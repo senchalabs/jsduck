@@ -1,5 +1,8 @@
 /**
  * Creates new DateRange
+ * <pre>
+2 * 8 = 16
+ * </pre>
  * @param {Date} beginDate
  * @param {Date} endDate
  */

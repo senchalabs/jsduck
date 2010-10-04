@@ -104,7 +104,7 @@ class DocComment
       elsif line =~ /^ *\* ?(.*)\Z/ then
         result << $1
       else
-        result << line
+        result << line.chomp
       end
     end
     return result.join("\n")
