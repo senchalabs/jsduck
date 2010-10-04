@@ -1,6 +1,5 @@
 /**
  * Creates new DateRange
- * 
  * @param {Date} beginDate
  * @param {Date} endDate
  */

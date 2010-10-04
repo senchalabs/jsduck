@@ -42,7 +42,7 @@ class Lexer
       elsif @input.check(/\/\*\*/) then
         @tokens << {
           :type => :doc_comment,
-          :value => @input.scan_until(/\*\//)
+          :value => DocComment.new(@input.scan_until(/\*\//))
         }
       elsif @input.check(/"/) then
         @tokens << {
@@ -90,6 +90,33 @@ class Lexer
 end
 
 
+class DocComment
+  def initialize(input)
+    @input = purify(input)
+  end
+
+  # Extracts content inside /** ... */
+  def purify(input)
+    result = []
+    input.each_line do |line|
+      if line =~ /\A\/\*\*/ || line =~ /\*\/\Z/ then
+        # ignore first and last line
+      elsif line =~ /^ *\* ?(.*)\Z/ then
+        result << $1
+      else
+        result << line
+      end
+    end
+    return result.join("\n")
+  end
+
+  def to_s
+    @input
+  end
+end
+
+
+
 lex = Lexer.new($stdin.read)
 while !lex.empty? do
   if lex.look(:doc_comment) then
@@ -106,6 +133,7 @@ while !lex.empty? do
       # name: function(){
       puts "function " + lex.next
     end
+    puts
   else
     lex.next
   end
