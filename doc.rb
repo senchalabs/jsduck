@@ -44,6 +44,16 @@ class Lexer
           :type => :doc_comment,
           :value => @input.scan_until(/\*\//)
         }
+      elsif @input.check(/"/) then
+        @tokens << {
+          :type => :string,
+          :value => eval(@input.scan(/"([^\\]|\\.)*"/))
+        }
+      elsif @input.check(/'/) then
+        @tokens << {
+          :type => :string,
+          :value => eval(@input.scan(/'([^\\]|\\.)*'/))
+        }
       elsif @input.check(/./) then
         @tokens << {
           :type => :operator,
@@ -92,7 +102,7 @@ while !lex.empty? do
       lex.next
       # var name = function(){
       puts "function " + lex.next
-    elsif lex.look(:keyword, ":", "function") then
+    elsif lex.look(:keyword, ":", "function") || lex.look(:string, ":", "function") then
       # name: function(){
       puts "function " + lex.next
     end

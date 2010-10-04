@@ -14,7 +14,7 @@ DateRange.prototype = {
    * Return beginning date of range
    * @return {Date}
    */
-  beg: function() {
+  'beg': function() {
     return this.beginDate;
   },
   
@@ -22,7 +22,7 @@ DateRange.prototype = {
    * Return end date of range
    * @return {Date}
    */
-  end: function() {
+  "end": function() {
     return this.endDate;
   }
 };
