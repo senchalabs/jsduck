@@ -91,50 +91,76 @@ end
 
 
 class DocComment
+  attr_accessor :function
+  
   def initialize(input)
-    @input = purify(input)
+    @function = ""
+    @doc = []
+    @params = []
+    @return = "void"
+    parse(purify(input))
   end
 
   # Extracts content inside /** ... */
   def purify(input)
     result = []
     input.each_line do |line|
+      line.chomp!
       if line =~ /\A\/\*\*/ || line =~ /\*\/\Z/ then
         # ignore first and last line
-      elsif line =~ /^ *\* ?(.*)\Z/ then
+      elsif line =~ /\A\s*\*\s?(.*)\Z/ then
         result << $1
       else
-        result << line.chomp
+        result << line
       end
     end
     return result.join("\n")
   end
 
-  def to_s
-    @input
+  def parse(input)
+    input.each_line do |line|
+      line.chomp!
+      if line =~ /\A@param\b/ then
+        @params << line
+      elsif line =~ /\A@return\b/ then
+        @return = line
+      else
+        @doc << line
+      end
+    end
+  end
+
+  def print
+    puts "function: " + @function
+    puts "doc: " + @doc.join("\\n")
+    puts "params: " + @params.join("\\n")
+    puts "return: " + @return
   end
 end
 
 
 
 lex = Lexer.new($stdin.read)
+docs = []
 while !lex.empty? do
   if lex.look(:doc_comment) then
-    puts lex.next
+    doc = lex.next
     if lex.look("function", :keyword) then
       lex.next
       # function name(){
-      puts "function " + lex.next
+      doc.function = lex.next
     elsif lex.look("var", :keyword, "=", "function") then
       lex.next
       # var name = function(){
-      puts "function " + lex.next
+      doc.function = lex.next
     elsif lex.look(:keyword, ":", "function") || lex.look(:string, ":", "function") then
       # name: function(){
-      puts "function " + lex.next
+      doc.function = lex.next
     end
-    puts
+    docs << doc
   else
     lex.next
   end
 end
+
+docs.each {|d| d.print; puts}
