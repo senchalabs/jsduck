@@ -1,54 +1,55 @@
 #!/usr/bin/env ruby
 require 'strscan'
+require 'pp'
 
 class Lexer
   def initialize(input)
     @input = StringScanner.new(input)
+    tokenize
   end
 
-  def scan
-    if keyword? then
-      @input.scan(/\w+/)
-    elsif doc_comment? then
-      @input.scan_until(/\*\//)
-    elsif operator? then
-      @input.scan(/./)
-    else
-      nil
+  def look(*tokens)
+    i = 0
+    tokens.all? do |t|
+      tok = @tokens[i]
+      i += 1
+      if t.instance_of?(Symbol) then
+        tok[:type] == t
+      else
+        tok[:value] == t
+      end
     end
   end
 
-  def keyword?
-    skip_white_and_comments
-    @input.check(/\w+/)
+  def next
+    @tokens.shift[:value]
   end
 
-  def operator?
-    skip_white_and_comments
-    @input.check(/\W/)
+  def empty?
+    @tokens.empty?
   end
 
-  def doc_comment?
-    skip_white_and_comments
-    @input.check(/\/\*\*/)
-  end
-
-  def eos?
-    skip_white_and_comments
-    @input.eos?
-  end
-
-  def check(re)
-    skip_white_and_comments
-    @input.check(re)
-  end
-
-  def scan_if(re)
-    skip_white_and_comments
-    if @input.check(re) then
-      scan
-    else
-      nil
+  # Goes through the whole input and tokenizes it
+  def tokenize
+    @tokens = []
+    while !@input.eos? do
+      skip_white_and_comments
+      if @input.check(/\w+/) then
+        @tokens << {
+          :type => :keyword,
+          :value => @input.scan(/\w+/)
+        }
+      elsif @input.check(/\/\*\*/) then
+        @tokens << {
+          :type => :doc_comment,
+          :value => @input.scan_until(/\*\//)
+        }
+      elsif @input.check(/./) then
+        @tokens << {
+          :type => :operator,
+          :value => @input.scan(/./)
+        }
+      end
     end
   end
 
@@ -80,21 +81,22 @@ end
 
 
 lex = Lexer.new($stdin.read)
-while !lex.eos? do
-  if lex.doc_comment? then
-    puts lex.scan
-    if lex.scan_if(/function/) && lex.keyword? then
+while !lex.empty? do
+  if lex.look(:doc_comment) then
+    puts lex.next
+    if lex.look("function", :keyword) then
+      lex.next
       # function name(){
-      puts "function " + lex.scan
-    elsif lex.scan_if(/var/) && lex.keyword? && (fname = lex.scan) && lex.scan_if(/=/) && lex.scan_if(/function/) then
+      puts "function " + lex.next
+    elsif lex.look("var", :keyword, "=", "function") then
+      lex.next
       # var name = function(){
-      puts "function " + fname
-    elsif lex.keyword? && (fname = lex.scan) && lex.scan_if(/:/) && lex.scan_if(/function/) then
+      puts "function " + lex.next
+    elsif lex.look(:keyword, ":", "function") then
       # name: function(){
-      puts "function " + fname
+      puts "function " + lex.next
     end
   else
-    lex.scan
+    lex.next
   end
 end
-
