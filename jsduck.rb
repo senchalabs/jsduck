@@ -39,7 +39,7 @@ module JsDuck
         skip_white_and_comments
         if @input.check(/\w+/) then
           @tokens << {
-            :type => :keyword,
+            :type => :ident,
             :value => @input.scan(/\w+/)
           }
         elsif @input.check(/\/\*\*/) then
@@ -209,23 +209,23 @@ module JsDuck
     while !lex.empty? do
       if lex.look(:doc_comment) then
         doc = lex.next
-        if lex.look("function", :keyword) then
+        if lex.look("function", :ident) then
           lex.next
           # function name(){
           doc.set_default(:function, {:name => lex.next})
-        elsif lex.look("var", :keyword, "=", "function") then
+        elsif lex.look("var", :ident, "=", "function") then
           lex.next
           # var name = function(){
           doc.set_default(:function, {:name => lex.next})
-        elsif lex.look(:keyword, "=", "function") ||
-            lex.look(:keyword, ":", "function") ||
+        elsif lex.look(:ident, "=", "function") ||
+            lex.look(:ident, ":", "function") ||
             lex.look(:string, ":", "function") then
           # name: function(){
           doc.set_default(:function, {:name => lex.next})
-        elsif lex.look(:keyword, ".") then
+        elsif lex.look(:ident, ".") then
           # some.long.prototype.chain = function() {
           lex.next
-          while lex.look(".", :keyword) do
+          while lex.look(".", :ident) do
             lex.next
             name = lex.next
             if lex.look("=", "function") then
