@@ -94,14 +94,20 @@ module JsDuck
 
 
   class DocComment
-    attr_accessor :function, :doc
-    
     def initialize(input)
-      @function = ""
-      @doc = ""
-      @params = []
-      @return = "void"
+      @current_tag = {:doc => ""}
+      @tags = {:default => @current_tag}
       parse(purify(input))
+    end
+
+    # sets the name and properties of the default at-tag
+    def set_default(tagname, attrs={})
+      @tags[tagname] = attrs
+      @tags[tagname][:doc] = @tags[:default][:doc]
+    end
+
+    def [](tagname)
+      @tags[tagname]
     end
 
     # Extracts content inside /** ... */
@@ -121,25 +127,78 @@ module JsDuck
     end
 
     def parse(input)
-      doc = []
-      input.each_line do |line|
-        line.chomp!
-        if line =~ /\A@param\b/ then
-          @params << line
-        elsif line =~ /\A@return\b/ then
-          @return = line
-        else
-          doc << line
+      @input = StringScanner.new(input)
+      while !@input.eos? do
+        if look(/@return\b/) then
+          at_return
+        elsif look(/@param\b/) then
+          at_param
+        elsif look(/@/) then
+          @current_tag[:doc] += @input.scan(/@/)
+        elsif look(/[^@]/) then
+          @current_tag[:doc] += @input.scan(/[^@]+/)
         end
       end
-      @doc = doc.join("\n")
+    end
+
+    # matches @return {type} ...
+    def at_return
+      match(/@return/)
+      @current_tag = @tags[:return] = {:doc => ""}
+      skip_white
+      if look(/\{/) then
+        @current_tag[:type] = typedef
+      end
+      skip_white
+    end
+
+    # matches @param {type} variable ...
+    def at_param
+      match(/@param/)
+      @current_tag = {:doc => ""}
+      if @tags[:param] then
+        @tags[:param] << @current_tag
+      else
+        @tags[:param] = [@current_tag]
+      end
+      skip_white
+      if look(/\{/) then
+        @current_tag[:type] = typedef
+      end
+      skip_white
+      if look(/\w/) then
+        @current_tag[:name] = ident
+      end
+      skip_white
+    end
+
+    # matches {...} and returns text inside brackets
+    def typedef
+      match(/\{/)
+      name = @input.scan(/[^}]+/)
+      match(/\}/)
+      return name
+    end
+
+    # matches identifier and returns its name
+    def ident
+      @input.scan(/\w+/)
+    end
+
+    def look(re)
+      @input.check(re)
+    end
+    
+    def match(re)
+      @input.scan(re)
+    end
+
+    def skip_white
+      @input.scan(/\s+/)
     end
 
     def print
-      puts "function: " + @function
-      puts "doc: " + @doc
-      puts "params: " + @params.join("\n")
-      puts "return: " + @return
+      pp @tags
     end
   end
 
@@ -153,16 +212,16 @@ module JsDuck
         if lex.look("function", :keyword) then
           lex.next
           # function name(){
-          doc.function = lex.next
+          doc.set_default(:function, {:name => lex.next})
         elsif lex.look("var", :keyword, "=", "function") then
           lex.next
           # var name = function(){
-          doc.function = lex.next
+          doc.set_default(:function, {:name => lex.next})
         elsif lex.look(:keyword, "=", "function") ||
             lex.look(:keyword, ":", "function") ||
             lex.look(:string, ":", "function") then
           # name: function(){
-          doc.function = lex.next
+          doc.set_default(:function, {:name => lex.next})
         end
         docs << doc
       else
