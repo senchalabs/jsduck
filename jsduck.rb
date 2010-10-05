@@ -222,6 +222,16 @@ module JsDuck
             lex.look(:string, ":", "function") then
           # name: function(){
           doc.set_default(:function, {:name => lex.next})
+        elsif lex.look(:keyword, ".") then
+          # some.long.prototype.chain = function() {
+          lex.next
+          while lex.look(".", :keyword) do
+            lex.next
+            name = lex.next
+            if lex.look("=", "function") then
+              doc.set_default(:function, {:name => name})
+            end
+          end
         end
         docs << doc
       else

@@ -99,6 +99,16 @@ foo: function() {
     assert_equal("foo", docs[0][:function][:name])
   end
 
+  def test_function_in_prototype
+    docs = JsDuck.parse("
+/**
+ */
+Some.Long.prototype.foo = function() {
+}
+")
+    assert_equal("foo", docs[0][:function][:name])
+  end
+
   def test_function_private
     docs = JsDuck.parse("
 // no doc-comment for this function
