@@ -158,7 +158,9 @@ module JsDuck
           lex.next
           # var name = function(){
           doc.function = lex.next
-        elsif lex.look(:keyword, ":", "function") || lex.look(:string, ":", "function") then
+        elsif lex.look(:keyword, "=", "function") ||
+            lex.look(:keyword, ":", "function") ||
+            lex.look(:string, ":", "function") then
           # name: function(){
           doc.function = lex.next
         end

@@ -15,9 +15,65 @@ class TestJsDuck < Test::Unit::TestCase
     assert_equal([], JsDuck.parse("/* ") )
   end
 
-  def test_single_doc_comment
-    assert_equal("Hello", JsDuck.parse("/**\nHello\n*/")[0].doc )
+  def test_function
+    docs = JsDuck.parse("
+/**
+ * Some function
+ */
+function foo() {
+}
+")
+    assert_equal("Some function", docs[0].doc)
+    assert_equal("foo", docs[0].function)
   end
 
+  def test_function_with_var
+    docs = JsDuck.parse("
+/**
+ */
+var foo = function() {
+}
+")
+    assert_equal("foo", docs[0].function)
+  end
+
+  def test_function_without_var
+    docs = JsDuck.parse("
+/**
+ */
+foo = function() {
+}
+")
+    assert_equal("foo", docs[0].function)
+  end
+
+  def test_function_in_object_literal
+    docs = JsDuck.parse("
+/**
+ */
+foo: function() {
+}
+")
+    assert_equal("foo", docs[0].function)
+  end
+
+  def test_function_in_object_literal_string
+    docs = JsDuck.parse("
+/**
+ */
+'foo': function() {
+}
+")
+    assert_equal("foo", docs[0].function)
+  end
+
+  def test_function_private
+    docs = JsDuck.parse("
+// no doc-comment for this function
+function foo() {
+}
+")
+    assert_equal(0, docs.length)
+  end
 end
 
