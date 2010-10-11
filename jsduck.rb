@@ -102,8 +102,10 @@ module JsDuck
 
     # sets the name and properties of the default at-tag
     def set_default(tagname, attrs={})
-      @tags[tagname] = attrs
-      @tags[tagname][:doc] = @tags[:default][:doc]
+      if !@tags[tagname] then
+        @tags[tagname] = attrs
+        @tags[tagname][:doc] = @tags[:default][:doc]
+      end
     end
 
     def [](tagname)
@@ -133,6 +135,8 @@ module JsDuck
           at_return
         elsif look(/@param\b/) then
           at_param
+        elsif look(/@function\b/) then
+          at_function
         elsif look(/@/) then
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/) then
@@ -165,6 +169,17 @@ module JsDuck
       if look(/\{/) then
         @current_tag[:type] = typedef
       end
+      skip_white
+      if look(/\w/) then
+        @current_tag[:name] = ident
+      end
+      skip_white
+    end
+
+    # matches @return {type} ...
+    def at_function
+      match(/@function/)
+      @current_tag = @tags[:function] = {:doc => ""}
       skip_white
       if look(/\w/) then
         @current_tag[:name] = ident

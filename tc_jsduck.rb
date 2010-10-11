@@ -117,5 +117,30 @@ function foo() {
 ")
     assert_equal([], docs)
   end
+
+  def test_explicit_function_doc
+    docs = JsDuck.parse("
+/**
+ * @function hello
+ * Just some function
+ */
+eval('hello = new Function();');
+")
+    assert_equal("hello", docs[0][:function][:name])
+    assert_equal("Just some function", docs[0][:function][:doc])
+  end
+
+  def test_explicit_function_doc_overrides_implicit_code
+    docs = JsDuck.parse("
+/**
+ * @function hello
+ * Just some function
+ */
+function goodby(){}
+")
+    assert_equal("hello", docs[0][:function][:name])
+    assert_equal("Just some function", docs[0][:function][:doc])
+  end
+
 end
 
