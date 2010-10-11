@@ -235,71 +235,81 @@ module JsDuck
   end
 
 
-  def JsDuck.parse(input)
-    lex = Lexer.new(input)
-    docs = []
-    while !lex.empty? do
-      if lex.look(:doc_comment) then
-        doc = lex.next
-        if lex.look("function", :ident) then
-          lex.next
-          # function name(){
-          doc.set_default(:function, {:name => lex.next})
-          doc.set_default_params(parse_params(lex))
-        elsif lex.look("var", :ident, "=", "function") then
-          lex.next
-          # var name = function(){
-          doc.set_default(:function, {:name => lex.next})
-          lex.next # =
-          lex.next # function
-          lex.next if lex.look(:ident) # optional anonymous function name
-          doc.set_default_params(parse_params(lex))
-        elsif lex.look(:ident, "=", "function") ||
-            lex.look(:ident, ":", "function") ||
-            lex.look(:string, ":", "function") then
-          # name: function(){
-          doc.set_default(:function, {:name => lex.next})
-          lex.next # : or =
-          lex.next # function
-          lex.next if lex.look(:ident) # optional anonymous function name
-          doc.set_default_params(parse_params(lex))
-        elsif lex.look(:ident, ".") then
-          # some.long.prototype.chain = function() {
-          lex.next
-          while lex.look(".", :ident) do
-            lex.next
-            name = lex.next
-            if lex.look("=", "function") then
-              doc.set_default(:function, {:name => name})
-              lex.next # =
-              lex.next # function
-              lex.next if lex.look(:ident) # optional anonymous function name
-              doc.set_default_params(parse_params(lex))
+  class Parser
+    def initialize(input)
+      @lex = Lexer.new(input)
+      @docs = []
+    end
+
+    def parse
+      while !@lex.empty? do
+        if @lex.look(:doc_comment) then
+          doc = @lex.next
+          if @lex.look("function", :ident) then
+            @lex.next
+            # function name(){
+            doc.set_default(:function, {:name => @lex.next})
+            doc.set_default_params(parse_params)
+          elsif @lex.look("var", :ident, "=", "function") then
+            @lex.next
+            # var name = function(){
+            doc.set_default(:function, {:name => @lex.next})
+            @lex.next # =
+            @lex.next # function
+            @lex.next if @lex.look(:ident) # optional anonymous function name
+            doc.set_default_params(parse_params)
+          elsif @lex.look(:ident, "=", "function") ||
+              @lex.look(:ident, ":", "function") ||
+              @lex.look(:string, ":", "function") then
+            # name: function(){
+            doc.set_default(:function, {:name => @lex.next})
+            @lex.next # : or =
+            @lex.next # function
+            @lex.next if @lex.look(:ident) # optional anonymous function name
+            doc.set_default_params(parse_params)
+          elsif @lex.look(:ident, ".") then
+            # some.long.prototype.chain = function() {
+            @lex.next
+            while @lex.look(".", :ident) do
+              @lex.next
+              name = @lex.next
+              if @lex.look("=", "function") then
+                doc.set_default(:function, {:name => name})
+                @lex.next # =
+                @lex.next # function
+                @lex.next if @lex.look(:ident) # optional anonymous function name
+                doc.set_default_params(parse_params)
+              end
             end
           end
+          @docs << doc
+        else
+          @lex.next
         end
-        docs << doc
-      else
-        lex.next
       end
+      @docs
     end
-    return docs
+
+    def parse_params
+      params = []
+      if @lex.look("(") then
+        @lex.next
+        while @lex.look(:ident) do
+          params << {:name => @lex.next}
+          if @lex.look(",") then
+            @lex.next
+          else
+            break
+          end
+        end
+      end
+      params
+    end
   end
 
-  def JsDuck.parse_params(lex)
-    params = []
-    if lex.look("(") then
-      lex.next
-      while lex.look(:ident) do
-        params << {:name => lex.next}
-        if lex.look(",") then
-          lex.next
-        else
-          break
-        end
-      end
-    end
-    params
+
+  def JsDuck.parse(input)
+    Parser.new(input).parse
   end
 
 end
