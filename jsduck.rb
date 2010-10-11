@@ -255,18 +255,14 @@ module JsDuck
             # var name = function(){
             doc.set_default(:function, {:name => @lex.next})
             @lex.next # =
-            @lex.next # function
-            @lex.next if @lex.look(:ident) # optional anonymous function name
-            doc.set_default_params(parse_params)
+            doc.set_default_params(parse_anonymous_function_params)
           elsif @lex.look(:ident, "=", "function") ||
               @lex.look(:ident, ":", "function") ||
               @lex.look(:string, ":", "function") then
             # name: function(){
             doc.set_default(:function, {:name => @lex.next})
             @lex.next # : or =
-            @lex.next # function
-            @lex.next if @lex.look(:ident) # optional anonymous function name
-            doc.set_default_params(parse_params)
+            doc.set_default_params(parse_anonymous_function_params)
           elsif @lex.look(:ident, ".") then
             # some.long.prototype.chain = function() {
             @lex.next
@@ -276,9 +272,7 @@ module JsDuck
               if @lex.look("=", "function") then
                 doc.set_default(:function, {:name => name})
                 @lex.next # =
-                @lex.next # function
-                @lex.next if @lex.look(:ident) # optional anonymous function name
-                doc.set_default_params(parse_params)
+                doc.set_default_params(parse_anonymous_function_params)
               end
             end
           end
@@ -290,6 +284,18 @@ module JsDuck
       @docs
     end
 
+    # Parses function parameters out of:  function blah(x, y, z) {...
+    def parse_anonymous_function_params
+      if @lex.look("function") then
+        @lex.next # function
+        @lex.next if @lex.look(:ident) # optional anonymous function name
+        parse_params
+      else
+        []
+      end
+    end
+
+    # Parses parameters out of:  (x, y, z, ...)
     def parse_params
       params = []
       if @lex.look("(") then
