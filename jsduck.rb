@@ -108,6 +108,23 @@ module JsDuck
       end
     end
 
+    # sets default names and possibly other properties of params
+    def set_default_params(params)
+      if @tags[:param] then
+        0.upto(params.length-1) do |i|
+          if @tags[:param][i] then
+            params[i].each do |key, val|
+              @tags[:param][i][key] = val unless @tags[:param][i][key]
+            end
+          else
+            @tags[:param] << params[i]
+          end
+        end
+      else
+        @tags[:param] = params
+      end
+    end
+
     def [](tagname)
       @tags[tagname]
     end
@@ -228,15 +245,24 @@ module JsDuck
           lex.next
           # function name(){
           doc.set_default(:function, {:name => lex.next})
+          doc.set_default_params(parse_params(lex))
         elsif lex.look("var", :ident, "=", "function") then
           lex.next
           # var name = function(){
           doc.set_default(:function, {:name => lex.next})
+          lex.next # =
+          lex.next # function
+          lex.next if lex.look(:ident) # optional anonymous function name
+          doc.set_default_params(parse_params(lex))
         elsif lex.look(:ident, "=", "function") ||
             lex.look(:ident, ":", "function") ||
             lex.look(:string, ":", "function") then
           # name: function(){
           doc.set_default(:function, {:name => lex.next})
+          lex.next # : or =
+          lex.next # function
+          lex.next if lex.look(:ident) # optional anonymous function name
+          doc.set_default_params(parse_params(lex))
         elsif lex.look(:ident, ".") then
           # some.long.prototype.chain = function() {
           lex.next
@@ -245,6 +271,10 @@ module JsDuck
             name = lex.next
             if lex.look("=", "function") then
               doc.set_default(:function, {:name => name})
+              lex.next # =
+              lex.next # function
+              lex.next if lex.look(:ident) # optional anonymous function name
+              doc.set_default_params(parse_params(lex))
             end
           end
         end
@@ -254,6 +284,22 @@ module JsDuck
       end
     end
     return docs
+  end
+
+  def JsDuck.parse_params(lex)
+    params = []
+    if lex.look("(") then
+      lex.next
+      while lex.look(:ident) do
+        params << {:name => lex.next}
+        if lex.look(",") then
+          lex.next
+        else
+          break
+        end
+      end
+    end
+    params
   end
 
 end
