@@ -205,12 +205,12 @@ function f(foo, bar){}
   def test_explicit_class_name
     docs = JsDuck.parse("
 /**
- * @class Foo
+ * @class my.package.Foo
  * My class
  */
 function Bar(){}
 ")
-    assert_equal("Foo", docs[0][:class][:name])
+    assert_equal("my.package.Foo", docs[0][:class][:name])
     assert_equal("My class", docs[0][:class][:doc])
   end
 
@@ -225,16 +225,27 @@ function Foo(){}
     assert_equal("My class", docs[0][:class][:doc])
   end
 
+  def test_uppercase_name_at_chain_end_implies_class_name
+    docs = JsDuck.parse("
+/**
+ * My class
+ */
+some.namespace.ClassName = function(){}
+")
+    assert_equal("some.namespace.ClassName", docs[0][:class][:name])
+    assert_equal("My class", docs[0][:class][:doc])
+  end
+
   def test_explicit_extends
     docs = JsDuck.parse("
 /**
  * @class Foo
- * @extends Bar
+ * @extends some.namespace.Bar
  * My class
  */
 ")
     assert_equal("Foo", docs[0][:class][:name])
-    assert_equal("Bar", docs[0][:class][:extends])
+    assert_equal("some.namespace.Bar", docs[0][:class][:extends])
     assert_equal("My class", docs[0][:class][:doc])
   end
 

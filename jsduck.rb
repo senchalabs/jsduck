@@ -101,13 +101,18 @@ module JsDuck
     end
 
     # Sets the name property of the default at-tag.
-    # When name begins with uppercase it's considered to be class name,
-    # otherwise a function name.
-    def set_default_name(name)
+    #
+    # When name begins with uppercase it's considered to be class
+    # name, otherwise a function name.
+    #
+    # When the name consists of several parts like foo.bar.baz, then
+    # the parts should be passed as multiple arguments.
+    def set_default_name(*name_chain)
+      name = name_chain.last
       tagname = (name[0,1] == name[0,1].upcase) ? :class : :function
       
       if !@tags[:class] && !@tags[:function] then
-        @tags[tagname] = {:name => name}
+        @tags[tagname] = {:name => (tagname == :function) ? name : name_chain.join(".")}
         @tags[tagname][:doc] = @tags[:default][:doc]
       end
     end
@@ -176,7 +181,7 @@ module JsDuck
       @current_tag = @tags[:class] = {:doc => ""}
       skip_white
       if look(/\w/) then
-        @current_tag[:name] = ident
+        @current_tag[:name] = ident_chain
       end
       skip_white
     end
@@ -190,7 +195,7 @@ module JsDuck
       @current_tag = @tags[:class]
       skip_white
       if look(/\w/) then
-        @current_tag[:extends] = ident
+        @current_tag[:extends] = ident_chain
       end
       skip_white
     end
@@ -243,6 +248,11 @@ module JsDuck
       name = @input.scan(/[^}]+/)
       match(/\}/)
       return name
+    end
+
+    # matches chained.identifier.name and returns it
+    def ident_chain
+      @input.scan(/[\w.]+/)
     end
 
     # matches identifier and returns its name
@@ -298,12 +308,12 @@ module JsDuck
             doc.set_default_params(parse_anonymous_function_params)
           elsif @lex.look(:ident, ".") then
             # some.long.prototype.chain = function() {
-            @lex.next
+            name_chain = [@lex.next]
             while @lex.look(".", :ident) do
               @lex.next
-              name = @lex.next
+              name_chain << @lex.next
               if @lex.look("=", "function") then
-                doc.set_default_name(name)
+                doc.set_default_name(*name_chain)
                 @lex.next # =
                 doc.set_default_params(parse_anonymous_function_params)
               end
