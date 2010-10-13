@@ -154,6 +154,8 @@ module JsDuck
       while !@input.eos? do
         if look(/@class\b/) then
           at_class
+        elsif look(/@extends\b/) then
+          at_extends
         elsif look(/@function\b/) then
           at_function
         elsif look(/@param\b/) then
@@ -175,6 +177,20 @@ module JsDuck
       skip_white
       if look(/\w/) then
         @current_tag[:name] = ident
+      end
+      skip_white
+    end
+
+    # matches @extends name ...
+    def at_extends
+      match(/@extends/)
+      unless @tags[:class]
+        @tags[:class] = {:doc => ""}
+      end
+      @current_tag = @tags[:class]
+      skip_white
+      if look(/\w/) then
+        @current_tag[:extends] = ident
       end
       skip_white
     end

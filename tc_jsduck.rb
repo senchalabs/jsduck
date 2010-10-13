@@ -225,5 +225,18 @@ function Foo(){}
     assert_equal("My class", docs[0][:class][:doc])
   end
 
+  def test_explicit_extends
+    docs = JsDuck.parse("
+/**
+ * @class Foo
+ * @extends Bar
+ * My class
+ */
+")
+    assert_equal("Foo", docs[0][:class][:name])
+    assert_equal("Bar", docs[0][:class][:extends])
+    assert_equal("My class", docs[0][:class][:doc])
+  end
+
 end
 
