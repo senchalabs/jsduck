@@ -202,5 +202,28 @@ function f(foo, bar){}
     assert_equal("Number", params[1][:type])
   end
 
+  def test_explicit_class_name
+    docs = JsDuck.parse("
+/**
+ * @class Foo
+ * My class
+ */
+function Bar(){}
+")
+    assert_equal("Foo", docs[0][:class][:name])
+    assert_equal("My class", docs[0][:class][:doc])
+  end
+
+  def test_uppercase_function_name_implies_class_name
+    docs = JsDuck.parse("
+/**
+ * My class
+ */
+function Foo(){}
+")
+    assert_equal("Foo", docs[0][:class][:name])
+    assert_equal("My class", docs[0][:class][:doc])
+  end
+
 end
 

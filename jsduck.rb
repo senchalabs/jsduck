@@ -100,10 +100,14 @@ module JsDuck
       parse(purify(input))
     end
 
-    # sets the name and properties of the default at-tag
-    def set_default(tagname, attrs={})
-      if !@tags[tagname] then
-        @tags[tagname] = attrs
+    # Sets the name property of the default at-tag.
+    # When name begins with uppercase it's considered to be class name,
+    # otherwise a function name.
+    def set_default_name(name)
+      tagname = (name[0,1] == name[0,1].upcase) ? :class : :function
+      
+      if !@tags[:class] && !@tags[:function] then
+        @tags[tagname] = {:name => name}
         @tags[tagname][:doc] = @tags[:default][:doc]
       end
     end
@@ -154,6 +158,8 @@ module JsDuck
           at_param
         elsif look(/@function\b/) then
           at_function
+        elsif look(/@class\b/) then
+          at_class
         elsif look(/@/) then
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/) then
@@ -197,6 +203,17 @@ module JsDuck
     def at_function
       match(/@function/)
       @current_tag = @tags[:function] = {:doc => ""}
+      skip_white
+      if look(/\w/) then
+        @current_tag[:name] = ident
+      end
+      skip_white
+    end
+
+    # matches @class name ...
+    def at_class
+      match(/@class/)
+      @current_tag = @tags[:class] = {:doc => ""}
       skip_white
       if look(/\w/) then
         @current_tag[:name] = ident
@@ -248,19 +265,19 @@ module JsDuck
           if @lex.look("function", :ident) then
             @lex.next
             # function name(){
-            doc.set_default(:function, {:name => @lex.next})
+            doc.set_default_name(@lex.next)
             doc.set_default_params(parse_params)
           elsif @lex.look("var", :ident, "=", "function") then
             @lex.next
             # var name = function(){
-            doc.set_default(:function, {:name => @lex.next})
+            doc.set_default_name(@lex.next)
             @lex.next # =
             doc.set_default_params(parse_anonymous_function_params)
           elsif @lex.look(:ident, "=", "function") ||
               @lex.look(:ident, ":", "function") ||
               @lex.look(:string, ":", "function") then
             # name: function(){
-            doc.set_default(:function, {:name => @lex.next})
+            doc.set_default_name(@lex.next)
             @lex.next # : or =
             doc.set_default_params(parse_anonymous_function_params)
           elsif @lex.look(:ident, ".") then
@@ -270,7 +287,7 @@ module JsDuck
               @lex.next
               name = @lex.next
               if @lex.look("=", "function") then
-                doc.set_default(:function, {:name => name})
+                doc.set_default_name(name)
                 @lex.next # =
                 doc.set_default_params(parse_anonymous_function_params)
               end
