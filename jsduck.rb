@@ -152,14 +152,14 @@ module JsDuck
     def parse(input)
       @input = StringScanner.new(input)
       while !@input.eos? do
-        if look(/@return\b/) then
-          at_return
-        elsif look(/@param\b/) then
-          at_param
+        if look(/@class\b/) then
+          at_class
         elsif look(/@function\b/) then
           at_function
-        elsif look(/@class\b/) then
-          at_class
+        elsif look(/@param\b/) then
+          at_param
+        elsif look(/@return\b/) then
+          at_return
         elsif look(/@/) then
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/) then
@@ -168,13 +168,24 @@ module JsDuck
       end
     end
 
-    # matches @return {type} ...
-    def at_return
-      match(/@return/)
-      @current_tag = @tags[:return] = {:doc => ""}
+    # matches @class name ...
+    def at_class
+      match(/@class/)
+      @current_tag = @tags[:class] = {:doc => ""}
       skip_white
-      if look(/\{/) then
-        @current_tag[:type] = typedef
+      if look(/\w/) then
+        @current_tag[:name] = ident
+      end
+      skip_white
+    end
+
+    # matches @return {type} ...
+    def at_function
+      match(/@function/)
+      @current_tag = @tags[:function] = {:doc => ""}
+      skip_white
+      if look(/\w/) then
+        @current_tag[:name] = ident
       end
       skip_white
     end
@@ -200,23 +211,12 @@ module JsDuck
     end
 
     # matches @return {type} ...
-    def at_function
-      match(/@function/)
-      @current_tag = @tags[:function] = {:doc => ""}
+    def at_return
+      match(/@return/)
+      @current_tag = @tags[:return] = {:doc => ""}
       skip_white
-      if look(/\w/) then
-        @current_tag[:name] = ident
-      end
-      skip_white
-    end
-
-    # matches @class name ...
-    def at_class
-      match(/@class/)
-      @current_tag = @tags[:class] = {:doc => ""}
-      skip_white
-      if look(/\w/) then
-        @current_tag[:name] = ident
+      if look(/\{/) then
+        @current_tag[:type] = typedef
       end
       skip_white
     end
