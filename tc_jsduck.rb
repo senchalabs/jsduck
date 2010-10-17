@@ -249,5 +249,31 @@ some.namespace.ClassName = function(){}
     assert_equal("My class", docs[0][:class][:doc])
   end
 
+  def test_implicit_extends
+    docs = JsDuck.parse("
+/**
+ * My class
+ */
+MyClass = Ext.extend(Ext.util.Observable, {
+});
+")
+    assert_equal("MyClass", docs[0][:class][:name])
+    assert_equal("Ext.util.Observable", docs[0][:class][:extends])
+    assert_equal("My class", docs[0][:class][:doc])
+  end
+
+  def test_implicit_extends_with_var
+    docs = JsDuck.parse("
+/**
+ * My class
+ */
+var MyClass = Ext.extend(Ext.util.Observable, {
+});
+")
+    assert_equal("MyClass", docs[0][:class][:name])
+    assert_equal("Ext.util.Observable", docs[0][:class][:extends])
+    assert_equal("My class", docs[0][:class][:doc])
+  end
+
 end
 
