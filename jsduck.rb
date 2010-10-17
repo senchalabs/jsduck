@@ -42,6 +42,11 @@ module JsDuck
             :type => :ident,
             :value => @input.scan(/\w+/)
           }
+        elsif @input.check(/[0-9]+/) then
+          @tokens << {
+            :type => :number,
+            :value => eval(@input.scan(/[0-9]+(\.[0-9]*)?/))
+          }
         elsif @input.check(/\/\*\*/) then
           @tokens << {
             :type => :doc_comment,
@@ -57,6 +62,18 @@ module JsDuck
             :type => :string,
             :value => eval(@input.scan(/'([^\\]|\\.)*'/))
           }
+        elsif @input.check(/\//) then
+          if regex? then
+            @tokens << {
+              :type => :regex,
+              :value => @input.scan(/\/([^\\]|\\.)*\/[gim]*/)
+            }
+          else
+            @tokens << {
+              :type => :operator,
+              :value => @input.scan(/\//)
+            }
+          end
         elsif @input.check(/./) then
           @tokens << {
             :type => :operator,
@@ -64,6 +81,23 @@ module JsDuck
           }
         end
       end
+    end
+
+    # A slash "/" is a division operator if it follows:
+    # - identifier
+    # - number
+    # - closing bracket )
+    # - closing square-bracket ]
+    # Otherwise it's a beginning of regex
+    def regex?
+      if @tokens.last then
+        type = @tokens.last[:type]
+        value = @tokens.last[:value]
+        if type == :ident || type == :number || value == ")" || value == "]" then
+          return false
+        end
+      end
+      return true
     end
 
     def skip_white_and_comments
