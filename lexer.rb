@@ -23,8 +23,9 @@ module JsDuck
       end
     end
 
-    def next
-      @tokens.shift[:value]
+    def next(full=false)
+      tok = @tokens.shift
+      full ? tok : tok[:value]
     end
 
     def empty?
@@ -36,15 +37,15 @@ module JsDuck
       @tokens = []
       while !@input.eos? do
         skip_white_and_comments
-        if @input.check(/\w+/) then
-          @tokens << {
-            :type => :ident,
-            :value => @input.scan(/\w+/)
-          }
-        elsif @input.check(/[0-9]+/) then
+        if @input.check(/[0-9]+/) then
           @tokens << {
             :type => :number,
             :value => eval(@input.scan(/[0-9]+(\.[0-9]*)?/))
+          }
+        elsif @input.check(/\w+/) then
+          @tokens << {
+            :type => :ident,
+            :value => @input.scan(/\w+/)
           }
         elsif @input.check(/\/\*\*/) then
           @tokens << {
@@ -54,18 +55,18 @@ module JsDuck
         elsif @input.check(/"/) then
           @tokens << {
             :type => :string,
-            :value => eval(@input.scan(/"([^\\]|\\.)*"/))
+            :value => eval(@input.scan(/"([^"\\]|\\.)*"/))
           }
         elsif @input.check(/'/) then
           @tokens << {
             :type => :string,
-            :value => eval(@input.scan(/'([^\\]|\\.)*'/))
+            :value => eval(@input.scan(/'([^'\\]|\\.)*'/))
           }
         elsif @input.check(/\//) then
           if regex? then
             @tokens << {
               :type => :regex,
-              :value => @input.scan(/\/([^\\]|\\.)*\/[gim]*/)
+              :value => @input.scan(/\/([^\/\\]|\\.)*\/[gim]*/)
             }
           else
             @tokens << {
