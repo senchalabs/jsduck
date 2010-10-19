@@ -28,6 +28,15 @@ class TestDocComment < Test::Unit::TestCase
     assert_equal("resulting value", doc[:return][:doc])
   end
 
+  def test_constructor
+    doc = JsDuck::DocComment.new("/**
+ * @constructor
+ * Some docs.
+ */")
+    assert_equal("constructor", doc[:function][:name])
+    assert_equal("Some docs.", doc[:function][:doc])
+  end
+
   def test_class
     doc = JsDuck::DocComment.new("/**
  * @class my.package.Foo

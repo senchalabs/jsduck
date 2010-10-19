@@ -81,6 +81,8 @@ module JsDuck
           at_event
         elsif look(/@function\b/) then
           at_function
+        elsif look(/@constructor\b/) then
+          at_constructor
         elsif look(/@param\b/) then
           at_param
         elsif look(/@return\b/) then
@@ -143,7 +145,7 @@ module JsDuck
       skip_white
     end
 
-    # matches @return {type} ...
+    # matches @function name ...
     def at_function
       match(/@function/)
       @current_tag = @tags[:function] = {:doc => ""}
@@ -151,6 +153,14 @@ module JsDuck
       if look(/\w/) then
         @current_tag[:name] = ident
       end
+      skip_white
+    end
+
+    # matches @constructor ...
+    # Which is equivalent of: @function constructor ...
+    def at_constructor
+      match(/@constructor/)
+      @current_tag = @tags[:function] = {:doc => "", :name => "constructor"}
       skip_white
     end
 
