@@ -21,7 +21,7 @@ module JsDuck
       name = name_chain.last
       tagname = (name[0,1] == name[0,1].upcase) ? :class : :function
 
-      if !@tags[:class] && !@tags[:function] then
+      if !@tags[:class] && !@tags[:function] && !@tags[:event] && !@tags[:cfg] then
         @tags[tagname] = {:name => (tagname == :function) ? name : name_chain.join(".")}
         @tags[tagname][:doc] = @tags[:default][:doc]
       end
@@ -87,6 +87,8 @@ module JsDuck
           at_param
         elsif look(/@return\b/) then
           at_return
+        elsif look(/@cfg\b/) then
+          at_cfg
         elsif look(/@/) then
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/) then
@@ -191,6 +193,21 @@ module JsDuck
       skip_white
       if look(/\{/) then
         @current_tag[:type] = typedef
+      end
+      skip_white
+    end
+
+    # matches @cfg {type} name ...
+    def at_cfg
+      match(/@cfg/)
+      @current_tag = @tags[:cfg] = {:doc => ""}
+      skip_white
+      if look(/\{/) then
+        @current_tag[:type] = typedef
+      end
+      skip_white
+      if look(/\w/) then
+        @current_tag[:name] = ident
       end
       skip_white
     end

@@ -57,6 +57,16 @@ class TestDocComment < Test::Unit::TestCase
     assert_equal("Fires when the mouse button is depressed.", doc[:event][:doc])
   end
 
+  def test_cfg
+    doc = JsDuck::DocComment.new("/**
+ * @cfg {Boolean} enabled
+ * True to enable this.
+ */")
+    assert_equal("enabled", doc[:cfg][:name])
+    assert_equal("Boolean", doc[:cfg][:type])
+    assert_equal("True to enable this.", doc[:cfg][:doc])
+  end
+
   def test_long_docs
     doc = JsDuck::DocComment.new("/**
  * @function foo
