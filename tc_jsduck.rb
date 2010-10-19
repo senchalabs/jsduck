@@ -15,38 +15,6 @@ class TestJsDuck < Test::Unit::TestCase
     assert_equal([], JsDuck.parse("/* ") )
   end
 
-  def test_return
-    docs = JsDuck.parse("
-/**
- * Some function
- * @return {String} some value
- * on several
- * lines
- */
-")
-    assert_equal("String", docs[0][:return][:type])
-    assert_equal("some value\non several\nlines", docs[0][:return][:doc])
-  end
-
-  def test_param
-    docs = JsDuck.parse("
-/**
- * Some function
- * @param {Number} x value 1
- * @param {Float} y value 2
- */
-")
-    param1 = docs[0][:param][0]
-    assert_equal("Number", param1[:type])
-    assert_equal("x", param1[:name])
-    assert_equal("value 1\n", param1[:doc])
-
-    param2 = docs[0][:param][1]
-    assert_equal("Float", param2[:type])
-    assert_equal("y", param2[:name])
-    assert_equal("value 2", param2[:doc])
-  end
-
   def test_function
     docs = JsDuck.parse("
 /**
@@ -202,7 +170,7 @@ function f(foo, bar){}
     assert_equal("Number", params[1][:type])
   end
 
-  def test_explicit_class_name
+  def test_explicit_class_name_overrides_implicit
     docs = JsDuck.parse("
 /**
  * @class my.package.Foo
@@ -233,19 +201,6 @@ function Foo(){}
 some.namespace.ClassName = function(){}
 ")
     assert_equal("some.namespace.ClassName", docs[0][:class][:name])
-    assert_equal("My class", docs[0][:class][:doc])
-  end
-
-  def test_explicit_extends
-    docs = JsDuck.parse("
-/**
- * @class Foo
- * @extends some.namespace.Bar
- * My class
- */
-")
-    assert_equal("Foo", docs[0][:class][:name])
-    assert_equal("some.namespace.Bar", docs[0][:class][:extends])
     assert_equal("My class", docs[0][:class][:doc])
   end
 
