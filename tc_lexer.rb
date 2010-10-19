@@ -1,6 +1,6 @@
 require "lexer"
 require "test/unit"
- 
+
 class TestLexer < Test::Unit::TestCase
 
   def assert_tokens(source, expected_tokens)
@@ -8,6 +8,7 @@ class TestLexer < Test::Unit::TestCase
     expected_tokens.each do |t|
       assert_equal({:type => t[0], :value => t[1]}, lex.next(true))
     end
+    assert(lex.empty?)
   end
 
   def test_simple
@@ -38,10 +39,10 @@ class TestLexer < Test::Unit::TestCase
     d = '"' # double-quote
     s = "'" # single-quote
     b = "\\" # backslash
-    assert_tokens(d+s+d + ' "blah"', [[:string, s]])
-    assert_tokens(s+d+s + ' "blah"', [[:string, d]])
-    assert_tokens(d+b+d+d + ' "blah"', [[:string, d]])
-    assert_tokens(s+b+s+s + ' "blah"', [[:string, s]])
+    assert_tokens(d+s+d   + ' "blah"', [[:string, s], [:string, "blah"]])
+    assert_tokens(s+d+s   + ' "blah"', [[:string, d], [:string, "blah"]])
+    assert_tokens(d+b+d+d + ' "blah"', [[:string, d], [:string, "blah"]])
+    assert_tokens(s+b+s+s + ' "blah"', [[:string, s], [:string, "blah"]])
   end
 
   def test_comments
@@ -49,9 +50,13 @@ class TestLexer < Test::Unit::TestCase
     assert_tokens("a /* foo */ b", [[:ident, "a"], [:ident, "b"]])
   end
 
+  def test_comments_until_file_end
+    assert_tokens("// ", [])
+    assert_tokens("/* ", [])
+  end
+
   def test_doc_comment
-    lex = JsDuck::Lexer.new("/** foo */")
-    assert_equal(:doc_comment, lex.next(true)[:type])
+    assert_tokens("/** foo */", [[:doc_comment, "/** foo */"]])
   end
 end
 

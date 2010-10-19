@@ -1,5 +1,4 @@
 require 'strscan'
-require 'doc_comment'
 
 module JsDuck
 
@@ -50,7 +49,7 @@ module JsDuck
         elsif @input.check(/\/\*\*/) then
           @tokens << {
             :type => :doc_comment,
-            :value => DocComment.new(@input.scan_until(/\*\//))
+            :value => @input.scan_until(/\*\//)
           }
         elsif @input.check(/"/) then
           @tokens << {
