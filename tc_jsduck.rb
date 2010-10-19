@@ -1,6 +1,6 @@
 require "jsduck"
 require "test/unit"
- 
+
 class TestJsDuck < Test::Unit::TestCase
 
   def test_function

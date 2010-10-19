@@ -77,6 +77,8 @@ module JsDuck
           at_class
         elsif look(/@extends\b/) then
           at_extends
+        elsif look(/@event\b/) then
+          at_event
         elsif look(/@function\b/) then
           at_function
         elsif look(/@param\b/) then
@@ -126,6 +128,17 @@ module JsDuck
       skip_white
       if look(/\w/) then
         @current_tag[:extends] = ident_chain
+      end
+      skip_white
+    end
+
+    # matches @event name ...
+    def at_event
+      match(/@event/)
+      @current_tag = @tags[:event] = {:doc => ""}
+      skip_white
+      if look(/\w/) then
+        @current_tag[:name] = ident
       end
       skip_white
     end

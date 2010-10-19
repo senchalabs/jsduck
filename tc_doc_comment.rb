@@ -39,6 +39,15 @@ class TestDocComment < Test::Unit::TestCase
     assert_equal("Some docs.", doc[:class][:doc])
   end
 
+  def test_event
+    doc = JsDuck::DocComment.new("/**
+ * @event mousedown
+ * Fires when the mouse button is depressed.
+ */")
+    assert_equal("mousedown", doc[:event][:name])
+    assert_equal("Fires when the mouse button is depressed.", doc[:event][:doc])
+  end
+
   def test_long_docs
     doc = JsDuck::DocComment.new("/**
  * @function foo
