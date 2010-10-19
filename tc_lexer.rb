@@ -50,9 +50,10 @@ class TestLexer < Test::Unit::TestCase
     assert_tokens("a /* foo */ b", [[:ident, "a"], [:ident, "b"]])
   end
 
-  def test_comments_until_file_end
+  def test_tokens_until_file_end
     assert_tokens("// ", [])
     assert_tokens("/* ", [])
+    assert_tokens("/** ", [[:doc_comment, "/** "]])
   end
 
   def test_doc_comment

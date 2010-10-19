@@ -49,7 +49,7 @@ module JsDuck
         elsif @input.check(/\/\*\*/) then
           @tokens << {
             :type => :doc_comment,
-            :value => @input.scan_until(/\*\//)
+            :value => @input.scan_until(/\*\/|\Z/)
           }
         elsif @input.check(/"/) then
           @tokens << {
