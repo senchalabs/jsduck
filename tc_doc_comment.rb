@@ -12,17 +12,17 @@ class TestDocComment < Test::Unit::TestCase
  * @return {String} resulting value
  */")
     assert_equal("foo", doc[:function][:name])
-    assert_equal("Some docs.\n", doc[:function][:doc])
+    assert_equal("Some docs.", doc[:function][:doc])
 
     assert_equal(2, doc[:param].length)
 
     assert_equal("x", doc[:param][0][:name])
     assert_equal("Number", doc[:param][0][:type])
-    assert_equal("doc for x\n", doc[:param][0][:doc])
+    assert_equal("doc for x", doc[:param][0][:doc])
 
     assert_equal("y", doc[:param][1][:name])
     assert_equal("Integer", doc[:param][1][:type])
-    assert_equal("doc for y\n", doc[:param][1][:doc])
+    assert_equal("doc for y", doc[:param][1][:doc])
 
     assert_equal("String", doc[:return][:type])
     assert_equal("resulting value", doc[:return][:doc])
@@ -54,8 +54,8 @@ class TestDocComment < Test::Unit::TestCase
  * long
  * docs.
  */")
-    assert_equal("Some docs.\n\nNice docs.\n\n", doc[:function][:doc])
-    assert_equal("some\nlong\ndocs.\n", doc[:param][0][:doc])
+    assert_equal("Some docs.\n\nNice docs.", doc[:function][:doc])
+    assert_equal("some\nlong\ndocs.", doc[:param][0][:doc])
     assert_equal("more\nlong\ndocs.", doc[:return][:doc])
   end
 
@@ -65,7 +65,7 @@ class TestDocComment < Test::Unit::TestCase
  * @return doc2
  */")
     assert_equal("x", doc[:param][0][:name])
-    assert_equal("doc1\n", doc[:param][0][:doc])
+    assert_equal("doc1", doc[:param][0][:doc])
     assert_equal("doc2", doc[:return][:doc])
 
     assert_equal(nil, doc[:param][0][:type])

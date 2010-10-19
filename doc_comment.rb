@@ -20,7 +20,7 @@ module JsDuck
     def set_default_name(*name_chain)
       name = name_chain.last
       tagname = (name[0,1] == name[0,1].upcase) ? :class : :function
-      
+
       if !@tags[:class] && !@tags[:function] then
         @tags[tagname] = {:name => (tagname == :function) ? name : name_chain.join(".")}
         @tags[tagname][:doc] = @tags[:default][:doc]
@@ -89,6 +89,20 @@ module JsDuck
           @current_tag[:doc] += @input.scan(/[^@]+/)
         end
       end
+      trim_docs
+    end
+
+    # The parsing process can leave whitespace at the ends of
+    # doc-strings, here we get rid of it.
+    def trim_docs
+      # trim the :doc property of each at-tag
+      @tags.each_value do |tag|
+        if tag.instance_of?(Hash) && tag[:doc]
+          tag[:doc].strip!
+        end
+      end
+      # trim :doc properties of parameters
+      @tags[:param] && @tags[:param].each {|p| p[:doc].strip!}
     end
 
     # matches @class name ...
@@ -179,7 +193,7 @@ module JsDuck
     def look(re)
       @input.check(re)
     end
-    
+
     def match(re)
       @input.scan(re)
     end
