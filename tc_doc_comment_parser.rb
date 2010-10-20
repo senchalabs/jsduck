@@ -4,7 +4,7 @@ require "test/unit"
 class TestDocCommentParser < Test::Unit::TestCase
 
   def parse_single(doc)
-    return JsDuck::DocCommentParser.new.parse(doc)
+    return JsDuck::DocCommentParser.new.parse(doc)[0]
   end
 
   def test_function

@@ -14,7 +14,13 @@ module JsDuck
     def parse
       while !@lex.empty? do
         if look(:doc_comment) then
-          doc = DocComment.new(@doc_parser.parse(match(:doc_comment)))
+          # Parsing of doc-block may result in several doc-comment
+          # objects. Only the first one of these gets augmented with
+          # information inferred from the code that follows doc-block.
+          docset = @doc_parser.parse(match(:doc_comment)).map { |d| DocComment.new(d) }
+          docset.each { |d| @docs << d }
+          doc = docset[0]
+
           block = code_block
           if block[:type] == :function then
             doc.set_default_name(*block[:name]) if block[:name]
@@ -30,7 +36,6 @@ module JsDuck
               end
             end
           end
-          @docs << doc
         else
           @lex.next
         end

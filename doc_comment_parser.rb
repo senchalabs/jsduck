@@ -4,16 +4,25 @@ module JsDuck
 
   class DocCommentParser
     def parse(input)
-      @current_tag = {:doc => ""}
-      @tags = {:default => @current_tag}
+      @root_tags = []
+      set_root_tag(:default, {:doc => ""})
       @input = StringScanner.new(purify(input))
       parse_loop
-      trim_docs
-      @tags
+      @root_tags.each {|tagset| trim_docs(tagset)}
+      @root_tags
     end
 
-    def [](tagname)
-      @tags[tagname]
+    def set_root_tag(tagname, definition)
+      # When previous tagset was an empty :default, then delete it
+      if @root_tags.length == 1 &&
+          @root_tags[0].keys.length == 1 &&
+          @root_tags[0][:default] &&
+          @root_tags[0][:default][:doc] == "" then
+        @root_tags = []
+      end
+      @current_tag = definition
+      @tags = {tagname => @current_tag}
+      @root_tags << @tags
     end
 
     # Extracts content inside /** ... */
@@ -60,21 +69,21 @@ module JsDuck
 
     # The parsing process can leave whitespace at the ends of
     # doc-strings, here we get rid of it.
-    def trim_docs
+    def trim_docs(tags)
       # trim the :doc property of each at-tag
-      @tags.each_value do |tag|
+      tags.each_value do |tag|
         if tag.instance_of?(Hash) && tag[:doc]
           tag[:doc].strip!
         end
       end
       # trim :doc properties of parameters
-      @tags[:param] && @tags[:param].each {|p| p[:doc].strip!}
+      tags[:param] && tags[:param].each {|p| p[:doc].strip! }
     end
 
     # matches @class name ...
     def at_class
       match(/@class/)
-      @current_tag = @tags[:class] = {:doc => ""}
+      set_root_tag(:class, {:doc => ""})
       skip_white
       if look(/\w/) then
         @current_tag[:name] = ident_chain
@@ -99,7 +108,7 @@ module JsDuck
     # matches @event name ...
     def at_event
       match(/@event/)
-      @current_tag = @tags[:event] = {:doc => ""}
+      set_root_tag(:event, {:doc => ""})
       skip_white
       if look(/\w/) then
         @current_tag[:name] = ident
@@ -110,7 +119,7 @@ module JsDuck
     # matches @function name ...
     def at_function
       match(/@function/)
-      @current_tag = @tags[:function] = {:doc => ""}
+      set_root_tag(:function, {:doc => ""})
       skip_white
       if look(/\w/) then
         @current_tag[:name] = ident
@@ -122,7 +131,7 @@ module JsDuck
     # Which is equivalent of: @function constructor ...
     def at_constructor
       match(/@constructor/)
-      @current_tag = @tags[:function] = {:doc => "", :name => "constructor"}
+      set_root_tag(:function, {:doc => "", :name => "constructor"})
       skip_white
     end
 
@@ -160,7 +169,7 @@ module JsDuck
     # matches @cfg {type} name ...
     def at_cfg
       match(/@cfg/)
-      @current_tag = @tags[:cfg] = {:doc => ""}
+      set_root_tag(:cfg, {:doc => ""})
       skip_white
       if look(/\{/) then
         @current_tag[:type] = typedef

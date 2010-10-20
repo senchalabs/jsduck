@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'parser'
+require 'pp'
 
 module JsDuck
   def JsDuck.parse(input)
@@ -9,6 +10,6 @@ end
 
 
 if __FILE__ == $0 then
-  JsDuck.parse($stdin.read).each {|d| d.print; puts}
+  JsDuck.parse($stdin.read).each {|d| pp d; puts}
 end
 
