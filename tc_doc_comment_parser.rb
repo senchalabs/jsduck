@@ -1,10 +1,14 @@
-require "doc_comment"
+require "doc_comment_parser"
 require "test/unit"
 
-class TestDocComment < Test::Unit::TestCase
+class TestDocCommentParser < Test::Unit::TestCase
+
+  def parse_single(doc)
+    return JsDuck::DocCommentParser.new.parse(doc)
+  end
 
   def test_function
-    doc = JsDuck::DocComment.new("/**
+    doc = parse_single("/**
  * @function foo
  * Some docs.
  * @param {Number} x doc for x
@@ -29,7 +33,7 @@ class TestDocComment < Test::Unit::TestCase
   end
 
   def test_constructor
-    doc = JsDuck::DocComment.new("/**
+    doc = parse_single("/**
  * @constructor
  * Some docs.
  */")
@@ -38,7 +42,7 @@ class TestDocComment < Test::Unit::TestCase
   end
 
   def test_class
-    doc = JsDuck::DocComment.new("/**
+    doc = parse_single("/**
  * @class my.package.Foo
  * @extends my.Bar
  * Some docs.
@@ -49,7 +53,7 @@ class TestDocComment < Test::Unit::TestCase
   end
 
   def test_event
-    doc = JsDuck::DocComment.new("/**
+    doc = parse_single("/**
  * @event mousedown
  * Fires when the mouse button is depressed.
  */")
@@ -58,7 +62,7 @@ class TestDocComment < Test::Unit::TestCase
   end
 
   def test_cfg
-    doc = JsDuck::DocComment.new("/**
+    doc = parse_single("/**
  * @cfg {Boolean} enabled
  * True to enable this.
  */")
@@ -68,7 +72,7 @@ class TestDocComment < Test::Unit::TestCase
   end
 
   def test_long_docs
-    doc = JsDuck::DocComment.new("/**
+    doc = parse_single("/**
  * @function foo
  *
  * Some docs.
@@ -88,7 +92,7 @@ class TestDocComment < Test::Unit::TestCase
   end
 
   def test_typeless_docs
-    doc = JsDuck::DocComment.new("/**
+    doc = parse_single("/**
  * @param x doc1
  * @return doc2
  */")

@@ -1,4 +1,5 @@
 require 'lexer'
+require 'doc_comment_parser'
 require 'doc_comment'
 
 module JsDuck
@@ -6,13 +7,14 @@ module JsDuck
   class Parser
     def initialize(input)
       @lex = Lexer.new(input)
+      @doc_parser = DocCommentParser.new
       @docs = []
     end
 
     def parse
       while !@lex.empty? do
         if look(:doc_comment) then
-          doc = DocComment.new(match(:doc_comment))
+          doc = DocComment.new(@doc_parser.parse(match(:doc_comment)))
           block = code_block
           if block[:type] == :function then
             doc.set_default_name(*block[:name]) if block[:name]
