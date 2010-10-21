@@ -56,6 +56,8 @@ module JsDuck
         property_literal
       elsif look(:ident) then
         maybe_assignment
+      elsif look(:string) then
+        {:type => :assignment, :left => [match(:string)]}
       else
         {:type => :nop}
       end
@@ -143,7 +145,7 @@ module JsDuck
       right = expression
       return {
         :type => :assignment,
-        :left => left,
+        :left => [left],
         :right => right,
       }
     end

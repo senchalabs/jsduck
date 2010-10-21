@@ -20,6 +20,14 @@ module JsDuck
       if !@tags[:class] && !@tags[:function] && !@tags[:event] && !@tags[:cfg] then
         @tags[tagname] = {:name => (tagname == :function) ? name : name_chain.join(".")}
         @tags[tagname][:doc] = @tags[:default][:doc]
+      elsif @tags[:class] && !@tags[:class][:name] then
+        @tags[:class][:name] = name
+      elsif @tags[:function] && !@tags[:function][:name] then
+        @tags[:function][:name] = name
+      elsif @tags[:event] && !@tags[:event][:name] then
+        @tags[:event][:name] = name
+      elsif @tags[:cfg] && !@tags[:cfg][:name] then
+        @tags[:cfg][:name] = name
       end
     end
 

@@ -103,5 +103,50 @@ class TestDocCommentParser < Test::Unit::TestCase
     assert_equal(nil, doc[:param][0][:type])
     assert_equal(nil, doc[:return][:type])
   end
+
+  def test_nameless_function
+    doc = parse_single("/**
+ * @function
+ * Comment for this func.
+ */")
+    assert_equal(nil, doc[:function][:name])
+    assert_equal("Comment for this func.", doc[:function][:doc])
+  end
+
+  def test_nameless_class
+    doc = parse_single("/**
+ * @class
+ * Comment for this class.
+ */")
+    assert_equal(nil, doc[:class][:name])
+    assert_equal("Comment for this class.", doc[:class][:doc])
+  end
+
+  def test_nameless_event
+    doc = parse_single("/**
+ * @event
+ * Comment for event.
+ */")
+    assert_equal(nil, doc[:event][:name])
+    assert_equal("Comment for event.", doc[:event][:doc])
+  end
+
+  def test_nameless_cfg
+    doc = parse_single("/**
+ * @cfg
+ * Config comment.
+ */")
+    assert_equal(nil, doc[:cfg][:name])
+    assert_equal("Config comment.", doc[:cfg][:doc])
+  end
+
+  def test_nameless_param
+    doc = parse_single("/**
+ * @param
+ * My parameter.
+ */")
+    assert_equal(nil, doc[:param][0][:name])
+    assert_equal("My parameter.", doc[:param][0][:doc])
+  end
 end
 

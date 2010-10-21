@@ -84,7 +84,7 @@ module JsDuck
     def at_class
       match(/@class/)
       set_root_tag(:class, {:doc => ""})
-      skip_white
+      skip_horiz_white
       if look(/\w/) then
         @current_tag[:name] = ident_chain
       end
@@ -98,7 +98,7 @@ module JsDuck
         @tags[:class] = {:doc => ""}
       end
       @current_tag = @tags[:class]
-      skip_white
+      skip_horiz_white
       if look(/\w/) then
         @current_tag[:extends] = ident_chain
       end
@@ -109,7 +109,7 @@ module JsDuck
     def at_event
       match(/@event/)
       set_root_tag(:event, {:doc => ""})
-      skip_white
+      skip_horiz_white
       if look(/\w/) then
         @current_tag[:name] = ident
       end
@@ -120,7 +120,7 @@ module JsDuck
     def at_function
       match(/@function/)
       set_root_tag(:function, {:doc => ""})
-      skip_white
+      skip_horiz_white
       if look(/\w/) then
         @current_tag[:name] = ident
       end
@@ -144,11 +144,11 @@ module JsDuck
       else
         @tags[:param] = [@current_tag]
       end
-      skip_white
+      skip_horiz_white
       if look(/\{/) then
         @current_tag[:type] = typedef
       end
-      skip_white
+      skip_horiz_white
       if look(/\w/) then
         @current_tag[:name] = ident
       end
@@ -159,7 +159,7 @@ module JsDuck
     def at_return
       match(/@return/)
       @current_tag = @tags[:return] = {:doc => ""}
-      skip_white
+      skip_horiz_white
       if look(/\{/) then
         @current_tag[:type] = typedef
       end
@@ -170,11 +170,11 @@ module JsDuck
     def at_cfg
       match(/@cfg/)
       set_root_tag(:cfg, {:doc => ""})
-      skip_white
+      skip_horiz_white
       if look(/\{/) then
         @current_tag[:type] = typedef
       end
-      skip_white
+      skip_horiz_white
       if look(/\w/) then
         @current_tag[:name] = ident
       end
@@ -209,6 +209,11 @@ module JsDuck
 
     def skip_white
       @input.scan(/\s+/)
+    end
+
+    # skips horizontal whitespace (tabs and spaces)
+    def skip_horiz_white
+      @input.scan(/[ \t]+/)
     end
   end
 
