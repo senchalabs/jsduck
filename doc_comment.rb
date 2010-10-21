@@ -4,6 +4,12 @@ module JsDuck
   class DocComment
     def initialize(tags)
       @tags = tags
+
+      [:class, :function, :event, :cfg].each do |name|
+        if @tags[name] then
+          @root_tag = @tags[name]
+        end
+      end
     end
 
     # Sets the name property of the default at-tag.
@@ -17,17 +23,13 @@ module JsDuck
       name = name_chain.last
       tagname = (name[0,1] == name[0,1].upcase) ? :class : :function
 
-      if !@tags[:class] && !@tags[:function] && !@tags[:event] && !@tags[:cfg] then
-        @tags[tagname] = {:name => (tagname == :function) ? name : name_chain.join(".")}
-        @tags[tagname][:doc] = @tags[:default][:doc]
-      elsif @tags[:class] && !@tags[:class][:name] then
-        @tags[:class][:name] = name
-      elsif @tags[:function] && !@tags[:function][:name] then
-        @tags[:function][:name] = name
-      elsif @tags[:event] && !@tags[:event][:name] then
-        @tags[:event][:name] = name
-      elsif @tags[:cfg] && !@tags[:cfg][:name] then
-        @tags[:cfg][:name] = name
+      if !@root_tag then
+        @root_tag = {:name => (tagname == :function) ? name : name_chain.join(".")}
+        @root_tag[:doc] = @tags[:default][:doc]
+        @tags[tagname] = @root_tag
+        @tags.delete(:default)
+      elsif !@root_tag[:name] then
+        @root_tag[:name] = name
       end
     end
 
