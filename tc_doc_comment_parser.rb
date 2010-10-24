@@ -114,6 +114,16 @@ class TestDocCommentParser < Test::Unit::TestCase
     assert_equal("True when enabled.", doc[:property][:doc])
   end
 
+  def test_description_can_precede_property_tag
+    doc = parse_single("/**
+ * Property description
+ * @property {Number} foo
+ */")
+    assert_equal("Property description", doc[:property][:doc])
+    assert_equal("foo", doc[:property][:name])
+    assert_equal("Number", doc[:property][:type])
+  end
+
   def test_long_docs
     doc = parse_single("/**
  * @method foo
