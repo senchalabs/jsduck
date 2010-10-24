@@ -69,6 +69,8 @@ module JsDuck
           at_cfg
         elsif look(/@property\b/) then
           at_property
+        elsif look(/@type\b/) then
+          at_type
         elsif look(/@/) then
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/) then
@@ -192,6 +194,25 @@ module JsDuck
       set_root_tag(:property)
       maybe_type
       maybe_name
+      skip_white
+    end
+
+    # matches @type {type}  or  @type type
+    #
+    # The presence of @type implies that we are dealing with property.
+    # ext-doc allows type name to be either inside curly braces or
+    # without them at all.
+    def at_type
+      match(/@type/)
+      unless @tags[:property] then
+        set_root_tag(:property)
+      end
+      skip_horiz_white
+      if look(/\{/) then
+        @current_tag[:type] = typedef
+      elsif look(/\S/) then
+        @current_tag[:type] = @input.scan(/\S+/)
+      end
       skip_white
     end
 

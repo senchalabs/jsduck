@@ -124,6 +124,34 @@ class TestDocCommentParser < Test::Unit::TestCase
     assert_equal("Number", doc[:property][:type])
   end
 
+  def test_type
+    doc = parse_single("/**
+ * @property foo
+ * @type {Boolean}
+ * This is property
+ */")
+    assert_equal("foo", doc[:property][:name])
+    assert_equal("Boolean", doc[:property][:type])
+    assert_equal("This is property", doc[:property][:doc])
+  end
+
+  def test_type_without_curlies
+    doc = parse_single("/**
+ * @property
+ * @type Boolean|String
+ */")
+    assert_equal("Boolean|String", doc[:property][:type])
+  end
+
+  def test_type_implies_property
+    doc = parse_single("/**
+ * This is property
+ * @type {Boolean}
+ */")
+    assert_equal("Boolean", doc[:property][:type])
+    assert_equal("This is property", doc[:property][:doc])
+  end
+
   def test_long_docs
     doc = parse_single("/**
  * @method foo

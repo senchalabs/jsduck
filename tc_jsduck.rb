@@ -234,11 +234,13 @@ foo: true,
     docs = JsDuck.parse("
 /**
  * @property
+ * @type Boolean
  * My comment
  */
 foo: true,
 ")
     assert_equal("foo", docs[0][:property][:name])
+    assert_equal("Boolean", docs[0][:property][:type])
     assert_equal("My comment", docs[0][:property][:doc])
   end
 
