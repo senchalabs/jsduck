@@ -46,10 +46,30 @@ class TestDocCommentParser < Test::Unit::TestCase
  * @class my.package.Foo
  * @extends my.Bar
  * Some docs.
+ * @singleton
  */")
     assert_equal("my.package.Foo", doc[:class][:name])
     assert_equal("my.Bar", doc[:class][:extends])
     assert_equal("Some docs.", doc[:class][:doc])
+    assert_equal(true, doc[:class][:singleton])
+  end
+
+  def test_extends_implies_class
+    doc = parse_single("/**
+ * Class description
+ * @extends my.Bar
+ */")
+    assert_equal("my.Bar", doc[:class][:extends])
+    assert_equal("Class description", doc[:class][:doc])
+  end
+
+  def test_singleton_implies_class
+    doc = parse_single("/**
+ * Class description
+ * @singleton
+ */")
+    assert_equal(true, doc[:class][:singleton])
+    assert_equal("Class description", doc[:class][:doc])
   end
 
   def test_event

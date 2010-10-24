@@ -47,6 +47,8 @@ module JsDuck
           at_class
         elsif look(/@extends\b/) then
           at_extends
+        elsif look(/@singleton\b/) then
+          at_singleton
         elsif look(/@event\b/) then
           at_event
         elsif look(/@function\b/) then
@@ -95,13 +97,24 @@ module JsDuck
     def at_extends
       match(/@extends/)
       unless @tags[:class]
-        @tags[:class] = {:doc => ""}
+        @tags[:class] = @tags[:default]
       end
       @current_tag = @tags[:class]
       skip_horiz_white
       if look(/\w/) then
         @current_tag[:extends] = ident_chain
       end
+      skip_white
+    end
+
+    # matches @singleton
+    def at_singleton
+      match(/@singleton/)
+      unless @tags[:class]
+        @tags[:class] = @tags[:default]
+      end
+      @current_tag = @tags[:class]
+      @current_tag[:singleton] = true
       skip_white
     end
 
