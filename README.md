@@ -49,5 +49,5 @@ Some usage stats from ExtJS source:
 
 Some links:
 
-* http://code.google.com/p/ext-doc/wiki/TagSpecification
-* http://code.google.com/p/jsdoc-toolkit/w/list
+* [ext-doc @tags](http://code.google.com/p/ext-doc/wiki/TagSpecification)
+* [jsdoc-toolkit @tags](http://code.google.com/p/jsdoc-toolkit/w/list)
