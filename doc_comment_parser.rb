@@ -132,11 +132,9 @@ module JsDuck
     # matches @method name ...
     def at_method
       match(/@method/)
-      # In case @method comes after the description,
-      # turn the :default tag description into method description,
-      # and afterwards delete it.
-      set_root_tag(:method, @tags[:default] || {:doc => ""})
-      @root_tags.shift() if @root_tags[0][:default]
+      # @method curses the current :default tag into :method.
+      @current_tag = @tags[:method] = @tags[:default]
+      @tags.delete(:default)
       skip_horiz_white
       if look(/\w/) then
         @current_tag[:name] = ident

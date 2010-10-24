@@ -37,10 +37,12 @@ class TestDocCommentParser < Test::Unit::TestCase
  * Method description
  * @param foo
  * @method blah
+ * @return {String}
  */")
     assert_equal("blah", doc[:method][:name])
     assert_equal("Method description", doc[:method][:doc])
     assert_equal("foo", doc[:param][0][:name])
+    assert_equal("String", doc[:return][:type])
   end
 
   def test_constructor
