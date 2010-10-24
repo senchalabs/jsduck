@@ -130,10 +130,7 @@ module JsDuck
     def at_event
       match(/@event/)
       add_root_tag(:event, {:doc => ""})
-      skip_horiz_white
-      if look(/\w/) then
-        @current_tag[:name] = ident
-      end
+      maybe_name
       skip_white
     end
 
@@ -141,10 +138,7 @@ module JsDuck
     def at_method
       match(/@method/)
       set_root_tag(:method)
-      skip_horiz_white
-      if look(/\w/) then
-        @current_tag[:name] = ident
-      end
+      maybe_name
       skip_white
     end
 
@@ -165,14 +159,8 @@ module JsDuck
       else
         @tags[:param] = [@current_tag]
       end
-      skip_horiz_white
-      if look(/\{/) then
-        @current_tag[:type] = typedef
-      end
-      skip_horiz_white
-      if look(/\w/) then
-        @current_tag[:name] = ident
-      end
+      maybe_type
+      maybe_name
       skip_white
     end
 
@@ -180,10 +168,7 @@ module JsDuck
     def at_return
       match(/@return/)
       @current_tag = @tags[:return] = {:doc => ""}
-      skip_horiz_white
-      if look(/\{/) then
-        @current_tag[:type] = typedef
-      end
+      maybe_type
       skip_white
     end
 
@@ -191,14 +176,8 @@ module JsDuck
     def at_cfg
       match(/@cfg/)
       add_root_tag(:cfg, {:doc => ""})
-      skip_horiz_white
-      if look(/\{/) then
-        @current_tag[:type] = typedef
-      end
-      skip_horiz_white
-      if look(/\w/) then
-        @current_tag[:name] = ident
-      end
+      maybe_type
+      maybe_name
       skip_white
     end
 
@@ -211,15 +190,25 @@ module JsDuck
     def at_property
       match(/@property/)
       set_root_tag(:property)
+      maybe_type
+      maybe_name
+      skip_white
+    end
+
+    # matches {type} if possible and sets it on @current_tag
+    def maybe_type
       skip_horiz_white
       if look(/\{/) then
         @current_tag[:type] = typedef
       end
+    end
+
+    # matches identifier name if possible and sets it on @current_tag
+    def maybe_name
       skip_horiz_white
       if look(/\w/) then
         @current_tag[:name] = ident
       end
-      skip_white
     end
 
     # matches {...} and returns text inside brackets
