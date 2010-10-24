@@ -218,5 +218,29 @@ var MyClass = Ext.extend(Ext.util.Observable, {
     assert_equal("My class", docs[0][:class][:doc])
   end
 
+  def test_cfg
+    docs = JsDuck.parse("
+/**
+ * @cfg
+ * My comment
+ */
+foo: true,
+")
+    assert_equal("foo", docs[0][:cfg][:name])
+    assert_equal("My comment", docs[0][:cfg][:doc])
+  end
+
+  def test_property
+    docs = JsDuck.parse("
+/**
+ * @property
+ * My comment
+ */
+foo: true,
+")
+    assert_equal("foo", docs[0][:property][:name])
+    assert_equal("My comment", docs[0][:property][:doc])
+  end
+
 end
 
