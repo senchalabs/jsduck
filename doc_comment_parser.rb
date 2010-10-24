@@ -61,6 +61,8 @@ module JsDuck
           at_return
         elsif look(/@cfg\b/) then
           at_cfg
+        elsif look(/@property\b/) then
+          at_property
         elsif look(/@/) then
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/) then
@@ -185,6 +187,26 @@ module JsDuck
     def at_cfg
       match(/@cfg/)
       set_root_tag(:cfg, {:doc => ""})
+      skip_horiz_white
+      if look(/\{/) then
+        @current_tag[:type] = typedef
+      end
+      skip_horiz_white
+      if look(/\w/) then
+        @current_tag[:name] = ident
+      end
+      skip_white
+    end
+
+    # matches @property {type} name ...
+    #
+    # ext-doc doesn't support {type} and name for @property - name is
+    # inferred from source and @type is required to specify type,
+    # jsdoc-toolkit on the other hand follows the sensible route, and
+    # so do we.
+    def at_property
+      match(/@property/)
+      set_root_tag(:property, {:doc => ""})
       skip_horiz_white
       if look(/\{/) then
         @current_tag[:type] = typedef

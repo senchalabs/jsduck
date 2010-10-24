@@ -104,6 +104,16 @@ class TestDocCommentParser < Test::Unit::TestCase
     assert_equal("True to enable this.", doc[:cfg][:doc])
   end
 
+  def test_property
+    doc = parse_single("/**
+ * @property {Boolean} enabled
+ * True when enabled.
+ */")
+    assert_equal("enabled", doc[:property][:name])
+    assert_equal("Boolean", doc[:property][:type])
+    assert_equal("True when enabled.", doc[:property][:doc])
+  end
+
   def test_long_docs
     doc = parse_single("/**
  * @method foo

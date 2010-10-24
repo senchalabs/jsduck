@@ -5,7 +5,7 @@ module JsDuck
     def initialize(tags)
       @tags = tags
 
-      [:class, :method, :event, :cfg].each do |name|
+      [:class, :method, :event, :cfg, :property].each do |name|
         if @tags[name] then
           @root_tag = @tags[name]
         end
