@@ -21,8 +21,8 @@ List of @tags to support
 * @singleton - OK
 * @cfg - OK
 * @constructor - OK
-* @property
-* @type
+* @property - OK
+* @type - OK
 * @method - OK
 * @event - OK
 * @param - OK
