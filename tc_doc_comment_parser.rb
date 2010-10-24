@@ -32,6 +32,17 @@ class TestDocCommentParser < Test::Unit::TestCase
     assert_equal("resulting value", doc[:return][:doc])
   end
 
+  def test_description_can_precede_method_tag
+    doc = parse_single("/**
+ * Method description
+ * @param foo
+ * @method blah
+ */")
+    assert_equal("blah", doc[:method][:name])
+    assert_equal("Method description", doc[:method][:doc])
+    assert_equal("foo", doc[:param][0][:name])
+  end
+
   def test_constructor
     doc = parse_single("/**
  * @constructor
