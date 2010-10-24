@@ -5,7 +5,7 @@ module JsDuck
     def initialize(tags)
       @tags = tags
 
-      [:class, :function, :event, :cfg].each do |name|
+      [:class, :method, :event, :cfg].each do |name|
         if @tags[name] then
           @root_tag = @tags[name]
         end
@@ -15,16 +15,16 @@ module JsDuck
     # Sets the name property of the default at-tag.
     #
     # When name begins with uppercase it's considered to be class
-    # name, otherwise a function name.
+    # name, otherwise a method name.
     #
     # When the name consists of several parts like foo.bar.baz, then
     # the parts should be passed as multiple arguments.
     def set_default_name(*name_chain)
       name = name_chain.last
-      tagname = (name[0,1] == name[0,1].upcase) ? :class : :function
+      tagname = (name[0,1] == name[0,1].upcase) ? :class : :method
 
       if !@root_tag then
-        @root_tag = {:name => (tagname == :function) ? name : name_chain.join(".")}
+        @root_tag = {:name => (tagname == :method) ? name : name_chain.join(".")}
         @root_tag[:doc] = @tags[:default][:doc]
         @tags[tagname] = @root_tag
         @tags.delete(:default)

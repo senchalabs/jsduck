@@ -7,16 +7,16 @@ class TestDocCommentParser < Test::Unit::TestCase
     return JsDuck::DocCommentParser.new.parse(doc)[0]
   end
 
-  def test_function
+  def test_method
     doc = parse_single("/**
- * @function foo
+ * @method foo
  * Some docs.
  * @param {Number} x doc for x
  * @param {Integer} y doc for y
  * @return {String} resulting value
  */")
-    assert_equal("foo", doc[:function][:name])
-    assert_equal("Some docs.", doc[:function][:doc])
+    assert_equal("foo", doc[:method][:name])
+    assert_equal("Some docs.", doc[:method][:doc])
 
     assert_equal(2, doc[:param].length)
 
@@ -37,8 +37,8 @@ class TestDocCommentParser < Test::Unit::TestCase
  * @constructor
  * Some docs.
  */")
-    assert_equal("constructor", doc[:function][:name])
-    assert_equal("Some docs.", doc[:function][:doc])
+    assert_equal("constructor", doc[:method][:name])
+    assert_equal("Some docs.", doc[:method][:doc])
   end
 
   def test_class
@@ -93,7 +93,7 @@ class TestDocCommentParser < Test::Unit::TestCase
 
   def test_long_docs
     doc = parse_single("/**
- * @function foo
+ * @method foo
  *
  * Some docs.
  *
@@ -106,7 +106,7 @@ class TestDocCommentParser < Test::Unit::TestCase
  * long
  * docs.
  */")
-    assert_equal("Some docs.\n\nNice docs.", doc[:function][:doc])
+    assert_equal("Some docs.\n\nNice docs.", doc[:method][:doc])
     assert_equal("some\nlong\ndocs.", doc[:param][0][:doc])
     assert_equal("more\nlong\ndocs.", doc[:return][:doc])
   end
@@ -124,13 +124,13 @@ class TestDocCommentParser < Test::Unit::TestCase
     assert_equal(nil, doc[:return][:type])
   end
 
-  def test_nameless_function
+  def test_nameless_method
     doc = parse_single("/**
- * @function
+ * @method
  * Comment for this func.
  */")
-    assert_equal(nil, doc[:function][:name])
-    assert_equal("Comment for this func.", doc[:function][:doc])
+    assert_equal(nil, doc[:method][:name])
+    assert_equal("Comment for this func.", doc[:method][:doc])
   end
 
   def test_nameless_class

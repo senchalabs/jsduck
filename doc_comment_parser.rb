@@ -51,8 +51,8 @@ module JsDuck
           at_singleton
         elsif look(/@event\b/) then
           at_event
-        elsif look(/@function\b/) then
-          at_function
+        elsif look(/@method\b/) then
+          at_method
         elsif look(/@constructor\b/) then
           at_constructor
         elsif look(/@param\b/) then
@@ -129,10 +129,10 @@ module JsDuck
       skip_white
     end
 
-    # matches @function name ...
-    def at_function
-      match(/@function/)
-      set_root_tag(:function, {:doc => ""})
+    # matches @method name ...
+    def at_method
+      match(/@method/)
+      set_root_tag(:method, {:doc => ""})
       skip_horiz_white
       if look(/\w/) then
         @current_tag[:name] = ident
@@ -141,10 +141,10 @@ module JsDuck
     end
 
     # matches @constructor ...
-    # Which is equivalent of: @function constructor ...
+    # Which is equivalent of: @method constructor ...
     def at_constructor
       match(/@constructor/)
-      set_root_tag(:function, {:doc => "", :name => "constructor"})
+      set_root_tag(:method, {:doc => "", :name => "constructor"})
       skip_white
     end
 

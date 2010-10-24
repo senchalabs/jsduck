@@ -3,7 +3,7 @@ require "test/unit"
 
 class TestJsDuck < Test::Unit::TestCase
 
-  def test_function
+  def test_method
     docs = JsDuck.parse("
 /**
  * Some function
@@ -11,67 +11,67 @@ class TestJsDuck < Test::Unit::TestCase
 function foo(x) {
 }
 ")
-    assert_equal("Some function", docs[0][:function][:doc])
-    assert_equal("foo", docs[0][:function][:name])
+    assert_equal("Some function", docs[0][:method][:doc])
+    assert_equal("foo", docs[0][:method][:name])
     assert_equal("x", docs[0][:param][0][:name])
   end
 
-  def test_function_with_var
+  def test_method_with_var
     docs = JsDuck.parse("
 /**
  */
 var foo = function(x) {
 }
 ")
-    assert_equal("foo", docs[0][:function][:name])
+    assert_equal("foo", docs[0][:method][:name])
     assert_equal("x", docs[0][:param][0][:name])
   end
 
-  def test_function_without_var
+  def test_method_without_var
     docs = JsDuck.parse("
 /**
  */
 foo = function(x) {
 }
 ")
-    assert_equal("foo", docs[0][:function][:name])
+    assert_equal("foo", docs[0][:method][:name])
     assert_equal("x", docs[0][:param][0][:name])
   end
 
-  def test_function_in_object_literal
+  def test_method_in_object_literal
     docs = JsDuck.parse("
 /**
  */
 foo: function(x) {
 }
 ")
-    assert_equal("foo", docs[0][:function][:name])
+    assert_equal("foo", docs[0][:method][:name])
     assert_equal("x", docs[0][:param][0][:name])
   end
 
-  def test_function_in_object_literal_string
+  def test_method_in_object_literal_string
     docs = JsDuck.parse("
 /**
  */
 'foo': function(x) {
 }
 ")
-    assert_equal("foo", docs[0][:function][:name])
+    assert_equal("foo", docs[0][:method][:name])
     assert_equal("x", docs[0][:param][0][:name])
   end
 
-  def test_function_in_prototype
+  def test_method_in_prototype
     docs = JsDuck.parse("
 /**
  */
 Some.Long.prototype.foo = function(x) {
 }
 ")
-    assert_equal("foo", docs[0][:function][:name])
+    assert_equal("foo", docs[0][:method][:name])
     assert_equal("x", docs[0][:param][0][:name])
   end
 
-  def test_function_private
+  def test_method_private
     docs = JsDuck.parse("
 // no doc-comment for this function
 function foo() {
@@ -80,31 +80,31 @@ function foo() {
     assert_equal([], docs)
   end
 
-  def test_explicit_function_doc
+  def test_explicit_method_doc
     docs = JsDuck.parse("
 /**
- * @function hello
+ * @method hello
  * Just some function
  */
 eval('hello = new Function();');
 ")
-    assert_equal("hello", docs[0][:function][:name])
-    assert_equal("Just some function", docs[0][:function][:doc])
+    assert_equal("hello", docs[0][:method][:name])
+    assert_equal("Just some function", docs[0][:method][:doc])
   end
 
-  def test_explicit_function_doc_overrides_implicit_code
+  def test_explicit_method_doc_overrides_implicit_code
     docs = JsDuck.parse("
 /**
- * @function hello
+ * @method hello
  * Just some function
  */
 function goodby(){}
 ")
-    assert_equal("hello", docs[0][:function][:name])
-    assert_equal("Just some function", docs[0][:function][:doc])
+    assert_equal("hello", docs[0][:method][:name])
+    assert_equal("Just some function", docs[0][:method][:doc])
   end
 
-  def test_implicit_function_parameters
+  def test_implicit_method_parameters
     docs = JsDuck.parse("
 /**
  */
@@ -116,7 +116,7 @@ function f(foo, bar, baz){}
     assert_equal("baz", params[2][:name])
   end
 
-  def test_explicit_function_parameters_override_implicit_ones
+  def test_explicit_method_parameters_override_implicit_ones
     docs = JsDuck.parse("
 /**
  * @param {String} x
@@ -170,7 +170,7 @@ function Bar(){}
     assert_equal("My class", docs[0][:class][:doc])
   end
 
-  def test_uppercase_function_name_implies_class_name
+  def test_uppercase_method_name_implies_class_name
     docs = JsDuck.parse("
 /**
  * My class
