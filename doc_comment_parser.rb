@@ -55,6 +55,8 @@ module JsDuck
           at_extends
         elsif look(/@singleton\b/) then
           at_singleton
+        elsif look(/@private\b/) then
+          at_private
         elsif look(/@event\b/) then
           at_event
         elsif look(/@method\b/) then
@@ -125,6 +127,17 @@ module JsDuck
       end
       @current_tag = @tags[:class]
       @current_tag[:singleton] = true
+      skip_white
+    end
+
+    # matches @private
+    # sets :private property to true on the root tag
+    def at_private
+      match(/@private/)
+      tagname = [:class, :method, :event, :property, :default].find {|name| @tags[name]}
+      if tagname
+        @tags[tagname][:private] = true
+      end
       skip_white
     end
 

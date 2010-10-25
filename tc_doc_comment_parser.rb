@@ -229,5 +229,52 @@ class TestDocCommentParser < Test::Unit::TestCase
     assert_equal(nil, doc[:param][0][:name])
     assert_equal("My parameter.", doc[:param][0][:doc])
   end
+
+  def test_private_class
+    doc = parse_single("/**
+ * @class Foo
+ * Blah blah
+ * @private
+ */")
+    assert(doc[:class][:private])
+  end
+
+  def test_private_method
+    doc = parse_single("/**
+ * @method foo
+ * Some method
+ * @param {type} x
+ * @private
+ */")
+    assert(doc[:method][:private])
+  end
+
+  def test_private_event
+    doc = parse_single("/**
+ * @event foo
+ * Some prop
+ * @param {type} x
+ * @private
+ */")
+    assert(doc[:event][:private])
+  end
+
+  def test_private_property
+    doc = parse_single("/**
+ * @property foo
+ * Some prop
+ * @private
+ */")
+    assert(doc[:property][:private])
+  end
+
+  def test_private_default
+    doc = parse_single("/**
+ * Some docs
+ * @private
+ */")
+    assert(doc[:default][:private])
+  end
+
 end
 
