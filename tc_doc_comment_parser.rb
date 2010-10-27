@@ -59,12 +59,10 @@ class TestDocCommentParser < Test::Unit::TestCase
  * @class my.package.Foo
  * @extends my.Bar
  * Some docs.
- * @singleton
  */")
     assert_equal("my.package.Foo", doc[:class][:name])
     assert_equal("my.Bar", doc[:class][:extends])
     assert_equal("Some docs.", doc[:class][:doc])
-    assert_equal(true, doc[:class][:singleton])
   end
 
   def test_extends_implies_class
@@ -230,50 +228,68 @@ class TestDocCommentParser < Test::Unit::TestCase
     assert_equal("My parameter.", doc[:param][0][:doc])
   end
 
-  def test_private_class
+  def test_class_modifiers
     doc = parse_single("/**
  * @class Foo
  * Blah blah
+ * @singleton
  * @private
+ * @ignore
+ * @hide
  */")
-    assert(doc[:class][:private])
+    assert(doc[:class][:singleton])
+    assert_modifiers(doc[:class])
   end
 
-  def test_private_method
+  def test_method_modifiers
     doc = parse_single("/**
  * @method foo
  * Some method
  * @param {type} x
  * @private
+ * @ignore
+ * @hide
  */")
-    assert(doc[:method][:private])
+    assert_modifiers(doc[:method])
   end
 
-  def test_private_event
+  def test_event_modifiers
     doc = parse_single("/**
  * @event foo
  * Some prop
  * @param {type} x
  * @private
+ * @ignore
+ * @hide
  */")
-    assert(doc[:event][:private])
+    assert_modifiers(doc[:event])
   end
 
-  def test_private_property
+  def test_property_modifiers
     doc = parse_single("/**
  * @property foo
  * Some prop
  * @private
+ * @ignore
+ * @hide
  */")
-    assert(doc[:property][:private])
+    assert_modifiers(doc[:property])
   end
 
-  def test_private_default
+  def test_default_modifiers
     doc = parse_single("/**
  * Some docs
  * @private
+ * @ignore
+ * @hide
  */")
-    assert(doc[:default][:private])
+    assert_modifiers(doc[:default])
+  end
+
+  def assert_modifiers(tag)
+    assert(tag[:private])
+    assert(tag[:ignore])
+    assert(tag[:hide])
   end
 
 end

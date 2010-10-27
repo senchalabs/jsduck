@@ -55,8 +55,6 @@ module JsDuck
           at_extends
         elsif look(/@singleton\b/) then
           at_singleton
-        elsif look(/@private\b/) then
-          at_private
         elsif look(/@event\b/) then
           at_event
         elsif look(/@method\b/) then
@@ -73,6 +71,12 @@ module JsDuck
           at_property
         elsif look(/@type\b/) then
           at_type
+        elsif look(/@private\b/) then
+          match_boolean_at_tag(/@private/, :private)
+        elsif look(/@ignore\b/) then
+          match_boolean_at_tag(/@ignore/, :ignore)
+        elsif look(/@hide\b/) then
+          match_boolean_at_tag(/@hide/, :hide)
         elsif look(/@/) then
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/) then
@@ -130,13 +134,13 @@ module JsDuck
       skip_white
     end
 
-    # matches @private
-    # sets :private property to true on the root tag
-    def at_private
-      match(/@private/)
+    # matches @ignore
+    # sets :ignore property to true on the root tag
+    def at_ignore
+      match(/@ignore/)
       tagname = [:class, :method, :event, :property, :default].find {|name| @tags[name]}
       if tagname
-        @tags[tagname][:private] = true
+        @tags[tagname][:ignore] = true
       end
       skip_white
     end
@@ -225,6 +229,17 @@ module JsDuck
         @current_tag[:type] = typedef
       elsif look(/\S/) then
         @current_tag[:type] = @input.scan(/\S+/)
+      end
+      skip_white
+    end
+
+    # Used to match @private, @ignore, @hide
+    # and set the corresponding property true on root tag
+    def match_boolean_at_tag(regex, propname)
+      match(regex)
+      tagname = [:class, :method, :event, :property, :default].find {|name| @tags[name]}
+      if tagname
+        @tags[tagname][propname] = true
       end
       skip_white
     end
