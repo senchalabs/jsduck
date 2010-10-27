@@ -228,6 +228,7 @@ foo: true,
 ")
     assert_equal("foo", docs[0][:cfg][:name])
     assert_equal("My comment", docs[0][:cfg][:doc])
+    assert_equal("Boolean", docs[0][:cfg][:type])
   end
 
   def test_property
@@ -242,6 +243,24 @@ foo: true,
     assert_equal("foo", docs[0][:property][:name])
     assert_equal("Boolean", docs[0][:property][:type])
     assert_equal("My comment", docs[0][:property][:doc])
+  end
+
+  def test_implicit_property_type
+    comment = "
+/**
+ * @property
+ */
+"
+    docs = JsDuck.parse(comment + "foo: 'haha',")
+    assert_equal("String", docs[0][:property][:type])
+    docs = JsDuck.parse(comment + "foo: 123,")
+    assert_equal("Number", docs[0][:property][:type])
+    docs = JsDuck.parse(comment + "foo: /^123/,")
+    assert_equal("RegExp", docs[0][:property][:type])
+    docs = JsDuck.parse(comment + "foo: true,")
+    assert_equal("Boolean", docs[0][:property][:type])
+    docs = JsDuck.parse(comment + "foo: false,")
+    assert_equal("Boolean", docs[0][:property][:type])
   end
 
 end

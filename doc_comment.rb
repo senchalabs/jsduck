@@ -56,6 +56,11 @@ module JsDuck
       end
     end
 
+    # Sets default type of @cfg or @property
+    def set_default_type(type)
+      @root_tag[:type] = type if @tags[:cfg] || @tags[:property]
+    end
+
     def [](tagname)
       @tags[tagname]
     end

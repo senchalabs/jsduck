@@ -33,6 +33,8 @@ module JsDuck
                 doc.set_default_params(right[:params])
               elsif right[:type] == :ext_extend then
                 doc.set_default_extends(right[:extend])
+              elsif right[:type] == :literal then
+                doc.set_default_type(right[:class])
               end
             end
           end
@@ -126,6 +128,14 @@ module JsDuck
         function
       elsif look("Ext", ".", "extend") then
         ext_extend
+      elsif look(:string) then
+        {:type => :literal, :class => "String"}
+      elsif look("true") || look("false") then
+        {:type => :literal, :class => "Boolean"}
+      elsif look(:number) then
+        {:type => :literal, :class => "Number"}
+      elsif look(:regex) then
+        {:type => :literal, :class => "RegExp"}
       end
     end
 
