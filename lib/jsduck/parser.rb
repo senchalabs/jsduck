@@ -4,37 +4,49 @@ module JsDuck
   class Parser
     def initialize(input)
       @lex = Lexer.new(input)
-      @doc_parser = DocCommentParser.new
       @docs = []
     end
 
+    # Parses the whole JavaScript block and returns array where for
+    # each doc-comment there is a hash of two values: the comment
+    # itself as string and parsed structure of the code that
+    # immediately follows the comment.
+    #
+    # For example with the following JavaScript input:
+    #
+    # /**
+    #  * @param {String} foo
+    #  */
+    # MyClass.doIt = function(foo, bar) {
+    # }
+    #
+    # The return value of this function will be:
+    #
+    # [
+    #   {
+    #     :comment => "/**\n * @param {String} foo\n */",
+    #     :code => {
+    #       :type => :assignment,
+    #       :left => ["MyClass", "doIt"],
+    #       :right => {
+    #         :type => :function,
+    #         :name => nil,
+    #         :params => [
+    #           {:name => "foo"},
+    #           {:name => "bar"}
+    #         ]
+    #       }
+    #     }
+    #   }
+    # ]
+    #
     def parse
       while !@lex.empty? do
         if look(:doc_comment) then
-          # Parsing of doc-block may result in several doc-comment
-          # objects. Only the first one of these gets augmented with
-          # information inferred from the code that follows doc-block.
-          docset = @doc_parser.parse(match(:doc_comment)).map { |d| DocComment.new(d) }
-          docset.each { |d| @docs << d }
-          doc = docset[0]
-
-          block = code_block
-          if block[:type] == :function then
-            doc.set_default_name(*block[:name]) if block[:name]
-            doc.set_default_params(block[:params])
-          elsif block[:type] == :assignment then
-            doc.set_default_name(*block[:left])
-            if block[:right] then
-              right = block[:right]
-              if right[:type] == :function then
-                doc.set_default_params(right[:params])
-              elsif right[:type] == :ext_extend then
-                doc.set_default_extends(right[:extend])
-              elsif right[:type] == :literal then
-                doc.set_default_type(right[:class])
-              end
-            end
-          end
+          @docs << {
+            :comment => match(:doc_comment),
+            :code => code_block
+          }
         else
           @lex.next
         end
