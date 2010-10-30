@@ -1,6 +1,3 @@
-require 'lexer'
-require 'doc_comment_parser'
-require 'doc_comment'
 
 module JsDuck
 

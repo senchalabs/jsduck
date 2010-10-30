@@ -1,4 +1,4 @@
-require "lexer"
+require "jsduck/lexer"
 require "test/unit"
 
 class TestLexer < Test::Unit::TestCase

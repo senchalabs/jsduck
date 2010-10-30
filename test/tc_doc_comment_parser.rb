@@ -1,4 +1,4 @@
-require "doc_comment_parser"
+require "jsduck/doc_comment_parser"
 require "test/unit"
 
 class TestDocCommentParser < Test::Unit::TestCase
