@@ -32,17 +32,9 @@ List of @tags to support
 * @static
 * @link
 
-* @ignore @hide - these probably do exactly the same thing.
-* @private - this is also almost the same, with the possibility that
-  documentation could also be generated so, that it includes private
-  methods, in which case stuff marked with @private is included,
-  while @ignore and @hide are never included.
-
-Some usage stats from ExtJS source:
-
-* @hide 306 times
-* @private 199 times
-* @ignore 11 times.
+* @ignore @hide @private - in JsDuck implementation @ignore and @hide
+  are considered aliases for @private.  (Some usage stats from ExtJS
+  source: @hide 306 times, @private 199 times, @ignore 11 times.)
 
 * @namespace - Looks useless to me and indeed ExtJS source doesn't use
   it at all.
