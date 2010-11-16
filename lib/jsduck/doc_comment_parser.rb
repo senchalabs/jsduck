@@ -71,6 +71,8 @@ module JsDuck
           boolean_at_tag(/@ignore/, :private)
         elsif look(/@hide\b/) then
           boolean_at_tag(/@hide/, :private)
+        elsif look(/@static\b/) then
+          boolean_at_tag(/@static/, :static)
         elsif look(/@/) then
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/) then

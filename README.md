@@ -27,9 +27,9 @@ List of @tags to support
 * @event - OK
 * @param - OK
 * @return - OK
+* @static - OK
 
 * @member
-* @static
 * @link
 
 * @ignore @hide @private - in JsDuck implementation @ignore and @hide

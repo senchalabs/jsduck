@@ -114,6 +114,7 @@ module JsDuck
         :params => detect_params(docs, code),
         :return => doc_map[:return] ? doc_map[:return].first : nil,
         :private => !!doc_map[:private],
+        :static => !!doc_map[:static],
       }
     end
 
@@ -147,6 +148,7 @@ module JsDuck
         :type => detect_type(:prop, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
+        :static => !!doc_map[:static],
       }
     end
 
