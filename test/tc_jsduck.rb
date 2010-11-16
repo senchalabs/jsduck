@@ -311,7 +311,7 @@ MyClass = Ext.extend(Ext.util.Observable, {
     assert_equal("Bar", docs[0][:extends])
     assert_equal("Comment here.", docs[0][:doc])
 
-    cfgs = docs[0][:cfgs]
+    cfgs = docs[0][:cfg]
     assert_equal(2, cfgs.length)
 
     assert_equal(:cfg, cfgs[0][:tagname])
@@ -398,6 +398,74 @@ foo: true,
       docs = JsDuck.parse("/**\n * #{tagname}\n */");
       assert_equal(true, docs[0][:private])
     end
+  end
+
+  def test_member_docs_following_class
+    docs = JsDuck.parse("
+/**
+ * @class
+ */
+var MyPanel = Ext.extend(Ext.Panel, {
+  /**
+   * @cfg
+   */
+  fast: false,
+  /**
+   * @property
+   */
+  length: 0,
+  /**
+   */
+  doStuff: function() {
+    this.addEvents(
+      /**
+       * @event
+       */
+      'touch'
+    );
+  }
+});
+")
+    assert_equal(:class, docs[0][:tagname])
+    assert_equal("MyPanel", docs[0][:name])
+
+    cfgs = docs[0][:cfg]
+    assert_equal(1, cfgs.length)
+    assert_equal(:cfg, cfgs[0][:tagname])
+    assert_equal("fast", cfgs[0][:name])
+
+    props = docs[0][:property]
+    assert_equal(1, props.length)
+    assert_equal(:property, props[0][:tagname])
+    assert_equal("length", props[0][:name])
+
+    methods = docs[0][:method]
+    assert_equal(1, methods.length)
+    assert_equal(:method, methods[0][:tagname])
+    assert_equal("doStuff", methods[0][:name])
+
+    events = docs[0][:event]
+    assert_equal(1, events.length)
+    assert_equal(:event, events[0][:tagname])
+    assert_equal("touch", events[0][:name])
+  end
+
+  def test_multiple_classes
+    docs = JsDuck.parse("
+/**
+ * @class
+ */
+function Foo(){}
+/**
+ * @class
+ */
+function Bar(){}
+")
+    assert_equal(2, docs.length)
+    assert_equal(:class, docs[0][:tagname])
+    assert_equal("Foo", docs[0][:name])
+    assert_equal(:class, docs[1][:tagname])
+    assert_equal("Bar", docs[1][:name])
   end
 
 end
