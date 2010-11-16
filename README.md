@@ -36,6 +36,7 @@ List of @tags to support
 * @ignore @hide @private - in JsDuck implementation @ignore and @hide
   are considered aliases for @private.  (Some usage stats from ExtJS
   source: @hide 306 times, @private 199 times, @ignore 11 times.)
+  Additionally @protected is currently also treated as @private.
 
 * @namespace - Looks useless to me and indeed ExtJS source doesn't use
   it at all.

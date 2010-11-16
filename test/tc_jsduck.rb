@@ -418,7 +418,7 @@ foo: true,
   end
 
   def test_visibility_modifiers
-    ["@private", "@hide", "@ignore"].each do |tagname|
+    ["@private", "@hide", "@ignore", "@protected"].each do |tagname|
       docs = JsDuck.parse("/**\n * #{tagname}\n */");
       assert_equal(true, docs[0][:private])
     end

@@ -67,14 +67,10 @@ module JsDuck
           at_type
         elsif look(/@xtype\b/) then
           at_xtype
-        elsif look(/@private\b/) then
-          boolean_at_tag(/@private/, :private)
-        elsif look(/@ignore\b/) then
-          boolean_at_tag(/@ignore/, :private)
-        elsif look(/@hide\b/) then
-          boolean_at_tag(/@hide/, :private)
         elsif look(/@static\b/) then
           boolean_at_tag(/@static/, :static)
+        elsif look(/@(private|ignore|hide|protected)\b/) then
+          boolean_at_tag(/@(private|ignore|hide|protected)/, :private)
         elsif look(/@/) then
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/) then
@@ -176,7 +172,6 @@ module JsDuck
     def at_xtype
       match(/@xtype/)
       add_tag(:xtype)
-      maybe_type
       maybe_name
       skip_white
     end
