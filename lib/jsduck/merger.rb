@@ -66,7 +66,9 @@ module JsDuck
     end
 
     # Gathers all tags until first @cfg or @constructor into the first
-    # bare :class group.
+    # bare :class group.  We have a special case for @xtype which in
+    # ExtJS comments often appears after @constructor - so we
+    # explicitly place it into :class group.
     #
     # Then gathers each @cfg and tags following it into :cfg group, so
     # that it becomes array of arrays of tags.  This is to allow some
@@ -84,7 +86,9 @@ module JsDuck
           end
         end
 
-        if group_name == :cfg
+        if tag[:tagname] == :xtype
+          groups[:class] << tag
+        elsif group_name == :cfg
           groups[:cfg].last << tag
         else
           groups[group_name] << tag
@@ -100,6 +104,7 @@ module JsDuck
         :name => detect_name(:class, doc_map, code, :full_name),
         :doc => detect_doc(docs),
         :extends => detect_extends(doc_map, code),
+        :xtype => detect_xtype(doc_map),
         :singleton => !!doc_map[:singleton],
         :private => !!doc_map[:private],
       }
@@ -188,6 +193,10 @@ module JsDuck
       elsif code[:type] == :assignment && code[:right][:type] == :ext_extend
         code[:right][:extend].join(".")
       end
+    end
+
+    def detect_xtype(doc_map)
+      doc_map[:xtype] ? doc_map[:xtype].first[:name] : nil
     end
 
     def detect_params(docs, code)

@@ -250,12 +250,14 @@ mousedown: true,
  * @extends Your.Class
  * A good class indeed.
  * @singleton
+ * @xtype nicely
  */")
     assert_equal(:class, docs[0][:tagname])
     assert_equal("My.nice.Class", docs[0][:name])
     assert_equal("Your.Class", docs[0][:extends])
     assert_equal("A good class indeed.", docs[0][:doc])
     assert_equal(true, docs[0][:singleton])
+    assert_equal("nicely", docs[0][:xtype])
   end
 
   def test_implicit_class_name_from_function
@@ -354,6 +356,18 @@ MyClass = Ext.extend(Ext.util.Observable, {
     params = methods[0][:params]
     assert_equal("nr", params[0][:name])
     assert_equal("Number", params[0][:type])
+  end
+
+  def test_xtype_after_constructor
+    docs = JsDuck.parse("/**
+ * @class Foo
+ * Comment here.
+ * @constructor
+ * Often in ExtJS the xtype tag follows constructor tag.
+ * @xtype blah
+ */")
+    assert_equal(:class, docs[0][:tagname])
+    assert_equal("blah", docs[0][:xtype])
   end
 
   def test_cfg

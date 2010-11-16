@@ -28,6 +28,7 @@ List of @tags to support
 * @param - OK
 * @return - OK
 * @static - OK
+* @xtype - OK
 
 * @member
 * @link

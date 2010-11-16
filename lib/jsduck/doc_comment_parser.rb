@@ -65,6 +65,8 @@ module JsDuck
           at_property
         elsif look(/@type\b/) then
           at_type
+        elsif look(/@xtype\b/) then
+          at_xtype
         elsif look(/@private\b/) then
           boolean_at_tag(/@private/, :private)
         elsif look(/@ignore\b/) then
@@ -167,6 +169,15 @@ module JsDuck
       elsif look(/\S/) then
         @current_tag[:type] = @input.scan(/\S+/)
       end
+      skip_white
+    end
+
+    # matches @xtype name
+    def at_xtype
+      match(/@xtype/)
+      add_tag(:xtype)
+      maybe_type
+      maybe_name
       skip_white
     end
 
