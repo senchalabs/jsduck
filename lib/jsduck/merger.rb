@@ -56,9 +56,11 @@ module JsDuck
       groups = group_class_docs(docs)
       result = create_bare_class(groups[:class], code)
       result[:cfg] = groups[:cfg].map { |tags| create_cfg(tags, {}) }
-      result[:constructor] = create_method(groups[:constructor], {}) if groups[:constructor].length
-      result[:property] = []
       result[:method] = []
+      if groups[:constructor].length > 0
+        result[:method] << create_method(groups[:constructor], {})
+      end
+      result[:property] = []
       result[:event] = []
       result
     end

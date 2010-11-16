@@ -337,11 +337,12 @@ MyClass = Ext.extend(Ext.util.Observable, {
     assert_equal(:class, docs[0][:tagname])
     assert_equal("Foo", docs[0][:name])
 
-    const = docs[0][:constructor]
-    assert_equal(:method, const[:tagname])
-    assert_equal("constructor", const[:name])
+    methods = docs[0][:method]
+    assert_equal(1, methods.length)
+    assert_equal(:method, methods[0][:tagname])
+    assert_equal("constructor", methods[0][:name])
 
-    params = const[:params]
+    params = methods[0][:params]
     assert_equal("nr", params[0][:name])
     assert_equal("Number", params[0][:type])
   end
