@@ -57,7 +57,7 @@ module JsDuck
           boolean_at_tag(/@constructor/, :constructor)
         elsif look(/@param\b/) then
           at_param
-        elsif look(/@return\b/) then
+        elsif look(/@returns?\b/) then
           at_return
         elsif look(/@cfg\b/) then
           at_cfg
@@ -124,7 +124,7 @@ module JsDuck
 
     # matches @return {type} ...
     def at_return
-      match(/@return/)
+      match(/@returns?/)
       add_tag(:return)
       maybe_type
       skip_white

@@ -182,6 +182,15 @@ function f(foo, bar){}
     assert_equal("Some really\nlong comment.", docs[0][:return][:doc])
   end
 
+  def test_returns_is_alias_for_return
+    docs = JsDuck.parse("/**
+ * @method
+ * @returns {String} blah
+ */")
+    assert_equal("String", docs[0][:return][:type])
+    assert_equal("blah", docs[0][:return][:doc])
+  end
+
   def test_typeless_param_and_return
     docs = JsDuck.parse("/**
  * @method
