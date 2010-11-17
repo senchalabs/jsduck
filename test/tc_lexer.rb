@@ -35,6 +35,17 @@ class TestLexer < Test::Unit::TestCase
                   ])
   end
 
+  def test_regex_after_return
+    assert_tokens("return /foo/.test;",
+                  [
+                   [:ident, "return"],
+                   [:regex, "/foo/"],
+                   [:operator, "."],
+                   [:ident, "test"],
+                   [:operator, ";"]
+                  ])
+  end
+
   def test_strings
     d = '"' # double-quote
     s = "'" # single-quote
