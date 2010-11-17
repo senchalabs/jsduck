@@ -45,11 +45,11 @@ end
 
 if __FILE__ == $0 then
   JsDuck.parse_files(ARGV).each do |doc|
-    puts doc[:name] + ":"
+    puts (doc[:name] || "?") + ":"
     if doc[:tagname] == :class
       [:cfg, :property, :method, :event].each do |key|
         puts "  " + key.to_s + "s:"
-        doc[key].each {|item| puts "    " + item[:name]}
+        doc[key].each {|item| puts "    " + (item[:name] || "?")}
       end
     end
     puts
