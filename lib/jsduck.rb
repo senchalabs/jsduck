@@ -35,6 +35,7 @@ module JsDuck
   def JsDuck.parse_files(filenames)
     docs = []
     filenames.each do |name|
+      puts "Parsing #{name} ..."
       JsDuck.parse(IO.read(name)).each { |d| docs << d }
     end
     docs
