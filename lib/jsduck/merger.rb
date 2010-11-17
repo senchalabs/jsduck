@@ -39,7 +39,7 @@ module JsDuck
         :cfg
       elsif code[:type] == :function
         :method
-      elsif code[:type] == :assignment && code[:right][:type] == :function
+      elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :function
         :method
       else
         :property
@@ -178,7 +178,7 @@ module JsDuck
         doc_map[:type].first[:type]
       elsif code[:type] == :function
         :function
-      elsif code[:type] == :assignment
+      elsif code[:type] == :assignment && code[:right]
         if code[:right][:type] == :function
           :function
         elsif code[:right][:type] == :literal
@@ -190,7 +190,7 @@ module JsDuck
     def detect_extends(doc_map, code)
       if doc_map[:extends]
         doc_map[:extends].first[:extends]
-      elsif code[:type] == :assignment && code[:right][:type] == :ext_extend
+      elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :ext_extend
         code[:right][:extend].join(".")
       end
     end
