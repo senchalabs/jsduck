@@ -29,10 +29,29 @@ module JsDuck
 
     documentation
   end
+
+  # Given array of filenames, parses all files and returns array of
+  # documented items in all of those files.
+  def JsDuck.parse_files(filenames)
+    docs = []
+    filenames.each do |name|
+      JsDuck.parse(IO.read(name)).each { |d| docs << d }
+    end
+    docs
+  end
 end
 
 
 if __FILE__ == $0 then
-  JsDuck.parse($stdin.read).each {|d| pp d; puts}
+  JsDuck.parse_files(ARGV).each do |doc|
+    puts doc[:name] + ":"
+    if doc[:tagname] == :class
+      [:cfg, :property, :method, :event].each do |key|
+        puts "  " + key.to_s + "s:"
+        doc[key].each {|item| puts "    " + item[:name]}
+      end
+    end
+    puts
+  end
 end
 
