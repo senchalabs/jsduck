@@ -4,6 +4,8 @@ require 'jsduck/lexer'
 require 'jsduck/parser'
 require 'jsduck/doc_parser'
 require 'jsduck/merger'
+require 'jsduck/tree'
+require 'json'
 
 require 'pp'
 
@@ -40,19 +42,29 @@ module JsDuck
     end
     docs
   end
+
+  def JsDuck.print_debug(docs)
+    docs.each do |doc|
+      puts (doc[:name] || "?") + ":"
+      if doc[:tagname] == :class
+        [:cfg, :property, :method, :event].each do |key|
+          puts "  " + key.to_s + "s:"
+          doc[key].each {|item| puts "    " + (item[:name] || "?")}
+        end
+      end
+      puts
+    end
+  end
+
+  # Given array of doc-objects, generates namespace tree that can be
+  # later printed out in JSON.
+  def JsDuck.print_tree(docs)
+    puts "Docs.classData = " + JSON.generate( Tree.new.create(docs) ) + ";"
+  end
 end
 
 
 if __FILE__ == $0 then
-  JsDuck.parse_files(ARGV).each do |doc|
-    puts (doc[:name] || "?") + ":"
-    if doc[:tagname] == :class
-      [:cfg, :property, :method, :event].each do |key|
-        puts "  " + key.to_s + "s:"
-        doc[key].each {|item| puts "    " + (item[:name] || "?")}
-      end
-    end
-    puts
-  end
+  JsDuck.print_tree( JsDuck.parse_files(ARGV) )
 end
 
