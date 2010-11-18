@@ -1,10 +1,10 @@
-require "jsduck/doc_comment_parser"
+require "jsduck/doc_parser"
 require "test/unit"
 
-class TestDocCommentParser < Test::Unit::TestCase
+class TestDocParser < Test::Unit::TestCase
 
   def parse_single(doc)
-    return JsDuck::DocCommentParser.new.parse(doc)
+    return JsDuck::DocParser.new.parse(doc)
   end
 
   def test_method

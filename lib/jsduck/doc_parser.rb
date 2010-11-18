@@ -2,7 +2,7 @@ require 'strscan'
 
 module JsDuck
 
-  class DocCommentParser
+  class DocParser
     def parse(input)
       @tags = []
       @input = StringScanner.new(purify(input))

@@ -2,14 +2,14 @@ $:.unshift File.dirname(__FILE__) # For running the actual JsDuck app
 
 require 'jsduck/lexer'
 require 'jsduck/parser'
-require 'jsduck/doc_comment_parser'
+require 'jsduck/doc_parser'
 require 'jsduck/merger'
 
 require 'pp'
 
 module JsDuck
   def JsDuck.parse(input)
-    doc_parser = DocCommentParser.new
+    doc_parser = DocParser.new
     merger = Merger.new
     documentation = []
     current_class = nil
