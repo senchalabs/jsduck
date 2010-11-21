@@ -5,6 +5,7 @@ require 'jsduck/parser'
 require 'jsduck/doc_parser'
 require 'jsduck/merger'
 require 'jsduck/tree'
+require 'jsduck/page'
 require 'json'
 
 require 'optparse'
@@ -62,7 +63,17 @@ module JsDuck
   # in JSON form into a file.
   def JsDuck.write_tree(filename, docs)
     js = "Docs.classData = " + JSON.generate( Tree.new.create(docs) ) + ";"
+    js += "Docs.icons = {};"
     File.open(filename, 'w') {|f| f.write(js) }
+  end
+
+  # Writes documentation page for each class
+  def JsDuck.write_pages(path, docs, verbose)
+    docs.each do |cls|
+      filename = path + "/" + cls[:name] + ".html"
+      puts "Writing to #{filename} ..." if verbose
+      File.open(filename, 'w') {|f| f.write( Page.new(cls).to_html ) }
+    end
   end
 end
 
@@ -106,5 +117,6 @@ if __FILE__ == $0 then
 
   docs = JsDuck.parse_files(input_files, verbose)
   JsDuck.write_tree(output_dir+"/tree.js", docs)
+  JsDuck.write_pages(output_dir, docs, verbose)
 end
 
