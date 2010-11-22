@@ -45,7 +45,7 @@ module JsDuck
     # When package for the class exists, add class node to that
     # package; otherwise create the package first.
     def add_class(cls)
-      parent_name = package_name(cls[:name])
+      parent_name = cls.package_name
       parent = @packages[parent_name] || add_package(parent_name)
       parent[:children] << class_node(cls)
     end
@@ -57,7 +57,7 @@ module JsDuck
     # Note that the root package always exists, so we can safely
     # recurse knowing we will eventually stop.
     def add_package(name)
-      parent_name = package_name(name)
+      parent_name = Class.package_name(name)
       parent = @packages[parent_name] || add_package(parent_name)
       package = package_node(name)
       parent[:children] << package
@@ -65,33 +65,12 @@ module JsDuck
       package
     end
 
-    # Given full class name, returns package name
-    #
-    # For example:
-    #     My.package.Class => My.package
-    #     My.package => My
-    #     My => ""
-    def package_name(name)
-      parts = name.split(/\./)
-      parts.slice(0, parts.length - 1).join(".")
-    end
-
-    # Given full class name, returns class name
-    #
-    # For example:
-    #     My.package.Class => Class
-    #     My.package => package
-    #     My => My
-    def class_name(name)
-      name.split(/\./).last
-    end
-
     # Given full doc object for class creates class node
     def class_node(cls)
       return {
-        :href => "output/#{cls[:name]}.html",
-        :text => class_name(cls[:name]),
-        :id => cls[:name],
+        :href => "output/#{cls.full_name}.html",
+        :text => cls.short_name,
+        :id => cls.full_name,
         :isClass => true,
         :iconCls => cls[:singleton] ? "icon-static" : "icon-cls",
         :cls => "cls",
@@ -103,7 +82,7 @@ module JsDuck
     def package_node(name)
       return {
         :id => "pkg-#{name}",
-        :text => class_name(name),
+        :text => Class.short_name(name),
         :iconCls => "icon-pkg",
         :cls => "package",
         :singleClickExpand => true,

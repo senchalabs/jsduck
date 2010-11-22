@@ -17,18 +17,15 @@ module JsDuck
     end
 
     def heading
-      "<h1>Class <a href='source/sample.html#cls-#{@cls[:name]}'>#{@cls[:name]}</a></h1>"
+      "<h1>Class <a href='source/sample.html#cls-#{@cls.full_name}'>#{@cls.full_name}</a></h1>"
     end
 
     def abstract
-      parts = @cls[:name].split(/\./)
-      namespace = parts.slice(0, parts.length - 1).join(".")
-      short_name = parts.last
       [
        "<table cellspacing='0'>",
-       abstract_row("Package:", namespace),
+       abstract_row("Package:", @cls.package_name),
        abstract_row("Defined In:", "sample.js"),
-       abstract_row("Class:", "<a href='source/sample.html#cls-#{@cls[:name]}'>#{short_name}</a>"),
+       abstract_row("Class:", "<a href='source/sample.html#cls-#{@cls.full_name}'>#{@cls.short_name}</a>"),
        abstract_row("Extends:", @cls[:extends] || "Object"),
        "</table>",
       ].join("\n")

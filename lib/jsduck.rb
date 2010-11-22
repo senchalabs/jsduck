@@ -4,6 +4,7 @@ require 'jsduck/lexer'
 require 'jsduck/parser'
 require 'jsduck/doc_parser'
 require 'jsduck/merger'
+require 'jsduck/class'
 require 'jsduck/tree'
 require 'jsduck/page'
 require 'json'
@@ -46,13 +47,13 @@ module JsDuck
     docs
   end
 
-  # Filters out class-documentations
+  # Filters out class-documentations, converting them to Class objects.
   # For each other type, prints a warning message and discards it
   def JsDuck.filter_classes(docs)
     classes = []
     docs.each do |d|
       if d[:tagname] == :class
-        classes << d
+        classes << Class.new(d)
       else
         puts "Warning: Ignoring " + d[:tagname].to_s + ": " + (d[:name] || "")
       end
@@ -129,8 +130,8 @@ if __FILE__ == $0 then
     exit(1)
   end
 
-  docs = JsDuck.filter_classes(JsDuck.parse_files(input_files, verbose))
-  JsDuck.write_tree(output_dir+"/tree.js", docs)
-  JsDuck.write_pages(output_dir, docs, verbose)
+  classes = JsDuck.filter_classes(JsDuck.parse_files(input_files, verbose))
+  JsDuck.write_tree(output_dir+"/tree.js", classes)
+  JsDuck.write_pages(output_dir, classes, verbose)
 end
 

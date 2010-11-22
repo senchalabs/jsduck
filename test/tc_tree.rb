@@ -1,3 +1,4 @@
+require "jsduck/class"
 require "jsduck/tree"
 require "test/unit"
 
@@ -5,8 +6,8 @@ class TestTree < Test::Unit::TestCase
 
   def test_create
     output = JsDuck::Tree.new.create([
-      {:tagname => :class, :name => "SamplePackage.SampleClass"},
-      {:tagname => :class, :name => "SamplePackage.Singleton", :singleton => true},
+      JsDuck::Class.new({:tagname => :class, :name => "SamplePackage.SampleClass"}),
+      JsDuck::Class.new({:tagname => :class, :name => "SamplePackage.Singleton", :singleton => true}),
     ])
     assert_equal({
       :id => "apidocs",
