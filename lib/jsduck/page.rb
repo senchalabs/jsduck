@@ -12,6 +12,8 @@ module JsDuck
        heading,
        abstract,
        description,
+       "<div class='hr'></div>",
+       configs,
        "</div>",
       ].join("\n")
     end
@@ -37,6 +39,31 @@ module JsDuck
 
     def description
       "<div class='description'>#{@cls[:doc]}</div>"
+    end
+
+    def configs
+      [
+       "<a id='#{@cls.full_name}-configs'></a>",
+       "<h2>Config Options</h2>",
+       "<table cellspacing='0' class='member-table'><tbody>",
+       "<tr><th colspan='2' class='sig-header'>Config Options</th><th class='msource-header'>Defined By</th></tr>",
+       @cls[:cfg].collect {|cfg| config_row(cfg) }.join("\n"),
+       "</tbody></table>",
+      ].join("\n")
+    end
+
+    def config_row(cfg)
+      [
+       "<tr class='config-row'>",
+         "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
+         "<td class='sig'>",
+           "<a id='#{@cls.full_name}-#{cfg[:name]}'></a>",
+           "<b><a href='source/sample.html#cfg-#{@cls.full_name}-#{cfg[:name]}'>#{cfg[:name]}</a></b> : #{cfg[:type]}",
+           "<div class='mdesc'>#{cfg[:doc]}</div>",
+         "</td>",
+         "<td class='msource'>#{@cls.short_name}</td>",
+       "</tr>",
+      ].join("")
     end
   end
 
