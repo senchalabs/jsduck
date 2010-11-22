@@ -15,6 +15,7 @@ module JsDuck
        "<div class='hr'></div>",
        configs,
        properties,
+       methods,
        "</div>",
       ].join("\n")
     end
@@ -86,6 +87,32 @@ module JsDuck
            "<a id='#{@cls.full_name}-#{prop[:name]}'></a>",
            "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{prop[:name]}'>#{prop[:name]}</a></b> : #{prop[:type]}",
            "<div class='mdesc'>#{prop[:doc]}</div>",
+         "</td>",
+         "<td class='msource'>#{@cls.short_name}</td>",
+       "</tr>",
+      ].join("")
+    end
+
+    def methods
+      [
+       "<a id='#{@cls.full_name}-methods'></a>",
+       "<h2>Public Methods</h2>",
+       "<table cellspacing='0' class='member-table'><tbody>",
+       "<tr><th colspan='2' class='sig-header'>Method</th><th class='msource-header'>Defined By</th></tr>",
+       @cls[:method].collect {|m| method_row(m) }.join("\n"),
+       "</tbody></table>",
+      ].join("\n")
+    end
+
+    def method_row(method)
+      [
+       "<tr class='method-row'>",
+         "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
+         "<td class='sig'>",
+           "<a id='#{@cls.full_name}-#{method[:name]}'></a>",
+           "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{method[:name]}'>#{method[:name]}</a></b>()",
+           " : " + (method[:return] ? method[:return][:type] : "void"),
+           "<div class='mdesc'>#{method[:doc]}</div>",
          "</td>",
          "<td class='msource'>#{@cls.short_name}</td>",
        "</tr>",
