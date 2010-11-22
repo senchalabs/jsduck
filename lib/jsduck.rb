@@ -14,7 +14,7 @@ require 'fileutils'
 require 'pp'
 
 module JsDuck
-  def JsDuck.parse(input)
+  def self.parse(input)
     doc_parser = DocParser.new
     merger = Merger.new
     documentation = []
@@ -38,7 +38,7 @@ module JsDuck
 
   # Given array of filenames, parses all files and returns array of
   # documented items in all of those files.
-  def JsDuck.parse_files(filenames, verbose)
+  def self.parse_files(filenames, verbose)
     docs = []
     filenames.each do |name|
       puts "Parsing #{name} ..." if verbose
@@ -49,7 +49,7 @@ module JsDuck
 
   # Filters out class-documentations, converting them to Class objects.
   # For each other type, prints a warning message and discards it
-  def JsDuck.filter_classes(docs)
+  def self.filter_classes(docs)
     classes = []
     docs.each do |d|
       if d[:tagname] == :class
@@ -61,7 +61,7 @@ module JsDuck
     classes
   end
 
-  def JsDuck.print_debug(docs)
+  def self.print_debug(docs)
     docs.each do |doc|
       puts (doc[:name] || "?") + ":"
       if doc[:tagname] == :class
@@ -76,14 +76,14 @@ module JsDuck
 
   # Given array of doc-objects, generates namespace tree and writes in
   # in JSON form into a file.
-  def JsDuck.write_tree(filename, docs)
+  def self.write_tree(filename, docs)
     js = "Docs.classData = " + JSON.generate( Tree.new.create(docs) ) + ";"
     js += "Docs.icons = {};"
     File.open(filename, 'w') {|f| f.write(js) }
   end
 
   # Writes documentation page for each class
-  def JsDuck.write_pages(path, docs, verbose)
+  def self.write_pages(path, docs, verbose)
     docs.each do |cls|
       filename = path + "/" + cls[:name] + ".html"
       puts "Writing to #{filename} ..." if verbose
