@@ -16,6 +16,7 @@ module JsDuck
        configs,
        properties,
        methods,
+       events,
        "</div>",
       ].join("\n")
     end
@@ -113,6 +114,31 @@ module JsDuck
            "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{method[:name]}'>#{method[:name]}</a></b>()",
            " : " + (method[:return] ? method[:return][:type] : "void"),
            "<div class='mdesc'>#{method[:doc]}</div>",
+         "</td>",
+         "<td class='msource'>#{@cls.short_name}</td>",
+       "</tr>",
+      ].join("")
+    end
+
+    def events
+      [
+       "<a id='#{@cls.full_name}-events'></a>",
+       "<h2>Public Events</h2>",
+       "<table cellspacing='0' class='member-table'><tbody>",
+       "<tr><th colspan='2' class='sig-header'>Event</th><th class='msource-header'>Defined By</th></tr>",
+       @cls[:event].collect {|m| event_row(m) }.join("\n"),
+       "</tbody></table>",
+      ].join("\n")
+    end
+
+    def event_row(event)
+      [
+       "<tr class='method-row'>",
+         "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
+         "<td class='sig'>",
+           "<a id='#{@cls.full_name}-#{event[:name]}'></a>",
+           "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{event[:name]}'>#{event[:name]}</a></b> : ()",
+           "<div class='mdesc'>#{event[:doc]}</div>",
          "</td>",
          "<td class='msource'>#{@cls.short_name}</td>",
        "</tr>",
