@@ -14,6 +14,7 @@ module JsDuck
        description,
        "<div class='hr'></div>",
        configs,
+       properties,
        "</div>",
       ].join("\n")
     end
@@ -60,6 +61,31 @@ module JsDuck
            "<a id='#{@cls.full_name}-#{cfg[:name]}'></a>",
            "<b><a href='source/sample.html#cfg-#{@cls.full_name}-#{cfg[:name]}'>#{cfg[:name]}</a></b> : #{cfg[:type]}",
            "<div class='mdesc'>#{cfg[:doc]}</div>",
+         "</td>",
+         "<td class='msource'>#{@cls.short_name}</td>",
+       "</tr>",
+      ].join("")
+    end
+
+    def properties
+      [
+       "<a id='#{@cls.full_name}-props'></a>",
+       "<h2>Public Properties</h2>",
+       "<table cellspacing='0' class='member-table'><tbody>",
+       "<tr><th colspan='2' class='sig-header'>Property</th><th class='msource-header'>Defined By</th></tr>",
+       @cls[:property].collect {|prop| property_row(prop) }.join("\n"),
+       "</tbody></table>",
+      ].join("\n")
+    end
+
+    def property_row(prop)
+      [
+       "<tr class='property-row'>",
+         "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
+         "<td class='sig'>",
+           "<a id='#{@cls.full_name}-#{prop[:name]}'></a>",
+           "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{prop[:name]}'>#{prop[:name]}</a></b> : #{prop[:type]}",
+           "<div class='mdesc'>#{prop[:doc]}</div>",
          "</td>",
          "<td class='msource'>#{@cls.short_name}</td>",
        "</tr>",
