@@ -45,14 +45,7 @@ module JsDuck
     end
 
     def configs
-      [
-       "<a id='#{@cls.full_name}-configs'></a>",
-       "<h2>Config Options</h2>",
-       "<table cellspacing='0' class='member-table'><tbody>",
-       "<tr><th colspan='2' class='sig-header'>Config Options</th><th class='msource-header'>Defined By</th></tr>",
-       @cls[:cfg].collect {|cfg| config_row(cfg) }.join("\n"),
-       "</tbody></table>",
-      ].join("\n")
+      table("configs", "Config Options", "Config Options", @cls[:cfg].collect {|c| config_row(c) })
     end
 
     def config_row(cfg)
@@ -64,14 +57,7 @@ module JsDuck
     end
 
     def properties
-      [
-       "<a id='#{@cls.full_name}-props'></a>",
-       "<h2>Public Properties</h2>",
-       "<table cellspacing='0' class='member-table'><tbody>",
-       "<tr><th colspan='2' class='sig-header'>Property</th><th class='msource-header'>Defined By</th></tr>",
-       @cls[:property].collect {|prop| property_row(prop) }.join("\n"),
-       "</tbody></table>",
-      ].join("\n")
+      table("props", "Public Properties", "Property", @cls[:property].collect {|p| property_row(p) })
     end
 
     def property_row(prop)
@@ -83,14 +69,7 @@ module JsDuck
     end
 
     def methods
-      [
-       "<a id='#{@cls.full_name}-methods'></a>",
-       "<h2>Public Methods</h2>",
-       "<table cellspacing='0' class='member-table'><tbody>",
-       "<tr><th colspan='2' class='sig-header'>Method</th><th class='msource-header'>Defined By</th></tr>",
-       @cls[:method].collect {|m| method_row(m) }.join("\n"),
-       "</tbody></table>",
-      ].join("\n")
+      table("methods", "Public Methods", "Method", @cls[:method].collect {|m| property_row(m) })
     end
 
     def method_row(method)
@@ -103,14 +82,7 @@ module JsDuck
     end
 
     def events
-      [
-       "<a id='#{@cls.full_name}-events'></a>",
-       "<h2>Public Events</h2>",
-       "<table cellspacing='0' class='member-table'><tbody>",
-       "<tr><th colspan='2' class='sig-header'>Event</th><th class='msource-header'>Defined By</th></tr>",
-       @cls[:event].collect {|m| event_row(m) }.join("\n"),
-       "</tbody></table>",
-      ].join("\n")
+      table("events", "Public Events", "Event", @cls[:event].collect {|e| event_row(e) })
     end
 
     def event_row(event)
@@ -119,6 +91,17 @@ module JsDuck
         "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{event[:name]}'>#{event[:name]}</a></b> : ()" +
         "<div class='mdesc'>#{event[:doc]}</div>"
       )
+    end
+
+    def table(idSuffix, title, columnTitle, rows)
+      [
+       "<a id='#{@cls.full_name}-#{idSuffix}'></a>",
+       "<h2>#{title}</h2>",
+       "<table cellspacing='0' class='member-table'><tbody>",
+       "<tr><th colspan='2' class='sig-header'>#{columnTitle}</th><th class='msource-header'>Defined By</th></tr>",
+       rows.join("\n"),
+       "</tbody></table>",
+      ].join("\n")
     end
 
     def table_row(className, contents)
