@@ -56,17 +56,11 @@ module JsDuck
     end
 
     def config_row(cfg)
-      [
-       "<tr class='config-row'>",
-         "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
-         "<td class='sig'>",
-           "<a id='#{@cls.full_name}-#{cfg[:name]}'></a>",
-           "<b><a href='source/sample.html#cfg-#{@cls.full_name}-#{cfg[:name]}'>#{cfg[:name]}</a></b> : #{cfg[:type]}",
-           "<div class='mdesc'>#{cfg[:doc]}</div>",
-         "</td>",
-         "<td class='msource'>#{@cls.short_name}</td>",
-       "</tr>",
-      ].join("")
+      table_row("config-row",
+        "<a id='#{@cls.full_name}-#{cfg[:name]}'></a>" +
+        "<b><a href='source/sample.html#cfg-#{@cls.full_name}-#{cfg[:name]}'>#{cfg[:name]}</a></b> : #{cfg[:type]}" +
+        "<div class='mdesc'>#{cfg[:doc]}</div>"
+      )
     end
 
     def properties
@@ -81,17 +75,11 @@ module JsDuck
     end
 
     def property_row(prop)
-      [
-       "<tr class='property-row'>",
-         "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
-         "<td class='sig'>",
-           "<a id='#{@cls.full_name}-#{prop[:name]}'></a>",
-           "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{prop[:name]}'>#{prop[:name]}</a></b> : #{prop[:type]}",
-           "<div class='mdesc'>#{prop[:doc]}</div>",
-         "</td>",
-         "<td class='msource'>#{@cls.short_name}</td>",
-       "</tr>",
-      ].join("")
+      table_row("property-row",
+        "<a id='#{@cls.full_name}-#{prop[:name]}'></a>" +
+        "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{prop[:name]}'>#{prop[:name]}</a></b> : #{prop[:type]}" +
+        "<div class='mdesc'>#{prop[:doc]}</div>"
+      )
     end
 
     def methods
@@ -106,18 +94,12 @@ module JsDuck
     end
 
     def method_row(method)
-      [
-       "<tr class='method-row'>",
-         "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
-         "<td class='sig'>",
-           "<a id='#{@cls.full_name}-#{method[:name]}'></a>",
-           "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{method[:name]}'>#{method[:name]}</a></b>()",
-           " : " + (method[:return] ? method[:return][:type] : "void"),
-           "<div class='mdesc'>#{method[:doc]}</div>",
-         "</td>",
-         "<td class='msource'>#{@cls.short_name}</td>",
-       "</tr>",
-      ].join("")
+      table_row("method-row",
+        "<a id='#{@cls.full_name}-#{method[:name]}'></a>" +
+        "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{method[:name]}'>#{method[:name]}</a></b>()" +
+        " : " + (method[:return] ? method[:return][:type] : "void") +
+        "<div class='mdesc'>#{method[:doc]}</div>"
+      )
     end
 
     def events
@@ -132,14 +114,18 @@ module JsDuck
     end
 
     def event_row(event)
+      table_row("method-row",
+        "<a id='#{@cls.full_name}-#{event[:name]}'></a>" +
+        "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{event[:name]}'>#{event[:name]}</a></b> : ()" +
+        "<div class='mdesc'>#{event[:doc]}</div>"
+      )
+    end
+
+    def table_row(className, contents)
       [
-       "<tr class='method-row'>",
+       "<tr class='#{className}'>",
          "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
-         "<td class='sig'>",
-           "<a id='#{@cls.full_name}-#{event[:name]}'></a>",
-           "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{event[:name]}'>#{event[:name]}</a></b> : ()",
-           "<div class='mdesc'>#{event[:doc]}</div>",
-         "</td>",
+         "<td class='sig'>#{contents}</td>",
          "<td class='msource'>#{@cls.short_name}</td>",
        "</tr>",
       ].join("")
