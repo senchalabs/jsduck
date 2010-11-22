@@ -46,6 +46,20 @@ module JsDuck
     docs
   end
 
+  # Filters out class-documentations
+  # For each other type, prints a warning message and discards it
+  def JsDuck.filter_classes(docs)
+    classes = []
+    docs.each do |d|
+      if d[:tagname] == :class
+        classes << d
+      else
+        puts "Warning: Ignoring " + d[:tagname].to_s + ": " + (d[:name] || "")
+      end
+    end
+    classes
+  end
+
   def JsDuck.print_debug(docs)
     docs.each do |doc|
       puts (doc[:name] || "?") + ":"
@@ -115,7 +129,7 @@ if __FILE__ == $0 then
     exit(1)
   end
 
-  docs = JsDuck.parse_files(input_files, verbose)
+  docs = JsDuck.filter_classes(JsDuck.parse_files(input_files, verbose))
   JsDuck.write_tree(output_dir+"/tree.js", docs)
   JsDuck.write_pages(output_dir, docs, verbose)
 end
