@@ -42,9 +42,10 @@ module JsDuck
             :value => eval(@input.scan(/[0-9]+(\.[0-9]*)?/))
           }
         elsif @input.check(/\w+/) then
+          value = @input.scan(/\w+/)
           @tokens << {
-            :type => :ident,
-            :value => @input.scan(/\w+/)
+            :type => KEYWORDS[value] ? :keyword : :ident,
+            :value => value
           }
         elsif @input.check(/\/\*\*/) then
           @tokens << {
@@ -83,7 +84,7 @@ module JsDuck
     end
 
     # A slash "/" is a division operator if it follows:
-    # - identifier (but not the keyword "return")
+    # - identifier (but not a keyword)
     # - number
     # - closing bracket )
     # - closing square-bracket ]
@@ -92,7 +93,7 @@ module JsDuck
       if @tokens.last then
         type = @tokens.last[:type]
         value = @tokens.last[:value]
-        if (type == :ident && value != "return") || type == :number || value == ")" || value == "]" then
+        if type == :ident || type == :number || value == ")" || value == "]" then
           return false
         end
       end
@@ -123,6 +124,33 @@ module JsDuck
       @input.scan(/\s+/)
     end
 
+    KEYWORDS = {
+      "break" => true,
+      "case" => true,
+      "catch" => true,
+      "continue" => true,
+      "default" => true,
+      "delete" => true,
+      "do" => true,
+      "else" => true,
+      "finally" => true,
+      "for" => true,
+      "function" => true,
+      "if" => true,
+      "in" => true,
+      "instanceof" => true,
+      "new" => true,
+      "return" => true,
+      "switch" => true,
+      "this" => true,
+      "throw" => true,
+      "try" => true,
+      "typeof" => true,
+      "var" => true,
+      "void" => true,
+      "while" => true,
+      "with" => true,
+    }
   end
 
 end

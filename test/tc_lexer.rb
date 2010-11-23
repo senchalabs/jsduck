@@ -14,7 +14,7 @@ class TestLexer < Test::Unit::TestCase
   def test_simple
     assert_tokens("var foo = 8;",
                   [
-                   [:ident, "var"],
+                   [:keyword, "var"],
                    [:ident, "foo"],
                    [:operator, "="],
                    [:number, 8],
@@ -38,10 +38,19 @@ class TestLexer < Test::Unit::TestCase
   def test_regex_after_return
     assert_tokens("return /foo/.test;",
                   [
-                   [:ident, "return"],
+                   [:keyword, "return"],
                    [:regex, "/foo/"],
                    [:operator, "."],
                    [:ident, "test"],
+                   [:operator, ";"]
+                  ])
+  end
+
+  def test_regex_after_typeof
+    assert_tokens("typeof /foo/;",
+                  [
+                   [:keyword, "typeof"],
+                   [:regex, "/foo/"],
                    [:operator, ";"]
                   ])
   end
