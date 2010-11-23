@@ -399,6 +399,19 @@ foo: true,
     assert_equal("My comment", docs[0][:doc])
   end
 
+  def test_property_ident_chain_begins_with_this
+    docs = JsDuck.parse("
+/**
+ * If true then lock actions
+ */
+this.locked = false;
+")
+    assert_equal(:property, docs[0][:tagname])
+    assert_equal("locked", docs[0][:name])
+    assert_equal("Boolean", docs[0][:type])
+    assert_equal("If true then lock actions", docs[0][:doc])
+  end
+
   def test_implicit_property_type
     comment = "
 /**

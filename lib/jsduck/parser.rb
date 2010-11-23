@@ -65,7 +65,7 @@ module JsDuck
         var_declaration
       elsif look(:ident, ":") || look(:string, ":") then
         property_literal
-      elsif look(:ident) then
+      elsif look(:ident) || look("this") then
         maybe_assignment
       elsif look(:string) then
         {:type => :assignment, :left => [match(:string)]}
@@ -121,9 +121,14 @@ module JsDuck
       }
     end
 
-    # <ident-chain> := <ident> [ "." <ident> ]*
+    # <ident-chain> := [ "this" | <ident> ]  [ "." <ident> ]*
     def ident_chain
-      chain = [match(:ident)]
+      if look("this")
+        chain = [match("this")]
+      else
+        chain = [match(:ident)]
+      end
+
       while look(".", :ident) do
         chain << match(".", :ident)
       end
