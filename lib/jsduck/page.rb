@@ -49,10 +49,10 @@ module JsDuck
     end
 
     def config_row(cfg)
-      table_row("config-row",
+      table_row("config-row " + expandable_class(cfg),
         "<a id='#{@cls.full_name}-#{cfg[:name]}'></a>" +
         "<b><a href='source/sample.html#cfg-#{@cls.full_name}-#{cfg[:name]}'>#{cfg[:name]}</a></b> : #{cfg[:type]}" +
-        "<div class='mdesc'>#{cfg[:doc]}</div>"
+        mdesc(cfg)
       )
     end
 
@@ -61,10 +61,10 @@ module JsDuck
     end
 
     def property_row(prop)
-      table_row("property-row",
+      table_row("property-row " + expandable_class(prop),
         "<a id='#{@cls.full_name}-#{prop[:name]}'></a>" +
         "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{prop[:name]}'>#{prop[:name]}</a></b> : #{prop[:type]}" +
-        "<div class='mdesc'>#{prop[:doc]}</div>"
+        mdesc(prop)
       )
     end
 
@@ -73,11 +73,11 @@ module JsDuck
     end
 
     def method_row(method)
-      table_row("method-row",
+      table_row("method-row " + expandable_class(method),
         "<a id='#{@cls.full_name}-#{method[:name]}'></a>" +
         "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{method[:name]}'>#{method[:name]}</a></b>()" +
         " : " + (method[:return] ? method[:return][:type] : "void") +
-        "<div class='mdesc'>#{method[:doc]}</div>"
+        mdesc(method)
       )
     end
 
@@ -86,11 +86,27 @@ module JsDuck
     end
 
     def event_row(event)
-      table_row("method-row",
+      table_row("method-row " + expandable_class(event),
         "<a id='#{@cls.full_name}-#{event[:name]}'></a>" +
         "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{event[:name]}'>#{event[:name]}</a></b> : ()" +
-        "<div class='mdesc'>#{event[:doc]}</div>"
+        mdesc(event)
       )
+    end
+
+    def mdesc(item)
+      "<div class='mdesc'>#{expandable_desc(item[:doc])}</div>"
+    end
+
+    def expandable_class(item)
+      expandable?(item[:doc]) ? "expandable" : ""
+    end
+
+    def expandable_desc(doc)
+      expandable?(doc) ? "<div class='short'>#{doc[0..117]}...</div><div class='long'>#{doc}</div>" : doc
+    end
+
+    def expandable?(doc)
+      doc.length > 120
     end
 
     def table(idSuffix, title, columnTitle, rows)
