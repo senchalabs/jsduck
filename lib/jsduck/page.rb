@@ -69,7 +69,7 @@ module JsDuck
     end
 
     def methods
-      table("methods", "Public Methods", "Method", @cls[:method].collect {|m| property_row(m) })
+      table("methods", "Public Methods", "Method", @cls[:method].collect {|m| method_row(m) })
     end
 
     def method_row(method)
