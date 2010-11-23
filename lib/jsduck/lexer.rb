@@ -84,7 +84,8 @@ module JsDuck
     end
 
     # A slash "/" is a division operator if it follows:
-    # - identifier (but not a keyword)
+    # - identifier
+    # - the "this" keyword
     # - number
     # - closing bracket )
     # - closing square-bracket ]
@@ -93,7 +94,11 @@ module JsDuck
       if @tokens.last then
         type = @tokens.last[:type]
         value = @tokens.last[:value]
-        if type == :ident || type == :number || value == ")" || value == "]" then
+        if type == :ident || type == :number
+          return false
+        elsif type == :keyword && value == "this"
+          return false
+        elsif type == :operator && (value == ")" || value == "]")
           return false
         end
       end

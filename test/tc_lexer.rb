@@ -55,6 +55,15 @@ class TestLexer < Test::Unit::TestCase
                   ])
   end
 
+  def test_division_after_this
+    assert_tokens("this / 3",
+                  [
+                   [:keyword, "this"],
+                   [:operator, "/"],
+                   [:number, 3]
+                  ])
+  end
+
   def test_strings
     d = '"' # double-quote
     s = "'" # single-quote
