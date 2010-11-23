@@ -94,6 +94,9 @@ module JsDuck
     end
 
     def table(idSuffix, title, columnTitle, rows)
+      # When no rows to show, create no table whatsoever
+      return "" if rows.length == 0
+
       [
        "<a id='#{@cls.full_name}-#{idSuffix}'></a>",
        "<h2>#{title}</h2>",
