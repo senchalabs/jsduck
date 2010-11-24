@@ -18,25 +18,28 @@ module JsDuck
       @doc[:extends] ? @classes[@doc[:extends]] : nil
     end
 
-    # Returns array of all methods in a class, sorted by name.
-    # See methods_hash for details.
-    def methods
-      methods_hash.values.sort {|a,b| a[:name] <=> b[:name] }
+    # Returns array of all members of particular type in a class,
+    # sorted by name.  See members_hash for details.
+    def members(type)
+      members_hash(type).values.sort {|a,b| a[:name] <=> b[:name] }
     end
 
-    # Returns hash of methods in class (and parent classes).
-    # When parent and child have methods with same name,
-    # method from child overrides tha parent method.
+    # Returns hash of members of class (and parent classes).
+    # Members are methods, properties, cfgs, events (member type
+    # is speified through 'type' parameter).
     #
-    # We also set :member property to each method to the full class
+    # When parent and child have members with same name,
+    # member from child overrides tha parent member.
+    #
+    # We also set :member property to each member to the full class
     # name where it belongs, so one can tell them apart afterwards.
-    def methods_hash
-      parent_methods = parent ? parent.methods_hash : {}
-      @doc[:method].each do |m|
+    def members_hash(type)
+      parent_members = parent ? parent.members_hash(type) : {}
+      @doc[type].each do |m|
         m[:member] = full_name
-        parent_methods[m[:name]] = m
+        parent_members[m[:name]] = m
       end
-      parent_methods
+      parent_members
     end
 
     # A way to access full class name with similar syntax to

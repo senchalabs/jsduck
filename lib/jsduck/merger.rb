@@ -167,6 +167,8 @@ module JsDuck
         code[:name]
       elsif code[:type] == :assignment
         name_type == :full_name ? code[:left].join(".") : code[:left].last
+      else
+        ""
       end
     end
 

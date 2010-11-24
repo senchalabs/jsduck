@@ -3,7 +3,7 @@ require "test/unit"
 
 class TestClass < Test::Unit::TestCase
 
-  def test_local_methods
+  def test_local_members
     cls = JsDuck::Class.new({
       :name => "MyClass",
       :method => [
@@ -12,13 +12,13 @@ class TestClass < Test::Unit::TestCase
       ]
     });
 
-    ms = cls.methods_hash
+    ms = cls.members_hash(:method)
     assert_equal(2, ms.values.length)
     assert_equal("MyClass", ms["foo"][:member])
     assert_equal("MyClass", ms["bar"][:member])
   end
 
-  def test_parent_methods
+  def test_parent_members
     classes = {}
     parent = JsDuck::Class.new({
       :name => "ParentClass",
@@ -38,7 +38,7 @@ class TestClass < Test::Unit::TestCase
     }, classes);
     classes["MyClass"] = child
 
-    ms = child.methods_hash
+    ms = child.members_hash(:method)
     assert_equal(3, ms.values.length)
     assert_equal("MyClass", ms["foo"][:member], "foo should be overridden in child class")
     assert_equal("MyClass", ms["bar"][:member], "bar is only in child class")

@@ -45,11 +45,11 @@ module JsDuck
     end
 
     def configs
-      table("configs", "Config Options", "Config Options", @cls[:cfg].collect {|c| config_row(c) })
+      table("configs", "Config Options", "Config Options", @cls.members(:cfg).collect {|c| config_row(c) })
     end
 
     def config_row(cfg)
-      table_row("config-row " + expandable_class(cfg),
+      table_row("config-row", cfg,
         "<a id='#{@cls.full_name}-#{cfg[:name]}'></a>" +
         "<b><a href='source/sample.html#cfg-#{@cls.full_name}-#{cfg[:name]}'>#{cfg[:name]}</a></b> : #{cfg[:type]}" +
         mdesc(cfg)
@@ -57,11 +57,11 @@ module JsDuck
     end
 
     def properties
-      table("props", "Public Properties", "Property", @cls[:property].collect {|p| property_row(p) })
+      table("props", "Public Properties", "Property", @cls.members(:property).collect {|p| property_row(p) })
     end
 
     def property_row(prop)
-      table_row("property-row " + expandable_class(prop),
+      table_row("property-row", prop,
         "<a id='#{@cls.full_name}-#{prop[:name]}'></a>" +
         "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{prop[:name]}'>#{prop[:name]}</a></b> : #{prop[:type]}" +
         mdesc(prop)
@@ -69,25 +69,24 @@ module JsDuck
     end
 
     def methods
-      table("methods", "Public Methods", "Method", @cls.methods.collect {|m| method_row(m) })
+      table("methods", "Public Methods", "Method", @cls.members(:method).collect {|m| method_row(m) })
     end
 
     def method_row(method)
-      table_row("method-row " + expandable_class(method),
+      table_row("method-row", method,
         "<a id='#{@cls.full_name}-#{method[:name]}'></a>" +
         "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{method[:name]}'>#{method[:name]}</a></b>()" +
         " : " + (method[:return] ? (method[:return][:type] || "void") : "void") +
-        mdesc(method),
-        Class.short_name(method[:member])
+        mdesc(method)
       )
     end
 
     def events
-      table("events", "Public Events", "Event", @cls[:event].collect {|e| event_row(e) })
+      table("events", "Public Events", "Event", @cls.members(:event).collect {|e| event_row(e) })
     end
 
     def event_row(event)
-      table_row("method-row " + expandable_class(event),
+      table_row("method-row", event,
         "<a id='#{@cls.full_name}-#{event[:name]}'></a>" +
         "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{event[:name]}'>#{event[:name]}</a></b> : ()" +
         mdesc(event)
@@ -124,12 +123,12 @@ module JsDuck
       ].join("\n")
     end
 
-    def table_row(className, contents, defined_by=nil)
+    def table_row(className, item, contents)
       [
-       "<tr class='#{className}'>",
+       "<tr class='#{className} #{expandable_class(item)}'>",
          "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
          "<td class='sig'>#{contents}</td>",
-         "<td class='msource'>#{defined_by ? defined_by : @cls.short_name}</td>",
+         "<td class='msource'>#{Class.short_name(item[:member])}</td>",
        "</tr>",
       ].join("")
     end
