@@ -4,12 +4,39 @@ module JsDuck
   # methods on it.  Otherwise it acts like Hash, providing the []
   # method.
   class Class
-    def initialize(doc)
+    def initialize(doc, classes={})
       @doc = doc
+      @classes = classes
     end
 
     def [](key)
       @doc[key]
+    end
+
+    # Returns instance of parent class, or nil if there is none
+    def parent
+      @doc[:extends] ? @classes[@doc[:extends]] : nil
+    end
+
+    # Returns array of all methods in a class, sorted by name.
+    # See methods_hash for details.
+    def methods
+      methods_hash.values.sort {|a,b| a[:name] <=> b[:name] }
+    end
+
+    # Returns hash of methods in class (and parent classes).
+    # When parent and child have methods with same name,
+    # method from child overrides tha parent method.
+    #
+    # We also set :member property to each method to the full class
+    # name where it belongs, so one can tell them apart afterwards.
+    def methods_hash
+      parent_methods = parent ? parent.methods_hash : {}
+      @doc[:method].each do |m|
+        m[:member] = full_name
+        parent_methods[m[:name]] = m
+      end
+      parent_methods
     end
 
     # A way to access full class name with similar syntax to

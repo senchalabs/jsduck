@@ -69,15 +69,16 @@ module JsDuck
     end
 
     def methods
-      table("methods", "Public Methods", "Method", @cls[:method].collect {|m| method_row(m) })
+      table("methods", "Public Methods", "Method", @cls.methods.collect {|m| method_row(m) })
     end
 
     def method_row(method)
       table_row("method-row " + expandable_class(method),
         "<a id='#{@cls.full_name}-#{method[:name]}'></a>" +
         "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{method[:name]}'>#{method[:name]}</a></b>()" +
-        " : " + (method[:return] ? method[:return][:type] : "void") +
-        mdesc(method)
+        " : " + (method[:return] ? (method[:return][:type] || "void") : "void") +
+        mdesc(method),
+        Class.short_name(method[:member])
       )
     end
 
@@ -123,12 +124,12 @@ module JsDuck
       ].join("\n")
     end
 
-    def table_row(className, contents)
+    def table_row(className, contents, defined_by=nil)
       [
        "<tr class='#{className}'>",
          "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
          "<td class='sig'>#{contents}</td>",
-         "<td class='msource'>#{@cls.short_name}</td>",
+         "<td class='msource'>#{defined_by ? defined_by : @cls.short_name}</td>",
        "</tr>",
       ].join("")
     end

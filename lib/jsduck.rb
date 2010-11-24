@@ -50,15 +50,15 @@ module JsDuck
   # Filters out class-documentations, converting them to Class objects.
   # For each other type, prints a warning message and discards it
   def self.filter_classes(docs)
-    classes = []
+    classes = {}
     docs.each do |d|
       if d[:tagname] == :class
-        classes << Class.new(d)
+        classes[d[:name]] = Class.new(d, classes)
       else
         puts "Warning: Ignoring " + d[:tagname].to_s + ": " + (d[:name] || "")
       end
     end
-    classes
+    classes.values
   end
 
   def self.print_debug(docs)
