@@ -23,11 +23,14 @@ module JsDuck
     # Extracts content inside /** ... */
     def purify(input)
       result = []
+      # Remove the beginning /** and end */
+      input = input.sub(/\A\/\*\* ?/, "").sub(/ ?\*\/\Z/, "")
+      # Now we are left with only two types of lines:
+      # - those beginning with *
+      # - and those without it
       input.each_line do |line|
         line.chomp!
-        if line =~ /\A\/\*\*/ || line =~ /\*\/\Z/ then
-          # ignore first and last line
-        elsif line =~ /\A\s*\*\s?(.*)\Z/ then
+        if line =~ /\A\s*\*\s?(.*)\Z/ then
           result << $1
         else
           result << line

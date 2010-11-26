@@ -36,5 +36,11 @@ class TestDocParser < Test::Unit::TestCase
     assert_equal("Boolean|String", doc[0][:type])
   end
 
+  def test_single_line_doc_comment
+    doc = parse_single("/** @event blah */")
+    assert_equal(:event, doc[0][:tagname])
+    assert_equal("blah", doc[0][:name])
+  end
+
 end
 
