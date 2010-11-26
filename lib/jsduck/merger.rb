@@ -48,8 +48,7 @@ module JsDuck
 
     # Class name begins with upcase char
     def class_name?(*name_chain)
-      name = name_chain.last
-      return name[0,1] == name[0,1].upcase
+      return name_chain.last =~ /\A[A-Z]/
     end
 
     def create_class(docs, code)

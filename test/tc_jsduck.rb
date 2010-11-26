@@ -297,6 +297,16 @@ function Bar(){}
     assert_equal("Foo", docs[0][:name])
   end
 
+  def test_underscore_does_not_imply_class_name
+    # name beginning with uppercase letter is assumed to be class name,
+    # but we have to ensure that "_" is not treated as uppercase letter.
+    docs = JsDuck.parse("
+/** */
+_blah = {}
+")
+    assert_equal(:property, docs[0][:tagname])
+  end
+
   def test_implicit_extends
     docs = JsDuck.parse("
 /**
