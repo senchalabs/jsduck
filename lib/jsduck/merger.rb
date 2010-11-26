@@ -27,7 +27,7 @@ module JsDuck
         :event
       elsif doc_map[:method]
         :method
-      elsif doc_map[:property]
+      elsif doc_map[:property] || doc_map[:type]
         :property
       elsif code[:type] == :ext_extend
         :class

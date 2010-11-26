@@ -399,6 +399,18 @@ foo: true,
     assert_equal("My comment", docs[0][:doc])
   end
 
+  def test_type_implies_property
+    docs = JsDuck.parse("
+/**
+ * @type Boolean
+ */
+MY_CONSTANT: true,
+")
+    assert_equal(:property, docs[0][:tagname])
+    assert_equal("MY_CONSTANT", docs[0][:name])
+    assert_equal("Boolean", docs[0][:type])
+  end
+
   def test_property_ident_chain_begins_with_this
     docs = JsDuck.parse("
 /**
