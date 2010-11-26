@@ -18,6 +18,12 @@ module JsDuck
       @doc[:extends] ? @classes[@doc[:extends]] : nil
     end
 
+    # Returns true when this class inherits from the specified class.
+    # Also returns true when the class itself is the one we are asking about.
+    def inherits_from?(class_name)
+      return full_name == class_name || (parent ? parent.inherits_from?(class_name) : false)
+    end
+
     # Returns array of all members of particular type in a class,
     # sorted by name.  See members_hash for details.
     def members(type)

@@ -45,5 +45,33 @@ class TestClass < Test::Unit::TestCase
     assert_equal("ParentClass", ms["baz"][:member], "baz is only in parent class")
   end
 
+  def test_inherits_from
+    classes = {}
+    parent = JsDuck::Class.new({
+      :name => "Parent",
+    }, classes);
+    classes["Parent"] = parent
+
+    child = JsDuck::Class.new({
+      :name => "Child",
+      :extends => "Parent",
+    }, classes);
+    classes["Child"] = child
+
+    grandchild = JsDuck::Class.new({
+      :name => "GrandChild",
+      :extends => "Child",
+    }, classes);
+    classes["GrandChild"] = grandchild
+
+    assert_equal(true, parent.inherits_from?("Parent"), "Parent inherits from Parent")
+    assert_equal(false, parent.inherits_from?("Child"), "Parent does not inherit from Child")
+
+    assert_equal(true, child.inherits_from?("Parent"), "Child inherits from Parent")
+
+    assert_equal(true, grandchild.inherits_from?("Parent"), "GrandChild inherits from Parent")
+    assert_equal(true, grandchild.inherits_from?("Child"), "GrandChild inherits from Child")
+  end
+
 end
 

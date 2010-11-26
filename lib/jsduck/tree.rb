@@ -72,10 +72,20 @@ module JsDuck
         :text => cls.short_name,
         :id => cls.full_name,
         :isClass => true,
-        :iconCls => cls[:singleton] ? "icon-static" : "icon-cls",
+        :iconCls => class_icon(cls),
         :cls => "cls",
         :leaf => true
       }
+    end
+
+    def class_icon(cls)
+      if cls[:singleton]
+        "icon-static"
+      elsif cls.inherits_from?("Ext.Component")
+        "icon-cmp"
+      else
+        "icon-cls"
+      end
     end
 
     # Given full package name like my.package creates package node
