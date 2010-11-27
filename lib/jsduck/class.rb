@@ -24,13 +24,13 @@ module JsDuck
       return full_name == class_name || (parent ? parent.inherits_from?(class_name) : false)
     end
 
-    # Returns array of all members of particular type in a class,
+    # Returns array of all public members of particular type in a class,
     # sorted by name.  See members_hash for details.
     def members(type)
       members_hash(type).values.sort {|a,b| a[:name] <=> b[:name] }
     end
 
-    # Returns hash of members of class (and parent classes).
+    # Returns hash of public members of class (and parent classes).
     # Members are methods, properties, cfgs, events (member type
     # is speified through 'type' parameter).
     #
@@ -43,7 +43,7 @@ module JsDuck
       parent_members = parent ? parent.members_hash(type) : {}
       @doc[type].each do |m|
         m[:member] = full_name
-        parent_members[m[:name]] = m
+        parent_members[m[:name]] = m if !m[:private]
       end
       parent_members
     end

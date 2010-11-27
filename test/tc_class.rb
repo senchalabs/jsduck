@@ -45,6 +45,23 @@ class TestClass < Test::Unit::TestCase
     assert_equal("ParentClass", ms["baz"][:member], "baz is only in parent class")
   end
 
+  def test_private_members_are_excluded
+    cls = JsDuck::Class.new({
+      :name => "MyClass",
+      :method => [
+        {:name => "foo"},
+        {:name => "bar", :private => true},
+        {:name => "baz"},
+        {:name => "zed", :private => true},
+      ]
+    });
+
+    ms = cls.members_hash(:method)
+    assert_equal(2, ms.values.length)
+    assert(ms["foo"])
+    assert(ms["baz"])
+  end
+
   def test_inherits_from
     classes = {}
     parent = JsDuck::Class.new({
