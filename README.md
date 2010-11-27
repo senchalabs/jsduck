@@ -45,3 +45,19 @@ Some links:
 
 * [ext-doc @tags](http://code.google.com/p/ext-doc/wiki/TagSpecification)
 * [jsdoc-toolkit @tags](http://code.google.com/p/jsdoc-toolkit/w/list)
+
+
+List of doc-comment errors found in ExtJS source
+------------------------------------------------
+
+The file `src/core/Error.js` documents `Ext.handleError` method. But
+that doc-comment doesn't follow a @class definition, nor does it
+contain @member, nor is it marked with @private, @hide, or @ignore.
+Therefore this method is simply not included in official ExtJS
+documentation.
+
+The file `src/ext-core/src/core/Ext.js` has a doc-comment that says
+"Removes a DOM node from the document." but it contains no @tags and
+is followed by another doc-comment.  The result is that official ExtJS
+documentation simply lists a nameless property of `Ext` class.
+
