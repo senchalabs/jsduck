@@ -148,8 +148,8 @@ module JsDuck
       doc_map = build_doc_map(docs)
       return {
         :tagname => :property,
-        :name => detect_name(:prop, doc_map, code),
-        :type => detect_type(:prop, doc_map, code),
+        :name => detect_name(:property, doc_map, code),
+        :type => detect_type(:property, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],

@@ -394,7 +394,19 @@ foo: true,
     assert_equal("Boolean", docs[0][:type])
   end
 
-  def test_property
+  def test_explicit_property
+    docs = JsDuck.parse("
+/**
+ * @property {Integer} foo  My comment
+ */
+")
+    assert_equal(:property, docs[0][:tagname])
+    assert_equal("foo", docs[0][:name])
+    assert_equal("Integer", docs[0][:type])
+    assert_equal("My comment", docs[0][:doc])
+  end
+
+  def test_property_with_type
     docs = JsDuck.parse("
 /**
  * @property
