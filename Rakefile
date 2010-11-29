@@ -16,4 +16,6 @@ Spec::Rake::SpecTask.new(:spec) do |spec|
   spec.spec_files = FileList["spec/**/*_spec.rb"]
 end
 
-task :default => :test
+task :all_tests => [:test, :spec]
+
+task :default => :all_tests
