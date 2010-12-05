@@ -61,3 +61,6 @@ The file `src/ext-core/src/core/Ext.js` has a doc-comment that says
 is followed by another doc-comment.  The result is that official ExtJS
 documentation simply lists a nameless property of `Ext` class.
 
+For some reason `@see` is only used inside normal comments, not in
+doc-comments.  There are only 7 of these though.
+
