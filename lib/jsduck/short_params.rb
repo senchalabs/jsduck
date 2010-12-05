@@ -1,17 +1,17 @@
 module JsDuck
 
-  # Renders method/event parameter lists
-  class ParamList
-    # Creates short parameters list used in signatures.
-    def short(params)
+  # Renders method/event parameters list in short form
+  # for use in signatures
+  class ShortParams
+    def render(params)
       if params.length > 0
-        "( " + params.collect {|p| format_short(p) }.join(", ") + " )"
+        "( " + params.collect {|p| render_single(p) }.join(", ") + " )"
       else
         "()"
       end
     end
 
-    def format_short(param)
+    def render_single(param)
       type = param[:type] || "Object"
       name = param[:name] || ""
       str = "<code>#{type} #{name}</code>"

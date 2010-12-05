@@ -8,11 +8,11 @@ module JsDuck
       @title = "Public Events"
       @column_title = "Event"
       @row_class = "method-row"
-      @param_list = ParamList.new
+      @short_params = ShortParams.new
     end
 
     def signature_suffix(item)
-      " : " + @param_list.short(item[:params])
+      " : " + @short_params.render(item[:params])
     end
   end
 
