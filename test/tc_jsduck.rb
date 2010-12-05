@@ -462,6 +462,10 @@ this.locked = false;
     assert_equal("Boolean", docs[0][:type])
     docs = JsDuck.parse(comment + "foo: false,")
     assert_equal("Boolean", docs[0][:type])
+    docs = JsDuck.parse(comment + "foo: function(){},")
+    assert_equal("Function", docs[0][:type])
+    docs = JsDuck.parse(comment + "function foo(){},")
+    assert_equal("Function", docs[0][:type])
   end
 
   def test_visibility_modifiers

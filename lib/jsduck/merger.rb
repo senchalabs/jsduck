@@ -178,10 +178,10 @@ module JsDuck
       elsif doc_map[:type]
         doc_map[:type].first[:type]
       elsif code[:type] == :function
-        :function
+        "Function"
       elsif code[:type] == :assignment && code[:right]
         if code[:right][:type] == :function
-          :function
+          "Function"
         elsif code[:right][:type] == :literal
           code[:right][:class]
         end
