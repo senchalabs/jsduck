@@ -42,7 +42,7 @@ module JsDuck
     end
 
     def description
-      "<div class='description'>#{@cls[:doc]}</div>"
+      "<div class='description'>#{@links.replace(@cls[:doc])}</div>"
     end
 
     def configs
