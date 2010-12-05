@@ -6,6 +6,7 @@ require 'jsduck/doc_parser'
 require 'jsduck/merger'
 require 'jsduck/class'
 require 'jsduck/tree'
+require 'jsduck/doc_links'
 require 'jsduck/page'
 require 'json'
 

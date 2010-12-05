@@ -4,6 +4,7 @@ module JsDuck
   class Page
     def initialize(cls)
       @cls = cls
+      @links = DocLinks.new(cls.full_name)
     end
 
     def to_html
@@ -94,7 +95,7 @@ module JsDuck
     end
 
     def mdesc(item)
-      "<div class='mdesc'>#{expandable_desc(item[:doc])}</div>"
+      "<div class='mdesc'>" + expandable_desc(@links.replace(item[:doc])) + "</div>"
     end
 
     def expandable_class(item)
