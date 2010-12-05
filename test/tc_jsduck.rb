@@ -199,15 +199,14 @@ function f(foo, bar){}
     assert_equal("blah", docs[0][:return][:doc])
   end
 
-  def test_typeless_param
+  def test_default_param_type_is_object
     docs = JsDuck.parse("/**
  * @method
- * @param x doc1
+ * @param
  */")
-    assert_equal("x", docs[0][:params][0][:name])
-    assert_equal("doc1", docs[0][:params][0][:doc])
-
-    assert_equal(nil, docs[0][:params][0][:type])
+    assert_equal("Object", docs[0][:params][0][:type])
+    assert_equal("", docs[0][:params][0][:name])
+    assert_equal("", docs[0][:params][0][:doc])
   end
 
   def test_event

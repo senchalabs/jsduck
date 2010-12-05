@@ -16,12 +16,10 @@ module JsDuck
     end
 
     def render_single(param)
-      type = param[:type] || "Object"
-      name = param[:name] || ""
-      doc = @links.replace(param[:doc] || "")
+      doc = @links.replace(param[:doc])
       return [
         "<li>",
-        "<code>#{name}</code> : #{type}",
+        "<code>#{param[:name]}</code> : #{param[:type]}",
         "<div class='sub-desc'>#{doc}</div>",
         "</li>",
       ].join("")

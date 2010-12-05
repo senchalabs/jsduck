@@ -213,9 +213,9 @@ module JsDuck
         im = implicit[i] || {}
         ex = explicit[i] || {}
         params << {
-          :type => ex[:type] || im[:type],
-          :name => ex[:name] || im[:name],
-          :doc => ex[:doc] || im[:doc],
+          :type => ex[:type] || im[:type] || "Object",
+          :name => ex[:name] || im[:name] || "",
+          :doc => ex[:doc] || im[:doc] || "",
         }
       end
       params
