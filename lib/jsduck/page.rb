@@ -110,8 +110,10 @@ module JsDuck
 
     def table_row(className, item, signature, contents)
       contents = @links.replace(contents)
+      expandable = expandable?(contents) ? 'expandable' : ''
+      inherited = inherited?(item) ? 'inherited' : ''
       [
-       "<tr class='#{className} #{expandable?(contents) ? 'expandable' : ''}'>",
+       "<tr class='#{className} #{expandable} #{inherited}'>",
          "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
          "<td class='sig'>#{signature}<div class='mdesc'>#{expandable_desc(contents)}</div></td>",
          "<td class='msource'>#{Class.short_name(item[:member])}</td>",
@@ -140,6 +142,10 @@ module JsDuck
 
     def strip_tags(str)
       str.gsub(/<.*?>/, "")
+    end
+
+    def inherited?(item)
+      item[:member] != @cls.full_name
     end
 
   end
