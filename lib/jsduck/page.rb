@@ -14,10 +14,10 @@ module JsDuck
        abstract,
        description,
        "<div class='hr'></div>",
-       configs,
-       properties,
-       methods,
-       events,
+       CfgTable.new(@cls).to_html,
+       PropertyTable.new(@cls).to_html,
+       MethodTable.new(@cls).to_html,
+       EventTable.new(@cls).to_html,
        "</div>",
       ].join("\n")
     end
@@ -44,110 +44,6 @@ module JsDuck
     def description
       "<div class='description'>#{@links.replace(@cls[:doc])}</div>"
     end
-
-    def configs
-      table("configs", "Config Options", "Config Options", @cls.members(:cfg).collect {|c| config_row(c) })
-    end
-
-    def config_row(cfg)
-      table_row("config-row", cfg,
-        "<a id='#{@cls.full_name}-#{cfg[:name]}'></a>" +
-        "<b><a href='source/sample.html#cfg-#{@cls.full_name}-#{cfg[:name]}'>#{cfg[:name]}</a></b> : #{cfg[:type]}",
-        cfg[:doc]
-      )
-    end
-
-    def properties
-      table("props", "Public Properties", "Property", @cls.members(:property).collect {|p| property_row(p) })
-    end
-
-    def property_row(prop)
-      table_row("property-row", prop,
-        "<a id='#{@cls.full_name}-#{prop[:name]}'></a>" +
-        "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{prop[:name]}'>#{prop[:name]}</a></b> : #{prop[:type]}",
-        prop[:doc]
-      )
-    end
-
-    def methods
-      table("methods", "Public Methods", "Method", @cls.members(:method).collect {|m| method_row(m) })
-    end
-
-    def method_row(method)
-      table_row("method-row", method,
-        "<a id='#{@cls.full_name}-#{method[:name]}'></a>" +
-        "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{method[:name]}'>#{method[:name]}</a></b>()" +
-        " : " + (method[:return] ? (method[:return][:type] || "void") : "void"),
-        method[:doc]
-      )
-    end
-
-    def events
-      table("events", "Public Events", "Event", @cls.members(:event).collect {|e| event_row(e) })
-    end
-
-    def event_row(event)
-      table_row("method-row", event,
-        "<a id='#{@cls.full_name}-#{event[:name]}'></a>" +
-        "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{event[:name]}'>#{event[:name]}</a></b> : ()",
-        event[:doc]
-      )
-    end
-
-    def table(idSuffix, title, columnTitle, rows)
-      # When no rows to show, create no table whatsoever
-      return "" if rows.length == 0
-
-      [
-       "<a id='#{@cls.full_name}-#{idSuffix}'></a>",
-       "<h2>#{title}</h2>",
-       "<table cellspacing='0' class='member-table'><tbody>",
-       "<tr><th colspan='2' class='sig-header'>#{columnTitle}</th><th class='msource-header'>Defined By</th></tr>",
-       rows.join("\n"),
-       "</tbody></table>",
-      ].join("\n")
-    end
-
-    def table_row(className, item, signature, contents)
-      contents = @links.replace(contents)
-      expandable = expandable?(contents) ? 'expandable' : ''
-      inherited = inherited?(item) ? 'inherited' : ''
-      [
-       "<tr class='#{className} #{expandable} #{inherited}'>",
-         "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
-         "<td class='sig'>#{signature}<div class='mdesc'>#{expandable_desc(contents)}</div></td>",
-         "<td class='msource'>#{Class.short_name(item[:member])}</td>",
-       "</tr>",
-      ].join("")
-    end
-
-    # 116 chars is also where ext-doc makes its cut, but unlike
-    # ext-doc we only make the cut when there's more than 120 chars.
-    #
-    # This way we don't get stupid expansions like:
-    #
-    #   Blah blah blah some text...
-    #
-    # expanding to:
-    #
-    #   Blah blah blah some text.
-    #
-    def expandable_desc(doc)
-      expandable?(doc) ? "<div class='short'>#{strip_tags(doc)[0..116]}...</div><div class='long'>#{doc}</div>" : doc
-    end
-
-    def expandable?(doc)
-      strip_tags(doc).length > 120
-    end
-
-    def strip_tags(str)
-      str.gsub(/<.*?>/, "")
-    end
-
-    def inherited?(item)
-      item[:member] != @cls.full_name
-    end
-
   end
 
 end
