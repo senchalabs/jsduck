@@ -45,6 +45,14 @@ module JsDuck
       return "<a id='#{id}'></a><b><a href='#{src}'>#{item[:name]}</a></b>" + signature_suffix(item)
     end
 
+    # Creates parameter list used in method and event signature.
+    def short_param_list(item)
+      params = item[:params].collect do |p|
+        (p[:type] || "Object") + " " + (p[:name] || "")
+      end
+      return params.length > 0 ? ("( " + params.join(", ") + " )") : "()"
+    end
+
     # 116 chars is also where ext-doc makes its cut, but unlike
     # ext-doc we only make the cut when there's more than 120 chars.
     #

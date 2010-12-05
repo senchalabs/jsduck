@@ -11,7 +11,7 @@ module JsDuck
     end
 
     def signature_suffix(item)
-      " : ()"
+      " : " + short_param_list(item)
     end
   end
 

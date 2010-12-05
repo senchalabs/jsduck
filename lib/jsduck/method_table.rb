@@ -13,14 +13,6 @@ module JsDuck
     def signature_suffix(item)
       short_param_list(item) + " : " + (item[:return] ? (item[:return][:type] || "void") : "void")
     end
-
-    def short_param_list(item)
-      params = item[:params].collect do |p|
-        (p[:type] || "Object") + " " + (p[:name] || "")
-      end
-      return params.length > 0 ? ("( " + params.join(", ") + " )") : "()"
-    end
-
   end
 
 end
