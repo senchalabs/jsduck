@@ -1,6 +1,6 @@
 require "jsduck/class"
 
-describe Class do
+describe JsDuck::Class do
 
   describe "#members_hash" do
 
