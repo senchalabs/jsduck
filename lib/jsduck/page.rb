@@ -119,8 +119,19 @@ module JsDuck
       ].join("")
     end
 
+    # 116 chars is also where ext-doc makes its cut, but unlike
+    # ext-doc we only make the cut when there's more than 120 chars.
+    #
+    # This way we don't get stupid expansions like:
+    #
+    #   Blah blah blah some text...
+    #
+    # expanding to:
+    #
+    #   Blah blah blah some text.
+    #
     def expandable_desc(doc)
-      expandable?(doc) ? "<div class='short'>#{strip_tags(doc)[0..117]}...</div><div class='long'>#{doc}</div>" : doc
+      expandable?(doc) ? "<div class='short'>#{strip_tags(doc)[0..116]}...</div><div class='long'>#{doc}</div>" : doc
     end
 
     def expandable?(doc)
