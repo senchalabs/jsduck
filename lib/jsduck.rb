@@ -105,7 +105,7 @@ if __FILE__ == $0 then
       output_dir = path
     end
 
-    opts.on('--verbose', "This will fill up your console.") do
+    opts.on('-v', '--verbose', "This will fill up your console.") do
       verbose = true
     end
 
