@@ -3,7 +3,8 @@ module JsDuck
   # Base class for creating HTML tables of class members.
   #
   # Subclasses must set variables @type, @id, @title, @column_title,
-  # @row_class, and implement the signature_suffix() method.
+  # @row_class, and implement the signature_suffix() and extra_doc()
+  # methods.
   class Table
     def initialize(cls)
       @cls = cls
@@ -27,13 +28,15 @@ module JsDuck
     end
 
     def row(item)
-      contents = @links.replace(item[:doc])
-      expandable = expandable?(contents) ? 'expandable' : ''
+      p_doc = primary_doc(item)
+      e_doc = extra_doc(item)
+      description = expandable_desc(p_doc, e_doc)
+      expandable = expandable?(p_doc, e_doc) ? 'expandable' : ''
       inherited = inherited?(item) ? 'inherited' : ''
       [
        "<tr class='#{@row_class} #{expandable} #{inherited}'>",
          "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
-         "<td class='sig'>#{signature(item)}<div class='mdesc'>#{expandable_desc(contents)}</div></td>",
+         "<td class='sig'>#{signature(item)}<div class='mdesc'>#{description}</div></td>",
          "<td class='msource'>#{Class.short_name(item[:member])}</td>",
        "</tr>",
       ].join("")
@@ -56,12 +59,30 @@ module JsDuck
     #
     #   Blah blah blah some text.
     #
-    def expandable_desc(doc)
-      expandable?(doc) ? "<div class='short'>#{strip_tags(doc)[0..116]}...</div><div class='long'>#{doc}</div>" : doc
+    def expandable_desc(p_doc, e_doc)
+      if expandable?(p_doc, e_doc)
+        # Only show ellipsis when primary_doc is shortened.
+        tagless = strip_tags(p_doc)
+        short_doc = tagless[0..116]
+        ellipsis = tagless.length > short_doc.length ? "..." : ""
+        "<div class='short'>#{short_doc}#{ellipsis}</div>" +
+          "<div class='long'>#{p_doc}#{e_doc}</div>"
+      else
+        p_doc
+      end
     end
 
-    def expandable?(doc)
-      strip_tags(doc).length > 120
+    def primary_doc(item)
+      @links.replace(item[:doc])
+    end
+
+    # Override to append extra documentation to the doc found in item[:doc]
+    def extra_doc(item)
+      ""
+    end
+
+    def expandable?(p_doc, e_doc)
+      strip_tags(p_doc).length > 120 || e_doc.length > 0
     end
 
     def strip_tags(str)

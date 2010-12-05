@@ -9,6 +9,7 @@ module JsDuck
       @column_title = "Method"
       @row_class = "method-row"
       @short_params = ShortParams.new
+      @long_params = LongParams.new(@cls)
     end
 
     def signature_suffix(item)
@@ -17,6 +18,15 @@ module JsDuck
 
     def return_type(item)
       item[:return] ? (item[:return][:type] || "void") : "void"
+    end
+
+    def extra_doc(item)
+      [
+        "<div class='mdetail-params'>",
+        "<strong>Parameters:</strong>",
+        @long_params.render(item[:params]),
+        "</div>"
+      ].join("\n")
     end
   end
 
