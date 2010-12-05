@@ -10,12 +10,9 @@ module JsDuck
       @row_class = "method-row"
     end
 
-    def signature(item)
-      id = @cls.full_name+ "-" + item[:name]
-      src = "source/sample.html#event-" + id
-      return "<a id='#{id}'></a><b><a href='#{src}'>#{item[:name]}</a></b> : ()"
+    def signature_suffix(item)
+      " : ()"
     end
-
   end
 
 end

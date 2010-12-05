@@ -10,11 +10,8 @@ module JsDuck
       @row_class = "method-row"
     end
 
-    def signature(item)
-      id = @cls.full_name+ "-" + item[:name]
-      src = "source/sample.html#method-" + id
-      type = item[:return] ? (item[:return][:type] || "void") : "void"
-      return "<a id='#{id}'></a><b><a href='#{src}'>#{item[:name]}</a></b>() : #{type}"
+    def signature_suffix(item)
+      "() : " + (item[:return] ? (item[:return][:type] || "void") : "void")
     end
 
   end

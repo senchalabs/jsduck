@@ -3,7 +3,7 @@ module JsDuck
   # Base class for creating HTML tables of class members.
   #
   # Subclasses must set variables @type, @id, @title, @column_title,
-  # @row_class, and implement the signature() method.
+  # @row_class, and implement the signature_suffix() method.
   class Table
     def initialize(cls)
       @cls = cls
@@ -37,6 +37,12 @@ module JsDuck
          "<td class='msource'>#{Class.short_name(item[:member])}</td>",
        "</tr>",
       ].join("")
+    end
+
+    def signature(item)
+      id = @cls.full_name+ "-" + item[:name]
+      src = "source/sample.html#" + id
+      return "<a id='#{id}'></a><b><a href='#{src}'>#{item[:name]}</a></b>" + signature_suffix(item)
     end
 
     # 116 chars is also where ext-doc makes its cut, but unlike

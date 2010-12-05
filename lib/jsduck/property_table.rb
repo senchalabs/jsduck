@@ -10,10 +10,8 @@ module JsDuck
       @row_class = "property-row"
     end
 
-    def signature(item)
-      id = @cls.full_name+ "-" + item[:name]
-      src = "source/sample.html#prop-" + id
-      return "<a id='#{id}'></a><b><a href='#{src}'>#{item[:name]}</a></b> : #{item[:type]}"
+    def signature_suffix(item)
+      " : " + (item[:type] || "Object")
     end
 
   end
