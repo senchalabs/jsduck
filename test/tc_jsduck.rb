@@ -182,6 +182,14 @@ function f(foo, bar){}
     assert_equal("Some really\nlong comment.", docs[0][:return][:doc])
   end
 
+  def test_default_return_type_is_void
+    docs = JsDuck.parse("/**
+ * @method foo
+ */")
+    assert_equal("void", docs[0][:return][:type])
+    assert_equal("", docs[0][:return][:doc])
+  end
+
   def test_returns_is_alias_for_return
     docs = JsDuck.parse("/**
  * @method
@@ -191,18 +199,15 @@ function f(foo, bar){}
     assert_equal("blah", docs[0][:return][:doc])
   end
 
-  def test_typeless_param_and_return
+  def test_typeless_param
     docs = JsDuck.parse("/**
  * @method
  * @param x doc1
- * @return doc2
  */")
     assert_equal("x", docs[0][:params][0][:name])
     assert_equal("doc1", docs[0][:params][0][:doc])
-    assert_equal("doc2", docs[0][:return][:doc])
 
     assert_equal(nil, docs[0][:params][0][:type])
-    assert_equal(nil, docs[0][:return][:type])
   end
 
   def test_event

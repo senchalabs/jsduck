@@ -116,7 +116,7 @@ module JsDuck
         :name => detect_name(:method, doc_map, code),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
-        :return => doc_map[:return] ? doc_map[:return].first : nil,
+        :return => detect_return(doc_map),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],
       }
@@ -233,6 +233,14 @@ module JsDuck
 
     def detect_explicit_params(docs)
       docs.find_all {|tag| tag[:tagname] == :param}
+    end
+
+    def detect_return(doc_map)
+      ret = doc_map[:return] ? doc_map[:return].first : {}
+      return {
+        :type => ret[:type] || "void",
+        :doc => ret[:doc] || "",
+      }
     end
 
     # Combines :doc-s of most tags

@@ -13,7 +13,7 @@ module JsDuck
     end
 
     def signature_suffix(item)
-      @short_params.render(item[:params]) + " : " + return_type(item)
+      @short_params.render(item[:params]) + " : " + item[:return][:type]
     end
 
     def extra_doc(item)
@@ -28,21 +28,13 @@ module JsDuck
     end
 
     def render_return(item)
-      type = return_type(item)
-      doc = return_doc(item)
+      type = item[:return][:type]
+      doc = item[:return][:doc]
       if type == "void" && doc.length == 0
         "<ul><li>void</li></ul>"
       else
         "<ul><li><code>#{type}</code><div class='sub-desc'>#{doc}</div></li></ul>"
       end
-    end
-
-    def return_type(item)
-      item[:return] ? (item[:return][:type] || "void") : "void"
-    end
-
-    def return_doc(item)
-      item[:return] ? (item[:return][:doc] || "") : ""
     end
   end
 
