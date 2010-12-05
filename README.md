@@ -29,9 +29,9 @@ List of @tags to support
 * @return - OK
 * @static - OK
 * @xtype - OK
+* {@link} - OK
 
 * @member
-* @link
 
 * @ignore @hide @private - in JsDuck implementation @ignore and @hide
   are considered aliases for @private.  (Some usage stats from ExtJS
