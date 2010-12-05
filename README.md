@@ -44,7 +44,7 @@ List of @tags to support
 Some links:
 
 * [ext-doc @tags](http://code.google.com/p/ext-doc/wiki/TagSpecification)
-* [jsdoc-toolkit @tags](http://code.google.com/p/jsdoc-toolkit/w/list)
+* [jsdoc-toolkit @tags](http://code.google.com/p/jsdoc-toolkit/wiki/TagReference)
 
 
 List of doc-comment errors found in ExtJS source
