@@ -1,5 +1,5 @@
-JS-Duck
-=======
+JsDuck
+======
 
 Simple JavaScript Duckumentation generator.
 
