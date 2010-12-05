@@ -52,8 +52,8 @@ module JsDuck
     def config_row(cfg)
       table_row("config-row", cfg,
         "<a id='#{@cls.full_name}-#{cfg[:name]}'></a>" +
-        "<b><a href='source/sample.html#cfg-#{@cls.full_name}-#{cfg[:name]}'>#{cfg[:name]}</a></b> : #{cfg[:type]}" +
-        mdesc(cfg)
+        "<b><a href='source/sample.html#cfg-#{@cls.full_name}-#{cfg[:name]}'>#{cfg[:name]}</a></b> : #{cfg[:type]}",
+        cfg[:doc]
       )
     end
 
@@ -64,8 +64,8 @@ module JsDuck
     def property_row(prop)
       table_row("property-row", prop,
         "<a id='#{@cls.full_name}-#{prop[:name]}'></a>" +
-        "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{prop[:name]}'>#{prop[:name]}</a></b> : #{prop[:type]}" +
-        mdesc(prop)
+        "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{prop[:name]}'>#{prop[:name]}</a></b> : #{prop[:type]}",
+        prop[:doc]
       )
     end
 
@@ -77,8 +77,8 @@ module JsDuck
       table_row("method-row", method,
         "<a id='#{@cls.full_name}-#{method[:name]}'></a>" +
         "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{method[:name]}'>#{method[:name]}</a></b>()" +
-        " : " + (method[:return] ? (method[:return][:type] || "void") : "void") +
-        mdesc(method)
+        " : " + (method[:return] ? (method[:return][:type] || "void") : "void"),
+        method[:doc]
       )
     end
 
@@ -89,25 +89,9 @@ module JsDuck
     def event_row(event)
       table_row("method-row", event,
         "<a id='#{@cls.full_name}-#{event[:name]}'></a>" +
-        "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{event[:name]}'>#{event[:name]}</a></b> : ()" +
-        mdesc(event)
+        "<b><a href='source/sample.html#prop-#{@cls.full_name}-#{event[:name]}'>#{event[:name]}</a></b> : ()",
+        event[:doc]
       )
-    end
-
-    def mdesc(item)
-      "<div class='mdesc'>" + expandable_desc(@links.replace(item[:doc])) + "</div>"
-    end
-
-    def expandable_class(item)
-      expandable?(item[:doc]) ? "expandable" : ""
-    end
-
-    def expandable_desc(doc)
-      expandable?(doc) ? "<div class='short'>#{doc[0..117]}...</div><div class='long'>#{doc}</div>" : doc
-    end
-
-    def expandable?(doc)
-      doc.length > 120
     end
 
     def table(idSuffix, title, columnTitle, rows)
@@ -124,15 +108,29 @@ module JsDuck
       ].join("\n")
     end
 
-    def table_row(className, item, contents)
+    def table_row(className, item, signature, contents)
+      contents = @links.replace(contents)
       [
-       "<tr class='#{className} #{expandable_class(item)}'>",
+       "<tr class='#{className} #{expandable?(contents) ? 'expandable' : ''}'>",
          "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
-         "<td class='sig'>#{contents}</td>",
+         "<td class='sig'>#{signature}<div class='mdesc'>#{expandable_desc(contents)}</div></td>",
          "<td class='msource'>#{Class.short_name(item[:member])}</td>",
        "</tr>",
       ].join("")
     end
+
+    def expandable_desc(doc)
+      expandable?(doc) ? "<div class='short'>#{strip_tags(doc)[0..117]}...</div><div class='long'>#{doc}</div>" : doc
+    end
+
+    def expandable?(doc)
+      strip_tags(doc).length > 120
+    end
+
+    def strip_tags(str)
+      str.gsub(/<.*?>/, "")
+    end
+
   end
 
 end
