@@ -184,7 +184,11 @@ module JsDuck
           "Function"
         elsif code[:right][:type] == :literal
           code[:right][:class]
+        else
+          "Object"
         end
+      else
+        "Object"
       end
     end
 

@@ -11,7 +11,7 @@ module JsDuck
     end
 
     def signature_suffix(item)
-      " : " + (item[:type] || "Object")
+      " : " + item[:type]
     end
 
   end

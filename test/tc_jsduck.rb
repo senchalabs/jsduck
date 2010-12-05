@@ -468,6 +468,24 @@ this.locked = false;
     assert_equal("Function", docs[0][:type])
   end
 
+  def test_default_property_type_is_object
+    docs = JsDuck.parse("
+/**
+ * @property foo
+ */
+")
+    assert_equal("Object", docs[0][:type])
+  end
+
+  def test_default_cfg_type_is_object
+    docs = JsDuck.parse("
+/**
+ * @cfg foo
+ */
+")
+    assert_equal("Object", docs[0][:type])
+  end
+
   def test_visibility_modifiers
     ["@private", "@hide", "@ignore", "@protected"].each do |tagname|
       docs = JsDuck.parse("/**\n * #{tagname}\n */");
