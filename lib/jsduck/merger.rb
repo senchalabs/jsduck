@@ -114,6 +114,7 @@ module JsDuck
       return {
         :tagname => :method,
         :name => detect_name(:method, doc_map, code),
+        :member => detect_member(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :return => detect_return(doc_map),
@@ -127,6 +128,7 @@ module JsDuck
       return {
         :tagname => :event,
         :name => detect_name(:event, doc_map, code),
+        :member => detect_member(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :private => !!doc_map[:private],
@@ -138,6 +140,7 @@ module JsDuck
       return {
         :tagname => :cfg,
         :name => detect_name(:cfg, doc_map, code),
+        :member => detect_member(doc_map),
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
@@ -149,6 +152,7 @@ module JsDuck
       return {
         :tagname => :property,
         :name => detect_name(:property, doc_map, code),
+        :member => detect_member(doc_map),
         :type => detect_type(:property, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
@@ -168,6 +172,14 @@ module JsDuck
         name_type == :full_name ? code[:left].join(".") : code[:left].last
       else
         ""
+      end
+    end
+
+    def detect_member(doc_map)
+      if doc_map[:member]
+        doc_map[:member].first[:member]
+      else
+        nil
       end
     end
 

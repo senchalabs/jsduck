@@ -70,6 +70,8 @@ module JsDuck
           at_type
         elsif look(/@xtype\b/) then
           at_xtype
+        elsif look(/@member\b/) then
+          at_member
         elsif look(/@static\b/) then
           boolean_at_tag(/@static/, :static)
         elsif look(/@(private|ignore|hide|protected)\b/) then
@@ -176,6 +178,14 @@ module JsDuck
       match(/@xtype/)
       add_tag(:xtype)
       maybe_name
+      skip_white
+    end
+
+    # matches @member name ...
+    def at_member
+      match(/@member/)
+      add_tag(:member)
+      maybe_ident_chain(:member)
       skip_white
     end
 
