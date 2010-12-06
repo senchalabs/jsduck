@@ -9,9 +9,9 @@ describe JsDuck::Class do
       @parent = JsDuck::Class.new({
           :name => "ParentClass",
           :method => [
-            {:name => "baz"},
-            {:name => "foo"},
-            {:name => "frank", :private => true},
+            {:name => "baz", :member => "ParentClass"},
+            {:name => "foo", :member => "ParentClass"},
+            {:name => "frank", :member => "ParentClass", :private => true},
           ]
         }, @classes);
       @classes["ParentClass"] = @parent
@@ -19,9 +19,9 @@ describe JsDuck::Class do
           :name => "ChildClass",
           :extends => "ParentClass",
           :method => [
-            {:name => "foo"},
-            {:name => "bar"},
-            {:name => "zappa", :private => true},
+            {:name => "foo", :member => "ChildClass"},
+            {:name => "bar", :member => "ChildClass"},
+            {:name => "zappa", :member => "ChildClass", :private => true},
           ]
         }, @classes);
       @classes["ChildClass"] = @child

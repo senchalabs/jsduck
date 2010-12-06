@@ -54,10 +54,12 @@ module JsDuck
     def create_class(docs, code)
       groups = group_class_docs(docs)
       result = create_bare_class(groups[:class], code)
-      result[:cfg] = groups[:cfg].map { |tags| create_cfg(tags, {}) }
+      result[:cfg] = groups[:cfg].map { |tags| create_cfg(tags, {}, result[:name]) }
       result[:method] = []
       if groups[:constructor].length > 0
-        result[:method] << create_method(groups[:constructor], {})
+        constr = create_method(groups[:constructor], {})
+        constr[:member] = result[:name]
+        result[:method] << constr
       end
       result[:property] = []
       result[:event] = []
@@ -135,12 +137,12 @@ module JsDuck
       }
     end
 
-    def create_cfg(docs, code)
+    def create_cfg(docs, code, member = nil)
       doc_map = build_doc_map(docs)
       return {
         :tagname => :cfg,
         :name => detect_name(:cfg, doc_map, code),
-        :member => detect_member(doc_map),
+        :member => detect_member(doc_map) || member,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],

@@ -46,6 +46,7 @@ module JsDuck
           add_orphan(node)
         end
       elsif @current_class
+        node[:member] = @current_class[:name]
         @current_class[ node[:tagname] ] << node
       else
         add_orphan(node)

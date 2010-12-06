@@ -42,7 +42,6 @@ module JsDuck
     def members_hash(type)
       parent_members = parent ? parent.members_hash(type) : {}
       @doc[type].each do |m|
-        m[:member] = full_name
         parent_members[m[:name]] = m if !m[:private]
       end
       parent_members
