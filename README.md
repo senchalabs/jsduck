@@ -29,9 +29,8 @@ List of @tags to support
 * @return - OK
 * @static - OK
 * @xtype - OK
+* @member - OK
 * {@link} - OK
-
-* @member
 
 * @ignore @hide @private - in JsDuck implementation @ignore and @hide
   are considered aliases for @private.  (Some usage stats from ExtJS
@@ -47,8 +46,8 @@ Some links:
 * [jsdoc-toolkit @tags](http://code.google.com/p/jsdoc-toolkit/wiki/TagReference)
 
 
-List of doc-comment errors found in ExtJS source
-------------------------------------------------
+List of doc-comment errors(?) found in ExtJS source
+---------------------------------------------------
 
 The file `src/core/Error.js` documents `Ext.handleError` method. But
 that doc-comment doesn't follow a @class definition, nor does it
@@ -63,4 +62,13 @@ documentation simply lists a nameless property of `Ext` class.
 
 For some reason `@see` is only used inside normal comments, not in
 doc-comments.  There are only 7 of these though.
+
+Two uses of `@member` also name the item itself.  For example `@member
+Ext apply` - although that's pretty much useless as that is followed
+by code from which we can infer that the name should be `apply` plus
+it's preceded by `@class Ext` so a member declaration shouldn't be
+needed at all.  The other example is `@member Ext.Element
+getTextWidth`, again followed by code that says the same thing.  Given
+this silliness, JsDuck currently only supports the form `@member
+ClassName`.
 
