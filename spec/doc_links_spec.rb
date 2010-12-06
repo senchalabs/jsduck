@@ -1,6 +1,6 @@
 require "jsduck/doc_links"
 
-describe JsDuck::DocLinks, "#parse" do
+describe JsDuck::DocLinks, "#replace" do
 
   before do
     @links = JsDuck::DocLinks.new("Context")
