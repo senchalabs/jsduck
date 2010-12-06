@@ -1,3 +1,5 @@
+require 'jsduck/table'
+
 module JsDuck
 
   class CfgTable < Table

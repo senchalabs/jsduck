@@ -1,3 +1,9 @@
+require 'jsduck/doc_links'
+require 'jsduck/cfg_table'
+require 'jsduck/property_table'
+require 'jsduck/method_table'
+require 'jsduck/event_table'
+
 module JsDuck
 
   # Creates HTML documentation page for one class.

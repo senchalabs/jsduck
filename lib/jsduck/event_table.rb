@@ -1,3 +1,7 @@
+require 'jsduck/table'
+require 'jsduck/short_params'
+require 'jsduck/long_params'
+
 module JsDuck
 
   class EventTable < Table

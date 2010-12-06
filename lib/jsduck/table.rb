@@ -1,3 +1,5 @@
+require 'jsduck/doc_links'
+
 module JsDuck
 
   # Base class for creating HTML tables of class members.

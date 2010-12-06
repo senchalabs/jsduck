@@ -1,7 +1,3 @@
-require 'jsduck/lexer'
-require 'jsduck/parser'
-require 'jsduck/doc_parser'
-require 'jsduck/merger'
 require "jsduck/aggregator"
 
 describe JsDuck::Aggregator, "@member" do

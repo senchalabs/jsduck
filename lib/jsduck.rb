@@ -1,20 +1,8 @@
 $:.unshift File.dirname(__FILE__) # For running the actual JsDuck app
 
-require 'jsduck/lexer'
-require 'jsduck/parser'
-require 'jsduck/doc_parser'
-require 'jsduck/merger'
 require 'jsduck/aggregator'
 require 'jsduck/class'
 require 'jsduck/tree'
-require 'jsduck/doc_links'
-require 'jsduck/table'
-require 'jsduck/cfg_table'
-require 'jsduck/property_table'
-require 'jsduck/short_params'
-require 'jsduck/long_params'
-require 'jsduck/method_table'
-require 'jsduck/event_table'
 require 'jsduck/page'
 require 'json'
 

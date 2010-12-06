@@ -1,3 +1,7 @@
+require 'jsduck/parser'
+require 'jsduck/doc_parser'
+require 'jsduck/merger'
+
 module JsDuck
 
   # Combines JavaScript Parser, DocParser and Merger.

@@ -1,3 +1,4 @@
+require 'jsduck/lexer'
 
 module JsDuck
 
