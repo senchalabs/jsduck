@@ -4,6 +4,7 @@ require 'jsduck/lexer'
 require 'jsduck/parser'
 require 'jsduck/doc_parser'
 require 'jsduck/merger'
+require 'jsduck/aggregator'
 require 'jsduck/class'
 require 'jsduck/tree'
 require 'jsduck/doc_links'
@@ -23,25 +24,9 @@ require 'pp'
 
 module JsDuck
   def self.parse(input)
-    doc_parser = DocParser.new
-    merger = Merger.new
-    documentation = []
-    current_class = nil
-
-    Parser.new(input).parse.each do |docset|
-      node = merger.merge(doc_parser.parse(docset[:comment]), docset[:code])
-      # all methods, cfgs, ... following a class will be added to that class
-      if node[:tagname] == :class
-        current_class = node
-        documentation << node
-      elsif current_class
-        current_class[ node[:tagname] ] << node
-      else
-        documentation << node
-      end
-    end
-
-    documentation
+    agr = Aggregator.new
+    agr.parse(input)
+    agr.result
   end
 
   # Given array of filenames, parses all files and returns array of
