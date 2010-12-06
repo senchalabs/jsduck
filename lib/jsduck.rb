@@ -32,12 +32,12 @@ module JsDuck
   # Given array of filenames, parses all files and returns array of
   # documented items in all of those files.
   def self.parse_files(filenames, verbose)
-    docs = []
+    agr = Aggregator.new
     filenames.each do |name|
       puts "Parsing #{name} ..." if verbose
-      JsDuck.parse(IO.read(name)).each { |d| docs << d }
+      agr.parse(IO.read(name))
     end
-    docs
+    agr.result
   end
 
   # Filters out class-documentations, converting them to Class objects.
