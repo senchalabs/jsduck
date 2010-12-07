@@ -1,3 +1,5 @@
+require 'maruku'
+
 module JsDuck
 
   # Detects {@link ...} tags in text and replaces them with HTML links
@@ -42,6 +44,25 @@ module JsDuck
         "<a" + href + ext_cls + ext_member + ">" + text + "</a>"
       end
     end
+
+    # Formats doc-comment for placement into HTML.
+    # Renders it with Markdown-formatter if possible,
+    # and replaces @link-s.
+    def format(input)
+      # When comment doesn't contain HTML, treat it as
+      # Markdown-formatted text.
+      unless input =~ /<[a-z]/
+        begin
+          input = Maruku.new(input, {:on_error => :raise}).to_html
+        rescue MaRuKu::Exception
+          # When Maruku fails because of Markdown syntax error, assume
+          # the author didn't intend to write doc-comment in Markdown
+          # at all.
+        end
+      end
+      return replace(input)
+    end
+
   end
 
 end

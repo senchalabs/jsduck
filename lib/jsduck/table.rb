@@ -75,7 +75,7 @@ module JsDuck
     end
 
     def primary_doc(item)
-      @links.replace(item[:doc])
+      @links.format(item[:doc])
     end
 
     # Override to append extra documentation to the doc found in item[:doc]

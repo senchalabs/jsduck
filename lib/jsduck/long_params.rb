@@ -16,7 +16,7 @@ module JsDuck
     end
 
     def render_single(param)
-      doc = @links.replace(param[:doc])
+      doc = @links.format(param[:doc])
       return [
         "<li>",
         "<code>#{param[:name]}</code> : #{param[:type]}",
