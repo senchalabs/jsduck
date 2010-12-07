@@ -1,4 +1,4 @@
-require 'jsduck/doc_links'
+require 'jsduck/doc_formatter'
 
 module JsDuck
 
@@ -10,7 +10,7 @@ module JsDuck
   class Table
     def initialize(cls)
       @cls = cls
-      @links = DocLinks.new(cls.full_name)
+      @formatter = DocFormatter.new(cls.full_name)
     end
 
     def to_html
@@ -75,7 +75,7 @@ module JsDuck
     end
 
     def primary_doc(item)
-      @links.format(item[:doc])
+      @formatter.format(item[:doc])
     end
 
     # Override to append extra documentation to the doc found in item[:doc]

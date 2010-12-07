@@ -2,10 +2,8 @@ require 'maruku'
 
 module JsDuck
 
-  # Detects {@link ...} tags in text and replaces them with HTML links
-  # pointing to documentation.  In addition to the href attribute
-  # links will also contain ext:cls and ext:member attributes.
-  class DocLinks
+  # Formats doc-comments
+  class DocFormatter
     # Initializes instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
     # Context#blah is meant.
@@ -14,7 +12,9 @@ module JsDuck
     end
 
     # Replaces {@link Class#member link text} in given string with
-    # HTML links.
+    # HTML links pointing to documentation.  In addition to the href
+    # attribute links will also contain ext:cls and ext:member
+    # attributes.
     def replace(input)
       input.gsub(/\{@link +(\S*?)(?: +(.+?))?\}/) do
         target = $1

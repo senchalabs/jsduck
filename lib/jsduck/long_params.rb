@@ -1,10 +1,12 @@
+require "jsduck/doc_formatter"
+
 module JsDuck
 
   # Renders method/event parameters list in long form
   # for use in documentation body.
   class LongParams
     def initialize(cls)
-      @links = DocLinks.new(cls.full_name)
+      @formatter = DocFormatter.new(cls.full_name)
     end
 
     def render(params)
@@ -16,7 +18,7 @@ module JsDuck
     end
 
     def render_single(param)
-      doc = @links.format(param[:doc])
+      doc = @formatter.format(param[:doc])
       return [
         "<li>",
         "<code>#{param[:name]}</code> : #{param[:type]}",

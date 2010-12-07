@@ -1,4 +1,4 @@
-require 'jsduck/doc_links'
+require 'jsduck/doc_formatter'
 require 'jsduck/cfg_table'
 require 'jsduck/property_table'
 require 'jsduck/method_table'
@@ -10,7 +10,7 @@ module JsDuck
   class Page
     def initialize(cls)
       @cls = cls
-      @links = DocLinks.new(cls.full_name)
+      @formatter = DocFormatter.new(cls.full_name)
     end
 
     def to_html
@@ -48,7 +48,7 @@ module JsDuck
     end
 
     def description
-      "<div class='description'>#{@links.format(@cls[:doc])}</div>"
+      "<div class='description'>#{@formatter.format(@cls[:doc])}</div>"
     end
   end
 
