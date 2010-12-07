@@ -53,7 +53,7 @@ module JsDuck
       # Markdown-formatted text.
       unless input =~ /<[a-z]/
         begin
-          input = Maruku.new(input, {:on_error => :raise}).to_html
+          input = "<div class='markdown'>" + Maruku.new(input, {:on_error => :raise}).to_html + "</div>"
         rescue MaRuKu::Exception
           # When Maruku fails because of Markdown syntax error, assume
           # the author didn't intend to write doc-comment in Markdown
