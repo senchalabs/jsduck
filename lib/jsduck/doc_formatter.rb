@@ -1,4 +1,4 @@
-require 'maruku'
+require 'rdiscount'
 
 module JsDuck
 
@@ -46,21 +46,9 @@ module JsDuck
     end
 
     # Formats doc-comment for placement into HTML.
-    # Renders it with Markdown-formatter if possible,
-    # and replaces @link-s.
+    # Renders it with Markdown-formatter and replaces @link-s.
     def format(input)
-      # When comment doesn't contain HTML, treat it as
-      # Markdown-formatted text.
-      unless input =~ /<[a-z]/
-        begin
-          input = "<div class='markdown'>" + Maruku.new(input, {:on_error => :raise}).to_html + "</div>"
-        rescue MaRuKu::Exception
-          # When Maruku fails because of Markdown syntax error, assume
-          # the author didn't intend to write doc-comment in Markdown
-          # at all.
-        end
-      end
-      return replace(input)
+      replace("<div class='markdown'>" + RDiscount.new(input).to_html + "</div>")
     end
 
   end
