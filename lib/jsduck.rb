@@ -3,6 +3,7 @@ $:.unshift File.dirname(__FILE__) # For running the actual JsDuck app
 require 'jsduck/aggregator'
 require 'jsduck/class'
 require 'jsduck/tree'
+require 'jsduck/tree_icons'
 require 'jsduck/page'
 require 'json'
 
@@ -58,8 +59,10 @@ module JsDuck
   # Given array of doc-objects, generates namespace tree and writes in
   # in JSON form into a file.
   def self.write_tree(filename, docs)
-    js = "Docs.classData = " + JSON.generate( Tree.new.create(docs) ) + ";"
-    js += "Docs.icons = {};"
+    tree = Tree.new.create(docs)
+    icons = TreeIcons.new.extract_icons(tree)
+    js = "Docs.classData = " + JSON.generate( tree ) + ";"
+    js += "Docs.icons = " + JSON.generate( icons ) + ";"
     File.open(filename, 'w') {|f| f.write(js) }
   end
 
