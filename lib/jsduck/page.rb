@@ -35,12 +35,13 @@ module JsDuck
     def abstract
       [
        "<table cellspacing='0'>",
-       abstract_row("Package:", @cls.package_name),
-       abstract_row("Defined In:", "sample.js"),
-       abstract_row("Class:", "<a href='source/sample.html#cls-#{@cls.full_name}'>#{@cls.short_name}</a>"),
-       abstract_row("Extends:", @cls[:extends] || "Object"),
+        abstract_row("Extends:", @cls.parent ? class_link(@cls.parent.full_name) : "Object"),
        "</table>",
       ].join("\n")
+    end
+
+    def class_link(name)
+      "<a href='output/#{name}.html' ext:cls='#{name}'>#{name}</a>"
     end
 
     def abstract_row(label, info)
