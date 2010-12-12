@@ -210,12 +210,13 @@
     color: #444 !important;
 }
 
-/* Used in ExtJS source for indentation */
+/* Wraps descriptions of parameters */
+/* also heavily used in ExtJS source */
 .body-wrap .sub-desc {
     margin: 5px;
     margin-left: 16px;
 }
-/* wraps method parameters descriptions */
+/* wraps method parameters and return values */
 /* also used in ExtJS source for wrapping lists */
 .body-wrap .mdetail-params {
     margin-top: 10px;
