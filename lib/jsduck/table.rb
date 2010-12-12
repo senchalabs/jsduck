@@ -35,13 +35,22 @@ module JsDuck
       description = expandable_desc(p_doc, e_doc)
       expandable = expandable?(p_doc, e_doc) ? 'expandable' : ''
       inherited = inherited?(item) ? 'inherited' : ''
+      source = inherited?(item) ? member_link(item) : Class.short_name(item[:member])
       [
        "<tr class='#{@row_class} #{expandable} #{inherited}'>",
          "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
          "<td class='sig'>#{signature(item)}<div class='mdesc'>#{description}</div></td>",
-         "<td class='msource'>#{Class.short_name(item[:member])}</td>",
+         "<td class='msource'>#{source}</td>",
        "</tr>",
       ].join("")
+    end
+
+    def member_link(item)
+      cls = item[:member]
+      member = item[:name]
+      "<a href='output/#{cls}.html##{member}' " +
+        "ext:member='##{member}' " +
+        "ext:cls='#{cls}'>#{Class.short_name(cls)}</a>"
     end
 
     def signature(item)
