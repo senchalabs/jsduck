@@ -74,11 +74,21 @@ module JsDuck
       File.open(filename, 'w') {|f| f.write( Page.new(cls).to_html ) }
     end
   end
+
+  def self.copy_template(template_dir, dir, verbose)
+    puts "Copying template files to #{dir}..." if verbose
+    if File.exists?(dir)
+      FileUtils.rm_r(dir)
+    end
+    FileUtils.cp_r(template_dir, dir)
+    FileUtils.mkdir(dir + "/output")
+  end
 end
 
 
 if __FILE__ == $0 then
   output_dir = nil
+  template_dir = File.dirname(File.dirname(__FILE__)) + "/template"
   verbose = false
 
   opts = OptionParser.new do | opts |
@@ -86,6 +96,10 @@ if __FILE__ == $0 then
 
     opts.on('-o', '--output=PATH', "Directory to output all this amazing documentation.") do |path|
       output_dir = path
+    end
+
+    opts.on('-t', '--template=PATH', "Directory containing doc-browser UI template.") do |path|
+      template_dir = path
     end
 
     opts.on('-v', '--verbose', "This will fill up your console.") do
@@ -106,16 +120,17 @@ if __FILE__ == $0 then
   elsif !output_dir
     puts "You should also specify an output directory, where I could write all this amazing documentation."
     exit(1)
-  elsif !File.exists?(output_dir)
-    puts "Output directory doesn't exist.  I'll take the pride of creating it..."
-    FileUtils.mkdir(output_dir)
-  elsif !File.directory?(output_dir)
+  elsif File.exists?(output_dir) && !File.directory?(output_dir)
     puts "Oh noes!  The output directory is not really a directory at all :("
+    exit(1)
+  elsif !File.exists?(File.dirname(output_dir))
+    puts "Oh noes!  The parent directory for #{output_dir} doesn't exist."
     exit(1)
   end
 
   classes = JsDuck.filter_classes(JsDuck.parse_files(input_files, verbose))
-  JsDuck.write_tree(output_dir+"/tree.js", classes)
-  JsDuck.write_pages(output_dir, classes, verbose)
+  JsDuck.copy_template(template_dir, output_dir, verbose)
+  JsDuck.write_tree(output_dir+"/output/tree.js", classes)
+  JsDuck.write_pages(output_dir+"/output", classes, verbose)
 end
 
