@@ -48,7 +48,7 @@ module JsDuck
     # Formats doc-comment for placement into HTML.
     # Renders it with Markdown-formatter and replaces @link-s.
     def format(input)
-      replace("<div class='markdown'>" + RDiscount.new(input).to_html + "</div>")
+      replace(RDiscount.new(input).to_html)
     end
 
   end

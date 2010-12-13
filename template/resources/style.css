@@ -111,10 +111,7 @@
 }
 /* Class description */
 .body-wrap .description {
-    margin: 10px 0px;
-}
-.body-wrap .description p {
-    margin: 8px 3px !important;
+    margin: 10px 3px;
 }
 /* horizontal line after description */
 .body-wrap div.hr {
@@ -210,12 +207,6 @@
     color: #444 !important;
 }
 
-/* Wraps descriptions of parameters */
-/* also heavily used in ExtJS source */
-.body-wrap .sub-desc {
-    margin: 5px;
-    margin-left: 16px;
-}
 /* wraps method parameters and return values */
 /* also used in ExtJS source for wrapping lists */
 .body-wrap .mdetail-params {
@@ -223,23 +214,23 @@
     font-size: 12px;
     padding-left: 12px;
 }
-    /* Header for parameters description */
-    .body-wrap .mdetail-params strong {
-        display: block;
-        margin-bottom: 3px;
-        font-size: 11px;
-        font-weight: bold;
-        color: #555;
-    }
-    .mdetail-params ul {
-        list-style: inside;
-        list-style-type: circle;
-        margin: 12px;
-    }
-    .mdetail-params li {
-        list-style: inside;
-        list-style-type: circle;
-    }
+
+/* Styles for common text elements */
+.body-wrap p {
+    margin-bottom: 8px;
+}
+.body-wrap ul {
+    list-style-type: circle;
+    margin: 12px 12px 12px 24px;
+}
+.body-wrap strong {
+    font-weight: bold;
+    font-size: 11px;
+    color: #555;
+}
+.body-wrap em {
+    font-style: italic;
+}
 
 .body-wrap pre,
 .body-wrap code {
