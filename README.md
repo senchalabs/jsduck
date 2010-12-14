@@ -10,32 +10,51 @@ Simple JavaScript Duckumentation generator.
        \ `-' /    hjw
     ~'`~'`~'`~'`~
 
-This duck is not ready yet...
+This duck is starting to get ready...
+
+Motivation for JsDuck: [Why ExtJS doc-comments suck][motivation]
+
+[motivation]: http://www.triin.net/2010/03/14/Why_ExtJS_doc-comments_suck
 
 
-List of @tags to support
-------------------------
+Dependencies
+------------
 
-* @class - OK
-* @extends - OK
-* @singleton - OK
-* @cfg - OK
-* @constructor - OK
-* @property - OK
-* @type - OK
-* @method - OK
-* @event - OK
-* @param - OK
-* @return - OK
-* @static - OK
-* @xtype - OK
-* @member - OK
-* {@link} - OK
+* Ruby 1.8
+* [json](http://flori.github.com/json/)
+* [RDiscount](https://github.com/rtomayko/rdiscount)
 
-* @ignore @hide @private - in JsDuck implementation @ignore and @hide
-  are considered aliases for @private.  (Some usage stats from ExtJS
-  source: @hide 306 times, @private 199 times, @ignore 11 times.)
-  Additionally @protected is currently also treated as @private.
+For development:
+
+* Rake
+* RSpec
+
+
+List of supported @tags
+-----------------------
+
+* @class
+* @extends
+* @singleton
+* @cfg
+* @constructor
+* @property
+* @type
+* @method
+* @event
+* @param
+* @return alias @returns
+* @static
+* @xtype
+* @member
+* {@link}
+
+* @ignore, @hide, @private, @protected - in JsDuck implementation
+  @ignore, @hide and @protected are considered aliases for @private.
+  (Some usage stats from ExtJS source: @hide 306 times, @private 199
+  times, @ignore 11 times.)
+
+Unsupported:
 
 * @namespace - Looks useless to me and indeed ExtJS source doesn't use
   it at all.
