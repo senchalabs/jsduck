@@ -56,6 +56,10 @@ module JsDuck
       # To prevent this, we always add extra newline before <pre>.
       input.gsub!(/([^\n])<pre>/, "\1\n<pre>")
 
+      # But we remove trailing newline after <pre> to prevent
+      # code-blocks beginning with empty line.
+      input.gsub!(/<pre>(<code>)?\n?/, "<pre>\1")
+
       replace(RDiscount.new(input).to_html)
     end
 
