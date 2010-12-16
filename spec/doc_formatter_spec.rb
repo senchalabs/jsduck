@@ -46,6 +46,20 @@ describe JsDuck::DocFormatter do
       @formatter.format("Hello **world**").should =~ /Hello <strong>world<\/strong>/
     end
 
+    shared_examples_for "code blocks" do
+      it "contains text before" do
+        @html.should =~ /Some code/
+      end
+
+      it "contains the code" do
+        @html.include?("if (condition) {\n    doSomething();\n}").should == true
+      end
+
+      it "does not create nested <pre> segments" do
+        @html.should_not =~ /<pre>.*<pre>/m
+      end
+    end
+
     describe "<pre>" do
       before do
         @html = @formatter.format(<<-EOS)
@@ -57,9 +71,7 @@ if (condition) {
         EOS
       end
 
-      it "does not create nested <pre> segments" do
-        @html.should_not =~ /<pre>.*<pre>/m
-      end
+      it_should_behave_like "code blocks"
 
       it "avoids newline after <pre>" do
         @html.should_not =~ /<pre>\n/m
@@ -77,14 +89,13 @@ if (condition) {
         EOS
       end
 
-      it "does not create nested <pre><code> segments" do
-        @html.should_not =~ /<pre><code>.*<pre><code>/m
-      end
+      it_should_behave_like "code blocks"
 
       it "avoids newline after <pre><code>" do
         @html.should_not =~ /<pre><code>\n/m
       end
     end
+
   end
 
 end
