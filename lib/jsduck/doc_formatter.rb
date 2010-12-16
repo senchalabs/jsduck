@@ -48,6 +48,14 @@ module JsDuck
     # Formats doc-comment for placement into HTML.
     # Renders it with Markdown-formatter and replaces @link-s.
     def format(input)
+      # In ExtJS source "<pre>" is often at the end of paragraph, not
+      # on its own line.  But in that case RDiscount doesn't recognize
+      # it as the beginning of <pre>-block and goes on parsing it as
+      # normal Markdown, which often causes nested <pre>-blocks.
+      #
+      # To prevent this, we always add extra newline before <pre>.
+      input.gsub!(/([^\n])<pre>/, "\1\n<pre>")
+
       replace(RDiscount.new(input).to_html)
     end
 
