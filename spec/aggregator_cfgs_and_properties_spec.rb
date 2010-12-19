@@ -129,6 +129,60 @@ describe JsDuck::Aggregator do
     it_should_behave_like "cfg or property default type"
   end
 
+  shared_examples_for "auto type" do
+    it "should imply correct type" do
+      @doc[:type].should == @type
+    end
+  end
+
+  describe "@property with number in code" do
+    before do
+      @doc = parse("/** @property */ foo: 123")[0]
+      @type = "Number"
+    end
+    it_should_behave_like "auto type"
+  end
+
+  describe "@property with regex in code" do
+    before do
+      @doc = parse("/** @property */ foo: /foo/i")[0]
+      @type = "RegExp"
+    end
+    it_should_behave_like "auto type"
+  end
+
+  describe "@property with true in code" do
+    before do
+      @doc = parse("/** @property */ foo: true")[0]
+      @type = "Boolean"
+    end
+    it_should_behave_like "auto type"
+  end
+
+  describe "@property with false in code" do
+    before do
+      @doc = parse("/** @property */ foo: false")[0]
+      @type = "Boolean"
+    end
+    it_should_behave_like "auto type"
+  end
+
+  describe "@property with function in code" do
+    before do
+      @doc = parse("/** @property */ function foo() {}")[0]
+      @type = "Function"
+    end
+    it_should_behave_like "auto type"
+  end
+
+  describe "@property with lambda in code" do
+    before do
+      @doc = parse("/** @property */ foo = function() {}")[0]
+      @type = "Function"
+    end
+    it_should_behave_like "auto type"
+  end
+
   describe "@property with @type" do
     before do
       @doc = parse(<<-EOS)[0]
