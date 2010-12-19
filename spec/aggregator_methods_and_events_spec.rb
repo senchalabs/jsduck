@@ -255,6 +255,22 @@ describe JsDuck::Aggregator do
     it_should_behave_like "has return"
   end
 
+  describe "method with @static" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @static
+         */
+        function foo() {}
+      EOS
+    end
+    it_should_behave_like "method documentation"
+    it "detects method as static" do
+      @doc[:static].should == true
+    end
+  end
+
   describe "method without doc-comment" do
     before do
       @docs = parse(<<-EOS)

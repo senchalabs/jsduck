@@ -32,21 +32,5 @@ class TestJsDuck < Test::Unit::TestCase
     end
   end
 
-  def test_static_method
-    docs = JsDuck.parse("/**
- * @method
- * @static
- */");
-    assert_equal(true, docs[0][:static])
-  end
-
-  def test_static_property
-    docs = JsDuck.parse("/**
- * @property
- * @static
- */");
-    assert_equal(true, docs[0][:static])
-  end
-
 end
 

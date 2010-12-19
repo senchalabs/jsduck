@@ -176,4 +176,20 @@ describe JsDuck::Aggregator do
     it_should_behave_like "cfg or property String type"
   end
 
+  describe "property with @static" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @property
+         * @static
+         */
+        foo: "",
+      EOS
+    end
+    it_should_behave_like "property"
+    it "detects property as static" do
+      @doc[:static].should == true
+    end
+  end
+
 end
