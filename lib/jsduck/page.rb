@@ -15,7 +15,7 @@ module JsDuck
 
     def to_html
       [
-       '<div xmlns:ext="http://www.extjs.com" class="body-wrap">',
+       '<div class="body-wrap">',
        heading,
        abstract,
        description,
