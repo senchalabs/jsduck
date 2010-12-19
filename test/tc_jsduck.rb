@@ -25,12 +25,5 @@ class TestJsDuck < Test::Unit::TestCase
     assert_equal("Function", docs[0][:type])
   end
 
-  def test_visibility_modifiers
-    ["@private", "@hide", "@ignore", "@protected"].each do |tagname|
-      docs = JsDuck.parse("/**\n * #{tagname}\n */");
-      assert_equal(true, docs[0][:private])
-    end
-  end
-
 end
 
