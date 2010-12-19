@@ -2,6 +2,24 @@ require 'strscan'
 
 module JsDuck
 
+  # Parses doc-comment into array of @tags
+  #
+  # For each @tag it produces Hash like the following:
+  #
+  #     {
+  #       :tagname => :cfg/:property/:type/:extends/...,
+  #       :doc => "Some documentation for this tag",
+  #       ...@tag specific stuff like :name, :type, and so on...
+  #     }
+  #
+  # When doc-comment begins with comment, not preceded by @tag, then
+  # the comment will be placed into Hash with :tagname => :default.
+  #
+  # Unrecognized @tags are left as is into documentation as if they
+  # were normal text.
+  #
+  # @see and {@link} are parsed separately in JsDuck::DocFormatter.
+  #
   class DocParser
     def parse(input)
       @tags = []
