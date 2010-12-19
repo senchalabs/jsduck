@@ -139,72 +139,6 @@ MyClass = Ext.extend(Ext.util.Observable, {
     assert_equal("blah", docs[0][:xtype])
   end
 
-  def test_cfg
-    docs = JsDuck.parse("
-/**
- * @cfg
- * My comment
- */
-foo: true,
-")
-    assert_equal(:cfg, docs[0][:tagname])
-    assert_equal("foo", docs[0][:name])
-    assert_equal("My comment", docs[0][:doc])
-    assert_equal("Boolean", docs[0][:type])
-  end
-
-  def test_explicit_property
-    docs = JsDuck.parse("
-/**
- * @property {Integer} foo  My comment
- */
-")
-    assert_equal(:property, docs[0][:tagname])
-    assert_equal("foo", docs[0][:name])
-    assert_equal("Integer", docs[0][:type])
-    assert_equal("My comment", docs[0][:doc])
-  end
-
-  def test_property_with_type
-    docs = JsDuck.parse("
-/**
- * @property
- * @type Boolean
- * My comment
- */
-foo: true,
-")
-    assert_equal(:property, docs[0][:tagname])
-    assert_equal("foo", docs[0][:name])
-    assert_equal("Boolean", docs[0][:type])
-    assert_equal("My comment", docs[0][:doc])
-  end
-
-  def test_type_implies_property
-    docs = JsDuck.parse("
-/**
- * @type Boolean
- */
-MY_CONSTANT: true,
-")
-    assert_equal(:property, docs[0][:tagname])
-    assert_equal("MY_CONSTANT", docs[0][:name])
-    assert_equal("Boolean", docs[0][:type])
-  end
-
-  def test_property_ident_chain_begins_with_this
-    docs = JsDuck.parse("
-/**
- * If true then lock actions
- */
-this.locked = false;
-")
-    assert_equal(:property, docs[0][:tagname])
-    assert_equal("locked", docs[0][:name])
-    assert_equal("Boolean", docs[0][:type])
-    assert_equal("If true then lock actions", docs[0][:doc])
-  end
-
   def test_implicit_property_type
     comment = "
 /**
@@ -225,24 +159,6 @@ this.locked = false;
     assert_equal("Function", docs[0][:type])
     docs = JsDuck.parse(comment + "function foo(){},")
     assert_equal("Function", docs[0][:type])
-  end
-
-  def test_default_property_type_is_object
-    docs = JsDuck.parse("
-/**
- * @property foo
- */
-")
-    assert_equal("Object", docs[0][:type])
-  end
-
-  def test_default_cfg_type_is_object
-    docs = JsDuck.parse("
-/**
- * @cfg foo
- */
-")
-    assert_equal("Object", docs[0][:type])
   end
 
   def test_visibility_modifiers
