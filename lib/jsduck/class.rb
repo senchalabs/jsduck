@@ -74,14 +74,21 @@ module JsDuck
     # Utility method that given a package or class name finds the name
     # of its parent package.
     def self.package_name(name)
-      parts = name.split(/\./)
-      parts.slice(0, parts.length - 1).join(".")
+      name.slice(0, name.length - self.short_name(name).length - 1) || ""
     end
 
     # Utility method that given full package or class name extracts
-    # the last part of the name.
+    # the "class"-part of the name.
+    #
+    # Because we try to emulate ext-doc, it's not as simple as just
+    # taking the last part.  See class_spec.rb for details.
     def self.short_name(name)
-      name.split(/\./).last
+      parts = name.split(/\./)
+      short = parts.pop
+      while parts.length > 1 && parts.last =~ /^[A-Z]/
+        short = parts.pop + "." + short
+      end
+      short
     end
   end
 

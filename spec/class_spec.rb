@@ -82,4 +82,64 @@ describe JsDuck::Class do
     end
   end
 
+  describe "when full_name like My.package.Cls" do
+
+    before do
+      @cls = JsDuck::Class.new({:name => "My.package.Cls",}, {});
+    end
+
+    it "#package_name contains all parts except the last" do
+      @cls.package_name.should == "My.package"
+    end
+
+    it "#short_name contains only the last part" do
+      @cls.short_name.should == "Cls"
+    end
+  end
+
+  describe "when full_name like My.Package.Cls" do
+
+    before do
+      @cls = JsDuck::Class.new({:name => "My.Package.Cls",}, {});
+    end
+
+    it "#package_name contains only first part" do
+      @cls.package_name.should == "My"
+    end
+
+    it "#short_name contains remaining parts" do
+      @cls.short_name.should == "Package.Cls"
+    end
+  end
+
+  describe "when full_name has no parts" do
+
+    before do
+      @cls = JsDuck::Class.new({:name => "Foo",}, {});
+    end
+
+    it "#package_name is empty" do
+      @cls.package_name.should == ""
+    end
+
+    it "#short_name is the same as full_name" do
+      @cls.short_name.should == "Foo"
+    end
+  end
+
+  describe "when full_name has two uppercase parts" do
+
+    before do
+      @cls = JsDuck::Class.new({:name => "Foo.Bar",}, {});
+    end
+
+    it "#package_name is first part" do
+      @cls.package_name.should == "Foo"
+    end
+
+    it "#short_name is second part" do
+      @cls.short_name.should == "Bar"
+    end
+  end
+
 end

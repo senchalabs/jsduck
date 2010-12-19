@@ -117,3 +117,51 @@ describe JsDuck::Tree do
 
 end
 
+describe JsDuck::Tree, "lowercase package name" do
+
+  before do
+    @tree = JsDuck::Tree.new.create([
+        JsDuck::Class.new({:tagname => :class, :name => "Foo.bar.Baz"})
+      ])
+    @root = @tree[:children][0]
+    @middle = @root[:children][0]
+    @leaf = @middle[:children][0]
+  end
+
+  it "gets root package node" do
+    @root[:cls].should == 'package'
+  end
+
+  it "gets middle package node" do
+    @middle[:cls].should == 'package'
+  end
+
+  it "gets leaf class node" do
+    @leaf[:cls].should == 'cls'
+  end
+
+end
+
+describe JsDuck::Tree, "uppercase package name" do
+
+  before do
+    @tree = JsDuck::Tree.new.create([
+        JsDuck::Class.new({:tagname => :class, :name => "Foo.Bar.Baz"})
+      ])
+    @root = @tree[:children][0]
+    @middle = @root[:children][0]
+  end
+
+  it "gets root package node" do
+    @root[:cls].should == 'package'
+  end
+
+  it "gets middle class node" do
+    @middle[:cls].should == 'cls'
+  end
+
+  it "gets class name containing package name" do
+    @middle[:text].should == 'Bar.Baz'
+  end
+
+end
