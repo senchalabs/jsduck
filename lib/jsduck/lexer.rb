@@ -2,12 +2,36 @@ require 'strscan'
 
 module JsDuck
 
+  # Tokenizes JavaScript code into lexical tokens.
+  #
+  # Each token has a type and value.
+  # Types and possible values for them are as follows:
+  #
+  # - :number      -- 25
+  # - :string      -- "Hello world"
+  # - :keyword     -- "typeof"
+  # - :ident       -- "foo"
+  # - :regex       -- "/abc/i"
+  # - :operator    -- "+"
+  # - :doc_comment -- "/** My comment */"
+  #
+  # Notice that doc-comments are recognized as tokens while normal
+  # comments are ignored just as whitespace.
+  #
   class Lexer
     def initialize(input)
       @input = StringScanner.new(input)
       tokenize
     end
 
+    # Tests if given pattern matches the tokens that follow at current
+    # position.
+    #
+    # Takes list of strings and symbols.  Symbols are compared to
+    # token type, while strings to token value.  For example:
+    #
+    #     look(:ident, "=", :regex)
+    #
     def look(*tokens)
       i = 0
       tokens.all? do |t|
@@ -22,11 +46,19 @@ module JsDuck
       end
     end
 
+    # Returns the value of next token, moving the current token cursor
+    # also to next token.
+    #
+    # When full=true, returns full token as hash like so:
+    #
+    #     {:type => :ident, :value => "foo"}
+    #
     def next(full=false)
       tok = @tokens.shift
       full ? tok : tok[:value]
     end
 
+    # True when no more tokens.
     def empty?
       @tokens.empty?
     end
