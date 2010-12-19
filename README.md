@@ -39,3 +39,11 @@ More
 [tags]: https://github.com/nene/jsduck/wiki/List-of-supported-@tags
 [errors]: https://github.com/nene/jsduck/wiki/List-of-doc-comment-errors(%3F)-found-in-ExtJS-source
 
+
+Copying
+-------
+
+JsDuck is distributed under the terms of the GNU General Public License version 3.
+
+JsDuck was developed by [Rene Saarsoo](http://triin.net).
+
