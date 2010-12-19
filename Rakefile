@@ -3,12 +3,6 @@ require 'rake'
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.pattern = 'test/**/tc_*.rb'
-  test.verbose = true
-end
-
 require 'spec'
 require 'spec/rake/spectask'
 Spec::Rake::SpecTask.new(:spec) do |spec|
@@ -16,6 +10,4 @@ Spec::Rake::SpecTask.new(:spec) do |spec|
   spec.spec_files = FileList["spec/**/*_spec.rb"]
 end
 
-task :all_tests => [:test, :spec]
-
-task :default => :all_tests
+task :default => :spec
