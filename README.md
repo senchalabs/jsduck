@@ -10,24 +10,89 @@ Simple JavaScript Duckumentation generator.
        \ `-' /    hjw
     ~'`~'`~'`~'`~
 
-This duck is starting to get ready...
+JsDuck aims to be a better documentation generator for [ExtJS][].
+While it tries to do everything that [ext-doc][] does, it isn't
+satisfied with it and aims to make your life much easier.
 
-Motivation for JsDuck: [Why ExtJS doc-comments suck][motivation]
+Basically JsDuck thinks that the following doc-comment really sucks:
 
-[motivation]: http://www.triin.net/2010/03/14/Why_ExtJS_doc-comments_suck
+    /**
+     * @class Ext.form.TextField
+     * @extends Ext.form.Field
+     * <p>Basic text field.  Can be used as a direct replacement for traditional
+     * text inputs, or as the base class for more sophisticated input controls
+     * (like {@link Ext.form.TextArea} and {@link Ext.form.ComboBox}).</p>
+     * <p><b><u>Validation</u></b></p>
+     * <p>The validation procedure is described in the documentation for
+     * {@link #validateValue}.</p>
+     * <p><b><u>Alter Validation Behavior</u></b></p>
+     * <p>Validation behavior for each field can be configured:</p>
+     * <div class="mdetail-params"><ul>
+     * <li><code>{@link Ext.form.TextField#invalidText invalidText}</code> :
+     * the default validation message to show if any validation step above does
+     * not provide a message when invalid</li>
+     * <li><code>{@link Ext.form.TextField#maskRe maskRe}</code> :
+     * filter out keystrokes before any validation occurs</li>
+     * <li><code>{@link Ext.form.TextField#stripCharsRe stripCharsRe}</code> :
+     * filter characters after being typed in, but before being validated</li>
+     * </ul></div>
+     */
+    Ext.form.TextField = Ext.extend(Ext.form.Field,  {
+
+Not quite so readable is it?  The source of ExtJS is filled with
+comments just like that, and when you use ext-doc, you too are forced
+to write such comments.
+
+JsDuck does not like it.  Although it can handle comments like this,
+it would like that you wrote comments like that instead:
+
+    /**
+     * Basic text field.  Can be used as a direct replacement for traditional
+     * text inputs, or as the base class for more sophisticated input controls
+     * (like {@link Ext.form.TextArea} and {@link Ext.form.ComboBox}).
+     *
+     * Validation
+     * ----------
+     *
+     * The validation procedure is described in the documentation for
+     * {@link #validateValue}.
+     *
+     * Alter Validation Behavior
+     * -------------------------
+     *
+     * Validation behavior for each field can be configured:
+     *
+     * - `{@link Ext.form.TextField#invalidText invalidText}` :
+     *   the default validation message to show if any validation step above
+     *   does not provide a message when invalid
+     * - `{@link Ext.form.TextField#maskRe maskRe}` :
+     *   filter out keystrokes before any validation occurs
+     * - `{@link Ext.form.TextField#stripCharsRe stripCharsRe}` :
+     *   filter characters after being typed in, but before being validated
+     */
+    Ext.form.TextField = Ext.extend(Ext.form.Field,  {
+
+As you can see, JsDuck supports formatting comments with friendly
+[Markdown][] syntax.  And it can infer several things from the code
+(like @class and @extends in this case), so you don't have to repeat
+yourself.
+
+That's basically it.  Have fun.
+
+[ExtJS]: http://www.sencha.com/products/js/
+[ext-doc]: http://ext-doc.org/
+[Markdown]: http://daringfireball.net/projects/markdown/
 
 
 Dependencies
 ------------
 
-* Ruby 1.8
-* [json](http://flori.github.com/json/)
-* [RDiscount](https://github.com/rtomayko/rdiscount)
+To run, you need Ruby 1.8 with [json][] and [RDiscount][] gems.
 
-For development:
+For development Rake and RSpec are also needed.
 
-* Rake
-* RSpec
+[json]: http://flori.github.com/json/
+[RDiscount]: https://github.com/rtomayko/rdiscount
 
 
 More
