@@ -1,6 +1,10 @@
-
 module JsDuck
 
+  # Takes data from doc-comment and code that follows it and combines
+  # these to pieces of information into one.  The code comes from
+  # JsDuck::Parser and doc-comment from JsDuck::DocParser.
+  #
+  # The main method merge() produces a hash as a result.
   class Merger
     def merge(docs, code)
       case detect_doc_type(docs, code)
