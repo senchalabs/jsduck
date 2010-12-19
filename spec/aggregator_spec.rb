@@ -131,11 +131,12 @@ describe JsDuck::Aggregator do
 
   describe "explicit @method without @param-s" do
     before do
-      @doc = parse("
-/**
- * @method foo
- * Some function
- */")[0]
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @method foo
+         * Some function
+         */
+      EOS
     end
     it_should_behave_like "method documentation"
     it_should_behave_like "no parameters"
@@ -144,13 +145,14 @@ describe JsDuck::Aggregator do
 
   describe "explicit @method with @param-s" do
     before do
-      @doc = parse("
-/**
- * @method foo
- * Some function
- * @param {String} x First parameter
- * @param {Number} y Second parameter
- */")[0]
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @method foo
+         * Some function
+         * @param {String} x First parameter
+         * @param {Number} y Second parameter
+         */
+      EOS
     end
     it_should_behave_like "method documentation"
     it_should_behave_like "two parameters"
@@ -161,13 +163,14 @@ describe JsDuck::Aggregator do
 
   describe "explicit @method after @params-s" do
     before do
-      @doc = parse("
-/**
- * Some function
- * @param {String} x First parameter
- * @param {Number} y Second parameter
- * @method foo
- */")[0]
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @param {String} x First parameter
+         * @param {Number} y Second parameter
+         * @method foo
+         */
+      EOS
     end
     it_should_behave_like "method documentation"
     it_should_behave_like "two parameters"
@@ -178,15 +181,15 @@ describe JsDuck::Aggregator do
 
   describe "explicit @method with @param-s overriding implicit code" do
     before do
-      @doc = parse("
-/**
- * Some function
- * @param {String} x First parameter
- * @param {Number} y Second parameter
- * @method foo
- */
-function bar(q, z) {}
-")[0]
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @param {String} x First parameter
+         * @param {Number} y Second parameter
+         * @method foo
+         */
+        function bar(q, z) {}
+      EOS
     end
     it_should_behave_like "method documentation"
     it_should_behave_like "two parameters"
@@ -196,13 +199,13 @@ function bar(q, z) {}
 
   describe "@param-s partially overriding implicit params" do
     before do
-      @doc = parse("
-/**
- * Some function
- * @param {String} x
- */
-function foo(q, y) {}
-")[0]
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @param {String} x
+         */
+        function foo(q, y) {}
+      EOS
     end
     it_should_behave_like "method documentation"
     it_should_behave_like "two parameters"
@@ -210,14 +213,14 @@ function foo(q, y) {}
 
   describe "@param-s declaring only types" do
     before do
-      @doc = parse("
-/**
- * Some function
- * @param {String}
- * @param {Number}
- */
-function foo(x, y) {}
-")[0]
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @param {String}
+         * @param {Number}
+         */
+        function foo(x, y) {}
+      EOS
     end
     it_should_behave_like "method documentation"
     it_should_behave_like "two parameters"
@@ -226,13 +229,13 @@ function foo(x, y) {}
 
   describe "@return documenting return value" do
     before do
-      @doc = parse("
-/**
- * Some function
- * @return {String} return value
- */
-function foo() {}
-")[0]
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @return {String} return value
+         */
+        function foo() {}
+      EOS
     end
     it_should_behave_like "method documentation"
     it_should_behave_like "has return"
@@ -240,13 +243,13 @@ function foo() {}
 
   describe "@returns being alias for @return" do
     before do
-      @doc = parse("
-/**
- * Some function
- * @returns {String} return value
- */
-function foo() {}
-")[0]
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @returns {String} return value
+         */
+        function foo() {}
+      EOS
     end
     it_should_behave_like "method documentation"
     it_should_behave_like "has return"
@@ -254,10 +257,10 @@ function foo() {}
 
   describe "method without doc-comment" do
     before do
-      @docs = parse("
-// My comment
-function foo(x, y) {}
-")
+      @docs = parse(<<-EOS)
+        // My comment
+        function foo(x, y) {}
+      EOS
     end
     it "remains undocumented" do
       @docs.length.should == 0
@@ -267,79 +270,79 @@ function foo(x, y) {}
   describe "@member" do
 
     it "defines the class where item belongs" do
-      items = parse("
-/**
- * @cfg foo
- * @member Bar
- */
-")
+      items = parse(<<-EOS)
+        /**
+         * @cfg foo
+         * @member Bar
+         */
+      EOS
       items[0][:member].should == "Bar"
     end
 
     it "forces item to be moved into that class" do
-      items = parse("
-/**
- * @class Bar
- */
-/**
- * @class Baz
- */
-/**
- * @cfg foo
- * @member Bar
- */
-")
+      items = parse(<<-EOS)
+        /**
+         * @class Bar
+         */
+        /**
+         * @class Baz
+         */
+        /**
+         * @cfg foo
+         * @member Bar
+         */
+      EOS
       items[0][:cfg].length.should == 1
       items[1][:cfg].length.should == 0
     end
 
     it "even when @member comes before the class itself" do
-      items = parse("
-/**
- * @cfg foo
- * @member Bar
- */
-/**
- * @class Bar
- */
-")
+      items = parse(<<-EOS)
+        /**
+         * @cfg foo
+         * @member Bar
+         */
+        /**
+         * @class Bar
+         */
+      EOS
       items[0][:cfg].length.should == 1
     end
   end
 
   describe "one class many times" do
     before do
-      @classes = parse("
-/**
- * @class Foo
- * @cfg c1
- */
-  /** @method fun1 */
-  /** @event eve1 */
-  /** @property prop1 */
-/**
- * @class Foo
- * @extends Bar
- * Second description.
- * @xtype xfoo
- * @private
- * @cfg c2
- */
-  /** @method fun2 */
-  /** @event eve3 */
-  /** @property prop2 */
-/**
- * @class Foo
- * @extends Bazaar
- * @singleton
- * Third description.
- * @xtype xxxfoo
- * @cfg c3
- */
-  /** @method fun3 */
-  /** @event eve3 */
-  /** @property prop3 */
-")
+      @classes = parse(<<-EOS)
+        /**
+         * @class Foo
+         * @cfg c1
+         */
+          /** @method fun1 */
+          /** @event eve1 */
+          /** @property prop1 */
+        /**
+         * @class Foo
+         * @extends Bar
+         * Second description.
+         * @xtype xfoo
+         * @private
+         * @cfg c2
+         */
+          /** @method fun2 */
+          /** @event eve3 */
+          /** @property prop2 */
+        /**
+         * @class Foo
+         * @extends Bazaar
+         * @singleton
+         * Third description.
+         * @xtype xxxfoo
+         * @cfg c3
+         */
+          /** @method fun3 */
+          /** @event eve3 */
+          /** @property prop3 */
+      EOS
     end
 
     it "results in only one class" do
