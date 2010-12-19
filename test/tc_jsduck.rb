@@ -3,45 +3,6 @@ require "test/unit"
 
 class TestJsDuck < Test::Unit::TestCase
 
-  def test_event
-    docs = JsDuck.parse("/**
- * @event mousedown
- * Fires when the mouse button is depressed.
- * @param {String} foo  Comment 1
- * @param {Number} bar  Comment 2
- */")
-    assert_equal(:event, docs[0][:tagname])
-    assert_equal("mousedown", docs[0][:name])
-    assert_equal("Fires when the mouse button is depressed.", docs[0][:doc])
-    params = docs[0][:params]
-    assert_equal("foo", params[0][:name])
-    assert_equal("String", params[0][:type])
-    assert_equal("Comment 1", params[0][:doc])
-    assert_equal("bar", params[1][:name])
-    assert_equal("Number", params[1][:type])
-    assert_equal("Comment 2", params[1][:doc])
-  end
-
-  def test_implicit_event_name_as_string
-    docs = JsDuck.parse("/**
- * @event
- */
-'mousedown',
-")
-    assert_equal(:event, docs[0][:tagname])
-    assert_equal("mousedown", docs[0][:name])
-  end
-
-  def test_implicit_event_name_as_property
-    docs = JsDuck.parse("/**
- * @event
- */
-mousedown: true,
-")
-    assert_equal(:event, docs[0][:tagname])
-    assert_equal("mousedown", docs[0][:name])
-  end
-
   def test_explicit_class
     docs = JsDuck.parse("/**
  * @class My.nice.Class
