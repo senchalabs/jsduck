@@ -41,6 +41,11 @@ html, body {
     font-weight: bold;
     padding-right: 20px;
 }
+#header p {
+    float: right;
+    margin: 15px 15px 0 0;
+    color: #ccc;
+}
 
 .docs-header .x-panel-body {
     background:transparent;
