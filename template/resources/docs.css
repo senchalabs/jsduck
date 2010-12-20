@@ -26,15 +26,22 @@ html, body {
 .x-panel-noborder {
     border: 0 none;
 }
-#header{
-/*
-   border:0 none;
-   background:#1E4176 url(hd-bg.gif) repeat-x 0 0;
-   padding-top:3px;
-   padding-left:3px;
-*/
+#header {
     height: 44px;
 }
+#header h1 {
+    float: left;
+    margin-left: 20px;
+    font-size: 20px;
+    line-height: 44px;
+    color: #444;
+    font-weight: normal;
+}
+#header strong {
+    font-weight: bold;
+    padding-right: 20px;
+}
+
 .docs-header .x-panel-body {
     background:transparent;
 }
