@@ -15,6 +15,7 @@
 
 $:.unshift File.dirname(__FILE__) # For running the actual JsDuck app
 
+require 'rubygems'
 require 'jsduck/aggregator'
 require 'jsduck/class'
 require 'jsduck/tree'
