@@ -95,6 +95,37 @@ For development Rake and RSpec are also needed.
 [RDiscount]: https://github.com/rtomayko/rdiscount
 
 
+Features and differences from ext-doc
+-------------------------------------
+
+JsDuck has some strong opinions, so some things are intentionally
+missing.
+
+* Support for Markdown in comments
+* More things infered from the code
+* No XML configuration file, just command line options
+* Class documentation header doesn't separately list Package and Class -
+  these are IMHO redundant.
+* Class documentation header doesn't duplicate toolbar buttons -
+  another redundancy
+* Ext.Component has a component icon too, not only its descendants
+
+
+Missing features
+----------------
+
+It's still in early beta, so several things supported by ext-doc are
+currently missing:
+
+* Links from documentation to source code
+* List of subclasses
+* Tree of parent classes
+* Syntax highlighting of code examples
+* Constructor first in methods list
+* Search, not just searching from official ExtJS documentation
+* Support for custom @tags
+
+
 More
 ----
 
