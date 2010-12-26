@@ -43,6 +43,33 @@ describe JsDuck::Class do
     end
   end
 
+  describe "#members(:method)" do
+    before do
+      @classes = {}
+      @parent = JsDuck::Class.new({
+          :name => "ParentClass",
+          :method => [
+            {:name => "baz", :member => "ParentClass"},
+            {:name => "constructor", :member => "ParentClass"},
+          ]
+        }, @classes);
+      @classes["ParentClass"] = @parent
+      @child = JsDuck::Class.new({
+          :name => "ChildClass",
+          :extends => "ParentClass",
+          :method => [
+            {:name => "foo", :member => "ChildClass"}
+          ]
+        }, @classes);
+      @classes["ChildClass"] = @child
+    end
+
+    it "returns constructor as first method" do
+      ms = @child.members(:method)
+      ms.first[:name].should == "ChildClass"
+    end
+  end
+
   describe "#inherits_from" do
 
     before do

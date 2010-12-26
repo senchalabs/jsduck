@@ -25,9 +25,30 @@ module JsDuck
     end
 
     # Returns array of all public members of particular type in a class,
-    # sorted by name.  See members_hash for details.
+    # sorted by name.
+    #
+    # For methods the the constructor is listed as first method having
+    # the same name as class itself.
+    #
+    # See members_hash for details.
     def members(type)
-      members_hash(type).values.sort {|a,b| a[:name] <=> b[:name] }
+      ms = members_hash(type).values.sort {|a,b| a[:name] <=> b[:name] }
+      type == :method ? constructor_first(ms) : ms
+    end
+
+    # If methods list contains constructor, rename it with class name
+    # and move into beginning of methods list.
+    def constructor_first(ms)
+      constr = ms.find {|m| m[:name] == "constructor" }
+      if constr
+        ms.delete(constr)
+        # Clone it.  Otherwise the search for "constructor" from this
+        # class will return nothing as we have renamed it.
+        constr2 = constr.clone
+        constr2[:name] = short_name
+        ms.unshift(constr2)
+      end
+      ms
     end
 
     # Returns hash of public members of class (and parent classes).

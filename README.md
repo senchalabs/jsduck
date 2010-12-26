@@ -36,6 +36,11 @@ Basically JsDuck thinks that the following doc-comment really sucks:
      * <li><code>{@link Ext.form.TextField#stripCharsRe stripCharsRe}</code> :
      * filter characters after being typed in, but before being validated</li>
      * </ul></div>
+     *
+     * @constructor Creates a new TextField
+     * @param {Object} config Configuration options
+     *
+     * @xtype textfield
      */
     Ext.form.TextField = Ext.extend(Ext.form.Field,  {
 
@@ -69,13 +74,17 @@ it would like that you wrote comments like that instead:
      *   filter out keystrokes before any validation occurs
      * - `{@link Ext.form.TextField#stripCharsRe stripCharsRe}` :
      *   filter characters after being typed in, but before being validated
+     *
+     * @xtype textfield
      */
     Ext.form.TextField = Ext.extend(Ext.form.Field,  {
 
 As you can see, JsDuck supports formatting comments with friendly
 [Markdown][] syntax.  And it can infer several things from the code
 (like @class and @extends in this case), so you don't have to repeat
-yourself.
+yourself.  Also the constructor documentation is inherited from parent
+class - so you don't have to restate that it takes a config object
+again.
 
 That's basically it.  Have fun.
 
@@ -121,7 +130,6 @@ currently missing:
 * List of subclasses
 * Tree of parent classes
 * Syntax highlighting of code examples
-* Constructor first in methods list
 * Search, not just searching from official ExtJS documentation
 * Support for custom @tags
 
