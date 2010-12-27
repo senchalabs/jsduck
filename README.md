@@ -137,6 +137,27 @@ Here's how the resulting documentation will look:
 * [Official ExtJS documentation](http://dev.sencha.com/deploy/dev/docs/) (for comparison)
 
 
+Documentation
+-------------
+
+Overview of documenting your code with JsDuck:
+
+* [Class](https://github.com/nene/jsduck/wiki/Class)
+* [Constructor](https://github.com/nene/jsduck/wiki/Constructor)
+* [Config options](https://github.com/nene/jsduck/wiki/Cfg)
+* [Properties](https://github.com/nene/jsduck/wiki/Property)
+* [Methods](https://github.com/nene/jsduck/wiki/Method)
+* [Events](https://github.com/nene/jsduck/wiki/Event)
+
+More details:
+
+* [List of supported @tags][tags]
+* [List of doc-comment errors(?) found in ExtJS source][errors]
+
+[tags]: https://github.com/nene/jsduck/wiki/List-of-supported-@tags
+[errors]: https://github.com/nene/jsduck/wiki/List-of-doc-comment-errors(%3F)-found-in-ExtJS-source
+
+
 Features and differences from ext-doc
 -------------------------------------
 
@@ -165,27 +186,6 @@ currently missing:
 * Syntax highlighting of code examples
 * Search, not just searching from official ExtJS documentation
 * Support for custom @tags
-
-
-Documentation
--------------
-
-Overview of documenting your code with JsDuck:
-
-* [Class](https://github.com/nene/jsduck/wiki/Class)
-* [Constructor](https://github.com/nene/jsduck/wiki/Constructor)
-* [Config options](https://github.com/nene/jsduck/wiki/Cfg)
-* [Properties](https://github.com/nene/jsduck/wiki/Property)
-* [Methods](https://github.com/nene/jsduck/wiki/Method)
-* [Events](https://github.com/nene/jsduck/wiki/Event)
-
-More details:
-
-* [List of supported @tags][tags]
-* [List of doc-comment errors(?) found in ExtJS source][errors]
-
-[tags]: https://github.com/nene/jsduck/wiki/List-of-supported-@tags
-[errors]: https://github.com/nene/jsduck/wiki/List-of-doc-comment-errors(%3F)-found-in-ExtJS-source
 
 
 Copying
