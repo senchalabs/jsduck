@@ -134,8 +134,19 @@ currently missing:
 * Support for custom @tags
 
 
-More
-----
+Documentation
+-------------
+
+Overview of documenting your code with JsDuck:
+
+* [Class](https://github.com/nene/jsduck/wiki/Class)
+* [Constructor](https://github.com/nene/jsduck/wiki/Constructor)
+* [Config options](https://github.com/nene/jsduck/wiki/Cfg)
+* [Properties](https://github.com/nene/jsduck/wiki/Property)
+* [Methods](https://github.com/nene/jsduck/wiki/Method)
+* [Events](https://github.com/nene/jsduck/wiki/Event)
+
+More details:
 
 * [List of supported @tags][tags]
 * [List of doc-comment errors(?) found in ExtJS source][errors]
