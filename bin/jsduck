@@ -24,7 +24,7 @@ app = JsDuck::App.new
 app.template_dir = File.dirname(File.dirname(__FILE__)) + "/template"
 
 opts = OptionParser.new do | opts |
-  opts.banner = "Usage: ruby jsduck.rb [options] files..."
+  opts.banner = "Usage: jsduck [options] files..."
 
   opts.on('-o', '--output=PATH', "Directory to output all this amazing documentation.") do |path|
     app.output_dir = path

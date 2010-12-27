@@ -93,15 +93,48 @@ That's basically it.  Have fun.
 [Markdown]: http://daringfireball.net/projects/markdown/
 
 
-Dependencies
-------------
+Getting it
+----------
 
-To run, you need Ruby 1.8 with [json][] and [RDiscount][] gems.
+Standard rubygems install should do:
 
-For development Rake and RSpec are also needed.
+    $ [sudo] gem install jsduck
+
+For hacking fork it from github.
+
+    $ git clone git://github.com/nene/jsduck.git
+    $ cd jsduck
+    $ rake --tasks
+
+JsDuck depends on [json][] and [RDiscount][] plus [RSpec][] for tests.
 
 [json]: http://flori.github.com/json/
 [RDiscount]: https://github.com/rtomayko/rdiscount
+[RSpec]: http://rspec.info/
+
+
+Usage
+-----
+
+Just call it from command line with output directory and a list of
+JavaScript files:
+
+    $ jsduck --verbose --output some/dir  your/project/*.js
+
+To specify a lot of files you should probably create a script that
+generates a file list and passes it through `xargs` to `jsduck`.
+
+For example to generate documentation for ExtJS:
+
+    $ find ext-3.3.1/src/ -name '*.js' | egrep -v 'locale/|test/|adapter/' | xargs jsduck -v -o output/
+
+The `--verbose` flag creates a lot of output, but at least you will
+see that something is happening.
+
+Here's how the resulting documentation will look:
+
+* [JsDuck generated documentation](http://triin.net/temp/jsduck/)
+* [Official ExtJS documentation](http://dev.sencha.com/deploy/dev/docs/) (for comparison)
 
 
 Features and differences from ext-doc
