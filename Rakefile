@@ -10,4 +10,14 @@ Spec::Rake::SpecTask.new(:spec) do |spec|
   spec.spec_files = FileList["spec/**/*_spec.rb"]
 end
 
+desc "Build gem locally"
+task :build do
+  system "gem build jsduck.gemspec"
+end
+
+desc "Install gem locally"
+task :install => :build do
+  system "gem install --user-install jsduck"
+end
+
 task :default => :spec
