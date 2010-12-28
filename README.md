@@ -165,7 +165,7 @@ JsDuck has some strong opinions, so some things are intentionally
 missing.
 
 * Support for Markdown in comments
-* More things infered from the code
+* More things inferred from the code
 * No XML configuration file, just command line options
 * Class documentation header doesn't separately list Package and Class -
   these are IMHO redundant.
