@@ -8,6 +8,9 @@ describe JsDuck::Lexer do
     while !lex.empty?
       t = lex.next(true)
       tokens << [t[:type], t[:value]]
+      if t[:linenr]
+        tokens.last << t[:linenr]
+      end
     end
     tokens
   end
@@ -96,8 +99,19 @@ describe JsDuck::Lexer do
     lex("a /* foo */ b").should == [[:ident, "a"], [:ident, "b"]]
   end
 
-  it "identifies doc-comments" do
-    lex("/** foo */").should == [[:doc_comment, "/** foo */"]]
+  it "identifies doc-comments together with line numbers" do
+    lex("/** foo */").should == [[:doc_comment, "/** foo */", 1]]
+  end
+
+  it "counts line numbers correctly" do
+    tokens = lex(<<-EOS)
+      foo = {
+        bar: foo,
+        /**
+         * My comment.
+         */
+    EOS
+    tokens.last.last.should == 3
   end
 
   describe "handles unfinished" do
@@ -111,7 +125,7 @@ describe JsDuck::Lexer do
     end
 
     it "doc-comment" do
-      lex("/** ").should == [[:doc_comment, "/** "]]
+      lex("/** ").should == [[:doc_comment, "/** ", 1]]
     end
   end
 

@@ -53,6 +53,9 @@ module JsDuck
     #
     #     {:type => :ident, :value => "foo"}
     #
+    # For doc-comments the full token also contains the field :linenr,
+    # pointing to the line where the doc-comment began.
+    #
     def next(full=false)
       tok = @tokens.shift
       full ? tok : tok[:value]
@@ -82,6 +85,8 @@ module JsDuck
         elsif @input.check(/\/\*\*/) then
           @tokens << {
             :type => :doc_comment,
+            # Calculate current line number, starting with 1
+            :linenr => @input.string[0...@input.pos].count("\n") + 1,
             :value => @input.scan_until(/\*\/|\Z/)
           }
         elsif @input.check(/"/) then
