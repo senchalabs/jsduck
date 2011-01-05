@@ -41,8 +41,8 @@ module JsDuck
       filenames.each do |fname|
         puts "Parsing #{fname} ..." if @verbose
         code = IO.read(fname)
-        agr.parse(code)
-        src.write(code, fname)
+        src_fname = src.write(code, fname)
+        agr.parse(code, File.basename(src_fname))
       end
       agr.result
     end

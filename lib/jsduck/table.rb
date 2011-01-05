@@ -55,7 +55,7 @@ module JsDuck
 
     def signature(item)
       id = @cls.full_name+ "-" + item[:name]
-      src = "source/sample.html#" + id
+      src = "source/#{item[:href]}"
       return "<a id='#{id}'></a><b><a href='#{src}'>#{item[:name]}</a></b>" + signature_suffix(item)
     end
 

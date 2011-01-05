@@ -16,13 +16,23 @@ module JsDuck
       @merger = Merger.new
     end
 
-    def parse(input)
+    def parse(input, filename="")
       @current_class = nil
       Parser.new(input).parse.each do |docset|
         doc = @doc_parser.parse(docset[:comment])
         code = docset[:code]
-        register(@merger.merge(doc, code))
+        register(add_href(@merger.merge(doc, code), filename))
       end
+    end
+
+    # Tags doc-object with link to source code where it came from
+    def add_href(doc, href)
+      doc[:href] = href
+      if doc[:tagname] == :class
+        doc[:cfg].each {|cfg| cfg[:href] = href }
+        doc[:method].each {|method| method[:href] = href }
+      end
+      doc
     end
 
     # Registers documentation node either as class or as member of
