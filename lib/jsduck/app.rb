@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'jsduck/aggregator'
+require 'jsduck/source_formatter'
 require 'jsduck/class'
 require 'jsduck/tree'
 require 'jsduck/tree_icons'
@@ -26,8 +27,8 @@ module JsDuck
 
     # Call this after input parameters set
     def run
-      classes = filter_classes(parse_files(@input_files))
       copy_template(@template_dir, @output_dir)
+      classes = filter_classes(parse_files(@input_files))
       write_tree(@output_dir+"/output/tree.js", classes)
       write_pages(@output_dir+"/output", classes)
     end
@@ -36,9 +37,12 @@ module JsDuck
     # documented items in all of those files.
     def parse_files(filenames)
       agr = Aggregator.new
-      filenames.each do |name|
-        puts "Parsing #{name} ..." if @verbose
-        agr.parse(IO.read(name))
+      src = SourceFormatter.new(@output_dir + "/source")
+      filenames.each do |fname|
+        puts "Parsing #{fname} ..." if @verbose
+        code = IO.read(fname)
+        agr.parse(code)
+        src.write(code, fname)
       end
       agr.result
     end
@@ -83,6 +87,7 @@ module JsDuck
       end
       FileUtils.cp_r(template_dir, dir)
       FileUtils.mkdir(dir + "/output")
+      FileUtils.mkdir(dir + "/source")
     end
   end
 
