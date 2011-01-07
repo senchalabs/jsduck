@@ -9,9 +9,10 @@ module JsDuck
     end
 
     # Parses the whole JavaScript block and returns array where for
-    # each doc-comment there is a hash of two values: the comment
-    # itself as string and parsed structure of the code that
-    # immediately follows the comment.
+    # each doc-comment there is a hash of three values: the comment
+    # itself as string, number of the line where the comment starts,
+    # and parsed structure of the code that immediately follows the
+    # comment.
     #
     # For example with the following JavaScript input:
     #
@@ -26,6 +27,7 @@ module JsDuck
     # [
     #   {
     #     :comment => "/**\n * @param {String} foo\n */",
+    #     :linenr => 1,
     #     :code => {
     #       :type => :assignment,
     #       :left => ["MyClass", "doIt"],
@@ -44,8 +46,10 @@ module JsDuck
     def parse
       while !@lex.empty? do
         if look(:doc_comment) then
+          comment = @lex.next(true)
           @docs << {
-            :comment => match(:doc_comment),
+            :comment => comment[:value],
+            :linenr => comment[:linenr],
             :code => code_block
           }
         else

@@ -21,7 +21,8 @@ module JsDuck
       Parser.new(input).parse.each do |docset|
         doc = @doc_parser.parse(docset[:comment])
         code = docset[:code]
-        register(add_href(@merger.merge(doc, code), filename))
+        href = filename + "#line-" + docset[:linenr].to_s
+        register(add_href(@merger.merge(doc, code), href))
       end
     end
 
