@@ -33,5 +33,9 @@ describe JsDuck::SourceFormatter do
       @formatter.html_filename("foo.js").should == "some/dir/foo.html"
     end
 
+    it "Adds number to filename if provided" do
+      @formatter.html_filename("foo.js", 2).should == "some/dir/foo2.html"
+    end
+
   end
 end

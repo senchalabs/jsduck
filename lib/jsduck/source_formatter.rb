@@ -16,13 +16,23 @@ module JsDuck
     # Converts source to HTML and writes into file in output
     # directory.  It returns the name of the file that it wrote.
     def write(source, filename)
-      fname = html_filename(filename)
+      fname = uniq_html_filename(filename)
       File.open(fname, 'w') {|f| f.write(format(source)) }
       fname
     end
 
-    def html_filename(filename)
-      @output_dir + "/" + File.basename(filename, ".js") + ".html"
+    def uniq_html_filename(filename)
+      fname = html_filename(filename)
+      nr = 1
+      while File.exists?(fname)
+        nr += 1
+        fname = html_filename(filename, nr)
+      end
+      fname
+    end
+
+    def html_filename(filename, nr=0)
+      @output_dir + "/" + File.basename(filename, ".js") + (nr > 0 ? nr.to_s : "") + ".html"
     end
 
     # Returns full source for HTML page
