@@ -180,7 +180,6 @@ Missing features
 It's still in early beta, so several things supported by ext-doc are
 currently missing:
 
-* Links from documentation to source code
 * List of subclasses
 * Tree of parent classes
 * Syntax highlighting of code examples
@@ -195,3 +194,11 @@ JsDuck is distributed under the terms of the GNU General Public License version 
 
 JsDuck was developed by [Rene Saarsoo](http://triin.net).
 
+
+Changelog
+---------
+
+* Latest version.
+  * Links from documentation to source code
+
+* 0.1 - initial version.
