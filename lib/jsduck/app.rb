@@ -42,7 +42,7 @@ module JsDuck
         puts "Parsing #{fname} ..." if @verbose
         code = IO.read(fname)
         src_fname = src.write(code, fname)
-        agr.parse(code, File.basename(src_fname))
+        agr.parse(code, File.basename(fname), File.basename(src_fname))
       end
       agr.result
     end

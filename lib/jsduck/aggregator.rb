@@ -16,20 +16,30 @@ module JsDuck
       @merger = Merger.new
     end
 
-    def parse(input, filename="")
+    # Parses chunk of JavaScript.  The resulting documentation is
+    # accumulated inside this class and can be later accessed through
+    # #result method.
+    #
+    # - input  the JavaScript source
+    # - filename  name of the JS file where it came from
+    # - html_filename  name of the HTML file where the source was saved.
+    #
+    def parse(input, filename="", html_filename="")
       @current_class = nil
       Parser.new(input).parse.each do |docset|
         doc = @doc_parser.parse(docset[:comment])
         code = docset[:code]
-        href = filename + "#line-" + docset[:linenr].to_s
-        register(add_href(@merger.merge(doc, code), href))
+        href = html_filename + "#line-" + docset[:linenr].to_s
+        register(add_href(@merger.merge(doc, code), href, filename))
       end
     end
 
-    # Tags doc-object with link to source code where it came from
-    def add_href(doc, href)
+    # Tags doc-object with link to source code where it came from.
+    # For class we also store the name of the JavaScript file.
+    def add_href(doc, href, filename)
       doc[:href] = href
       if doc[:tagname] == :class
+        doc[:filename] = filename
         doc[:cfg].each {|cfg| cfg[:href] = href }
         doc[:method].each {|method| method[:href] = href }
       end

@@ -36,12 +36,17 @@ module JsDuck
       [
        "<table cellspacing='0'>",
         abstract_row("Extends:", @cls.parent ? class_link(@cls.parent.full_name) : "Object"),
+        abstract_row("Defind In:", file_link),
        "</table>",
       ].join("\n")
     end
 
     def class_link(name)
       "<a href='output/#{name}.html' ext:cls='#{name}'>#{name}</a>"
+    end
+
+    def file_link
+      "<a href='source/#{@cls[:href]}'>#{@cls[:filename]}</a>"
     end
 
     def abstract_row(label, info)
