@@ -45,8 +45,16 @@ module JsDuck
   <title>The source code</title>
   <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
   <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
 </head>
-<body onload="prettyPrint()">
+<body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">#{format_pre(source)}</pre>
 </body>
 </html>
