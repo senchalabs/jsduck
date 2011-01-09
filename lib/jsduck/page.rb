@@ -9,8 +9,9 @@ module JsDuck
 
   # Creates HTML documentation page for one class.
   class Page
-    def initialize(cls)
+    def initialize(cls, subclasses = {})
       @cls = cls
+      @subclasses = subclasses
       @formatter = DocFormatter.new(cls.full_name)
     end
 
@@ -44,16 +45,23 @@ module JsDuck
        "<table cellspacing='0'>",
         abstract_row("Extends:", @cls.parent ? class_link(@cls.parent.full_name) : "Object"),
         abstract_row("Defind In:", file_link),
+        @subclasses[@cls] ? abstract_row("Subclasses:", subclasses) : "",
        "</table>",
       ].join("\n")
     end
 
-    def class_link(name)
-      "<a href='output/#{name}.html' ext:cls='#{name}'>#{name}</a>"
+    def class_link(class_name, label=nil)
+      label = label || class_name
+      "<a href='output/#{class_name}.html' ext:cls='#{class_name}'>#{label}</a>"
     end
 
     def file_link
       "<a href='source/#{@cls[:href]}'>#{@cls[:filename]}</a>"
+    end
+
+    def subclasses
+      subs = @subclasses[@cls].sort {|a, b| a.short_name <=> b.short_name }
+      subs.collect {|cls| class_link(cls.full_name, cls.short_name) }.join(", ")
     end
 
     def abstract_row(label, info)

@@ -180,7 +180,6 @@ Missing features
 It's still in early beta, so several things supported by ext-doc are
 currently missing:
 
-* List of subclasses
 * Search, not just searching from official ExtJS documentation
 * Support for custom @tags
 
@@ -200,5 +199,6 @@ Changelog
   * Links from documentation to source code
   * Syntax highlighting of code examples
   * Tree of parent classes
+  * List of subclasses
 
 * 0.1 - initial version.

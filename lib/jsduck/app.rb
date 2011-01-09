@@ -4,6 +4,7 @@ require 'jsduck/source_formatter'
 require 'jsduck/class'
 require 'jsduck/tree'
 require 'jsduck/tree_icons'
+require 'jsduck/subclasses'
 require 'jsduck/page'
 require 'json'
 require 'fileutils'
@@ -73,10 +74,11 @@ module JsDuck
 
     # Writes documentation page for each class
     def write_pages(path, docs)
+      subclasses = Subclasses.new(docs)
       docs.each do |cls|
         filename = path + "/" + cls[:name] + ".html"
         puts "Writing to #{filename} ..." if @verbose
-        File.open(filename, 'w') {|f| f.write( Page.new(cls).to_html ) }
+        File.open(filename, 'w') {|f| f.write( Page.new(cls, subclasses).to_html ) }
       end
     end
 
