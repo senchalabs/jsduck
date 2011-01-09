@@ -182,7 +182,6 @@ currently missing:
 
 * List of subclasses
 * Tree of parent classes
-* Syntax highlighting of code examples
 * Search, not just searching from official ExtJS documentation
 * Support for custom @tags
 
@@ -200,5 +199,6 @@ Changelog
 
 * Latest version.
   * Links from documentation to source code
+  * Syntax highlighting of code examples
 
 * 0.1 - initial version.
