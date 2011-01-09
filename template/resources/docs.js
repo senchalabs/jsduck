@@ -213,6 +213,13 @@ DocPanel = Ext.extend(Ext.Panel, {
                 tr.highlight('#cadaf9');
             }
         }
+    },
+
+    // Marks all code examples with "prettyprint" class.
+    // Then runs the prettify library on the whole document.
+    prettyPrint : function(){
+        Ext.select("pre > code", this.el).addClass("prettyprint lang-js");
+        prettyPrint();
     }
 });
 
@@ -314,12 +321,14 @@ Ext.extend(MainPanel, Ext.TabPanel, {
                 tab.scrollToMember(member);
             }
         }else{
-            var autoLoad = {url: href};
-            if(member){
-                autoLoad.callback = function(){
-                    Ext.getCmp(id).scrollToMember(member);
+            var autoLoad = {
+                url: href,
+                callback: function(){
+                    var tab = Ext.getCmp(id);
+                    tab.prettyPrint();
+                    member && tab.scrollToMember(member);
                 }
-            }
+            };
             var p = this.add(new DocPanel({
                 id: id,
                 cclass : cls,

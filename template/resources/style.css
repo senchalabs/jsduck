@@ -251,22 +251,9 @@
     color: #000;
     line-height: 16px !important;
 }
-    .body-wrap pre code b {
-        font-weight: normal;
-        color: #800080;
-    }
-    .body-wrap pre code em {
-        font-weight: normal;
-        color: #008080;
-        background-color:#eee;
-    }
-    .body-wrap pre code i,
-    .body-wrap pre code i b,
-    .body-wrap pre code i em {
-        font-weight: normal;
-        font-style: normal;
-        color: #999;
-    }
+.body-wrap pre code a {
+    text-decoration: underline !important;
+}
 
 /* Hide long descriptions initially */
 /* When "expanded" class set, hide short and show long */
