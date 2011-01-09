@@ -209,9 +209,8 @@ DocPanel = Ext.extend(Ext.Panel, {
     hlMember : function(member){
         var el = Ext.fly(this.cclass + '-' + member);
         if(el){
-            if (tr = el.up('tr')) {
-                tr.highlight('#cadaf9');
-            }
+            var tr = el.up('tr');
+            tr && tr.highlight('#cadaf9');
         }
     },
 
