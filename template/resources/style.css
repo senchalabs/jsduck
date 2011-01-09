@@ -120,6 +120,8 @@
     margin: 5px 0;
     overflow: hidden;
     line-height: 1px;
+    /* Force the line always below inheritance tree */
+    clear: both;
 }
 
 

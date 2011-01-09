@@ -1,4 +1,5 @@
 require 'jsduck/doc_formatter'
+require 'jsduck/inheritance_tree'
 require 'jsduck/cfg_table'
 require 'jsduck/property_table'
 require 'jsduck/method_table'
@@ -16,6 +17,7 @@ module JsDuck
     def to_html
       [
        '<div class="body-wrap">',
+       inheritance_tree,
        heading,
        abstract,
        description,
@@ -26,6 +28,11 @@ module JsDuck
        EventTable.new(@cls).to_html,
        "</div>",
       ].join("\n")
+    end
+
+    # only render the tree if class has at least one ancestor
+    def inheritance_tree
+      @cls.parent ? InheritanceTree.new(@cls).to_html : ""
     end
 
     def heading
