@@ -43,9 +43,11 @@ module JsDuck
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
 </head>
-<body>
-  <pre>#{format_pre(source)}</pre>
+<body onload="prettyPrint()">
+  <pre class="prettyprint lang-js">#{format_pre(source)}</pre>
 </body>
 </html>
       EOHTML
