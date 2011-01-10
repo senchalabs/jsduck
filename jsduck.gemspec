@@ -2,8 +2,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.7"
 
   s.name = 'jsduck'
-  s.version = '0.1'
-  s.date = '2010-12-27'
+  s.version = '0.2'
+  s.date = '2011-01-10'
   s.summary = "Simple JavaScript Duckumentation generator"
   s.description = "Better ext-doc like JavaScript documentation generator for ExtJS"
   s.homepage = "https://github.com/nene/jsduck"

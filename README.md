@@ -174,14 +174,17 @@ missing.
 * Ext.Component has a component icon too, not only its descendants
 
 
-Missing features
-----------------
+Missing features and TODO
+-------------------------
 
-It's still in early beta, so several things supported by ext-doc are
-currently missing:
+* Search, not just searching from official ExtJS documentation.
 
-* Search, not just searching from official ExtJS documentation
-* Support for custom @tags
+* Support for custom @tags. Ext-doc supports this, I personally have
+  never used this feature, so I'm thinking it's not really needed.
+
+* Speed improvements. JsDuck is clearly slower than ext-doc, but I
+  haven't so far done almost no optimizations, so there should be some
+  pretty low-hanging fruits to pick.
 
 
 Copying
@@ -195,7 +198,7 @@ JsDuck was developed by [Rene Saarsoo](http://triin.net).
 Changelog
 ---------
 
-* Latest version.
+* 0.2 - most features of ext-doc supported.
   * Links from documentation to source code
   * Syntax highlighting of code examples
   * Tree of parent classes
