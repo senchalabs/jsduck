@@ -37,7 +37,7 @@ module JsDuck
     end
 
     def heading
-      "<h1>Class <a href='source/sample.html#cls-#{@cls.full_name}'>#{@cls.full_name}</a></h1>"
+      "<h1>Class <a href='source/#{@cls[:href]}'>#{@cls.full_name}</a></h1>"
     end
 
     def abstract
