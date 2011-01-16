@@ -72,9 +72,11 @@ module JsDuck
       while !@input.eos? do
         skip_white_and_comments
         if @input.check(/[0-9]+/)
+          nr = @input.scan(/[0-9]+(\.[0-9]*)?/)
           @tokens << {
             :type => :number,
-            :value => eval(@input.scan(/[0-9]+(\.[0-9]*)?/))
+            # When number ends with ".", append "0" so Ruby eval will work
+            :value => eval(/\.$/ =~ nr ? nr+"0" : nr)
           }
         elsif @input.check(/\w+/)
           value = @input.scan(/\w+/)

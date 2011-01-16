@@ -91,6 +91,10 @@ describe JsDuck::Lexer do
     end
   end
 
+  it "evaluates floating-point numbers with no digits after dot" do
+    lex("alert(5.)")[2].should == [:number, 5.0]
+  end
+
   it "ignores one-line comments" do
     lex("a // foo\n b").should == [[:ident, "a"], [:ident, "b"]]
   end
