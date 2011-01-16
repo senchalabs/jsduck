@@ -70,6 +70,9 @@ module JsDuck
         var_declaration
       elsif look(:ident, ":") || look(:string, ":") then
         property_literal
+      elsif look(",", :ident, ":") || look(",", :string, ":")  then
+        match(",")
+        property_literal
       elsif look(:ident) || look("this") then
         maybe_assignment
       elsif look(:string) then

@@ -129,6 +129,13 @@ describe JsDuck::Aggregator do
     it_should_behave_like "method documentation"
   end
 
+  describe "function-literal in comma-first style" do
+    before do
+      @doc = parse("/** Some function */ , foo: function() {}")[0]
+    end
+    it_should_behave_like "method documentation"
+  end
+
   describe "explicit @method without @param-s" do
     before do
       @doc = parse(<<-EOS)[0]

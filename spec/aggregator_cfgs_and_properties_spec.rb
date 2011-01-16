@@ -246,4 +246,17 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "comma-first style" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some documentation.
+         */
+        ,foo: ""
+      EOS
+    end
+    it_should_behave_like "property"
+    it_should_behave_like "cfg or property"
+  end
+
 end
