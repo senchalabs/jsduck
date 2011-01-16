@@ -45,7 +45,7 @@ module JsDuck
     #
     def parse
       while !@lex.empty? do
-        if look(:doc_comment) then
+        if look(:doc_comment)
           comment = @lex.next(true)
           @docs << {
             :comment => comment[:value],
@@ -64,18 +64,18 @@ module JsDuck
 
     # <code-block> := <function> | <var-declaration> | <assignment> | <property-literal>
     def code_block
-      if look("function") then
+      if look("function")
         function
-      elsif look("var") then
+      elsif look("var")
         var_declaration
-      elsif look(:ident, ":") || look(:string, ":") then
+      elsif look(:ident, ":") || look(:string, ":")
         property_literal
-      elsif look(",", :ident, ":") || look(",", :string, ":")  then
+      elsif look(",", :ident, ":") || look(",", :string, ":")
         match(",")
         property_literal
-      elsif look(:ident) || look("this") then
+      elsif look(:ident) || look("this")
         maybe_assignment
-      elsif look(:string) then
+      elsif look(:string)
         {:type => :assignment, :left => [match(:string)]}
       else
         {:type => :nop}
@@ -118,7 +118,7 @@ module JsDuck
     # <maybe-assignment> := <ident-chain> [ "=" <expression> ]
     def maybe_assignment
       left = ident_chain
-      if look("=") then
+      if look("=")
         match("=")
         right = expression
       end
@@ -146,17 +146,17 @@ module JsDuck
     # <expression> := <function> | <ext-extend> | <literal>
     # <literal> := <string> | <boolean> | <number> | <regex>
     def expression
-      if look("function") then
+      if look("function")
         function
-      elsif look("Ext", ".", "extend") then
+      elsif look("Ext", ".", "extend")
         ext_extend
-      elsif look(:string) then
+      elsif look(:string)
         {:type => :literal, :class => "String"}
-      elsif look("true") || look("false") then
+      elsif look("true") || look("false")
         {:type => :literal, :class => "Boolean"}
-      elsif look(:number) then
+      elsif look(:number)
         {:type => :literal, :class => "Number"}
-      elsif look(:regex) then
+      elsif look(:regex)
         {:type => :literal, :class => "RegExp"}
       end
     end
@@ -185,7 +185,7 @@ module JsDuck
     # Matches all arguments, returns the value of last match
     # When the whole sequence doesn't match, throws exception
     def match(*args)
-      if look(*args) then
+      if look(*args)
         last = nil
         args.length.times { last = @lex.next }
         last

@@ -38,7 +38,7 @@ module JsDuck
         tok = @tokens[i]
         i += 1
         return false if tok == nil
-        if t.instance_of?(Symbol) then
+        if t.instance_of?(Symbol)
           tok[:type] == t
         else
           tok[:value] == t
@@ -71,36 +71,36 @@ module JsDuck
       @tokens = []
       while !@input.eos? do
         skip_white_and_comments
-        if @input.check(/[0-9]+/) then
+        if @input.check(/[0-9]+/)
           @tokens << {
             :type => :number,
             :value => eval(@input.scan(/[0-9]+(\.[0-9]*)?/))
           }
-        elsif @input.check(/\w+/) then
+        elsif @input.check(/\w+/)
           value = @input.scan(/\w+/)
           @tokens << {
             :type => KEYWORDS[value] ? :keyword : :ident,
             :value => value
           }
-        elsif @input.check(/\/\*\*/) then
+        elsif @input.check(/\/\*\*/)
           @tokens << {
             :type => :doc_comment,
             # Calculate current line number, starting with 1
             :linenr => @input.string[0...@input.pos].count("\n") + 1,
             :value => @input.scan_until(/\*\/|\Z/)
           }
-        elsif @input.check(/"/) then
+        elsif @input.check(/"/)
           @tokens << {
             :type => :string,
             :value => eval(@input.scan(/"([^"\\]|\\.)*"/))
           }
-        elsif @input.check(/'/) then
+        elsif @input.check(/'/)
           @tokens << {
             :type => :string,
             :value => eval(@input.scan(/'([^'\\]|\\.)*'/))
           }
-        elsif @input.check(/\//) then
-          if regex? then
+        elsif @input.check(/\//)
+          if regex?
             @tokens << {
               :type => :regex,
               :value => @input.scan(/\/([^\/\\]|\\.)*\/[gim]*/)
@@ -111,7 +111,7 @@ module JsDuck
               :value => @input.scan(/\//)
             }
           end
-        elsif @input.check(/./) then
+        elsif @input.check(/./)
           @tokens << {
             :type => :operator,
             :value => @input.scan(/./)
@@ -128,7 +128,7 @@ module JsDuck
     # - closing square-bracket ]
     # Otherwise it's a beginning of regex
     def regex?
-      if @tokens.last then
+      if @tokens.last
         type = @tokens.last[:type]
         value = @tokens.last[:value]
         if type == :ident || type == :number
@@ -145,9 +145,9 @@ module JsDuck
     def skip_white_and_comments
       skip_white
       while multiline_comment? || line_comment? do
-        if multiline_comment? then
+        if multiline_comment?
           @input.scan_until(/\*\/|\Z/)
-        elsif line_comment? then
+        elsif line_comment?
           @input.scan_until(/\n|\Z/)
         end
         skip_white

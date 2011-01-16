@@ -48,7 +48,7 @@ module JsDuck
       # - and those without it
       input.each_line do |line|
         line.chomp!
-        if line =~ /\A\s*\*\s?(.*)\Z/ then
+        if line =~ /\A\s*\*\s?(.*)\Z/
           result << $1
         else
           result << line
@@ -64,39 +64,39 @@ module JsDuck
     def parse_loop
       add_tag(:default)
       while !@input.eos? do
-        if look(/@class\b/) then
+        if look(/@class\b/)
           at_class
-        elsif look(/@extends\b/) then
+        elsif look(/@extends\b/)
           at_extends
-        elsif look(/@singleton\b/) then
+        elsif look(/@singleton\b/)
           boolean_at_tag(/@singleton/, :singleton)
-        elsif look(/@event\b/) then
+        elsif look(/@event\b/)
           at_event
-        elsif look(/@method\b/) then
+        elsif look(/@method\b/)
           at_method
-        elsif look(/@constructor\b/) then
+        elsif look(/@constructor\b/)
           boolean_at_tag(/@constructor/, :constructor)
-        elsif look(/@param\b/) then
+        elsif look(/@param\b/)
           at_param
-        elsif look(/@returns?\b/) then
+        elsif look(/@returns?\b/)
           at_return
-        elsif look(/@cfg\b/) then
+        elsif look(/@cfg\b/)
           at_cfg
-        elsif look(/@property\b/) then
+        elsif look(/@property\b/)
           at_property
-        elsif look(/@type\b/) then
+        elsif look(/@type\b/)
           at_type
-        elsif look(/@xtype\b/) then
+        elsif look(/@xtype\b/)
           at_xtype
-        elsif look(/@member\b/) then
+        elsif look(/@member\b/)
           at_member
-        elsif look(/@static\b/) then
+        elsif look(/@static\b/)
           boolean_at_tag(/@static/, :static)
-        elsif look(/@(private|ignore|hide|protected)\b/) then
+        elsif look(/@(private|ignore|hide|protected)\b/)
           boolean_at_tag(/@(private|ignore|hide|protected)/, :private)
-        elsif look(/@/) then
+        elsif look(/@/)
           @current_tag[:doc] += @input.scan(/@/)
-        elsif look(/[^@]/) then
+        elsif look(/[^@]/)
           @current_tag[:doc] += @input.scan(/[^@]+/)
         end
       end
@@ -183,9 +183,9 @@ module JsDuck
       match(/@type/)
       add_tag(:type)
       skip_horiz_white
-      if look(/\{/) then
+      if look(/\{/)
         @current_tag[:type] = typedef
-      elsif look(/\S/) then
+      elsif look(/\S/)
         @current_tag[:type] = @input.scan(/\S+/)
       end
       skip_white
@@ -217,7 +217,7 @@ module JsDuck
     # matches {type} if possible and sets it on @current_tag
     def maybe_type
       skip_horiz_white
-      if look(/\{/) then
+      if look(/\{/)
         @current_tag[:type] = typedef
       end
     end
@@ -225,7 +225,7 @@ module JsDuck
     # matches identifier name if possible and sets it on @current_tag
     def maybe_name
       skip_horiz_white
-      if look(/\w/) then
+      if look(/\w/)
         @current_tag[:name] = ident
       end
     end
@@ -233,7 +233,7 @@ module JsDuck
     # matches ident.chain if possible and sets it on @current_tag
     def maybe_ident_chain(propname)
       skip_horiz_white
-      if look(/\w/) then
+      if look(/\w/)
         @current_tag[propname] = ident_chain
       end
     end
