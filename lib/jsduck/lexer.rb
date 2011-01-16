@@ -84,6 +84,12 @@ module JsDuck
             :type => KEYWORDS[value] ? :keyword : :ident,
             :value => value
           }
+        elsif @input.check(/\$/)
+          value = @input.scan(/\$\w*/)
+          @tokens << {
+            :type => :ident,
+            :value => value
+          }
         elsif @input.check(/\/\*\*/)
           @tokens << {
             :type => :doc_comment,

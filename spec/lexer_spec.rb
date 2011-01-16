@@ -95,6 +95,14 @@ describe JsDuck::Lexer do
     lex("alert(5.)")[2].should == [:number, 5.0]
   end
 
+  it "identifies $ as beginning of identifier" do
+    lex("$1a").should == [[:ident, "$1a"]]
+  end
+
+  it "allows $ as a name of identifier" do
+    lex("$ = 3")[0].should == [:ident, "$"]
+  end
+
   it "ignores one-line comments" do
     lex("a // foo\n b").should == [[:ident, "a"], [:ident, "b"]]
   end
