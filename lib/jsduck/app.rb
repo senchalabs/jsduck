@@ -6,6 +6,7 @@ require 'jsduck/tree'
 require 'jsduck/tree_icons'
 require 'jsduck/subclasses'
 require 'jsduck/page'
+require 'jsduck/timer'
 require 'json'
 require 'fileutils'
 
@@ -24,14 +25,18 @@ module JsDuck
       @template_dir = nil
       @input_files = []
       @verbose = false
+      @timer = Timer.new
     end
 
     # Call this after input parameters set
     def run
       copy_template(@template_dir, @output_dir)
-      classes = filter_classes(parse_files(@input_files))
-      write_tree(@output_dir+"/output/tree.js", classes)
-      write_pages(@output_dir+"/output", classes)
+      result = parse_files(@input_files)
+      classes = @timer.time(:parsing) { filter_classes(result) }
+      @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", classes) }
+      @timer.time(:generating) { write_pages(@output_dir+"/output", classes) }
+
+      @timer.report if @verbose
     end
 
     # Given array of filenames, parses all files and returns array of
@@ -41,9 +46,9 @@ module JsDuck
       src = SourceFormatter.new(@output_dir + "/source")
       filenames.each do |fname|
         puts "Parsing #{fname} ..." if @verbose
-        code = IO.read(fname)
-        src_fname = src.write(code, fname)
-        agr.parse(code, File.basename(fname), File.basename(src_fname))
+        code = @timer.time(:parsing) { IO.read(fname) }
+        src_fname = @timer.time(:generating) { src.write(code, fname) }
+        @timer.time(:parsing) { agr.parse(code, File.basename(fname), File.basename(src_fname)) }
       end
       agr.result
     end
@@ -78,7 +83,8 @@ module JsDuck
       docs.each do |cls|
         filename = path + "/" + cls[:name] + ".html"
         puts "Writing to #{filename} ..." if @verbose
-        File.open(filename, 'w') {|f| f.write( Page.new(cls, subclasses).to_html ) }
+        html = Page.new(cls, subclasses).to_html
+        File.open(filename, 'w') {|f| f.write(html) }
       end
     end
 
