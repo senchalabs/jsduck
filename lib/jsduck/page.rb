@@ -9,9 +9,16 @@ module JsDuck
 
   # Creates HTML documentation page for one class.
   class Page
-    def initialize(cls, subclasses = {})
+    # Initializes doc page generator
+    #
+    # - cls : the Class object for which to generate documentation
+    # - subclasses : lookup table for easy access to subclasses
+    # - cache : cache for already generated HTML rows for class members
+    #
+    def initialize(cls, subclasses = {}, cache = {})
       @cls = cls
       @subclasses = subclasses
+      @cache = cache
       @formatter = DocFormatter.new(cls.full_name)
     end
 
@@ -23,10 +30,10 @@ module JsDuck
        abstract,
        description,
        "<div class='hr'></div>",
-       CfgTable.new(@cls).to_html,
-       PropertyTable.new(@cls).to_html,
-       MethodTable.new(@cls).to_html,
-       EventTable.new(@cls).to_html,
+       CfgTable.new(@cls, @cache).to_html,
+       PropertyTable.new(@cls, @cache).to_html,
+       MethodTable.new(@cls, @cache).to_html,
+       EventTable.new(@cls, @cache).to_html,
        "</div>",
       ].join("\n")
     end

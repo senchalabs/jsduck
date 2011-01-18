@@ -80,10 +80,11 @@ module JsDuck
     # Writes documentation page for each class
     def write_pages(path, docs)
       subclasses = Subclasses.new(docs)
+      cache = {}
       docs.each do |cls|
         filename = path + "/" + cls[:name] + ".html"
         puts "Writing to #{filename} ..." if @verbose
-        html = Page.new(cls, subclasses).to_html
+        html = Page.new(cls, subclasses, cache).to_html
         File.open(filename, 'w') {|f| f.write(html) }
       end
     end

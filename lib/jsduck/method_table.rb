@@ -5,8 +5,8 @@ require 'jsduck/long_params'
 module JsDuck
 
   class MethodTable < Table
-    def initialize(cls)
-      super(cls)
+    def initialize(cls, cache={})
+      super(cls, cache)
       @type = :method
       @id = @cls.full_name + "-methods"
       @title = "Public Methods"

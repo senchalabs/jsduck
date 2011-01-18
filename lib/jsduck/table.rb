@@ -8,8 +8,18 @@ module JsDuck
   # @row_class, and implement the signature_suffix() and extra_doc()
   # methods.
   class Table
-    def initialize(cls)
+    # Initializes class member table generator
+    #
+    # - cls : the class for which to generate the table.
+    #
+    # - cache : shared cache of already generated HTML rows.  If Foo
+    #   inherits from Bar and we have already generated members table
+    #   for Bar, then we don't have to re-render all the HTML the
+    #   methods from Bar, but can just look them up from cache.
+    #
+    def initialize(cls, cache={})
       @cls = cls
+      @cache = cache
       @formatter = DocFormatter.new(cls.full_name)
     end
 
@@ -29,20 +39,39 @@ module JsDuck
       ].join("\n")
     end
 
+    # Returns HTML row for class member.
+    #
+    # When HTML for member has already been rendered we can pick it
+    # from cache and only fill in some details which differ from class
+    # to class.
+    #
+    # Otherwise perform the rendering of HTML and save it to cache.
     def row(item)
+      cache_key = "#{item[:member]}-#{@row_class}-#{item[:name]}"
+      if @cache[cache_key]
+        html = @cache[cache_key]
+      else
+        html = @cache[cache_key] = create_row(item)
+      end
+      inherited = inherited?(item) ? 'inherited' : ''
+      owner = inherited?(item) ? member_link(item) : Class.short_name(item[:member])
+      html.sub(/!!--inherited--!!/, inherited).sub(/!!--owner-class--!!/, owner)
+    end
+
+    # Generates HTML for the row, leaving in placeholders for owner
+    # class name and inherited class.
+    def create_row(item)
       p_doc = primary_doc(item)
       e_doc = extra_doc(item)
       description = expandable_desc(p_doc, e_doc)
       expandable = expandable?(p_doc, e_doc) ? 'expandable' : ''
-      inherited = inherited?(item) ? 'inherited' : ''
-      source = inherited?(item) ? member_link(item) : Class.short_name(item[:member])
-      [
-       "<tr class='#{@row_class} #{expandable} #{inherited}'>",
-         "<td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>",
-         "<td class='sig'>#{signature(item)}<div class='mdesc'>#{description}</div></td>",
-         "<td class='msource'>#{source}</td>",
-       "</tr>",
-      ].join("")
+      return <<-EOHTML
+      <tr class='#{@row_class} #{expandable} !!--inherited--!!'>
+        <td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>
+        <td class='sig'>#{signature(item)}<div class='mdesc'>#{description}</div></td>
+        <td class='msource'>!!--owner-class--!!</td>
+      </tr>
+      EOHTML
     end
 
     def member_link(item)

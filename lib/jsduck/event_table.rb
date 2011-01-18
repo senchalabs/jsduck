@@ -5,8 +5,8 @@ require 'jsduck/long_params'
 module JsDuck
 
   class EventTable < Table
-    def initialize(cls)
-      super(cls)
+    def initialize(cls, cache={})
+      super(cls, cache)
       @type = :event
       @id = @cls.full_name + "-events"
       @title = "Public Events"
