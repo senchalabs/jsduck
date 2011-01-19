@@ -152,22 +152,18 @@ module JsDuck
 
     def skip_white_and_comments
       skip_white
-      while multiline_comment? || line_comment? do
-        if multiline_comment?
+      while true do
+        if @input.check(/\/\*[^*]/)
+          # skip multiline comment
           @input.scan_until(/\*\/|\Z/)
-        elsif line_comment?
+        elsif @input.check(/\/\//)
+          # skip line comment
           @input.scan_until(/\n|\Z/)
+        else
+          break
         end
         skip_white
       end
-    end
-
-    def multiline_comment?
-      @input.check(/\/\*[^*]/)
-    end
-
-    def line_comment?
-      @input.check(/\/\//)
     end
 
     def skip_white
