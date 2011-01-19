@@ -152,7 +152,8 @@ module JsDuck
 
     def skip_white_and_comments
       skip_white
-      while true do
+      # Perform the comments cleanup loop only if there are comments
+      while @input.check(/\//) do
         if @input.check(/\/\*[^*]/)
           # skip multiline comment
           @input.scan_until(/\*\/|\Z/)
