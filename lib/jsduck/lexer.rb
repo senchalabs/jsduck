@@ -67,38 +67,42 @@ module JsDuck
     end
 
     # Goes through the whole input and tokenizes it
+    #
+    # For efficency we look for tokens in order of frequency in
+    # JavaScript source code:
+    #
+    # - first check for most common operators.
+    # - then for identifiers and keywords.
+    # - then strings
+    # - then comments
+    #
+    # The remaining token types are less frequent, so these are left
+    # to the end.
+    #
     def tokenize
       @tokens = []
       while !@input.eos? do
         skip_white
-        if @input.check(/[0-9]+/)
-          nr = @input.scan(/[0-9]+(\.[0-9]*)?/)
+        if @input.check(/[.(),;={}:]/)
           @tokens << {
-            :type => :number,
-            # When number ends with ".", append "0" so Ruby eval will work
-            :value => eval(/\.$/ =~ nr ? nr+"0" : nr)
+            :type => :operator,
+            :value => @input.scan(/./)
           }
-        elsif @input.check(/\w+/)
+        elsif @input.check(/[a-zA-Z_]/)
           value = @input.scan(/\w+/)
           @tokens << {
             :type => KEYWORDS[value] ? :keyword : :ident,
             :value => value
           }
-        elsif @input.check(/\$/)
-          value = @input.scan(/\$\w*/)
+        elsif @input.check(/'/)
           @tokens << {
-            :type => :ident,
-            :value => value
+            :type => :string,
+            :value => eval(@input.scan(/'([^'\\]|\\.)*'/))
           }
         elsif @input.check(/"/)
           @tokens << {
             :type => :string,
             :value => eval(@input.scan(/"([^"\\]|\\.)*"/))
-          }
-        elsif @input.check(/'/)
-          @tokens << {
-            :type => :string,
-            :value => eval(@input.scan(/'([^'\\]|\\.)*'/))
           }
         elsif @input.check(/\//)
           # Several things begin with dash:
@@ -127,7 +131,20 @@ module JsDuck
               :value => @input.scan(/\//)
             }
           end
-        elsif @input.check(/./)
+        elsif @input.check(/[0-9]+/)
+          nr = @input.scan(/[0-9]+(\.[0-9]*)?/)
+          @tokens << {
+            :type => :number,
+            # When number ends with ".", append "0" so Ruby eval will work
+            :value => eval(/\.$/ =~ nr ? nr+"0" : nr)
+          }
+        elsif @input.check(/\$/)
+          value = @input.scan(/\$\w*/)
+          @tokens << {
+            :type => :ident,
+            :value => value
+          }
+        elsif  @input.check(/./)
           @tokens << {
             :type => :operator,
             :value => @input.scan(/./)
