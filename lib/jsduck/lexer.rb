@@ -70,7 +70,7 @@ module JsDuck
     def tokenize
       @tokens = []
       while !@input.eos? do
-        skip_white_and_comments
+        skip_white
         if @input.check(/[0-9]+/)
           nr = @input.scan(/[0-9]+(\.[0-9]*)?/)
           @tokens << {
@@ -90,13 +90,6 @@ module JsDuck
             :type => :ident,
             :value => value
           }
-        elsif @input.check(/\/\*\*/)
-          @tokens << {
-            :type => :doc_comment,
-            # Calculate current line number, starting with 1
-            :linenr => @input.string[0...@input.pos].count("\n") + 1,
-            :value => @input.scan_until(/\*\/|\Z/)
-          }
         elsif @input.check(/"/)
           @tokens << {
             :type => :string,
@@ -108,7 +101,22 @@ module JsDuck
             :value => eval(@input.scan(/'([^'\\]|\\.)*'/))
           }
         elsif @input.check(/\//)
-          if regex?
+          # Several things begin with dash:
+          # - comments, regexes, division-operators
+          if @input.check(/\/\*\*/)
+            @tokens << {
+              :type => :doc_comment,
+              # Calculate current line number, starting with 1
+              :linenr => @input.string[0...@input.pos].count("\n") + 1,
+              :value => @input.scan_until(/\*\/|\Z/)
+            }
+          elsif @input.check(/\/\*/)
+            # skip multiline comment
+            @input.scan_until(/\*\/|\Z/)
+          elsif @input.check(/\/\//)
+            # skip line comment
+            @input.scan_until(/\n|\Z/)
+          elsif regex?
             @tokens << {
               :type => :regex,
               :value => @input.scan(/\/([^\/\\]|\\.)*\/[gim]*/)
@@ -148,23 +156,6 @@ module JsDuck
         end
       end
       return true
-    end
-
-    def skip_white_and_comments
-      skip_white
-      # Perform the comments cleanup loop only if there are comments
-      while @input.check(/\//) do
-        if @input.check(/\/\*[^*]/)
-          # skip multiline comment
-          @input.scan_until(/\*\/|\Z/)
-        elsif @input.check(/\/\//)
-          # skip line comment
-          @input.scan_until(/\n|\Z/)
-        else
-          break
-        end
-        skip_white
-      end
     end
 
     def skip_white
