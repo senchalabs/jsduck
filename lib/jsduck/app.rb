@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'jsduck/parser'
 require 'jsduck/aggregator'
 require 'jsduck/source_formatter'
 require 'jsduck/class'
@@ -9,6 +10,7 @@ require 'jsduck/page'
 require 'jsduck/timer'
 require 'json'
 require 'fileutils'
+require 'parallel'
 
 module JsDuck
 
@@ -31,24 +33,36 @@ module JsDuck
     # Call this after input parameters set
     def run
       copy_template(@template_dir, @output_dir)
-      result = parse_files(@input_files)
-      classes = @timer.time(:parsing) { filter_classes(result) }
+
+      parsed_files = @timer.time(:parsing) { parallel_parse(@input_files) }
+      result = @timer.time(:aggregating) { aggregate(parsed_files) }
+      classes = @timer.time(:aggregating) { filter_classes(result) }
       @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", classes) }
       @timer.time(:generating) { write_pages(@output_dir+"/output", classes) }
 
       @timer.report if @verbose
     end
 
-    # Given array of filenames, parses all files and returns array of
-    # documented items in all of those files.
-    def parse_files(filenames)
-      agr = Aggregator.new
+    # Parses the files in parallel using as many processes as available CPU-s
+    def parallel_parse(filenames)
       src = SourceFormatter.new(@output_dir + "/source")
-      filenames.each do |fname|
+      Parallel.map(filenames) do |fname|
         puts "Parsing #{fname} ..." if @verbose
-        code = @timer.time(:parsing) { IO.read(fname) }
-        src_fname = @timer.time(:generating) { src.write(code, fname) }
-        @timer.time(:parsing) { agr.parse(code, File.basename(fname), File.basename(src_fname)) }
+        code = IO.read(fname)
+        {
+          :name => fname,
+          :src_name => src.write(code, fname),
+          :data => Parser.new(code).parse,
+        }
+      end
+    end
+
+    # Aggregates parsing results sequencially
+    def aggregate(parsed_files)
+      agr = Aggregator.new
+      parsed_files.each do |file|
+        puts "Aggregating #{file[:name]} ..." if @verbose
+        agr.aggregate(file[:data], File.basename(file[:name]), File.basename(file[:src_name]))
       end
       agr.result
     end

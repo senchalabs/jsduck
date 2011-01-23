@@ -1,5 +1,3 @@
-require 'jsduck/parser'
-require 'jsduck/doc_parser'
 require 'jsduck/merger'
 
 module JsDuck
@@ -12,22 +10,21 @@ module JsDuck
       @classes = {}
       @orphans = []
       @current_class = nil
-      @doc_parser = DocParser.new
       @merger = Merger.new
     end
 
-    # Parses chunk of JavaScript.  The resulting documentation is
-    # accumulated inside this class and can be later accessed through
-    # #result method.
+    # Combines chunk of parsed JavaScript together with previously
+    # added chunks.  The resulting documentation is accumulated inside
+    # this class and can be later accessed through #result method.
     #
-    # - input  the JavaScript source
+    # - input  parse result from JsDuck::Parser
     # - filename  name of the JS file where it came from
     # - html_filename  name of the HTML file where the source was saved.
     #
-    def parse(input, filename="", html_filename="")
+    def aggregate(input, filename="", html_filename="")
       @current_class = nil
-      Parser.new(input).parse.each do |docset|
-        doc = @doc_parser.parse(docset[:comment])
+      input.each do |docset|
+        doc = docset[:comment]
         code = docset[:code]
         href = html_filename + "#line-" + docset[:linenr].to_s
         register(add_href(@merger.merge(doc, code), href, filename))

@@ -1,18 +1,20 @@
 require 'jsduck/lexer'
+require 'jsduck/doc_parser'
 
 module JsDuck
 
   class Parser
     def initialize(input)
       @lex = Lexer.new(input)
+      @doc_parser = DocParser.new
       @docs = []
     end
 
     # Parses the whole JavaScript block and returns array where for
     # each doc-comment there is a hash of three values: the comment
-    # itself as string, number of the line where the comment starts,
-    # and parsed structure of the code that immediately follows the
-    # comment.
+    # structure created by DocParser, number of the line where the
+    # comment starts, and parsed structure of the code that
+    # immediately follows the comment.
     #
     # For example with the following JavaScript input:
     #
@@ -26,7 +28,10 @@ module JsDuck
     #
     # [
     #   {
-    #     :comment => "/**\n * @param {String} foo\n */",
+    #     :comment => [
+    #       {:tagname => :default, :doc => "Method description"},
+    #       {:tagname => :return, :type => "Number", :doc => ""},
+    #     ],
     #     :linenr => 1,
     #     :code => {
     #       :type => :assignment,
@@ -48,7 +53,7 @@ module JsDuck
         if look(:doc_comment)
           comment = @lex.next(true)
           @docs << {
-            :comment => comment[:value],
+            :comment => @doc_parser.parse(comment[:value]),
             :linenr => comment[:linenr],
             :code => code_block
           }
