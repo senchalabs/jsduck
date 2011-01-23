@@ -106,10 +106,11 @@ For hacking fork it from github.
     $ cd jsduck
     $ rake --tasks
 
-JsDuck depends on [json][] and [RDiscount][] plus [RSpec][] for tests.
+JsDuck depends on [json][], [RDiscount][], and [parallel][] plus [RSpec][] for tests.
 
 [json]: http://flori.github.com/json/
 [RDiscount]: https://github.com/rtomayko/rdiscount
+[parallel]: https://github.com/grosser/parallel
 [RSpec]: http://rspec.info/
 
 
@@ -182,10 +183,6 @@ Missing features and TODO
 * Support for custom @tags. Ext-doc supports this, I personally have
   never used this feature, so I'm thinking it's not really needed.
 
-* Speed improvements. JsDuck is clearly slower than ext-doc, but I
-  haven't so far done almost no optimizations, so there should be some
-  pretty low-hanging fruits to pick.
-
 
 Copying
 -------
@@ -197,6 +194,14 @@ JsDuck was developed by [Rene Saarsoo](http://triin.net).
 
 Changelog
 ---------
+
+* Development version
+  * Significant peed improvements - most importantly utilizing
+    multiple CPU-s (if available) to speed things up.  On my 4-core
+    box JsDuck is now even faster than ext-doc.
+  * Printing of performance info in verbose mode
+  * Support for comma-first coding style
+  * Few other fixes to JavaScript parsing
 
 * 0.2 - most features of ext-doc supported.
   * Links from documentation to source code
