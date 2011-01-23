@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'rdiscount'
   s.add_dependency 'json'
+  s.add_dependency 'parallel'
 
   s.require_path = 'lib'
 end
