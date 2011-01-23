@@ -92,10 +92,11 @@ module JsDuck
     end
 
     # Writes documentation page for each class
+    # We do it in parallel using as many processes as available CPU-s
     def write_pages(path, docs)
       subclasses = Subclasses.new(docs)
       cache = {}
-      docs.each do |cls|
+      Parallel.each(docs) do |cls|
         filename = path + "/" + cls[:name] + ".html"
         puts "Writing to #{filename} ..." if @verbose
         html = Page.new(cls, subclasses, cache).to_html
