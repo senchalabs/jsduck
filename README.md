@@ -195,7 +195,7 @@ JsDuck was developed by [Rene Saarsoo](http://triin.net).
 Changelog
 ---------
 
-* Development version
+* 0.3 - Performance improvements
   * Significant peed improvements - most importantly utilizing
     multiple CPU-s (if available) to speed things up.  On my 4-core
     box JsDuck is now even faster than ext-doc.

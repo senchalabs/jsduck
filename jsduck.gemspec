@@ -2,8 +2,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.7"
 
   s.name = 'jsduck'
-  s.version = '0.2'
-  s.date = '2011-01-10'
+  s.version = '0.3'
+  s.date = '2011-02-08'
   s.summary = "Simple JavaScript Duckumentation generator"
   s.description = "Better ext-doc like JavaScript documentation generator for ExtJS"
   s.homepage = "https://github.com/nene/jsduck"
@@ -11,7 +11,10 @@ Gem::Specification.new do |s|
   s.email = "nene@triin.net"
   s.rubyforge_project = s.name
 
-  s.files = `git ls-files`.split("\n").find_all {|file| file !~ /spec.rb$/ }
+  s.files = `git ls-files`.split("\n").find_all do |file|
+    file !~ /spec.rb$/ && file !~ /benchmark/
+  end
+
   s.executables = ["jsduck"]
 
   s.add_dependency 'rdiscount'
