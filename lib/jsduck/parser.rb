@@ -67,12 +67,15 @@ module JsDuck
     # The following is a recursive-descent parser for JavaScript that
     # can possibly follow a doc-comment
 
-    # <code-block> := <function> | <var-declaration> | <assignment> | <property-literal>
+    # <code-block> := <function> | <var-declaration> | <ext-define> |
+    #                 <assignment> | <property-literal>
     def code_block
       if look("function")
         function
       elsif look("var")
         var_declaration
+      elsif look("Ext", ".", "define", "(")
+        ext_define
       elsif look(:ident, ":") || look(:string, ":")
         property_literal
       elsif look(",", :ident, ":") || look(",", :string, ":")
@@ -172,6 +175,16 @@ module JsDuck
       return {
         :type => :ext_extend,
         :extend => ident_chain,
+      }
+    end
+
+    # <ext-define> := "Ext" "." "define" "(" <string> "," ...
+    def ext_define
+      match("Ext", ".", "define", "(")
+      return {
+        :type => :function,
+        :name => look(:string) ? match(:string) : nil,
+        :params => []
       }
     end
 

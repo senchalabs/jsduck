@@ -97,6 +97,13 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "Ext.define() in code" do
+    before do
+      @doc = parse("/** */ Ext.define('MyClass', {  });")[0]
+    end
+    it_should_behave_like "class"
+  end
+
   describe "class with cfgs" do
     before do
       @doc = parse(<<-EOS)[0]
