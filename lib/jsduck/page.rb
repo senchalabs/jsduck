@@ -64,7 +64,7 @@ module JsDuck
     end
 
     def file_link
-      "<a href='source/#{@cls[:href]}'>#{@cls[:filename]}</a>"
+      "<a href='source/#{@cls[:href]}'>#{File.basename(@cls[:filename])}</a>"
     end
 
     def subclasses

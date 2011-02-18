@@ -50,8 +50,8 @@ module JsDuck
         puts "Parsing #{fname} ..." if @verbose
         code = IO.read(fname)
         {
-          :name => fname,
-          :src_name => src.write(code, fname),
+          :filename => fname,
+          :html_filename => File.basename(src.write(code, fname)),
           :data => Parser.new(code).parse,
         }
       end
@@ -61,8 +61,8 @@ module JsDuck
     def aggregate(parsed_files)
       agr = Aggregator.new
       parsed_files.each do |file|
-        puts "Aggregating #{file[:name]} ..." if @verbose
-        agr.aggregate(file[:data], File.basename(file[:name]), File.basename(file[:src_name]))
+        puts "Aggregating #{file[:filename]} ..." if @verbose
+        agr.aggregate(file[:data], file[:filename], file[:html_filename])
       end
       agr.result
     end
@@ -75,7 +75,11 @@ module JsDuck
         if d[:tagname] == :class
           classes[d[:name]] = Class.new(d, classes)
         else
-          puts "Warning: Ignoring " + d[:tagname].to_s + ": " + (d[:name] || "")
+          type = d[:tagname].to_s
+          name = d[:name]
+          file = d[:filename]
+          line = d[:linenr]
+          puts "Warning: Ignoring #{type}: #{name} in #{file} line #{line}"
         end
       end
       classes.values

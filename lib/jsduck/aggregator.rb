@@ -24,21 +24,28 @@ module JsDuck
     def aggregate(input, filename="", html_filename="")
       @current_class = nil
       input.each do |docset|
-        doc = docset[:comment]
-        code = docset[:code]
-        href = html_filename + "#line-" + docset[:linenr].to_s
-        register(add_href(@merger.merge(doc, code), href, filename))
+        doc = @merger.merge(docset[:comment], docset[:code])
+
+        add_source_data(doc, {
+          :filename => filename,
+          :html_filename => html_filename,
+          :linenr => docset[:linenr],
+        })
+
+        register(doc)
       end
     end
 
-    # Tags doc-object with link to source code where it came from.
-    # For class we also store the name of the JavaScript file.
-    def add_href(doc, href, filename)
-      doc[:href] = href
+    # Links doc-object to source code where it came from.
+    def add_source_data(doc, src)
+      doc[:href] = src[:html_filename] + "#line-" + src[:linenr].to_s
+      doc[:filename] = src[:filename]
+      doc[:linenr] = src[:linenr]
+      # class-level doc-comment can contain constructor and config
+      # options, link those to the same location in source.
       if doc[:tagname] == :class
-        doc[:filename] = filename
-        doc[:cfg].each {|cfg| cfg[:href] = href }
-        doc[:method].each {|method| method[:href] = href }
+        doc[:cfg].each {|cfg| add_source_data(cfg, src) }
+        doc[:method].each {|method| add_source_data(method, src) }
       end
       doc
     end
