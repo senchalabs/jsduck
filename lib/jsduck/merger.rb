@@ -33,7 +33,7 @@ module JsDuck
         :method
       elsif doc_map[:property] || doc_map[:type]
         :property
-      elsif code[:type] == :ext_extend
+      elsif code[:type] == :ext_define
         :class
       elsif code[:type] == :assignment && class_name?(*code[:left])
         :class
@@ -176,6 +176,8 @@ module JsDuck
         code[:name]
       elsif code[:type] == :assignment
         name_type == :full_name ? code[:left].join(".") : code[:left].last
+      elsif code[:type] == :ext_define
+        name_type == :full_name ? code[:name] : code[:name].split(/\./).last
       else
         ""
       end

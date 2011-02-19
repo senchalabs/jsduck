@@ -182,9 +182,8 @@ module JsDuck
     def ext_define
       match("Ext", ".", "define", "(")
       return {
-        :type => :function,
+        :type => :ext_define,
         :name => look(:string) ? match(:string) : nil,
-        :params => []
       }
     end
 
