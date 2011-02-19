@@ -97,14 +97,49 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "Ext.define() in code" do
-    before do
-      @doc = parse("/** */ Ext.define('MyClass', { extend: 'Your.Class' });")[0]
-    end
+  shared_examples_for "Ext.define" do
     it_should_behave_like "class"
     it "detects implied extends" do
       @doc[:extends].should == "Your.Class"
     end
+    it "detects implied mixins" do
+      @doc[:mixins].should == ["Ext.util.Observable", "Foo.Bar"]
+    end
+  end
+
+  describe "basic Ext.define() in code" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+          extend: 'Your.Class',
+          mixins: {
+            obs: 'Ext.util.Observable',
+            bar: 'Foo.Bar'
+          }
+        });
+      EOS
+    end
+    it_should_behave_like "Ext.define"
+  end
+
+  describe "complex Ext.define() in code" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+          singleton: true,
+          extend: 'Your.Class',
+          alias: 'somealias',
+          requires: ['Hohooo', 'hahaa'],
+          mixins: {
+            obs: 'Ext.util.Observable',
+            bar: 'Foo.Bar'
+          }
+        });
+      EOS
+    end
+    it_should_behave_like "Ext.define"
   end
 
   describe "class with cfgs" do

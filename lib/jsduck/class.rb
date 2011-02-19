@@ -18,6 +18,12 @@ module JsDuck
       @doc[:extends] ? @classes[@doc[:extends]] : nil
     end
 
+    # Returns array of mixin class instances.
+    # Returns empty array if no mixins
+    def mixins
+      @doc[:mixins] ? @doc[:mixins].collect {|classname| @classes[classname] } : []
+    end
+
     # Returns true when this class inherits from the specified class.
     # Also returns true when the class itself is the one we are asking about.
     def inherits_from?(class_name)
@@ -51,9 +57,9 @@ module JsDuck
       ms
     end
 
-    # Returns hash of public members of class (and parent classes).
-    # Members are methods, properties, cfgs, events (member type
-    # is speified through 'type' parameter).
+    # Returns hash of public members of class (and of parent classes
+    # and mixin classes).  Members are methods, properties, cfgs,
+    # events (member type is specified through 'type' parameter).
     #
     # When parent and child have members with same name,
     # member from child overrides tha parent member.
@@ -61,11 +67,17 @@ module JsDuck
     # We also set :member property to each member to the full class
     # name where it belongs, so one can tell them apart afterwards.
     def members_hash(type)
-      parent_members = parent ? parent.members_hash(type) : {}
-      @doc[type].each do |m|
-        parent_members[m[:name]] = m if !m[:private]
+      all_members = parent ? parent.members_hash(type) : {}
+
+      mixins.each do |mix|
+        all_members.merge!(mix.members_hash(type))
       end
-      parent_members
+
+      @doc[type].each do |m|
+        all_members[m[:name]] = m if !m[:private]
+      end
+
+      all_members
     end
 
     # A way to access full class name with similar syntax to

@@ -51,6 +51,7 @@ module JsDuck
       [
        "<table cellspacing='0'>",
         abstract_row("Extends:", @cls.parent ? class_link(@cls.parent.full_name) : "Object"),
+        @cls.mixins.length > 0 ? abstract_row("Mixins:", mixins) : "",
         abstract_row("Defind In:", file_link),
         @subclasses[@cls] ? abstract_row("Subclasses:", subclasses) : "",
         @cls[:xtype] ? abstract_row("xtype:", @cls[:xtype]) : "",
@@ -70,6 +71,11 @@ module JsDuck
     def subclasses
       subs = @subclasses[@cls].sort {|a, b| a.short_name <=> b.short_name }
       subs.collect {|cls| class_link(cls.full_name, cls.short_name) }.join(", ")
+    end
+
+    def mixins
+      mixs = @cls.mixins.sort {|a, b| a.full_name <=> b.full_name }
+      mixs.collect {|cls| class_link(cls.full_name, cls.short_name) }.join(", ")
     end
 
     def abstract_row(label, info)

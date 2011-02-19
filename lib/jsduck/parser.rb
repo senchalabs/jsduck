@@ -181,27 +181,82 @@ module JsDuck
     # <ext-define> := "Ext" "." "define" "(" <string> "," <ext-define-cfg>
     def ext_define
       name = match("Ext", ".", "define", "(", :string)
-      cfg = {}
 
-      if look(",")
+      if look(",", "{")
         match(",")
         cfg = ext_define_cfg
+      else
+        cfg = {}
       end
 
-      return {
-        :type => :ext_define,
-        :name => name,
-        :extend => cfg[:extend],
-      }
+      cfg[:type] = :ext_define
+      cfg[:name] = name
+
+      cfg
     end
 
-    # <ext-define-cfg> := "{" "extend" ":" <string> "," ...
+    # <ext-define-cfg> := "{" ( <extend> | <mixins> | <?> )*
     def ext_define_cfg
+      match("{")
       cfg = {}
-      if look("{", "extend", ":", :string)
-        cfg[:extend] = match("{", "extend", ":", :string)
+      found = true
+      while found
+        found = false
+        if look("extend", ":", :string)
+          cfg[:extend] = ext_define_extend
+          found = true
+        elsif look("mixins", ":", "{")
+          cfg[:mixins] = ext_define_mixins
+          found = true
+        elsif look(:ident, ":")
+          match(:ident, ":")
+          if look(:string) || look(:number) || look(:regex) ||
+              look("true") || look("false") ||
+              look("null") || look("undefined")
+            # Some key with literal value -- ignore
+            @lex.next
+            found = true
+          elsif look("[")
+            # Some key with array of strings -- ignore
+            found = array_of_strings
+          end
+        end
+        match(",") if look(",")
       end
       cfg
+    end
+
+    # <ext-define-extend> := "extend" ":" <string>
+    def ext_define_extend
+      match("extend", ":", :string)
+    end
+
+    # <ext-define-mixins> := "mixins" ":" "{" [ <ident> ":" <string> ","? ]* "}"
+    def ext_define_mixins
+      match("mixins", ":", "{")
+      mixins = []
+      while look(:ident, ":", :string)
+        mixins << match(:ident, ":", :string)
+        match(",") if look(",")
+      end
+      match("}") if look("}")
+      mixins
+    end
+
+    # <array-of-strings> := "[" [ <string> ","? ]* "]"
+    def array_of_strings
+      match("[")
+      while look(:string)
+        match(:string)
+        match(",") if look(",")
+      end
+
+      if look("]")
+        match("]")
+        true
+      else
+        false
+      end
     end
 
     # <property-literal> := ( <ident> | <string> ) ":" <expression>

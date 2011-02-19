@@ -109,6 +109,7 @@ module JsDuck
         :name => detect_name(:class, doc_map, code, :full_name),
         :doc => detect_doc(docs),
         :extends => detect_extends(doc_map, code),
+        :mixins => detect_mixins(doc_map, code),
         :xtype => detect_xtype(doc_map),
         :singleton => !!doc_map[:singleton],
         :private => !!doc_map[:private],
@@ -219,6 +220,14 @@ module JsDuck
         code[:right][:extend].join(".")
       elsif code[:type] == :ext_define
         code[:extend]
+      end
+    end
+
+    def detect_mixins(doc_map, code)
+      if code[:type] == :ext_define && code[:mixins]
+        code[:mixins]
+      else
+        []
       end
     end
 
