@@ -93,15 +93,18 @@ describe JsDuck::Aggregator do
     end
     it_should_behave_like "class"
     it "detects implied extends" do
-      @doc[:extends] == "Your.Class"
+      @doc[:extends].should == "Your.Class"
     end
   end
 
   describe "Ext.define() in code" do
     before do
-      @doc = parse("/** */ Ext.define('MyClass', {  });")[0]
+      @doc = parse("/** */ Ext.define('MyClass', { extend: 'Your.Class' });")[0]
     end
     it_should_behave_like "class"
+    it "detects implied extends" do
+      @doc[:extends].should == "Your.Class"
+    end
   end
 
   describe "class with cfgs" do

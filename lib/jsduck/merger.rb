@@ -217,6 +217,8 @@ module JsDuck
         doc_map[:extends].first[:extends]
       elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :ext_extend
         code[:right][:extend].join(".")
+      elsif code[:type] == :ext_define
+        code[:extend]
       end
     end
 
