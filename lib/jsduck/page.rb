@@ -55,6 +55,7 @@ module JsDuck
         abstract_row("Defind In:", file_link),
         @subclasses[@cls] ? abstract_row("Subclasses:", subclasses) : "",
         @cls[:xtype] ? abstract_row("xtype:", @cls[:xtype]) : "",
+        @cls[:author] ? abstract_row("Author:", @cls[:author]) : "",
        "</table>",
       ].join("\n")
     end

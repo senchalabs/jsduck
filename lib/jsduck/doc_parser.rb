@@ -90,6 +90,8 @@ module JsDuck
           at_xtype
         elsif look(/@member\b/)
           at_member
+        elsif look(/@author\b/)
+          at_author
         elsif look(/@static\b/)
           boolean_at_tag(/@static/, :static)
         elsif look(/@(private|ignore|hide|protected)\b/)
@@ -204,6 +206,15 @@ module JsDuck
       match(/@member/)
       add_tag(:member)
       maybe_ident_chain(:member)
+      skip_white
+    end
+
+    # matches @author some name ... newline
+    def at_author
+      match(/@author/)
+      add_tag(:author)
+      skip_horiz_white
+      @current_tag[:name] = @input.scan(/.*$/)
       skip_white
     end
 

@@ -111,6 +111,7 @@ module JsDuck
         :extends => detect_extends(doc_map, code),
         :mixins => detect_mixins(doc_map, code),
         :xtype => detect_xtype(doc_map),
+        :author => detect_author(doc_map),
         :singleton => !!doc_map[:singleton],
         :private => !!doc_map[:private],
       }
@@ -233,6 +234,10 @@ module JsDuck
 
     def detect_xtype(doc_map)
       doc_map[:xtype] ? doc_map[:xtype].first[:name] : nil
+    end
+
+    def detect_author(doc_map)
+      doc_map[:author] ? doc_map[:author].first[:name] : nil
     end
 
     def detect_params(docs, code)

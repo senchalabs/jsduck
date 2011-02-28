@@ -213,6 +213,23 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "class with @author" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @author John Doe
+         * Comment here.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "detects author name" do
+      @doc[:author].should == "John Doe"
+    end
+  end
+
   describe "member docs after class doc" do
     before do
       @classes = parse(<<-EOS)
