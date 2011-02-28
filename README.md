@@ -195,6 +195,12 @@ JsDuck was developed by [Rene Saarsoo](http://triin.net).
 Changelog
 ---------
 
+* 0.4 - Ext4 support
+  * Support for Ext.define() syntax from ExtJS 4.
+  * Showing @xtype and @author information on generated pages.
+  * Showing filename and line number in warnings.
+  * Fix for event showing the same doc as method with same name.
+
 * 0.3 - Performance improvements
   * Significant peed improvements - most importantly utilizing
     multiple CPU-s (if available) to speed things up.  On my 4-core
