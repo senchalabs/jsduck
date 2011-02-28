@@ -11,7 +11,7 @@ module JsDuck
       @id = @cls.full_name + "-events"
       @title = "Public Events"
       @column_title = "Event"
-      @row_class = "method-row"
+      @row_class = "event-row"
       @short_params = ShortParams.new
       @long_params = LongParams.new(@cls)
     end
