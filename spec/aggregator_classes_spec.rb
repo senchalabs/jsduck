@@ -230,6 +230,23 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "class with @markdown" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @markdown
+         * Comment here.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "does not show @markdown tag in docs" do
+      @doc[:doc].should == "Comment here."
+    end
+  end
+
   describe "member docs after class doc" do
     before do
       @classes = parse(<<-EOS)
