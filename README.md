@@ -132,10 +132,15 @@ For example to generate documentation for ExtJS:
 The `--verbose` flag creates a lot of output, but at least you will
 see that something is happening.
 
-Here's how the resulting documentation will look:
+Here's how the resulting documentation will look (ExtJS 3.3.1):
 
 * [JsDuck generated documentation](http://triin.net/temp/jsduck/)
 * [Official ExtJS documentation](http://dev.sencha.com/deploy/dev/docs/) (for comparison)
+
+Here's the same for ExtJS 4 Preview 2:
+
+* [JsDuck generated documentation](http://triin.net/temp/jsduck4/)
+* [Official ExtJS documentation](http://dev.sencha.com/deploy/ext-4.0-pr2/docs/) (for comparison)
 
 
 Documentation
