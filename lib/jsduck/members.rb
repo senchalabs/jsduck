@@ -60,8 +60,32 @@ module JsDuck
         :cls => "#{cls.full_name}",
         :member => m[:name],
         :type => m[:tagname],
-        :doc => m[:doc]
+        :doc => expandable_desc(m[:doc])
       }
+    end
+
+    def expandable_desc(p_doc)
+      tagless = first_sentence(strip_tags(strip_links(p_doc)))
+      if tagless.length > 120
+        short_doc = tagless[0..116]
+        ellipsis = tagless.length > short_doc.length ? "..." : ""
+        "#{short_doc}#{ellipsis}"
+      else
+        tagless
+      end
+    end
+
+    def strip_tags(str)
+      str.gsub(/<.*?>/, "")
+    end
+
+    def strip_links(str)
+      str = str.gsub(/\{@link +(\S*?)(?: +(.+?))?\}/, "\\1")
+      str = str.gsub(/#/, ".")
+    end
+
+    def first_sentence(str)
+      r = str.sub(/^(.+?\.)\s.*$/m, "\\1")
     end
 
   end

@@ -226,6 +226,10 @@ DocPanel = Ext.extend(Ext.Panel, {
 MainPanel = function(){
 	
 	this.searchStore = new Ext.data.Store({
+		sortInfo: {
+			field: 'member',
+			direction: 'ASC'
+		},
 		reader: new Ext.data.JsonReader({
 			root: 'data',
 			fields: ['cls', 'member', 'type', 'doc']
