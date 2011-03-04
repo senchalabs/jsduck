@@ -250,10 +250,12 @@ a:hover {
 .icon-event {
     background-image: url(event.gif) !important;
 }
+.icon-cfg,
 .icon-config {
     background-image: url(config.gif) !important;
 }
-.icon-prop {
+.icon-prop,
+.icon-property {
     background-image: url(prop.gif) !important;
 }
 .icon-method {

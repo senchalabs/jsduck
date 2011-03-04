@@ -5,6 +5,7 @@ require 'jsduck/source_formatter'
 require 'jsduck/class'
 require 'jsduck/tree'
 require 'jsduck/tree_icons'
+require 'jsduck/members'
 require 'jsduck/subclasses'
 require 'jsduck/page'
 require 'jsduck/timer'
@@ -38,6 +39,7 @@ module JsDuck
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       classes = @timer.time(:aggregating) { filter_classes(result) }
       @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", classes) }
+      @timer.time(:generating) { write_members(@output_dir+"/output/members.js", classes) }
       @timer.time(:generating) { write_pages(@output_dir+"/output", classes) }
 
       @timer.report if @verbose
@@ -92,6 +94,14 @@ module JsDuck
       icons = TreeIcons.new.extract_icons(tree)
       js = "Docs.classData = " + JSON.generate( tree ) + ";"
       js += "Docs.icons = " + JSON.generate( icons ) + ";"
+      File.open(filename, 'w') {|f| f.write(js) }
+    end
+
+    # Given array of doc-objects, generates members data for search and writes in
+    # in JSON form into a file.
+    def write_members(filename, docs)
+      members = Members.new.create(docs)
+      js = "Docs.membersData = " + JSON.generate( members ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
     end
 

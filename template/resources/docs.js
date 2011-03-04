@@ -75,7 +75,7 @@ Ext.extend(ApiPanel, Ext.tree.TreePanel, {
                 handler: function(){ this.root.collapse(true); },
                 scope: this
             }]
-        })
+        });
         ApiPanel.superclass.initComponent.call(this);
     },
 	filterTree: function(t, e){
@@ -226,21 +226,16 @@ DocPanel = Ext.extend(Ext.Panel, {
 MainPanel = function(){
 	
 	this.searchStore = new Ext.data.Store({
-        proxy: new Ext.data.ScriptTagProxy({
-            url: 'http://extjs.com/playpen/api.php'
-        }),
-        reader: new Ext.data.JsonReader({
-	            root: 'data'
-	        }, 
-			['cls', 'member', 'type', 'doc']
-		),
-		baseParams: {},
-        listeners: {
-            'beforeload' : function(){
-                this.baseParams.qt = Ext.getCmp('search-type').getValue();
-            }
-        }
-    }); 
+		reader: new Ext.data.JsonReader({
+			root: 'data',
+			fields: ['cls', 'member', 'type', 'doc']
+		})
+	});
+	this.searchStore.loadData(Docs.membersData);
+	this.searchStore.filterBy(function(r) {
+		return false;
+	});
+
 	
     MainPanel.superclass.constructor.call(this, {
         id:'doc-body',
@@ -256,7 +251,9 @@ MainPanel = function(){
         items: {
             id:'welcome-panel',
             title: 'API Home',
-            autoLoad: {url: 'welcome.html', callback: this.initSearch, scope: this},
+    autoLoad: {url: 'welcome.html', callback: function() {
+	    this.initSearch.defer(100, this);
+    }, scope: this},
             iconCls:'icon-docs',
             autoScroll: true,
 			tbar: [
@@ -291,7 +288,7 @@ Ext.extend(MainPanel, Ext.TabPanel, {
     },
 
     onClick: function(e, target){
-        if(target = e.getTarget('a:not(.exi)', 3)){
+        if((target = e.getTarget('a:not(.exi)', 3))){
             var cls = Ext.fly(target).getAttributeNS('ext', 'cls');
             e.stopEvent();
             if(cls){
@@ -302,7 +299,7 @@ Ext.extend(MainPanel, Ext.TabPanel, {
             }else{
                 window.open(target.href);
             }
-        }else if(target = e.getTarget('.micon', 2)){
+        }else if((target = e.getTarget('.micon', 2))){
             e.stopEvent();
             var tr = Ext.fly(target.parentNode);
             if(tr.hasClass('expandable')){
@@ -344,15 +341,15 @@ Ext.extend(MainPanel, Ext.TabPanel, {
 	        '<tpl for=".">',
 	        '<div class="search-item">',
 	            '<a class="member" ext:cls="{cls}" ext:member="{member}" href="output/{cls}.html">',
-				'<img src="../resources/images/default/s.gif" class="item-icon icon-{type}"/>{member}',
+				'<img src="resources/images/default/s.gif" class="item-icon icon-{type}"/>{member}',
 				'</a> ',
 				'<a class="cls" ext:cls="{cls}" href="output/{cls}.html">{cls}</a>',
 	            '<p>{doc}</p>',
 	        '</div></tpl>'
 	    );
-		
+
 		var p = new Ext.DataView({
-            applyTo: 'search',
+			applyTo: Ext.get('search') ? 'search' : Ext.getCmp('welcome-panel').body,
 			tpl: resultTpl,
 			loadingText:'Searching...',
             store: this.searchStore,
@@ -452,8 +449,9 @@ Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
 
     onTrigger1Click : function(){
         if(this.hasSearch){
-            this.store.baseParams[this.paramName] = '';
-			this.store.removeAll();
+	this.store.filterBy(function(r) {
+		return false;
+	});
 			this.el.dom.value = '';
             this.triggers[0].hide();
             this.hasSearch = false;
@@ -471,9 +469,21 @@ Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
 			Ext.Msg.alert('Invalid Search', 'You must enter a minimum of 2 characters to search the API');
 			return;
 		}
-		this.store.baseParams[this.paramName] = v;
-        var o = {start: 0};
-        this.store.reload({params:o});
+
+		var type = Ext.getCmp('search-type').getValue();
+	v = v.toLowerCase();
+	this.store.filterBy(function(r) {
+		var name = r.get('member');
+		if (type == 'Starts with') {
+			return name.toLowerCase().indexOf(v) === 0;
+		} else if (type == 'Ends with') {
+			var idx = name.toLowerCase().indexOf(v);
+			return idx != -1 && name.length == v.length + idx;
+		}
+
+		return name.toLowerCase().indexOf(v) != -1;
+	});
+
         this.hasSearch = true;
         this.triggers[0].show();
 		this.focus();
@@ -548,6 +558,8 @@ Ext.extend(Ext.ux.SelectBox, Ext.form.ComboBox, {
 				this.selectPrevPage();
 				e.stopEvent();
 				return;
+			default:
+			break;
 		}
 
 		// skip special keys other than the shift key
