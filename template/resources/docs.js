@@ -351,6 +351,7 @@ Ext.extend(MainPanel, Ext.TabPanel, {
 		var p = new Ext.DataView({
 			applyTo: Ext.get('search') ? 'search' : Ext.getCmp('welcome-panel').body,
 			tpl: resultTpl,
+			deferEmptyText: false,
 			loadingText:'Searching...',
             store: this.searchStore,
             itemSelector: 'div.search-item',
