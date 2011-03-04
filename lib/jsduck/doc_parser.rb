@@ -200,7 +200,7 @@ module JsDuck
     def at_xtype
       match(/@xtype/)
       add_tag(:xtype)
-      maybe_name
+      maybe_ident_chain(:name)
       skip_white
     end
 
