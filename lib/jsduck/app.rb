@@ -101,7 +101,7 @@ module JsDuck
     # in JSON form into a file.
     def write_members(filename, docs)
       members = Members.new.create(docs)
-      js = "Docs.membersData = " + JSON.generate( members ) + ";"
+      js = "Docs.membersData = " + JSON.generate( {:data => members} ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
     end
 
