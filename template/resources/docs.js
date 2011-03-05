@@ -255,9 +255,7 @@ MainPanel = function(){
         items: {
             id:'welcome-panel',
             title: 'API Home',
-    autoLoad: {url: 'welcome.html', callback: function() {
-	    this.initSearch.defer(100, this);
-    }, scope: this},
+            autoLoad: {url: 'welcome.html', callback: this.initSearch, scope: this, delay: 100},
             iconCls:'icon-docs',
             autoScroll: true,
 			tbar: [
@@ -454,13 +452,13 @@ Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
 
     onTrigger1Click : function(){
         if(this.hasSearch){
-	this.store.filterBy(function(r) {
-		return false;
-	});
-			this.el.dom.value = '';
+            this.store.filterBy(function(r) {
+                return false;
+            });
+            this.el.dom.value = '';
             this.triggers[0].hide();
             this.hasSearch = false;
-			this.focus();
+            this.focus();
         }
     },
 
@@ -476,22 +474,22 @@ Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
 		}
 
 		var type = Ext.getCmp('search-type').getValue();
-	v = v.toLowerCase();
-	this.store.filterBy(function(r) {
-		var name = r.get('member');
-		if (type == 'Starts with') {
-			return name.toLowerCase().indexOf(v) === 0;
-		} else if (type == 'Ends with') {
-			var idx = name.toLowerCase().indexOf(v);
-			return idx != -1 && name.length == v.length + idx;
-		}
-
-		return name.toLowerCase().indexOf(v) != -1;
-	});
+		this.store.filter("member", this.createRegex(type, v));
 
         this.hasSearch = true;
         this.triggers[0].show();
 		this.focus();
+    },
+
+    createRegex: function(type, text) {
+        var safeText = Ext.escapeRe(text);
+        if (type === 'Starts with') {
+            return new RegExp("^" + safeText, "i");
+        } else if (type === 'Ends with') {
+            return new RegExp(safeText + "$", "i");
+        } else {
+            return new RegExp(safeText, "i");
+        }
     }
 });
 
@@ -564,7 +562,7 @@ Ext.extend(Ext.ux.SelectBox, Ext.form.ComboBox, {
 				e.stopEvent();
 				return;
 			default:
-			break;
+				break;
 		}
 
 		// skip special keys other than the shift key
