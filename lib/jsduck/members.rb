@@ -49,7 +49,7 @@ module JsDuck
     end
 
     def first_sentence(str)
-      r = str.sub(/^(.+?\.)\s.*$/m, "\\1")
+      str.sub(/\A(.+?\.)\s.*\Z/m, "\\1")
     end
 
   end
