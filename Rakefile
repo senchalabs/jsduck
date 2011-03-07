@@ -3,11 +3,11 @@ require 'rake'
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
-require 'spec'
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.spec_opts = ["--color"]
-  spec.spec_files = FileList["spec/**/*_spec.rb"]
+require 'rspec'
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.rspec_opts = ["--color"]
+  spec.pattern = "spec/**/*_spec.rb"
 end
 
 desc "Build gem locally"
