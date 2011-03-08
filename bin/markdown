@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+# For running when gem not installed
+$:.unshift File.dirname(File.dirname(__FILE__)) + "/lib"
+
+require 'jsduck/markdown'
+require 'optparse'
+
+app = JsDuck::Markdown.new
+
+opts = OptionParser.new do | opts |
+  opts.banner = "Usage: markdown [options] files..."
+
+  opts.on('-v', '--verbose', "This will fill up your console.") do
+    app.verbose = true
+  end
+
+  opts.on('-h', '--help', "Prints this help message") do
+    puts opts
+    exit
+  end
+end
+
+app.input_files = opts.parse!(ARGV)
+
+if app.input_files.length == 0
+  puts "You should specify some input files, otherwise there's nothing I can do :("
+  exit(1)
+end
+
+app.run()
