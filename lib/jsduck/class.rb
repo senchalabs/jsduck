@@ -34,6 +34,23 @@ module JsDuck
       end
     end
 
+    # Returns all data in Class object as hash.  This is basically the
+    # same as just accessing @doc, except instead of :cfg field there
+    # is :cfgs which also contains the inherited ones.  Same for
+    # :properties, :methods, and :events.
+    def to_hash
+      doc = @doc.clone
+      doc[:cfgs] = members(:cfg)
+      doc[:properties] = members(:property)
+      doc[:methods] = members(:method)
+      doc[:events] = members(:event)
+      doc.delete(:cfg)
+      doc.delete(:property)
+      doc.delete(:method)
+      doc.delete(:event)
+      doc
+    end
+
     # Returns true when this class inherits from the specified class.
     # Also returns true when the class itself is the one we are asking about.
     def inherits_from?(class_name)

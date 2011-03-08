@@ -22,25 +22,37 @@ module JsDuck
     attr_accessor :template_dir
     attr_accessor :input_files
     attr_accessor :verbose
+    attr_accessor :export
 
     def initialize
       @output_dir = nil
       @template_dir = nil
       @input_files = []
       @verbose = false
+      @export = nil
       @timer = Timer.new
     end
 
     # Call this after input parameters set
     def run
-      copy_template(@template_dir, @output_dir)
+      clear_dir(@output_dir)
+      if @export
+        FileUtils.mkdir(@output_dir)
+      else
+        copy_template(@template_dir, @output_dir)
+      end
 
       parsed_files = @timer.time(:parsing) { parallel_parse(@input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       classes = @timer.time(:aggregating) { filter_classes(result) }
-      @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", classes) }
-      @timer.time(:generating) { write_members(@output_dir+"/output/members.js", classes) }
-      @timer.time(:generating) { write_pages(@output_dir+"/output", classes) }
+
+      if @export == :json
+        @timer.time(:generating) { write_json(@output_dir, classes) }
+      else
+        @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", classes) }
+        @timer.time(:generating) { write_members(@output_dir+"/output/members.js", classes) }
+        @timer.time(:generating) { write_pages(@output_dir+"/output", classes) }
+      end
 
       @timer.report if @verbose
     end
@@ -53,7 +65,7 @@ module JsDuck
         code = IO.read(fname)
         {
           :filename => fname,
-          :html_filename => File.basename(src.write(code, fname)),
+          :html_filename => @export ? "" : File.basename(src.write(code, fname)),
           :data => Parser.new(code).parse,
         }
       end
@@ -118,14 +130,33 @@ module JsDuck
       end
     end
 
+    # Writes JSON export file for each class
+    def write_json(path, docs)
+      subclasses = Subclasses.new(docs)
+      cache = {}
+      Parallel.each(docs) do |cls|
+        filename = path + "/" + cls[:name] + ".json"
+        puts "Writing to #{filename} ..." if @verbose
+        hash = cls.to_hash
+        if hash[:doc]
+          hash[:doc] = DocFormatter.new(hash[:name]).format(hash[:doc])
+        end
+        json = JSON.pretty_generate(hash)
+        File.open(filename, 'w') {|f| f.write(json) }
+      end
+    end
+
     def copy_template(template_dir, dir)
       puts "Copying template files to #{dir}..." if @verbose
-      if File.exists?(dir)
-        FileUtils.rm_r(dir)
-      end
       FileUtils.cp_r(template_dir, dir)
       FileUtils.mkdir(dir + "/output")
       FileUtils.mkdir(dir + "/source")
+    end
+
+    def clear_dir(dir)
+      if File.exists?(dir)
+        FileUtils.rm_r(dir)
+      end
     end
   end
 

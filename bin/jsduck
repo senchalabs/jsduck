@@ -34,6 +34,10 @@ opts = OptionParser.new do | opts |
     app.template_dir = path
   end
 
+  opts.on('--json', "Produces JSON export instead of HTML documentation.") do |path|
+    app.export = :json
+  end
+
   opts.on('-v', '--verbose', "This will fill up your console.") do
     app.verbose = true
   end
