@@ -15,13 +15,23 @@ module JsDuck
 
     # Returns instance of parent class, or nil if there is none
     def parent
-      @doc[:extends] ? @classes[@doc[:extends]] : nil
+      @doc[:extends] ? lookup(@doc[:extends]) : nil
     end
 
     # Returns array of mixin class instances.
     # Returns empty array if no mixins
     def mixins
-      @doc[:mixins] ? @doc[:mixins].collect {|classname| @classes[classname] } : []
+      @doc[:mixins] ? @doc[:mixins].collect {|classname| lookup(classname) }.compact : []
+    end
+
+    # Looks up class object by name
+    # When not found, prints warning message.
+    def lookup(classname)
+      if @classes[classname]
+        @classes[classname]
+      elsif classname != "Object"
+        puts "Warning: Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}"
+      end
     end
 
     # Returns true when this class inherits from the specified class.
