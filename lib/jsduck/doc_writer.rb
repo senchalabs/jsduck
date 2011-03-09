@@ -45,6 +45,7 @@ module JsDuck
         cls[:extends] ? "@extends " + cls[:extends] : nil,
         cls[:singleton] ? "@singleton" : nil,
         cls[:xtype] ? "@xtype " + cls[:xtype] : nil,
+        cls[:author] ? "@author " + cls[:author] : nil,
         privat(cls[:private]),
         "",
         cls[:markdown] ? cls[:doc] : html2text(cls[:doc]),
