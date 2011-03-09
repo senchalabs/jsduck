@@ -75,13 +75,19 @@ module JsDuck
     # indents it the same amount as original comment we're replacing.
     def to_comment(text, orig_comment)
       indent = orig_comment.match(/^.*?\n( *) /)[1]
-      com = []
-      com << "/**\n"
+      comment = []
+      comment << "/**\n"
+      prev_line = ""
       text.each_line do |line|
-        com << indent + " * " + line
+        line.rstrip!
+        # Don't put more than one empty line in a row
+        unless line == "" && prev_line == ""
+          comment << (indent + " * " + line).rstrip + "\n"
+        end
+        prev_line = line
       end
-      com << indent + " */"
-      com.join("")
+      comment << indent + " */"
+      comment.join("")
     end
 
     # Parses the files in parallel using as many processes as available CPU-s
