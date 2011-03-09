@@ -31,6 +31,8 @@ module JsDuck
     def convert_docs(classes)
       replacements = {}
 
+      # Regenerate the doc-comment for each class.
+      # Build up search-replace list for each file.
       classes.each do |cls|
         fname = cls[:filename]
         replacements[fname] = [] unless replacements[fname]
@@ -40,6 +42,7 @@ module JsDuck
         }
       end
 
+      # Simply replace original doc-comments with generated ones.
       replacements.each do |fname, items|
         src = IO.read(fname)
         items.each do |diff|
@@ -50,7 +53,7 @@ module JsDuck
       end
     end
 
-    # surrounds text with /** ... */
+    # surrounds comment contents with /** ... */
     def to_comment(text)
       com = []
       com << "/**\n"
