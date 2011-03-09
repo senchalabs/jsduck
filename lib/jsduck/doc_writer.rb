@@ -39,7 +39,7 @@ module JsDuck
         cls[:extends] ? "@extends " + cls[:extends] : nil,
         cls[:singleton] ? "@singleton" : nil,
         cls[:xtype] ? "@xtype " + cls[:xtype] : nil,
-        cls[:private] ? "@private" : nil,
+        privat(cls[:private]),
         "",
         cls[:markdown] ? cls[:doc] : html2text(cls[:doc]),
         constructor(cls),
@@ -59,6 +59,18 @@ module JsDuck
       ]
     end
 
+    def property(p)
+      return [
+        [
+          "@property",
+          type(p[:type], "Object"),
+          p[:name],
+          doc(p[:doc]),
+        ].compact.join(" "),
+        privat(p[:private]),
+      ]
+    end
+
     def constructor(cls)
       con = cls[:method].find {|m| m[:name] == "constructor" }
       return nil if !con
@@ -73,10 +85,10 @@ module JsDuck
     # the part shared by both normal method and constructor
     def method_rest(m)
       return [
-        html2text(m[:doc]),
+        doc(m[:doc]),
         m[:params].map {|p| param(p) },
         retrn(m[:return]),
-        m[:private] ? "@private" : nil,
+        privat(m[:private]),
       ]
     end
 
@@ -85,7 +97,7 @@ module JsDuck
         "@param",
         type(p[:type], "Object"),
         p[:name],
-        p[:doc] != "" ? html2text(p[:doc]) : nil,
+        doc(p[:doc]),
       ].compact.join(" ")
     end
 
@@ -95,12 +107,20 @@ module JsDuck
       return [
         "@return",
         type(r[:type], "void"),
-        r[:doc] != "" ? html2text(r[:doc]) : nil,
+        doc(r[:doc]),
       ].compact.join(" ")
     end
 
     def type(t, default)
       t && t != default ? "{"+t+"}" : nil
+    end
+
+    def doc(d)
+      d != "" ? html2text(d) : nil
+    end
+
+    def privat(p)
+      p ? "@private" : nil
     end
 
     # Does HTML to Markdown magic using python script.

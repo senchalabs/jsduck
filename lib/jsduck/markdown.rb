@@ -41,7 +41,7 @@ module JsDuck
           :orig => cls[:orig_comment],
           :new => @doc_writer.write(:class, cls),
         }
-        [:method, :event].each do |type|
+        [:method, :event, :property].each do |type|
           cls[type].each do |m|
             unless type == :method && m[:name] == "constructor"
               replacements[fname] << {
