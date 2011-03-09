@@ -9,7 +9,7 @@ module JsDuck
         cls[:singleton] ? "@singleton" : nil,
         cls[:xtype] ? "@xtype " + cls[:xtype] : nil,
         "",
-        html2text(cls[:doc]),
+        cls[:markdown] ? cls[:doc] : html2text(cls[:doc]),
         constructor(cls),
       ].flatten.compact.join("\n") + "\n"
     end

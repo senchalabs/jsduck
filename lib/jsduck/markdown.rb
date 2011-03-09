@@ -34,6 +34,7 @@ module JsDuck
       # Regenerate the doc-comment for each class.
       # Build up search-replace list for each file.
       classes.each do |cls|
+        puts "Converting #{cls[:name]} ..." if @verbose
         fname = cls[:filename]
         replacements[fname] = [] unless replacements[fname]
         replacements[fname] << {
@@ -44,11 +45,11 @@ module JsDuck
 
       # Simply replace original doc-comments with generated ones.
       replacements.each do |fname, items|
+        puts "Writing #{fname} ..." if @verbose
         src = IO.read(fname)
         items.each do |diff|
           src.sub!(diff[:orig], diff[:new])
         end
-        puts "Writing #{fname} ..." if @verbose
         File.open(fname, 'w') {|f| f.write(src) }
       end
     end

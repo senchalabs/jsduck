@@ -114,6 +114,7 @@ module JsDuck
         :author => detect_author(doc_map),
         :singleton => !!doc_map[:singleton],
         :private => !!doc_map[:private],
+        :markdown => !!doc_map[:markdown],
       }
     end
 
