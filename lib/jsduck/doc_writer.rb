@@ -2,8 +2,14 @@ module JsDuck
 
   # Rewrites doc-comment contents from already parsed doc-object.
   class DocWriter
-    # Creates doc-comment of particular type
+    # Creates doc-comment of particular type.
+    #
+    # Returns new doc-comment as string or nil when no replacement
+    # should be made (like when @cfg defined inside @class comment).
     def write(type, doc)
+      # skip @cfg-s inside @class doc-comment
+      return if !doc[:orig_comment]
+
       to_comment(self.send(type, doc).flatten.compact.join("\n"), doc[:orig_comment])
     end
 
@@ -42,6 +48,8 @@ module JsDuck
         privat(cls[:private]),
         "",
         cls[:markdown] ? cls[:doc] : html2text(cls[:doc]),
+        # configs defined inside class-comment
+        cls[:cfg].find_all {|c| !c[:orig_comment] }.map {|c| cfg(c) },
         constructor(cls),
       ]
     end
@@ -60,15 +68,11 @@ module JsDuck
     end
 
     def property(p)
-      return [
-        [
-          "@property",
-          type(p[:type], "Object"),
-          p[:name],
-          doc(p[:doc]),
-        ].compact.join(" "),
-        privat(p[:private]),
-      ]
+      property_rest(p, "@property")
+    end
+
+    def cfg(c)
+      property_rest(c, "@cfg")
     end
 
     def constructor(cls)
@@ -79,6 +83,19 @@ module JsDuck
         "",
         "@constructor",
         method_rest(con),
+      ]
+    end
+
+    # the part shared of cfg and property
+    def property_rest(p, at_tag)
+      return [
+        [
+          at_tag,
+          type(p[:type], "Object"),
+          p[:name],
+          doc(p[:doc]),
+        ].compact.join(" "),
+        privat(p[:private]),
       ]
     end
 

@@ -41,7 +41,7 @@ module JsDuck
           :orig => cls[:orig_comment],
           :new => @doc_writer.write(:class, cls),
         }
-        [:method, :event, :property].each do |type|
+        [:cfg, :property, :method, :event].each do |type|
           cls[type].each do |m|
             unless type == :method && m[:name] == "constructor"
               replacements[fname] << {
@@ -58,7 +58,7 @@ module JsDuck
         puts "Writing #{fname} ..." if @verbose
         src = IO.read(fname)
         comments.each do |c|
-          src = safe_replace(src, c[:orig], c[:new])
+          src = safe_replace(src, c[:orig], c[:new]) if c[:new]
         end
         File.open(fname, 'w') {|f| f.write(src) }
       end
