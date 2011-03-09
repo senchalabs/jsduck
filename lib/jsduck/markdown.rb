@@ -39,29 +39,39 @@ module JsDuck
         replacements[fname] = [] unless replacements[fname]
         replacements[fname] << {
           :orig => cls[:orig_comment],
-          :new => to_comment(@doc_writer.class(cls)),
+          :new => to_comment(@doc_writer.class(cls), cls[:orig_comment]),
         }
+        cls[:method].each do |m|
+          if m[:name] != "constructor"
+            replacements[fname] << {
+              :orig => m[:orig_comment],
+              :new => to_comment(@doc_writer.method(m), m[:orig_comment]),
+            }
+          end
+        end
       end
 
       # Simply replace original doc-comments with generated ones.
-      replacements.each do |fname, items|
+      replacements.each do |fname, comments|
         puts "Writing #{fname} ..." if @verbose
         src = IO.read(fname)
-        items.each do |diff|
-          src.sub!(diff[:orig], diff[:new])
+        comments.each do |c|
+          src.sub!(c[:orig], c[:new])
         end
         File.open(fname, 'w') {|f| f.write(src) }
       end
     end
 
     # surrounds comment contents with /** ... */
-    def to_comment(text)
+    # indents it the same amount as original comment we're replacing.
+    def to_comment(text, orig_comment)
+      indent = orig_comment.match(/^.*?\n( *) /)[1]
       com = []
       com << "/**\n"
       text.each_line do |line|
-        com << " * " + line
+        com << indent + " * " + line
       end
-      com << " */"
+      com << indent + " */"
       com.join("")
     end
 

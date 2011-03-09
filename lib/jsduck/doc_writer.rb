@@ -14,6 +14,12 @@ module JsDuck
       ].flatten.compact.join("\n") + "\n"
     end
 
+    def method(m)
+      return [
+        method_rest(m),
+      ].flatten.compact.join("\n") + "\n"
+    end
+
     def constructor(cls)
       con = cls[:method].find {|m| m[:name] == "constructor" }
       return nil if !con
@@ -21,18 +27,40 @@ module JsDuck
       return [
         "",
         "@constructor",
-        html2text(con[:doc]),
-        con[:params].map {|p| param(p) }
+        method_rest(con),
+      ]
+    end
+
+    # the part shared by both normal method and constructor
+    def method_rest(m)
+      return [
+        html2text(m[:doc]),
+        m[:params].map {|p| param(p) },
+        retrn(m[:return]),
       ]
     end
 
     def param(p)
       return [
         "@param",
-        p[:type] ? "{"+p[:type]+"}" : nil,
+        type(p[:type]),
         p[:name],
-        html2text(p[:doc]),
+        p[:doc] != "" ? html2text(p[:doc]) : nil,
       ].compact.join(" ")
+    end
+
+    def retrn(r)
+      return nil if !r || r[:type] == "void" && r[:doc] == ""
+
+      return [
+        "@return",
+        r[:type] != "void" ? type(r[:type]) : nil,
+        r[:doc] != "" ? html2text(r[:doc]) : nil,
+      ].compact.join(" ")
+    end
+
+    def type(t)
+      t ? "{"+t+"}" : nil
     end
 
     # Does HTML to Markdown magic using python script.
