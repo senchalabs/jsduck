@@ -2,6 +2,37 @@ module JsDuck
 
   # Rewrites doc-comment contents from already parsed doc-object.
   class DocWriter
+    # Creates doc-comment of particular type
+    def write(type, doc)
+      to_comment(self.send(type, doc).flatten.compact.join("\n"), doc[:orig_comment])
+    end
+
+    # Surrounds comment within /** ... */
+    # Indents it the same amount as original comment we're replacing.
+    # Also trims trailing whitespace and double empty lines.
+    def to_comment(raw_lines, orig_comment)
+      # measure the indentation of original comment
+      indent = orig_comment.match(/^.*?\n( *) /)[1]
+      # construct the /**-surrounded-comment
+      comment = []
+      comment << "/**"
+      prev_line = ""
+      raw_lines.each_line do |line|
+        line.rstrip!
+        # Don't put more than one empty line in a row
+        unless line == "" && prev_line == ""
+          comment << (indent + " * " + line).rstrip
+        end
+        prev_line = line
+      end
+      comment << indent + " */"
+      comment.join("\n")
+    end
+
+    # The following methods produce the actual comment contents.  They
+    # return either array, string, or nil.  Nils are removed, arrays
+    # flattened, and each string is converted to a line.
+
     def class(cls)
       return [
         "@class " + cls[:name],
@@ -12,13 +43,20 @@ module JsDuck
         "",
         cls[:markdown] ? cls[:doc] : html2text(cls[:doc]),
         constructor(cls),
-      ].flatten.compact.join("\n") + "\n"
+      ]
     end
 
     def method(m)
       return [
         method_rest(m),
-      ].flatten.compact.join("\n") + "\n"
+      ]
+    end
+
+    def event(e)
+      return [
+        "@event",
+        method_rest(e),
+      ]
     end
 
     def constructor(cls)

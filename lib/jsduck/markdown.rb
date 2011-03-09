@@ -39,14 +39,16 @@ module JsDuck
         replacements[fname] = [] unless replacements[fname]
         replacements[fname] << {
           :orig => cls[:orig_comment],
-          :new => to_comment(@doc_writer.class(cls), cls[:orig_comment]),
+          :new => @doc_writer.write(:class, cls),
         }
-        cls[:method].each do |m|
-          if m[:name] != "constructor"
-            replacements[fname] << {
-              :orig => m[:orig_comment],
-              :new => to_comment(@doc_writer.method(m), m[:orig_comment]),
-            }
+        [:method, :event].each do |type|
+          cls[type].each do |m|
+            unless type == :method && m[:name] == "constructor"
+              replacements[fname] << {
+                :orig => m[:orig_comment],
+                :new => @doc_writer.write(type, m),
+              }
+            end
           end
         end
       end
@@ -69,25 +71,6 @@ module JsDuck
     def safe_replace(str, text, replacement)
       ps = str.split(text, 2)
       ps[0] + replacement + ps[1]
-    end
-
-    # surrounds comment contents with /** ... */
-    # indents it the same amount as original comment we're replacing.
-    def to_comment(text, orig_comment)
-      indent = orig_comment.match(/^.*?\n( *) /)[1]
-      comment = []
-      comment << "/**\n"
-      prev_line = ""
-      text.each_line do |line|
-        line.rstrip!
-        # Don't put more than one empty line in a row
-        unless line == "" && prev_line == ""
-          comment << (indent + " * " + line).rstrip + "\n"
-        end
-        prev_line = line
-      end
-      comment << indent + " */"
-      comment.join("")
     end
 
     # Parses the files in parallel using as many processes as available CPU-s
