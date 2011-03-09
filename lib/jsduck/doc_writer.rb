@@ -45,7 +45,7 @@ module JsDuck
     def param(p)
       return [
         "@param",
-        type(p[:type]),
+        type(p[:type], "Object"),
         p[:name],
         p[:doc] != "" ? html2text(p[:doc]) : nil,
       ].compact.join(" ")
@@ -56,13 +56,13 @@ module JsDuck
 
       return [
         "@return",
-        r[:type] != "void" ? type(r[:type]) : nil,
+        type(r[:type], "void"),
         r[:doc] != "" ? html2text(r[:doc]) : nil,
       ].compact.join(" ")
     end
 
-    def type(t)
-      t ? "{"+t+"}" : nil
+    def type(t, default)
+      t && t != default ? "{"+t+"}" : nil
     end
 
     # Does HTML to Markdown magic using python script.
