@@ -98,6 +98,7 @@ module JsDuck
           doc(p[:doc]),
         ].compact.join(" "),
         privat(p[:private]),
+        static(p[:static]),
       ]
     end
 
@@ -108,6 +109,7 @@ module JsDuck
         m[:params].map {|p| param(p) },
         retrn(m[:return]),
         privat(m[:private]),
+        static(m[:static]),
       ]
     end
 
@@ -140,6 +142,10 @@ module JsDuck
 
     def privat(p)
       p ? "@private" : nil
+    end
+
+    def static(s)
+      s ? "@static" : nil
     end
 
     # Does HTML to Markdown magic using python script.
