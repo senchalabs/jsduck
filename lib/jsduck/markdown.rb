@@ -37,8 +37,32 @@ module JsDuck
         "@class " + cls[:name],
         cls[:extends] ? "@extends " + cls[:extends] : nil,
         cls[:singleton] ? "@singleton" : nil,
+        cls[:xtype] ? "@xtype " + cls[:xtype] : nil,
+        "",
         html2text(cls[:doc]),
-      ].compact.join("\n")
+        format_constructor(cls),
+      ].flatten.compact.join("\n") + "\n"
+    end
+
+    def format_constructor(cls)
+      con = cls[:method].find {|m| m[:name] == "constructor" }
+      return nil if !con
+
+      return [
+        "",
+        "@constructor",
+        html2text(con[:doc]),
+        con[:params].map {|p| format_param(p) }
+      ]
+    end
+
+    def format_param(p)
+      return [
+        "@param",
+        p[:type] ? "{"+p[:type]+"}" : nil,
+        p[:name],
+        html2text(p[:doc]),
+      ].compact.join(" ")
     end
 
     def html2text(html)
@@ -47,7 +71,7 @@ module JsDuck
       text = IO.read("temp.text")
       FileUtils.rm("temp.html")
       FileUtils.rm("temp.text")
-      return text
+      return text.strip
     end
 
     # surrounds text with /** ... */
