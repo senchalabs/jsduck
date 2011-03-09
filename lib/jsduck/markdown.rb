@@ -56,10 +56,19 @@ module JsDuck
         puts "Writing #{fname} ..." if @verbose
         src = IO.read(fname)
         comments.each do |c|
-          src.sub!(c[:orig], c[:new])
+          src = safe_replace(src, c[:orig], c[:new])
         end
         File.open(fname, 'w') {|f| f.write(src) }
       end
+    end
+
+    # Replaces of one string with other exactly.
+    #
+    # String#sub expands meta-characters in replacement string, so we
+    # use split + concatenate to get around that.
+    def safe_replace(str, text, replacement)
+      ps = str.split(text, 2)
+      ps[0] + replacement + ps[1]
     end
 
     # surrounds comment contents with /** ... */
