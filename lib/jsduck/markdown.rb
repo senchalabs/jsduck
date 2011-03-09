@@ -2,6 +2,7 @@ require 'rubygems'
 require 'jsduck/parser'
 require 'jsduck/aggregator'
 require 'jsduck/class'
+require 'jsduck/doc_writer'
 require 'json'
 require 'parallel'
 
@@ -16,6 +17,7 @@ module JsDuck
     def initialize
       @input_files = []
       @verbose = false
+      @doc_writer = DocWriter.new
     end
 
     # Call this after input parameters set
@@ -34,7 +36,7 @@ module JsDuck
         replacements[fname] = [] unless replacements[fname]
         replacements[fname] << {
           :orig => cls[:orig_comment],
-          :new => to_comment(format_class(cls)),
+          :new => to_comment(@doc_writer.class(cls)),
         }
       end
 
@@ -46,48 +48,6 @@ module JsDuck
         puts "Writing #{fname} ..." if @verbose
         File.open(fname, 'w') {|f| f.write(src) }
       end
-    end
-
-    def format_class(cls)
-      return [
-        "@class " + cls[:name],
-        cls[:extends] ? "@extends " + cls[:extends] : nil,
-        cls[:singleton] ? "@singleton" : nil,
-        cls[:xtype] ? "@xtype " + cls[:xtype] : nil,
-        "",
-        html2text(cls[:doc]),
-        format_constructor(cls),
-      ].flatten.compact.join("\n") + "\n"
-    end
-
-    def format_constructor(cls)
-      con = cls[:method].find {|m| m[:name] == "constructor" }
-      return nil if !con
-
-      return [
-        "",
-        "@constructor",
-        html2text(con[:doc]),
-        con[:params].map {|p| format_param(p) }
-      ]
-    end
-
-    def format_param(p)
-      return [
-        "@param",
-        p[:type] ? "{"+p[:type]+"}" : nil,
-        p[:name],
-        html2text(p[:doc]),
-      ].compact.join(" ")
-    end
-
-    def html2text(html)
-      File.open("temp.html", 'w') {|f| f.write(html) }
-      `python html2text.py temp.html > temp.text`
-      text = IO.read("temp.text")
-      FileUtils.rm("temp.html")
-      FileUtils.rm("temp.text")
-      return text.strip
     end
 
     # surrounds text with /** ... */
