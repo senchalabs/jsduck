@@ -8,6 +8,7 @@ module JsDuck
         cls[:extends] ? "@extends " + cls[:extends] : nil,
         cls[:singleton] ? "@singleton" : nil,
         cls[:xtype] ? "@xtype " + cls[:xtype] : nil,
+        cls[:private] ? "@private" : nil,
         "",
         cls[:markdown] ? cls[:doc] : html2text(cls[:doc]),
         constructor(cls),
@@ -37,6 +38,7 @@ module JsDuck
         html2text(m[:doc]),
         m[:params].map {|p| param(p) },
         retrn(m[:return]),
+        m[:private] ? "@private" : nil,
       ]
     end
 
