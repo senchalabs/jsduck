@@ -23,12 +23,28 @@ module JsDuck
       parsed_files = parallel_parse(@input_files)
       result = aggregate(parsed_files)
       classes = filter_classes(result)
-      list_docs(classes)
+      convert_docs(classes)
     end
 
-    def list_docs(classes)
+    def convert_docs(classes)
+      replacements = {}
+
       classes.each do |cls|
-        puts to_comment(format_class(cls))
+        fname = cls[:filename]
+        replacements[fname] = [] unless replacements[fname]
+        replacements[fname] << {
+          :orig => cls[:orig_comment],
+          :new => to_comment(format_class(cls)),
+        }
+      end
+
+      replacements.each do |fname, items|
+        src = IO.read(fname)
+        items.each do |diff|
+          src.sub!(diff[:orig], diff[:new])
+        end
+        puts "Writing #{fname} ..." if @verbose
+        File.open(fname, 'w') {|f| f.write(src) }
       end
     end
 
@@ -81,7 +97,7 @@ module JsDuck
       text.each_line do |line|
         com << " * " + line
       end
-      com << " */\n"
+      com << " */"
       com.join("")
     end
 

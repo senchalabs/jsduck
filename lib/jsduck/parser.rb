@@ -54,6 +54,7 @@ module JsDuck
           comment = @lex.next(true)
           @docs << {
             :comment => @doc_parser.parse(comment[:value]),
+            :orig_comment => comment[:value],
             :linenr => comment[:linenr],
             :code => code_block
           }

@@ -32,6 +32,8 @@ module JsDuck
           :linenr => docset[:linenr],
         })
 
+        doc[:orig_comment] = docset[:orig_comment]
+
         register(doc)
       end
     end
