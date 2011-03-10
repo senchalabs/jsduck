@@ -18,7 +18,8 @@ module JsDuck
     # Also trims trailing whitespace and double empty lines.
     def to_comment(raw_lines, orig_comment)
       # measure the indentation of original comment
-      indent = orig_comment.match(/^.*?\n( *) /)[1]
+      m = orig_comment.match(/^.*?\n( *) /)
+      indent = m ? m[1] : ""
       # construct the /**-surrounded-comment
       comment = []
       comment << "/**"
