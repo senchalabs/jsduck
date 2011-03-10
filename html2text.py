@@ -59,13 +59,13 @@ def name2cp(k):
         if k.startswith("&#") and k.endswith(";"): return int(k[2:-1]) # not in latin-1
         return ord(codecs.latin_1_decode(k)[0])
 
-unifiable = {'rsquo':"'", 'lsquo':"'", 'rdquo':'"', 'ldquo':'"', 
+unifiable = {'rsquo':"'", 'lsquo':"'", 'rdquo':'"', 'ldquo':'"',
 'copy':'(C)', 'mdash':'--', 'nbsp':' ', 'rarr':'->', 'larr':'<-', 'middot':'*',
 'ndash':'-', 'oelig':'oe', 'aelig':'ae',
-'agrave':'a', 'aacute':'a', 'acirc':'a', 'atilde':'a', 'auml':'a', 'aring':'a', 
-'egrave':'e', 'eacute':'e', 'ecirc':'e', 'euml':'e', 
+'agrave':'a', 'aacute':'a', 'acirc':'a', 'atilde':'a', 'auml':'a', 'aring':'a',
+'egrave':'e', 'eacute':'e', 'ecirc':'e', 'euml':'e',
 'igrave':'i', 'iacute':'i', 'icirc':'i', 'iuml':'i',
-'ograve':'o', 'oacute':'o', 'ocirc':'o', 'otilde':'o', 'ouml':'o', 
+'ograve':'o', 'oacute':'o', 'ocirc':'o', 'otilde':'o', 'ouml':'o',
 'ugrave':'u', 'uacute':'u', 'ucirc':'u', 'uuml':'u'}
 
 unifiable_n = {}
@@ -78,7 +78,7 @@ def charref(name):
         c = int(name[1:], 16)
     else:
         c = int(name)
-    
+
     if not UNICODE_SNOB and c in unifiable_n.keys():
         return unifiable_n[c]
     else:
@@ -101,7 +101,7 @@ def entityref(c):
 
 def replaceEntities(s):
     s = s.group(1)
-    if s[0] == "#": 
+    if s[0] == "#":
         return charref(s[1:])
     else: return entityref(s)
 
@@ -122,7 +122,7 @@ def optwrap(text):
     """Wrap all paragraphs in the provided text."""
     if not BODY_WIDTH:
         return text
-    
+
     assert wrap, "Requires Python 2.3."
     result = ''
     newlines = 0
@@ -153,7 +153,7 @@ def hn(tag):
 class _html2text(HTMLParser.HTMLParser):
     def __init__(self, out=None, baseurl=''):
         HTMLParser.HTMLParser.__init__(self)
-        
+
         if out is None: self.out = self.outtextf
         else: self.out = out
         try:
@@ -177,43 +177,43 @@ class _html2text(HTMLParser.HTMLParser):
         self.abbr_data = None # last inner HTML (for abbr being defined)
         self.abbr_list = {} # stack of abbreviations to write later
         self.baseurl = baseurl
-    
-    def outtextf(self, s): 
+
+    def outtextf(self, s):
         self.outtext += s
-    
+
     def close(self):
         HTMLParser.HTMLParser.close(self)
-        
+
         self.pbr()
         self.o('', 0, 'end')
-        
+
         return self.outtext
-        
+
     def handle_charref(self, c):
         self.o(charref(c))
 
     def handle_entityref(self, c):
         self.o(entityref(c))
-            
+
     def handle_starttag(self, tag, attrs):
         self.handle_tag(tag, attrs, 1)
-    
+
     def handle_endtag(self, tag):
         self.handle_tag(tag, None, 0)
-        
+
     def previousIndex(self, attrs):
         """ returns the index of certain set of attributes (of a link) in the
             self.a list
- 
+
             If the set of attributes is not found, returns None
         """
         if not has_key(attrs, 'href'): return None
-        
+
         i = -1
         for a in self.a:
             i += 1
             match = 0
-            
+
             if has_key(a, 'href') and a['href'] == attrs['href']:
                 if has_key(a, 'title') or has_key(attrs, 'title'):
                         if (has_key(a, 'title') and has_key(attrs, 'title') and
@@ -226,13 +226,13 @@ class _html2text(HTMLParser.HTMLParser):
 
     def handle_tag(self, tag, attrs, start):
         #attrs = fixattrs(attrs)
-    
+
         if hn(tag):
             self.p()
             if start: self.o(hn(tag)*"#" + ' ')
 
         if tag in ['p', 'div']: self.p()
-        
+
         if tag == "br" and start: self.o("  \n")
 
         if tag == "hr" and start:
@@ -240,21 +240,21 @@ class _html2text(HTMLParser.HTMLParser):
             self.o("* * *")
             self.p()
 
-        if tag in ["head", "style", 'script']: 
+        if tag in ["head", "style", 'script']:
             if start: self.quiet += 1
             else: self.quiet -= 1
 
         if tag in ["body"]:
             self.quiet = 0 # sites like 9rules.com never close <head>
-        
+
         if tag == "blockquote":
-            if start: 
+            if start:
                 self.p(); self.o('> ', 0, 1); self.start = 1
                 self.blockquote += 1
             else:
                 self.blockquote -= 1
                 self.p()
-        
+
         if tag in ['em', 'i', 'u']: self.o("_")
         if tag in ['strong', 'b']: self.o("**")
         if tag == "code" and not self.pre: self.o('`') #TODO: `` `this` ``
@@ -263,7 +263,7 @@ class _html2text(HTMLParser.HTMLParser):
                 attrsD = {}
                 for (x, y) in attrs: attrsD[x] = y
                 attrs = attrsD
-                
+
                 self.abbr_title = None
                 self.abbr_data = ''
                 if has_key(attrs, 'title'):
@@ -273,13 +273,13 @@ class _html2text(HTMLParser.HTMLParser):
                     self.abbr_list[self.abbr_data] = self.abbr_title
                     self.abbr_title = None
                 self.abbr_data = ''
-        
+
         if tag == "a":
             if start:
                 attrsD = {}
                 for (x, y) in attrs: attrsD[x] = y
                 attrs = attrsD
-                if has_key(attrs, 'href') and not (SKIP_INTERNAL_LINKS and attrs['href'].startswith('#')): 
+                if has_key(attrs, 'href') and not (SKIP_INTERNAL_LINKS and attrs['href'].startswith('#')):
                     self.astack.append(attrs)
                     self.o("[")
                 else:
@@ -297,7 +297,7 @@ class _html2text(HTMLParser.HTMLParser):
                             a['outcount'] = self.outcount
                             self.a.append(a)
                         self.o("][" + str(a['count']) + "]")
-        
+
         if tag == "img" and start:
             attrsD = {}
             for (x, y) in attrs: attrsD[x] = y
@@ -316,20 +316,20 @@ class _html2text(HTMLParser.HTMLParser):
                 self.o("![")
                 self.o(alt)
                 self.o("]["+ str(attrs['count']) +"]")
-        
+
         if tag == 'dl' and start: self.p()
         if tag == 'dt' and not start: self.pbr()
         if tag == 'dd' and start: self.o('    ')
         if tag == 'dd' and not start: self.pbr()
-        
+
         if tag in ["ol", "ul"]:
             if start:
                 self.list.append({'name':tag, 'num':0})
             else:
                 if self.list: self.list.pop()
-            
+
             self.p()
-        
+
         if tag == 'li':
             if start:
                 self.pbr()
@@ -343,10 +343,10 @@ class _html2text(HTMLParser.HTMLParser):
                 self.start = 1
             else:
                 self.pbr()
-        
+
         if tag in ["table", "tr"] and start: self.p()
         if tag == 'td': self.pbr()
-        
+
         if tag == "pre":
             if start:
                 self.startpre = 1
@@ -354,34 +354,34 @@ class _html2text(HTMLParser.HTMLParser):
             else:
                 self.pre = 0
             self.p()
-            
+
     def pbr(self):
         if self.p_p == 0: self.p_p = 1
 
     def p(self): self.p_p = 2
-    
+
     def o(self, data, puredata=0, force=0):
         if self.abbr_data is not None: self.abbr_data += data
-        
-        if not self.quiet: 
+
+        if not self.quiet:
             if puredata and not self.pre:
                 data = re.sub('\s+', ' ', data)
                 if data and data[0] == ' ':
                     self.space = 1
                     data = data[1:]
             if not data and not force: return
-            
+
             if self.startpre:
                 #self.out(" :") #TODO: not output when already one there
                 self.startpre = 0
-            
+
             bq = (">" * self.blockquote)
             if not (force and data and data[0] == ">") and self.blockquote: bq += " "
-            
+
             if self.pre:
                 bq += "    "
                 data = data.replace("\n", "\n"+bq)
-            
+
             if self.start:
                 self.space = 0
                 self.p_p = 0
@@ -397,7 +397,7 @@ class _html2text(HTMLParser.HTMLParser):
             if self.p_p:
                 self.out(('\n'+bq)*self.p_p)
                 self.space = 0
-                
+
             if self.space:
                 if not self.lastWasNL: self.out(' ')
                 self.space = 0
@@ -408,7 +408,7 @@ class _html2text(HTMLParser.HTMLParser):
                 newa = []
                 for link in self.a:
                     if self.outcount > link['outcount']:
-                        self.out("   ["+ str(link['count']) +"]: " + urlparse.urljoin(self.baseurl, link['href'])) 
+                        self.out("   ["+ str(link['count']) +"]: " + urlparse.urljoin(self.baseurl, link['href']))
                         if has_key(link, 'title'): self.out(" ("+link['title']+")")
                         self.out("\n")
                     else:
@@ -417,7 +417,7 @@ class _html2text(HTMLParser.HTMLParser):
                 if self.a != newa: self.out("\n") # Don't need an extra line when nothing was done.
 
                 self.a = newa
-            
+
             if self.abbr_list and force == "end":
                 for abbr, definition in self.abbr_list.items():
                     self.out("  *[" + abbr + "]: " + definition + "\n")
@@ -430,7 +430,7 @@ class _html2text(HTMLParser.HTMLParser):
     def handle_data(self, data):
         if r'\/script>' in data: self.quiet -= 1
         self.o(data, 1)
-    
+
     def unknown_decl(self, data): pass
 
 def wrapwrite(text):
