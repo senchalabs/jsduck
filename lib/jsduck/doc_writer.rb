@@ -93,12 +93,12 @@ module JsDuck
     # the part shared of cfg and property
     def property_rest(p, at_tag)
       return [
-        [
+        html2text([
           at_tag,
           type(p[:type], "Object"),
           p[:name],
           doc(p[:doc]),
-        ].compact.join(" "),
+        ].compact.join(" ")),
         privat(p[:private]),
         static(p[:static]),
       ]
@@ -107,7 +107,7 @@ module JsDuck
     # the part shared by both normal method and constructor
     def method_rest(m)
       return [
-        doc(m[:doc]),
+        m[:doc] != "" ? html2text(m[:doc]) : nil,
         m[:params].map {|p| param(p) },
         retrn(m[:return]),
         privat(m[:private]),
@@ -116,22 +116,22 @@ module JsDuck
     end
 
     def param(p)
-      return [
+      return html2text([
         "@param",
         type(p[:type], "Object"),
         p[:name],
         doc(p[:doc]),
-      ].compact.join(" ")
+      ].compact.join(" "))
     end
 
     def retrn(r)
       return nil if !r || r[:type] == "void" && r[:doc] == ""
 
-      return [
+      return html2text([
         "@return",
         type(r[:type], "void"),
         doc(r[:doc]),
-      ].compact.join(" ")
+      ].compact.join(" "))
     end
 
     def type(t, default)
@@ -139,7 +139,7 @@ module JsDuck
     end
 
     def doc(d)
-      d != "" ? html2text(d) : nil
+      d != "" ? d : nil
     end
 
     def privat(p)
