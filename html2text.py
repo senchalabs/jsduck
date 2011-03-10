@@ -454,7 +454,12 @@ if __name__ == "__main__":
 
     p = optparse.OptionParser('%prog [(filename|url) [encoding]]',
                               version='%prog ' + __version__)
-    args = p.parse_args()[1]
+    p.add_option("-w", "--wrap", type="int", dest="wrap",
+                 help="wrap text at NUM columns", metavar="NUM")
+    (options, args) = p.parse_args()
+    if options.wrap:
+        BODY_WIDTH = options.wrap
+
     if len(args) > 0:
         file_ = args[0]
         encoding = None

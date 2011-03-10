@@ -2,6 +2,9 @@ module JsDuck
 
   # Rewrites doc-comment contents from already parsed doc-object.
   class DocWriter
+
+    LINE_LENGTH = 120
+
     # Creates doc-comment of particular type.
     #
     # Returns new doc-comment as string or nil when no replacement
@@ -9,17 +12,16 @@ module JsDuck
     def write(type, doc)
       # skip @cfg-s inside @class doc-comment
       return if !doc[:orig_comment]
-
-      to_comment(self.send(type, doc).flatten.compact.join("\n"), doc[:orig_comment])
+      ilen = indent_length(doc[:orig_comment])
+      @wrap = LINE_LENGTH - ilen - 3
+      to_comment(self.send(type, doc).flatten.compact.join("\n"), ilen)
     end
 
     # Surrounds comment within /** ... */
     # Indents it the same amount as original comment we're replacing.
     # Also trims trailing whitespace and double empty lines.
-    def to_comment(raw_lines, orig_comment)
-      # measure the indentation of original comment
-      m = orig_comment.match(/^.*?\n( *) /)
-      indent = m ? m[1] : ""
+    def to_comment(raw_lines, ilen)
+      indent = " " * ilen
       # construct the /**-surrounded-comment
       comment = []
       comment << "/**"
@@ -34,6 +36,12 @@ module JsDuck
       end
       comment << indent + " */"
       comment.join("\n")
+    end
+
+    # measure the indentation of comment
+    def indent_length(comment)
+      m = comment.match(/^.*?\n( *) /)
+      indent = m ? m[1].length : 0
     end
 
     # The following methods produce the actual comment contents.  They
@@ -172,7 +180,7 @@ module JsDuck
     # Does HTML to Markdown magic using python script.
     def html2text(html)
       File.open("temp.html", 'w') {|f| f.write(html) }
-      `python html2text.py temp.html > temp.text`
+      `python html2text.py --wrap #{@wrap} temp.html > temp.text`
       text = IO.read("temp.text")
       FileUtils.rm("temp.html")
       FileUtils.rm("temp.text")
