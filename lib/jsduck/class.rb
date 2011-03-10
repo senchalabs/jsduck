@@ -48,6 +48,7 @@ module JsDuck
       doc.delete(:property)
       doc.delete(:method)
       doc.delete(:event)
+      doc[:component] = inherits_from?("Ext.Component")
       doc
     end
 
