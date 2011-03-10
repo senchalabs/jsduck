@@ -33,6 +33,7 @@ module JsDuck
         })
 
         doc[:orig_comment] = docset[:orig_comment]
+        doc[:code] = docset[:code]
 
         register(doc)
       end

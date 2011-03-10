@@ -42,8 +42,8 @@ module JsDuck
 
     def class(cls)
       return [
-        "@class " + cls[:name],
-        cls[:extends] ? "@extends " + cls[:extends] : nil,
+        at_class(cls),
+        at_extends(cls),
         cls[:singleton] ? "@singleton" : nil,
         cls[:xtype] ? "@xtype " + cls[:xtype] : nil,
         cls[:author] ? "@author " + cls[:author] : nil,
@@ -54,6 +54,24 @@ module JsDuck
         cls[:cfg].find_all {|c| !c[:orig_comment] }.map {|c| cfg(c) },
         constructor(cls),
       ]
+    end
+
+    # creates @class when not detectable from source code
+    def at_class(cls)
+      if cls[:code][:type] == :ext_define && cls[:code][:name] == cls[:name]
+        return nil
+      else
+        return "@class " + cls[:name]
+      end
+    end
+
+    # creates @extends when not detectable from source code
+    def at_extends(cls)
+      if cls[:code][:type] == :ext_define && cls[:code][:extend] == cls[:extends]
+        return nil
+      else
+        return "@extends " + cls[:extends]
+      end
     end
 
     def method(m)
