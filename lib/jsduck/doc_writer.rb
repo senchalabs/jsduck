@@ -41,7 +41,7 @@ module JsDuck
     # measure the indentation of comment
     def indent_length(comment)
       m = comment.match(/^.*?\n( *) /)
-      indent = m ? m[1].length : 0
+      m ? m[1].length : 0
     end
 
     # The following methods produce the actual comment contents.  They
@@ -67,18 +67,20 @@ module JsDuck
     # creates @class when not detectable from source code
     def at_class(cls)
       if cls[:code][:type] == :ext_define && cls[:code][:name] == cls[:name]
-        return nil
+        nil
       else
-        return "@class " + cls[:name]
+        "@class " + cls[:name]
       end
     end
 
     # creates @extends when not detectable from source code
     def at_extends(cls)
       if cls[:code][:type] == :ext_define && cls[:code][:extend] == cls[:extends]
-        return nil
+        nil
+      elsif cls[:extends]
+        "@extends " + cls[:extends]
       else
-        return "@extends " + cls[:extends]
+        nil
       end
     end
 
