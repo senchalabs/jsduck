@@ -57,8 +57,9 @@ module JsDuck
 
     def method(m)
       return [
-        # add explicit @method tag when it's used in original source
+        # add explicit @method and @member when it's used in original source
         m[:orig_comment] =~ /@method/ ? "@method " + m[:name] : nil,
+        m[:orig_comment] =~ /@member/ ? "@member " + m[:member] : nil,
         method_rest(m),
       ]
     end

@@ -5,6 +5,7 @@ require 'jsduck/class'
 require 'jsduck/doc_writer'
 require 'json'
 require 'parallel'
+require 'pp'
 
 module JsDuck
 
@@ -44,6 +45,8 @@ module JsDuck
         [:cfg, :property, :method, :event].each do |type|
           cls[type].each do |m|
             unless type == :method && m[:name] == "constructor"
+              fname = m[:filename]
+              replacements[fname] = [] unless replacements[fname]
               replacements[fname] << {
                 :orig => m[:orig_comment],
                 :new => @doc_writer.write(type, m),
@@ -70,6 +73,9 @@ module JsDuck
     # use split + concatenate to get around that.
     def safe_replace(str, text, replacement)
       ps = str.split(text, 2)
+      if ps.length == 1
+        puts text
+      end
       ps[0] + replacement + ps[1]
     end
 
