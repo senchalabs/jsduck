@@ -100,7 +100,7 @@ module JsDuck
       classes.values
     end
 
-    # Given array of doc-objects, generates namespace tree and writes in
+    # Given array of doc-objects, generates namespace tree and writes it
     # in JSON form into a file.
     def write_tree(filename, docs)
       tree = Tree.new.create(docs)
