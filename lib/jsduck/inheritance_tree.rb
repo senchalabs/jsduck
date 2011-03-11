@@ -9,7 +9,7 @@ module JsDuck
     # Renders the tree using HTML <pre> element
     def to_html
       i = -1
-      html = ancestors(@cls).reverse.collect do |cls|
+      html = (@cls.superclasses + [@cls]).collect do |cls|
         i += 1
         make_indent(i) + make_link(cls)
       end.join("\n")
@@ -19,16 +19,6 @@ module JsDuck
           <pre class="res-block-inner">#{html}</pre>
         </div>
       EOHTML
-    end
-
-    # Returns array of the names of ancestor classes for given class.
-    # Including the name of the class itself.
-    # Example result when ascing ancestors of MyPanel might be:
-    #
-    #   [MyPanel, Ext.Panel, Ext.Component, Ext.util.Observable]
-    #
-    def ancestors(cls)
-      cls.parent ? [cls] + ancestors(cls.parent) : [cls]
     end
 
     def make_indent(level)

@@ -18,6 +18,16 @@ module JsDuck
       @doc[:extends] ? lookup(@doc[:extends]) : nil
     end
 
+    # Returns array of ancestor classes.
+    # Example result when asking ancestors of MyPanel might be:
+    #
+    #   [Ext.util.Observable, Ext.Component, Ext.Panel]
+    #
+    def superclasses
+      p = parent
+      p ? p.superclasses + [p]  : []
+    end
+
     # Returns array of mixin class instances.
     # Returns empty array if no mixins
     def mixins
@@ -49,6 +59,7 @@ module JsDuck
       doc.delete(:method)
       doc.delete(:event)
       doc[:component] = inherits_from?("Ext.Component")
+      doc[:superclasses] = superclasses.collect {|cls| cls.full_name }
       doc
     end
 
