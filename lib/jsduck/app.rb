@@ -38,6 +38,7 @@ module JsDuck
       clear_dir(@output_dir)
       if @export
         FileUtils.mkdir(@output_dir)
+        init_output_dirs(@output_dir)
       else
         copy_template(@template_dir, @output_dir)
       end
@@ -47,7 +48,7 @@ module JsDuck
       classes = @timer.time(:aggregating) { filter_classes(result) }
 
       if @export == :json
-        @timer.time(:generating) { write_json(@output_dir, classes) }
+        @timer.time(:generating) { write_json(@output_dir+"/output", classes) }
       else
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", classes) }
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", classes) }
@@ -59,13 +60,13 @@ module JsDuck
 
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
-      src = SourceFormatter.new(@output_dir + "/source")
+      src = SourceFormatter.new(@output_dir + "/source", @export ? :format_pre : :format_page)
       Parallel.map(filenames) do |fname|
         puts "Parsing #{fname} ..." if @verbose
         code = IO.read(fname)
         {
           :filename => fname,
-          :html_filename => @export ? "" : File.basename(src.write(code, fname)),
+          :html_filename => File.basename(src.write(code, fname)),
           :data => Parser.new(code).parse,
         }
       end
@@ -149,14 +150,18 @@ module JsDuck
     def copy_template(template_dir, dir)
       puts "Copying template files to #{dir}..." if @verbose
       FileUtils.cp_r(template_dir, dir)
-      FileUtils.mkdir(dir + "/output")
-      FileUtils.mkdir(dir + "/source")
+      init_output_dirs(dir)
     end
 
     def clear_dir(dir)
       if File.exists?(dir)
         FileUtils.rm_r(dir)
       end
+    end
+
+    def init_output_dirs(dir)
+      FileUtils.mkdir(dir + "/output")
+      FileUtils.mkdir(dir + "/source")
     end
   end
 

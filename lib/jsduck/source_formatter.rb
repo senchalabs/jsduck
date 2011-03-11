@@ -8,16 +8,21 @@ module JsDuck
   class SourceFormatter
 
     # Initializes SourceFormatter to the directory where
-    # HTML-formatted source files will be placed
-    def initialize(output_dir)
+    # HTML-formatted source files will be placed.
+    #
+    # formatter can be either :format_page or :format_pre; with the
+    # first one the whole HTML page is created, otherwise just a
+    # contents of <pre> element.
+    def initialize(output_dir, formatter = :format_page)
       @output_dir = output_dir
+      @formatter = formatter
     end
 
     # Converts source to HTML and writes into file in output
     # directory.  It returns the name of the file that it wrote.
     def write(source, filename)
       fname = uniq_html_filename(filename)
-      File.open(fname, 'w') {|f| f.write(format(source)) }
+      File.open(fname, 'w') {|f| f.write(self.send(@formatter, source)) }
       fname
     end
 
@@ -36,7 +41,7 @@ module JsDuck
     end
 
     # Returns full source for HTML page
-    def format(source)
+    def format_page(source)
       return <<-EOHTML
 <!DOCTYPE html>
 <html>
