@@ -4,9 +4,11 @@ module JsDuck
   # methods on it.  Otherwise it acts like Hash, providing the []
   # method.
   class Class
-    def initialize(doc, classes={})
+    attr_accessor :relations
+
+    def initialize(doc)
       @doc = doc
-      @classes = classes
+      @relations = nil
     end
 
     def [](key)
@@ -37,8 +39,8 @@ module JsDuck
     # Looks up class object by name
     # When not found, prints warning message.
     def lookup(classname)
-      if @classes[classname]
-        @classes[classname]
+      if @relations[classname]
+        @relations[classname]
       elsif classname != "Object"
         puts "Warning: Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}"
       end
@@ -60,6 +62,8 @@ module JsDuck
       doc.delete(:event)
       doc[:component] = inherits_from?("Ext.Component")
       doc[:superclasses] = superclasses.collect {|cls| cls.full_name }
+      doc[:subclasses] = @relations.subclasses(self).collect {|cls| cls.full_name }
+      doc[:mixedInto] = @relations.mixed_into(self).collect {|cls| cls.full_name }
       doc
     end
 

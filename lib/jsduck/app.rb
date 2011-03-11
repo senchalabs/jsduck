@@ -6,7 +6,7 @@ require 'jsduck/class'
 require 'jsduck/tree'
 require 'jsduck/tree_icons'
 require 'jsduck/members'
-require 'jsduck/subclasses'
+require 'jsduck/relations'
 require 'jsduck/page'
 require 'jsduck/timer'
 require 'json'
@@ -45,14 +45,14 @@ module JsDuck
 
       parsed_files = @timer.time(:parsing) { parallel_parse(@input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
-      classes = @timer.time(:aggregating) { filter_classes(result) }
+      relations = @timer.time(:aggregating) { filter_classes(result) }
 
       if @export == :json
-        @timer.time(:generating) { write_json(@output_dir+"/output", classes) }
+        @timer.time(:generating) { write_json(@output_dir+"/output", relations) }
       else
-        @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", classes) }
-        @timer.time(:generating) { write_members(@output_dir+"/output/members.js", classes) }
-        @timer.time(:generating) { write_pages(@output_dir+"/output", classes) }
+        @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
+        @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
+        @timer.time(:generating) { write_pages(@output_dir+"/output", relations) }
       end
 
       @timer.report if @verbose
@@ -85,10 +85,10 @@ module JsDuck
     # Filters out class-documentations, converting them to Class objects.
     # For each other type, prints a warning message and discards it
     def filter_classes(docs)
-      classes = {}
+      classes = []
       docs.each do |d|
         if d[:tagname] == :class
-          classes[d[:name]] = Class.new(d, classes)
+          classes << Class.new(d)
         else
           type = d[:tagname].to_s
           name = d[:name]
@@ -97,45 +97,43 @@ module JsDuck
           puts "Warning: Ignoring #{type}: #{name} in #{file} line #{line}"
         end
       end
-      classes.values
+      Relations.new(classes)
     end
 
-    # Given array of doc-objects, generates namespace tree and writes it
+    # Given all classes, generates namespace tree and writes it
     # in JSON form into a file.
-    def write_tree(filename, docs)
-      tree = Tree.new.create(docs)
+    def write_tree(filename, relations)
+      tree = Tree.new.create(relations.classes)
       icons = TreeIcons.new.extract_icons(tree)
       js = "Docs.classData = " + JSON.generate( tree ) + ";"
       js += "Docs.icons = " + JSON.generate( icons ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
     end
 
-    # Given array of doc-objects, generates members data for search and writes in
+    # Given all classes, generates members data for search and writes in
     # in JSON form into a file.
-    def write_members(filename, docs)
-      members = Members.new.create(docs)
+    def write_members(filename, relations)
+      members = Members.new.create(relations.classes)
       js = "Docs.membersData = " + JSON.generate( {:data => members} ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
     end
 
     # Writes documentation page for each class
     # We do it in parallel using as many processes as available CPU-s
-    def write_pages(path, docs)
-      subclasses = Subclasses.new(docs)
+    def write_pages(path, relations)
       cache = {}
-      Parallel.each(docs) do |cls|
+      Parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".html"
         puts "Writing to #{filename} ..." if @verbose
-        html = Page.new(cls, subclasses, cache).to_html
+        html = Page.new(cls, relations, cache).to_html
         File.open(filename, 'w') {|f| f.write(html) }
       end
     end
 
     # Writes JSON export file for each class
-    def write_json(path, docs)
-      subclasses = Subclasses.new(docs)
+    def write_json(path, relations)
       cache = {}
-      Parallel.each(docs) do |cls|
+      Parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".json"
         puts "Writing to #{filename} ..." if @verbose
         hash = cls.to_hash

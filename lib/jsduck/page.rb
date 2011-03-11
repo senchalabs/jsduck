@@ -12,12 +12,12 @@ module JsDuck
     # Initializes doc page generator
     #
     # - cls : the Class object for which to generate documentation
-    # - subclasses : lookup table for easy access to subclasses
+    # - relations : access to subclasses, mixins, etc
     # - cache : cache for already generated HTML rows for class members
     #
-    def initialize(cls, subclasses = {}, cache = {})
+    def initialize(cls, relations, cache = {})
       @cls = cls
-      @subclasses = subclasses
+      @relations = relations
       @cache = cache
       @formatter = DocFormatter.new(cls.full_name)
     end
@@ -53,7 +53,7 @@ module JsDuck
         abstract_row("Extends:", @cls.parent ? class_link(@cls.parent.full_name) : "Object"),
         @cls.mixins.length > 0 ? abstract_row("Mixins:", mixins) : "",
         abstract_row("Defind In:", file_link),
-        @subclasses[@cls] ? abstract_row("Subclasses:", subclasses) : "",
+        @relations.subclasses(@cls).length ? abstract_row("Subclasses:", subclasses) : "",
         @cls[:xtype] ? abstract_row("xtype:", @cls[:xtype]) : "",
         @cls[:author] ? abstract_row("Author:", @cls[:author]) : "",
        "</table>",
@@ -70,7 +70,7 @@ module JsDuck
     end
 
     def subclasses
-      subs = @subclasses[@cls].sort {|a, b| a.short_name <=> b.short_name }
+      subs = @relations.subclasses(@cls).sort {|a, b| a.short_name <=> b.short_name }
       subs.collect {|cls| class_link(cls.full_name, cls.short_name) }.join(", ")
     end
 
