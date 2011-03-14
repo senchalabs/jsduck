@@ -128,7 +128,7 @@ def optwrap(text):
     newlines = 0
     for para in text.split("\n"):
         if len(para) > 0:
-            if para[0] != ' ' and para[0] != '-' and para[0] != '*':
+            if para[0] != ' ' and para[0:1] != '- ' and para[0:1] != '* ':
                 for line in wrap(para, BODY_WIDTH):
                     result += line + "\n"
                 result += "\n"
