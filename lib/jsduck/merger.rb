@@ -129,6 +129,7 @@ module JsDuck
         :return => detect_return(doc_map),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],
+        :markdown => !!doc_map[:markdown],
       }
     end
 
@@ -141,6 +142,7 @@ module JsDuck
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :private => !!doc_map[:private],
+        :markdown => !!doc_map[:markdown],
       }
     end
 
@@ -153,6 +155,7 @@ module JsDuck
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
+        :markdown => !!doc_map[:markdown],
       }
     end
 
@@ -166,6 +169,7 @@ module JsDuck
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],
+        :markdown => !!doc_map[:markdown],
       }
     end
 

@@ -57,7 +57,7 @@ module JsDuck
         cls[:author] ? "@author " + cls[:author] : nil,
         privat(cls[:private]),
         "",
-        cls[:markdown] ? cls[:doc] : html2text(cls[:doc]),
+        maybe_html2text(cls),
         # configs defined inside class-comment
         cls[:cfg].find_all {|c| !c[:orig_comment] }.map {|c| cfg(c) },
         constructor(cls),
@@ -122,12 +122,15 @@ module JsDuck
     # the part shared of cfg and property
     def property_rest(p, at_tag)
       return [
-        html2text([
-          at_tag,
-          type(p[:type], "Object"),
-          p[:name],
-          doc(p[:doc]),
-        ].compact.join(" ")),
+        maybe_html2text({
+            :doc => [
+              at_tag,
+              type(p[:type], "Object"),
+              p[:name],
+              doc(p[:doc]),
+            ].compact.join(" "),
+            :markdown => p[:markdown],
+          }),
         privat(p[:private]),
         static(p[:static]),
       ]
@@ -136,7 +139,7 @@ module JsDuck
     # the part shared by both normal method and constructor
     def method_rest(m)
       return [
-        m[:doc] != "" ? html2text(m[:doc]) : nil,
+        m[:doc] != "" ? maybe_html2text(m) : nil,
         m[:params].map {|p| param(p) },
         retrn(m[:return]),
         privat(m[:private]),
@@ -177,6 +180,11 @@ module JsDuck
 
     def static(s)
       s ? "@static" : nil
+    end
+
+    # Convert :doc property to markdown only if no @markdown tag already
+    def maybe_html2text(item)
+      item[:markdown] ? item[:doc] : html2text(item[:doc])
     end
 
     # Does HTML to Markdown magic using python script.
