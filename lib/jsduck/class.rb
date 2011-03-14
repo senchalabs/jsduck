@@ -46,25 +46,9 @@ module JsDuck
       end
     end
 
-    # Returns all data in Class object as hash.  This is basically the
-    # same as just accessing @doc, except instead of :cfg field there
-    # is :cfgs which also contains the inherited ones.  Same for
-    # :properties, :methods, and :events.
+    # Returns copy of @doc hash
     def to_hash
-      doc = @doc.clone
-      doc[:cfgs] = members(:cfg)
-      doc[:properties] = members(:property)
-      doc[:methods] = members(:method)
-      doc[:events] = members(:event)
-      doc.delete(:cfg)
-      doc.delete(:property)
-      doc.delete(:method)
-      doc.delete(:event)
-      doc[:component] = inherits_from?("Ext.Component")
-      doc[:superclasses] = superclasses.collect {|cls| cls.full_name }
-      doc[:subclasses] = @relations.subclasses(self).collect {|cls| cls.full_name }
-      doc[:mixedInto] = @relations.mixed_into(self).collect {|cls| cls.full_name }
-      doc
+      @doc.clone
     end
 
     # Returns true when this class inherits from the specified class.

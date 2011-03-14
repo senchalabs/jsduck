@@ -8,6 +8,7 @@ require 'jsduck/tree_icons'
 require 'jsduck/members'
 require 'jsduck/relations'
 require 'jsduck/page'
+require 'jsduck/exporter'
 require 'jsduck/timer'
 require 'json'
 require 'fileutils'
@@ -132,17 +133,11 @@ module JsDuck
 
     # Writes JSON export file for each class
     def write_json(path, relations)
-      cache = {}
-      formatter = DocFormatter.new
-      formatter.cssClass = 'docClass'
+      exporter = Exporter.new(relations)
       Parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".json"
         puts "Writing to #{filename} ..." if @verbose
-        hash = cls.to_hash
-        if hash[:doc]
-          formatter.context = cls[:name]
-          hash[:doc] = formatter.format(hash[:doc])
-        end
+        hash = exporter.export(cls)
         json = JSON.pretty_generate(hash)
         File.open(filename, 'w') {|f| f.write(json) }
       end
