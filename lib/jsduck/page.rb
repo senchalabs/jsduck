@@ -19,7 +19,10 @@ module JsDuck
       @cls = cls
       @relations = relations
       @cache = cache
-      @formatter = DocFormatter.new(cls.full_name)
+      @formatter = DocFormatter.new
+      @formatter.context = cls.full_name
+      @formatter.cssClass = 'docClass'
+      @formatter.urlTemplate = 'output/%cls%.html'
     end
 
     def to_html
@@ -62,7 +65,7 @@ module JsDuck
 
     def class_link(class_name, label=nil)
       label = label || class_name
-      "<a href='output/#{class_name}.html' ext:cls='#{class_name}'>#{label}</a>"
+      "<a href='output/#{class_name}.html' class='docClass' rel='#{class_name}'>#{label}</a>"
     end
 
     def file_link

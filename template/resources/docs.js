@@ -291,11 +291,10 @@ Ext.extend(MainPanel, Ext.TabPanel, {
 
     onClick: function(e, target){
         if((target = e.getTarget('a:not(.exi)', 3))){
-            var cls = Ext.fly(target).getAttributeNS('ext', 'cls');
             e.stopEvent();
-            if(cls){
-                var member = Ext.fly(target).getAttributeNS('ext', 'member');
-                this.loadClass(target.href, cls, member);
+            if(/\bdocClass\b/.test(target.className)){
+                var m = target.rel.split("#");
+                this.loadClass(target.href, m[0], m[1]);
             }else if(target.className == 'inner-link'){
                 this.getActiveTab().scrollToSection(target.href.split('#')[1]);
             }else{
@@ -342,10 +341,10 @@ Ext.extend(MainPanel, Ext.TabPanel, {
 	    var resultTpl = new Ext.XTemplate(
 	        '<tpl for=".">',
 	        '<div class="search-item">',
-	            '<a class="member" ext:cls="{cls}" ext:member="{member}" href="output/{cls}.html">',
+	            '<a class="member docClass" rel="{cls}#{member}" href="output/{cls}.html">',
 				'<img src="resources/images/default/s.gif" class="item-icon icon-{type}"/>{member}',
 				'</a> ',
-				'<a class="cls" ext:cls="{cls}" href="output/{cls}.html">{cls}</a>',
+				'<a class="cls docClass" rel="{cls}" href="output/{cls}.html">{cls}</a>',
 	            '<p>{doc}</p>',
 	        '</div></tpl>'
 	    );

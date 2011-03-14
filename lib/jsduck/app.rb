@@ -133,12 +133,15 @@ module JsDuck
     # Writes JSON export file for each class
     def write_json(path, relations)
       cache = {}
+      formatter = DocFormatter.new
+      formatter.cssClass = 'docClass'
       Parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".json"
         puts "Writing to #{filename} ..." if @verbose
         hash = cls.to_hash
         if hash[:doc]
-          hash[:doc] = DocFormatter.new(hash[:name]).format(hash[:doc])
+          formatter.context = cls[:name]
+          hash[:doc] = formatter.format(hash[:doc])
         end
         json = JSON.pretty_generate(hash)
         File.open(filename, 'w') {|f| f.write(json) }

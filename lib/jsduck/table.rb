@@ -20,7 +20,10 @@ module JsDuck
     def initialize(cls, cache={})
       @cls = cls
       @cache = cache
-      @formatter = DocFormatter.new(cls.full_name)
+      @formatter = DocFormatter.new
+      @formatter.context = cls.full_name
+      @formatter.cssClass = 'docClass'
+      @formatter.urlTemplate = 'output/%cls%.html'
     end
 
     def to_html
@@ -78,8 +81,8 @@ module JsDuck
       cls = item[:member]
       member = item[:name]
       "<a href='output/#{cls}.html##{member}' " +
-        "ext:member='##{member}' " +
-        "ext:cls='#{cls}'>#{Class.short_name(cls)}</a>"
+        "class='docClass' " +
+        "rel='#{cls}##{member}'>#{Class.short_name(cls)}</a>"
     end
 
     def signature(item)
