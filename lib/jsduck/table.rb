@@ -91,24 +91,11 @@ module JsDuck
       return "<a id='#{id}'></a><b><a href='#{src}'>#{item[:name]}</a></b>" + signature_suffix(item)
     end
 
-    # 116 chars is also where ext-doc makes its cut, but unlike
-    # ext-doc we only make the cut when there's more than 120 chars.
-    #
-    # This way we don't get stupid expansions like:
-    #
-    #   Blah blah blah some text...
-    #
-    # expanding to:
-    #
-    #   Blah blah blah some text.
-    #
+    # Creates either expandable or normal doc-entry
     def expandable_desc(p_doc, e_doc)
       if expandable?(p_doc, e_doc)
-        # Only show ellipsis when primary_doc is shortened.
-        tagless = strip_tags(p_doc)
-        short_doc = tagless[0..116]
-        ellipsis = tagless.length > short_doc.length ? "..." : ""
-        "<div class='short'>#{short_doc}#{ellipsis}</div>" +
+        short_doc = @formatter.shorten(p_doc)
+        "<div class='short'>#{short_doc}</div>" +
           "<div class='long'>#{p_doc}#{e_doc}</div>"
       else
         p_doc
@@ -125,11 +112,7 @@ module JsDuck
     end
 
     def expandable?(p_doc, e_doc)
-      strip_tags(p_doc).length > 120 || e_doc.length > 0
-    end
-
-    def strip_tags(str)
-      str.gsub(/<.*?>/, "")
+      @formatter.too_long?(p_doc) || e_doc.length > 0
     end
 
     def inherited?(item)

@@ -48,6 +48,9 @@ module JsDuck
     def format_member(m)
       m = m.clone
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
+      if m[:params] || @formatter.too_long?(m[:doc])
+        m[:shortDoc] = @formatter.shorten(m[:doc])
+      end
       m[:params] = format_params(m[:params]) if m[:params]
       m[:return] = format_return(m[:return]) if m[:return]
       m

@@ -18,10 +18,14 @@ module JsDuck
     # Context#blah is meant.
     attr_accessor :context
 
+    # Maximum length for text that doesn't get shortened, defaults to 120
+    attr_accessor :max_length
+
     def initialize
       @context = ""
       @cssClass = nil
       @urlTemplate = "%cls%"
+      @max_length = 120
     end
 
     # Replaces {@link Class#member link text} in given string with
@@ -81,6 +85,36 @@ module JsDuck
       replace(RDiscount.new(input).to_html)
     end
 
+    # Shortens text if needed.
+    #
+    # 116 chars is also where ext-doc makes its cut, but unlike
+    # ext-doc we only make the cut when there's more than 120 chars.
+    #
+    # This way we don't get stupid expansions like:
+    #
+    #   Blah blah blah some text...
+    #
+    # expanding to:
+    #
+    #   Blah blah blah some text.
+    #
+    # Ellipsis is only added when input actually gets shortened.
+    def shorten(input)
+      if too_long?(input)
+        strip_tags(input)[0..(@max_length-4)] + "..."
+      else
+        input
+      end
+    end
+
+    # Returns true when input should get shortened.
+    def too_long?(input)
+      strip_tags(input).length > @max_length
+    end
+
+    def strip_tags(str)
+      str.gsub(/<.*?>/, "")
+    end
   end
 
 end

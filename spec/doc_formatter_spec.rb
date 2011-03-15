@@ -3,7 +3,8 @@ require "jsduck/doc_formatter"
 describe JsDuck::DocFormatter do
 
   before do
-    @formatter = JsDuck::DocFormatter.new("Context")
+    @formatter = JsDuck::DocFormatter.new
+    @formatter.context = "Context"
   end
 
   describe "#replace" do
@@ -96,6 +97,33 @@ describe JsDuck::DocFormatter do
       end
     end
 
+  end
+
+  describe "#shorten" do
+
+    before do
+      @formatter.max_length = 10
+    end
+
+    it "leaves short text unchanged" do
+      @formatter.shorten("Ha ha").should == "Ha ha"
+    end
+
+    it "leaves text with max length unchanged" do
+      @formatter.shorten("1234567890").should == "1234567890"
+    end
+
+    it "shortens text longer than max length" do
+      @formatter.shorten("12345678901").should == "1234567..."
+    end
+
+    it "ignores HTML tags when calculating text length" do
+      @formatter.shorten("<a href='some-long-link'>Foo</a>").should == "<a href='some-long-link'>Foo</a>"
+    end
+
+    it "strips HTML tags when shortening" do
+      @formatter.shorten("<a href='some-long-link'>12345678901</a>").should == "1234567..."
+    end
   end
 
 end
