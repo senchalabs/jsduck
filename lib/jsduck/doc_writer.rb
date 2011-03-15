@@ -38,9 +38,10 @@ module JsDuck
       comment.join("\n")
     end
 
-    # measure the indentation of comment
+    # measure the indentation of last line in comment
     def indent_length(comment)
-      m = comment.match(/^.*?\n( *) /)
+      lines = comment.split(/\n/)
+      m = lines.last.match(/^( *) \*/)
       m ? m[1].length : 0
     end
 
