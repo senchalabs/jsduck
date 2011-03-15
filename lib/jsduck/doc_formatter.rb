@@ -33,7 +33,7 @@ module JsDuck
     # attribute links will also contain ext:cls and ext:member
     # attributes.
     def replace(input)
-      input.gsub(/\{@link +(\S*?)(?: +(.+?))?\}/) do
+      input.gsub(/\{@link\s+(\S*?)(?:\s+(.+?))?\}/m) do
         target = $1
         text = $2
         if target =~ /^(.*)#(.*)$/

@@ -38,6 +38,16 @@ describe JsDuck::DocFormatter do
       @formatter.replace("unfinished {@link tag here").should ==
         'unfinished {@link tag here'
     end
+
+    it "handles {@link} spanning multiple lines" do
+      @formatter.replace("Look at {@link\nExt.Msg\nsome text}").should ==
+        'Look at <a href="Ext.Msg" rel="Ext.Msg">some text</a>'
+    end
+
+    it "handles {@link} with label spanning multiple lines" do
+      @formatter.replace("Look at {@link Ext.Msg some\ntext}").should ==
+        "Look at <a href=\"Ext.Msg\" rel=\"Ext.Msg\">some\ntext</a>"
+    end
   end
 
   describe "#format" do
