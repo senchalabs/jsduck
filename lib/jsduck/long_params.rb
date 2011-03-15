@@ -6,7 +6,7 @@ module JsDuck
   # for use in documentation body.
   class LongParams
     def initialize(cls)
-      @formatter = DocFormatter.new(cls.full_name)
+      @formatter = DocFormatter.new()
     end
 
     def render(params)
