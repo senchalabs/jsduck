@@ -7,6 +7,9 @@ module JsDuck
   class LongParams
     def initialize(cls)
       @formatter = DocFormatter.new()
+      @formatter.context = cls.full_name
+      @formatter.cssClass = 'docClass'
+      @formatter.urlTemplate = 'output/%cls%.html'
     end
 
     def render(params)
