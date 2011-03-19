@@ -6,12 +6,12 @@ module JsDuck
   # Formats doc-comments
   class DocFormatter
     # CSS class to add to each link
-    attr_accessor :cssClass
+    attr_accessor :css_class
 
     # Template for the href URL.
     # Can contain %cls% which is replaced with actual classname.
     # Also '#' and member name is appended to link if needed
-    attr_accessor :urlTemplate
+    attr_accessor :url_template
 
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
@@ -23,8 +23,8 @@ module JsDuck
 
     def initialize
       @context = ""
-      @cssClass = nil
-      @urlTemplate = "%cls%"
+      @css_class = nil
+      @url_template = "%cls%"
       @max_length = 120
     end
 
@@ -60,10 +60,10 @@ module JsDuck
     # Creates HTML link to class and/or member
     def link(cls, member, label)
       anchor = member ? "#" + member : ""
-      url = @urlTemplate.sub(/%cls%/, cls) + anchor
+      url = @url_template.sub(/%cls%/, cls) + anchor
       href = ' href="' + url + '"'
       rel = ' rel="' + cls + anchor + '"'
-      cssCls = @cssClass ? ' class="' + @cssClass + '"' : ''
+      cssCls = @css_class ? ' class="' + @css_class + '"' : ''
       "<a" + href + rel + cssCls + ">" + label + "</a>"
     end
 

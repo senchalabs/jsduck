@@ -14,7 +14,7 @@ module JsDuck
     def initialize(relations)
       @relations = relations
       @formatter = DocFormatter.new
-      @formatter.cssClass = 'docClass'
+      @formatter.css_class = 'docClass'
     end
 
     # Returns all data in Class object as hash.

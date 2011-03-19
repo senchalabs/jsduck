@@ -8,8 +8,8 @@ module JsDuck
     def initialize(cls)
       @formatter = DocFormatter.new()
       @formatter.context = cls.full_name
-      @formatter.cssClass = 'docClass'
-      @formatter.urlTemplate = 'output/%cls%.html'
+      @formatter.css_class = 'docClass'
+      @formatter.url_template = 'output/%cls%.html'
     end
 
     def render(params)

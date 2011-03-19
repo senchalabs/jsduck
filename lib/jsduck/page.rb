@@ -21,8 +21,8 @@ module JsDuck
       @cache = cache
       @formatter = DocFormatter.new
       @formatter.context = cls.full_name
-      @formatter.cssClass = 'docClass'
-      @formatter.urlTemplate = 'output/%cls%.html'
+      @formatter.css_class = 'docClass'
+      @formatter.url_template = 'output/%cls%.html'
     end
 
     def to_html
