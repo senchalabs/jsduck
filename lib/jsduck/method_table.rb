@@ -14,6 +14,10 @@ module JsDuck
       @row_class = "method-row"
       @short_params = ShortParams.new
       @long_params = LongParams.new(@cls)
+      @formatter = DocFormatter.new()
+      @formatter.context = @cls.full_name
+      @formatter.css_class = 'docClass'
+      @formatter.url_template = 'output/%cls%.html'
     end
 
     def signature_suffix(item)
@@ -33,7 +37,7 @@ module JsDuck
 
     def render_return(item)
       type = item[:return][:type]
-      doc = item[:return][:doc]
+      doc = @formatter.format(item[:return][:doc])
       if type == "void" && doc.length == 0
         "<ul><li>void</li></ul>"
       else
