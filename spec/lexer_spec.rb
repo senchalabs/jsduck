@@ -83,11 +83,11 @@ describe JsDuck::Lexer do
     end
 
     it "when escaped double-quote inside double-quoted string" do
-      lex(@d+@b+@d+@d   + ' "blah"').should == [[:string, @d], [:string, "blah"]]
+      lex(@d+@b+@d+@d   + ' "blah"').should == [[:string, @b+@d], [:string, "blah"]]
     end
 
     it "when escaped single-quote inside single-quoted string" do
-      lex(@s+@b+@s+@s   + ' "blah"').should == [[:string, @s], [:string, "blah"]]
+      lex(@s+@b+@s+@s   + ' "blah"').should == [[:string, @b+@s], [:string, "blah"]]
     end
   end
 
