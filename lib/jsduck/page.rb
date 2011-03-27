@@ -65,7 +65,7 @@ module JsDuck
 
     def class_link(class_name, label=nil)
       label = label || class_name
-      "<a href='output/#{class_name}.html' class='docClass' rel='#{class_name}'>#{label}</a>"
+      @formatter.link(class_name, nil, label || class_name)
     end
 
     def file_link

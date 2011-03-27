@@ -78,11 +78,7 @@ module JsDuck
     end
 
     def member_link(item)
-      cls = item[:member]
-      member = item[:name]
-      "<a href='output/#{cls}.html##{member}' " +
-        "class='docClass' " +
-        "rel='#{cls}##{member}'>#{Class.short_name(cls)}</a>"
+      @formatter.link(item[:member], item[:name], Class.short_name(item[:member]))
     end
 
     def signature(item)
