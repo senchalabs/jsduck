@@ -56,7 +56,7 @@ module JsDuck
         abstract_row("Extends:", @cls.parent ? class_link(@cls.parent.full_name) : "Object"),
         @cls.mixins.length > 0 ? abstract_row("Mixins:", mixins) : "",
         abstract_row("Defind In:", file_link),
-        @relations.subclasses(@cls).length ? abstract_row("Subclasses:", subclasses) : "",
+        @relations.subclasses(@cls).length > 0 ? abstract_row("Subclasses:", subclasses) : "",
         @cls[:xtype] ? abstract_row("xtype:", @cls[:xtype]) : "",
         @cls[:author] ? abstract_row("Author:", @cls[:author]) : "",
        "</table>",
