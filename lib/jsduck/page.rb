@@ -53,13 +53,13 @@ module JsDuck
     def abstract
       [
        "<table cellspacing='0'>",
-        abstract_row("Extends:", @cls.parent ? class_link(@cls.parent.full_name) : "Object"),
-        @cls.mixins.length > 0 ? abstract_row("Mixins:", mixins) : "",
-        abstract_row("Defind In:", file_link),
-        relation_row("Subclasses:", :subclasses),
-        relation_row("Mixed into:", :mixed_into),
-        @cls[:xtype] ? abstract_row("xtype:", @cls[:xtype]) : "",
-        @cls[:author] ? abstract_row("Author:", @cls[:author]) : "",
+        row("Extends:", @cls.parent ? class_link(@cls.parent.full_name) : "Object"),
+        classes_row("Mixins:", @cls.mixins),
+        row("Defind In:", file_link),
+        classes_row("Subclasses:", @relations.subclasses(@cls)),
+        classes_row("Mixed into:", @relations.mixed_into(@cls)),
+        boolean_row("xtype:", @cls[:xtype]),
+        boolean_row("Author:", @cls[:author]),
        "</table>",
       ].join("\n")
     end
@@ -73,22 +73,21 @@ module JsDuck
       "<a href='source/#{@cls[:href]}'>#{File.basename(@cls[:filename])}</a>"
     end
 
-    def mixins
-      mixs = @cls.mixins.sort {|a, b| a.full_name <=> b.full_name }
-      mixs.collect {|cls| class_link(cls.full_name, cls.short_name) }.join(", ")
-    end
-
-    def relation_row(label, type)
-      classes = @relations.send(type, @cls).sort {|a, b| a.short_name <=> b.short_name }
+    def classes_row(label, classes)
       if classes.length > 0
+        classes = classes.sort {|a, b| a.short_name <=> b.short_name }
         html = classes.collect {|cls| class_link(cls.full_name, cls.short_name) }.join(", ")
-        abstract_row(label, html)
+        row(label, html)
       else
         ""
       end
     end
 
-    def abstract_row(label, info)
+    def boolean_row(label, item)
+      item ? row(label, item) : ""
+    end
+
+    def row(label, info)
       "<tr><td class='label'>#{label}</td><td class='hd-info'>#{info}</td></tr>"
     end
 
