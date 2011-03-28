@@ -38,6 +38,13 @@ opts = OptionParser.new do | opts |
     app.export = :json
   end
 
+  # For debugging it's often useful to set --processes=0 to get deterministic results.
+  opts.on('-p', '--processes=COUNT', "The number of parallel processes to use.",
+    "Defaults to the number of processors/cores.",
+    "Set to 0 to disable parallel processing completely.") do |count|
+    app.processes = count.to_i
+  end
+
   opts.on('-v', '--verbose', "This will fill up your console.") do
     app.verbose = true
   end

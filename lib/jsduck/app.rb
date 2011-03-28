@@ -10,9 +10,9 @@ require 'jsduck/relations'
 require 'jsduck/page'
 require 'jsduck/exporter'
 require 'jsduck/timer'
+require 'jsduck/parallel_wrap'
 require 'json'
 require 'fileutils'
-require 'parallel'
 
 module JsDuck
 
@@ -32,6 +32,13 @@ module JsDuck
       @verbose = false
       @export = nil
       @timer = Timer.new
+      @parallel = ParallelWrap.new
+    end
+
+    # Sets the nr of parallel processes to use.
+    # Set to 0 to disable parallelization completely.
+    def processes=(count)
+      @parallel = ParallelWrap.new(:in_processes => count)
     end
 
     # Call this after input parameters set
@@ -62,7 +69,7 @@ module JsDuck
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
       src = SourceFormatter.new(@output_dir + "/source", @export ? :format_pre : :format_page)
-      Parallel.map(filenames) do |fname|
+      @parallel.map(filenames) do |fname|
         puts "Parsing #{fname} ..." if @verbose
         code = IO.read(fname)
         {
@@ -123,7 +130,7 @@ module JsDuck
     # We do it in parallel using as many processes as available CPU-s
     def write_pages(path, relations)
       cache = {}
-      Parallel.each(relations.classes) do |cls|
+      @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".html"
         puts "Writing to #{filename} ..." if @verbose
         html = Page.new(cls, relations, cache).to_html
@@ -134,7 +141,7 @@ module JsDuck
     # Writes JSON export file for each class
     def write_json(path, relations)
       exporter = Exporter.new(relations)
-      Parallel.each(relations.classes) do |cls|
+      @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".json"
         puts "Writing to #{filename} ..." if @verbose
         hash = exporter.export(cls)
