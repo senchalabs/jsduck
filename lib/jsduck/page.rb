@@ -53,7 +53,7 @@ module JsDuck
     def abstract
       [
        "<table cellspacing='0'>",
-        row("Extends:", @cls.parent ? class_link(@cls.parent.full_name) : "Object"),
+        row("Extends:", extends_link),
         classes_row("Mixins:", @cls.mixins),
         row("Defind In:", file_link),
         classes_row("Subclasses:", @relations.subclasses(@cls)),
@@ -71,6 +71,14 @@ module JsDuck
 
     def file_link
       "<a href='source/#{@cls[:href]}'>#{File.basename(@cls[:filename])}</a>"
+    end
+
+    def extends_link
+      if @cls[:extends]
+        @relations[@cls[:extends]] ? class_link(@cls[:extends]) : @cls[:extends]
+      else
+        "Object"
+      end
     end
 
     def classes_row(label, classes)
