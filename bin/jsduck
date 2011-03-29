@@ -24,7 +24,7 @@ app = JsDuck::App.new
 app.template_dir = File.dirname(File.dirname(__FILE__)) + "/template"
 
 opts = OptionParser.new do | opts |
-  opts.banner = "Usage: jsduck [options] files..."
+  opts.banner = "Usage: jsduck [options] files/dirs..."
 
   opts.on('-o', '--output=PATH', "Directory to output all this amazing documentation.") do |path|
     app.output_dir = path
@@ -55,7 +55,20 @@ opts = OptionParser.new do | opts |
   end
 end
 
-app.input_files = opts.parse!(ARGV)
+js_files = []
+# scan directories for .js files
+opts.parse!(ARGV).each do |fname|
+  if File.exists?(fname)
+    if File.directory?(fname)
+      Dir[fname+"/**/*.js"].each {|f| js_files << f }
+    else
+      js_files << fname
+    end
+  else
+    puts "Warning: File #{fname} not found"
+  end
+end
+app.input_files = js_files
 
 if app.input_files.length == 0
   puts "You should specify some input files, otherwise there's nothing I can do :("
