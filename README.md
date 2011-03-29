@@ -117,30 +117,34 @@ JsDuck depends on [json][], [RDiscount][], and [parallel][] plus [RSpec][] for t
 Usage
 -----
 
-Just call it from command line with output directory and a list of
-JavaScript files:
+Just call it from command line with output directory and a directory
+containing your JavaScript files:
 
-    $ jsduck --verbose --output some/dir  your/project/*.js
-
-To specify a lot of files you should probably create a script that
-generates a file list and passes it through `xargs` to `jsduck`.
-
-For example to generate documentation for ExtJS:
-
-    $ find ext-3.3.1/src/ -name '*.js' | egrep -v 'locale/|test/|adapter/' | xargs jsduck -v -o output/
+    $ jsduck --verbose --output some/dir  your/project/js
 
 The `--verbose` flag creates a lot of output, but at least you will
 see that something is happening.
+
+You pass in both directories and JavaScript files.  For example to
+generate docs for ExtJS 3, the simplest way is the following:
+
+    $ jsduck -v -o output/ ext-3.3.1/src/
+
+But this will give you a bunch of warnings, so you should better
+create a script that takes just the files really needed and passes
+them through `xargs` to `jsduck`:
+
+    $ find ext-3.3.1/src/ -name '*.js' | egrep -v 'locale/|test/|adapter/' | xargs jsduck -v -o output/
 
 Here's how the resulting documentation will look (ExtJS 3.3.1):
 
 * [JsDuck generated documentation](http://triin.net/temp/jsduck/)
 * [Official ExtJS documentation](http://dev.sencha.com/deploy/dev/docs/) (for comparison)
 
-Here's the same for ExtJS 4 Preview 2:
+Here's the same for ExtJS 4 Preview 5:
 
 * [JsDuck generated documentation](http://triin.net/temp/jsduck4/)
-* [Official ExtJS documentation](http://dev.sencha.com/deploy/ext-4.0-pr2/docs/) (for comparison)
+* [Official ExtJS documentation](http://dev.sencha.com/deploy/ext-4.0-pr5/docs/) (for comparison)
 
 
 Documentation
@@ -183,8 +187,6 @@ missing.
 Missing features and TODO
 -------------------------
 
-* Search, not just searching from official ExtJS documentation.
-
 * Support for custom @tags. Ext-doc supports this, I personally have
   never used this feature, so I'm thinking it's not really needed.
 
@@ -194,11 +196,20 @@ Copying
 
 JsDuck is distributed under the terms of the GNU General Public License version 3.
 
-JsDuck was developed by [Rene Saarsoo](http://triin.net).
+JsDuck was developed by [Rene Saarsoo](http://triin.net),
+with contributions from [Ondřej Jirman](https://github.com/megous).
 
 
 Changelog
 ---------
+
+* 0.5 - Search and export
+  * Search from the actually generated docs (not through sencha.com)
+  * JSON export with --json switch.
+  * Listing of mixed into classes.
+  * Option to control or disable parallel processing.
+  * Accepting directories as input (those are scanned for .js files)
+  * Many bug fixes.
 
 * 0.4 - Ext4 support
   * Support for Ext.define() syntax from ExtJS 4.
