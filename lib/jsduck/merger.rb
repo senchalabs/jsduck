@@ -18,6 +18,8 @@ module JsDuck
         create_cfg(docs, code)
       when :property
         create_property(docs, code)
+      when :var
+        create_var(docs, code)
       end
     end
 
@@ -33,6 +35,8 @@ module JsDuck
         :method
       elsif doc_map[:property] || doc_map[:type]
         :property
+      elsif doc_map[:var]
+        :var
       elsif code[:type] == :ext_define
         :class
       elsif code[:type] == :assignment && class_name?(*code[:left])
@@ -67,6 +71,7 @@ module JsDuck
       end
       result[:property] = []
       result[:event] = []
+      result[:var] = []
       result
     end
 
@@ -162,6 +167,19 @@ module JsDuck
         :name => detect_name(:property, doc_map, code),
         :member => detect_member(doc_map),
         :type => detect_type(:property, doc_map, code),
+        :doc => detect_doc(docs),
+        :private => !!doc_map[:private],
+        :static => !!doc_map[:static],
+      }
+    end
+
+    def create_var(docs, code)
+      doc_map = build_doc_map(docs)
+      return {
+        :tagname => :var,
+        :name => detect_name(:var, doc_map, code),
+        :member => detect_member(doc_map),
+        :type => detect_type(:var, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],

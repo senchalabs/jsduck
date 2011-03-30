@@ -92,6 +92,8 @@ module JsDuck
           at_member
         elsif look(/@author\b/)
           at_author
+        elsif look(/@var\b/)
+          at_var
         elsif look(/@static\b/)
           boolean_at_tag(/@static/, :static)
         elsif look(/@(private|ignore|hide|protected)\b/)
@@ -179,6 +181,15 @@ module JsDuck
       skip_white
     end
 
+    # matches @var {type} $name ...
+    def at_var
+      match(/@var/)
+      add_tag(:var)
+      maybe_type
+      maybe_name(/\$[a-zA-Z0-9_-]*/)
+      skip_white
+    end
+
     # matches @type {type}  or  @type type
     #
     # The presence of @type implies that we are dealing with property.
@@ -237,10 +248,10 @@ module JsDuck
     end
 
     # matches identifier name if possible and sets it on @current_tag
-    def maybe_name
+    def maybe_name(pattern = /\w+/)
       skip_horiz_white
-      if look(/\w/)
-        @current_tag[:name] = ident
+      if look(pattern)
+        @current_tag[:name] = @input.scan(pattern)
       end
     end
 
