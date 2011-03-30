@@ -87,6 +87,7 @@ module JsDuck
         puts "Aggregating #{file[:filename]} ..." if @verbose
         agr.aggregate(file[:data], file[:filename], file[:html_filename])
       end
+      agr.classify_orphans
       agr.result
     end
 

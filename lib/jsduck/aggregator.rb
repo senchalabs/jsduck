@@ -121,6 +121,29 @@ module JsDuck
       end
     end
 
+    # Creates classes for orphans that have :member property defined,
+    # and then inserts orphans to these classes.
+    def classify_orphans
+      @orphans.each do |orph|
+        if orph[:member]
+          class_name = orph[:member]
+          if !@classes[class_name]
+            add_class({
+              :tagname => :class,
+              :name => class_name,
+              :cfg => [],
+              :property => [],
+              :method => [],
+              :event => [],
+              :var => [],
+            })
+          end
+          add_member(orph)
+          @orphans.delete(orph)
+        end
+      end
+    end
+
     def result
       @documentation + @orphans
     end
