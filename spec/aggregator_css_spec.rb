@@ -24,7 +24,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects variable" do
-      @doc[:tagname].should == :var
+      @doc[:tagname].should == :css_var
     end
     it "detects variable name" do
       @doc[:name].should == "$button-height"
@@ -49,7 +49,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects mixin" do
-      @doc[:tagname].should == :mixin
+      @doc[:tagname].should == :css_mixin
     end
     it "detects mixin name" do
       @doc[:name].should == "my-button"

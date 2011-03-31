@@ -135,8 +135,8 @@ module JsDuck
               :property => [],
               :method => [],
               :event => [],
-              :var => [],
-              :mixin => [],
+              :css_var => [],
+              :css_mixin => [],
             })
           end
           add_member(orph)

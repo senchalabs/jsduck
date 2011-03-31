@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'jsduck/parser'
+require 'jsduck/css_parser'
 require 'jsduck/aggregator'
 require 'jsduck/source_formatter'
 require 'jsduck/class'
@@ -75,7 +76,7 @@ module JsDuck
         {
           :filename => fname,
           :html_filename => File.basename(src.write(code, fname)),
-          :data => Parser.new(code).parse,
+          :data => fname =~ /\.s?css$/ ? CssParser.new(code).parse : Parser.new(code).parse,
         }
       end
     end

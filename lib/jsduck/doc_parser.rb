@@ -184,7 +184,7 @@ module JsDuck
     # matches @var {type} $name ...
     def at_var
       match(/@var/)
-      add_tag(:var)
+      add_tag(:css_var)
       maybe_type
       maybe_name(/\$[a-zA-Z0-9_-]*/)
       skip_white

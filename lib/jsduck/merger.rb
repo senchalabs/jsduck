@@ -18,10 +18,10 @@ module JsDuck
         create_cfg(docs, code)
       when :property
         create_property(docs, code)
-      when :var
-        create_var(docs, code)
-      when :mixin
-        create_mixin(docs, code)
+      when :css_var
+        create_css_var(docs, code)
+      when :css_mixin
+        create_css_mixin(docs, code)
       end
     end
 
@@ -37,16 +37,16 @@ module JsDuck
         :method
       elsif doc_map[:property] || doc_map[:type]
         :property
-      elsif doc_map[:var]
-        :var
+      elsif doc_map[:css_var]
+        :css_var
       elsif code[:type] == :ext_define
         :class
       elsif code[:type] == :assignment && class_name?(*code[:left])
         :class
       elsif code[:type] == :function && class_name?(code[:name])
         :class
-      elsif code[:type] == :mixin
-        :mixin
+      elsif code[:type] == :css_mixin
+        :css_mixin
       elsif doc_map[:cfg]
         :cfg
       elsif code[:type] == :function
@@ -177,24 +177,24 @@ module JsDuck
       }
     end
 
-    def create_var(docs, code)
+    def create_css_var(docs, code)
       doc_map = build_doc_map(docs)
       return {
-        :tagname => :var,
-        :name => detect_name(:var, doc_map, code),
+        :tagname => :css_var,
+        :name => detect_name(:css_var, doc_map, code),
         :member => detect_member(doc_map),
-        :type => detect_type(:var, doc_map, code),
+        :type => detect_type(:css_var, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],
       }
     end
 
-    def create_mixin(docs, code)
+    def create_css_mixin(docs, code)
       doc_map = build_doc_map(docs)
       return {
-        :tagname => :mixin,
-        :name => detect_name(:mixin, doc_map, code),
+        :tagname => :css_mixin,
+        :name => detect_name(:css_mixin, doc_map, code),
         :member => detect_member(doc_map),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
@@ -208,7 +208,7 @@ module JsDuck
         main_tag[:name]
       elsif doc_map[:constructor]
         "constructor"
-      elsif code[:type] == :function || code[:type] == :mixin
+      elsif code[:type] == :function || code[:type] == :css_mixin
         code[:name]
       elsif code[:type] == :assignment
         name_type == :full_name ? code[:left].join(".") : code[:left].last
