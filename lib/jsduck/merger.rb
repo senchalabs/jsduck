@@ -197,6 +197,7 @@ module JsDuck
         :name => detect_name(:css_mixin, doc_map, code),
         :member => detect_member(doc_map),
         :doc => detect_doc(docs),
+        :params => detect_params(docs, code),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],
       }

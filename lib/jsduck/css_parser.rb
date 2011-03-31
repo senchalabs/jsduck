@@ -6,7 +6,7 @@ module JsDuck
   class CssParser
     def initialize(input)
       @lex = Lexer.new(input)
-      @doc_parser = DocParser.new
+      @doc_parser = DocParser.new(:css)
       @docs = []
     end
 

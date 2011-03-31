@@ -21,6 +21,11 @@ module JsDuck
   # @see and {@link} are parsed separately in JsDuck::DocFormatter.
   #
   class DocParser
+    # Pass in :css to be able to parse CSS doc-comments
+    def initialize(mode = :js)
+      @ident_pattern = (mode == :css) ? /\$[a-zA-Z0-9_-]*/ : /\w+/
+    end
+
     def parse(input)
       @tags = []
       @input = StringScanner.new(purify(input))
@@ -186,7 +191,7 @@ module JsDuck
       match(/@var/)
       add_tag(:css_var)
       maybe_type
-      maybe_name(/\$[a-zA-Z0-9_-]*/)
+      maybe_name
       skip_white
     end
 
@@ -248,10 +253,10 @@ module JsDuck
     end
 
     # matches identifier name if possible and sets it on @current_tag
-    def maybe_name(pattern = /\w+/)
+    def maybe_name
       skip_horiz_white
-      if look(pattern)
-        @current_tag[:name] = @input.scan(pattern)
+      if look(@ident_pattern)
+        @current_tag[:name] = @input.scan(@ident_pattern)
       end
     end
 

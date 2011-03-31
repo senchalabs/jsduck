@@ -42,6 +42,9 @@ describe JsDuck::Aggregator do
       @doc = parse(<<-EOCSS)[0]
         /**
          * Creates an awesome button.
+         *
+         * @param {string} $ui-label The name of the UI being created.
+         * @param {color} $color Base color for the UI.
          */
         @mixin my-button {
         }
@@ -56,6 +59,18 @@ describe JsDuck::Aggregator do
     end
     it "detects mixin description" do
       @doc[:doc].should == "Creates an awesome button."
+    end
+    it "detects mixin parameters" do
+      @doc[:params].length.should == 2
+    end
+    it "detects mixin param name" do
+      @doc[:params][0][:name].should == "$ui-label"
+    end
+    it "detects mixin param type" do
+      @doc[:params][0][:type].should == "string"
+    end
+    it "detects mixin param description" do
+      @doc[:params][0][:doc].should == "The name of the UI being created."
     end
   end
 
