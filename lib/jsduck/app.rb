@@ -89,6 +89,7 @@ module JsDuck
         agr.aggregate(file[:data], file[:filename], file[:html_filename])
       end
       agr.classify_orphans
+      agr.create_global_class
       agr.result
     end
 

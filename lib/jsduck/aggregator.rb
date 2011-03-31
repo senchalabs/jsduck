@@ -128,21 +128,38 @@ module JsDuck
         if orph[:member]
           class_name = orph[:member]
           if !@classes[class_name]
-            add_class({
-              :tagname => :class,
-              :name => class_name,
-              :cfg => [],
-              :property => [],
-              :method => [],
-              :event => [],
-              :css_var => [],
-              :css_mixin => [],
-            })
+            add_empty_class(class_name)
           end
           add_member(orph)
           @orphans.delete(orph)
         end
       end
+    end
+
+    # Creates class with name "global" and inserts all the remaining
+    # orphans into it (but only if there are any orphans).
+    def create_global_class
+      return if @orphans.length == 0
+
+      add_empty_class("global")
+      @orphans.each do |orph|
+        orph[:member] = "global"
+        add_member(orph)
+      end
+      @orphans = []
+    end
+
+    def add_empty_class(name)
+      add_class({
+          :tagname => :class,
+          :name => name,
+          :cfg => [],
+          :property => [],
+          :method => [],
+          :event => [],
+          :css_var => [],
+          :css_mixin => [],
+        })
     end
 
     def result
