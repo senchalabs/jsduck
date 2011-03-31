@@ -75,7 +75,8 @@ module JsDuck
       end
       result[:property] = []
       result[:event] = []
-      result[:var] = []
+      result[:css_var] = []
+      result[:css_mixin] = []
       result
     end
 
