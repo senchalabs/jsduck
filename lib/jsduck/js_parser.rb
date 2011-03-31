@@ -3,7 +3,7 @@ require 'jsduck/doc_parser'
 
 module JsDuck
 
-  class Parser
+  class JsParser
     def initialize(input)
       @lex = Lexer.new(input)
       @doc_parser = DocParser.new

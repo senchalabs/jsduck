@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/parser"
+require "jsduck/js_parser"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Parser.new(string).parse)
+    agr.aggregate(JsDuck::JsParser.new(string).parse)
     agr.result
   end
 
