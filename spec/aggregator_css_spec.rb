@@ -37,5 +37,27 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "CSS doc-comment followed by @mixin" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /**
+         * Creates an awesome button.
+         */
+        @mixin my-button {
+        }
+      EOCSS
+    end
+
+    it "detects mixin" do
+      @doc[:tagname].should == :mixin
+    end
+    it "detects mixin name" do
+      @doc[:name].should == "my-button"
+    end
+    it "detects mixin description" do
+      @doc[:doc].should == "Creates an awesome button."
+    end
+  end
+
 end
 

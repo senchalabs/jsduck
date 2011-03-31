@@ -20,6 +20,8 @@ module JsDuck
         create_property(docs, code)
       when :var
         create_var(docs, code)
+      when :mixin
+        create_mixin(docs, code)
       end
     end
 
@@ -43,6 +45,8 @@ module JsDuck
         :class
       elsif code[:type] == :function && class_name?(code[:name])
         :class
+      elsif code[:type] == :mixin
+        :mixin
       elsif doc_map[:cfg]
         :cfg
       elsif code[:type] == :function
@@ -186,13 +190,25 @@ module JsDuck
       }
     end
 
+    def create_mixin(docs, code)
+      doc_map = build_doc_map(docs)
+      return {
+        :tagname => :mixin,
+        :name => detect_name(:mixin, doc_map, code),
+        :member => detect_member(doc_map),
+        :doc => detect_doc(docs),
+        :private => !!doc_map[:private],
+        :static => !!doc_map[:static],
+      }
+    end
+
     def detect_name(tagname, doc_map, code, name_type = :last_name)
       main_tag = doc_map[tagname] ? doc_map[tagname].first : {}
       if main_tag[:name]
         main_tag[:name]
       elsif doc_map[:constructor]
         "constructor"
-      elsif code[:type] == :function
+      elsif code[:type] == :function || code[:type] == :mixin
         code[:name]
       elsif code[:type] == :assignment
         name_type == :full_name ? code[:left].join(".") : code[:left].last
