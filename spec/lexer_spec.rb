@@ -20,7 +20,7 @@ describe JsDuck::Lexer do
       [:keyword, "var"],
       [:ident, "foo"],
       [:operator, "="],
-      [:number, 8],
+      [:number, "8"],
       [:operator, ";"]
     ]
   end
@@ -35,7 +35,7 @@ describe JsDuck::Lexer do
         [:operator, ";"],
         [:ident, "y"],
         [:operator, "/"],
-        [:number, 2]
+        [:number, "2"]
       ]
     end
 
@@ -61,7 +61,7 @@ describe JsDuck::Lexer do
       lex("this / 3").should == [
         [:keyword, "this"],
         [:operator, "/"],
-        [:number, 3]
+        [:number, "3"]
       ]
     end
   end
@@ -89,10 +89,6 @@ describe JsDuck::Lexer do
     it "when escaped single-quote inside single-quoted string" do
       lex(@s+@b+@s+@s   + ' "blah"').should == [[:string, @b+@s], [:string, "blah"]]
     end
-  end
-
-  it "evaluates floating-point numbers with no digits after dot" do
-    lex("alert(5.)")[2].should == [:number, 5.0]
   end
 
   it "identifies $ as beginning of identifier" do

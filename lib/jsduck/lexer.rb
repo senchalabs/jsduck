@@ -135,8 +135,7 @@ module JsDuck
           nr = @input.scan(/[0-9]+(\.[0-9]*)?/)
           @tokens << {
             :type => :number,
-            # When number ends with ".", append "0" so Ruby eval will work
-            :value => eval(/\.$/ =~ nr ? nr+"0" : nr)
+            :value => nr
           }
         elsif @input.check(/\$/)
           value = @input.scan(/\$\w*/)
