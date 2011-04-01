@@ -60,7 +60,7 @@ js_files = []
 opts.parse!(ARGV).each do |fname|
   if File.exists?(fname)
     if File.directory?(fname)
-      Dir[fname+"/**/*.js"].each {|f| js_files << f }
+      Dir[fname+"/**/*.{js,css,scss}"].each {|f| js_files << f }
     else
       js_files << fname
     end
