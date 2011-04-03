@@ -56,6 +56,7 @@ module JsDuck
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       relations = @timer.time(:aggregating) { filter_classes(result) }
       warn_globals(relations)
+      warn_unnamed(relations)
 
       if @export == :json
         @timer.time(:generating) { write_json(@output_dir+"/output", relations) }
@@ -122,6 +123,21 @@ module JsDuck
           file = member[:filename]
           line = member[:linenr]
           puts "Warning: Global #{type}: #{name} in #{file} line #{line}"
+        end
+      end
+    end
+
+    # print warning for each member with no name
+    def warn_unnamed(relations)
+      relations.each do |cls|
+        [:cfg, :property, :method, :event].each do |type|
+          cls[type].each do |member|
+            if !member[:name] || member[:name] == ""
+              file = member[:filename]
+              line = member[:linenr]
+              puts "Warning: Unnamed #{type} in #{file} line #{line}"
+            end
+          end
         end
       end
     end

@@ -34,6 +34,10 @@ module JsDuck
       @lookup[classname]
     end
 
+    def each(&block)
+      @classes.each(&block)
+    end
+
     def reg_subclasses(cls)
       if !cls.parent
         # do nothing
