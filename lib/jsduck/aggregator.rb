@@ -141,7 +141,7 @@ module JsDuck
     def create_global_class
       return if @orphans.length == 0
 
-      add_empty_class("global")
+      add_empty_class("global", "Global variables and functions.")
       @orphans.each do |orph|
         orph[:member] = "global"
         add_member(orph)
@@ -149,17 +149,24 @@ module JsDuck
       @orphans = []
     end
 
-    def add_empty_class(name)
-      add_class({
-          :tagname => :class,
-          :name => name,
-          :cfg => [],
-          :property => [],
-          :method => [],
-          :event => [],
-          :css_var => [],
-          :css_mixin => [],
+    def add_empty_class(name, doc = "")
+      cls = {
+        :tagname => :class,
+        :name => name,
+        :doc => "",
+        :cfg => [],
+        :property => [],
+        :method => [],
+        :event => [],
+        :css_var => [],
+        :css_mixin => [],
+      }
+      add_source_data(cls, {
+          :filename => "",
+          :html_filename => "",
+          :linenr => 0,
         })
+      add_class(cls)
     end
 
     def result

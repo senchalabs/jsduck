@@ -55,6 +55,7 @@ module JsDuck
       parsed_files = @timer.time(:parsing) { parallel_parse(@input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       relations = @timer.time(:aggregating) { filter_classes(result) }
+      warn_globals(relations)
 
       if @export == :json
         @timer.time(:generating) { write_json(@output_dir+"/output", relations) }
@@ -109,6 +110,20 @@ module JsDuck
         end
       end
       Relations.new(classes)
+    end
+
+    # print warning for each global member
+    def warn_globals(relations)
+      global = relations["global"]
+      return unless global
+      [:cfg, :property, :method, :event].each do |type|
+        global.members(type).each do |member|
+          name = member[:name]
+          file = member[:filename]
+          line = member[:linenr]
+          puts "Warning: Global #{type}: #{name} in #{file} line #{line}"
+        end
+      end
     end
 
     # Given all classes, generates namespace tree and writes it
