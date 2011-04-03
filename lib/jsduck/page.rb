@@ -23,6 +23,7 @@ module JsDuck
       @formatter.context = cls.full_name
       @formatter.css_class = 'docClass'
       @formatter.url_template = 'output/%cls%.html'
+      @formatter.relations = relations
     end
 
     def to_html
@@ -33,17 +34,17 @@ module JsDuck
        abstract,
        description,
        "<div class='hr'></div>",
-       CfgTable.new(@cls, @cache).to_html,
-       PropertyTable.new(@cls, @cache).to_html,
-       MethodTable.new(@cls, @cache).to_html,
-       EventTable.new(@cls, @cache).to_html,
+       CfgTable.new(@cls, @formatter, @cache).to_html,
+       PropertyTable.new(@cls, @formatter, @cache).to_html,
+       MethodTable.new(@cls, @formatter, @cache).to_html,
+       EventTable.new(@cls, @formatter, @cache).to_html,
        "</div>",
       ].join("\n")
     end
 
     # only render the tree if class has at least one ancestor
     def inheritance_tree
-      @cls.parent ? InheritanceTree.new(@cls).to_html : ""
+      @cls.parent ? InheritanceTree.new(@cls, @formatter).to_html : ""
     end
 
     def heading

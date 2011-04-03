@@ -15,6 +15,7 @@ module JsDuck
       @relations = relations
       @formatter = DocFormatter.new
       @formatter.css_class = 'docClass'
+      @formatter.relations = relations
     end
 
     # Returns all data in Class object as hash.

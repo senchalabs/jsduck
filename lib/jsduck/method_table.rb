@@ -5,19 +5,15 @@ require 'jsduck/long_params'
 module JsDuck
 
   class MethodTable < Table
-    def initialize(cls, cache={})
-      super(cls, cache)
+    def initialize(cls, formatter, cache={})
+      super(cls, formatter, cache)
       @type = :method
       @id = @cls.full_name + "-methods"
       @title = "Public Methods"
       @column_title = "Method"
       @row_class = "method-row"
       @short_params = ShortParams.new
-      @long_params = LongParams.new(@cls)
-      @formatter = DocFormatter.new()
-      @formatter.context = @cls.full_name
-      @formatter.css_class = 'docClass'
-      @formatter.url_template = 'output/%cls%.html'
+      @long_params = LongParams.new(@formatter)
     end
 
     def signature_suffix(item)

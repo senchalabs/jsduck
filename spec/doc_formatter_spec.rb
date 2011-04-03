@@ -48,6 +48,70 @@ describe JsDuck::DocFormatter do
       @formatter.replace("Look at {@link Ext.Msg some\ntext}").should ==
         "Look at <a href=\"Ext.Msg\" rel=\"Ext.Msg\">some\ntext</a>"
     end
+
+    # auto-conversion of identifiable ClassNames to links
+    describe "auto-detect" do
+      before do
+        @formatter.relations = {
+          'FooBar' => true,
+          'FooBar.Blah' => true,
+          'Ext.form.Field' => true,
+          'Ext.XTemplate' => true,
+          'MyClass' => true,
+          'Ext' => true,
+        }
+      end
+
+      it "doesn't recognize John as class name" do
+        @formatter.replace("John is lazy").should ==
+          "John is lazy"
+      end
+
+      it "doesn't recognize Foo.Bar as class name" do
+        @formatter.replace("Unknown Foo.Bar class").should ==
+          "Unknown Foo.Bar class"
+      end
+
+      it "converts FooBar to class link" do
+        @formatter.replace("Look at FooBar").should ==
+          "Look at <a href=\"FooBar\" rel=\"FooBar\">FooBar</a>"
+      end
+
+      it "converts FooBar.Blah to class link" do
+        @formatter.replace("Look at FooBar.Blah").should ==
+          "Look at <a href=\"FooBar.Blah\" rel=\"FooBar.Blah\">FooBar.Blah</a>"
+      end
+
+      it "converts Ext.form.Field to class link" do
+        @formatter.replace("Look at Ext.form.Field").should ==
+          "Look at <a href=\"Ext.form.Field\" rel=\"Ext.form.Field\">Ext.form.Field</a>"
+      end
+
+      it "converts Ext.XTemplate to class link" do
+        @formatter.replace("Look at Ext.XTemplate").should ==
+          "Look at <a href=\"Ext.XTemplate\" rel=\"Ext.XTemplate\">Ext.XTemplate</a>"
+      end
+
+      it "converts ClassName ending with dot to class link" do
+        @formatter.replace("Look at MyClass.").should ==
+          "Look at <a href=\"MyClass\" rel=\"MyClass\">MyClass</a>."
+      end
+
+      it "converts ClassName ending with comma to class link" do
+        @formatter.replace("Look at MyClass, it's great!").should ==
+          "Look at <a href=\"MyClass\" rel=\"MyClass\">MyClass</a>, it's great!"
+      end
+
+      it "converts Ext#encode to method link" do
+        @formatter.replace("Look at Ext#encode").should ==
+          "Look at <a href=\"Ext#encode\" rel=\"Ext#encode\">Ext.encode</a>"
+      end
+
+      it "converts Ext.form.Field#getValues to method link" do
+        @formatter.replace("Look at Ext.form.Field#getValues").should ==
+          "Look at <a href=\"Ext.form.Field#getValues\" rel=\"Ext.form.Field#getValues\">Ext.form.Field.getValues</a>"
+      end
+    end
   end
 
   describe "#format" do

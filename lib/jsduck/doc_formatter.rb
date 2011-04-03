@@ -21,18 +21,34 @@ module JsDuck
     # Maximum length for text that doesn't get shortened, defaults to 120
     attr_accessor :max_length
 
+    # JsDuck::Relations for looking up class names.
+    #
+    # When auto-creating class links from CamelCased names found from
+    # text, we check the relations object to see if a class with that
+    # name actually exists.
+    attr_accessor :relations
+
     def initialize
       @context = ""
       @css_class = nil
       @url_template = "%cls%"
       @max_length = 120
+      @relations = {}
     end
 
     # Replaces {@link Class#member link text} in given string with
     # HTML links pointing to documentation.  In addition to the href
     # attribute links will also contain ext:cls and ext:member
     # attributes.
+    #
+    # Additionally replaces strings recognized as ClassNames with
+    # links to these classes.  So one doesn even need to use the @link
+    # tag to create a link.
     def replace(input)
+      replace_class_names(replace_link_tags(input))
+    end
+
+    def replace_link_tags(input)
       input.gsub(/\{@link\s+(\S*?)(?:\s+(.+?))?\}/m) do
         target = $1
         text = $2
@@ -54,6 +70,23 @@ module JsDuck
         end
 
         link(cls, member, text)
+      end
+    end
+
+    def replace_class_names(input)
+      input.gsub(/(\A|\s)([A-Z][A-Za-z0-9.]*[A-Za-z0-9])(?:(#)([A-Za-z0-9]+))?([.,]?(?:\s|\Z))/m) do
+        before = $1
+        cls = $2
+        hash = $3
+        method = $4
+        after = $5
+
+        if @relations[cls]
+          label = method ? cls+"."+method : cls
+          before + link(cls, method, label) + after
+        else
+          before + cls + (hash || "") + (method || "") + after
+        end
       end
     end
 

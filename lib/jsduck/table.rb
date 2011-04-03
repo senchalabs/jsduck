@@ -1,5 +1,3 @@
-require 'jsduck/doc_formatter'
-
 module JsDuck
 
   # Base class for creating HTML tables of class members.
@@ -12,18 +10,17 @@ module JsDuck
     #
     # - cls : the class for which to generate the table.
     #
+    # - formatter : instance of JsDuck::DocFormatter
+    #
     # - cache : shared cache of already generated HTML rows.  If Foo
     #   inherits from Bar and we have already generated members table
     #   for Bar, then we don't have to re-render all the HTML the
     #   methods from Bar, but can just look them up from cache.
     #
-    def initialize(cls, cache={})
+    def initialize(cls, formatter, cache={})
       @cls = cls
+      @formatter = formatter
       @cache = cache
-      @formatter = DocFormatter.new
-      @formatter.context = cls.full_name
-      @formatter.css_class = 'docClass'
-      @formatter.url_template = 'output/%cls%.html'
     end
 
     def to_html

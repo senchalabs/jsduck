@@ -1,15 +1,10 @@
-require 'jsduck/doc_formatter'
-
 module JsDuck
 
   # Creates the inheritance tree shown on class documentation page.
   class InheritanceTree
-    def initialize(cls)
+    def initialize(cls, formatter)
       @cls = cls
-      @formatter = DocFormatter.new
-      @formatter.context = cls.full_name
-      @formatter.css_class = 'docClass'
-      @formatter.url_template = 'output/%cls%.html'
+      @formatter = formatter
     end
 
     # Renders the tree using HTML <pre> element
