@@ -235,10 +235,9 @@ MainPanel = function(){
 			fields: ['cls', 'member', 'type', 'doc']
 		})
 	});
-	this.searchStore.loadData(Docs.membersData);
-	this.searchStore.filterBy(function(r) {
-		return false;
-	});
+    this.searchStore.loadData(Docs.membersData);
+    var records = this.searchStore.getRange();
+    this.searchStore.removeAll();
 
 	
     MainPanel.superclass.constructor.call(this, {
@@ -258,25 +257,14 @@ MainPanel = function(){
             autoLoad: {url: 'welcome.html', callback: this.initSearch, scope: this, delay: 100},
             iconCls:'icon-docs',
             autoScroll: true,
-			tbar: [
-				'Search: ', ' ',
-                new Ext.ux.SelectBox({
-                    listClass:'x-combo-list-small',
-                    width:90,
-                    value:'Starts with',
-                    id:'search-type',
-                    store: new Ext.data.SimpleStore({
-                        fields: ['text'],
-                        expandData: true,
-                        data : ['Starts with', 'Ends with', 'Any match']
-                    }),
-                    displayField: 'text'
-                }), ' ',
+            tbar: [
+                'Search: ', ' ',
                 new Ext.app.SearchField({
-	                width:240,
-					store: this.searchStore,
-					paramName: 'q'
-	            })
+                    width: 340,
+                    records: records,
+                    store: this.searchStore,
+                    paramName: 'q'
+                })
             ]
         }
     });
@@ -358,20 +346,6 @@ Ext.extend(MainPanel, Ext.TabPanel, {
             itemSelector: 'div.search-item',
 			emptyText: '<h3>Use the search field above to search the Ext API for classes, properties, config options, methods and events.</h3>'
         });
-	},
-	
-	doSearch : function(e){
-		var k = e.getKey();
-		if(!e.isSpecialKey()){
-			var text = e.target.value;
-			if(!text){
-				this.searchStore.baseParams.q = '';
-				this.searchStore.removeAll();
-			}else{
-				this.searchStore.baseParams.q = text;
-				this.searchStore.reload();
-			}
-		}
 	}
 });
 
@@ -451,9 +425,7 @@ Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
 
     onTrigger1Click : function(){
         if(this.hasSearch){
-            this.store.filterBy(function(r) {
-                return false;
-            });
+            this.store.removeAll();
             this.el.dom.value = '';
             this.triggers[0].hide();
             this.hasSearch = false;
@@ -472,23 +444,37 @@ Ext.app.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
 			return;
 		}
 
-		var type = Ext.getCmp('search-type').getValue();
-		this.store.filter("member", this.createRegex(type, v));
+        this.store.removeAll();
+        this.store.add(this.search(v));
 
         this.hasSearch = true;
         this.triggers[0].show();
 		this.focus();
     },
 
-    createRegex: function(type, text) {
+    search: function(text) {
+        var results = [[], [], []];
         var safeText = Ext.escapeRe(text);
-        if (type === 'Starts with') {
-            return new RegExp("^" + safeText, "i");
-        } else if (type === 'Ends with') {
-            return new RegExp(safeText + "$", "i");
-        } else {
-            return new RegExp(safeText, "i");
-        }
+        var re0 = new RegExp("^" + safeText + "$", "i");
+        var re1 = new RegExp("^" + safeText, "i");
+        var re2 = new RegExp(safeText, "i");
+        this.records.forEach(function(r) {
+            var member = r.get("member");
+            if (re0.test(member)) {
+                results[0].push(r);
+            }
+            else if (re1.test(member)) {
+                results[1].push(r);
+            }
+            else if (re2.test(member)) {
+                results[2].push(r);
+            }
+        });
+        // flatten results array
+        var arr = [];
+        results = arr.concat.apply(arr, results);
+        // only pick first n results
+        return results.slice(0, 50);
     }
 });
 
