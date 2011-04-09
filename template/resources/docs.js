@@ -329,12 +329,18 @@ Ext.extend(MainPanel, Ext.TabPanel, {
 	    var resultTpl = new Ext.XTemplate(
 	        '<tpl for=".">',
 	        '<div class="search-item">',
-	            '<a class="member docClass" rel="{cls}#{member}" href="output/{cls}.html">',
+	            '<a class="member docClass" rel="{[this.rel(values)]}" href="output/{cls}.html">',
 				'<img src="resources/images/default/s.gif" class="item-icon icon-{type}"/>{member}',
 				'</a> ',
 				'<a class="cls docClass" rel="{cls}" href="output/{cls}.html">{cls}</a>',
 	            '<p>{doc}</p>',
-	        '</div></tpl>'
+	        '</div></tpl>',
+            {
+                // Different links to classes and members
+                rel: function(values) {
+                    return (values.type === "cls") ? values.cls : values.cls+"#"+values.member;
+                }
+            }
 	    );
 
 		var p = new Ext.DataView({
