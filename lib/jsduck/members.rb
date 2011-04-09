@@ -11,7 +11,8 @@ module JsDuck
       docs.each do |cls|
         [:cfg, :property, :method, :event].each do |type|
           cls.members(type).each do |m|
-            list << member_node(m, cls)
+            # skip inherited items
+            list << member_node(m, cls) if m[:member] == cls.full_name
           end
         end
       end
