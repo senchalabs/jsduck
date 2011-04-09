@@ -17,9 +17,10 @@ module JsDuck
 
     def render_single(param)
       doc = @formatter.format(param[:doc])
+      type = @formatter.replace(param[:type])
       return [
         "<li>",
-        "<code>#{param[:name]}</code> : #{param[:type]}",
+        "<code>#{param[:name]}</code> : #{type}",
         "<div class='sub-desc'>#{doc}</div>",
         "</li>",
       ].join("")

@@ -32,7 +32,7 @@ module JsDuck
     end
 
     def render_return(item)
-      type = item[:return][:type]
+      type = @formatter.replace(item[:return][:type])
       doc = @formatter.format(item[:return][:doc])
       if type == "void" && doc.length == 0
         "<ul><li>void</li></ul>"
