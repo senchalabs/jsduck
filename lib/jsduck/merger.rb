@@ -120,6 +120,7 @@ module JsDuck
         :doc => detect_doc(docs),
         :extends => detect_extends(doc_map, code),
         :mixins => detect_mixins(doc_map, code),
+        :alternateClassName => code[:alternateClassName],
         :xtype => detect_xtype(doc_map),
         :author => detect_author(doc_map),
         :singleton => !!doc_map[:singleton],

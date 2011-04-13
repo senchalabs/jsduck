@@ -97,6 +97,8 @@ module JsDuck
           at_member
         elsif look(/@author\b/)
           at_author
+        elsif look(/@docauthor\b/)
+          at_docauthor
         elsif look(/@var\b/)
           at_var
         elsif look(/@static\b/)
@@ -232,6 +234,15 @@ module JsDuck
     def at_author
       match(/@author/)
       add_tag(:author)
+      skip_horiz_white
+      @current_tag[:name] = @input.scan(/.*$/)
+      skip_white
+    end
+
+    # matches @docauthor some name ... newline
+    def at_docauthor
+      match(/@docauthor/)
+      add_tag(:docauthor)
       skip_horiz_white
       @current_tag[:name] = @input.scan(/.*$/)
       skip_white

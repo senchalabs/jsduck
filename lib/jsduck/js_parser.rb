@@ -205,6 +205,12 @@ module JsDuck
         if look("extend", ":", :string)
           cfg[:extend] = ext_define_extend
           found = true
+        elsif look("alternateClassName", ":", '[')
+          cfg[:alternateClassName] = ext_define_alternate_class_names
+          found = true
+        elsif look("alternateClassName", ":", :string)
+          cfg[:alternateClassName] = ext_define_alternate_class_name
+          found = true
         elsif look("mixins", ":", "{")
           cfg[:mixins] = ext_define_mixins
           found = true
@@ -231,6 +237,28 @@ module JsDuck
       match("extend", ":", :string)
     end
 
+    # <ext-define-alternate-class-name> := "alternateClassName" ":" <string>
+    def ext_define_alternate_class_name
+      match("alternateClassName", ":", :string)
+    end
+
+    # <ext-define-alternate-class-name> := "alternateClassName" ":" <string>
+    def ext_define_alternate_class_names
+      match("alternateClassName", ":", "[")
+      strs = []
+      while look(:string)
+        strs << match(:string)
+        match(",") if look(",")
+      end
+
+      if look("]")
+        match("]")
+        strs
+      else
+        false
+      end
+    end
+
     # <ext-define-mixins> := "mixins" ":" "{" [ <ident> ":" <string> ","? ]* "}"
     def ext_define_mixins
       match("mixins", ":", "{")
@@ -246,14 +274,17 @@ module JsDuck
     # <array-of-strings> := "[" [ <string> ","? ]* "]"
     def array_of_strings
       match("[")
+      
+      strs = []
+      
       while look(:string)
-        match(:string)
+        strs << match(:string)
         match(",") if look(",")
       end
 
       if look("]")
         match("]")
-        true
+        strs
       else
         false
       end

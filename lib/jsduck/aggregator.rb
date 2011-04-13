@@ -77,7 +77,7 @@ module JsDuck
 
     # Merges new class-doc into old one.
     def merge_classes(old, new)
-      [:extends, :xtype, :singleton, :private].each do |tag|
+      [:extends, :xtype, :singleton, :private, :alternateClassName].each do |tag|
         old[tag] = old[tag] || new[tag]
       end
       old[:doc] = old[:doc].length > 0 ? old[:doc] : new[:doc]
