@@ -125,6 +125,16 @@ describe JsDuck::DocFormatter do
         @formatter.replace("Look at Ext.form.Field#getValues").should ==
           "Look at <a href=\"Ext.form.Field#getValues\" rel=\"Ext.form.Field#getValues\">Ext.form.Field.getValues</a>"
       end
+
+      it "doesn't create links inside {@link} tag" do
+        @formatter.replace("{@link MyClass a MyClass link}").should ==
+          '<a href="MyClass" rel="MyClass">a MyClass link</a>'
+      end
+
+      it "doesn't create links inside {@img} tag" do
+        @formatter.replace("{@img some/file.jpg a MyClass image}").should ==
+          '<img src="some/file.jpg" alt="a MyClass image"/>'
+      end
     end
   end
 

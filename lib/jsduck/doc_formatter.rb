@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'rdiscount'
+require 'strscan'
 
 module JsDuck
 
@@ -34,6 +35,8 @@ module JsDuck
       @url_template = "%cls%"
       @max_length = 120
       @relations = {}
+      @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
+      @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
     end
 
     # Replaces {@link} and {@img} tags, auto-generates links for
@@ -50,11 +53,24 @@ module JsDuck
     # links to these classes.  So one doesn even need to use the @link
     # tag to create a link.
     def replace(input)
-      replace_class_names(replace_img_tags(replace_link_tags(input)))
+      s = StringScanner.new(input)
+      out = ""
+      while !s.eos? do
+        if s.check(@link_re)
+          out += replace_link_tag(s.scan(@link_re))
+        elsif s.check(@img_re)
+          out += replace_img_tag(s.scan(@img_re))
+        elsif s.check(/\{/)
+          out += s.scan(/\{/)
+        else
+          out += replace_class_names(s.scan(/[^{]+/))
+        end
+      end
+      out
     end
 
-    def replace_link_tags(input)
-      input.gsub(/\{@link\s+(\S*?)(?:\s+(.+?))?\}/m) do
+    def replace_link_tag(input)
+      input.sub(@link_re) do
         target = $1
         text = $2
         if target =~ /^(.*)#(.*)$/
@@ -78,8 +94,8 @@ module JsDuck
       end
     end
 
-    def replace_img_tags(input)
-      input.gsub(/\{@img\s+(\S*?)(?:\s+(.+?))?\}/m) do
+    def replace_img_tag(input)
+      input.sub(@img_re) do
         src = $1
         alt = $2
         "<img src=\"#{src}\" alt=\"#{alt}\"/>"
