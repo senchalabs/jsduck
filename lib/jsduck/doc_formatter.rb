@@ -36,16 +36,21 @@ module JsDuck
       @relations = {}
     end
 
+    # Replaces {@link} and {@img} tags, auto-generates links for
+    # recognized classnames.
+    #
     # Replaces {@link Class#member link text} in given string with
     # HTML links pointing to documentation.  In addition to the href
     # attribute links will also contain ext:cls and ext:member
     # attributes.
     #
+    # Replaces {@img path/to/image.jpg Alt text} with HTML <img> tag.
+    #
     # Additionally replaces strings recognized as ClassNames with
     # links to these classes.  So one doesn even need to use the @link
     # tag to create a link.
     def replace(input)
-      replace_class_names(replace_link_tags(input))
+      replace_class_names(replace_img_tags(replace_link_tags(input)))
     end
 
     def replace_link_tags(input)
@@ -70,6 +75,14 @@ module JsDuck
         end
 
         link(cls, member, text)
+      end
+    end
+
+    def replace_img_tags(input)
+      input.gsub(/\{@img\s+(\S*?)(?:\s+(.+?))?\}/m) do
+        src = $1
+        alt = $2
+        "<img src=\"#{src}\" alt=\"#{alt}\"/>"
       end
     end
 

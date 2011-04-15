@@ -9,6 +9,8 @@ describe JsDuck::DocFormatter do
 
   describe "#replace" do
 
+    # {@link ...}
+
     it "replaces {@link Ext.Msg} with link to class" do
       @formatter.replace("Look at {@link Ext.Msg}").should ==
         'Look at <a href="Ext.Msg" rel="Ext.Msg">Ext.Msg</a>'
@@ -47,6 +49,18 @@ describe JsDuck::DocFormatter do
     it "handles {@link} with label spanning multiple lines" do
       @formatter.replace("Look at {@link Ext.Msg some\ntext}").should ==
         "Look at <a href=\"Ext.Msg\" rel=\"Ext.Msg\">some\ntext</a>"
+    end
+
+    # {@img ...}
+
+    it "replaces {@img some/image.png Alt text} with <img> element" do
+      @formatter.replace("Look at {@img some/image.png Alt text}").should ==
+        'Look at <img src="some/image.png" alt="Alt text"/>'
+    end
+
+    it "replaces {@img some/image.png} with <img> element with empty alt tag" do
+      @formatter.replace("Look at {@img some/image.png}").should ==
+        'Look at <img src="some/image.png" alt=""/>'
     end
 
     # auto-conversion of identifiable ClassNames to links
