@@ -61,6 +61,7 @@ module JsDuck
         classes_row("Mixed into:", @relations.mixed_into(@cls)),
         boolean_row("xtype:", @cls[:xtype]),
         boolean_row("Author:", @cls[:author]),
+        boolean_row("Author of docs:", @cls[:docauthor]),
        "</table>",
       ].join("\n")
     end
