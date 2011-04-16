@@ -122,6 +122,9 @@ describe JsDuck::Aggregator do
     it "detects implied mixins" do
       @doc[:mixins].should == ["Ext.util.Observable", "Foo.Bar"]
     end
+    it "detects implied alternateClassName" do
+      @doc[:alternateClassName].should == ["JustClass"]
+    end
   end
 
   describe "basic Ext.define() in code" do
@@ -133,7 +136,8 @@ describe JsDuck::Aggregator do
           mixins: {
             obs: 'Ext.util.Observable',
             bar: 'Foo.Bar'
-          }
+          },
+          alternateClassName: 'JustClass'
         });
       EOS
     end
@@ -148,6 +152,7 @@ describe JsDuck::Aggregator do
           singleton: true,
           extend: 'Your.Class',
           alias: 'somealias',
+          alternateClassName: ['JustClass'],
           requires: ['Hohooo', 'hahaa'],
           mixins: {
             obs: 'Ext.util.Observable',
