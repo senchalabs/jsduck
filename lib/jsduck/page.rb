@@ -55,6 +55,7 @@ module JsDuck
     def abstract
       [
        "<table cellspacing='0'>",
+        boolean_row("Alternate names:", @cls[:alternateClassNames].join(", ")),
         row("Extends:", extends_link),
         classes_row("Mixins:", @cls.mixins),
         row("Defind In:", file_link),
@@ -95,7 +96,7 @@ module JsDuck
     end
 
     def boolean_row(label, item)
-      item ? row(label, CGI.escapeHTML(item)) : ""
+      (item && item != "") ? row(label, CGI.escapeHTML(item)) : ""
     end
 
     def row(label, info)

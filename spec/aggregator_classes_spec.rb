@@ -25,6 +25,7 @@ describe JsDuck::Aggregator do
          * @class MyClass
          * @extends Your.Class
          * @mixins Foo.Mixin Bar.Mixin
+         * @alternateClassNames AltClass
          * Some documentation.
          * @singleton
          * @xtype nicely
@@ -38,6 +39,9 @@ describe JsDuck::Aggregator do
     end
     it "detects mixins" do
       @doc[:mixins].should == ["Foo.Mixin", "Bar.Mixin"]
+    end
+    it "detects alternate class names" do
+      @doc[:alternateClassNames].should == ["AltClass"]
     end
     it "takes documentation from doc-comment" do
       @doc[:doc].should == "Some documentation."
@@ -57,6 +61,7 @@ describe JsDuck::Aggregator do
          * @class MyClass
          * @extend Your.Class
          * @mixin My.Mixin
+         * @alternateClassName AltClass
          * Some documentation.
          */
       EOS
@@ -68,6 +73,9 @@ describe JsDuck::Aggregator do
     end
     it "@mixin treated as alias for @mixins" do
       @doc[:mixins].should == ["My.Mixin"]
+    end
+    it "@alternateClassName treated as alias for @alternateClassNames" do
+      @doc[:alternateClassNames].should == ["AltClass"]
     end
   end
 
@@ -86,6 +94,24 @@ describe JsDuck::Aggregator do
     it_should_behave_like "class"
     it "collects all mixins together" do
       @doc[:mixins].should == ["My.Mixin", "Your.Mixin", "Other.Mixin"]
+    end
+  end
+
+  describe "class with multiple @alternateClassNames" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @alternateClassNames AltClass1
+         * @alternateClassNames AltClass2
+         * Some documentation.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "collects all alternateClassNames together" do
+      @doc[:alternateClassNames].should == ["AltClass1", "AltClass2"]
     end
   end
 
@@ -148,8 +174,8 @@ describe JsDuck::Aggregator do
     it "detects implied mixins" do
       @doc[:mixins].should == ["Ext.util.Observable", "Foo.Bar"]
     end
-    it "detects implied alternateClassName" do
-      @doc[:alternateClassName].should == ["JustClass"]
+    it "detects implied alternateClassNames" do
+      @doc[:alternateClassNames].should == ["JustClass"]
     end
   end
 
@@ -401,6 +427,8 @@ describe JsDuck::Aggregator do
         /**
          * @class Foo
          * @extends Bar
+         * @mixins Mix1
+         * @alternateClassNames AltClassic
          * Second description.
          * @xtype xfoo
          * @private
@@ -412,6 +440,7 @@ describe JsDuck::Aggregator do
         /**
          * @class Foo
          * @extends Bazaar
+         * @mixins Mix2
          * @singleton
          * Third description.
          * @xtype xxxfoo
@@ -449,6 +478,14 @@ describe JsDuck::Aggregator do
 
     it "combines all configs" do
       @classes[0][:cfg].length.should == 3
+    end
+
+    it "combines all mixins" do
+      @classes[0][:mixins].length.should == 2
+    end
+
+    it "combines all alternateClassNames" do
+      @classes[0][:alternateClassNames].length.should == 1
     end
 
     it "combines all methods, events, properties" do

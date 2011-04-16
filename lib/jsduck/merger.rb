@@ -119,8 +119,8 @@ module JsDuck
         :name => detect_name(:class, doc_map, code, :full_name),
         :doc => detect_doc(docs),
         :extends => detect_extends(doc_map, code),
-        :mixins => detect_mixins(doc_map, code),
-        :alternateClassName => code[:alternateClassName] || [],
+        :mixins => detect_list(:mixins, doc_map, code),
+        :alternateClassNames => detect_list(:alternateClassNames, doc_map, code),
         :xtype => detect_xtype(doc_map),
         :author => detect_author(doc_map),
         :docauthor => detect_docauthor(doc_map),
@@ -262,11 +262,12 @@ module JsDuck
       end
     end
 
-    def detect_mixins(doc_map, code)
-      if doc_map[:mixins]
-        doc_map[:mixins].map {|d| d[:mixins] }.flatten
-      elsif code[:type] == :ext_define && code[:mixins]
-        code[:mixins]
+    # for detecting mixins and alternateClassNames
+    def detect_list(type, doc_map, code)
+      if doc_map[type]
+        doc_map[type].map {|d| d[type] }.flatten
+      elsif code[:type] == :ext_define && code[type]
+        code[type]
       else
         []
       end

@@ -75,6 +75,8 @@ module JsDuck
           at_extends
         elsif look(/@mixins?\b/)
           at_mixins
+        elsif look(/@alternateClassNames?\b/)
+          at_alternateClassName
         elsif look(/@singleton\b/)
           boolean_at_tag(/@singleton/, :singleton)
         elsif look(/@event\b/)
@@ -139,12 +141,16 @@ module JsDuck
       match(/@mixins?/)
       add_tag(:mixins)
       skip_horiz_white
-      mixins = []
-      while look(/\w/)
-        mixins << ident_chain
-        skip_horiz_white
-      end
-      @current_tag[:mixins] = mixins
+      @current_tag[:mixins] = class_list
+      skip_white
+    end
+
+    # matches @alternateClassName name1 name2 ...
+    def at_alternateClassName
+      match(/@alternateClassNames?/)
+      add_tag(:alternateClassNames)
+      skip_horiz_white
+      @current_tag[:alternateClassNames] = class_list
       skip_white
     end
 
@@ -301,6 +307,17 @@ module JsDuck
       name = @input.scan(/[^}]+/)
       match(/\}/)
       return name
+    end
+
+    # matches <ident_chain> <ident_chain> ... until line end
+    def class_list
+      skip_horiz_white
+      classes = []
+      while look(/\w/)
+        classes << ident_chain
+        skip_horiz_white
+      end
+      classes
     end
 
     # matches chained.identifier.name and returns it

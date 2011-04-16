@@ -209,7 +209,7 @@ module JsDuck
           cfg[:mixins] = ext_define_mixins
           found = true
         elsif look("alternateClassName", ":")
-          cfg[:alternateClassName] = ext_define_alternate_class_name
+          cfg[:alternateClassNames] = ext_define_alternate_class_name
           found = true
         elsif look(:ident, ":")
           match(:ident, ":")
