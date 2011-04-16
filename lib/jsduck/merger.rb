@@ -263,7 +263,9 @@ module JsDuck
     end
 
     def detect_mixins(doc_map, code)
-      if code[:type] == :ext_define && code[:mixins]
+      if doc_map[:mixins]
+        doc_map[:mixins].map {|d| d[:mixins] }.flatten
+      elsif code[:type] == :ext_define && code[:mixins]
         code[:mixins]
       else
         []

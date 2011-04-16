@@ -24,6 +24,7 @@ describe JsDuck::Aggregator do
         /**
          * @class MyClass
          * @extends Your.Class
+         * @mixins Foo.Mixin Bar.Mixin
          * Some documentation.
          * @singleton
          * @xtype nicely
@@ -34,6 +35,9 @@ describe JsDuck::Aggregator do
     it_should_behave_like "class"
     it "detects extends" do
       @doc[:extends].should == "Your.Class"
+    end
+    it "detects mixins" do
+      @doc[:mixins].should == ["Foo.Mixin", "Bar.Mixin"]
     end
     it "takes documentation from doc-comment" do
       @doc[:doc].should == "Some documentation."
@@ -46,20 +50,42 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "class with @extend" do
+  describe "class @tag aliases" do
     before do
       @doc = parse(<<-EOS)[0]
         /**
          * @class MyClass
          * @extend Your.Class
+         * @mixin My.Mixin
          * Some documentation.
          */
       EOS
     end
 
     it_should_behave_like "class"
-    it "treated as alias for @extends" do
+    it "@extend treated as alias for @extends" do
       @doc[:extends].should == "Your.Class"
+    end
+    it "@mixin treated as alias for @mixins" do
+      @doc[:mixins].should == ["My.Mixin"]
+    end
+  end
+
+  describe "class with multiple @mixins" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @mixins My.Mixin
+         * @mixins Your.Mixin Other.Mixin
+         * Some documentation.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "collects all mixins together" do
+      @doc[:mixins].should == ["My.Mixin", "Your.Mixin", "Other.Mixin"]
     end
   end
 

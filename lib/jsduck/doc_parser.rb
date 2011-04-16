@@ -73,6 +73,8 @@ module JsDuck
           at_class
         elsif look(/@extends?\b/)
           at_extends
+        elsif look(/@mixins?\b/)
+          at_mixins
         elsif look(/@singleton\b/)
           boolean_at_tag(/@singleton/, :singleton)
         elsif look(/@event\b/)
@@ -129,6 +131,20 @@ module JsDuck
       match(/@extends?/)
       add_tag(:extends)
       maybe_ident_chain(:extends)
+      skip_white
+    end
+
+    # matches @mixins name1 name2 ...
+    def at_mixins
+      match(/@mixins?/)
+      add_tag(:mixins)
+      skip_horiz_white
+      mixins = []
+      while look(/\w/)
+        mixins << ident_chain
+        skip_horiz_white
+      end
+      @current_tag[:mixins] = mixins
       skip_white
     end
 
