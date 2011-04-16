@@ -33,7 +33,7 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "detects extends" do
-      @doc[:extends] == "Your.Class"
+      @doc[:extends].should == "Your.Class"
     end
     it "takes documentation from doc-comment" do
       @doc[:doc].should == "Some documentation."
@@ -43,6 +43,23 @@ describe JsDuck::Aggregator do
     end
     it "detects xtype" do
       @doc[:xtype].should == "nicely"
+    end
+  end
+
+  describe "class with @extend" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @extend Your.Class
+         * Some documentation.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "treated as alias for @extends" do
+      @doc[:extends].should == "Your.Class"
     end
   end
 

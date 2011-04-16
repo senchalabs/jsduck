@@ -71,7 +71,7 @@ module JsDuck
       while !@input.eos? do
         if look(/@class\b/)
           at_class
-        elsif look(/@extends\b/)
+        elsif look(/@extends?\b/)
           at_extends
         elsif look(/@singleton\b/)
           boolean_at_tag(/@singleton/, :singleton)
@@ -126,7 +126,7 @@ module JsDuck
 
     # matches @extends name ...
     def at_extends
-      match(/@extends/)
+      match(/@extends?/)
       add_tag(:extends)
       maybe_ident_chain(:extends)
       skip_white
