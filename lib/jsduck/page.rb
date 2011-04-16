@@ -1,3 +1,4 @@
+require 'cgi'
 require 'jsduck/doc_formatter'
 require 'jsduck/inheritance_tree'
 require 'jsduck/cfg_table'
@@ -94,7 +95,7 @@ module JsDuck
     end
 
     def boolean_row(label, item)
-      item ? row(label, item) : ""
+      item ? row(label, CGI.escapeHTML(item)) : ""
     end
 
     def row(label, info)
