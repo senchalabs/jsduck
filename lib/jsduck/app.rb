@@ -25,6 +25,8 @@ module JsDuck
     attr_accessor :input_files
     attr_accessor :verbose
     attr_accessor :export
+    attr_accessor :link_tpl
+    attr_accessor :img_tpl
 
     def initialize
       @output_dir = nil
@@ -32,6 +34,8 @@ module JsDuck
       @input_files = []
       @verbose = false
       @export = nil
+      @link_tpl = nil
+      @img_tpl = nil
       @timer = Timer.new
       @parallel = ParallelWrap.new
     end
@@ -174,7 +178,11 @@ module JsDuck
 
     # Writes JSON export file for each class
     def write_json(path, relations)
-      exporter = Exporter.new(relations)
+      formatter = DocFormatter.new
+      formatter.link_tpl = @link_tpl if @link_tpl
+      formatter.img_tpl = @img_tpl if @img_tpl
+      formatter.relations = relations
+      exporter = Exporter.new(relations, formatter)
       @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".json"
         puts "Writing to #{filename} ..." if @verbose

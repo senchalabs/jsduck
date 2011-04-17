@@ -9,13 +9,9 @@ module JsDuck
   # Also all the :doc elements will be formatted - converted from
   # markdown to HTML and @links resolved.
   class Exporter
-    attr_accessor :relations
-
-    def initialize(relations)
+    def initialize(relations, formatter)
       @relations = relations
-      @formatter = DocFormatter.new
-      @formatter.css_class = 'docClass'
-      @formatter.relations = relations
+      @formatter = formatter
     end
 
     # Returns all data in Class object as hash.
