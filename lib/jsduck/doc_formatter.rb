@@ -1,18 +1,31 @@
 require 'rubygems'
 require 'rdiscount'
 require 'strscan'
+require 'cgi'
 
 module JsDuck
 
   # Formats doc-comments
   class DocFormatter
-    # CSS class to add to each link
-    attr_accessor :css_class
+    # Template HTML that replaces {@link Class#member anchor text}.
+    # Can contain placeholders:
+    #
+    # %c - full class name (e.g. "Ext.Panel")
+    # %m - class member name (e.g. "urlEncode")
+    # %M - class member name, prefixed with hash (e.g. "#urlEncode")
+    # %a - anchor text for link
+    #
+    # Default value: '<a href="%c%M">%a</a>'
+    attr_accessor :link_tpl
 
-    # Template for the href URL.
-    # Can contain %cls% which is replaced with actual classname.
-    # Also '#' and member name is appended to link if needed
-    attr_accessor :url_template
+    # Template HTML that replaces {@img URL alt text}
+    # Can contain placeholders:
+    #
+    # %u - URL from @img tag (e.g. "some/path.png")
+    # %a - alt text for image
+    #
+    # Default value: '<img src="%u" alt="%a"/>'
+    attr_accessor :img_tpl
 
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
@@ -31,10 +44,10 @@ module JsDuck
 
     def initialize
       @context = ""
-      @css_class = nil
-      @url_template = "%cls%"
       @max_length = 120
       @relations = {}
+      @link_tpl = '<a href="%c%M">%a</a>'
+      @img_tpl = '<img src="%u" alt="%a"/>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
     end
@@ -43,11 +56,9 @@ module JsDuck
     # recognized classnames.
     #
     # Replaces {@link Class#member link text} in given string with
-    # HTML links pointing to documentation.  In addition to the href
-    # attribute links will also contain ext:cls and ext:member
-    # attributes.
+    # HTML from @link_tpl.
     #
-    # Replaces {@img path/to/image.jpg Alt text} with HTML <img> tag.
+    # Replaces {@img path/to/image.jpg Alt text} with HTML from @img_tpl.
     #
     # Additionally replaces strings recognized as ClassNames with
     # links to these classes.  So one doesn even need to use the @link
@@ -95,11 +106,7 @@ module JsDuck
     end
 
     def replace_img_tag(input)
-      input.sub(@img_re) do
-        src = $1
-        alt = $2
-        "<img src=\"#{src}\" alt=\"#{alt}\"/>"
-      end
+      input.sub(@img_re) { img($1, $2) }
     end
 
     def replace_class_names(input)
@@ -119,14 +126,36 @@ module JsDuck
       end
     end
 
-    # Creates HTML link to class and/or member
-    def link(cls, member, label)
-      anchor = member ? "#" + member : ""
-      url = @url_template.sub(/%cls%/, cls) + anchor
-      href = ' href="' + url + '"'
-      rel = ' rel="' + cls + anchor + '"'
-      cssCls = @css_class ? ' class="' + @css_class + '"' : ''
-      "<a" + href + rel + cssCls + ">" + label + "</a>"
+    # applies the image template
+    def img(url, alt_text)
+      @img_tpl.gsub(/(%\w)/) do
+        case $1
+        when '%u'
+          url
+        when '%a'
+          CGI.escapeHTML(alt_text||"")
+        else
+          $1
+        end
+      end
+    end
+
+    # applies the link template
+    def link(cls, member, anchor_text)
+      @link_tpl.gsub(/(%\w)/) do
+        case $1
+        when '%c'
+          cls
+        when '%m'
+          member ? member : ""
+        when '%M'
+          member ? "#"+member : ""
+        when '%a'
+          CGI.escapeHTML(anchor_text||"")
+        else
+          $1
+        end
+      end
     end
 
     # Formats doc-comment for placement into HTML.

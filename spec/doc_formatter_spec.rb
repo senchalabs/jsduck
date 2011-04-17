@@ -13,22 +13,22 @@ describe JsDuck::DocFormatter do
 
     it "replaces {@link Ext.Msg} with link to class" do
       @formatter.replace("Look at {@link Ext.Msg}").should ==
-        'Look at <a href="Ext.Msg" rel="Ext.Msg">Ext.Msg</a>'
+        'Look at <a href="Ext.Msg">Ext.Msg</a>'
     end
 
     it "replaces {@link Foo#bar} with link to class member" do
       @formatter.replace("Look at {@link Foo#bar}").should ==
-        'Look at <a href="Foo#bar" rel="Foo#bar">Foo.bar</a>'
+        'Look at <a href="Foo#bar">Foo.bar</a>'
     end
 
     it "uses context to replace {@link #bar} with link to class member" do
       @formatter.replace("Look at {@link #bar}").should ==
-        'Look at <a href="Context#bar" rel="Context#bar">bar</a>'
+        'Look at <a href="Context#bar">bar</a>'
     end
 
     it "allows use of custom link text" do
       @formatter.replace("Look at {@link Foo link text}").should ==
-        'Look at <a href="Foo" rel="Foo">link text</a>'
+        'Look at <a href="Foo">link text</a>'
     end
 
     it "leaves text without {@link...} untouched" do
@@ -43,12 +43,17 @@ describe JsDuck::DocFormatter do
 
     it "handles {@link} spanning multiple lines" do
       @formatter.replace("Look at {@link\nExt.Msg\nsome text}").should ==
-        'Look at <a href="Ext.Msg" rel="Ext.Msg">some text</a>'
+        'Look at <a href="Ext.Msg">some text</a>'
     end
 
     it "handles {@link} with label spanning multiple lines" do
       @formatter.replace("Look at {@link Ext.Msg some\ntext}").should ==
-        "Look at <a href=\"Ext.Msg\" rel=\"Ext.Msg\">some\ntext</a>"
+        "Look at <a href=\"Ext.Msg\">some\ntext</a>"
+    end
+
+    it "escapes link text" do
+      @formatter.replace('{@link Ext.Msg <bla>}').should ==
+        '<a href="Ext.Msg">&lt;bla&gt;</a>'
     end
 
     # {@img ...}
@@ -61,6 +66,11 @@ describe JsDuck::DocFormatter do
     it "replaces {@img some/image.png} with <img> element with empty alt tag" do
       @formatter.replace("Look at {@img some/image.png}").should ==
         'Look at <img src="some/image.png" alt=""/>'
+    end
+
+    it "escapes image alt text" do
+      @formatter.replace('{@img some/image.png foo"bar}').should ==
+        '<img src="some/image.png" alt="foo&quot;bar"/>'
     end
 
     # auto-conversion of identifiable ClassNames to links
@@ -88,47 +98,47 @@ describe JsDuck::DocFormatter do
 
       it "converts FooBar to class link" do
         @formatter.replace("Look at FooBar").should ==
-          "Look at <a href=\"FooBar\" rel=\"FooBar\">FooBar</a>"
+          'Look at <a href="FooBar">FooBar</a>'
       end
 
       it "converts FooBar.Blah to class link" do
         @formatter.replace("Look at FooBar.Blah").should ==
-          "Look at <a href=\"FooBar.Blah\" rel=\"FooBar.Blah\">FooBar.Blah</a>"
+          'Look at <a href="FooBar.Blah">FooBar.Blah</a>'
       end
 
       it "converts Ext.form.Field to class link" do
         @formatter.replace("Look at Ext.form.Field").should ==
-          "Look at <a href=\"Ext.form.Field\" rel=\"Ext.form.Field\">Ext.form.Field</a>"
+          'Look at <a href="Ext.form.Field">Ext.form.Field</a>'
       end
 
       it "converts Ext.XTemplate to class link" do
         @formatter.replace("Look at Ext.XTemplate").should ==
-          "Look at <a href=\"Ext.XTemplate\" rel=\"Ext.XTemplate\">Ext.XTemplate</a>"
+          'Look at <a href="Ext.XTemplate">Ext.XTemplate</a>'
       end
 
       it "converts ClassName ending with dot to class link" do
         @formatter.replace("Look at MyClass.").should ==
-          "Look at <a href=\"MyClass\" rel=\"MyClass\">MyClass</a>."
+          'Look at <a href="MyClass">MyClass</a>.'
       end
 
       it "converts ClassName ending with comma to class link" do
         @formatter.replace("Look at MyClass, it's great!").should ==
-          "Look at <a href=\"MyClass\" rel=\"MyClass\">MyClass</a>, it's great!"
+          'Look at <a href="MyClass">MyClass</a>, it\'s great!'
       end
 
       it "converts Ext#encode to method link" do
         @formatter.replace("Look at Ext#encode").should ==
-          "Look at <a href=\"Ext#encode\" rel=\"Ext#encode\">Ext.encode</a>"
+          'Look at <a href="Ext#encode">Ext.encode</a>'
       end
 
       it "converts Ext.form.Field#getValues to method link" do
         @formatter.replace("Look at Ext.form.Field#getValues").should ==
-          "Look at <a href=\"Ext.form.Field#getValues\" rel=\"Ext.form.Field#getValues\">Ext.form.Field.getValues</a>"
+          'Look at <a href="Ext.form.Field#getValues">Ext.form.Field.getValues</a>'
       end
 
       it "doesn't create links inside {@link} tag" do
         @formatter.replace("{@link MyClass a MyClass link}").should ==
-          '<a href="MyClass" rel="MyClass">a MyClass link</a>'
+          '<a href="MyClass">a MyClass link</a>'
       end
 
       it "doesn't create links inside {@img} tag" do
