@@ -57,7 +57,7 @@ module JsDuck
         boolean_row("Alternate names:", @cls[:alternateClassNames].join(", ")),
         row("Extends:", extends_link),
         classes_row("Mixins:", @cls.mixins),
-        row("Defind In:", file_link),
+        row("Defined In:", file_link),
         classes_row("Subclasses:", @relations.subclasses(@cls)),
         classes_row("Mixed into:", @relations.mixed_into(@cls)),
         boolean_row("xtype:", @cls[:xtype]),
