@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'jsduck/aggregator'
 require 'jsduck/source_file'
-require 'jsduck/source_formatter'
+require 'jsduck/source_writer'
 require 'jsduck/class'
 require 'jsduck/tree'
 require 'jsduck/tree_icons'
@@ -185,11 +185,11 @@ module JsDuck
 
     # Writes formatted HTML source code for each input file
     def write_src(path, parsed_files)
-      src = SourceFormatter.new(path, @export ? :format_pre : :format_page)
+      src = SourceWriter.new(path, @export ? nil : :page)
       # Can't be done in parallel, because file.html_filename= method
       # updates all the doc-objects related to the file
       parsed_files.each do |file|
-        html_filename = src.write(file.contents, file.filename)
+        html_filename = src.write(file.to_html, file.filename)
         puts "Writing to #{html_filename} ..." if @verbose
         file.html_filename = File.basename(html_filename)
       end

@@ -1,6 +1,7 @@
 require 'jsduck/js_parser'
 require 'jsduck/css_parser'
 require 'jsduck/merger'
+require "cgi"
 
 module JsDuck
 
@@ -18,7 +19,7 @@ module JsDuck
       @contents = contents
       @filename = filename
       @html_filename = ""
-      @links = []
+      @links = {}
 
       merger = Merger.new
       @docs = parse.map do |docset|
@@ -35,9 +36,35 @@ module JsDuck
     # updating also all doc-objects linking this file
     def html_filename=(html_filename)
       @html_filename = html_filename
-      @links.each do |doc|
-        doc[:html_filename] = @html_filename
-        doc[:href] = @html_filename + "#line-" + doc[:linenr].to_s
+      @links.each_value do |line|
+        line.each do |doc|
+          doc[:html_filename] = @html_filename
+          doc[:href] = @html_filename + "#" + id(doc)
+        end
+      end
+    end
+
+    # Returns source code as HTML with lines starting doc-comments specially marked.
+    def to_html
+      linenr = 0
+      return @contents.lines.map do |line|
+        linenr += 1;
+        line = CGI.escapeHTML(line)
+        # wrap the line in as many spans as there are links to this line number.
+        if @links[linenr]
+          @links[linenr].each do |doc|
+            line = "<span id='#{id(doc)}'>#{line}</span>"
+          end
+        end
+        line
+      end.join()
+    end
+
+    def id(doc)
+      if doc[:tagname] == :class
+        doc[:name].sub(/\./, '-')
+      else
+        doc[:member].sub(/\./, '-') + "-" + doc[:tagname].to_s + "-" + doc[:name]
       end
     end
 
@@ -56,7 +83,8 @@ module JsDuck
     # If doc-object is class, links also the contained cfgs and constructor.
     # Returns the modified doc-object after done.
     def link(linenr, doc)
-      @links << doc
+      @links[linenr] = [] unless @links[linenr]
+      @links[linenr] << doc
       doc[:filename] = @filename
       doc[:linenr] = linenr
       if doc[:tagname] == :class

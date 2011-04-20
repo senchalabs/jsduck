@@ -1,28 +1,25 @@
-require "cgi"
-
 module JsDuck
 
-  # Formats JavaScript source into HTML page.  Inside the HTML every
-  # source code line will be marked with ID, so that it can be linked
-  # from documentation.
-  class SourceFormatter
+  # Writes HTML JavaScript/CSS source into HTML file.
+  class SourceWriter
 
     # Initializes SourceFormatter to the directory where
     # HTML-formatted source files will be placed.
     #
-    # formatter can be either :format_page or :format_pre; with the
-    # first one the whole HTML page is created, otherwise just a
-    # contents of <pre> element.
-    def initialize(output_dir, formatter = :format_page)
+    # Wrapper can be either :page or nil; with the first one the whole
+    # HTML page is created, otherwise source is left as is.
+    def initialize(output_dir, wrapper = :page)
       @output_dir = output_dir
-      @formatter = formatter
+      @wrapper = wrapper
     end
 
-    # Converts source to HTML and writes into file in output
-    # directory.  It returns the name of the file that it wrote.
+    # Writes HTML into file in output directory.  It returns the name
+    # of the file that it wrote.
     def write(source, filename)
       fname = uniq_html_filename(filename)
-      File.open(fname, 'w') {|f| f.write(self.send(@formatter, source)) }
+      File.open(fname, 'w') do |f|
+        f.write(@wrapper ? wrap_page(source) : source)
+      end
       fname
     end
 
@@ -40,8 +37,8 @@ module JsDuck
       @output_dir + "/" + File.basename(filename, ".js") + (nr > 0 ? nr.to_s : "") + ".html"
     end
 
-    # Returns full source for HTML page
-    def format_page(source)
+    # Returns source wrapped inside HTML page
+    def wrap_page(source)
       return <<-EOHTML
 <!DOCTYPE html>
 <html>
@@ -60,20 +57,10 @@ module JsDuck
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js">#{format_pre(source)}</pre>
+  <pre class="prettyprint lang-js">#{source}</pre>
 </body>
 </html>
       EOHTML
-    end
-
-    # Formats the contents of <pre>, wrapping each source code line
-    # inside <span>.
-    def format_pre(source)
-      i = 0
-      return source.lines.collect do |line|
-        i += 1
-        "<span id='line-#{i}'>#{CGI.escapeHTML(line)}</span>"
-      end.join()
     end
 
   end
