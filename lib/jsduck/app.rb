@@ -47,24 +47,20 @@ module JsDuck
 
     # Call this after input parameters set
     def run
-      clear_dir(@output_dir)
-      if @export
-        FileUtils.mkdir(@output_dir)
-        init_output_dirs(@output_dir)
-      else
-        copy_template(@template_dir, @output_dir)
-      end
-
       parsed_files = @timer.time(:parsing) { parallel_parse(@input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       relations = @timer.time(:aggregating) { filter_classes(result) }
       warn_globals(relations)
       warn_unnamed(relations)
 
+      clear_dir(@output_dir)
       if @export == :json
+        FileUtils.mkdir(@output_dir)
+        init_output_dirs(@output_dir)
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_json(@output_dir+"/output", relations) }
       else
+        copy_template(@template_dir, @output_dir)
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
