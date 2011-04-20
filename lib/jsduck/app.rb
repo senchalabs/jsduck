@@ -1,7 +1,6 @@
 require 'rubygems'
-require 'jsduck/js_parser'
-require 'jsduck/css_parser'
 require 'jsduck/aggregator'
+require 'jsduck/source_file'
 require 'jsduck/source_formatter'
 require 'jsduck/class'
 require 'jsduck/tree'
@@ -63,8 +62,10 @@ module JsDuck
       warn_unnamed(relations)
 
       if @export == :json
+        @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_json(@output_dir+"/output", relations) }
       else
+        @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
         @timer.time(:generating) { write_pages(@output_dir+"/output", relations) }
@@ -75,15 +76,9 @@ module JsDuck
 
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
-      src = SourceFormatter.new(@output_dir + "/source", @export ? :format_pre : :format_page)
       @parallel.map(filenames) do |fname|
         puts "Parsing #{fname} ..." if @verbose
-        code = IO.read(fname)
-        {
-          :filename => fname,
-          :html_filename => File.basename(src.write(code, fname)),
-          :data => fname =~ /\.s?css$/ ? CssParser.new(code).parse : JsParser.new(code).parse,
-        }
+        SourceFile.new(IO.read(fname), fname)
       end
     end
 
@@ -91,8 +86,8 @@ module JsDuck
     def aggregate(parsed_files)
       agr = Aggregator.new
       parsed_files.each do |file|
-        puts "Aggregating #{file[:filename]} ..." if @verbose
-        agr.aggregate(file[:data], file[:filename], file[:html_filename])
+        puts "Aggregating #{file.filename} ..." if @verbose
+        agr.aggregate(file)
       end
       agr.classify_orphans
       agr.create_global_class
@@ -189,6 +184,18 @@ module JsDuck
         hash = exporter.export(cls)
         json = JSON.pretty_generate(hash)
         File.open(filename, 'w') {|f| f.write(json) }
+      end
+    end
+
+    # Writes formatted HTML source code for each input file
+    def write_src(path, parsed_files)
+      src = SourceFormatter.new(path, @export ? :format_pre : :format_page)
+      # Can't be done in parallel, because file.html_filename= method
+      # updates all the doc-objects related to the file
+      parsed_files.each do |file|
+        html_filename = src.write(file.contents, file.filename)
+        puts "Writing to #{html_filename} ..." if @verbose
+        file.html_filename = File.basename(html_filename)
       end
     end
 
