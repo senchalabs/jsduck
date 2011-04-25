@@ -36,6 +36,11 @@ module JsDuck
       @doc[:mixins] ? @doc[:mixins].collect {|classname| lookup(classname) }.compact : []
     end
 
+    # Returns all mixins this class and its parent classes
+    def all_mixins
+      mixins + (parent ? parent.all_mixins : [])
+    end
+
     # Looks up class object by name
     # When not found, prints warning message.
     def lookup(classname)

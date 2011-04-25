@@ -33,6 +33,7 @@ module JsDuck
       h[:superclasses] = cls.superclasses.collect {|c| c.full_name }
       h[:subclasses] = @relations.subclasses(cls).collect {|c| c.full_name }
       h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c.full_name }
+      h[:allMixins] = cls.all_mixins.collect {|c| c.full_name }
       format_class(h)
     end
 
