@@ -162,8 +162,10 @@ module JsDuck
       @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".html"
         puts "Writing to #{filename} ..." if @verbose
-        html = Page.new(cls, relations, cache).to_html
-        File.open(filename, 'w') {|f| f.write(html) }
+        page = Page.new(cls, relations, cache)
+        page.link_tpl = @link_tpl if @link_tpl
+        page.img_tpl = @img_tpl if @img_tpl
+        File.open(filename, 'w') {|f| f.write(page.to_html) }
       end
     end
 

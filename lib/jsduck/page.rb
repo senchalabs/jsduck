@@ -26,6 +26,14 @@ module JsDuck
       @formatter.relations = relations
     end
 
+    # Setters to override link and image templates
+    def link_tpl=(tpl)
+      @formatter.link_tpl = tpl
+    end
+    def img_tpl=(tpl)
+      @formatter.img_tpl = tpl
+    end
+
     def to_html
       [
        '<div class="body-wrap">',

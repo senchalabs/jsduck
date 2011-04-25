@@ -38,21 +38,21 @@ opts = OptionParser.new do | opts |
     app.export = :json
   end
 
-  opts.on('--link=TPL', "HTML template for replacing {@link} in export.",
+  opts.on('--link=TPL', "HTML template for replacing {@link}.",
     "Possible placeholders:",
     "%c - full class name (e.g. 'Ext.Panel')",
     "%m - class member name (e.g. 'urlEncode')",
     "%M - class member name, prefixed with hash (e.g. '#urlEncode')",
     "%a - anchor text for link",
-    "Default value: '<a href=\"%c%M\">%a</a>'") do |tpl|
+    "Default value in export: '<a href=\"%c%M\">%a</a>'") do |tpl|
     app.link_tpl = tpl
   end
 
-  opts.on('--img=TPL', "HTML template for replacing {@img} in export.",
+  opts.on('--img=TPL', "HTML template for replacing {@img}.",
     "Possible placeholders:",
     "%u - URL from @img tag (e.g. 'some/path.png')",
     "%a - alt text for image",
-    "Default value: '<img src=\"%u\" alt=\"%a\"/>'") do |tpl|
+    "Default value in export: '<img src=\"%u\" alt=\"%a\"/>'") do |tpl|
     app.img_tpl = tpl
   end
 
