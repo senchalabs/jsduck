@@ -54,8 +54,12 @@ module JsDuck
         html = @cache[cache_key] = create_row(item)
       end
       inherited = inherited?(item) ? 'inherited' : ''
-      owner = inherited?(item) ? member_link(item) : Class.short_name(item[:member])
-      html.sub(/!!--inherited--!!/, inherited).sub(/!!--owner-class--!!/, owner)
+      owner_link = inherited?(item) ? member_link(item) : Class.short_name(item[:member])
+      owner_class = @cls.full_name
+      html = html.sub(/!!--inherited--!!/, inherited)
+      html = html.sub(/!!--owner-link--!!/, owner_link)
+      html = html.sub(/!!--owner-class--!!/, owner_class)
+      html
     end
 
     # Generates HTML for the row, leaving in placeholders for owner
@@ -69,7 +73,7 @@ module JsDuck
       <tr class='#{@row_class} #{expandable} !!--inherited--!!'>
         <td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>
         <td class='sig'>#{signature(item)}<div class='mdesc'>#{description}</div></td>
-        <td class='msource'>!!--owner-class--!!</td>
+        <td class='msource'>!!--owner-link--!!</td>
       </tr>
       EOHTML
     end
@@ -79,7 +83,7 @@ module JsDuck
     end
 
     def signature(item)
-      id = @cls.full_name+ "-" + item[:name]
+      id = "!!--owner-class--!!-" + item[:name]
       src = "source/#{item[:href]}"
       return "<a id='#{id}'></a><b><a href='#{src}'>#{item[:name]}</a></b>" + signature_suffix(item)
     end
