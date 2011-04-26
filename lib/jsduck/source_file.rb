@@ -62,9 +62,9 @@ module JsDuck
 
     def id(doc)
       if doc[:tagname] == :class
-        doc[:name].sub(/\./, '-')
+        doc[:name].gsub(/\./, '-')
       else
-        doc[:member].sub(/\./, '-') + "-" + doc[:tagname].to_s + "-" + doc[:name]
+        doc[:member].gsub(/\./, '-') + "-" + doc[:tagname].to_s + "-" + doc[:name]
       end
     end
 
