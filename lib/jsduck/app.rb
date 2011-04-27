@@ -26,6 +26,7 @@ module JsDuck
     attr_accessor :export
     attr_accessor :link_tpl
     attr_accessor :img_tpl
+    attr_accessor :ignore_global
 
     def initialize
       @output_dir = nil
@@ -35,6 +36,7 @@ module JsDuck
       @export = nil
       @link_tpl = nil
       @img_tpl = nil
+      @ignore_global = false
       @timer = Timer.new
       @parallel = ParallelWrap.new
     end
@@ -86,7 +88,7 @@ module JsDuck
         agr.aggregate(file)
       end
       agr.classify_orphans
-      agr.create_global_class
+      agr.create_global_class unless @ignore_global
       agr.result
     end
 

@@ -63,6 +63,10 @@ opts = OptionParser.new do | opts |
     app.processes = count.to_i
   end
 
+  opts.on('--ignore-global', "Turns off the creation of global class.") do
+    app.ignore_global = true
+  end
+
   opts.on('-v', '--verbose', "This will fill up your console.") do
     app.verbose = true
   end
