@@ -98,22 +98,6 @@ var showClass = function(resp, anchor) {
 
     prettyPrint();
 
-    var historyItems = Ext.getCmp('historyItems');
-    if (historyItems) {
-
-        var item = classPackagesStore.getById(resp.cls);
-
-        var menuItem = {
-            text: resp.cls
-        };
-        if (item.data.value.clsType) {
-            menuItem.iconCls = 'icon-'+item.data.value.clsType;
-        }
-
-        historyItems.insert(0, menuItem);
-    }
-
-
     Ext.get('top-block').update(resp.title);
     if (anchor) {
         Ext.getCmp('doc-overview').scrollToEl("a[name=" + anchor + "]");
@@ -159,76 +143,3 @@ var resizeWindowFn = function() {
 
     resizeWindows = null;
 };
-
-
-var convert = function(classes) {
-    var tree = {},
-        nodes = [],
-        id = 0,
-        c = classes;
-
-    classes.keys.forEach(function(cls) {
-        var parts = cls.split('.'),
-            prevObject = tree;
-
-        var stitchedParts = [];
-        for (var i = 0; i < parts.length; i++) {
-            if (i > 0 && parts[i + 1]  && parts[i + 1][0] && parts[i][0] && parts[i][0].match(/^[A-Z]/) && parts[i + 1][0].match(/^[A-Z]/)) {
-                var n = parts.splice(i, 2).join('.');
-                parts.splice(i, 0, n);
-            }
-        }
-
-        parts.forEach(function(part) {
-            if (!prevObject[part]) {
-                prevObject[part] = {};
-            }
-
-            prevObject = prevObject[part];
-        });
-    });
-
-    function handleTree(cls, tree) {
-        var innerNodes = [];
-
-        var treeKeys = [];
-        for (var key in tree) treeKeys.push(key);
-
-        treeKeys.forEach(function(key) {
-            innerNodes.push({
-                id: id++,
-                text: key
-            });
-            innerNodes[innerNodes.length - 1].allowDrop = false;
-            var clsName = (cls ? (cls + ".") : "") + key;
-            var clsData = classes.get(clsName);
-
-            var subTreeKeys = [];
-            for (var k2 in tree[key]) {
-                subTreeKeys.push(k2);
-            }
-            if (subTreeKeys.length) {
-                innerNodes[innerNodes.length - 1].children = handleTree(clsName, tree[key]);
-                innerNodes[innerNodes.length - 1].allowDrag = false;
-                innerNodes[innerNodes.length - 1].iconCls = 'icon-pkg';
-                if (clsData) {
-                    innerNodes[innerNodes.length - 1].clsName = clsName;
-                    innerNodes[innerNodes.length - 1].text = innerNodes[innerNodes.length - 1].text + '<a rel="'+clsName+'" class="fav"></a>';
-                    innerNodes[innerNodes.length - 1].iconCls = 'icon-' + clsData.data.value.clsType;
-                }
-            } else {
-                if (clsData) {
-                    innerNodes[innerNodes.length - 1].iconCls = 'icon-' + clsData.data.value.clsType;
-                }
-                innerNodes[innerNodes.length - 1].text = innerNodes[innerNodes.length - 1].text + '<a rel="'+clsName+'" class="fav"></a>';
-                innerNodes[innerNodes.length - 1].leaf = true;
-                innerNodes[innerNodes.length - 1].clsName = clsName;
-            }
-        });
-
-        return innerNodes;
-    }
-
-    return handleTree(null, tree);
-};
-

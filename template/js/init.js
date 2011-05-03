@@ -35,25 +35,9 @@ Ext.onReady(function() {
         }, false);
     }
 
-    var classPackagesStore = new Ext.data.Store({
-        model: 'Docs.ClassTreeModel',
-        proxy: {
-            type: 'ajax',
-            url : req.baseDocURL + '/classes.json',
-            reader: {
-                type: 'json',
-                root: 'rows'
-            }
-        },
-        autoLoad: true,
-        listeners: {
-            load: function() {
-                var nodes = convert(this.data)[0];
-                nodes.expanded = true;
-                Ext.create('Docs.ClassTree', {
-                    root: nodes
-                });
-            }
-        }
+    Docs.classData.expanded = true;
+    Docs.classData.children[0].expanded = true;
+    Ext.create('Docs.ClassTree', {
+      root: Docs.classData
     });
 });
