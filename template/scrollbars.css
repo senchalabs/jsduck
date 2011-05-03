@@ -1,0 +1,25 @@
+.iScroll ::-webkit-scrollbar {
+  width:7px;
+  height:9px;
+}
+.iScroll ::-webkit-scrollbar-button:start:decrement, 
+.iScroll ::-webkit-scrollbar-button:end:increment {
+  display:block;
+  height:0;
+  background-color:transparent;
+}
+.iScroll ::-webkit-scrollbar-track-piece {
+  -webkit-border-radius:0;
+  -webkit-border-bottom-right-radius:4px;
+  -webkit-border-bottom-left-radius:4px;
+}
+.iScroll ::-webkit-scrollbar-thumb:vertical {
+  height:50px;
+  background-color:rgba(0,0,0,0.15);
+  -webkit-border-radius:4px;
+}
+.iScroll ::-webkit-scrollbar-thumb:horizontal {
+  width:50px;
+  background-color: rgba(0,0,0,0.15);
+  -webkit-border-radius:4px;
+}

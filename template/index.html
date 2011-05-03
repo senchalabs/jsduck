@@ -1,48 +1,76 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:ext="http://www.sencha.com/docs">
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Your API Documentation</title>
-<link rel="stylesheet" type="text/css" href="resources/css/ext-all.css" />
-<link rel="stylesheet" type="text/css" href="resources/css/xtheme-gray.css" />
-<link rel="stylesheet" type="text/css" href="resources/docs.css" />
-<link rel="stylesheet" type="text/css" href="resources/style.css" />
-<link rel="stylesheet" type="text/css" href="resources/prettify/prettify.css" />
-<link rel="shortcut icon" href="resources/favicon.ico" />
-<link rel="icon" href="resources/favicon.ico" />
-<script type="text/javascript" src="resources/ext-base.js"></script>
-<script type="text/javascript" src="resources/ext-all.js"></script>
-<script type="text/javascript" src="resources/TabCloseMenu.js"></script>
-<script type="text/javascript" src="resources/prettify/prettify.js"></script>
-<script type="text/javascript" src="resources/docs.js"></script>
-<script type="text/javascript" src="output/tree.js"></script>
-<script type="text/javascript" src="output/members.js"></script>
+  <title>Ext JS API</title>
+  <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
+  <link rel="stylesheet" href="extjs/resources/css/ext-all.css" type="text/css" />
+  <link rel="stylesheet" href="scrollbars.css" type="text/css" />
+  <link rel="stylesheet" href="style.css" type="text/css" />
+  <link rel="stylesheet" href="prettify.css" type="text/css" />
 </head>
-<body scroll="no" id="docs">
+<body id="ext-body" class="iScroll">
+  <div id="notice" class="notice">
+    For up to date documentation and features, visit <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a>
+  </div>
 
-<div id="loading-mask"></div>
+  <div class="wrapper">
+    <div class="head-band"></div>
 
-<div id="loading">
-    <div class="loading-indicator">
-        <img src="resources/extanim32.gif" width="32" height="32" style="margin-right:8px;" align="absmiddle" />
-        Loading&hellip;
+    <div class="header">
+      <h2><a href="index.html">Sencha Documentation</a></h2>
     </div>
-</div>
 
-<div id="header">
-    <h1><strong>JsDuck</strong> Your API Documentation</h1>
-    <p><a href="https://github.com/nene/jsduck">about JsDuck</a></p>
-</div>
+    <div id="search">
+      <form>
+        <input type="text" placeholder="Search" id="search-field" autocomplete="off" name="q" />
+      </form>
 
-<div id="classes"></div>
+      <div id="search-box"></div>
+    </div>
 
-<div id="main"></div>
+    <div id="treePanel"></div>
 
-<select id="search-options" style="display:none">
-    <option>Starts with</option>
-    <option>Ends with</option>
-    <option>Any Match</option>
-</select>
+    <div id="container">
+      <label style="float: right; padding: 10px 25px 0 0; display: none"><input type="checkbox" id="hideUnpopularClasses" />&nbsp; Popular classes</label>
 
+      <div id="top-block" class="top-block">
+        <h1>Ext JS 4.0 API Documentation</h1>
+      </div>
+
+      <div id="docContent" class="iScroll">
+
+        <div id="api-overview" class="piechartLinks">...</div>
+      </div>
+
+      <div style="clear: both"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="extjs/ext-all-debug.js"></script>
+  <script type="text/javascript" src="js/prettify.js"></script>
+  <script type="text/javascript">
+    req = {
+      liveURL: '.',
+      standAloneMode: true,
+      origDocClass: 'undefined',
+      docClass: 'undefined',
+      docReq: 'undefined',
+      version: '4.0',
+      baseURL: '.',
+      baseDocURL: '.',
+      baseProdURL: '.'
+    };
+    clsInfo = {};
+  </script>
+  <script type="text/javascript" src="js/functions.js"></script>
+
+  <script type="text/javascript" src="js/ClassTree.js"></script>
+  <script type="text/javascript" src="js/ClassTreeModel.js"></script>
+  <script type="text/javascript" src="js/OverviewToolbar.js"></script>
+  <script type="text/javascript" src="js/ClassPanel.js"></script>
+  <script type="text/javascript" src="js/SourceCodePanel.js"></script>
+
+  <script type="text/javascript" src="js/search.js"></script>
+  <script type="text/javascript" src="js/init.js"></script>
 </body>
 </html>
