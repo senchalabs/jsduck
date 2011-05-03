@@ -21,6 +21,7 @@ module JsDuck
     # These are basically input parameters for app
     attr_accessor :output_dir
     attr_accessor :template_dir
+    attr_accessor :template_links
     attr_accessor :input_files
     attr_accessor :verbose
     attr_accessor :export
@@ -31,6 +32,7 @@ module JsDuck
     def initialize
       @output_dir = nil
       @template_dir = nil
+      @template_links = false
       @input_files = []
       @verbose = false
       @export = nil
@@ -62,7 +64,11 @@ module JsDuck
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_json(@output_dir+"/output", relations) }
       else
-        copy_template(@template_dir, @output_dir)
+        if @template_links
+          link_template(@template_dir, @output_dir)
+        else
+          copy_template(@template_dir, @output_dir)
+        end
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
@@ -202,6 +208,15 @@ module JsDuck
     def copy_template(template_dir, dir)
       puts "Copying template files to #{dir}..." if @verbose
       FileUtils.cp_r(template_dir, dir)
+      init_output_dirs(dir)
+    end
+
+    def link_template(template_dir, dir)
+      puts "Linking template files to #{dir}..." if @verbose
+      FileUtils.mkdir(dir)
+      Dir.glob(template_dir + "/*").each do |file|
+        File.symlink(File.expand_path(file), dir+"/"+File.basename(file))
+      end
       init_output_dirs(dir)
     end
 

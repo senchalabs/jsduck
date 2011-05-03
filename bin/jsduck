@@ -34,6 +34,12 @@ opts = OptionParser.new do | opts |
     app.template_dir = path
   end
 
+  opts.on('--template-links', "Instead of copying template files, create symbolic links.",
+    "Useful for template files development.",
+    "Only works on platforms supporting symbolic links.") do
+    app.template_links = true
+  end
+
   opts.on('--json', "Produces JSON export instead of HTML documentation.") do
     app.export = :json
   end
