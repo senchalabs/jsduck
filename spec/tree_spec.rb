@@ -96,7 +96,7 @@ describe JsDuck::Tree do
     it_should_behave_like "all class nodes"
 
     it "with normal class icon" do
-      @class[:iconCls].should == "icon-cls"
+      @class[:iconCls].should == "icon-class"
     end
   end
 
@@ -111,7 +111,7 @@ describe JsDuck::Tree do
     it_should_behave_like "all class nodes"
 
     it "with singleton class icon" do
-      @class[:iconCls].should == "icon-static"
+      @class[:iconCls].should == "icon-singleton"
     end
   end
 
