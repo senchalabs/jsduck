@@ -165,3 +165,28 @@ describe JsDuck::Tree, "uppercase package name" do
   end
 
 end
+
+describe JsDuck::Tree do
+
+  before do
+    @tree = JsDuck::Tree.new.create([
+        JsDuck::Class.new({:tagname => :class, :name => "Dingo"}),
+        JsDuck::Class.new({:tagname => :class, :name => "Beeta"}),
+        JsDuck::Class.new({:tagname => :class, :name => "cheetah"}),
+        JsDuck::Class.new({:tagname => :class, :name => "pkg.Class"}),
+        JsDuck::Class.new({:tagname => :class, :name => "Abba"}),
+      ])
+  end
+
+  it "sorts packages first" do
+    @tree[:children][0][:text].should == 'pkg'
+  end
+
+  it "sorts classes case-insensitively" do
+    @tree[:children][1][:text].should == 'Abba'
+    @tree[:children][2][:text].should == 'Beeta'
+    @tree[:children][3][:text].should == 'cheetah'
+    @tree[:children][4][:text].should == 'Dingo'
+  end
+
+end

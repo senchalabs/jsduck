@@ -36,7 +36,7 @@ module JsDuck
     # Comparson method that sorts package nodes before class nodes.
     def compare(a, b)
       if a[:cls] == b[:cls]
-        a[:text] <=> b[:text]
+        a[:text].casecmp(b[:text])
       else
         a[:cls] == "package" ? -1 : 1
       end
