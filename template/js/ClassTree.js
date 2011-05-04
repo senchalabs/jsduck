@@ -15,7 +15,7 @@ Ext.define('Docs.ClassTree', {
 
     listeners: {
         itemclick: function(view, node) {
-            var clsName = node.raw ? node.raw.clsName : node.data.clsName;
+            var clsName = node.raw ? node.raw.id : node.data.id;
 
             if (clsName) {
                 getDocClass(clsName);

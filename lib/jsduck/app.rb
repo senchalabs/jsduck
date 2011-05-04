@@ -79,7 +79,7 @@ module JsDuck
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
-        @timer.time(:generating) { write_pages(@output_dir+"/output", relations) }
+        @timer.time(:generating) { write_json(@output_dir+"/output", relations) }
       end
 
       @timer.report if @verbose

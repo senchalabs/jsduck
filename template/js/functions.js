@@ -6,7 +6,7 @@ if (!Array.prototype.forEach) {
         if (typeof fun != "function") {
             throw new TypeError();
         }
-        
+
         var thisp = arguments[1];
         for (var i = 0; i < len; i++) {
             if (i in this) {
@@ -26,24 +26,13 @@ var getDocClass = function(cls, noHistory) {
         cls = cls.substr(0, hashIdx);
     }
 
-    if (req.standAloneMode) {
-        if (window.location.href.match(/api/)) {
-            window.location = cls + '.html';
-        } else if (window.location.href.match(/guide/)){
-            window.location = '../api/' + cls + '.html';
-        } else {
-            window.location = 'api/' + cls + '.html';
-        }
-        return;
-    }
-
-    var fullUrl = req.baseDocURL + "/api/" + cls;
-    if (!noHistory && window.history && window.history.pushState) {
-        window.history.pushState({
-            docClass: cls
-        },
-        '', fullUrl);
-    }
+    // if (!noHistory && window.history && window.history.pushState) {
+    //     var fullUrl = req.baseDocURL + "/" + cls;
+    //     window.history.pushState({
+    //         docClass: cls
+    //     },
+    //     '', fullUrl);
+    // }
 
     var docTabPanel = Ext.getCmp('docTabPanel');
     if (docTabPanel) {
@@ -57,12 +46,12 @@ var getDocClass = function(cls, noHistory) {
             Ext.getCmp('doc-overview').setLoading(true);
         }
 
-        Ext.data.JsonP.request({
-            callbackKey: 'docsCallback',
-            url     : req.baseDocURL + '/api/' + cls + '/ajax',
-            success : function(response, opts) {
-                classCache[response.cls] = response;
-                showClass(response, member);
+        Ext.Ajax.request({
+            url: req.baseDocURL + '/output/' + cls + '.json',
+            success: function(response, opts) {
+                var json = Ext.JSON.decode(response.responseText);
+                classCache[cls] = json;
+                showClass(json, member);
             },
             failure : function(response, opts) {
               console.log('Fail');
@@ -71,13 +60,10 @@ var getDocClass = function(cls, noHistory) {
     }
 };
 
-var showClass = function(resp, anchor) {
+var showClass = function(cls, anchor) {
+    window.clsInfo = cls;
+
     var docTabPanel = Ext.getCmp('docTabPanel');
-
-    clsInfo = resp.clsInfo;
-    req.docClass = resp.cls;
-    req.source = resp.source;
-
     if (!docTabPanel) {
          Ext.get('docContent').update('');
          Ext.create('Docs.ClassPanel');
@@ -91,14 +77,14 @@ var showClass = function(resp, anchor) {
 
     var docOverviewTab = Ext.getCmp('doc-overview');
 
-    docOverviewTab.update(resp.content);
+    docOverviewTab.update(cls.doc);
     docOverviewTab.removeDocked(Ext.getCmp('overview-toolbar'), true);
     docOverviewTab.addDocked(Ext.create('Docs.OverviewToolbar'));
     docOverviewTab.setLoading(false);
 
     prettyPrint();
 
-    Ext.get('top-block').update(resp.title);
+    Ext.get(Ext.DomQuery.selectNode('#top-block > h1')).update(cls.name);
     if (anchor) {
         Ext.getCmp('doc-overview').scrollToEl("a[name=" + anchor + "]");
     } else {
