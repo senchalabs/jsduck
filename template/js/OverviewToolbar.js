@@ -11,38 +11,23 @@ Ext.define('Docs.OverviewToolbar', {
     initComponent: function() {
         this.items = [];
 
-        if (clsInfo.cfgs.length) {
-            this.items.push(this.createMemberButton({
-                items: clsInfo.cfgs,
-                type: "config",
-                cls: "configs",
-                title: "Configs"
-            }));
+        var memberTitles = {
+            cfg: "Configs",
+            property: "Properties",
+            method: "Methods",
+            event: "Events"
+        };
+        for (var type in memberTitles) {
+            var members = clsInfo[type];
+            if (members.length) {
+                this.items.push(this.createMemberButton({
+                    items: members,
+                    type: type,
+                    title: memberTitles[type]
+                }));
+            }
         }
-        if (clsInfo.properties.length) {
-            this.items.push(this.createMemberButton({
-                items: clsInfo.properties,
-                type: "property",
-                cls: "properties",
-                title: "Properties"
-            }));
-        }
-        if (clsInfo.methods.length) {
-            this.items.push(this.createMemberButton({
-                items: clsInfo.methods,
-                type: "method",
-                cls: "methods",
-                title: "Methods"
-            }));
-        }
-        if (clsInfo.events.length) {
-            this.items.push(this.createMemberButton({
-                items: clsInfo.events,
-                type: "event",
-                cls: "events",
-                title: "Events"
-            }));
-        }
+
         if (clsInfo.subclasses.length) {
             this.items.push(this.createSubClassesButton({
                 items: clsInfo.subclasses,
@@ -100,7 +85,7 @@ Ext.define('Docs.OverviewToolbar', {
         });
 
         return Ext.create('Ext.button.Split', {
-            cls: cfg.cls,
+            cls: cfg.type,
             iconCls: 'icon-' + cfg.type,
             text: cfg.title + ' <span class="num">' + cfg.items.length + '</span>',
             listeners: {

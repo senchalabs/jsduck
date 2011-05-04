@@ -17,17 +17,13 @@ module JsDuck
     # Returns all data in Class object as hash.
     def export(cls)
       h = cls.to_hash
-      h[:cfgs] = cls.members(:cfg)
-      h.delete(:cfg)
-      h[:properties] = cls.members(:property)
-      h.delete(:property)
-      h[:methods] = cls.members(:method)
-      h.delete(:method)
-      h[:events] = cls.members(:event)
-      h.delete(:event)
-      h[:cssVars] = cls.members(:css_var)
+      h[:cfg] = cls.members(:cfg)
+      h[:property] = cls.members(:property)
+      h[:method] = cls.members(:method)
+      h[:event] = cls.members(:event)
+      h[:cssVar] = cls.members(:css_var)
       h.delete(:css_var)
-      h[:cssMixins] = cls.members(:css_mixin)
+      h[:cssMixin] = cls.members(:css_mixin)
       h.delete(:css_mixin)
       h[:component] = cls.inherits_from?("Ext.Component")
       h[:superclasses] = cls.superclasses.collect {|c| c.full_name }
@@ -41,7 +37,7 @@ module JsDuck
     def format_class(c)
       @formatter.context = c[:name]
       c[:doc] = @formatter.format(c[:doc]) if c[:doc]
-      [:cfgs, :properties, :methods, :events, :cssVars, :cssMixins].each do |type|
+      [:cfg, :property, :method, :event, :cssVar, :cssMixin].each do |type|
         c[type] = c[type].map {|m| format_member(m) }
       end
       c

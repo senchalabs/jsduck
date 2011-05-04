@@ -15,7 +15,7 @@ pre,code,kbd,samp,tt{font-family:"Menlo","Courier New",Courier,monospace}
 #search .item{display:block;cursor:pointer;overflow:hidden;padding:5px 5px 5px 30px;border-width:0 0 1px 0;border-style:solid;border-color:#bebdbf;}
 #search .item .title{color:#605f5f;font-weight:bold;overflow:hidden;text-overflow:ellipsis}
 #search .item .class{color:#605f5f;font-size:.85em;overflow:hidden;text-overflow:ellipsis}
-#search .item.config{background:url("img/configs.png") no-repeat 0 3px}
+#search .item.cfg{background:url("img/configs.png") no-repeat 0 3px}
 #search .item.property{background:url("img/properties.png") no-repeat 3px 8px}
 #search .item.method{background:url("img/methods.png") no-repeat 3px 5px}
 #search .item.event{background:url("img/events.png") no-repeat 4px 0}
@@ -206,7 +206,7 @@ pre,code,kbd,samp,tt{font-family:"Menlo","Courier New",Courier,monospace}
 #treePanel .x-grid-cell-inner .icon-event{background:url("img/icons.png") no-repeat -3px -245px !important}
 #treePanel .x-grid-cell-inner .icon-property{background:url("img/icons.png") no-repeat -3px -192px !important}
 #treePanel .x-grid-cell-inner .icon-method{background:url("img/icons.png") no-repeat -3px -165px !important}
-#treePanel .x-grid-cell-inner .icon-config{background:url("img/icons.png") no-repeat -3px -219px !important}
+#treePanel .x-grid-cell-inner .icon-cfg{background:url("img/icons.png") no-repeat -3px -219px !important}
 #treePanel .x-grid-cell-inner .icon-subclass{background:url("img/icons.png") no-repeat -3px -299px !important}
 #treePanel .x-grid-cell-inner .icon-fav{background:url("img/favorite2.png") no-repeat 0 -2px;padding-left:20px}
 #treePanel .x-grid-cell-inner .icon-hist{background:url("img/favorite2.png") no-repeat 0 -40px;padding-left:20px}
@@ -242,7 +242,7 @@ pre,code,kbd,samp,tt{font-family:"Menlo","Courier New",Courier,monospace}
 .icon-event{background:url("img/icons.png") no-repeat -3px -245px !important}
 .icon-property{background:url("img/icons.png") no-repeat -3px -192px !important}
 .icon-method{background:url("img/icons.png") no-repeat -3px -165px !important}
-.icon-config{background:url("img/icons.png") no-repeat -3px -219px !important}
+.icon-cfg{background:url("img/icons.png") no-repeat -3px -219px !important}
 .icon-subclass{background:url("img/icons.png") no-repeat -3px -299px !important}
 .icon-fav{background:url("img/favorite2.png") no-repeat 0 -2px;padding-left:20px}
 .icon-hist{background:url("img/favorite2.png") no-repeat 0 -40px;padding-left:20px}
