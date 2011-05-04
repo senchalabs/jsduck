@@ -35,6 +35,25 @@ Ext.define('Docs.ClassTree', {
         }
     },
 
+    initComponent: function() {
+        // Expand the main tree
+        this.root.expanded = true;
+        this.root.children[0].expanded = true;
+        // Add links for favoriting classes
+        this.addFavIcons(this.root);
+
+        this.callParent();
+    },
+
+    addFavIcons: function(node) {
+        if (node.isClass) {
+            node.text += '<a rel="'+node.id+'" class="fav"></a>';
+        }
+        if (node.children) {
+            Ext.Array.forEach(node.children, this.addFavIcons, this);
+        }
+    },
+
     selectCurrentClass: function() {
         var treePanel = Ext.getCmp('treePanelCmp');
 

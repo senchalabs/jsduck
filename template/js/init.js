@@ -35,8 +35,6 @@ Ext.onReady(function() {
         }, false);
     }
 
-    Docs.classData.expanded = true;
-    Docs.classData.children[0].expanded = true;
     Ext.create('Docs.ClassTree', {
       root: Docs.classData
     });
