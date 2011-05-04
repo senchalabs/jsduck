@@ -64,10 +64,6 @@ describe JsDuck::Tree do
       @class[:text].should == @short_class_name
     end
 
-    it "with href pointing to output/ClassName.html" do
-      @class[:href].should == "output/" + @full_class_name + ".html"
-    end
-
     it "with leaf = true" do
       @class[:leaf].should == true
     end

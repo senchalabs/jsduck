@@ -67,7 +67,6 @@ module JsDuck
     # Given full doc object for class creates class node
     def class_node(cls)
       return {
-        :href => "output/#{cls.full_name}.html",
         :text => cls.short_name,
         :id => cls.full_name,
         :isClass => true,
