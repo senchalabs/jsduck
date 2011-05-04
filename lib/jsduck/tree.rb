@@ -12,7 +12,6 @@ module JsDuck
         :id => "apidocs",
         :iconCls => "icon-docs",
         :text => "API Documentation",
-        :singleClickExpand => true,
         :children => []
       }
       @packages = {"" => @root}
@@ -30,15 +29,15 @@ module JsDuck
     # Sorts all child nodes, and recursively all child packages.
     def sort_tree(node)
       node[:children].sort! {|a,b| compare(a, b) }
-      node[:children].find_all {|c| c[:cls] == "package" }.each {|c| sort_tree(c) }
+      node[:children].find_all {|c| c[:children] }.each {|c| sort_tree(c) }
     end
 
     # Comparson method that sorts package nodes before class nodes.
     def compare(a, b)
-      if a[:cls] == b[:cls]
+      if a[:isClass] == b[:isClass]
         a[:text].casecmp(b[:text])
       else
-        a[:cls] == "package" ? -1 : 1
+        a[:isClass] ? 1 : -1
       end
     end
 
@@ -73,7 +72,6 @@ module JsDuck
         :id => cls.full_name,
         :isClass => true,
         :iconCls => class_icon(cls),
-        :cls => "cls",
         :leaf => true
       }
     end
@@ -94,8 +92,6 @@ module JsDuck
         :id => "pkg-#{name}",
         :text => Class.short_name(name),
         :iconCls => "icon-pkg",
-        :cls => "package",
-        :singleClickExpand => true,
         :children => []
       }
     end

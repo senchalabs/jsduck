@@ -18,10 +18,6 @@ describe JsDuck::Tree do
       @tree[:iconCls].should == "icon-docs"
     end
 
-    it "with singleClickExpand = true" do
-      @tree[:singleClickExpand].should == true
-    end
-
     it "with as many children as there are root packages" do
       @tree[:children].length.should == 1
     end
@@ -43,14 +39,6 @@ describe JsDuck::Tree do
 
     it "with icon being package icon" do
       @package[:iconCls].should == "icon-pkg"
-    end
-
-    it "with cls = 'package'" do
-      @package[:cls].should == "package"
-    end
-
-    it "with singleClickExpand = true" do
-      @package[:singleClickExpand].should == true
     end
 
     it "with as many children as there are classes inside this packages" do
@@ -129,15 +117,15 @@ describe JsDuck::Tree, "lowercase package name" do
   end
 
   it "gets root package node" do
-    @root[:cls].should == 'package'
+    @root[:isClass].should_not == true
   end
 
   it "gets middle package node" do
-    @middle[:cls].should == 'package'
+    @middle[:isClass].should_not == true
   end
 
   it "gets leaf class node" do
-    @leaf[:cls].should == 'cls'
+    @leaf[:isClass].should == true
   end
 
 end
@@ -153,11 +141,11 @@ describe JsDuck::Tree, "uppercase package name" do
   end
 
   it "gets root package node" do
-    @root[:cls].should == 'package'
+    @root[:isClass].should_not == true
   end
 
   it "gets middle class node" do
-    @middle[:cls].should == 'cls'
+    @middle[:isClass].should == true
   end
 
   it "gets class name containing package name" do
