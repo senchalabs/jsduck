@@ -33,7 +33,9 @@ module JsDuck
     # Returns array of mixin class instances.
     # Returns empty array if no mixins
     def mixins
-      @doc[:mixins] ? @doc[:mixins].collect {|classname| lookup(classname) }.compact : []
+      m = @doc[:mixins] ? @doc[:mixins].collect {|classname| lookup(classname) }.compact : []
+      p = parent
+      p ? (p.mixins + m) : m
     end
 
     # Returns all mixins this class and its parent classes

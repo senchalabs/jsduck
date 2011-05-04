@@ -97,6 +97,8 @@ module JsDuck
           at_type
         elsif look(/@xtype\b/)
           at_xtype
+        elsif look(/@ftype\b/)
+          at_ftype
         elsif look(/@member\b/)
           at_member
         elsif look(/@author\b/)
@@ -112,6 +114,9 @@ module JsDuck
         elsif look(/@markdown\b/)
           # this is detected just to be ignored
           boolean_at_tag(/@markdown/, :markdown)
+        elsif look(/@abstract\b/)
+          # this is detected just to be ignored
+          boolean_at_tag(/@abstract/, :abstract)
         elsif look(/@/)
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/)
@@ -240,6 +245,14 @@ module JsDuck
     def at_xtype
       match(/@xtype/)
       add_tag(:xtype)
+      maybe_ident_chain(:name)
+      skip_white
+    end
+
+    # matches @ftype name
+    def at_ftype
+      match(/@ftype/)
+      add_tag(:ftype)
       maybe_ident_chain(:name)
       skip_white
     end
