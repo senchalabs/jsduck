@@ -26,13 +26,9 @@ var getDocClass = function(cls, noHistory) {
         cls = cls.substr(0, hashIdx);
     }
 
-    // if (!noHistory && window.history && window.history.pushState) {
-    //     var fullUrl = req.baseDocURL + "/" + cls;
-    //     window.history.pushState({
-    //         docClass: cls
-    //     },
-    //     '', fullUrl);
-    // }
+    if (!noHistory) {
+        Docs.History.push(cls);
+    }
 
     var docTabPanel = Ext.getCmp('docTabPanel');
     if (docTabPanel) {
@@ -47,7 +43,7 @@ var getDocClass = function(cls, noHistory) {
         }
 
         Ext.Ajax.request({
-            url: req.baseDocURL + '/output/' + cls + '.json',
+            url: Docs.App.getBaseUrl() + '/output/' + cls + '.json',
             success: function(response, opts) {
                 var json = Ext.JSON.decode(response.responseText);
                 classCache[cls] = json;

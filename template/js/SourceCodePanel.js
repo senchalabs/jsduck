@@ -8,7 +8,7 @@ Ext.define('Docs.SourceCodePanel', {
         activate: function(a,b,c) {
             var self = this;
 
-            var url = req.baseDocURL + '/source/' + req.source,
+            var url = Docs.App.getBaseUrl() + '/source/' + req.source,
                 idx = url.indexOf('#');
             if (idx) {
                 url = url.substr(0, idx);

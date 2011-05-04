@@ -144,16 +144,8 @@ Ext.onReady(function() {
 
     var classSearch;
 
-    if (req.standAloneMode) {
-        if (window.location.href.match(/api/)) {
-            req.baseDocURL = '../';
-        } else if (window.location.href.match(/guide/)) {
-            req.baseDocURL = '../';
-        }
-    }
-
     Ext.Ajax.request({
-        url: req.baseDocURL + '/class_search.json',
+        url: Docs.App.getBaseUrl() + '/class_search.json',
         success: function(response) {
             classSearch = Ext.JSON.decode(response.responseText);
         }

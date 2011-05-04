@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^api:(.*)$ index.html [QSA]
