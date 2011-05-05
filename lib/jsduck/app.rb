@@ -221,12 +221,8 @@ module JsDuck
     def link_template(template_dir, dir)
       puts "Linking template files to #{dir}..." if @verbose
       FileUtils.mkdir(dir)
-      # Use File::FNM_DOTMATCH to include .htaccess
-      Dir.glob(template_dir + "/*", File::FNM_DOTMATCH).each do |file|
-        basename = File.basename(file)
-        unless basename == "." || basename == ".."
-          File.symlink(File.expand_path(file), dir+"/"+basename)
-        end
+      Dir.glob(template_dir + "/*").each do |file|
+        File.symlink(File.expand_path(file), dir+"/"+File.basename(file))
       end
       init_output_dirs(dir)
     end

@@ -19,7 +19,7 @@ Ext.define("Docs.History", {
             return false;
         }, false);
 
-        var matches = document.location.href.match(/\/api:(.*)/);
+        var matches = document.location.hash.match(/#\/api\/(.*)/);
         if (matches) {
             var className = matches[1];
             getDocClass(className, true);
@@ -30,7 +30,7 @@ Ext.define("Docs.History", {
         if (!this.compliant) {
             return;
         }
-        var fullUrl = Docs.App.getBaseUrl() + "/api:" + className;
+        var fullUrl = Docs.App.getBaseUrl() + "#/api/" + className;
         window.history.pushState({docClass: className}, '', fullUrl);
     }
 });
