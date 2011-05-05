@@ -68,7 +68,7 @@ module JsDuck
     def class_node(cls)
       return {
         :text => cls.short_name,
-        :id => cls.full_name,
+        :clsName => cls.full_name,
         :isClass => true,
         :iconCls => class_icon(cls),
         :leaf => true
@@ -88,7 +88,6 @@ module JsDuck
     # Given full package name like my.package creates package node
     def package_node(name)
       return {
-        :id => "pkg-#{name}",
         :text => Class.short_name(name),
         :iconCls => "icon-pkg",
         :children => []
