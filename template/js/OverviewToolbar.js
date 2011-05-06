@@ -4,7 +4,6 @@
 Ext.define('Docs.OverviewToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     dock: 'top',
-    id: 'overview-toolbar',
     cls: 'member-links',
     padding: '3 5',
 

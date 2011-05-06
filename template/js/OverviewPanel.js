@@ -47,7 +47,7 @@ Ext.define('Docs.OverviewPanel', {
 
     initComponent: function() {
         this.dockedItems = [
-            Ext.create('Docs.OverviewToolbar', {
+            this.toolbar = Ext.create('Docs.OverviewToolbar', {
               docClass: this.docClass
             })
         ];
@@ -60,10 +60,12 @@ Ext.define('Docs.OverviewPanel', {
     },
 
     load: function(docClass) {
-      this.removeDocked(Ext.getCmp('overview-toolbar'), true);
-      this.addDocked(Ext.create('Docs.OverviewToolbar', {
+      this.removeDocked(this.toolbar, true);
+      this.toolbar = Ext.create('Docs.OverviewToolbar', {
         docClass: docClass
-      }));
+      });
+      this.addDocked(this.toolbar);
+
       this.update(docClass.doc);
     }
 });
