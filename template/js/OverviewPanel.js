@@ -6,6 +6,12 @@ Ext.define('Docs.OverviewPanel', {
     title: 'Overview',
     autoScroll: true,
 
+    /**
+     * @cfg {Object} docClass
+     * Documentation for a class.
+     */
+    docClass: {},
+
     scrollToEl: function(query) {
         var el = Ext.get(Ext.query(query)[0]);
         if (el) {
@@ -41,7 +47,9 @@ Ext.define('Docs.OverviewPanel', {
 
     initComponent: function() {
         this.dockedItems = [
-            Ext.create('Docs.OverviewToolbar')
+            Ext.create('Docs.OverviewToolbar', {
+              docClass: this.docClass
+            })
         ];
 
         if (Ext.get('doc-overview-content')) {
@@ -49,5 +57,13 @@ Ext.define('Docs.OverviewPanel', {
         }
 
         this.callParent(arguments);
+    },
+
+    load: function(docClass) {
+      this.removeDocked(Ext.getCmp('overview-toolbar'), true);
+      this.addDocked(Ext.create('Docs.OverviewToolbar', {
+        docClass: docClass
+      }));
+      this.update(docClass.doc);
     }
 });

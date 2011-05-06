@@ -57,12 +57,12 @@ var getDocClass = function(cls, noHistory) {
 };
 
 var showClass = function(cls, anchor) {
-    window.clsInfo = cls;
-
     var docTabPanel = Ext.getCmp('docTabPanel');
     if (!docTabPanel) {
          Ext.get('docContent').update('');
-         Ext.create('Docs.ClassPanel');
+         Ext.create('Docs.ClassPanel', {
+           docClass: cls
+         });
     }
 
     Ext.get('docTabPanel').show();
@@ -72,10 +72,7 @@ var showClass = function(cls, anchor) {
     }
 
     var docOverviewTab = Ext.getCmp('doc-overview');
-
-    docOverviewTab.update(cls.doc);
-    docOverviewTab.removeDocked(Ext.getCmp('overview-toolbar'), true);
-    docOverviewTab.addDocked(Ext.create('Docs.OverviewToolbar'));
+    docOverviewTab.load(cls);
     docOverviewTab.setLoading(false);
 
     prettyPrint();

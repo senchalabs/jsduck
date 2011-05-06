@@ -8,6 +8,12 @@ Ext.define('Docs.OverviewToolbar', {
     cls: 'member-links',
     padding: '3 5',
 
+    /**
+     * @cfg {Object} docClass
+     * Documentation for a class.
+     */
+    docClass: {},
+
     initComponent: function() {
         this.items = [];
 
@@ -18,7 +24,7 @@ Ext.define('Docs.OverviewToolbar', {
             event: "Events"
         };
         for (var type in memberTitles) {
-            var members = clsInfo[type];
+            var members = this.docClass[type];
             if (members.length) {
                 this.items.push(this.createMemberButton({
                     items: members,
@@ -28,9 +34,9 @@ Ext.define('Docs.OverviewToolbar', {
             }
         }
 
-        if (clsInfo.subclasses.length) {
+        if (this.docClass.subclasses.length) {
             this.items.push(this.createSubClassesButton({
-                items: clsInfo.subclasses,
+                items: this.docClass.subclasses,
                 title: "Sub Classes"
             }));
         }
