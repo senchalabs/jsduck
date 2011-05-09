@@ -7,3 +7,8 @@ Either copy over ExtJS directory or create symlink to it.
 or
 
     $ ln -s /path/to/ext-4.0.0 template/extjs
+
+Then run compass to generate custom ExtJS theme:
+
+    $ compass template/resources/sass
+
