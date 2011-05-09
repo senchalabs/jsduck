@@ -16,7 +16,7 @@ css_path = File.join(sass_path, "..", "css")
 # output_style: The output style for your compiled CSS
 # nested, expanded, compact, compressed
 # More information can be found here http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html#output_style
-output_style = :compressed
+output_style = :compact
 
 # We need to load in the Ext4 themes folder, which includes all it's default styling, images, variables and mixins
 load File.join(File.dirname(__FILE__), $ext_path, 'resources', 'themes')

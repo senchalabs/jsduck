@@ -1,0 +1,950 @@
+@mixin box-shadow
+  -webkit-box-shadow: arguments
+  -moz-box-shadow: arguments
+
+@mixin border-radius
+  border-radius: arguments
+  -moz-border-radius: arguments
+
+@mixin border-radius-bottom
+  border-bottom-left-radius: arguments
+  border-bottom-right-radius: arguments
+
+@mixin border-top-left-radius
+  border-top-left-radius: arguments
+  -moz-border-radius-topleft: arguments
+
+@mixin border-top-right-radius
+  border-top-right-radius: arguments
+  -moz-border-radius-topright: arguments
+
+@mixin border-bottom-left-radius
+  -webkit-border-bottom-left-radius: arguments
+  -moz-border-radius-bottomleft: arguments
+
+@mixin border-bottom-right-radius
+  border-bottom-right-radius: arguments
+  -moz-border-radius-bottomright: arguments
+
+@mixin vertical-gradient($fromCol, $toCol)
+  background: -webkit-gradient(linear, left top, left bottom, from($fromCol), to($toCol))
+  background: -moz-linear-gradient(top, $fromCol, $toCol)
+
+@mixin horizontal-gradient($fromCol, $toCol)
+  background: -webkit-gradient(linear, left top, right top, from($fromCol), to($toCol))
+  background: -moz-linear-gradient(left, $fromCol, $toCol)
+
+@mixin icons
+  .icon-pkg
+    background: url(../images/icons.png) no-repeat -3px -57px !important
+  .icon-class
+    background: url(../images/icons.png) no-repeat -3px -84px !important
+  .icon-singleton
+    background: url(../images/icons.png) no-repeat -3px -111px !important
+  .icon-component
+    background: url(../images/icons.png) no-repeat -3px -137px !important
+  .icon-book
+    background: url(../images/icons.png) no-repeat -3px -5px !important
+  .icon-event
+    background: url(../images/icons.png) no-repeat -3px -245px !important
+  .icon-property
+    background: url(../images/icons.png) no-repeat -3px -192px !important
+  .icon-method
+    background: url(../images/icons.png) no-repeat -3px -165px !important
+  .icon-config
+    background: url(../images/icons.png) no-repeat -3px -219px !important
+  .icon-subclass
+    background: url(../images/icons.png) no-repeat -3px -299px !important
+  .icon-fav
+    background: url(../images/favorite2.png) no-repeat 0 -2px
+    padding-left: 20px
+  .icon-hist
+    background: url(../images/favorite2.png) no-repeat 0 -40px
+    padding-left: 20px
+
+@mixin gray-h4
+  h4
+    font-family: HelveticaNeue, Helvetica, Arial, sans-serif
+    font-size: 90%
+    padding: 11px 0 5px 0
+    text-transform: uppercase
+    color: #999
+
+html
+  background: #F8F8F8
+body
+  -webkit-font-smoothing: antialiased
+  font: 13px/1.231 HelveticaNeue,helvetica,arial,clean,sans-serif
+  min-width: 980px
+  color: #484848
+a
+  color: #083772
+  text-decoration: none
+  &:hover
+    color: #0464BB
+
+pre, code, kbd, samp, tt
+  font-family: 'Menlo', 'Courier New', Courier, monospace
+
+.lft
+  h2
+    font-weight: bold
+
+.list
+  font-size: 0.9em
+
+.head-band
+  background: #043250
+  height: 5px
+  width: 100%
+.header
+  @include vertical-gradient(#064872, #085b88)
+  border-top: 1px solid #0b5f8a
+  border-bottom: 1px solid #fff
+  height: 65px
+  width: 100%
+  h2
+    a
+      display: block
+      text-indent: -9999px
+      background: url(../images/icon.png) 0 -787px no-repeat
+      margin-left: 20px
+      width: 150px
+      color: #000
+      height: 70px
+#search
+  position: absolute
+  top: 75px
+  form
+    position: absolute
+    margin: 10px 0 0 20px
+    width: 219px
+    height: 30px
+    background: url(../images/search-box.png) no-repeat
+    z-index: 11
+    #search-field
+      position: absolute
+      top: 6px
+      left: 30px
+      width: 155px
+      border: 0
+      background: none
+  #quick-search
+    border-style: solid
+    border-color: #bebdbf
+    border-width: 0 1px
+    background: #fff
+    position: absolute
+    width: 190px
+    top: 23px
+    padding-top: 16px
+    left: 20px
+    z-index: 5
+  .item
+    display: block
+    cursor: pointer
+    overflow: hidden
+    padding: 5px 5px 5px 30px
+    border-width: 0px 0px 1px 0px
+    border-style: solid
+    border-color: #bebdbf
+    .title
+      color: #605f5f
+      font-weight: bold
+      overflow: hidden
+      text-overflow: ellipsis
+    .class
+      color: #605f5f
+      font-size: 0.85em
+      overflow: hidden
+      text-overflow: ellipsis
+  .item.config
+    background: url(../images/configs.png) no-repeat 0 3px
+  .item.property
+    background: url(../images/properties.png) no-repeat 3px 8px
+  .item.method
+    background: url(../images/methods.png) no-repeat 3px 5px
+  .item.event
+    background: url(../images/events.png) no-repeat 4px 0px
+  .item.cls
+    background: url(../images/class-sm.png) no-repeat 3px 5px
+  .item.x-item-selected
+    background-color: #ffa
+  .item.x-view-over
+    background-color: #ffa
+
+
+.footer
+  clear: both
+  color: #999
+  text-align: center
+  border-top: 1px solid #ccc
+  padding: 20px
+  margin: 20px
+
+#container
+  padding: 12px 20px 20px 20px
+  margin: -50px 20px 20px 260px
+  border-radius: 5px
+  box-shadow: 0 0 4px rgba(0,0,0, 0.4)
+  background: #fff
+
+  nav.bc
+    font: 1.1em "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+    margin-top: -10px
+    margin-bottom: 10px
+    color: #aaa
+    a
+      color: #aaa
+  h1
+    font-family: "klavika-web-1", "klavika-web-2", sans-serif
+    letter-spacing: -1px
+    padding-bottom: 5px
+    padding-top: 2px
+    border-bottom: 1px #f1f1f1
+    font-size: 2.3em
+    color: #66AB16
+    a
+      color: #66AB16
+    span
+      color: #929292
+      letter-spacing: 0
+      margin-left: 10px
+      font-size: 0.6em
+  h1.cls
+    a
+      background: url(../images/class-m.png) no-repeat 0 -5px
+      margin-left: -12px
+      padding: 0.1em 0 0.4em 2em
+  h1.comp
+    a
+      background: url(../images/component-m.png) no-repeat 0 -5px
+      margin-left: -12px
+      padding: 0.1em 0 0.4em 2em
+  h1.sing
+    a
+      background: url(../images/singleton-m.png) no-repeat 0 -5px
+      margin-left: -12px
+      padding: 0.1em 0 0.4em 2em
+  .versions *
+    box-sizing: content-box
+  .versions
+    position: absolute
+    top: 26px
+    right: 20px
+    .desc
+      position: absolute
+      top: -13px
+      right: 10px
+      width: 200px
+      text-align: right
+      font-size: 0.8em
+      text-transform: uppercase
+      color: #aaa
+    .v
+      position: absolute
+      font-size: 0.8em
+      width: 35px
+      padding-right: 15px
+      line-height: 15px
+      text-align: right
+      background: url(../images/version-tabs.png) no-repeat
+    .v.active
+      background-position: -42px -40px
+      color: #757575
+    .v.active.last
+      background-position: -90px -40px
+    .v.active.first
+      background-position: 0 -40px
+    .v.active:hover
+      background-position: -42px -20px
+      color: #fff
+    .v.active.last:hover
+      background-position: -90px -20px
+      color: #fff
+    .v.active.first:hover
+      background-position: 0 -20px
+      color: #fff
+    .v.inactive
+      background-position: -42px 0
+      color: #acacac
+    .v.inactive.first
+      background-position: 0 0
+    .v.inactive.last
+      background-position: -90px -40px
+    .v.selected
+      background-position: -42px -20px
+      color: #fff
+      font-weight: bold
+    .v.selected.first
+      background-position: 0 -20px
+    .v.selected.last
+      background-position: -90px -20px
+    .v.first
+      width: 27px
+    .v.last
+      width: 40px
+    .i1
+      z-index: 1
+      right: 0px
+    .i2
+      z-index: 2
+      right: 32px
+    .i3
+      right: 64px
+      z-index: 3
+    .i4
+      right: 96px
+      z-index: 4
+    .i5
+      right: 128px
+      z-index: 5
+    .i6
+      right: 160px
+      z-index: 6
+    .i7
+      right: 192px
+      z-index: 7
+    .i8
+      right: 224px
+      z-index: 8
+    .i9
+      right: 256px
+      z-index: 9
+    .i10
+      right: 288px
+      z-index: 10
+
+#doc-overview
+  h1
+    font-size: 1.2em
+    font-weight: bold
+    padding-bottom: 0.5em
+#doc-overview, .guide
+  pre
+    background-color: #F7F7F7
+    border: solid 1px #E8E8E8
+    border-radius: 5px
+    color: #314E64
+    font-family: 'Menlo', 'Courier New', Courier, monospace
+    padding: 10px 20px
+    line-height: 1.3em
+    margin: 10px 0 14px
+    overflow-x: auto
+    overflow-y: hidden
+    code
+      font-family: 'Menlo', 'Courier New', Courier, monospace
+
+    i,em
+      font-style: normal
+  pre.prettyprint
+    padding: 10px 12px
+
+#api-overview
+  overflow: auto
+  position: absolute
+  bottom: 50px
+  top: 0
+  left: 0
+  right: 0
+  h1
+    padding: 0.5em 0 0 0
+    font-size: 2em
+  line-height: 1.4em
+  h3
+    font-size: 1.2em
+    padding: 1em 0 0.4em 0
+    font-weight: normal
+  .guides
+    width: 650px !important
+    line-height: 1.7em
+    .lft
+      float: left
+      width: 220px
+    .mid
+      float: left
+      width: 180px
+      margin-left: 20px
+    .right
+      margin-left: 410px
+    a
+      display: block
+      height: 32px
+      margin: 10px 0
+      padding-left: 40px
+    .getting_started
+      background: url(../images/guides.png) no-repeat 0px 0px
+    .drawing_and_charting
+      background: url(../images/guides.png) no-repeat 0px -288px
+    .layouts_and_containers
+      background: url(../images/guides.png) no-repeat 0px -130px
+    .application_architecture
+      background: url(../images/guides.png) no-repeat 0px -98px
+    .class_system
+      background: url(../images/guides.png) no-repeat 0px -31px
+    .data
+      background: url(../images/guides.png) no-repeat 0px -66px
+    .grid
+      background: url(../images/guides.png) no-repeat 0px -193px
+    .tree
+      background: url(../images/guides.png) no-repeat 0px -228px
+    .components
+      background: url(../images/guides.png) no-repeat 0px -160px
+    .theming
+      background: url(../images/guides.png) no-repeat 0px -320px
+    .direct
+      background: url(../images/guides.png) no-repeat 0px -387px
+    .accessibility
+      background: url(../images/guides.png) no-repeat 0px -453px
+  .category
+    clear: both
+    background-color: #f7f7f7
+    border: 1px solid #ebebeb
+    padding: 10px 10px 20px 20px
+    margin: 0 20px 20px 0
+    border-radius: 10px
+  .lft
+    float: left
+    width: 270px
+    margin-left: 20px
+  .mid
+    float: left
+    width: 320px
+  .rgt
+    float: left
+  .links
+    margin-left: 1.5em
+    a
+      display: block
+    a.more
+      font-weight: bold
+  .stats
+    .c
+      text-align: center
+    .pl
+      padding: 0 5px 0 15px
+      border-left: 1px solid #ccc
+    .pr
+      padding: 0 15px 0 5px
+      border-right: 1px solid #ccc
+    .p
+      padding: 0 15px
+      border-left: 1px solid #ccc
+      border-right: 1px solid #ccc
+    th.c
+      font-weight: bold
+    td
+      border-width: 1px 1px 0 1px
+      border-style: solid
+      border-color: #eee
+    tr.bot
+      th
+        padding-bottom: 10px
+        border-bottom: 1px solid #ccc
+  .legend
+    border-radius: 5px
+    background-color: #f7f7f7
+    border: 1px solid #ebebeb
+    padding: 0 15px 15px 10px
+    margin: 0 20px 10px 0
+    width: 300px
+    .icn
+      padding-left: 22px
+    a
+      display: block
+    @iclude gray-h4
+
+#api-overview.classList
+  h2
+    font-weight: bold
+  td
+    padding: 0 0 0 20px
+    vertical-align: top
+  .group
+    h1
+      padding-bottom: 10px
+    background: #fafafa
+    padding: 10px 20px 20px 20px
+    margin: 0 20px 20px 0
+    border-radius: 10px
+    h2
+      border-bottom: 1px solid #ddd
+      padding-bottom: 2px
+      margin-bottom: 2px
+      padding-top: 10px
+    td.l
+      span
+        font-family: courier
+        padding-right: 3px
+  .piechartLinks
+    a
+      display: block
+
+#docContent
+  position: relative
+  margin: 10px 0
+  overflow: auto
+.doc-tab,.guide
+  min-height: 100px
+  .clr
+    clear: both
+  p
+    padding: 0
+    margin: 0 0 1em
+  em
+    font-style: italic
+  strong
+    font-weight: bold
+  ul
+    margin: 0 0 1em 2em
+    li
+      list-style: disc outside
+  h3
+    font-weight: bold
+    font-size: 1.1em
+  h4
+    font-weight: bold
+#container
+  .guide
+    top: 10px
+    padding-right: 10px
+    font-size: 14px
+    h1
+      background: url(../images/doc-m.png) no-repeat -5px 0
+      padding: 5px 0 10px 55px
+
+      font-family: "klavika-web-1", "klavika-web-2", sans-serif
+      letter-spacing: -1px
+      margin-bottom: 16px
+      font-size: 2.3em
+      color: #66AB16
+    h2
+      font-family: Helvetica Neue, Helvetica, Arial, sans-serif
+      letter-spacing: -1px
+      line-height: 20px
+      border-bottom: 1px solid #f1f1f1
+      font-size: 20px
+      font-weight: bold
+      color: #314E64
+      margin: 30px 0 15px
+      padding-bottom: 5px
+    h3
+      font-weight: bold
+      color: #314E64
+      margin-top: 1em
+      font-size: 14px
+      line-height: 16px
+      margin-bottom: 4px
+    hr
+      display: none
+.doc-tab
+  .lft
+    margin: 0 20px
+    padding: 20px 0
+    .deprecated
+      font-weight: bold
+      text-transform: uppercase
+      color: white
+      font-size: 0.7em
+      border-radius: 2px
+      margin-left: 5px
+      padding: 0 3px
+      background-color: #a00
+    .new
+      font-weight: bold
+      color: white
+      font-size: 0.7em
+      border-radius: 2px
+      margin-left: 5px
+      padding: 0 3px
+      background-color: #0a0
+    .cfgGroup
+      margin: 10px 0 3px 0
+  .members
+    color: #444
+    padding-top: 10px
+    clear: both
+    :first-child
+      padding-top: 0
+    .pre
+      font-family: 'Menlo', 'Courier New', Courier, monospace
+      font-size: 0.9em
+    .definedBy
+      float: right
+      padding: 20px 20px 0 0
+      font-weight: bold
+      color: #666
+    h3.pa
+      padding: 10px 0 5px 0
+    h3.p
+      padding: 15px 0 10px 30px
+      font-size: 1.3em
+      font-weight: bold
+      &.cfg
+        background: url(../images/configs.png) no-repeat 0 15px
+      &.prp
+        background: url(../images/properties.png) no-repeat 0 19px
+      &.mth
+        background: url(../images/methods.png) no-repeat 0 16px
+      &.evt
+        background: url(../images/events.png) no-repeat 0 11px
+    ul ul
+      list-style: circle
+      margin-top: 1em
+    .sub-desc
+      margin: .5em 0 1em
+    .description
+      .short
+        p
+          margin: 0
+    a
+      text-decoration: none
+    .member.f
+      border-width: 1px
+    .member
+      position: relative
+      min-height: 2.5em
+      .long
+        display: none
+      .meta
+        float: right
+        text-align: right
+      a.definedIn
+        color: #888
+        font-size: 0.9em
+        &:hover
+          color: #0464BB
+      a.more
+        display: block
+        position: absolute
+        top: 0
+        left: 0
+        bottom: 0
+        background: #aaa
+        @include horizontal-gradient(#f9f9f9, #eff0f2)
+        span
+          display: block
+          width: 15px
+        &.ar
+          span
+            background: url(../images/member-collapsed.gif) no-repeat 2px 2px
+          &:hover
+            span
+              background: url(../images/member-hover.gif) no-repeat 2px 2px
+      a.viewSource
+        color: rgba(0,0,0,0)
+        -webkit-transition: color .2s linear
+        font-size: 0.9em
+        &:hover
+          color: #0464BB
+      &:hover
+        a.viewSource
+          color: rgba(128, 128, 128, 1)
+          -webkit-transition: color .2s linear
+      &.open
+        a.more.ar
+          @include horizontal-gradient(#ebf3fe, #d9e8fc)
+          span
+            background: url(../images/member-expanded.gif) no-repeat 1px 2px
+        .short
+          display: none
+        .long
+          display: block
+      border-style: solid
+      border-color: #d0d0d0
+      border-width: 0 1px 1px 1px
+      padding: 5px 22px
+      .cls
+        font-weight: bold
+      .title
+        padding-bottom: 3px
+
+#doc-overview
+  img.screenshot
+    display: block
+    padding: 10px 0
+  .subclasses
+    border-radius: 5px
+    background-color: #f7f7f7
+    border: 1px solid #ebebeb
+    padding: 0 15px 15px 10px
+    float: right
+    margin: 0 0 20px 20px
+    font-size: 12px
+    @include gray-h4
+    .mixin
+      padding: 0 0 0 12px
+      margin-top: 3px
+    .subclass
+      background: url(/images/elbow-end.gif) no-repeat -5px 0
+      margin-top: 3px
+      padding: 0 0 0 12px
+      &.f
+        background: none
+        padding-left: 15px
+
+
+#doc-examples
+  display: relative
+  min-height: 440px
+  .expl
+    padding: 20px 0 10px 0
+  h1
+    font-family: Arial
+    font-size: 1.6em
+  h2
+    padding-bottom: 10px
+
+  .egCode
+    width: 400px
+    margin-bottom: 10px
+
+  .codemirrorCode, .cssCode
+    border: 2px solid #aaa
+    margin-bottom: 10px
+
+  .exampleIframe
+    position: absolute
+    left: 20px
+    right: 20px
+    top: 20px
+    iframe
+      border: 0
+      width: 100%
+      height: 100%
+
+  .CodeMirror
+    height: 300px
+
+  .examplesList
+    float: left
+    width: 200px
+    .item
+      a
+        font-weight: bold
+        min-height: 230px
+        display: block
+        float: left
+        width: 250px
+        text-align: center
+        margin: 0 15px
+        img
+          padding-bottom: 5px
+  .rhs
+    margin-left: 220px
+    .doc-tab
+      left: 240px
+      top: 131px
+      bottom: 20px
+      right: 20px
+      margin-top: -77px
+      padding: 20px
+
+.member-links
+  border-width: 0 0 1px 0
+  border-style: solid
+  border-color: #bfbfbf
+  // @include vertical-gradient(#e8e8e8, #eaeaea)
+  .num
+    font-size: 0.8em
+    position: relative
+    top: -4px
+  .expandAllMembers
+    background: url(../images/expandcollapse.png) no-repeat -14px 2px
+  .collapseAllMembers
+    background: url(../images/expandcollapse.png) no-repeat 2px 2px
+  .member_sm
+    position: absolute
+    padding: 5px 15px 10px
+    background: #EAEAEA
+    z-index: 8
+    top: 21px
+    line-height: 1.3em
+    border: 1px solid #BFBFBF
+    border-top: 1px solid #EAEAEA
+    left: -16px
+    border-radius-bottom: 5px
+    h2
+      font-weight: bold
+      text-decoration: underline
+      padding-bottom: 5px
+    a
+      display: block
+      position: relative
+      padding: 2px 30px 2px 0
+      color: #0464BB
+      white-space: nowrap
+      &:hover
+        color: #083772
+        text-decoration: underline
+    .l
+      vertical-align: top
+#doc-source
+  .x-panel-body-default
+    background: #f7f7f7
+    padding: 0
+    margin: 0
+    .prettyprint
+      background-color: #F7F7F7
+      line-height: 1.3em
+      overflow-x: auto
+      overflow-y: hidden
+      code
+        font-family: 'Menlo', 'Courier New', Courier, monospace
+      i,em
+        font-style: normal
+      font-size: 11px
+      border: 0
+      margin: 0
+      padding: 10px
+      overflow: none
+#treePanel
+  position: absolute
+  top: 75px
+  width: 240px
+  padding: 50px 0 0 0px
+  .x-grid-cell-inner
+    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+    font-size: 13px
+    position: relative
+    -webkit-transition: background-color .15s linear
+    a.fav
+      display: block
+      width: 15px
+      height: 15px
+      position: absolute
+      right: 3px
+      z-index: 20
+      top: 0
+    @include icons
+  .x-grid-row-over
+    .x-grid-cell-inner
+      -webkit-transition: background-color .15s linear
+      a.fav
+        background: url(../images/favorite.png) no-repeat -21px -1px
+        &:hover
+          background: url(../images/favorite.png) no-repeat -2px -1px
+    .x-tree-node-el.fav
+      a.fav
+        background: url(../images/favorite.png) no-repeat -2px -1px
+  .x-panel-body
+    background: #f8f8f8
+  .sortBy
+    position: relative
+    padding-bottom: 10px
+    #expandAll
+      width: 13px
+      height: 15px
+      position: absolute
+      top: 4px
+      right: 40px
+      display: block
+      background: url(../images/expandcollapse.png) no-repeat -14px 2px
+    #collapseAll
+      width: 13px
+      height: 15px
+      position: absolute
+      top: 4px
+      right: 20px
+      display: block
+      background: url(../images/expandcollapse.png) no-repeat 0 2px
+  h2
+    text-transform: uppercase
+    font-weight: bold
+    font-family: "Helvetica Neue"
+    color: #8a8a8a
+  .favorites
+    padding: 10px
+    margin: 0 10px 10px 0
+
+.treePanel
+  position: absolute
+  top: 215px
+  bottom: 20px
+  overflow: auto
+  width: 230px
+
+.piechartLinks
+  a
+    text-decoration: none
+    padding-left: 15px
+  .a0
+    background: url(../images/piecharts.png) no-repeat 0 -78px
+  .a1
+    background: url(../images/piecharts.png) no-repeat 0 -61px
+  .a2
+    background: url(../images/piecharts.png) no-repeat 0 -45px
+  .a3
+    background: url(../images/piecharts.png) no-repeat 0 -29px
+  .a4
+    background: url(../images/piecharts.png) no-repeat 0 -13px
+  .a5
+    background: url(../images/piecharts.png) no-repeat 0 3px
+  .ra0
+    background: url(../images/piecharts_red.png) no-repeat 0 -78px
+    min-width: 15px
+    min-height: 15px
+  .ra1
+    background: url(../images/piecharts_red.png) no-repeat 0 -61px
+    min-width: 15px
+    min-height: 15px
+  .ra2
+    background: url(../images/piecharts_red.png) no-repeat 0 -45px
+    min-width: 15px
+    min-height: 15px
+  .ra3
+    background: url(../images/piecharts_red.png) no-repeat 0 -29px
+    min-width: 15px
+    min-height: 15px
+  .ra4
+    background: url(../images/piecharts_red.png) no-repeat 0 -13px
+    min-width: 15px
+    min-height: 15px
+  .ra5
+    background: url(../images/piecharts_red.png) no-repeat 0 3px
+    min-width: 15px
+    min-height: 15px
+
+@include icons
+
+.cfgStats
+  margin-top: 10px
+  th
+    padding: 10px
+    font-weight: bold
+  td
+    padding: 10px
+    vertical-align: top
+  .o
+    td
+      background-color: #eee
+
+.searchResults
+  th
+    text-align: left
+    font-weight: bold
+  td
+    height: 20px
+    border-top: 1px solid #ccc
+    padding: 3px 6px 3px 3px
+  .icn
+    width: 20px
+    height: 20px
+  .result
+    font-weight: bold
+
+.historyBut
+  button
+    border: 0
+    padding-right: 10px
+    background: url('../../extjs/resources/themes/images/default/button/arrow.gif') no-repeat top right
+
+.notice
+  background-color: #fff99c
+  text-align: center
+  color: #434343
+  font-weight: bold
+  padding: 8px 0
+.wrapper
+  position: relative
+
