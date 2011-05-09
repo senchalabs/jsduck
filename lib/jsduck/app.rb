@@ -22,7 +22,6 @@ module JsDuck
     attr_accessor :output_dir
     attr_accessor :template_dir
     attr_accessor :template_links
-    attr_accessor :extjs_dir
     attr_accessor :input_files
     attr_accessor :verbose
     attr_accessor :export
@@ -34,7 +33,6 @@ module JsDuck
       @output_dir = nil
       @template_dir = nil
       @template_links = false
-      @extjs_dir = nil
       @input_files = []
       @verbose = false
       @export = nil
@@ -70,11 +68,6 @@ module JsDuck
           link_template(@template_dir, @output_dir)
         else
           copy_template(@template_dir, @output_dir)
-        end
-        if @template_links
-          File.symlink(File.expand_path(@extjs_dir), @output_dir+"/extjs")
-        else
-          FileUtils.cp_r(File.expand_path(@extjs_dir), @output_dir+"/extjs")
         end
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }

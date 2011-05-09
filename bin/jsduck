@@ -34,10 +34,6 @@ opts = OptionParser.new do | opts |
     app.template_dir = path
   end
 
-  opts.on('--extjs=PATH', "Directory containing ExtJS.") do |path|
-    app.extjs_dir = path
-  end
-
   opts.on('--template-links', "Instead of copying template files, create symbolic links.",
     "Useful for template files development.",
     "Only works on platforms supporting symbolic links.") do
@@ -113,9 +109,6 @@ elsif File.exists?(app.output_dir) && !File.directory?(app.output_dir)
   exit(1)
 elsif !File.exists?(File.dirname(app.output_dir))
   puts "Oh noes!  The parent directory for #{output_dir} doesn't exist."
-  exit(1)
-elsif !app.export && !app.extjs_dir
-  puts "You must specify directory containing ExtJS using --extjs option :("
   exit(1)
 end
 
