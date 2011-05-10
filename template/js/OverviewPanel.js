@@ -58,8 +58,9 @@ Ext.define('Docs.OverviewPanel', {
 
         this.callParent(arguments);
 
+        this.firstChildCounters = {};
         var cfgTemplate = new Ext.XTemplate(
-            '<div class="member f ni">',
+            '<div class="member {[this.firstChild(values)]}">',
                 '<a href="Ext.Action.html#config-disabled" rel="config-disabled" class="expand more">',
                     '<span>&nbsp;</span>',
                 '</a>',
@@ -76,7 +77,17 @@ Ext.define('Docs.OverviewPanel', {
                 '<div class="description">',
                     '{doc}',
                 '</div>',
-            '</div>'
+            '</div>',
+            {
+                firstChild: Ext.bind(function(cfg) {
+                    var cs = this.firstChildCounters;
+                    cs[cfg.tagname] = cs[cfg.tagname] ? cs[cfg.tagname]+1 : 1;
+                    if (cs[cfg.tagname] === 1) {
+                        return "first-child";
+                    }
+                    return "";
+                }, this)
+            }
         );
 
         this.tpl = new Ext.XTemplate(
@@ -128,6 +139,7 @@ Ext.define('Docs.OverviewPanel', {
       });
       this.addDocked(this.toolbar);
 
+      this.firstChildCounters = {};
       this.update(this.tpl.apply(docClass));
     }
 });
