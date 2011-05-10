@@ -71,13 +71,14 @@ var showClass = function(cls, anchor) {
         pageContent.setVisibilityMode(Ext.core.Element.DISPLAY).hide();
     }
 
+    Docs.PageHeader.load(cls);
+
     var docOverviewTab = Ext.getCmp('doc-overview');
     docOverviewTab.load(cls);
     docOverviewTab.setLoading(false);
 
     prettyPrint();
 
-    Ext.get(Ext.DomQuery.selectNode('#top-block > h1')).update(cls.name);
     if (anchor) {
         Ext.getCmp('doc-overview').scrollToEl("a[name=" + anchor + "]");
     } else {
