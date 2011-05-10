@@ -80,6 +80,7 @@ Ext.define('Docs.OverviewPanel', {
         );
 
         this.tpl = new Ext.XTemplate(
+            '<div class="doc-overview-content">',
             '{doc}',
             '<div class="members">',
                 '<div class="m-cfgs">',
@@ -114,6 +115,7 @@ Ext.define('Docs.OverviewPanel', {
                         '{[this.renderMember(values)]}',
                     '</tpl>',
                 '</div>',
+            '</div>',
             '</div>',
             {
                 renderMember: function(cfg) {
