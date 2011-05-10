@@ -62,7 +62,7 @@ Ext.define('Docs.OverviewPanel', {
         var cfgTemplate = new Ext.XTemplate(
             '<div id="{tagname}-{name}" class="member {[this.firstChild(values)]}">',
                 // leftmost column: expand button
-                '<a href="#" class="side expandable">',
+                '<a href="#" class="side {[this.expandable(values)]}">',
                     '<span>&nbsp;</span>',
                 '</a>',
                 // member name and type + link to owner class and source
@@ -73,11 +73,14 @@ Ext.define('Docs.OverviewPanel', {
                     '</div>',
                     '<a href="#" class="name expandable">{name}</a><span> : {type}</span>',
                 '</div>',
+                // short and long descriptions
                 '<div class="description">',
-                    '{doc}',
+                    '<div class="short">{[this.shortDoc(values)]}</div>',
+                    '<div class="long">{doc}</div>',
                 '</div>',
             '</div>',
             {
+                // returns classname "first-child" when it's first member in its category
                 firstChild: Ext.bind(function(cfg) {
                     var cs = this.firstChildCounters;
                     cs[cfg.tagname] = cs[cfg.tagname] ? cs[cfg.tagname]+1 : 1;
@@ -85,7 +88,15 @@ Ext.define('Docs.OverviewPanel', {
                         return "first-child";
                     }
                     return "";
-                }, this)
+                }, this),
+                // returns classname "expandable" when member has shortened description
+                expandable: function(cfg) {
+                    return cfg.shortDoc ? "expandable" : "";
+                },
+                // Returns contents for short documentation
+                shortDoc: function(cfg) {
+                    return cfg.shortDoc ? cfg.shortDoc : cfg.doc;
+                }
             }
         );
 
