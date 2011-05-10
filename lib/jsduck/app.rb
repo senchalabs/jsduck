@@ -28,6 +28,7 @@ module JsDuck
     attr_accessor :link_tpl
     attr_accessor :img_tpl
     attr_accessor :ignore_global
+    attr_accessor :external_classes
 
     def initialize
       @output_dir = nil
@@ -39,6 +40,7 @@ module JsDuck
       @link_tpl = nil
       @img_tpl = nil
       @ignore_global = false
+      @external_classes = []
       @timer = Timer.new
       @parallel = ParallelWrap.new
     end
@@ -113,7 +115,7 @@ module JsDuck
           puts "Warning: Ignoring #{type}: #{name} in #{file} line #{line}"
         end
       end
-      Relations.new(classes)
+      Relations.new(classes, @external_classes)
     end
 
     # print warning for each global member

@@ -46,7 +46,7 @@ module JsDuck
     def lookup(classname)
       if @relations[classname]
         @relations[classname]
-      elsif classname != "Object"
+      elsif !@relations.ignore?(classname)
         puts "Warning: Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}"
       end
     end
