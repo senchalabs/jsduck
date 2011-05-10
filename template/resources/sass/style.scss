@@ -580,18 +580,18 @@ pre, code, kbd, samp, tt {
       color: #666666; }
     h3.pa {
       padding: 10px 0 5px 0; }
-    h3.p {
+    h3.members-title {
       padding: 15px 0 10px 30px;
       font-size: 1.3em;
-      font-weight: bold;
-      &.cfg {
-        background: url(../images/configs.png) no-repeat 0 15px; }
-      &.prp {
-        background: url(../images/properties.png) no-repeat 0 19px; }
-      &.mth {
-        background: url(../images/methods.png) no-repeat 0 16px; }
-      &.evt {
-        background: url(../images/events.png) no-repeat 0 11px; } }
+      font-weight: bold; }
+    #m-cfg .members-title {
+      background: url(../images/configs.png) no-repeat 0 15px; }
+    #m-property .members-title {
+      background: url(../images/properties.png) no-repeat 0 19px; }
+    #m-method .members-title {
+      background: url(../images/methods.png) no-repeat 0 16px; }
+    #m-event .members-title {
+      background: url(../images/events.png) no-repeat 0 11px; }
     ul ul {
       list-style: circle;
       margin-top: 1em; }
