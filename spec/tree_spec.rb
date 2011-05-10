@@ -29,10 +29,6 @@ describe JsDuck::Tree do
       @package = @tree[:children][0]
     end
 
-    it "with id reflecting package name" do
-      @package[:id].should == "pkg-SamplePackage"
-    end
-
     it "with text being package name" do
       @package[:text].should == "SamplePackage"
     end
@@ -56,8 +52,8 @@ describe JsDuck::Tree do
       @class[:isClass].should == true
     end
 
-    it "with id being full class name" do
-      @class[:id].should == @full_class_name
+    it "with clsName being full class name" do
+      @class[:clsName].should == @full_class_name
     end
 
     it "with text being short class name" do
