@@ -618,7 +618,7 @@ pre, code, kbd, samp, tt {
         font-size: 0.9em;
         &:hover {
           color: #0464bb; } }
-      a.more {
+      a.side {
         display: block;
         position: absolute;
         top: 0;
@@ -629,7 +629,7 @@ pre, code, kbd, samp, tt {
         span {
           display: block;
           width: 15px; }
-        &.ar {
+        &.expandable {
           span {
             background: url(../images/member-collapsed.gif) no-repeat 2px 2px; }
           &:hover {
@@ -646,7 +646,7 @@ pre, code, kbd, samp, tt {
           color: rgba(128, 128, 128, 1);
           -webkit-transition: color 0.2s linear; } }
       &.open {
-        a.more.ar {
+        a.expandable {
           @include horizontal-gradient(#ebf3fe, #d9e8fc);
           span {
             background: url(../images/member-expanded.gif) no-repeat 1px 2px; } }

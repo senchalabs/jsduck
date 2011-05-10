@@ -61,7 +61,8 @@ Ext.define('Docs.OverviewPanel', {
         this.firstChildCounters = {};
         var cfgTemplate = new Ext.XTemplate(
             '<div id="{tagname}-{name}" class="member {[this.firstChild(values)]}">',
-                '<a href="Ext.Action.html#config-disabled" rel="config-disabled" class="expand more">',
+                // leftmost column: expand button
+                '<a href="#" class="side expandable">',
                     '<span>&nbsp;</span>',
                 '</a>',
                 '<div class="title">',
