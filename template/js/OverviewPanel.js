@@ -60,7 +60,7 @@ Ext.define('Docs.OverviewPanel', {
 
         this.firstChildCounters = {};
         var cfgTemplate = new Ext.XTemplate(
-            '<div class="member {[this.firstChild(values)]}">',
+            '<div id="{tagname}-{name}" class="member {[this.firstChild(values)]}">',
                 '<a href="Ext.Action.html#config-disabled" rel="config-disabled" class="expand more">',
                     '<span>&nbsp;</span>',
                 '</a>',
