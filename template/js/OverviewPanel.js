@@ -57,12 +57,78 @@ Ext.define('Docs.OverviewPanel', {
         }
 
         this.callParent(arguments);
+    },
 
-        this.firstChildCounters = {};
-        var cfgTemplate = new Ext.XTemplate(
-            '<div id="{tagname}-{name}" class="member {[this.firstChild(values)]}">',
+    /**
+     * Renders class documentation in this panel.
+     *
+     * @param {Object} docClass
+     */
+    load: function(docClass) {
+      this.removeDocked(this.toolbar, true);
+      this.toolbar = Ext.create('Docs.OverviewToolbar', {
+        docClass: docClass
+      });
+      this.addDocked(this.toolbar);
+
+      this.update(this.renderClass(docClass));
+    },
+
+    renderClass: function(cls) {
+        this.classTpl = this.classTpl || new Ext.XTemplate(
+            '<div class="doc-overview-content">',
+                '{doc}',
+                '<div class="members">',
+                    '{members}',
+                '</div>',
+            '</div>'
+        );
+
+        return this.classTpl.apply({
+            doc: cls.doc,
+            members: this.renderMembers(cls)
+        });
+    },
+
+    renderMembers: function(cls) {
+        var typeTitles = {
+            cfg: "Config options",
+            property: "Properties",
+            method: "Methods",
+            event: "Events"
+        };
+
+        // Skip rendering empty sections
+        var html = [];
+        for (var type in typeTitles) {
+            if (cls[type].length > 0) {
+                html.push(this.renderSection(cls[type], type, typeTitles[type]));
+            }
+        }
+        return html.join("");
+    },
+
+    renderSection: function(members, type, title) {
+        this.sectionTpl = this.sectionTpl || new Ext.XTemplate(
+            '<div id="m-{type}">',
+                '<div class="definedBy">Defined By</div>',
+                '<h3 class="members-title">{title}</h3>',
+                '{members}',
+            '</div>'
+        );
+
+        return this.sectionTpl.apply({
+            type: type,
+            title: title,
+            members: Ext.Array.map(members, this.renderMemberDiv, this).join("")
+        });
+    },
+
+    renderMemberDiv: function(member, index) {
+        this.memberTpl = this.memberTpl || new Ext.XTemplate(
+            '<div id="{tagname}-{name}" class="member {firstChild}">',
                 // leftmost column: expand button
-                '<a href="#" class="side {[this.expandable(values)]}">',
+                '<a href="#" class="side {expandable}">',
                     '<span>&nbsp;</span>',
                 '</a>',
                 // member name and type + link to owner class and source
@@ -71,7 +137,7 @@ Ext.define('Docs.OverviewPanel', {
                         '<a href="#/api/{member}" rel="{member}" class="definedIn docClass">{member}</a><br/>',
                         '<a href="source/{href}" target="_blank" class="viewSource">view source</a>',
                     '</div>',
-                    '<a href="#" class="name expandable">{name}</a><span> : {type}</span>',
+                    '<a href="#" class="name {expandable}">{name}</a><span> : {type}</span>',
                 '</div>',
                 // short and long descriptions
                 '<div class="description">',
@@ -80,19 +146,6 @@ Ext.define('Docs.OverviewPanel', {
                 '</div>',
             '</div>',
             {
-                // returns classname "first-child" when it's first member in its category
-                firstChild: Ext.bind(function(cfg) {
-                    var cs = this.firstChildCounters;
-                    cs[cfg.tagname] = cs[cfg.tagname] ? cs[cfg.tagname]+1 : 1;
-                    if (cs[cfg.tagname] === 1) {
-                        return "first-child";
-                    }
-                    return "";
-                }, this),
-                // returns classname "expandable" when member has shortened description
-                expandable: function(cfg) {
-                    return cfg.shortDoc ? "expandable" : "";
-                },
                 // Returns contents for short documentation
                 shortDoc: function(cfg) {
                     return cfg.shortDoc ? cfg.shortDoc : cfg.doc;
@@ -100,56 +153,11 @@ Ext.define('Docs.OverviewPanel', {
             }
         );
 
-        this.tpl = new Ext.XTemplate(
-            '<div class="doc-overview-content">',
-            '{doc}',
-            '<div class="members">',
-                '<div id="m-cfg">',
-                    '<div class="definedBy">Defined By</div>',
-                    '<h3 class="members-title">Config Options</h3>',
-                    '<tpl for="cfg">',
-                        '{[this.renderMember(values)]}',
-                    '</tpl>',
-                '</div>',
-                '<div id="m-property">',
-                    '<div class="definedBy">Defined By</div>',
-                    '<h3 class="members-title">Properties</h3>',
-                    '<tpl for="property">',
-                        '{[this.renderMember(values)]}',
-                    '</tpl>',
-                '</div>',
-                '<div id="m-method">',
-                    '<div class="definedBy">Defined By</div>',
-                    '<h3 class="members-title">Methods</h3>',
-                    '<tpl for="method">',
-                        '{[this.renderMember(values)]}',
-                    '</tpl>',
-                '</div>',
-                '<div id="m-event">',
-                    '<div class="definedBy">Defined By</div>',
-                    '<h3 class="members-title">Events</h3>',
-                    '<tpl for="event">',
-                        '{[this.renderMember(values)]}',
-                    '</tpl>',
-                '</div>',
-            '</div>',
-            '</div>',
-            {
-                renderMember: function(cfg) {
-                    return cfgTemplate.apply(cfg);
-                }
-            }
-        );
-    },
-
-    load: function(docClass) {
-      this.removeDocked(this.toolbar, true);
-      this.toolbar = Ext.create('Docs.OverviewToolbar', {
-        docClass: docClass
-      });
-      this.addDocked(this.toolbar);
-
-      this.firstChildCounters = {};
-      this.update(this.tpl.apply(docClass));
+        return this.memberTpl.apply(Ext.apply({
+            // use classname "first-child" when it's first member in its category
+            firstChild: (index === 0) ? "first-child" : "",
+            // use classname "expandable" when member has shortened description
+            expandable: member.shortDoc ? "expandable" : ""
+        }, member));
     }
 });
