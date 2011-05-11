@@ -124,7 +124,7 @@ Ext.define('Docs.OverviewPanel', {
                         '<a href="#/api/{member}" rel="{member}" class="definedIn docClass">{member}</a><br/>',
                         '<a href="source/{href}" target="_blank" class="viewSource">view source</a>',
                     '</div>',
-                    '<a href="#" class="name {expandable}">{name}</a><span> : {type}</span>',
+                    '<a href="#" class="name {expandable}">{name}</a>{signature}',
                 '</div>',
                 // short and long descriptions
                 '<div class="description">',
@@ -144,7 +144,30 @@ Ext.define('Docs.OverviewPanel', {
             // use classname "first-child" when it's first member in its category
             firstChild: (index === 0) ? "first-child" : "",
             // use classname "expandable" when member has shortened description
-            expandable: member.shortDoc ? "expandable" : "not-expandable"
+            expandable: member.shortDoc ? "expandable" : "not-expandable",
+            // method params signature or property type signature
+            signature: this.renderSignature(member)
         }, member));
+    },
+    
+    renderSignature: function(member) {
+        if (member.tagname === "cfg" || member.tagname === "property") {
+            return "<span> : " + member.type + "</span>";
+        }
+        else {
+            var ps = Ext.Array.map(member.params, this.renderShortParam, this).join(", ");
+            var signature = '( <span class="pre">' + ps + "</span> )";
+            if (member.tagname === "method") {
+                return signature + " : " + member["return"].type;
+            }
+            else {
+                return signature;
+            }
+        }
+    },
+    
+    renderShortParam: function(param) {
+        var p = param.name + " " + param.type;
+        return param.optional ? "["+p+"]" : p;
     }
 });
