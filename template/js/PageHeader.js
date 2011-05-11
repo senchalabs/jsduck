@@ -13,6 +13,9 @@ Ext.define('Docs.PageHeader', {
             this.tpl = new Ext.XTemplate(
                 '<h1 class="{[this.getClass(values)]}">',
                     '<a href="source/{href}" target="_blank">{name}</a>',
+                    '<tpl if="xtype">',
+                        '<span>xtype: {xtype}</span>',
+                    '</tpl>',
                 '</h1>',
                 {
                     getClass: function(cls) {
