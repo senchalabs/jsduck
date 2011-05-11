@@ -129,7 +129,7 @@ Ext.define('Docs.OverviewPanel', {
                 // short and long descriptions
                 '<div class="description">',
                     '<div class="short">{[this.shortDoc(values)]}</div>',
-                    '<div class="long">{doc}</div>',
+                    '<div class="long">{longDoc}</div>',
                 '</div>',
             '</div>',
             {
@@ -146,10 +146,12 @@ Ext.define('Docs.OverviewPanel', {
             // use classname "expandable" when member has shortened description
             expandable: member.shortDoc ? "expandable" : "not-expandable",
             // method params signature or property type signature
-            signature: this.renderSignature(member)
+            signature: this.renderSignature(member),
+            // full documentation together with optional parameters and return value
+            longDoc: this.renderLongDoc(member)
         }, member));
     },
-    
+
     renderSignature: function(member) {
         if (member.tagname === "cfg" || member.tagname === "property") {
             return "<span> : " + member.type + "</span>";
@@ -165,9 +167,54 @@ Ext.define('Docs.OverviewPanel', {
             }
         }
     },
-    
+
     renderShortParam: function(param) {
         var p = param.name + " " + param.type;
         return param.optional ? "["+p+"]" : p;
+    },
+
+    renderLongDoc: function(member) {
+        var doc = member.doc;
+
+        if (member.params && member.params.length > 0) {
+            doc += '<h3 class="pa">Parameters</h3>';
+            var ps = Ext.Array.map(member.params, this.renderLongParam, this).join("");
+            doc += "<ul>" + ps + "</ul>";
+        }
+
+        if (member["return"]) {
+            doc += this.renderReturn(member["return"]);
+        }
+
+        return doc;
+    },
+
+    renderLongParam: function(param) {
+        this.paramTpl = this.paramTpl || new Ext.XTemplate(
+            '<li>',
+                '<span class="pre">{name}</span> : {type}',
+                '<div class="sub-desc">',
+                    '{doc}',
+                '</div>',
+            '</li>'
+        );
+
+        return this.paramTpl.apply(param);
+    },
+
+    renderReturn: function(returnDoc) {
+        this.returnTpl = this.returnTpl || new Ext.XTemplate(
+            '<h3 class="pa">Returns</h3>',
+            '<ul>',
+                '<li>',
+                    '<span class="pre">{type}</span>',
+                    '<div class="sub-desc">',
+                        '{doc}',
+                    '</div>',
+                '</li>',
+            '</ul>'
+        );
+
+        return this.returnTpl.apply(returnDoc);
     }
 });
