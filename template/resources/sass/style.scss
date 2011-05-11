@@ -646,7 +646,7 @@ pre, code, kbd, samp, tt {
           color: rgba(128, 128, 128, 1);
           -webkit-transition: color 0.2s linear; } }
       &.open {
-        a.expandable {
+        a.side.expandable {
           @include horizontal-gradient(#ebf3fe, #d9e8fc);
           span {
             background: url(../images/member-expanded.gif) no-repeat 1px 2px; } }

@@ -29,19 +29,25 @@ Ext.define('Docs.OverviewPanel', {
 
     listeners: {
         afterrender: function(cmp) {
+            // Expand member when clicked
             cmp.el.addListener('click', function(cmp, el) {
                 Ext.get(Ext.get(el).up('.member')).toggleCls('open');
             }, this, {
                 preventDefault: true,
-                delegate: '.expand'
+                delegate: '.expandable'
             });
+            // Do nothing when clicking on not-expandable items
+            cmp.el.addListener('click', Ext.emptyFn, this, {
+                preventDefault: true,
+                delegate: '.not-expandable'
+            });
+
             cmp.el.addListener('click', function(cmp, el) {
                 getDocClass(el.rel);
             }, this, {
                 preventDefault: true,
                 delegate: '.docClass'
             });
-            prettyPrint();
         }
     },
 
@@ -72,6 +78,7 @@ Ext.define('Docs.OverviewPanel', {
       this.addDocked(this.toolbar);
 
       this.update(this.renderClass(docClass));
+      prettyPrint();
     },
 
     renderClass: function(cls) {
@@ -157,7 +164,7 @@ Ext.define('Docs.OverviewPanel', {
             // use classname "first-child" when it's first member in its category
             firstChild: (index === 0) ? "first-child" : "",
             // use classname "expandable" when member has shortened description
-            expandable: member.shortDoc ? "expandable" : ""
+            expandable: member.shortDoc ? "expandable" : "not-expandable"
         }, member));
     }
 });
