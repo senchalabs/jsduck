@@ -51,20 +51,6 @@ Ext.define('Docs.OverviewPanel', {
         }
     },
 
-    initComponent: function() {
-        this.dockedItems = [
-            this.toolbar = Ext.create('Docs.OverviewToolbar', {
-              docClass: this.docClass
-            })
-        ];
-
-        if (Ext.get('doc-overview-content')) {
-            this.contentEl = 'doc-overview-content';
-        }
-
-        this.callParent(arguments);
-    },
-
     /**
      * Renders class documentation in this panel.
      *
