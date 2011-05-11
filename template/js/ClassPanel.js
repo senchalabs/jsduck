@@ -7,12 +7,6 @@ Ext.define('Docs.ClassPanel', {
     style: 'border-color: #bfbfbf;',
     plain: true,
 
-    /**
-     * @cfg {Object} docClass
-     * Documentation for a class.
-     */
-    docClass: {},
-
     // Remember tab scroll position on Webkit
     listeners: {
         beforetabchange: function(tabPanel, newCard, oldCard) {
@@ -30,9 +24,7 @@ Ext.define('Docs.ClassPanel', {
 
     initComponent: function() {
         this.height = Ext.get('docContent').getHeight() - 55;
-        this.items = Ext.create('Docs.OverviewPanel', {
-          docClass: this.docClass
-        });
+        this.items = Ext.create('Docs.OverviewPanel');
         this.callParent(arguments);
     }
 });

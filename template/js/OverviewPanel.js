@@ -6,12 +6,6 @@ Ext.define('Docs.OverviewPanel', {
     title: 'Overview',
     autoScroll: true,
 
-    /**
-     * @cfg {Object} docClass
-     * Documentation for a class.
-     */
-    docClass: {},
-
     scrollToEl: function(query) {
         var el = Ext.get(Ext.query(query)[0]);
         if (el) {

@@ -60,9 +60,7 @@ var showClass = function(cls, anchor) {
     var docTabPanel = Ext.getCmp('docTabPanel');
     if (!docTabPanel) {
          Ext.get('docContent').update('');
-         Ext.create('Docs.ClassPanel', {
-           docClass: cls
-         });
+         Ext.create('Docs.ClassPanel');
     }
 
     Ext.get('docTabPanel').show();
