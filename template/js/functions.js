@@ -75,8 +75,6 @@ var showClass = function(cls, anchor) {
     docOverviewTab.load(cls);
     docOverviewTab.setLoading(false);
 
-    prettyPrint();
-
     if (anchor) {
         Ext.getCmp('doc-overview').scrollToEl("a[name=" + anchor + "]");
     } else {

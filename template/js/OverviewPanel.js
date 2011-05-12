@@ -62,6 +62,15 @@ Ext.define('Docs.OverviewPanel', {
         this.addDocked(this.toolbar);
         
         this.update(this.renderClass(docClass));
+        this.syntaxHighlight();
+    },
+    
+    // Marks all code blocks with "prettyprint" class and then calls
+    // the prettify library function to highlight them.
+    syntaxHighlight: function() {
+        Ext.Array.forEach(Ext.query("pre > code"), function(el) {
+            Ext.get(el).addCls("prettyprint");
+        });
         prettyPrint();
     },
 
