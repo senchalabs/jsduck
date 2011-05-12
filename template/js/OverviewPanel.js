@@ -41,14 +41,14 @@ Ext.define('Docs.OverviewPanel', {
     scrollToEl: function(query) {
         var el = Ext.get(Ext.query(query)[0]);
         if (el) {
-            var scrollOffset = el.getY() - 160;
+            var isMember = el.hasCls("member");
+            var scrollOffset = el.getY() - (isMember ? 170 : 160);
             var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
             var currentScroll = docContent.getScroll()['top'];
             docContent.scrollTo('top', currentScroll + scrollOffset, true);
 
-            var prnt = el.up('.member');
-            if (prnt) {
-                Ext.get(prnt).addCls('open');
+            if (isMember && el.down(".expandable")) {
+                el.addCls('open');
             }
         }
     },

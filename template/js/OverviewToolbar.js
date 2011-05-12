@@ -86,7 +86,7 @@ Ext.define('Docs.OverviewToolbar', {
             plain: true,
             listeners: {
                 click: function(menu, item) {
-                    Ext.getCmp('doc-overview').scrollToEl("a[name=" + item.memberName + "]");
+                    Ext.getCmp('doc-overview').scrollToEl("#" + item.memberName);
                 }
             }
         });
