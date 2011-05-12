@@ -449,12 +449,15 @@ pre, code, kbd, samp, tt {
     border: 1px solid #ebebeb;
     padding: 0 15px 15px 10px;
     margin: 0 20px 10px 0;
-    width: 300px;
+    width: 120px;
+    float: right;
+    ul {
+      float: left; }
     .icn {
       padding-left: 22px; }
     a {
       display: block; }
-    @iclude gray-h4; } }
+    @include gray-h4; } }
 
 #api-overview.classList {
   h2 {
