@@ -97,7 +97,7 @@ Ext.define('Docs.OverviewToolbar', {
             text: cfg.title + ' <span class="num">' + cfg.items.length + '</span>',
             listeners: {
                 click: function() {
-                    Ext.getCmp('doc-overview').scrollToEl("a[name=" + cfg.cls + "]");
+                    Ext.getCmp('doc-overview').scrollToEl("#m-" + cfg.type);
                 }
             },
             menu: menu

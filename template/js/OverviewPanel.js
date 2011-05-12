@@ -9,21 +9,6 @@ Ext.define('Docs.OverviewPanel', {
     title: 'Overview',
     autoScroll: true,
 
-    scrollToEl: function(query) {
-        var el = Ext.get(Ext.query(query)[0]);
-        if (el) {
-            var scrollOffset = el.getY() - 150;
-            var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
-            var currentScroll = docContent.getScroll()['top'];
-            docContent.scrollTo('top', currentScroll + scrollOffset, true);
-
-            var prnt = el.up('.member');
-            if (prnt) {
-                Ext.get(prnt).addCls('open');
-            }
-        }
-    },
-
     listeners: {
         afterrender: function(cmp) {
             // Expand member when clicked
@@ -45,6 +30,26 @@ Ext.define('Docs.OverviewPanel', {
                 preventDefault: true,
                 delegate: '.docClass'
             });
+        }
+    },
+
+    /**
+     * Scrolls the specified element into view
+     * 
+     * @param {String} query  DomQuery selector string.
+     */
+    scrollToEl: function(query) {
+        var el = Ext.get(Ext.query(query)[0]);
+        if (el) {
+            var scrollOffset = el.getY() - 160;
+            var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
+            var currentScroll = docContent.getScroll()['top'];
+            docContent.scrollTo('top', currentScroll + scrollOffset, true);
+
+            var prnt = el.up('.member');
+            if (prnt) {
+                Ext.get(prnt).addCls('open');
+            }
         }
     },
 
