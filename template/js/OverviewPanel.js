@@ -1,3 +1,6 @@
+/**
+ * Renders the whole class-documentation page.
+ */
 Ext.define('Docs.OverviewPanel', {
     extend: 'Ext.panel.Panel',
 
@@ -51,15 +54,15 @@ Ext.define('Docs.OverviewPanel', {
      * @param {Object} docClass
      */
     load: function(docClass) {
-      this.docClass = docClass;
-      this.removeDocked(this.toolbar, true);
-      this.toolbar = Ext.create('Docs.OverviewToolbar', {
-        docClass: docClass
-      });
-      this.addDocked(this.toolbar);
-
-      this.update(this.renderClass(docClass));
-      prettyPrint();
+        this.docClass = docClass;
+        this.removeDocked(this.toolbar, true);
+        this.toolbar = Ext.create('Docs.OverviewToolbar', {
+            docClass: docClass
+        });
+        this.addDocked(this.toolbar);
+        
+        this.update(this.renderClass(docClass));
+        prettyPrint();
     },
 
     renderClass: function(cls) {
