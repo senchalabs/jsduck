@@ -241,7 +241,7 @@ Ext.define('Docs.OverviewPanel', {
     },
 
     renderShortParam: function(param) {
-        var p = param.name + " " + param.type;
+        var p = param.type + " " + param.name;
         return param.optional ? "["+p+"]" : p;
     },
 
