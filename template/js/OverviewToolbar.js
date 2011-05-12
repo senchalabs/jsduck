@@ -126,34 +126,30 @@ Ext.define('Docs.OverviewToolbar', {
     },
 
     hideInherited: function(el) {
+        var hide = el.checked;
+        
+        // show/hide all inherited members
         Ext.Array.forEach(Ext.query('.member.inherited'), function(m) {
-            if (el.checked) {
-                Ext.get(m).setStyle({display: 'none'});
-            } else {
-                Ext.get(m).setStyle({display: 'block'});
-            }
+            Ext.get(m).setStyle({display: hide ? 'none' : 'block'});
         });
 
-        Ext.Array.forEach(Ext.query('.member.f'), function(m) {
-            Ext.get(m).removeCls('f');
+        // Remove all first-child classes
+        Ext.Array.forEach(Ext.query('.member.first-child'), function(m) {
+            Ext.get(m).removeCls('first-child');
         });
 
-        Ext.Array.forEach(['cfgs', 'properties', 'methods', 'events'], function(m) {
-            // If the number of inherited members is the same as the total number of members...
-            if (Ext.query('.m-'+m+' .member').length == Ext.query('.m-'+m+' .member.inherited').length) {
-                var first = Ext.query('.m-'+m)[0];
-                if (first) {
-                    if (el.checked) {
-                        Ext.get(Ext.query('.m-'+m)[0]).setStyle({display: 'none'});
-                    } else {
-                        Ext.get(Ext.query('.m-'+m)[0]).setStyle({display: 'block'});
-                    }
-                }
+        Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(m) {
+            var sectionId = '#m-' + m;
+            
+            // Hide the section completely if all items in it are inherited
+            if (Ext.query(sectionId+' .member.not-inherited').length === 0) {
+                Ext.get(Ext.query(sectionId)[0]).setStyle({display: hide ? 'none' : 'block'});
             }
-            var t = el.checked ? 'ni' : 'member';
-            var firstMemberEl = Ext.query('.m-'+m+' .member.' + t);
-            if (firstMemberEl.length > 0) {
-                Ext.get(firstMemberEl[0]).addCls('f');
+            
+            // add first-child class to first member in section
+            var sectionMembers = Ext.query(sectionId+' .member' + (hide ? ".not-inherited" : ""));
+            if (sectionMembers.length > 0) {
+                Ext.get(sectionMembers[0]).addCls('first-child');
             }
         });
     }

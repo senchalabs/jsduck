@@ -51,6 +51,7 @@ Ext.define('Docs.OverviewPanel', {
      * @param {Object} docClass
      */
     load: function(docClass) {
+      this.docClass = docClass;
       this.removeDocked(this.toolbar, true);
       this.toolbar = Ext.create('Docs.OverviewToolbar', {
         docClass: docClass
@@ -113,7 +114,7 @@ Ext.define('Docs.OverviewPanel', {
 
     renderMemberDiv: function(member, index) {
         this.memberTpl = this.memberTpl || new Ext.XTemplate(
-            '<div id="{tagname}-{name}" class="member {firstChild}">',
+            '<div id="{tagname}-{name}" class="member {firstChild} {inherited}">',
                 // leftmost column: expand button
                 '<a href="#" class="side {expandable}">',
                     '<span>&nbsp;</span>',
@@ -145,6 +146,8 @@ Ext.define('Docs.OverviewPanel', {
             firstChild: (index === 0) ? "first-child" : "",
             // use classname "expandable" when member has shortened description
             expandable: member.shortDoc ? "expandable" : "not-expandable",
+            // use classname "inherited" when member is not defined in this class
+            inherited: member.member === this.docClass.name ? "not-inherited" : "inherited",
             // method params signature or property type signature
             signature: this.renderSignature(member),
             // full documentation together with optional parameters and return value
