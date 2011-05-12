@@ -449,8 +449,9 @@ pre, code, kbd, samp, tt {
     border: 1px solid #ebebeb;
     padding: 0 15px 15px 10px;
     margin: 0 20px 10px 0;
-    width: 120px;
-    float: right;
+    &.icons {
+      width: 120px;
+      float: right; }
     ul {
       float: left; }
     .icn {
