@@ -89,7 +89,7 @@ Ext.define('Docs.OverviewPanel', {
         }
         
         this.hierarchyTpl = this.hierarchyTpl || new Ext.XTemplate(
-            '<pre class="subclasses">',
+            '<pre class="hierarchy">',
             '<tpl if="tree">',
                 '<h4>Hierarchy</h4>',
                 '{tree}',
