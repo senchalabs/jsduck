@@ -25,5 +25,5 @@ ruby bin/jsduck \
 # appears inline withing text, but that just looks ugly in HTML
 
 # Finally copy over the images that documentation links to.
-cp -r $SDK_DIR/extjs/doc-resources $SDK_DIR/doc-resources
+cp -r $SDK_DIR/extjs/doc-resources $OUT_DIR/doc-resources
 
