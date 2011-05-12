@@ -127,7 +127,7 @@ Ext.define('Docs.OverviewToolbar', {
 
     hideInherited: function(el) {
         var hide = el.checked;
-        
+
         // show/hide all inherited members
         Ext.Array.forEach(Ext.query('.member.inherited'), function(m) {
             Ext.get(m).setStyle({display: hide ? 'none' : 'block'});
@@ -140,12 +140,12 @@ Ext.define('Docs.OverviewToolbar', {
 
         Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(m) {
             var sectionId = '#m-' + m;
-            
+
             // Hide the section completely if all items in it are inherited
             if (Ext.query(sectionId+' .member.not-inherited').length === 0) {
                 Ext.get(Ext.query(sectionId)[0]).setStyle({display: hide ? 'none' : 'block'});
             }
-            
+
             // add first-child class to first member in section
             var sectionMembers = Ext.query(sectionId+' .member' + (hide ? ".not-inherited" : ""));
             if (sectionMembers.length > 0) {

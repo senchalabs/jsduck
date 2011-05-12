@@ -35,7 +35,7 @@ Ext.define('Docs.OverviewPanel', {
 
     /**
      * Scrolls the specified element into view
-     * 
+     *
      * @param {String} query  DomQuery selector string.
      */
     scrollToEl: function(query) {
@@ -65,11 +65,11 @@ Ext.define('Docs.OverviewPanel', {
             docClass: docClass
         });
         this.addDocked(this.toolbar);
-        
+
         this.update(this.renderClass(docClass));
         this.syntaxHighlight();
     },
-    
+
     // Marks all code blocks with "prettyprint" class and then calls
     // the prettify library function to highlight them.
     syntaxHighlight: function() {
@@ -101,7 +101,7 @@ Ext.define('Docs.OverviewPanel', {
         if (cls.superclasses.length === 0 && cls.allMixins.length === 0) {
             return "";
         }
-        
+
         this.hierarchyTpl = this.hierarchyTpl || new Ext.XTemplate(
             '<pre class="hierarchy">',
             '<tpl if="tree">',
@@ -122,19 +122,19 @@ Ext.define('Docs.OverviewPanel', {
             mixins: Ext.Array.map(cls.allMixins, this.renderLink, this)
         });
     },
-    
+
     renderClassTree: function(superclasses, firstChild) {
         if (superclasses.length === 0) {
             return "";
         }
-        
+
         this.classTreeTpl = this.classTreeTpl || new Ext.XTemplate(
             '<div class="subclass {firstChild}">',
               '{link}',
               '{subtree}',
             '</div>'
         );
-        
+
         var name = superclasses[0];
         return this.classTreeTpl.apply({
             firstChild: firstChild ? 'first-child' : '',
@@ -142,7 +142,7 @@ Ext.define('Docs.OverviewPanel', {
             subtree: this.renderClassTree(superclasses.slice(1))
         });
     },
-    
+
     renderLink: function(className) {
         return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{0}</a>', className);
     },
