@@ -68,6 +68,7 @@ Ext.define('Docs.OverviewPanel', {
     renderClass: function(cls) {
         this.classTpl = this.classTpl || new Ext.XTemplate(
             '<div class="doc-overview-content">',
+                '{hierarchy}',
                 '{doc}',
                 '<div class="members">',
                     '{members}',
@@ -77,8 +78,59 @@ Ext.define('Docs.OverviewPanel', {
 
         return this.classTpl.apply({
             doc: cls.doc,
+            hierarchy: this.renderHierarchy(cls),
             members: this.renderMembers(cls)
         });
+    },
+
+    renderHierarchy: function(cls) {
+        if (cls.superclasses.length === 0 && cls.allMixins.length === 0) {
+            return "";
+        }
+        
+        this.hierarchyTpl = this.hierarchyTpl || new Ext.XTemplate(
+            '<pre class="subclasses">',
+            '<tpl if="tree">',
+                '<h4>Hierarchy</h4>',
+                '{tree}',
+            '</tpl>',
+            '<tpl if="mixins.length &gt; 0">',
+                '<h4>Mixins</h4>',
+                '<tpl for="mixins">',
+                    '<div class="mixin">{.}</div>',
+                '</tpl>',
+            '</tpl>',
+            '</pre>'
+        );
+
+        return this.hierarchyTpl.apply({
+            tree: cls.superclasses.length ? this.renderClassTree(cls.superclasses.concat(cls.name), true) : "",
+            mixins: Ext.Array.map(cls.allMixins, this.renderLink, this)
+        });
+    },
+    
+    renderClassTree: function(superclasses, firstChild) {
+        if (superclasses.length === 0) {
+            return "";
+        }
+        
+        this.classTreeTpl = this.classTreeTpl || new Ext.XTemplate(
+            '<div class="subclass {firstChild}">',
+              '{link}',
+              '{subtree}',
+            '</div>'
+        );
+        
+        var name = superclasses[0];
+        return this.classTreeTpl.apply({
+            firstChild: firstChild ? 'first-child' : '',
+            link: superclasses.length > 1 ? this.renderLink(name) : '<strong>'+name+'</strong>',
+            subtree: this.renderClassTree(superclasses.slice(1))
+        });
+    },
+    
+    renderLink: function(className) {
+        return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{0}</a>', className);
     },
 
     renderMembers: function(cls) {

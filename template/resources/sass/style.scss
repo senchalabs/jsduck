@@ -680,10 +680,10 @@ pre, code, kbd, samp, tt {
       padding: 0 0 0 12px;
       margin-top: 3px; }
     .subclass {
-      background: url(/images/elbow-end.gif) no-repeat -5px 0;
+      background: url(../images/elbow-end.gif) no-repeat -5px 0;
       margin-top: 3px;
       padding: 0 0 0 12px;
-      &.f {
+      &.first-child {
         background: none;
         padding-left: 15px; } } } }
 
