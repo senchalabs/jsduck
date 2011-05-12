@@ -53,6 +53,7 @@ Ext.define('Docs.OverviewToolbar', {
             {
                 xtype: 'button',
                 iconCls: 'expandAllMembers',
+                tooltip: "Expand all",
                 handler: function() {
                     Ext.Array.forEach(Ext.query('.side.expandable'), function(el) {
                         Ext.get(el).parent().addCls('open');
@@ -62,6 +63,7 @@ Ext.define('Docs.OverviewToolbar', {
             {
                 xtype: 'button',
                 iconCls: 'collapseAllMembers',
+                tooltip: "Collapse all",
                 handler: function() {
                     Ext.Array.forEach(Ext.query('.side.expandable'), function(el) {
                         Ext.get(el).parent().removeCls('open');
