@@ -1,4 +1,6 @@
-
+/**
+ * Class tree.
+ */
 Ext.define('Docs.ClassTree', {
     extend: 'Ext.tree.Panel',
 
@@ -26,12 +28,6 @@ Ext.define('Docs.ClassTree', {
                     node.expand(false);
                 }
             }
-        },
-        render: function() {
-            var self = this;
-            setTimeout(function() {
-                self.selectCurrentClass();
-            }, 500);
         }
     },
 
@@ -54,20 +50,21 @@ Ext.define('Docs.ClassTree', {
         }
     },
 
-    selectCurrentClass: function() {
-        var treePanel = Ext.getCmp('treePanelCmp');
+    /**
+     * Selects class node in tree by name.
+     *
+     * @param {String} className
+     */
+    selectClass: function(className) {
+        var classNode = this.getRootNode().findChildBy(function(n) {
+            return className === n.raw.clsName;
+        }, null, true);
 
-        if (req.docClass != 'undefined') {
-            var classNode = Ext.getCmp('treePanelCmp').getRootNode().findChildBy(function(n) {
-                return req.docClass == n.raw.clsName;
-            }, null, true);
-
-            if (classNode) {
-                treePanel.getSelectionModel().select(classNode);
-                classNode.bubble(function(n) {
-                    n.expand();
-                });
-            }
+        if (classNode) {
+            this.getSelectionModel().select(classNode);
+            classNode.bubble(function(n) {
+                n.expand();
+            });
         }
     }
 });

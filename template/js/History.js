@@ -15,6 +15,7 @@ Ext.define("Docs.History", {
             e.preventDefault();
             if (e.state && e.state.docClass) {
                 Docs.ClassLoader.load(e.state.docClass, true);
+                Ext.getCmp('treePanelCmp').selectClass(e.state.docClass);
             }
             return false;
         }, false);
@@ -23,6 +24,7 @@ Ext.define("Docs.History", {
         if (matches) {
             var className = matches[1];
             Docs.ClassLoader.load(className, true);
+            Ext.getCmp('treePanelCmp').selectClass(className);
         }
     },
 
