@@ -59,18 +59,7 @@ Ext.onReady(function() {
 
         handleClick: function(curItem) {
             curItem = curItem || panel.getSelectionModel().getLastSelected();
-            var classId = curItem.data.cls;
-
-            if (req.standAloneMode) {
-                if (window.location.href.match(/api/)) {
-                    window.location = classId + '.html';
-                } else {
-                    window.location = 'api/' + classId + '.html';
-                }
-                return;
-            }
-
-            var cls = classId;
+            var cls = curItem.data.cls;
             if (curItem.data.memberType != 'cls') {
                 cls += '#' + curItem.data.memberType + '-' + curItem.data.member;
             }
