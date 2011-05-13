@@ -14,7 +14,7 @@ Ext.define("Docs.History", {
         window.addEventListener('popstate', function(e) {
             e.preventDefault();
             if (e.state && e.state.docClass) {
-                getDocClass(e.state.docClass, true);
+                Docs.ClassLoader.load(e.state.docClass, true);
             }
             return false;
         }, false);
@@ -22,7 +22,7 @@ Ext.define("Docs.History", {
         var matches = document.location.hash.match(/#\/api\/(.*)/);
         if (matches) {
             var className = matches[1];
-            getDocClass(className, true);
+            Docs.ClassLoader.load(className, true);
         }
     },
 

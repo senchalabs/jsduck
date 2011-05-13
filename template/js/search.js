@@ -75,7 +75,7 @@ Ext.onReady(function() {
                 cls += '#' + curItem.data.memberType + '-' + curItem.data.member;
             }
             panel.hide();
-            getDocClass(cls);
+            Docs.ClassLoader.load(cls);
         },
         listeners: {
             itemclick: function(panel, item) {

@@ -112,7 +112,7 @@ Ext.define('Docs.OverviewToolbar', {
             plain: true,
             listeners: {
                 click: function(menu, item) {
-                    getDocClass(item.clsName);
+                    Docs.ClassLoader.load(item.clsName);
                 }
             }
         });

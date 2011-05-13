@@ -18,7 +18,7 @@ Ext.define('Docs.ClassTree', {
             var clsName = node.raw ? node.raw.clsName : node.data.clsName;
 
             if (clsName) {
-                getDocClass(clsName);
+                Docs.ClassLoader.load(clsName);
             } else if (!node.isLeaf()) {
                 if (node.isExpanded()) {
                     node.collapse(false);

@@ -25,7 +25,7 @@ Ext.define('Docs.OverviewPanel', {
             });
 
             cmp.el.addListener('click', function(cmp, el) {
-                getDocClass(el.rel);
+                Docs.ClassLoader.load(el.rel);
             }, this, {
                 preventDefault: true,
                 delegate: '.docClass'
