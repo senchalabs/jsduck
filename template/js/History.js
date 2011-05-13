@@ -25,17 +25,21 @@ Ext.define("Docs.History", {
 
     // Parses current URL and navigates to the page
     navigate: function() {
-        var className = this.parseUrl();
-        if (className) {
-            Docs.ClassLoader.load(className, true);
-            Ext.getCmp('treePanelCmp').selectClass(className);
+        var url = this.parseUrl();
+        if (url.type === "api") {
+            Docs.ClassLoader.load(url.key, true);
+            Ext.getCmp('treePanelCmp').selectClass(url.key);
+        }
+        else if (url.type === "guide") {
+            Docs.App.setGuideMode();
+            Docs.Guides.load(url.key, true);
         }
     },
 
     // Parses current browser location
     parseUrl: function() {
-        var matches = document.location.hash.match(/#\/api\/(.*)/);
-        return matches ? matches[1] : undefined;
+        var matches = document.location.hash.match(/#\/(api|guide)\/(.*)/);
+        return matches ? {type: matches[1], key: matches[2]} : {};
     },
 
     /**

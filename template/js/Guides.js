@@ -7,11 +7,14 @@ Ext.define("Docs.Guides", {
     /**
      * Loads guide from given URL.
      *
-     * @param {String} url
+     * @param {String} name  name of the guide
+     * @param {Boolean} noHistory  true to not add browser history entry
      */
-    load: function(url) {
+    load: function(name, noHistory) {
+        noHistory || Docs.History.push("/guide/" + name);
+
         Ext.Ajax.request({
-            url: url,
+            url: Docs.App.getBaseUrl() + "/guides/" + name + "/index.html",
             success: function(response) {
                 var html = response.responseText;
                 this.render(html);

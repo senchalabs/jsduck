@@ -28,7 +28,7 @@ Ext.define("Docs.App", {
         Ext.Array.forEach(Ext.query("#api-overview .guides a"), function(el) {
             Ext.get(el).addListener('click', function() {
                 this.setGuideMode();
-                Docs.Guides.load(el.href);
+                Docs.Guides.load(el.className);
             }, this, {preventDefault: true});
         }, this);
 
