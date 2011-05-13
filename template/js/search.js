@@ -21,6 +21,11 @@ Ext.onReady(function() {
         '</table>'
     );
 
+    var showContent = function(title, html) {
+        Ext.getCmp('docTabPanel').hide();
+        Ext.get('pageContent').setVisibilityMode(Ext.core.Element.DISPLAY).show().update(html);
+    };
+
     var searchStore = new Ext.data.Store({
         fields: ['memberType', 'cls', 'member'],
         proxy: {
