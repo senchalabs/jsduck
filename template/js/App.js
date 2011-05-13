@@ -17,6 +17,8 @@ Ext.define("Docs.App", {
      * Initializes listeners for all kind of links on front page.
      */
     init: function() {
+        this.initResizeWindow();
+
         // load front page when clicked on logo
         Ext.get(Ext.query(".header > h2 > a")[0]).addListener('click', function() {
             this.setIndexMode();
@@ -62,5 +64,45 @@ Ext.define("Docs.App", {
         Ext.get("api-overview").setStyle({display: 'none'});
         Ext.get("api-guide").setStyle({display: 'none'}).update("");
         Ext.get("api-class").setStyle({display: 'block'});
+    },
+
+    initResizeWindow: function() {
+        this.resizeWindow();
+        // Resize the main window and tree on resize
+        window.onresize = Ext.bind(function() {
+            if (!this.resizeTimeout) {
+                this.resizeTimeout = setTimeout(this.resizeWindow, 100);
+            }
+        }, this);
+    },
+
+    resizeWindow: function() {
+        var treePanelCmp = Ext.getCmp('treePanelCmp'),
+            docTabPanel = Ext.getCmp('docTabPanel'),
+            container = Ext.get('container'),
+            viewportHeight = Ext.core.Element.getViewportHeight(),
+            viewportWidth = Ext.core.Element.getViewportWidth();
+
+        if (Ext.get('notice')) {
+            viewportHeight = viewportHeight - 40;
+        }
+
+        container.setStyle({
+            position: 'absolute',
+            height: String(viewportHeight - 40) + 'px',
+            width: String(viewportWidth - 280) + 'px'
+        });
+
+        if (treePanelCmp) {
+            treePanelCmp.setHeight(viewportHeight - 140);
+        } else {
+            Ext.get('docContent').setHeight(viewportHeight - 90);
+        }
+
+        if (docTabPanel) {
+            docTabPanel.setHeight(viewportHeight - 125);
+        }
+
+        this.resizeTimeout = null;
     }
 });

@@ -88,34 +88,3 @@ var showContent = function(title, html) {
     Ext.get('pageContent').setVisibilityMode(Ext.core.Element.DISPLAY).show().update(html);
 };
 
-
-var resizeWindows;
-var resizeWindowFn = function() {
-    var treePanelCmp = Ext.getCmp('treePanelCmp'),
-        docTabPanel = Ext.getCmp('docTabPanel'),
-        container = Ext.get('container'),
-        viewportHeight = Ext.core.Element.getViewportHeight(),
-        viewportWidth = Ext.core.Element.getViewportWidth();
-
-    if (Ext.get('notice')) {
-        viewportHeight = viewportHeight - 40;
-    }
-
-    container.setStyle({
-        position: 'absolute',
-        height: String(viewportHeight - 40) + 'px',
-        width: String(viewportWidth - 280) + 'px'
-    });
-
-    if (treePanelCmp) {
-        treePanelCmp.setHeight(viewportHeight - 140);
-    } else {
-        Ext.get('docContent').setHeight(viewportHeight - 90);
-    }
-
-    if (docTabPanel) {
-        docTabPanel.setHeight(viewportHeight - 125);
-    }
-
-    resizeWindows = null;
-};

@@ -18,7 +18,7 @@ Ext.define('Docs.ClassPanel', {
             }
         },
         afterrender: function() {
-            resizeWindowFn();
+            Docs.App.resizeWindow();
         }
     },
 
