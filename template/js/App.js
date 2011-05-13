@@ -22,6 +22,7 @@ Ext.define("Docs.App", {
         // load front page when clicked on logo
         Ext.get(Ext.query(".header > h2 > a")[0]).addListener('click', function() {
             this.setIndexMode();
+            Docs.History.push("");
         }, this, {preventDefault: true});
 
         // load guide when clicked on guide link

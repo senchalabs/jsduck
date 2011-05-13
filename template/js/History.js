@@ -34,6 +34,9 @@ Ext.define("Docs.History", {
             Docs.App.setGuideMode();
             Docs.Guides.load(url.key, true);
         }
+        else {
+            Docs.App.setIndexMode();
+        }
     },
 
     // Parses current browser location
