@@ -28,7 +28,7 @@ Ext.define("Docs.History", {
         var url = this.parseUrl();
         if (url.type === "api") {
             Docs.ClassLoader.load(url.key, true);
-            Ext.getCmp('treePanelCmp').selectClass(url.key);
+            Ext.getCmp('treePanelCmp').selectClass(url.key.replace(/-.*$/, ''));
         }
         else if (url.type === "guide") {
             Docs.App.setGuideMode();

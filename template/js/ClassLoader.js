@@ -8,21 +8,22 @@ Ext.define("Docs.ClassLoader", {
     /**
      * Loads class.
      *
-     * @param {String} cls  name of the class to load
+     * @param {String} clsUrl  name of the class + optionally name of the method, separated with dash.
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
-    load: function(cls, noHistory) {
+    load: function(clsUrl, noHistory) {
+        var cls = clsUrl;
         var member;
 
         // separate class and member name
-        var matches = cls.match(/^(.*?)(?:#(.*))?$/);
+        var matches = clsUrl.match(/^(.*?)(?:-(.*))?$/);
         if (matches) {
             cls = matches[1];
             member = matches[2];
         }
 
         if (!noHistory) {
-            Docs.History.push("/api/" + cls);
+            Docs.History.push("/api/" + clsUrl);
         }
 
         Docs.App.setClassMode();
@@ -65,6 +66,7 @@ Ext.define("Docs.ClassLoader", {
             pageContent.setVisibilityMode(Ext.core.Element.DISPLAY).hide();
         }
 
+        Ext.getCmp('treePanelCmp').selectClass(cls.name);
         Docs.PageHeader.load(cls);
 
         var docOverviewTab = Ext.getCmp('doc-overview');
