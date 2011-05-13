@@ -5,16 +5,10 @@ Ext.define("Docs.Guides", {
     singleton: true,
 
     /**
-     * Adds click listeners for all guide links.
+     * Loads guide from given URL.
+     *
+     * @param {String} url
      */
-    init: function() {
-        Ext.Array.forEach(Ext.query("#api-overview .guides a"), function(el) {
-            Ext.get(el).addListener('click', function() {
-                this.load(el.href);
-            }, this, {preventDefault: true});
-        }, this);
-    },
-
     load: function(url) {
         Ext.Ajax.request({
             url: url,
@@ -27,8 +21,7 @@ Ext.define("Docs.Guides", {
     },
 
     render: function(html) {
-        Ext.get("top-block").setStyle({display: 'none'});
-        Ext.get("docContent").update('<div class="guide">'+html+'</div>');
+        Ext.get("api-guide").update(html);
         this.syntaxHighlight();
     },
 

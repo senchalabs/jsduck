@@ -2,7 +2,7 @@ Ext.define('Docs.ClassPanel', {
     extend: 'Ext.tab.Panel',
 
     id: 'docTabPanel',
-    renderTo: 'docContent',
+    renderTo: 'api-class',
 
     style: 'border-color: #bfbfbf;',
     plain: true,

@@ -323,7 +323,7 @@ pre, code, kbd, samp, tt {
     font-weight: bold;
     padding-bottom: 0.5em; } }
 
-#doc-overview, .guide {
+#doc-overview, #api-guide {
   pre {
     background-color: #f7f7f7;
     border: solid 1px #e8e8e8;
@@ -491,7 +491,7 @@ pre, code, kbd, samp, tt {
   margin: 10px 0;
   overflow: auto; }
 
-.doc-tab,.guide {
+.doc-tab, #api-guide {
   min-height: 100px;
   .clr {
     clear: both; }
@@ -512,38 +512,37 @@ pre, code, kbd, samp, tt {
   h4 {
     font-weight: bold; } }
 
-#container {
-  .guide {
-    top: 10px;
-    padding-right: 10px;
+#api-guide {
+  top: 10px;
+  padding-right: 10px;
+  font-size: 14px;
+  h1 {
+    background: url(../images/doc-m.png) no-repeat -5px 0;
+    padding: 5px 0 10px 55px;
+    font-family: "klavika-web-1", "klavika-web-2", sans-serif;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+    font-size: 2.3em;
+    color: #66ab16; }
+  h2 {
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    letter-spacing: -1px;
+    line-height: 20px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 20px;
+    font-weight: bold;
+    color: #314e64;
+    margin: 30px 0 15px;
+    padding-bottom: 5px; }
+  h3 {
+    font-weight: bold;
+    color: #314e64;
+    margin-top: 1em;
     font-size: 14px;
-    h1 {
-      background: url(../images/doc-m.png) no-repeat -5px 0;
-      padding: 5px 0 10px 55px;
-      font-family: "klavika-web-1", "klavika-web-2", sans-serif;
-      letter-spacing: -1px;
-      margin-bottom: 16px;
-      font-size: 2.3em;
-      color: #66ab16; }
-    h2 {
-      font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-      letter-spacing: -1px;
-      line-height: 20px;
-      border-bottom: 1px solid #f1f1f1;
-      font-size: 20px;
-      font-weight: bold;
-      color: #314e64;
-      margin: 30px 0 15px;
-      padding-bottom: 5px; }
-    h3 {
-      font-weight: bold;
-      color: #314e64;
-      margin-top: 1em;
-      font-size: 14px;
-      line-height: 16px;
-      margin-bottom: 4px; }
-    hr {
-      display: none; } } }
+    line-height: 16px;
+    margin-bottom: 4px; }
+  hr {
+    display: none; } }
 
 .doc-tab {
   .doc-overview-content {
