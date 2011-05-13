@@ -29,6 +29,14 @@ Ext.define("Docs.App", {
                 Docs.Guides.load(el.href);
             }, this, {preventDefault: true});
         }, this);
+
+        // render classes tree
+        Ext.create('Docs.ClassTree', {
+            root: Docs.classData
+        });
+
+        Ext.tip.QuickTipManager.init();
+        Docs.History.init();
     },
 
     setIndexMode: function() {
