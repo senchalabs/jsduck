@@ -8,6 +8,6 @@ Ext.define("Docs.App", {
      * @return {String} URL
      */
     getBaseUrl: function() {
-        return document.location.href.replace(/#.*/, "");
+        return document.location.href.replace(/#.*/, "").replace(/index.html/, "");
     }
 });
