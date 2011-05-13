@@ -143,7 +143,8 @@ Ext.define('Docs.OverviewToolbar', {
 
             // Hide the section completely if all items in it are inherited
             if (Ext.query(sectionId+' .member.not-inherited').length === 0) {
-                Ext.get(Ext.query(sectionId)[0]).setStyle({display: hide ? 'none' : 'block'});
+                var section = Ext.query(sectionId)[0];
+                section && Ext.get(section).setStyle({display: hide ? 'none' : 'block'});
             }
 
             // add first-child class to first member in section
