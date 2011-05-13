@@ -6,33 +6,48 @@ Ext.define("Docs.History", {
     singleton: true,
     compliant: window.history && window.history.pushState,
 
+    /**
+     * Initializes history management.
+     */
     init: function() {
         if (!this.compliant) {
             return;
         }
 
-        window.addEventListener('popstate', function(e) {
+        window.addEventListener('popstate', Ext.bind(function(e) {
             e.preventDefault();
-            if (e.state && e.state.docClass) {
-                Docs.ClassLoader.load(e.state.docClass, true);
-                Ext.getCmp('treePanelCmp').selectClass(e.state.docClass);
-            }
+            this.navigate();
             return false;
-        }, false);
+        }, this), false);
 
-        var matches = document.location.hash.match(/#\/api\/(.*)/);
-        if (matches) {
-            var className = matches[1];
+        this.navigate();
+    },
+
+    // Parses current URL and navigates to the page
+    navigate: function() {
+        var className = this.parseUrl();
+        if (className) {
             Docs.ClassLoader.load(className, true);
             Ext.getCmp('treePanelCmp').selectClass(className);
         }
     },
 
-    push: function(className) {
+    // Parses current browser location
+    parseUrl: function() {
+        var matches = document.location.hash.match(/#\/api\/(.*)/);
+        return matches ? matches[1] : undefined;
+    },
+
+    /**
+     * Adds URL to history
+     *
+     * @param {String} url  the part of URL after #
+     */
+    push: function(url) {
         if (!this.compliant) {
             return;
         }
-        var fullUrl = Docs.App.getBaseUrl() + "#/api/" + className;
-        window.history.pushState({docClass: className}, '', fullUrl);
+        var fullUrl = Docs.App.getBaseUrl() + "#" + url;
+        window.history.pushState({}, '', fullUrl);
     }
 });

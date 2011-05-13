@@ -21,7 +21,7 @@ Ext.define("Docs.ClassLoader", {
         }
 
         if (!noHistory) {
-            Docs.History.push(cls);
+            Docs.History.push("/api/" + cls);
         }
 
         Docs.App.setClassMode();
