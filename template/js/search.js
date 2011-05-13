@@ -1,31 +1,5 @@
 // Search box
 Ext.onReady(function() {
-    var searchResults = Ext.create('Ext.XTemplate',
-        '<table class="searchResults">',
-            '<thead>',
-                '<tr>',
-                    '<th></th>',
-                    '<th>Result</th>',
-                    '<th>Class</th>',
-                '</tr>',
-            '</thead>',
-            '<tbody>',
-                '<tpl for=".">',
-                    '<tr>',
-                        '<td><div class="icn icon-{iconCls}"></div></td>',
-                        '<td class="result"><a href="#">{member}</td>',
-                        '<td class="result"><a href="#">{cls}</td>',
-                    '</tr>',
-                '</tpl>',
-            '</tbody>',
-        '</table>'
-    );
-
-    var showContent = function(title, html) {
-        Ext.getCmp('docTabPanel').hide();
-        Ext.get('pageContent').setVisibilityMode(Ext.core.Element.DISPLAY).show().update(html);
-    };
-
     var searchStore = new Ext.data.Store({
         fields: ['memberType', 'cls', 'member'],
         proxy: {
@@ -120,9 +94,6 @@ Ext.onReady(function() {
             if (curItem > 0) {
                 ev.preventDefault();
                 panel.handleClick();
-            } else {
-                var html = searchResults.apply(filterClasses(Ext.get(el).getValue(), 100));
-                showContent('Search', html);
             }
         }
         else {
