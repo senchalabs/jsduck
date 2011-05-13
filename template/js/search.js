@@ -1,25 +1,24 @@
 // Search box
 Ext.onReady(function() {
     var searchStore = new Ext.data.Store({
-        fields: ['memberType', 'cls', 'member'],
+        fields: ['cls', 'member', 'type', 'doc'],
         proxy: {
             type: 'memory',
             reader: {
-                type: 'array'
-            }
-        },
-        listeners: {
-            datachanged: function() {
-                panel.render('search-box');
+                type: 'json'
             }
         }
     });
+    // This is the global object read from /output/members.js
+    searchStore.loadData(Docs.membersData.data);
+    var allRecords = searchStore.getRange();
+    searchStore.removeAll();
 
     var panel = Ext.create('Ext.view.View', {
         store: searchStore,
         tpl: new Ext.XTemplate(
             '<tpl for=".">',
-                '<div class="item {memberType}">',
+                '<div class="item {type}">',
                     '<div class="title">{member}</div>',
                     '<div class="class">{cls}</div>',
                 '</div>',
@@ -34,8 +33,8 @@ Ext.onReady(function() {
         handleClick: function(curItem) {
             curItem = curItem || panel.getSelectionModel().getLastSelected();
             var cls = curItem.data.cls;
-            if (curItem.data.memberType != 'cls') {
-                cls += '-' + curItem.data.memberType + '-' + curItem.data.member;
+            if (curItem.data.type != 'cls') {
+                cls += '-' + curItem.data.type + '-' + curItem.data.member;
             }
             panel.hide();
             Docs.ClassLoader.load(cls);
@@ -47,6 +46,9 @@ Ext.onReady(function() {
         }
     });
 
+    panel.render('search-box');
+    panel.hide();
+
     Ext.get('search-field').on('blur', function(ev, el) {
         setTimeout(function() {
             panel.hide();
@@ -55,8 +57,6 @@ Ext.onReady(function() {
     Ext.get('search-field').on('focus', function(ev, el) {
         panel.show();
     });
-
-    var submitForm = false;
 
     // When a key is pressed in the search field, search for classes, methods, properties, configs, etc
     Ext.get('search-field').on('keyup', function(ev, el) {
@@ -91,10 +91,8 @@ Ext.onReady(function() {
         }
         // Enter key
         else if (ev.keyCode == 13) {
-            if (curItem > 0) {
-                ev.preventDefault();
-                panel.handleClick();
-            }
+            ev.preventDefault();
+            panel.handleClick();
         }
         else {
             searchExt(Ext.get(el).getValue());
@@ -102,62 +100,33 @@ Ext.onReady(function() {
     });
 
     Ext.get(Ext.get('search-field').dom.parentNode).on('submit', function(ev, el) {
-        if (!submitForm) {
-            ev.preventDefault();
-        }
-    });
-
-    var classSearch;
-
-    Ext.Ajax.request({
-        url: Docs.App.getBaseUrl() + '/class_search.json',
-        success: function(response) {
-            classSearch = Ext.JSON.decode(response.responseText);
-        }
+        ev.preventDefault();
     });
 
     var searchExt = function(term) {
-        searchStore.loadData(filterClasses(term), false);
+        searchStore.loadData(filterMembers(term), false);
     };
 
-    var filterClasses = function(term, maxResults) {
-        maxResults = maxResults || 10;
-
-        var result = [];
-        var termExpr = new RegExp(term, "i");
-        var members = ['method', 'config', 'property', 'event'];
-
-        for (var cls in classSearch) {
-            if (cls.match(termExpr)) {
-                result.push({cls: cls, memberType: 'cls', member: cls});
-                if (result.length >= maxResults) {
-                    return result;
-                }
+    var filterMembers = function(text) {
+        var results = [[], [], []];
+        var safeText = Ext.escapeRe(text);
+        var re0 = new RegExp("^" + safeText + "$", "i");
+        var re1 = new RegExp("^" + safeText, "i");
+        var re2 = new RegExp(safeText, "i");
+        Ext.Array.forEach(allRecords, function(r) {
+            var member = r.get("member");
+            if (re0.test(member)) {
+                results[0].push(r);
             }
-        }
-        for (var cls in classSearch) {
-            for (var m=0; m< 4; m++) {
-                var member = members[m];
-                for (var i=0; i< classSearch[cls][member].length; i++) {
-                    var curMember = classSearch[cls][member][i];
-                    if (curMember && curMember.match(termExpr)) {
-
-                        var iconCls;
-                        if (member == 'cls') iconCls = 'class';
-                        if (member == 'properties') iconCls = 'property';
-                        if (member == 'methods') iconCls = 'method';
-                        if (member == 'cfgs') iconCls = 'config';
-                        if (member == 'events') iconCls = 'event';
-
-                        result.push({ cls: cls, memberType: member, member: curMember, iconCls: iconCls });
-                        if (result.length >= maxResults) {
-                            return result;
-                        }
-                    }
-                }
+            else if (re1.test(member)) {
+                results[1].push(r);
             }
-        }
-
-        return result;
+            else if (re2.test(member)) {
+                results[2].push(r);
+            }
+        });
+        // flatten results array and returns first n results
+        return Ext.Array.flatten(results).slice(0, 10);
     };
+
 });
