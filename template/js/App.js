@@ -19,6 +19,8 @@ Ext.define("Docs.App", {
     init: function() {
         this.initResizeWindow();
 
+        Ext.core.DomHelper.append(Ext.get("api-overview"), this.renderOverviewData(Docs.overviewData));
+
         // load front page when clicked on logo
         Ext.get(Ext.query(".header > h2 > a")[0]).addListener('click', function() {
             this.setIndexMode();
@@ -105,5 +107,34 @@ Ext.define("Docs.App", {
         }
 
         this.resizeTimeout = null;
+    },
+
+    renderOverviewData: function(data) {
+        var tpl = new Ext.XTemplate(
+            '<tpl for="organisation">',
+                '<div class="category">',
+                    '<h1>{name}</h1>',
+                    '<tpl for="categories">',
+                        '<div class="{align}">',
+                        '<tpl for="items">',
+                            '<h3>{.}</h3>',
+                            '<div class="links">',
+                                '{[this.renderClasses(values)]}',
+                            '</div>',
+                        '</tpl>',
+                        '</div>',
+                    '</tpl>',
+                    '<div style="clear:both"></div>',
+                '</div>',
+            '</tpl>',
+            {
+                renderClasses: function(category) {
+                    return Ext.Array.map(data.categories[category].classes, function(cls) {
+                        return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{0}</a>', cls);
+                    }).join("\n");
+                }
+            }
+        );
+        return tpl.apply(data);
     }
 });
