@@ -35,7 +35,7 @@ Ext.onReady(function() {
             curItem = curItem || panel.getSelectionModel().getLastSelected();
             var cls = curItem.data.cls;
             if (curItem.data.memberType != 'cls') {
-                cls += '#' + curItem.data.memberType + '-' + curItem.data.member;
+                cls += '-' + curItem.data.memberType + '-' + curItem.data.member;
             }
             panel.hide();
             Docs.ClassLoader.load(cls);
