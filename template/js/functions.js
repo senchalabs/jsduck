@@ -30,7 +30,7 @@ var getDocClass = function(cls, noHistory) {
         Docs.History.push(cls);
     }
 
-    Docs.Index.setClassMode();
+    Docs.App.setClassMode();
     var docTabPanel = Ext.getCmp('docTabPanel');
     if (docTabPanel) {
         Ext.getCmp('docTabPanel').setActiveTab(0);

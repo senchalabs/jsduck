@@ -9,7 +9,7 @@ Ext.onReady(function() {
     };
 
     Ext.tip.QuickTipManager.init();
-    Docs.Index.init();
+    Docs.App.init();
     Docs.History.init();
 
     Ext.create('Docs.ClassTree', {
