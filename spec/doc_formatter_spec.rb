@@ -5,6 +5,16 @@ describe JsDuck::DocFormatter do
   before do
     @formatter = JsDuck::DocFormatter.new
     @formatter.context = "Context"
+    @formatter.relations = {
+      'Context' => JsDuck::Class.new({
+        :method => [{:name => "bar", :tagname => :method}]
+      }),
+      'Ext.Msg' => JsDuck::Class.new({
+      }),
+      'Foo' => JsDuck::Class.new({
+        :cfg => [{:name => "bar", :tagname => :cfg}]
+      }),
+    }
   end
 
   describe "#replace" do
@@ -18,12 +28,12 @@ describe JsDuck::DocFormatter do
 
     it "replaces {@link Foo#bar} with link to class member" do
       @formatter.replace("Look at {@link Foo#bar}").should ==
-        'Look at <a href="Foo#bar">Foo.bar</a>'
+        'Look at <a href="Foo#cfg-bar">Foo.bar</a>'
     end
 
     it "uses context to replace {@link #bar} with link to class member" do
       @formatter.replace("Look at {@link #bar}").should ==
-        'Look at <a href="Context#bar">bar</a>'
+        'Look at <a href="Context#method-bar">bar</a>'
     end
 
     it "allows use of custom link text" do
@@ -77,12 +87,16 @@ describe JsDuck::DocFormatter do
     describe "auto-detect" do
       before do
         @formatter.relations = {
-          'FooBar' => true,
-          'FooBar.Blah' => true,
-          'Ext.form.Field' => true,
-          'Ext.XTemplate' => true,
-          'MyClass' => true,
-          'Ext' => true,
+          'FooBar' => JsDuck::Class.new({}),
+          'FooBar.Blah' => JsDuck::Class.new({}),
+          'Ext.form.Field' => JsDuck::Class.new({
+            :method => [{:name => "getValues", :tagname => :method}]
+          }),
+          'Ext.XTemplate' => JsDuck::Class.new({}),
+          'MyClass' => JsDuck::Class.new({}),
+          'Ext' => JsDuck::Class.new({
+            :method => [{:name => "encode", :tagname => :method}]
+          }),
         }
       end
 
@@ -128,12 +142,12 @@ describe JsDuck::DocFormatter do
 
       it "converts Ext#encode to method link" do
         @formatter.replace("Look at Ext#encode").should ==
-          'Look at <a href="Ext#encode">Ext.encode</a>'
+          'Look at <a href="Ext#method-encode">Ext.encode</a>'
       end
 
       it "converts Ext.form.Field#getValues to method link" do
         @formatter.replace("Look at Ext.form.Field#getValues").should ==
-          'Look at <a href="Ext.form.Field#getValues">Ext.form.Field.getValues</a>'
+          'Look at <a href="Ext.form.Field#method-getValues">Ext.form.Field.getValues</a>'
       end
 
       it "doesn't create links inside {@link} tag" do

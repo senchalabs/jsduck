@@ -105,11 +105,26 @@ module JsDuck
         all_members.merge!(mix.members_hash(type))
       end
 
-      @doc[type].each do |m|
+      (@doc[type] || []).each do |m|
         all_members[m[:name]] = m if !m[:private]
       end
 
       all_members
+    end
+
+    # Looks up member type by member name
+    #
+    # Returns type of nil if member not found
+    def member_type(name)
+      # build hash of all members
+      unless @type_map
+        @type_map = {}
+        [:cfg, :property, :method, :event, :css_var, :css_mixin].each do |type|
+          @type_map.merge!(members_hash(type))
+        end
+      end
+
+      @type_map[name] && @type_map[name][:tagname]
     end
 
     # A way to access full class name with similar syntax to

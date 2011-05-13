@@ -142,6 +142,9 @@ module JsDuck
 
     # applies the link template
     def link(cls, member, anchor_text)
+      # prepend type name to member name
+      member = member && (get_member_type(cls, member).to_s + "-" + member)
+
       @link_tpl.gsub(/(%\w)/) do
         case $1
         when '%c'
@@ -156,6 +159,10 @@ module JsDuck
           $1
         end
       end
+    end
+
+    def get_member_type(cls, member)
+      @relations[cls] && @relations[cls].member_type(member)
     end
 
     # Formats doc-comment for placement into HTML.
