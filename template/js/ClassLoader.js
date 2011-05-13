@@ -12,12 +12,13 @@ Ext.define("Docs.ClassLoader", {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     load: function(cls, noHistory) {
-        var member,
-            hashIdx = cls.indexOf('#');
+        var member;
 
-        if (hashIdx > 0) {
-            member = cls.substr(hashIdx + 1);
-            cls = cls.substr(0, hashIdx);
+        // separate class and member name
+        var matches = cls.match(/^(.*?)(?:#(.*))?$/);
+        if (matches) {
+            cls = matches[1];
+            member = matches[2];
         }
 
         if (!noHistory) {
@@ -71,7 +72,7 @@ Ext.define("Docs.ClassLoader", {
         docOverviewTab.setLoading(false);
 
         if (anchor) {
-            Ext.getCmp('doc-overview').scrollToEl("a[name=" + anchor + "]");
+            Ext.getCmp('doc-overview').scrollToEl("#" + anchor);
         } else {
             var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
             docContent.scrollTo('top', 0);

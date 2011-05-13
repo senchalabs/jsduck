@@ -47,8 +47,9 @@ opts = OptionParser.new do | opts |
   opts.on('--link=TPL', "HTML template for replacing {@link}.",
     "Possible placeholders:",
     "%c - full class name (e.g. 'Ext.Panel')",
-    "%m - class member name (e.g. 'urlEncode')",
-    "%M - class member name, prefixed with hash (e.g. '#urlEncode')",
+    "%m - class member name prefixed with member type (e.g. 'method-urlEncode')",
+    "%# - inserts '#' if member name present",
+    "%- - inserts '-' if member name present",
     "%a - anchor text for link",
     "Default value in export: '<a href=\"%c%M\">%a</a>'") do |tpl|
     app.link_tpl = tpl

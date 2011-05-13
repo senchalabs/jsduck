@@ -10,7 +10,7 @@ OUT_DIR=~/public_html/docs
 ruby bin/jsduck \
      --template-links \
      --external=Error \
-     --link='<a href="#/api/%c" rel="%c%M" class="docClass">%a</a>' \
+     --link='<a href="#/api/%c%-%m" rel="%c%#%m" class="docClass">%a</a>' \
      --img='<p><img src="doc-resources/%u" alt="%a"></p>' \
      --output=$OUT_DIR \
      $SDK_DIR/extjs/src $SDK_DIR/platform/src $SDK_DIR/platform/core/src

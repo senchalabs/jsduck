@@ -11,8 +11,9 @@ module JsDuck
     # Can contain placeholders:
     #
     # %c - full class name (e.g. "Ext.Panel")
-    # %m - class member name (e.g. "urlEncode")
-    # %M - class member name, prefixed with hash (e.g. "#urlEncode")
+    # %m - class member name prefixed with member type (e.g. "method-urlEncode")
+    # %# - inserts "#" if member name present
+    # %- - inserts "-" if member name present
     # %a - anchor text for link
     #
     # Default value: '<a href="%c%M">%a</a>'
@@ -46,7 +47,7 @@ module JsDuck
       @context = ""
       @max_length = 120
       @relations = {}
-      @link_tpl = '<a href="%c%M">%a</a>'
+      @link_tpl = '<a href="%c%#%m">%a</a>'
       @img_tpl = '<img src="%u" alt="%a"/>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
@@ -145,14 +146,16 @@ module JsDuck
       # prepend type name to member name
       member = member && (get_member_type(cls, member).to_s + "-" + member)
 
-      @link_tpl.gsub(/(%\w)/) do
+      @link_tpl.gsub(/(%[\w#-])/) do
         case $1
         when '%c'
           cls
         when '%m'
           member ? member : ""
-        when '%M'
-          member ? "#"+member : ""
+        when '%#'
+          member ? "#" : ""
+        when '%-'
+          member ? "-" : ""
         when '%a'
           CGI.escapeHTML(anchor_text||"")
         else
