@@ -2,6 +2,7 @@ require 'rubygems'
 require 'jsduck/aggregator'
 require 'jsduck/source_file'
 require 'jsduck/source_writer'
+require 'jsduck/doc_formatter'
 require 'jsduck/class'
 require 'jsduck/tree'
 require 'jsduck/tree_icons'
@@ -184,13 +185,9 @@ module JsDuck
       end
     end
 
-    # Writes JSON export file for each class
+    # Writes JsonP export file for each class
     def write_json(path, relations)
-      formatter = DocFormatter.new
-      formatter.link_tpl = @link_tpl if @link_tpl
-      formatter.img_tpl = @img_tpl if @img_tpl
-      formatter.relations = relations
-      exporter = Exporter.new(relations, formatter)
+      exporter = Exporter.new(relations, get_doc_formatter(relations))
       @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".js"
         puts "Writing to #{filename} ..." if @verbose
@@ -215,10 +212,7 @@ module JsDuck
 
     # Writes JsonP export file for each guide
     def write_guides(in_path, out_path, relations)
-      formatter = DocFormatter.new
-      formatter.link_tpl = @link_tpl if @link_tpl
-      formatter.img_tpl = @img_tpl if @img_tpl
-      formatter.relations = relations
+      formatter = get_doc_formatter(relations)
       FileUtils.mkdir(out_path)
       Dir.glob(in_path + "/*").each do |in_dir|
         if File.directory?(in_dir)
@@ -234,6 +228,15 @@ module JsDuck
           FileUtils.rm(out_dir + "/README.md")
         end
       end
+    end
+
+    # Creates and initializes DocFormatter
+    def get_doc_formatter(relations)
+      formatter = DocFormatter.new
+      formatter.link_tpl = @link_tpl if @link_tpl
+      formatter.img_tpl = @img_tpl if @img_tpl
+      formatter.relations = relations
+      formatter
     end
 
     def copy_template(template_dir, dir)
