@@ -78,6 +78,7 @@ module JsDuck
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
         @timer.time(:generating) { write_class(@output_dir+"/output", relations) }
+        @timer.time(:generating) { write_overview(@output_dir+"/output/overviewData.js", relations) }
         if @guides_dir
           @timer.time(:generating) { write_guides(@guides_dir, @output_dir+"/guides", relations) }
         end
@@ -151,6 +152,33 @@ module JsDuck
           end
         end
       end
+    end
+
+    # prints warnings for missing classes in overviewData.json file,
+    # and writes overviewData to .js file
+    def write_overview(filename, relations)
+      overview = JSON.parse(IO.read(@template_dir+"/overviewData.json"))
+      overview_classes = {}
+
+      # Check that each class listed in overview file exists
+      overview["categories"].each_pair do |cat_name, cat|
+        cat["classes"].each do |cls_name|
+          unless relations[cls_name]
+            puts "Warning: Class '#{cls_name}' in category '#{cat_name}' not found"
+          end
+          overview_classes[cls_name] = true
+        end
+      end
+
+      # Check that each existing non-private class is listed in overview file
+      relations.each do |cls|
+        unless overview_classes[cls[:name]] || cls[:private]
+          puts "Warning: Class '#{cls[:name]}' not found in overview file"
+        end
+      end
+
+      js = "Docs.overviewData = " + JSON.generate( overview ) + ";"
+      File.open(filename, 'w') {|f| f.write(js) }
     end
 
     # Given all classes, generates namespace tree and writes it
