@@ -67,7 +67,7 @@ module JsDuck
         FileUtils.mkdir(@output_dir)
         init_output_dirs(@output_dir)
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
-        @timer.time(:generating) { write_json(@output_dir+"/output", relations) }
+        @timer.time(:generating) { write_class(@output_dir+"/output", relations) }
       else
         if @template_links
           link_template(@template_dir, @output_dir)
@@ -77,7 +77,7 @@ module JsDuck
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
-        @timer.time(:generating) { write_json(@output_dir+"/output", relations) }
+        @timer.time(:generating) { write_class(@output_dir+"/output", relations) }
         if @guides_dir
           @timer.time(:generating) { write_guides(@guides_dir, @output_dir+"/guides", relations) }
         end
@@ -186,15 +186,12 @@ module JsDuck
     end
 
     # Writes JsonP export file for each class
-    def write_json(path, relations)
+    def write_class(path, relations)
       exporter = Exporter.new(relations, get_doc_formatter(relations))
       @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".js"
         puts "Writing to #{filename} ..." if @verbose
-        hash = exporter.export(cls)
-        json = JSON.pretty_generate(hash)
-        jsonp = "Ext.data.JsonP." + cls[:name].gsub(/\./, "_") + "(" + json + ");"
-        File.open(filename, 'w') {|f| f.write(jsonp) }
+        write_jsonp_file(filename, cls[:name].gsub(/\./, "_"), exporter.export(cls))
       end
     end
 
@@ -222,9 +219,7 @@ module JsDuck
           FileUtils.cp_r(in_dir, out_dir)
           guide = formatter.format(IO.read(out_dir + "/README.md"))
           guide.gsub!(/<img src="/, "<img src=\"guides/#{guide_name}/")
-          json = JSON.pretty_generate({:guide => guide})
-          jsonp = "Ext.data.JsonP." + guide_name + "(" + json + ");"
-          File.open(out_dir+"/README.js", 'w') {|f| f.write(jsonp) }
+          write_jsonp_file(out_dir+"/README.js", guide_name, {:guide => guide})
           FileUtils.rm(out_dir + "/README.md")
         end
       end
@@ -237,6 +232,13 @@ module JsDuck
       formatter.img_tpl = @img_tpl if @img_tpl
       formatter.relations = relations
       formatter
+    end
+
+    # Turns hash into JSON and writes inside JavaScript that calls the
+    # given callback name
+    def write_jsonp_file(filename, callback_name, data)
+      jsonp = "Ext.data.JsonP." + callback_name + "(" + JSON.pretty_generate(data) + ");"
+      File.open(filename, 'w') {|f| f.write(jsonp) }
     end
 
     def copy_template(template_dir, dir)
