@@ -187,11 +187,12 @@ module JsDuck
       formatter.relations = relations
       exporter = Exporter.new(relations, formatter)
       @parallel.each(relations.classes) do |cls|
-        filename = path + "/" + cls[:name] + ".json"
+        filename = path + "/" + cls[:name] + ".js"
         puts "Writing to #{filename} ..." if @verbose
         hash = exporter.export(cls)
         json = JSON.pretty_generate(hash)
-        File.open(filename, 'w') {|f| f.write(json) }
+        jsonp = "Ext.data.JsonP." + cls[:name].gsub(/\./, "_") + "(" + json + ");"
+        File.open(filename, 'w') {|f| f.write(jsonp) }
       end
     end
 

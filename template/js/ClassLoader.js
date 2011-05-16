@@ -39,10 +39,10 @@ Ext.define("Docs.ClassLoader", {
                 Ext.getCmp('doc-overview').setLoading(true);
             }
 
-            Ext.Ajax.request({
-                url: Docs.App.getBaseUrl() + '/output/' + cls + '.json',
-                success: function(response, opts) {
-                    var json = Ext.JSON.decode(response.responseText);
+            Ext.data.JsonP.request({
+                url: Docs.App.getBaseUrl() + '/output/' + cls + '.js',
+                callbackName: cls.replace(/\./g, '_'),
+                success: function(json, opts) {
                     this.cache[cls] = json;
                     this.showClass(json, member);
                 },
