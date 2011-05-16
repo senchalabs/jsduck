@@ -26,6 +26,7 @@ ruby bin/jsduck \
 
 # Finally copy over the images that documentation links to.
 cp -r $SDK_DIR/extjs/doc-resources $OUT_DIR/doc-resources
+cp -r $SDK_DIR/platform/doc-resources/* $OUT_DIR/doc-resources
 
 # Copy over guides
 cp -r $SDK_DIR/guides $OUT_DIR/guides
