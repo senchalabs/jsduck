@@ -21,6 +21,7 @@ module JsDuck
     # These are basically input parameters for app
     attr_accessor :output_dir
     attr_accessor :template_dir
+    attr_accessor :guides_dir
     attr_accessor :template_links
     attr_accessor :input_files
     attr_accessor :verbose
@@ -33,6 +34,7 @@ module JsDuck
     def initialize
       @output_dir = nil
       @template_dir = nil
+      @guides_dir = nil
       @template_links = false
       @input_files = []
       @verbose = false
@@ -75,6 +77,9 @@ module JsDuck
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
         @timer.time(:generating) { write_json(@output_dir+"/output", relations) }
+        if @guides_dir
+          @timer.time(:generating) { write_guides(@guides_dir, @output_dir+"/guides", relations) }
+        end
       end
 
       @timer.report if @verbose
@@ -205,6 +210,29 @@ module JsDuck
         html_filename = src.write(file.to_html, file.filename)
         puts "Writing to #{html_filename} ..." if @verbose
         file.html_filename = File.basename(html_filename)
+      end
+    end
+
+    # Writes JsonP export file for each guide
+    def write_guides(in_path, out_path, relations)
+      formatter = DocFormatter.new
+      formatter.link_tpl = @link_tpl if @link_tpl
+      formatter.img_tpl = @img_tpl if @img_tpl
+      formatter.relations = relations
+      FileUtils.mkdir(out_path)
+      Dir.glob(in_path + "/*").each do |in_dir|
+        if File.directory?(in_dir)
+          guide_name = File.basename(in_dir)
+          out_dir = out_path + "/" + guide_name
+          puts "Creating guide #{out_dir} ..." if @verbose
+          FileUtils.cp_r(in_dir, out_dir)
+          guide = formatter.format(IO.read(out_dir + "/README.md"))
+          guide.gsub!(/<img src="/, "<img src=\"guides/#{guide_name}/")
+          json = JSON.pretty_generate({:guide => guide})
+          jsonp = "Ext.data.JsonP." + guide_name + "(" + json + ");"
+          File.open(out_dir+"/README.js", 'w') {|f| f.write(jsonp) }
+          FileUtils.rm(out_dir + "/README.md")
+        end
       end
     end
 

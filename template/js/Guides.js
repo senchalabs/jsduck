@@ -5,7 +5,7 @@ Ext.define("Docs.Guides", {
     singleton: true,
 
     /**
-     * Loads guide from given URL.
+     * Loads guide with given name.
      *
      * @param {String} name  name of the guide
      * @param {Boolean} noHistory  true to not add browser history entry
@@ -13,11 +13,11 @@ Ext.define("Docs.Guides", {
     load: function(name, noHistory) {
         noHistory || Docs.History.push("/guide/" + name);
 
-        Ext.Ajax.request({
-            url: Docs.App.getBaseUrl() + "/guides/" + name + "/index.html",
-            success: function(response) {
-                var html = response.responseText;
-                this.render(html);
+        Ext.data.JsonP.request({
+            url: Docs.App.getBaseUrl() + "/guides/" + name + "/README.js",
+            callbackName: name,
+            success: function(json) {
+                this.render(json.guide);
             },
             scope: this
         });

@@ -81,6 +81,13 @@ opts = OptionParser.new do | opts |
     app.external_classes << classname
   end
 
+  opts.on('--guides=PATH', "Path to guides directory.",
+    "Each subdirectory of that is treated as a guide",
+    "and is expectd to contain a REAME.md file,",
+    "which will be converted into a README.js.") do |path|
+    app.guides_dir = path
+  end
+
   opts.on('-v', '--verbose', "This will fill up your console.") do
     app.verbose = true
   end

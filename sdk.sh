@@ -12,6 +12,7 @@ ruby bin/jsduck \
      --external=Error \
      --link='<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>' \
      --img='<p><img src="doc-resources/%u" alt="%a"></p>' \
+     --guides=$SDK_DIR/guides \
      --output=$OUT_DIR \
      $SDK_DIR/extjs/src $SDK_DIR/platform/src $SDK_DIR/platform/core/src
 
@@ -27,15 +28,4 @@ ruby bin/jsduck \
 # Finally copy over the images that documentation links to.
 cp -r $SDK_DIR/extjs/doc-resources $OUT_DIR/doc-resources
 cp -r $SDK_DIR/platform/doc-resources/* $OUT_DIR/doc-resources
-
-# Copy over guides
-cp -r $SDK_DIR/guides $OUT_DIR/guides
-# Remove documentation_style.md which we don't want
-rm $OUT_DIR/guides/documentation_style.md
-# convert markdown files in guides to HTML
-# also make image links relative to root dir
-for dir in $(ls $OUT_DIR/guides); do
-    rdiscount $OUT_DIR/guides/$dir/README.md | sed 's/<img src="/<img src="guides\/'$dir'\//;' > $OUT_DIR/guides/$dir/index.html
-    rm $OUT_DIR/guides/$dir/README.md
-done
 
