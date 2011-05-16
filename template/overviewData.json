@@ -343,6 +343,7 @@
                 "Ext.data.reader.Array",
                 "Ext.data.reader.Json",
                 "Ext.data.reader.Xml",
+                "Ext.data.writer.Json",
                 "Ext.data.writer.Writer",
                 "Ext.data.writer.Xml"
             ]
