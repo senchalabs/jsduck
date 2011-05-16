@@ -24,78 +24,85 @@ app = JsDuck::App.new
 app.template_dir = File.dirname(File.dirname(__FILE__)) + "/template"
 
 opts = OptionParser.new do | opts |
-  opts.banner = "Usage: jsduck [options] files/dirs..."
+  opts.banner = "Usage: jsduck [options] files/dirs...\n\n"
 
-  opts.on('-o', '--output=PATH', "Directory to output all this amazing documentation.") do |path|
-    app.output_dir = path
-  end
-
-  opts.on('-t', '--template=PATH', "Directory containing doc-browser UI template.") do |path|
-    app.template_dir = path
-  end
-
-  opts.on('--template-links', "Instead of copying template files, create symbolic links.",
-    "Useful for template files development.",
-    "Only works on platforms supporting symbolic links.") do
-    app.template_links = true
-  end
-
-  opts.on('--json', "Produces JSON export instead of HTML documentation.") do
-    app.export = :json
-  end
-
-  opts.on('--link=TPL', "HTML template for replacing {@link}.",
-    "Possible placeholders:",
-    "%c - full class name (e.g. 'Ext.Panel')",
-    "%m - class member name prefixed with member type (e.g. 'method-urlEncode')",
-    "%# - inserts '#' if member name present",
-    "%- - inserts '-' if member name present",
-    "%a - anchor text for link",
-    "Default value in export: '<a href=\"%c%M\">%a</a>'") do |tpl|
-    app.link_tpl = tpl
-  end
-
-  opts.on('--img=TPL', "HTML template for replacing {@img}.",
-    "Possible placeholders:",
-    "%u - URL from @img tag (e.g. 'some/path.png')",
-    "%a - alt text for image",
-    "Default value in export: '<img src=\"%u\" alt=\"%a\"/>'") do |tpl|
-    app.img_tpl = tpl
-  end
-
-  # For debugging it's often useful to set --processes=0 to get deterministic results.
-  opts.on('-p', '--processes=COUNT', "The number of parallel processes to use.",
-    "Defaults to the number of processors/cores.",
-    "Set to 0 to disable parallel processing completely.") do |count|
-    app.processes = count.to_i
-  end
-
-  opts.on('--ignore-global', "Turns off the creation of global class.") do
-    app.ignore_global = true
-  end
-
-  opts.on('--external=CLASSNAME', "Declare an external class.",
-    "When declared as external, inheriting from this class will not",
-    "trigger warnings.  Useful when you are extending a class for which",
-    "you can not supply source code.") do |classname|
+  opts.on('--external=CLASSNAME',
+    "Declares an external class.  When declared as",
+    "external, inheriting from this class will not",
+    "trigger warnings.  Useful when you are extending",
+    "a class for which you can not supply source code.", " ") do |classname|
     app.external_classes << classname
   end
 
   opts.on('--guides=PATH', "Path to guides directory.",
     "Each subdirectory of that is treated as a guide",
     "and is expectd to contain a REAME.md file,",
-    "which will be converted into a README.js.") do |path|
+    "which will be converted into a README.js.", " ") do |path|
     app.guides_dir = path
   end
 
-  opts.on('-v', '--verbose', "This will fill up your console.") do
-    app.verbose = true
-  end
-
-  opts.on('-h', '--help', "Prints this help message") do
+  opts.on('-h', '--help', "Prints this help message", " ") do
     puts opts
     exit
   end
+
+  opts.on('--ignore-global', "Turns off the creation of global class.", " ") do
+    app.ignore_global = true
+  end
+
+  opts.on('--img=TPL',
+    "HTML template for replacing {@img}.",
+    "Possible placeholders:",
+    "%u - URL from @img tag (e.g. 'some/path.png')",
+    "%a - alt text for image",
+    "Default value in export: '<img src=\"%u\" alt=\"%a\"/>'", " ") do |tpl|
+    app.img_tpl = tpl
+  end
+
+  opts.on('--json', "Produces JSON export instead of HTML documentation.", " ") do
+    app.export = :json
+  end
+
+  opts.on('--link=TPL',
+    "HTML template for replacing {@link}.",
+    "Possible placeholders:",
+    "%c - full class name (e.g. 'Ext.Panel')",
+    "%m - class member name prefixed with member type",
+    "     (e.g. 'method-urlEncode')",
+    "%# - inserts '#' if member name present",
+    "%- - inserts '-' if member name present",
+    "%a - anchor text for link",
+    "Default value in export: '<a href=\"%c%#%m\">%a</a>'", " ") do |tpl|
+    app.link_tpl = tpl
+  end
+
+  opts.on('-o', '--output=PATH', "Directory to output all this amazing documentation.", " ") do |path|
+    app.output_dir = path
+  end
+
+  # For debugging it's often useful to set --processes=0 to get deterministic results.
+  opts.on('-p', '--processes=COUNT',
+    "The number of parallel processes to use.",
+    "Defaults to the number of processors/cores.",
+    "Set to 0 to disable parallel processing completely.", " ") do |count|
+    app.processes = count.to_i
+  end
+
+  opts.on('-t', '--template=PATH', "Directory containing doc-browser UI template.", " ") do |path|
+    app.template_dir = path
+  end
+
+  opts.on('--template-links',
+    "Instead of copying template files, create symbolic",
+    "links.  Useful for template files development.",
+    "Only works on platforms supporting symbolic links.", " ") do
+    app.template_links = true
+  end
+
+  opts.on('-v', '--verbose', "This will fill up your console.", " ") do
+    app.verbose = true
+  end
+
 end
 
 js_files = []
