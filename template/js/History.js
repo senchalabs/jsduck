@@ -9,7 +9,7 @@ Ext.define("Docs.History", {
      */
     init: function() {
         Ext.util.History.init(function() {
-            this.navigate(Ext.util.History.getToken());
+            this.navigate(''); //Ext.util.History.getToken()); TODO: Fix the initial screen load problems
         }, this);
         Ext.util.History.on("change", this.navigate, this);
     },

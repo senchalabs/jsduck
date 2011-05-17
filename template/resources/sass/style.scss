@@ -780,6 +780,8 @@ pre, code, kbd, samp, tt {
         text-decoration: underline; } }
     .l {
       vertical-align: top; } } }
+  .x-box-inner {
+    position: relative; }
 
 #doc-source {
   .x-panel-body-default {
@@ -951,3 +953,7 @@ pre, code, kbd, samp, tt {
 
 .wrapper {
   position: relative; }
+
+.x-scroller-vertical {
+  border: 0;
+}

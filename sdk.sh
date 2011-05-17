@@ -4,11 +4,10 @@
 # latest ExtJS SDK.
 
 # Sorry, these are currently hard-coded :(
-SDK_DIR=~/work/SDK
-OUT_DIR=~/public_html/docs
+SDK_DIR=~/Projects/sencha/SDK
+OUT_DIR=~/Projects/sencha/jsduck/json_docs
 
 ruby bin/jsduck \
-     --template-links \
      --external=Error \
      --link='<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>' \
      --img='<p><img src="doc-resources/%u" alt="%a"></p>' \
@@ -28,4 +27,3 @@ ruby bin/jsduck \
 # Finally copy over the images that documentation links to.
 cp -r $SDK_DIR/extjs/doc-resources $OUT_DIR/doc-resources
 cp -r $SDK_DIR/platform/doc-resources/* $OUT_DIR/doc-resources
-
