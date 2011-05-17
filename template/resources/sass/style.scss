@@ -753,33 +753,34 @@ pre, code, kbd, samp, tt {
   .expandAllMembers {
     background: url(../images/expandcollapse.png) no-repeat -14px 2px; }
   .collapseAllMembers {
-    background: url(../images/expandcollapse.png) no-repeat 2px 2px; }
-  .member_sm {
-    position: absolute;
-    padding: 5px 15px 10px;
-    background: #eaeaea;
-    z-index: 8;
-    top: 21px;
-    line-height: 1.3em;
-    border: 1px solid #bfbfbf;
-    border-top: 1px solid #eaeaea;
-    left: -16px;
-    border-radius-bottom: 5px;
-    h2 {
-      font-weight: bold;
-      text-decoration: underline;
-      padding-bottom: 5px; }
-    a {
-      display: block;
-      position: relative;
-      padding: 2px 30px 2px 0;
-      color: #0464bb;
-      white-space: nowrap;
-      &:hover {
-        color: #083772;
-        text-decoration: underline; } }
-    .l {
-      vertical-align: top; } } }
+    background: url(../images/expandcollapse.png) no-repeat 2px 2px; } }
+.member_sm {
+  font-size: 12px;
+  position: absolute;
+  padding: 5px 15px 10px;
+  background: #eaeaea;
+  z-index: 8;
+  top: 21px;
+  line-height: 1.3em;
+  border: 1px solid #bfbfbf;
+  border-top: 1px solid #eaeaea;
+  left: -16px;
+  border-radius-bottom: 5px;
+  h2 {
+    font-weight: bold;
+    text-decoration: underline;
+    padding-bottom: 5px; }
+  a {
+    display: block;
+    position: relative;
+    padding: 2px 30px 2px 0;
+    color: #0464bb;
+    white-space: nowrap;
+    &:hover {
+      color: #083772;
+      text-decoration: underline; } }
+  .l {
+    vertical-align: top; } }
 
 #doc-source {
   .x-panel-body-default {

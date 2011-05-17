@@ -76,32 +76,93 @@ Ext.define('Docs.OverviewToolbar', {
     },
 
     createMemberButton: function(cfg) {
-        var menu = Ext.create('Ext.menu.Menu', {
-            items: Ext.Array.map(cfg.items, function(m) {
-                return {
-                    text: m.name,
-                    memberName: cfg.type + '-' + m.name
-                };
-            }),
-            plain: true,
-            listeners: {
-                click: function(menu, item) {
-                    Ext.getCmp('doc-overview').scrollToEl("#" + item.memberName);
-                }
-            }
-        });
+        var columns = [];
+        for (var i=0; i<cfg.items.length; i+=25) {
+            columns.push(cfg.items.slice(i, i+25));
+        }
 
-        return Ext.create('Ext.button.Split', {
-            cls: cfg.type,
-            iconCls: 'icon-' + cfg.type,
+        var tpl = new Ext.XTemplate(
+            '<table>',
+                '<tr>',
+                    '<tpl for="columns">',
+                        '<td class="l">',
+                            '<tpl for=".">',
+                                '{[this.renderLink(values)]}',
+                            '</tpl>',
+                        '</td>',
+                    '</tpl>',
+                '</tr>',
+            '</table>',
+            {
+                renderLink: Ext.bind(function(member) {
+                    return this.createLink(this.docClass.name, member);
+                }, this)
+            }
+        );
+
+        var menu = Ext.get(Ext.core.DomHelper.append(document.body, {
+            html: tpl.apply({columns: columns}),
+            style: "display: none; position: absolute",
+            cls: 'member_sm'
+        }));
+        this.menus = this.menus || [];
+        this.menus.push(menu);
+
+        var timeout;
+
+        return Ext.create('Ext.toolbar.TextItem', {
+            cls: 'icon-' + cfg.type,
+            style: "padding-left: 20px; cursor: pointer;",
             text: cfg.title + ' <span class="num">' + cfg.items.length + '</span>',
             listeners: {
-                click: function() {
-                    Ext.getCmp('doc-overview').scrollToEl("#m-" + cfg.type);
-                }
-            },
-            menu: menu
+                render: function(item) {
+                    var el = item.getEl();
+                    el.on({
+                        click: function() {
+                            Ext.getCmp('doc-overview').scrollToEl("#m-" + cfg.type);
+                        },
+                        mouseover: function() {
+                            // hide other menus
+                            Ext.Array.forEach(this.menus, function(m) {
+                                if (m !== menu) {
+                                    m.setStyle({display: "none"});
+                                }
+                            });
+                            clearTimeout(timeout);
+                            var p = el.getXY();
+                            menu.setStyle({left: p[0]+"px", top: (p[1]+23)+"px", display: "block"});
+                        },
+                        mouseout: function() {
+                            timeout = Ext.Function.defer(function() {
+                                menu.setStyle({display: "none"});
+                            }, 200);
+                        },
+                        scope: this
+                    });
+                    menu.on({
+                        mouseover: function() {
+                            clearTimeout(timeout);
+                        },
+                        mouseout: function() {
+                            timeout = Ext.Function.defer(function() {
+                                menu.setStyle({display: "none"});
+                            }, 200);
+                        },
+                        scope: this
+                    });
+                },
+                beforeDestroy: function() {
+                    // clean up DOM
+                    menu.remove();
+                },
+                scope: this
+            }
         });
+    },
+
+    createLink: function(cls, member) {
+        var url = cls+"-"+member.tagname+"-"+member.name;
+        return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{1}</a>', url, member.name);
     },
 
     createSubClassesButton: function(cfg) {
