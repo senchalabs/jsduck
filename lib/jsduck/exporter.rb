@@ -27,6 +27,7 @@ module JsDuck
       h.delete(:css_mixin)
       h[:component] = cls.inherits_from?("Ext.Component")
       h[:superclasses] = cls.superclasses.collect {|c| c.full_name }
+      h[:mixins] = cls.mixins.collect {|c| c.full_name }
       h[:subclasses] = @relations.subclasses(cls).collect {|c| c.full_name }
       h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c.full_name }
       h[:allMixins] = cls.all_mixins.collect {|c| c.full_name }

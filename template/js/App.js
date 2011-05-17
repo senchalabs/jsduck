@@ -73,8 +73,8 @@ Ext.define("Docs.App", {
         this.resizeWindow();
         // Resize the main window and tree on resize
         window.onresize = Ext.bind(function() {
-            if (!this.resizeTimeout) {
-                this.resizeTimeout = setTimeout(this.resizeWindow, 100);
+            if (!Docs.resizeTimeout) {
+                Docs.resizeTimeout = setTimeout(this.resizeWindow, 100);
             }
         }, this);
     },
@@ -106,7 +106,7 @@ Ext.define("Docs.App", {
             docTabPanel.setHeight(viewportHeight - 125);
         }
 
-        this.resizeTimeout = null;
+        Docs.resizeTimeout = null;
     },
 
     renderOverviewData: function(data) {

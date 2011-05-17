@@ -9,6 +9,7 @@ Ext.define('Docs.ClassTree', {
     renderTo: 'treePanel',
     folderSort: true,
     useArrows: true,
+    rootVisible: false,
 
     height: Ext.core.Element.getViewportHeight() - 170,
     border: false,
