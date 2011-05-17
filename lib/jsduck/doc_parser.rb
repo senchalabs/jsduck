@@ -114,6 +114,9 @@ module JsDuck
         elsif look(/@markdown\b/)
           # this is detected just to be ignored
           boolean_at_tag(/@markdown/, :markdown)
+        elsif look(/@abstract\b/)
+          # this is detected just to be ignored
+          boolean_at_tag(/@abstract/, :abstract)
         elsif look(/@/)
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/)
