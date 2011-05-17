@@ -74,7 +74,7 @@ Ext.define("Docs.App", {
         // Resize the main window and tree on resize
         window.onresize = Ext.bind(function() {
             if (!this.resizeTimeout) {
-                this.resizeTimeout = setTimeout(this.resizeWindow, 100);
+                this.resizeTimeout = Ext.Function.defer(this.resizeWindow, 100, this);
             }
         }, this);
     },
