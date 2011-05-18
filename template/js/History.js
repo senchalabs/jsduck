@@ -22,8 +22,7 @@ Ext.define("Docs.History", {
             Ext.getCmp('treePanelCmp').selectClass(url.key.replace(/-.*$/, ''));
         }
         else if (url.type === "guide") {
-            Docs.App.setGuideMode();
-            Docs.Guides.load(url.key, true);
+            Docs.controller.Classes.showGuide(url.key, true);
         }
         else {
             Docs.App.setIndexMode();

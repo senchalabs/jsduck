@@ -23,7 +23,6 @@ Ext.define('Docs.ClassPanel', {
     },
 
     initComponent: function() {
-        this.height = Ext.get('docContent').getHeight() - 55;
         this.items = Ext.create('Docs.OverviewPanel');
         this.callParent(arguments);
     }

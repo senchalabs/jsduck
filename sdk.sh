@@ -4,12 +4,12 @@
 # latest ExtJS SDK.
 
 # Sorry, these are currently hard-coded :(
-SDK_DIR=~/work/SDK
-OUT_DIR=~/public_html/docs
+SDK_DIR=~/Projects/sencha/SDK
+OUT_DIR=~/Projects/sencha/jsduck/out
 
 ruby bin/jsduck \
-     --template-links \
      --external=Error \
+     --template-links \
      --link='<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>' \
      --img='<p><img src="doc-resources/%u" alt="%a"></p>' \
      --guides=$SDK_DIR/guides \
