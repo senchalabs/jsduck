@@ -2,6 +2,7 @@ require 'singleton'
 
 module JsDuck
 
+  # Central logging of JsDuck
   class Logger
     include Singleton
 
@@ -11,6 +12,7 @@ module JsDuck
     def initialize
       @verbose = false
       @warnings = true
+      @shown_warnings = {}
     end
 
     # Prints log message
@@ -18,9 +20,16 @@ module JsDuck
       puts msg if @verbose
     end
 
-    # Prints warning message
+    # Prints warning message.
+    #
+    # Ignores duplicate warnings - only prints the first one.
+    # Works best when --processes=0, but it reduces the amount of
+    # warnings greatly also when run multiple processes.
     def warn(msg)
-      puts "Warning: " + msg if @warnings
+      if @warnings && !@shown_warnings[msg]
+        puts "Warning: " + msg
+        @shown_warnings[msg] = true
+      end
     end
   end
 
