@@ -1,12 +1,15 @@
+/**
+ * List of classes on front page.
+ * Together with links to guides and icons legend.
+ */
 Ext.define('Docs.view.class.List', {
     extend: 'Ext.container.Container',
     alias : 'widget.classlist',
     id: 'classlist',
-    
+
     initComponent: function() {
-        
         var data = this.classData;
-        
+
         var tpl = new Ext.XTemplate(
             '<h1>Ext JS 4.0 API Documentation</h1>',
             '<div class="legend icons">',
@@ -65,9 +68,9 @@ Ext.define('Docs.view.class.List', {
                 }
             }
         );
-        
+
         this.html = tpl.apply(data);
-        
+
         this.callParent(arguments);
     }
 });

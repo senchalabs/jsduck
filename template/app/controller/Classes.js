@@ -10,15 +10,13 @@ Ext.define('Docs.controller.Classes', {
     ],
 
     init: function() {
-
         this.control({
             '#treePanelCmp': {
                 itemclick: this.treeItemClick
             },
-            
+
             '#classlist': {
                 afterrender: function(cmp) {
-                    
                     cmp.el.addListener('click', function(cmp, el) {
                         this.showGuide(el.rel);
                     }, this, {
@@ -30,7 +28,6 @@ Ext.define('Docs.controller.Classes', {
 
             '#doc-overview': {
                 afterrender: function(cmp) {
-
                     // Expand member when clicked
                     cmp.el.addListener('click', function(cmp, el) {
                         Ext.get(Ext.get(el).up('.member')).toggleCls('open');
@@ -53,7 +50,7 @@ Ext.define('Docs.controller.Classes', {
                     });
                 }
             }
-        })
+        });
     },
 
     cache: {},
@@ -106,7 +103,6 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-
         var container = Ext.getCmp('container'),
             showClass = container.down('showclass'),
             classHeader = showClass.down('classheader'),
@@ -166,6 +162,5 @@ Ext.define('Docs.controller.Classes', {
     getBaseUrl: function() {
         return document.location.href.replace(/#.*/, "").replace(/index.html/, "");
     }
-
 
 });

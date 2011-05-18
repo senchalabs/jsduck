@@ -38,9 +38,9 @@ Ext.define('Docs.view.class.Overview', {
      */
     load: function(docClass) {
         this.docClass = docClass;
-        
+
         if (this.toolbar) {
-            this.removeDocked(this.toolbar, true);            
+            this.removeDocked(this.toolbar, true);
         }
         this.toolbar = Ext.create('Docs.view.class.Toolbar', {
             docClass: this.docClass

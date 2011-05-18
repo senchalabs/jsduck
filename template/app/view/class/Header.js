@@ -27,10 +27,10 @@ Ext.define('Docs.view.class.Header', {
             }
         }
     ),
-    
+
     initComponent: function() {
         this.html = this.tpl.apply(this.docClass || '&nbsp;');
-        
+
         this.callParent(arguments);
     }
 });

@@ -4,10 +4,10 @@
  */
 Ext.define('Docs.view.class.Panel', {
     extend: 'Ext.tab.Panel',
-    
+
     id: 'docTabPanel',
     plain: true,
-    
+
     // Remember tab scroll position on Webkit
     listeners: {
         beforetabchange: function(tabPanel, newCard, oldCard) {
@@ -21,13 +21,12 @@ Ext.define('Docs.view.class.Panel', {
     },
 
     initComponent: function() {
-        
         this.items = [
             Ext.create('Docs.view.class.Overview', {
                 docClass: this.docClass
             })
         ];
-        
+
         this.callParent(arguments);
     }
 });

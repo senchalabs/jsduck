@@ -3,7 +3,6 @@
  * TODO: Add framework version
  */
 Ext.define('Docs.view.class.Show', {
-    
     extend: 'Ext.container.Container',
     alias: 'widget.showclass',
     layout: {
@@ -20,7 +19,7 @@ Ext.define('Docs.view.class.Show', {
                 docClass: this.docClass,
                 flex: 1
             })
-        ]
-        this.callParent(arguments)
+        ];
+        this.callParent(arguments);
     }
 });

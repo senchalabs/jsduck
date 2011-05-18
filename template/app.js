@@ -1,5 +1,5 @@
 /**
- * Main application definition for Docs app. Defines a 'Docs' namespace under 
+ * Main application definition for Docs app. Defines a 'Docs' namespace under
  * which all models, views, controllers, stores, helpers etc should be defined.
  */
 Ext.application({
@@ -12,6 +12,6 @@ Ext.application({
     ],
 
     launch: function() {
-        Ext.create('Docs.view.Viewport')
+        Ext.create('Docs.view.Viewport');
     }
 });

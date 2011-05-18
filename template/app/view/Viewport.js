@@ -1,19 +1,18 @@
 /**
- * The main viewport, split in to a west and center region. 
- * The North region should also be shown by default in the packaged 
+ * The main viewport, split in to a west and center region.
+ * The North region should also be shown by default in the packaged
  * (non-live) version of the docs. TODO: close button on north region.
  */
 Ext.define('Docs.view.Viewport', {
-    
     extend: 'Ext.container.Viewport',
-    
+
     id: 'viewport',
     layout: 'border',
     defaults: { xtype: 'container' },
-    
+
     initComponent: function() {
         this.items = [
-        
+
             // This is the 'live docs' header that should appear in the distributed version of the docs
             // {
             //     region: 'north',
@@ -22,15 +21,15 @@ Ext.define('Docs.view.Viewport', {
             //     html: 'For up to date documentation and features, visit <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a>',
             //     height: 33
             // },
-            
+
             {
                 region:'west',
                 width: 240,
                 id: 'west-region-container',
                 padding: '5 0 10 20',
                 layout: 'vbox',
-                defaults: { 
-                    xtype: 'container', 
+                defaults: {
+                    xtype: 'container',
                     width: "100%"
                 },
                 items: [
@@ -44,7 +43,7 @@ Ext.define('Docs.view.Viewport', {
                         ui: 'hmm',
                         listeners: {
                             click: function() {
-                                Ext.getCmp('container').layout.setActiveItem(0);                                
+                                Ext.getCmp('container').layout.setActiveItem(0);
                             }
                         }
                     },

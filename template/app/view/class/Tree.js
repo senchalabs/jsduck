@@ -2,7 +2,6 @@
  * The class tree
  */
 Ext.define('Docs.view.class.Tree', {
-
     extend: 'Ext.tree.Panel',
     alias : 'widget.classtree',
 
