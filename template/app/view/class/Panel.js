@@ -1,12 +1,13 @@
-Ext.define('Docs.ClassPanel', {
+/**
+ * The documentation panel.
+ * TODO: Source code tab, Examples, Q&A
+ */
+Ext.define('Docs.view.class.Panel', {
     extend: 'Ext.tab.Panel',
-
+    
     id: 'docTabPanel',
-    renderTo: 'api-class',
-
-    style: 'border-color: #bfbfbf;',
     plain: true,
-
+    
     // Remember tab scroll position on Webkit
     listeners: {
         beforetabchange: function(tabPanel, newCard, oldCard) {
@@ -16,14 +17,17 @@ Ext.define('Docs.ClassPanel', {
             if (newCard.prevScroll) {
                 newCard.body.scrollTo('top', newCard.prevScroll);
             }
-        },
-        afterrender: function() {
-            Docs.App.resizeWindow();
         }
     },
 
     initComponent: function() {
-        this.items = Ext.create('Docs.OverviewPanel');
+        
+        this.items = [
+            Ext.create('Docs.view.class.Overview', {
+                docClass: this.docClass
+            })
+        ];
+        
         this.callParent(arguments);
     }
 });
