@@ -35,7 +35,8 @@ module JsDuck
 
     # converts :doc properties from markdown to html and resolve @links
     def format_class(c)
-      @formatter.context = c[:name]
+      @formatter.class_context = c[:name]
+      @formatter.doc_context = c
       c[:doc] = @formatter.format(c[:doc]) if c[:doc]
       [:cfg, :property, :method, :event, :cssVar, :cssMixin].each do |type|
         c[type] = c[type].map {|m| format_member(m) }
@@ -45,6 +46,7 @@ module JsDuck
 
     def format_member(m)
       m = m.clone
+      @formatter.doc_context = m
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
       if m[:params] || @formatter.too_long?(m[:doc])
         m[:shortDoc] = @formatter.shorten(m[:doc])
