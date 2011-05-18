@@ -1,3 +1,7 @@
+/**
+ * The class documentation page. Consists of the header (class name) and class panel.
+ * TODO: Add framework version
+ */
 Ext.define('Docs.view.class.Show', {
     
     extend: 'Ext.container.Container',

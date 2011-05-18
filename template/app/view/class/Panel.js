@@ -1,3 +1,7 @@
+/**
+ * The documentation panel.
+ * TODO: Source code tab, Examples, Q&A
+ */
 Ext.define('Docs.view.class.Panel', {
     extend: 'Ext.tab.Panel',
     

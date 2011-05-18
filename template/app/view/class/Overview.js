@@ -11,31 +11,6 @@ Ext.define('Docs.view.class.Overview', {
     autoScroll: true,
     bodyPadding: '20',
 
-    // listeners: {
-    //     afterrender: function(cmp) {
-    //         
-    //         // Expand member when clicked
-    //         cmp.el.addListener('click', function(cmp, el) {
-    //             Ext.get(Ext.get(el).up('.member')).toggleCls('open');
-    //         }, this, {
-    //             preventDefault: true,
-    //             delegate: '.expandable'
-    //         });
-    //         // Do nothing when clicking on not-expandable items
-    //         cmp.el.addListener('click', Ext.emptyFn, this, {
-    //             preventDefault: true,
-    //             delegate: '.not-expandable'
-    //         });
-    // 
-    //         cmp.el.addListener('click', function(cmp, el) {
-    //             Docs.ClassLoader.load(el.rel);
-    //         }, this, {
-    //             preventDefault: true,
-    //             delegate: '.docClass'
-    //         });
-    //     }
-    // },
-    
     /**
      * Scrolls the specified element into view
      *
