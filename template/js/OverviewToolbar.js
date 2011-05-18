@@ -34,10 +34,7 @@ Ext.define('Docs.OverviewToolbar', {
         }
 
         if (this.docClass.subclasses.length) {
-            this.items.push(this.createSubClassesButton({
-                items: this.docClass.subclasses,
-                title: "Sub Classes"
-            }));
+            this.items.push(this.createSubClassesButton(this.docClass.subclasses));
         }
 
         this.items = this.items.concat([
@@ -90,30 +87,27 @@ Ext.define('Docs.OverviewToolbar', {
         });
     },
 
-    createLink: function(cls, member) {
-        var url = cls+"-"+member.tagname+"-"+member.name;
-        return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{1}</a>', url, member.name);
+    createSubClassesButton: function(subclasses) {
+        return Ext.create('Docs.HoverMenuButton', {
+            text: "Sub Classes",
+            cls: 'icon-subclass',
+            links: Ext.Array.map(subclasses, function(cls) {
+                return this.createLink(cls);
+            }, this)
+        });
     },
 
-    createSubClassesButton: function(cfg) {
-        var menu = Ext.create('Ext.menu.Menu', {
-            items: Ext.Array.map(cfg.items, function(className) {
-                return {text: className, clsName: className};
-            }),
-            plain: true,
-            listeners: {
-                click: function(menu, item) {
-                    Docs.ClassLoader.load(item.clsName);
-                }
-            }
-        });
-
-        return Ext.create('Ext.button.Button', {
-            cls: 'subcls',
-            iconCls: 'icon-subclass',
-            text: cfg.title + ' <span class="num">' + cfg.items.length + '</span>',
-            menu: menu
-        });
+    // Creates HTML link to class (and optionally to class member)
+    createLink: function(cls, member) {
+        if (member) {
+            var url = cls+"-"+member.tagname+"-"+member.name;
+            var label = member.name;
+        }
+        else {
+            var url = cls;
+            var label = cls;
+        }
+        return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{1}</a>', url, label);
     },
 
     hideInherited: function(el) {
