@@ -76,6 +76,10 @@ opts = OptionParser.new do | opts |
     app.link_tpl = tpl
   end
 
+  opts.on('--no-warnings', "Turns off warnings.", " ") do
+    app.warnings = false
+  end
+
   opts.on('-o', '--output=PATH', "Directory to output all this amazing documentation.", " ") do |path|
     app.output_dir = path
   end

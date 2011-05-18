@@ -2,6 +2,7 @@ require 'rubygems'
 require 'rdiscount'
 require 'strscan'
 require 'cgi'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -110,10 +111,10 @@ module JsDuck
         file = @doc_context[:filename]
         line = @doc_context[:linenr]
         if !@relations[cls]
-          puts "Warning: #{file} line #{line} #{input} links to non-existing class."
+          Logger.instance.warn("#{file} line #{line} #{input} links to non-existing class.")
           text
         elsif member && !get_member_type(cls, member)
-          puts "Warning: #{file} line #{line} #{input} links to non-existing member."
+          Logger.instance.warn("#{file} line #{line} #{input} links to non-existing member.")
           text
         else
           link(cls, member, text)

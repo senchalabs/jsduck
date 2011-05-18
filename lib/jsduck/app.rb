@@ -12,6 +12,7 @@ require 'jsduck/page'
 require 'jsduck/exporter'
 require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
+require 'jsduck/logger'
 require 'json'
 require 'fileutils'
 
@@ -39,6 +40,7 @@ module JsDuck
       @template_links = false
       @input_files = []
       @verbose = false
+      @warnings = true
       @export = nil
       @link_tpl = nil
       @img_tpl = nil
@@ -52,6 +54,11 @@ module JsDuck
     # Set to 0 to disable parallelization completely.
     def processes=(count)
       @parallel = ParallelWrap.new(:in_processes => count)
+    end
+
+    # Sets warnings on or off
+    def warnings=(enabled)
+      Logger.instance.warnings = enabled
     end
 
     # Call this after input parameters set
@@ -119,7 +126,7 @@ module JsDuck
           name = d[:name]
           file = d[:filename]
           line = d[:linenr]
-          puts "Warning: Ignoring #{type}: #{name} in #{file} line #{line}"
+          Logger.instance.warn("Ignoring #{type}: #{name} in #{file} line #{line}")
         end
       end
       Relations.new(classes, @external_classes)
@@ -134,7 +141,7 @@ module JsDuck
           name = member[:name]
           file = member[:filename]
           line = member[:linenr]
-          puts "Warning: Global #{type}: #{name} in #{file} line #{line}"
+          Logger.instance.warn("Global #{type}: #{name} in #{file} line #{line}")
         end
       end
     end
@@ -147,7 +154,7 @@ module JsDuck
             if !member[:name] || member[:name] == ""
               file = member[:filename]
               line = member[:linenr]
-              puts "Warning: Unnamed #{type} in #{file} line #{line}"
+              Logger.instance.warn("Unnamed #{type} in #{file} line #{line}")
             end
           end
         end
@@ -164,7 +171,7 @@ module JsDuck
       overview["categories"].each_pair do |cat_name, cat|
         cat["classes"].each do |cls_name|
           unless relations[cls_name]
-            puts "Warning: Class '#{cls_name}' in category '#{cat_name}' not found"
+            Logger.instance.warn("Class '#{cls_name}' in category '#{cat_name}' not found")
           end
           overview_classes[cls_name] = true
         end
@@ -173,7 +180,7 @@ module JsDuck
       # Check that each existing non-private class is listed in overview file
       relations.each do |cls|
         unless overview_classes[cls[:name]] || cls[:private]
-          puts "Warning: Class '#{cls[:name]}' not found in overview file"
+          Logger.instance.warn("Class '#{cls[:name]}' not found in overview file")
         end
       end
 

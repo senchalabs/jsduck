@@ -1,3 +1,5 @@
+require 'jsduck/logger'
+
 module JsDuck
 
   # Encapsulates class documentation and provides some commonly needed
@@ -47,7 +49,7 @@ module JsDuck
       if @relations[classname]
         @relations[classname]
       elsif !@relations.ignore?(classname)
-        puts "Warning: Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}"
+        Logger.instance.warn("Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}")
       end
     end
 
