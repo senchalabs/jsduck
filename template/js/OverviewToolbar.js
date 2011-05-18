@@ -26,9 +26,9 @@ Ext.define('Docs.OverviewToolbar', {
             var members = this.docClass[type];
             if (members.length) {
                 this.items.push(this.createMemberButton({
-                    items: members,
+                    text: memberTitles[type],
                     type: type,
-                    title: memberTitles[type]
+                    members: members
                 }));
             }
         }
@@ -76,86 +76,16 @@ Ext.define('Docs.OverviewToolbar', {
     },
 
     createMemberButton: function(cfg) {
-        var columns = [];
-        for (var i=0; i<cfg.items.length; i+=25) {
-            columns.push(cfg.items.slice(i, i+25));
-        }
-
-        var tpl = new Ext.XTemplate(
-            '<table>',
-                '<tr>',
-                    '<tpl for="columns">',
-                        '<td class="l">',
-                            '<tpl for=".">',
-                                '{[this.renderLink(values)]}',
-                            '</tpl>',
-                        '</td>',
-                    '</tpl>',
-                '</tr>',
-            '</table>',
-            {
-                renderLink: Ext.bind(function(member) {
-                    return this.createLink(this.docClass.name, member);
-                }, this)
-            }
-        );
-
-        var menu = Ext.get(Ext.core.DomHelper.append(document.body, {
-            html: tpl.apply({columns: columns}),
-            style: "display: none; position: absolute",
-            cls: 'member_sm'
-        }));
-        this.menus = this.menus || [];
-        this.menus.push(menu);
-
-        var timeout;
-
-        return Ext.create('Ext.toolbar.TextItem', {
-            cls: 'icon-' + cfg.type,
-            style: "padding-left: 20px; cursor: pointer;",
-            text: cfg.title + ' <span class="num">' + cfg.items.length + '</span>',
+        return Ext.create('Docs.HoverMenuButton', {
+            text: cfg.text,
+            cls: 'icon-'+cfg.type,
+            links: Ext.Array.map(cfg.members, function(m) {
+                return this.createLink(this.docClass.name, m);
+            }, this),
             listeners: {
-                render: function(item) {
-                    var el = item.getEl();
-                    el.on({
-                        click: function() {
-                            Ext.getCmp('doc-overview').scrollToEl("#m-" + cfg.type);
-                        },
-                        mouseover: function() {
-                            // hide other menus
-                            Ext.Array.forEach(this.menus, function(m) {
-                                if (m !== menu) {
-                                    m.setStyle({display: "none"});
-                                }
-                            });
-                            clearTimeout(timeout);
-                            var p = el.getXY();
-                            menu.setStyle({left: p[0]+"px", top: (p[1]+23)+"px", display: "block"});
-                        },
-                        mouseout: function() {
-                            timeout = Ext.Function.defer(function() {
-                                menu.setStyle({display: "none"});
-                            }, 200);
-                        },
-                        scope: this
-                    });
-                    menu.on({
-                        mouseover: function() {
-                            clearTimeout(timeout);
-                        },
-                        mouseout: function() {
-                            timeout = Ext.Function.defer(function() {
-                                menu.setStyle({display: "none"});
-                            }, 200);
-                        },
-                        scope: this
-                    });
-                },
-                beforeDestroy: function() {
-                    // clean up DOM
-                    menu.remove();
-                },
-                scope: this
+                click: function() {
+                    Ext.getCmp('doc-overview').scrollToEl("#m-" + cfg.type);
+                }
             }
         });
     },

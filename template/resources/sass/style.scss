@@ -754,7 +754,11 @@ pre, code, kbd, samp, tt {
     background: url(../images/expandcollapse.png) no-repeat -14px 2px; }
   .collapseAllMembers {
     background: url(../images/expandcollapse.png) no-repeat 2px 2px; } }
-.member_sm {
+.hover-menu-button {
+  padding-left: 20px;
+  cursor: pointer; }
+.hover-menu-menu {
+  display: none; // hide initially
   font-size: 12px;
   position: absolute;
   padding: 5px 15px 10px;
@@ -779,7 +783,7 @@ pre, code, kbd, samp, tt {
     &:hover {
       color: #083772;
       text-decoration: underline; } }
-  .l {
+  td {
     vertical-align: top; } }
 
 #doc-source {
