@@ -245,6 +245,7 @@ module JsDuck
           out_dir = out_path + "/" + guide_name
           puts "Creating guide #{out_dir} ..." if @verbose
           FileUtils.cp_r(in_dir, out_dir)
+          formatter.doc_context = {:filename => out_dir + "/README.md", :linenr => 0}
           guide = formatter.format(IO.read(out_dir + "/README.md"))
           guide.gsub!(/<img src="/, "<img src=\"guides/#{guide_name}/")
           write_jsonp_file(out_dir+"/README.js", guide_name, {:guide => guide})
