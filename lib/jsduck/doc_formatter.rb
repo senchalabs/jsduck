@@ -111,10 +111,10 @@ module JsDuck
         line = @doc_context[:linenr]
         if !@relations[cls]
           puts "Warning: #{file} line #{line} #{input} links to non-existing class."
-          input
+          text
         elsif member && !get_member_type(cls, member)
           puts "Warning: #{file} line #{line} #{input} links to non-existing member."
-          input
+          text
         else
           link(cls, member, text)
         end
