@@ -26,7 +26,6 @@ module JsDuck
     attr_accessor :guides_dir
     attr_accessor :template_links
     attr_accessor :input_files
-    attr_accessor :verbose
     attr_accessor :export
     attr_accessor :link_tpl
     attr_accessor :img_tpl
@@ -39,7 +38,6 @@ module JsDuck
       @guides_dir = nil
       @template_links = false
       @input_files = []
-      @verbose = false
       @warnings = true
       @export = nil
       @link_tpl = nil
@@ -59,6 +57,11 @@ module JsDuck
     # Sets warnings on or off
     def warnings=(enabled)
       Logger.instance.warnings = enabled
+    end
+
+    # Sets verbose mode on or off
+    def verbose=(enabled)
+      Logger.instance.verbose = enabled
     end
 
     # Call this after input parameters set
@@ -91,13 +94,13 @@ module JsDuck
         end
       end
 
-      @timer.report if @verbose
+      @timer.report
     end
 
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
       @parallel.map(filenames) do |fname|
-        puts "Parsing #{fname} ..." if @verbose
+        Logger.instance.log("Parsing #{fname} ...")
         SourceFile.new(IO.read(fname), fname)
       end
     end
@@ -106,7 +109,7 @@ module JsDuck
     def aggregate(parsed_files)
       agr = Aggregator.new
       parsed_files.each do |file|
-        puts "Aggregating #{file.filename} ..." if @verbose
+        Logger.instance.log("Aggregating #{file.filename} ...")
         agr.aggregate(file)
       end
       agr.classify_orphans
@@ -212,7 +215,7 @@ module JsDuck
       cache = {}
       @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".html"
-        puts "Writing to #{filename} ..." if @verbose
+        Logger.instance.log("Writing to #{filename} ...")
         page = Page.new(cls, relations, cache)
         page.link_tpl = @link_tpl if @link_tpl
         page.img_tpl = @img_tpl if @img_tpl
@@ -225,7 +228,7 @@ module JsDuck
       exporter = Exporter.new(relations, get_doc_formatter(relations))
       @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".js"
-        puts "Writing to #{filename} ..." if @verbose
+        Logger.instance.log("Writing to #{filename} ...")
         write_jsonp_file(filename, cls[:name].gsub(/\./, "_"), exporter.export(cls))
       end
     end
@@ -237,7 +240,7 @@ module JsDuck
       # updates all the doc-objects related to the file
       parsed_files.each do |file|
         html_filename = src.write(file.to_html, file.filename)
-        puts "Writing to #{html_filename} ..." if @verbose
+        Logger.instance.log("Writing to #{html_filename} ...")
         file.html_filename = File.basename(html_filename)
       end
     end
@@ -250,7 +253,7 @@ module JsDuck
         if File.directory?(in_dir)
           guide_name = File.basename(in_dir)
           out_dir = out_path + "/" + guide_name
-          puts "Creating guide #{out_dir} ..." if @verbose
+          Logger.instance.log("Creating guide #{out_dir} ...")
           FileUtils.cp_r(in_dir, out_dir)
           formatter.doc_context = {:filename => out_dir + "/README.md", :linenr => 0}
           guide = formatter.format(IO.read(out_dir + "/README.md"))
@@ -278,13 +281,13 @@ module JsDuck
     end
 
     def copy_template(template_dir, dir)
-      puts "Copying template files to #{dir}..." if @verbose
+      Logger.instance.log("Copying template files to #{dir}...")
       FileUtils.cp_r(template_dir, dir)
       init_output_dirs(dir)
     end
 
     def link_template(template_dir, dir)
-      puts "Linking template files to #{dir}..." if @verbose
+      Logger.instance.log("Linking template files to #{dir}...")
       FileUtils.mkdir(dir)
       Dir.glob(template_dir + "/*").each do |file|
         File.symlink(File.expand_path(file), dir+"/"+File.basename(file))
