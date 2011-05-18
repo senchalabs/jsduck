@@ -57,7 +57,7 @@ Ext.define('Docs.view.class.HoverMenuButton', {
                 // position menu right below button and show it
                 var p = this.getEl().getXY();
                 this.menu.setStyle({
-                    left: p[0]+"px",
+                    left: (p[0] - 10)+"px",
                     top: (p[1]+23)+"px",
                     display: "block"
                 });
@@ -89,6 +89,9 @@ Ext.define('Docs.view.class.HoverMenuButton', {
             html: this.renderMenuHtml(),
             cls: 'hover-menu-menu'
         }));
+        this.menu.addListener('click', function() {
+            this.menu.setStyle({display: "none"});
+        }, this)
         this.menus.push(this.menu);
     },
 

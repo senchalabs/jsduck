@@ -98,8 +98,17 @@ a:hover {
 
 .search {
   background: url(../images/search-box.png) no-repeat;
+  position: relative;
 }
-
+.search input {
+  position: absolute;
+  border: 0;
+  top: 3px;
+  right: 35px;
+  background: none;
+  bottom: 16px;
+  left: 25px;
+}
 
 
 #center-container, #west-region-container {
@@ -123,6 +132,7 @@ a:hover {
       letter-spacing: 0;
       margin-left: 10px;
       font-size: 0.6em; } }
+
   h1.class {
     a {
       background: url(../images/class-m.png) no-repeat 0 -5px;
@@ -200,6 +210,9 @@ a:hover {
     padding: 20px 10px 20px 20px;
     margin: 0 20px 20px 0;
     border-radius: 10px; }
+  .category:last-child {
+    margin-bottom: 0;
+  }
   .lft {
     float: left;
     width: 270px;
@@ -236,7 +249,8 @@ a:hover {
 
 
 
-#api-overview.classList {
+#center-container #classlist {
+  h1.pb { margin-bottom: 12px; }
   h2 {
     font-weight: bold; }
   td {
@@ -359,6 +373,59 @@ a:hover {
       &.first-child {
         background: none;
         padding-left: 15px; } } } }
+
+#doc-overview, #guide {
+  min-height: 100px;
+  .clr {
+    clear: both; }
+  p {
+    padding: 0;
+    margin: 0 0 0.8em; }
+  p:last-child { margin: 0; }
+  em {
+    font-style: italic; }
+  strong {
+    font-weight: bold; }
+  ul {
+    margin: 0 0 1em 2em;
+    li {
+      list-style: disc outside; } }
+  h3 {
+    font-weight: bold;
+    font-size: 1.1em; }
+  h4 {
+    font-weight: bold; } }
+
+#guide {
+  padding-right: 10px;
+  font-size: 14px;
+  h1 {
+    background: url(../images/doc-m.png) no-repeat -5px -5px;
+    padding: 10px 0 10px 55px;
+    font-family: "klavika-web-1", "klavika-web-2", sans-serif;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+    font-size: 2.3em;
+    color: #66ab16; }
+  h2 {
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    letter-spacing: -1px;
+    line-height: 20px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 20px;
+    font-weight: bold;
+    color: #314e64;
+    margin: 30px 0 15px;
+    padding-bottom: 5px; }
+  h3 {
+    font-weight: bold;
+    color: #314e64;
+    margin-top: 1em;
+    font-size: 14px;
+    line-height: 16px;
+    margin-bottom: 4px; }
+  hr {
+    display: none; } }
 
 
 #doc-overview {

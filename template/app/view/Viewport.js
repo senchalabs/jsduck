@@ -44,12 +44,14 @@ Ext.define('Docs.view.Viewport', {
                         listeners: {
                             click: function() {
                                 Ext.getCmp('container').layout.setActiveItem(0);
+                                Docs.History.push("");
                             }
                         }
                     },
                     {
                         cls: 'search',
-                        height: 40
+                        height: 40,
+                        html: '<input type="text" id="search-field" />'
                     },
                     {
                         flex: 1,

@@ -10,6 +10,14 @@ Ext.define('Docs.controller.Classes', {
     ],
 
     init: function() {
+        
+        Ext.getBody().addListener('click', function(cmp, el) {
+            this.loadClass(el.rel);
+        }, this, {
+            preventDefault: true,
+            delegate: '.docClass'
+        });
+        
         this.control({
             '#treePanelCmp': {
                 itemclick: this.treeItemClick
@@ -40,13 +48,6 @@ Ext.define('Docs.controller.Classes', {
                     cmp.el.addListener('click', Ext.emptyFn, this, {
                         preventDefault: true,
                         delegate: '.not-expandable'
-                    });
-
-                    cmp.el.addListener('click', function(cmp, el) {
-                        this.loadClass(el.rel);
-                    }, this, {
-                        preventDefault: true,
-                        delegate: '.docClass'
                     });
                 }
             }
@@ -103,28 +104,33 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-        var container = Ext.getCmp('container'),
-            showClass = container.down('showclass'),
-            classHeader = showClass.down('classheader'),
-            classOverview = showClass.down('classoverview'),
-            docTabPanel = Ext.getCmp('docTabPanel');
+        
+        if (this.currentCls != cls) {
+            var container = Ext.getCmp('container'),
+                showClass = container.down('showclass'),
+                classHeader = showClass.down('classheader'),
+                classOverview = showClass.down('classoverview'),
+                docTabPanel = Ext.getCmp('docTabPanel');
 
-        classHeader.update(classHeader.tpl.apply(cls));
-        classOverview.load(cls);
+            classHeader.update(classHeader.tpl.apply(cls));
+            classOverview.load(cls);
 
-        if (docTabPanel) {
-            docTabPanel.setActiveTab(0);
-            docTabPanel.setLoading(false);
+            if (docTabPanel) {
+                docTabPanel.setActiveTab(0);
+                docTabPanel.setLoading(false);
+            }
+
+            Ext.getCmp('treePanelCmp').selectClass(cls.name);
         }
-
-        Ext.getCmp('treePanelCmp').selectClass(cls.name);
-
+        
         if (anchor) {
             Ext.getCmp('doc-overview').scrollToEl("#" + anchor);
         } else {
             var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
             docContent.scrollTo('top', 0);
         }
+        
+        this.currentCls = cls;        
     },
 
     showGuide: function(name, noHistory) {

@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.view.class.Header', {
     extend: 'Ext.container.Container',
-    padding: '5 0 10 0',
+    padding: '5 0 17 0',
     alias: 'widget.classheader',
 
     tpl: Ext.create('Ext.XTemplate',
