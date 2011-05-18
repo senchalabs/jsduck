@@ -2,3 +2,4 @@
 template/extjs
 template/resources/css
 template/resources/sass/.sass-cache
+sdk-vars.rb
