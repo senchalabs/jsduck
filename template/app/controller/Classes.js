@@ -142,6 +142,7 @@ Ext.define('Docs.controller.Classes', {
             success: function(json) {
                 Ext.getCmp("guide").update(json.guide);
                 Ext.getCmp('container').layout.setActiveItem(2);
+                Docs.Syntax.highlight(Ext.get("guide"));
             },
             scope: this
         });
