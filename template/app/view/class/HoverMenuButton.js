@@ -11,8 +11,6 @@ Ext.define('Docs.view.class.HoverMenuButton', {
      */
     links: [],
 
-    menus: [],
-
     statics: {
         // Global list of all menus.
         // So we can hide all other menus while showing a specific one.
@@ -35,8 +33,6 @@ Ext.define('Docs.view.class.HoverMenuButton', {
     },
 
     onRender: function() {
-        var me = this;
-
         this.callParent(arguments);
 
         this.renderMenu();
@@ -47,7 +43,7 @@ Ext.define('Docs.view.class.HoverMenuButton', {
             },
             mouseover: function() {
                 // hide other menus
-                Ext.Array.forEach(me.menus, function(menu) {
+                Ext.Array.forEach(Docs.view.class.HoverMenuButton.menus, function(menu) {
                     if (menu !== this.menu) {
                         menu.setStyle({display: "none"});
                     }
@@ -79,7 +75,7 @@ Ext.define('Docs.view.class.HoverMenuButton', {
         // clean up DOM
         this.menu.remove();
         // remove from global menu list
-        Ext.Array.remove(this.menus, this.menu);
+        Ext.Array.remove(Docs.view.class.HoverMenuButton.menus, this.menu);
 
         this.callParent(arguments);
     },
@@ -92,7 +88,7 @@ Ext.define('Docs.view.class.HoverMenuButton', {
         this.menu.addListener('click', function() {
             this.menu.setStyle({display: "none"});
         }, this);
-        this.menus.push(this.menu);
+        Docs.view.class.HoverMenuButton.menus.push(this.menu);
     },
 
     renderMenuHtml: function() {
