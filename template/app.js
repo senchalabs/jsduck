@@ -11,7 +11,7 @@ Ext.application({
         'Classes',
         'Search'
     ],
-    
+
     autoCreateViewport: true,
 
     launch: function() {

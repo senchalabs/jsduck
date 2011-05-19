@@ -59,7 +59,7 @@ Ext.define('Docs.view.Viewport', {
                                 id: 'search-field',
                                 enableKeyEvents: true
                             },
-                            { 
+                            {
                                 xtype: 'searchdropdown'
                             }
                         ]

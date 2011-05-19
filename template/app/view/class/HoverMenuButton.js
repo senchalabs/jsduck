@@ -10,7 +10,7 @@ Ext.define('Docs.view.class.HoverMenuButton', {
      * Array of HTML anchor elements to be shown in menu.
      */
     links: [],
-    
+
     menus: [],
 
     statics: {
@@ -36,7 +36,7 @@ Ext.define('Docs.view.class.HoverMenuButton', {
 
     onRender: function() {
         var me = this;
-        
+
         this.callParent(arguments);
 
         this.renderMenu();
@@ -91,7 +91,7 @@ Ext.define('Docs.view.class.HoverMenuButton', {
         }));
         this.menu.addListener('click', function() {
             this.menu.setStyle({display: "none"});
-        }, this)
+        }, this);
         this.menus.push(this.menu);
     },
 

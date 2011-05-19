@@ -10,14 +10,13 @@ Ext.define('Docs.controller.Classes', {
     ],
 
     init: function() {
-        
         Ext.getBody().addListener('click', function(cmp, el) {
             this.loadClass(el.rel);
         }, this, {
             preventDefault: true,
             delegate: '.docClass'
         });
-        
+
         this.control({
             '#treePanelCmp': {
                 itemclick: this.treeItemClick
@@ -104,7 +103,6 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-        
         if (this.currentCls != cls) {
             var container = Ext.getCmp('container'),
                 showClass = container.down('showclass'),
@@ -122,15 +120,15 @@ Ext.define('Docs.controller.Classes', {
 
             Ext.getCmp('treePanelCmp').selectClass(cls.name);
         }
-        
+
         if (anchor) {
             Ext.getCmp('doc-overview').scrollToEl("#" + anchor);
         } else {
             var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
             docContent.scrollTo('top', 0);
         }
-        
-        this.currentCls = cls;        
+
+        this.currentCls = cls;
     },
 
     showGuide: function(name, noHistory) {

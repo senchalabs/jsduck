@@ -8,7 +8,6 @@ Ext.define('Docs.controller.Search', {
     stores: ['Search'],
 
     init: function() {
-
         this.control({
             '#quick-search': {
                 itemclick: function(panel, item) {
@@ -17,7 +16,6 @@ Ext.define('Docs.controller.Search', {
             },
             '#search-field': {
                 keyup: function(el, ev) {
-
                     var panel = Ext.getCmp('quick-search');
 
                     if (ev.keyCode == 27 || el.value == '') {
@@ -54,7 +52,7 @@ Ext.define('Docs.controller.Search', {
                         // panel.handleClick();
                     }
                     else {
-                        Docs.App.getController('Search').search(el.value)
+                        Docs.App.getController('Search').search(el.value);
                     }
                 }
             }
@@ -72,7 +70,7 @@ Ext.define('Docs.controller.Search', {
 
     search: function(term) {
         Docs.App.getStore('Search').loadData(this.filterMembers(term), false);
-        Ext.getCmp('quick-search').alignTo('search-field', 'bl', [-23, 0])
+        Ext.getCmp('quick-search').alignTo('search-field', 'bl', [-23, 0]);
     },
 
     filterMembers: function(text, n) {
