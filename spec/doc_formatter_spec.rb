@@ -4,7 +4,7 @@ describe JsDuck::DocFormatter do
 
   before do
     @formatter = JsDuck::DocFormatter.new
-    @formatter.context = "Context"
+    @formatter.class_context = "Context"
     @formatter.relations = {
       'Context' => JsDuck::Class.new({
         :method => [{:name => "bar", :tagname => :method}]

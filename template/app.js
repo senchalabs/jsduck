@@ -8,10 +8,14 @@ Ext.application({
     appFolder: 'app',
 
     controllers: [
-        'Classes'
+        'Classes',
+        'Search'
     ],
+    
+    autoCreateViewport: true,
 
     launch: function() {
-        Ext.create('Docs.view.Viewport');
+        Docs.App = this;
+        Docs.History.init();
     }
 });
