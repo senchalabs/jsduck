@@ -1,7 +1,7 @@
 /**
  * Toolbar button with menu that appears when hovered over.
  */
-Ext.define('Docs.view.class.HoverMenuButton', {
+Ext.define('Docs.view.cls.HoverMenuButton', {
     extend: 'Ext.toolbar.TextItem',
     componentCls: "hover-menu-button",
 
@@ -43,7 +43,7 @@ Ext.define('Docs.view.class.HoverMenuButton', {
             },
             mouseover: function() {
                 // hide other menus
-                Ext.Array.forEach(Docs.view.class.HoverMenuButton.menus, function(menu) {
+                Ext.Array.forEach(Docs.view.cls.HoverMenuButton.menus, function(menu) {
                     if (menu !== this.menu) {
                         menu.setStyle({display: "none"});
                     }
@@ -75,7 +75,7 @@ Ext.define('Docs.view.class.HoverMenuButton', {
         // clean up DOM
         this.menu.remove();
         // remove from global menu list
-        Ext.Array.remove(Docs.view.class.HoverMenuButton.menus, this.menu);
+        Ext.Array.remove(Docs.view.cls.HoverMenuButton.menus, this.menu);
 
         this.callParent(arguments);
     },
@@ -88,7 +88,7 @@ Ext.define('Docs.view.class.HoverMenuButton', {
         this.menu.addListener('click', function() {
             this.menu.setStyle({display: "none"});
         }, this);
-        Docs.view.class.HoverMenuButton.menus.push(this.menu);
+        Docs.view.cls.HoverMenuButton.menus.push(this.menu);
     },
 
     renderMenuHtml: function() {

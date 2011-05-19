@@ -36,14 +36,14 @@ def load_sdk_vars
   end
 end
 
-def run_jsduck(paths)
+def run_jsduck(paths, template_links = true)
   system [
     "ruby bin/jsduck",
     # --external=Error to ignore the Error class that Ext.Error extends.
     "--external=Error",
     # to create symbolic links to template files instead of copying them over.
     # Useful for development.  Turn off for deployment.
-    "--template-links",
+    (template_links ? "--template-links" : ""),
     '--link=\'<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>\'',
     # Note that we wrap image template inside <p> because {@img} often
     # appears inline withing text, but that just looks ugly in HTML
@@ -65,6 +65,20 @@ task :sdk do
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",
   ])
+end
+
+desc "Run JSDuck on ExtJS SDK for export"
+task :export do
+  load_sdk_vars
+  run_jsduck([
+    "#{SDK_DIR}/extjs/src",
+    "#{SDK_DIR}/platform/src",
+    "#{SDK_DIR}/platform/core/src",
+  ], false)
+  
+  system "mkdir -p #{OUT_DIR}/extjs/resources/themes"
+  system "cp #{SDK_DIR}/extjs-all.js #{OUT_DIR}/extjs"
+  system "cp -r #{SDK_DIR}/resources/themes/images #{OUT_DIR}/extjs/resources/themes"
 end
 
 desc "Run JSDuck on the Docs app itself"

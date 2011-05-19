@@ -2,10 +2,10 @@
  * The documentation panel.
  * TODO: Source code tab, Examples, Q&A
  */
-Ext.define('Docs.view.class.Panel', {
+Ext.define('Docs.view.cls.Panel', {
     extend: 'Ext.tab.Panel',
     requires: [
-        'Docs.view.class.Overview'
+        'Docs.view.cls.Overview'
     ],
 
     id: 'docTabPanel',
@@ -25,7 +25,7 @@ Ext.define('Docs.view.class.Panel', {
 
     initComponent: function() {
         this.items = [
-            Ext.create('Docs.view.class.Overview', {
+            Ext.create('Docs.view.cls.Overview', {
                 docClass: this.docClass
             })
         ];
