@@ -5,6 +5,11 @@
  */
 Ext.define('Docs.view.Viewport', {
     extend: 'Ext.container.Viewport',
+    requires: [
+        'Docs.view.class.Show',
+        'Docs.view.class.List',
+        'Docs.History'
+    ],
 
     id: 'viewport',
     layout: 'border',

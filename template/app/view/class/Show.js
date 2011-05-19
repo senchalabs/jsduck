@@ -5,6 +5,11 @@
 Ext.define('Docs.view.class.Show', {
     extend: 'Ext.container.Container',
     alias: 'widget.showclass',
+    requires: [
+        'Docs.view.class.Header',
+        'Docs.view.class.Panel'
+    ],
+    
     layout: {
         type: 'vbox',
         align: 'stretch'

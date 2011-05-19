@@ -3,6 +3,10 @@
  */
 Ext.define('Docs.controller.Classes', {
     extend: 'Ext.app.Controller',
+    requires: [
+        'Docs.History',
+        'Docs.Syntax'
+    ],
 
     views: [
         'class.List',

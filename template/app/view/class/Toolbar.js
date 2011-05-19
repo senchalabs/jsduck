@@ -3,6 +3,10 @@
  */
 Ext.define('Docs.view.class.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
+    requires: [
+        'Docs.view.class.HoverMenuButton'
+    ],
+    
     dock: 'top',
     cls: 'member-links',
     padding: '3 5',

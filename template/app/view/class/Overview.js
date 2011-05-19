@@ -4,6 +4,10 @@
 Ext.define('Docs.view.class.Overview', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.classoverview',
+    requires: [
+        'Docs.view.class.Toolbar',
+        'Docs.Syntax'
+    ],
 
     id: 'doc-overview',
     cls: 'doc-tab iScroll',

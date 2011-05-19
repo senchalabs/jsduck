@@ -4,6 +4,9 @@
  */
 Ext.define('Docs.view.class.Panel', {
     extend: 'Ext.tab.Panel',
+    requires: [
+        'Docs.view.class.Overview'
+    ],
 
     id: 'docTabPanel',
     plain: true,

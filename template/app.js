@@ -1,3 +1,10 @@
+Ext.Loader.setConfig({
+    enabled: true,
+    paths: {
+        'Docs': 'app'
+    }
+});
+
 /**
  * @class Docs.App
  * @extends Ext.app.Application
