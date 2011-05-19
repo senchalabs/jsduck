@@ -20,4 +20,43 @@ task :install => :build do
   system "gem install --user-install jsduck"
 end
 
+desc "Run JSDuck on ExtJS SDK"
+task :sdk do
+  if File.exists?("sdk-vars.rb")
+    require "sdk-vars.rb"
+  else
+    puts "Error: sdk-vars.rb not found."
+    puts
+    puts "Please create file sdk-vars.rb and define constants SDK_DIR and OUT_DIR in it."
+    puts
+    puts "For example:"
+    puts
+    puts "    SDK_DIR='/path/to/SDK'"
+    puts "    OUT_DIR='/path/to/ouput/dir'"
+    exit 1
+  end
+
+  system [
+    "ruby bin/jsduck",
+    # --external=Error to ignore the Error class that Ext.Error extends.
+    "--external=Error",
+    # to create symbolic links to template files instead of copying them over.
+    # Useful for development.  Turn off for deployment.
+    "--template-links",
+    '--link=\'<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>\'',
+    # Note that we wrap image template inside <p> because {@img} often
+    # appears inline withing text, but that just looks ugly in HTML
+    '--img=\'<p><img src="doc-resources/%u" alt="%a"></p>\'',
+    "--guides=#{SDK_DIR}/guides",
+    "--output=#{OUT_DIR}",
+    "#{SDK_DIR}/extjs/src",
+    "#{SDK_DIR}/platform/src",
+    "#{SDK_DIR}/platform/core/src"
+  ].join(" ")
+
+  # Finally copy over the images that documentation links to.
+  system "cp -r #{SDK_DIR}/extjs/doc-resources #{OUT_DIR}/doc-resources"
+  system "cp -r #{SDK_DIR}/platform/doc-resources/* #{OUT_DIR}/doc-resources"
+end
+
 task :default => :spec

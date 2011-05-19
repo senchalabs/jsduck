@@ -134,7 +134,7 @@ elsif File.exists?(app.output_dir) && !File.directory?(app.output_dir)
   puts "Oh noes!  The output directory is not really a directory at all :("
   exit(1)
 elsif !File.exists?(File.dirname(app.output_dir))
-  puts "Oh noes!  The parent directory for #{output_dir} doesn't exist."
+  puts "Oh noes!  The parent directory for #{app.output_dir} doesn't exist."
   exit(1)
 elsif !File.exists?(app.template_dir + "/extjs")
   puts "Oh noes!  The template directory does not contain extjs/ directory :("

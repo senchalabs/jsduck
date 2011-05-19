@@ -18,15 +18,13 @@ Ext.define("Docs.History", {
     navigate: function(token) {
         var url = this.parseToken(token);
         if (url.type === "api") {
-            Docs.ClassLoader.load(url.key, true);
-            Ext.getCmp('treePanelCmp').selectClass(url.key.replace(/-.*$/, ''));
+            Docs.App.getController('Classes').loadClass(url.key);
         }
         else if (url.type === "guide") {
-            Docs.App.setGuideMode();
-            Docs.Guides.load(url.key, true);
+            Docs.App.getController('Classes').showGuide(url.key, true);
         }
         else {
-            Docs.App.setIndexMode();
+            Ext.getCmp('container').layout.setActiveItem(0);
         }
     },
 
