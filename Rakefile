@@ -20,8 +20,7 @@ task :install => :build do
   system "gem install --user-install jsduck"
 end
 
-desc "Run JSDuck on ExtJS SDK"
-task :sdk do
+def load_sdk_vars
   if File.exists?("sdk-vars.rb")
     require "sdk-vars.rb"
   else
@@ -35,7 +34,9 @@ task :sdk do
     puts "    OUT_DIR='/path/to/ouput/dir'"
     exit 1
   end
+end
 
+def run_jsduck(paths)
   system [
     "ruby bin/jsduck",
     # --external=Error to ignore the Error class that Ext.Error extends.
@@ -49,14 +50,33 @@ task :sdk do
     '--img=\'<p><img src="doc-resources/%u" alt="%a"></p>\'',
     "--guides=#{SDK_DIR}/guides",
     "--output=#{OUT_DIR}",
-    "#{SDK_DIR}/extjs/src",
-    "#{SDK_DIR}/platform/src",
-    "#{SDK_DIR}/platform/core/src"
-  ].join(" ")
+  ].concat(paths).join(" ")
 
   # Finally copy over the images that documentation links to.
   system "cp -r #{SDK_DIR}/extjs/doc-resources #{OUT_DIR}/doc-resources"
   system "cp -r #{SDK_DIR}/platform/doc-resources/* #{OUT_DIR}/doc-resources"
+end
+
+desc "Run JSDuck on ExtJS SDK"
+task :sdk do
+  load_sdk_vars
+  run_jsduck([
+    "#{SDK_DIR}/extjs/src",
+    "#{SDK_DIR}/platform/src",
+    "#{SDK_DIR}/platform/core/src",
+  ])
+end
+
+desc "Run JSDuck on the Docs app itself"
+task :docs do
+  load_sdk_vars
+  run_jsduck([
+    "#{SDK_DIR}/extjs/src",
+    "#{SDK_DIR}/platform/src",
+    "#{SDK_DIR}/platform/core/src",
+    "template/app",
+    "template/app.js",
+  ])
 end
 
 task :default => :spec

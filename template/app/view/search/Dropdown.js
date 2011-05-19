@@ -1,3 +1,6 @@
+/**
+ * Renders search results list.
+ */
 Ext.define('Docs.view.search.Dropdown', {
     extend: 'Ext.view.View',
     alias: 'widget.searchdropdown',

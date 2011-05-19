@@ -1,3 +1,6 @@
+/**
+ * Controller for search.
+ */
 Ext.define('Docs.controller.Search', {
     extend: 'Ext.app.Controller',
 
