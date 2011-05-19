@@ -20,7 +20,7 @@ Ext.define('Docs.view.class.Overview', {
         var el = Ext.get(Ext.query(query)[0]);
         if (el) {
             var isMember = el.hasCls("member");
-            var scrollOffset = el.getY() - (isMember ? 170 : 160);
+            var scrollOffset = el.getY() - (isMember ? 145 : 135);
             var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
             var currentScroll = docContent.getScroll()['top'];
             docContent.scrollTo('top', currentScroll + scrollOffset, true);

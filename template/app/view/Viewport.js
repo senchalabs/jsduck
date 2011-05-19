@@ -26,7 +26,7 @@ Ext.define('Docs.view.Viewport', {
                 region:'west',
                 width: 240,
                 id: 'west-region-container',
-                padding: '5 0 10 20',
+                padding: '5 0 20 20',
                 layout: 'vbox',
                 defaults: {
                     xtype: 'container',
@@ -44,12 +44,25 @@ Ext.define('Docs.view.Viewport', {
                         listeners: {
                             click: function() {
                                 Ext.getCmp('container').layout.setActiveItem(0);
+                                Docs.History.push("");
                             }
                         }
                     },
                     {
                         cls: 'search',
-                        height: 40
+                        id: 'search-container',
+                        height: 40,
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                emptyText: 'Search',
+                                id: 'search-field',
+                                enableKeyEvents: true
+                            },
+                            { 
+                                xtype: 'searchdropdown'
+                            }
+                        ]
                     },
                     {
                         flex: 1,

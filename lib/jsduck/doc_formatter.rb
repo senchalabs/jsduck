@@ -31,7 +31,11 @@ module JsDuck
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
     # Context#blah is meant.
-    attr_accessor :context
+    attr_accessor :class_context
+
+    # Sets up instance to work in context of particular doc object.
+    # Used for error reporting.
+    attr_accessor :doc_context
 
     # Maximum length for text that doesn't get shortened, defaults to 120
     attr_accessor :max_length
@@ -44,7 +48,8 @@ module JsDuck
     attr_accessor :relations
 
     def initialize
-      @context = ""
+      @class_context = ""
+      @doc_context = {}
       @max_length = 120
       @relations = {}
       @link_tpl = '<a href="%c%#%m">%a</a>'
@@ -86,7 +91,7 @@ module JsDuck
         target = $1
         text = $2
         if target =~ /^(.*)#(.*)$/
-          cls = $1.empty? ? @context : $1
+          cls = $1.empty? ? @class_context : $1
           member = $2
         else
           cls = target
@@ -97,12 +102,22 @@ module JsDuck
         if text
           text = text
         elsif member
-          text = (cls == @context) ? member : (cls + "." + member)
+          text = (cls == @class_context) ? member : (cls + "." + member)
         else
           text = cls
         end
 
-        link(cls, member, text)
+        file = @doc_context[:filename]
+        line = @doc_context[:linenr]
+        if !@relations[cls]
+          puts "Warning: #{file} line #{line} #{input} links to non-existing class."
+          text
+        elsif member && !get_member_type(cls, member)
+          puts "Warning: #{file} line #{line} #{input} links to non-existing member."
+          text
+        else
+          link(cls, member, text)
+        end
       end
     end
 
