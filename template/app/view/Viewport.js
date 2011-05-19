@@ -26,7 +26,7 @@ Ext.define('Docs.view.Viewport', {
                 region:'west',
                 width: 240,
                 id: 'west-region-container',
-                padding: '5 0 10 20',
+                padding: '5 0 20 20',
                 layout: 'vbox',
                 defaults: {
                     xtype: 'container',
@@ -50,8 +50,19 @@ Ext.define('Docs.view.Viewport', {
                     },
                     {
                         cls: 'search',
+                        id: 'search-container',
                         height: 40,
-                        html: '<input type="text" id="search-field" />'
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                emptyText: 'Search',
+                                id: 'search-field',
+                                enableKeyEvents: true
+                            },
+                            { 
+                                xtype: 'searchdropdown'
+                            }
+                        ]
                     },
                     {
                         flex: 1,
