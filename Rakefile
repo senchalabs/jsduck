@@ -76,9 +76,13 @@ task :export do
     "#{SDK_DIR}/platform/core/src",
   ], false)
   
-  system "mkdir -p #{OUT_DIR}/extjs/resources/themes"
-  system "cp #{SDK_DIR}/build/sdk/extjs-all.js #{OUT_DIR}/extjs"
-  system "cp -r #{SDK_DIR}/build/sdk/resources/themes/images #{OUT_DIR}/extjs/resources/themes"
+  system "rm #{OUT_DIR}/extjs"
+  system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
+  system "cp #{SDK_DIR}/extjs/build/sdk/ext-all.js #{OUT_DIR}/extjs"
+  system "cp -r #{SDK_DIR}/extjs/build/sdk/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
+  system "rm -rf #{OUT_DIR}/resources/sass/.sass-cache"
+  system "rm -rf #{OUT_DIR}/resources/.sass-cache"
+  system "cp template/index_production.html #{OUT_DIR}/index.html" 
 end
 
 desc "Run JSDuck on the Docs app itself"
