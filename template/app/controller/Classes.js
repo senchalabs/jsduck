@@ -13,6 +13,12 @@ Ext.define('Docs.controller.Classes', {
         'clsTree.Tree'
     ],
 
+	stores: [
+		'History'
+	],
+
+	models: ['History'],
+
     init: function() {
         Ext.getBody().addListener('click', function(cmp, el) {
             this.loadClass(el.rel);
