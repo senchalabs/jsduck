@@ -20,7 +20,7 @@ Ext.define("Docs.History", {
             this.ignoreChange = false;
             return;
         }
-        
+
         var url = this.parseToken(token);
         if (url.type === "api") {
             Docs.App.getController('Classes').loadClass(url.key, true);

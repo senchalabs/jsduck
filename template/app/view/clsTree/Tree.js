@@ -13,7 +13,7 @@ Ext.define('Docs.view.clsTree.Tree', {
 
     border: false,
     bodyBorder: false,
-    
+
     // dockedItems: [
     //     {
     //         xtype: 'container',

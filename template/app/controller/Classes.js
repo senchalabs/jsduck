@@ -90,7 +90,7 @@ Ext.define('Docs.controller.Classes', {
             if (docTabPanel) {
                 docTabPanel.setLoading(true);
             }
-            
+
             Ext.data.JsonP.request({
                 url: this.getBaseUrl() + '/output/' + cls + '.js',
                 callbackName: cls.replace(/\./g, '_'),
