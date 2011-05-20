@@ -52,7 +52,7 @@ Ext.define('Docs.controller.Search', {
                         // panel.handleClick();
                     }
                     else {
-                        Docs.App.getController('Search').search(el.value);
+                        this.search(el.value);
                     }
                 }
             }
