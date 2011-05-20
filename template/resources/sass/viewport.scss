@@ -108,12 +108,11 @@ a:hover {
 #quick-search {
   border-style: solid;
   border-color: #bebdbf;
-  border-width: 0 1px;
+  border-width: 1px 1px 0 1px;
   background: white;
   position: absolute;
   width: 190px;
   top: 23px;
-  padding-top: 16px;
   left: 20px;
   z-index: 5;
 

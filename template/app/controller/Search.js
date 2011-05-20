@@ -85,7 +85,7 @@ Ext.define('Docs.controller.Search', {
         Docs.App.getStore('Search').loadData(results, false);
         // position dropdown below search box
         var dropdown = Ext.getCmp('quick-search');
-        dropdown.alignTo('search-field', 'bl', [-23, 0]);
+        dropdown.alignTo('search-field', 'bl', [-23, 2]);
         // hide dropdown when nothing found
         if (results.length === 0) {
             dropdown.hide();
