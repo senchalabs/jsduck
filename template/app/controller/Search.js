@@ -13,43 +13,44 @@ Ext.define('Docs.controller.Search', {
     init: function() {
         this.control({
             '#quick-search': {
-                itemclick: function(panel, item) {
-                    this.handleClick(item);
+                itemclick: function(dropdown, record) {
+                    this.loadRecord(record);
                 }
             },
             '#search-field': {
                 keyup: function(el, ev) {
-                    var panel = Ext.getCmp('quick-search');
+                    var dropdown = Ext.getCmp('quick-search');
 
                     if (ev.keyCode === Ext.EventObject.ESC || el.value === '') {
-                        panel.hide();
+                        dropdown.hide();
                         return;
                     }
                     else {
-                        panel.show();
+                        dropdown.show();
                     }
 
-                    var curItem = panel.store.indexOf(panel.getSelectionModel().getLastSelected()),
-                        lastItem = panel.store.data.length - 1,
-                        selModel = panel.getSelectionModel();
+                    var selModel = dropdown.getSelectionModel();
+                    var record = selModel.getLastSelected();
+                    var curIndex = dropdown.store.indexOf(record);
+                    var lastIndex = dropdown.store.getCount() - 1;
 
                     if (ev.keyCode === Ext.EventObject.UP) {
-                        if (curItem === undefined) {
+                        if (curIndex === undefined) {
                             selModel.select(0);
                         } else {
-                            selModel.select(curItem === 0 ? lastItem : (curItem - 1));
+                            selModel.select(curIndex === 0 ? lastIndex : (curIndex - 1));
                         }
                     }
                     else if (ev.keyCode === Ext.EventObject.DOWN) {
-                        if (curItem === undefined) {
+                        if (curIndex === undefined) {
                             selModel.select(0);
                         } else {
-                            selModel.select(curItem === lastItem ? 0 : curItem + 1);
+                            selModel.select(curIndex === lastIndex ? 0 : curIndex + 1);
                         }
                     }
                     else if (ev.keyCode === Ext.EventObject.ENTER) {
                         ev.preventDefault();
-                        this.handleClick(selModel.getLastSelected());
+                        this.loadRecord(record);
                     }
                     else {
                         this.search(el.value);
@@ -59,13 +60,13 @@ Ext.define('Docs.controller.Search', {
         });
     },
 
-    handleClick: function(curItem) {
-        curItem = curItem;
-        var cls = curItem.data.cls;
-        if (curItem.data.type !== 'cls') {
-            cls += '-' + curItem.data.type + '-' + curItem.data.member;
+    // loads class/method corrseponding to the record
+    loadRecord: function(record) {
+        var name = record.get("cls");
+        if (record.get("type") !== 'cls') {
+            name += '-' + record.get("type") + '-' + record.get("member");
         }
-        Docs.App.getController('Classes').loadClass(cls);
+        Docs.App.getController('Classes').loadClass(name);
         Ext.getCmp('quick-search').hide();
     },
 
