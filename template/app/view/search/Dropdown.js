@@ -13,7 +13,7 @@ Ext.define('Docs.view.search.Dropdown', {
 
     store: 'Search',
 
-    id: 'quick-search',
+    id: 'search-dropdown',
     overItemCls:'x-view-over',
     trackOver: true,
     itemSelector:'div.item',

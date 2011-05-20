@@ -12,14 +12,14 @@ Ext.define('Docs.controller.Search', {
 
     init: function() {
         this.control({
-            '#quick-search': {
+            '#search-dropdown': {
                 itemclick: function(dropdown, record) {
                     this.loadRecord(record);
                 }
             },
             '#search-field': {
                 keyup: function(el, ev) {
-                    var dropdown = Ext.getCmp('quick-search');
+                    var dropdown = Ext.getCmp('search-dropdown');
 
                     if (ev.keyCode === Ext.EventObject.ESC || !el.value) {
                         dropdown.hide();
@@ -57,13 +57,13 @@ Ext.define('Docs.controller.Search', {
                     }
                 },
                 focus: function(el) {
-                    var dropdown = Ext.getCmp('quick-search');
+                    var dropdown = Ext.getCmp('search-dropdown');
                     if (el.value && dropdown.store.getCount() > 0) {
                         dropdown.show();
                     }
                 },
                 blur: function() {
-                    Ext.getCmp('quick-search').hide();
+                    Ext.getCmp('search-dropdown').hide();
                 }
             }
         });
@@ -76,7 +76,7 @@ Ext.define('Docs.controller.Search', {
             name += '-' + record.get("type") + '-' + record.get("member");
         }
         Docs.App.getController('Classes').loadClass(name);
-        Ext.getCmp('quick-search').hide();
+        Ext.getCmp('search-dropdown').hide();
     },
 
     search: function(term) {
@@ -84,7 +84,7 @@ Ext.define('Docs.controller.Search', {
         var results = this.filterMembers(term);
         Docs.App.getStore('Search').loadData(results, false);
         // position dropdown below search box
-        var dropdown = Ext.getCmp('quick-search');
+        var dropdown = Ext.getCmp('search-dropdown');
         dropdown.alignTo('search-field', 'bl', [-23, 2]);
         // hide dropdown when nothing found
         if (results.length === 0) {
