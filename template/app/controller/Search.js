@@ -62,7 +62,15 @@ Ext.define('Docs.controller.Search', {
                     }
                 },
                 blur: function() {
-                    this.getDropdown().hide();
+                    // Don't hide the dropdown right away, otherwise
+                    // we don't receive the itemclick event when focus
+                    // was lost because we clicked on dropdown item.
+                    // Not really a good solution, but I can't
+                    // currently think of anything better.  Behaves
+                    // badly when you make a long mouse press on
+                    // dropdown item.
+                    var dropdown = this.getDropdown();
+                    Ext.Function.defer(dropdown.hide, 500, dropdown);
                 }
             }
         });
