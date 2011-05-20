@@ -21,7 +21,7 @@ Ext.define('Docs.controller.Search', {
                 keyup: function(el, ev) {
                     var dropdown = Ext.getCmp('quick-search');
 
-                    if (ev.keyCode === Ext.EventObject.ESC || el.value === '') {
+                    if (ev.keyCode === Ext.EventObject.ESC || !el.value) {
                         dropdown.hide();
                         return;
                     }
@@ -55,6 +55,14 @@ Ext.define('Docs.controller.Search', {
                     else {
                         this.search(el.value);
                     }
+                },
+                focus: function(el) {
+                    if (el.value) {
+                        Ext.getCmp('quick-search').show();
+                    }
+                },
+                blur: function() {
+                    Ext.getCmp('quick-search').hide();
                 }
             }
         });
