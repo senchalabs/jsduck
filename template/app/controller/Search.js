@@ -57,8 +57,9 @@ Ext.define('Docs.controller.Search', {
                     }
                 },
                 focus: function(el) {
-                    if (el.value) {
-                        Ext.getCmp('quick-search').show();
+                    var dropdown = Ext.getCmp('quick-search');
+                    if (el.value && dropdown.store.getCount() > 0) {
+                        dropdown.show();
                     }
                 },
                 blur: function() {
@@ -79,8 +80,16 @@ Ext.define('Docs.controller.Search', {
     },
 
     search: function(term) {
-        Docs.App.getStore('Search').loadData(this.filterMembers(term), false);
-        Ext.getCmp('quick-search').alignTo('search-field', 'bl', [-23, 0]);
+        // perform search and load results to store
+        var results = this.filterMembers(term);
+        Docs.App.getStore('Search').loadData(results, false);
+        // position dropdown below search box
+        var dropdown = Ext.getCmp('quick-search');
+        dropdown.alignTo('search-field', 'bl', [-23, 0]);
+        // hide dropdown when nothing found
+        if (results.length === 0) {
+            dropdown.hide();
+        }
     },
 
     filterMembers: function(text, n) {
