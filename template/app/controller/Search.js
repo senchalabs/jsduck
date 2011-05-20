@@ -77,19 +77,23 @@ Ext.define('Docs.controller.Search', {
 
     filterMembers: function(text, n) {
         var results = [[], [], []];
+        var hasDot = /\./.test(text);
         var safeText = Ext.escapeRe(text);
         var re0 = new RegExp("^" + safeText + "$", "i");
         var re1 = new RegExp("^" + safeText, "i");
         var re2 = new RegExp(safeText, "i");
         Ext.Array.forEach(Docs.membersData.data, function(r) {
-            var member = r.member;
-            if (re0.test(member)) {
+            // when search text has "." in it, search from the full name (e.g. "Ext.Component.focus")
+            // Otherwise search from just the member name (e.g. "focus" or "Component")
+            var name = hasDot ? r.cls + (r.type === "cls" ? "" : "." + r.member) : r.member;
+
+            if (re0.test(name)) {
                 results[0].push(r);
             }
-            else if (re1.test(member)) {
+            else if (re1.test(name)) {
                 results[1].push(r);
             }
-            else if (re2.test(member)) {
+            else if (re2.test(name)) {
                 results[2].push(r);
             }
         });
