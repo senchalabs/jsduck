@@ -1,7 +1,7 @@
 /**
  * Renders class name and icon in page header.
  */
-Ext.define('Docs.view.class.Header', {
+Ext.define('Docs.view.cls.Header', {
     extend: 'Ext.container.Container',
     padding: '5 0 17 0',
     alias: 'widget.classheader',

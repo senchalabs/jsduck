@@ -2,7 +2,7 @@
  * List of classes on front page.
  * Together with links to guides and icons legend.
  */
-Ext.define('Docs.view.class.List', {
+Ext.define('Docs.view.cls.List', {
     extend: 'Ext.container.Container',
     alias : 'widget.classlist',
     id: 'classlist',
@@ -11,7 +11,7 @@ Ext.define('Docs.view.class.List', {
         var data = this.classData;
 
         var tpl = new Ext.XTemplate(
-            '<h1 class="pb">Ext JS 4.0 API Documentation</h1>',
+            '<h1 class="pb">Ext JS 4.0.1 API Documentation</h1>',
             '<div class="legend icons">',
                 '<h4>Legend</h4>',
                 '<ul>',

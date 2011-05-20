@@ -1,11 +1,11 @@
 /**
  * Renders the whole class-documentation page.
  */
-Ext.define('Docs.view.class.Overview', {
+Ext.define('Docs.view.cls.Overview', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.classoverview',
     requires: [
-        'Docs.view.class.Toolbar',
+        'Docs.view.cls.Toolbar',
         'Docs.Syntax'
     ],
 
@@ -46,7 +46,7 @@ Ext.define('Docs.view.class.Overview', {
         if (this.toolbar) {
             this.removeDocked(this.toolbar, true);
         }
-        this.toolbar = Ext.create('Docs.view.class.Toolbar', {
+        this.toolbar = Ext.create('Docs.view.cls.Toolbar', {
             docClass: this.docClass
         });
         this.addDocked(this.toolbar);
