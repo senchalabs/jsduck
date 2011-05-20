@@ -5,10 +5,11 @@ Ext.define('Docs.view.search.Dropdown', {
     extend: 'Ext.view.View',
     alias: 'widget.searchdropdown',
 
-    floating: 'true',
+    floating: true,
     autoShow: false,
     autoRender: true,
     toFrontOnShow: true,
+    focusOnToFront: false,
 
     store: 'Search',
 
