@@ -1,7 +1,7 @@
 /**
  * The class tree
  */
-Ext.define('Docs.view.class.Tree', {
+Ext.define('Docs.view.clsTree.Tree', {
     extend: 'Ext.tree.Panel',
     alias : 'widget.classtree',
 
@@ -13,6 +13,28 @@ Ext.define('Docs.view.class.Tree', {
 
     border: false,
     bodyBorder: false,
+    
+    // dockedItems: [
+    //     {
+    //         xtype: 'container',
+    //         layout: {
+    //             type: 'hbox'
+    //         },
+    //         dock: 'top',
+    //         margin: '0 0 15 0',
+    //         items: [
+    //             {
+    //                 margin: '0 10 0 0',
+    //                 xtype: 'button',
+    //                 text: 'Favorites'
+    //             },
+    //             {
+    //                 xtype: 'button',
+    //                 text: 'History'
+    //             }
+    //         ]
+    //     }
+    // ],
 
     initComponent: function() {
         // Expand the main tree

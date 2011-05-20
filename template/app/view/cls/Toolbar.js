@@ -1,10 +1,10 @@
 /**
  * Toolbar with menus providing quick access to class members.
  */
-Ext.define('Docs.view.class.Toolbar', {
+Ext.define('Docs.view.cls.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
     requires: [
-        'Docs.view.class.HoverMenuButton'
+        'Docs.view.cls.HoverMenuButton'
     ],
     
     dock: 'top',
@@ -77,7 +77,7 @@ Ext.define('Docs.view.class.Toolbar', {
     },
 
     createMemberButton: function(cfg) {
-        return Ext.create('Docs.view.class.HoverMenuButton', {
+        return Ext.create('Docs.view.cls.HoverMenuButton', {
             text: cfg.text,
             cls: 'icon-'+cfg.type,
             links: Ext.Array.map(cfg.members, function(m) {
@@ -92,7 +92,7 @@ Ext.define('Docs.view.class.Toolbar', {
     },
 
     createSubClassesButton: function(subclasses) {
-        return Ext.create('Docs.view.class.HoverMenuButton', {
+        return Ext.create('Docs.view.cls.HoverMenuButton', {
             text: "Sub Classes",
             cls: 'icon-subclass',
             links: Ext.Array.map(subclasses, function(cls) {
