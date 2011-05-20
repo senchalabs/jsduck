@@ -82,7 +82,7 @@ Ext.define('Docs.controller.Search', {
         var re1 = new RegExp("^" + safeText, "i");
         var re2 = new RegExp(safeText, "i");
         Ext.Array.forEach(Docs.membersData.data, function(r) {
-            var member = r.cls;
+            var member = r.member;
             if (re0.test(member)) {
                 results[0].push(r);
             }
