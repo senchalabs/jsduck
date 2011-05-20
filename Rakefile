@@ -77,8 +77,8 @@ task :export do
   ], false)
   
   system "mkdir -p #{OUT_DIR}/extjs/resources/themes"
-  system "cp #{SDK_DIR}/extjs-all.js #{OUT_DIR}/extjs"
-  system "cp -r #{SDK_DIR}/resources/themes/images #{OUT_DIR}/extjs/resources/themes"
+  system "cp #{SDK_DIR}/build/sdk/extjs-all.js #{OUT_DIR}/extjs"
+  system "cp -r #{SDK_DIR}/build/sdk/resources/themes/images #{OUT_DIR}/extjs/resources/themes"
 end
 
 desc "Run JSDuck on the Docs app itself"

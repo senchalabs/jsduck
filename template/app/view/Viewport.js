@@ -8,6 +8,7 @@ Ext.define('Docs.view.Viewport', {
     requires: [
         'Docs.view.cls.Show',
         'Docs.view.cls.List',
+        'Docs.view.clsTree.Tree',
         'Docs.History'
     ],
 

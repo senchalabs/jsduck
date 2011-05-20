@@ -10,7 +10,7 @@ Ext.define('Docs.controller.Classes', {
 
     views: [
         'cls.List',
-        'cls.Tree'
+        'clsTree.Tree'
     ],
 
     init: function() {
