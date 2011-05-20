@@ -21,7 +21,7 @@ Ext.define('Docs.controller.Search', {
                 keyup: function(el, ev) {
                     var panel = Ext.getCmp('quick-search');
 
-                    if (ev.keyCode == 27 || el.value == '') {
+                    if (ev.keyCode == Ext.EventObject.ESC || el.value == '') {
                         panel.hide();
                         return;
                     }
@@ -33,24 +33,21 @@ Ext.define('Docs.controller.Search', {
                         lastItem = panel.store.data.length - 1,
                         selModel = panel.getSelectionModel();
 
-                    // Up arrow
-                    if (ev.keyCode == 38) {
+                    if (ev.keyCode == Ext.EventObject.UP) {
                         if (curItem == undefined) {
                             selModel.select(0);
                         } else {
                             selModel.select(curItem == 0 ? lastItem : (curItem - 1));
                         }
                     }
-                    // Down arrow
-                    else if (ev.keyCode == 40) {
+                    else if (ev.keyCode == Ext.EventObject.DOWN) {
                         if (curItem == undefined) {
                             selModel.select(0);
                         } else {
                             selModel.select(curItem == lastItem ? 0 : curItem + 1);
                         }
                     }
-                    // Enter key
-                    else if (ev.keyCode == 13) {
+                    else if (ev.keyCode == Ext.EventObject.ENTER) {
                         ev.preventDefault();
                         // panel.handleClick();
                     }
