@@ -19,7 +19,7 @@ Ext.define('Docs.controller.Search', {
             },
             '#search-field': {
                 keyup: function(el, ev) {
-                    var dropdown = Ext.getCmp('search-dropdown');
+                    var dropdown = this.getDropdown();
 
                     if (ev.keyCode === Ext.EventObject.ESC || !el.value) {
                         dropdown.hide();
@@ -57,16 +57,19 @@ Ext.define('Docs.controller.Search', {
                     }
                 },
                 focus: function(el) {
-                    var dropdown = Ext.getCmp('search-dropdown');
-                    if (el.value && dropdown.store.getCount() > 0) {
-                        dropdown.show();
+                    if (el.value && this.getDropdown().store.getCount() > 0) {
+                        this.getDropdown().show();
                     }
                 },
                 blur: function() {
-                    Ext.getCmp('search-dropdown').hide();
+                    this.getDropdown().hide();
                 }
             }
         });
+    },
+
+    getDropdown: function() {
+        return this.dropdown || (this.dropdown = Ext.getCmp('search-dropdown'));
     },
 
     // loads class/method corrseponding to the record
@@ -76,7 +79,7 @@ Ext.define('Docs.controller.Search', {
             name += '-' + record.get("type") + '-' + record.get("member");
         }
         Docs.App.getController('Classes').loadClass(name);
-        Ext.getCmp('search-dropdown').hide();
+        this.getDropdown().hide();
     },
 
     search: function(term) {
@@ -84,11 +87,10 @@ Ext.define('Docs.controller.Search', {
         var results = this.filterMembers(term);
         Docs.App.getStore('Search').loadData(results, false);
         // position dropdown below search box
-        var dropdown = Ext.getCmp('search-dropdown');
-        dropdown.alignTo('search-field', 'bl', [-23, 2]);
+        this.getDropdown().alignTo('search-field', 'bl', [-23, 2]);
         // hide dropdown when nothing found
         if (results.length === 0) {
-            dropdown.hide();
+            this.getDropdown().hide();
         }
     },
 
