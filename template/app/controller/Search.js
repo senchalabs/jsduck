@@ -21,7 +21,7 @@ Ext.define('Docs.controller.Search', {
                 keyup: function(el, ev) {
                     var panel = Ext.getCmp('quick-search');
 
-                    if (ev.keyCode == Ext.EventObject.ESC || el.value == '') {
+                    if (ev.keyCode === Ext.EventObject.ESC || el.value === '') {
                         panel.hide();
                         return;
                     }
@@ -33,21 +33,21 @@ Ext.define('Docs.controller.Search', {
                         lastItem = panel.store.data.length - 1,
                         selModel = panel.getSelectionModel();
 
-                    if (ev.keyCode == Ext.EventObject.UP) {
-                        if (curItem == undefined) {
+                    if (ev.keyCode === Ext.EventObject.UP) {
+                        if (curItem === undefined) {
                             selModel.select(0);
                         } else {
-                            selModel.select(curItem == 0 ? lastItem : (curItem - 1));
+                            selModel.select(curItem === 0 ? lastItem : (curItem - 1));
                         }
                     }
-                    else if (ev.keyCode == Ext.EventObject.DOWN) {
-                        if (curItem == undefined) {
+                    else if (ev.keyCode === Ext.EventObject.DOWN) {
+                        if (curItem === undefined) {
                             selModel.select(0);
                         } else {
-                            selModel.select(curItem == lastItem ? 0 : curItem + 1);
+                            selModel.select(curItem === lastItem ? 0 : curItem + 1);
                         }
                     }
-                    else if (ev.keyCode == Ext.EventObject.ENTER) {
+                    else if (ev.keyCode === Ext.EventObject.ENTER) {
                         ev.preventDefault();
                         this.handleClick(selModel.getLastSelected());
                     }
@@ -62,7 +62,7 @@ Ext.define('Docs.controller.Search', {
     handleClick: function(curItem) {
         curItem = curItem;
         var cls = curItem.data.cls;
-        if (curItem.data.type != 'cls') {
+        if (curItem.data.type !== 'cls') {
             cls += '-' + curItem.data.type + '-' + curItem.data.member;
         }
         Docs.App.getController('Classes').loadClass(cls);
