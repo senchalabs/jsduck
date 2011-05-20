@@ -49,7 +49,7 @@ Ext.define('Docs.controller.Search', {
                     }
                     else if (ev.keyCode == Ext.EventObject.ENTER) {
                         ev.preventDefault();
-                        // panel.handleClick();
+                        this.handleClick(selModel.getLastSelected());
                     }
                     else {
                         this.search(el.value);
@@ -60,12 +60,13 @@ Ext.define('Docs.controller.Search', {
     },
 
     handleClick: function(curItem) {
-        curItem = curItem || panel.getSelectionModel().getLastSelected();
+        curItem = curItem;
         var cls = curItem.data.cls;
         if (curItem.data.type != 'cls') {
             cls += '-' + curItem.data.type + '-' + curItem.data.member;
         }
         Docs.App.getController('Classes').loadClass(cls);
+        Ext.getCmp('quick-search').hide();
     },
 
     search: function(term) {
