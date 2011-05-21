@@ -9,7 +9,10 @@ Ext.define('Docs.view.clsTree.HistoryItems', {
     
     tpl: new Ext.XTemplate(
         '<tpl for=".">',
-            '<a href="{cls}" rel="{cls}" class="docClass">{cls}</a>',
+            '<div class="item">',
+                '<a href="{cls}" rel="{cls}" class="docClass">{cls}</a>',
+                '<a class="close" href="#" rel="{cls}">x</a>',
+            '</div>',
         '</tpl>'
     )
 });

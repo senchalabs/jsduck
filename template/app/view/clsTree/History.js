@@ -1,14 +1,16 @@
 Ext.define('Docs.view.clsTree.History', {
-	
-	extend: 'Ext.button.Button',
+    	
+	extend: 'Ext.Component',
 	alias: 'widget.docshistorybutton',
+
 	id: 'historyBtn',
-	
-	text: 'History',
-	
+	html: '<span></span>History',
+		
 	afterRender: function() {
 	    
-        this.on({
+        this.callParent(arguments);
+
+        this.getEl().on({
             mouseover: function() {
                 
                 if (!this.hoverMenu) {
@@ -21,7 +23,7 @@ Ext.define('Docs.view.clsTree.History', {
             mouseout: this.deferHideMenu,
             scope: this
         });
-
+        
 	},
 	
     renderMenu: function() {
@@ -37,8 +39,14 @@ Ext.define('Docs.view.clsTree.History', {
                 clearTimeout(this.hideTimeout);
             },
             mouseout: this.deferHideMenu,
-            click: function() {
-                this.hoverMenu.hide();
+            click: function(e) {
+                console.log(arguments)
+                if (e.getTarget(".close")) {                    
+                    console.log("Close");
+                } else {
+                    this.hoverMenu.hide();                    
+                }
+                e.preventDefault();
             },
             scope: this
         });
