@@ -131,11 +131,11 @@ Ext.define('Docs.controller.Classes', {
                 docTabPanel.setLoading(false);
             }
 
-            var prevCls = historyStore.find('cls', cls.name);
-            if (prevCls === -1) {
-                historyStore.add({cls: cls.name});
-                historyStore.sync();
-            }
+            // var prevCls = historyStore.find('cls', cls.name);
+            // if (prevCls === -1) {
+            //     historyStore.add({cls: cls.name});
+            //     historyStore.sync();
+            // }
 
             Ext.getCmp('treePanelCmp').selectClass(cls.name);
         }
