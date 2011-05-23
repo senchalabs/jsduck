@@ -635,31 +635,30 @@ a:hover {
       color: #083772;
       text-decoration: underline; } }
   td {
-    vertical-align: top; } 
+    vertical-align: top; }
   span {
-	position: absolute;
-	right: 0; }}
+    position: absolute;
+    right: 0; } }
 
 .hover-menu-menu.show {
-	display: block;
-	.item {
-		position: relative;
-	    padding: 2px 30px 2px 0;
-	}
-	a {
-	  display: inline;
-		padding: 0;
-	}
-	a.close {
-	  position: absolute; right: 0;
-	}
-}
+    display: block;
+    .item {
+      position: relative;
+      padding: 2px 30px 2px 0; }
+    a {
+      display: inline;
+      padding: 0; }
+    a.close {
+      position: absolute;
+      right: 0; } }
 
 #historyBtn {
   padding-left: 22px;
-}
-#historyBtn span {
-	display: block; width: 17px; height: 17px; 
-	position: absolute; left: 0; top: -2px;
-	background: url(../images/favorite.png) no-repeat -36px 0;
-}
+  span {
+    display: block;
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    left: 0;
+    top: -2px;
+    background: url(../images/favorite.png) no-repeat -36px 0; } }
