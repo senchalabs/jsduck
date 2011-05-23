@@ -6,7 +6,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     requires: [
         'Docs.view.cls.HoverMenuButton'
     ],
-    
+
     dock: 'top',
     cls: 'member-links',
     padding: '3 5',
@@ -19,6 +19,7 @@ Ext.define('Docs.view.cls.Toolbar', {
 
     initComponent: function() {
         this.items = [];
+        this.memberButtons = {};
 
         var memberTitles = {
             cfg: "Configs",
@@ -29,11 +30,13 @@ Ext.define('Docs.view.cls.Toolbar', {
         for (var type in memberTitles) {
             var members = this.docClass[type];
             if (members.length) {
-                this.items.push(this.createMemberButton({
+                var btn = this.createMemberButton({
                     text: memberTitles[type],
                     type: type,
                     members: members
-                }));
+                });
+                this.memberButtons[type] = btn;
+                this.items.push(btn);
             }
         }
 
@@ -49,7 +52,8 @@ Ext.define('Docs.view.cls.Toolbar', {
                 xtype: 'checkbox',
                 margin: '0 5 0 0',
                 padding: '0 0 5 0',
-                handler: this.hideInherited
+                handler: this.hideInherited,
+                scope: this
             },
             {
                 xtype: 'button',
@@ -127,8 +131,8 @@ Ext.define('Docs.view.cls.Toolbar', {
             Ext.get(m).removeCls('first-child');
         });
 
-        Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(m) {
-            var sectionId = '#m-' + m;
+        Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
+            var sectionId = '#m-' + type;
 
             // Hide the section completely if all items in it are inherited
             if (Ext.query(sectionId+' .member.not-inherited').length === 0) {
@@ -141,6 +145,19 @@ Ext.define('Docs.view.cls.Toolbar', {
             if (sectionMembers.length > 0) {
                 Ext.get(sectionMembers[0]).addCls('first-child');
             }
-        });
+
+            if (this.memberButtons[type]) {
+                var members = this.docClass[type];
+                if (hide) {
+                    members = Ext.Array.filter(members, function(m) {
+                        return m.member === this.docClass.name;
+                    }, this);
+                }
+                var links = Ext.Array.map(members, function(m) {
+                    return this.createLink(this.docClass.name, m);
+                }, this);
+                this.memberButtons[type].setLinks(links);
+            }
+        }, this);
     }
 });

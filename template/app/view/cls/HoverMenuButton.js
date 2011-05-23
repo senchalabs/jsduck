@@ -27,6 +27,7 @@ Ext.define('Docs.view.cls.HoverMenuButton', {
         );
 
         // Append links count to button text
+        this.initialText = this.text;
         this.text += ' <span class="num">' + this.links.length + '</span>';
 
         this.callParent(arguments);
@@ -89,6 +90,16 @@ Ext.define('Docs.view.cls.HoverMenuButton', {
             this.menu.setStyle({display: "none"});
         }, this);
         Docs.view.cls.HoverMenuButton.menus.push(this.menu);
+    },
+
+    /**
+     * Changes the list of links in menu.
+     * @param {[String]} links
+     */
+    setLinks: function(links) {
+        this.links = links;
+        this.setText(this.initialText + ' <span class="num">' + this.links.length + '</span>');
+        this.menu.update(this.renderMenuHtml());
     },
 
     renderMenuHtml: function() {
