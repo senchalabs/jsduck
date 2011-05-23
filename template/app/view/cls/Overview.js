@@ -80,6 +80,12 @@ Ext.define('Docs.view.cls.Overview', {
 
         this.hierarchyTpl = this.hierarchyTpl || new Ext.XTemplate(
             '<pre class="hierarchy">',
+            '<tpl if="alternateClassNames.length &gt; 0">',
+                '<h4>Alternate names</h4>',
+                '<tpl for="alternateClassNames">',
+                    '<div class="alternate-class-name">{.}</div>',
+                '</tpl>',
+            '</tpl>',
             '<tpl if="tree">',
                 '<h4>Hierarchy</h4>',
                 '{tree}',
@@ -95,7 +101,8 @@ Ext.define('Docs.view.cls.Overview', {
 
         return this.hierarchyTpl.apply({
             tree: cls.superclasses.length ? this.renderClassTree(cls.superclasses.concat(cls.name), true) : "",
-            mixins: Ext.Array.map(cls.allMixins, this.renderLink, this)
+            mixins: Ext.Array.map(cls.allMixins, this.renderLink, this),
+            alternateClassNames: cls.alternateClassNames
         });
     },
 

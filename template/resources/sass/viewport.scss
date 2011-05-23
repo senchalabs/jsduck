@@ -402,9 +402,11 @@ a:hover {
     margin: 0 0 20px 20px;
     font-size: 12px;
     @include gray-h4;
-    .mixin {
+    .mixin, .alternate-class-name {
       padding: 0 0 0 12px;
       margin-top: 3px; }
+    .alternate-class-name {
+      color: #484848; }
     .subclass {
       background: url(../images/elbow-end.gif) no-repeat -5px 0;
       margin-top: 3px;
