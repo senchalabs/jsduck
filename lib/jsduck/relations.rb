@@ -21,6 +21,9 @@ module JsDuck
       @lookup = {}
       @classes.each do |cls|
         @lookup[cls.full_name] = cls
+        (cls[:alternateClassNames] || []).each do |alt_name|
+          @lookup[alt_name] = cls
+        end
         cls.relations = self
       end
 

@@ -1,20 +1,25 @@
 require "jsduck/doc_formatter"
+require "jsduck/relations"
 
 describe JsDuck::DocFormatter do
 
   before do
     @formatter = JsDuck::DocFormatter.new
     @formatter.class_context = "Context"
-    @formatter.relations = {
-      'Context' => JsDuck::Class.new({
+    @formatter.relations = JsDuck::Relations.new([
+      JsDuck::Class.new({
+        :name => "Context",
         :method => [{:name => "bar", :tagname => :method}]
       }),
-      'Ext.Msg' => JsDuck::Class.new({
+      JsDuck::Class.new({
+        :name => 'Ext.Msg'
       }),
-      'Foo' => JsDuck::Class.new({
-        :cfg => [{:name => "bar", :tagname => :cfg}]
+      JsDuck::Class.new({
+        :name => "Foo",
+        :cfg => [{:name => "bar", :tagname => :cfg}],
+        :alternateClassNames => ["FooBar"]
       }),
-    }
+    ])
   end
 
   describe "#replace" do
@@ -39,6 +44,11 @@ describe JsDuck::DocFormatter do
     it "allows use of custom link text" do
       @formatter.replace("Look at {@link Foo link text}").should ==
         'Look at <a href="Foo">link text</a>'
+    end
+
+    it "Links alternate classname to real classname" do
+      @formatter.replace("Look at {@link FooBar}").should ==
+        'Look at <a href="Foo">FooBar</a>'
     end
 
     it "leaves text without {@link...} untouched" do
@@ -86,18 +96,23 @@ describe JsDuck::DocFormatter do
     # auto-conversion of identifiable ClassNames to links
     describe "auto-detect" do
       before do
-        @formatter.relations = {
-          'FooBar' => JsDuck::Class.new({}),
-          'FooBar.Blah' => JsDuck::Class.new({}),
-          'Ext.form.Field' => JsDuck::Class.new({
+        @formatter.relations = JsDuck::Relations.new([
+          JsDuck::Class.new({:name => 'FooBar'}),
+          JsDuck::Class.new({:name => 'FooBar.Blah'}),
+          JsDuck::Class.new({
+            :name => 'Ext.form.Field',
             :method => [{:name => "getValues", :tagname => :method}]
           }),
-          'Ext.XTemplate' => JsDuck::Class.new({}),
-          'MyClass' => JsDuck::Class.new({}),
-          'Ext' => JsDuck::Class.new({
+          JsDuck::Class.new({
+            :name => 'Ext.XTemplate',
+            :alternateClassNames => ['Ext.AltXTemplate']
+          }),
+          JsDuck::Class.new({:name => 'MyClass'}),
+          JsDuck::Class.new({
+            :name => 'Ext',
             :method => [{:name => "encode", :tagname => :method}]
           }),
-        }
+        ])
       end
 
       it "doesn't recognize John as class name" do
@@ -128,6 +143,11 @@ describe JsDuck::DocFormatter do
       it "converts Ext.XTemplate to class link" do
         @formatter.replace("Look at Ext.XTemplate").should ==
           'Look at <a href="Ext.XTemplate">Ext.XTemplate</a>'
+      end
+
+      it "links alternate classname to canonical classname" do
+        @formatter.replace("Look at Ext.AltXTemplate").should ==
+          'Look at <a href="Ext.XTemplate">Ext.AltXTemplate</a>'
       end
 
       it "converts ClassName ending with dot to class link" do

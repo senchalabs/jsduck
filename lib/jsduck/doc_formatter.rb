@@ -159,6 +159,8 @@ module JsDuck
 
     # applies the link template
     def link(cls, member, anchor_text)
+      # Use the canonical class name for link (not some alternateClassName)
+      cls = @relations[cls].full_name
       # prepend type name to member name
       member = member && (get_member_type(cls, member).to_s + "-" + member)
 
