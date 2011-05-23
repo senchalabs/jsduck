@@ -74,7 +74,7 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     renderHierarchy: function(cls) {
-        if (cls.superclasses.length === 0 && cls.allMixins.length === 0) {
+        if (cls.superclasses.length === 0 && cls.allMixins.length === 0 && cls.alternateClassNames.length === 0) {
             return "";
         }
 
