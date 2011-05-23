@@ -1,30 +1,30 @@
-@mixin box-shadow {
-  -webkit-box-shadow: arguments;
-  -moz-box-shadow: arguments; }
+@mixin box-shadow($x, $y, $radius, $color) {
+  -webkit-box-shadow: $x $y $radius $color;
+  -moz-box-shadow: $x $y $radius $color; }
 
-@mixin border-radius {
-  border-radius: arguments;
-  -moz-border-radius: arguments; }
+@mixin border-radius($size) {
+  border-radius: $size;
+  -moz-border-radius: $size; }
 
-@mixin border-radius-bottom {
-  border-bottom-left-radius: arguments;
-  border-bottom-right-radius: arguments; }
+@mixin border-radius-bottom($size) {
+  border-bottom-left-radius: $size;
+  border-bottom-right-radius: $size; }
 
-@mixin border-top-left-radius {
-  border-top-left-radius: arguments;
-  -moz-border-radius-topleft: arguments; }
+@mixin border-top-left-radius($size) {
+  border-top-left-radius: $size;
+  -moz-border-radius-topleft: $size; }
 
-@mixin border-top-right-radius {
-  border-top-right-radius: arguments;
-  -moz-border-radius-topright: arguments; }
+@mixin border-top-right-radius($size) {
+  border-top-right-radius: $size;
+  -moz-border-radius-topright: $size; }
 
-@mixin border-bottom-left-radius {
-  -webkit-border-bottom-left-radius: arguments;
-  -moz-border-radius-bottomleft: arguments; }
+@mixin border-bottom-left-radius($size) {
+  -webkit-border-bottom-left-radius: $size;
+  -moz-border-radius-bottomleft: $size; }
 
-@mixin border-bottom-right-radius {
-  border-bottom-right-radius: arguments;
-  -moz-border-radius-bottomright: arguments; }
+@mixin border-bottom-right-radius($size) {
+  border-bottom-right-radius: $size;
+  -moz-border-radius-bottomright: $size; }
 
 @mixin vertical-gradient($fromCol, $toCol) {
   background: -webkit-gradient(linear, left top, left bottom, from($fromCol), to($toCol));
@@ -192,8 +192,8 @@ a:hover {
 
 .container {
   background: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  @include border-radius(5px);
+  @include box-shadow(0, 0, 4px, rgba(0, 0, 0, 0.4));
   padding: 20px;
 
   line-height: 1.4em;
@@ -248,7 +248,7 @@ a:hover {
     border: 1px solid #ebebeb;
     padding: 20px 10px 20px 20px;
     margin: 0 20px 20px 0;
-    border-radius: 10px; }
+    @include border-radius(10px); }
   .category:last-child {
     margin-bottom: 0;
   }
@@ -269,7 +269,7 @@ a:hover {
       font-weight: bold; } }
 
   .legend {
-    border-radius: 5px;
+    @include border-radius(5px);
     background-color: #f7f7f7;
     border: 1px solid #ebebeb;
     padding: 0 15px 15px 10px;
@@ -301,7 +301,7 @@ a:hover {
     background: #fafafa;
     padding: 10px 20px 20px 20px;
     margin: 0 20px 20px 0;
-    border-radius: 10px;
+    @include border-radius(10px);
     h2 {
       border-bottom: 1px solid #dddddd;
       padding-bottom: 2px;
@@ -374,7 +374,7 @@ a:hover {
   pre {
     background-color: #f7f7f7;
     border: solid 1px #e8e8e8;
-    border-radius: 5px;
+    @include border-radius(5px);
     color: #314e64;
     font-family: "Menlo", "Courier New", Courier, monospace;
     padding: 10px 20px;
@@ -394,7 +394,7 @@ a:hover {
     display: block;
     padding: 10px 0; }
   .hierarchy {
-    border-radius: 5px;
+    @include border-radius(5px);
     background-color: #f7f7f7;
     border: 1px solid #ebebeb;
     padding: 0 15px 15px 10px;
@@ -475,7 +475,7 @@ a:hover {
     text-transform: uppercase;
     color: white;
     font-size: 0.7em;
-    border-radius: 2px;
+    @include border-radius(2px);
     margin-left: 5px;
     padding: 0 3px;
     background-color: #aa0000; }
@@ -483,7 +483,7 @@ a:hover {
     font-weight: bold;
     color: white;
     font-size: 0.7em;
-    border-radius: 2px;
+    @include border-radius(2px);
     margin-left: 5px;
     padding: 0 3px;
     background-color: #00aa00; }
@@ -590,7 +590,7 @@ a:hover {
       padding-bottom: 3px; }
     .deprecated {
       border: 1px solid #999;
-      border-radius: 5px;
+      @include border-radius(5px);
       color: #600;
       background-color: #fee;
       padding: 10px 50px;
@@ -598,7 +598,7 @@ a:hover {
       strong {
         text-transform: uppercase;
         color: white;
-        border-radius: 2px;
+        @include border-radius(2px);
         padding: 0 3px;
         background-color: #aa0000; } } } }
 
@@ -635,7 +635,7 @@ a:hover {
   border: 1px solid #bfbfbf;
   border-top: 1px solid #eaeaea;
   left: -16px;
-  border-radius-bottom: 5px;
+  @include border-radius-bottom(5px);
   h2 {
     font-weight: bold;
     text-decoration: underline;
