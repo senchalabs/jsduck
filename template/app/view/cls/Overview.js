@@ -208,19 +208,23 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     renderSignature: function(member) {
+        var signature;
         if (member.tagname === "cfg" || member.tagname === "property") {
-            return "<span> : " + member.type + "</span>";
+            signature = "<span> : " + member.type + "</span>";
         }
         else {
             var ps = Ext.Array.map(member.params, this.renderShortParam, this).join(", ");
-            var signature = '( <span class="pre">' + ps + "</span> )";
+            signature = '( <span class="pre">' + ps + "</span> )";
             if (member.tagname === "method") {
-                return signature + " : " + member["return"].type;
-            }
-            else {
-                return signature;
+                signature += " : " + member["return"].type;
             }
         }
+
+        if (member.deprecated) {
+            signature += "<strong class='deprecated-signature'>deprecated</strong>";
+        }
+
+        return signature;
     },
 
     renderShortParam: function(param) {
@@ -230,6 +234,14 @@ Ext.define('Docs.view.cls.Overview', {
 
     renderLongDoc: function(member) {
         var doc = member.doc;
+
+        if (member.deprecated) {
+            var v = member.deprecated.version ? "since " + member.deprecated.version : "";
+            doc += '<div class="deprecated">';
+            doc += Ext.String.format('<p>This {0} has been <strong>deprecated</strong> {1}</p>', member.tagname, v);
+            doc += member.deprecated.text;
+            doc += '</div>';
+        }
 
         if (member.params && member.params.length > 0) {
             doc += '<h3 class="pa">Parameters</h3>';

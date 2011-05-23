@@ -470,7 +470,7 @@ a:hover {
 
 
 #doc-overview {
-  .deprecated {
+  .deprecated-signature {
     font-weight: bold;
     text-transform: uppercase;
     color: white;
@@ -587,7 +587,20 @@ a:hover {
     .name {
       font-weight: bold; }
     .title {
-      padding-bottom: 3px; } } }
+      padding-bottom: 3px; }
+    .deprecated {
+      border: 1px solid #999;
+      border-radius: 5px;
+      color: #600;
+      background-color: #fee;
+      padding: 10px 50px;
+      text-align: center;
+      strong {
+        text-transform: uppercase;
+        color: white;
+        border-radius: 2px;
+        padding: 0 3px;
+        background-color: #aa0000; } } } }
 
 .expandAllMembers {
   background: url(../images/expandcollapse.png) no-repeat -14px 2px !important; }

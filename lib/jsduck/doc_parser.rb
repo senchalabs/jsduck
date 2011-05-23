@@ -105,6 +105,8 @@ module JsDuck
           at_author
         elsif look(/@docauthor\b/)
           at_docauthor
+        elsif look(/@deprecated\b/)
+          at_deprecated
         elsif look(/@var\b/)
           at_var
         elsif look(/@static\b/)
@@ -280,6 +282,17 @@ module JsDuck
       add_tag(:docauthor)
       skip_horiz_white
       @current_tag[:name] = @input.scan(/.*$/)
+      skip_white
+    end
+
+    # matches @deprecated <version> some text ... newline
+    def at_deprecated
+      match(/@deprecated/)
+      add_tag(:deprecated)
+      skip_horiz_white
+      @current_tag[:version] = @input.scan(/[0-9.]+/)
+      skip_horiz_white
+      @current_tag[:text] = @input.scan(/.*$/)
       skip_white
     end
 

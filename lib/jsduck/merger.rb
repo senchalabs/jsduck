@@ -140,6 +140,7 @@ module JsDuck
         :return => detect_return(doc_map),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],
+        :deprecated => detect_deprecated(doc_map),
       }
     end
 
@@ -152,6 +153,7 @@ module JsDuck
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :private => !!doc_map[:private],
+        :deprecated => detect_deprecated(doc_map),
       }
     end
 
@@ -164,6 +166,7 @@ module JsDuck
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
+        :deprecated => detect_deprecated(doc_map),
       }
     end
 
@@ -177,6 +180,7 @@ module JsDuck
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],
+        :deprecated => detect_deprecated(doc_map),
       }
     end
 
@@ -190,6 +194,7 @@ module JsDuck
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],
+        :deprecated => detect_deprecated(doc_map),
       }
     end
 
@@ -203,6 +208,7 @@ module JsDuck
         :params => detect_params(docs, code),
         :private => !!doc_map[:private],
         :static => !!doc_map[:static],
+        :deprecated => detect_deprecated(doc_map),
       }
     end
 
@@ -289,6 +295,10 @@ module JsDuck
 
     def detect_docauthor(doc_map)
       doc_map[:docauthor] ? doc_map[:docauthor].first[:name] : nil
+    end
+
+    def detect_deprecated(doc_map)
+      doc_map[:deprecated] ? doc_map[:deprecated].first : nil
     end
 
     def detect_params(docs, code)
