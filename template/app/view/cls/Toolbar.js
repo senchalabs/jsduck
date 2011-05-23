@@ -41,7 +41,10 @@ Ext.define('Docs.view.cls.Toolbar', {
         }
 
         if (this.docClass.subclasses.length) {
-            this.items.push(this.createSubClassesButton(this.docClass.subclasses));
+            this.items.push(this.createClassListButton("Sub Classes", this.docClass.subclasses));
+        }
+        if (this.docClass.mixedInto.length) {
+            this.items.push(this.createClassListButton("Mixed Into", this.docClass.mixedInto));
         }
 
         this.items = this.items.concat([
@@ -95,11 +98,11 @@ Ext.define('Docs.view.cls.Toolbar', {
         });
     },
 
-    createSubClassesButton: function(subclasses) {
+    createClassListButton: function(text, classes) {
         return Ext.create('Docs.view.cls.HoverMenuButton', {
-            text: "Sub Classes",
+            text: text,
             cls: 'icon-subclass',
-            links: Ext.Array.map(subclasses, function(cls) {
+            links: Ext.Array.map(classes, function(cls) {
                 return this.createLink(cls);
             }, this)
         });
