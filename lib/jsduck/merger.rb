@@ -121,7 +121,7 @@ module JsDuck
         :extends => detect_extends(doc_map, code),
         :mixins => detect_list(:mixins, doc_map, code),
         :alternateClassNames => detect_list(:alternateClassNames, doc_map, code),
-        :xtypes => detect_xtypes(doc_map),
+        :xtypes => detect_xtypes(doc_map, code),
         :author => detect_author(doc_map),
         :docauthor => detect_docauthor(doc_map),
         :singleton => !!doc_map[:singleton],
@@ -273,8 +273,14 @@ module JsDuck
       end
     end
 
-    def detect_xtypes(doc_map)
-      doc_map[:xtype] ? doc_map[:xtype].map {|tag| tag[:name] } : []
+    def detect_xtypes(doc_map, code)
+      if doc_map[:xtype]
+        doc_map[:xtype].map {|tag| tag[:name] }
+      elsif code[:alias]
+        code[:alias].find_all {|a| a =~ /^widget\./ }.map {|a| a.sub(/^widget\./, "") }
+      else
+        []
+      end
     end
 
     def detect_author(doc_map)

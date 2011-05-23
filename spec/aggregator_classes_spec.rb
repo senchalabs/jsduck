@@ -195,6 +195,9 @@ describe JsDuck::Aggregator do
     it "detects implied alternateClassNames" do
       @doc[:alternateClassNames].should == ["JustClass"]
     end
+    it "detects implied xtype" do
+      @doc[:xtypes].should == ["foo"]
+    end
   end
 
   describe "basic Ext.define() in code" do
@@ -207,6 +210,7 @@ describe JsDuck::Aggregator do
             obs: 'Ext.util.Observable',
             bar: 'Foo.Bar'
           },
+          alias: 'widget.foo',
           alternateClassName: 'JustClass'
         });
       EOS
@@ -221,7 +225,7 @@ describe JsDuck::Aggregator do
         Ext.define('MyClass', {
           singleton: true,
           extend: 'Your.Class',
-          alias: 'somealias',
+          alias: ['widget.foo', 'something.bar'],
           alternateClassName: ['JustClass'],
           requires: ['Hohooo', 'hahaa'],
           mixins: {
