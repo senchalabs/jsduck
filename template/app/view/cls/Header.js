@@ -9,8 +9,8 @@ Ext.define('Docs.view.cls.Header', {
     tpl: Ext.create('Ext.XTemplate',
         '<h1 class="{[this.getClass(values)]}">',
             '<a href="source/{href}" target="_blank">{name}</a>',
-            '<tpl if="xtype">',
-                '<span>xtype: {xtype}</span>',
+            '<tpl if="xtypes.length &gt; 0">',
+                '<span>xtype: {[values.xtypes.join(", ")]}</span>',
             '</tpl>',
         '</h1>',
         {

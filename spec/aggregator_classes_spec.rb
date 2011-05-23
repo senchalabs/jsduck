@@ -50,7 +50,7 @@ describe JsDuck::Aggregator do
       @doc[:singleton].should == true
     end
     it "detects xtype" do
-      @doc[:xtype].should == "nicely"
+      @doc[:xtypes].should == ["nicely"]
     end
   end
 
@@ -112,6 +112,24 @@ describe JsDuck::Aggregator do
     it_should_behave_like "class"
     it "collects all alternateClassNames together" do
       @doc[:alternateClassNames].should == ["AltClass1", "AltClass2"]
+    end
+  end
+
+  describe "class with multiple @xtypes" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @xtype foo
+         * @xtype bar
+         * Some documentation.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "collects all xtypes together" do
+      @doc[:xtypes].should == ["foo", "bar"]
     end
   end
 
@@ -283,7 +301,7 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "detects xtype" do
-      @doc[:xtype].should == "nicely"
+      @doc[:xtypes].should == ["nicely"]
     end
   end
 
@@ -464,16 +482,16 @@ describe JsDuck::Aggregator do
       @classes[0][:extends].should == "Bar"
     end
 
-    it "takes @xtype from first doc-block that has one" do
-      @classes[0][:xtype].should == "xfoo"
-    end
-
     it "is singleton when one doc-block is singleton" do
       @classes[0][:singleton].should == true
     end
 
     it "is private when one doc-block is private" do
       @classes[0][:private].should == true
+    end
+
+    it "combines all @xtypes" do
+      @classes[0][:xtypes].length.should == 2
     end
 
     it "combines all configs" do

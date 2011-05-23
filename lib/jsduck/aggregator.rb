@@ -51,7 +51,7 @@ module JsDuck
       [:extends, :xtype, :singleton, :private].each do |tag|
         old[tag] = old[tag] || new[tag]
       end
-      [:mixins, :alternateClassNames].each do |tag|
+      [:mixins, :alternateClassNames, :xtypes].each do |tag|
         old[tag] = old[tag] + new[tag]
       end
       old[:doc] = old[:doc].length > 0 ? old[:doc] : new[:doc]
