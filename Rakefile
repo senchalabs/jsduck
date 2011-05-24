@@ -80,7 +80,7 @@ task :export do
   system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
   system "cp #{SDK_DIR}/extjs/build/sdk/ext-all.js #{OUT_DIR}/extjs"
   system "cp -r #{SDK_DIR}/extjs/build/sdk/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
-  system "rm -rf #{OUT_DIR}/resources/sass/.sass-cache"
+  system "rm -rf #{OUT_DIR}/resources/sass"
   system "rm -rf #{OUT_DIR}/resources/.sass-cache"
   system "cp template/index_production.html #{OUT_DIR}/index.html" 
 end
