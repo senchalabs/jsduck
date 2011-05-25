@@ -93,6 +93,7 @@
                 "Ext.panel.AbstractPanel",
                 "Ext.panel.Panel",
                 "Ext.panel.Header",
+                "Ext.panel.Table",
                 "Ext.panel.Tool",
                 "Ext.tab.Panel",
                 "Ext.tree.Panel",
@@ -104,6 +105,7 @@
         "Layouts": {
             "guide": "layouts_and_containers",
             "classes": [
+                "Ext.layout.Layout",
                 "Ext.layout.container.Accordion",
                 "Ext.layout.container.Absolute",
                 "Ext.layout.container.AbstractCard",
@@ -116,6 +118,7 @@
                 "Ext.layout.container.Card",
                 "Ext.layout.container.CheckboxGroup",
                 "Ext.layout.container.Column",
+                "Ext.layout.container.Container",
                 "Ext.layout.container.Fit",
                 "Ext.layout.container.HBox",
                 "Ext.layout.container.Table",
@@ -181,12 +184,14 @@
                 "Ext.grid.column.Date",
                 "Ext.grid.column.Number",
                 "Ext.grid.column.Template",
+                "Ext.grid.feature.AbstractSummary",
                 "Ext.grid.feature.Chunking",
                 "Ext.grid.feature.RowBody",
                 "Ext.grid.feature.Summary",
                 "Ext.grid.feature.Feature",
                 "Ext.grid.feature.Grouping",
                 "Ext.grid.feature.GroupingSummary",
+                "Ext.grid.header.Container",
                 "Ext.grid.RowNumberer",
                 "Ext.grid.property.Grid",
                 "Ext.grid.property.HeaderContainer",
@@ -267,13 +272,13 @@
                 "Ext.Layer",
                 "Ext.resizer.Handle",
                 "Ext.resizer.Resizer",
-                "Ext.resizer.ResizeTracker",
                 "Ext.resizer.Splitter",
                 "Ext.selection.Model",
                 "Ext.selection.CheckboxModel",
                 "Ext.selection.RowModel",
                 "Ext.Shadow",
                 "Ext.util.Floating",
+                "Ext.util.Memento",
                 "Ext.WindowManager",
                 "Ext.Template",
                 "Ext.XTemplate",
@@ -376,7 +381,6 @@
             "classes": [
                 "Ext.app.Application",
                 "Ext.app.Controller",
-                "Ext.app.EventBus",
                 "Ext.ModelManager",
                 "Ext.state.CookieProvider",
                 "Ext.state.Manager",
@@ -399,11 +403,16 @@
         "Charts": {
             "guide": "drawing_and_charting",
             "classes": [
+                "Ext.chart.Callout",
                 "Ext.chart.Chart",
+                "Ext.chart.Highlight",
                 "Ext.chart.Legend",
                 "Ext.chart.Label",
                 "Ext.chart.LegendItem",
                 "Ext.chart.Mask",
+                "Ext.chart.Navigation",
+                "Ext.chart.Tip",
+                "Ext.chart.axis.Abstract",
                 "Ext.chart.axis.Axis",
                 "Ext.chart.axis.Category",
                 "Ext.chart.axis.Gauge",
@@ -418,7 +427,8 @@
                 "Ext.chart.series.Pie",
                 "Ext.chart.series.Radar",
                 "Ext.chart.series.Scatter",
-                "Ext.chart.series.Series"
+                "Ext.chart.series.Series",
+                "Ext.chart.theme.Theme"
             ]
         },
         "Native Extensions": {
@@ -434,6 +444,7 @@
         },
         "Utility": {
             "classes": [
+                "Ext.AbstractManager",
                 "Ext.util.Filter",
                 "Ext.util.Format",
                 "Ext.util.Inflector",
