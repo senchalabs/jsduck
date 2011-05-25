@@ -31,6 +31,7 @@ module JsDuck
     attr_accessor :img_tpl
     attr_accessor :ignore_global
     attr_accessor :external_classes
+    attr_accessor :show_private_classes
 
     def initialize
       @output_dir = nil
@@ -44,6 +45,7 @@ module JsDuck
       @img_tpl = nil
       @ignore_global = false
       @external_classes = []
+      @show_private_classes = false
       @timer = Timer.new
       @parallel = ParallelWrap.new
     end
@@ -123,7 +125,7 @@ module JsDuck
       classes = []
       docs.each do |d|
         if d[:tagname] == :class
-          classes << Class.new(d)
+          classes << Class.new(d) if !d[:private] || @show_private_classes
         else
           type = d[:tagname].to_s
           name = d[:name]

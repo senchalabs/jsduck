@@ -50,6 +50,7 @@ module JsDuck
         @relations[classname]
       elsif !@relations.ignore?(classname)
         Logger.instance.warn("Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}")
+        nil
       end
     end
 

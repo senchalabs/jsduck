@@ -84,6 +84,10 @@ opts = OptionParser.new do | opts |
     app.output_dir = path
   end
 
+  opts.on('--private-classes', "Include private classes to docs.", " ") do
+    app.show_private_classes = true
+  end
+
   # For debugging it's often useful to set --processes=0 to get deterministic results.
   opts.on('-p', '--processes=COUNT',
     "The number of parallel processes to use.",
