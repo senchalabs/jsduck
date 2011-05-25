@@ -27,6 +27,5 @@ Ext.application({
     launch: function() {
         Docs.App = this;
         Docs.History.init();
-        this.getStore('History').load(); // Load History from localStorage
     }
 });
