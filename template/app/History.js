@@ -66,8 +66,17 @@ Ext.define("Docs.History", {
 
         // Add class name to history store if it's not there already
         var cls = this.parseClassName(token);
-        if (cls && this.store.find('cls', cls) === -1) {
+        if (cls) {
+            // When class already in history remove it and add again.
+            // This way the most recently visited items will always be at the top.
+            var oldIndex = this.store.find('cls', cls);
+            if (oldIndex) {
+                this.store.removeAt(oldIndex);
+            }
+
+            // Add new item at the beginning
             this.store.insert(0, {cls: cls});
+
             // Remove items from the end of history if there are too many
             while (this.store.getAt(this.maxHistoryLength)) {
                 this.store.removeAt(this.maxHistoryLength);
