@@ -11,15 +11,18 @@ Ext.define('Docs.controller.Classes', {
     views: [
         'cls.List',
         'tree.Tree',
+        'tree.Favorites',
         'tree.History',
         'tree.HistoryItems'
     ],
 
     stores: [
+        'Favorites',
         'History'
     ],
 
     models: [
+        'Favorite',
         'History'
     ],
 
@@ -160,15 +163,23 @@ Ext.define('Docs.controller.Classes', {
         });
     },
 
-    treeItemClick: function(view, node) {
+    treeItemClick: function(view, node, item, index, e) {
         var clsName = node.raw ? node.raw.clsName : node.data.clsName;
 
         if (clsName) {
-            this.loadClass(clsName);
-        } else if (!node.isLeaf()) {
+            if (e.getTarget(".fav")) {
+                Docs.Favorites.add(clsName);
+                Ext.get(e.getTarget(".fav")).addCls("show");
+            }
+            else {
+                this.loadClass(clsName);
+            }
+        }
+        else if (!node.isLeaf()) {
             if (node.isExpanded()) {
                 node.collapse(false);
-            } else {
+            }
+            else {
                 node.expand(false);
             }
         }

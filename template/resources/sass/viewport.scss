@@ -329,7 +329,9 @@ a:hover {
       position: absolute;
       right: 3px;
       z-index: 20;
-      top: 0; }
+      top: 0;
+      &.show {
+        background: url(../images/favorite.png) no-repeat -2px -1px; } }
     @include icons; }
   .x-grid-row-over {
     .x-grid-cell-inner {
@@ -667,13 +669,20 @@ a:hover {
       position: absolute;
       right: 0; } }
 
-#historyBtn {
+#favoritesBtn,#historyBtn {
   padding-left: 22px;
+  padding-right: 10px;
+  cursor: pointer;
+  &:hover {
+    color: black; }
   span {
     display: block;
     width: 17px;
     height: 17px;
     position: absolute;
     left: 0;
-    top: -2px;
-    background: url(../images/favorite.png) no-repeat -36px 0; } }
+    top: -2px; } }
+#historyBtn span {
+    background: url(../images/favorite.png) no-repeat -36px 0; }
+#favoritesBtn span {
+    background: url(../images/favorite.png) no-repeat 0 0; }

@@ -24,9 +24,7 @@ Ext.define('Docs.view.tree.Tree', {
             margin: '0 0 15 0',
             items: [
                 {
-                    margin: '0 10 0 0',
-                    xtype: 'button',
-                    text: 'Favorites'
+                    xtype: 'docsfavoritesbutton'
                 },
                 {
                     xtype: 'docshistorybutton'
@@ -40,17 +38,22 @@ Ext.define('Docs.view.tree.Tree', {
         this.root.expanded = true;
         this.root.children[0].expanded = true;
         // Add links for favoriting classes
-        this.addFavIcons(this.root);
+        // HACK: To do the favicons initialization after History store loaded.
+        this.on("render", function() {
+            Ext.getStore("Favorites").on("load", function() {
+                this.getRootNode().cascadeBy(this.addFavIcons, this);
+            }, this);
+        }, this);
 
         this.callParent();
     },
 
     addFavIcons: function(node) {
-        if (node.isClass) {
-            node.text += '<a rel="'+node.id+'" class="fav"></a>';
-        }
-        if (node.children) {
-            Ext.Array.forEach(node.children, this.addFavIcons, this);
+        if (node.get("leaf")) {
+            var cls = node.raw.clsName;
+            var show = Docs.Favorites.has(cls) ? "show" : "";
+            node.set("text", node.get("text") + Ext.String.format('<a rel="{0}" class="fav {1}"></a>', cls, show));
+            node.commit();
         }
     },
 

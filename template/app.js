@@ -26,6 +26,7 @@ Ext.application({
 
     launch: function() {
         Docs.App = this;
+        Docs.Favorites.init();
         Docs.History.init();
     }
 });
