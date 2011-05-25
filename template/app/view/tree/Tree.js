@@ -1,7 +1,7 @@
 /**
  * The class tree
  */
-Ext.define('Docs.view.clsTree.Tree', {
+Ext.define('Docs.view.tree.Tree', {
     extend: 'Ext.tree.Panel',
     alias : 'widget.classtree',
 

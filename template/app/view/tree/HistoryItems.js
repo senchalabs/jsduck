@@ -1,7 +1,7 @@
 /**
  * Menu of history items.
  */
-Ext.define('Docs.view.clsTree.HistoryItems', {
+Ext.define('Docs.view.tree.HistoryItems', {
     extend: 'Ext.view.View',
 
     itemSelector: 'div.a',

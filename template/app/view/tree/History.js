@@ -1,7 +1,7 @@
 /**
  * History button with fly-out menu of history entries.
  */
-Ext.define('Docs.view.clsTree.History', {
+Ext.define('Docs.view.tree.History', {
 	extend: 'Ext.Component',
 	alias: 'widget.docshistorybutton',
 
@@ -27,7 +27,7 @@ Ext.define('Docs.view.clsTree.History', {
 	},
 
     renderMenu: function() {
-        this.hoverMenu = Ext.create('Docs.view.clsTree.HistoryItems', {
+        this.hoverMenu = Ext.create('Docs.view.tree.HistoryItems', {
             store: Docs.App.getStore('History')
         });
 

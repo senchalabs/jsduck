@@ -10,9 +10,9 @@ Ext.define('Docs.controller.Classes', {
 
     views: [
         'cls.List',
-        'clsTree.Tree',
-        'clsTree.History',
-        'clsTree.HistoryItems'
+        'tree.Tree',
+        'tree.History',
+        'tree.HistoryItems'
     ],
 
     stores: [
