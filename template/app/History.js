@@ -12,6 +12,7 @@ Ext.define("Docs.History", {
             this.navigate(Ext.util.History.getToken());
         }, this);
         Ext.util.History.on("change", this.navigate, this);
+        this.store = Ext.getStore("History");
     },
 
     // Parses current URL and navigates to the page
@@ -39,6 +40,18 @@ Ext.define("Docs.History", {
         return matches ? {type: matches[1], key: matches[2]} : {};
     },
 
+    // Extracts class name from history token
+    // Returns false when it's not class-related token.
+    parseClassName: function(token) {
+        var url = this.parseToken(token);
+        if (url.type === "api") {
+            return url.key.replace(/-.*$/, '');
+        }
+        else {
+            return false;
+        }
+    },
+
     /**
      * Adds URL to history
      *
@@ -47,5 +60,12 @@ Ext.define("Docs.History", {
     push: function(token) {
         this.ignoreChange = true;
         Ext.util.History.add(token);
+
+        // Add class name to history store if it's not there already
+        var cls = this.parseClassName(token);
+        if (cls && this.store.find('cls', cls) === -1) {
+            this.store.add({cls: cls});
+            this.store.sync();
+        }
     }
 });

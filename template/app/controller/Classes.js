@@ -19,7 +19,9 @@ Ext.define('Docs.controller.Classes', {
         'History'
     ],
 
-    models: ['History'],
+    models: [
+        'History'
+    ],
 
     init: function() {
         Ext.getBody().addListener('click', function(cmp, el) {
@@ -120,8 +122,7 @@ Ext.define('Docs.controller.Classes', {
                 showClass = container.down('showclass'),
                 classHeader = showClass.down('classheader'),
                 classOverview = showClass.down('classoverview'),
-                docTabPanel = Ext.getCmp('docTabPanel'),
-                historyStore = this.getStore('History');
+                docTabPanel = Ext.getCmp('docTabPanel');
 
             classHeader.update(classHeader.tpl.apply(cls));
             classOverview.load(cls);
@@ -129,12 +130,6 @@ Ext.define('Docs.controller.Classes', {
             if (docTabPanel) {
                 docTabPanel.setActiveTab(0);
                 docTabPanel.setLoading(false);
-            }
-
-            var prevCls = historyStore.find('cls', cls.name);
-            if (prevCls === -1) {
-                historyStore.add({cls: cls.name});
-                historyStore.sync();
             }
 
             Ext.getCmp('treePanelCmp').selectClass(cls.name);

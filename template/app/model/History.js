@@ -2,7 +2,7 @@
  * Previously visited classes / guides
  */
 Ext.define('Docs.model.History', {
-    fields: ['id', 'cls', 'scrollPosision', 'hideInherited', 'expandedMembers'],
+    fields: ['id', 'cls'],
     extend: 'Ext.data.Model',
     proxy: {
         type: 'localstorage',

@@ -12,7 +12,7 @@ Ext.define('Docs.view.tree.HistoryItems', {
     tpl: new Ext.XTemplate(
         '<tpl for=".">',
             '<div class="item">',
-                '<a href="{cls}" rel="{cls}" class="docClass">{cls}</a>',
+                '<a href="#/api/{cls}" rel="{cls}" class="docClass">{cls}</a>',
                 '<a class="close" href="#" rel="{cls}">x</a>',
             '</div>',
         '</tpl>'
