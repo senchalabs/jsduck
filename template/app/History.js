@@ -74,5 +74,15 @@ Ext.define("Docs.History", {
             }
             this.store.sync();
         }
+    },
+
+    /**
+     * Removes class from History store
+     *
+     * @param {String} cls
+     */
+    removeClass: function(cls) {
+        var index = this.store.find('cls', cls);
+        this.store.removeAt(index);
     }
 });

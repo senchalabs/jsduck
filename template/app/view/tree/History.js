@@ -39,9 +39,9 @@ Ext.define('Docs.view.tree.History', {
             },
             mouseout: this.deferHideMenu,
             click: function(e) {
-                console.log(arguments)
                 if (e.getTarget(".close")) {
-                    console.log("Close");
+                    var cls = e.getTarget().rel;
+                    Docs.History.removeClass(e.getTarget().rel);
                 } else {
                     this.hoverMenu.hide();
                 }
