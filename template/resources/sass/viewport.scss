@@ -218,6 +218,11 @@ a:hover {
       height: 32px;
       margin: 10px 0;
       padding-left: 40px; }
+		.egLink {
+		  border-top: 1px solid #ebebeb; 
+		  a {
+		    padding-left: 10px; margin: 10px 0 0 0; 
+				height: auto; } }
     .getting_started {
       background: url(../images/guides.png) no-repeat 0px 0px; }
     .drawing_and_charting {

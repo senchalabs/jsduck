@@ -81,6 +81,7 @@ Ext.define('Docs.view.Viewport', {
                 region: 'center',
                 id: 'center-container',
                 layout: 'fit',
+                minWidth: 800,
                 items: {
                     id: 'container',
                     xtype: 'container',
