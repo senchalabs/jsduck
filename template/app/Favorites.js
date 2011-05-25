@@ -9,8 +9,11 @@ Ext.define("Docs.Favorites", {
      */
     init: function() {
         // Load Favorites from localStorage
+        
+        this.localStorage = ('localStorage' in window && window['localStorage'] !== null);
+        
         this.store = Ext.getStore("Favorites");
-        this.store.load();
+        if (this.localStorage) this.store.load();
     },
 
     /**
@@ -21,7 +24,7 @@ Ext.define("Docs.Favorites", {
     add: function(cls) {
         if (!this.has(cls)) {
             this.store.add({cls: cls});
-            this.store.sync();
+            if (this.localStorage) this.store.sync();
         }
     },
 
@@ -33,7 +36,7 @@ Ext.define("Docs.Favorites", {
     remove: function(cls) {
         if (this.has(cls)) {
             this.store.removeAt(this.store.find('cls', cls));
-            this.store.sync();
+            if (this.localStorage) this.store.sync();
         }
     },
 

@@ -5,7 +5,7 @@ Ext.define('Docs.model.Favorite', {
     fields: ['id', 'cls'],
     extend: 'Ext.data.Model',
     proxy: {
-        type: 'localstorage',
+        type: ('localStorage' in window && window['localStorage'] !== null) ? 'localstorage' : 'memory',
         id  : 'docs-favorites'
     }
 });

@@ -16,8 +16,10 @@ Ext.define("Docs.History", {
         }, this);
         Ext.util.History.on("change", this.navigate, this);
         // Load History from localStorage
+        this.localStorage = ('localStorage' in window && window['localStorage'] !== null);
+        
         this.store = Ext.getStore("History");
-        this.store.load();
+        if (this.localStorage) this.store.load();
     },
 
     // Parses current URL and navigates to the page
@@ -83,7 +85,7 @@ Ext.define("Docs.History", {
             while (this.store.getAt(this.maxHistoryLength)) {
                 this.store.removeAt(this.maxHistoryLength);
             }
-            this.store.sync();
+            if (this.localStorage) this.store.sync();
         }
     },
 
@@ -95,6 +97,6 @@ Ext.define("Docs.History", {
     removeClass: function(cls) {
         var index = this.store.find('cls', cls);
         this.store.removeAt(index);
-        this.store.sync();
+        if (this.localStorage) this.store.sync();
     }
 });

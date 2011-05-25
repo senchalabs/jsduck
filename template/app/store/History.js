@@ -6,6 +6,6 @@ Ext.define('Docs.store.History', {
     model: 'Docs.model.History',
     // Sort history with latest on top
     sorters: [
-        {property: 'id', direction: 'DESC'}
+        { property: 'id', direction: 'DESC' }
     ]
 });
