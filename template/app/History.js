@@ -4,6 +4,9 @@
 Ext.define("Docs.History", {
     singleton: true,
 
+    // Maximum number of items to keep in history store
+    maxHistoryLength: 25,
+
     /**
      * Initializes history management.
      */
@@ -64,7 +67,11 @@ Ext.define("Docs.History", {
         // Add class name to history store if it's not there already
         var cls = this.parseClassName(token);
         if (cls && this.store.find('cls', cls) === -1) {
-            this.store.add({cls: cls});
+            this.store.insert(0, {cls: cls});
+            // Remove items from the end of history if there are too many
+            while (this.store.getAt(this.maxHistoryLength)) {
+                this.store.removeAt(this.maxHistoryLength);
+            }
             this.store.sync();
         }
     }
