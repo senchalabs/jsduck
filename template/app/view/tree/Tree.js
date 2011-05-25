@@ -14,26 +14,26 @@ Ext.define('Docs.view.tree.Tree', {
     border: false,
     bodyBorder: false,
 
-    // dockedItems: [
-    //     {
-    //         xtype: 'container',
-    //         layout: {
-    //             type: 'hbox'
-    //         },
-    //         dock: 'top',
-    //         margin: '0 0 15 0',
-    //         items: [
-    //             {
-    //                 margin: '0 10 0 0',
-    //                 xtype: 'button',
-    //                 text: 'Favorites'
-    //             },
-    //             {
-    //                 xtype: 'docshistorybutton'
-    //             }
-    //         ]
-    //     }
-    // ],
+    dockedItems: [
+        {
+            xtype: 'container',
+            layout: {
+                type: 'hbox'
+            },
+            dock: 'top',
+            margin: '0 0 15 0',
+            items: [
+                {
+                    margin: '0 10 0 0',
+                    xtype: 'button',
+                    text: 'Favorites'
+                },
+                {
+                    xtype: 'docshistorybutton'
+                }
+            ]
+        }
+    ],
 
     initComponent: function() {
         // Expand the main tree
