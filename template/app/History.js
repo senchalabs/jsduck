@@ -71,9 +71,9 @@ Ext.define("Docs.History", {
         if (cls) {
             // When class already in history remove it and add again.
             // This way the most recently visited items will always be at the top.
-            var oldIndex = this.store.find('cls', cls);
-            if (oldIndex) {
-                this.store.removeAt(oldIndex);
+            var oldItem = this.store.findRecord('cls', cls);
+            if (oldItem) {
+                this.store.remove(oldItem);
             }
 
             // Add new item at the beginning

@@ -328,7 +328,6 @@ a:hover {
       height: 15px;
       position: absolute;
       right: 3px;
-      z-index: 20;
       top: 0;
       &.show {
         background: url(../images/favorite.png) no-repeat -2px -1px; } }
@@ -661,13 +660,13 @@ a:hover {
     display: block;
     .item {
       position: relative;
-      padding: 2px 30px 2px 0; }
-    a {
-      display: inline;
-      padding: 0; }
-    a.close {
-      position: absolute;
-      right: 0; } }
+      padding: 2px 0 2px 0; 
+	    a.close {
+	      position: absolute;
+				width: auto;
+				padding: 3px 0 0 0;
+	      right: 0; top: 0; } }
+}
 
 #favoritesBtn,#historyBtn {
   padding-left: 22px;
