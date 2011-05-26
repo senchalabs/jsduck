@@ -14,25 +14,6 @@ Ext.define('Docs.view.tree.Tree', {
     border: false,
     bodyBorder: false,
 
-    dockedItems: [
-        {
-            xtype: 'container',
-            layout: {
-                type: 'hbox'
-            },
-            dock: 'top',
-            margin: '0 0 15 0',
-            items: [
-                {
-                    xtype: 'docsfavoritesbutton'
-                },
-                {
-                    xtype: 'docshistorybutton'
-                }
-            ]
-        }
-    ],
-
     initComponent: function() {
         // Expand the main tree
         this.root.expanded = true;
@@ -44,6 +25,41 @@ Ext.define('Docs.view.tree.Tree', {
                 this.getRootNode().cascadeBy(this.addFavIcons, this);
             }, this);
         }, this);
+
+        this.dockedItems = [
+            {
+                xtype: 'container',
+                layout: 'hbox',
+                dock: 'top',
+                margin: '0 0 15 0',
+                items: [
+                    {
+                        xtype: 'menubutton',
+                        id: 'favoritesBtn',
+                        text: 'Favorites',
+                        emptyText: 'No favorites',
+                        store: Ext.getStore('Favorites'),
+                        listeners: {
+                            closeclick: function(cls) {
+                                Docs.Favorites.remove(cls);
+                            }
+                        }
+                    },
+                    {
+                        xtype: 'menubutton',
+                        id: 'historyBtn',
+                        text: 'History',
+                        emptyText: 'No history',
+                        store: Ext.getStore('History'),
+                        listeners: {
+                            closeclick: function(cls) {
+                                Docs.History.removeClass(cls);
+                            }
+                        }
+                    }
+                ]
+            }
+        ];
 
         this.callParent();
     },

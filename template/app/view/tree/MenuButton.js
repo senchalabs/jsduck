@@ -1,14 +1,40 @@
 /**
- * Favorites button with fly-out menu of entries.
+ * Button with fly-out menu of history/favorites entries.
  */
-Ext.define('Docs.view.tree.Favorites', {
-	extend: 'Ext.Component',
-	alias: 'widget.docsfavoritesbutton',
+Ext.define('Docs.view.tree.MenuButton', {
+    extend: 'Ext.Component',
+    alias: 'widget.menubutton',
 
-	id: 'favoritesBtn',
-	html: '<span></span>Favorites',
+    /**
+     * @cfg {Ext.data.Store} store
+     * The store that contains the menu entries.
+     */
+    /**
+     * @cfg {String} text
+     * Text for the button.
+     */
+    text: "",
+    /**
+     * @cfg {String} emptyText
+     * Text to display in menu when store empty.
+     */
+    emptyText: "",
 
-	afterRender: function() {
+    initComponent: function() {
+        this.addEvents(
+            /**
+             * @event closeclick
+             * Fired when close link in menu clicked.
+             * @param {String} cls  Name of the class that was closed.
+             */
+            "closeclick"
+        );
+        this.html = '<span></span>' + this.text;
+
+        this.callParent();
+    },
+
+    afterRender: function() {
         this.callParent(arguments);
 
         this.getEl().on({
@@ -16,20 +42,18 @@ Ext.define('Docs.view.tree.Favorites', {
                 if (!this.hoverMenu) {
                     this.renderMenu();
                 }
-
                 this.hoverMenu.show();
                 clearTimeout(this.hideTimeout);
-    	    },
+            },
             mouseout: this.deferHideMenu,
             scope: this
         });
-
-	},
+    },
 
     renderMenu: function() {
         this.hoverMenu = Ext.create('Docs.view.tree.HoverMenu', {
-            emptyText: 'No favorites',
-            store: Docs.App.getStore('Favorites')
+            emptyText: this.emptyText,
+            store: this.store
         });
 
         this.hoverMenu.getEl().setVisibilityMode(Ext.core.Element.DISPLAY);
@@ -41,8 +65,7 @@ Ext.define('Docs.view.tree.Favorites', {
             mouseout: this.deferHideMenu,
             click: function(e) {
                 if (e.getTarget(".close")) {
-                    var cls = e.getTarget().rel;
-                    Docs.Favorites.remove(e.getTarget().rel);
+                    this.fireEvent("closeclick", e.getTarget().rel);
                 } else {
                     this.hoverMenu.hide();
                 }

@@ -11,8 +11,7 @@ Ext.define('Docs.controller.Classes', {
     views: [
         'cls.List',
         'tree.Tree',
-        'tree.Favorites',
-        'tree.History',
+        'tree.MenuButton',
         'tree.HoverMenu'
     ],
 
