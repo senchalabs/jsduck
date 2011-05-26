@@ -8,13 +8,6 @@ Ext.define('Docs.controller.Classes', {
         'Docs.Syntax'
     ],
 
-    views: [
-        'cls.List',
-        'tree.Tree',
-        'tree.MenuButton',
-        'tree.HoverMenu'
-    ],
-
     stores: [
         'Favorites',
         'History'

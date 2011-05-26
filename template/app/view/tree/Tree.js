@@ -4,6 +4,11 @@
 Ext.define('Docs.view.tree.Tree', {
     extend: 'Ext.tree.Panel',
     alias : 'widget.classtree',
+    requires: [
+        'Docs.view.tree.MenuButton',
+        'Docs.Favorites',
+        'Docs.History'
+    ],
 
     id: 'treePanelCmp',
     cls: 'iScroll',

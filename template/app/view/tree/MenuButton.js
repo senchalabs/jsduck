@@ -4,6 +4,9 @@
 Ext.define('Docs.view.tree.MenuButton', {
     extend: 'Ext.Component',
     alias: 'widget.menubutton',
+    requires: [
+        'Docs.view.tree.HoverMenu'
+    ],
 
     /**
      * @cfg {Ext.data.Store} store
