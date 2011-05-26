@@ -2,6 +2,8 @@
  * Browser history management using Ext.util.History.
  */
 Ext.define("Docs.History", {
+    extend: 'Docs.LocalStore',
+    storeName: 'History',
     singleton: true,
 
     // Maximum number of items to keep in history store
@@ -15,11 +17,7 @@ Ext.define("Docs.History", {
             this.navigate(Ext.util.History.getToken());
         }, this);
         Ext.util.History.on("change", this.navigate, this);
-        // Load History from localStorage
-        this.localStorage = ('localStorage' in window && window['localStorage'] !== null);
-
-        this.store = Ext.getStore("History");
-        if (this.localStorage) this.store.load();
+        this.callParent();
     },
 
     // Parses current URL and navigates to the page
@@ -85,7 +83,7 @@ Ext.define("Docs.History", {
             while (this.store.getAt(this.maxHistoryLength)) {
                 this.store.removeAt(this.maxHistoryLength);
             }
-            if (this.localStorage) this.store.sync();
+            this.syncStore();
         }
     },
 
@@ -97,6 +95,6 @@ Ext.define("Docs.History", {
     removeClass: function(cls) {
         var index = this.store.findExact('cls', cls);
         this.store.removeAt(index);
-        if (this.localStorage) this.store.sync();
+        this.syncStore();
     }
 });

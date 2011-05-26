@@ -2,19 +2,9 @@
  * Favorites management.
  */
 Ext.define("Docs.Favorites", {
+    extend: 'Docs.LocalStore',
+    storeName: 'Favorites',
     singleton: true,
-
-    /**
-     * Initializes favorites management.
-     */
-    init: function() {
-        // Load Favorites from localStorage
-
-        this.localStorage = ('localStorage' in window && window['localStorage'] !== null);
-
-        this.store = Ext.getStore("Favorites");
-        if (this.localStorage) this.store.load();
-    },
 
     /**
      * Adds class to favorites
@@ -24,7 +14,7 @@ Ext.define("Docs.Favorites", {
     add: function(cls) {
         if (!this.has(cls)) {
             this.store.add({cls: cls});
-            if (this.localStorage) this.store.sync();
+            this.syncStore();
         }
     },
 
@@ -36,7 +26,7 @@ Ext.define("Docs.Favorites", {
     remove: function(cls) {
         if (this.has(cls)) {
             this.store.removeAt(this.store.findExact('cls', cls));
-            if (this.localStorage) this.store.sync();
+            this.syncStore();
         }
     },
 
@@ -49,5 +39,4 @@ Ext.define("Docs.Favorites", {
     has: function(cls) {
         return this.store.findExact('cls', cls) > -1;
     }
-
 });
