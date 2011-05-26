@@ -4,6 +4,9 @@
 Ext.define('Docs.view.cls.HoverMenuButton', {
     extend: 'Ext.toolbar.TextItem',
     componentCls: "hover-menu-button",
+    requires: [
+        'Docs.view.HoverMenu'
+    ],
 
     /**
      * @cfg {[String]} links
@@ -46,24 +49,24 @@ Ext.define('Docs.view.cls.HoverMenuButton', {
                 // hide other menus
                 Ext.Array.forEach(Docs.view.cls.HoverMenuButton.menus, function(menu) {
                     if (menu !== this.menu) {
-                        menu.setStyle({display: "none"});
+                        menu.hide();
                     }
                 });
                 // stop pending menuhide process
                 clearTimeout(this.hideTimeout);
                 // position menu right below button and show it
                 var p = this.getEl().getXY();
-                this.menu.setStyle({
+                this.menu.show();
+                this.menu.getEl().setStyle({
                     left: (p[0] - 10)+"px",
-                    top: (p[1]+23)+"px",
-                    display: "block"
+                    top: (p[1]+23)+"px"
                 });
             },
             mouseout: this.deferHideMenu,
             scope: this
         });
 
-        this.menu.on({
+        this.menu.getEl().on({
             mouseover: function() {
                 clearTimeout(this.hideTimeout);
             },
@@ -74,7 +77,7 @@ Ext.define('Docs.view.cls.HoverMenuButton', {
 
     onDestroy: function() {
         // clean up DOM
-        this.menu.remove();
+        this.menu.destroy();
         // remove from global menu list
         Ext.Array.remove(Docs.view.cls.HoverMenuButton.menus, this.menu);
 
@@ -82,52 +85,38 @@ Ext.define('Docs.view.cls.HoverMenuButton', {
     },
 
     renderMenu: function() {
-        this.menu = Ext.get(Ext.core.DomHelper.append(document.body, {
-            html: this.renderMenuHtml(),
+        this.store = Ext.create('Ext.data.Store', {
+            fields: ['id', 'cls', 'url', 'label']
+        });
+        this.store.add(this.links);
+
+        this.menu = Ext.create('Docs.view.HoverMenu', {
+            store: this.store,
             cls: 'hover-menu-menu'
-        }));
-        this.menu.addListener('click', function() {
-            this.menu.setStyle({display: "none"});
+        });
+        this.menu.getEl().setVisibilityMode(Ext.core.Element.DISPLAY);
+        this.menu.hide();
+
+        this.menu.getEl().addListener('click', function() {
+            this.menu.hide();
         }, this);
         Docs.view.cls.HoverMenuButton.menus.push(this.menu);
     },
 
     /**
      * Changes the list of links in menu.
-     * @param {[String]} links
+     * @param {[Object]} links
      */
     setLinks: function(links) {
         this.links = links;
         this.setText(this.initialText + ' <span class="num">' + this.links.length + '</span>');
-        this.menu.update(this.renderMenuHtml());
-    },
-
-    renderMenuHtml: function() {
-        // divide links into columns with at most 25 links in one column
-        var columns = [];
-        for (var i=0; i<this.links.length; i+=25) {
-            columns.push(this.links.slice(i, i+25));
-        }
-
-        var tpl = new Ext.XTemplate(
-            '<table>',
-                '<tr>',
-                    '<tpl for="columns">',
-                        '<td>',
-                            '<tpl for=".">',
-                                '{.}',
-                            '</tpl>',
-                        '</td>',
-                    '</tpl>',
-                '</tr>',
-            '</table>'
-        );
-        return tpl.apply({columns: columns});
+        this.store.removeAll();
+        this.store.add(this.links);
     },
 
     deferHideMenu: function() {
         this.hideTimeout = Ext.Function.defer(function() {
-            this.menu.setStyle({display: "none"});
+            this.menu.hide();
         }, 200, this);
     }
 

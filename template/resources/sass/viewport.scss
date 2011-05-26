@@ -625,7 +625,6 @@ a:hover {
   padding-left: 20px;
   cursor: pointer; }
 .hover-menu-menu {
-  display: none; // hide initially
   font-size: 12px;
   position: absolute;
   padding: 5px 15px 10px;
@@ -657,7 +656,7 @@ a:hover {
     right: 0; } }
 
 .hover-menu-menu.show {
-  display: block;
+  min-width: 220px;
   .item {
     position: relative;
     padding: 2px 0 2px 0;

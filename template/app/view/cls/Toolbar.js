@@ -108,7 +108,7 @@ Ext.define('Docs.view.cls.Toolbar', {
         });
     },
 
-    // Creates HTML link to class (and optionally to class member)
+    // Creates link object referencing a class (and optionally a class member)
     createLink: function(cls, member) {
         if (member) {
             var url = cls+"-"+member.tagname+"-"+member.name;
@@ -118,7 +118,11 @@ Ext.define('Docs.view.cls.Toolbar', {
             var url = cls;
             var label = cls;
         }
-        return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{1}</a>', url, label);
+        return {
+            cls: cls,
+            url: url,
+            label: label
+        };
     },
 
     hideInherited: function(el) {

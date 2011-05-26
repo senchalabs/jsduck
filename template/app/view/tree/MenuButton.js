@@ -5,7 +5,7 @@ Ext.define('Docs.view.tree.MenuButton', {
     extend: 'Ext.Component',
     alias: 'widget.menubutton',
     requires: [
-        'Docs.view.tree.HoverMenu'
+        'Docs.view.HoverMenu'
     ],
 
     /**
@@ -54,9 +54,11 @@ Ext.define('Docs.view.tree.MenuButton', {
     },
 
     renderMenu: function() {
-        this.hoverMenu = Ext.create('Docs.view.tree.HoverMenu', {
+        this.hoverMenu = Ext.create('Docs.view.HoverMenu', {
+            store: this.store,
             emptyText: this.emptyText,
-            store: this.store
+            cls: 'hover-menu-menu show',
+            showCloseButtons: true
         });
 
         this.hoverMenu.getEl().setVisibilityMode(Ext.core.Element.DISPLAY);
@@ -80,7 +82,6 @@ Ext.define('Docs.view.tree.MenuButton', {
         var p = this.getEl().getXY();
         this.hoverMenu.getEl().setStyle({
             left: "20px",
-            width: "220px",
             top: (p[1]+23)+"px"
         });
     },
