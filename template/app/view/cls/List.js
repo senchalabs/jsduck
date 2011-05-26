@@ -42,6 +42,7 @@ Ext.define('Docs.view.cls.List', {
                   '<a class="guide direct" rel="direct" href="guides/direct/index.html">Direct</a>',
                   '<a class="guide accessibility" rel="accessibility" href="guides/accessibility/index.html">Accessibility</a>',
                 '</div>',
+                '<div class="egLink"><a href="http://dev.sencha.com/deploy/ext-4.0.1/examples/index.html">View the Ext 4.0.1 examples &rarr;</a></div>',
               '</div>',
             '</div>',
             '<tpl for="organisation">',

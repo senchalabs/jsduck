@@ -168,8 +168,14 @@ Ext.define('Docs.controller.Classes', {
 
         if (clsName) {
             if (e.getTarget(".fav")) {
-                Docs.Favorites.add(clsName);
-                Ext.get(e.getTarget(".fav")).addCls("show");
+                var favEl = Ext.get(e.getTarget(".fav"));
+                if (favEl.hasCls('show')) {
+                    Docs.Favorites.remove(clsName);
+                    favEl.removeCls("show");                    
+                } else {                    
+                    Docs.Favorites.add(clsName);
+                    favEl.addCls("show");
+                }
             }
             else {
                 this.loadClass(clsName);

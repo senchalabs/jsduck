@@ -6,6 +6,7 @@ Ext.define('Docs.view.tree.HistoryItems', {
 
     itemSelector: 'div.item',
     emptyText: 'No history',
+    deferEmptyText: false,
     renderTo: Ext.getBody(),
     cls: 'hover-menu-menu show',
 

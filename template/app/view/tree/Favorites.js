@@ -28,6 +28,7 @@ Ext.define('Docs.view.tree.Favorites', {
 
     renderMenu: function() {
         this.hoverMenu = Ext.create('Docs.view.tree.HistoryItems', {
+            emptyText: 'No favorites',
             store: Docs.App.getStore('Favorites')
         });
 
@@ -52,7 +53,8 @@ Ext.define('Docs.view.tree.Favorites', {
 
         var p = this.getEl().getXY();
         this.hoverMenu.getEl().setStyle({
-            left: "35px",
+            left: "20px",
+            width: "220px",
             top: (p[1]+23)+"px"
         });
     },
