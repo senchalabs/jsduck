@@ -81,18 +81,35 @@ Ext.define('Docs.view.tree.Tree', {
     /**
      * Selects class node in tree by name.
      *
-     * @param {String} className
+     * @param {String} cls
      */
-    selectClass: function(className) {
-        var classNode = this.getRootNode().findChildBy(function(n) {
-            return className === n.raw.clsName;
-        }, null, true);
-
-        if (classNode) {
-            this.getSelectionModel().select(classNode);
-            classNode.bubble(function(n) {
+    selectClass: function(cls) {
+        var r = this.findRecordByClassName(cls);
+        if (r) {
+            this.getSelectionModel().select(r);
+            r.bubble(function(n) {
                 n.expand();
             });
         }
+    },
+
+    /**
+     * Sets favorite status of class on or off.
+     *
+     * @param {String} cls  name of the class
+     * @param {Boolean} enable  true to mark class as favorite.
+     */
+    setFavorite: function(cls, enable) {
+        var r = this.findRecordByClassName(cls);
+        if (r) {
+            var el = this.getView().getNode(r);
+            Ext.get(el).down(".fav")[enable ? "addCls" : "removeCls"]("show");
+        }
+    },
+
+    findRecordByClassName: function(cls) {
+        return this.getRootNode().findChildBy(function(n) {
+            return cls === n.raw.clsName;
+        }, this, true);
     }
 });

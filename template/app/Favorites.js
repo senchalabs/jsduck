@@ -15,6 +15,7 @@ Ext.define("Docs.Favorites", {
         if (!this.has(cls)) {
             this.store.add({cls: cls});
             this.syncStore();
+            Ext.getCmp("treePanelCmp").setFavorite(cls, true);
         }
     },
 
@@ -27,6 +28,7 @@ Ext.define("Docs.Favorites", {
         if (this.has(cls)) {
             this.store.removeAt(this.store.findExact('cls', cls));
             this.syncStore();
+            Ext.getCmp("treePanelCmp").setFavorite(cls, false);
         }
     },
 
