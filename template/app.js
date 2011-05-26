@@ -5,28 +5,11 @@ Ext.Loader.setConfig({
     }
 });
 
-/**
- * @class Docs.App
- * @extends Ext.app.Application
- *
- * Main application definition for Docs app. Defines a 'Docs' namespace under
- * which all models, views, controllers, stores, helpers etc should be defined.
- */
-Ext.application({
-    name: 'Docs',
+// The following is exactly what Ext.application() function does, but
+// we use our own Application class that extends Ext.app.Application
 
-    appFolder: 'app',
+Ext.require('Docs.Application');
 
-    controllers: [
-        'Classes',
-        'Search'
-    ],
-
-    autoCreateViewport: true,
-
-    launch: function() {
-        Docs.App = this;
-        Docs.Favorites.init();
-        Docs.History.init();
-    }
+Ext.onReady(function() {
+    Ext.create('Docs.Application');
 });
