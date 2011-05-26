@@ -17,7 +17,7 @@ Ext.define("Docs.History", {
         Ext.util.History.on("change", this.navigate, this);
         // Load History from localStorage
         this.localStorage = ('localStorage' in window && window['localStorage'] !== null);
-        
+
         this.store = Ext.getStore("History");
         if (this.localStorage) this.store.load();
     },
@@ -73,9 +73,9 @@ Ext.define("Docs.History", {
         if (cls) {
             // When class already in history remove it and add again.
             // This way the most recently visited items will always be at the top.
-            var oldItem = this.store.findRecord('cls', cls);
-            if (oldItem) {
-                this.store.remove(oldItem);
+            var oldIndex = this.store.findExact('cls', cls);
+            if (oldIndex > -1) {
+                this.store.removeAt(oldIndex);
             }
 
             // Add new item at the beginning
@@ -95,7 +95,7 @@ Ext.define("Docs.History", {
      * @param {String} cls
      */
     removeClass: function(cls) {
-        var index = this.store.find('cls', cls);
+        var index = this.store.findExact('cls', cls);
         this.store.removeAt(index);
         if (this.localStorage) this.store.sync();
     }

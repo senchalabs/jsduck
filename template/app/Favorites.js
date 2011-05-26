@@ -9,9 +9,9 @@ Ext.define("Docs.Favorites", {
      */
     init: function() {
         // Load Favorites from localStorage
-        
+
         this.localStorage = ('localStorage' in window && window['localStorage'] !== null);
-        
+
         this.store = Ext.getStore("Favorites");
         if (this.localStorage) this.store.load();
     },
@@ -35,7 +35,7 @@ Ext.define("Docs.Favorites", {
      */
     remove: function(cls) {
         if (this.has(cls)) {
-            this.store.removeAt(this.store.find('cls', cls));
+            this.store.removeAt(this.store.findExact('cls', cls));
             if (this.localStorage) this.store.sync();
         }
     },
@@ -47,7 +47,7 @@ Ext.define("Docs.Favorites", {
      * @return {Boolean} true when class exists in favorites.
      */
     has: function(cls) {
-        return this.store.find('cls', cls) > -1;
+        return this.store.findExact('cls', cls) > -1;
     }
 
 });
