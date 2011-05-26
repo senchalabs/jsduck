@@ -28,7 +28,7 @@ Ext.define('Docs.controller.Classes', {
 
         this.control({
             '#treePanelCmp': {
-                itemclick: this.treeItemClick
+                classclick: Ext.Function.bind(this.loadClass, this)
             },
 
             '#classlist': {
@@ -153,32 +153,6 @@ Ext.define('Docs.controller.Classes', {
             },
             scope: this
         });
-    },
-
-    treeItemClick: function(view, node, item, index, e) {
-        var clsName = node.raw ? node.raw.clsName : node.data.clsName;
-
-        if (clsName) {
-            if (e.getTarget(".fav")) {
-                var favEl = Ext.get(e.getTarget(".fav"));
-                if (favEl.hasCls('show')) {
-                    Docs.Favorites.remove(clsName);
-                } else {
-                    Docs.Favorites.add(clsName);
-                }
-            }
-            else {
-                this.loadClass(clsName);
-            }
-        }
-        else if (!node.isLeaf()) {
-            if (node.isExpanded()) {
-                node.collapse(false);
-            }
-            else {
-                node.expand(false);
-            }
-        }
     },
 
     /**

@@ -20,6 +20,15 @@ Ext.define('Docs.view.tree.Tree', {
     bodyBorder: false,
 
     initComponent: function() {
+        this.addEvents(
+            /**
+             * @event
+             * Fired when class in tree was clicked on and needs to be loaded.
+             * @param {String} cls  name of the class.
+             */
+            "classclick"
+        );
+
         // Expand the main tree
         this.root.expanded = true;
         this.root.children[0].expanded = true;
@@ -30,6 +39,8 @@ Ext.define('Docs.view.tree.Tree', {
                 this.getRootNode().cascadeBy(this.addFavIcons, this);
             }, this);
         }, this);
+
+        this.on("itemclick", this.onItemClick, this);
 
         this.dockedItems = [
             {
@@ -75,6 +86,33 @@ Ext.define('Docs.view.tree.Tree', {
             var show = Docs.Favorites.has(cls) ? "show" : "";
             node.set("text", node.get("text") + Ext.String.format('<a rel="{0}" class="fav {1}"></a>', cls, show));
             node.commit();
+        }
+    },
+
+    onItemClick: function(view, node, item, index, e) {
+        var clsName = node.raw ? node.raw.clsName : node.data.clsName;
+
+        if (clsName) {
+            if (e.getTarget(".fav")) {
+                var favEl = Ext.get(e.getTarget(".fav"));
+                if (favEl.hasCls('show')) {
+                    Docs.Favorites.remove(clsName);
+                }
+                else {
+                    Docs.Favorites.add(clsName);
+                }
+            }
+            else {
+                this.fireEvent("classclick", clsName);
+            }
+        }
+        else if (!node.isLeaf()) {
+            if (node.isExpanded()) {
+                node.collapse(false);
+            }
+            else {
+                node.expand(false);
+            }
         }
     },
 
