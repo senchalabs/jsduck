@@ -32,6 +32,9 @@ module JsDuck
     attr_accessor :ignore_global
     attr_accessor :external_classes
     attr_accessor :show_private_classes
+    attr_accessor :title
+    attr_accessor :extjs_path
+    attr_accessor :append_html
 
     def initialize
       @output_dir = nil
@@ -46,6 +49,9 @@ module JsDuck
       @ignore_global = false
       @external_classes = []
       @show_private_classes = false
+      @title = "Ext JS API Documentation"
+      @extjs_path = "extjs/ext-all-debug.js"
+      @append_html = ""
       @timer = Timer.new
       @parallel = ParallelWrap.new
     end
@@ -86,6 +92,7 @@ module JsDuck
         else
           copy_template(@template_dir, @output_dir)
         end
+        create_index_html(@template_dir, @output_dir)
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
@@ -306,6 +313,16 @@ module JsDuck
     def init_output_dirs(dir)
       FileUtils.mkdir(dir + "/output")
       FileUtils.mkdir(dir + "/source")
+    end
+
+    def create_index_html(template_dir, dir)
+      Logger.instance.log("Creating #{dir}/index.html...")
+      html = IO.read(template_dir+"/index.html")
+      html.gsub!("{title}", @title)
+      html.gsub!("{extjs_path}", @extjs_path)
+      html.gsub!("{append_html}", @append_html)
+      FileUtils.rm(dir+"/index.html")
+      File.open(dir+"/index.html", 'w') {|f| f.write(html) }
     end
   end
 

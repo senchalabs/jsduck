@@ -26,12 +26,22 @@ app.template_dir = File.dirname(File.dirname(__FILE__)) + "/template"
 opts = OptionParser.new do | opts |
   opts.banner = "Usage: jsduck [options] files/dirs...\n\n"
 
+  opts.on('--append-html=HTML', "Extra code to append to the index.html page.", " ") do |html|
+    app.append_html = html
+  end
+
   opts.on('--external=CLASSNAME',
     "Declares an external class.  When declared as",
     "external, inheriting from this class will not",
     "trigger warnings.  Useful when you are extending",
     "a class for which you can not supply source code.", " ") do |classname|
     app.external_classes << classname
+  end
+
+  opts.on('--extjs-path=PATH',
+    "Path for main ExtJS JavaScript file.  Useful for specifying",
+    "something different than extjs/ext-all-debug.js", " ") do |path|
+    app.extjs_path = path
   end
 
   opts.on('--guides=PATH', "Path to guides directory.",
@@ -105,6 +115,10 @@ opts = OptionParser.new do | opts |
     "links.  Useful for template files development.",
     "Only works on platforms supporting symbolic links.", " ") do
     app.template_links = true
+  end
+
+  opts.on('--title=TEXT', "Custom title for the documentation app.", " ") do |text|
+    app.title = text
   end
 
   opts.on('-v', '--verbose', "This will fill up your console.", " ") do

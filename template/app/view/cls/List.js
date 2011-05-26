@@ -11,7 +11,7 @@ Ext.define('Docs.view.cls.List', {
         var data = this.classData;
 
         var tpl = new Ext.XTemplate(
-            '<h1 class="pb">Ext JS 4.0.1 API Documentation</h1>',
+            '<h1 class="pb">{title}</h1>',
             '<div class="legend icons">',
                 '<h4>Legend</h4>',
                 '<ul>',
@@ -70,7 +70,10 @@ Ext.define('Docs.view.cls.List', {
             }
         );
 
-        this.html = tpl.apply(data);
+        this.html = tpl.apply(Ext.apply({
+            // Use the same title as in <title>
+            title: document.getElementsByTagName("title")[0].innerHTML
+        }, data));
 
         this.callParent(arguments);
     }

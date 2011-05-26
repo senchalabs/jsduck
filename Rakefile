@@ -36,21 +36,18 @@ def load_sdk_vars
   end
 end
 
-def run_jsduck(paths, template_links = true)
+def run_jsduck(extra_options)
   system [
     "ruby bin/jsduck",
     # --external=Error to ignore the Error class that Ext.Error extends.
     "--external=Error",
-    # to create symbolic links to template files instead of copying them over.
-    # Useful for development.  Turn off for deployment.
-    (template_links ? "--template-links" : ""),
     '--link=\'<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>\'',
     # Note that we wrap image template inside <p> because {@img} often
     # appears inline withing text, but that just looks ugly in HTML
     '--img=\'<p><img src="doc-resources/%u" alt="%a"></p>\'',
     "--guides=#{SDK_DIR}/guides",
     "--output=#{OUT_DIR}",
-  ].concat(paths).join(" ")
+  ].concat(extra_options).join(" ")
 
   # Finally copy over the images that documentation links to.
   system "cp -r #{SDK_DIR}/extjs/doc-resources #{OUT_DIR}/doc-resources"
@@ -61,6 +58,9 @@ desc "Run JSDuck on ExtJS SDK"
 task :sdk do
   load_sdk_vars
   run_jsduck([
+    # to create symbolic links to template files instead of copying them over.
+    # Useful for development.  Turn off for deployment.
+    "--template-links",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",
@@ -70,25 +70,45 @@ end
 desc "Run JSDuck on ExtJS SDK for export"
 task :export do
   load_sdk_vars
+
+  analytics = <<-EOHTML
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-1396058-10']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  EOHTML
+
   run_jsduck([
+    "--title='Ext JS 4.0.1 API Documentation'",
+    "--extjs-path=extjs/ext-all.js",
+    "--append-html='" + analytics.gsub(/'/, "\'") + "'",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",
-  ], false)
-  
+  ])
+
   system "rm #{OUT_DIR}/extjs"
   system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
   system "cp #{SDK_DIR}/extjs/build/sdk/ext-all.js #{OUT_DIR}/extjs"
   system "cp -r #{SDK_DIR}/extjs/build/sdk/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
   system "rm -rf #{OUT_DIR}/resources/sass"
   system "rm -rf #{OUT_DIR}/resources/.sass-cache"
-  system "cp template/index_production.html #{OUT_DIR}/index.html" 
 end
 
 desc "Run JSDuck on the Docs app itself"
 task :docs do
   load_sdk_vars
   run_jsduck([
+    "--template-links",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",
