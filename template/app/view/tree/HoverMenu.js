@@ -1,11 +1,10 @@
 /**
  * Menu of history items.
  */
-Ext.define('Docs.view.tree.HistoryItems', {
+Ext.define('Docs.view.tree.HoverMenu', {
     extend: 'Ext.view.View',
 
     itemSelector: 'div.item',
-    emptyText: 'No history',
     deferEmptyText: false,
     renderTo: Ext.getBody(),
     cls: 'hover-menu-menu show',

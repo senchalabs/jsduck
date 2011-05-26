@@ -13,7 +13,7 @@ Ext.define('Docs.controller.Classes', {
         'tree.Tree',
         'tree.Favorites',
         'tree.History',
-        'tree.HistoryItems'
+        'tree.HoverMenu'
     ],
 
     stores: [
@@ -171,8 +171,8 @@ Ext.define('Docs.controller.Classes', {
                 var favEl = Ext.get(e.getTarget(".fav"));
                 if (favEl.hasCls('show')) {
                     Docs.Favorites.remove(clsName);
-                    favEl.removeCls("show");                    
-                } else {                    
+                    favEl.removeCls("show");
+                } else {
                     Docs.Favorites.add(clsName);
                     favEl.addCls("show");
                 }

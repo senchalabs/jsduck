@@ -27,7 +27,8 @@ Ext.define('Docs.view.tree.History', {
 	},
 
     renderMenu: function() {
-        this.hoverMenu = Ext.create('Docs.view.tree.HistoryItems', {
+        this.hoverMenu = Ext.create('Docs.view.tree.HoverMenu', {
+            emptyText: 'No history',
             store: Docs.App.getStore('History')
         });
 
