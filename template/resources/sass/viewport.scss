@@ -64,7 +64,7 @@
 
 @mixin gray-h4 {
   h4 {
-    font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 90%;
     padding: 11px 0 5px 0;
     text-transform: uppercase;
@@ -186,16 +186,13 @@ a:hover {
     a {
       background: url(../images/singleton-m.png) no-repeat 0 -5px;
       margin-left: -12px;
-      padding: 0.1em 0 0.4em 2em; } }
-
-}
+      padding: 0.1em 0 0.4em 2em; } } }
 
 .container {
   background: #fff;
   @include border-radius(5px);
   @include box-shadow(0, 0, 4px, rgba(0, 0, 0, 0.4));
   padding: 20px;
-
   line-height: 1.4em;
   h3 {
     font-size: 1.2em;
@@ -218,11 +215,12 @@ a:hover {
       height: 32px;
       margin: 10px 0;
       padding-left: 40px; }
-		.egLink {
-		  border-top: 1px solid #ebebeb; 
-		  a {
-		    padding-left: 10px; margin: 10px 0 0 0; 
-				height: auto; } }
+    .egLink {
+      border-top: 1px solid #ebebeb;
+      a {
+        padding-left: 10px;
+        margin: 10px 0 0 0;
+        height: auto; } }
     .getting_started {
       background: url(../images/guides.png) no-repeat 0px 0px; }
     .drawing_and_charting {
@@ -255,8 +253,7 @@ a:hover {
     margin: 0 20px 20px 0;
     @include border-radius(10px); }
   .category:last-child {
-    margin-bottom: 0;
-  }
+    margin-bottom: 0; }
   .lft {
     float: left;
     width: 250px;
@@ -288,9 +285,7 @@ a:hover {
       padding-left: 22px; }
     a {
       display: block; }
-    @include gray-h4; }
-}
-
+    @include gray-h4; } }
 
 
 #center-container #classlist {
@@ -455,7 +450,7 @@ a:hover {
     font-size: 2.3em;
     color: #66ab16; }
   h2 {
-    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     letter-spacing: -1px;
     line-height: 20px;
     border-bottom: 1px solid #f1f1f1;
@@ -662,16 +657,16 @@ a:hover {
     right: 0; } }
 
 .hover-menu-menu.show {
-    display: block;
-    .item {
-      position: relative;
-      padding: 2px 0 2px 0; 
-	    a.close {
-	      position: absolute;
-				width: auto;
-				padding: 3px 0 0 0;
-	      right: 0; top: 0; } }
-}
+  display: block;
+  .item {
+    position: relative;
+    padding: 2px 0 2px 0;
+    a.close {
+      position: absolute;
+      width: auto;
+      padding: 3px 0 0 0;
+      right: 0;
+      top: 0; } } }
 
 #favoritesBtn,#historyBtn {
   padding-left: 22px;
@@ -687,6 +682,6 @@ a:hover {
     left: 0;
     top: -2px; } }
 #historyBtn span {
-    background: url(../images/favorite.png) no-repeat -36px 0; }
+  background: url(../images/favorite.png) no-repeat -36px 0; }
 #favoritesBtn span {
-    background: url(../images/favorite.png) no-repeat 0 0; }
+  background: url(../images/favorite.png) no-repeat 0 0; }
