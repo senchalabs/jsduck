@@ -56,9 +56,14 @@
   .icon-subclass {
     background: url(../images/icons.png) no-repeat -3px -299px !important; }
   .icon-fav {
-    background: url(../images/favorite.png) no-repeat 0 0; }
+    background: url(../images/icons.png) no-repeat -3px -326px !important; }
   .icon-hist {
-    background: url(../images/favorite.png) no-repeat -36px 0; } }
+    background: url(../images/icons.png) no-repeat -3px -380px !important; } }
+
+@mixin icon-fav {
+  background: url(../images/icons.png) no-repeat -4px -353px; }
+@mixin icon-fav-over {
+  background: url(../images/icons.png) no-repeat -4px -326px; }
 
 @mixin gray-h4 {
   h4 {
@@ -320,6 +325,7 @@ a:hover {
     font-size: 13px;
     position: relative;
     -webkit-transition: background-color 0.15s linear;
+    @include icons;
     a.fav {
       display: block;
       width: 15px;
@@ -328,18 +334,14 @@ a:hover {
       right: 3px;
       top: 0;
       &.show {
-        background: url(../images/favorite.png) no-repeat -2px -1px; } }
-    @include icons; }
+        @include icon-fav-over; } } }
   .x-grid-row-over {
     .x-grid-cell-inner {
       -webkit-transition: background-color 0.15s linear;
       a.fav {
-        background: url(../images/favorite.png) no-repeat -21px -1px;
+        @include icon-fav;
         &:hover {
-          background: url(../images/favorite.png) no-repeat -2px -1px; } } }
-    .x-tree-node-el.fav {
-      a.fav {
-        background: url(../images/favorite.png) no-repeat -2px -1px; } } }
+          @include icon-fav-over; } } } }
   .x-panel-body {
     background: #f8f8f8; }
   .sortBy {
