@@ -148,8 +148,9 @@ Ext.define('Docs.view.tree.Tree', {
     setFavorite: function(cls, enable) {
         var r = this.findRecordByClassName(cls);
         if (r) {
-            var el = this.getView().getNode(r);
-            Ext.get(el).down(".fav")[enable ? "addCls" : "removeCls"]("show");
+            var show = enable ? "show" : "";
+            r.set("text", r.get("text").replace(/class="fav *(show)?"/, 'class="fav '+show+'"'));
+            r.commit();
         }
     },
 
