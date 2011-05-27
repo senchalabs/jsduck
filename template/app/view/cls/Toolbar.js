@@ -4,7 +4,7 @@
 Ext.define('Docs.view.cls.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
     requires: [
-        'Docs.view.cls.HoverMenuButton'
+        'Docs.view.HoverMenuButton'
     ],
 
     dock: 'top',
@@ -84,12 +84,15 @@ Ext.define('Docs.view.cls.Toolbar', {
     },
 
     createMemberButton: function(cfg) {
-        return Ext.create('Docs.view.cls.HoverMenuButton', {
+        var data = Ext.Array.map(cfg.members, function(m) {
+            return this.createLinkRecord(this.docClass.name, m);
+        }, this);
+
+        return Ext.create('Docs.view.HoverMenuButton', {
             text: cfg.text,
             cls: 'icon-'+cfg.type,
-            links: Ext.Array.map(cfg.members, function(m) {
-                return this.createLink(this.docClass.name, m);
-            }, this),
+            store: this.createStore(data),
+            showCount: true,
             listeners: {
                 click: function() {
                     Ext.getCmp('doc-overview').scrollToEl("#m-" + cfg.type);
@@ -99,29 +102,34 @@ Ext.define('Docs.view.cls.Toolbar', {
     },
 
     createClassListButton: function(text, classes) {
-        return Ext.create('Docs.view.cls.HoverMenuButton', {
+        var data = Ext.Array.map(classes, function(cls) {
+            return this.createLinkRecord(cls);
+        }, this);
+
+        return Ext.create('Docs.view.HoverMenuButton', {
             text: text,
             cls: 'icon-subclass',
-            links: Ext.Array.map(classes, function(cls) {
-                return this.createLink(cls);
-            }, this)
+            showCount: true,
+            store: this.createStore(data)
         });
     },
 
+    // creates store tha holds link records
+    createStore: function(records) {
+        var store = Ext.create('Ext.data.Store', {
+            fields: ['id', 'cls', 'url', 'label', 'inherited']
+        });
+        store.add(records);
+        return store;
+    },
+
     // Creates link object referencing a class (and optionally a class member)
-    createLink: function(cls, member) {
-        if (member) {
-            var url = cls+"-"+member.tagname+"-"+member.name;
-            var label = member.name;
-        }
-        else {
-            var url = cls;
-            var label = cls;
-        }
+    createLinkRecord: function(cls, member) {
         return {
             cls: cls,
-            url: url,
-            label: label
+            url: member ? cls+"-"+member.tagname+"-"+member.name : cls,
+            label: member ? member.name : cls,
+            inherited: member ? member.member !== cls : false
         };
     },
 
@@ -154,16 +162,13 @@ Ext.define('Docs.view.cls.Toolbar', {
             }
 
             if (this.memberButtons[type]) {
-                var members = this.docClass[type];
+                var store = this.memberButtons[type].getStore();
                 if (hide) {
-                    members = Ext.Array.filter(members, function(m) {
-                        return m.member === this.docClass.name;
-                    }, this);
+                    store.filterBy(function(m) { return !m.get("inherited"); });
                 }
-                var links = Ext.Array.map(members, function(m) {
-                    return this.createLink(this.docClass.name, m);
-                }, this);
-                this.memberButtons[type].setLinks(links);
+                else {
+                    store.clearFilter();
+                }
             }
         }, this);
     }

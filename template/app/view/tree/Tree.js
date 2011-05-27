@@ -5,7 +5,7 @@ Ext.define('Docs.view.tree.Tree', {
     extend: 'Ext.tree.Panel',
     alias : 'widget.classtree',
     requires: [
-        'Docs.view.tree.MenuButton',
+        'Docs.view.HoverMenuButton',
         'Docs.Favorites',
         'Docs.History'
     ],
@@ -50,10 +50,14 @@ Ext.define('Docs.view.tree.Tree', {
                 margin: '0 0 15 0',
                 items: [
                     {
-                        xtype: 'menubutton',
-                        id: 'favoritesBtn',
+                        xtype: 'hovermenubutton',
+                        cls: 'icon-fav sidebar',
                         text: 'Favorites',
-                        emptyText: 'No favorites',
+                        menuCfg: {
+                            cls: 'sidebar',
+                            emptyText: 'No favorites',
+                            showCloseButtons: true
+                        },
                         store: Ext.getStore('Favorites'),
                         listeners: {
                             closeclick: function(cls) {
@@ -62,10 +66,14 @@ Ext.define('Docs.view.tree.Tree', {
                         }
                     },
                     {
-                        xtype: 'menubutton',
-                        id: 'historyBtn',
+                        xtype: 'hovermenubutton',
+                        cls: 'icon-hist sidebar',
                         text: 'History',
-                        emptyText: 'No history',
+                        menuCfg: {
+                            cls: 'sidebar',
+                            emptyText: 'No history',
+                            showCloseButtons: true
+                        },
                         store: Ext.getStore('History'),
                         listeners: {
                             closeclick: function(cls) {

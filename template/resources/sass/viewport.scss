@@ -56,11 +56,9 @@
   .icon-subclass {
     background: url(../images/icons.png) no-repeat -3px -299px !important; }
   .icon-fav {
-    background: url(../images/favorite2.png) no-repeat 0 -2px;
-    padding-left: 20px; }
+    background: url(../images/favorite.png) no-repeat 0 0; }
   .icon-hist {
-    background: url(../images/favorite2.png) no-repeat 0 -40px;
-    padding-left: 20px; } }
+    background: url(../images/favorite.png) no-repeat -36px 0; } }
 
 @mixin gray-h4 {
   h4 {
@@ -613,18 +611,24 @@ a:hover {
   border-style: solid;
   border-color: #bfbfbf;
   // @include vertical-gradient(#e8e8e8, #eaeaea)
-  .num {
-    font-size: 0.8em;
-    position: relative;
-    top: -4px; }
   .expandAllMembers {
     background: url(../images/expandcollapse.png) no-repeat -14px 2px; }
   .collapseAllMembers {
     background: url(../images/expandcollapse.png) no-repeat 2px 2px; } }
+
+
 .hover-menu-button {
   padding-left: 20px;
-  cursor: pointer; }
-.hover-menu-menu {
+  cursor: pointer;
+  // The same button when used for favorites and history
+  &.sidebar {
+    padding-right: 10px; }
+  sup {
+    font-size: 0.8em;
+    position: relative;
+    top: -4px; } }
+
+.hover-menu {
   font-size: 12px;
   position: absolute;
   padding: 5px 15px 10px;
@@ -636,10 +640,16 @@ a:hover {
   border-top: 1px solid #eaeaea;
   left: -16px;
   @include border-radius-bottom(5px);
-  h2 {
-    font-weight: bold;
-    text-decoration: underline;
-    padding-bottom: 5px; }
+  // The same menu when used for favorites and history
+  &.sidebar {
+    min-width: 220px;
+    left: 20px !important; }
+  table {
+    width: 100%; }
+  td {
+    vertical-align: top; }
+  .item {
+    position: relative; }
   a {
     display: block;
     position: relative;
@@ -648,39 +658,10 @@ a:hover {
     white-space: nowrap;
     &:hover {
       color: #083772;
-      text-decoration: underline; } }
-  td {
-    vertical-align: top; }
-  span {
-    position: absolute;
-    right: 0; } }
-
-.hover-menu-menu.show {
-  min-width: 220px;
-  .item {
-    position: relative;
-    padding: 2px 0 2px 0;
-    a.close {
+      text-decoration: underline; }
+    &.close {
       position: absolute;
       width: auto;
       padding: 3px 0 0 0;
       right: 0;
       top: 0; } } }
-
-#favoritesBtn,#historyBtn {
-  padding-left: 22px;
-  padding-right: 10px;
-  cursor: pointer;
-  &:hover {
-    color: black; }
-  span {
-    display: block;
-    width: 17px;
-    height: 17px;
-    position: absolute;
-    left: 0;
-    top: -2px; } }
-#historyBtn span {
-  background: url(../images/favorite.png) no-repeat -36px 0; }
-#favoritesBtn span {
-  background: url(../images/favorite.png) no-repeat 0 0; }

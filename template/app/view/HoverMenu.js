@@ -1,9 +1,10 @@
 /**
- * Menu shown by cls.HoverMenuButton and tree.MenuButton.
+ * Menu shown by {@link Docs.view.HoverMenuButton}.
  */
 Ext.define('Docs.view.HoverMenu', {
     extend: 'Ext.view.View',
 
+    componentCls: 'hover-menu',
     itemSelector: 'div.item',
     deferEmptyText: false,
     renderTo: Ext.getBody(),
