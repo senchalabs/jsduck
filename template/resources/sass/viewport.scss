@@ -471,7 +471,7 @@ a:hover {
 
 
 #doc-overview {
-  .deprecated-signature, .protected-signature {
+  .deprecated-signature, .protected-signature, .static-signature {
     font-weight: bold;
     text-transform: uppercase;
     color: white;
@@ -483,6 +483,8 @@ a:hover {
     background-color: #aa0000; }
   .protected-signature {
     background-color: #aaa; }
+  .static-signature {
+    background-color: #484848; }
   .new {
     font-weight: bold;
     color: white;

@@ -223,6 +223,9 @@ Ext.define('Docs.view.cls.Overview', {
         if (member.protected) {
             signature += "<strong class='protected-signature'>protected</strong>";
         }
+        if (member.static) {
+            signature += "<strong class='static-signature'>static</strong>";
+        }
         if (member.deprecated) {
             signature += "<strong class='deprecated-signature'>deprecated</strong>";
         }
