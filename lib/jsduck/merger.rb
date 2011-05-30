@@ -257,7 +257,8 @@ module JsDuck
       elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :ext_extend
         code[:right][:extend].join(".")
       elsif code[:type] == :ext_define
-        code[:extend]
+        # Classes defined with Ext.define will automatically inherit from Ext.Base
+        code[:extend] || "Ext.Base"
       end
     end
 

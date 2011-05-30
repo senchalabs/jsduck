@@ -238,6 +238,19 @@ describe JsDuck::Aggregator do
     it_should_behave_like "Ext.define"
   end
 
+  describe "Ext.define() without extend" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+        });
+      EOS
+    end
+    it "automatically extends from Ext.Base" do
+      @doc[:extends].should == "Ext.Base"
+    end
+  end
+
   describe "class with cfgs" do
     before do
       @doc = parse(<<-EOS)[0]
