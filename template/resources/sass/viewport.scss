@@ -471,15 +471,18 @@ a:hover {
 
 
 #doc-overview {
-  .deprecated-signature {
+  .deprecated-signature, .protected-signature {
     font-weight: bold;
     text-transform: uppercase;
     color: white;
     font-size: 0.7em;
     @include border-radius(2px);
     margin-left: 5px;
-    padding: 0 3px;
+    padding: 0 3px; }
+  .deprecated-signature {
     background-color: #aa0000; }
+  .protected-signature {
+    background-color: #aaa; }
   .new {
     font-weight: bold;
     color: white;

@@ -35,8 +35,13 @@ describe JsDuck::Aggregator do
   end
 
   describe "@protected" do
-    before { @tagname = "@protected" }
-    it_should_behave_like "private"
+    before do
+      @doc = parse("/**\n * @protected\n */")[0]
+    end
+
+    it "marks item as protected" do
+      @doc[:protected].should == true
+    end
   end
 
 end

@@ -111,8 +111,10 @@ module JsDuck
           at_var
         elsif look(/@static\b/)
           boolean_at_tag(/@static/, :static)
-        elsif look(/@(private|ignore|hide|protected)\b/)
-          boolean_at_tag(/@(private|ignore|hide|protected)/, :private)
+        elsif look(/@(private|ignore|hide)\b/)
+          boolean_at_tag(/@(private|ignore|hide)/, :private)
+        elsif look(/@protected\b/)
+          boolean_at_tag(/@protected/, :protected)
         elsif look(/@markdown\b/)
           # this is detected just to be ignored
           boolean_at_tag(/@markdown/, :markdown)

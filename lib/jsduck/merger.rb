@@ -126,6 +126,7 @@ module JsDuck
         :docauthor => detect_docauthor(doc_map),
         :singleton => !!doc_map[:singleton],
         :private => !!doc_map[:private],
+        :protected => !!doc_map[:protected],
       }
     end
 
@@ -139,6 +140,7 @@ module JsDuck
         :params => detect_params(docs, code),
         :return => detect_return(doc_map),
         :private => !!doc_map[:private],
+        :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
         :deprecated => detect_deprecated(doc_map),
       }
@@ -153,6 +155,7 @@ module JsDuck
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :private => !!doc_map[:private],
+        :protected => !!doc_map[:protected],
         :deprecated => detect_deprecated(doc_map),
       }
     end
@@ -166,6 +169,7 @@ module JsDuck
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
+        :protected => !!doc_map[:protected],
         :deprecated => detect_deprecated(doc_map),
       }
     end
@@ -179,6 +183,7 @@ module JsDuck
         :type => detect_type(:property, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
+        :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
         :deprecated => detect_deprecated(doc_map),
       }
@@ -193,6 +198,7 @@ module JsDuck
         :type => detect_type(:css_var, doc_map, code),
         :doc => detect_doc(docs),
         :private => !!doc_map[:private],
+        :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
         :deprecated => detect_deprecated(doc_map),
       }
@@ -207,6 +213,7 @@ module JsDuck
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :private => !!doc_map[:private],
+        :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
         :deprecated => detect_deprecated(doc_map),
       }
