@@ -114,7 +114,7 @@ module JsDuck
 
     def create_bare_class(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :class,
         :name => detect_name(:class, doc_map, code, :full_name),
         :doc => detect_doc(docs),
@@ -125,98 +125,84 @@ module JsDuck
         :author => detect_author(doc_map),
         :docauthor => detect_docauthor(doc_map),
         :singleton => !!doc_map[:singleton],
-        :private => !!doc_map[:private],
-        :protected => !!doc_map[:protected],
-      }
+      }, doc_map)
     end
 
     def create_method(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :method,
         :name => detect_name(:method, doc_map, code),
         :member => detect_member(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :return => detect_return(doc_map),
-        :private => !!doc_map[:private],
-        :protected => !!doc_map[:protected],
-        :static => !!doc_map[:static],
-        :deprecated => detect_deprecated(doc_map),
-      }
+      }, doc_map)
     end
 
     def create_event(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :event,
         :name => detect_name(:event, doc_map, code),
         :member => detect_member(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
-        :private => !!doc_map[:private],
-        :protected => !!doc_map[:protected],
-        :deprecated => detect_deprecated(doc_map),
-      }
+      }, doc_map)
     end
 
     def create_cfg(docs, code, member = nil)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :cfg,
         :name => detect_name(:cfg, doc_map, code),
         :member => detect_member(doc_map) || member,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
-        :private => !!doc_map[:private],
-        :protected => !!doc_map[:protected],
-        :deprecated => detect_deprecated(doc_map),
-      }
+      }, doc_map)
     end
 
     def create_property(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :property,
         :name => detect_name(:property, doc_map, code),
         :member => detect_member(doc_map),
         :type => detect_type(:property, doc_map, code),
         :doc => detect_doc(docs),
-        :private => !!doc_map[:private],
-        :protected => !!doc_map[:protected],
-        :static => !!doc_map[:static],
-        :deprecated => detect_deprecated(doc_map),
-      }
+      }, doc_map)
     end
 
     def create_css_var(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :css_var,
         :name => detect_name(:css_var, doc_map, code),
         :member => detect_member(doc_map),
         :type => detect_type(:css_var, doc_map, code),
         :doc => detect_doc(docs),
-        :private => !!doc_map[:private],
-        :protected => !!doc_map[:protected],
-        :static => !!doc_map[:static],
-        :deprecated => detect_deprecated(doc_map),
-      }
+      }, doc_map)
     end
 
     def create_css_mixin(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :css_mixin,
         :name => detect_name(:css_mixin, doc_map, code),
         :member => detect_member(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
+      }, doc_map)
+    end
+
+    # Detects properties common for each doc-object and adds them
+    def add_shared(hash, doc_map)
+      return hash.merge({
         :private => !!doc_map[:private],
         :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
         :deprecated => detect_deprecated(doc_map),
-      }
+      })
     end
 
     def detect_name(tagname, doc_map, code, name_type = :last_name)
