@@ -37,17 +37,18 @@ def load_sdk_vars
 end
 
 def run_jsduck(extra_options)
-  system [
-    "ruby bin/jsduck",
+  # Pass multiple arguments to system, so we'll take advantage of the built-in escaping
+  system(*[
+    "ruby", "bin/jsduck",
     # --external=Error to ignore the Error class that Ext.Error extends.
-    "--external=Error",
-    '--link=\'<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>\'',
+    "--external", "Error",
+    '--link', '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>',
     # Note that we wrap image template inside <p> because {@img} often
     # appears inline withing text, but that just looks ugly in HTML
-    '--img=\'<p><img src="doc-resources/%u" alt="%a"></p>\'',
-    "--guides=#{SDK_DIR}/guides",
-    "--output=#{OUT_DIR}",
-  ].concat(extra_options).join(" ")
+    '--img', '<p><img src="doc-resources/%u" alt="%a"></p>',
+    "--guides", "#{SDK_DIR}/guides",
+    "--output", "#{OUT_DIR}",
+  ].concat(extra_options))
 
   # Finally copy over the images that documentation links to.
   system "cp -r #{SDK_DIR}/extjs/doc-resources #{OUT_DIR}/doc-resources"
@@ -88,9 +89,9 @@ task :export do
   EOHTML
 
   run_jsduck([
-    "--title='Ext JS 4.0.1 API Documentation'",
-    "--extjs-path=extjs/ext-all.js",
-    "--append-html='" + analytics.gsub(/'/, "\'") + "'",
+    "--title", "Ext JS 4.0.1 API Documentation",
+    "--extjs-path", "extjs/ext-all.js",
+    "--append-html", analytics,
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",
