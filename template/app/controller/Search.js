@@ -53,7 +53,15 @@ Ext.define('Docs.controller.Search', {
                         this.loadRecord(record);
                     }
                     else {
-                        this.search(el.value);
+                        // Wait a bit before actually performing the search.
+                        // When user is typing fast, the value of el.value
+                        // might not right away be the final value.  For example
+                        // user might type "tre" but we will get three keyup events
+                        // where el.value === "t".
+                        clearTimeout(this.searchTimeout);
+                        this.searchTimeout = Ext.Function.defer(function() {
+                            this.search(el.value);
+                        }, 50, this);
                     }
                 },
                 focus: function(el) {
