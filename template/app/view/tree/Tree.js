@@ -10,8 +10,7 @@ Ext.define('Docs.view.tree.Tree', {
         'Docs.History'
     ],
 
-    id: 'treePanelCmp',
-    cls: 'iScroll',
+    cls: 'class-tree iScroll',
     folderSort: true,
     useArrows: true,
     rootVisible: false,
@@ -41,6 +40,8 @@ Ext.define('Docs.view.tree.Tree', {
         }, this);
 
         this.on("itemclick", this.onItemClick, this);
+
+        Docs.Favorites.setTree(this);
 
         this.dockedItems = [
             {

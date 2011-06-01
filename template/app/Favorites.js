@@ -7,6 +7,14 @@ Ext.define("Docs.Favorites", {
     singleton: true,
 
     /**
+     * Associates Favorites with Docs TreePanel component.
+     * @param {Docs.view.tree.Tree} tree
+     */
+    setTree: function(tree) {
+        this.tree = tree;
+    },
+
+    /**
      * Adds class to favorites
      *
      * @param {String} cls  the class to add
@@ -15,7 +23,7 @@ Ext.define("Docs.Favorites", {
         if (!this.has(cls)) {
             this.store.add({cls: cls});
             this.syncStore();
-            Ext.getCmp("treePanelCmp").setFavorite(cls, true);
+            this.tree.setFavorite(cls, true);
         }
     },
 
@@ -28,7 +36,7 @@ Ext.define("Docs.Favorites", {
         if (this.has(cls)) {
             this.store.removeAt(this.store.findExact('cls', cls));
             this.syncStore();
-            Ext.getCmp("treePanelCmp").setFavorite(cls, false);
+            this.tree.setFavorite(cls, false);
         }
     },
 

@@ -28,6 +28,10 @@ Ext.define('Docs.controller.Classes', {
         {
             ref: 'classOverview',
             selector: 'classoverview'
+        },
+        {
+            ref: 'tree',
+            selector: 'classtree'
         }
     ],
 
@@ -40,7 +44,7 @@ Ext.define('Docs.controller.Classes', {
         });
 
         this.control({
-            '#treePanelCmp': {
+            'classtree': {
                 // Can't simply assign the loadClass function as event
                 // handler, because an extra event options object is
                 // appended to the event arguments, which we don't
@@ -144,7 +148,7 @@ Ext.define('Docs.controller.Classes', {
                 this.getTabPanel().setLoading(false);
             }
 
-            Ext.getCmp('treePanelCmp').selectClass(cls.name);
+            this.getTree().selectClass(cls.name);
         }
 
         if (anchor) {
