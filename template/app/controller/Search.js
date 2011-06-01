@@ -53,7 +53,7 @@ Ext.define('Docs.controller.Search', {
                     }
                     else if (ev.keyCode === Ext.EventObject.ENTER) {
                         ev.preventDefault();
-                        this.loadRecord(record);
+                        record && this.loadRecord(record);
                     }
                     else {
                         // Wait a bit before actually performing the search.
