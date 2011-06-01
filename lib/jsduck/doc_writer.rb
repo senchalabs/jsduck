@@ -58,6 +58,7 @@ module JsDuck
         cls[:singleton] ? "@singleton" : nil,
         cls[:xtype] ? "@xtype " + cls[:xtype] : nil,
         cls[:author] ? "@author " + cls[:author] : nil,
+        cls[:docauthor] ? "@docauthor " + cls[:docauthor] : nil,
         privat(cls[:private]),
         "",
         maybe_html2text(cls),
