@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module JsDuck
 
   # Rewrites doc-comment contents from already parsed doc-object.
