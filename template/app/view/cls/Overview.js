@@ -182,7 +182,7 @@ Ext.define('Docs.view.cls.Overview', {
                         '<a href="#/api/{member}" rel="{member}" class="definedIn docClass">{member}</a><br/>',
                         '<a href="source/{href}" target="_blank" class="viewSource">view source</a>',
                     '</div>',
-                    '<a href="#" class="name {expandable}">{name}</a>{signature}',
+                    '<a href="#/api/{member}-{tagname}-{name}" class="name {expandable}">{name}</a>{signature}',
                 '</div>',
                 // short and long descriptions
                 '<div class="description">',
