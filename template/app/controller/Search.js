@@ -25,6 +25,7 @@ Ext.define('Docs.controller.Search', {
 
                     if (ev.keyCode === Ext.EventObject.ESC || !el.value) {
                         dropdown.hide();
+                        el.setValue("");
                         return;
                     }
                     else {
