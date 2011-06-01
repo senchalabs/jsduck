@@ -128,7 +128,7 @@ module JsDuck
         maybe_html2text({
             :doc => [
               at_tag,
-              type(p[:type], "Object"),
+              type(p[:type]),
               p[:name],
               doc(p[:doc]),
             ].compact.join(" "),
@@ -153,7 +153,7 @@ module JsDuck
     def param(p)
       return html2text([
         "@param",
-        type(p[:type], "Object"),
+        type(p[:type]),
         p[:name],
         doc(p[:doc]),
       ].compact.join(" "))
@@ -169,7 +169,7 @@ module JsDuck
       ].compact.join(" "))
     end
 
-    def type(t, default)
+    def type(t, default=nil)
       t && t != default ? "{"+t+"}" : nil
     end
 
