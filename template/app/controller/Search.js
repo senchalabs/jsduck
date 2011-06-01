@@ -20,9 +20,9 @@ Ext.define('Docs.controller.Search', {
             '#search-field': {
                 keyup: function(el, ev) {
                     var dropdown = this.getDropdown();
-                    
-                    el.setHideTrigger(el.getValue().length == 0);
-                    
+
+                    el.setHideTrigger(el.getValue().length === 0);
+
                     if (ev.keyCode === Ext.EventObject.ESC || !el.value) {
                         dropdown.hide();
                         return;
