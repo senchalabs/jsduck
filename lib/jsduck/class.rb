@@ -1,12 +1,16 @@
+require 'jsduck/logger'
+
 module JsDuck
 
   # Encapsulates class documentation and provides some commonly needed
   # methods on it.  Otherwise it acts like Hash, providing the []
   # method.
   class Class
-    def initialize(doc, classes={})
+    attr_accessor :relations
+
+    def initialize(doc)
       @doc = doc
-      @classes = classes
+      @relations = nil
     end
 
     def [](key)
@@ -18,37 +22,41 @@ module JsDuck
       @doc[:extends] ? lookup(@doc[:extends]) : nil
     end
 
+    # Returns array of ancestor classes.
+    # Example result when asking ancestors of MyPanel might be:
+    #
+    #   [Ext.util.Observable, Ext.Component, Ext.Panel]
+    #
+    def superclasses
+      p = parent
+      p ? p.superclasses + [p]  : []
+    end
+
     # Returns array of mixin class instances.
     # Returns empty array if no mixins
     def mixins
       @doc[:mixins] ? @doc[:mixins].collect {|classname| lookup(classname) }.compact : []
     end
 
+    # Returns all mixins this class and its parent classes
+    def all_mixins
+      mixins + (parent ? parent.all_mixins : [])
+    end
+
     # Looks up class object by name
     # When not found, prints warning message.
     def lookup(classname)
-      if @classes[classname]
-        @classes[classname]
-      elsif classname != "Object"
-        puts "Warning: Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}"
+      if @relations[classname]
+        @relations[classname]
+      elsif !@relations.ignore?(classname)
+        Logger.instance.warn("Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}")
+        nil
       end
     end
 
-    # Returns all data in Class object as hash.  This is basically the
-    # same as just accessing @doc, except instead of :cfg field there
-    # is :cfgs which also contains the inherited ones.  Same for
-    # :properties, :methods, and :events.
+    # Returns copy of @doc hash
     def to_hash
-      doc = @doc.clone
-      doc[:cfgs] = members(:cfg)
-      doc[:properties] = members(:property)
-      doc[:methods] = members(:method)
-      doc[:events] = members(:event)
-      doc.delete(:cfg)
-      doc.delete(:property)
-      doc.delete(:method)
-      doc.delete(:event)
-      doc
+      @doc.clone
     end
 
     # Returns true when this class inherits from the specified class.
@@ -100,11 +108,26 @@ module JsDuck
         all_members.merge!(mix.members_hash(type))
       end
 
-      @doc[type].each do |m|
+      (@doc[type] || []).each do |m|
         all_members[m[:name]] = m if !m[:private]
       end
 
       all_members
+    end
+
+    # Looks up member type by member name
+    #
+    # Returns type of nil if member not found
+    def member_type(name)
+      # build hash of all members
+      unless @type_map
+        @type_map = {}
+        [:cfg, :property, :method, :event, :css_var, :css_mixin].each do |type|
+          @type_map.merge!(members_hash(type))
+        end
+      end
+
+      @type_map[name] && @type_map[name][:tagname]
     end
 
     # A way to access full class name with similar syntax to

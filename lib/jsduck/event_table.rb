@@ -5,15 +5,15 @@ require 'jsduck/long_params'
 module JsDuck
 
   class EventTable < Table
-    def initialize(cls, cache={})
-      super(cls, cache)
+    def initialize(cls, formatter, cache={})
+      super(cls, formatter, cache)
       @type = :event
       @id = @cls.full_name + "-events"
       @title = "Public Events"
       @column_title = "Event"
       @row_class = "event-row"
       @short_params = ShortParams.new
-      @long_params = LongParams.new(@cls)
+      @long_params = LongParams.new(@formatter)
     end
 
     def signature_suffix(item)

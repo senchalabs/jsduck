@@ -1,10 +1,12 @@
 require 'rubygems'
-require 'jsduck/parser'
+require 'jsduck/source_file'
 require 'jsduck/aggregator'
 require 'jsduck/class'
 require 'jsduck/doc_writer'
+require 'jsduck/logger'
+require 'jsduck/parallel_wrap'
+require 'jsduck/relations'
 require 'json'
-require 'parallel'
 require 'pp'
 
 module JsDuck
@@ -13,29 +15,33 @@ module JsDuck
   class Markdown
     # These are basically input parameters for app
     attr_accessor :input_files
-    attr_accessor :verbose
 
     def initialize
       @input_files = []
-      @verbose = false
       @doc_writer = DocWriter.new
+      @parallel = ParallelWrap.new
+    end
+
+    # Sets verbose mode on or off
+    def verbose=(enabled)
+      Logger.instance.verbose = enabled
     end
 
     # Call this after input parameters set
     def run
       parsed_files = parallel_parse(@input_files)
       result = aggregate(parsed_files)
-      classes = filter_classes(result)
-      convert_docs(classes)
+      relations = filter_classes(result)
+      convert_docs(relations)
     end
 
-    def convert_docs(classes)
+    def convert_docs(relations)
       replacements = {}
 
       # Regenerate the doc-comment for each class.
       # Build up search-replace list for each file.
-      classes.each do |cls|
-        puts "Converting #{cls[:name]} ..." if @verbose
+      relations.each do |cls|
+        Logger.instance.log("Converting #{cls[:name]} ...")
         fname = cls[:filename]
         replacements[fname] = [] unless replacements[fname]
         replacements[fname] << {
@@ -58,7 +64,7 @@ module JsDuck
 
       # Simply replace original doc-comments with generated ones.
       replacements.each do |fname, comments|
-        puts "Writing #{fname} ..." if @verbose
+        Logger.instance.log("Writing #{fname} ...")
         src = IO.read(fname)
         comments.each do |c|
           src = safe_replace(src, c[:orig], c[:new]) if c[:new]
@@ -81,14 +87,9 @@ module JsDuck
 
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
-      Parallel.map(filenames) do |fname|
-        puts "Parsing #{fname} ..." if @verbose
-        code = IO.read(fname)
-        {
-          :filename => fname,
-          :html_filename => "",
-          :data => Parser.new(code).parse,
-        }
+      @parallel.map(filenames) do |fname|
+        Logger.instance.log("Parsing #{fname} ...")
+        SourceFile.new(IO.read(fname), fname)
       end
     end
 
@@ -96,8 +97,8 @@ module JsDuck
     def aggregate(parsed_files)
       agr = Aggregator.new
       parsed_files.each do |file|
-        puts "Aggregating #{file[:filename]} ..." if @verbose
-        agr.aggregate(file[:data], file[:filename], file[:html_filename])
+        Logger.instance.log("Aggregating #{file.filename} ...")
+        agr.aggregate(file)
       end
       agr.result
     end
@@ -105,19 +106,19 @@ module JsDuck
     # Filters out class-documentations, converting them to Class objects.
     # For each other type, prints a warning message and discards it
     def filter_classes(docs)
-      classes = {}
+      classes = []
       docs.each do |d|
         if d[:tagname] == :class
-          classes[d[:name]] = Class.new(d, classes)
+          classes << Class.new(d) if !d[:private]
         else
           type = d[:tagname].to_s
           name = d[:name]
           file = d[:filename]
           line = d[:linenr]
-          puts "Warning: Ignoring #{type}: #{name} in #{file} line #{line}"
+          Logger.instance.warn("Ignoring #{type}: #{name} in #{file} line #{line}")
         end
       end
-      classes.values
+      Relations.new(classes)
     end
 
   end

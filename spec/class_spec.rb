@@ -13,8 +13,9 @@ describe JsDuck::Class do
             {:name => "foo", :member => "ParentClass"},
             {:name => "frank", :member => "ParentClass", :private => true},
           ]
-        }, @classes);
+        });
       @classes["ParentClass"] = @parent
+      @parent.relations = @classes
       @child = JsDuck::Class.new({
           :name => "ChildClass",
           :extends => "ParentClass",
@@ -23,8 +24,9 @@ describe JsDuck::Class do
             {:name => "bar", :member => "ChildClass"},
             {:name => "zappa", :member => "ChildClass", :private => true},
           ]
-        }, @classes);
+        });
       @classes["ChildClass"] = @child
+      @child.relations = @classes
     end
 
     it "returns all public members in current class" do
@@ -52,16 +54,18 @@ describe JsDuck::Class do
             {:name => "baz", :member => "ParentClass"},
             {:name => "constructor", :member => "ParentClass"},
           ]
-        }, @classes);
+        });
       @classes["ParentClass"] = @parent
+      @parent.relations = @classes
       @child = JsDuck::Class.new({
           :name => "ChildClass",
           :extends => "ParentClass",
           :method => [
             {:name => "foo", :member => "ChildClass"}
           ]
-        }, @classes);
+        });
       @classes["ChildClass"] = @child
+      @child.relations = @classes
     end
 
     it "returns constructor as first method" do
@@ -76,20 +80,23 @@ describe JsDuck::Class do
       @classes = {}
       @parent = JsDuck::Class.new({
         :name => "Parent",
-      }, @classes);
+      });
       @classes["Parent"] = @parent
+      @parent.relations = @classes
 
       @child = JsDuck::Class.new({
         :name => "Child",
         :extends => "Parent",
-      }, @classes);
+      });
       @classes["Child"] = @child
+      @child.relations = @classes
 
       @grandchild = JsDuck::Class.new({
         :name => "GrandChild",
         :extends => "Child",
-      }, @classes);
+      });
       @classes["GrandChild"] = @grandchild
+      @grandchild.relations = @classes
     end
 
     it "true when asked about itself" do
@@ -112,7 +119,7 @@ describe JsDuck::Class do
   describe "when full_name like My.package.Cls" do
 
     before do
-      @cls = JsDuck::Class.new({:name => "My.package.Cls",}, {});
+      @cls = JsDuck::Class.new({:name => "My.package.Cls",});
     end
 
     it "#package_name contains all parts except the last" do
@@ -127,7 +134,7 @@ describe JsDuck::Class do
   describe "when full_name like My.Package.Cls" do
 
     before do
-      @cls = JsDuck::Class.new({:name => "My.Package.Cls",}, {});
+      @cls = JsDuck::Class.new({:name => "My.Package.Cls",});
     end
 
     it "#package_name contains only first part" do
@@ -142,7 +149,7 @@ describe JsDuck::Class do
   describe "when full_name has no parts" do
 
     before do
-      @cls = JsDuck::Class.new({:name => "Foo",}, {});
+      @cls = JsDuck::Class.new({:name => "Foo",});
     end
 
     it "#package_name is empty" do
@@ -157,7 +164,7 @@ describe JsDuck::Class do
   describe "when full_name has two uppercase parts" do
 
     before do
-      @cls = JsDuck::Class.new({:name => "Foo.Bar",}, {});
+      @cls = JsDuck::Class.new({:name => "Foo.Bar",});
     end
 
     it "#package_name is first part" do

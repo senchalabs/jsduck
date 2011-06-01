@@ -1,5 +1,3 @@
-require 'jsduck/doc_formatter'
-
 module JsDuck
 
   # Base class for creating HTML tables of class members.
@@ -12,15 +10,17 @@ module JsDuck
     #
     # - cls : the class for which to generate the table.
     #
+    # - formatter : instance of JsDuck::DocFormatter
+    #
     # - cache : shared cache of already generated HTML rows.  If Foo
     #   inherits from Bar and we have already generated members table
     #   for Bar, then we don't have to re-render all the HTML the
     #   methods from Bar, but can just look them up from cache.
     #
-    def initialize(cls, cache={})
+    def initialize(cls, formatter, cache={})
       @cls = cls
+      @formatter = formatter
       @cache = cache
-      @formatter = DocFormatter.new(cls.full_name)
     end
 
     def to_html
@@ -54,8 +54,12 @@ module JsDuck
         html = @cache[cache_key] = create_row(item)
       end
       inherited = inherited?(item) ? 'inherited' : ''
-      owner = inherited?(item) ? member_link(item) : Class.short_name(item[:member])
-      html.sub(/!!--inherited--!!/, inherited).sub(/!!--owner-class--!!/, owner)
+      owner_link = inherited?(item) ? member_link(item) : Class.short_name(item[:member])
+      owner_class = @cls.full_name
+      html = html.sub(/!!--inherited--!!/, inherited)
+      html = html.sub(/!!--owner-link--!!/, owner_link)
+      html = html.sub(/!!--owner-class--!!/, owner_class)
+      html
     end
 
     # Generates HTML for the row, leaving in placeholders for owner
@@ -69,43 +73,26 @@ module JsDuck
       <tr class='#{@row_class} #{expandable} !!--inherited--!!'>
         <td class='micon'><a href='#expand' class='exi'>&nbsp;</a></td>
         <td class='sig'>#{signature(item)}<div class='mdesc'>#{description}</div></td>
-        <td class='msource'>!!--owner-class--!!</td>
+        <td class='msource'>!!--owner-link--!!</td>
       </tr>
       EOHTML
     end
 
     def member_link(item)
-      cls = item[:member]
-      member = item[:name]
-      "<a href='output/#{cls}.html##{member}' " +
-        "ext:member='##{member}' " +
-        "ext:cls='#{cls}'>#{Class.short_name(cls)}</a>"
+      @formatter.link(item[:member], item[:name], Class.short_name(item[:member]))
     end
 
     def signature(item)
-      id = @cls.full_name+ "-" + item[:name]
+      id = "!!--owner-class--!!-" + item[:name]
       src = "source/#{item[:href]}"
       return "<a id='#{id}'></a><b><a href='#{src}'>#{item[:name]}</a></b>" + signature_suffix(item)
     end
 
-    # 116 chars is also where ext-doc makes its cut, but unlike
-    # ext-doc we only make the cut when there's more than 120 chars.
-    #
-    # This way we don't get stupid expansions like:
-    #
-    #   Blah blah blah some text...
-    #
-    # expanding to:
-    #
-    #   Blah blah blah some text.
-    #
+    # Creates either expandable or normal doc-entry
     def expandable_desc(p_doc, e_doc)
       if expandable?(p_doc, e_doc)
-        # Only show ellipsis when primary_doc is shortened.
-        tagless = strip_tags(p_doc)
-        short_doc = tagless[0..116]
-        ellipsis = tagless.length > short_doc.length ? "..." : ""
-        "<div class='short'>#{short_doc}#{ellipsis}</div>" +
+        short_doc = @formatter.shorten(p_doc)
+        "<div class='short'>#{short_doc}</div>" +
           "<div class='long'>#{p_doc}#{e_doc}</div>"
       else
         p_doc
@@ -122,11 +109,7 @@ module JsDuck
     end
 
     def expandable?(p_doc, e_doc)
-      strip_tags(p_doc).length > 120 || e_doc.length > 0
-    end
-
-    def strip_tags(str)
-      str.gsub(/<.*?>/, "")
+      @formatter.too_long?(p_doc) || e_doc.length > 0
     end
 
     def inherited?(item)

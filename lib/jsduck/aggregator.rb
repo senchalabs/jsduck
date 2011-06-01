@@ -1,5 +1,3 @@
-require 'jsduck/merger'
-
 module JsDuck
 
   # Combines JavaScript Parser, DocParser and Merger.
@@ -10,47 +8,17 @@ module JsDuck
       @classes = {}
       @orphans = []
       @current_class = nil
-      @merger = Merger.new
     end
 
     # Combines chunk of parsed JavaScript together with previously
     # added chunks.  The resulting documentation is accumulated inside
     # this class and can be later accessed through #result method.
     #
-    # - input  parse result from JsDuck::Parser
-    # - filename  name of the JS file where it came from
-    # - html_filename  name of the HTML file where the source was saved.
+    # - file  SoureFile class instance
     #
-    def aggregate(input, filename="", html_filename="")
+    def aggregate(file)
       @current_class = nil
-      input.each do |docset|
-        doc = @merger.merge(docset[:comment], docset[:code])
-
-        add_source_data(doc, {
-          :filename => filename,
-          :html_filename => html_filename,
-          :linenr => docset[:linenr],
-        })
-
-        doc[:orig_comment] = docset[:orig_comment]
-        doc[:code] = docset[:code]
-
-        register(doc)
-      end
-    end
-
-    # Links doc-object to source code where it came from.
-    def add_source_data(doc, src)
-      doc[:href] = src[:html_filename] + "#line-" + src[:linenr].to_s
-      doc[:filename] = src[:filename]
-      doc[:linenr] = src[:linenr]
-      # class-level doc-comment can contain constructor and config
-      # options, link those to the same location in source.
-      if doc[:tagname] == :class
-        doc[:cfg].each {|cfg| add_source_data(cfg, src) }
-        doc[:method].each {|method| add_source_data(method, src) }
-      end
-      doc
+      file.each {|doc| register(doc) }
     end
 
     # Registers documentation node either as class or as member of
@@ -80,8 +48,11 @@ module JsDuck
 
     # Merges new class-doc into old one.
     def merge_classes(old, new)
-      [:extends, :xtype, :singleton, :private].each do |tag|
+      [:extends, :xtype, :singleton, :private, :protected].each do |tag|
         old[tag] = old[tag] || new[tag]
+      end
+      [:mixins, :alternateClassNames, :xtypes].each do |tag|
+        old[tag] = old[tag] + new[tag]
       end
       old[:doc] = old[:doc].length > 0 ? old[:doc] : new[:doc]
       old[:cfg] = old[:cfg] + new[:cfg]
@@ -122,6 +93,53 @@ module JsDuck
         cls[node[:tagname]] << node
         @orphans.delete(node)
       end
+    end
+
+    # Creates classes for orphans that have :member property defined,
+    # and then inserts orphans to these classes.
+    def classify_orphans
+      @orphans.each do |orph|
+        if orph[:member]
+          class_name = orph[:member]
+          if !@classes[class_name]
+            add_empty_class(class_name)
+          end
+          add_member(orph)
+          @orphans.delete(orph)
+        end
+      end
+    end
+
+    # Creates class with name "global" and inserts all the remaining
+    # orphans into it (but only if there are any orphans).
+    def create_global_class
+      return if @orphans.length == 0
+
+      add_empty_class("global", "Global variables and functions.")
+      @orphans.each do |orph|
+        orph[:member] = "global"
+        add_member(orph)
+      end
+      @orphans = []
+    end
+
+    def add_empty_class(name, doc = "")
+      add_class({
+        :tagname => :class,
+        :name => name,
+        :doc => doc,
+        :mixins => [],
+        :alternateClassNames => [],
+        :cfg => [],
+        :property => [],
+        :method => [],
+        :event => [],
+        :css_var => [],
+        :css_mixin => [],
+        :filename => "",
+        :html_filename => "",
+        :linenr => 0,
+      })
     end
 
     def result

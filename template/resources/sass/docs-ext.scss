@@ -1,0 +1,23 @@
+// Unless you want to include all components, you must set $include-default to false
+// IF you set this to true, you can also remove lines 10 to 38 of this file
+$include-default: true;
+
+// Custom theme for docs app
+
+$base-color: #e9e9e9;
+$font-family: Helvetica Neue, Arial, sans-serif;
+
+$tab-base-color: #e9e9e9;
+$toolbar-background-color: #e9e9e9;
+$panel-border-color: #bfbfbf;
+$panel-body-font-size: 13px;
+$grid-row-cell-selected-background-color: #D9E8FB;
+
+@import 'ext4/default/all';
+
+// This line changes the location of your images when creating UIs to be relative instead of within the ExtJS directory.
+// You MUST set this to true/string value if you are creating new UIs + supporting legacy browsers.
+// This only applies to new UIs. It does not apply to default component images (i.e. when changing $base-color)
+// The value can either be true, in which case the image path will be "../images/"
+// or a string, of where the path is
+$relative-image-path-for-uis: true; // defaults to "../images/" when true

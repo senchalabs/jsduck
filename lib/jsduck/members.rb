@@ -9,13 +9,27 @@ module JsDuck
     def create(docs)
       list = []
       docs.each do |cls|
+        list << class_node(cls)
         [:cfg, :property, :method, :event].each do |type|
           cls.members(type).each do |m|
-            list << member_node(m, cls)
+            # skip inherited items and constructors
+            if m[:member] == cls.full_name && m[:name] != cls.short_name
+              list << member_node(m, cls)
+            end
           end
         end
       end
       list
+    end
+
+    # Creates structure representing one class
+    def class_node(cls)
+      return {
+        :cls => cls.full_name,
+        :member => cls.short_name,
+        :type => :cls,
+        :doc => short_desc(cls[:doc])
+      }
     end
 
     # Creates structure representing one member

@@ -13,15 +13,11 @@ module JsDuck
 
     def render_single(param)
       str = "<code>#{param[:type]} #{param[:name]}</code>"
-      if optional?(param)
+      if param[:optional]
         "<span title='Optional' class='optional'>[" + str + "]</span>"
       else
         str
       end
-    end
-
-    def optional?(param)
-      return param[:doc] =~ /\(optional\)/
     end
   end
 

@@ -54,7 +54,7 @@ it would like that you wrote comments like that instead:
     /**
      * Basic text field.  Can be used as a direct replacement for traditional
      * text inputs, or as the base class for more sophisticated input controls
-     * (like {@link Ext.form.TextArea} and {@link Ext.form.ComboBox}).
+     * (like Ext.form.TextArea and Ext.form.ComboBox).
      *
      * Validation
      * ----------
@@ -117,30 +117,34 @@ JsDuck depends on [json][], [RDiscount][], and [parallel][] plus [RSpec][] for t
 Usage
 -----
 
-Just call it from command line with output directory and a list of
-JavaScript files:
+Just call it from command line with output directory and a directory
+containing your JavaScript files:
 
-    $ jsduck --verbose --output some/dir  your/project/*.js
-
-To specify a lot of files you should probably create a script that
-generates a file list and passes it through `xargs` to `jsduck`.
-
-For example to generate documentation for ExtJS:
-
-    $ find ext-3.3.1/src/ -name '*.js' | egrep -v 'locale/|test/|adapter/' | xargs jsduck -v -o output/
+    $ jsduck --verbose --output some/dir  your/project/js
 
 The `--verbose` flag creates a lot of output, but at least you will
 see that something is happening.
+
+You pass in both directories and JavaScript files.  For example to
+generate docs for ExtJS 3, the simplest way is the following:
+
+    $ jsduck -v -o output/ ext-3.3.1/src/
+
+But this will give you a bunch of warnings, so you should better
+create a script that takes just the files really needed and passes
+them through `xargs` to `jsduck`:
+
+    $ find ext-3.3.1/src/ -name '*.js' | egrep -v 'locale/|test/|adapter/' | xargs jsduck -v -o output/
 
 Here's how the resulting documentation will look (ExtJS 3.3.1):
 
 * [JsDuck generated documentation](http://triin.net/temp/jsduck/)
 * [Official ExtJS documentation](http://dev.sencha.com/deploy/dev/docs/) (for comparison)
 
-Here's the same for ExtJS 4 Preview 2:
+Here's the same for ExtJS 4:
 
 * [JsDuck generated documentation](http://triin.net/temp/jsduck4/)
-* [Official ExtJS documentation](http://dev.sencha.com/deploy/ext-4.0-pr2/docs/) (for comparison)
+* [Official ExtJS documentation](http://docs.sencha.com/ext-js/4-0/api) (for comparison)
 
 
 Documentation
@@ -183,8 +187,6 @@ missing.
 Missing features and TODO
 -------------------------
 
-* Search, not just searching from official ExtJS documentation.
-
 * Support for custom @tags. Ext-doc supports this, I personally have
   never used this feature, so I'm thinking it's not really needed.
 
@@ -194,11 +196,48 @@ Copying
 
 JsDuck is distributed under the terms of the GNU General Public License version 3.
 
-JsDuck was developed by [Rene Saarsoo](http://triin.net).
+JsDuck was developed by [Rene Saarsoo](http://triin.net),
+with contributions from [Ondřej Jirman](https://github.com/megous)
+and [Nick Poulden](https://github.com/nick).
 
 
 Changelog
 ---------
+
+* 0.6 - JsDuck is now used for creating the official ExtJS4 documentation.
+  * Automatic linking of class names found in comments.  Instead of writing
+    `{@link Ext.Panel}` one can simply write `Ext.Panel` and link will be
+    automatically created.
+  * In generated docs, method return types and parameter types are also
+    automatically linked to classes if such class is included to docs.
+  * Support for `{@img}` tag for including images to documentation.
+    The markup created by `{@link}` and `{@img}` tags can now be customized using
+    the --img and --link command line options to supply HTML templates.
+  * Links to source code are no more simply links to line numbers.
+    Instead the source code files will contain ID-s like `MyClass-cfg-style`.
+  * New tags: `@docauthor`, `@alternateClassName`, `@mixins`.
+    The latter two Ext4 class properties are both detected from code and
+    can also be defined (or overriden) in doc-comments.
+  * Global methods are now placed to separate "global" class.
+    Creation of this can be turned off using `--ignore-global`.
+  * Much improved search feature.
+    Search results are now ordered so that best matches are at the top.
+    No more is there a select-box to match at beginning/middle/end -
+    we automatically search first by exact match, then beginning and
+    finally by middle.  Additionally the search no more lists a lot of
+    duplicates - only the class that defines a method is listed, ignoring
+    all the classes that inherit it.
+  * Support for doc-comments in [SASS](http://sass-lang.com/) .scss files:
+    For now, it's possible to document SASS variables and mixins.
+  * Several bug fixes.
+
+* 0.5 - Search and export
+  * Search from the actually generated docs (not through sencha.com)
+  * JSON export with --json switch.
+  * Listing of mixed into classes.
+  * Option to control or disable parallel processing.
+  * Accepting directories as input (those are scanned for .js files)
+  * Many bug fixes.
 
 * 0.4 - Ext4 support
   * Support for Ext.define() syntax from ExtJS 4.

@@ -21,6 +21,11 @@ module JsDuck
   # @see and {@link} are parsed separately in JsDuck::DocFormatter.
   #
   class DocParser
+    # Pass in :css to be able to parse CSS doc-comments
+    def initialize(mode = :js)
+      @ident_pattern = (mode == :css) ? /\$[a-zA-Z0-9_-]*/ : /\w+/
+    end
+
     def parse(input)
       @tags = []
       @input = StringScanner.new(purify(input))
@@ -66,8 +71,12 @@ module JsDuck
       while !@input.eos? do
         if look(/@class\b/)
           at_class
-        elsif look(/@extends\b/)
+        elsif look(/@extends?\b/)
           at_extends
+        elsif look(/@mixins?\b/)
+          at_mixins
+        elsif look(/@alternateClassNames?\b/)
+          at_alternateClassName
         elsif look(/@singleton\b/)
           boolean_at_tag(/@singleton/, :singleton)
         elsif look(/@event\b/)
@@ -88,17 +97,30 @@ module JsDuck
           at_type
         elsif look(/@xtype\b/)
           at_xtype
+        elsif look(/@ftype\b/)
+          at_ftype
         elsif look(/@member\b/)
           at_member
         elsif look(/@author\b/)
           at_author
+        elsif look(/@docauthor\b/)
+          at_docauthor
+        elsif look(/@deprecated\b/)
+          at_deprecated
+        elsif look(/@var\b/)
+          at_var
         elsif look(/@static\b/)
           boolean_at_tag(/@static/, :static)
-        elsif look(/@(private|ignore|hide|protected)\b/)
-          boolean_at_tag(/@(private|ignore|hide|protected)/, :private)
+        elsif look(/@(private|ignore|hide)\b/)
+          boolean_at_tag(/@(private|ignore|hide)/, :private)
+        elsif look(/@protected\b/)
+          boolean_at_tag(/@protected/, :protected)
         elsif look(/@markdown\b/)
           # this is detected just to be ignored
           boolean_at_tag(/@markdown/, :markdown)
+        elsif look(/@abstract\b/)
+          # this is detected just to be ignored
+          boolean_at_tag(/@abstract/, :abstract)
         elsif look(/@/)
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/)
@@ -117,9 +139,27 @@ module JsDuck
 
     # matches @extends name ...
     def at_extends
-      match(/@extends/)
+      match(/@extends?/)
       add_tag(:extends)
       maybe_ident_chain(:extends)
+      skip_white
+    end
+
+    # matches @mixins name1 name2 ...
+    def at_mixins
+      match(/@mixins?/)
+      add_tag(:mixins)
+      skip_horiz_white
+      @current_tag[:mixins] = class_list
+      skip_white
+    end
+
+    # matches @alternateClassName name1 name2 ...
+    def at_alternateClassName
+      match(/@alternateClassNames?/)
+      add_tag(:alternateClassNames)
+      skip_horiz_white
+      @current_tag[:alternateClassNames] = class_list
       skip_white
     end
 
@@ -179,6 +219,15 @@ module JsDuck
       skip_white
     end
 
+    # matches @var {type} $name ...
+    def at_var
+      match(/@var/)
+      add_tag(:css_var)
+      maybe_type
+      maybe_name
+      skip_white
+    end
+
     # matches @type {type}  or  @type type
     #
     # The presence of @type implies that we are dealing with property.
@@ -204,6 +253,14 @@ module JsDuck
       skip_white
     end
 
+    # matches @ftype name
+    def at_ftype
+      match(/@ftype/)
+      add_tag(:ftype)
+      maybe_ident_chain(:name)
+      skip_white
+    end
+
     # matches @member name ...
     def at_member
       match(/@member/)
@@ -218,6 +275,26 @@ module JsDuck
       add_tag(:author)
       skip_horiz_white
       @current_tag[:name] = @input.scan(/.*$/)
+      skip_white
+    end
+
+    # matches @docauthor some name ... newline
+    def at_docauthor
+      match(/@docauthor/)
+      add_tag(:docauthor)
+      skip_horiz_white
+      @current_tag[:name] = @input.scan(/.*$/)
+      skip_white
+    end
+
+    # matches @deprecated <version> some text ... newline
+    def at_deprecated
+      match(/@deprecated/)
+      add_tag(:deprecated)
+      skip_horiz_white
+      @current_tag[:version] = @input.scan(/[0-9.]+/)
+      skip_horiz_white
+      @current_tag[:text] = @input.scan(/.*$/)
       skip_white
     end
 
@@ -239,8 +316,8 @@ module JsDuck
     # matches identifier name if possible and sets it on @current_tag
     def maybe_name
       skip_horiz_white
-      if look(/\w/)
-        @current_tag[:name] = ident
+      if look(@ident_pattern)
+        @current_tag[:name] = @input.scan(@ident_pattern)
       end
     end
 
@@ -258,6 +335,17 @@ module JsDuck
       name = @input.scan(/[^}]+/)
       match(/\}/)
       return name
+    end
+
+    # matches <ident_chain> <ident_chain> ... until line end
+    def class_list
+      skip_horiz_white
+      classes = []
+      while look(/\w/)
+        classes << ident_chain
+        skip_horiz_white
+      end
+      classes
     end
 
     # matches chained.identifier.name and returns it

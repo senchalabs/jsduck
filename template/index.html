@@ -1,48 +1,38 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:ext="http://www.sencha.com/docs">
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Your API Documentation</title>
-<link rel="stylesheet" type="text/css" href="resources/css/ext-all.css" />
-<link rel="stylesheet" type="text/css" href="resources/css/xtheme-gray.css" />
-<link rel="stylesheet" type="text/css" href="resources/docs.css" />
-<link rel="stylesheet" type="text/css" href="resources/style.css" />
-<link rel="stylesheet" type="text/css" href="resources/prettify/prettify.css" />
-<link rel="shortcut icon" href="resources/favicon.ico" />
-<link rel="icon" href="resources/favicon.ico" />
-<script type="text/javascript" src="resources/ext-base.js"></script>
-<script type="text/javascript" src="resources/ext-all.js"></script>
-<script type="text/javascript" src="resources/TabCloseMenu.js"></script>
-<script type="text/javascript" src="resources/prettify/prettify.js"></script>
-<script type="text/javascript" src="resources/docs.js"></script>
-<script type="text/javascript" src="output/tree.js"></script>
-<script type="text/javascript" src="output/members.js"></script>
+  <title>{title}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
+  <link rel="stylesheet" href="resources/css/reset.css" type="text/css" />
+  <link rel="stylesheet" href="resources/css/docs-ext.css" type="text/css" />
+  <link rel="stylesheet" href="resources/css/scrollbars.css" type="text/css" />
+  <link rel="stylesheet" href="resources/css/viewport.css" type="text/css" />
+  <link rel="stylesheet" href="prettify/prettify.css" type="text/css" />
+
+  <script type="text/javascript" src="http://use.typekit.com/uxj6dew.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+  <!--[if IE]>
+    <link rel="stylesheet" href="resources/css/ie.css" type="text/css" />
+  <![endif]-->
+
+  <script type="text/javascript" src="{extjs_path}"></script>
+  <script type="text/javascript" src="prettify/prettify.js"></script>
+
+  <script type="text/javascript"> Ext.ns("Docs"); </script>
+  <script type="text/javascript" src="app.js"></script>
+
+  <script type="text/javascript" src="output/tree.js"></script>
+  <script type="text/javascript" src="output/members.js"></script>
+  <script type="text/javascript" src="output/overviewData.js"></script>
+
 </head>
-<body scroll="no" id="docs">
-
-<div id="loading-mask"></div>
-
-<div id="loading">
-    <div class="loading-indicator">
-        <img src="resources/extanim32.gif" width="32" height="32" style="margin-right:8px;" align="absmiddle" />
-        Loading&hellip;
-    </div>
-</div>
-
-<div id="header">
-    <h1><strong>JsDuck</strong> Your API Documentation</h1>
-    <p><a href="https://github.com/nene/jsduck">about JsDuck</a></p>
-</div>
-
-<div id="classes"></div>
-
-<div id="main"></div>
-
-<select id="search-options" style="display:none">
-    <option>Starts with</option>
-    <option>Ends with</option>
-    <option>Any Match</option>
-</select>
-
+<body id="ext-body" class="iScroll">
+    <form id="history-form" class="x-hide-display">
+        <input type="hidden" id="x-history-field" />
+        <iframe id="x-history-frame"></iframe>
+    </form>
+    {append_html}
 </body>
 </html>

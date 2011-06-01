@@ -3,8 +3,8 @@ require 'jsduck/table'
 module JsDuck
 
   class CfgTable < Table
-    def initialize(cls, cache={})
-      super(cls, cache)
+    def initialize(cls, formatter, cache={})
+      super(cls, formatter, cache)
       @type = :cfg
       @id = @cls.full_name + "-configs"
       @title = "Config Options"

@@ -3,8 +3,8 @@ require 'jsduck/table'
 module JsDuck
 
   class PropertyTable < Table
-    def initialize(cls, cache={})
-      super(cls, cache)
+    def initialize(cls, formatter, cache={})
+      super(cls, formatter, cache)
       @type = :property
       @id = @cls.full_name + "-props"
       @title = "Public Properties"

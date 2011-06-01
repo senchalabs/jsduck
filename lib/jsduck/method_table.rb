@@ -5,15 +5,15 @@ require 'jsduck/long_params'
 module JsDuck
 
   class MethodTable < Table
-    def initialize(cls, cache={})
-      super(cls, cache)
+    def initialize(cls, formatter, cache={})
+      super(cls, formatter, cache)
       @type = :method
       @id = @cls.full_name + "-methods"
       @title = "Public Methods"
       @column_title = "Method"
       @row_class = "method-row"
       @short_params = ShortParams.new
-      @long_params = LongParams.new(@cls)
+      @long_params = LongParams.new(@formatter)
     end
 
     def signature_suffix(item)
@@ -32,8 +32,8 @@ module JsDuck
     end
 
     def render_return(item)
-      type = item[:return][:type]
-      doc = item[:return][:doc]
+      type = @formatter.replace(item[:return][:type])
+      doc = @formatter.format(item[:return][:doc])
       if type == "void" && doc.length == 0
         "<ul><li>void</li></ul>"
       else

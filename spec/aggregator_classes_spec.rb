@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/parser"
+require "jsduck/source_file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Parser.new(string).parse)
+    agr.aggregate(JsDuck::SourceFile.new(string))
     agr.result
   end
 
@@ -24,6 +24,8 @@ describe JsDuck::Aggregator do
         /**
          * @class MyClass
          * @extends Your.Class
+         * @mixins Foo.Mixin Bar.Mixin
+         * @alternateClassNames AltClass
          * Some documentation.
          * @singleton
          * @xtype nicely
@@ -33,7 +35,13 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "detects extends" do
-      @doc[:extends] == "Your.Class"
+      @doc[:extends].should == "Your.Class"
+    end
+    it "detects mixins" do
+      @doc[:mixins].should == ["Foo.Mixin", "Bar.Mixin"]
+    end
+    it "detects alternate class names" do
+      @doc[:alternateClassNames].should == ["AltClass"]
     end
     it "takes documentation from doc-comment" do
       @doc[:doc].should == "Some documentation."
@@ -42,7 +50,86 @@ describe JsDuck::Aggregator do
       @doc[:singleton].should == true
     end
     it "detects xtype" do
-      @doc[:xtype].should == "nicely"
+      @doc[:xtypes].should == ["nicely"]
+    end
+  end
+
+  describe "class @tag aliases" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @extend Your.Class
+         * @mixin My.Mixin
+         * @alternateClassName AltClass
+         * Some documentation.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "@extend treated as alias for @extends" do
+      @doc[:extends].should == "Your.Class"
+    end
+    it "@mixin treated as alias for @mixins" do
+      @doc[:mixins].should == ["My.Mixin"]
+    end
+    it "@alternateClassName treated as alias for @alternateClassNames" do
+      @doc[:alternateClassNames].should == ["AltClass"]
+    end
+  end
+
+  describe "class with multiple @mixins" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @mixins My.Mixin
+         * @mixins Your.Mixin Other.Mixin
+         * Some documentation.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "collects all mixins together" do
+      @doc[:mixins].should == ["My.Mixin", "Your.Mixin", "Other.Mixin"]
+    end
+  end
+
+  describe "class with multiple @alternateClassNames" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @alternateClassNames AltClass1
+         * @alternateClassNames AltClass2
+         * Some documentation.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "collects all alternateClassNames together" do
+      @doc[:alternateClassNames].should == ["AltClass1", "AltClass2"]
+    end
+  end
+
+  describe "class with multiple @xtypes" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @xtype foo
+         * @xtype bar
+         * Some documentation.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "collects all xtypes together" do
+      @doc[:xtypes].should == ["foo", "bar"]
     end
   end
 
@@ -105,6 +192,12 @@ describe JsDuck::Aggregator do
     it "detects implied mixins" do
       @doc[:mixins].should == ["Ext.util.Observable", "Foo.Bar"]
     end
+    it "detects implied alternateClassNames" do
+      @doc[:alternateClassNames].should == ["JustClass"]
+    end
+    it "detects implied xtype" do
+      @doc[:xtypes].should == ["foo"]
+    end
   end
 
   describe "basic Ext.define() in code" do
@@ -116,7 +209,9 @@ describe JsDuck::Aggregator do
           mixins: {
             obs: 'Ext.util.Observable',
             bar: 'Foo.Bar'
-          }
+          },
+          alias: 'widget.foo',
+          alternateClassName: 'JustClass'
         });
       EOS
     end
@@ -130,7 +225,8 @@ describe JsDuck::Aggregator do
         Ext.define('MyClass', {
           singleton: true,
           extend: 'Your.Class',
-          alias: 'somealias',
+          alias: ['widget.foo', 'something.bar'],
+          alternateClassName: ['JustClass'],
           requires: ['Hohooo', 'hahaa'],
           mixins: {
             obs: 'Ext.util.Observable',
@@ -140,6 +236,19 @@ describe JsDuck::Aggregator do
       EOS
     end
     it_should_behave_like "Ext.define"
+  end
+
+  describe "Ext.define() without extend" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+        });
+      EOS
+    end
+    it "automatically extends from Ext.Base" do
+      @doc[:extends].should == "Ext.Base"
+    end
   end
 
   describe "class with cfgs" do
@@ -209,7 +318,7 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "detects xtype" do
-      @doc[:xtype].should == "nicely"
+      @doc[:xtypes].should == ["nicely"]
     end
   end
 
@@ -227,6 +336,23 @@ describe JsDuck::Aggregator do
     it_should_behave_like "class"
     it "detects author name" do
       @doc[:author].should == "John Doe"
+    end
+  end
+
+  describe "class with @docauthor" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @docauthor John Doe
+         * Comment here.
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "detects documentation author name" do
+      @doc[:docauthor].should == "John Doe"
     end
   end
 
@@ -336,6 +462,8 @@ describe JsDuck::Aggregator do
         /**
          * @class Foo
          * @extends Bar
+         * @mixins Mix1
+         * @alternateClassNames AltClassic
          * Second description.
          * @xtype xfoo
          * @private
@@ -347,6 +475,7 @@ describe JsDuck::Aggregator do
         /**
          * @class Foo
          * @extends Bazaar
+         * @mixins Mix2
          * @singleton
          * Third description.
          * @xtype xxxfoo
@@ -370,10 +499,6 @@ describe JsDuck::Aggregator do
       @classes[0][:extends].should == "Bar"
     end
 
-    it "takes @xtype from first doc-block that has one" do
-      @classes[0][:xtype].should == "xfoo"
-    end
-
     it "is singleton when one doc-block is singleton" do
       @classes[0][:singleton].should == true
     end
@@ -382,8 +507,20 @@ describe JsDuck::Aggregator do
       @classes[0][:private].should == true
     end
 
+    it "combines all @xtypes" do
+      @classes[0][:xtypes].length.should == 2
+    end
+
     it "combines all configs" do
       @classes[0][:cfg].length.should == 3
+    end
+
+    it "combines all mixins" do
+      @classes[0][:mixins].length.should == 2
+    end
+
+    it "combines all alternateClassNames" do
+      @classes[0][:alternateClassNames].length.should == 1
     end
 
     it "combines all methods, events, properties" do

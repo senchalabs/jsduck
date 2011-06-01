@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/parser"
+require "jsduck/source_file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Parser.new(string).parse)
+    agr.aggregate(JsDuck::SourceFile.new(string))
     agr.result
   end
 
@@ -35,8 +35,13 @@ describe JsDuck::Aggregator do
   end
 
   describe "@protected" do
-    before { @tagname = "@protected" }
-    it_should_behave_like "private"
+    before do
+      @doc = parse("/**\n * @protected\n */")[0]
+    end
+
+    it "marks item as protected" do
+      @doc[:protected].should == true
+    end
   end
 
 end

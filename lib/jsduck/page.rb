@@ -1,3 +1,4 @@
+require 'cgi'
 require 'jsduck/doc_formatter'
 require 'jsduck/inheritance_tree'
 require 'jsduck/cfg_table'
@@ -12,14 +13,25 @@ module JsDuck
     # Initializes doc page generator
     #
     # - cls : the Class object for which to generate documentation
-    # - subclasses : lookup table for easy access to subclasses
+    # - relations : access to subclasses, mixins, etc
     # - cache : cache for already generated HTML rows for class members
     #
-    def initialize(cls, subclasses = {}, cache = {})
+    def initialize(cls, relations, cache = {})
       @cls = cls
-      @subclasses = subclasses
+      @relations = relations
       @cache = cache
-      @formatter = DocFormatter.new(cls.full_name)
+      @formatter = DocFormatter.new
+      @formatter.class_context = cls.full_name
+      @formatter.link_tpl = '<a href="output/%c.html%M" rel="%c%M" class="docClass">%a</a>'
+      @formatter.relations = relations
+    end
+
+    # Setters to override link and image templates
+    def link_tpl=(tpl)
+      @formatter.link_tpl = tpl
+    end
+    def img_tpl=(tpl)
+      @formatter.img_tpl = tpl
     end
 
     def to_html
@@ -30,17 +42,17 @@ module JsDuck
        abstract,
        description,
        "<div class='hr'></div>",
-       CfgTable.new(@cls, @cache).to_html,
-       PropertyTable.new(@cls, @cache).to_html,
-       MethodTable.new(@cls, @cache).to_html,
-       EventTable.new(@cls, @cache).to_html,
+       CfgTable.new(@cls, @formatter, @cache).to_html,
+       PropertyTable.new(@cls, @formatter, @cache).to_html,
+       MethodTable.new(@cls, @formatter, @cache).to_html,
+       EventTable.new(@cls, @formatter, @cache).to_html,
        "</div>",
       ].join("\n")
     end
 
     # only render the tree if class has at least one ancestor
     def inheritance_tree
-      @cls.parent ? InheritanceTree.new(@cls).to_html : ""
+      @cls.parent ? InheritanceTree.new(@cls, @formatter).to_html : ""
     end
 
     def heading
@@ -50,36 +62,51 @@ module JsDuck
     def abstract
       [
        "<table cellspacing='0'>",
-        abstract_row("Extends:", @cls.parent ? class_link(@cls.parent.full_name) : "Object"),
-        @cls.mixins.length > 0 ? abstract_row("Mixins:", mixins) : "",
-        abstract_row("Defind In:", file_link),
-        @subclasses[@cls] ? abstract_row("Subclasses:", subclasses) : "",
-        @cls[:xtype] ? abstract_row("xtype:", @cls[:xtype]) : "",
-        @cls[:author] ? abstract_row("Author:", @cls[:author]) : "",
+        boolean_row("Alternate names:", @cls[:alternateClassNames].join(", ")),
+        row("Extends:", extends_link),
+        classes_row("Mixins:", @cls.mixins),
+        row("Defined In:", file_link),
+        classes_row("Subclasses:", @relations.subclasses(@cls)),
+        classes_row("Mixed into:", @relations.mixed_into(@cls)),
+        boolean_row("xtype:", @cls[:xtype]),
+        boolean_row("Author:", @cls[:author]),
+        boolean_row("Author of docs:", @cls[:docauthor]),
        "</table>",
       ].join("\n")
     end
 
     def class_link(class_name, label=nil)
       label = label || class_name
-      "<a href='output/#{class_name}.html' ext:cls='#{class_name}'>#{label}</a>"
+      @formatter.link(class_name, nil, label || class_name)
     end
 
     def file_link
       "<a href='source/#{@cls[:href]}'>#{File.basename(@cls[:filename])}</a>"
     end
 
-    def subclasses
-      subs = @subclasses[@cls].sort {|a, b| a.short_name <=> b.short_name }
-      subs.collect {|cls| class_link(cls.full_name, cls.short_name) }.join(", ")
+    def extends_link
+      if @cls[:extends]
+        @relations[@cls[:extends]] ? class_link(@cls[:extends]) : @cls[:extends]
+      else
+        "Object"
+      end
     end
 
-    def mixins
-      mixs = @cls.mixins.sort {|a, b| a.full_name <=> b.full_name }
-      mixs.collect {|cls| class_link(cls.full_name, cls.short_name) }.join(", ")
+    def classes_row(label, classes)
+      if classes.length > 0
+        classes = classes.sort {|a, b| a.short_name <=> b.short_name }
+        html = classes.collect {|cls| class_link(cls.full_name, cls.short_name) }.join(", ")
+        row(label, html)
+      else
+        ""
+      end
     end
 
-    def abstract_row(label, info)
+    def boolean_row(label, item)
+      (item && item != "") ? row(label, CGI.escapeHTML(item)) : ""
+    end
+
+    def row(label, info)
       "<tr><td class='label'>#{label}</td><td class='hd-info'>#{info}</td></tr>"
     end
 
