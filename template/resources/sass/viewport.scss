@@ -79,7 +79,27 @@ body {
   -webkit-font-smoothing: antialiased;
   font-family: 13px / 1.231 "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   min-width: 980px;
-  color: #484848; }
+  color: #484848; 
+  background: #f8f8f8; }
+
+#loading .title {
+  background: url(../images/loading-title.png) no-repeat;
+  position: absolute;
+  display: block;
+  top: 40%;
+  left: 45%;
+  width: 180px;
+	height: 27px;
+}
+#loading .logo {
+  background: url(../images/loading.gif) no-repeat;
+  position: absolute;
+  display: block;
+  top: 45%;
+  left: 45%;
+  width: 120px;
+	height: 120px;
+}
 
 a {
   color: #083772;

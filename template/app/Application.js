@@ -20,7 +20,7 @@ Ext.define('Docs.Application', {
     ],
 
     autoCreateViewport: true,
-
+    
     launch: function() {
         Docs.App = this;
         Docs.Favorites.init();
