@@ -5,7 +5,7 @@
 Ext.define('Docs.view.cls.List', {
     extend: 'Ext.container.Container',
     alias : 'widget.classlist',
-    id: 'classlist',
+    cls: 'class-list',
 
     initComponent: function() {
         var data = this.classData;
