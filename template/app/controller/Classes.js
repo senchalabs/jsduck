@@ -3,6 +3,7 @@
  */
 Ext.define('Docs.controller.Classes', {
     extend: 'Ext.app.Controller',
+    
     requires: [
         'Docs.History',
         'Docs.Syntax'
@@ -36,6 +37,12 @@ Ext.define('Docs.controller.Classes', {
     ],
 
     init: function() {
+        
+        this.addEvents({
+            "showClass" : true,
+            "showGuide" : true
+        });
+        
         Ext.getBody().addListener('click', function(cmp, el) {
             this.loadClass(el.rel);
         }, this, {
@@ -134,6 +141,9 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
+        
+        this.fireEvent('showClass', cls.name, anchor);
+        
         if (this.currentCls != cls) {
             var container = Ext.getCmp('container'),
                 showClass = container.down('showclass'),
@@ -162,6 +172,8 @@ Ext.define('Docs.controller.Classes', {
 
     showGuide: function(name, noHistory) {
         noHistory || Docs.History.push("/guide/" + name);
+        
+        this.fireEvent('showGuide', name);
 
         Ext.data.JsonP.request({
             url: this.getBaseUrl() + "/guides/" + name + "/README.js",
