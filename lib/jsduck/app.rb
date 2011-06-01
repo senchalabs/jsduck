@@ -122,6 +122,7 @@ module JsDuck
         agr.aggregate(file)
       end
       agr.classify_orphans
+      agr.populate_aliases
       agr.create_global_class unless @ignore_global
       agr.result
     end

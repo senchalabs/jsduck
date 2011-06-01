@@ -101,6 +101,8 @@ module JsDuck
           at_ftype
         elsif look(/@member\b/)
           at_member
+        elsif look(/@alias\b/)
+          at_alias
         elsif look(/@author\b/)
           at_author
         elsif look(/@docauthor\b/)
@@ -266,6 +268,21 @@ module JsDuck
       match(/@member/)
       add_tag(:member)
       maybe_ident_chain(:member)
+      skip_white
+    end
+
+    # matches @alias class.name#member
+    def at_alias
+      match(/@alias/)
+      add_tag(:alias)
+      skip_horiz_white
+      if look(/\w/)
+        @current_tag[:cls] = ident_chain
+        if look(/#\w/)
+          @input.scan(/#/)
+          @current_tag[:member] = ident
+        end
+      end
       skip_white
     end
 

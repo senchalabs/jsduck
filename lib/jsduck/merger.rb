@@ -202,6 +202,7 @@ module JsDuck
         :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
         :deprecated => detect_deprecated(doc_map),
+        :alias => doc_map[:alias] ? doc_map[:alias].first : nil,
       })
     end
 
