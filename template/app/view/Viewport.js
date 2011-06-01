@@ -69,9 +69,7 @@ Ext.define('Docs.view.Viewport', {
                                 onTriggerClick: function() {
                                     this.reset();
                                     this.focus();
-                                },
-                                onChange: function() {
-                                    this.setHideTrigger(this.getValue().length == 0);
+                                    Ext.getCmp('search-dropdown').hide();
                                 }
                             },
                             {
