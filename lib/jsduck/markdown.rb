@@ -44,7 +44,7 @@ module JsDuck
         }
         [:cfg, :property, :method, :event].each do |type|
           cls[type].each do |m|
-            unless type == :method && m[:name] == "constructor"
+            unless type == :method && m[:name] == "constructor" || m[:private]
               fname = m[:filename]
               replacements[fname] = [] unless replacements[fname]
               replacements[fname] << {
