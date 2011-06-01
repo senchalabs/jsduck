@@ -87,14 +87,14 @@ task :export do
       })();
       
       Docs.afterLaunch = function() {
-          Docs.App.getController('Classes').addListener('showClass', function(cls, member) { 
+          Docs.App.getController('Classes').addListener('showClass', function(cls, anchor) { 
               _gaq.push(['_trackEvent', 'Classes', 'Show', cls]);
-              if (member) {
-                  _gaq.push(['_trackEvent', 'Classes', 'Member', cls + ' - ' + member]);
+              if (anchor) {
+                  _gaq.push(['_trackEvent', 'Classes', 'Member', cls + ' - ' + anchor]);
               }
           });
           Docs.App.getController('Classes').addListener('showGuide', function(guide) { 
-              _gaq.push(['_trackEvent', 'Guides', 'Show', cls]);
+              _gaq.push(['_trackEvent', 'Guides', 'Show', guide]);
           });
       }      
     </script>

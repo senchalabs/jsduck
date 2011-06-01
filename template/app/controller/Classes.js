@@ -142,8 +142,6 @@ Ext.define('Docs.controller.Classes', {
 
     showClass: function(cls, anchor) {
         
-        this.fireEvent('showClass', cls.name, anchor);
-        
         if (this.currentCls != cls) {
             var container = Ext.getCmp('container'),
                 showClass = container.down('showclass'),
@@ -159,6 +157,7 @@ Ext.define('Docs.controller.Classes', {
             }
 
             this.getTree().selectClass(cls.name);
+            this.fireEvent('showClass', cls.name, anchor);        
         }
 
         if (anchor) {
