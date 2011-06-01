@@ -110,6 +110,10 @@ Ext.define('Docs.controller.Search', {
         if (results.length === 0) {
             this.getDropdown().hide();
         }
+        else {
+            // auto-select first result
+            this.getDropdown().getSelectionModel().select(0);
+        }
     },
 
     filterMembers: function(text, n) {
