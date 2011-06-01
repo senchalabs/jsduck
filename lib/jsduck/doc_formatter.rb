@@ -219,16 +219,23 @@ module JsDuck
     #
     # Ellipsis is only added when input actually gets shortened.
     def shorten(input)
-      if too_long?(input)
-        strip_tags(input)[0..(@max_length-4)] + "..."
+      sent = first_sentence(strip_tags(input))
+      if sent.length > @max_length
+        sent[0..(@max_length-4)] + "..."
+      elsif strip_tags(input).length > sent.length
+        sent + " ..."
       else
         input
       end
     end
 
+    def first_sentence(str)
+      str.sub(/\A(.+?\.)\s.*\Z/m, "\\1")
+    end
+
     # Returns true when input should get shortened.
     def too_long?(input)
-      strip_tags(input).length > @max_length
+      first_sentence(input).length > input.length || strip_tags(input).length > @max_length
     end
 
     def strip_tags(str)
