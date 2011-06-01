@@ -10,8 +10,7 @@ Ext.define('Docs.view.cls.Overview', {
         'Docs.Settings'
     ],
 
-    id: 'doc-overview',
-    cls: 'doc-tab iScroll',
+    cls: 'class-overview iScroll',
     title: 'Overview',
     autoScroll: true,
     bodyPadding: '20',
@@ -26,7 +25,7 @@ Ext.define('Docs.view.cls.Overview', {
         if (el) {
             var isMember = el.hasCls("member");
             var scrollOffset = el.getY() - (isMember ? 145 : 135);
-            var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
+            var docContent = this.getEl().down('.x-panel-body');
             var currentScroll = docContent.getScroll()['top'];
             docContent.scrollTo('top', currentScroll + scrollOffset, true);
 
@@ -62,7 +61,7 @@ Ext.define('Docs.view.cls.Overview', {
 
     renderClass: function(cls) {
         this.classTpl = this.classTpl || new Ext.XTemplate(
-            '<div class="doc-overview-content">',
+            '<div>',
                 '{hierarchy}',
                 '{doc}',
                 '<div class="members">',

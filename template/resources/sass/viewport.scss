@@ -403,7 +403,7 @@ a:hover {
   border: 0; }
 
 
-#doc-overview, #guide {
+.class-overview, #guide {
   pre {
     background-color: #f7f7f7;
     border: solid 1px #e8e8e8;
@@ -422,7 +422,7 @@ a:hover {
   pre.prettyprint {
     padding: 10px 12px; } }
 
-#doc-overview {
+.class-overview {
   img.screenshot {
     display: block;
     padding: 10px 0; }
@@ -448,7 +448,7 @@ a:hover {
         background: none;
         padding-left: 15px; } } } }
 
-#doc-overview, #guide {
+.class-overview, #guide {
   min-height: 100px;
   .clr {
     clear: both; }
@@ -502,7 +502,7 @@ a:hover {
     display: none; } }
 
 
-#doc-overview {
+.class-overview {
   .deprecated-signature, .protected-signature, .static-signature {
     font-weight: bold;
     text-transform: uppercase;

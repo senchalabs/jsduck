@@ -24,6 +24,10 @@ Ext.define('Docs.controller.Classes', {
         {
             ref: 'tabPanel',
             selector: 'classtabpanel'
+        },
+        {
+            ref: 'classOverview',
+            selector: 'classoverview'
         }
     ],
 
@@ -58,7 +62,7 @@ Ext.define('Docs.controller.Classes', {
                 }
             },
 
-            '#doc-overview': {
+            'classoverview': {
                 afterrender: function(cmp) {
                     // Expand member when clicked
                     cmp.el.addListener('click', function(cmp, el) {
@@ -144,10 +148,9 @@ Ext.define('Docs.controller.Classes', {
         }
 
         if (anchor) {
-            Ext.getCmp('doc-overview').scrollToEl("#" + anchor);
+            this.getClassOverview().scrollToEl("#" + anchor);
         } else {
-            var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
-            docContent.scrollTo('top', 0);
+            this.getClassOverview().getEl().down('.x-panel-body').scrollTo('top', 0);
         }
 
         this.currentCls = cls;

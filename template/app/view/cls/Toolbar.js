@@ -99,8 +99,9 @@ Ext.define('Docs.view.cls.Toolbar', {
             showCount: true,
             listeners: {
                 click: function() {
-                    Ext.getCmp('doc-overview').scrollToEl("#m-" + cfg.type);
-                }
+                    this.up('classoverview').scrollToEl("#m-" + cfg.type);
+                },
+                scope: this
             }
         });
     },
