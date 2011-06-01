@@ -20,6 +20,13 @@ Ext.define('Docs.controller.Classes', {
         'Setting'
     ],
 
+    refs: [
+        {
+            ref: 'tabPanel',
+            selector: 'classtabpanel'
+        }
+    ],
+
     init: function() {
         Ext.getBody().addListener('click', function(cmp, el) {
             this.loadClass(el.rel);
@@ -96,13 +103,11 @@ Ext.define('Docs.controller.Classes', {
             Docs.History.push("/api/" + clsUrl);
         }
 
-        var docTabPanel = Ext.getCmp('docTabPanel');
-
         if (this.cache[cls]) {
             this.showClass(this.cache[cls], member);
         } else {
-            if (docTabPanel) {
-                docTabPanel.setLoading(true);
+            if (this.getTabPanel()) {
+                this.getTabPanel().setLoading(true);
             }
 
             Ext.data.JsonP.request({
@@ -125,15 +130,14 @@ Ext.define('Docs.controller.Classes', {
             var container = Ext.getCmp('container'),
                 showClass = container.down('showclass'),
                 classHeader = showClass.down('classheader'),
-                classOverview = showClass.down('classoverview'),
-                docTabPanel = Ext.getCmp('docTabPanel');
+                classOverview = showClass.down('classoverview');
 
             classHeader.update(classHeader.tpl.apply(cls));
             classOverview.load(cls);
 
-            if (docTabPanel) {
-                docTabPanel.setActiveTab(0);
-                docTabPanel.setLoading(false);
+            if (this.getTabPanel()) {
+                this.getTabPanel().setActiveTab(0);
+                this.getTabPanel().setLoading(false);
             }
 
             Ext.getCmp('treePanelCmp').selectClass(cls.name);

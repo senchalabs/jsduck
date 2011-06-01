@@ -4,11 +4,11 @@
  */
 Ext.define('Docs.view.cls.Panel', {
     extend: 'Ext.tab.Panel',
+    alias: 'widget.classtabpanel',
     requires: [
         'Docs.view.cls.Overview'
     ],
 
-    id: 'docTabPanel',
     plain: true,
 
     // Remember tab scroll position on Webkit
