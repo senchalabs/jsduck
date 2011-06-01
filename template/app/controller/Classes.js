@@ -10,12 +10,14 @@ Ext.define('Docs.controller.Classes', {
 
     stores: [
         'Favorites',
-        'History'
+        'History',
+        'Settings'
     ],
 
     models: [
         'Favorite',
-        'History'
+        'History',
+        'Setting'
     ],
 
     init: function() {

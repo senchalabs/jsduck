@@ -6,7 +6,8 @@ Ext.define('Docs.view.cls.Overview', {
     alias: 'widget.classoverview',
     requires: [
         'Docs.view.cls.Toolbar',
-        'Docs.Syntax'
+        'Docs.Syntax',
+        'Docs.Settings'
     ],
 
     id: 'doc-overview',
@@ -53,6 +54,10 @@ Ext.define('Docs.view.cls.Overview', {
 
         this.update(this.renderClass(docClass));
         Docs.Syntax.highlight(this.getEl());
+
+        if (Docs.Settings.get("hideInherited")) {
+            this.toolbar.hideInherited(true);
+        }
     },
 
     renderClass: function(cls) {

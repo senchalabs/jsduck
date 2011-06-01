@@ -4,7 +4,8 @@
 Ext.define('Docs.view.cls.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
     requires: [
-        'Docs.view.HoverMenuButton'
+        'Docs.view.HoverMenuButton',
+        'Docs.Settings'
     ],
 
     dock: 'top',
@@ -55,7 +56,10 @@ Ext.define('Docs.view.cls.Toolbar', {
                 xtype: 'checkbox',
                 margin: '0 5 0 0',
                 padding: '0 0 5 0',
-                handler: this.hideInherited,
+                checked: Docs.Settings.get("hideInherited"),
+                handler: function(el) {
+                    this.hideInherited(el.checked);
+                },
                 scope: this
             },
             {
@@ -133,8 +137,12 @@ Ext.define('Docs.view.cls.Toolbar', {
         };
     },
 
-    hideInherited: function(el) {
-        var hide = el.checked;
+    /**
+     * Hides or unhides inherited members.
+     * @param {Boolean} hide
+     */
+    hideInherited: function(hide) {
+        Docs.Settings.set("hideInherited", hide);
 
         // show/hide all inherited members
         Ext.Array.forEach(Ext.query('.member.inherited'), function(m) {
