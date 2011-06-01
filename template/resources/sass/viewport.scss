@@ -135,6 +135,13 @@ a:hover {
 .search .x-form-text {
   border: 0; background: 0;
 }
+#search-field .reset {
+	background: url(../images/x.png) no-repeat;
+	width: 16px;
+	height: 16px;
+	border: 0;
+	margin: 3px 0 0 9px;
+}
 
 
 #search-dropdown {

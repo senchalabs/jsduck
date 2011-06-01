@@ -60,10 +60,19 @@ Ext.define('Docs.view.Viewport', {
                         height: 40,
                         items: [
                             {
-                                xtype: 'textfield',
+                                xtype: 'triggerfield',
+                                triggerCls: 'reset',
                                 emptyText: 'Search',
                                 id: 'search-field',
-                                enableKeyEvents: true
+                                enableKeyEvents: true,
+                                hideTrigger: true,
+                                onTriggerClick: function() {
+                                    this.reset();
+                                    this.focus();
+                                },
+                                onChange: function() {
+                                    this.setHideTrigger(this.getValue().length == 0);
+                                }
                             },
                             {
                                 xtype: 'searchdropdown'
