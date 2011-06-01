@@ -32,6 +32,7 @@ Ext.define('Docs.view.cls.Overview', {
             if (isMember && el.down(".expandable")) {
                 el.addCls('open');
             }
+            el.highlight();
         }
     },
 
