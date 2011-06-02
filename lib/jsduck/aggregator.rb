@@ -160,6 +160,19 @@ module JsDuck
       })
     end
 
+    # Appends Ext4 options parameter to each event parameter list.
+    def append_ext4_event_options
+      options = {
+        :tagname => :param,
+        :name => "options",
+        :type => "Object",
+        :doc => "The options object passed to {@link Ext.util.Observable#addListener}."
+      }
+      @classes.each_value do |cls|
+        cls[:event].each {|e| e[:params] << options }
+      end
+    end
+
     def result
       @documentation + @orphans
     end

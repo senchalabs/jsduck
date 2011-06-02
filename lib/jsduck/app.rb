@@ -124,6 +124,7 @@ module JsDuck
       agr.classify_orphans
       agr.populate_aliases
       agr.create_global_class unless @ignore_global
+      agr.append_ext4_event_options
       agr.result
     end
 
