@@ -85,18 +85,20 @@ task :export do
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(ga, s);
       })();
-      
-      Docs.afterLaunch = function() {
-          Docs.App.getController('Classes').addListener('showClass', function(cls, anchor) { 
-              _gaq.push(['_trackEvent', 'Classes', 'Show', cls]);
-              if (anchor) {
+
+      Docs.initEventTracking = function() {
+          Docs.App.getController('Classes').addListener({
+              showClass: function(cls) {
+                  _gaq.push(['_trackEvent', 'Classes', 'Show', cls]);
+              },
+              showMember: function(cls, anchor) {
                   _gaq.push(['_trackEvent', 'Classes', 'Member', cls + ' - ' + anchor]);
+              },
+              showGuide: function(guide) {
+                  _gaq.push(['_trackEvent', 'Guides', 'Show', guide]);
               }
           });
-          Docs.App.getController('Classes').addListener('showGuide', function(guide) { 
-              _gaq.push(['_trackEvent', 'Guides', 'Show', guide]);
-          });
-      }      
+      }
     </script>
   EOHTML
 

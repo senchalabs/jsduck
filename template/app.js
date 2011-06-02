@@ -10,6 +10,6 @@ Ext.Loader.setConfig({
 
 Ext.require('Docs.Application');
 
-Ext.onReady(function() {    
+Ext.onReady(function() {
     Ext.create('Docs.Application');
 });

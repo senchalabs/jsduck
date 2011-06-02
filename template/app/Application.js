@@ -26,9 +26,10 @@ Ext.define('Docs.Application', {
         Docs.Favorites.init();
         Docs.History.init();
         Docs.Settings.init();
-        
-        if (Docs.afterLaunch) {
-            Docs.afterLaunch();
+
+        // When google analytics event tracking script present on page
+        if (Docs.initEventTracking) {
+            Docs.initEventTracking();
         }
     }
 });

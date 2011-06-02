@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.controller.Classes', {
     extend: 'Ext.app.Controller',
-    
+
     requires: [
         'Docs.History',
         'Docs.Syntax'
@@ -37,12 +37,28 @@ Ext.define('Docs.controller.Classes', {
     ],
 
     init: function() {
-        
-        this.addEvents({
-            "showClass" : true,
-            "showGuide" : true
-        });
-        
+        this.addEvents(
+            /**
+             * @event showClass
+             * Fired after class shown. Used for analytics event tracking.
+             * @param {String} cls  name of the class.
+             */
+            "showClass",
+            /**
+             * @event showMember
+             * Fired after class member scrolled to view. Used for analytics event tracking.
+             * @param {String} cls  name of the class.
+             * @param {String} anchor  name of the member in form type-name like "method-bind".
+             */
+            "showMember",
+            /**
+             * @event showGuide
+             * Fired after guide shown. Used for analytics event tracking.
+             * @param {String} guide  name of the guide.
+             */
+            "showGuide"
+        );
+
         Ext.getBody().addListener('click', function(cmp, el) {
             this.loadClass(el.rel);
         }, this, {
@@ -141,7 +157,6 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-        
         if (this.currentCls != cls) {
             var container = Ext.getCmp('container'),
                 showClass = container.down('showclass'),
@@ -157,11 +172,12 @@ Ext.define('Docs.controller.Classes', {
             }
 
             this.getTree().selectClass(cls.name);
-            this.fireEvent('showClass', cls.name, anchor);        
+            this.fireEvent('showClass', cls.name);
         }
 
         if (anchor) {
             this.getClassOverview().scrollToEl("#" + anchor);
+            this.fireEvent('showMember', cls.name, anchor);
         } else {
             this.getClassOverview().getEl().down('.x-panel-body').scrollTo('top', 0);
         }
@@ -171,8 +187,6 @@ Ext.define('Docs.controller.Classes', {
 
     showGuide: function(name, noHistory) {
         noHistory || Docs.History.push("/guide/" + name);
-        
-        this.fireEvent('showGuide', name);
 
         Ext.data.JsonP.request({
             url: this.getBaseUrl() + "/guides/" + name + "/README.js",
@@ -181,6 +195,7 @@ Ext.define('Docs.controller.Classes', {
                 Ext.getCmp("guide").update(json.guide);
                 Ext.getCmp('container').layout.setActiveItem(2);
                 Docs.Syntax.highlight(Ext.get("guide"));
+                this.fireEvent('showGuide', name);
             },
             scope: this
         });
