@@ -385,6 +385,7 @@
                 "Ext.state.CookieProvider",
                 "Ext.state.Manager",
                 "Ext.state.Provider",
+                "Ext.state.LocalStorageProvider",
                 "Ext.state.Stateful",
                 "Ext.util.History"
             ]

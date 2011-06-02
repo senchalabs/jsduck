@@ -26,5 +26,9 @@ Ext.define('Docs.Application', {
         Docs.Favorites.init();
         Docs.History.init();
         Docs.Settings.init();
+        
+        if (Docs.afterLaunch) {
+            Docs.afterLaunch();
+        }
     }
 });

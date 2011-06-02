@@ -85,6 +85,18 @@ task :export do
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(ga, s);
       })();
+      
+      Docs.afterLaunch = function() {
+          Docs.App.getController('Classes').addListener('showClass', function(cls, anchor) { 
+              _gaq.push(['_trackEvent', 'Classes', 'Show', cls]);
+              if (anchor) {
+                  _gaq.push(['_trackEvent', 'Classes', 'Member', cls + ' - ' + anchor]);
+              }
+          });
+          Docs.App.getController('Classes').addListener('showGuide', function(guide) { 
+              _gaq.push(['_trackEvent', 'Guides', 'Show', guide]);
+          });
+      }      
     </script>
   EOHTML
 
