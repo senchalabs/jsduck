@@ -130,13 +130,14 @@ module JsDuck
 
     def create_method(docs, code)
       doc_map = build_doc_map(docs)
+      name = detect_name(:method, doc_map, code)
       return add_shared({
         :tagname => :method,
-        :name => detect_name(:method, doc_map, code),
+        :name => name,
         :member => detect_member(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
-        :return => detect_return(doc_map),
+        :return => detect_return(doc_map, name == "constructor" ? "Object" : "void"),
       }, doc_map)
     end
 
@@ -330,10 +331,10 @@ module JsDuck
       docs.find_all {|tag| tag[:tagname] == :param}
     end
 
-    def detect_return(doc_map)
+    def detect_return(doc_map, default_type="void")
       ret = doc_map[:return] ? doc_map[:return].first : {}
       return {
-        :type => ret[:type] || "void",
+        :type => ret[:type] || default_type,
         :doc => ret[:doc] || "",
       }
     end
