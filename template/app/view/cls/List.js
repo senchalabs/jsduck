@@ -23,7 +23,7 @@ Ext.define('Docs.view.cls.List', {
                 '</ul>',
               '</div>',
               '<div class="legend guides">',
-                '<h4>Guides</h4>',
+                '<h1>Guides</h1>',
                 '<div class="lft">',
                   '<a class="guide getting_started" rel="getting_started" href="guides/getting_started/index.html">Getting Started</a>',
                   '<a class="guide class_system" rel="class_system" href="guides/class_system/index.html">Class System</a>',
