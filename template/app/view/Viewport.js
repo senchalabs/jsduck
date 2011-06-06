@@ -7,7 +7,7 @@ Ext.define('Docs.view.Viewport', {
     extend: 'Ext.container.Viewport',
     requires: [
         'Docs.view.cls.Container',
-        'Docs.view.cls.List',
+        'Docs.view.index.Container',
         'Docs.view.tree.Tree',
         'Docs.History'
     ],
@@ -99,7 +99,7 @@ Ext.define('Docs.view.Viewport', {
                     items: [
                         {
                             autoScroll: true,
-                            xtype: 'classlist',
+                            xtype: 'indexcontainer',
                             classData: Docs.overviewData
                         },
                         {
