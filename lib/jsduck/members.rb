@@ -28,6 +28,7 @@ module JsDuck
         :cls => cls.full_name,
         :member => cls.short_name,
         :type => :cls,
+        :xtypes => cls[:xtypes]
       }
     end
 
