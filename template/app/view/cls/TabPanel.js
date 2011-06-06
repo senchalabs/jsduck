@@ -21,15 +21,6 @@ Ext.define('Docs.view.cls.TabPanel', {
                 newCard.body.scrollTo('top', newCard.prevScroll);
             }
         }
-    },
-
-    initComponent: function() {
-        this.items = [
-            Ext.create('Docs.view.cls.Overview', {
-                docClass: this.docClass
-            })
-        ];
-
-        this.callParent(arguments);
     }
+
 });

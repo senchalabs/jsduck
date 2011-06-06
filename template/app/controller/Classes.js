@@ -6,7 +6,8 @@ Ext.define('Docs.controller.Classes', {
 
     requires: [
         'Docs.History',
-        'Docs.Syntax'
+        'Docs.Syntax',
+        'Docs.view.cls.Overview'
     ],
 
     stores: [
@@ -164,12 +165,16 @@ Ext.define('Docs.controller.Classes', {
                 classOverview = classCnt.down('classoverview');
 
             classHeader.load(cls);
+
+            // Init overview tab if not already available
+            if (!classOverview) {
+                classOverview = Ext.create('Docs.view.cls.Overview');
+                this.getTabPanel().add(classOverview);
+                this.getTabPanel().setActiveTab(0);
+            }
             classOverview.load(cls);
 
-            if (this.getTabPanel()) {
-                this.getTabPanel().setActiveTab(0);
-                this.getTabPanel().setLoading(false);
-            }
+            this.getTabPanel().setLoading(false);
 
             this.getTree().selectClass(cls.name);
             this.fireEvent('showClass', cls.name);

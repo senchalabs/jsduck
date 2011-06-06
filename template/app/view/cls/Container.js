@@ -19,7 +19,6 @@ Ext.define('Docs.view.cls.Container', {
         this.items = [
             Ext.create('Docs.view.cls.Header'),
             Ext.create('Docs.view.cls.TabPanel', {
-                docClass: this.docClass,
                 flex: 1
             })
         ];
