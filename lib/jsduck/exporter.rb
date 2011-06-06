@@ -17,14 +17,14 @@ module JsDuck
     # Returns all data in Class object as hash.
     def export(cls)
       h = cls.to_hash
-      h[:cfg] = cls.members(:cfg)
-      h[:property] = cls.members(:property)
-      h[:method] = cls.members(:method)
-      h[:event] = cls.members(:event)
-      h[:cssVar] = cls.members(:css_var)
-      h.delete(:css_var)
-      h[:cssMixin] = cls.members(:css_mixin)
-      h.delete(:css_mixin)
+      h[:members] = {
+        :cfg => cls.members(:cfg),
+        :property => cls.members(:property),
+        :method => cls.members(:method),
+        :event => cls.members(:event),
+        :cssVar => cls.members(:css_var),
+        :cssMixin => cls.members(:css_mixin),
+      }
       h[:component] = cls.inherits_from?("Ext.Component")
       h[:superclasses] = cls.superclasses.collect {|c| c.full_name }
       h[:subclasses] = @relations.subclasses(cls).collect {|c| c.full_name }
@@ -38,8 +38,8 @@ module JsDuck
       @formatter.class_context = c[:name]
       @formatter.doc_context = c
       c[:doc] = @formatter.format(c[:doc]) if c[:doc]
-      [:cfg, :property, :method, :event, :cssVar, :cssMixin].each do |type|
-        c[type] = c[type].map {|m| format_member(m) }
+      c[:members].each_pair do |type, members|
+        c[:members][type] = members.map {|m| format_member(m) }
       end
       c
     end

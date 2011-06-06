@@ -29,8 +29,8 @@ describe JsDuck::Aggregator do
            * @alias Foo#bar
            */
       EOF
-      @orig = @docs[0][:method][0]
-      @alias = @docs[1][:method][0]
+      @orig = @docs[0][:members][:method][0]
+      @alias = @docs[1][:members][:method][0]
     end
 
     it "original method keeps its name" do

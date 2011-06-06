@@ -1,3 +1,5 @@
+require 'jsduck/class'
+
 module JsDuck
 
   # Combines JavaScript Parser, DocParser and Merger.
@@ -56,7 +58,7 @@ module JsDuck
         old[tag] = old[tag] + new[tag]
       end
       old[:doc] = old[:doc].length > 0 ? old[:doc] : new[:doc]
-      old[:cfg] = old[:cfg] + new[:cfg]
+      old[:members][:cfg] = old[:members][:cfg] + new[:members][:cfg]
     end
 
     # Tries to place members into classes where they belong.
@@ -71,13 +73,13 @@ module JsDuck
     def add_member(node)
       if node[:owner]
         if @classes[node[:owner]]
-          @classes[node[:owner]][node[:tagname]] << node
+          @classes[node[:owner]][:members][node[:tagname]] << node
         else
           add_orphan(node)
         end
       elsif @current_class
         node[:owner] = @current_class[:name]
-        @current_class[ node[:tagname] ] << node
+        @current_class[:members][ node[:tagname] ] << node
       else
         add_orphan(node)
       end
@@ -92,7 +94,7 @@ module JsDuck
     def insert_orphans(cls)
       members = @orphans.find_all {|node| node[:owner] == cls[:name] }
       members.each do |node|
-        cls[node[:tagname]] << node
+        cls[:members][node[:tagname]] << node
         @orphans.delete(node)
       end
     end
@@ -125,7 +127,7 @@ module JsDuck
 
     def get_member(cls_name, member_name)
       cls = @classes[cls_name]
-      return cls[:method].find {|m| m[:name] == member_name }
+      return cls[:members][:method].find {|m| m[:name] == member_name }
     end
 
     # Creates class with name "global" and inserts all the remaining
@@ -148,12 +150,7 @@ module JsDuck
         :doc => doc,
         :mixins => [],
         :alternateClassNames => [],
-        :cfg => [],
-        :property => [],
-        :method => [],
-        :event => [],
-        :css_var => [],
-        :css_mixin => [],
+        :members => Class.default_members_hash,
         :filename => "",
         :html_filename => "",
         :linenr => 0,
@@ -169,7 +166,7 @@ module JsDuck
         :doc => "The options object passed to {@link Ext.util.Observable#addListener}."
       }
       @classes.each_value do |cls|
-        cls[:event].each {|e| e[:params] << options }
+        cls[:members][:event].each {|e| e[:params] << options }
       end
     end
 

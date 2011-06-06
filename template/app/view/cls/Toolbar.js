@@ -29,7 +29,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             event: "Events"
         };
         for (var type in memberTitles) {
-            var members = this.docClass[type];
+            var members = this.docClass.members[type];
             if (members.length) {
                 var btn = this.createMemberButton({
                     text: memberTitles[type],

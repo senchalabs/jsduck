@@ -9,14 +9,18 @@ describe JsDuck::DocFormatter do
     @formatter.relations = JsDuck::Relations.new([
       JsDuck::Class.new({
         :name => "Context",
-        :method => [{:name => "bar", :tagname => :method}]
+        :members => {
+          :method => [{:name => "bar", :tagname => :method}]
+        }
       }),
       JsDuck::Class.new({
         :name => 'Ext.Msg'
       }),
       JsDuck::Class.new({
         :name => "Foo",
-        :cfg => [{:name => "bar", :tagname => :cfg}],
+        :members => {
+          :cfg => [{:name => "bar", :tagname => :cfg}],
+        },
         :alternateClassNames => ["FooBar"]
       }),
     ])
@@ -101,7 +105,9 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({:name => 'FooBar.Blah'}),
           JsDuck::Class.new({
             :name => 'Ext.form.Field',
-            :method => [{:name => "getValues", :tagname => :method}]
+            :members => {
+              :method => [{:name => "getValues", :tagname => :method}]
+            }
           }),
           JsDuck::Class.new({
             :name => 'Ext.XTemplate',
@@ -110,7 +116,9 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({:name => 'MyClass'}),
           JsDuck::Class.new({
             :name => 'Ext',
-            :method => [{:name => "encode", :tagname => :method}]
+            :members => {
+              :method => [{:name => "encode", :tagname => :method}]
+            }
           }),
         ])
       end

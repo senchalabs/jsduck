@@ -150,7 +150,7 @@ module JsDuck
     def warn_globals(relations)
       global = relations["global"]
       return unless global
-      [:cfg, :property, :method, :event].each do |type|
+      global[:members].each_key do |type|
         global.members(type).each do |member|
           name = member[:name]
           file = member[:filename]
@@ -163,8 +163,8 @@ module JsDuck
     # print warning for each member with no name
     def warn_unnamed(relations)
       relations.each do |cls|
-        [:cfg, :property, :method, :event].each do |type|
-          cls[type].each do |member|
+        cls[:members].each_pair do |type, members|
+          members.each do |member|
             if !member[:name] || member[:name] == ""
               file = member[:filename]
               line = member[:linenr]

@@ -146,8 +146,8 @@ Ext.define('Docs.view.cls.Overview', {
         // Skip rendering empty sections
         var html = [];
         for (var type in typeTitles) {
-            if (cls[type].length > 0) {
-                html.push(this.renderSection(cls[type], type, typeTitles[type]));
+            if (cls.members[type].length > 0) {
+                html.push(this.renderSection(cls.members[type], type, typeTitles[type]));
             }
         }
         return html.join("");

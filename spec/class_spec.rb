@@ -8,22 +8,26 @@ describe JsDuck::Class do
       @classes = {}
       @parent = JsDuck::Class.new({
           :name => "ParentClass",
-          :method => [
-            {:name => "baz", :owner => "ParentClass"},
-            {:name => "foo", :owner => "ParentClass"},
-            {:name => "frank", :owner => "ParentClass", :private => true},
-          ]
+          :members => {
+            :method => [
+              {:name => "baz", :owner => "ParentClass"},
+              {:name => "foo", :owner => "ParentClass"},
+              {:name => "frank", :owner => "ParentClass", :private => true},
+            ]
+          }
         });
       @classes["ParentClass"] = @parent
       @parent.relations = @classes
       @child = JsDuck::Class.new({
           :name => "ChildClass",
           :extends => "ParentClass",
-          :method => [
-            {:name => "foo", :owner => "ChildClass"},
-            {:name => "bar", :owner => "ChildClass"},
-            {:name => "zappa", :owner => "ChildClass", :private => true},
-          ]
+          :members => {
+            :method => [
+              {:name => "foo", :owner => "ChildClass"},
+              {:name => "bar", :owner => "ChildClass"},
+              {:name => "zappa", :owner => "ChildClass", :private => true},
+            ]
+          }
         });
       @classes["ChildClass"] = @child
       @child.relations = @classes
@@ -50,19 +54,23 @@ describe JsDuck::Class do
       @classes = {}
       @parent = JsDuck::Class.new({
           :name => "ParentClass",
-          :method => [
-            {:name => "baz", :owner => "ParentClass"},
-            {:name => "constructor", :owner => "ParentClass"},
-          ]
+          :members => {
+            :method => [
+              {:name => "baz", :owner => "ParentClass"},
+              {:name => "constructor", :owner => "ParentClass"},
+            ]
+          }
         });
       @classes["ParentClass"] = @parent
       @parent.relations = @classes
       @child = JsDuck::Class.new({
           :name => "ChildClass",
           :extends => "ParentClass",
-          :method => [
-            {:name => "foo", :owner => "ChildClass"}
-          ]
+          :members => {
+            :method => [
+              {:name => "foo", :owner => "ChildClass"}
+            ]
+          }
         });
       @classes["ChildClass"] = @child
       @child.relations = @classes

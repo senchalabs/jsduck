@@ -105,7 +105,7 @@ module JsDuck
         all_members.merge!(mix.members_hash(type))
       end
 
-      (@doc[type] || []).each do |m|
+      (@doc[:members][type] || []).each do |m|
         all_members[m[:name]] = m if !m[:private]
       end
 
@@ -119,7 +119,7 @@ module JsDuck
       # build hash of all members
       unless @type_map
         @type_map = {}
-        [:cfg, :property, :method, :event, :css_var, :css_mixin].each do |type|
+        @doc[:members].each_key do |type|
           @type_map.merge!(members_hash(type))
         end
       end
@@ -169,6 +169,18 @@ module JsDuck
         short = parts.pop + "." + short
       end
       short
+    end
+
+    # Returns default hash that has empty array for each member type
+    def self.default_members_hash
+      return {
+        :cfg => [],
+        :property => [],
+        :method => [],
+        :event => [],
+        :css_var => [],
+        :css_mixin => [],
+      }
     end
   end
 

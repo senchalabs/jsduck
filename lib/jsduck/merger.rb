@@ -66,17 +66,7 @@ module JsDuck
     def create_class(docs, code)
       groups = group_class_docs(docs)
       result = create_bare_class(groups[:class], code)
-      result[:cfg] = groups[:cfg].map { |tags| create_cfg(tags, {}, result[:name]) }
-      result[:method] = []
-      if groups[:constructor].length > 0
-        constr = create_method(groups[:constructor], {})
-        constr[:owner] = result[:name]
-        result[:method] << constr
-      end
-      result[:property] = []
-      result[:event] = []
-      result[:css_var] = []
-      result[:css_mixin] = []
+      result[:members] = create_class_members(groups, result[:name])
       result
     end
 
@@ -126,6 +116,17 @@ module JsDuck
         :docauthor => detect_docauthor(doc_map),
         :singleton => !!doc_map[:singleton],
       }, doc_map)
+    end
+
+    def create_class_members(groups, owner)
+      members = Class.default_members_hash
+      members[:cfg] = groups[:cfg].map { |tags| create_cfg(tags, {}, owner) }
+      if groups[:constructor].length > 0
+        constr = create_method(groups[:constructor], {})
+        constr[:owner] = owner
+        members[:method] << constr
+      end
+      members
     end
 
     def create_method(docs, code)
