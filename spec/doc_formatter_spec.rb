@@ -255,26 +255,47 @@ describe JsDuck::DocFormatter do
       @formatter.max_length = 10
     end
 
-    it "leaves short text unchanged" do
-      @formatter.shorten("Ha ha").should == "Ha ha"
-    end
-
-    it "leaves text with max length unchanged" do
-      @formatter.shorten("1234567890").should == "1234567890"
+    it "appends ellipsis to short text" do
+      @formatter.shorten("Ha ha").should == "Ha ha ..."
     end
 
     it "shortens text longer than max length" do
       @formatter.shorten("12345678901").should == "1234567..."
     end
 
-    it "ignores HTML tags when calculating text length" do
-      @formatter.shorten("<a href='some-long-link'>Foo</a>").should == "<a href='some-long-link'>Foo</a>"
-    end
-
     it "strips HTML tags when shortening" do
       @formatter.shorten("<a href='some-long-link'>12345678901</a>").should == "1234567..."
     end
+
+    it "takes only first centence" do
+      @formatter.shorten("bla. blah").should == "bla. ..."
+    end
   end
+
+  describe "#too_long?" do
+
+    before do
+      @formatter.max_length = 10
+    end
+
+    it "is false when exactly equal to the max_length" do
+      @formatter.too_long?("1234567890").should == false
+    end
+
+    it "is false when short sentence" do
+      @formatter.too_long?("bla bla.").should == false
+    end
+
+    it "is true when long sentence" do
+      @formatter.too_long?("bla bla bla.").should == true
+    end
+
+    it "ignores HTML tags when calculating text length" do
+      @formatter.too_long?("<a href='some-long-link'>Foo</a>").should == false
+    end
+
+  end
+
 
   describe "#first_sentence" do
     it "extracts first sentence" do

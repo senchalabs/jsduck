@@ -204,7 +204,7 @@ module JsDuck
       replace(RDiscount.new(input).to_html)
     end
 
-    # Shortens text if needed.
+    # Shortens text
     #
     # 116 chars is also where ext-doc makes its cut, but unlike
     # ext-doc we only make the cut when there's more than 120 chars.
@@ -217,15 +217,12 @@ module JsDuck
     #
     #   Blah blah blah some text.
     #
-    # Ellipsis is only added when input actually gets shortened.
     def shorten(input)
       sent = first_sentence(strip_tags(input))
       if sent.length > @max_length
         sent[0..(@max_length-4)] + "..."
-      elsif strip_tags(input).length > sent.length
-        sent + " ..."
       else
-        input
+        sent + " ..."
       end
     end
 
@@ -235,11 +232,12 @@ module JsDuck
 
     # Returns true when input should get shortened.
     def too_long?(input)
-      first_sentence(input).length > input.length || strip_tags(input).length > @max_length
+      stripped = strip_tags(input)
+      first_sentence(stripped).length < stripped.length || stripped.length > @max_length
     end
 
     def strip_tags(str)
-      str.gsub(/<.*?>/, "")
+      str.gsub(/<.*?>/, "").strip
     end
   end
 
