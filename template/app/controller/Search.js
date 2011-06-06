@@ -103,8 +103,10 @@ Ext.define('Docs.controller.Search', {
 
     search: function(term) {
         // perform search and load results to store
+        var limit = 10;
         var results = this.filterMembers(term);
-        Docs.App.getStore('Search').loadData(results, false);
+        this.getDropdown().setTotal(results.length);
+        this.getDropdown().getStore().loadData(results.slice(0, limit));
         // position dropdown below search box
         this.getDropdown().alignTo('search-field', 'bl', [-23, 2]);
         // hide dropdown when nothing found
@@ -117,7 +119,7 @@ Ext.define('Docs.controller.Search', {
         }
     },
 
-    filterMembers: function(text, n) {
+    filterMembers: function(text) {
         var results = [[], [], [], [], []];
         var xFull=0, nFull=1, xBeg=2, nBeg=3, nMid=4;
         var hasDot = /\./.test(text);
@@ -148,8 +150,7 @@ Ext.define('Docs.controller.Search', {
             }
         });
 
-        // flatten results array and returns first n results
-        return Ext.Array.flatten(results).slice(0, n || 10);
+        return Ext.Array.flatten(results);
     }
 
 });

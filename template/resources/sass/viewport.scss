@@ -155,7 +155,7 @@ a:hover {
   left: 20px;
   z-index: 5;
 
-  .item {
+  .item, .total {
     display: block;
     cursor: pointer;
     overflow: hidden;
@@ -163,13 +163,12 @@ a:hover {
     border-width: 0px 0px 1px 0px;
     border-style: solid;
     border-color: #bebdbf;
+    color: #605f5f;
     .title {
-      color: #605f5f;
       font-weight: bold;
       overflow: hidden;
       text-overflow: ellipsis; }
     .class {
-      color: #605f5f;
       font-size: 0.85em;
       overflow: hidden;
       text-overflow: ellipsis; } }
@@ -186,7 +185,11 @@ a:hover {
   .item.x-item-selected {
     background-color: #ffffaa; }
   .item.x-view-over {
-    background-color: #ffffaa; } }
+    background-color: #ffffaa; }
+  .total {
+    cursor: auto;
+    text-align: right;
+    font-size: 0.85em; } }
 
 
 #center-container, #west-region-container {
