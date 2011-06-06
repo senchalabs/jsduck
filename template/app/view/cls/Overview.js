@@ -179,7 +179,7 @@ Ext.define('Docs.view.cls.Overview', {
                 // member name and type + link to owner class and source
                 '<div class="title">',
                     '<div class="meta">',
-                        '<a href="#/api/{member}" rel="{member}" class="definedIn docClass">{member}</a><br/>',
+                        '<a href="#/api/{owner}" rel="{owner}" class="definedIn docClass">{owner}</a><br/>',
                         '<a href="source/{href}" target="_blank" class="viewSource">view source</a>',
                     '</div>',
                     '{signature}',
