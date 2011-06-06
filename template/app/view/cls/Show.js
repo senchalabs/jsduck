@@ -7,9 +7,9 @@ Ext.define('Docs.view.cls.Show', {
     alias: 'widget.showclass',
     requires: [
         'Docs.view.cls.Header',
-        'Docs.view.cls.Panel'
+        'Docs.view.cls.TabPanel'
     ],
-    
+
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -20,7 +20,7 @@ Ext.define('Docs.view.cls.Show', {
             Ext.create('Docs.view.cls.Header', {
                 docClass: this.docClass
             }),
-            Ext.create('Docs.view.cls.Panel', {
+            Ext.create('Docs.view.cls.TabPanel', {
                 docClass: this.docClass,
                 flex: 1
             })

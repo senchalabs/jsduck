@@ -2,7 +2,7 @@
  * The documentation panel.
  * TODO: Source code tab, Examples, Q&A
  */
-Ext.define('Docs.view.cls.Panel', {
+Ext.define('Docs.view.cls.TabPanel', {
     extend: 'Ext.tab.Panel',
     alias: 'widget.classtabpanel',
     requires: [
