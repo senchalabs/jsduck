@@ -163,7 +163,7 @@ Ext.define('Docs.controller.Classes', {
                 classHeader = classCnt.down('classheader'),
                 classOverview = classCnt.down('classoverview');
 
-            classHeader.update(classHeader.tpl.apply(cls));
+            classHeader.load(cls);
             classOverview.load(cls);
 
             if (this.getTabPanel()) {
