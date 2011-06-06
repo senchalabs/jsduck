@@ -28,10 +28,6 @@ Ext.define('Docs.controller.Classes', {
             selector: 'classtabpanel'
         },
         {
-            ref: 'classOverview',
-            selector: 'classoverview'
-        },
-        {
             ref: 'tree',
             selector: 'classtree'
         }
@@ -158,12 +154,12 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-        if (this.currentCls != cls) {
-            var container = Ext.getCmp('container'),
-                classCnt = container.down('classcontainer'),
-                classHeader = classCnt.down('classheader'),
-                classOverview = classCnt.down('classoverview');
+        var container = Ext.getCmp('container');
+        var classCnt = container.down('classcontainer');
+        var classHeader = classCnt.down('classheader');
+        var classOverview = classCnt.down('classoverview');
 
+        if (this.currentCls != cls) {
             classHeader.load(cls);
 
             // Init overview tab if not already available
@@ -181,10 +177,10 @@ Ext.define('Docs.controller.Classes', {
         }
 
         if (anchor) {
-            this.getClassOverview().scrollToEl("#" + anchor);
+            classOverview.scrollToEl("#" + anchor);
             this.fireEvent('showMember', cls.name, anchor);
         } else {
-            this.getClassOverview().getEl().down('.x-panel-body').scrollTo('top', 0);
+            classOverview.getEl().down('.x-panel-body').scrollTo('top', 0);
         }
 
         this.currentCls = cls;
