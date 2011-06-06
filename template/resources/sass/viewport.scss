@@ -510,7 +510,7 @@ a:hover {
 
 
 .class-overview {
-  .deprecated-signature, .protected-signature, .static-signature {
+  .deprecated-signature, .protected-signature, .static-signature, .constructor-signature {
     font-weight: bold;
     text-transform: uppercase;
     color: white;
@@ -524,14 +524,10 @@ a:hover {
     background-color: #aaa; }
   .static-signature {
     background-color: #484848; }
-  .new {
-    font-weight: bold;
-    color: white;
-    font-size: 0.7em;
-    @include border-radius(2px);
-    margin-left: 5px;
-    padding: 0 3px;
-    background-color: #00aa00; }
+  .constructor-signature {
+    margin-left: 0;
+    margin-right: 5px;
+    background-color: #484848; }
   .cfgGroup {
     margin: 10px 0 3px 0; } }
 

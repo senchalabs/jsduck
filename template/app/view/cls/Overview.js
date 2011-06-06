@@ -182,7 +182,7 @@ Ext.define('Docs.view.cls.Overview', {
                         '<a href="#/api/{member}" rel="{member}" class="definedIn docClass">{member}</a><br/>',
                         '<a href="source/{href}" target="_blank" class="viewSource">view source</a>',
                     '</div>',
-                    '<a href="#/api/{member}-{tagname}-{name}" class="name {expandable}">{name}</a>{signature}',
+                    '{signature}',
                 '</div>',
                 // short and long descriptions
                 '<div class="description">',
@@ -213,29 +213,39 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     renderSignature: function(member) {
-        var signature;
+        this.signatureTpl = this.signatureTpl || new Ext.XTemplate(
+            '{before}<a href="#/api/{member}-{tagname}-{name}" class="name {expandable}">{name}</a>{params}{after}'
+        );
+            
+        var cfg = Ext.apply({}, member);
+        cfg.expandable = member.shortDoc ? "expandable" : "not-expandable";
+        
+        if (member.tagname === "method" && member.name === member.member.replace(/^.*\./, "")) {
+            cfg.before = "<strong class='constructor-signature'>new</strong>";
+        }
+        
         if (member.tagname === "cfg" || member.tagname === "property") {
-            signature = "<span> : " + member.type + "</span>";
+            cfg.params = "<span> : " + member.type + "</span>";
         }
         else {
             var ps = Ext.Array.map(member.params, this.renderShortParam, this).join(", ");
-            signature = '( <span class="pre">' + ps + "</span> )";
+            cfg.params = '( <span class="pre">' + ps + "</span> )";
             if (member.tagname === "method") {
-                signature += " : " + member["return"].type;
+                cfg.params += " : " + member["return"].type;
             }
         }
 
         if (member.protected) {
-            signature += "<strong class='protected-signature'>protected</strong>";
+            cfg.after = "<strong class='protected-signature'>protected</strong>";
         }
         if (member.static) {
-            signature += "<strong class='static-signature'>static</strong>";
+            cfg.after = "<strong class='static-signature'>static</strong>";
         }
         if (member.deprecated) {
-            signature += "<strong class='deprecated-signature'>deprecated</strong>";
+            cfg.after = "<strong class='deprecated-signature'>deprecated</strong>";
         }
-
-        return signature;
+        
+        return this.signatureTpl.apply(cfg);
     },
 
     renderShortParam: function(param) {
