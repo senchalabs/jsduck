@@ -69,14 +69,14 @@ module JsDuck
     # Items without @member belong by default to the preceding class.
     # When no class precedes them - they too are orphaned.
     def add_member(node)
-      if node[:member]
-        if @classes[node[:member]]
-          @classes[node[:member]][node[:tagname]] << node
+      if node[:owner]
+        if @classes[node[:owner]]
+          @classes[node[:owner]][node[:tagname]] << node
         else
           add_orphan(node)
         end
       elsif @current_class
-        node[:member] = @current_class[:name]
+        node[:owner] = @current_class[:name]
         @current_class[ node[:tagname] ] << node
       else
         add_orphan(node)
@@ -90,19 +90,19 @@ module JsDuck
 
     # Inserts available orphans to class
     def insert_orphans(cls)
-      members = @orphans.find_all {|node| node[:member] == cls[:name] }
+      members = @orphans.find_all {|node| node[:owner] == cls[:name] }
       members.each do |node|
         cls[node[:tagname]] << node
         @orphans.delete(node)
       end
     end
 
-    # Creates classes for orphans that have :member property defined,
+    # Creates classes for orphans that have :owner property defined,
     # and then inserts orphans to these classes.
     def classify_orphans
       @orphans.each do |orph|
-        if orph[:member]
-          class_name = orph[:member]
+        if orph[:owner]
+          class_name = orph[:owner]
           if !@classes[class_name]
             add_empty_class(class_name)
           end
@@ -116,7 +116,7 @@ module JsDuck
     # Aliases are currently only supported for methods.
     def populate_aliases
       @aliases.each do |al|
-        orig = get_member(al[:alias][:cls], al[:alias][:member])
+        orig = get_member(al[:alias][:cls], al[:alias][:owner])
         al[:doc] = al[:doc] + "\n\n" + orig[:doc]
         al[:params] = orig[:params]
         al[:return] = orig[:return]
@@ -135,7 +135,7 @@ module JsDuck
 
       add_empty_class("global", "Global variables and functions.")
       @orphans.each do |orph|
-        orph[:member] = "global"
+        orph[:owner] = "global"
         add_member(orph)
       end
       @orphans = []

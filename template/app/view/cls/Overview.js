@@ -204,7 +204,7 @@ Ext.define('Docs.view.cls.Overview', {
             // use classname "expandable" when member has shortened description
             expandable: member.shortDoc ? "expandable" : "not-expandable",
             // use classname "inherited" when member is not defined in this class
-            inherited: member.member === this.docClass.name ? "not-inherited" : "inherited",
+            inherited: member.owner === this.docClass.name ? "not-inherited" : "inherited",
             // method params signature or property type signature
             signature: this.renderSignature(member),
             // full documentation together with optional parameters and return value
@@ -216,14 +216,14 @@ Ext.define('Docs.view.cls.Overview', {
         this.signatureTpl = this.signatureTpl || new Ext.XTemplate(
             '{before}<a href="#/api/{member}-{tagname}-{name}" class="name {expandable}">{name}</a>{params}{after}'
         );
-            
+
         var cfg = Ext.apply({}, member);
         cfg.expandable = member.shortDoc ? "expandable" : "not-expandable";
-        
-        if (member.tagname === "method" && member.name === member.member.replace(/^.*\./, "")) {
+
+        if (member.tagname === "method" && member.name === member.owner.replace(/^.*\./, "")) {
             cfg.before = "<strong class='constructor-signature'>new</strong>";
         }
-        
+
         if (member.tagname === "cfg" || member.tagname === "property") {
             cfg.params = "<span> : " + member.type + "</span>";
         }
@@ -244,7 +244,7 @@ Ext.define('Docs.view.cls.Overview', {
         if (member.deprecated) {
             cfg.after = "<strong class='deprecated-signature'>deprecated</strong>";
         }
-        
+
         return this.signatureTpl.apply(cfg);
     },
 

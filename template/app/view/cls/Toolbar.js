@@ -134,7 +134,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             cls: cls,
             url: member ? cls+"-"+member.tagname+"-"+member.name : cls,
             label: member ? member.name : cls,
-            inherited: member ? member.member !== cls : false
+            inherited: member ? member.owner !== cls : false
         };
     },
 

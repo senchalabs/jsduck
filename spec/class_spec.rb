@@ -9,9 +9,9 @@ describe JsDuck::Class do
       @parent = JsDuck::Class.new({
           :name => "ParentClass",
           :method => [
-            {:name => "baz", :member => "ParentClass"},
-            {:name => "foo", :member => "ParentClass"},
-            {:name => "frank", :member => "ParentClass", :private => true},
+            {:name => "baz", :owner => "ParentClass"},
+            {:name => "foo", :owner => "ParentClass"},
+            {:name => "frank", :owner => "ParentClass", :private => true},
           ]
         });
       @classes["ParentClass"] = @parent
@@ -20,9 +20,9 @@ describe JsDuck::Class do
           :name => "ChildClass",
           :extends => "ParentClass",
           :method => [
-            {:name => "foo", :member => "ChildClass"},
-            {:name => "bar", :member => "ChildClass"},
-            {:name => "zappa", :member => "ChildClass", :private => true},
+            {:name => "foo", :owner => "ChildClass"},
+            {:name => "bar", :owner => "ChildClass"},
+            {:name => "zappa", :owner => "ChildClass", :private => true},
           ]
         });
       @classes["ChildClass"] = @child
@@ -32,16 +32,16 @@ describe JsDuck::Class do
     it "returns all public members in current class" do
       ms = @parent.members_hash(:method)
       ms.values.length.should == 2
-      ms["foo"][:member].should == "ParentClass"
-      ms["baz"][:member].should == "ParentClass"
+      ms["foo"][:owner].should == "ParentClass"
+      ms["baz"][:owner].should == "ParentClass"
     end
 
     it "also returns all public members in parent class" do
       ms = @child.members_hash(:method)
       ms.values.length.should == 3
-      ms["foo"][:member].should == "ChildClass"
-      ms["bar"][:member].should == "ChildClass"
-      ms["baz"][:member].should == "ParentClass"
+      ms["foo"][:owner].should == "ChildClass"
+      ms["bar"][:owner].should == "ChildClass"
+      ms["baz"][:owner].should == "ParentClass"
     end
   end
 
@@ -51,8 +51,8 @@ describe JsDuck::Class do
       @parent = JsDuck::Class.new({
           :name => "ParentClass",
           :method => [
-            {:name => "baz", :member => "ParentClass"},
-            {:name => "constructor", :member => "ParentClass"},
+            {:name => "baz", :owner => "ParentClass"},
+            {:name => "constructor", :owner => "ParentClass"},
           ]
         });
       @classes["ParentClass"] = @parent
@@ -61,7 +61,7 @@ describe JsDuck::Class do
           :name => "ChildClass",
           :extends => "ParentClass",
           :method => [
-            {:name => "foo", :member => "ChildClass"}
+            {:name => "foo", :owner => "ChildClass"}
           ]
         });
       @classes["ChildClass"] = @child

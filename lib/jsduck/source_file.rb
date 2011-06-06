@@ -65,8 +65,8 @@ module JsDuck
         doc[:name].gsub(/\./, '-')
       else
         # when creation of global class is skipped,
-        # this member property can be nil.
-        (doc[:member] || "global").gsub(/\./, '-') + "-" + doc[:tagname].to_s + "-" + doc[:name]
+        # this owner property can be nil.
+        (doc[:owner] || "global").gsub(/\./, '-') + "-" + doc[:tagname].to_s + "-" + doc[:name]
       end
     end
 

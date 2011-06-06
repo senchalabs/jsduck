@@ -18,7 +18,7 @@ describe JsDuck::Aggregator do
          * @member Bar
          */
       EOS
-      items[0][:member].should == "Bar"
+      items[0][:owner].should == "Bar"
     end
 
     it "forces item to be moved into that class" do

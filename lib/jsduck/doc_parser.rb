@@ -280,7 +280,7 @@ module JsDuck
         @current_tag[:cls] = ident_chain
         if look(/#\w/)
           @input.scan(/#/)
-          @current_tag[:member] = ident
+          @current_tag[:owner] = ident
         end
       end
       skip_white

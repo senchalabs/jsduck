@@ -98,9 +98,6 @@ module JsDuck
     #
     # When parent and child have members with same name,
     # member from child overrides tha parent member.
-    #
-    # We also set :member property to each member to the full class
-    # name where it belongs, so one can tell them apart afterwards.
     def members_hash(type)
       all_members = parent ? parent.members_hash(type) : {}
 

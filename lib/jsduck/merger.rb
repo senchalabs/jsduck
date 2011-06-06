@@ -70,7 +70,7 @@ module JsDuck
       result[:method] = []
       if groups[:constructor].length > 0
         constr = create_method(groups[:constructor], {})
-        constr[:member] = result[:name]
+        constr[:owner] = result[:name]
         result[:method] << constr
       end
       result[:property] = []
@@ -134,7 +134,7 @@ module JsDuck
       return add_shared({
         :tagname => :method,
         :name => name,
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :return => detect_return(doc_map, name == "constructor" ? "Object" : "void"),
@@ -146,18 +146,18 @@ module JsDuck
       return add_shared({
         :tagname => :event,
         :name => detect_name(:event, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
       }, doc_map)
     end
 
-    def create_cfg(docs, code, member = nil)
+    def create_cfg(docs, code, owner = nil)
       doc_map = build_doc_map(docs)
       return add_shared({
         :tagname => :cfg,
         :name => detect_name(:cfg, doc_map, code),
-        :member => detect_member(doc_map) || member,
+        :owner => detect_owner(doc_map) || owner,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
       }, doc_map)
@@ -168,7 +168,7 @@ module JsDuck
       return add_shared({
         :tagname => :property,
         :name => detect_name(:property, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :type => detect_type(:property, doc_map, code),
         :doc => detect_doc(docs),
       }, doc_map)
@@ -179,7 +179,7 @@ module JsDuck
       return add_shared({
         :tagname => :css_var,
         :name => detect_name(:css_var, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :type => detect_type(:css_var, doc_map, code),
         :doc => detect_doc(docs),
       }, doc_map)
@@ -190,7 +190,7 @@ module JsDuck
       return add_shared({
         :tagname => :css_mixin,
         :name => detect_name(:css_mixin, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
       }, doc_map)
@@ -224,7 +224,7 @@ module JsDuck
       end
     end
 
-    def detect_member(doc_map)
+    def detect_owner(doc_map)
       if doc_map[:member]
         doc_map[:member].first[:member]
       else
