@@ -268,4 +268,25 @@ describe JsDuck::DocFormatter do
     end
   end
 
+  describe "#first_sentence" do
+    it "extracts first sentence" do
+      @formatter.first_sentence("Hi John. This is me.").should == "Hi John."
+    end
+    it "extracts first sentence of multiline text" do
+      @formatter.first_sentence("Hi\nJohn.\nThis\nis\nme.").should == "Hi\nJohn."
+    end
+    it "returns everything if no dots in text" do
+      @formatter.first_sentence("Hi John this is me").should == "Hi John this is me"
+    end
+    it "returns everything if no dots in text" do
+      @formatter.first_sentence("Hi John this is me").should == "Hi John this is me"
+    end
+    it "ignores dots inside words" do
+      @formatter.first_sentence("Hi John th.is is me").should == "Hi John th.is is me"
+    end
+    it "ignores first empty sentence" do
+      @formatter.first_sentence(". Hi John. This is me.").should == ". Hi John."
+    end
+  end
+
 end
