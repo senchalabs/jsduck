@@ -212,7 +212,12 @@ a:hover {
       color: #929292;
       letter-spacing: 0;
       margin-left: 10px;
-      font-size: 0.6em; } }
+      font-size: 0.6em; }
+    span.private {
+      float: right;
+      font-weight: bold;
+      color: #e7ba27;
+      letter-spacing: 0px; } }
 
   h1.class {
     a {
