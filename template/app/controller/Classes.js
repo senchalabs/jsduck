@@ -24,6 +24,10 @@ Ext.define('Docs.controller.Classes', {
 
     refs: [
         {
+            ref: 'header',
+            selector: 'classheader'
+        },
+        {
             ref: 'tabPanel',
             selector: 'classtabpanel'
         },
@@ -154,13 +158,10 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-        var container = Ext.getCmp('container');
-        var classCnt = container.down('classcontainer');
-        var classHeader = classCnt.down('classheader');
-        var classOverview = classCnt.down('classoverview');
+        var classOverview = this.getTabPanel().down('classoverview');
 
         if (this.currentCls != cls) {
-            classHeader.load(cls);
+            this.getHeader().load(cls);
 
             // Init overview tab if not already available
             if (!classOverview) {
