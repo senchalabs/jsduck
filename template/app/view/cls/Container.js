@@ -1,10 +1,10 @@
 /**
- * The class documentation page. Consists of the header (class name) and class panel.
+ * The class documentation page. Consists of the header (class name) and tab panel.
  * TODO: Add framework version
  */
-Ext.define('Docs.view.cls.Show', {
+Ext.define('Docs.view.cls.Container', {
     extend: 'Ext.container.Container',
-    alias: 'widget.showclass',
+    alias: 'widget.classcontainer',
     requires: [
         'Docs.view.cls.Header',
         'Docs.view.cls.TabPanel'

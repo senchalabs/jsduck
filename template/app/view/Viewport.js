@@ -6,7 +6,7 @@
 Ext.define('Docs.view.Viewport', {
     extend: 'Ext.container.Viewport',
     requires: [
-        'Docs.view.cls.Show',
+        'Docs.view.cls.Container',
         'Docs.view.cls.List',
         'Docs.view.tree.Tree',
         'Docs.History'
@@ -102,7 +102,9 @@ Ext.define('Docs.view.Viewport', {
                             xtype: 'classlist',
                             classData: Docs.overviewData
                         },
-                        Ext.create('Docs.view.cls.Show'),
+                        {
+                            xtype: 'classcontainer'
+                        },
                         {
                             autoScroll: true,
                             xtype: 'container',

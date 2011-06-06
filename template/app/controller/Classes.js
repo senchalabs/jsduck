@@ -159,9 +159,9 @@ Ext.define('Docs.controller.Classes', {
     showClass: function(cls, anchor) {
         if (this.currentCls != cls) {
             var container = Ext.getCmp('container'),
-                showClass = container.down('showclass'),
-                classHeader = showClass.down('classheader'),
-                classOverview = showClass.down('classoverview');
+                classCnt = container.down('classcontainer'),
+                classHeader = classCnt.down('classheader'),
+                classOverview = classCnt.down('classoverview');
 
             classHeader.update(classHeader.tpl.apply(cls));
             classOverview.load(cls);
