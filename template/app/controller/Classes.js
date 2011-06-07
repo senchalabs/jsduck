@@ -79,7 +79,7 @@ Ext.define('Docs.controller.Classes', {
                 }
             },
 
-            'classlist': {
+            'indexcontainer': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(cmp, el) {
                         this.showGuide(el.rel);

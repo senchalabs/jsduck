@@ -32,6 +32,7 @@ def load_sdk_vars
     puts
     puts "    SDK_DIR='/path/to/SDK'"
     puts "    OUT_DIR='/path/to/ouput/dir'"
+    puts "    EXT_DIR='/path/to/ext/dir'"
     exit 1
   end
 end
@@ -70,6 +71,26 @@ end
 
 desc "Run JSDuck on ExtJS SDK for export"
 task :export do
+  load_sdk_vars
+
+  run_jsduck([
+    "--title", "Ext JS 4.0.2 API Documentation",
+    "--extjs-path", "extjs/ext-all.js",
+    "#{SDK_DIR}/extjs/src",
+    "#{SDK_DIR}/platform/src",
+    "#{SDK_DIR}/platform/core/src",
+  ])
+
+  system "rm #{OUT_DIR}/extjs"
+  system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
+  system "cp #{EXT_DIR}/ext-all.js #{OUT_DIR}/extjs"
+  system "cp -r #{EXT_DIR}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
+  system "rm -rf #{OUT_DIR}/resources/sass"
+  system "rm -rf #{OUT_DIR}/resources/.sass-cache"
+end
+
+desc "Run JSDuck on ExtJS SDK for export"
+task :live_docs do
   load_sdk_vars
 
   analytics = <<-EOHTML
