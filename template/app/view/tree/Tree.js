@@ -31,17 +31,8 @@ Ext.define('Docs.view.tree.Tree', {
         // Expand the main tree
         this.root.expanded = true;
         this.root.children[0].expanded = true;
-        // Add links for favoriting classes
-        // HACK: To do the favicons initialization after History store loaded.
-        this.on("render", function() {
-            Ext.getStore("Favorites").on("load", function() {
-                this.getRootNode().cascadeBy(this.addFavIcons, this);
-            }, this);
-        }, this);
 
         this.on("itemclick", this.onItemClick, this);
-
-        Docs.Favorites.setTree(this);
 
         this.dockedItems = [
             {
@@ -87,6 +78,28 @@ Ext.define('Docs.view.tree.Tree', {
         ];
 
         this.callParent();
+        
+        // Add links for favoriting classes
+        //
+        // We should be able to just listen the "render" event of tee,
+        // but for some reason the tree nodes aren't quite ready when
+        // "render" fires (setting text on node will cause an
+        // exception because the actual dom node seems to be missing,
+        // although setting text on the currently hidden nodes will
+        // work).  I found a workaround by listening the "refresh"
+        // event which seems to first fire when all tree nodes are
+        // ready.  Most ceartanly a big hack.
+        //
+        // Additionally all this is done after callParent, because the
+        // getRootNode() will work after initComponent has run.
+        // Probably not neccessary, because "refresh" should happen
+        // after that anyway, but just to play it safe.
+        Docs.Favorites.setTree(this);
+        Ext.getStore("Favorites").on("load", function() {
+            this.getView().on("refresh", function(){
+                this.getRootNode().cascadeBy(this.addFavIcons, this);
+            }, this, {single: true});
+        }, this);
     },
 
     addFavIcons: function(node) {
