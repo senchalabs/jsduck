@@ -87,6 +87,7 @@ Ext.define('Docs.view.Viewport', {
                         items: [
                             {
                                 xtype: 'classgrid',
+                                id: 'favorites-grid',
                                 title: 'Favorites',
                                 store: Ext.getStore('Favorites'),
                                 icons: Docs.icons,
@@ -98,6 +99,7 @@ Ext.define('Docs.view.Viewport', {
                             },
                             {
                                 xtype: 'classgrid',
+                                id: 'history-grid',
                                 title: 'History',
                                 store: Ext.getStore('History'),
                                 icons: Docs.icons,

@@ -60,6 +60,21 @@ Ext.define('Docs.view.ClassGrid', {
         this.getSelectionModel().on("select", function(sm, r) {
             this.fireEvent("classselect", r.get("cls"));
         }, this);
+    },
+
+    /**
+     * Selects class if grid contains such class.
+     * Fires no events while selecting.
+     * @param {String} cls  class name.
+     */
+    selectClass: function(cls) {
+        var index = this.getStore().findExact('cls', cls);
+        if (index > -1) {
+            this.getSelectionModel().select(index, false, true);
+        }
+        else {
+            this.getSelectionModel().deselectAll(true);
+        }
     }
 
 });

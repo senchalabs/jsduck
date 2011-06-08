@@ -34,6 +34,14 @@ Ext.define('Docs.controller.Classes', {
         {
             ref: 'tree',
             selector: 'classtree'
+        },
+        {
+            ref: 'favoritesGrid',
+            selector: '#favorites-grid'
+        },
+        {
+            ref: 'historyGrid',
+            selector: '#history-grid'
         }
     ],
 
@@ -190,6 +198,9 @@ Ext.define('Docs.controller.Classes', {
         }
 
         this.currentCls = cls;
+
+        this.getFavoritesGrid().selectClass(cls.name);
+        this.getHistoryGrid().selectClass(cls.name);
     },
 
     showGuide: function(name, noHistory) {
