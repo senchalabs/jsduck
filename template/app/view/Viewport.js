@@ -9,6 +9,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.cls.Container',
         'Docs.view.index.Container',
         'Docs.view.tree.Tree',
+        'Docs.view.ClassGrid',
         'Docs.History'
     ],
 
@@ -80,11 +81,21 @@ Ext.define('Docs.view.Viewport', {
                     },
                     {
                         xtype: 'tabpanel',
-                        height: 100,
+                        height: 150,
                         plain: true,
                         items: [
-                            {title: 'Favorites'},
-                            {title: 'History'}
+                            {
+                                xtype: 'classgrid',
+                                title: 'Favorites',
+                                store: Ext.getStore('Favorites'),
+                                icons: Docs.icons
+                            },
+                            {
+                                xtype: 'classgrid',
+                                title: 'History',
+                                store: Ext.getStore('History'),
+                                icons: Docs.icons
+                            }
                         ]
                     },
                     {
