@@ -10,7 +10,7 @@ module JsDuck
           icons.merge!(extract_icons(child))
         end
       else
-        icons[node[:id]] = node[:iconCls]
+        icons[node[:clsName]] = node[:iconCls]
       end
       icons
     end
