@@ -79,6 +79,15 @@ Ext.define('Docs.view.Viewport', {
                         ]
                     },
                     {
+                        xtype: 'tabpanel',
+                        height: 100,
+                        plain: true,
+                        items: [
+                            {title: 'Favorites'},
+                            {title: 'History'}
+                        ]
+                    },
+                    {
                         flex: 1,
                         xtype: 'classtree',
                         root: Docs.classData
