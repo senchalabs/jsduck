@@ -195,6 +195,11 @@ a:hover {
 #center-container, #west-region-container {
   background: #F8F8F8 url(../images/headBG.png) repeat-x; }
 
+#nested-west-region-container {
+  background: #F8F8F8;
+  .x-splitter {
+    background: #ccc; } }
+
 #center-container {
   padding: 20px;
 

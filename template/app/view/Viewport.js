@@ -81,41 +81,51 @@ Ext.define('Docs.view.Viewport', {
                         ]
                     },
                     {
-                        xtype: 'tabpanel',
-                        height: 150,
-                        plain: true,
-                        margin: '0 0 5 0',
+                        id: 'nested-west-region-container',
+                        flex: 1,
+                        layout: 'border',
+                        border: false,
                         items: [
                             {
-                                xtype: 'classgrid',
-                                id: 'favorites-grid',
-                                title: 'Favorites',
-                                store: Ext.getStore('Favorites'),
-                                icons: Docs.icons,
-                                listeners: {
-                                    closeclick: function(cls) {
-                                        Docs.Favorites.remove(cls);
+                                xtype: 'tabpanel',
+                                region: 'north',
+                                height: 150,
+                                plain: true,
+                                split: true,
+                                items: [
+                                    {
+                                        xtype: 'classgrid',
+                                        id: 'favorites-grid',
+                                        title: 'Favorites',
+                                        store: Ext.getStore('Favorites'),
+                                        icons: Docs.icons,
+                                        listeners: {
+                                            closeclick: function(cls) {
+                                                Docs.Favorites.remove(cls);
+                                            }
+                                        }
+                                    },
+                                    {
+                                        xtype: 'classgrid',
+                                        id: 'history-grid',
+                                        title: 'History',
+                                        store: Ext.getStore('History'),
+                                        icons: Docs.icons,
+                                        listeners: {
+                                            closeclick: function(cls) {
+                                                Docs.History.removeClass(cls);
+                                            }
+                                        }
                                     }
-                                }
+                                ]
                             },
                             {
-                                xtype: 'classgrid',
-                                id: 'history-grid',
-                                title: 'History',
-                                store: Ext.getStore('History'),
-                                icons: Docs.icons,
-                                listeners: {
-                                    closeclick: function(cls) {
-                                        Docs.History.removeClass(cls);
-                                    }
-                                }
+                                region: 'center',
+                                xtype: 'classtree',
+                                margin: '3 0 0 0',
+                                root: Docs.classData
                             }
                         ]
-                    },
-                    {
-                        flex: 1,
-                        xtype: 'classtree',
-                        root: Docs.classData
                     }
                 ]
             },
