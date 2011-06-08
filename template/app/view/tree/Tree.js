@@ -34,51 +34,8 @@ Ext.define('Docs.view.tree.Tree', {
 
         this.on("itemclick", this.onItemClick, this);
 
-        this.dockedItems = [
-            {
-                xtype: 'container',
-                layout: 'hbox',
-                dock: 'top',
-                margin: '0 0 15 0',
-                items: [
-                    {
-                        xtype: 'hovermenubutton',
-                        cls: 'icon-fav sidebar',
-                        text: 'Favorites',
-                        menuCfg: {
-                            cls: 'sidebar',
-                            emptyText: 'No favorites',
-                            showCloseButtons: true
-                        },
-                        store: Ext.getStore('Favorites'),
-                        listeners: {
-                            closeclick: function(cls) {
-                                Docs.Favorites.remove(cls);
-                            }
-                        }
-                    },
-                    {
-                        xtype: 'hovermenubutton',
-                        cls: 'icon-hist sidebar',
-                        text: 'History',
-                        menuCfg: {
-                            cls: 'sidebar',
-                            emptyText: 'No history',
-                            showCloseButtons: true
-                        },
-                        store: Ext.getStore('History'),
-                        listeners: {
-                            closeclick: function(cls) {
-                                Docs.History.removeClass(cls);
-                            }
-                        }
-                    }
-                ]
-            }
-        ];
-
         this.callParent();
-        
+
         // Add links for favoriting classes
         //
         // We should be able to just listen the "render" event of tee,
