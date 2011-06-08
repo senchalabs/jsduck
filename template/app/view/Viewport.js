@@ -84,6 +84,7 @@ Ext.define('Docs.view.Viewport', {
                         xtype: 'tabpanel',
                         height: 150,
                         plain: true,
+                        margin: '0 0 5 0',
                         items: [
                             {
                                 xtype: 'classgrid',
