@@ -78,6 +78,11 @@ Ext.define('Docs.controller.Classes', {
                     this.loadClass(cls);
                 }
             },
+            'classgrid': {
+                classselect: function(cls) {
+                    this.loadClass(cls);
+                }
+            },
 
             'indexcontainer': {
                 afterrender: function(cmp) {

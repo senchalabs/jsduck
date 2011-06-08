@@ -10,6 +10,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.index.Container',
         'Docs.view.tree.Tree',
         'Docs.view.ClassGrid',
+        'Docs.Favorites',
         'Docs.History'
     ],
 
@@ -88,13 +89,23 @@ Ext.define('Docs.view.Viewport', {
                                 xtype: 'classgrid',
                                 title: 'Favorites',
                                 store: Ext.getStore('Favorites'),
-                                icons: Docs.icons
+                                icons: Docs.icons,
+                                listeners: {
+                                    closeclick: function(cls) {
+                                        Docs.Favorites.remove(cls);
+                                    }
+                                }
                             },
                             {
                                 xtype: 'classgrid',
                                 title: 'History',
                                 store: Ext.getStore('History'),
-                                icons: Docs.icons
+                                icons: Docs.icons,
+                                listeners: {
+                                    closeclick: function(cls) {
+                                        Docs.History.removeClass(cls);
+                                    }
+                                }
                             }
                         ]
                     },

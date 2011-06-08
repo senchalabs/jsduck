@@ -7,7 +7,7 @@ Ext.define('Docs.view.ClassGrid', {
     hideHeaders: true,
     border: false,
     bodyBorder: false,
-    
+
     /**
      * @cfg {Object} icons
      * Mapping of class names to icon class names.
@@ -15,6 +15,21 @@ Ext.define('Docs.view.ClassGrid', {
     icons: {},
 
     initComponent: function() {
+        this.addEvents(
+            /**
+             * @event classselect
+             * Fired when class in grid selected.
+             * @param {String} name  Name of the class that was selected. For example "Ext.Ajax".
+             */
+            "classselect",
+            /**
+             * @event closeclick
+             * Fired when close button in grid clicked.
+             * @param {String} name  Name of the class that was closed. For example "Ext.Ajax".
+             */
+            "closeclick"
+        );
+
         this.columns = [
             {
                 width: 18,
@@ -32,11 +47,19 @@ Ext.define('Docs.view.ClassGrid', {
                 xtype: 'actioncolumn',
                 width: 18,
                 icon: 'resources/images/x12.png',
-                tooltip: 'Delete'
+                tooltip: 'Delete',
+                handler: function(view, rowIndex) {
+                    this.fireEvent("closeclick", this.getStore().getAt(rowIndex).get("cls"));
+                },
+                scope: this
             }
         ];
 
         this.callParent(arguments);
+
+        this.getSelectionModel().on("select", function(sm, r) {
+            this.fireEvent("classselect", r.get("cls"));
+        }, this);
     }
 
 });
