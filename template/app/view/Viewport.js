@@ -34,7 +34,7 @@ Ext.define('Docs.view.Viewport', {
                 region:'west',
                 width: 240,
                 id: 'west-region-container',
-                padding: '5 0 20 20',
+                padding: '5 0 20 0',
                 layout: 'vbox',
                 defaults: {
                     xtype: 'container',
@@ -45,7 +45,7 @@ Ext.define('Docs.view.Viewport', {
                         xtype: 'button',
                         cls: 'logo',
                         height: 60,
-                        margin: '0 0 10 0',
+                        margin: '0 0 10 10',
                         width: 220,
                         border: 0,
                         ui: 'hmm',
@@ -59,6 +59,7 @@ Ext.define('Docs.view.Viewport', {
                     {
                         cls: 'search',
                         id: 'search-container',
+                        margin: '0 0 0 5',
                         height: 40,
                         items: [
                             {
@@ -91,6 +92,8 @@ Ext.define('Docs.view.Viewport', {
                                 xtype: 'tabpanel',
                                 region: 'north',
                                 height: 150,
+                                padding: '0 5 0 10',
+                                margin: '0 10 4 0',
                                 plain: true,
                                 border: false,
                                 bodyPadding: '3 0',
@@ -125,7 +128,8 @@ Ext.define('Docs.view.Viewport', {
                             {
                                 region: 'center',
                                 xtype: 'classtree',
-                                margin: '5 0 0 0',
+                                padding: '10 10 0 10',
+                                margin: '0 10 0 0',
                                 root: Docs.classData
                             }
                         ]
@@ -137,6 +141,7 @@ Ext.define('Docs.view.Viewport', {
                 id: 'center-container',
                 layout: 'fit',
                 minWidth: 800,
+                padding: '20 20 20 0',
                 items: {
                     id: 'container',
                     xtype: 'container',
