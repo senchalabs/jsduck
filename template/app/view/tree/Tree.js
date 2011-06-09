@@ -81,25 +81,19 @@ Ext.define('Docs.view.tree.Tree', {
         
         // Add links for favoriting classes
         //
-        // We should be able to just listen the "render" event of tee,
-        // but for some reason the tree nodes aren't quite ready when
-        // "render" fires (setting text on node will cause an
-        // exception because the actual dom node seems to be missing,
-        // although setting text on the currently hidden nodes will
-        // work).  I found a workaround by listening the "refresh"
-        // event which seems to first fire when all tree nodes are
-        // ready.  Most ceartanly a big hack.
+        // Wait for the Favorites to load, then wait for tree to render,
+        // after which add the fav icons.
         //
-        // Additionally all this is done after callParent, because the
-        // getRootNode() will work after initComponent has run.
-        // Probably not neccessary, because "refresh" should happen
-        // after that anyway, but just to play it safe.
+        // Do all this after callParent, because the getRootNode() will work
+        // after initComponent has run.
         Docs.Favorites.setTree(this);
         Ext.getStore("Favorites").on("load", function() {
-            this.getView().on("refresh", function(){
-                this.getRootNode().cascadeBy(this.addFavIcons, this);
-            }, this, {single: true});
+            this.rendered ? this.initFavIcons() : this.on("render", this.initFavIcons, this);
         }, this);
+    },
+    
+    initFavIcons: function() {
+        this.getRootNode().cascadeBy(this.addFavIcons, this);
     },
 
     addFavIcons: function(node) {
