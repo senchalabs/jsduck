@@ -78,7 +78,7 @@ describe JsDuck::Class do
 
     it "returns constructor as first method" do
       ms = @child.members(:method)
-      ms.first[:name].should == "ChildClass"
+      ms.first[:name].should == "constructor"
     end
   end
 
