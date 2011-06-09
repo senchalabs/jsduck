@@ -220,8 +220,9 @@ Ext.define('Docs.view.cls.Overview', {
         var cfg = Ext.apply({}, member);
         cfg.expandable = member.shortDoc ? "expandable" : "not-expandable";
 
-        if (member.tagname === "method" && member.name === member.owner.replace(/^.*\./, "")) {
+        if (member.tagname === "method" && member.name === "constructor") {
             cfg.before = "<strong class='constructor-signature'>new</strong>";
+            cfg.name = this.docClass.name;
         }
 
         if (member.tagname === "cfg" || member.tagname === "property") {

@@ -68,8 +68,7 @@ module JsDuck
     # Returns array of all public members of particular type in a class,
     # sorted by name.
     #
-    # For methods the the constructor is listed as first method having
-    # the same name as class itself.
+    # For methods the the constructor is listed first.
     #
     # See members_hash for details.
     def members(type)
@@ -83,11 +82,7 @@ module JsDuck
       constr = ms.find {|m| m[:name] == "constructor" }
       if constr
         ms.delete(constr)
-        # Clone it.  Otherwise the search for "constructor" from this
-        # class will return nothing as we have renamed it.
-        constr2 = constr.clone
-        constr2[:name] = short_name
-        ms.unshift(constr2)
+        ms.unshift(constr)
       end
       ms
     end
