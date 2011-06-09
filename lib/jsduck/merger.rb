@@ -67,6 +67,7 @@ module JsDuck
       groups = group_class_docs(docs)
       result = create_bare_class(groups[:class], code)
       result[:members] = create_class_members(groups, result[:name])
+      result[:statics] = Class.default_members_hash
       result
     end
 

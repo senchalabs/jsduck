@@ -71,8 +71,8 @@ module JsDuck
     # For methods the the constructor is listed first.
     #
     # See members_hash for details.
-    def members(type)
-      ms = members_hash(type).values.sort {|a,b| a[:name] <=> b[:name] }
+    def members(type, context=:members)
+      ms = members_hash(type, context).values.sort {|a,b| a[:name] <=> b[:name] }
       type == :method ? constructor_first(ms) : ms
     end
 
@@ -93,14 +93,14 @@ module JsDuck
     #
     # When parent and child have members with same name,
     # member from child overrides tha parent member.
-    def members_hash(type)
-      all_members = parent ? parent.members_hash(type) : {}
+    def members_hash(type, context=:members)
+      all_members = parent ? parent.members_hash(type, context) : {}
 
       mixins.each do |mix|
-        all_members.merge!(mix.members_hash(type))
+        all_members.merge!(mix.members_hash(type, context))
       end
 
-      (@doc[:members][type] || []).each do |m|
+      (@doc[context][type] || []).each do |m|
         all_members[m[:name]] = m if !m[:private]
       end
 

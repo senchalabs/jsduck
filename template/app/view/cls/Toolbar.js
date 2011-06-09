@@ -30,11 +30,12 @@ Ext.define('Docs.view.cls.Toolbar', {
         };
         for (var type in memberTitles) {
             var members = this.docClass.members[type];
-            if (members.length) {
+            var statics = this.docClass.statics[type];
+            if (members.length || statics.length) {
                 var btn = this.createMemberButton({
                     text: memberTitles[type],
                     type: type,
-                    members: members
+                    members: members.concat(statics)
                 });
                 this.memberButtons[type] = btn;
                 this.items.push(btn);
@@ -122,7 +123,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     // creates store tha holds link records
     createStore: function(records) {
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'cls', 'url', 'label', 'inherited']
+            fields: ['id', 'cls', 'url', 'label', 'inherited', 'static']
         });
         store.add(records);
         return store;
@@ -134,7 +135,8 @@ Ext.define('Docs.view.cls.Toolbar', {
             cls: cls,
             url: member ? cls+"-"+member.tagname+"-"+member.name : cls,
             label: member ? ((member.name === "constructor") ? cls : member.name) : cls,
-            inherited: member ? member.owner !== cls : false
+            inherited: member ? member.owner !== cls : false,
+            'static': member ? member['static'] : false
         };
     },
 
