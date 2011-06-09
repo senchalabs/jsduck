@@ -248,10 +248,10 @@ Ext.define('Docs.view.cls.Overview', {
             }
         }
 
-        if (member.protected) {
+        if (member['protected']) {
             cfg.after = "<strong class='protected-signature'>protected</strong>";
         }
-        if (member.static) {
+        if (member['static']) {
             cfg.after = "<strong class='static-signature'>static</strong>";
         }
         if (member.deprecated) {
