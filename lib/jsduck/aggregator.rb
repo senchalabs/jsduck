@@ -73,17 +73,21 @@ module JsDuck
     def add_member(node)
       if node[:owner]
         if @classes[node[:owner]]
-          @classes[node[:owner]][:members][node[:tagname]] << node
+          add_to_class(@classes[node[:owner]], node)
         else
           add_orphan(node)
         end
       elsif @current_class
         node[:owner] = @current_class[:name]
-        @current_class[:members][ node[:tagname] ] << node
+        add_to_class(@current_class, node)
       else
         add_orphan(node)
       end
       @aliases << node if node[:alias]
+    end
+
+    def add_to_class(cls, member)
+      cls[member[:static] ? :statics : :members][member[:tagname]] << member
     end
 
     def add_orphan(node)
@@ -151,6 +155,7 @@ module JsDuck
         :mixins => [],
         :alternateClassNames => [],
         :members => Class.default_members_hash,
+        :statics => Class.default_members_hash,
         :filename => "",
         :html_filename => "",
         :linenr => 0,
