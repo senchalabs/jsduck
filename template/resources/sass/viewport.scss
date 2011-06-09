@@ -197,12 +197,30 @@ a:hover {
 
 #nested-west-region-container {
   background: #F8F8F8;
+  #nested-west-region-north {
+    .x-grid-row td {
+      background: none; border: 0; cursor: pointer;
+      img {
+        display: none;
+        margin-top: 1px; }}
+    .x-grid-row-over td {
+      background-color: #f0f0f0; }
+    .x-grid-row-selected td img,
+    .x-grid-row-over td img {
+      display: block; }
+    .x-grid-cell-inner {
+      padding: 2px 2px 3px 2px; } }
   .x-splitter {
-    background: #ccc; } }
+    background: #ccc;
+    border-style: solid;
+    border-color: #aaa;
+    height: 6px !important;
+    background-attachment: fixed;
+    background: #ccc url(../images/drag-bar-center.png) no-repeat center;
+    @include vertical-gradient(#dee0e0, #c8caca);
+    border-width: 1px 0; } }
 
 #center-container {
-  padding: 20px;
-
   h1 {
     font-family: "klavika-web-1", "klavika-web-2", sans-serif;
     letter-spacing: -1px;
@@ -371,7 +389,7 @@ a:hover {
       display: block; } } }
 
 
-.class-tree {
+#nested-west-region-container {
   .x-grid-cell-inner {
     font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: 13px;
@@ -726,3 +744,5 @@ a:hover {
       top: 3px;
       &:hover {
         @include opacity(1); } } } }
+
+
