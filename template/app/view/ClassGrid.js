@@ -70,8 +70,8 @@ Ext.define('Docs.view.ClassGrid', {
     selectClass: function(cls) {
         var index = this.getStore().findExact('cls', cls);
         if (index > -1) {
-            this.getSelectionModel().select(index, false, true);
             this.view.focusRow(index)
+            this.getSelectionModel().select(index, false, true);
         }
         else {
             this.getSelectionModel().deselectAll(true);
