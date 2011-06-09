@@ -100,6 +100,11 @@ module JsDuck
         all_members.merge!(mix.members_hash(type, context))
       end
 
+      # For static members, exclude everything not explicitly marked as inheritable
+      if context == :statics
+        all_members.delete_if {|key, member| !member[:inheritable] }
+      end
+
       (@doc[context][type] || []).each do |m|
         all_members[m[:name]] = m if !m[:private]
       end
