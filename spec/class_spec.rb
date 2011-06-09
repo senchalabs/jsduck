@@ -88,6 +88,77 @@ describe JsDuck::Class do
     end
   end
 
+  describe "#members(:statics)" do
+
+    before do
+      @classes = {}
+      @parent = JsDuck::Class.new({
+          :name => "ParentClass",
+          :statics => {
+            :method => [
+              {:name => "parentA", :owner => "ParentClass"},
+              {:name => "parentB", :owner => "ParentClass", :inheritable => true},
+            ]
+          }
+        });
+      @classes["ParentClass"] = @parent
+      @parent.relations = @classes
+
+      @mixin = JsDuck::Class.new({
+          :name => "MixinClass",
+          :statics => {
+            :method => [
+              {:name => "mixinA", :owner => "MixinClass"},
+              {:name => "mixinB", :owner => "MixinClass", :inheritable => true},
+            ]
+          }
+        });
+      @classes["MixinClass"] = @mixin
+      @mixin.relations = @classes
+
+      @child = JsDuck::Class.new({
+          :name => "ChildClass",
+          :extends => "ParentClass",
+          :mixins => ["MixinClass"],
+          :statics => {
+            :method => [
+              {:name => "childA", :owner => "ChildClass"},
+              {:name => "childB", :owner => "ChildClass", :inheritable => true},
+            ]
+          }
+        });
+      @classes["ChildClass"] = @child
+      @child.relations = @classes
+
+      @members = @child.members_hash(:method, :statics)
+    end
+
+    it "returns normal statics in current class" do
+      @members.should have_key("childA")
+    end
+
+    it "returns inheritableStatics in current class" do
+      @members.should have_key("childB")
+    end
+
+    it "doesn't inherit normal statics from parent class" do
+      @members.should_not have_key("parentA")
+    end
+
+    it "inherits inheritableStatics from parent class" do
+      @members.should have_key("parentB")
+    end
+
+    it "doesn't inherit normal statics from mixins" do
+      @members.should_not have_key("mixinA")
+    end
+
+    it "inherits inheritableStatics from mixins" do
+      @members.should have_key("mixinB")
+    end
+
+  end
+
   describe "#members(:method)" do
     before do
       @classes = {}

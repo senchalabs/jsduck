@@ -9,7 +9,7 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
-  describe "@static on single method" do
+  describe "normal @static on single method" do
     before do
       @doc = parse(<<-EOS)[0]
         /**
@@ -22,6 +22,31 @@ describe JsDuck::Aggregator do
 
     it "labels that method as static" do
       @doc[:static].should == true
+    end
+
+    it "doesn't detect inheritable property" do
+      @doc[:inheritable].should_not == true
+    end
+  end
+
+  describe "@static with @inheritable" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @static
+         * @inheritable
+         */
+        function bar() {}
+      EOS
+    end
+
+    it "labels that method as static" do
+      @doc[:static].should == true
+    end
+
+    it "detects the @inheritable property" do
+      @doc[:inheritable].should == true
     end
   end
 
