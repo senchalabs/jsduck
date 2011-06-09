@@ -199,9 +199,15 @@ a:hover {
   background: #F8F8F8;
   #nested-west-region-north {
     .x-grid-row td {
-      background: none; border: 0; cursor: pointer; }
+      background: none; border: 0; cursor: pointer;
+      img {
+        display: none;
+        margin-top: 1px; }}
     .x-grid-row-over td {
       background-color: #f0f0f0; }
+    .x-grid-row-selected td img,
+    .x-grid-row-over td img {
+      display: block; }
     .x-grid-cell-inner {
       padding: 2px 2px 3px 2px; } }
   .x-splitter {

@@ -92,11 +92,11 @@ Ext.define('Docs.view.Viewport', {
                                 xtype: 'tabpanel',
                                 region: 'north',
                                 height: 150,
-                                padding: '0 5 0 10',
-                                margin: '0 10 4 0',
+                                padding: '2 5 0 0',
+                                // margin: '0 10 4 0',
                                 plain: true,
                                 border: false,
-                                bodyPadding: '3 0',
+                                bodyPadding: '8 15 8 25',
                                 split: true,
                                 items: [
                                     {
@@ -129,7 +129,7 @@ Ext.define('Docs.view.Viewport', {
                                 region: 'center',
                                 xtype: 'classtree',
                                 padding: '10 10 0 10',
-                                margin: '0 10 0 0',
+                                margin: '0 5 0 0',
                                 root: Docs.classData
                             }
                         ]
