@@ -124,7 +124,7 @@ task :live_docs do
   EOHTML
 
   run_jsduck([
-    "--title", "Ext JS 4.0.1 API Documentation",
+    "--title", "Ext JS 4.0.2 API Documentation",
     "--extjs-path", "extjs/ext-all.js",
     "--append-html", analytics,
     "#{SDK_DIR}/extjs/src",
