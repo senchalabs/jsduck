@@ -98,6 +98,11 @@ Ext.define('Docs.view.Viewport', {
                                 border: false,
                                 bodyPadding: '8 15 8 25',
                                 split: true,
+                                listeners: {
+                                    afterRender: function() {
+                                        this.tabBar.insert(0, {width: 10, xtype: 'container'})
+                                    }
+                                },
                                 items: [
                                     {
                                         xtype: 'classgrid',
