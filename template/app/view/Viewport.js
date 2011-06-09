@@ -25,7 +25,7 @@ Ext.define('Docs.view.Viewport', {
                 region:'west',
                 width: 240,
                 id: 'west-region-container',
-                padding: '5 0 20 0',
+                padding: '5 0 0 0',
                 layout: 'vbox',
                 defaults: {
                     xtype: 'container',
@@ -89,26 +89,14 @@ Ext.define('Docs.view.Viewport', {
                                 // margin: '0 10 4 0',
                                 plain: true,
                                 border: false,
-                                bodyPadding: '8 15 8 25',
+                                bodyPadding: '8 15 8 12',
                                 split: true,
                                 listeners: {
                                     afterRender: function() {
-                                        this.tabBar.insert(0, {width: 10, xtype: 'container'})
+                                        this.tabBar.insert(0, {width: 7, xtype: 'container'})
                                     }
                                 },
                                 items: [
-                                    {
-                                        xtype: 'classgrid',
-                                        id: 'favorites-grid',
-                                        title: 'Favorites',
-                                        store: Ext.getStore('Favorites'),
-                                        icons: Docs.icons,
-                                        listeners: {
-                                            closeclick: function(cls) {
-                                                Docs.Favorites.remove(cls);
-                                            }
-                                        }
-                                    },
                                     {
                                         xtype: 'classgrid',
                                         id: 'history-grid',
@@ -120,6 +108,23 @@ Ext.define('Docs.view.Viewport', {
                                                 Docs.History.removeClass(cls);
                                             }
                                         }
+                                    },
+                                    {
+                                        xtype: 'classgrid',
+                                        id: 'favorites-grid',
+                                        title: 'Favorites',
+                                        viewConfig: {
+                                            plugins: {
+                                                ptype: 'gridviewdragdrop'
+                                            }
+                                        },
+                                        store: Ext.getStore('Favorites'),
+                                        icons: Docs.icons,
+                                        listeners: {
+                                            closeclick: function(cls) {
+                                                Docs.Favorites.remove(cls);
+                                            }
+                                        }
                                     }
                                 ]
                             },
@@ -127,7 +132,7 @@ Ext.define('Docs.view.Viewport', {
                                 region: 'center',
                                 xtype: 'classtree',
                                 padding: '10 10 0 10',
-                                margin: '0 5 0 0',
+                                margin: '0 5 10 0',
                                 root: Docs.classData
                             }
                         ]
