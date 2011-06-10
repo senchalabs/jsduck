@@ -166,11 +166,19 @@ Ext.define('Docs.view.cls.Toolbar', {
                 section && Ext.get(section).setStyle({display: hide ? 'none' : 'block'});
             }
 
-            // add first-child class to first member in section
-            var sectionMembers = Ext.query(sectionId+' .member' + (hide ? ".not-inherited" : ""));
-            if (sectionMembers.length > 0) {
-                Ext.get(sectionMembers[0]).addCls('first-child');
-            }
+            // add first-child class to first member in subsection
+            Ext.Array.forEach(Ext.query(sectionId+" .subsection"), function(subsection) {
+                var subsectionMembers = Ext.query('.member' + (hide ? ".not-inherited" : ""), subsection);
+                if (subsectionMembers.length > 0) {
+                    Ext.get(subsectionMembers[0]).addCls('first-child');
+                    // make sure subsection is visible
+                    Ext.get(subsection).setStyle({display: 'block'});
+                }
+                else {
+                    // Hide subsection completely if empty
+                    Ext.get(subsection).setStyle({display: 'none'});
+                }
+            }, this);
 
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();
