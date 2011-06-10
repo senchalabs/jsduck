@@ -24,6 +24,10 @@ Ext.define('Docs.controller.Classes', {
 
     refs: [
         {
+            ref: 'viewport',
+            selector: '#viewport'
+        },
+        {
             ref: 'header',
             selector: 'classheader'
         },
@@ -161,6 +165,7 @@ Ext.define('Docs.controller.Classes', {
         var classOverview = this.getTabPanel().down('classoverview');
 
         if (this.currentCls != cls) {
+            this.getViewport().setPageTitle(cls.name);
             this.getHeader().load(cls);
 
             // Init overview tab if not already available
@@ -194,6 +199,7 @@ Ext.define('Docs.controller.Classes', {
             url: this.getBaseUrl() + "/guides/" + name + "/README.js",
             callbackName: name,
             success: function(json) {
+                this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
                 Ext.getCmp("guide").update(json.guide);
                 Ext.getCmp('container').layout.setActiveItem(2);
                 Docs.Syntax.highlight(Ext.get("guide"));

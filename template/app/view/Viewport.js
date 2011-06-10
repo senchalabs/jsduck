@@ -40,9 +40,11 @@ Ext.define('Docs.view.Viewport', {
                         ui: 'hmm',
                         listeners: {
                             click: function() {
+                                this.setPageTitle("");
                                 Ext.getCmp('container').layout.setActiveItem(0);
                                 Docs.History.push("");
-                            }
+                            },
+                            scope: this
                         }
                     },
                     {
@@ -113,5 +115,18 @@ Ext.define('Docs.view.Viewport', {
         ];
 
         this.callParent(arguments);
+    },
+
+    /**
+     * Sets the contents of `<title>` tag.
+     * @param {String} text
+     */
+    setPageTitle: function(text) {
+        text = Ext.util.Format.stripTags(text);
+        var title = Ext.query("title")[0];
+        if (!this.origTitle) {
+            this.origTitle = title.innerHTML;
+        }
+        title.innerHTML = text ? (text + " - " + this.origTitle) : this.origTitle;
     }
 });
