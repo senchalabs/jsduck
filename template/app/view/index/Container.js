@@ -12,6 +12,7 @@ Ext.define('Docs.view.index.Container', {
 
         var tpl = new Ext.XTemplate(
             '<h1 class="pb">{title}</h1>',
+            Docs.live ? '' : '<div class="notice">Use <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a> for up to date documentation and features</div>',
             '<div class="legend icons">',
                 '<h4>Legend</h4>',
                 '<ul>',
@@ -42,7 +43,7 @@ Ext.define('Docs.view.index.Container', {
                   '<a class="guide direct" rel="direct" href="guides/direct/index.html">Direct</a>',
                   '<a class="guide accessibility" rel="accessibility" href="guides/accessibility/index.html">Accessibility</a>',
                 '</div>',
-                '<div class="egLink"><a href="http://dev.sencha.com/deploy/ext-4.0.1/examples/index.html">View the Ext 4.0.1 examples &rarr;</a></div>',
+                '<div class="egLink"><a href="http://dev.sencha.com/deploy/ext-4.0.3/examples/index.html">View the Ext 4.0 examples &rarr;</a></div>',
               '</div>',
             '</div>',
             '<tpl for="organisation">',

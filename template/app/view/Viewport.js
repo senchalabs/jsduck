@@ -19,15 +19,6 @@ Ext.define('Docs.view.Viewport', {
     initComponent: function() {
         this.items = [
 
-            // This is the 'live docs' header that should appear in the distributed version of the docs
-            // {
-            //     region: 'north',
-            //     layout: 'fit',
-            //     cls: 'notice',
-            //     html: 'For up to date documentation and features, visit <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a>',
-            //     height: 33
-            // },
-
             {
                 region:'west',
                 width: 240,

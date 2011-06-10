@@ -74,7 +74,7 @@ task :export do
   load_sdk_vars
 
   run_jsduck([
-    "--title", "Ext JS 4.0.2 API Documentation",
+    "--title", "Ext JS 4.0.3 API Documentation",
     "--extjs-path", "extjs/ext-all.js",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
@@ -95,6 +95,9 @@ task :live_docs do
 
   analytics = <<-EOHTML
     <script type="text/javascript">
+
+      Docs.live = true;
+
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-1396058-10']);
       _gaq.push(['_trackPageview']);
@@ -124,7 +127,7 @@ task :live_docs do
   EOHTML
 
   run_jsduck([
-    "--title", "Ext JS 4.0.1 API Documentation",
+    "--title", "Ext JS 4.0.3 API Documentation",
     "--extjs-path", "extjs/ext-all.js",
     "--append-html", analytics,
     "#{SDK_DIR}/extjs/src",
