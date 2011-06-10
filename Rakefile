@@ -72,9 +72,11 @@ end
 desc "Run JSDuck on ExtJS SDK for export"
 task :export do
   load_sdk_vars
+  rev = `git rev-parse HEAD`.slice(0, 7)
 
   run_jsduck([
     "--title", "Ext JS 4.0.3 API Documentation",
+    "--footer", "ExtJS 4.0.3 Documentation from Sencha. Generated with <a href='https://github.com/nene/jsduck'>JSDuck</a> revison #{rev}",
     "--extjs-path", "extjs/ext-all.js",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
@@ -92,6 +94,7 @@ end
 desc "Run JSDuck on ExtJS SDK for export"
 task :live_docs do
   load_sdk_vars
+  rev = `git rev-parse HEAD`.slice(0, 7)
 
   analytics = <<-EOHTML
     <script type="text/javascript">
@@ -128,6 +131,7 @@ task :live_docs do
 
   run_jsduck([
     "--title", "Ext JS 4.0.3 API Documentation",
+    "--footer", "ExtJS 4.0.3 Documentation from Sencha. Generated with <a href='https://github.com/nene/jsduck'>JSDuck</a> revison #{rev}",
     "--extjs-path", "extjs/ext-all.js",
     "--append-html", analytics,
     "#{SDK_DIR}/extjs/src",
