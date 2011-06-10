@@ -93,7 +93,13 @@ end
 desc "Run JSDuck on ExtJS SDK to create release version of docs app"
 task :export do
   load_sdk_vars
-  run_jsduck_export([], EXT_DIR)
+  run_jsduck_export([
+    "--append-html", <<-EOHTML
+    <div id="notice-text" style="display: none">
+      Use <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a> for up to date documentation and features
+    </div>
+    EOHTML
+  ], EXT_DIR)
 end
 
 desc "Run JSDuck on ExtJS SDK to create live docs app"
@@ -102,9 +108,6 @@ task :live_docs do
   run_jsduck_export([
     "--append-html", <<-EOHTML
     <script type="text/javascript">
-
-      Docs.live = true;
-
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-1396058-10']);
       _gaq.push(['_trackPageview']);

@@ -12,7 +12,9 @@ Ext.define('Docs.view.index.Container', {
 
         var tpl = new Ext.XTemplate(
             '<h1 class="pb">{title}</h1>',
-            Docs.live ? '' : '<div class="notice">Use <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a> for up to date documentation and features</div>',
+            '<tpl if="notice">',
+                '<div class="notice">{notice}</div>',
+            '</tpl>',
             '<div class="legend icons">',
                 '<h4>Legend</h4>',
                 '<ul>',
@@ -71,9 +73,12 @@ Ext.define('Docs.view.index.Container', {
             }
         );
 
+        var notice = Ext.get("notice-text");
         this.html = tpl.apply(Ext.apply({
             // Use the same title as in <title>
-            title: document.getElementsByTagName("title")[0].innerHTML
+            title: Ext.query("title")[0].innerHTML,
+            // If page contains div with notice-text extract the text and show it as notice
+            notice: notice && notice.dom.innerHTML
         }, data));
 
         this.callParent(arguments);
