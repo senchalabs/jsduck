@@ -126,7 +126,8 @@ a:hover {
   text-align: center;
   color: #434343;
   font-weight: bold;
-  padding: 8px 0; }
+  padding: 8px 0; margin: 0 20px 15px 0;
+  @include border-radius(8px); }
 
 .logo {
   background: url(../images/icon.png) 0 -787px no-repeat; }

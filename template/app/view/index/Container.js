@@ -12,6 +12,7 @@ Ext.define('Docs.view.index.Container', {
 
         var tpl = new Ext.XTemplate(
             '<h1 class="pb">{title}</h1>',
+            Docs.live ? '' : '<div class="notice">For up to date documentation and features, visit <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a></div>',
             '<div class="legend icons">',
                 '<h4>Legend</h4>',
                 '<ul>',

@@ -95,6 +95,9 @@ task :live_docs do
 
   analytics = <<-EOHTML
     <script type="text/javascript">
+
+      Docs.live = true;
+
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-1396058-10']);
       _gaq.push(['_trackPageview']);
