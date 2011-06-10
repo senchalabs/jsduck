@@ -122,6 +122,9 @@ module JsDuck
         @doc[:members].each_key do |type|
           @type_map.merge!(members_hash(type))
         end
+        @doc[:statics].each_key do |type|
+          @type_map.merge!(members_hash(type, :statics))
+        end
       end
 
       @type_map[name] && @type_map[name][:tagname]
