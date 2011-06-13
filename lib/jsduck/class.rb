@@ -68,12 +68,11 @@ module JsDuck
     # Returns array of all public members of particular type in a class,
     # sorted by name.
     #
-    # For methods the the constructor is listed as first method having
-    # the same name as class itself.
+    # For methods the the constructor is listed first.
     #
     # See members_hash for details.
-    def members(type)
-      ms = members_hash(type).values.sort {|a,b| a[:name] <=> b[:name] }
+    def members(type, context=:members)
+      ms = members_hash(type, context).values.sort {|a,b| a[:name] <=> b[:name] }
       type == :method ? constructor_first(ms) : ms
     end
 
@@ -83,11 +82,7 @@ module JsDuck
       constr = ms.find {|m| m[:name] == "constructor" }
       if constr
         ms.delete(constr)
-        # Clone it.  Otherwise the search for "constructor" from this
-        # class will return nothing as we have renamed it.
-        constr2 = constr.clone
-        constr2[:name] = short_name
-        ms.unshift(constr2)
+        ms.unshift(constr)
       end
       ms
     end
@@ -98,14 +93,19 @@ module JsDuck
     #
     # When parent and child have members with same name,
     # member from child overrides tha parent member.
-    def members_hash(type)
-      all_members = parent ? parent.members_hash(type) : {}
+    def members_hash(type, context=:members)
+      all_members = parent ? parent.members_hash(type, context) : {}
 
       mixins.each do |mix|
-        all_members.merge!(mix.members_hash(type))
+        all_members.merge!(mix.members_hash(type, context))
       end
 
-      (@doc[:members][type] || []).each do |m|
+      # For static members, exclude everything not explicitly marked as inheritable
+      if context == :statics
+        all_members.delete_if {|key, member| !member[:inheritable] }
+      end
+
+      (@doc[context][type] || []).each do |m|
         all_members[m[:name]] = m if !m[:private]
       end
 
@@ -121,6 +121,9 @@ module JsDuck
         @type_map = {}
         @doc[:members].each_key do |type|
           @type_map.merge!(members_hash(type))
+        end
+        @doc[:statics].each_key do |type|
+          @type_map.merge!(members_hash(type, :statics))
         end
       end
 

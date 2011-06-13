@@ -32,4 +32,5 @@ Ext.define('Docs.Application', {
             Docs.initEventTracking();
         }
     }
+
 });

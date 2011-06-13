@@ -47,7 +47,8 @@ Ext.define('Docs.view.HoverMenu', {
                 renderLink: function(values) {
                     var url = values.url || values.cls;
                     var label = values.label || values.cls;
-                    return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{1}</a>', url, label);
+                    var stat = values['static'] ? '<span class="static">static</span>' : "";
+                    return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{1} {2}</a>', url, label, stat);
                 }
             }
         );

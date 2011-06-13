@@ -136,36 +136,52 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     renderMembers: function(cls) {
-        var typeTitles = {
-            cfg: "Config options",
-            property: "Properties",
-            method: "Methods",
-            event: "Events"
-        };
+        var sections = [
+            {type: "cfg", title: "Config options"},
+            {type: "property", title: "Properties"},
+            {type: "method", title: "Methods"},
+            {type: "event", title: "Events"}
+        ];
 
         // Skip rendering empty sections
-        var html = [];
-        for (var type in typeTitles) {
-            if (cls.members[type].length > 0) {
-                html.push(this.renderSection(cls.members[type], type, typeTitles[type]));
-            }
-        }
-        return html.join("");
+        return Ext.Array.map(sections, function(sec) {
+            var members = cls.members[sec.type];
+            var statics = cls.statics[sec.type];
+            return (members.length > 0 || statics.length > 0) ? this.renderSection(members, statics, sec) : "";
+        }, this).join("");
     },
 
-    renderSection: function(members, type, title) {
+    renderSection: function(members, statics, section) {
         this.sectionTpl = this.sectionTpl || new Ext.XTemplate(
             '<div id="m-{type}">',
-                '<div class="definedBy">Defined By</div>',
+                '<tpl if="!statics.length">',
+                    '<div class="definedBy">Defined By</div>',
+                '</tpl>',
                 '<h3 class="members-title">{title}</h3>',
-                '{members}',
+                '<tpl if="members.length">',
+                    '<div class="subsection">',
+                        '<tpl if="statics.length">',
+                            '<div class="definedBy">Defined By</div>',
+                            '<h4 class="members-subtitle">Instance {title}</h3>',
+                        '</tpl>',
+                        '{members}',
+                    '</div>',
+                '</tpl>',
+                '<tpl if="statics.length">',
+                    '<div class="subsection">',
+                        '<div class="definedBy">Defined By</div>',
+                        '<h4 class="members-subtitle">Static {title}</h3>',
+                        '{statics}',
+                    '</div>',
+                '</tpl>',
             '</div>'
         );
 
         return this.sectionTpl.apply({
-            type: type,
-            title: title,
-            members: Ext.Array.map(members, this.renderMemberDiv, this).join("")
+            type: section.type,
+            title: section.title,
+            members: Ext.Array.map(members, this.renderMemberDiv, this).join(""),
+            statics: Ext.Array.map(statics, this.renderMemberDiv, this).join("")
         });
     },
 
@@ -220,8 +236,9 @@ Ext.define('Docs.view.cls.Overview', {
         var cfg = Ext.apply({}, member);
         cfg.expandable = member.shortDoc ? "expandable" : "not-expandable";
 
-        if (member.tagname === "method" && member.name === member.owner.replace(/^.*\./, "")) {
+        if (member.tagname === "method" && member.name === "constructor") {
             cfg.before = "<strong class='constructor-signature'>new</strong>";
+            cfg.name = this.docClass.name;
         }
 
         if (member.tagname === "cfg" || member.tagname === "property") {
@@ -235,10 +252,10 @@ Ext.define('Docs.view.cls.Overview', {
             }
         }
 
-        if (member.protected) {
+        if (member['protected']) {
             cfg.after = "<strong class='protected-signature'>protected</strong>";
         }
-        if (member.static) {
+        if (member['static']) {
             cfg.after = "<strong class='static-signature'>static</strong>";
         }
         if (member.deprecated) {

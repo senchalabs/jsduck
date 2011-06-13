@@ -67,6 +67,7 @@ module JsDuck
       groups = group_class_docs(docs)
       result = create_bare_class(groups[:class], code)
       result[:members] = create_class_members(groups, result[:name])
+      result[:statics] = Class.default_members_hash
       result
     end
 
@@ -203,6 +204,7 @@ module JsDuck
         :private => !!doc_map[:private],
         :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
+        :inheritable => !!doc_map[:inheritable],
         :deprecated => detect_deprecated(doc_map),
         :alias => doc_map[:alias] ? doc_map[:alias].first : nil,
       })

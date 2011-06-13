@@ -122,11 +122,12 @@ a:hover {
   color: #0464BB; }
 
 .notice {
-  background-color: #fff99c;
+  background-color: #ffc;
   text-align: center;
   color: #434343;
   font-weight: bold;
-  padding: 8px 0; }
+  padding: 8px 0; margin: 0 20px 15px 0;
+  @include border-radius(8px); }
 
 .logo {
   background: url(../images/icon.png) 0 -787px no-repeat; }
@@ -220,6 +221,18 @@ a:hover {
     @include vertical-gradient(#dee0e0, #c8caca);
     border-width: 1px 0; } }
 
+#footer {
+  background: #F8F8F8;
+  color: gray;
+  text-align: right;
+  font-size: 10px;
+  padding-right: 40px;
+  // The footer-content div is initially hidden on page to prevent it
+  // being visible while loading-screen is shown.  Only after the div is
+  // brought inside footer component, make it visible.
+  #footer-content {
+    display: block !important; } }
+
 #center-container {
   h1 {
     font-family: "klavika-web-1", "klavika-web-2", sans-serif;
@@ -262,7 +275,6 @@ a:hover {
   background: #fff;
   @include border-radius(5px);
   @include box-shadow(0, 0, 4px, rgba(0, 0, 0, 0.4));
-  padding: 20px;
   line-height: 1.4em;
   h3 {
     font-size: 1.2em;
@@ -576,10 +588,14 @@ a:hover {
     padding: 20px 20px 0 0;
     font-weight: bold;
     color: #666666; }
+  .subsection .definedBy {
+    // do not lower definedBy float when inside subsection
+    padding-top: 0; }
   h3.pa {
     padding: 10px 0 5px 0; }
   h3.members-title {
-    padding: 15px 0 10px 30px;
+    margin: 15px 0 5px 0;
+    padding-left: 30px;
     font-size: 1.3em;
     font-weight: bold; }
   #m-cfg .members-title {
@@ -590,6 +606,9 @@ a:hover {
     background: url(../images/methods.png) no-repeat 0 16px; }
   #m-event .members-title {
     background: url(../images/events.png) no-repeat 0 11px; }
+  h4.members-subtitle {
+    padding-left: 30px;
+    margin: 10px 0 7px 0; }
   ul ul {
     list-style: circle;
     margin-top: 1em; }
@@ -743,6 +762,12 @@ a:hover {
       right: 0;
       top: 3px;
       &:hover {
-        @include opacity(1); } } } }
-
-
+        @include opacity(1); } }
+    span.static {
+      font-size: 0.6em;
+      text-transform: uppercase;
+      font-weight: bold;
+      padding: 0 0.5em;
+      @include border-radius(2px);
+      color: white;
+      background: #484848; } } }

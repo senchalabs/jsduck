@@ -69,31 +69,44 @@ task :sdk do
   ])
 end
 
-desc "Run JSDuck on ExtJS SDK for export"
-task :export do
+def run_jsduck_export(extra_options, ext_dir)
   load_sdk_vars
+  rev = `git rev-parse HEAD`.slice(0, 7)
 
   run_jsduck([
-    "--title", "Ext JS 4.0.2 API Documentation",
+    "--title", "Ext JS 4.0.3 API Documentation",
+    "--footer", "ExtJS 4.0.3 Documentation from Sencha. Generated with <a href='https://github.com/nene/jsduck'>JSDuck</a> revison #{rev}",
     "--extjs-path", "extjs/ext-all.js",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",
-  ])
+  ].concat(extra_options))
 
   system "rm #{OUT_DIR}/extjs"
   system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
   system "cp #{EXT_DIR}/ext-all.js #{OUT_DIR}/extjs"
-  system "cp -r #{EXT_DIR}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
-  system "rm -rf #{OUT_DIR}/resources/sass"
+  system "cp -r #{ext_dir}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
+  system "rm -rf #{ext_dir}/resources/sass"
   system "rm -rf #{OUT_DIR}/resources/.sass-cache"
 end
 
-desc "Run JSDuck on ExtJS SDK for export"
+desc "Run JSDuck on ExtJS SDK to create release version of docs app"
+task :export do
+  load_sdk_vars
+  run_jsduck_export([
+    "--append-html", <<-EOHTML
+    <div id="notice-text" style="display: none">
+      Use <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a> for up to date documentation and features
+    </div>
+    EOHTML
+  ], EXT_DIR)
+end
+
+desc "Run JSDuck on ExtJS SDK to create live docs app"
 task :live_docs do
   load_sdk_vars
-
-  analytics = <<-EOHTML
+  run_jsduck_export([
+    "--append-html", <<-EOHTML
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-1396058-10']);
@@ -122,22 +135,7 @@ task :live_docs do
       }
     </script>
   EOHTML
-
-  run_jsduck([
-    "--title", "Ext JS 4.0.1 API Documentation",
-    "--extjs-path", "extjs/ext-all.js",
-    "--append-html", analytics,
-    "#{SDK_DIR}/extjs/src",
-    "#{SDK_DIR}/platform/src",
-    "#{SDK_DIR}/platform/core/src",
-  ])
-
-  system "rm #{OUT_DIR}/extjs"
-  system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
-  system "cp #{SDK_DIR}/extjs/build/sdk/ext-all.js #{OUT_DIR}/extjs"
-  system "cp -r #{SDK_DIR}/extjs/build/sdk/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
-  system "rm -rf #{OUT_DIR}/resources/sass"
-  system "rm -rf #{OUT_DIR}/resources/.sass-cache"
+  ], "#{SDK_DIR}/extjs/build/sdk")
 end
 
 desc "Run JSDuck on the Docs app itself"

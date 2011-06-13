@@ -33,6 +33,7 @@ module JsDuck
     attr_accessor :external_classes
     attr_accessor :show_private_classes
     attr_accessor :title
+    attr_accessor :footer
     attr_accessor :extjs_path
     attr_accessor :append_html
 
@@ -50,6 +51,7 @@ module JsDuck
       @external_classes = []
       @show_private_classes = false
       @title = "Ext JS API Documentation"
+      @footer = 'Generated with <a href="https://github.com/nene/jsduck">JSDuck</a>.'
       @extjs_path = "extjs/ext-all-debug.js"
       @append_html = ""
       @timer = Timer.new
@@ -321,6 +323,7 @@ module JsDuck
       Logger.instance.log("Creating #{dir}/index.html...")
       html = IO.read(template_dir+"/index.html")
       html.gsub!("{title}", @title)
+      html.gsub!("{footer}", @footer)
       html.gsub!("{extjs_path}", @extjs_path)
       html.gsub!("{append_html}", @append_html)
       FileUtils.rm(dir+"/index.html")

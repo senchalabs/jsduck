@@ -17,14 +17,11 @@ module JsDuck
     # Returns all data in Class object as hash.
     def export(cls)
       h = cls.to_hash
-      h[:members] = {
-        :cfg => cls.members(:cfg),
-        :property => cls.members(:property),
-        :method => cls.members(:method),
-        :event => cls.members(:event),
-        :cssVar => cls.members(:css_var),
-        :cssMixin => cls.members(:css_mixin),
-      }
+      h[:members] = {}
+      Class.default_members_hash.each_key do |key|
+        h[:members][key] = cls.members(key)
+        h[:statics][key] = cls.members(key, :statics)
+      end
       h[:component] = cls.inherits_from?("Ext.Component")
       h[:superclasses] = cls.superclasses.collect {|c| c.full_name }
       h[:subclasses] = @relations.subclasses(cls).collect {|c| c.full_name }
@@ -40,6 +37,9 @@ module JsDuck
       c[:doc] = @formatter.format(c[:doc]) if c[:doc]
       c[:members].each_pair do |type, members|
         c[:members][type] = members.map {|m| format_member(m) }
+      end
+      c[:statics].each_pair do |type, members|
+        c[:statics][type] = members.map {|m| format_member(m) }
       end
       c
     end

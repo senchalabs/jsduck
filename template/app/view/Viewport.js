@@ -21,15 +21,6 @@ Ext.define('Docs.view.Viewport', {
     initComponent: function() {
         this.items = [
 
-            // This is the 'live docs' header that should appear in the distributed version of the docs
-            // {
-            //     region: 'north',
-            //     layout: 'fit',
-            //     cls: 'notice',
-            //     html: 'For up to date documentation and features, visit <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a>',
-            //     height: 33
-            // },
-
             {
                 region:'west',
                 width: 240,
@@ -51,9 +42,11 @@ Ext.define('Docs.view.Viewport', {
                         ui: 'hmm',
                         listeners: {
                             click: function() {
+                                this.setPageTitle("");
                                 Ext.getCmp('container').layout.setActiveItem(0);
                                 Docs.History.push("");
-                            }
+                            },
+                            scope: this
                         }
                     },
                     {
@@ -146,7 +139,7 @@ Ext.define('Docs.view.Viewport', {
                 id: 'center-container',
                 layout: 'fit',
                 minWidth: 800,
-                padding: '20 20 20 0',
+                padding: '20 20 5 0',
                 items: {
                     id: 'container',
                     xtype: 'container',
@@ -169,9 +162,28 @@ Ext.define('Docs.view.Viewport', {
                         }
                     ]
                 }
+            },
+            {
+                region: 'south',
+                id: 'footer',
+                contentEl: 'footer-content',
+                height: 15
             }
         ];
 
         this.callParent(arguments);
+    },
+
+    /**
+     * Sets the contents of `<title>` tag.
+     * @param {String} text
+     */
+    setPageTitle: function(text) {
+        text = Ext.util.Format.stripTags(text);
+        var title = Ext.query("title")[0];
+        if (!this.origTitle) {
+            this.origTitle = title.innerHTML;
+        }
+        title.innerHTML = text ? (text + " - " + this.origTitle) : this.origTitle;
     }
 });
