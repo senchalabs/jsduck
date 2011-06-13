@@ -213,5 +213,43 @@ describe JsDuck::Aggregator do
     it_behaves_like "@alias"
   end
 
+  describe "recursive @aliases" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @method bar
+           * Original comment.
+           * @param arg1
+           * @param arg2
+           * @return {String}
+           */
+
+        /** @class HyperCore */
+          /**
+           * @method zap
+           * Alias2 comment.
+           * @alias Core#foobar
+           */
+
+        /** @class Core */
+          /**
+           * @method foobar
+           * Alias comment.
+           * @alias Foo#bar
+           */
+      EOF
+      @orig = @docs["Foo"][:members][:method][0]
+      @alias = @docs["Core"][:members][:method][0]
+      @alias2 = @docs["HyperCore"][:members][:method][0]
+    end
+
+    it_behaves_like "@alias"
+
+    it "alias2 inherites params from first method" do
+      @alias2[:params].length.should == 2
+    end
+  end
+
 end
 
