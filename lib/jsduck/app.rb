@@ -8,6 +8,7 @@ require 'jsduck/tree'
 require 'jsduck/tree_icons'
 require 'jsduck/members'
 require 'jsduck/relations'
+require 'jsduck/aliases'
 require 'jsduck/page'
 require 'jsduck/exporter'
 require 'jsduck/timer'
@@ -79,6 +80,7 @@ module JsDuck
       parsed_files = @timer.time(:parsing) { parallel_parse(@input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       relations = @timer.time(:aggregating) { filter_classes(result) }
+      Aliases.new(relations).resolve_all
       warn_globals(relations)
       warn_unnamed(relations)
 
@@ -124,7 +126,6 @@ module JsDuck
         agr.aggregate(file)
       end
       agr.classify_orphans
-      agr.populate_aliases
       agr.create_global_class unless @ignore_global
       agr.append_ext4_event_options
       agr.result

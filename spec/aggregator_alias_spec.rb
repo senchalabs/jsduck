@@ -1,13 +1,17 @@
 require "jsduck/aggregator"
 require "jsduck/source_file"
+require "jsduck/class"
+require "jsduck/relations"
+require "jsduck/aliases"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))
-    agr.populate_aliases
-    agr.result
+    relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
+    JsDuck::Aliases.new(relations).resolve_all
+    relations
   end
 
   shared_examples_for "@alias" do
@@ -43,8 +47,8 @@ describe JsDuck::Aggregator do
            * @alias Foo#bar
            */
       EOF
-      @orig = @docs[0][:members][:method][0]
-      @alias = @docs[1][:members][:method][0]
+      @orig = @docs["Foo"][:members][:method][0]
+      @alias = @docs["Core"][:members][:method][0]
     end
 
     it_behaves_like "@alias"
@@ -76,8 +80,8 @@ describe JsDuck::Aggregator do
            * @alias Foo#bar
            */
       EOF
-      @orig = @docs[0][:members][:event][0]
-      @alias = @docs[1][:members][:event][0]
+      @orig = @docs["Foo"][:members][:event][0]
+      @alias = @docs["Core"][:members][:event][0]
     end
 
     it_behaves_like "@alias"
@@ -107,8 +111,8 @@ describe JsDuck::Aggregator do
            * @alias Foo#bar
            */
       EOF
-      @orig = @docs[0][:members][:cfg][0]
-      @alias = @docs[1][:members][:cfg][0]
+      @orig = @docs["Foo"][:members][:cfg][0]
+      @alias = @docs["Core"][:members][:cfg][0]
     end
 
     it_behaves_like "@alias"
@@ -140,8 +144,39 @@ describe JsDuck::Aggregator do
            * @static
            */
       EOF
-      @orig = @docs[0][:statics][:method][0]
-      @alias = @docs[1][:statics][:method][0]
+      @orig = @docs["Foo"][:statics][:method][0]
+      @alias = @docs["Core"][:statics][:method][0]
+    end
+
+    it_behaves_like "@alias"
+  end
+
+  describe "@alias with type info" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @cfg bar
+           * Original comment.
+           */
+          /**
+           * @method bar
+           * Method comment.
+           */
+          /**
+           * @property bar
+           * Prop comment.
+           */
+
+        /** @class Core */
+          /**
+           * @cfg foobar
+           * Alias comment.
+           * @alias Foo#cfg-bar
+           */
+      EOF
+      @orig = @docs["Foo"][:members][:cfg][0]
+      @alias = @docs["Core"][:members][:cfg][0]
     end
 
     it_behaves_like "@alias"

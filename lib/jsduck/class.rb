@@ -124,7 +124,7 @@ module JsDuck
         @members_map = {}
         [:members, :statics].each do |group|
           @doc[group].each_key do |type|
-            members_hash(type).each_pair do |key, member|
+            members_hash(type, group).each_pair do |key, member|
               @members_map["#{type}-#{key}"] = member
               @members_map[key] = member
             end
@@ -133,6 +133,15 @@ module JsDuck
       end
 
       @members_map[type_name ? "#{type_name}-#{name}" : name]
+    end
+
+    # Loops through each member of the class, invoking block with each of them
+    def each_member(&block)
+      [:members, :statics].each do |group|
+        @doc[group].each_value do |members|
+          members.each(&block)
+        end
+      end
     end
 
     # A way to access full class name with similar syntax to

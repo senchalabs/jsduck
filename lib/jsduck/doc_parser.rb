@@ -273,7 +273,7 @@ module JsDuck
       skip_white
     end
 
-    # matches @alias class.name#member
+    # matches @alias class.name#type-member
     def at_alias
       match(/@alias/)
       add_tag(:alias)
@@ -282,7 +282,11 @@ module JsDuck
         @current_tag[:cls] = ident_chain
         if look(/#\w/)
           @input.scan(/#/)
-          @current_tag[:owner] = ident
+          if look(/\w+-\w+/)
+            @current_tag[:type] = ident
+            @input.scan(/-/)
+          end
+          @current_tag[:member] = ident
         end
       end
       skip_white
