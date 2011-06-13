@@ -10,6 +10,8 @@ module JsDuck
 
     def initialize(doc)
       @doc = doc
+      @doc[:members] = Class.default_members_hash if !@doc[:members]
+      @doc[:statics] = Class.default_members_hash if !@doc[:statics]
       @relations = nil
     end
 
