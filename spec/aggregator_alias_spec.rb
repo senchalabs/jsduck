@@ -182,5 +182,36 @@ describe JsDuck::Aggregator do
     it_behaves_like "@alias"
   end
 
+  describe "@alias without type info uses the type of itself" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @cfg bar
+           * Original comment.
+           */
+          /**
+           * @method bar
+           * Method comment.
+           */
+          /**
+           * @property bar
+           * Prop comment.
+           */
+
+        /** @class Core */
+          /**
+           * @cfg foobar
+           * Alias comment.
+           * @alias Foo#bar
+           */
+      EOF
+      @orig = @docs["Foo"][:members][:cfg][0]
+      @alias = @docs["Core"][:members][:cfg][0]
+    end
+
+    it_behaves_like "@alias"
+  end
+
 end
 
