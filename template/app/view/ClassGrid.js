@@ -60,6 +60,11 @@ Ext.define('Docs.view.ClassGrid', {
         this.getSelectionModel().on("select", function(sm, r) {
             this.fireEvent("classselect", r.get("cls"));
         }, this);
+
+        // Initialize selection after rendering
+        this.on("afterrender", function() {
+            this.selectClass(this.selectedClass);
+        }, this);
     },
 
     /**
@@ -68,12 +73,17 @@ Ext.define('Docs.view.ClassGrid', {
      * @param {String} cls  class name.
      */
     selectClass: function(cls) {
-        var index = this.getStore().findExact('cls', cls);
-        if (index > -1) {
-            this.getSelectionModel().select(index, false, true);
-        }
-        else {
-            this.getSelectionModel().deselectAll(true);
+        this.selectedClass = cls;
+        // when grid hasn't been rendered yet, trying to select will give us error.
+        if (this.rendered) {
+            var index = this.getStore().findExact('cls', cls);
+            var sm = this.getSelectionModel();
+            if (index > -1) {
+                sm.select(index, false, true);
+            }
+            else {
+                sm.deselectAll(true);
+            }
         }
     }
 
