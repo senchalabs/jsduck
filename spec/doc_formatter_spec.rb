@@ -188,6 +188,30 @@ describe JsDuck::DocFormatter do
           '<img src="some/file.jpg" alt="a MyClass image"/>'
       end
     end
+
+    describe "with type information" do
+      before do
+        @formatter.relations = JsDuck::Relations.new([
+          JsDuck::Class.new({
+            :name => 'Foo',
+            :members => {
+              :method => [{:name => "select", :tagname => :method}],
+              :event => [{:name => "select", :tagname => :event}],
+            }
+          })
+        ])
+      end
+
+      it "replaces {@link Foo#method-select} with link to method" do
+        @formatter.replace("Look at {@link Foo#method-select}").should ==
+          'Look at <a href="Foo#method-select">Foo.select</a>'
+      end
+
+      it "replaces {@link Foo#event-select} with link to event" do
+        @formatter.replace("Look at {@link Foo#event-select}").should ==
+          'Look at <a href="Foo#event-select">Foo.select</a>'
+      end
+    end
   end
 
   describe "#format" do

@@ -91,11 +91,13 @@ module JsDuck
       input.sub(@link_re) do
         target = $1
         text = $2
-        if target =~ /^(.*)#(.*)$/
+        if target =~ /^(.*)#(?:(.*)-)?(.*)$/
           cls = $1.empty? ? @class_context : $1
-          member = $2
+          type = $2 ? $2.intern : nil
+          member = $3
         else
           cls = target
+          type = false
           member = false
         end
 
@@ -113,11 +115,11 @@ module JsDuck
         if !@relations[cls]
           Logger.instance.warn("#{file} line #{line} #{input} links to non-existing class.")
           text
-        elsif member && !get_member_type(cls, member)
+        elsif member && !get_member(cls, member, type)
           Logger.instance.warn("#{file} line #{line} #{input} links to non-existing member.")
           text
         else
-          link(cls, member, text)
+          link(cls, member, text, type)
         end
       end
     end
@@ -158,11 +160,11 @@ module JsDuck
     end
 
     # applies the link template
-    def link(cls, member, anchor_text)
+    def link(cls, member, anchor_text, type=nil)
       # Use the canonical class name for link (not some alternateClassName)
       cls = @relations[cls].full_name
       # prepend type name to member name
-      member = member && (get_member_type(cls, member).to_s + "-" + member)
+      member = member && (get_member(cls, member, type)[:tagname].to_s + "-" + member)
 
       @link_tpl.gsub(/(%[\w#-])/) do
         case $1
@@ -182,8 +184,8 @@ module JsDuck
       end
     end
 
-    def get_member_type(cls, member)
-      @relations[cls] && @relations[cls].member_type(member)
+    def get_member(cls, member, type)
+      @relations[cls] && @relations[cls].get_member(member, type)
     end
 
     # Formats doc-comment for placement into HTML.
