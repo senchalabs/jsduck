@@ -211,8 +211,9 @@ describe JsDuck::Aggregator do
         /**
          * Some function
          * @param {String} x
+         * @param {Number} y
          */
-        function foo(q, y) {}
+        function foo(q, v, z) {}
       EOS
     end
     it_should_behave_like "method documentation"
