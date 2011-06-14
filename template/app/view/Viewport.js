@@ -93,7 +93,8 @@ Ext.define('Docs.view.Viewport', {
                                 split: true,
                                 listeners: {
                                     afterRender: function() {
-                                        this.tabBar.insert(0, {width: 7, xtype: 'container'})
+                                        // Add 7px padding at left side of tab-bar
+                                        this.tabBar.insert(0, {width: 7, xtype: 'container'});
                                     }
                                 },
                                 items: [
