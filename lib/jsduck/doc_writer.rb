@@ -131,10 +131,10 @@ module JsDuck
               at_tag,
               type(p[:type]),
               p[:name],
-              doc(p[:doc]),
             ].compact.join(" "),
             :markdown => p[:markdown],
           }),
+        maybe_html2text(p),
         privat(p[:private]),
         static(p[:static]),
       ]
