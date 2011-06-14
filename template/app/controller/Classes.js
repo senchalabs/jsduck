@@ -13,13 +13,15 @@ Ext.define('Docs.controller.Classes', {
     stores: [
         'Favorites',
         'History',
-        'Settings'
+        'Settings',
+        'Top100'
     ],
 
     models: [
         'Favorite',
         'History',
-        'Setting'
+        'Setting',
+        'Top100'
     ],
 
     refs: [
@@ -217,6 +219,14 @@ Ext.define('Docs.controller.Classes', {
             },
             scope: this
         });
+    },
+
+    showPage: function(pageName) {
+        if (pageName.match(/^Ext./)) {
+            this.loadClass(pageName);
+        } else {
+            this.showGuide(pageName);
+        }
     },
 
     /**

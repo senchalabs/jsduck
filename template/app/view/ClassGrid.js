@@ -14,6 +14,12 @@ Ext.define('Docs.view.ClassGrid', {
      */
     icons: {},
 
+    /**
+     * @cfg {Boolean} enableClose
+     * Show or hide the close column
+     */
+    enableClose: true,
+
     initComponent: function() {
         this.addEvents(
             /**
@@ -42,18 +48,23 @@ Ext.define('Docs.view.ClassGrid', {
             {
                 dataIndex: 'cls',
                 flex: true
-            },
-            {
-                xtype: 'actioncolumn',
-                width: 18,
-                icon: 'resources/images/x12.png',
-                tooltip: 'Delete',
-                handler: function(view, rowIndex) {
-                    this.fireEvent("closeclick", this.getStore().getAt(rowIndex).get("cls"));
-                },
-                scope: this
             }
         ];
+
+        if (this.enableClose) {
+            this.columns = this.columns.concat([
+                {
+                    xtype: 'actioncolumn',
+                    width: 18,
+                    icon: 'resources/images/x12.png',
+                    tooltip: 'Delete',
+                    handler: function(view, rowIndex) {
+                        this.fireEvent("closeclick", this.getStore().getAt(rowIndex).get("cls"));
+                    },
+                    scope: this
+                }
+            ]);
+        }
 
         this.callParent(arguments);
 
@@ -69,6 +80,12 @@ Ext.define('Docs.view.ClassGrid', {
      */
     selectClass: function(cls) {
         var index = this.getStore().findExact('cls', cls);
+        if (this.getSelectionModel().store) {
+            this.selectIndex(index);
+        }
+    },
+
+    selectIndex: function(index) {
         if (index > -1) {
             this.view.focusRow(index)
             this.getSelectionModel().select(index, false, true);
