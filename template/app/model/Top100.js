@@ -1,5 +1,5 @@
 /**
- * Previously visited classes / guides
+ * Store for top 100 most visited classes.
  */
 Ext.define('Docs.model.Top100', {
     fields: ['id', 'cls'],
