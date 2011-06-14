@@ -11,7 +11,10 @@ describe JsDuck::DocFormatter do
         :name => "Context",
         :members => {
           :method => [{:name => "bar", :tagname => :method}]
-        }
+        },
+        :statics => {
+          :method => [{:name => "id", :tagname => :method}],
+        },
       }),
       JsDuck::Class.new({
         :name => 'Ext.Msg'
@@ -20,6 +23,9 @@ describe JsDuck::DocFormatter do
         :name => "Foo",
         :members => {
           :cfg => [{:name => "bar", :tagname => :cfg}],
+        },
+        :statics => {
+          :method => [{:name => "id", :tagname => :method}],
         },
         :alternateClassNames => ["FooBar"]
       }),
@@ -40,9 +46,19 @@ describe JsDuck::DocFormatter do
         'Look at <a href="Foo#cfg-bar">Foo.bar</a>'
     end
 
+    it "replaces {@link Foo#id} with link to static class member" do
+      @formatter.replace("Look at {@link Foo#id}").should ==
+        'Look at <a href="Foo#method-id">Foo.id</a>'
+    end
+
     it "uses context to replace {@link #bar} with link to class member" do
       @formatter.replace("Look at {@link #bar}").should ==
         'Look at <a href="Context#method-bar">bar</a>'
+    end
+
+    it "uses context to replace {@link #id} with link to static class member" do
+      @formatter.replace("Look at {@link #id}").should ==
+        'Look at <a href="Context#method-id">id</a>'
     end
 
     it "allows use of custom link text" do
@@ -186,6 +202,30 @@ describe JsDuck::DocFormatter do
       it "doesn't create links inside {@img} tag" do
         @formatter.replace("{@img some/file.jpg a MyClass image}").should ==
           '<img src="some/file.jpg" alt="a MyClass image"/>'
+      end
+    end
+
+    describe "with type information" do
+      before do
+        @formatter.relations = JsDuck::Relations.new([
+          JsDuck::Class.new({
+            :name => 'Foo',
+            :members => {
+              :method => [{:name => "select", :tagname => :method}],
+              :event => [{:name => "select", :tagname => :event}],
+            }
+          })
+        ])
+      end
+
+      it "replaces {@link Foo#method-select} with link to method" do
+        @formatter.replace("Look at {@link Foo#method-select}").should ==
+          'Look at <a href="Foo#method-select">Foo.select</a>'
+      end
+
+      it "replaces {@link Foo#event-select} with link to event" do
+        @formatter.replace("Look at {@link Foo#event-select}").should ==
+          'Look at <a href="Foo#event-select">Foo.select</a>'
       end
     end
   end

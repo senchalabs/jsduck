@@ -9,7 +9,6 @@ module JsDuck
       @documentation = []
       @classes = {}
       @orphans = []
-      @aliases = []
       @current_class = nil
     end
 
@@ -83,7 +82,6 @@ module JsDuck
       else
         add_orphan(node)
       end
-      @aliases << node if node[:alias]
     end
 
     def add_to_class(cls, member)
@@ -116,22 +114,6 @@ module JsDuck
           @orphans.delete(orph)
         end
       end
-    end
-
-    # Copy over doc/params/return from original methods to aliases.
-    # Aliases are currently only supported for methods.
-    def populate_aliases
-      @aliases.each do |al|
-        orig = get_member(al[:alias][:cls], al[:alias][:owner])
-        al[:doc] = al[:doc] + "\n\n" + orig[:doc]
-        al[:params] = orig[:params]
-        al[:return] = orig[:return]
-      end
-    end
-
-    def get_member(cls_name, member_name)
-      cls = @classes[cls_name]
-      return cls[:members][:method].find {|m| m[:name] == member_name }
     end
 
     # Creates class with name "global" and inserts all the remaining

@@ -304,8 +304,9 @@ module JsDuck
       implicit = detect_implicit_params(code)
       explicit = detect_explicit_params(docs)
       # Override implicit parameters with explicit ones
+      # But if explicit ones exist, don't append the implicit ones.
       params = []
-      [implicit.length, explicit.length].max.times do |i|
+      (explicit.length > 0 ? explicit.length : implicit.length).times do |i|
         im = implicit[i] || {}
         ex = explicit[i] || {}
         doc = ex[:doc] || im[:doc] || ""

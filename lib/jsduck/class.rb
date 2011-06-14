@@ -10,6 +10,8 @@ module JsDuck
 
     def initialize(doc)
       @doc = doc
+      @doc[:members] = Class.default_members_hash if !@doc[:members]
+      @doc[:statics] = Class.default_members_hash if !@doc[:statics]
       @relations = nil
     end
 
@@ -112,22 +114,34 @@ module JsDuck
       all_members
     end
 
-    # Looks up member type by member name
+    # Returns member by name.
     #
-    # Returns type of nil if member not found
-    def member_type(name)
+    # Optionally one can also specify type name to differenciate
+    # between different types of members.
+    def get_member(name, type_name=nil)
       # build hash of all members
-      unless @type_map
-        @type_map = {}
-        @doc[:members].each_key do |type|
-          @type_map.merge!(members_hash(type))
-        end
-        @doc[:statics].each_key do |type|
-          @type_map.merge!(members_hash(type, :statics))
+      unless @members_map
+        @members_map = {}
+        [:members, :statics].each do |group|
+          @doc[group].each_key do |type|
+            members_hash(type, group).each_pair do |key, member|
+              @members_map["#{type}-#{key}"] = member
+              @members_map[key] = member
+            end
+          end
         end
       end
 
-      @type_map[name] && @type_map[name][:tagname]
+      @members_map[type_name ? "#{type_name}-#{name}" : name]
+    end
+
+    # Loops through each member of the class, invoking block with each of them
+    def each_member(&block)
+      [:members, :statics].each do |group|
+        @doc[group].each_value do |members|
+          members.each(&block)
+        end
+      end
     end
 
     # A way to access full class name with similar syntax to
