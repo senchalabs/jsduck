@@ -299,105 +299,104 @@ a {
   h3 {
     font-size: 1.2em;
     padding: 1em 0 0.4em 0;
-    font-weight: normal; }
-  .legend.guides {
-    padding: 15px;
-    width: 560px !important;
-    line-height: 1.7em;
-    h1 {
-      font-size: 1.7em !important; }
-    .lft {
-      float: left;
-      width: 200px; }
-    .mid {
-      float: left;
-      width: 100px;
-      margin-left: 20px; }
-    .right {
-      margin-left: 370px; }
-    a {
-      display: block;
-      height: 32px;
-      margin: 10px 0;
-      padding-left: 40px; }
-    .egLink {
-      border-top: 1px solid #ebebeb;
-      a {
-        padding-left: 10px;
-        margin: 10px 0 0 0;
-        height: auto; } }
-    .getting_started {
-      background: url(../images/guides.png) no-repeat 0px 0px; }
-    .drawing_and_charting {
-      background: url(../images/guides.png) no-repeat 0px -288px; }
-    .layouts_and_containers {
-      background: url(../images/guides.png) no-repeat 0px -130px; }
-    .application_architecture {
-      background: url(../images/guides.png) no-repeat 0px -98px; }
-    .class_system {
-      background: url(../images/guides.png) no-repeat 0px -31px; }
-    .data {
-      background: url(../images/guides.png) no-repeat 0px -66px; }
-    .grid {
-      background: url(../images/guides.png) no-repeat 0px -193px; }
-    .tree {
-      background: url(../images/guides.png) no-repeat 0px -228px; }
-    .components {
-      background: url(../images/guides.png) no-repeat 0px -160px; }
-    .theming {
-      background: url(../images/guides.png) no-repeat 0px -320px; }
-    .direct {
-      background: url(../images/guides.png) no-repeat 0px -387px; }
-    .accessibility {
-      background: url(../images/guides.png) no-repeat 0px -453px; } }
-  .category {
-    clear: both;
-    background-color: #f7f7f7;
-    border: 1px solid #ebebeb;
-    padding: 20px 10px 20px 20px;
-    margin: 0 20px 20px 0;
-    @include border-radius(10px); }
-  .category:last-child {
-    margin-bottom: 0; }
-  .lft {
-    float: left;
-    width: 250px;
-    margin-left: 20px; }
-  .mid {
-    float: left;
-    width: 280px; }
-  .rgt {
-    float: left; }
-  .links {
-    margin-left: 1.5em;
-    a {
-      display: block; }
-    a.more {
-      font-weight: bold; } }
+    font-weight: normal; } }
 
-  .legend {
+// Styles for index page
+#center-container .class-list {
+  // Main heading at the top of the page
+  h1.top {
+    margin-bottom: 12px; }
+  // All sections are inside gray round-corners bubbles
+  .section {
     @include border-radius(5px);
     background-color: #f7f7f7;
     border: 1px solid #ebebeb;
     padding: 0 15px 15px 10px;
-    margin: 0 20px 10px 0;
-    &.icons {
+    margin: 0 20px 20px 0;
+    // Icons legend, floated to right
+    &.legend {
       width: 120px;
-      float: right; }
-    ul {
-      float: left; }
-    .icn {
-      padding-left: 22px; }
-    a {
-      display: block; }
-    @include gray-h4; } }
-
-
-#center-container .class-list {
-  h1 {
-    padding-bottom: 10px;
-    &.pb {
-      margin-bottom: 12px; } } }
+      float: right;
+      @include gray-h4;
+      ul {
+        float: left; }
+      .icon {
+        padding-left: 22px; }
+      a {
+        display: block; } }
+    // Guides section at top left
+    &.guides {
+      padding: 15px;
+      width: 560px;
+      line-height: 1.7em;
+      h1 {
+        font-size: 1.7em !important; }
+      .lft {
+        float: left;
+        width: 200px;
+        margin-left: 20px }
+      .mid {
+        float: left;
+        width: 100px;
+        margin-left: 20px; }
+      .rgt {
+        margin-left: 370px; }
+      a {
+        display: block;
+        height: 32px;
+        margin: 10px 0;
+        padding-left: 40px; }
+      // Link to examples
+      .examples {
+        border-top: 1px solid #ebebeb;
+        a {
+          padding-left: 10px;
+          margin: 10px 0 0 0;
+          height: auto; } }
+      // Icons for each guide
+      .getting_started {
+        background: url(../images/guides.png) no-repeat 0px 0px; }
+      .drawing_and_charting {
+        background: url(../images/guides.png) no-repeat 0px -288px; }
+      .layouts_and_containers {
+        background: url(../images/guides.png) no-repeat 0px -130px; }
+      .application_architecture {
+        background: url(../images/guides.png) no-repeat 0px -98px; }
+      .class_system {
+        background: url(../images/guides.png) no-repeat 0px -31px; }
+      .data {
+        background: url(../images/guides.png) no-repeat 0px -66px; }
+      .grid {
+        background: url(../images/guides.png) no-repeat 0px -193px; }
+      .tree {
+        background: url(../images/guides.png) no-repeat 0px -228px; }
+      .components {
+        background: url(../images/guides.png) no-repeat 0px -160px; }
+      .theming {
+        background: url(../images/guides.png) no-repeat 0px -320px; }
+      .direct {
+        background: url(../images/guides.png) no-repeat 0px -387px; }
+      .accessibility {
+        background: url(../images/guides.png) no-repeat 0px -453px; } }
+    // Sections for class lists
+    &.classes {
+      clear: both;
+      padding: 20px 10px 20px 20px;
+      .lft {
+        float: left;
+        width: 250px;
+        margin-left: 20px; }
+      .mid {
+        float: left;
+        width: 280px; }
+      .rgt {
+        float: left; }
+      .links {
+        margin-left: 1.5em;
+        a {
+          display: block; }
+        a.more {
+          font-weight: bold; } } } } }
 
 
 #nested-west-region-container {
