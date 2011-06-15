@@ -35,7 +35,7 @@ Ext.define("Docs.History", {
             Docs.App.getController('Classes').showGuide(url.key, true);
         }
         else {
-            Ext.getCmp('container').layout.setActiveItem(0);
+            Ext.getCmp('card-panel').layout.setActiveItem(0);
         }
     },
 

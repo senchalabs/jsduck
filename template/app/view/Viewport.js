@@ -43,7 +43,7 @@ Ext.define('Docs.view.Viewport', {
                         listeners: {
                             click: function() {
                                 this.setPageTitle("");
-                                Ext.getCmp('container').layout.setActiveItem(0);
+                                Ext.getCmp('card-panel').layout.setActiveItem(0);
                                 Docs.History.push("");
                             },
                             scope: this
@@ -152,11 +152,10 @@ Ext.define('Docs.view.Viewport', {
                 minWidth: 800,
                 padding: '20 20 5 0',
                 items: {
-                    id: 'container',
+                    id: 'card-panel',
                     xtype: 'container',
                     layout: 'card',
                     padding: '20',
-                    cls: 'container',
                     items: [
                         {
                             autoScroll: true,

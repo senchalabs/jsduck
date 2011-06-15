@@ -141,7 +141,7 @@ Ext.define('Docs.controller.Classes', {
         var cls = clsUrl;
         var member;
 
-        Ext.getCmp('container').layout.setActiveItem(1);
+        Ext.getCmp('card-panel').layout.setActiveItem(1);
 
         // separate class and member name
         var matches = clsUrl.match(/^(.*?)(?:-(.*))?$/);
@@ -219,7 +219,7 @@ Ext.define('Docs.controller.Classes', {
             success: function(json) {
                 this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
                 Ext.getCmp("guide").update(json.guide);
-                Ext.getCmp('container').layout.setActiveItem(2);
+                Ext.getCmp('card-panel').layout.setActiveItem(2);
                 Docs.Syntax.highlight(Ext.get("guide"));
                 this.fireEvent('showGuide', name);
             },
