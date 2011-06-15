@@ -81,14 +81,11 @@ Ext.define('Docs.view.Viewport', {
                         border: false,
                         items: [
                             {
-                                id: 'nested-west-region-north',
+                                id: 'classes-tab-panel',
                                 xtype: 'tabpanel',
                                 region: 'north',
                                 height: 150,
-                                padding: '2 5 0 0',
-                                // margin: '0 10 4 0',
-                                plain: true,
-                                border: false,
+                                padding: '2 4 0 0',
                                 bodyPadding: '8 15 8 12',
                                 split: true,
                                 listeners: {
