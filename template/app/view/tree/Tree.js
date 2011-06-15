@@ -5,9 +5,7 @@ Ext.define('Docs.view.tree.Tree', {
     extend: 'Ext.tree.Panel',
     alias : 'widget.classtree',
     requires: [
-        'Docs.view.HoverMenuButton',
-        'Docs.Favorites',
-        'Docs.History'
+        'Docs.Favorites'
     ],
 
     cls: 'class-tree iScroll',
