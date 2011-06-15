@@ -1,3 +1,15 @@
+// Colors
+$docs-bg-color: #f8f8f8;
+$docs-text-color: #484848;
+$docs-link-color: #083772;
+$docs-link-hover-color: #0464BB;
+$docs-border-color: #bfbfbf;
+
+// Fonts
+$docs-font: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+$docs-heading-font: "klavika-web-1", "klavika-web-2", sans-serif;
+$docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
+
 @mixin box-shadow($x, $y, $radius, $color) {
   -webkit-box-shadow: $x $y $radius $color;
   -moz-box-shadow: $x $y $radius $color; }
@@ -71,7 +83,7 @@
 
 @mixin gray-h4 {
   h4 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: $docs-font;
     font-size: 90%;
     padding: 11px 0 5px 0;
     text-transform: uppercase;
@@ -84,10 +96,10 @@ html {
 
 body {
   -webkit-font-smoothing: antialiased;
-  font-family: 13px / 1.231 "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font: 13px / 1.231 $docs-font;
   min-width: 980px;
-  color: #484848;
-  background: #f8f8f8;
+  color: $docs-text-color;
+  background: $docs-bg-color;
   min-height: 100%; }
 
 #loading {
@@ -115,11 +127,10 @@ body {
     height: 120px; } }
 
 a {
-  color: #083772;
-  text-decoration: none; }
-
-a:hover {
-  color: #0464BB; }
+  color: $docs-link-color;
+  text-decoration: none;
+  &:hover {
+    color: $docs-link-hover-color; } }
 
 .notice {
   background-color: #ffc;
@@ -147,7 +158,7 @@ a:hover {
 
 #search-dropdown {
   border-style: solid;
-  border-color: #bebdbf;
+  border-color: $docs-border-color;
   border-width: 1px 1px 0 1px;
   background: white;
   position: absolute;
@@ -163,7 +174,7 @@ a:hover {
     padding: 5px 5px 5px 30px;
     border-width: 0px 0px 1px 0px;
     border-style: solid;
-    border-color: #bebdbf;
+    border-color: $docs-border-color;
     color: #605f5f;
     .title {
       font-weight: bold;
@@ -194,10 +205,10 @@ a:hover {
 
 
 #center-container, #west-region-container {
-  background: #F8F8F8 url(../images/headBG.png) repeat-x; }
+  background: $docs-bg-color url(../images/headBG.png) repeat-x; }
 
 #nested-west-region-container {
-  background: #F8F8F8;
+  background: $docs-bg-color;
   #classes-tab-panel {
     .x-grid-row td {
       background: none;
@@ -224,14 +235,14 @@ a:hover {
   .x-splitter {
     background: #ccc;
     border-style: solid;
-    border-color: #bfbfbf;
+    border-color: $docs-border-color;
     height: 6px !important;
     background-attachment: fixed;
     background: #e9e9e9 url(../images/drag-bar-center.png) no-repeat center;
     border-width: 1px 0; } }
 
 #footer {
-  background: #F8F8F8;
+  background: $docs-bg-color;
   color: gray;
   text-align: right;
   font-size: 10px;
@@ -244,7 +255,7 @@ a:hover {
 
 #center-container {
   h1 {
-    font-family: "klavika-web-1", "klavika-web-2", sans-serif;
+    font-family: $docs-heading-font;
     letter-spacing: -1px;
     padding-bottom: 5px;
     padding-top: 2px;
@@ -412,7 +423,7 @@ a:hover {
 
 #nested-west-region-container {
   .x-grid-cell-inner {
-    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-family: $docs-font;
     font-size: 13px;
     position: relative;
     -webkit-transition: background-color 0.15s linear;
@@ -434,7 +445,7 @@ a:hover {
         &:hover {
           @include icon-fav-over; } } } }
   .x-panel-body {
-    background: #f8f8f8; }
+    background: $docs-bg-color; }
   .sortBy {
     position: relative;
     padding-bottom: 10px;
@@ -468,14 +479,14 @@ a:hover {
     border: solid 1px #e8e8e8;
     @include border-radius(5px);
     color: #314e64;
-    font-family: "Menlo", "Courier New", Courier, monospace;
+    font-family: $docs-monospace-font;
     padding: 10px 20px;
     line-height: 1.3em;
     margin: 10px 0 14px;
     overflow-x: auto;
     overflow-y: hidden;
     code {
-      font-family: "Menlo", "Courier New", Courier, monospace; }
+      font-family: $docs-monospace-font; }
     i,em {
       font-style: normal; } }
   pre.prettyprint {
@@ -498,7 +509,7 @@ a:hover {
       padding: 0 0 0 12px;
       margin-top: 3px; }
     .alternate-class-name {
-      color: #484848; }
+      color: $docs-text-color; }
     .subclass {
       background: url(../images/elbow-end.gif) no-repeat -5px 0;
       margin-top: 3px;
@@ -535,13 +546,13 @@ a:hover {
   h1 {
     background: url(../images/doc-m.png) no-repeat -5px -5px;
     padding: 10px 0 10px 55px;
-    font-family: "klavika-web-1", "klavika-web-2", sans-serif;
+    font-family: $docs-heading-font;
     letter-spacing: -1px;
     margin-bottom: 16px;
     font-size: 2.3em;
     color: #66ab16; }
   h2 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: $docs-font;
     letter-spacing: -1px;
     line-height: 20px;
     border-bottom: 1px solid #f1f1f1;
@@ -575,11 +586,11 @@ a:hover {
   .protected-signature {
     background-color: #aaa; }
   .static-signature {
-    background-color: #484848; }
+    background-color: $docs-text-color; }
   .constructor-signature {
     margin-left: 0;
     margin-right: 5px;
-    background-color: #484848; }
+    background-color: $docs-text-color; }
   .cfgGroup {
     margin: 10px 0 3px 0; } }
 
@@ -590,7 +601,7 @@ a:hover {
   first-child: {
     padding-top: 0; };
   .pre {
-    font-family: "Menlo", "Courier New", Courier, monospace;
+    font-family: $docs-monospace-font;
     font-size: 0.9em; }
   .definedBy {
     float: right;
@@ -643,7 +654,7 @@ a:hover {
       color: #888888;
       font-size: 0.9em;
       &:hover {
-        color: #0464bb; } }
+        color: $docs-link-hover-color; } }
     a.side {
       display: block;
       position: absolute;
@@ -666,7 +677,7 @@ a:hover {
       -webkit-transition: color 0.2s linear;
       font-size: 0.9em;
       &:hover {
-        color: #0464bb; } }
+        color: $docs-link-hover-color; } }
     &:hover {
       a.viewSource {
         color: rgba(128, 128, 128, 1);
@@ -710,7 +721,7 @@ a:hover {
 .member-links {
   border-width: 0 0 1px 0;
   border-style: solid;
-  border-color: #bfbfbf;
+  border-color: $docs-border-color;
   // @include vertical-gradient(#e8e8e8, #eaeaea)
   .expandAllMembers {
     background: url(../images/expandcollapse.png) no-repeat -14px 2px; }
@@ -737,7 +748,7 @@ a:hover {
   z-index: 8;
   top: 21px;
   line-height: 1.3em;
-  border: 1px solid #bfbfbf;
+  border: 1px solid $docs-border-color;
   border-top: 1px solid #eaeaea;
   left: -16px;
   @include border-radius-bottom(5px);
@@ -755,10 +766,10 @@ a:hover {
     display: block;
     position: relative;
     padding: 2px 30px 2px 0;
-    color: #0464bb;
+    color: $docs-link-hover-color;
     white-space: nowrap;
     &:hover {
-      color: #083772;
+      color: $docs-link-color;
       text-decoration: underline; }
     &.close {
       position: absolute;
@@ -779,4 +790,4 @@ a:hover {
       padding: 0 0.5em;
       @include border-radius(2px);
       color: white;
-      background: #484848; } } }
+      background: $docs-text-color; } } }
