@@ -87,6 +87,8 @@ Ext.define('Docs.view.Viewport', {
                                 height: 150,
                                 padding: '2 4 0 0',
                                 bodyPadding: '8 15 8 12',
+                                border: false,
+                                plain: true,
                                 split: true,
                                 listeners: {
                                     afterRender: function() {
