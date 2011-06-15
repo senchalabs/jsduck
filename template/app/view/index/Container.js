@@ -22,7 +22,7 @@ Ext.define('Docs.view.index.Container', {
                   '<li class="icn icon-class">Class</li>',
                   '<li class="icn icon-singleton">Singleton</li>',
                   '<li class="icn icon-component">Component</li>',
-                  '<li class="icn icon-book">Guide</li>',
+                  '<li class="icn icon-guide">Guide</li>',
                 '</ul>',
               '</div>',
               '<div class="legend guides">',
