@@ -64,7 +64,9 @@ Ext.define('Docs.view.cls.Overview', {
         this.classTpl = this.classTpl || new Ext.XTemplate(
             '<div>',
                 '{hierarchy}',
-                '{doc}',
+                 '<div class="doc-contents">',
+                    '{doc}',
+                '</div>',
                 '<div class="members">',
                     '{members}',
                 '</div>',
