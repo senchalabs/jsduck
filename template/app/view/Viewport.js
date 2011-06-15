@@ -153,6 +153,7 @@ Ext.define('Docs.view.Viewport', {
                 padding: '20 20 5 0',
                 items: {
                     id: 'card-panel',
+                    cls: 'card-panel',
                     xtype: 'container',
                     layout: 'card',
                     padding: '20',

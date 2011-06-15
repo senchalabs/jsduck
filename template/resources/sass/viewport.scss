@@ -291,11 +291,15 @@ a {
       margin-left: -12px;
       padding: 0.1em 0 0.4em 2em; } } }
 
-#card-panel {
+.card-panel {
   background: #fff;
   @include border-radius(5px);
   @include box-shadow(0, 0, 4px, rgba(0, 0, 0, 0.4));
-  line-height: 1.4em; }
+  line-height: 1.4em;
+  h3 {
+    font-size: 1.2em;
+    padding: 1em 0 0.4em 0;
+    font-weight: normal; } }
 
 // Styles for index page
 #center-container .class-list {
@@ -378,10 +382,6 @@ a {
     &.classes {
       clear: both;
       padding: 20px 10px 20px 20px;
-      h3 {
-        font-size: 1.2em;
-        padding: 1em 0 0.4em 0;
-        font-weight: normal; }
       .lft {
         float: left;
         width: 250px;
