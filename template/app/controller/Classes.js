@@ -94,7 +94,7 @@ Ext.define('Docs.controller.Classes', {
             },
             'classgrid': {
                 classselect: function(cls) {
-                    this.loadClass(cls);
+                    this.showPage(cls);
                 }
             },
 
