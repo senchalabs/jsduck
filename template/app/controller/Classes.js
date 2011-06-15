@@ -94,7 +94,7 @@ Ext.define('Docs.controller.Classes', {
             },
             'classgrid': {
                 classselect: function(cls) {
-                    this.showPage(cls);
+                    this.loadClass(cls);
                 }
             },
 
@@ -225,14 +225,6 @@ Ext.define('Docs.controller.Classes', {
             },
             scope: this
         });
-    },
-
-    showPage: function(pageName) {
-        if (pageName.match(/^Ext./)) {
-            this.loadClass(pageName);
-        } else {
-            this.showGuide(pageName);
-        }
     },
 
     /**

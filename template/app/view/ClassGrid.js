@@ -41,24 +41,13 @@ Ext.define('Docs.view.ClassGrid', {
                 width: 18,
                 dataIndex: 'cls',
                 renderer: function(cls, data) {
-                    if (cls.match(/^[a-z_]+$/)) {
-                        data.tdCls = 'icon-guide';
-                    } else {
-                        data.tdCls = this.icons[cls];
-                    }
+                    data.tdCls = this.icons[cls];
                 },
                 scope: this
             },
             {
                 dataIndex: 'cls',
-                flex: true,
-                renderer: function(cls, data) {
-                    if (cls.match(/^[a-z_]+$/)) {
-                        return Ext.Array.map(cls.split('_'), function(s) { return Ext.String.capitalize(s) }).join(" ");
-                    } else {
-                        return cls;
-                    }
-                }
+                flex: true
             }
         ];
 
