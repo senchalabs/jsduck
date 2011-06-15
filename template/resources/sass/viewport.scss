@@ -394,31 +394,10 @@ a {
 
 
 #center-container .class-list {
-  h1.pb { margin-bottom: 12px; }
-  h2 {
-    font-weight: bold; }
-  td {
-    padding: 0 0 0 20px;
-    vertical-align: top; }
-  .group {
-    h1 {
-      padding-bottom: 10px; }
-    background: #fafafa;
-    padding: 10px 20px 20px 20px;
-    margin: 0 20px 20px 0;
-    @include border-radius(10px);
-    h2 {
-      border-bottom: 1px solid #dddddd;
-      padding-bottom: 2px;
-      margin-bottom: 2px;
-      padding-top: 10px; }
-    td.l {
-      span {
-        font-family: courier;
-        padding-right: 3px; } } }
-  .piechartLinks {
-    a {
-      display: block; } } }
+  h1 {
+    padding-bottom: 10px;
+    &.pb {
+      margin-bottom: 12px; } } }
 
 
 #nested-west-region-container {
