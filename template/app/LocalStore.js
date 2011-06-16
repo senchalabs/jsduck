@@ -1,7 +1,7 @@
 /**
  * Provides methods dealing with localStorage- and memory-store.
  *
- * Base class for History and Favorites.
+ * Base class for Favorites and Settings.
  */
 Ext.define("Docs.LocalStore", {
     storeName: '',

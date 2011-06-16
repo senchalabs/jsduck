@@ -12,13 +12,11 @@ Ext.define('Docs.controller.Classes', {
 
     stores: [
         'Favorites',
-        'History',
         'Settings'
     ],
 
     models: [
         'Favorite',
-        'History',
         'Setting'
     ],
 
@@ -203,7 +201,6 @@ Ext.define('Docs.controller.Classes', {
         this.currentCls = cls;
 
         this.getFavoritesGrid().selectClass(cls.name);
-        this.getHistoryGrid().selectClass(cls.name);
     },
 
     showGuide: function(name, noHistory) {

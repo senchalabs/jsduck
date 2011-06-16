@@ -99,18 +99,6 @@ Ext.define('Docs.view.Viewport', {
                                 items: [
                                     {
                                         xtype: 'classgrid',
-                                        id: 'history-grid',
-                                        title: 'History',
-                                        store: Ext.getStore('History'),
-                                        icons: Docs.icons,
-                                        listeners: {
-                                            closeclick: function(cls) {
-                                                Docs.History.removeClass(cls);
-                                            }
-                                        }
-                                    },
-                                    {
-                                        xtype: 'classgrid',
                                         id: 'favorites-grid',
                                         title: 'Favorites',
                                         viewConfig: {
