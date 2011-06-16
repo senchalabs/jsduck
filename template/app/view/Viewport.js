@@ -9,6 +9,8 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.cls.Container',
         'Docs.view.index.Container',
         'Docs.view.tree.Tree',
+        'Docs.view.ClassGrid',
+        'Docs.Favorites',
         'Docs.History'
     ],
 
@@ -23,7 +25,7 @@ Ext.define('Docs.view.Viewport', {
                 region:'west',
                 width: 240,
                 id: 'west-region-container',
-                padding: '5 0 20 20',
+                padding: '5 0 0 0',
                 layout: 'vbox',
                 defaults: {
                     xtype: 'container',
@@ -34,14 +36,14 @@ Ext.define('Docs.view.Viewport', {
                         xtype: 'button',
                         cls: 'logo',
                         height: 60,
-                        margin: '0 0 10 0',
+                        margin: '0 0 10 10',
                         width: 220,
                         border: 0,
                         ui: 'hmm',
                         listeners: {
                             click: function() {
                                 this.setPageTitle("");
-                                Ext.getCmp('container').layout.setActiveItem(0);
+                                Ext.getCmp('card-panel').layout.setActiveItem(0);
                                 Docs.History.push("");
                             },
                             scope: this
@@ -50,6 +52,7 @@ Ext.define('Docs.view.Viewport', {
                     {
                         cls: 'search',
                         id: 'search-container',
+                        margin: '0 0 0 5',
                         height: 40,
                         items: [
                             {
@@ -72,9 +75,56 @@ Ext.define('Docs.view.Viewport', {
                         ]
                     },
                     {
+                        id: 'nested-west-region-container',
                         flex: 1,
-                        xtype: 'classtree',
-                        root: Docs.classData
+                        layout: 'border',
+                        border: false,
+                        items: [
+                            {
+                                id: 'classes-tab-panel',
+                                xtype: 'tabpanel',
+                                region: 'north',
+                                height: 150,
+                                padding: '2 4 0 0',
+                                bodyPadding: '8 15 8 12',
+                                border: false,
+                                plain: true,
+                                split: true,
+                                listeners: {
+                                    afterRender: function() {
+                                        // Add 7px padding at left side of tab-bar
+                                        this.tabBar.insert(0, {width: 7, xtype: 'container'});
+                                    }
+                                },
+                                items: [
+                                    {
+                                        xtype: 'classgrid',
+                                        id: 'favorites-grid',
+                                        title: 'Favorites',
+                                        iconCls: 'icon-fav',
+                                        viewConfig: {
+                                            plugins: {
+                                                ptype: 'gridviewdragdrop'
+                                            }
+                                        },
+                                        store: Ext.getStore('Favorites'),
+                                        icons: Docs.icons,
+                                        listeners: {
+                                            closeclick: function(cls) {
+                                                Docs.Favorites.remove(cls);
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                region: 'center',
+                                xtype: 'classtree',
+                                padding: '10 10 0 10',
+                                margin: '0 5 10 0',
+                                root: Docs.classData
+                            }
+                        ]
                     }
                 ]
             },
@@ -83,12 +133,13 @@ Ext.define('Docs.view.Viewport', {
                 id: 'center-container',
                 layout: 'fit',
                 minWidth: 800,
+                padding: '20 20 5 0',
                 items: {
-                    id: 'container',
+                    id: 'card-panel',
+                    cls: 'card-panel',
                     xtype: 'container',
                     layout: 'card',
                     padding: '20',
-                    cls: 'container',
                     items: [
                         {
                             autoScroll: true,

@@ -1,3 +1,15 @@
+// Colors
+$docs-bg-color: #f8f8f8;
+$docs-text-color: #484848;
+$docs-link-color: #083772;
+$docs-link-hover-color: #0464BB;
+$docs-border-color: #bfbfbf;
+
+// Fonts
+$docs-font: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+$docs-heading-font: "klavika-web-1", "klavika-web-2", sans-serif;
+$docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
+
 @mixin box-shadow($x, $y, $radius, $color) {
   -webkit-box-shadow: $x $y $radius $color;
   -moz-box-shadow: $x $y $radius $color; }
@@ -47,7 +59,7 @@
     background: url(../images/icons.png) no-repeat -3px -111px !important; }
   .icon-component {
     background: url(../images/icons.png) no-repeat -3px -137px !important; }
-  .icon-book {
+  .icon-guide {
     background: url(../images/icons.png) no-repeat -3px -5px !important; }
   .icon-event {
     background: url(../images/icons.png) no-repeat -3px -245px !important; }
@@ -60,7 +72,7 @@
   .icon-subclass {
     background: url(../images/icons.png) no-repeat -3px -299px !important; }
   .icon-fav {
-    background: url(../images/icons.png) no-repeat -3px -326px !important; }
+    background: url(../images/icons.png) no-repeat -3px -328px !important; }
   .icon-hist {
     background: url(../images/icons.png) no-repeat -3px -380px !important; } }
 
@@ -71,7 +83,7 @@
 
 @mixin gray-h4 {
   h4 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: $docs-font;
     font-size: 90%;
     padding: 11px 0 5px 0;
     text-transform: uppercase;
@@ -84,10 +96,10 @@ html {
 
 body {
   -webkit-font-smoothing: antialiased;
-  font-family: 13px / 1.231 "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font: 13px / 1.231 $docs-font;
   min-width: 980px;
-  color: #484848;
-  background: #f8f8f8;
+  color: $docs-text-color;
+  background: $docs-bg-color;
   min-height: 100%; }
 
 #loading {
@@ -115,11 +127,10 @@ body {
     height: 120px; } }
 
 a {
-  color: #083772;
-  text-decoration: none; }
-
-a:hover {
-  color: #0464BB; }
+  color: $docs-link-color;
+  text-decoration: none;
+  &:hover {
+    color: $docs-link-hover-color; } }
 
 .notice {
   background-color: #ffc;
@@ -147,7 +158,7 @@ a:hover {
 
 #search-dropdown {
   border-style: solid;
-  border-color: #bebdbf;
+  border-color: $docs-border-color;
   border-width: 1px 1px 0 1px;
   background: white;
   position: absolute;
@@ -163,7 +174,7 @@ a:hover {
     padding: 5px 5px 5px 30px;
     border-width: 0px 0px 1px 0px;
     border-style: solid;
-    border-color: #bebdbf;
+    border-color: $docs-border-color;
     color: #605f5f;
     .title {
       font-weight: bold;
@@ -194,10 +205,35 @@ a:hover {
 
 
 #center-container, #west-region-container {
-  background: #F8F8F8 url(../images/headBG.png) repeat-x; }
+  background: $docs-bg-color url(../images/headBG.png) repeat-x; }
+
+#nested-west-region-container {
+  background: $docs-bg-color;
+  #classes-tab-panel {
+    .x-grid-row td {
+      background: none;
+      border: 0;
+      cursor: pointer;
+      img {
+        display: none;
+        margin-top: 1px; } }
+    .x-grid-row-over td {
+      background-color: #f0f0f0; }
+    .x-grid-row-over td img {
+      display: block; }
+    .x-grid-cell-inner {
+      padding: 2px 2px 3px 2px; } }
+  .x-splitter {
+    background: #ccc;
+    border-style: solid;
+    border-color: $docs-border-color;
+    height: 6px !important;
+    background-attachment: fixed;
+    background: #e9e9e9 url(../images/drag-bar-center.png) no-repeat center;
+    border-width: 1px 0; } }
 
 #footer {
-  background: #F8F8F8;
+  background: $docs-bg-color;
   color: gray;
   text-align: right;
   font-size: 10px;
@@ -209,10 +245,8 @@ a:hover {
     display: block !important; } }
 
 #center-container {
-  padding: 20px 20px 5px 20px;
-
   h1 {
-    font-family: "klavika-web-1", "klavika-web-2", sans-serif;
+    font-family: $docs-heading-font;
     letter-spacing: -1px;
     padding-bottom: 5px;
     padding-top: 2px;
@@ -248,140 +282,117 @@ a:hover {
       margin-left: -12px;
       padding: 0.1em 0 0.4em 2em; } } }
 
-.container {
+.card-panel {
   background: #fff;
   @include border-radius(5px);
   @include box-shadow(0, 0, 4px, rgba(0, 0, 0, 0.4));
-  padding: 20px;
   line-height: 1.4em;
   h3 {
     font-size: 1.2em;
     padding: 1em 0 0.4em 0;
-    font-weight: normal; }
-  .legend.guides {
-    padding: 15px;
-    width: 560px !important;
-    line-height: 1.7em;
-    h1 {
-      font-size: 1.7em !important; }
-    .lft {
-      float: left;
-      width: 200px; }
-    .mid {
-      float: left;
-      width: 100px;
-      margin-left: 20px; }
-    .right {
-      margin-left: 370px; }
-    a {
-      display: block;
-      height: 32px;
-      margin: 10px 0;
-      padding-left: 40px; }
-    .egLink {
-      border-top: 1px solid #ebebeb;
-      a {
-        padding-left: 10px;
-        margin: 10px 0 0 0;
-        height: auto; } }
-    .getting_started {
-      background: url(../images/guides.png) no-repeat 0px 0px; }
-    .drawing_and_charting {
-      background: url(../images/guides.png) no-repeat 0px -288px; }
-    .layouts_and_containers {
-      background: url(../images/guides.png) no-repeat 0px -130px; }
-    .application_architecture {
-      background: url(../images/guides.png) no-repeat 0px -98px; }
-    .class_system {
-      background: url(../images/guides.png) no-repeat 0px -31px; }
-    .data {
-      background: url(../images/guides.png) no-repeat 0px -66px; }
-    .grid {
-      background: url(../images/guides.png) no-repeat 0px -193px; }
-    .tree {
-      background: url(../images/guides.png) no-repeat 0px -228px; }
-    .components {
-      background: url(../images/guides.png) no-repeat 0px -160px; }
-    .theming {
-      background: url(../images/guides.png) no-repeat 0px -320px; }
-    .direct {
-      background: url(../images/guides.png) no-repeat 0px -387px; }
-    .accessibility {
-      background: url(../images/guides.png) no-repeat 0px -453px; } }
-  .category {
-    clear: both;
-    background-color: #f7f7f7;
-    border: 1px solid #ebebeb;
-    padding: 20px 10px 20px 20px;
-    margin: 0 20px 20px 0;
-    @include border-radius(10px); }
-  .category:last-child {
-    margin-bottom: 0; }
-  .lft {
-    float: left;
-    width: 250px;
-    margin-left: 20px; }
-  .mid {
-    float: left;
-    width: 280px; }
-  .rgt {
-    float: left; }
-  .links {
-    margin-left: 1.5em;
-    a {
-      display: block; }
-    a.more {
-      font-weight: bold; } }
+    font-weight: normal; } }
 
-  .legend {
+// Styles for index page
+#center-container .class-list {
+  // Main heading at the top of the page
+  h1.top {
+    margin-bottom: 12px; }
+  // All sections are inside gray round-corners bubbles
+  .section {
     @include border-radius(5px);
     background-color: #f7f7f7;
     border: 1px solid #ebebeb;
     padding: 0 15px 15px 10px;
-    margin: 0 20px 10px 0;
-    &.icons {
-      width: 120px;
-      float: right; }
-    ul {
-      float: left; }
-    .icn {
-      padding-left: 22px; }
-    a {
-      display: block; }
-    @include gray-h4; } }
-
-
-#center-container .class-list {
-  h1.pb { margin-bottom: 12px; }
-  h2 {
-    font-weight: bold; }
-  td {
-    padding: 0 0 0 20px;
-    vertical-align: top; }
-  .group {
-    h1 {
-      padding-bottom: 10px; }
-    background: #fafafa;
-    padding: 10px 20px 20px 20px;
     margin: 0 20px 20px 0;
-    @include border-radius(10px);
-    h2 {
-      border-bottom: 1px solid #dddddd;
-      padding-bottom: 2px;
-      margin-bottom: 2px;
-      padding-top: 10px; }
-    td.l {
-      span {
-        font-family: courier;
-        padding-right: 3px; } } }
-  .piechartLinks {
-    a {
-      display: block; } } }
+    // Icons legend, floated to right
+    &.legend {
+      width: 120px;
+      float: right;
+      @include gray-h4;
+      ul {
+        float: left; }
+      .icon {
+        padding-left: 22px; }
+      a {
+        display: block; } }
+    // Guides section at top left
+    &.guides {
+      padding: 15px;
+      width: 560px;
+      line-height: 1.7em;
+      h1 {
+        font-size: 1.7em !important; }
+      .lft {
+        float: left;
+        width: 200px;
+        margin-left: 20px }
+      .mid {
+        float: left;
+        width: 100px;
+        margin-left: 20px; }
+      .rgt {
+        margin-left: 370px; }
+      a {
+        display: block;
+        height: 32px;
+        margin: 10px 0;
+        padding-left: 40px; }
+      // Link to examples
+      .examples {
+        border-top: 1px solid #ebebeb;
+        a {
+          padding-left: 10px;
+          margin: 10px 0 0 0;
+          height: auto; } }
+      // Icons for each guide
+      .getting_started {
+        background: url(../images/guides.png) no-repeat 0px 0px; }
+      .drawing_and_charting {
+        background: url(../images/guides.png) no-repeat 0px -288px; }
+      .layouts_and_containers {
+        background: url(../images/guides.png) no-repeat 0px -130px; }
+      .application_architecture {
+        background: url(../images/guides.png) no-repeat 0px -98px; }
+      .class_system {
+        background: url(../images/guides.png) no-repeat 0px -31px; }
+      .data {
+        background: url(../images/guides.png) no-repeat 0px -66px; }
+      .grid {
+        background: url(../images/guides.png) no-repeat 0px -193px; }
+      .tree {
+        background: url(../images/guides.png) no-repeat 0px -228px; }
+      .components {
+        background: url(../images/guides.png) no-repeat 0px -160px; }
+      .theming {
+        background: url(../images/guides.png) no-repeat 0px -320px; }
+      .direct {
+        background: url(../images/guides.png) no-repeat 0px -387px; }
+      .accessibility {
+        background: url(../images/guides.png) no-repeat 0px -453px; } }
+    // Sections for class lists
+    &.classes {
+      clear: both;
+      padding: 20px 10px 20px 20px;
+      .lft {
+        float: left;
+        width: 250px;
+        margin-left: 20px; }
+      .mid {
+        float: left;
+        width: 280px; }
+      .rgt {
+        float: left; }
+      .links {
+        margin-left: 1.5em;
+        a {
+          display: block; }
+        a.more {
+          font-weight: bold; } } } } }
 
 
-.class-tree {
+#nested-west-region-container {
   .x-grid-cell-inner {
-    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-family: $docs-font;
     font-size: 13px;
     position: relative;
     -webkit-transition: background-color 0.15s linear;
@@ -403,7 +414,7 @@ a:hover {
         &:hover {
           @include icon-fav-over; } } } }
   .x-panel-body {
-    background: #f8f8f8; }
+    background: $docs-bg-color; }
   .sortBy {
     position: relative;
     padding-bottom: 10px;
@@ -437,14 +448,14 @@ a:hover {
     border: solid 1px #e8e8e8;
     @include border-radius(5px);
     color: #314e64;
-    font-family: "Menlo", "Courier New", Courier, monospace;
+    font-family: $docs-monospace-font;
     padding: 10px 20px;
     line-height: 1.3em;
     margin: 10px 0 14px;
     overflow-x: auto;
     overflow-y: hidden;
     code {
-      font-family: "Menlo", "Courier New", Courier, monospace; }
+      font-family: $docs-monospace-font; }
     i,em {
       font-style: normal; } }
   pre.prettyprint {
@@ -467,7 +478,7 @@ a:hover {
       padding: 0 0 0 12px;
       margin-top: 3px; }
     .alternate-class-name {
-      color: #484848; }
+      color: $docs-text-color; }
     .subclass {
       background: url(../images/elbow-end.gif) no-repeat -5px 0;
       margin-top: 3px;
@@ -498,37 +509,49 @@ a:hover {
   h4 {
     font-weight: bold; } }
 
+@mixin guides-h2-heading {
+  font-family: $docs-font;
+  letter-spacing: -1px;
+  line-height: 20px;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 20px;
+  font-weight: bold;
+  color: #314e64;
+  margin: 30px 0 15px;
+  padding-bottom: 5px; }
+
+@mixin guides-h3-heading {
+  font-weight: bold;
+  color: #314e64;
+  margin-top: 1em;
+  font-size: 14px;
+  line-height: 16px;
+  margin-bottom: 4px; }
+
 #guide {
   padding-right: 10px;
   font-size: 14px;
   h1 {
     background: url(../images/doc-m.png) no-repeat -5px -5px;
     padding: 10px 0 10px 55px;
-    font-family: "klavika-web-1", "klavika-web-2", sans-serif;
+    font-family: $docs-heading-font;
     letter-spacing: -1px;
     margin-bottom: 16px;
     font-size: 2.3em;
     color: #66ab16; }
   h2 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    letter-spacing: -1px;
-    line-height: 20px;
-    border-bottom: 1px solid #f1f1f1;
-    font-size: 20px;
-    font-weight: bold;
-    color: #314e64;
-    margin: 30px 0 15px;
-    padding-bottom: 5px; }
+    @include guides-h2-heading; }
   h3 {
-    font-weight: bold;
-    color: #314e64;
-    margin-top: 1em;
-    font-size: 14px;
-    line-height: 16px;
-    margin-bottom: 4px; }
+    @include guides-h3-heading; }
   hr {
     display: none; } }
 
+// Nice styles for headings inside documentation
+#center-container .doc-contents {
+  h1, h2 {
+    @include guides-h2-heading; }
+  h3 {
+    @include guides-h3-heading; } }
 
 .class-overview {
   .deprecated-signature, .protected-signature, .static-signature, .constructor-signature {
@@ -544,11 +567,11 @@ a:hover {
   .protected-signature {
     background-color: #aaa; }
   .static-signature {
-    background-color: #484848; }
+    background-color: $docs-text-color; }
   .constructor-signature {
     margin-left: 0;
     margin-right: 5px;
-    background-color: #484848; }
+    background-color: $docs-text-color; }
   .cfgGroup {
     margin: 10px 0 3px 0; } }
 
@@ -559,7 +582,7 @@ a:hover {
   first-child: {
     padding-top: 0; };
   .pre {
-    font-family: "Menlo", "Courier New", Courier, monospace;
+    font-family: $docs-monospace-font;
     font-size: 0.9em; }
   .definedBy {
     float: right;
@@ -612,7 +635,7 @@ a:hover {
       color: #888888;
       font-size: 0.9em;
       &:hover {
-        color: #0464bb; } }
+        color: $docs-link-hover-color; } }
     a.side {
       display: block;
       position: absolute;
@@ -635,7 +658,7 @@ a:hover {
       -webkit-transition: color 0.2s linear;
       font-size: 0.9em;
       &:hover {
-        color: #0464bb; } }
+        color: $docs-link-hover-color; } }
     &:hover {
       a.viewSource {
         color: rgba(128, 128, 128, 1);
@@ -677,10 +700,6 @@ a:hover {
   background: url(../images/expandcollapse.png) no-repeat 2px 2px !important; }
 
 .member-links {
-  border-width: 0 0 1px 0;
-  border-style: solid;
-  border-color: #bfbfbf;
-  // @include vertical-gradient(#e8e8e8, #eaeaea)
   .expandAllMembers {
     background: url(../images/expandcollapse.png) no-repeat -14px 2px; }
   .collapseAllMembers {
@@ -690,9 +709,6 @@ a:hover {
 .hover-menu-button {
   padding-left: 20px;
   cursor: pointer;
-  // The same button when used for favorites and history
-  &.sidebar {
-    padding-right: 10px; }
   sup {
     font-size: 0.8em;
     position: relative;
@@ -706,14 +722,10 @@ a:hover {
   z-index: 8;
   top: 21px;
   line-height: 1.3em;
-  border: 1px solid #bfbfbf;
+  border: 1px solid $docs-border-color;
   border-top: 1px solid #eaeaea;
   left: -16px;
   @include border-radius-bottom(5px);
-  // The same menu when used for favorites and history
-  &.sidebar {
-    min-width: 220px;
-    left: 20px !important; }
   table {
     width: 100%; }
   td {
@@ -724,10 +736,10 @@ a:hover {
     display: block;
     position: relative;
     padding: 2px 30px 2px 0;
-    color: #0464bb;
+    color: $docs-link-hover-color;
     white-space: nowrap;
     &:hover {
-      color: #083772;
+      color: $docs-link-color;
       text-decoration: underline; }
     &.close {
       position: absolute;
@@ -748,4 +760,4 @@ a:hover {
       padding: 0 0.5em;
       @include border-radius(2px);
       color: white;
-      background: #484848; } } }
+      background: $docs-text-color; } } }

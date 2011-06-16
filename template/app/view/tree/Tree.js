@@ -5,9 +5,7 @@ Ext.define('Docs.view.tree.Tree', {
     extend: 'Ext.tree.Panel',
     alias : 'widget.classtree',
     requires: [
-        'Docs.view.HoverMenuButton',
-        'Docs.Favorites',
-        'Docs.History'
+        'Docs.Favorites'
     ],
 
     cls: 'class-tree iScroll',
@@ -24,6 +22,7 @@ Ext.define('Docs.view.tree.Tree', {
              * @event
              * Fired when class in tree was clicked on and needs to be loaded.
              * @param {String} cls  name of the class.
+             * @param {Ext.EventObject} e
              */
             "classclick"
         );
@@ -34,51 +33,8 @@ Ext.define('Docs.view.tree.Tree', {
 
         this.on("itemclick", this.onItemClick, this);
 
-        this.dockedItems = [
-            {
-                xtype: 'container',
-                layout: 'hbox',
-                dock: 'top',
-                margin: '0 0 15 0',
-                items: [
-                    {
-                        xtype: 'hovermenubutton',
-                        cls: 'icon-fav sidebar',
-                        text: 'Favorites',
-                        menuCfg: {
-                            cls: 'sidebar',
-                            emptyText: 'No favorites',
-                            showCloseButtons: true
-                        },
-                        store: Ext.getStore('Favorites'),
-                        listeners: {
-                            closeclick: function(cls) {
-                                Docs.Favorites.remove(cls);
-                            }
-                        }
-                    },
-                    {
-                        xtype: 'hovermenubutton',
-                        cls: 'icon-hist sidebar',
-                        text: 'History',
-                        menuCfg: {
-                            cls: 'sidebar',
-                            emptyText: 'No history',
-                            showCloseButtons: true
-                        },
-                        store: Ext.getStore('History'),
-                        listeners: {
-                            closeclick: function(cls) {
-                                Docs.History.removeClass(cls);
-                            }
-                        }
-                    }
-                ]
-            }
-        ];
-
         this.callParent();
-        
+
         // Add links for favoriting classes
         //
         // Wait for the Favorites to load, then wait for tree to render,
@@ -91,7 +47,7 @@ Ext.define('Docs.view.tree.Tree', {
             this.rendered ? this.initFavIcons() : this.on("render", this.initFavIcons, this);
         }, this);
     },
-    
+
     initFavIcons: function() {
         this.getRootNode().cascadeBy(this.addFavIcons, this);
     },
@@ -119,7 +75,7 @@ Ext.define('Docs.view.tree.Tree', {
                 }
             }
             else {
-                this.fireEvent("classclick", clsName);
+                this.fireEvent("classclick", clsName, e);
             }
         }
         else if (!node.isLeaf()) {

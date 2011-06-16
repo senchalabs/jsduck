@@ -12,13 +12,11 @@ Ext.define('Docs.controller.Classes', {
 
     stores: [
         'Favorites',
-        'History',
         'Settings'
     ],
 
     models: [
         'Favorite',
-        'History',
         'Setting'
     ],
 
@@ -32,14 +30,25 @@ Ext.define('Docs.controller.Classes', {
             selector: 'classheader'
         },
         {
-            ref: 'tabPanel',
-            selector: 'classtabpanel'
+            ref: 'overview',
+            selector: 'classoverview'
         },
         {
             ref: 'tree',
             selector: 'classtree'
+        },
+        {
+            ref: 'favoritesGrid',
+            selector: '#favorites-grid'
+        },
+        {
+            ref: 'historyGrid',
+            selector: '#history-grid'
         }
     ],
+
+    // Code for the middle mouse button
+    MIDDLE: 1,
 
     init: function() {
         this.addEvents(
@@ -64,8 +73,8 @@ Ext.define('Docs.controller.Classes', {
             "showGuide"
         );
 
-        Ext.getBody().addListener('click', function(cmp, el) {
-            this.loadClass(el.rel);
+        Ext.getBody().addListener('click', function(event, el) {
+            (event.button === this.MIDDLE) ? window.open(el.href) : this.loadClass(el.rel);
         }, this, {
             preventDefault: true,
             delegate: '.docClass'
@@ -73,20 +82,20 @@ Ext.define('Docs.controller.Classes', {
 
         this.control({
             'classtree': {
-                // Can't simply assign the loadClass function as event
-                // handler, because an extra event options object is
-                // appended to the event arguments, which we don't
-                // want to give to the loadClass, as this would render
-                // the noHistory parameter to true.
-                classclick: function(cls) {
-                    this.loadClass(cls);
+                classclick: function(cls, event) {
+                    (event.button === this.MIDDLE) ? window.open("#/api/" + cls) : this.loadClass(cls);
+                }
+            },
+            'classgrid': {
+                classclick: function(cls, event) {
+                    (event.button === this.MIDDLE) ? window.open("#/api/" + cls) : this.loadClass(cls);
                 }
             },
 
             'indexcontainer': {
                 afterrender: function(cmp) {
-                    cmp.el.addListener('click', function(cmp, el) {
-                        this.showGuide(el.rel);
+                    cmp.el.addListener('click', function(event, el) {
+                        (event.button === this.MIDDLE) ? window.open(el.href) : this.loadClass(el.rel);
                     }, this, {
                         preventDefault: true,
                         delegate: '.guide'
@@ -126,7 +135,7 @@ Ext.define('Docs.controller.Classes', {
         var cls = clsUrl;
         var member;
 
-        Ext.getCmp('container').layout.setActiveItem(1);
+        Ext.getCmp('card-panel').layout.setActiveItem(1);
 
         // separate class and member name
         var matches = clsUrl.match(/^(.*?)(?:-(.*))?$/);
@@ -142,8 +151,8 @@ Ext.define('Docs.controller.Classes', {
         if (this.cache[cls]) {
             this.showClass(this.cache[cls], member);
         } else {
-            if (this.getTabPanel()) {
-                this.getTabPanel().setLoading(true);
+            if (this.getOverview()) {
+                this.getOverview().setLoading(true);
             }
 
             Ext.data.JsonP.request({
@@ -162,34 +171,27 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-        var classOverview = this.getTabPanel().down('classoverview');
-
         if (this.currentCls != cls) {
             this.getViewport().setPageTitle(cls.name);
             this.getHeader().load(cls);
+            this.getOverview().load(cls);
 
-            // Init overview tab if not already available
-            if (!classOverview) {
-                classOverview = Ext.create('Docs.view.cls.Overview');
-                this.getTabPanel().add(classOverview);
-                this.getTabPanel().setActiveTab(0);
-            }
-            classOverview.load(cls);
-
-            this.getTabPanel().setLoading(false);
+            this.getOverview().setLoading(false);
 
             this.getTree().selectClass(cls.name);
             this.fireEvent('showClass', cls.name);
         }
 
         if (anchor) {
-            classOverview.scrollToEl("#" + anchor);
+            this.getOverview().scrollToEl("#" + anchor);
             this.fireEvent('showMember', cls.name, anchor);
         } else {
-            classOverview.getEl().down('.x-panel-body').scrollTo('top', 0);
+            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', 0);
         }
 
         this.currentCls = cls;
+
+        this.getFavoritesGrid().selectClass(cls.name);
     },
 
     showGuide: function(name, noHistory) {
@@ -201,7 +203,7 @@ Ext.define('Docs.controller.Classes', {
             success: function(json) {
                 this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
                 Ext.getCmp("guide").update(json.guide);
-                Ext.getCmp('container').layout.setActiveItem(2);
+                Ext.getCmp('card-panel').layout.setActiveItem(2);
                 Docs.Syntax.highlight(Ext.get("guide"));
                 this.fireEvent('showGuide', name);
             },
