@@ -221,6 +221,11 @@ a {
       background-color: #f0f0f0; }
     .x-grid-row-over td img {
       display: block; }
+    .drag {
+      .x-grid-row-over td {
+        background: none; }
+      .x-grid-row-over td img {
+        display: none; } }
     .x-grid-cell-inner {
       padding: 2px 2px 3px 2px; } }
   .x-splitter {

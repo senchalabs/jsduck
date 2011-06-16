@@ -83,12 +83,12 @@ Ext.define('Docs.controller.Classes', {
         this.control({
             'classtree': {
                 classclick: function(cls, event) {
-                    (event.button === this.MIDDLE) ? window.open("#/api/" + cls) : this.loadClass(cls);
+                    (event.button === this.MIDDLE || event.shiftKey || event.ctrlKey) ? window.open("#/api/" + cls) : this.loadClass(cls);
                 }
             },
             'classgrid': {
                 classclick: function(cls, event) {
-                    (event.button === this.MIDDLE) ? window.open("#/api/" + cls) : this.loadClass(cls);
+                    (event.button === this.MIDDLE || event.shiftKey || event.ctrlKey) ? window.open("#/api/" + cls) : this.loadClass(cls);
                 }
             },
 

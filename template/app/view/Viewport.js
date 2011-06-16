@@ -103,15 +103,28 @@ Ext.define('Docs.view.Viewport', {
                                         title: 'Favorites',
                                         iconCls: 'icon-fav',
                                         viewConfig: {
-                                            plugins: {
-                                                ptype: 'gridviewdragdrop'
-                                            }
+                                            plugins: [{
+                                                pluginId: 'favGridDD',
+                                                ptype: 'gridviewdragdrop',
+                                                dragText: 'Drag and drop to reorganize'
+                                            }]
                                         },
                                         store: Ext.getStore('Favorites'),
                                         icons: Docs.icons,
                                         listeners: {
                                             closeclick: function(cls) {
                                                 Docs.Favorites.remove(cls);
+                                            },
+                                            afterrender: function() {
+                                                var ddPlugin = this.getView().getPlugin('favGridDD');
+
+                                                ddPlugin.dragZone.onInitDrag = function() {
+                                                    Ext.getCmp('favorites-grid').addCls('drag');
+                                                    Ext.view.DragZone.prototype.onInitDrag.apply(this, arguments);
+                                                }
+                                                ddPlugin.dragZone.afterValidDrop = ddPlugin.dragZone.afterInvalidDrop = function() {
+                                                    Ext.getCmp('favorites-grid').removeCls('drag');
+                                                }
                                             }
                                         }
                                     }
