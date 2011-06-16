@@ -22,6 +22,7 @@ Ext.define('Docs.view.tree.Tree', {
              * @event
              * Fired when class in tree was clicked on and needs to be loaded.
              * @param {String} cls  name of the class.
+             * @param {Ext.EventObject} e
              */
             "classclick"
         );
@@ -46,7 +47,7 @@ Ext.define('Docs.view.tree.Tree', {
             this.rendered ? this.initFavIcons() : this.on("render", this.initFavIcons, this);
         }, this);
     },
-    
+
     initFavIcons: function() {
         this.getRootNode().cascadeBy(this.addFavIcons, this);
     },
@@ -74,7 +75,7 @@ Ext.define('Docs.view.tree.Tree', {
                 }
             }
             else {
-                this.fireEvent("classclick", clsName);
+                this.fireEvent("classclick", clsName, e);
             }
         }
         else if (!node.isLeaf()) {

@@ -86,13 +86,8 @@ Ext.define('Docs.controller.Classes', {
 
         this.control({
             'classtree': {
-                // Can't simply assign the loadClass function as event
-                // handler, because an extra event options object is
-                // appended to the event arguments, which we don't
-                // want to give to the loadClass, as this would render
-                // the noHistory parameter to true.
-                classclick: function(cls) {
-                    this.loadClass(cls);
+                classclick: function(cls, event) {
+                    (event.button === this.MIDDLE) ? window.open("#/api/" + cls) : this.loadClass(cls);
                 }
             },
             'classgrid': {
