@@ -30,8 +30,8 @@ Ext.define('Docs.controller.Classes', {
             selector: 'classheader'
         },
         {
-            ref: 'tabPanel',
-            selector: 'classtabpanel'
+            ref: 'overview',
+            selector: 'classoverview'
         },
         {
             ref: 'tree',
@@ -151,8 +151,8 @@ Ext.define('Docs.controller.Classes', {
         if (this.cache[cls]) {
             this.showClass(this.cache[cls], member);
         } else {
-            if (this.getTabPanel()) {
-                this.getTabPanel().setLoading(true);
+            if (this.getOverview()) {
+                this.getOverview().setLoading(true);
             }
 
             Ext.data.JsonP.request({
@@ -171,31 +171,22 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-        var classOverview = this.getTabPanel().down('classoverview');
-
         if (this.currentCls != cls) {
             this.getViewport().setPageTitle(cls.name);
             this.getHeader().load(cls);
+            this.getOverview().load(cls);
 
-            // Init overview tab if not already available
-            if (!classOverview) {
-                classOverview = Ext.create('Docs.view.cls.Overview');
-                this.getTabPanel().add(classOverview);
-                this.getTabPanel().setActiveTab(0);
-            }
-            classOverview.load(cls);
-
-            this.getTabPanel().setLoading(false);
+            this.getOverview().setLoading(false);
 
             this.getTree().selectClass(cls.name);
             this.fireEvent('showClass', cls.name);
         }
 
         if (anchor) {
-            classOverview.scrollToEl("#" + anchor);
+            this.getOverview().scrollToEl("#" + anchor);
             this.fireEvent('showMember', cls.name, anchor);
         } else {
-            classOverview.getEl().down('.x-panel-body').scrollTo('top', 0);
+            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', 0);
         }
 
         this.currentCls = cls;
