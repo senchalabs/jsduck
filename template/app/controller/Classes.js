@@ -95,7 +95,7 @@ Ext.define('Docs.controller.Classes', {
             'indexcontainer': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(event, el) {
-                        (event.button === this.MIDDLE) ? window.open(el.href) : this.loadClass(el.rel);
+                        (event.button === this.MIDDLE) ? window.open(el.href) : this.showGuide(el.rel);
                     }, this, {
                         preventDefault: true,
                         delegate: '.guide'
