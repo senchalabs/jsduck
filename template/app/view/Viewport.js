@@ -125,14 +125,6 @@ Ext.define('Docs.view.Viewport', {
                                                 Docs.Favorites.remove(cls);
                                             }
                                         }
-                                    },
-                                    {
-                                        xtype: 'classgrid',
-                                        id: 'top100-grid',
-                                        title: 'Top 100',
-                                        store: Ext.getStore('Top100'),
-                                        enableClose: false,
-                                        icons: Docs.icons
                                     }
                                 ]
                             },

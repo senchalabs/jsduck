@@ -13,15 +13,13 @@ Ext.define('Docs.controller.Classes', {
     stores: [
         'Favorites',
         'History',
-        'Settings',
-        'Top100'
+        'Settings'
     ],
 
     models: [
         'Favorite',
         'History',
-        'Setting',
-        'Top100'
+        'Setting'
     ],
 
     refs: [
