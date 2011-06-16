@@ -91,8 +91,8 @@ Ext.define('Docs.controller.Classes', {
                 }
             },
             'classgrid': {
-                classselect: function(cls) {
-                    this.loadClass(cls);
+                classclick: function(cls, event) {
+                    (event.button === this.MIDDLE) ? window.open("#/api/" + cls) : this.loadClass(cls);
                 }
             },
 

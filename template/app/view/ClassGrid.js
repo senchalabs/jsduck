@@ -23,11 +23,12 @@ Ext.define('Docs.view.ClassGrid', {
     initComponent: function() {
         this.addEvents(
             /**
-             * @event classselect
-             * Fired when class in grid selected.
+             * @event classclick
+             * Fired when class in grid clicked.
              * @param {String} name  Name of the class that was selected. For example "Ext.Ajax".
+             * @param {Ext.EventObject} e
              */
-            "classselect",
+            "classclick",
             /**
              * @event closeclick
              * Fired when close button in grid clicked.
@@ -68,8 +69,18 @@ Ext.define('Docs.view.ClassGrid', {
 
         this.callParent(arguments);
 
-        this.getSelectionModel().on("select", function(sm, r) {
-            this.fireEvent("classselect", r.get("cls"));
+        // Prevent item from becoming selected right away, because the
+        // the click event that follows can possibly cause the class
+        // to be loaded in another window, in which case the selection
+        // of the clicked-on item should not happen.  When it needs to
+        // be selected, the #showClass method in Class controller will
+        // explicitly call #selectClass.
+        this.on("beforeselect", function() {
+            return false;
+        }, this);
+
+        this.on("itemclick", function(view, record, item, index, event) {
+            this.fireEvent("classclick", record.get("cls"), event);
         }, this);
 
         // Initialize selection after rendering
