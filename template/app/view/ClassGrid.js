@@ -80,7 +80,10 @@ Ext.define('Docs.view.ClassGrid', {
         }, this);
 
         this.on("itemclick", function(view, record, item, index, event) {
-            this.fireEvent("classclick", record.get("cls"), event);
+            // Don't fire classclick when close button clicked
+            if (!event.getTarget("img")) {
+                this.fireEvent("classclick", record.get("cls"), event);
+            }
         }, this);
 
         // Initialize selection after rendering
