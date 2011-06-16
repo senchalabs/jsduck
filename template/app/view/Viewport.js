@@ -101,6 +101,7 @@ Ext.define('Docs.view.Viewport', {
                                         xtype: 'classgrid',
                                         id: 'favorites-grid',
                                         title: 'Favorites',
+                                        iconCls: 'icon-fav',
                                         viewConfig: {
                                             plugins: {
                                                 ptype: 'gridviewdragdrop'
