@@ -700,10 +700,6 @@ a {
   background: url(../images/expandcollapse.png) no-repeat 2px 2px !important; }
 
 .member-links {
-  border-width: 0 0 1px 0;
-  border-style: solid;
-  border-color: $docs-border-color;
-  // @include vertical-gradient(#e8e8e8, #eaeaea)
   .expandAllMembers {
     background: url(../images/expandcollapse.png) no-repeat -14px 2px; }
   .collapseAllMembers {
