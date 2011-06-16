@@ -713,9 +713,6 @@ a {
 .hover-menu-button {
   padding-left: 20px;
   cursor: pointer;
-  // The same button when used for favorites and history
-  &.sidebar {
-    padding-right: 10px; }
   sup {
     font-size: 0.8em;
     position: relative;
@@ -733,10 +730,6 @@ a {
   border-top: 1px solid #eaeaea;
   left: -16px;
   @include border-radius-bottom(5px);
-  // The same menu when used for favorites and history
-  &.sidebar {
-    min-width: 220px;
-    left: 20px !important; }
   table {
     width: 100%; }
   td {
