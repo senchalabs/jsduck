@@ -6,7 +6,8 @@
 Ext.define('Docs.view.Viewport', {
     extend: 'Ext.container.Viewport',
     requires: [
-        'Docs.view.cls.Container',
+        'Docs.view.cls.Header',
+        'Docs.view.cls.Overview',
         'Docs.view.index.Container',
         'Docs.view.tree.Tree',
         'Docs.view.ClassGrid',
@@ -147,7 +148,15 @@ Ext.define('Docs.view.Viewport', {
                             classData: Docs.overviewData
                         },
                         {
-                            xtype: 'classcontainer'
+                            xtype: 'container',
+                            layout: {
+                                type: 'vbox',
+                                align: 'stretch'
+                            },
+                            items: [
+                                {xtype: 'classheader'},
+                                {xtype: 'classoverview', flex: 1}
+                            ]
                         },
                         {
                             autoScroll: true,
