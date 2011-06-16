@@ -51,6 +51,9 @@ Ext.define('Docs.controller.Classes', {
         }
     ],
 
+    // Code for the middle mouse button
+    MIDDLE: 1,
+
     init: function() {
         this.addEvents(
             /**
@@ -74,8 +77,8 @@ Ext.define('Docs.controller.Classes', {
             "showGuide"
         );
 
-        Ext.getBody().addListener('click', function(cmp, el) {
-            this.loadClass(el.rel);
+        Ext.getBody().addListener('click', function(event, el) {
+            (event.button === this.MIDDLE) ? window.open(el.href) : this.loadClass(el.rel);
         }, this, {
             preventDefault: true,
             delegate: '.docClass'
@@ -100,8 +103,8 @@ Ext.define('Docs.controller.Classes', {
 
             'indexcontainer': {
                 afterrender: function(cmp) {
-                    cmp.el.addListener('click', function(cmp, el) {
-                        this.showGuide(el.rel);
+                    cmp.el.addListener('click', function(event, el) {
+                        (event.button === this.MIDDLE) ? window.open(el.href) : this.loadClass(el.rel);
                     }, this, {
                         preventDefault: true,
                         delegate: '.guide'
