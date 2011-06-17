@@ -26,6 +26,17 @@ Ext.define('Docs.Application', {
 
         Ext.create('Docs.view.Viewport');
 
+        // Update favorites grid height between browser tabs if changed
+        Ext.getStore('Settings').on('load', function(store) {
+            var favHeight = Docs.Settings.get('favorites-height');
+            if (favHeight) {
+                var tabPanel = Ext.getCmp('classes-tab-panel');
+                tabPanel.suspendEvents();
+                tabPanel.setHeight(favHeight);
+                tabPanel.resumeEvents();
+            }
+        });
+
         Docs.History.init();
 
         // When google analytics event tracking script present on page
