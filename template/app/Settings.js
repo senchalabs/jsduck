@@ -15,11 +15,10 @@ Ext.define("Docs.Settings", {
     set: function(key, value) {
         var index = this.store.findExact("key", key);
         if (index > -1) {
-            this.store.getAt(index).set({key: key, value: value});
+            this.store.removeAt(index);
         }
-        else {
-            this.store.add({key: key, value: value});
-        }
+        this.store.add({key: key, value: value});
+
         this.syncStore();
     },
 

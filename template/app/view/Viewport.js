@@ -95,6 +95,14 @@ Ext.define('Docs.view.Viewport', {
                                     afterRender: function() {
                                         // Add 7px padding at left side of tab-bar
                                         this.tabBar.insert(0, {width: 7, xtype: 'container'});
+
+                                        this.on('resize', function(cls, w, h) {
+                                            Docs.Settings.set('favorites-height', h)
+                                        });
+                                        var favHeight = Docs.Settings.get('favorites-height');
+                                        if (favHeight) {
+                                            this.setHeight(favHeight);
+                                        }
                                     }
                                 },
                                 items: [
@@ -104,8 +112,18 @@ Ext.define('Docs.view.Viewport', {
                                         title: 'Favorites',
                                         iconCls: 'icon-fav',
                                         viewConfig: {
-                                            plugins: {
-                                                ptype: 'gridviewdragdrop'
+                                            plugins: [{
+                                                pluginId: 'favGridDD',
+                                                ptype: 'gridviewdragdrop',
+                                                dragText: 'Drag and drop to reorganize'
+                                            }],
+                                            listeners: {
+                                                drop: function() {
+                                                    // Hack to fix a bug in localStorage which prevents the order of
+                                                    // items being saved when they're changed
+                                                    var store = Ext.getStore('Favorites');
+                                                    store.getProxy().setIds(Ext.Array.map(store.data.items, function(i) { return i.data.id}))
+                                                }
                                             }
                                         },
                                         store: Ext.getStore('Favorites'),
@@ -113,6 +131,17 @@ Ext.define('Docs.view.Viewport', {
                                         listeners: {
                                             closeclick: function(cls) {
                                                 Docs.Favorites.remove(cls);
+                                            },
+                                            afterrender: function() {
+                                                var ddPlugin = this.getView().getPlugin('favGridDD');
+
+                                                ddPlugin.dragZone.onInitDrag = function() {
+                                                    Ext.getCmp('favorites-grid').addCls('drag');
+                                                    Ext.view.DragZone.prototype.onInitDrag.apply(this, arguments);
+                                                }
+                                                ddPlugin.dragZone.afterValidDrop = ddPlugin.dragZone.afterInvalidDrop = function() {
+                                                    Ext.getCmp('favorites-grid').removeCls('drag');
+                                                }
                                             }
                                         }
                                     }

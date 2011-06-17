@@ -43,9 +43,10 @@ Ext.define('Docs.view.tree.Tree', {
         // Do all this after callParent, because the getRootNode() will work
         // after initComponent has run.
         Docs.Favorites.setTree(this);
-        Ext.getStore("Favorites").on("load", function() {
-            this.rendered ? this.initFavIcons() : this.on("render", this.initFavIcons, this);
-        }, this);
+        // Ext.getStore("Favorites").on("load", function() {
+        //     this.rendered ? this.initFavIcons() : this.on("render", this.initFavIcons, this);
+        // }, this);
+        this.initFavIcons()
     },
 
     initFavIcons: function() {
