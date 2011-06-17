@@ -69,16 +69,6 @@ Ext.define('Docs.view.ClassGrid', {
 
         this.callParent(arguments);
 
-        // Prevent item from becoming selected right away, because the
-        // the click event that follows can possibly cause the class
-        // to be loaded in another window, in which case the selection
-        // of the clicked-on item should not happen.  When it needs to
-        // be selected, the #showClass method in Class controller will
-        // explicitly call #selectClass.
-        // this.on("beforeselect", function() {
-        //     return false;
-        // }, this);
-
         this.on("itemclick", function(view, record, item, index, event) {
             // Don't fire classclick when close button clicked
             if (!event.getTarget("img")) {

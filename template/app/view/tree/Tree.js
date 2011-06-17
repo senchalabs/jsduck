@@ -95,6 +95,9 @@ Ext.define('Docs.view.tree.Tree', {
                 n.expand();
             });
         }
+        else {
+            this.getSelectionModel().deselectAll();
+        }
     },
 
     /**

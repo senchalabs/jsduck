@@ -80,12 +80,12 @@ Ext.define('Docs.controller.Classes', {
         this.control({
             'classtree': {
                 classclick: function(cls, event) {
-                    this.opensNewWindow(event) ? window.open("#/api/" + cls) : this.loadClass(cls);
+                    this.handleClassClick(cls, event, this.getTree());
                 }
             },
             'classgrid': {
                 classclick: function(cls, event) {
-                    this.opensNewWindow(event) ? window.open("#/api/" + cls) : this.loadClass(cls);
+                    this.handleClassClick(cls, event, this.getFavoritesGrid());
                 }
             },
 
@@ -118,6 +118,18 @@ Ext.define('Docs.controller.Classes', {
                 }
             }
         });
+    },
+
+    // We don't want to select the class that was opened in another window,
+    // so restore the previous selection.
+    handleClassClick: function(cls, event, view) {
+        if (this.opensNewWindow(event)) {
+            window.open("#/api/" + cls);
+            view.selectClass(this.currentCls ? this.currentCls.name : "");
+        }
+        else {
+            this.loadClass(cls);
+        }
     },
 
     // Code for the middle mouse button
