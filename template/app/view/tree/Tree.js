@@ -46,7 +46,7 @@ Ext.define('Docs.view.tree.Tree', {
         // Ext.getStore("Favorites").on("load", function() {
         //     this.rendered ? this.initFavIcons() : this.on("render", this.initFavIcons, this);
         // }, this);
-        this.initFavIcons()
+        this.initFavIcons();
     },
 
     initFavIcons: function() {
