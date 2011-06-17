@@ -47,9 +47,6 @@ Ext.define('Docs.controller.Classes', {
         }
     ],
 
-    // Code for the middle mouse button
-    MIDDLE: 1,
-
     init: function() {
         this.addEvents(
             /**
@@ -74,7 +71,7 @@ Ext.define('Docs.controller.Classes', {
         );
 
         Ext.getBody().addListener('click', function(event, el) {
-            (event.button === this.MIDDLE || event.shiftKey || event.ctrlKey) ? window.open(el.href) : this.loadClass(el.rel);
+            this.opensNewWindow(event) ? window.open(el.href) : this.loadClass(el.rel);
         }, this, {
             preventDefault: true,
             delegate: '.docClass'
@@ -83,19 +80,19 @@ Ext.define('Docs.controller.Classes', {
         this.control({
             'classtree': {
                 classclick: function(cls, event) {
-                    (event.button === this.MIDDLE || event.shiftKey || event.ctrlKey) ? window.open("#/api/" + cls) : this.loadClass(cls);
+                    this.opensNewWindow(event) ? window.open("#/api/" + cls) : this.loadClass(cls);
                 }
             },
             'classgrid': {
                 classclick: function(cls, event) {
-                    (event.button === this.MIDDLE || event.shiftKey || event.ctrlKey) ? window.open("#/api/" + cls) : this.loadClass(cls);
+                    this.opensNewWindow(event) ? window.open("#/api/" + cls) : this.loadClass(cls);
                 }
             },
 
             'indexcontainer': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(event, el) {
-                        (event.button === this.MIDDLE) ? window.open(el.href) : this.showGuide(el.rel);
+                        this.opensNewWindow(event) ? window.open(el.href) : this.showGuide(el.rel);
                     }, this, {
                         preventDefault: true,
                         delegate: '.guide'
@@ -121,6 +118,15 @@ Ext.define('Docs.controller.Classes', {
                 }
             }
         });
+    },
+
+    // Code for the middle mouse button
+    MIDDLE: 1,
+
+    // True when middle mouse button pressed or shift/ctrl key pressed
+    // together with mouse button (for Mac)
+    opensNewWindow: function(event) {
+        return event.button === this.MIDDLE || event.shiftKey || event.ctrlKey;
     },
 
     cache: {},
