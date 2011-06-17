@@ -12,6 +12,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.tree.Tree',
         'Docs.view.ClassGrid',
         'Docs.Favorites',
+        'Docs.Settings',
         'Docs.History'
     ],
 
@@ -85,7 +86,7 @@ Ext.define('Docs.view.Viewport', {
                                 id: 'classes-tab-panel',
                                 xtype: 'tabpanel',
                                 region: 'north',
-                                height: 150,
+                                height: Docs.Settings.get('favorites-height') || 150,
                                 padding: '2 4 0 0',
                                 bodyPadding: '8 15 8 12',
                                 border: false,
@@ -95,14 +96,9 @@ Ext.define('Docs.view.Viewport', {
                                     afterRender: function() {
                                         // Add 7px padding at left side of tab-bar
                                         this.tabBar.insert(0, {width: 7, xtype: 'container'});
-
-                                        this.on('resize', function(cls, w, h) {
-                                            Docs.Settings.set('favorites-height', h);
-                                        });
-                                        var favHeight = Docs.Settings.get('favorites-height');
-                                        if (favHeight) {
-                                            this.setHeight(favHeight);
-                                        }
+                                    },
+                                    resize: function(cmp, w, h) {
+                                        Docs.Settings.set('favorites-height', h);
                                     }
                                 },
                                 items: [

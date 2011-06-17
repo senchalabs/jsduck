@@ -35,17 +35,10 @@ Ext.define('Docs.view.tree.Tree', {
 
         this.callParent();
 
-        // Add links for favoriting classes
-        //
-        // Wait for the Favorites to load, then wait for tree to render,
-        // after which add the fav icons.
-        //
-        // Do all this after callParent, because the getRootNode() will work
-        // after initComponent has run.
+        // Add links for favoriting classes.
+        // Do this after callParent, because the getRootNode() will
+        // work after initComponent has run.
         Docs.Favorites.setTree(this);
-        // Ext.getStore("Favorites").on("load", function() {
-        //     this.rendered ? this.initFavIcons() : this.on("render", this.initFavIcons, this);
-        // }, this);
         this.initFavIcons();
     },
 
