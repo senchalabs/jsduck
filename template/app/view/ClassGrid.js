@@ -75,9 +75,9 @@ Ext.define('Docs.view.ClassGrid', {
         // of the clicked-on item should not happen.  When it needs to
         // be selected, the #showClass method in Class controller will
         // explicitly call #selectClass.
-        this.on("beforeselect", function() {
-            return false;
-        }, this);
+        // this.on("beforeselect", function() {
+        //     return false;
+        // }, this);
 
         this.on("itemclick", function(view, record, item, index, event) {
             // Don't fire classclick when close button clicked
