@@ -74,7 +74,7 @@ Ext.define('Docs.controller.Classes', {
         );
 
         Ext.getBody().addListener('click', function(event, el) {
-            (event.button === this.MIDDLE) ? window.open(el.href) : this.loadClass(el.rel);
+            (event.button === this.MIDDLE || event.shiftKey || event.ctrlKey) ? window.open(el.href) : this.loadClass(el.rel);
         }, this, {
             preventDefault: true,
             delegate: '.docClass'
@@ -135,6 +135,10 @@ Ext.define('Docs.controller.Classes', {
         var cls = clsUrl;
         var member;
 
+        if (!noHistory) {
+            Docs.History.push("/api/" + clsUrl);
+        }
+
         Ext.getCmp('card-panel').layout.setActiveItem(1);
 
         // separate class and member name
@@ -142,10 +146,6 @@ Ext.define('Docs.controller.Classes', {
         if (matches) {
             cls = matches[1];
             member = matches[2];
-        }
-
-        if (!noHistory) {
-            Docs.History.push("/api/" + clsUrl);
         }
 
         if (this.cache[cls]) {
