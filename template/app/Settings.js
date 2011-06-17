@@ -14,6 +14,10 @@ Ext.define("Docs.Settings", {
      */
     set: function(key, value) {
         var index = this.store.findExact("key", key);
+        // There is currently a bug in localstorage with Ext that
+        // prevents updated records getting synced properly. As a
+        // temporary fix, remove and re-add the item instead of just
+        // changing the value.
         if (index > -1) {
             this.store.removeAt(index);
         }

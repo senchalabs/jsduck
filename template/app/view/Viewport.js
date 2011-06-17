@@ -128,6 +128,7 @@ Ext.define('Docs.view.Viewport', {
                                             closeclick: function(cls) {
                                                 Docs.Favorites.remove(cls);
                                             },
+                                            // Prevent row highlighting when doing drag-drop
                                             afterrender: function() {
                                                 var ddPlugin = this.getView().getPlugin('favGridDD');
 
