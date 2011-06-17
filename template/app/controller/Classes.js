@@ -40,10 +40,6 @@ Ext.define('Docs.controller.Classes', {
         {
             ref: 'favoritesGrid',
             selector: '#favorites-grid'
-        },
-        {
-            ref: 'historyGrid',
-            selector: '#history-grid'
         }
     ],
 
