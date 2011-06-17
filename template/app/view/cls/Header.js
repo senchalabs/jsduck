@@ -4,10 +4,16 @@
 Ext.define('Docs.view.cls.Header', {
     extend: 'Ext.container.Container',
     padding: '5 0 17 0',
+    // Initially the component will be empty and so the initial height
+    // will not be correct if not set explicitly
+    height: 47,
     alias: 'widget.classheader',
 
     tpl: Ext.create('Ext.XTemplate',
         '<h1 class="{[this.getClass(values)]}">',
+            '<tpl if="private">',
+                '<span class="private">Private</span>',
+            '</tpl>',
             '<a href="source/{href}" target="_blank">{name}</a>',
             '<tpl if="xtypes.length &gt; 0">',
                 '<span>xtype: {[values.xtypes.join(", ")]}</span>',
@@ -28,9 +34,11 @@ Ext.define('Docs.view.cls.Header', {
         }
     ),
 
-    initComponent: function() {
-        this.html = this.tpl.apply(this.docClass || '&nbsp;');
-
-        this.callParent(arguments);
+    /**
+     * Loads class name and icon to header.
+     * @param {Object} cls  class config.
+     */
+    load: function(cls) {
+        this.update(this.tpl.apply(cls));
     }
 });

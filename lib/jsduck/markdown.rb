@@ -43,21 +43,21 @@ module JsDuck
       relations.each do |cls|
         Logger.instance.log("Converting #{cls[:name]} ...")
         fname = cls[:filename]
-        replacements[fname] = [] unless replacements[fname]
-        replacements[fname] << {
-          :orig => cls[:orig_comment],
-          :new => @doc_writer.write(:class, cls),
-        }
-        [:cfg, :property, :method, :event].each do |type|
-          cls[type].each do |m|
-            unless type == :method && m[:name] == "constructor" || m[:private]
-              fname = m[:filename]
-              replacements[fname] = [] unless replacements[fname]
-              replacements[fname] << {
-                :orig => m[:orig_comment],
-                :new => @doc_writer.write(type, m),
-              }
-            end
+        if fname && fname.length > 0
+          replacements[fname] = [] unless replacements[fname]
+          replacements[fname] << {
+            :orig => cls[:orig_comment],
+            :new => @doc_writer.write(:class, cls),
+          }
+        end
+        cls.each_member do |m|
+          unless m[:tagname] == :method && m[:name] == "constructor" || m[:private]
+            fname = m[:filename]
+            replacements[fname] = [] unless replacements[fname]
+            replacements[fname] << {
+              :orig => m[:orig_comment],
+              :new => @doc_writer.write(m[:tagname], m),
+            }
           end
         end
       end

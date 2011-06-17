@@ -66,17 +66,8 @@ module JsDuck
     def create_class(docs, code)
       groups = group_class_docs(docs)
       result = create_bare_class(groups[:class], code)
-      result[:cfg] = groups[:cfg].map { |tags| create_cfg(tags, {}, result[:name]) }
-      result[:method] = []
-      if groups[:constructor].length > 0
-        constr = create_method(groups[:constructor], {})
-        constr[:member] = result[:name]
-        result[:method] << constr
-      end
-      result[:property] = []
-      result[:event] = []
-      result[:css_var] = []
-      result[:css_mixin] = []
+      result[:members] = create_class_members(groups, result[:name])
+      result[:statics] = Class.default_members_hash
       result
     end
 
@@ -128,15 +119,27 @@ module JsDuck
       }, doc_map)
     end
 
+    def create_class_members(groups, owner)
+      members = Class.default_members_hash
+      members[:cfg] = groups[:cfg].map { |tags| create_cfg(tags, {}, owner) }
+      if groups[:constructor].length > 0
+        constr = create_method(groups[:constructor], {})
+        constr[:owner] = owner
+        members[:method] << constr
+      end
+      members
+    end
+
     def create_method(docs, code)
       doc_map = build_doc_map(docs)
+      name = detect_name(:method, doc_map, code)
       return add_shared({
         :tagname => :method,
-        :name => detect_name(:method, doc_map, code),
-        :member => detect_member(doc_map),
+        :name => name,
+        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
-        :return => detect_return(doc_map),
+        :return => detect_return(doc_map, name == "constructor" ? "Object" : "void"),
       }, doc_map)
     end
 
@@ -145,18 +148,18 @@ module JsDuck
       return add_shared({
         :tagname => :event,
         :name => detect_name(:event, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
       }, doc_map)
     end
 
-    def create_cfg(docs, code, member = nil)
+    def create_cfg(docs, code, owner = nil)
       doc_map = build_doc_map(docs)
       return add_shared({
         :tagname => :cfg,
         :name => detect_name(:cfg, doc_map, code),
-        :member => detect_member(doc_map) || member,
+        :owner => detect_owner(doc_map) || owner,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
       }, doc_map)
@@ -167,7 +170,7 @@ module JsDuck
       return add_shared({
         :tagname => :property,
         :name => detect_name(:property, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :type => detect_type(:property, doc_map, code),
         :doc => detect_doc(docs),
       }, doc_map)
@@ -178,7 +181,7 @@ module JsDuck
       return add_shared({
         :tagname => :css_var,
         :name => detect_name(:css_var, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :type => detect_type(:css_var, doc_map, code),
         :doc => detect_doc(docs),
       }, doc_map)
@@ -189,7 +192,7 @@ module JsDuck
       return add_shared({
         :tagname => :css_mixin,
         :name => detect_name(:css_mixin, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
       }, doc_map)
@@ -201,8 +204,10 @@ module JsDuck
         :private => !!doc_map[:private],
         :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
+        :inheritable => !!doc_map[:inheritable],
         :deprecated => detect_deprecated(doc_map),
         :markdown => !!doc_map[:markdown],
+        :alias => doc_map[:alias] ? doc_map[:alias].first : nil,
       })
     end
 
@@ -223,7 +228,7 @@ module JsDuck
       end
     end
 
-    def detect_member(doc_map)
+    def detect_owner(doc_map)
       if doc_map[:member]
         doc_map[:member].first[:member]
       else
@@ -300,8 +305,9 @@ module JsDuck
       implicit = detect_implicit_params(code)
       explicit = detect_explicit_params(docs)
       # Override implicit parameters with explicit ones
+      # But if explicit ones exist, don't append the implicit ones.
       params = []
-      [implicit.length, explicit.length].max.times do |i|
+      (explicit.length > 0 ? explicit.length : implicit.length).times do |i|
         im = implicit[i] || {}
         ex = explicit[i] || {}
         doc = ex[:doc] || im[:doc] || ""
@@ -330,10 +336,10 @@ module JsDuck
       docs.find_all {|tag| tag[:tagname] == :param}
     end
 
-    def detect_return(doc_map)
+    def detect_return(doc_map, default_type="void")
       ret = doc_map[:return] ? doc_map[:return].first : {}
       return {
-        :type => ret[:type] || "void",
+        :type => ret[:type] || default_type,
         :doc => ret[:doc] || "",
       }
     end

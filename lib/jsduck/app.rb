@@ -8,6 +8,7 @@ require 'jsduck/tree'
 require 'jsduck/tree_icons'
 require 'jsduck/members'
 require 'jsduck/relations'
+require 'jsduck/aliases'
 require 'jsduck/page'
 require 'jsduck/exporter'
 require 'jsduck/timer'
@@ -33,6 +34,7 @@ module JsDuck
     attr_accessor :external_classes
     attr_accessor :show_private_classes
     attr_accessor :title
+    attr_accessor :footer
     attr_accessor :extjs_path
     attr_accessor :append_html
 
@@ -50,6 +52,7 @@ module JsDuck
       @external_classes = []
       @show_private_classes = false
       @title = "Ext JS API Documentation"
+      @footer = 'Generated with <a href="https://github.com/nene/jsduck">JSDuck</a>.'
       @extjs_path = "extjs/ext-all-debug.js"
       @append_html = ""
       @timer = Timer.new
@@ -77,6 +80,7 @@ module JsDuck
       parsed_files = @timer.time(:parsing) { parallel_parse(@input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       relations = @timer.time(:aggregating) { filter_classes(result) }
+      Aliases.new(relations).resolve_all
       warn_globals(relations)
       warn_unnamed(relations)
 
@@ -123,6 +127,7 @@ module JsDuck
       end
       agr.classify_orphans
       agr.create_global_class unless @ignore_global
+      agr.append_ext4_event_options
       agr.result
     end
 
@@ -148,7 +153,7 @@ module JsDuck
     def warn_globals(relations)
       global = relations["global"]
       return unless global
-      [:cfg, :property, :method, :event].each do |type|
+      global[:members].each_key do |type|
         global.members(type).each do |member|
           name = member[:name]
           file = member[:filename]
@@ -161,8 +166,8 @@ module JsDuck
     # print warning for each member with no name
     def warn_unnamed(relations)
       relations.each do |cls|
-        [:cfg, :property, :method, :event].each do |type|
-          cls[type].each do |member|
+        cls[:members].each_pair do |type, members|
+          members.each do |member|
             if !member[:name] || member[:name] == ""
               file = member[:filename]
               line = member[:linenr]
@@ -319,6 +324,7 @@ module JsDuck
       Logger.instance.log("Creating #{dir}/index.html...")
       html = IO.read(template_dir+"/index.html")
       html.gsub!("{title}", @title)
+      html.gsub!("{footer}", @footer)
       html.gsub!("{extjs_path}", @extjs_path)
       html.gsub!("{append_html}", @append_html)
       FileUtils.rm(dir+"/index.html")

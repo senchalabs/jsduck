@@ -5,13 +5,10 @@ Ext.define('Docs.view.tree.Tree', {
     extend: 'Ext.tree.Panel',
     alias : 'widget.classtree',
     requires: [
-        'Docs.view.HoverMenuButton',
-        'Docs.Favorites',
-        'Docs.History'
+        'Docs.Favorites'
     ],
 
-    id: 'treePanelCmp',
-    cls: 'iScroll',
+    cls: 'class-tree iScroll',
     folderSort: true,
     useArrows: true,
     rootVisible: false,
@@ -25,6 +22,7 @@ Ext.define('Docs.view.tree.Tree', {
              * @event
              * Fired when class in tree was clicked on and needs to be loaded.
              * @param {String} cls  name of the class.
+             * @param {Ext.EventObject} e
              */
             "classclick"
         );
@@ -32,60 +30,20 @@ Ext.define('Docs.view.tree.Tree', {
         // Expand the main tree
         this.root.expanded = true;
         this.root.children[0].expanded = true;
-        // Add links for favoriting classes
-        // HACK: To do the favicons initialization after History store loaded.
-        this.on("render", function() {
-            Ext.getStore("Favorites").on("load", function() {
-                this.getRootNode().cascadeBy(this.addFavIcons, this);
-            }, this);
-        }, this);
 
         this.on("itemclick", this.onItemClick, this);
 
-        this.dockedItems = [
-            {
-                xtype: 'container',
-                layout: 'hbox',
-                dock: 'top',
-                margin: '0 0 15 0',
-                items: [
-                    {
-                        xtype: 'hovermenubutton',
-                        cls: 'icon-fav sidebar',
-                        text: 'Favorites',
-                        menuCfg: {
-                            cls: 'sidebar',
-                            emptyText: 'No favorites',
-                            showCloseButtons: true
-                        },
-                        store: Ext.getStore('Favorites'),
-                        listeners: {
-                            closeclick: function(cls) {
-                                Docs.Favorites.remove(cls);
-                            }
-                        }
-                    },
-                    {
-                        xtype: 'hovermenubutton',
-                        cls: 'icon-hist sidebar',
-                        text: 'History',
-                        menuCfg: {
-                            cls: 'sidebar',
-                            emptyText: 'No history',
-                            showCloseButtons: true
-                        },
-                        store: Ext.getStore('History'),
-                        listeners: {
-                            closeclick: function(cls) {
-                                Docs.History.removeClass(cls);
-                            }
-                        }
-                    }
-                ]
-            }
-        ];
-
         this.callParent();
+
+        // Add links for favoriting classes.
+        // Do this after callParent, because the getRootNode() will
+        // work after initComponent has run.
+        Docs.Favorites.setTree(this);
+        this.initFavIcons();
+    },
+
+    initFavIcons: function() {
+        this.getRootNode().cascadeBy(this.addFavIcons, this);
     },
 
     addFavIcons: function(node) {
@@ -111,7 +69,7 @@ Ext.define('Docs.view.tree.Tree', {
                 }
             }
             else {
-                this.fireEvent("classclick", clsName);
+                this.fireEvent("classclick", clsName, e);
             }
         }
         else if (!node.isLeaf()) {
@@ -136,6 +94,9 @@ Ext.define('Docs.view.tree.Tree', {
             r.bubble(function(n) {
                 n.expand();
             });
+        }
+        else {
+            this.getSelectionModel().deselectAll();
         }
     },
 

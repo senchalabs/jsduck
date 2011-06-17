@@ -267,14 +267,14 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "has needed number of configs" do
-      @doc[:cfg].length.should == 2
+      @doc[:members][:cfg].length.should == 2
     end
     it "picks up names of all configs" do
-      @doc[:cfg][0][:name].should == "foo"
-      @doc[:cfg][1][:name].should == "bar"
+      @doc[:members][:cfg][0][:name].should == "foo"
+      @doc[:members][:cfg][1][:name].should == "bar"
     end
     it "marks first @cfg as private" do
-      @doc[:cfg][0][:private].should == true
+      @doc[:members][:cfg][0][:private].should == true
     end
   end
 
@@ -293,13 +293,16 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "has one method" do
-      @doc[:method].length.should == 1
+      @doc[:members][:method].length.should == 1
     end
     it "has method with name 'constructor'" do
-      @doc[:method][0][:name].should == "constructor"
+      @doc[:members][:method][0][:name].should == "constructor"
     end
     it "has method with needed parameters" do
-      @doc[:method][0][:params].length.should == 1
+      @doc[:members][:method][0][:params].length.should == 1
+    end
+    it "has method with default return type Object" do
+      @doc[:members][:method][0][:return][:type].should == "Object"
     end
   end
 
@@ -407,16 +410,16 @@ describe JsDuck::Aggregator do
     end
     it_should_behave_like "class"
     it "should have configs" do
-      @doc[:cfg].length.should == 1
+      @doc[:members][:cfg].length.should == 1
     end
     it "should have properties" do
-      @doc[:property].length.should == 1
+      @doc[:members][:property].length.should == 1
     end
     it "should have method" do
-      @doc[:method].length.should == 1
+      @doc[:members][:method].length.should == 1
     end
     it "should have events" do
-      @doc[:event].length.should == 1
+      @doc[:members][:event].length.should == 1
     end
   end
 
@@ -512,7 +515,7 @@ describe JsDuck::Aggregator do
     end
 
     it "combines all configs" do
-      @classes[0][:cfg].length.should == 3
+      @classes[0][:members][:cfg].length.should == 3
     end
 
     it "combines all mixins" do
@@ -524,9 +527,9 @@ describe JsDuck::Aggregator do
     end
 
     it "combines all methods, events, properties" do
-      @classes[0][:method].length.should == 3
-      @classes[0][:event].length.should == 3
-      @classes[0][:property].length.should == 3
+      @classes[0][:members][:method].length.should == 3
+      @classes[0][:members][:event].length.should == 3
+      @classes[0][:members][:property].length.should == 3
     end
   end
 

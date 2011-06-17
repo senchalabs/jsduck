@@ -63,7 +63,7 @@ module JsDuck
         "",
         maybe_html2text(cls),
         # configs defined inside class-comment
-        cls[:cfg].find_all {|c| !c[:orig_comment] }.map {|c| cfg(c) },
+        cls[:members][:cfg].find_all {|c| !c[:orig_comment] }.map {|c| cfg(c) },
         constructor(cls),
       ]
     end
@@ -92,7 +92,7 @@ module JsDuck
       return [
         # add explicit @method and @member when it's used in original source
         m[:orig_comment] =~ /@method/ ? "@method " + m[:name] : nil,
-        m[:orig_comment] =~ /@member/ ? "@member " + m[:member] : nil,
+        m[:orig_comment] =~ /@member/ ? "@member " + m[:owner] : nil,
         method_rest(m),
       ]
     end
@@ -113,7 +113,7 @@ module JsDuck
     end
 
     def constructor(cls)
-      con = cls[:method].find {|m| m[:name] == "constructor" }
+      con = cls[:members][:method].find {|m| m[:name] == "constructor" }
       return nil if !con
 
       return [

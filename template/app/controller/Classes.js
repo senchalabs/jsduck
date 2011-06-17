@@ -3,45 +3,92 @@
  */
 Ext.define('Docs.controller.Classes', {
     extend: 'Ext.app.Controller',
+
     requires: [
         'Docs.History',
-        'Docs.Syntax'
+        'Docs.Syntax',
+        'Docs.view.cls.Overview'
     ],
 
     stores: [
         'Favorites',
-        'History'
+        'Settings'
     ],
 
     models: [
         'Favorite',
-        'History'
+        'Setting'
+    ],
+
+    refs: [
+        {
+            ref: 'viewport',
+            selector: '#viewport'
+        },
+        {
+            ref: 'header',
+            selector: 'classheader'
+        },
+        {
+            ref: 'overview',
+            selector: 'classoverview'
+        },
+        {
+            ref: 'tree',
+            selector: 'classtree'
+        },
+        {
+            ref: 'favoritesGrid',
+            selector: '#favorites-grid'
+        }
     ],
 
     init: function() {
-        Ext.getBody().addListener('click', function(cmp, el) {
-            this.loadClass(el.rel);
+        this.addEvents(
+            /**
+             * @event showClass
+             * Fired after class shown. Used for analytics event tracking.
+             * @param {String} cls  name of the class.
+             */
+            "showClass",
+            /**
+             * @event showMember
+             * Fired after class member scrolled to view. Used for analytics event tracking.
+             * @param {String} cls  name of the class.
+             * @param {String} anchor  name of the member in form type-name like "method-bind".
+             */
+            "showMember",
+            /**
+             * @event showGuide
+             * Fired after guide shown. Used for analytics event tracking.
+             * @param {String} guide  name of the guide.
+             */
+            "showGuide"
+        );
+
+        Ext.getBody().addListener('click', function(event, el) {
+            this.opensNewWindow(event) ? window.open(el.href) : this.loadClass(el.rel);
         }, this, {
             preventDefault: true,
             delegate: '.docClass'
         });
 
         this.control({
-            '#treePanelCmp': {
-                // Can't simply assign the loadClass function as event
-                // handler, because an extra event options object is
-                // appended to the event arguments, which we don't
-                // want to give to the loadClass, as this would render
-                // the noHistory parameter to true.
-                classclick: function(cls) {
-                    this.loadClass(cls);
+            'classtree': {
+                classclick: function(cls, event) {
+                    this.handleClassClick(cls, event, this.getTree());
+                }
+            },
+            'classgrid': {
+                classclick: function(cls, event) {
+                    this.handleClassClick(cls, event, this.getFavoritesGrid());
                 }
             },
 
-            '#classlist': {
+            'indexcontainer': {
                 afterrender: function(cmp) {
-                    cmp.el.addListener('click', function(cmp, el) {
-                        this.showGuide(el.rel);
+                    cmp.el.addListener('click', function(event, el) {
+                        this.opensNewWindow(event) ? window.open(el.href) : this.showGuide(el.rel);
                     }, this, {
                         preventDefault: true,
                         delegate: '.guide'
@@ -49,7 +96,7 @@ Ext.define('Docs.controller.Classes', {
                 }
             },
 
-            '#doc-overview': {
+            'classoverview': {
                 afterrender: function(cmp) {
                     // Expand member when clicked
                     cmp.el.addListener('click', function(cmp, el) {
@@ -69,6 +116,27 @@ Ext.define('Docs.controller.Classes', {
         });
     },
 
+    // We don't want to select the class that was opened in another window,
+    // so restore the previous selection.
+    handleClassClick: function(cls, event, view) {
+        if (this.opensNewWindow(event)) {
+            window.open("#/api/" + cls);
+            view.selectClass(this.currentCls ? this.currentCls.name : "");
+        }
+        else {
+            this.loadClass(cls);
+        }
+    },
+
+    // Code for the middle mouse button
+    MIDDLE: 1,
+
+    // True when middle mouse button pressed or shift/ctrl key pressed
+    // together with mouse button (for Mac)
+    opensNewWindow: function(event) {
+        return event.button === this.MIDDLE || event.shiftKey || event.ctrlKey;
+    },
+
     cache: {},
 
     /**
@@ -81,7 +149,11 @@ Ext.define('Docs.controller.Classes', {
         var cls = clsUrl;
         var member;
 
-        Ext.getCmp('container').layout.setActiveItem(1);
+        if (!noHistory) {
+            Docs.History.push("/api/" + clsUrl);
+        }
+
+        Ext.getCmp('card-panel').layout.setActiveItem(1);
 
         // separate class and member name
         var matches = clsUrl.match(/^(.*?)(?:-(.*))?$/);
@@ -90,17 +162,11 @@ Ext.define('Docs.controller.Classes', {
             member = matches[2];
         }
 
-        if (!noHistory) {
-            Docs.History.push("/api/" + clsUrl);
-        }
-
-        var docTabPanel = Ext.getCmp('docTabPanel');
-
         if (this.cache[cls]) {
             this.showClass(this.cache[cls], member);
         } else {
-            if (docTabPanel) {
-                docTabPanel.setLoading(true);
+            if (this.getOverview()) {
+                this.getOverview().setLoading(true);
             }
 
             Ext.data.JsonP.request({
@@ -120,31 +186,26 @@ Ext.define('Docs.controller.Classes', {
 
     showClass: function(cls, anchor) {
         if (this.currentCls != cls) {
-            var container = Ext.getCmp('container'),
-                showClass = container.down('showclass'),
-                classHeader = showClass.down('classheader'),
-                classOverview = showClass.down('classoverview'),
-                docTabPanel = Ext.getCmp('docTabPanel');
+            this.getViewport().setPageTitle(cls.name);
+            this.getHeader().load(cls);
+            this.getOverview().load(cls);
 
-            classHeader.update(classHeader.tpl.apply(cls));
-            classOverview.load(cls);
+            this.getOverview().setLoading(false);
 
-            if (docTabPanel) {
-                docTabPanel.setActiveTab(0);
-                docTabPanel.setLoading(false);
-            }
-
-            Ext.getCmp('treePanelCmp').selectClass(cls.name);
+            this.getTree().selectClass(cls.name);
+            this.fireEvent('showClass', cls.name);
         }
 
         if (anchor) {
-            Ext.getCmp('doc-overview').scrollToEl("#" + anchor);
+            this.getOverview().scrollToEl("#" + anchor);
+            this.fireEvent('showMember', cls.name, anchor);
         } else {
-            var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
-            docContent.scrollTo('top', 0);
+            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', 0);
         }
 
         this.currentCls = cls;
+
+        this.getFavoritesGrid().selectClass(cls.name);
     },
 
     showGuide: function(name, noHistory) {
@@ -154,9 +215,11 @@ Ext.define('Docs.controller.Classes', {
             url: this.getBaseUrl() + "/guides/" + name + "/README.js",
             callbackName: name,
             success: function(json) {
+                this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
                 Ext.getCmp("guide").update(json.guide);
-                Ext.getCmp('container').layout.setActiveItem(2);
+                Ext.getCmp('card-panel').layout.setActiveItem(2);
                 Docs.Syntax.highlight(Ext.get("guide"));
+                this.fireEvent('showGuide', name);
             },
             scope: this
         });

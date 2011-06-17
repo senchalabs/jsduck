@@ -1,7 +1,7 @@
 /**
  * Provides methods dealing with localStorage- and memory-store.
  *
- * Base class for History and Favorites.
+ * Base class for Favorites and Settings.
  */
 Ext.define("Docs.LocalStore", {
     storeName: '',
@@ -15,7 +15,24 @@ Ext.define("Docs.LocalStore", {
     init: function() {
         this.localStorage = ('localStorage' in window && window['localStorage'] !== null);
         this.store = Ext.getStore(this.storeName);
-        this.localStorage && this.store.load();
+
+        if (this.localStorage) {
+            this.store.load();
+            if (window.addEventListener) {
+                window.addEventListener("storage", Ext.Function.bind(this.onStorageChange, this), false);
+            }
+            else {
+                window.attachEvent("onstorage", Ext.Function.bind(this.onStorageChange, this));
+            }
+        }
+    },
+
+    // When records in localstorage change, reload the store.
+    onStorageChange: function(e) {
+        e = e || window.event;
+        if (e.key === this.store.getProxy().id) {
+            this.store.load();
+        }
     },
 
     /**

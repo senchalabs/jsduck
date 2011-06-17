@@ -101,6 +101,8 @@ module JsDuck
           at_ftype
         elsif look(/@member\b/)
           at_member
+        elsif look(/@alias\b/)
+          at_alias
         elsif look(/@author\b/)
           at_author
         elsif look(/@docauthor\b/)
@@ -111,6 +113,8 @@ module JsDuck
           at_var
         elsif look(/@static\b/)
           boolean_at_tag(/@static/, :static)
+        elsif look(/@inheritable\b/)
+          boolean_at_tag(/@inheritable/, :inheritable)
         elsif look(/@(private|ignore|hide)\b/)
           boolean_at_tag(/@(private|ignore|hide)/, :private)
         elsif look(/@protected\b/)
@@ -266,6 +270,25 @@ module JsDuck
       match(/@member/)
       add_tag(:member)
       maybe_ident_chain(:member)
+      skip_white
+    end
+
+    # matches @alias class.name#type-member
+    def at_alias
+      match(/@alias/)
+      add_tag(:alias)
+      skip_horiz_white
+      if look(/\w/)
+        @current_tag[:cls] = ident_chain
+        if look(/#\w/)
+          @input.scan(/#/)
+          if look(/\w+-\w+/)
+            @current_tag[:type] = ident
+            @input.scan(/-/)
+          end
+          @current_tag[:member] = ident
+        end
+      end
       skip_white
     end
 

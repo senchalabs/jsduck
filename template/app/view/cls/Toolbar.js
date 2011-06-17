@@ -4,7 +4,8 @@
 Ext.define('Docs.view.cls.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
     requires: [
-        'Docs.view.HoverMenuButton'
+        'Docs.view.HoverMenuButton',
+        'Docs.Settings'
     ],
 
     dock: 'top',
@@ -28,12 +29,13 @@ Ext.define('Docs.view.cls.Toolbar', {
             event: "Events"
         };
         for (var type in memberTitles) {
-            var members = this.docClass[type];
-            if (members.length) {
+            var members = this.docClass.members[type];
+            var statics = this.docClass.statics[type];
+            if (members.length || statics.length) {
                 var btn = this.createMemberButton({
                     text: memberTitles[type],
                     type: type,
-                    members: members
+                    members: members.concat(statics)
                 });
                 this.memberButtons[type] = btn;
                 this.items.push(btn);
@@ -55,7 +57,10 @@ Ext.define('Docs.view.cls.Toolbar', {
                 xtype: 'checkbox',
                 margin: '0 5 0 0',
                 padding: '0 0 5 0',
-                handler: this.hideInherited,
+                checked: Docs.Settings.get("hideInherited"),
+                handler: function(el) {
+                    this.hideInherited(el.checked);
+                },
                 scope: this
             },
             {
@@ -95,8 +100,9 @@ Ext.define('Docs.view.cls.Toolbar', {
             showCount: true,
             listeners: {
                 click: function() {
-                    Ext.getCmp('doc-overview').scrollToEl("#m-" + cfg.type);
-                }
+                    this.up('classoverview').scrollToEl("#m-" + cfg.type);
+                },
+                scope: this
             }
         });
     },
@@ -117,7 +123,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     // creates store tha holds link records
     createStore: function(records) {
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'cls', 'url', 'label', 'inherited']
+            fields: ['id', 'cls', 'url', 'label', 'inherited', 'static']
         });
         store.add(records);
         return store;
@@ -128,13 +134,18 @@ Ext.define('Docs.view.cls.Toolbar', {
         return {
             cls: cls,
             url: member ? cls+"-"+member.tagname+"-"+member.name : cls,
-            label: member ? member.name : cls,
-            inherited: member ? member.member !== cls : false
+            label: member ? ((member.name === "constructor") ? cls : member.name) : cls,
+            inherited: member ? member.owner !== cls : false,
+            'static': member ? member['static'] : false
         };
     },
 
-    hideInherited: function(el) {
-        var hide = el.checked;
+    /**
+     * Hides or unhides inherited members.
+     * @param {Boolean} hide
+     */
+    hideInherited: function(hide) {
+        Docs.Settings.set("hideInherited", hide);
 
         // show/hide all inherited members
         Ext.Array.forEach(Ext.query('.member.inherited'), function(m) {
@@ -155,11 +166,19 @@ Ext.define('Docs.view.cls.Toolbar', {
                 section && Ext.get(section).setStyle({display: hide ? 'none' : 'block'});
             }
 
-            // add first-child class to first member in section
-            var sectionMembers = Ext.query(sectionId+' .member' + (hide ? ".not-inherited" : ""));
-            if (sectionMembers.length > 0) {
-                Ext.get(sectionMembers[0]).addCls('first-child');
-            }
+            // add first-child class to first member in subsection
+            Ext.Array.forEach(Ext.query(sectionId+" .subsection"), function(subsection) {
+                var subsectionMembers = Ext.query('.member' + (hide ? ".not-inherited" : ""), subsection);
+                if (subsectionMembers.length > 0) {
+                    Ext.get(subsectionMembers[0]).addCls('first-child');
+                    // make sure subsection is visible
+                    Ext.get(subsection).setStyle({display: 'block'});
+                }
+                else {
+                    // Hide subsection completely if empty
+                    Ext.get(subsection).setStyle({display: 'none'});
+                }
+            }, this);
 
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();

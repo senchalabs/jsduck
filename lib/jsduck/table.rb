@@ -47,14 +47,14 @@ module JsDuck
     #
     # Otherwise perform the rendering of HTML and save it to cache.
     def row(item)
-      cache_key = "#{item[:member]}-#{@row_class}-#{item[:name]}"
+      cache_key = "#{item[:owner]}-#{@row_class}-#{item[:name]}"
       if @cache[cache_key]
         html = @cache[cache_key]
       else
         html = @cache[cache_key] = create_row(item)
       end
       inherited = inherited?(item) ? 'inherited' : ''
-      owner_link = inherited?(item) ? member_link(item) : Class.short_name(item[:member])
+      owner_link = inherited?(item) ? member_link(item) : Class.short_name(item[:owner])
       owner_class = @cls.full_name
       html = html.sub(/!!--inherited--!!/, inherited)
       html = html.sub(/!!--owner-link--!!/, owner_link)
@@ -79,7 +79,7 @@ module JsDuck
     end
 
     def member_link(item)
-      @formatter.link(item[:member], item[:name], Class.short_name(item[:member]))
+      @formatter.link(item[:owner], item[:name], Class.short_name(item[:owner]))
     end
 
     def signature(item)
@@ -113,7 +113,7 @@ module JsDuck
     end
 
     def inherited?(item)
-      item[:member] != @cls.full_name
+      item[:owner] != @cls.full_name
     end
 
   end

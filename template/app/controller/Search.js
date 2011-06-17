@@ -21,8 +21,11 @@ Ext.define('Docs.controller.Search', {
                 keyup: function(el, ev) {
                     var dropdown = this.getDropdown();
 
+                    el.setHideTrigger(el.getValue().length === 0);
+
                     if (ev.keyCode === Ext.EventObject.ESC || !el.value) {
                         dropdown.hide();
+                        el.setValue("");
                         return;
                     }
                     else {
@@ -50,7 +53,7 @@ Ext.define('Docs.controller.Search', {
                     }
                     else if (ev.keyCode === Ext.EventObject.ENTER) {
                         ev.preventDefault();
-                        this.loadRecord(record);
+                        record && this.loadRecord(record);
                     }
                     else {
                         // Wait a bit before actually performing the search.
@@ -100,41 +103,54 @@ Ext.define('Docs.controller.Search', {
 
     search: function(term) {
         // perform search and load results to store
+        var limit = 10;
         var results = this.filterMembers(term);
-        Docs.App.getStore('Search').loadData(results, false);
+        this.getDropdown().setTotal(results.length);
+        this.getDropdown().getStore().loadData(results.slice(0, limit));
         // position dropdown below search box
         this.getDropdown().alignTo('search-field', 'bl', [-23, 2]);
         // hide dropdown when nothing found
         if (results.length === 0) {
             this.getDropdown().hide();
         }
+        else {
+            // auto-select first result
+            this.getDropdown().getSelectionModel().select(0);
+        }
     },
 
-    filterMembers: function(text, n) {
-        var results = [[], [], []];
+    filterMembers: function(text) {
+        var results = [[], [], [], [], []];
+        var xFull=0, nFull=1, xBeg=2, nBeg=3, nMid=4;
         var hasDot = /\./.test(text);
         var safeText = Ext.escapeRe(text);
-        var re0 = new RegExp("^" + safeText + "$", "i");
-        var re1 = new RegExp("^" + safeText, "i");
-        var re2 = new RegExp(safeText, "i");
+        var reFull = new RegExp("^" + safeText + "$", "i");
+        var reBeg = new RegExp("^" + safeText, "i");
+        var reMid = new RegExp(safeText, "i");
+
         Ext.Array.forEach(Docs.membersData.data, function(r) {
             // when search text has "." in it, search from the full name (e.g. "Ext.Component.focus")
             // Otherwise search from just the member name (e.g. "focus" or "Component")
             var name = hasDot ? r.cls + (r.type === "cls" ? "" : "." + r.member) : r.member;
 
-            if (re0.test(name)) {
-                results[0].push(r);
+            if (r.xtypes && Ext.Array.some(r.xtypes, function(x) {return reFull.test(x);})) {
+                results[xFull].push(r);
             }
-            else if (re1.test(name)) {
-                results[1].push(r);
+            else if (r.xtypes && Ext.Array.some(r.xtypes, function(x) {return reBeg.test(x);})) {
+                results[xBeg].push(r);
             }
-            else if (re2.test(name)) {
-                results[2].push(r);
+            else if (reFull.test(name)) {
+                results[nFull].push(r);
+            }
+            else if (reBeg.test(name)) {
+                results[nBeg].push(r);
+            }
+            else if (reMid.test(name)) {
+                results[nMid].push(r);
             }
         });
 
-        // flatten results array and returns first n results
-        return Ext.Array.flatten(results).slice(0, n || 10);
+        return Ext.Array.flatten(results);
     }
 
 });

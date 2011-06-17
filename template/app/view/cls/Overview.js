@@ -6,12 +6,11 @@ Ext.define('Docs.view.cls.Overview', {
     alias: 'widget.classoverview',
     requires: [
         'Docs.view.cls.Toolbar',
-        'Docs.Syntax'
+        'Docs.Syntax',
+        'Docs.Settings'
     ],
 
-    id: 'doc-overview',
-    cls: 'doc-tab iScroll',
-    title: 'Overview',
+    cls: 'class-overview iScroll',
     autoScroll: true,
     bodyPadding: '20',
 
@@ -25,13 +24,14 @@ Ext.define('Docs.view.cls.Overview', {
         if (el) {
             var isMember = el.hasCls("member");
             var scrollOffset = el.getY() - (isMember ? 145 : 135);
-            var docContent = Ext.get(Ext.query('#doc-overview .x-panel-body')[0]);
+            var docContent = this.getEl().down('.x-panel-body');
             var currentScroll = docContent.getScroll()['top'];
             docContent.scrollTo('top', currentScroll + scrollOffset, true);
 
             if (isMember && el.down(".expandable")) {
                 el.addCls('open');
             }
+            el.highlight();
         }
     },
 
@@ -53,13 +53,19 @@ Ext.define('Docs.view.cls.Overview', {
 
         this.update(this.renderClass(docClass));
         Docs.Syntax.highlight(this.getEl());
+
+        if (Docs.Settings.get("hideInherited")) {
+            this.toolbar.hideInherited(true);
+        }
     },
 
     renderClass: function(cls) {
         this.classTpl = this.classTpl || new Ext.XTemplate(
-            '<div class="doc-overview-content">',
+            '<div>',
                 '{hierarchy}',
-                '{doc}',
+                 '<div class="doc-contents">',
+                    '{doc}',
+                '</div>',
                 '<div class="members">',
                     '{members}',
                 '</div>',
@@ -131,36 +137,52 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     renderMembers: function(cls) {
-        var typeTitles = {
-            cfg: "Config options",
-            property: "Properties",
-            method: "Methods",
-            event: "Events"
-        };
+        var sections = [
+            {type: "cfg", title: "Config options"},
+            {type: "property", title: "Properties"},
+            {type: "method", title: "Methods"},
+            {type: "event", title: "Events"}
+        ];
 
         // Skip rendering empty sections
-        var html = [];
-        for (var type in typeTitles) {
-            if (cls[type].length > 0) {
-                html.push(this.renderSection(cls[type], type, typeTitles[type]));
-            }
-        }
-        return html.join("");
+        return Ext.Array.map(sections, function(sec) {
+            var members = cls.members[sec.type];
+            var statics = cls.statics[sec.type];
+            return (members.length > 0 || statics.length > 0) ? this.renderSection(members, statics, sec) : "";
+        }, this).join("");
     },
 
-    renderSection: function(members, type, title) {
+    renderSection: function(members, statics, section) {
         this.sectionTpl = this.sectionTpl || new Ext.XTemplate(
             '<div id="m-{type}">',
-                '<div class="definedBy">Defined By</div>',
+                '<tpl if="!statics.length">',
+                    '<div class="definedBy">Defined By</div>',
+                '</tpl>',
                 '<h3 class="members-title">{title}</h3>',
-                '{members}',
+                '<tpl if="members.length">',
+                    '<div class="subsection">',
+                        '<tpl if="statics.length">',
+                            '<div class="definedBy">Defined By</div>',
+                            '<h4 class="members-subtitle">Instance {title}</h3>',
+                        '</tpl>',
+                        '{members}',
+                    '</div>',
+                '</tpl>',
+                '<tpl if="statics.length">',
+                    '<div class="subsection">',
+                        '<div class="definedBy">Defined By</div>',
+                        '<h4 class="members-subtitle">Static {title}</h3>',
+                        '{statics}',
+                    '</div>',
+                '</tpl>',
             '</div>'
         );
 
         return this.sectionTpl.apply({
-            type: type,
-            title: title,
-            members: Ext.Array.map(members, this.renderMemberDiv, this).join("")
+            type: section.type,
+            title: section.title,
+            members: Ext.Array.map(members, this.renderMemberDiv, this).join(""),
+            statics: Ext.Array.map(statics, this.renderMemberDiv, this).join("")
         });
     },
 
@@ -174,10 +196,10 @@ Ext.define('Docs.view.cls.Overview', {
                 // member name and type + link to owner class and source
                 '<div class="title">',
                     '<div class="meta">',
-                        '<a href="#/api/{member}" rel="{member}" class="definedIn docClass">{member}</a><br/>',
+                        '<a href="#/api/{owner}" rel="{owner}" class="definedIn docClass">{owner}</a><br/>',
                         '<a href="source/{href}" target="_blank" class="viewSource">view source</a>',
                     '</div>',
-                    '<a href="#" class="name {expandable}">{name}</a>{signature}',
+                    '{signature}',
                 '</div>',
                 // short and long descriptions
                 '<div class="description">',
@@ -199,7 +221,7 @@ Ext.define('Docs.view.cls.Overview', {
             // use classname "expandable" when member has shortened description
             expandable: member.shortDoc ? "expandable" : "not-expandable",
             // use classname "inherited" when member is not defined in this class
-            inherited: member.member === this.docClass.name ? "not-inherited" : "inherited",
+            inherited: member.owner === this.docClass.name ? "not-inherited" : "inherited",
             // method params signature or property type signature
             signature: this.renderSignature(member),
             // full documentation together with optional parameters and return value
@@ -208,29 +230,40 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     renderSignature: function(member) {
-        var signature;
+        this.signatureTpl = this.signatureTpl || new Ext.XTemplate(
+            '{before}<a href="#/api/{member}-{tagname}-{name}" class="name {expandable}">{name}</a>{params}{after}'
+        );
+
+        var cfg = Ext.apply({}, member);
+        cfg.expandable = member.shortDoc ? "expandable" : "not-expandable";
+
+        if (member.tagname === "method" && member.name === "constructor") {
+            cfg.before = "<strong class='constructor-signature'>new</strong>";
+            cfg.name = this.docClass.name;
+        }
+
         if (member.tagname === "cfg" || member.tagname === "property") {
-            signature = "<span> : " + member.type + "</span>";
+            cfg.params = "<span> : " + member.type + "</span>";
         }
         else {
             var ps = Ext.Array.map(member.params, this.renderShortParam, this).join(", ");
-            signature = '( <span class="pre">' + ps + "</span> )";
+            cfg.params = '( <span class="pre">' + ps + "</span> )";
             if (member.tagname === "method") {
-                signature += " : " + member["return"].type;
+                cfg.params += " : " + member["return"].type;
             }
         }
 
-        if (member.protected) {
-            signature += "<strong class='protected-signature'>protected</strong>";
+        if (member['protected']) {
+            cfg.after = "<strong class='protected-signature'>protected</strong>";
         }
-        if (member.static) {
-            signature += "<strong class='static-signature'>static</strong>";
+        if (member['static']) {
+            cfg.after = "<strong class='static-signature'>static</strong>";
         }
         if (member.deprecated) {
-            signature += "<strong class='deprecated-signature'>deprecated</strong>";
+            cfg.after = "<strong class='deprecated-signature'>deprecated</strong>";
         }
 
-        return signature;
+        return this.signatureTpl.apply(cfg);
     },
 
     renderShortParam: function(param) {

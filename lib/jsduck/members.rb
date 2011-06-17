@@ -13,7 +13,7 @@ module JsDuck
         [:cfg, :property, :method, :event].each do |type|
           cls.members(type).each do |m|
             # skip inherited items and constructors
-            if m[:member] == cls.full_name && m[:name] != cls.short_name
+            if m[:owner] == cls.full_name && m[:name] != cls.short_name
               list << member_node(m, cls)
             end
           end
@@ -28,7 +28,7 @@ module JsDuck
         :cls => cls.full_name,
         :member => cls.short_name,
         :type => :cls,
-        :doc => short_desc(cls[:doc])
+        :xtypes => cls[:xtypes]
       }
     end
 
@@ -38,32 +38,7 @@ module JsDuck
         :cls => cls.full_name,
         :member => member[:name],
         :type => member[:tagname],
-        :doc => short_desc(member[:doc])
       }
-    end
-
-    def short_desc(str)
-      tagless = first_sentence(strip_tags(strip_links(str)))
-      if tagless.length > 120
-        short_doc = tagless[0..116]
-        ellipsis = tagless.length > short_doc.length ? "..." : ""
-        tagless[0..116] + ellipsis
-      else
-        tagless
-      end
-    end
-
-    def strip_tags(str)
-      str.gsub(/<.*?>/, "")
-    end
-
-    def strip_links(str)
-      str = str.gsub(/\{@link +(\S*?)(?: +(.+?))?\}/, "\\1")
-      str = str.gsub(/#/, ".")
-    end
-
-    def first_sentence(str)
-      str.sub(/\A(.+?\.)\s.*\Z/m, "\\1")
     end
 
   end

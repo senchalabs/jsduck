@@ -9,14 +9,24 @@ describe JsDuck::DocFormatter do
     @formatter.relations = JsDuck::Relations.new([
       JsDuck::Class.new({
         :name => "Context",
-        :method => [{:name => "bar", :tagname => :method}]
+        :members => {
+          :method => [{:name => "bar", :tagname => :method}]
+        },
+        :statics => {
+          :method => [{:name => "id", :tagname => :method}],
+        },
       }),
       JsDuck::Class.new({
         :name => 'Ext.Msg'
       }),
       JsDuck::Class.new({
         :name => "Foo",
-        :cfg => [{:name => "bar", :tagname => :cfg}],
+        :members => {
+          :cfg => [{:name => "bar", :tagname => :cfg}],
+        },
+        :statics => {
+          :method => [{:name => "id", :tagname => :method}],
+        },
         :alternateClassNames => ["FooBar"]
       }),
     ])
@@ -36,9 +46,19 @@ describe JsDuck::DocFormatter do
         'Look at <a href="Foo#cfg-bar">Foo.bar</a>'
     end
 
+    it "replaces {@link Foo#id} with link to static class member" do
+      @formatter.replace("Look at {@link Foo#id}").should ==
+        'Look at <a href="Foo#method-id">Foo.id</a>'
+    end
+
     it "uses context to replace {@link #bar} with link to class member" do
       @formatter.replace("Look at {@link #bar}").should ==
         'Look at <a href="Context#method-bar">bar</a>'
+    end
+
+    it "uses context to replace {@link #id} with link to static class member" do
+      @formatter.replace("Look at {@link #id}").should ==
+        'Look at <a href="Context#method-id">id</a>'
     end
 
     it "allows use of custom link text" do
@@ -101,7 +121,9 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({:name => 'FooBar.Blah'}),
           JsDuck::Class.new({
             :name => 'Ext.form.Field',
-            :method => [{:name => "getValues", :tagname => :method}]
+            :members => {
+              :method => [{:name => "getValues", :tagname => :method}]
+            }
           }),
           JsDuck::Class.new({
             :name => 'Ext.XTemplate',
@@ -110,7 +132,9 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({:name => 'MyClass'}),
           JsDuck::Class.new({
             :name => 'Ext',
-            :method => [{:name => "encode", :tagname => :method}]
+            :members => {
+              :method => [{:name => "encode", :tagname => :method}]
+            }
           }),
         ])
       end
@@ -180,6 +204,30 @@ describe JsDuck::DocFormatter do
           '<img src="some/file.jpg" alt="a MyClass image"/>'
       end
     end
+
+    describe "with type information" do
+      before do
+        @formatter.relations = JsDuck::Relations.new([
+          JsDuck::Class.new({
+            :name => 'Foo',
+            :members => {
+              :method => [{:name => "select", :tagname => :method}],
+              :event => [{:name => "select", :tagname => :event}],
+            }
+          })
+        ])
+      end
+
+      it "replaces {@link Foo#method-select} with link to method" do
+        @formatter.replace("Look at {@link Foo#method-select}").should ==
+          'Look at <a href="Foo#method-select">Foo.select</a>'
+      end
+
+      it "replaces {@link Foo#event-select} with link to event" do
+        @formatter.replace("Look at {@link Foo#event-select}").should ==
+          'Look at <a href="Foo#event-select">Foo.select</a>'
+      end
+    end
   end
 
   describe "#format" do
@@ -247,24 +295,66 @@ describe JsDuck::DocFormatter do
       @formatter.max_length = 10
     end
 
-    it "leaves short text unchanged" do
-      @formatter.shorten("Ha ha").should == "Ha ha"
-    end
-
-    it "leaves text with max length unchanged" do
-      @formatter.shorten("1234567890").should == "1234567890"
+    it "appends ellipsis to short text" do
+      @formatter.shorten("Ha ha").should == "Ha ha ..."
     end
 
     it "shortens text longer than max length" do
       @formatter.shorten("12345678901").should == "1234567..."
     end
 
-    it "ignores HTML tags when calculating text length" do
-      @formatter.shorten("<a href='some-long-link'>Foo</a>").should == "<a href='some-long-link'>Foo</a>"
-    end
-
     it "strips HTML tags when shortening" do
       @formatter.shorten("<a href='some-long-link'>12345678901</a>").should == "1234567..."
+    end
+
+    it "takes only first centence" do
+      @formatter.shorten("bla. blah").should == "bla. ..."
+    end
+  end
+
+  describe "#too_long?" do
+
+    before do
+      @formatter.max_length = 10
+    end
+
+    it "is false when exactly equal to the max_length" do
+      @formatter.too_long?("1234567890").should == false
+    end
+
+    it "is false when short sentence" do
+      @formatter.too_long?("bla bla.").should == false
+    end
+
+    it "is true when long sentence" do
+      @formatter.too_long?("bla bla bla.").should == true
+    end
+
+    it "ignores HTML tags when calculating text length" do
+      @formatter.too_long?("<a href='some-long-link'>Foo</a>").should == false
+    end
+
+  end
+
+
+  describe "#first_sentence" do
+    it "extracts first sentence" do
+      @formatter.first_sentence("Hi John. This is me.").should == "Hi John."
+    end
+    it "extracts first sentence of multiline text" do
+      @formatter.first_sentence("Hi\nJohn.\nThis\nis\nme.").should == "Hi\nJohn."
+    end
+    it "returns everything if no dots in text" do
+      @formatter.first_sentence("Hi John this is me").should == "Hi John this is me"
+    end
+    it "returns everything if no dots in text" do
+      @formatter.first_sentence("Hi John this is me").should == "Hi John this is me"
+    end
+    it "ignores dots inside words" do
+      @formatter.first_sentence("Hi John th.is is me").should == "Hi John th.is is me"
+    end
+    it "ignores first empty sentence" do
+      @formatter.first_sentence(". Hi John. This is me.").should == ". Hi John."
     end
   end
 
