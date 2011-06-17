@@ -74,8 +74,8 @@ def run_jsduck_export(extra_options, ext_dir)
   rev = `git rev-parse HEAD`.slice(0, 7)
 
   run_jsduck([
-    "--title", "Ext JS 4.0.3 API Documentation",
-    "--footer", "ExtJS 4.0.3 Documentation from Sencha. Generated with <a href='https://github.com/nene/jsduck'>JSDuck</a> revison #{rev}",
+    "--title", "Ext JS 4.0.2 API Documentation",
+    "--footer", "ExtJS 4.0.2 Documentation from Sencha. Generated with <a href='https://github.com/nene/jsduck'>JSDuck</a> revison #{rev}",
     "--extjs-path", "extjs/ext-all.js",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
