@@ -149,6 +149,7 @@
                 "Ext.tip.QuickTipManager",
                 "Ext.tip.Tip",
                 "Ext.tip.ToolTip",
+                "Ext.MessageBox",
                 "Ext.window.MessageBox",
                 "Ext.window.Window"
             ]
@@ -192,7 +193,7 @@
                 "Ext.grid.feature.Grouping",
                 "Ext.grid.feature.GroupingSummary",
                 "Ext.grid.header.Container",
-                "Ext.grid.RowNumberer",
+                "Ext.grid.PagingScroller",
                 "Ext.grid.property.Grid",
                 "Ext.grid.property.HeaderContainer",
                 "Ext.grid.property.Property",
@@ -202,6 +203,7 @@
                 "Ext.grid.plugin.Editing",
                 "Ext.grid.plugin.HeaderResizer",
                 "Ext.grid.plugin.RowEditing",
+                "Ext.grid.RowNumberer",
                 "Ext.view.AbstractView",
                 "Ext.view.BoundList",
                 "Ext.view.BoundListKeyNav",
@@ -274,6 +276,7 @@
                 "Ext.resizer.Resizer",
                 "Ext.resizer.Splitter",
                 "Ext.selection.Model",
+                "Ext.selection.CellModel",
                 "Ext.selection.CheckboxModel",
                 "Ext.selection.RowModel",
                 "Ext.Shadow",
@@ -302,7 +305,7 @@
                 "Ext.dd.ScrollManager",
                 "Ext.dd.StatusProxy",
                 "Ext.panel.Proxy",
-                "Ext.tree.ViewDDPlugin",
+                "Ext.tree.plugin.TreeViewDragDrop",
                 "Ext.util.ComponentDragger"
             ]
         },
@@ -359,6 +362,7 @@
                 "Ext.data.AbstractStore",
                 "Ext.data.StoreManager",
                 "Ext.data.Store",
+                "Ext.data.ArrayStore",
                 "Ext.data.DirectStore"
             ]
         },

@@ -88,7 +88,7 @@ Ext.define('Docs.view.Viewport', {
                                 region: 'north',
                                 height: Docs.Settings.get('favorites-height') || 150,
                                 padding: '2 4 0 0',
-                                bodyPadding: '8 15 8 12',
+                                bodyPadding: '3 15 0 12',
                                 border: false,
                                 plain: true,
                                 split: true,
@@ -111,6 +111,7 @@ Ext.define('Docs.view.Viewport', {
                                             plugins: [{
                                                 pluginId: 'favGridDD',
                                                 ptype: 'gridviewdragdrop',
+                                                animate: true,
                                                 dragText: 'Drag and drop to reorganize'
                                             }],
                                             listeners: {
@@ -209,10 +210,9 @@ Ext.define('Docs.view.Viewport', {
      */
     setPageTitle: function(text) {
         text = Ext.util.Format.stripTags(text);
-        var title = Ext.query("title")[0];
         if (!this.origTitle) {
-            this.origTitle = title.innerHTML;
+            this.origTitle = document.title;
         }
-        title.innerHTML = text ? (text + " - " + this.origTitle) : this.origTitle;
+        document.title = text ? (text + " - " + this.origTitle) : this.origTitle;
     }
 });

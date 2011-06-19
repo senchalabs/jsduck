@@ -291,7 +291,7 @@ a {
   background: #fff;
   @include border-radius(5px);
   @include box-shadow(0, 0, 4px, rgba(0, 0, 0, 0.4));
-  line-height: 1.4em;
+  line-height: 1.5em;
   h3 {
     font-size: 1.2em;
     padding: 1em 0 0.4em 0;
@@ -508,6 +508,10 @@ a {
     margin: 0 0 1em 2em;
     li {
       list-style: disc outside; } }
+  ol {
+    margin: 0 0 1em 2em;
+    li {
+      list-style: decimal outside; } }
   h3 {
     font-weight: bold;
     font-size: 1.1em; }
@@ -528,8 +532,9 @@ a {
 @mixin guides-h3-heading {
   font-weight: bold;
   color: #314e64;
-  margin-top: 1em;
-  font-size: 14px;
+  margin-top: 0.5em;
+  padding-top: 16px;
+  font-size: 16px;
   line-height: 16px;
   margin-bottom: 4px; }
 
@@ -559,7 +564,7 @@ a {
     @include guides-h3-heading; } }
 
 .class-overview {
-  .deprecated-signature, .protected-signature, .static-signature, .constructor-signature {
+  .deprecated-signature, .protected-signature, .static-signature {
     font-weight: bold;
     text-transform: uppercase;
     color: white;
@@ -575,8 +580,8 @@ a {
     background-color: $docs-text-color; }
   .constructor-signature {
     margin-left: 0;
-    margin-right: 5px;
-    background-color: $docs-text-color; }
+    margin-right: 3px;
+    color: $docs-link-color; }
   .cfgGroup {
     margin: 10px 0 3px 0; } }
 
