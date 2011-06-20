@@ -4,13 +4,13 @@ describe JsDuck::TreeIcons do
 
   before do
     @icons = JsDuck::TreeIcons.new.extract_icons({
-        :id => "apidocs",
+        :clsName => "apidocs",
         :iconCls => "icon-docs",
         :text => "API Documentation",
         :singleClickExpand => true,
         :children => [
           {
-            :id => "pkg-SamplePackage",
+            :clsName => "pkg-SamplePackage",
             :text => "SamplePackage",
             :iconCls => "icon-pkg",
             :cls => "package",
@@ -19,7 +19,7 @@ describe JsDuck::TreeIcons do
               {
                 :href => "output/SamplePackage.Component.html",
                 :text => "Component",
-                :id => "SamplePackage.Component",
+                :clsName => "SamplePackage.Component",
                 :isClass => true,
                 :iconCls => "icon-cmp",
                 :cls => "cls",
@@ -28,14 +28,14 @@ describe JsDuck::TreeIcons do
               {
                 :href => "output/SamplePackage.Singleton.html",
                 :text => "Singleton",
-                :id => "SamplePackage.Singleton",
+                :clsName => "SamplePackage.Singleton",
                 :isClass => true,
                 :iconCls => "icon-static",
                 :cls => "cls",
                 :leaf => true
               },
               {
-                :id => "pkg-SamplePackage",
+                :clsName => "pkg-SamplePackage",
                 :text => "sub",
                 :iconCls => "icon-pkg",
                 :cls => "package",
@@ -44,7 +44,7 @@ describe JsDuck::TreeIcons do
                   {
                     :href => "output/SamplePackage.sub.Foo.html",
                     :text => "Foo",
-                    :id => "SamplePackage.sub.Foo",
+                    :clsName => "SamplePackage.sub.Foo",
                     :isClass => true,
                     :iconCls => "icon-cls",
                     :cls => "cls",
