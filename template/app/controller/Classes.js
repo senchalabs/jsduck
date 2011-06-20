@@ -43,6 +43,8 @@ Ext.define('Docs.controller.Classes', {
         }
     ],
 
+    activeUrl: null,
+
     init: function() {
         this.addEvents(
             /**
@@ -149,6 +151,9 @@ Ext.define('Docs.controller.Classes', {
         var cls = clsUrl;
         var member;
 
+        if (this.activeUrl == clsUrl) return;
+        this.activeUrl = clsUrl;
+
         if (!noHistory) {
             Docs.History.push("/api/" + clsUrl);
         }
@@ -177,7 +182,7 @@ Ext.define('Docs.controller.Classes', {
                     this.showClass(json, member);
                 },
                 failure : function(response, opts) {
-                    console.log('Fail');
+                    // console.log('Fail');
                 },
                 scope: this
             });
@@ -209,6 +214,10 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showGuide: function(name, noHistory) {
+
+        if (this.activeUrl == name) return;
+        this.activeUrl = name;
+
         noHistory || Docs.History.push("/guide/" + name);
 
         Ext.data.JsonP.request({

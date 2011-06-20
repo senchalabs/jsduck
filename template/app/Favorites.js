@@ -6,6 +6,28 @@ Ext.define("Docs.Favorites", {
     storeName: 'Favorites',
     singleton: true,
 
+    init: function() {
+        this.callParent(arguments);
+
+        // Populate favorites with Top 10 classes
+        if (this.store.data.items.length == 0) {
+            this.store.add([
+                { cls: 'Ext.data.Store' },
+                { cls: 'Ext' },
+                { cls: 'Ext.grid.Panel' },
+                { cls: 'Ext.panel.Panel' },
+                { cls: 'Ext.form.field.ComboBox' },
+                { cls: 'Ext.data.Model' },
+                { cls: 'Ext.form.Panel' },
+                { cls: 'Ext.button.Button' },
+                { cls: 'Ext.tree.Panel' },
+                { cls: 'Ext.Component' }
+            ]);
+            this.syncStore();
+        }
+
+    },
+
     /**
      * Associates Favorites with Docs TreePanel component.
      * @param {Docs.view.tree.Tree} tree
