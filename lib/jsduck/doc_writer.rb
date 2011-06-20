@@ -137,6 +137,7 @@ module JsDuck
         maybe_html2text(p),
         privat(p[:private]),
         static(p[:static]),
+        aliass(p[:alias]),
       ]
     end
 
@@ -148,6 +149,7 @@ module JsDuck
         retrn(m[:return]),
         privat(m[:private]),
         static(m[:static]),
+        aliass(m[:alias]),
       ]
     end
 
@@ -184,6 +186,10 @@ module JsDuck
 
     def static(s)
       s ? "@static" : nil
+    end
+
+    def aliass(a)
+      a ? "@alias #{a[:cls]}##{a[:member]}" : nil
     end
 
     # Convert :doc property to markdown only if no @markdown tag already
