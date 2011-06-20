@@ -99,7 +99,7 @@ module JsDuck
 
     def event(e)
       return [
-        "@event",
+        "@event " + e[:name],
         method_rest(e),
       ]
     end
