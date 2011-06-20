@@ -96,6 +96,15 @@ module JsDuck
     # When parent and child have members with same name,
     # member from child overrides tha parent member.
     def members_hash(type, context=:members)
+      # Singletons have no static members
+      if @doc[:singleton] && context == :statics
+        # Warn if singleton has static members
+        if @doc[context][type].length > 0
+          Logger.instance.warn("Singleton class #{@doc[:name]} can't have static members, remove the @static tag.")
+        end
+        return {}
+      end
+
       all_members = parent ? parent.members_hash(type, context) : {}
 
       mixins.each do |mix|

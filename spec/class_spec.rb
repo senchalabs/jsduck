@@ -64,6 +64,15 @@ describe JsDuck::Class do
         });
       @classes["ChildClass"] = @child
       @child.relations = @classes
+
+      @singletonChild = JsDuck::Class.new({
+          :name => "Singleton",
+          :extends => "ParentClass",
+          :mixins => ["MixinClass"],
+          :singleton => true,
+        });
+      @classes["Singleton"] = @singletonChild
+      @singletonChild.relations = @classes
     end
 
     it "returns constructor as first method" do
@@ -113,6 +122,21 @@ describe JsDuck::Class do
       it "overrides parent class members with the same name" do
         @members["foo"][:owner].should == "ChildClass"
       end
+
+      describe "singleton class" do
+        before do
+          @members = @singletonChild.members_hash(:method)
+        end
+
+        it "inherits all instance members from parent" do
+          @members.should have_key("baz")
+          @members.should have_key("foo")
+        end
+
+        it "inherites all instace members from mixins" do
+          @members.should have_key("xxx")
+        end
+      end
     end
 
     describe "(:method, :statics)" do
@@ -142,6 +166,22 @@ describe JsDuck::Class do
 
       it "inherits inheritableStatics from mixins" do
         @members.should have_key("mixinB")
+      end
+
+      describe "singleton class" do
+        before do
+          @members = @singletonChild.members_hash(:method, :statics)
+        end
+
+        it "doesn't inherit any static members from parent" do
+          @members.should_not have_key("parentA")
+          @members.should_not have_key("parentB")
+        end
+
+        it "doesn't inherit any static members from mixins" do
+          @members.should_not have_key("mixinA")
+          @members.should_not have_key("mixinB")
+        end
       end
     end
   end
