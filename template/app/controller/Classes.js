@@ -34,6 +34,10 @@ Ext.define('Docs.controller.Classes', {
             selector: 'classoverview'
         },
         {
+            ref: 'tabPanel',
+            selector: 'classtabpanel'
+        },
+        {
             ref: 'tree',
             selector: 'classtree'
         },
@@ -190,9 +194,19 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
+        var classOverview = this.getTabPanel().down('classoverview');
+
         if (this.currentCls != cls) {
             this.getViewport().setPageTitle(cls.name);
             this.getHeader().load(cls);
+
+            if (!classOverview) {
+                classOverview = Ext.create('Docs.view.cls.Overview');
+                this.getTabPanel().add(classOverview);
+                this.getTabPanel().setActiveTab(0);
+            }
+            classOverview.load(cls);
+
             this.getOverview().load(cls);
 
             this.getOverview().setLoading(false);

@@ -102,6 +102,7 @@ module JsDuck
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
         @timer.time(:generating) { write_class(@output_dir+"/output", relations) }
         @timer.time(:generating) { write_overview(@output_dir+"/output/overviewData.js", relations) }
+        @timer.time(:generating) { write_examples(@output_dir+"/output/exampleData.js") }
         if @guides_dir
           @timer.time(:generating) { write_guides(@guides_dir, @output_dir+"/guides", relations) }
         end
@@ -222,6 +223,15 @@ module JsDuck
       js = "Docs.membersData = " + JSON.generate( {:data => members} ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
     end
+
+    # Write examples in JSON form into a file.
+    def write_examples(filename)
+      overview = JSON.parse(IO.read(@template_dir+"/exampleData.json"))
+
+      js = "Docs.examplesData = " + JSON.generate( overview ) + ";"
+      File.open(filename, 'w') {|f| f.write(js) }
+    end
+
 
     # Writes documentation page for each class
     # We do it in parallel using as many processes as available CPU-s

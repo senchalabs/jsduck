@@ -6,11 +6,13 @@ Ext.define('Docs.view.cls.Overview', {
     alias: 'widget.classoverview',
     requires: [
         'Docs.view.cls.Toolbar',
+        'Docs.view.examples.Inline',
         'Docs.Syntax',
         'Docs.Settings'
     ],
 
     cls: 'class-overview iScroll',
+    title: 'Overview',
     autoScroll: true,
     bodyPadding: '20',
 

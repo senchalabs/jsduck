@@ -1,0 +1,17 @@
+{
+  "examples": [
+    {
+      "title": "Simple Button",
+      "primaryClass": "Ext.button.Button",
+      "description": "Simple button with click handler",
+      "id": "Ext.button.Button/simple.js"
+    },
+    {
+      "title": "Menu Button",
+      "primaryClass": "Ext.button.Button",
+      "referencedClasses": ["Ext.menu.Menu"],
+      "description": "Menu button with bottom aligned arrow",
+      "id": "Ext.button.Button/menu.js"
+    }
+  ]
+}
