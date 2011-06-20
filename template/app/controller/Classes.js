@@ -11,13 +11,15 @@ Ext.define('Docs.controller.Classes', {
     ],
 
     stores: [
+        'Examples',
         'Favorites',
         'Settings'
     ],
 
     models: [
         'Favorite',
-        'Setting'
+        'Setting',
+        'Example'
     ],
 
     refs: [
@@ -203,6 +205,7 @@ Ext.define('Docs.controller.Classes', {
             if (!classOverview) {
                 classOverview = Ext.create('Docs.view.cls.Overview');
                 this.getTabPanel().add(classOverview);
+                this.getTabPanel().add(Ext.create('Docs.view.cls.Examples'));
                 this.getTabPanel().setActiveTab(0);
             }
             classOverview.load(cls);

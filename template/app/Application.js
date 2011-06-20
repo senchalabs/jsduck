@@ -29,6 +29,8 @@ Ext.define('Docs.Application', {
         Docs.Favorites.init();
         Docs.Settings.init();
 
+        Ext.getStore('Examples').add(Docs.examplesData.examples);
+
         Ext.create('Docs.view.Viewport');
 
         // Update favorites grid height between browser tabs if changed

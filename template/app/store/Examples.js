@@ -1,7 +1,7 @@
 /**
  * Store for keeping examples index.
  */
-Ext.define('Docs.store.Example', {
+Ext.define('Docs.store.Examples', {
     extend: 'Ext.data.Store',
-    model: 'Example'
+    model: 'Docs.model.Example'
 });

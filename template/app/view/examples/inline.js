@@ -5,6 +5,7 @@ Ext.define('Docs.view.examples.Inline', {
     deferredRender: false,
     style: 'border-color: #bfbfbf;',
     plain: true,
+    id: 'inlineCodeExample',
     items: [
         {
             id: 'code',
@@ -56,12 +57,6 @@ Ext.define('Docs.view.examples.Inline', {
         });
     },
 
-    setEditorHeights: function() {
-        // var codeCmp = this.getComponent('code');
-        // var el = new Ext.core.Element(Ext.DomQuery.selectNode('.CodeMirror-lines', codeCmp.body.dom));
-        // this.setHeight(el.getHeight() + 50)
-    },
-
     listeners: {
         afterlayout: function() {
             var inlineEditor = this;
@@ -70,17 +65,11 @@ Ext.define('Docs.view.examples.Inline', {
                     value: '',
                     mode:  "javascript",
                     lineNumbers: true,
-                    indentUnit: 4,
-                    onChange: function() {
-                        inlineEditor.setEditorHeights();
-                    }
+                    indentUnit: 4
                 });
                 this.cssEditor = CodeMirror(this.getComponent('cssEditor').body, {
                     value: '',
-                    mode:  "css",
-                    onChange: function() {
-                        inlineEditor.setEditorHeights();
-                    }
+                    mode:  "css"
                 });
             }
         }

@@ -6,7 +6,8 @@ Ext.define('Docs.view.cls.TabPanel', {
     extend: 'Ext.tab.Panel',
     alias: 'widget.classtabpanel',
     requires: [
-        'Docs.view.cls.Overview'
+        'Docs.view.cls.Overview',
+        'Docs.view.cls.Examples'
     ],
 
     plain: true,
