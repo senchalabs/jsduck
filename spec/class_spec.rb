@@ -2,7 +2,7 @@ require "jsduck/class"
 
 describe JsDuck::Class do
 
-  describe "#members_hash" do
+  describe "#members" do
 
     before do
       @classes = {}
@@ -12,7 +12,14 @@ describe JsDuck::Class do
             :method => [
               {:name => "baz", :owner => "ParentClass"},
               {:name => "foo", :owner => "ParentClass"},
+              {:name => "constructor", :owner => "ParentClass"},
               {:name => "frank", :owner => "ParentClass", :private => true},
+            ]
+          },
+          :statics => {
+            :method => [
+              {:name => "parentA", :owner => "ParentClass"},
+              {:name => "parentB", :owner => "ParentClass", :inheritable => true},
             ]
           }
         });
@@ -25,6 +32,12 @@ describe JsDuck::Class do
             :method => [
               {:name => "xxx", :owner => "MixinClass"},
               {:name => "pri", :owner => "MixinClass", :private => true},
+            ]
+          },
+          :statics => {
+            :method => [
+              {:name => "mixinA", :owner => "MixinClass"},
+              {:name => "mixinB", :owner => "MixinClass", :inheritable => true},
             ]
           }
         });
@@ -41,85 +54,7 @@ describe JsDuck::Class do
               {:name => "bar", :owner => "ChildClass"},
               {:name => "zappa", :owner => "ChildClass", :private => true},
             ]
-          }
-        });
-      @classes["ChildClass"] = @child
-      @child.relations = @classes
-
-      @members = @child.members_hash(:method)
-    end
-
-    it "returns all public members in current class" do
-      @members.should have_key("foo")
-      @members.should have_key("bar")
-    end
-
-    it "doesn't return private members of current class" do
-      @members.should_not have_key("zappa")
-    end
-
-    it "inherites public members of parent class" do
-      @members.should have_key("baz")
-      @members.should have_key("foo")
-    end
-
-    it "doesn't inherit private members of parent class" do
-      @members.should_not have_key("frank")
-    end
-
-    it "inherites public members of mixin classes" do
-      @members.should have_key("xxx")
-    end
-
-    it "doesn't inherit private members of mixin classes" do
-      @members.should_not have_key("pri")
-    end
-
-    it "keeps ownership of current class members" do
-      @members["bar"][:owner].should == "ChildClass"
-    end
-
-    it "keeps ownership of non-overridden parent class members" do
-      @members["baz"][:owner].should == "ParentClass"
-    end
-
-    it "overrides parent class members with the same name" do
-      @members["foo"][:owner].should == "ChildClass"
-    end
-  end
-
-  describe "#members(:statics)" do
-
-    before do
-      @classes = {}
-      @parent = JsDuck::Class.new({
-          :name => "ParentClass",
-          :statics => {
-            :method => [
-              {:name => "parentA", :owner => "ParentClass"},
-              {:name => "parentB", :owner => "ParentClass", :inheritable => true},
-            ]
-          }
-        });
-      @classes["ParentClass"] = @parent
-      @parent.relations = @classes
-
-      @mixin = JsDuck::Class.new({
-          :name => "MixinClass",
-          :statics => {
-            :method => [
-              {:name => "mixinA", :owner => "MixinClass"},
-              {:name => "mixinB", :owner => "MixinClass", :inheritable => true},
-            ]
-          }
-        });
-      @classes["MixinClass"] = @mixin
-      @mixin.relations = @classes
-
-      @child = JsDuck::Class.new({
-          :name => "ChildClass",
-          :extends => "ParentClass",
-          :mixins => ["MixinClass"],
+          },
           :statics => {
             :method => [
               {:name => "childA", :owner => "ChildClass"},
@@ -129,66 +64,85 @@ describe JsDuck::Class do
         });
       @classes["ChildClass"] = @child
       @child.relations = @classes
-
-      @members = @child.members_hash(:method, :statics)
-    end
-
-    it "returns normal statics in current class" do
-      @members.should have_key("childA")
-    end
-
-    it "returns inheritableStatics in current class" do
-      @members.should have_key("childB")
-    end
-
-    it "doesn't inherit normal statics from parent class" do
-      @members.should_not have_key("parentA")
-    end
-
-    it "inherits inheritableStatics from parent class" do
-      @members.should have_key("parentB")
-    end
-
-    it "doesn't inherit normal statics from mixins" do
-      @members.should_not have_key("mixinA")
-    end
-
-    it "inherits inheritableStatics from mixins" do
-      @members.should have_key("mixinB")
-    end
-
-  end
-
-  describe "#members(:method)" do
-    before do
-      @classes = {}
-      @parent = JsDuck::Class.new({
-          :name => "ParentClass",
-          :members => {
-            :method => [
-              {:name => "baz", :owner => "ParentClass"},
-              {:name => "constructor", :owner => "ParentClass"},
-            ]
-          }
-        });
-      @classes["ParentClass"] = @parent
-      @parent.relations = @classes
-      @child = JsDuck::Class.new({
-          :name => "ChildClass",
-          :extends => "ParentClass",
-          :members => {
-            :method => [
-              {:name => "foo", :owner => "ChildClass"}
-            ]
-          }
-        });
-      @classes["ChildClass"] = @child
-      @child.relations = @classes
     end
 
     it "returns constructor as first method" do
-      ms = @child.members(:method)
-      ms.first[:name].should == "constructor"
+      @members = @child.members(:method)
+      @members.first[:name].should == "constructor"
+    end
+
+    describe "(:method)" do
+      before do
+        @members = @child.members_hash(:method)
+      end
+
+      it "returns all public members in current class" do
+        @members.should have_key("foo")
+        @members.should have_key("bar")
+      end
+
+      it "doesn't return private members of current class" do
+        @members.should_not have_key("zappa")
+      end
+
+      it "inherites public members of parent class" do
+        @members.should have_key("baz")
+        @members.should have_key("foo")
+      end
+
+      it "doesn't inherit private members of parent class" do
+        @members.should_not have_key("frank")
+      end
+
+      it "inherites public members of mixin classes" do
+        @members.should have_key("xxx")
+      end
+
+      it "doesn't inherit private members of mixin classes" do
+        @members.should_not have_key("pri")
+      end
+
+      it "keeps ownership of current class members" do
+        @members["bar"][:owner].should == "ChildClass"
+      end
+
+      it "keeps ownership of non-overridden parent class members" do
+        @members["baz"][:owner].should == "ParentClass"
+      end
+
+      it "overrides parent class members with the same name" do
+        @members["foo"][:owner].should == "ChildClass"
+      end
+    end
+
+    describe "(:method, :statics)" do
+      before do
+        @members = @child.members_hash(:method, :statics)
+      end
+
+      it "returns normal statics in current class" do
+        @members.should have_key("childA")
+      end
+
+      it "returns inheritableStatics in current class" do
+        @members.should have_key("childB")
+      end
+
+      it "doesn't inherit normal statics from parent class" do
+        @members.should_not have_key("parentA")
+      end
+
+      it "inherits inheritableStatics from parent class" do
+        @members.should have_key("parentB")
+      end
+
+      it "doesn't inherit normal statics from mixins" do
+        @members.should_not have_key("mixinA")
+      end
+
+      it "inherits inheritableStatics from mixins" do
+        @members.should have_key("mixinB")
+      end
     end
   end
 
