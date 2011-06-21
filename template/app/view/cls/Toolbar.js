@@ -72,8 +72,7 @@ Ext.define('Docs.view.cls.Toolbar', {
 
         this.items = this.items.concat([
             { width: 10 },
-            {
-                xtype: 'textfield',
+            this.filterField = Ext.widget("textfield", {
                 emptyText: 'Find class members...',
                 enableKeyEvents: true,
                 listeners: {
@@ -88,7 +87,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                     },
                     scope: this
                 }
-            },
+            }),
             { xtype: 'tbfill' },
             {
                 boxLabel: 'Hide inherited',
@@ -191,5 +190,13 @@ Ext.define('Docs.view.cls.Toolbar', {
                 }
             }
         }, this);
+    },
+
+    /**
+     * Returns the current text in filter field.
+     * @return {String}
+     */
+    getFilterValue: function() {
+        return this.filterField.getValue();
     }
 });
