@@ -50,6 +50,24 @@ Ext.define('Docs.view.cls.Toolbar', {
         }
 
         this.items = this.items.concat([
+            { width: 10 },
+            {
+                xtype: 'textfield',
+                emptyText: 'Find class members...',
+                enableKeyEvents: true,
+                listeners: {
+                    keyup: function(cmp) {
+                        this.filterMembers(cmp.getValue());
+                    },
+                    specialkey: function(cmp, event) {
+                        if (event.keyCode === Ext.EventObject.ESC) {
+                            cmp.reset();
+                            this.filterMembers("");
+                        }
+                    },
+                    scope: this
+                }
+            },
             { xtype: 'tbfill' },
             {
                 boxLabel: 'Hide inherited',
@@ -189,6 +207,31 @@ Ext.define('Docs.view.cls.Toolbar', {
                     store.clearFilter();
                 }
             }
+        }, this);
+    },
+
+    filterMembers: function(search) {
+        var isSearch = search.length > 0;
+
+        // Hide the class documentation
+        Ext.Array.forEach(Ext.query('.doc-contents, .hierarchy'), function(el) {
+            Ext.get(el).setStyle({display: isSearch ? 'none' : 'block'});
+        });
+
+        // Hide members who's name doesn't match with the search string
+        var re = new RegExp(Ext.String.escapeRegex(search), "i");
+        this.eachMember(function(m) {
+            var el = Ext.get(m.tagname + "-" + m.name);
+            el.setStyle({display: (re.test(m.name) || !isSearch) ? 'block' : 'none'});
+        }, this);
+    },
+
+    // Loops through each member of class
+    eachMember: function(callback, scope) {
+        Ext.Array.forEach(['members', 'statics'], function(group) {
+            Ext.Object.each(this.docClass[group], function(type, members) {
+                Ext.Array.forEach(members, callback, scope);
+            }, this);
         }, this);
     }
 });
