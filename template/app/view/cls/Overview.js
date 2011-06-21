@@ -47,7 +47,13 @@ Ext.define('Docs.view.cls.Overview', {
             this.removeDocked(this.toolbar, true);
         }
         this.toolbar = Ext.create('Docs.view.cls.Toolbar', {
-            docClass: this.docClass
+            docClass: this.docClass,
+            listeners: {
+                hideInherited: this.hideInherited,
+                toggleExpanded: this.toggleExpanded,
+                filter: this.filterMembers,
+                scope: this
+            }
         });
         this.addDocked(this.toolbar);
 
@@ -55,8 +61,80 @@ Ext.define('Docs.view.cls.Overview', {
         Docs.Syntax.highlight(this.getEl());
 
         if (Docs.Settings.get("hideInherited")) {
-            this.toolbar.hideInherited(true);
+            this.hideInherited(true);
         }
+    },
+
+    // Hides or unhides inherited members.
+    hideInherited: function(hide) {
+        Docs.Settings.set("hideInherited", hide);
+
+        // show/hide all inherited members
+        Ext.Array.forEach(Ext.query('.member.inherited'), function(m) {
+            Ext.get(m).setStyle({display: hide ? 'none' : 'block'});
+        });
+
+        // Remove all first-child classes
+        Ext.Array.forEach(Ext.query('.member.first-child'), function(m) {
+            Ext.get(m).removeCls('first-child');
+        });
+
+        Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
+            var sectionId = '#m-' + type;
+
+            // Hide the section completely if all items in it are inherited
+            if (Ext.query(sectionId+' .member.not-inherited').length === 0) {
+                var section = Ext.query(sectionId)[0];
+                section && Ext.get(section).setStyle({display: hide ? 'none' : 'block'});
+            }
+
+            // add first-child class to first member in subsection
+            Ext.Array.forEach(Ext.query(sectionId+" .subsection"), function(subsection) {
+                var subsectionMembers = Ext.query('.member' + (hide ? ".not-inherited" : ""), subsection);
+                if (subsectionMembers.length > 0) {
+                    Ext.get(subsectionMembers[0]).addCls('first-child');
+                    // make sure subsection is visible
+                    Ext.get(subsection).setStyle({display: 'block'});
+                }
+                else {
+                    // Hide subsection completely if empty
+                    Ext.get(subsection).setStyle({display: 'none'});
+                }
+            }, this);
+        }, this);
+
+        this.toolbar.hideInherited(hide);
+    },
+
+    toggleExpanded: function(expanded) {
+        Ext.Array.forEach(Ext.query('.side.expandable'), function(el) {
+            Ext.get(el).parent()[expanded ? "addCls" : "removeCls"]('open');
+        });
+    },
+
+    filterMembers: function(search) {
+        var isSearch = search.length > 0;
+
+        // Hide the class documentation
+        Ext.Array.forEach(Ext.query('.doc-contents, .hierarchy'), function(el) {
+            Ext.get(el).setStyle({display: isSearch ? 'none' : 'block'});
+        });
+
+        // Hide members who's name doesn't match with the search string
+        var re = new RegExp(Ext.String.escapeRegex(search), "i");
+        this.eachMember(function(m) {
+            var el = Ext.get(m.tagname + "-" + m.name);
+            el.setStyle({display: (re.test(m.name) || !isSearch) ? 'block' : 'none'});
+        }, this);
+    },
+
+    // Loops through each member of class
+    eachMember: function(callback, scope) {
+        Ext.Array.forEach(['members', 'statics'], function(group) {
+            Ext.Object.each(this.docClass[group], function(type, members) {
+                Ext.Array.forEach(members, callback, scope);
+            }, this);
+        }, this);
     },
 
     renderClass: function(cls) {
