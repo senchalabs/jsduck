@@ -161,7 +161,7 @@ Ext.define('Docs.view.cls.Overview', {
         this.classTpl = this.classTpl || new Ext.XTemplate(
             '<div>',
                 '{hierarchy}',
-                 '<div class="doc-contents">',
+                '<div class="doc-contents">',
                     '{doc}',
                 '</div>',
                 '<div class="members">',
@@ -169,6 +169,18 @@ Ext.define('Docs.view.cls.Overview', {
                 '</div>',
             '</div>'
         );
+
+        var egId = 0;
+        var replaceExample = function() {
+            var idx = cls.doc.match(/\{@example ([A-Za-z\/\.]+)\}/);
+            if (idx) {
+                cls.doc = cls.doc.replace(/\{@example ([A-Za-z\/\.]+)\}/, '<div class="inlineExample" id="eg' + egId + '" rel="' + idx[1] + '"></div>');
+                egId += 1;
+                replaceExample();
+            }
+        }
+
+        replaceExample();
 
         return this.classTpl.apply({
             doc: cls.doc,

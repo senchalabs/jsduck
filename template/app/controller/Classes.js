@@ -210,6 +210,16 @@ Ext.define('Docs.controller.Classes', {
             }
             classOverview.load(cls);
 
+            Ext.Array.each(Ext.query('.inlineExample'), function(inlineEg) {
+                var egId = inlineEg.getAttribute('rel');
+                var divId = inlineEg.getAttribute('id');
+                var eg = Ext.create('Docs.view.examples.Inline', {
+                    height: 100,
+                    renderTo: divId
+                });
+                eg.showExample(egId);
+            });
+
             this.getOverview().load(cls);
 
             this.getOverview().setLoading(false);

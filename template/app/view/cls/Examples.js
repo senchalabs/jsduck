@@ -26,23 +26,7 @@ Ext.define('Docs.view.cls.Examples', {
 
             listeners: {
                 itemclick: function(view, record, item, index, event) {
-
-                    var inlineEg = Ext.getCmp('inlineCodeExample');
-
-                    Ext.Ajax.request({
-                        method  : 'GET',
-                        url     : 'doc-resources/' + record.data.id,
-                        headers : { 'Content-Type' : 'application/json' },
-
-                        success : function(response, opts) {
-                            // inlineEg.setHeight(inlineEg.codeEditor.body.getHeight());
-                            inlineEg.codeEditor.setValue(response.responseText);
-
-                            window.frames['egIframe'].refreshPage(inlineEg.codeEditor.getValue(), inlineEg.cssEditor.getValue());
-                        },
-                        failure : function(response, opts) {
-                        }
-                    });
+                    Ext.getCmp('inlineCodeExample').showExample(record.data.location);
                 }
             }
 
@@ -50,6 +34,7 @@ Ext.define('Docs.view.cls.Examples', {
         {
             region: 'center',
             padding: '10',
+            id: 'inlineCodeExample',
             xtype: 'inlineexample'
         }
     ]

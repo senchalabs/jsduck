@@ -1,60 +1,84 @@
+/**
+ * Inline example tab panel. Allows code to be demonstrated and edited inline.
+ */
 Ext.define('Docs.view.examples.Inline', {
+
     extend: 'Ext.tab.Panel',
     alias: 'widget.inlineexample',
-    activeTab: 0,
-    deferredRender: false,
-    style: 'border-color: #bfbfbf;',
+
     plain: true,
-    id: 'inlineCodeExample',
-    items: [
-        {
+    deferredRender: false,
+
+    initComponent: function() {
+
+        Docs.view.examples.Inline.prototype.iframeId = Docs.view.examples.Inline.prototype.iframeId || 0;
+        Docs.view.examples.Inline.prototype.iframeId = Docs.view.examples.Inline.prototype.iframeId + 0;
+
+        this.iframeId = "egIframe" + Docs.view.examples.Inline.prototype.iframeId;
+
+        this.items = [{
             id: 'code',
             title: 'Code',
             cls: 'codemirrorCode',
             autoScroll: true
-        },
-        {
+        }];
+
+        this.items.push({
             id: 'preview',
             title: 'Preview',
             bodyPadding: 10,
-            html: '<iframe src="egIframe.html" name="egIframe" style="width: 100%; height: 100%; border: 0"></iframe>',
+            html: '<iframe src="egIframe.html" name="' + this.iframeId + '" style="width: 100%; height: 100%; border: 0"></iframe>',
             listeners: {
                 show: function(a,b,c) {
-                    window.frames['egIframe'].refreshPage(this.ownerCt.codeEditor.getValue(), this.ownerCt.cssEditor.getValue());
+                    window.frames[this.ownerCt.iframeId].refreshPage(this.ownerCt.codeEditor.getValue(), this.ownerCt.cssEditor.getValue());
                 }
             }
-        },
-        {
+        });
+
+        this.items.push({
             id: 'cssEditor',
             title: 'CSS',
             cls: 'codemirrorCode',
             autoScroll: true
-        }
-    ],
-    codeEditor: null,
-    cssEditor: null,
+        });
+
+        this.callParent(arguments);
+    },
 
     showExample: function(exampleId) {
-        var url = '/sencha_examples/' + exampleId;
+
         var inlineEg = this;
+        var url = 'doc-resources/' + exampleId;
 
-        Ext.Ajax.request({
-            method  : 'GET',
-            url     : url,
-            headers : { 'Content-Type' : 'application/json' },
+        if (exampleId.match(/^https:\/\/api\.github\.com/)) {
+            Ext.data.JsonP.request({
+                url: exampleId,
+                // callbackName: name,
+                success: function(json) {
+                    inlineEg.codeEditor.setValue(json.data.files["basic_grid_panel.js"].content);
+                    window.frames[inlineEg.iframeId].refreshPage(inlineEg.codeEditor.getValue(), inlineEg.cssEditor.getValue());
+                },
+                scope: this
+            });
 
-            success : function(response, opts) {
-                var doc = Ext.JSON.decode(response.responseText);
+        } else {
+            Ext.Ajax.request({
+                method  : 'GET',
+                url     : url,
+                headers : { 'Content-Type' : 'application/json' },
 
-                // inlineEg.setHeight(inlineEg.codeEditor.body.getHeight());
-                inlineEg.codeEditor.setValue(doc.content);
-                inlineEg.cssEditor.setValue(doc.css || '');
+                success : function(response, opts) {
+                    // inlineEg.setHeight(inlineEg.codeEditor.body.getHeight());
+                    inlineEg.codeEditor.setValue(response.responseText);
+                    console.log(inlineEg.iframeId);
+                    window.frames[inlineEg.iframeId].refreshPage(inlineEg.codeEditor.getValue(), inlineEg.cssEditor.getValue());
+                },
+                failure : function(response, opts) {
+                }
+            });
+        }
 
-                window.frames['egIframe'].refreshPage(inlineEg.codeEditor.getValue(), inlineEg.cssEditor.getValue());
-            },
-            failure : function(response, opts) {
-            }
-        });
+
     },
 
     listeners: {
