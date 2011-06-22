@@ -1,3 +1,5 @@
+Ext.ns("Docs");
+
 Ext.Loader.setConfig({
     enabled: true,
     paths: {
