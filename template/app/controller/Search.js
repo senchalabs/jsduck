@@ -120,8 +120,8 @@ Ext.define('Docs.controller.Search', {
     },
 
     filterMembers: function(text) {
-        var results = [[], [], [], [], []];
-        var xFull=0, nFull=1, xBeg=2, nBeg=3, nMid=4;
+        var results = [[], [], [], [], [], [], [], []];
+        var xFull=0, clsFull=1, mFull=2, xBeg=3, clsBeg=4, mBeg=5, clsMid=6, mMid=7;
         var hasDot = /\./.test(text);
         var safeText = Ext.escapeRe(text);
         var reFull = new RegExp("^" + safeText + "$", "i");
@@ -140,13 +140,13 @@ Ext.define('Docs.controller.Search', {
                 results[xBeg].push(r);
             }
             else if (reFull.test(name)) {
-                results[nFull].push(r);
+                results[r.type === "cls" ? clsFull : mFull].push(r);
             }
             else if (reBeg.test(name)) {
-                results[nBeg].push(r);
+                results[r.type === "cls" ? clsBeg : mBeg].push(r);
             }
             else if (reMid.test(name)) {
-                results[nMid].push(r);
+                results[r.type === "cls" ? clsMid : mMid].push(r);
             }
         });
 
