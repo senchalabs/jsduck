@@ -54,22 +54,22 @@ Ext.define('Docs.view.cls.Toolbar', {
             var members = this.docClass.members[type];
             var statics = this.docClass.statics[type];
             if (members.length || statics.length) {
-                  var btn = this.createMemberButton({
-                      text: memberTitles[type],
-                      type: type,
-                      members: members.concat(statics)
-                  });
-                  this.memberButtons[type] = btn;
-                  this.items.push(btn);
-              }
+                var btn = this.createMemberButton({
+                    text: memberTitles[type],
+                    type: type,
+                    members: members.concat(statics)
+                });
+                this.memberButtons[type] = btn;
+                this.items.push(btn);
+            }
         }
 
         if (this.docClass.subclasses.length) {
-              this.items.push(this.createClassListButton("Sub Classes", this.docClass.subclasses));
-          }
-          if (this.docClass.mixedInto.length) {
-              this.items.push(this.createClassListButton("Mixed Into", this.docClass.mixedInto));
-          }
+            this.items.push(this.createClassListButton("Sub Classes", this.docClass.subclasses));
+        }
+        if (this.docClass.mixedInto.length) {
+            this.items.push(this.createClassListButton("Mixed Into", this.docClass.mixedInto));
+        }
 
         this.items = this.items.concat([
             { xtype: 'tbspacer', width: 10 },

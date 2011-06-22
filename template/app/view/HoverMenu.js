@@ -1,7 +1,6 @@
 /**
  * Menu shown by {@link Docs.view.HoverMenuButton}.
  */
-
 Ext.define('Docs.view.HoverMenu', {
     extend: 'Ext.view.View',
 

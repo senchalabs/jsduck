@@ -59,8 +59,8 @@ Ext.define('Docs.view.HoverMenuButton', {
         }
 
         this.menu = Ext.create('Docs.view.HoverMenu', Ext.apply({
-                store: this.store
-            }, this.menuCfg));
+            store: this.store
+        }, this.menuCfg));
 
         this.callParent(arguments);
     },
@@ -96,12 +96,12 @@ Ext.define('Docs.view.HoverMenuButton', {
         });
 
         this.menu.getEl().on({
-             mouseover: function() {
-                 clearTimeout(this.hideTimeout);
-             },
-             mouseout: this.deferHideMenu,
-             scope: this
-         });
+            mouseover: function() {
+                clearTimeout(this.hideTimeout);
+            },
+            mouseout: this.deferHideMenu,
+            scope: this
+        });
 
     },
 
