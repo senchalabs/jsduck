@@ -1,13 +1,13 @@
 /**
  * Menu shown by {@link Docs.view.HoverMenuButton}.
  */
+
 Ext.define('Docs.view.HoverMenu', {
     extend: 'Ext.view.View',
 
     componentCls: 'hover-menu',
     itemSelector: 'div.item',
     deferEmptyText: false,
-    renderTo: Ext.getBody(),
 
     /**
      * @cfg {Number} colHeight  maximum number of items in one column.
@@ -22,6 +22,8 @@ Ext.define('Docs.view.HoverMenu', {
     showCloseButtons: false,
 
     initComponent: function() {
+        this.renderTo = Ext.getBody();
+
         this.tpl = new Ext.XTemplate(
             '<table>',
             '<tr>',
