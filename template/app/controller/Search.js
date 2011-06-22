@@ -136,11 +136,11 @@ Ext.define('Docs.controller.Search', {
             if (r.xtypes && Ext.Array.some(r.xtypes, function(x) {return reFull.test(x);})) {
                 results[xFull].push(r);
             }
-            else if (r.xtypes && Ext.Array.some(r.xtypes, function(x) {return reBeg.test(x);})) {
-                results[xBeg].push(r);
-            }
             else if (reFull.test(name)) {
                 results[r.type === "cls" ? clsFull : mFull].push(r);
+            }
+            else if (r.xtypes && Ext.Array.some(r.xtypes, function(x) {return reBeg.test(x);})) {
+                results[xBeg].push(r);
             }
             else if (reBeg.test(name)) {
                 results[r.type === "cls" ? clsBeg : mBeg].push(r);
