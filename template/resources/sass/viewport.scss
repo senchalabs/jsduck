@@ -773,3 +773,16 @@ a {
       @include border-radius(2px);
       color: white;
       background: $docs-text-color; } } }
+
+.code {
+  background: url(../images/example-icons.png) no-repeat 1px -19px;
+}
+.preview {
+  background: url(../images/example-icons.png) no-repeat 0 -79px;
+}
+.info {
+  background: url(../images/example-icons.png) no-repeat 1px -127px;
+}
+.copy {
+  background: url(../images/example-icons.png) no-repeat 0 -101px;
+}

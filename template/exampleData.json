@@ -4,20 +4,32 @@
       "title": "Simple Button",
       "primaryClass": "Ext.button.Button",
       "description": "Simple button with click handler",
-      "location": "Ext.button.Button/simple.js"
+      "location": "Ext.button.Button/01_simple.js"
+    },
+    {
+      "title": "Toggle Button",
+      "primaryClass": "Ext.button.Button",
+      "description": "A button which retains its click state",
+      "location": "Ext.button.Button/02_toggle.js"
     },
     {
       "title": "Menu Button",
       "primaryClass": "Ext.button.Button",
       "referencedClasses": ["Ext.menu.Menu"],
       "description": "Menu button with bottom aligned arrow",
-      "location": "Ext.button.Button/menu.js"
+      "location": "Ext.button.Button/03_menu.js"
     },
     {
       "title": "Basic Grid Panel",
       "primaryClass": "Ext.panel.Grid",
       "description": "Basic grid panel",
-      "location": "Ext.grid.Panel/basic.js"
+      "location": "Ext.grid.Panel/01_basic.js"
+    },
+    {
+      "title": "Grouping Grid Panel",
+      "primaryClass": "Ext.panel.Grid",
+      "description": "Grouping grid panel",
+      "location": "Ext.grid.Panel/02_grouping.js"
     },
     {
       "title": "Gist Grid Panel",

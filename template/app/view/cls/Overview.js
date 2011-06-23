@@ -43,6 +43,7 @@ Ext.define('Docs.view.cls.Overview', {
      * @param {Object} docClass
      */
     load: function(docClass) {
+
         this.docClass = docClass;
 
         if (this.toolbar) {
@@ -172,9 +173,9 @@ Ext.define('Docs.view.cls.Overview', {
 
         var egId = 0;
         var replaceExample = function() {
-            var idx = cls.doc.match(/\{@example ([A-Za-z\/\.]+)\}/);
+            var idx = cls.doc.match(/\{@example ([A-Za-z0-9_\/\.]+)\}/);
             if (idx) {
-                cls.doc = cls.doc.replace(/\{@example ([A-Za-z\/\.]+)\}/, '<div class="inlineExample" id="eg' + egId + '" rel="' + idx[1] + '"></div>');
+                cls.doc = cls.doc.replace(/\{@example ([A-Za-z0-9_\/\.]+)\}/, '<div class="inlineExample" id="eg' + egId + '" rel="' + idx[1] + '"></div>');
                 egId += 1;
                 replaceExample();
             }
