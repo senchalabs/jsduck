@@ -6,28 +6,18 @@ Ext.define('Docs.view.examples.Inline', {
     extend: 'Ext.Panel',
     alias: 'widget.inlineexample',
 
-    layout: {
-        type: 'card',
-        deferredRender: false
-    },
-    // resizable: {
-    //     transparent: true,
-    //     handles: 's',
-    //     constrainTo: false
-    // },
+    layout: 'card',
     border: 0,
-
-    defaults: {
-        style: 'background: #f7f7f7; border: 0;',
-        border: 0,
-        bodyBorder: 0
+    resizable: {
+        transparent: true,
+        handles: 's',
+        constrainTo: false
     },
 
     dockedItems: [{
         xtype: 'toolbar',
         dock: 'left',
         padding: '0 2',
-        border: 0,
         style: 'background: none;',
         items: [
             {
@@ -66,14 +56,16 @@ Ext.define('Docs.view.examples.Inline', {
         ]
     }],
 
-    plain: true,
-    deferredRender: false,
+    defaults: {
+        border: 0
+    },
 
     initComponent: function() {
 
+        var self = this;
+
         Docs.view.examples.Inline.prototype.iframeId = Docs.view.examples.Inline.prototype.iframeId || 0;
         Docs.view.examples.Inline.prototype.iframeId = Docs.view.examples.Inline.prototype.iframeId + 1;
-
         this.iframeId = Docs.view.examples.Inline.prototype.iframeId;
 
         this.items = [{
@@ -81,7 +73,12 @@ Ext.define('Docs.view.examples.Inline', {
             style: 'border: 0',
             bodyPadding: 2,
             bodyStyle: 'background: #f7f7f7',
-            autoScroll: true
+            autoScroll: true,
+            listeners: {
+                activate: function() {
+                    self.activateTab('code')
+                }
+            }
         }];
 
         this.items.push({
@@ -90,28 +87,46 @@ Ext.define('Docs.view.examples.Inline', {
             listeners: {
                 show: function(a,b,c) {
                     document.getElementById('egIframe' + this.ownerCt.iframeId).contentWindow.refreshPage(this.ownerCt.codeEditor.getValue(), '');
+                },
+                activate: function() {
+                    self.activateTab('preview')
                 }
             }
         });
 
         this.items.push({
             bodyPadding: 10,
-            html: 'Meta Info'
+            html: 'Meta Info',
+            listeners: {
+                activate: function() {
+                    self.activateTab('info')
+                }
+            }
         });
 
         this.callParent(arguments);
+    },
+
+    activateTab: function(buttonCls) {
+        Ext.Array.each(this.query('button'), function(b) {
+            b.removeCls('active');
+        });
+        Ext.Array.each(this.query('button[iconCls=' + buttonCls + ']'), function(b) {
+            b.addCls('active');
+        });
     },
 
     showExample: function(exampleId, stripComments, updateHeight) {
 
         var inlineEg = this;
 
+        // Works with Gists from GitHub
         if (exampleId.match(/^https:\/\/api\.github\.com/)) {
             Ext.data.JsonP.request({
                 url: exampleId,
                 success: function(json) {
                     inlineEg.codeEditor.setValue(json.data.files["basic_grid_panel.js"].content);
-                    window.frames['egIframe' + inlineEg.iframeId].refreshPage(inlineEg.codeEditor.getValue(), ''); //inlineEg.cssEditor.getValue());
+                    window.frames['egIframe' + inlineEg.iframeId].refreshPage(inlineEg.codeEditor.getValue(), '');
                 },
                 scope: this
             });
@@ -132,41 +147,32 @@ Ext.define('Docs.view.examples.Inline', {
                         code = code.replace(/\/\*\*[\s\S]*\*\/[\s\S]/, '');
                     }
 
-                    inlineEg.codeEditor.setValue(code, '');
+                    inlineEg.codeEditor.setValue(code);
 
                     if (updateHeight) {
                         inlineEg.updateHeight();
                     }
-                },
-                failure : function(response, opts) {
-                    console.log("Fail")
                 }
             });
         }
     },
 
     updateHeight: function() {
-        var inlineEg = this.el.up('.inlineExample');
-        if (inlineEg) {
-            var egId = this.el.up('.inlineExample').getAttribute('id');
-            var el = Ext.get(Ext.query('#' + egId + ' .CodeMirror-lines')[0]);
-            if (el) {
-                var height = el.getHeight();
-                this.setHeight(height + 10)
-            }
+        var el = this.el.down('.CodeMirror-lines');
+        if (el) {
+            this.setHeight(el.getHeight() + 5)
         }
     },
 
     listeners: {
         afterlayout: function() {
             if(!this.codeEditor) {
-                var codeBody = this.getComponent(0).body;
                 var cmp = this;
+                var codeBody = this.getComponent(0).body;
 
                 this.codeEditor = CodeMirror(codeBody, {
                     mode:  "javascript",
                     indentUnit: 4,
-                    hmm: 'rar',
                     onChange: function(e) {
                         cmp.updateHeight();
                     }

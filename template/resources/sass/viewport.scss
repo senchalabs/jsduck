@@ -775,13 +775,20 @@ a {
       background: $docs-text-color; } } }
 
 .code {
-  background: url(../images/example-icons.png) no-repeat -2px -20px; }
+  background: url(../images/example-icons.png) no-repeat -2px -20px; opacity: 0.6; }
 .preview {
-  background: url(../images/example-icons.png) no-repeat -3px -40px; }
+  background: url(../images/example-icons.png) no-repeat -3px -62px; opacity: 0.6; }
 .info {
-  background: url(../images/example-icons.png) no-repeat -3px -62px; }
+  background: url(../images/example-icons.png) no-repeat -2px -111px; opacity: 0.6; }
 .copy {
   background: url(../images/example-icons.png) no-repeat -2px -85px; }
 
-
-
+.active {
+  .code {
+    background: url(../images/example-icons.png) no-repeat -30px -20px; opacity: 1; }
+  .preview {
+    background: url(../images/example-icons.png) no-repeat -31px -62px; opacity: 1; }
+  .info {
+    background: url(../images/example-icons.png) no-repeat -30px -111px; opacity: 1; }
+  .copy {
+    background: url(../images/example-icons.png) no-repeat -30px -85px; } }
