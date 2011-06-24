@@ -119,14 +119,6 @@ Ext.define('Docs.controller.Classes', {
                         preventDefault: true,
                         delegate: '.not-expandable'
                     });
-                },
-                resize: function() {
-                    Ext.Array.each(Ext.ComponentQuery.query('.inlineexample'), function(c) {
-                        if (c.codeEditor) {
-                            c.doLayout();
-                            c.codeEditor.refresh();
-                        }
-                    });
                 }
             }
         });
@@ -220,20 +212,6 @@ Ext.define('Docs.controller.Classes', {
 
             this.getOverview().load(cls);
             this.getOverview().setLoading(false);
-
-            Ext.Array.each(Ext.query('.inlineExample'), function(inlineEg) {
-                var egId = inlineEg.getAttribute('rel');
-                var divId = inlineEg.getAttribute('id');
-                var eg = Ext.create('Docs.view.examples.Inline', {
-                    height: 200,
-                    renderTo: divId,
-                    listeners: {
-                        render: function() {
-                            this.showExample(egId, true, true);
-                        }
-                    }
-                });
-            });
 
             this.getTree().selectClass(cls.name);
             this.fireEvent('showClass', cls.name);

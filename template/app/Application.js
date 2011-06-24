@@ -21,7 +21,8 @@ Ext.define('Docs.Application', {
 
     controllers: [
         'Classes',
-        'Search'
+        'Search',
+        'Examples'
     ],
 
     launch: function() {

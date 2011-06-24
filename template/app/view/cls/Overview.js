@@ -16,6 +16,11 @@ Ext.define('Docs.view.cls.Overview', {
     autoScroll: true,
     bodyPadding: '20',
 
+    initComponent: function() {
+        this.addEvents('afterload');
+        this.callParent(arguments);
+    },
+
     /**
      * Scrolls the specified element into view
      *
@@ -70,6 +75,8 @@ Ext.define('Docs.view.cls.Overview', {
         if (Docs.Settings.get("hideInherited")) {
             this.filterMembers("", true);
         }
+
+        this.fireEvent('afterload');
     },
 
     /**

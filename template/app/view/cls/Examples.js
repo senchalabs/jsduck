@@ -11,10 +11,10 @@ Ext.define('Docs.view.cls.Examples', {
     items: [
         {
             region: 'west',
-            html: 'west',
             width: 200,
             xtype: 'gridpanel',
-            store: Ext.getStore('Examples'),
+            store: 'Examples',
+            cmpName: 'examplelist',
             padding: '10',
             columns: [
                 {
@@ -22,14 +22,7 @@ Ext.define('Docs.view.cls.Examples', {
                     dataIndex: 'title',
                     flex: true
                 }
-            ],
-
-            listeners: {
-                itemclick: function(view, record, item, index, event) {
-                    Ext.getCmp('inlineCodeExample').showExample(record.data.location);
-                }
-            }
-
+            ]
         },
         {
             region: 'center',
