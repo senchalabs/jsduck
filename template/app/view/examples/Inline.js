@@ -5,10 +5,16 @@ Ext.define('Docs.view.examples.Inline', {
 
     extend: 'Ext.Panel',
     alias: 'widget.inlineexample',
+
     layout: {
         type: 'card',
         deferredRender: false
     },
+    // resizable: {
+    //     transparent: true,
+    //     handles: 's',
+    //     constrainTo: false
+    // },
     border: 0,
 
     defaults: {
@@ -118,8 +124,10 @@ Ext.define('Docs.view.examples.Inline', {
 
                 success : function(response, opts) {
 
-                    var code = response.responseText;
+                    // Remove any trailing whitespace
+                    var code = response.responseText.replace(/\s*$/, '');
 
+                    // Remove comments
                     if (stripComments) {
                         code = code.replace(/\/\*\*[\s\S]*\*\/[\s\S]/, '');
                     }
@@ -127,12 +135,7 @@ Ext.define('Docs.view.examples.Inline', {
                     inlineEg.codeEditor.setValue(code, '');
 
                     if (updateHeight) {
-                        var egId = inlineEg.el.up('.inlineExample').getAttribute('id');
-                        var el = Ext.get(Ext.query('#' + egId + ' .CodeMirror-lines')[0]);
-                        if (el) {
-                            var height = el.getHeight();
-                            inlineEg.setHeight(height + 27)
-                        }
+                        inlineEg.updateHeight();
                     }
                 },
                 failure : function(response, opts) {
@@ -142,16 +145,31 @@ Ext.define('Docs.view.examples.Inline', {
         }
     },
 
+    updateHeight: function() {
+        var inlineEg = this.el.up('.inlineExample');
+        if (inlineEg) {
+            var egId = this.el.up('.inlineExample').getAttribute('id');
+            var el = Ext.get(Ext.query('#' + egId + ' .CodeMirror-lines')[0]);
+            if (el) {
+                var height = el.getHeight();
+                this.setHeight(height + 10)
+            }
+        }
+    },
+
     listeners: {
         afterlayout: function() {
             if(!this.codeEditor) {
                 var codeBody = this.getComponent(0).body;
+                var cmp = this;
 
                 this.codeEditor = CodeMirror(codeBody, {
-                    value: '',
                     mode:  "javascript",
-                    // lineNumbers: true,
-                    indentUnit: 4
+                    indentUnit: 4,
+                    hmm: 'rar',
+                    onChange: function(e) {
+                        cmp.updateHeight();
+                    }
                 });
             }
         }

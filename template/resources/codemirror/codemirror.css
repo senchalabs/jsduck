@@ -5,8 +5,8 @@
 }
 
 .CodeMirror-scroll {
-  overflow: auto;
-  height: 300px;
+  height: auto;
+  overflow: visible;
 }
 
 .CodeMirror-gutter {
