@@ -33,14 +33,20 @@ Ext.define('Docs.controller.Examples', {
             'inlineexample [cmpName=code]': {
                 activate: function(cmp) {
                     this.activateTab(cmp, 'code')
+                    var inlineEg = cmp.up('inlineexample');
+                    if (inlineEg && inlineEg.codeEditor) {
+                        // Weird bug on CodeMirror requires 2 refreshes...
+                        inlineEg.codeEditor.refresh();
+                        inlineEg.codeEditor.refresh();
+                    }
                 }
             },
             'inlineexample [cmpName=preview]': {
                 show: function(card) {
-                    document.getElementById('egIframe' + card.ownerCt.iframeId).contentWindow.refreshPage(card.ownerCt.codeEditor.getValue(), '');
+                    this.refreshPreview(card.ownerCt);
                 },
                 activate: function(cmp) {
-                    this.activateTab(cmp, 'preview')
+                    this.activateTab(cmp, 'preview');
                 }
             },
             'inlineexample [cmpName=meta]': {
@@ -95,6 +101,8 @@ Ext.define('Docs.controller.Examples', {
 
     showExample: function(inlineEg, exampleId, stripComments, updateHeight) {
 
+        var self = this;
+
         // Works with Gists from GitHub
         if (exampleId.match(/^https:\/\/api\.github\.com/)) {
             Ext.data.JsonP.request({
@@ -124,6 +132,11 @@ Ext.define('Docs.controller.Examples', {
 
                     inlineEg.codeEditor.setValue(code);
 
+                    var activeItem = inlineEg.layout.getActiveItem();
+                    if (activeItem.cmpName == 'preview') {
+                        self.refreshPreview(inlineEg);
+                    }
+
                     if (updateHeight) {
                         inlineEg.updateHeight();
                     }
@@ -148,6 +161,10 @@ Ext.define('Docs.controller.Examples', {
                 }
             });
         });
+    },
+
+    refreshPreview: function(cmp) {
+        document.getElementById('egIframe' + cmp.iframeId).contentWindow.refreshPage(cmp.codeEditor.getValue(), '');
     }
 
 });
