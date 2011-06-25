@@ -53,7 +53,7 @@ module JsDuck
       @show_private_classes = false
       @title = "Ext JS API Documentation"
       @footer = 'Generated with <a href="https://github.com/nene/jsduck">JSDuck</a>.'
-      @extjs_path = "extjs/ext-all-debug.js"
+      @extjs_path = "extjs/ext-debug.js"
       @append_html = ""
       @timer = Timer.new
       @parallel = ParallelWrap.new

@@ -204,6 +204,7 @@
                 "Ext.grid.plugin.HeaderResizer",
                 "Ext.grid.plugin.RowEditing",
                 "Ext.grid.RowNumberer",
+                "Ext.grid.Scroller",
                 "Ext.view.AbstractView",
                 "Ext.view.BoundList",
                 "Ext.view.BoundListKeyNav",

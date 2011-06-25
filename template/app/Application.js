@@ -14,6 +14,11 @@ Ext.define('Docs.Application', {
         'Docs.Settings'
     ],
 
+    uses: [
+        'Ext.util.History',
+        'Ext.data.JsonP'
+    ],
+
     controllers: [
         'Classes',
         'Search'

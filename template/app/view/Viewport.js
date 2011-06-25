@@ -148,9 +148,37 @@ Ext.define('Docs.view.Viewport', {
                             {
                                 region: 'center',
                                 xtype: 'classtree',
-                                padding: '10 10 0 10',
-                                margin: '0 5 10 0',
+                                padding: '5 10 0 10',
+                                margin: '0 5 2 0',
                                 root: Docs.classData
+                                // dockedItems: [{
+                                //     xtype: 'toolbar',
+                                //     baseCls: null,
+                                //     dock: 'top',
+                                //     padding: '0 0 5 0',
+                                //     items: [
+                                //         {
+                                //             xtype: 'button',
+                                //             text: 'Sort by Package',
+                                //             menu: [
+                                //                 { text: 'by Category' },
+                                //                 { text: 'by Hierarchy' },
+                                //                 { text: 'by Popularity' }
+                                //             ]
+                                //         },
+                                //         { xtype: 'tbfill'},
+                                //         {
+                                //             xtype: 'button',
+                                //             iconCls: 'expandAllMembers',
+                                //             tooltip: "Expand all"
+                                //         },
+                                //         {
+                                //             xtype: 'button',
+                                //             iconCls: 'collapseAllMembers',
+                                //             tooltip: "Collapse all"
+                                //         }
+                                //     ]
+                                // }]
                             }
                         ]
                     }

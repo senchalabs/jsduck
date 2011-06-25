@@ -5,7 +5,8 @@ Ext.define('Docs.view.cls.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
     requires: [
         'Docs.view.HoverMenuButton',
-        'Docs.Settings'
+        'Docs.Settings',
+        'Ext.form.field.Checkbox'
     ],
 
     dock: 'top',
