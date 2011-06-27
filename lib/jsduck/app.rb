@@ -86,9 +86,9 @@ module JsDuck
       warn_globals(relations)
       warn_unnamed(relations)
 
-      guides = Guides.new(get_doc_formatter(relations))
+      @guides = Guides.new(get_doc_formatter(relations))
       if @guides_dir
-        @timer.time(:parsing) { guides.parse_dir(@guides_dir) }
+        @timer.time(:parsing) { @guides.parse_dir(@guides_dir) }
       end
 
       clear_dir(@output_dir)
@@ -109,7 +109,7 @@ module JsDuck
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
         @timer.time(:generating) { write_class(@output_dir+"/output", relations) }
         @timer.time(:generating) { write_overview(@output_dir+"/output/overviewData.js", relations) }
-        @timer.time(:generating) { guides.write(@output_dir+"/guides") }
+        @timer.time(:generating) { @guides.write(@output_dir+"/guides") }
       end
 
       @timer.report
@@ -306,6 +306,7 @@ module JsDuck
       html.gsub!("{footer}", @footer)
       html.gsub!("{extjs_path}", @extjs_path)
       html.gsub!("{append_html}", @append_html)
+      html.gsub!("{guides}", @guides.to_html)
       FileUtils.rm(dir+"/index.html")
       File.open(dir+"/index.html", 'w') {|f| f.write(html) }
     end

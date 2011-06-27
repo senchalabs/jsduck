@@ -18,6 +18,9 @@ module JsDuck
           parse_guide(dir)
         end
       end
+
+      # Sort guides alphabetically
+      @guides.sort! {|a, b| a[:title] <=> b[:title] }
     end
 
     def parse_guide(dir)
@@ -30,7 +33,7 @@ module JsDuck
       markdown = IO.read(guide_file)
       name = File.basename(dir)
       # Treat the first line of file as title
-      title = markdown.match(/^([^\n]*?)(\r?\n|$)/)[1],
+      title = markdown.match(/^#\s*([^\n]*?)(\r?\n|$)/)[1]
 
       @formatter.doc_context = {:filename => guide_file, :linenr => 0}
       html = @formatter.format(markdown)
@@ -40,7 +43,7 @@ module JsDuck
         :dir => dir,
         :name => name,
         :title => title,
-        :icon => File.exists?(dir+"/icon.png") ? dir+"/icon.png" : nil,
+        :icon => File.exists?(dir+"/icon.png"),
         :html => html,
       }
     end
@@ -57,6 +60,31 @@ module JsDuck
         JsonP.write(out_dir+"/README.js", guide[:name], {:guide => guide[:html]})
         FileUtils.rm(out_dir + "/README.md")
       end
+    end
+
+    def to_html
+      return "" if @guides.length == 0
+
+      links = @guides.map do |g|
+        style = g[:icon] ? "style='background: url(guides/#{g[:name]}/icon.png) no-repeat'" : ""
+        "<a class='guide' rel='#{g[:name]}' #{style} href='#/guide/#{g[:name]}'>#{g[:title]}</a>"
+      end
+
+      # Divide to three columns: lft, mid, rgt
+      col_height = (links.length / 3).ceil
+      return <<-EOHTML
+        <div id='guides-content' style='display:none'>
+            <div class="lft">
+                #{links.slice(0, col_height).join("\n")}
+            </div>
+            <div class="mid">
+                #{links.slice(col_height, col_height).join("\n")}
+            </div>
+            <div class="rgt">
+                #{links.slice(col_height*2, col_height).join("\n")}
+            </div>
+        </div>
+      EOHTML
     end
 
   end

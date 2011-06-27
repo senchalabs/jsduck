@@ -322,21 +322,14 @@ a {
         display: block; } }
     // Guides section at top left
     &.guides {
-      padding: 15px;
-      width: 560px;
+      padding: 15px 35px 15px 15px;
       line-height: 1.7em;
+      float: left;
       h1 {
         font-size: 1.7em !important; }
-      .lft {
+      .lft, .mid, .rgt {
         float: left;
-        width: 200px;
-        margin-left: 20px }
-      .mid {
-        float: left;
-        width: 100px;
         margin-left: 20px; }
-      .rgt {
-        margin-left: 370px; }
       a {
         display: block;
         height: 32px;
@@ -344,6 +337,7 @@ a {
         padding-left: 40px; }
       // Link to examples
       .examples {
+        clear: both;
         border-top: 1px solid #ebebeb;
         a {
           padding-left: 10px;
