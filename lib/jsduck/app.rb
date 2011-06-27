@@ -15,6 +15,7 @@ require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
 require 'jsduck/guides'
+require 'jsduck/jsonp'
 require 'json'
 require 'fileutils'
 
@@ -244,7 +245,7 @@ module JsDuck
       @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".js"
         Logger.instance.log("Writing to #{filename} ...")
-        write_jsonp_file(filename, cls[:name].gsub(/\./, "_"), exporter.export(cls))
+        JsonP.write(filename, cls[:name].gsub(/\./, "_"), exporter.export(cls))
       end
     end
 
@@ -274,13 +275,6 @@ module JsDuck
       formatter.img_tpl = @img_tpl if @img_tpl
       formatter.relations = relations
       formatter
-    end
-
-    # Turns hash into JSON and writes inside JavaScript that calls the
-    # given callback name
-    def write_jsonp_file(filename, callback_name, data)
-      jsonp = "Ext.data.JsonP." + callback_name + "(" + JSON.pretty_generate(data) + ");"
-      File.open(filename, 'w') {|f| f.write(jsonp) }
     end
 
     def copy_template(template_dir, dir)

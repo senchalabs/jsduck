@@ -1,6 +1,6 @@
+require 'jsduck/jsonp'
 require 'jsduck/logger'
 require 'fileutils'
-require 'json'
 
 module JsDuck
 
@@ -52,16 +52,9 @@ module JsDuck
         out_dir = dir+"/"+guide[:name]
         FileUtils.cp_r(guide[:dir], out_dir)
         # Write the JsonP file and remove the original Markdown file
-        write_jsonp_file(out_dir+"/README.js", guide[:name], {:guide => guide[:html]})
+        JsonP.write(out_dir+"/README.js", guide[:name], {:guide => guide[:html]})
         FileUtils.rm(out_dir + "/README.md")
       end
-    end
-
-    # Turns hash into JSON and writes inside JavaScript that calls the
-    # given callback name
-    def write_jsonp_file(filename, callback_name, data)
-      jsonp = "Ext.data.JsonP." + callback_name + "(" + JSON.pretty_generate(data) + ");"
-      File.open(filename, 'w') {|f| f.write(jsonp) }
     end
 
   end
