@@ -27,6 +27,7 @@ module JsDuck
     attr_accessor :output_dir
     attr_accessor :template_dir
     attr_accessor :guides_dir
+    attr_accessor :guides_order
     attr_accessor :template_links
     attr_accessor :input_files
     attr_accessor :export
@@ -44,6 +45,7 @@ module JsDuck
       @output_dir = nil
       @template_dir = nil
       @guides_dir = nil
+      @guides_order = nil
       @template_links = false
       @input_files = []
       @warnings = true
@@ -86,7 +88,7 @@ module JsDuck
       warn_globals(relations)
       warn_unnamed(relations)
 
-      @guides = Guides.new(get_doc_formatter(relations))
+      @guides = Guides.new(get_doc_formatter(relations), @guides_order)
       if @guides_dir
         @timer.time(:parsing) { @guides.parse_dir(@guides_dir) }
       end

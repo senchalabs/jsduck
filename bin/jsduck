@@ -55,6 +55,14 @@ opts = OptionParser.new do | opts |
     app.guides_dir = path
   end
 
+  opts.on('--guides-order=a,b,c', Array,
+    "The order in which the guides should appear. When",
+    "a guide name is not specified here, it will be excluded.",
+    "You don't have to write the whole name of the guide,",
+    "just the beginning of it, as long as it's unique.", " ") do |list|
+    app.guides_order = list
+  end
+
   opts.on('-h', '--help', "Prints this help message", " ") do
     puts opts
     exit

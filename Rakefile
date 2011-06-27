@@ -48,6 +48,7 @@ def run_jsduck(extra_options)
     # appears inline withing text, but that just looks ugly in HTML
     '--img', '<p><img src="doc-resources/%u" alt="%a"></p>',
     "--guides", "#{SDK_DIR}/guides",
+    "--guides-order", "getting,class,application,layouts,data,grid,tree,drawing,forms,components,theming,direct",
     "--output", "#{OUT_DIR}",
   ].concat(extra_options))
 

@@ -6,9 +6,10 @@ module JsDuck
 
   # Reads in guides and converts them to JsonP files
   class Guides
-    def initialize(formatter)
+    def initialize(formatter, order=nil)
       @guides = []
       @formatter = formatter
+      @order = order
     end
 
     # Looks for guide in each subdir of given directory.
@@ -19,8 +20,14 @@ module JsDuck
         end
       end
 
-      # Sort guides alphabetically
-      @guides.sort! {|a, b| a[:title] <=> b[:title] }
+      if @order
+        # When order specified, place guides into that order and
+        # exclude those guides that aren't listed in @order
+        @guides = @order.map {|name| @guides.find {|g| g[:name] =~ Regexp.new("^"+Regexp.escape(name)) } }
+      else
+        # Otherwise sort guides alphabetically
+        @guides.sort! {|a, b| a[:title] <=> b[:title] }
+      end
     end
 
     def parse_guide(dir)
@@ -62,6 +69,7 @@ module JsDuck
       end
     end
 
+    # Returns HTML listing of guides
     def to_html
       return "" if @guides.length == 0
 
