@@ -44,16 +44,8 @@ describe JsDuck::Tree do
 
   shared_examples_for "all class nodes" do
 
-    it "with isClass = true" do
-      @class[:isClass].should == true
-    end
-
-    it "with cls = 'cls'" do
-      @class[:isClass].should == true
-    end
-
-    it "with clsName being full class name" do
-      @class[:clsName].should == @full_class_name
+    it "with url being full class URL" do
+      @class[:url].should == @full_class_url
     end
 
     it "with text being short class name" do
@@ -70,7 +62,7 @@ describe JsDuck::Tree do
     before do
       @class = @tree[:children][0][:children][0]
       @short_class_name = "SampleClass"
-      @full_class_name = "SamplePackage.SampleClass"
+      @full_class_url = "/api/SamplePackage.SampleClass"
     end
 
     it_should_behave_like "all class nodes"
@@ -85,7 +77,7 @@ describe JsDuck::Tree do
     before do
       @class = @tree[:children][0][:children][1]
       @short_class_name = "Singleton"
-      @full_class_name = "SamplePackage.Singleton"
+      @full_class_url = "/api/SamplePackage.Singleton"
     end
 
     it_should_behave_like "all class nodes"
@@ -109,15 +101,15 @@ describe JsDuck::Tree, "lowercase package name" do
   end
 
   it "gets root package node" do
-    @root[:isClass].should_not == true
+    @root[:leaf].should_not == true
   end
 
   it "gets middle package node" do
-    @middle[:isClass].should_not == true
+    @middle[:leaf].should_not == true
   end
 
   it "gets leaf class node" do
-    @leaf[:isClass].should == true
+    @leaf[:leaf].should == true
   end
 
 end
@@ -133,11 +125,11 @@ describe JsDuck::Tree, "uppercase package name" do
   end
 
   it "gets root package node" do
-    @root[:isClass].should_not == true
+    @root[:leaf].should_not == true
   end
 
   it "gets middle class node" do
-    @middle[:isClass].should == true
+    @middle[:leaf].should == true
   end
 
   it "gets class name containing package name" do
@@ -167,6 +159,36 @@ describe JsDuck::Tree do
     @tree[:children][2][:text].should == 'Beeta'
     @tree[:children][3][:text].should == 'cheetah'
     @tree[:children][4][:text].should == 'Dingo'
+  end
+
+end
+
+describe JsDuck::Tree do
+
+  before do
+    @tree = JsDuck::Tree.new.create(
+      [JsDuck::Class.new({:tagname => :class, :name => "Foo"})],
+      [{:name => "g1", :title => "Guide 1"}, {:name => "g2", :title => "Guide 2"}]
+    )
+  end
+
+  it "places guides last" do
+    @tree[:children][1][:text].should == 'guides'
+    @tree[:children][1][:children].length.should == 2
+  end
+
+end
+
+describe JsDuck::Tree do
+
+  before do
+    @tree = JsDuck::Tree.new.create(
+      [JsDuck::Class.new({:tagname => :class, :name => "Foo"})]
+    )
+  end
+
+  it "doesn't add guides if there aren't any" do
+    @tree[:children].length.should == 1
   end
 
 end

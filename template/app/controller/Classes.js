@@ -69,7 +69,7 @@ Ext.define('Docs.controller.Classes', {
         );
 
         Ext.getBody().addListener('click', function(event, el) {
-            this.opensNewWindow(event) ? window.open(el.href) : this.loadClass(el.rel);
+            this.handleUrlClick(el.href, event);
         }, this, {
             preventDefault: true,
             delegate: '.docClass'
@@ -77,20 +77,20 @@ Ext.define('Docs.controller.Classes', {
 
         this.control({
             'classtree': {
-                classclick: function(cls, event) {
-                    this.handleClassClick(cls, event, this.getTree());
+                urlclick: function(url, event) {
+                    this.handleUrlClick(url, event, this.getTree());
                 }
             },
             'classgrid': {
-                classclick: function(cls, event) {
-                    this.handleClassClick(cls, event, this.getFavoritesGrid());
+                urlclick: function(url, event) {
+                    this.handleUrlClick(url, event, this.getFavoritesGrid());
                 }
             },
 
             'indexcontainer': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(event, el) {
-                        this.opensNewWindow(event) ? window.open(el.href) : this.showGuide(el.rel);
+                        this.handleUrlClick(el.href, event);
                     }, this, {
                         preventDefault: true,
                         delegate: '.guide'
@@ -120,13 +120,21 @@ Ext.define('Docs.controller.Classes', {
 
     // We don't want to select the class that was opened in another window,
     // so restore the previous selection.
-    handleClassClick: function(cls, event, view) {
+    handleUrlClick: function(url, event, view) {
+        // Remove everything up to #
+        url = url.replace(/.*#/, "");
+        
         if (this.opensNewWindow(event)) {
-            window.open("#/api/" + cls);
-            view.selectClass(this.currentCls ? this.currentCls.name : "");
+            window.open(url);
+            view && view.selectUrl(this.activeUrl ? this.activeUrl : "");
         }
         else {
-            this.loadClass(cls);
+            if (/^\/api\//.test(url)) {
+                this.loadClass(url);
+            }
+            else {
+                this.showGuide(url);
+            }
         }
     },
 
@@ -144,32 +152,28 @@ Ext.define('Docs.controller.Classes', {
     /**
      * Loads class.
      *
-     * @param {String} clsUrl  name of the class + optionally name of the method, separated with dash.
+     * @param {String} url  name of the class + optionally name of the method, separated with dash.
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
-    loadClass: function(clsUrl, noHistory) {
-        var cls = clsUrl;
-        var member;
-
-        if (this.activeUrl == clsUrl) return;
-        this.activeUrl = clsUrl;
+    loadClass: function(url, noHistory) {
+        if (this.activeUrl === url) return;
+        this.activeUrl = url;
 
         if (!noHistory) {
-            Docs.History.push("/api/" + clsUrl);
+            Docs.History.push(url);
         }
 
         Ext.getCmp('card-panel').layout.setActiveItem(1);
 
         // separate class and member name
-        var matches = clsUrl.match(/^(.*?)(?:-(.*))?$/);
-        if (matches) {
-            cls = matches[1];
-            member = matches[2];
-        }
+        var matches = url.match(/^\/api\/(.*?)(?:-(.*))?$/);
+        var cls = matches[1];
+        var member = matches[2];
 
         if (this.cache[cls]) {
             this.showClass(this.cache[cls], member);
-        } else {
+        }
+        else {
             if (this.getOverview()) {
                 this.getOverview().setLoading(true);
             }
@@ -197,7 +201,7 @@ Ext.define('Docs.controller.Classes', {
 
             this.getOverview().setLoading(false);
 
-            this.getTree().selectClass(cls.name);
+            this.getTree().selectUrl("/api/"+cls.name);
             this.fireEvent('showClass', cls.name);
         }
 
@@ -210,16 +214,16 @@ Ext.define('Docs.controller.Classes', {
 
         this.currentCls = cls;
 
-        this.getFavoritesGrid().selectClass(cls.name);
+        this.getFavoritesGrid().selectUrl("/api/"+cls.name);
     },
 
-    showGuide: function(name, noHistory) {
+    showGuide: function(url, noHistory) {
+        if (this.activeUrl === url) return;
+        this.activeUrl = url;
 
-        if (this.activeUrl == name) return;
-        this.activeUrl = name;
+        noHistory || Docs.History.push(url);
 
-        noHistory || Docs.History.push("/guide/" + name);
-
+        var name = url.match(/^\/guide\/(.*)$/)[1];
         Ext.data.JsonP.request({
             url: this.getBaseUrl() + "/guides/" + name + "/README.js",
             callbackName: name,
@@ -229,6 +233,8 @@ Ext.define('Docs.controller.Classes', {
                 Ext.getCmp('card-panel').layout.setActiveItem(2);
                 Docs.Syntax.highlight(Ext.get("guide"));
                 this.fireEvent('showGuide', name);
+                this.getTree().selectUrl(url);
+                this.getFavoritesGrid().selectUrl(url);
             },
             scope: this
         });

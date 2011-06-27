@@ -215,7 +215,7 @@ module JsDuck
     # Given all classes, generates namespace tree and writes it
     # in JSON form into a file.
     def write_tree(filename, relations)
-      tree = Tree.new.create(relations.classes)
+      tree = Tree.new.create(relations.classes, @guides)
       icons = TreeIcons.new.extract_icons(tree)
       js = "Docs.classData = " + JSON.generate( tree ) + ";"
       js += "Docs.icons = " + JSON.generate( icons ) + ";"

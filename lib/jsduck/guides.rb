@@ -95,6 +95,16 @@ module JsDuck
       EOHTML
     end
 
+    # Iterates over each guide
+    def each(&block)
+      @guides.each &block
+    end
+
+    # Returns number of guides
+    def length
+      @guides.length
+    end
+
   end
 
 end
