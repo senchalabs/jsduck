@@ -14,6 +14,7 @@ require 'jsduck/exporter'
 require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
+require 'jsduck/guides'
 require 'json'
 require 'fileutils'
 
@@ -261,21 +262,9 @@ module JsDuck
 
     # Writes JsonP export file for each guide
     def write_guides(in_path, out_path, relations)
-      formatter = get_doc_formatter(relations)
-      FileUtils.mkdir(out_path)
-      Dir.glob(in_path + "/*").each do |in_dir|
-        if File.directory?(in_dir)
-          guide_name = File.basename(in_dir)
-          out_dir = out_path + "/" + guide_name
-          Logger.instance.log("Creating guide #{out_dir} ...")
-          FileUtils.cp_r(in_dir, out_dir)
-          formatter.doc_context = {:filename => out_dir + "/README.md", :linenr => 0}
-          guide = formatter.format(IO.read(out_dir + "/README.md"))
-          guide.gsub!(/<img src="/, "<img src=\"guides/#{guide_name}/")
-          write_jsonp_file(out_dir+"/README.js", guide_name, {:guide => guide})
-          FileUtils.rm(out_dir + "/README.md")
-        end
-      end
+      guides = Guides.new(get_doc_formatter(relations))
+      guides.parse_dir(in_path)
+      guides.write(out_path)
     end
 
     # Creates and initializes DocFormatter
