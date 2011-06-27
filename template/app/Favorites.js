@@ -28,7 +28,17 @@ Ext.define("Docs.Favorites", {
             }));
             this.syncStore();
         }
-
+        
+        // For backwards compatibility with old Favorites Model
+        // convert the old-style records to new schema.
+        else if (!this.store.first().get("url")) {
+            this.store.each(function(r) {
+                r.set("title", r.data.cls);
+                r.set("url", "/api/"+r.get("cls"));
+                r.set("cls", "");
+            });
+            this.syncStore();
+        }
     },
 
     /**
