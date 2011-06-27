@@ -349,33 +349,9 @@ a {
           padding-left: 10px;
           margin: 10px 0 0 0;
           height: auto; } }
-      // Icons for each guide
-      .getting_started {
-        background: url(../images/guides.png) no-repeat 0px 0px; }
-      .drawing_and_charting {
-        background: url(../images/guides.png) no-repeat 0px -288px; }
-      .layouts_and_containers {
-        background: url(../images/guides.png) no-repeat 0px -130px; }
-      .application_architecture {
-        background: url(../images/guides.png) no-repeat 0px -98px; }
-      .class_system {
-        background: url(../images/guides.png) no-repeat 0px -31px; }
-      .data {
-        background: url(../images/guides.png) no-repeat 0px -66px; }
-      .grid {
-        background: url(../images/guides.png) no-repeat 0px -193px; }
-      .tree {
-        background: url(../images/guides.png) no-repeat 0px -228px; }
-      .components {
-        background: url(../images/guides.png) no-repeat 0px -160px; }
-      .theming {
-        background: url(../images/guides.png) no-repeat 0px -320px; }
-      .direct {
-        background: url(../images/guides.png) no-repeat 0px -387px; }
-      .accessibility {
-        background: url(../images/guides.png) no-repeat 0px -453px; }
-      .forms {
-        background: url(../images/guides.png) no-repeat 0px -258px; } }
+      // Default icon for guide
+      .guide {
+        background: url(../images/guide-icon.png) no-repeat; } }
     // Sections for class lists
     &.classes {
       clear: both;
