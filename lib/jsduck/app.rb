@@ -86,6 +86,11 @@ module JsDuck
       warn_globals(relations)
       warn_unnamed(relations)
 
+      guides = Guides.new(get_doc_formatter(relations))
+      if @guides_dir
+        @timer.time(:parsing) { guides.parse_dir(@guides_dir) }
+      end
+
       clear_dir(@output_dir)
       if @export == :json
         FileUtils.mkdir(@output_dir)
@@ -104,9 +109,7 @@ module JsDuck
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
         @timer.time(:generating) { write_class(@output_dir+"/output", relations) }
         @timer.time(:generating) { write_overview(@output_dir+"/output/overviewData.js", relations) }
-        if @guides_dir
-          @timer.time(:generating) { write_guides(@guides_dir, @output_dir+"/guides", relations) }
-        end
+        @timer.time(:generating) { guides.write(@output_dir+"/guides") }
       end
 
       @timer.report
@@ -259,13 +262,6 @@ module JsDuck
         Logger.instance.log("Writing to #{html_filename} ...")
         file.html_filename = File.basename(html_filename)
       end
-    end
-
-    # Writes JsonP export file for each guide
-    def write_guides(in_path, out_path, relations)
-      guides = Guides.new(get_doc_formatter(relations))
-      guides.parse_dir(in_path)
-      guides.write(out_path)
     end
 
     # Creates and initializes DocFormatter

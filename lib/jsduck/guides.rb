@@ -11,7 +11,7 @@ module JsDuck
       @formatter = formatter
     end
 
-    # Looks for guide in each subdir of given directory
+    # Looks for guide in each subdir of given directory.
     def parse_dir(guides_dir)
       Dir.glob(guides_dir + "/*").each do |dir|
         if File.directory?(dir)
@@ -47,7 +47,9 @@ module JsDuck
 
     # Writes all guides to given dir in JsonP format
     def write(dir)
-      FileUtils.mkdir(dir)
+      # Skip it all when we have no guides
+      FileUtils.mkdir(dir) if @guides.length > 0
+
       @guides.each do |guide|
         out_dir = dir+"/"+guide[:name]
         FileUtils.cp_r(guide[:dir], out_dir)
