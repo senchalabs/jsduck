@@ -44,9 +44,7 @@ Ext.define('Docs.view.Viewport', {
                         ui: 'hmm',
                         listeners: {
                             click: function() {
-                                this.setPageTitle("");
-                                Ext.getCmp('card-panel').layout.setActiveItem(0);
-                                Docs.History.push("");
+                                Docs.App.getController('Classes').showIndex();
                             },
                             scope: this
                         }

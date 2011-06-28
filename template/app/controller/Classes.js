@@ -147,6 +147,20 @@ Ext.define('Docs.controller.Classes', {
         return event.button === this.MIDDLE || event.shiftKey || event.ctrlKey;
     },
 
+    /**
+     * Loads main page.
+     *
+     * @param {Boolean} noHistory  true to disable adding entry to browser history
+     */
+    showIndex: function(noHistory) {
+        this.activeUrl = "";
+        if (!noHistory) {
+            Docs.History.push("");
+        }
+        this.getViewport().setPageTitle("");
+        Ext.getCmp('card-panel').layout.setActiveItem(0);
+    },
+
     cache: {},
 
     /**
@@ -217,6 +231,12 @@ Ext.define('Docs.controller.Classes', {
         this.getFavoritesGrid().selectUrl("/api/"+cls.name);
     },
 
+    /**
+     * Loads guide.
+     *
+     * @param {String} url  URL of the guide
+     * @param {Boolean} noHistory  true to disable adding entry to browser history
+     */
     showGuide: function(url, noHistory) {
         if (this.activeUrl === url) return;
         this.activeUrl = url;
@@ -243,6 +263,11 @@ Ext.define('Docs.controller.Classes', {
         });
     },
 
+    /**
+     * Displays page with 404 error message.
+     *
+     * @param {String} msg
+     */
     showFailure: function(msg) {
         this.getOverview().setLoading(false);
         var tpl = new Ext.XTemplate(
