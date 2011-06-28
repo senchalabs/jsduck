@@ -44,7 +44,7 @@ Ext.define('Docs.view.Viewport', {
                         ui: 'hmm',
                         listeners: {
                             click: function() {
-                                Docs.App.getController('Classes').showIndex();
+                                Docs.App.getController('Classes').loadIndex();
                             },
                             scope: this
                         }

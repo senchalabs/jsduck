@@ -21,10 +21,10 @@ Ext.define("Docs.History", {
             Docs.App.getController('Classes').loadClass(url.url, true);
         }
         else if (url.type === "guide") {
-            Docs.App.getController('Classes').showGuide(url.url, true);
+            Docs.App.getController('Classes').loadGuide(url.url, true);
         }
         else {
-            Docs.App.getController('Classes').showIndex(true);
+            Docs.App.getController('Classes').loadIndex(true);
         }
     },
 

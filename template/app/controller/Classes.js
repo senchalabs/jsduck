@@ -133,7 +133,7 @@ Ext.define('Docs.controller.Classes', {
                 this.loadClass(url);
             }
             else {
-                this.showGuide(url);
+                this.loadGuide(url);
             }
         }
     },
@@ -152,7 +152,7 @@ Ext.define('Docs.controller.Classes', {
      *
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
-    showIndex: function(noHistory) {
+    loadIndex: function(noHistory) {
         this.activeUrl = "";
         if (!noHistory) {
             Docs.History.push("");
@@ -208,7 +208,7 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-        if (this.currentCls != cls) {
+        if (this.currentCls !== cls) {
             this.getViewport().setPageTitle(cls.name);
             this.getHeader().load(cls);
             this.getOverview().load(cls);
@@ -237,7 +237,7 @@ Ext.define('Docs.controller.Classes', {
      * @param {String} url  URL of the guide
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
-    showGuide: function(url, noHistory) {
+    loadGuide: function(url, noHistory) {
         if (this.activeUrl === url) return;
         this.activeUrl = url;
 
@@ -265,8 +265,8 @@ Ext.define('Docs.controller.Classes', {
 
     /**
      * Displays page with 404 error message.
-     *
      * @param {String} msg
+     * @private
      */
     showFailure: function(msg) {
         this.getOverview().setLoading(false);
