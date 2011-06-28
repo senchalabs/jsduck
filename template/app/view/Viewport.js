@@ -217,6 +217,10 @@ Ext.define('Docs.view.Viewport', {
                             autoScroll: true,
                             xtype: 'container',
                             id: 'guide'
+                        },
+                        {
+                            xtype: 'container',
+                            id: 'failure'
                         }
                     ]
                 }

@@ -123,7 +123,7 @@ Ext.define('Docs.controller.Classes', {
     handleUrlClick: function(url, event, view) {
         // Remove everything up to #
         url = url.replace(/.*#/, "");
-        
+
         if (this.opensNewWindow(event)) {
             window.open(url);
             view && view.selectUrl(this.activeUrl ? this.activeUrl : "");
@@ -185,8 +185,8 @@ Ext.define('Docs.controller.Classes', {
                     this.cache[cls] = json;
                     this.showClass(json, member);
                 },
-                failure : function(response, opts) {
-                    // console.log('Fail');
+                failure: function(response, opts) {
+                    this.showFailure("Class <b>"+cls+"</b> was not found.");
                 },
                 scope: this
             });
@@ -236,8 +236,25 @@ Ext.define('Docs.controller.Classes', {
                 this.getTree().selectUrl(url);
                 this.getFavoritesGrid().selectUrl(url);
             },
+            failure: function(response, opts) {
+                this.showFailure("Guide <b>"+name+"</b> was not found.");
+            },
             scope: this
         });
+    },
+
+    showFailure: function(msg) {
+        this.getOverview().setLoading(false);
+        var tpl = new Ext.XTemplate(
+            "<h1>Oops...</h1>",
+            "<p>{msg}</p>",
+            "<p>Maybe it was renamed to something else? Or maybe it has passed away permanently to the 404 land? ",
+            "This would be sad. Hopefully it's just a bug in our side. ",
+            "Report it to <a href='http://www.sencha.com/forum/showthread.php?135036'>Sencha Forum</a> if you feel so.</p>",
+            "<p>Sorry for all this :(</p>"
+        );
+        Ext.getCmp("failure").update(tpl.apply({msg: msg}));
+        Ext.getCmp('card-panel').layout.setActiveItem("failure");
     },
 
     /**
