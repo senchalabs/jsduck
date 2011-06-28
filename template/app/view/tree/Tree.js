@@ -89,10 +89,10 @@ Ext.define('Docs.view.tree.Tree', {
     selectUrl: function(url) {
         var r = this.findRecordByUrl(url);
         if (r) {
-            this.getSelectionModel().select(r);
             r.bubble(function(n) {
                 n.expand();
             });
+            this.getSelectionModel().select(r);
         }
         else {
             this.getSelectionModel().deselectAll();
