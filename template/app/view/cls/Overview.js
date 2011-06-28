@@ -55,7 +55,6 @@ Ext.define('Docs.view.cls.Overview', {
                 filter: function(search) {
                     this.filterMembers(search, Docs.Settings.get("hideInherited"));
                 },
-                toggleExpanded: this.toggleExpanded,
                 scope: this
             }
         });
@@ -129,12 +128,6 @@ Ext.define('Docs.view.cls.Overview', {
         }, this);
 
         this.toolbar.hideInherited(hideInherited);
-    },
-
-    toggleExpanded: function(expanded) {
-        Ext.Array.forEach(Ext.query('.side.expandable'), function(el) {
-            Ext.get(el).parent()[expanded ? "addCls" : "removeCls"]('open');
-        });
     },
 
     getVisibleElements: function(selector, root) {

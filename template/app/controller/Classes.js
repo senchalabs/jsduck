@@ -98,6 +98,14 @@ Ext.define('Docs.controller.Classes', {
                 }
             },
 
+            'toolbar': {
+                toggleExpanded: function(expanded) {
+                    Ext.Array.forEach(Ext.query('.side.expandable'), function(el) {
+                        Ext.get(el).parent()[expanded ? "addCls" : "removeCls"]('open');
+                    });
+                }
+            },
+
             'classoverview': {
                 afterrender: function(cmp) {
                     // Expand member when clicked
