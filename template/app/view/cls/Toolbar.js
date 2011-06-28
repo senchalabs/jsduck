@@ -108,7 +108,8 @@ Ext.define('Docs.view.cls.Toolbar', {
                 tooltip: "Expand all",
                 handler: function() {
                     this.fireEvent("toggleExpanded", true);
-                }
+                },
+                scope: this
             },
             {
                 xtype: 'button',
@@ -116,7 +117,8 @@ Ext.define('Docs.view.cls.Toolbar', {
                 tooltip: "Collapse all",
                 handler: function() {
                     this.fireEvent("toggleExpanded", false);
-                }
+                },
+                scope: this
             }
         ]);
 
