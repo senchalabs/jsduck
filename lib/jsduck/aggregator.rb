@@ -57,7 +57,9 @@ module JsDuck
         old[tag] = old[tag] + new[tag]
       end
       old[:doc] = old[:doc].length > 0 ? old[:doc] : new[:doc]
-      old[:members][:cfg] = old[:members][:cfg] + new[:members][:cfg]
+      # Additionally the doc-comment can contain configs and constructor
+      old[:members][:cfg] += new[:members][:cfg]
+      old[:members][:method] += new[:members][:method]
     end
 
     # Tries to place members into classes where they belong.
