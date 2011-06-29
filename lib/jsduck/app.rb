@@ -95,11 +95,11 @@ module JsDuck
         @timer.time(:parsing) { @guides.parse_dir(@guides_dir) }
       end
 
-      @categories = Categories.new(get_doc_formatter(relations))
+      @categories = Categories.new(get_doc_formatter(relations), relations)
       if @categories_path
         @timer.time(:parsing) do
           @categories.parse(@categories_path)
-          @categories.validate(relations)
+          @categories.validate
         end
       end
 
