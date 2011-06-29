@@ -9,7 +9,6 @@ require 'jsduck/tree_icons'
 require 'jsduck/members'
 require 'jsduck/relations'
 require 'jsduck/aliases'
-require 'jsduck/page'
 require 'jsduck/exporter'
 require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
@@ -228,20 +227,6 @@ module JsDuck
       members = Members.new.create(relations.classes)
       js = "Docs.membersData = " + JSON.generate( {:data => members} ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
-    end
-
-    # Writes documentation page for each class
-    # We do it in parallel using as many processes as available CPU-s
-    def write_pages(path, relations)
-      cache = {}
-      @parallel.each(relations.classes) do |cls|
-        filename = path + "/" + cls[:name] + ".html"
-        Logger.instance.log("Writing to #{filename} ...")
-        page = Page.new(cls, relations, cache)
-        page.link_tpl = @link_tpl if @link_tpl
-        page.img_tpl = @img_tpl if @img_tpl
-        File.open(filename, 'w') {|f| f.write(page.to_html) }
-      end
     end
 
     # Writes JsonP export file for each class
