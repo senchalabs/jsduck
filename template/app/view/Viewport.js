@@ -169,11 +169,6 @@ Ext.define('Docs.view.Viewport', {
                                 //             xtype: 'button',
                                 //             iconCls: 'expandAllMembers',
                                 //             tooltip: "Expand all"
-                                //         },
-                                //         {
-                                //             xtype: 'button',
-                                //             iconCls: 'collapseAllMembers',
-                                //             tooltip: "Collapse all"
                                 //         }
                                 //     ]
                                 // }]

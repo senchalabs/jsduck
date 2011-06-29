@@ -106,17 +106,11 @@ Ext.define('Docs.view.cls.Toolbar', {
                 xtype: 'button',
                 iconCls: 'expandAllMembers',
                 tooltip: "Expand all",
-                handler: function() {
-                    this.fireEvent("toggleExpanded", true);
-                },
-                scope: this
-            },
-            {
-                xtype: 'button',
-                iconCls: 'collapseAllMembers',
-                tooltip: "Collapse all",
-                handler: function() {
-                    this.fireEvent("toggleExpanded", false);
+                enableToggle: true,
+                toggleHandler: function(btn, pressed) {
+                    btn.setIconCls(pressed ? 'collapseAllMembers' : 'expandAllMembers');
+                    btn.setTooltip(pressed ? "Collapse all" : "Expand all");
+                    this.fireEvent("toggleExpanded", pressed);
                 },
                 scope: this
             }

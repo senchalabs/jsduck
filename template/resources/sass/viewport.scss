@@ -391,29 +391,7 @@ a {
         &:hover {
           @include icon-fav-over; } } } }
   .x-panel-body {
-    background: $docs-bg-color; }
-  .sortBy {
-    position: relative;
-    padding-bottom: 10px;
-    #expandAll {
-      width: 13px;
-      height: 15px;
-      position: absolute;
-      top: 4px;
-      right: 40px;
-      display: block;
-      background: url(../images/expandcollapse.png) no-repeat -14px 2px; }
-    #collapseAll {
-      width: 13px;
-      height: 15px;
-      position: absolute;
-      top: 4px;
-      right: 20px;
-      display: block;
-      background: url(../images/expandcollapse.png) no-repeat 0 2px; } }
-  .favorites {
-    padding: 10px;
-    margin: 0 10px 10px 0; } }
+    background: $docs-bg-color; } }
 
 .x-scroller-vertical {
   border: 0; }
@@ -689,15 +667,9 @@ a {
         background-color: #aa0000; } } } }
 
 .expandAllMembers {
-  background: url(../images/expandcollapse.png) no-repeat -14px 2px !important; }
+  background: url(../images/expandcollapse.png) no-repeat -12px 2px !important; }
 .collapseAllMembers {
   background: url(../images/expandcollapse.png) no-repeat 2px 2px !important; }
-
-.member-links {
-  .expandAllMembers {
-    background: url(../images/expandcollapse.png) no-repeat -14px 2px; }
-  .collapseAllMembers {
-    background: url(../images/expandcollapse.png) no-repeat 2px 2px; } }
 
 
 .hover-menu-button {
