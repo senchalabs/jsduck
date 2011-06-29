@@ -97,7 +97,7 @@ module JsDuck
         FileUtils.mkdir(@output_dir)
         init_output_dirs(@output_dir)
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
-        @timer.time(:generating) { write_class(@output_dir+"/output", relations) }
+        @timer.time(:generating) { write_classes(@output_dir+"/output", relations) }
       else
         if @template_links
           link_template(@template_dir, @output_dir)
@@ -108,7 +108,7 @@ module JsDuck
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
-        @timer.time(:generating) { write_class(@output_dir+"/output", relations) }
+        @timer.time(:generating) { write_classes(@output_dir+"/output", relations) }
         @timer.time(:generating) { write_overview(@output_dir+"/output/overviewData.js", relations) }
         @timer.time(:generating) { @guides.write(@output_dir+"/guides") }
       end
@@ -230,7 +230,7 @@ module JsDuck
     end
 
     # Writes JsonP export file for each class
-    def write_class(path, relations)
+    def write_classes(path, relations)
       exporter = Exporter.new(relations, get_doc_formatter(relations))
       @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".js"
