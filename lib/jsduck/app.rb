@@ -14,6 +14,7 @@ require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
 require 'jsduck/guides'
+require 'jsduck/categories'
 require 'jsduck/jsonp'
 require 'json'
 require 'fileutils'
@@ -27,6 +28,7 @@ module JsDuck
     attr_accessor :template_dir
     attr_accessor :guides_dir
     attr_accessor :guides_order
+    attr_accessor :categories_path
     attr_accessor :template_links
     attr_accessor :input_files
     attr_accessor :export
@@ -45,6 +47,7 @@ module JsDuck
       @template_dir = nil
       @guides_dir = nil
       @guides_order = nil
+      @categories_path = nil
       @template_links = false
       @input_files = []
       @warnings = true
@@ -92,6 +95,14 @@ module JsDuck
         @timer.time(:parsing) { @guides.parse_dir(@guides_dir) }
       end
 
+      @categories = Categories.new()
+      if @categories_path
+        @timer.time(:parsing) do
+          @categories.parse(@categories_path)
+          @categories.validate(relations)
+        end
+      end
+
       clear_dir(@output_dir)
       if @export == :json
         FileUtils.mkdir(@output_dir)
@@ -109,7 +120,7 @@ module JsDuck
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_search_data(@output_dir+"/output/searchData.js", relations) }
         @timer.time(:generating) { write_classes(@output_dir+"/output", relations) }
-        @timer.time(:generating) { write_overview(@output_dir+"/output/overviewData.js", relations) }
+        @timer.time(:generating) { @categories.write(@output_dir+"/output/overviewData.js") }
         @timer.time(:generating) { @guides.write(@output_dir+"/guides") }
       end
 
@@ -182,33 +193,6 @@ module JsDuck
           end
         end
       end
-    end
-
-    # prints warnings for missing classes in overviewData.json file,
-    # and writes overviewData to .js file
-    def write_overview(filename, relations)
-      overview = JSON.parse(IO.read(@template_dir+"/overviewData.json"))
-      overview_classes = {}
-
-      # Check that each class listed in overview file exists
-      overview["categories"].each_pair do |cat_name, cat|
-        cat["classes"].each do |cls_name|
-          unless relations[cls_name]
-            Logger.instance.warn("Class '#{cls_name}' in category '#{cat_name}' not found")
-          end
-          overview_classes[cls_name] = true
-        end
-      end
-
-      # Check that each existing non-private class is listed in overview file
-      relations.each do |cls|
-        unless overview_classes[cls[:name]] || cls[:private]
-          Logger.instance.warn("Class '#{cls[:name]}' not found in overview file")
-        end
-      end
-
-      js = "Docs.overviewData = " + JSON.generate( overview ) + ";"
-      File.open(filename, 'w') {|f| f.write(js) }
     end
 
     # Given all classes, generates namespace tree and writes it

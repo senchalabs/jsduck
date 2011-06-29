@@ -63,6 +63,11 @@ opts = OptionParser.new do | opts |
     app.guides_order = list
   end
 
+  opts.on('--categories=PATH',
+    "Path to JSON file which defines categories for classes.", " ") do |path|
+    app.categories_path = path
+  end
+
   opts.on('-h', '--help', "Prints this help message", " ") do
     puts opts
     exit
