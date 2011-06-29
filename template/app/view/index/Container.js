@@ -35,20 +35,29 @@ Ext.define('Docs.view.index.Container', {
             '{categories}'
         );
 
-        var notice = Ext.get("notice-text");
-        var guides = Ext.get("guides-content");
-        var categories = Ext.get("categories-content");
-        this.html = tpl.apply({
-            // Use the same title as in <title>
-            title: Ext.query("title")[0].innerHTML,
-            // If page contains div with notice-text extract the text and show it as notice
-            notice: notice && notice.dom.innerHTML,
-            // Extract guides
-            guides: guides && guides.dom.innerHTML,
-            // Extract categories
-            categories: categories && categories.dom.innerHTML
-        });
-
+        this.html = tpl.apply(this.extractData());
+        
         this.callParent(arguments);
+    },
+
+    // Extracts HTML from hidden elements in page
+    extractData: function() {
+        var data = {
+            notice: Ext.get("notice-text"),
+            guides: Ext.get("guides-content"),
+            categories: Ext.get("categories-content")
+        };
+        for (var i in data) {
+            var el = data[i];
+            if (el) {
+                // If page contains the div then extract its contents,
+                // after that remove the original
+                data[i] = el.dom.innerHTML;
+                el.remove();
+            }
+        }
+        // Extract <title> text
+        data.title = Ext.query("title")[0].innerHTML;
+        return data;
     }
 });
