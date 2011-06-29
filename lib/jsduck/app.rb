@@ -6,7 +6,7 @@ require 'jsduck/doc_formatter'
 require 'jsduck/class'
 require 'jsduck/tree'
 require 'jsduck/tree_icons'
-require 'jsduck/members'
+require 'jsduck/search_data'
 require 'jsduck/relations'
 require 'jsduck/aliases'
 require 'jsduck/exporter'
@@ -107,7 +107,7 @@ module JsDuck
         create_index_html(@template_dir, @output_dir)
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
-        @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
+        @timer.time(:generating) { write_search_data(@output_dir+"/output/searchData.js", relations) }
         @timer.time(:generating) { write_classes(@output_dir+"/output", relations) }
         @timer.time(:generating) { write_overview(@output_dir+"/output/overviewData.js", relations) }
         @timer.time(:generating) { @guides.write(@output_dir+"/guides") }
@@ -223,9 +223,9 @@ module JsDuck
 
     # Given all classes, generates members data for search and writes in
     # in JSON form into a file.
-    def write_members(filename, relations)
-      members = Members.new.create(relations.classes)
-      js = "Docs.membersData = " + JSON.generate( {:data => members} ) + ";"
+    def write_search_data(filename, relations)
+      search_data = SearchData.new.create(relations.classes)
+      js = "Docs.searchData = " + JSON.generate( {:data => search_data} ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
     end
 
