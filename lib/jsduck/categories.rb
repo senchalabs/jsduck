@@ -5,7 +5,8 @@ module JsDuck
 
   # Reads in categories and outputs JSON file
   class Categories
-    def initialize
+    def initialize(doc_formatter)
+      @doc_formatter = doc_formatter
       @overview = {"organisation" => [], "categories" => {}}
     end
 
@@ -36,10 +37,42 @@ module JsDuck
       end
     end
 
-    # Writes the categories as JavaScript file
-    def write(filename)
-      js = "Docs.overviewData = " + JSON.generate( @overview ) + ";"
-      File.open(filename, 'w') {|f| f.write(js) }
+    # Returns HTML listing of classes divided into categories
+    def to_html
+      html = @overview["organisation"].map do |group|
+        [
+          "<div class='section classes'>",
+          "<h1>#{group['name']}</h1>",
+          group['categories'].map do |cat|
+            [
+              "<div class='#{cat['align']}'>",
+              cat['items'].map do |item|
+                [
+                  "<h3>#{item}</h3>",
+                  "<div class='links'>",
+                  class_links(item),
+                  "</div>",
+                ]
+              end,
+              "</div>",
+            ]
+          end,
+          "<div style='clear:both'></div>",
+          "</div>",
+        ]
+      end.flatten.join("\n")
+
+      return <<-EOHTML
+        <div id='categories-content' style='display:none'>
+            #{html}
+        </div>
+      EOHTML
+    end
+
+    def class_links(category)
+      return @overview["categories"][category]["classes"].map do |cls|
+        @doc_formatter.link(cls, nil, cls)
+      end
     end
 
   end

@@ -95,7 +95,7 @@ module JsDuck
         @timer.time(:parsing) { @guides.parse_dir(@guides_dir) }
       end
 
-      @categories = Categories.new()
+      @categories = Categories.new(get_doc_formatter(relations))
       if @categories_path
         @timer.time(:parsing) do
           @categories.parse(@categories_path)
@@ -120,7 +120,6 @@ module JsDuck
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
         @timer.time(:generating) { write_search_data(@output_dir+"/output/searchData.js", relations) }
         @timer.time(:generating) { write_classes(@output_dir+"/output", relations) }
-        @timer.time(:generating) { @categories.write(@output_dir+"/output/overviewData.js") }
         @timer.time(:generating) { @guides.write(@output_dir+"/guides") }
       end
 
@@ -278,6 +277,7 @@ module JsDuck
       html.gsub!("{extjs_path}", @extjs_path)
       html.gsub!("{append_html}", @append_html)
       html.gsub!("{guides}", @guides.to_html)
+      html.gsub!("{categories}", @categories.to_html)
       FileUtils.rm(dir+"/index.html")
       File.open(dir+"/index.html", 'w') {|f| f.write(html) }
     end

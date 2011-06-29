@@ -8,8 +8,6 @@ Ext.define('Docs.view.index.Container', {
     cls: 'class-list',
 
     initComponent: function() {
-        var data = this.classData;
-
         var tpl = new Ext.XTemplate(
             '<h1 class="top">{title}</h1>',
             '<tpl if="notice">',
@@ -34,41 +32,22 @@ Ext.define('Docs.view.index.Container', {
                     '</div>',
                 '</div>',
             '</tpl>',
-            '<tpl for="organisation">',
-                '<div class="section classes">',
-                    '<h1>{name}</h1>',
-                    '<tpl for="categories">',
-                        '<div class="{align}">',
-                        '<tpl for="items">',
-                            '<h3>{.}</h3>',
-                            '<div class="links">',
-                                '{[this.renderClasses(values)]}',
-                            '</div>',
-                        '</tpl>',
-                        '</div>',
-                    '</tpl>',
-                    '<div style="clear:both"></div>',
-                '</div>',
-            '</tpl>',
-            {
-                renderClasses: function(category) {
-                    return Ext.Array.map(data.categories[category].classes, function(cls) {
-                        return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{0}</a>', cls);
-                    }).join("\n");
-                }
-            }
+            '{categories}'
         );
 
         var notice = Ext.get("notice-text");
         var guides = Ext.get("guides-content");
-        this.html = tpl.apply(Ext.apply({
+        var categories = Ext.get("categories-content");
+        this.html = tpl.apply({
             // Use the same title as in <title>
             title: Ext.query("title")[0].innerHTML,
             // If page contains div with notice-text extract the text and show it as notice
             notice: notice && notice.dom.innerHTML,
             // Extract guides
-            guides: guides && guides.dom.innerHTML
-        }, data));
+            guides: guides && guides.dom.innerHTML,
+            // Extract categories
+            categories: categories && categories.dom.innerHTML
+        });
 
         this.callParent(arguments);
     }

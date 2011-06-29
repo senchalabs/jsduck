@@ -192,8 +192,7 @@ Ext.define('Docs.view.Viewport', {
                     items: [
                         {
                             autoScroll: true,
-                            xtype: 'indexcontainer',
-                            classData: Docs.overviewData
+                            xtype: 'indexcontainer'
                         },
                         {
                             xtype: 'container',
