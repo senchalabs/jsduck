@@ -2,66 +2,73 @@ require "jsduck/categories"
 
 describe JsDuck::Categories do
 
-  describe "splitting to one column" do
+  # Small helper to check the sums
+  def sum(arr)
+    arr.reduce(0) {|sum,x| sum + x }
+  end
+
+  # Replace the sum method with the one that simply sums the numbers,
+  # so we can use simpler test-data.
+  class JsDuck::Categories
+    def sum(arr)
+      arr.reduce(0) {|sum,x| sum + x }
+    end
+  end
+
+  describe "#split" do
     before do
-      categories = JsDuck::Categories.new({})
-      @cols = categories.split_to_columns([
-          {"classes" => ["1", "2", "3"]},
-          {"classes" => ["4", "5"]},
-          {"classes" => ["6"]},
-        ], 1)
+      @categories = JsDuck::Categories.new({})
     end
 
-    it "creates just one column" do
+    it "split(1 item by 1)" do
+      @cols = @categories.split([2], 1)
       @cols.length.should == 1
+      sum(@cols[0]).should == 2
     end
 
-    it "places all groups to first column" do
-      @cols[0].length.should == 3
-    end
-  end
-
-  describe "splitting to two equal-height columns" do
-    before do
-      categories = JsDuck::Categories.new({})
-      @cols = categories.split_to_columns([
-          {"classes" => ["1", "2", "3", "4", "5", "6"]}, # 6+3 = 9
-          {"classes" => ["7", "8"]}, # 2+3 = 5
-          {"classes" => ["9"]}, # 1+3 = 4
-        ], 2)
+    it "split(3 items by 1)" do
+      @cols = @categories.split([1, 2, 3], 1)
+      @cols.length.should == 1
+      sum(@cols[0]).should == 6
     end
 
-    it "creates two columns" do
+    it "split(3 items to two equal-height columns)" do
+      @cols = @categories.split([1, 2, 3], 2)
       @cols.length.should == 2
+      sum(@cols[0]).should == 3
+      sum(@cols[1]).should == 3
     end
 
-    it "places first group to first column" do
-      @cols[0].length.should == 1
+    it "split(1 item by 3)" do
+      @cols = @categories.split([2], 3)
+      @cols.length.should == 3
+      sum(@cols[0]).should == 2
+      sum(@cols[1]).should == 0
+      sum(@cols[2]).should == 0
     end
 
-    it "places other two groups to second column" do
-      @cols[1].length.should == 2
-    end
-  end
-
-  describe "splitting one group to two columns" do
-    before do
-      categories = JsDuck::Categories.new({})
-      @cols = categories.split_to_columns([
-          {"classes" => ["1", "2"]}
-        ], 2)
+    it "split(3 items by 3)" do
+      @cols = @categories.split([1, 2, 3], 3)
+      @cols.length.should == 3
+      sum(@cols[0]).should == 1
+      sum(@cols[1]).should == 2
+      sum(@cols[2]).should == 3
     end
 
-    it "creates two columns" do
-      @cols.length.should == 2
+    it "split(6 items by 3)" do
+      @cols = @categories.split([5, 8, 4, 2, 1, 3], 3)
+      @cols.length.should == 3
+      sum(@cols[0]).should <= 10
+      sum(@cols[1]).should <= 10
+      sum(@cols[2]).should <= 10
     end
 
-    it "places first group to first column" do
-      @cols[0].length.should == 1
-    end
-
-    it "leaves the second column empty" do
-      @cols[1].length.should == 0
+    it "split(8 items by 3)" do
+      @cols = @categories.split([1, 3, 5, 2, 1, 4, 2, 3], 3)
+      @cols.length.should == 3
+      sum(@cols[0]).should <= 9
+      sum(@cols[1]).should <= 9
+      sum(@cols[2]).should <= 9
     end
   end
 
