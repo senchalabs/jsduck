@@ -45,7 +45,7 @@ def run_jsduck(extra_options)
     "--external", "Error",
     '--link', '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>',
     # Note that we wrap image template inside <p> because {@img} often
-    # appears inline withing text, but that just looks ugly in HTML
+    # appears inline within text, but that just looks ugly in HTML
     '--img', '<p><img src="doc-resources/%u" alt="%a"></p>',
     "--guides", "#{SDK_DIR}/guides",
     "--guides-order", "getting,class,application,layouts,data,grid,tree,drawing,forms,components,theming,direct",
