@@ -32,12 +32,6 @@ opts = OptionParser.new do | opts |
     app.output_dir = path
   end
 
-  opts.on('--ext4-events',
-    "Appends extra options parameter to each event that is",
-    "automatically added by ExtJS 4.", " ") do
-    app.ignore_global = true
-  end
-
   opts.on('--ignore-global', "Turns off the creation of global class.", " ") do
     app.ignore_global = true
   end

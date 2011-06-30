@@ -147,7 +147,10 @@ module JsDuck
     end
 
     # Appends Ext4 options parameter to each event parameter list.
+    # But only when we are dealing with Ext4 codebase.
     def append_ext4_event_options
+      return unless ext4?
+
       options = {
         :tagname => :param,
         :name => "options",
@@ -157,6 +160,12 @@ module JsDuck
       @classes.each_value do |cls|
         cls[:members][:event].each {|e| e[:params] << options }
       end
+    end
+
+    # Are we dealing with ExtJS 4?
+    # True if any of the classes is defined with Ext.define()
+    def ext4?
+      @documentation.any? {|cls| cls[:code_type] == :ext_define }
     end
 
     def result

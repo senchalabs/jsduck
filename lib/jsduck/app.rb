@@ -41,7 +41,6 @@ module JsDuck
     attr_accessor :footer
     attr_accessor :extjs_path
     attr_accessor :append_html
-    attr_accessor :ext4_events
 
     def initialize
       @output_dir = nil
@@ -62,7 +61,6 @@ module JsDuck
       @footer = 'Generated with <a href="https://github.com/nene/jsduck">JSDuck</a>.'
       @extjs_path = "extjs/ext-all.js"
       @append_html = ""
-      @ext4_events = false
       @timer = Timer.new
       @parallel = ParallelWrap.new
     end
@@ -151,7 +149,7 @@ module JsDuck
       end
       agr.classify_orphans
       agr.create_global_class unless @ignore_global
-      agr.append_ext4_event_options if @ext4_events
+      agr.append_ext4_event_options
       agr.result
     end
 

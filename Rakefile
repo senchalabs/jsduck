@@ -43,7 +43,6 @@ def run_jsduck(extra_options)
     "ruby", "bin/jsduck",
     # --external=Error to ignore the Error class that Ext.Error extends.
     "--external", "Error",
-    "--ext4-events",
     "--guides", "#{SDK_DIR}/guides",
     "--guides-order", "getting,class,application,layouts,data,grid,tree,drawing,forms,components,theming,direct",
     "--categories", "#{SDK_DIR}/extjs/doc-resources/categories.json",

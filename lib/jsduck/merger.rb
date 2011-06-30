@@ -116,6 +116,8 @@ module JsDuck
         :author => detect_author(doc_map),
         :docauthor => detect_docauthor(doc_map),
         :singleton => !!doc_map[:singleton],
+        # Used by Aggregator to determine if we're dealing with Ext4 code
+        :code_type => code[:type],
       }, doc_map)
     end
 
