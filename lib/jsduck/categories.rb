@@ -3,7 +3,7 @@ require 'json'
 
 module JsDuck
 
-  # Reads in categories and outputs JSON file
+  # Reads in categories and outputs them as HTML div
   class Categories
     def initialize(doc_formatter, relations={})
       @doc_formatter = doc_formatter
@@ -42,6 +42,8 @@ module JsDuck
 
     # Returns HTML listing of classes divided into categories
     def to_html
+      return "" if @categories.length == 0
+
       html = @categories.map do |category|
         [
           "<div class='section classes'>",
