@@ -209,7 +209,7 @@ Changelog
   of changes.  But also possibly several bugs.  Use the --pre option
   to install:
 
-       $ gem install --pre jsduck
+        $ gem install --pre jsduck
 
   To run it on ExtJS4:
 
