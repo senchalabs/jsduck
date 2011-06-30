@@ -125,7 +125,7 @@ opts = OptionParser.new do | opts |
     app.processes = count.to_i
   end
 
-  opts.on('-t', '--template=PATH', "Directory containing doc-browser UI template.", " ") do |path|
+  opts.on('--template=PATH', "Directory containing doc-browser UI template.", " ") do |path|
     app.template_dir = path
   end
 
