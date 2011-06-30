@@ -227,7 +227,16 @@ a {
       .x-grid-row-over td img {
         display: none; } }
     .x-grid-cell-inner {
-      padding: 2px 2px 3px 2px; } }
+      padding: 2px 2px 3px 2px; }
+    // plain:true of gridpanel does not work as intended for us,
+    // so use plain:false and style the tab-bar almost like plan
+    // by simply removing the background and borders.
+    .x-tab-bar {
+      background: transparent;
+      .x-tab-bar-body {
+        border: none;
+        // because we removed the border, push the tabs 2px (instead of 1px) lower.
+        padding-top: 2px; } } }
   .x-splitter {
     background: #ccc;
     border-style: solid;

@@ -87,8 +87,6 @@ Ext.define('Docs.view.Viewport', {
                                 height: Docs.Settings.get('favorites-height') || 150,
                                 padding: '2 4 0 0',
                                 bodyPadding: '3 15 0 12',
-                                border: false,
-                                plain: true,
                                 split: true,
                                 listeners: {
                                     afterRender: function() {
