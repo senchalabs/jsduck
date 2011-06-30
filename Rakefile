@@ -58,6 +58,7 @@ desc "Run JSDuck on ExtJS SDK"
 task :sdk do
   load_sdk_vars
   run_jsduck([
+    "--extjs-path", "extjs/ext-debug.js",
     # to create symbolic links to template files instead of copying them over.
     # Useful for development.  Turn off for deployment.
     "--template-links",
@@ -74,7 +75,6 @@ def run_jsduck_export(extra_options, ext_dir)
   run_jsduck([
     "--title", "Ext JS 4.0.2a API Documentation",
     "--footer", "ExtJS 4.0.2a Documentation from Sencha. Generated with <a href='https://github.com/nene/jsduck'>JSDuck</a> revison #{rev}",
-    "--extjs-path", "extjs/ext-all.js",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",

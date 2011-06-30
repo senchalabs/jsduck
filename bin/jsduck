@@ -40,7 +40,7 @@ opts = OptionParser.new do | opts |
 
   opts.on('--extjs-path=PATH',
     "Path for main ExtJS JavaScript file.  Useful for specifying",
-    "something different than extjs/ext-all-debug.js", " ") do |path|
+    "something different than extjs/ext-all.js", " ") do |path|
     app.extjs_path = path
   end
 
