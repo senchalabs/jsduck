@@ -26,8 +26,18 @@ app.template_dir = File.dirname(File.dirname(__FILE__)) + "/template"
 opts = OptionParser.new do | opts |
   opts.banner = "Usage: jsduck [options] files/dirs...\n\n"
 
-  opts.on('--append-html=HTML', "Extra code to append to the index.html page.", " ") do |html|
-    app.append_html = html
+  opts.on('-o', '--output=PATH',
+    "Directory to output all this amazing documentation.",
+    "This option MUST be specified.", " ") do |path|
+    app.output_dir = path
+  end
+
+  opts.on('--ignore-global', "Turns off the creation of global class.", " ") do
+    app.ignore_global = true
+  end
+
+  opts.on('--private-classes', "Include private classes to docs.", " ") do
+    app.show_private_classes = true
   end
 
   opts.on('--external=CLASSNAME',
@@ -38,16 +48,31 @@ opts = OptionParser.new do | opts |
     app.external_classes << classname
   end
 
-  opts.on('--extjs-path=PATH',
-    "Path for main ExtJS JavaScript file.  Useful for specifying",
-    "something different than extjs/ext-all.js", " ") do |path|
-    app.extjs_path = path
+  opts.on('--no-warnings', "Turns off warnings.", " ") do
+    app.warnings = false
+  end
+
+  opts.on('-v', '--verbose', "This will fill up your console.", " ") do
+    app.verbose = true
+  end
+
+  opts.separator "Customizing output:"
+  opts.separator ""
+
+  opts.on('--title=TEXT',
+    "Custom title for the documentation app.",
+    "Defaults to 'ExtJS API Documentation'", " ") do |text|
+    app.title = text
   end
 
   opts.on('--footer=TEXT',
     "Custom footer text for the documentation app.",
     "Defaults to: 'Generated with JSDuck.'", " ") do |text|
     app.footer = text
+  end
+
+  opts.on('--append-html=HTML', "Extra code to append to the index.html page.", " ") do |html|
+    app.append_html = html
   end
 
   opts.on('--guides=PATH', "Path to guides directory.",
@@ -70,13 +95,17 @@ opts = OptionParser.new do | opts |
     app.categories_path = path
   end
 
-  opts.on('-h', '--help', "Prints this help message", " ") do
-    puts opts
-    exit
-  end
-
-  opts.on('--ignore-global', "Turns off the creation of global class.", " ") do
-    app.ignore_global = true
+  opts.on('--link=TPL',
+    "HTML template for replacing {@link}.",
+    "Possible placeholders:",
+    "%c - full class name (e.g. 'Ext.Panel')",
+    "%m - class member name prefixed with member type",
+    "     (e.g. 'method-urlEncode')",
+    "%# - inserts '#' if member name present",
+    "%- - inserts '-' if member name present",
+    "%a - anchor text for link",
+    "Default is: '<a href=\"#/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'", " ") do |tpl|
+    app.link_tpl = tpl
   end
 
   opts.on('--img=TPL',
@@ -92,30 +121,8 @@ opts = OptionParser.new do | opts |
     app.export = :json
   end
 
-  opts.on('--link=TPL',
-    "HTML template for replacing {@link}.",
-    "Possible placeholders:",
-    "%c - full class name (e.g. 'Ext.Panel')",
-    "%m - class member name prefixed with member type",
-    "     (e.g. 'method-urlEncode')",
-    "%# - inserts '#' if member name present",
-    "%- - inserts '-' if member name present",
-    "%a - anchor text for link",
-    "Default is: '<a href=\"#/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'", " ") do |tpl|
-    app.link_tpl = tpl
-  end
-
-  opts.on('--no-warnings', "Turns off warnings.", " ") do
-    app.warnings = false
-  end
-
-  opts.on('-o', '--output=PATH', "Directory to output all this amazing documentation.", " ") do |path|
-    app.output_dir = path
-  end
-
-  opts.on('--private-classes', "Include private classes to docs.", " ") do
-    app.show_private_classes = true
-  end
+  opts.separator "Debugging:"
+  opts.separator ""
 
   # For debugging it's often useful to set --processes=0 to get deterministic results.
   opts.on('-p', '--processes=COUNT',
@@ -125,7 +132,8 @@ opts = OptionParser.new do | opts |
     app.processes = count.to_i
   end
 
-  opts.on('--template=PATH', "Directory containing doc-browser UI template.", " ") do |path|
+  opts.on('--template=PATH',
+    "Directory containing doc-browser UI template.", " ") do |path|
     app.template_dir = path
   end
 
@@ -136,12 +144,15 @@ opts = OptionParser.new do | opts |
     app.template_links = true
   end
 
-  opts.on('--title=TEXT', "Custom title for the documentation app.", " ") do |text|
-    app.title = text
+  opts.on('--extjs-path=PATH',
+    "Path for main ExtJS JavaScript file.  Useful for specifying",
+    "something different than extjs/ext-all.js", " ") do |path|
+    app.extjs_path = path
   end
 
-  opts.on('-v', '--verbose', "This will fill up your console.", " ") do
-    app.verbose = true
+  opts.on('-h', '--help', "Prints this help message", " ") do
+    puts opts
+    exit
   end
 
 end
