@@ -58,7 +58,7 @@ module JsDuck
       @external_classes = []
       @show_private_classes = false
       @title = "Ext JS API Documentation"
-      @footer = 'Generated with <a href="https://github.com/nene/jsduck">JSDuck</a>.'
+      @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
       @extjs_path = "extjs/ext-all.js"
       @append_html = ""
       @timer = Timer.new

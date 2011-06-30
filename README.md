@@ -102,7 +102,7 @@ Standard rubygems install should do:
 
 For hacking fork it from github.
 
-    $ git clone git://github.com/nene/jsduck.git
+    $ git clone git://github.com/senchalabs/jsduck.git
     $ cd jsduck
     $ rake --tasks
 
@@ -152,20 +152,20 @@ Documentation
 
 Overview of documenting your code with JsDuck:
 
-* [Class](https://github.com/nene/jsduck/wiki/Class)
-* [Constructor](https://github.com/nene/jsduck/wiki/Constructor)
-* [Config options](https://github.com/nene/jsduck/wiki/Cfg)
-* [Properties](https://github.com/nene/jsduck/wiki/Property)
-* [Methods](https://github.com/nene/jsduck/wiki/Method)
-* [Events](https://github.com/nene/jsduck/wiki/Event)
+* [Class](https://github.com/senchalabs/jsduck/wiki/Class)
+* [Constructor](https://github.com/senchalabs/jsduck/wiki/Constructor)
+* [Config options](https://github.com/senchalabs/jsduck/wiki/Cfg)
+* [Properties](https://github.com/senchalabs/jsduck/wiki/Property)
+* [Methods](https://github.com/senchalabs/jsduck/wiki/Method)
+* [Events](https://github.com/senchalabs/jsduck/wiki/Event)
 
 More details:
 
 * [List of supported @tags][tags]
 * [List of doc-comment errors(?) found in ExtJS source][errors]
 
-[tags]: https://github.com/nene/jsduck/wiki/List-of-supported-@tags
-[errors]: https://github.com/nene/jsduck/wiki/List-of-doc-comment-errors(%3F)-found-in-ExtJS-source
+[tags]: https://github.com/senchalabs/jsduck/wiki/List-of-supported-@tags
+[errors]: https://github.com/senchalabs/jsduck/wiki/List-of-doc-comment-errors(%3F)-found-in-ExtJS-source
 
 
 Features and differences from ext-doc
@@ -286,4 +286,4 @@ Changelog
 
 * 0.1 - initial version.
 
-[overviewData.json]: https://raw.github.com/nene/jsduck/3ee0653554da1ddc54576e7df442d08c9a6d22fd/template/overviewData.json
+[overviewData.json]: https://raw.github.com/senchalabs/jsduck/3ee0653554da1ddc54576e7df442d08c9a6d22fd/template/overviewData.json

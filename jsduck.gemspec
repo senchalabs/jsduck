@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.date = '2011-06-30'
   s.summary = "Simple JavaScript Duckumentation generator"
   s.description = "Documentation generator for ExtJS 4"
-  s.homepage = "https://github.com/nene/jsduck"
+  s.homepage = "https://github.com/senchalabs/jsduck"
   s.authors = ["Rene Saarsoo", "Nick Poulden"]
   s.email = "rene.saarsoo@sencha.com"
   s.rubyforge_project = s.name
