@@ -1,3 +1,5 @@
+require 'jsduck/logger'
+
 module JsDuck
 
   # Encapsulates class documentation and provides some commonly needed
@@ -8,6 +10,8 @@ module JsDuck
 
     def initialize(doc)
       @doc = doc
+      @doc[:members] = Class.default_members_hash if !@doc[:members]
+      @doc[:statics] = Class.default_members_hash if !@doc[:statics]
       @relations = nil
     end
 
@@ -46,8 +50,9 @@ module JsDuck
     def lookup(classname)
       if @relations[classname]
         @relations[classname]
-      elsif classname != "Object"
-        puts "Warning: Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}"
+      elsif !@relations.ignore?(classname)
+        Logger.instance.warn("Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}")
+        nil
       end
     end
 
@@ -65,12 +70,11 @@ module JsDuck
     # Returns array of all public members of particular type in a class,
     # sorted by name.
     #
-    # For methods the the constructor is listed as first method having
-    # the same name as class itself.
+    # For methods the the constructor is listed first.
     #
     # See members_hash for details.
-    def members(type)
-      ms = members_hash(type).values.sort {|a,b| a[:name] <=> b[:name] }
+    def members(type, context=:members)
+      ms = members_hash(type, context).values.sort {|a,b| a[:name] <=> b[:name] }
       type == :method ? constructor_first(ms) : ms
     end
 
@@ -80,11 +84,7 @@ module JsDuck
       constr = ms.find {|m| m[:name] == "constructor" }
       if constr
         ms.delete(constr)
-        # Clone it.  Otherwise the search for "constructor" from this
-        # class will return nothing as we have renamed it.
-        constr2 = constr.clone
-        constr2[:name] = short_name
-        ms.unshift(constr2)
+        ms.unshift(constr)
       end
       ms
     end
@@ -95,21 +95,62 @@ module JsDuck
     #
     # When parent and child have members with same name,
     # member from child overrides tha parent member.
-    #
-    # We also set :member property to each member to the full class
-    # name where it belongs, so one can tell them apart afterwards.
-    def members_hash(type)
-      all_members = parent ? parent.members_hash(type) : {}
-
-      mixins.each do |mix|
-        all_members.merge!(mix.members_hash(type))
+    def members_hash(type, context=:members)
+      # Singletons have no static members
+      if @doc[:singleton] && context == :statics
+        # Warn if singleton has static members
+        if @doc[context][type].length > 0
+          Logger.instance.warn("Singleton class #{@doc[:name]} can't have static members, remove the @static tag.")
+        end
+        return {}
       end
 
-      @doc[type].each do |m|
+      all_members = parent ? parent.members_hash(type, context) : {}
+
+      mixins.each do |mix|
+        all_members.merge!(mix.members_hash(type, context))
+      end
+
+      # For static members, exclude everything not explicitly marked as inheritable
+      if context == :statics
+        all_members.delete_if {|key, member| !member[:inheritable] }
+      end
+
+      (@doc[context][type] || []).each do |m|
         all_members[m[:name]] = m if !m[:private]
       end
 
       all_members
+    end
+
+    # Returns member by name.
+    #
+    # Optionally one can also specify type name to differenciate
+    # between different types of members.
+    def get_member(name, type_name=nil)
+      # build hash of all members
+      unless @members_map
+        @members_map = {}
+        [:members, :statics].each do |group|
+          @doc[group].each_key do |type|
+            members_hash(type, group).each_pair do |key, member|
+              @members_map["#{type}-#{key}"] = member
+              @members_map[key] = member
+            end
+          end
+        end
+      end
+
+      @members_map[type_name ? "#{type_name}-#{name}" : name]
+    end
+
+    # Loops through each member of the class, invoking block with each of them
+    def each_member(&block)
+      [:members, :statics].each do |group|
+        @doc[group].each_value do |members|
+          members.each(&block)
+        end
+      end
     end
 
     # A way to access full class name with similar syntax to
@@ -154,6 +195,18 @@ module JsDuck
         short = parts.pop + "." + short
       end
       short
+    end
+
+    # Returns default hash that has empty array for each member type
+    def self.default_members_hash
+      return {
+        :cfg => [],
+        :property => [],
+        :method => [],
+        :event => [],
+        :css_var => [],
+        :css_mixin => [],
+      }
     end
   end
 

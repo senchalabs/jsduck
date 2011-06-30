@@ -66,17 +66,8 @@ module JsDuck
     def create_class(docs, code)
       groups = group_class_docs(docs)
       result = create_bare_class(groups[:class], code)
-      result[:cfg] = groups[:cfg].map { |tags| create_cfg(tags, {}, result[:name]) }
-      result[:method] = []
-      if groups[:constructor].length > 0
-        constr = create_method(groups[:constructor], {})
-        constr[:member] = result[:name]
-        result[:method] << constr
-      end
-      result[:property] = []
-      result[:event] = []
-      result[:css_var] = []
-      result[:css_mixin] = []
+      result[:members] = create_class_members(groups, result[:name])
+      result[:statics] = Class.default_members_hash
       result
     end
 
@@ -114,96 +105,111 @@ module JsDuck
 
     def create_bare_class(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :class,
         :name => detect_name(:class, doc_map, code, :full_name),
         :doc => detect_doc(docs),
         :extends => detect_extends(doc_map, code),
         :mixins => detect_list(:mixins, doc_map, code),
         :alternateClassNames => detect_list(:alternateClassNames, doc_map, code),
-        :xtype => detect_xtype(doc_map),
+        :xtypes => detect_xtypes(doc_map, code),
         :author => detect_author(doc_map),
         :docauthor => detect_docauthor(doc_map),
         :singleton => !!doc_map[:singleton],
-        :private => !!doc_map[:private],
-      }
+        # Used by Aggregator to determine if we're dealing with Ext4 code
+        :code_type => code[:type],
+      }, doc_map)
+    end
+
+    def create_class_members(groups, owner)
+      members = Class.default_members_hash
+      members[:cfg] = groups[:cfg].map { |tags| create_cfg(tags, {}, owner) }
+      if groups[:constructor].length > 0
+        constr = create_method(groups[:constructor], {})
+        constr[:owner] = owner
+        members[:method] << constr
+      end
+      members
     end
 
     def create_method(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      name = detect_name(:method, doc_map, code)
+      return add_shared({
         :tagname => :method,
-        :name => detect_name(:method, doc_map, code),
-        :member => detect_member(doc_map),
+        :name => name,
+        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
-        :return => detect_return(doc_map),
-        :private => !!doc_map[:private],
-        :static => !!doc_map[:static],
-      }
+        :return => detect_return(doc_map, name == "constructor" ? "Object" : "void"),
+      }, doc_map)
     end
 
     def create_event(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :event,
         :name => detect_name(:event, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
-        :private => !!doc_map[:private],
-      }
+      }, doc_map)
     end
 
-    def create_cfg(docs, code, member = nil)
+    def create_cfg(docs, code, owner = nil)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :cfg,
         :name => detect_name(:cfg, doc_map, code),
-        :member => detect_member(doc_map) || member,
+        :owner => detect_owner(doc_map) || owner,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
-        :private => !!doc_map[:private],
-      }
+      }, doc_map)
     end
 
     def create_property(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :property,
         :name => detect_name(:property, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :type => detect_type(:property, doc_map, code),
         :doc => detect_doc(docs),
-        :private => !!doc_map[:private],
-        :static => !!doc_map[:static],
-      }
+      }, doc_map)
     end
 
     def create_css_var(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :css_var,
         :name => detect_name(:css_var, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :type => detect_type(:css_var, doc_map, code),
         :doc => detect_doc(docs),
-        :private => !!doc_map[:private],
-        :static => !!doc_map[:static],
-      }
+      }, doc_map)
     end
 
     def create_css_mixin(docs, code)
       doc_map = build_doc_map(docs)
-      return {
+      return add_shared({
         :tagname => :css_mixin,
         :name => detect_name(:css_mixin, doc_map, code),
-        :member => detect_member(doc_map),
+        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
+      }, doc_map)
+    end
+
+    # Detects properties common for each doc-object and adds them
+    def add_shared(hash, doc_map)
+      return hash.merge({
         :private => !!doc_map[:private],
+        :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
-      }
+        :inheritable => !!doc_map[:inheritable],
+        :deprecated => detect_deprecated(doc_map),
+        :alias => doc_map[:alias] ? doc_map[:alias].first : nil,
+      })
     end
 
     def detect_name(tagname, doc_map, code, name_type = :last_name)
@@ -223,7 +229,7 @@ module JsDuck
       end
     end
 
-    def detect_member(doc_map)
+    def detect_owner(doc_map)
       if doc_map[:member]
         doc_map[:member].first[:member]
       else
@@ -258,7 +264,8 @@ module JsDuck
       elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :ext_extend
         code[:right][:extend].join(".")
       elsif code[:type] == :ext_define
-        code[:extend]
+        # Classes defined with Ext.define will automatically inherit from Ext.Base
+        code[:extend] || "Ext.Base"
       end
     end
 
@@ -273,8 +280,14 @@ module JsDuck
       end
     end
 
-    def detect_xtype(doc_map)
-      doc_map[:xtype] ? doc_map[:xtype].first[:name] : nil
+    def detect_xtypes(doc_map, code)
+      if doc_map[:xtype]
+        doc_map[:xtype].map {|tag| tag[:name] }
+      elsif code[:alias]
+        code[:alias].find_all {|a| a =~ /^widget\./ }.map {|a| a.sub(/^widget\./, "") }
+      else
+        []
+      end
     end
 
     def detect_author(doc_map)
@@ -285,12 +298,17 @@ module JsDuck
       doc_map[:docauthor] ? doc_map[:docauthor].first[:name] : nil
     end
 
+    def detect_deprecated(doc_map)
+      doc_map[:deprecated] ? doc_map[:deprecated].first : nil
+    end
+
     def detect_params(docs, code)
       implicit = detect_implicit_params(code)
       explicit = detect_explicit_params(docs)
       # Override implicit parameters with explicit ones
+      # But if explicit ones exist, don't append the implicit ones.
       params = []
-      [implicit.length, explicit.length].max.times do |i|
+      (explicit.length > 0 ? explicit.length : implicit.length).times do |i|
         im = implicit[i] || {}
         ex = explicit[i] || {}
         doc = ex[:doc] || im[:doc] || ""
@@ -319,10 +337,10 @@ module JsDuck
       docs.find_all {|tag| tag[:tagname] == :param}
     end
 
-    def detect_return(doc_map)
+    def detect_return(doc_map, default_type="void")
       ret = doc_map[:return] ? doc_map[:return].first : {}
       return {
-        :type => ret[:type] || "void",
+        :type => ret[:type] || default_type,
         :doc => ret[:doc] || "",
       }
     end

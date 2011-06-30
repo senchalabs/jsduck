@@ -12,7 +12,6 @@ module JsDuck
         :id => "apidocs",
         :iconCls => "icon-docs",
         :text => "API Documentation",
-        :singleClickExpand => true,
         :children => []
       }
       @packages = {"" => @root}
@@ -21,24 +20,25 @@ module JsDuck
     # Given list of class documentation objects returns a
     # tree-structure that can be turned into JSON that's needed by
     # documentation browser interface.
-    def create(docs)
+    def create(docs, guides=[])
       docs.each {|cls| add_class(cls) }
       sort_tree(@root)
+      add_guides(guides)
       @root
     end
 
     # Sorts all child nodes, and recursively all child packages.
     def sort_tree(node)
       node[:children].sort! {|a,b| compare(a, b) }
-      node[:children].find_all {|c| c[:cls] == "package" }.each {|c| sort_tree(c) }
+      node[:children].find_all {|c| c[:children] }.each {|c| sort_tree(c) }
     end
 
     # Comparson method that sorts package nodes before class nodes.
     def compare(a, b)
-      if a[:cls] == b[:cls]
-        a[:text] <=> b[:text]
+      if a[:leaf] == b[:leaf]
+        a[:text].casecmp(b[:text])
       else
-        a[:cls] == "package" ? -1 : 1
+        a[:leaf] ? 1 : -1
       end
     end
 
@@ -65,38 +65,51 @@ module JsDuck
       package
     end
 
+    # When guides list not empty, add guides to tree
+    def add_guides(guides)
+      if guides.length > 0
+        pkg = package_node("guides")
+        guides.each {|g| pkg[:children] << guide_node(g) }
+        @root[:children] << pkg
+      end
+    end
+
     # Given full doc object for class creates class node
     def class_node(cls)
       return {
-        :href => "output/#{cls.full_name}.html",
         :text => cls.short_name,
-        :id => cls.full_name,
-        :isClass => true,
+        :url => "/api/"+cls.full_name,
         :iconCls => class_icon(cls),
-        :cls => "cls",
         :leaf => true
       }
     end
 
     def class_icon(cls)
       if cls[:singleton]
-        "icon-static"
+        "icon-singleton"
       elsif cls.inherits_from?("Ext.Component")
-        "icon-cmp"
+        "icon-component"
       else
-        "icon-cls"
+        "icon-class"
       end
     end
 
     # Given full package name like my.package creates package node
     def package_node(name)
       return {
-        :id => "pkg-#{name}",
         :text => Class.short_name(name),
         :iconCls => "icon-pkg",
-        :cls => "package",
-        :singleClickExpand => true,
         :children => []
+      }
+    end
+
+    # Given full guide object creates guide node
+    def guide_node(guide)
+      return {
+        :text => guide[:title],
+        :url => "/guide/"+guide[:name],
+        :iconCls => "icon-guide",
+        :leaf => true
       }
     end
   end

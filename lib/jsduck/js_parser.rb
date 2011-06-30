@@ -195,7 +195,7 @@ module JsDuck
       cfg
     end
 
-    # <ext-define-cfg> := "{" ( <extend> | <mixins> | <alternate-class-name> | <?> )*
+    # <ext-define-cfg> := "{" ( <extend> | <mixins> | <alternate-class-name> | <alias> | <?> )*
     def ext_define_cfg
       match("{")
       cfg = {}
@@ -209,7 +209,10 @@ module JsDuck
           cfg[:mixins] = ext_define_mixins
           found = true
         elsif look("alternateClassName", ":")
-          cfg[:alternateClassNames] = ext_define_alternate_class_name
+          cfg[:alternateClassNames] = ext_define_alternate_class_names
+          found = true
+        elsif look("alias", ":")
+          cfg[:alias] = ext_define_alias
           found = true
         elsif look(:ident, ":")
           match(:ident, ":")
@@ -234,9 +237,20 @@ module JsDuck
       match("extend", ":", :string)
     end
 
-    # <ext-define-alternate-class-name> := "alternateClassName" ":" ( <string> | <array-of-strings> )
-    def ext_define_alternate_class_name
+    # <ext-define-alternate-class-names> := "alternateClassName" ":" <string-or-list>
+    def ext_define_alternate_class_names
       match("alternateClassName", ":")
+      string_or_list
+    end
+
+    # <ext-define-alias> := "alias" ":" <string-or-list>
+    def ext_define_alias
+      match("alias", ":")
+      string_or_list
+    end
+
+    # <string-or-list> := ( <string> | <array-of-strings> )
+    def string_or_list
       if look(:string)
         [ match(:string) ]
       elsif look("[")

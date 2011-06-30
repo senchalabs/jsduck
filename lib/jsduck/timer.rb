@@ -1,3 +1,5 @@
+require 'jsduck/logger'
+
 module JsDuck
 
   # Helper for timing execution of named code blocks.
@@ -31,9 +33,11 @@ module JsDuck
       result
     end
 
-    # prints timings report to console
+    # prints timings report to log
     def report
-      @timings.each {|name, time| puts "#{name}:\t#{time} seconds" }
+      @timings.each do |name, time|
+        Logger.instance.log("#{name}:\t#{time} seconds")
+      end
     end
   end
 

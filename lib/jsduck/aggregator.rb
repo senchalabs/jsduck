@@ -1,3 +1,5 @@
+require 'jsduck/class'
+
 module JsDuck
 
   # Combines JavaScript Parser, DocParser and Merger.
@@ -48,14 +50,16 @@ module JsDuck
 
     # Merges new class-doc into old one.
     def merge_classes(old, new)
-      [:extends, :xtype, :singleton, :private].each do |tag|
+      [:extends, :xtype, :singleton, :private, :protected].each do |tag|
         old[tag] = old[tag] || new[tag]
       end
-      [:mixins, :alternateClassNames].each do |tag|
+      [:mixins, :alternateClassNames, :xtypes].each do |tag|
         old[tag] = old[tag] + new[tag]
       end
       old[:doc] = old[:doc].length > 0 ? old[:doc] : new[:doc]
-      old[:cfg] = old[:cfg] + new[:cfg]
+      # Additionally the doc-comment can contain configs and constructor
+      old[:members][:cfg] += new[:members][:cfg]
+      old[:members][:method] += new[:members][:method]
     end
 
     # Tries to place members into classes where they belong.
@@ -68,18 +72,22 @@ module JsDuck
     # Items without @member belong by default to the preceding class.
     # When no class precedes them - they too are orphaned.
     def add_member(node)
-      if node[:member]
-        if @classes[node[:member]]
-          @classes[node[:member]][node[:tagname]] << node
+      if node[:owner]
+        if @classes[node[:owner]]
+          add_to_class(@classes[node[:owner]], node)
         else
           add_orphan(node)
         end
       elsif @current_class
-        node[:member] = @current_class[:name]
-        @current_class[ node[:tagname] ] << node
+        node[:owner] = @current_class[:name]
+        add_to_class(@current_class, node)
       else
         add_orphan(node)
       end
+    end
+
+    def add_to_class(cls, member)
+      cls[member[:static] ? :statics : :members][member[:tagname]] << member
     end
 
     def add_orphan(node)
@@ -88,19 +96,19 @@ module JsDuck
 
     # Inserts available orphans to class
     def insert_orphans(cls)
-      members = @orphans.find_all {|node| node[:member] == cls[:name] }
+      members = @orphans.find_all {|node| node[:owner] == cls[:name] }
       members.each do |node|
-        cls[node[:tagname]] << node
+        add_to_class(cls, node)
         @orphans.delete(node)
       end
     end
 
-    # Creates classes for orphans that have :member property defined,
+    # Creates classes for orphans that have :owner property defined,
     # and then inserts orphans to these classes.
     def classify_orphans
       @orphans.each do |orph|
-        if orph[:member]
-          class_name = orph[:member]
+        if orph[:owner]
+          class_name = orph[:owner]
           if !@classes[class_name]
             add_empty_class(class_name)
           end
@@ -117,7 +125,7 @@ module JsDuck
 
       add_empty_class("global", "Global variables and functions.")
       @orphans.each do |orph|
-        orph[:member] = "global"
+        orph[:owner] = "global"
         add_member(orph)
       end
       @orphans = []
@@ -130,16 +138,34 @@ module JsDuck
         :doc => doc,
         :mixins => [],
         :alternateClassNames => [],
-        :cfg => [],
-        :property => [],
-        :method => [],
-        :event => [],
-        :css_var => [],
-        :css_mixin => [],
+        :members => Class.default_members_hash,
+        :statics => Class.default_members_hash,
         :filename => "",
         :html_filename => "",
         :linenr => 0,
       })
+    end
+
+    # Appends Ext4 options parameter to each event parameter list.
+    # But only when we are dealing with Ext4 codebase.
+    def append_ext4_event_options
+      return unless ext4?
+
+      options = {
+        :tagname => :param,
+        :name => "options",
+        :type => "Object",
+        :doc => "The options object passed to {@link Ext.util.Observable#addListener}."
+      }
+      @classes.each_value do |cls|
+        cls[:members][:event].each {|e| e[:params] << options }
+      end
+    end
+
+    # Are we dealing with ExtJS 4?
+    # True if any of the classes is defined with Ext.define()
+    def ext4?
+      @documentation.any? {|cls| cls[:code_type] == :ext_define }
     end
 
     def result

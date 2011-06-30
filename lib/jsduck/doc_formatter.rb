@@ -2,6 +2,7 @@ require 'rubygems'
 require 'rdiscount'
 require 'strscan'
 require 'cgi'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -11,8 +12,9 @@ module JsDuck
     # Can contain placeholders:
     #
     # %c - full class name (e.g. "Ext.Panel")
-    # %m - class member name (e.g. "urlEncode")
-    # %M - class member name, prefixed with hash (e.g. "#urlEncode")
+    # %m - class member name prefixed with member type (e.g. "method-urlEncode")
+    # %# - inserts "#" if member name present
+    # %- - inserts "-" if member name present
     # %a - anchor text for link
     #
     # Default value: '<a href="%c%M">%a</a>'
@@ -30,7 +32,11 @@ module JsDuck
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
     # Context#blah is meant.
-    attr_accessor :context
+    attr_accessor :class_context
+
+    # Sets up instance to work in context of particular doc object.
+    # Used for error reporting.
+    attr_accessor :doc_context
 
     # Maximum length for text that doesn't get shortened, defaults to 120
     attr_accessor :max_length
@@ -43,10 +49,11 @@ module JsDuck
     attr_accessor :relations
 
     def initialize
-      @context = ""
+      @class_context = ""
+      @doc_context = {}
       @max_length = 120
       @relations = {}
-      @link_tpl = '<a href="%c%M">%a</a>'
+      @link_tpl = '<a href="%c%#%m">%a</a>'
       @img_tpl = '<img src="%u" alt="%a"/>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
@@ -84,11 +91,13 @@ module JsDuck
       input.sub(@link_re) do
         target = $1
         text = $2
-        if target =~ /^(.*)#(.*)$/
-          cls = $1.empty? ? @context : $1
-          member = $2
+        if target =~ /^(.*)#(?:(.*)-)?(.*)$/
+          cls = $1.empty? ? @class_context : $1
+          type = $2 ? $2.intern : nil
+          member = $3
         else
           cls = target
+          type = false
           member = false
         end
 
@@ -96,12 +105,22 @@ module JsDuck
         if text
           text = text
         elsif member
-          text = (cls == @context) ? member : (cls + "." + member)
+          text = (cls == @class_context) ? member : (cls + "." + member)
         else
           text = cls
         end
 
-        link(cls, member, text)
+        file = @doc_context[:filename]
+        line = @doc_context[:linenr]
+        if !@relations[cls]
+          Logger.instance.warn("#{file} line #{line} #{input} links to non-existing class.")
+          text
+        elsif member && !get_member(cls, member, type)
+          Logger.instance.warn("#{file} line #{line} #{input} links to non-existing member.")
+          text
+        else
+          link(cls, member, text, type)
+        end
       end
     end
 
@@ -114,14 +133,14 @@ module JsDuck
         before = $1
         cls = $2
         hash = $3
-        method = $4
+        member = $4
         after = $5
 
-        if @relations[cls]
-          label = method ? cls+"."+method : cls
-          before + link(cls, method, label) + after
+        if @relations[cls] && (!member || get_member(cls, member))
+          label = member ? cls+"."+member : cls
+          before + link(cls, member, label) + after
         else
-          before + cls + (hash || "") + (method || "") + after
+          before + cls + (hash || "") + (member || "") + after
         end
       end
     end
@@ -141,21 +160,32 @@ module JsDuck
     end
 
     # applies the link template
-    def link(cls, member, anchor_text)
-      @link_tpl.gsub(/(%\w)/) do
+    def link(cls, member, anchor_text, type=nil)
+      # Use the canonical class name for link (not some alternateClassName)
+      cls = @relations[cls].full_name
+      # prepend type name to member name
+      member = member && (get_member(cls, member, type)[:tagname].to_s + "-" + member)
+
+      @link_tpl.gsub(/(%[\w#-])/) do
         case $1
         when '%c'
           cls
         when '%m'
           member ? member : ""
-        when '%M'
-          member ? "#"+member : ""
+        when '%#'
+          member ? "#" : ""
+        when '%-'
+          member ? "-" : ""
         when '%a'
           CGI.escapeHTML(anchor_text||"")
         else
           $1
         end
       end
+    end
+
+    def get_member(cls, member, type=nil)
+      @relations[cls] && @relations[cls].get_member(member, type)
     end
 
     # Formats doc-comment for placement into HTML.
@@ -176,7 +206,7 @@ module JsDuck
       replace(RDiscount.new(input).to_html)
     end
 
-    # Shortens text if needed.
+    # Shortens text
     #
     # 116 chars is also where ext-doc makes its cut, but unlike
     # ext-doc we only make the cut when there's more than 120 chars.
@@ -189,22 +219,27 @@ module JsDuck
     #
     #   Blah blah blah some text.
     #
-    # Ellipsis is only added when input actually gets shortened.
     def shorten(input)
-      if too_long?(input)
-        strip_tags(input)[0..(@max_length-4)] + "..."
+      sent = first_sentence(strip_tags(input))
+      if sent.length > @max_length
+        sent[0..(@max_length-4)] + "..."
       else
-        input
+        sent + " ..."
       end
+    end
+
+    def first_sentence(str)
+      str.sub(/\A(.+?\.)\s.*\Z/m, "\\1")
     end
 
     # Returns true when input should get shortened.
     def too_long?(input)
-      strip_tags(input).length > @max_length
+      stripped = strip_tags(input)
+      first_sentence(stripped).length < stripped.length || stripped.length > @max_length
     end
 
     def strip_tags(str)
-      str.gsub(/<.*?>/, "")
+      str.gsub(/<.*?>/, "").strip
     end
   end
 

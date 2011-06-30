@@ -68,8 +68,8 @@ module JsDuck
         doc[:name].gsub(/\./, '-')
       else
         # when creation of global class is skipped,
-        # this member property can be nil.
-        (doc[:member] || "global").gsub(/\./, '-') + "-" + doc[:tagname].to_s + "-" + doc[:name]
+        # this owner property can be nil.
+        (doc[:owner] || "global").gsub(/\./, '-') + "-" + doc[:tagname].to_s + "-" + doc[:name]
       end
     end
 
@@ -93,8 +93,8 @@ module JsDuck
       doc[:filename] = @filename
       doc[:linenr] = linenr
       if doc[:tagname] == :class
-        doc[:cfg].each {|cfg| link(linenr, cfg) }
-        doc[:method].each {|method| link(linenr, method) }
+        doc[:members][:cfg].each {|cfg| link(linenr, cfg) }
+        doc[:members][:method].each {|method| link(linenr, method) }
       end
       doc
     end

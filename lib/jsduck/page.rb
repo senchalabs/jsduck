@@ -21,7 +21,7 @@ module JsDuck
       @relations = relations
       @cache = cache
       @formatter = DocFormatter.new
-      @formatter.context = cls.full_name
+      @formatter.class_context = cls.full_name
       @formatter.link_tpl = '<a href="output/%c.html%M" rel="%c%M" class="docClass">%a</a>'
       @formatter.relations = relations
     end

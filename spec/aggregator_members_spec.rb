@@ -18,7 +18,7 @@ describe JsDuck::Aggregator do
          * @member Bar
          */
       EOS
-      items[0][:member].should == "Bar"
+      items[0][:owner].should == "Bar"
     end
 
     it "forces item to be moved into that class" do
@@ -34,8 +34,8 @@ describe JsDuck::Aggregator do
          * @member Bar
          */
       EOS
-      items[0][:cfg].length.should == 1
-      items[1][:cfg].length.should == 0
+      items[0][:members][:cfg].length.should == 1
+      items[1][:members][:cfg].length.should == 0
     end
 
     it "even when @member comes before the class itself" do
@@ -48,7 +48,7 @@ describe JsDuck::Aggregator do
          * @class Bar
          */
       EOS
-      items[0][:cfg].length.should == 1
+      items[0][:members][:cfg].length.should == 1
     end
   end
 

@@ -17,18 +17,11 @@ module JsDuck
     # Returns all data in Class object as hash.
     def export(cls)
       h = cls.to_hash
-      h[:cfgs] = cls.members(:cfg)
-      h.delete(:cfg)
-      h[:properties] = cls.members(:property)
-      h.delete(:property)
-      h[:methods] = cls.members(:method)
-      h.delete(:method)
-      h[:events] = cls.members(:event)
-      h.delete(:event)
-      h[:cssVars] = cls.members(:css_var)
-      h.delete(:css_var)
-      h[:cssMixins] = cls.members(:css_mixin)
-      h.delete(:css_mixin)
+      h[:members] = {}
+      Class.default_members_hash.each_key do |key|
+        h[:members][key] = cls.members(key)
+        h[:statics][key] = cls.members(key, :statics)
+      end
       h[:component] = cls.inherits_from?("Ext.Component")
       h[:superclasses] = cls.superclasses.collect {|c| c.full_name }
       h[:subclasses] = @relations.subclasses(cls).collect {|c| c.full_name }
@@ -39,17 +32,23 @@ module JsDuck
 
     # converts :doc properties from markdown to html and resolve @links
     def format_class(c)
-      @formatter.context = c[:name]
+      @formatter.class_context = c[:name]
+      @formatter.doc_context = c
       c[:doc] = @formatter.format(c[:doc]) if c[:doc]
-      [:cfgs, :properties, :methods, :events, :cssVars, :cssMixins].each do |type|
-        c[type] = c[type].map {|m| format_member(m) }
+      c[:members].each_pair do |type, members|
+        c[:members][type] = members.map {|m| format_member(m) }
+      end
+      c[:statics].each_pair do |type, members|
+        c[:statics][type] = members.map {|m| format_member(m) }
       end
       c
     end
 
     def format_member(m)
       m = m.clone
+      @formatter.doc_context = m
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
+      m[:deprecated][:text] = @formatter.format(m[:deprecated][:text]) if m[:deprecated]
       if m[:params] || @formatter.too_long?(m[:doc])
         m[:shortDoc] = @formatter.shorten(m[:doc])
       end

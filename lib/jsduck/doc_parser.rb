@@ -97,21 +97,34 @@ module JsDuck
           at_type
         elsif look(/@xtype\b/)
           at_xtype
+        elsif look(/@ftype\b/)
+          at_ftype
         elsif look(/@member\b/)
           at_member
+        elsif look(/@alias\b/)
+          at_alias
         elsif look(/@author\b/)
           at_author
         elsif look(/@docauthor\b/)
           at_docauthor
+        elsif look(/@deprecated\b/)
+          at_deprecated
         elsif look(/@var\b/)
           at_var
         elsif look(/@static\b/)
           boolean_at_tag(/@static/, :static)
-        elsif look(/@(private|ignore|hide|protected)\b/)
-          boolean_at_tag(/@(private|ignore|hide|protected)/, :private)
+        elsif look(/@inheritable\b/)
+          boolean_at_tag(/@inheritable/, :inheritable)
+        elsif look(/@(private|ignore|hide)\b/)
+          boolean_at_tag(/@(private|ignore|hide)/, :private)
+        elsif look(/@protected\b/)
+          boolean_at_tag(/@protected/, :protected)
         elsif look(/@markdown\b/)
           # this is detected just to be ignored
           boolean_at_tag(/@markdown/, :markdown)
+        elsif look(/@abstract\b/)
+          # this is detected just to be ignored
+          boolean_at_tag(/@abstract/, :abstract)
         elsif look(/@/)
           @current_tag[:doc] += @input.scan(/@/)
         elsif look(/[^@]/)
@@ -244,11 +257,38 @@ module JsDuck
       skip_white
     end
 
+    # matches @ftype name
+    def at_ftype
+      match(/@ftype/)
+      add_tag(:ftype)
+      maybe_ident_chain(:name)
+      skip_white
+    end
+
     # matches @member name ...
     def at_member
       match(/@member/)
       add_tag(:member)
       maybe_ident_chain(:member)
+      skip_white
+    end
+
+    # matches @alias class.name#type-member
+    def at_alias
+      match(/@alias/)
+      add_tag(:alias)
+      skip_horiz_white
+      if look(/\w/)
+        @current_tag[:cls] = ident_chain
+        if look(/#\w/)
+          @input.scan(/#/)
+          if look(/\w+-\w+/)
+            @current_tag[:type] = ident
+            @input.scan(/-/)
+          end
+          @current_tag[:member] = ident
+        end
+      end
       skip_white
     end
 
@@ -267,6 +307,17 @@ module JsDuck
       add_tag(:docauthor)
       skip_horiz_white
       @current_tag[:name] = @input.scan(/.*$/)
+      skip_white
+    end
+
+    # matches @deprecated <version> some text ... newline
+    def at_deprecated
+      match(/@deprecated/)
+      add_tag(:deprecated)
+      skip_horiz_white
+      @current_tag[:version] = @input.scan(/[0-9.]+/)
+      skip_horiz_white
+      @current_tag[:text] = @input.scan(/.*$/)
       skip_white
     end
 
