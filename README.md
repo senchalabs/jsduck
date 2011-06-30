@@ -102,7 +102,7 @@ Standard rubygems install should do:
 
 For hacking fork it from github.
 
-    $ git clone git://github.com/nene/jsduck.git
+    $ git clone git://github.com/senchalabs/jsduck.git
     $ cd jsduck
     $ rake --tasks
 
@@ -152,20 +152,20 @@ Documentation
 
 Overview of documenting your code with JsDuck:
 
-* [Class](https://github.com/nene/jsduck/wiki/Class)
-* [Constructor](https://github.com/nene/jsduck/wiki/Constructor)
-* [Config options](https://github.com/nene/jsduck/wiki/Cfg)
-* [Properties](https://github.com/nene/jsduck/wiki/Property)
-* [Methods](https://github.com/nene/jsduck/wiki/Method)
-* [Events](https://github.com/nene/jsduck/wiki/Event)
+* [Class](https://github.com/senchalabs/jsduck/wiki/Class)
+* [Constructor](https://github.com/senchalabs/jsduck/wiki/Constructor)
+* [Config options](https://github.com/senchalabs/jsduck/wiki/Cfg)
+* [Properties](https://github.com/senchalabs/jsduck/wiki/Property)
+* [Methods](https://github.com/senchalabs/jsduck/wiki/Method)
+* [Events](https://github.com/senchalabs/jsduck/wiki/Event)
 
 More details:
 
 * [List of supported @tags][tags]
 * [List of doc-comment errors(?) found in ExtJS source][errors]
 
-[tags]: https://github.com/nene/jsduck/wiki/List-of-supported-@tags
-[errors]: https://github.com/nene/jsduck/wiki/List-of-doc-comment-errors(%3F)-found-in-ExtJS-source
+[tags]: https://github.com/senchalabs/jsduck/wiki/List-of-supported-@tags
+[errors]: https://github.com/senchalabs/jsduck/wiki/List-of-doc-comment-errors(%3F)-found-in-ExtJS-source
 
 
 Features and differences from ext-doc
@@ -205,29 +205,29 @@ Changelog
 ---------
 
 * 2.0.pre - Prerelease of the Ext4-themed version.  Generates docs in
-  exactly the same style as the official ExtJS4 docs.  Lots and lots
-  of changes.  But also possibly several bugs.  Use the --pre option
-  to install:
+    exactly the same style as the official ExtJS4 docs.  Lots and lots
+    of changes.  But also possibly several bugs.  Use the --pre option
+    to install:
 
-      $ gem install --pre jsduck
+        $ gem install --pre jsduck
 
-  To run it on ExtJS4:
+    To run it on ExtJS4:
 
-      $ jsduck  --output your/docs/  ext-4.0.2a/src  --ignore-global
+        $ jsduck  --output your/docs/  ext-4.0.2a/src  --ignore-global
 
-  This will generate a lot of warnings.  Those should be fixed in some
-  upcoming release of ExtJS4.  You can disable them with `--no-warnings`.
-  Additionally you will need to copy over the images:
+    This will generate a lot of warnings.  Those should be fixed in some
+    upcoming release of ExtJS4.  You can disable them with `--no-warnings`.
+    Additionally you will need to copy over the images:
 
-      $ cp -r ext-4.0.2a/docs/doc-resources your/docs/doc-resources
+        $ cp -r ext-4.0.2a/docs/doc-resources your/docs/doc-resources
 
-  You can also get the class-listing to the main page by downloading
-  [overviewData.json][] and passing it to JSDuck with:
+    You can also get the class-listing to the main page by downloading
+    [overviewData.json][] and passing it to JSDuck with:
 
-      --categories overviewData.json
+        --categories overviewData.json
 
-  This file should in the future be found inside the ExtJS4 release,
-  along with the source code for guides.
+    This file should in the future be found inside the ExtJS4 release,
+    along with the source code for guides.
 
 * 0.6 - JsDuck is now used for creating the official ExtJS4 documentation.
   * Automatic linking of class names found in comments.  Instead of writing
@@ -286,4 +286,4 @@ Changelog
 
 * 0.1 - initial version.
 
-[overviewData.json]: https://raw.github.com/nene/jsduck/3ee0653554da1ddc54576e7df442d08c9a6d22fd/template/overviewData.json
+[overviewData.json]: https://raw.github.com/senchalabs/jsduck/3ee0653554da1ddc54576e7df442d08c9a6d22fd/template/overviewData.json
