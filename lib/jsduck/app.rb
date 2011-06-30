@@ -83,6 +83,12 @@ module JsDuck
 
     # Call this after input parameters set
     def run
+      # Set default templates
+      @link_tpl ||= '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
+      # Note that we wrap image template inside <p> because {@img} often
+      # appears inline within text, but that just looks ugly in HTML
+      @img_tpl ||= '<p><img src="doc-resources/%u" alt="%a"></p>'
+
       parsed_files = @timer.time(:parsing) { parallel_parse(@input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       relations = @timer.time(:aggregating) { filter_classes(result) }

@@ -82,7 +82,7 @@ opts = OptionParser.new do | opts |
     "Possible placeholders:",
     "%u - URL from @img tag (e.g. 'some/path.png')",
     "%a - alt text for image",
-    "Default value in export: '<img src=\"%u\" alt=\"%a\"/>'", " ") do |tpl|
+    "Default is: '<p><img src=\"doc-resources/%u\" alt=\"%a\"></p>'", " ") do |tpl|
     app.img_tpl = tpl
   end
 
@@ -99,7 +99,7 @@ opts = OptionParser.new do | opts |
     "%# - inserts '#' if member name present",
     "%- - inserts '-' if member name present",
     "%a - anchor text for link",
-    "Default value in export: '<a href=\"%c%#%m\">%a</a>'", " ") do |tpl|
+    "Default is: '<a href=\"#/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'", " ") do |tpl|
     app.link_tpl = tpl
   end
 
