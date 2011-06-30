@@ -44,7 +44,9 @@ opts = OptionParser.new do | opts |
     app.extjs_path = path
   end
 
-  opts.on('--footer=TEXT', "Custom footer text for the documentation app.", " ") do |text|
+  opts.on('--footer=TEXT',
+    "Custom footer text for the documentation app.",
+    "Defaults to: 'Generated with JSDuck.'", " ") do |text|
     app.footer = text
   end
 
