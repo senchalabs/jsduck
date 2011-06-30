@@ -205,29 +205,29 @@ Changelog
 ---------
 
 * 2.0.pre - Prerelease of the Ext4-themed version.  Generates docs in
-  exactly the same style as the official ExtJS4 docs.  Lots and lots
-  of changes.  But also possibly several bugs.  Use the --pre option
-  to install:
+    exactly the same style as the official ExtJS4 docs.  Lots and lots
+    of changes.  But also possibly several bugs.  Use the --pre option
+    to install:
 
         $ gem install --pre jsduck
 
-  To run it on ExtJS4:
+    To run it on ExtJS4:
 
-      $ jsduck  --output your/docs/  ext-4.0.2a/src  --ignore-global
+        $ jsduck  --output your/docs/  ext-4.0.2a/src  --ignore-global
 
-  This will generate a lot of warnings.  Those should be fixed in some
-  upcoming release of ExtJS4.  You can disable them with `--no-warnings`.
-  Additionally you will need to copy over the images:
+    This will generate a lot of warnings.  Those should be fixed in some
+    upcoming release of ExtJS4.  You can disable them with `--no-warnings`.
+    Additionally you will need to copy over the images:
 
-      $ cp -r ext-4.0.2a/docs/doc-resources your/docs/doc-resources
+        $ cp -r ext-4.0.2a/docs/doc-resources your/docs/doc-resources
 
-  You can also get the class-listing to the main page by downloading
-  [overviewData.json][] and passing it to JSDuck with:
+    You can also get the class-listing to the main page by downloading
+    [overviewData.json][] and passing it to JSDuck with:
 
-      --categories overviewData.json
+        --categories overviewData.json
 
-  This file should in the future be found inside the ExtJS4 release,
-  along with the source code for guides.
+    This file should in the future be found inside the ExtJS4 release,
+    along with the source code for guides.
 
 * 0.6 - JsDuck is now used for creating the official ExtJS4 documentation.
   * Automatic linking of class names found in comments.  Instead of writing
