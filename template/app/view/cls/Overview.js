@@ -26,7 +26,7 @@ Ext.define('Docs.view.cls.Overview', {
             var scrollOffset = el.getY() - (isMember ? 145 : 135);
             var docContent = this.getEl().down('.x-panel-body');
             var currentScroll = docContent.getScroll()['top'];
-            docContent.scrollTo('top', currentScroll + scrollOffset, true);
+            docContent.scrollTo('top', currentScroll + scrollOffset);
 
             if (isMember && el.down(".expandable")) {
                 el.addCls('open');
