@@ -63,9 +63,8 @@ module JsDuck
       @guides.each do |guide|
         out_dir = dir+"/"+guide[:name]
         FileUtils.cp_r(guide[:dir], out_dir)
-        # Write the JsonP file and remove the original Markdown file
+        # Write the JsonP file
         JsonP.write(out_dir+"/README.js", guide[:name], {:guide => guide[:html]})
-        FileUtils.rm(out_dir + "/README.md")
       end
     end
 
