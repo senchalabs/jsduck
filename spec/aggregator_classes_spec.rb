@@ -218,6 +218,17 @@ describe JsDuck::Aggregator do
     it_should_behave_like "Ext.define"
   end
 
+  describe "Ext.ClassManager.create() instead of Ext.define()" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.ClassManager.create('MyClass', {
+        });
+      EOS
+    end
+    it_should_behave_like "class"
+  end
+
   describe "complex Ext.define() in code" do
     before do
       @doc = parse(<<-EOS)[0]
