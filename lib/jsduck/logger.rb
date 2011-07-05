@@ -27,7 +27,7 @@ module JsDuck
     # warnings greatly also when run multiple processes.
     def warn(msg)
       if @warnings && !@shown_warnings[msg]
-        puts "Warning: " + msg
+        $stderr.puts "Warning: " + msg
         @shown_warnings[msg] = true
       end
     end

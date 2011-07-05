@@ -167,7 +167,7 @@ opts.parse!(ARGV).each do |fname|
       js_files << fname
     end
   else
-    puts "Warning: File #{fname} not found"
+    $stderr.puts "Warning: File #{fname} not found"
   end
 end
 app.input_files = js_files
