@@ -24,6 +24,7 @@ module JsDuck
   # The main application logic of jsduck
   class App
     # These are basically input parameters for app
+    attr_accessor :output_to_stdout
     attr_accessor :output_dir
     attr_accessor :template_dir
     attr_accessor :guides_dir
@@ -43,6 +44,7 @@ module JsDuck
     attr_accessor :append_html
 
     def initialize
+      @output_to_stdout = false
       @output_dir = nil
       @template_dir = nil
       @guides_dir = nil
@@ -109,8 +111,10 @@ module JsDuck
         end
       end
 
-      clear_dir(@output_dir)
-      if @export == :json
+      clear_dir(@output_dir) unless @output_to_stdout
+      if @output_to_stdout
+        @timer.time(:generating) { output_classes(relations) }
+      elsif @export == :json
         FileUtils.mkdir(@output_dir)
         init_output_dirs(@output_dir)
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
@@ -216,6 +220,18 @@ module JsDuck
       search_data = SearchData.new.create(relations.classes)
       js = "Docs.searchData = " + JSON.generate( {:data => search_data} ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
+    end
+
+    # Writes each class to STDOUT
+    def output_classes(relations)
+      if @export == :json
+        puts JSON.generate(relations.classes)
+      else
+        exporter = Exporter.new(relations, get_doc_formatter(relations))
+        @parallel.each(relations.classes) do |cls|
+          puts exporter.export(cls)
+        end
+      end
     end
 
     # Writes JsonP export file for each class
