@@ -1,7 +1,7 @@
 JsDuck
 ======
 
-Simple JavaScript Duckumentation generator.
+API documentation generator for ExtJS 4.
 
            ,~~.
           (  6 )-_,
@@ -10,46 +10,16 @@ Simple JavaScript Duckumentation generator.
        \ `-' /    hjw
     ~'`~'`~'`~'`~
 
-JsDuck aims to be a better documentation generator for [ExtJS][].
-While it tries to do everything that [ext-doc][] does, it isn't
-satisfied with it and aims to make your life much easier.
+JsDuck aims to be a better documentation generator for [ExtJS][] than
+the old [ext-doc][] was.
 
-Basically JsDuck thinks that the following doc-comment really sucks:
+The standard way to give some structure to the JavaDoc-style code
+documentation is to use HTML in doc-comments.  Although the resulting
+documentation will look pretty, this is often achieved by sacrificing
+the readability of comments - HTML can get quite ugly.
 
-    /**
-     * @class Ext.form.TextField
-     * @extends Ext.form.Field
-     * <p>Basic text field.  Can be used as a direct replacement for traditional
-     * text inputs, or as the base class for more sophisticated input controls
-     * (like {@link Ext.form.TextArea} and {@link Ext.form.ComboBox}).</p>
-     * <p><b><u>Validation</u></b></p>
-     * <p>The validation procedure is described in the documentation for
-     * {@link #validateValue}.</p>
-     * <p><b><u>Alter Validation Behavior</u></b></p>
-     * <p>Validation behavior for each field can be configured:</p>
-     * <div class="mdetail-params"><ul>
-     * <li><code>{@link Ext.form.TextField#invalidText invalidText}</code> :
-     * the default validation message to show if any validation step above does
-     * not provide a message when invalid</li>
-     * <li><code>{@link Ext.form.TextField#maskRe maskRe}</code> :
-     * filter out keystrokes before any validation occurs</li>
-     * <li><code>{@link Ext.form.TextField#stripCharsRe stripCharsRe}</code> :
-     * filter characters after being typed in, but before being validated</li>
-     * </ul></div>
-     *
-     * @constructor Creates a new TextField
-     * @param {Object} config Configuration options
-     *
-     * @xtype textfield
-     */
-    Ext.form.TextField = Ext.extend(Ext.form.Field,  {
-
-Not quite so readable is it?  The source of ExtJS is filled with
-comments just like that, and when you use ext-doc, you too are forced
-to write such comments.
-
-JsDuck does not like it.  Although it can handle comments like this,
-it would like that you wrote comments like that instead:
+JsDuck does not like it.  Although it can handle comments written in
+HTML, it prefers a friendlier [Markdown][] syntax:
 
     /**
      * Basic text field.  Can be used as a direct replacement for traditional
@@ -77,16 +47,12 @@ it would like that you wrote comments like that instead:
      *
      * @xtype textfield
      */
-    Ext.form.TextField = Ext.extend(Ext.form.Field,  {
+    Ext.define('Ext.form.field.Text', {
+        extend: 'Ext.form.field.Base',
 
-As you can see, JsDuck supports formatting comments with friendly
-[Markdown][] syntax.  And it can infer several things from the code
-(like @class and @extends in this case), so you don't have to repeat
-yourself.  Also the constructor documentation is inherited from parent
-class - so you don't have to restate that it takes a config object
-again.
-
-That's basically it.  Have fun.
+As you can see, JsDuck can infer several things from the code (like
+`@class` and `@extends` in this case), so you don't have to repeat
+yourself.
 
 [ExtJS]: http://www.sencha.com/products/js/
 [ext-doc]: http://ext-doc.org/
@@ -96,18 +62,22 @@ That's basically it.  Have fun.
 Getting it
 ----------
 
-Standard rubygems install should do:
+Standard rubygems install should do (use the `--pre` switch to get the
+latest 2.0 version which this README documents, otherwise you will get
+the stable but quite old [0.6][v0.6] version):
 
-    $ [sudo] gem install jsduck
+    $ [sudo] gem install --pre jsduck
 
-For hacking fork it from github.
+For hacking fork it from github:
 
     $ git clone git://github.com/senchalabs/jsduck.git
     $ cd jsduck
     $ rake --tasks
 
-JsDuck depends on [json][], [RDiscount][], and [parallel][] plus [RSpec][] for tests.
+JsDuck depends on [json][], [RDiscount][], and [parallel][]; plus
+[RSpec][] for tests.
 
+[v0.6]: https://github.com/senchalabs/jsduck/tree/v0.6
 [json]: http://flori.github.com/json/
 [RDiscount]: https://github.com/rtomayko/rdiscount
 [parallel]: https://github.com/grosser/parallel
@@ -120,37 +90,39 @@ Usage
 Just call it from command line with output directory and a directory
 containing your JavaScript files:
 
-    $ jsduck --verbose --output some/dir  your/project/js
+    $ jsduck your/project/js --verbose --output your/docs
 
 The `--verbose` flag creates a lot of output, but at least you will
 see that something is happening.
 
-You pass in both directories and JavaScript files.  For example to
-generate docs for ExtJS 3, the simplest way is the following:
 
-    $ jsduck -v -o output/ ext-3.3.1/src/
+## Generating Docs for ExtJS 4
 
-But this will give you a bunch of warnings, so you should better
-create a script that takes just the files really needed and passes
-them through `xargs` to `jsduck`:
+For the simplest test-run just pass in the src/ dir of ExtJS 4.  But
+to get more similar result to the [official ExtJS 4
+documentation][official], you should pass in some extra options and
+copy over the doc-resources directory, which contains the images
+referenced by the documentation:
 
-    $ find ext-3.3.1/src/ -name '*.js' | egrep -v 'locale/|test/|adapter/' | xargs jsduck -v -o output/
+    $ jsduck ext-4.0.2a/src --output your/docs --ignore-global --exclude Error
+    $ cp -r ext-4.0.2a/docs/doc-resources your/docs/doc-resources
 
-Here's how the resulting documentation will look (ExtJS 3.3.1):
+The `--ignore-global` will avoid the creation of a `global` class.
+The `--exclude Error` will ignore references to the `Error` class,
+which would otherwise result in several warnings.
 
-* [JsDuck generated documentation](http://triin.net/temp/jsduck/)
-* [Official ExtJS documentation](http://dev.sencha.com/deploy/dev/docs/) (for comparison)
+Still, running JSDuck with the current ext-4.0.2a release is expected
+to generate a lot of warnings.  These should be fixed in some later
+releases.
 
-Here's the same for ExtJS 4:
-
-* [JsDuck generated documentation](http://triin.net/temp/jsduck4/)
-* [Official ExtJS documentation](http://docs.sencha.com/ext-js/4-0/api) (for comparison)
+[official]: http://docs.sencha.com/ext-js/4-0/
 
 
-Documentation
--------------
+Documenting your code with JSDuck
+---------------------------------
 
-Overview of documenting your code with JsDuck:
+Here's an overview of [all the available @tags][tags], and how to use
+them:
 
 * [Class](https://github.com/senchalabs/jsduck/wiki/Class)
 * [Constructor](https://github.com/senchalabs/jsduck/wiki/Constructor)
@@ -159,75 +131,30 @@ Overview of documenting your code with JsDuck:
 * [Methods](https://github.com/senchalabs/jsduck/wiki/Method)
 * [Events](https://github.com/senchalabs/jsduck/wiki/Event)
 
-More details:
-
-* [List of supported @tags][tags]
-* [List of doc-comment errors(?) found in ExtJS source][errors]
-
 [tags]: https://github.com/senchalabs/jsduck/wiki/List-of-supported-@tags
-[errors]: https://github.com/senchalabs/jsduck/wiki/List-of-doc-comment-errors(%3F)-found-in-ExtJS-source
-
-
-Features and differences from ext-doc
--------------------------------------
-
-JsDuck has some strong opinions, so some things are intentionally
-missing.
-
-* Support for Markdown in comments
-* More things inferred from the code
-* No XML configuration file, just command line options
-* Class documentation header doesn't separately list Package and Class -
-  these are IMHO redundant.
-* Class documentation header doesn't duplicate toolbar buttons -
-  another redundancy
-* Ext.Component has a component icon too, not only its descendants
-
-
-Missing features and TODO
--------------------------
-
-* Support for custom @tags. Ext-doc supports this, I personally have
-  never used this feature, so I'm thinking it's not really needed.
 
 
 Copying
 -------
 
-JsDuck is distributed under the terms of the GNU General Public License version 3.
+JsDuck is distributed under the terms of the GNU General Public
+License version 3.
 
 JsDuck was developed by [Rene Saarsoo](http://triin.net),
-with contributions from [Ondřej Jirman](https://github.com/megous)
-and [Nick Poulden](https://github.com/nick).
+with many contributions from [Nick Poulden](https://github.com/nick).
+
+Thanks to [Ondřej Jirman](https://github.com/megous),
+[johnnywengluu](https://github.com/johnnywengluu),
+[gevik](https://github.com/gevik),
+[ligaard](https://github.com/ligaard), and many-many others who
+reported bugs, submitted patches, and provided a lot of useful input.
 
 
 Changelog
 ---------
 
-* 2.0.pre - Prerelease of the Ext4-themed version.  Generates docs in
-    exactly the same style as the official ExtJS4 docs.  Lots and lots
-    of changes.  But also possibly several bugs.  Use the --pre option
-    to install:
-
-        $ gem install --pre jsduck
-
-    To run it on ExtJS4:
-
-        $ jsduck  --output your/docs/  ext-4.0.2a/src  --ignore-global
-
-    This will generate a lot of warnings.  Those should be fixed in some
-    upcoming release of ExtJS4.  You can disable them with `--no-warnings`.
-    Additionally you will need to copy over the images:
-
-        $ cp -r ext-4.0.2a/docs/doc-resources your/docs/doc-resources
-
-    You can also get the class-listing to the main page by downloading
-    [overviewData.json][] and passing it to JSDuck with:
-
-        --categories overviewData.json
-
-    This file should in the future be found inside the ExtJS4 release,
-    along with the source code for guides.
+* 2.0.pre - Completely overhauled Ext4-themed version.
+  * Currently in a pre-release state.
 
 * 0.6 - JsDuck is now used for creating the official ExtJS4 documentation.
   * Automatic linking of class names found in comments.  Instead of writing
@@ -285,5 +212,3 @@ Changelog
   * List of subclasses
 
 * 0.1 - initial version.
-
-[overviewData.json]: https://raw.github.com/senchalabs/jsduck/3ee0653554da1ddc54576e7df442d08c9a6d22fd/template/overviewData.json
