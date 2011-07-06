@@ -109,8 +109,10 @@ module JsDuck
         end
       end
 
-      clear_dir(@output_dir)
-      if @export == :json
+      clear_dir(@output_dir) unless @export == :stdout
+      if @export == :stdout
+        @timer.time(:generating) { puts JSON.generate(relations.classes) }
+      elsif @export == :json
         FileUtils.mkdir(@output_dir)
         init_output_dirs(@output_dir)
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }

@@ -133,7 +133,7 @@ Ext.define('Docs.controller.Classes', {
         url = url.replace(/.*#/, "");
 
         if (this.opensNewWindow(event)) {
-            window.open(url);
+            window.open("#"+url);
             view && view.selectUrl(this.activeUrl ? this.activeUrl : "");
         }
         else {

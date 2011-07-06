@@ -8,7 +8,7 @@ Ext.define('Docs.view.index.Container', {
     cls: 'class-list',
 
     initComponent: function() {
-        var tpl = new Ext.XTemplate(
+        this.tpl = new Ext.XTemplate(
             '<h1 class="top">{title}</h1>',
             '<tpl if="notice">',
                 '<div class="notice">{notice}</div>',
@@ -34,8 +34,7 @@ Ext.define('Docs.view.index.Container', {
             '</tpl>',
             '{categories}'
         );
-
-        this.html = tpl.apply(this.extractData());
+        this.data = this.extractData();
         
         this.callParent(arguments);
     },

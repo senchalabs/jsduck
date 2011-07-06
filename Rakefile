@@ -74,7 +74,7 @@ def run_jsduck_export(extra_options, ext_dir)
 
   run_jsduck([
     "--title", "Ext JS 4.0.2a API Documentation",
-    "--footer", "ExtJS 4.0.2a Documentation from Sencha. Generated with <a href='https://github.com/nene/jsduck'>JSDuck</a> revison #{rev}",
+    "--footer", "ExtJS 4.0.2a Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",

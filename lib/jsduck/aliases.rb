@@ -1,3 +1,5 @@
+require 'jsduck/logger'
+
 module JsDuck
 
   class Aliases
@@ -27,12 +29,24 @@ module JsDuck
     # If the original also happens to be an alias, continue recursively.
     def find_original(al)
       al_def = al[:alias]
-      orig = @relations[al_def[:cls]].get_member(al_def[:member], al_def[:type] || al[:tagname])
+
+      orig = @relations[al_def[:cls]]
+      unless orig
+        Logger.instance.warn("Class #{al_def[:cls]} not found in #{al[:filename]} line #{al[:linenr]}")
+        return al
+      end
+      orig = orig.get_member(al_def[:member], al_def[:type] || al[:tagname])
+      unless orig
+        Logger.instance.warn("Member #{al_def[:cls]}##{al_def[:member]} not found in #{al[:filename]} line #{al[:linenr]}")
+        return al
+      end
+
       if orig[:alias]
         find_original(orig)
       else
         orig
       end
+
     end
   end
 
