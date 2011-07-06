@@ -77,6 +77,11 @@ For hacking fork it from github:
 JsDuck depends on [json][], [RDiscount][], and [parallel][]; plus
 [RSpec][] for tests.
 
+If you encounter errors during gem installation, you may need to
+install the header files for compiling extension modules for ruby 1.8.
+For Debian systems you'll need the `ruby1.8-dev` package.  For Red Hat
+/ CentOS / Fedora use the `ruby-devel` package.
+
 [v0.6]: https://github.com/senchalabs/jsduck/tree/v0.6
 [json]: http://flori.github.com/json/
 [RDiscount]: https://github.com/rtomayko/rdiscount
