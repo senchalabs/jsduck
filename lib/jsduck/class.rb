@@ -60,7 +60,7 @@ module JsDuck
     def to_hash
       @doc.clone
     end
-    
+
     def to_json(*a)
       to_hash.to_json(*a)
     end
