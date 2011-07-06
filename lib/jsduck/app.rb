@@ -40,7 +40,8 @@ module JsDuck
     attr_accessor :title
     attr_accessor :footer
     attr_accessor :extjs_path
-    attr_accessor :append_html
+    attr_accessor :head_html
+    attr_accessor :body_html
 
     def initialize
       @output_dir = nil
@@ -60,7 +61,8 @@ module JsDuck
       @title = "Ext JS API Documentation"
       @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
       @extjs_path = "extjs/ext-all.js"
-      @append_html = ""
+      @head_html = ""
+      @body_html = ""
       @timer = Timer.new
       @parallel = ParallelWrap.new
     end
@@ -283,9 +285,10 @@ module JsDuck
       html.gsub!("{title}", @title)
       html.gsub!("{footer}", @footer)
       html.gsub!("{extjs_path}", @extjs_path)
-      html.gsub!("{append_html}", @append_html)
       html.gsub!("{guides}", @guides.to_html)
       html.gsub!("{categories}", @categories.to_html)
+      html.gsub!("{head_html}", @head_html)
+      html.gsub!("{body_html}", @body_html)
       FileUtils.rm(dir+"/index.html")
       File.open(dir+"/index.html", 'w') {|f| f.write(html) }
     end
