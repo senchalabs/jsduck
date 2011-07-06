@@ -158,6 +158,12 @@ opts = OptionParser.new do | opts |
     app.extjs_path = path
   end
 
+  opts.on('--local-storage-db=NAME',
+    "Prefix for LocalStorage database names.",
+    "Defaults to 'docs'.", " ") do |name|
+    app.local_storage_db = name
+  end
+
   opts.on('-h', '--help', "Prints this help message", " ") do
     puts opts
     exit

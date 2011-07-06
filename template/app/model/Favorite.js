@@ -6,6 +6,6 @@ Ext.define('Docs.model.Favorite', {
     extend: 'Ext.data.Model',
     proxy: {
         type: ('localStorage' in window && window['localStorage'] !== null) ? 'localstorage' : 'memory',
-        id  : 'docs-favorites'
+        id: Docs.localStorageDb + '-favorites'
     }
 });

@@ -40,6 +40,7 @@ module JsDuck
     attr_accessor :title
     attr_accessor :footer
     attr_accessor :extjs_path
+    attr_accessor :local_storage_db
     attr_accessor :head_html
     attr_accessor :body_html
 
@@ -61,6 +62,7 @@ module JsDuck
       @title = "Ext JS API Documentation"
       @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
       @extjs_path = "extjs/ext-all.js"
+      @local_storage_db = "docs"
       @head_html = ""
       @body_html = ""
       @timer = Timer.new
@@ -285,6 +287,7 @@ module JsDuck
       html.gsub!("{title}", @title)
       html.gsub!("{footer}", "<div id='footer-content' style='display: none'>#{@footer}</div>")
       html.gsub!("{extjs_path}", @extjs_path)
+      html.gsub!("{local_storage_db}", @local_storage_db)
       html.gsub!("{guides}", @guides.to_html)
       html.gsub!("{categories}", @categories.to_html)
       html.gsub!("{head_html}", @head_html)
