@@ -149,6 +149,7 @@ JsDuck was developed by [Rene Saarsoo](http://triin.net),
 with many contributions from [Nick Poulden](https://github.com/nick).
 
 Thanks to [Ondřej Jirman](https://github.com/megous),
+[Thomas Aylott](https://github.com/subtleGradient),
 [johnnywengluu](https://github.com/johnnywengluu),
 [gevik](https://github.com/gevik),
 [ligaard](https://github.com/ligaard), and many-many others who
@@ -157,6 +158,11 @@ reported bugs, submitted patches, and provided a lot of useful input.
 
 Changelog
 ---------
+
+* 2.0.pre2 - Fixes for the previous pre-release.
+  * New --stdout command line option.
+  * Fix opening links in new tabs.
+  * Few other small bugfixes and enhancements.
 
 * 2.0.pre - Completely overhauled Ext4-themed version.
   * Currently in a pre-release state.
