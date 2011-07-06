@@ -121,8 +121,8 @@ opts = OptionParser.new do | opts |
     app.export = :json
   end
 
-  opts.on('--stdout', "Sends the output to STDOUT instead of writing to the filesystem", " ") do
-    app.output_to_stdout = true
+  opts.on('--stdout', "Writes JSON export to STDOUT instead of writing to the filesystem", " ") do
+    app.export = :stdout
   end
 
   opts.separator "Debugging:"
@@ -179,27 +179,29 @@ app.input_files = js_files
 if app.input_files.length == 0
   puts "You should specify some input files, otherwise there's nothing I can do :("
   exit(1)
-elsif !app.output_to_stdout and !app.output_dir
-  puts "You should also specify an output directory, where I could write all this amazing documentation."
-  exit(1)
-elsif !app.output_to_stdout and File.exists?(app.output_dir) && !File.directory?(app.output_dir)
-  puts "Oh noes!  The output directory is not really a directory at all :("
-  exit(1)
-elsif !app.output_to_stdout and !File.exists?(File.dirname(app.output_dir))
-  puts "Oh noes!  The parent directory for #{app.output_dir} doesn't exist."
-  exit(1)
-elsif !app.output_to_stdout and !File.exists?(app.template_dir + "/extjs")
-  puts "Oh noes!  The template directory does not contain extjs/ directory :("
-  puts "Please copy ExtJS over to template/extjs or create symlink."
-  puts "For example:"
-  puts "    $ cp -r /path/to/ext-4.0.0 " + app.template_dir + "/extjs"
-  exit(1)
-elsif !app.output_to_stdout and !File.exists?(app.template_dir + "/resources/css")
-  puts "Oh noes!  CSS files for custom ExtJS theme missing :("
-  puts "Please compile SASS files in template/resources/sass with compass."
-  puts "For example:"
-  puts "    $ compass compile " + app.template_dir + "/resources/sass"
-  exit(1)
+elsif app.export != :stdout
+  if !app.output_dir
+    puts "You should also specify an output directory, where I could write all this amazing documentation."
+    exit(1)
+  elsif File.exists?(app.output_dir) && !File.directory?(app.output_dir)
+    puts "Oh noes!  The output directory is not really a directory at all :("
+    exit(1)
+  elsif !File.exists?(File.dirname(app.output_dir))
+    puts "Oh noes!  The parent directory for #{app.output_dir} doesn't exist."
+    exit(1)
+  elsif !File.exists?(app.template_dir + "/extjs")
+    puts "Oh noes!  The template directory does not contain extjs/ directory :("
+    puts "Please copy ExtJS over to template/extjs or create symlink."
+    puts "For example:"
+    puts "    $ cp -r /path/to/ext-4.0.0 " + app.template_dir + "/extjs"
+    exit(1)
+  elsif !File.exists?(app.template_dir + "/resources/css")
+    puts "Oh noes!  CSS files for custom ExtJS theme missing :("
+    puts "Please compile SASS files in template/resources/sass with compass."
+    puts "For example:"
+    puts "    $ compass compile " + app.template_dir + "/resources/sass"
+    exit(1)
+  end
 end
 
 app.run()
