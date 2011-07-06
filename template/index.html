@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="resources/css/scrollbars.css" type="text/css" />
   <link rel="stylesheet" href="resources/css/viewport.css" type="text/css" />
   <link rel="stylesheet" href="prettify/prettify.css" type="text/css" />
-
   <!--[if IE]>
     <link rel="stylesheet" href="resources/css/ie.css" type="text/css" />
   <![endif]-->
@@ -30,14 +29,19 @@
 
 </head>
 <body id="ext-body" class="iScroll">
-    <div id="loading"><span class="title"></span><span class="logo"></span></div>
-    <form id="history-form" class="x-hide-display">
-        <input type="hidden" id="x-history-field" />
-        <iframe id="x-history-frame"></iframe>
-    </form>
-    {guides}
-    {categories}
-    <div id="footer-content" style="display: none">{footer}</div>
-    {body_html}
+
+  <div id="loading"><span class="title"></span><span class="logo"></span></div>
+
+  <form id="history-form" class="x-hide-display">
+      <input type="hidden" id="x-history-field" />
+      <iframe id="x-history-frame"></iframe>
+  </form>
+
+  {guides}
+  {categories}
+  {footer}
+
+  {body_html}
+
 </body>
 </html>
