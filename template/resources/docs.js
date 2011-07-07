@@ -684,3 +684,86 @@ Ext.Ajax.on('requestcomplete', function(ajax, xhr, o){
         urchinTracker(o.url);
     }
 });
+
+// Override Ext.lib.Dom.getXY
+//
+// For some reason el.getBoundingClientRect does not work correctly in Chrome 12.
+// As a hack-solution, don't use it in Chrome at all.
+(function() {
+    var doc = document,
+        isCSS1 = doc.compatMode == "CSS1Compat",
+        MAX = Math.max,		
+        ROUND = Math.round,
+        PARSEINT = parseInt;
+    var fly = Ext.fly;
+
+    Ext.lib.Dom.getXY = function(el) {
+            var p, 
+            	pe, 
+            	b,
+            	bt, 
+            	bl,     
+            	dbd,       	
+            	x = 0,
+            	y = 0, 
+            	scroll,
+            	hasAbsolute, 
+            	bd = (doc.body || doc.documentElement),
+            	ret = [0,0];
+            	
+            el = Ext.getDom(el);
+
+            if(el != bd){
+                // Don't use getBoundingClientRect in Chrome
+	            if (el.getBoundingClientRect && !Ext.isChrome) {
+	                b = el.getBoundingClientRect();
+	                scroll = fly(document).getScroll();
+	                ret = [ROUND(b.left + scroll.left), ROUND(b.top + scroll.top)];
+	            } else {  
+		            p = el;		
+		            hasAbsolute = fly(el).isStyle("position", "absolute");
+		
+		            while (p) {
+			            pe = fly(p);		
+		                x += p.offsetLeft;
+		                y += p.offsetTop;
+		
+		                hasAbsolute = hasAbsolute || pe.isStyle("position", "absolute");
+		                		
+		                if (Ext.isGecko) {		                    
+		                    y += bt = PARSEINT(pe.getStyle("borderTopWidth"), 10) || 0;
+		                    x += bl = PARSEINT(pe.getStyle("borderLeftWidth"), 10) || 0;	
+		
+		                    if (p != el && !pe.isStyle('overflow','visible')) {
+		                        x += bl;
+		                        y += bt;
+		                    }
+		                }
+		                p = p.offsetParent;
+		            }
+		
+		            if (Ext.isSafari && hasAbsolute) {
+		                x -= bd.offsetLeft;
+		                y -= bd.offsetTop;
+		            }
+		
+		            if (Ext.isGecko && !hasAbsolute) {
+		                dbd = fly(bd);
+		                x += PARSEINT(dbd.getStyle("borderLeftWidth"), 10) || 0;
+		                y += PARSEINT(dbd.getStyle("borderTopWidth"), 10) || 0;
+		            }
+		
+		            p = el.parentNode;
+		            while (p && p != bd) {
+		                if (!Ext.isOpera || (p.tagName != 'TR' && !fly(p).isStyle("display", "inline"))) {
+		                    x -= p.scrollLeft;
+		                    y -= p.scrollTop;
+		                }
+		                p = p.parentNode;
+		            }
+		            ret = [x,y];
+	            }
+         	}
+            return ret;
+        };
+})();
