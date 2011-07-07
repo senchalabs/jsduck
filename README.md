@@ -167,6 +167,11 @@ Changelog
 * 2.0.pre - Completely overhauled Ext4-themed version.
   * Currently in a pre-release state.
 
+* 0.6.1 - Bug fixes.
+  * Fix scrolling to class members in Chrome 12.
+  * Make JSDuck work with Ruby 1.8.6.
+  * Upgrade the embedded ExtJS to 3.4.0.
+
 * 0.6 - JsDuck is now used for creating the official ExtJS4 documentation.
   * Automatic linking of class names found in comments.  Instead of writing
     `{@link Ext.Panel}` one can simply write `Ext.Panel` and link will be
