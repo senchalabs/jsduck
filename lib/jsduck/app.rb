@@ -133,7 +133,6 @@ module JsDuck
         @timer.time(:generating) { write_search_data(@output_dir+"/output/searchData.js", relations) }
         @timer.time(:generating) { write_classes(@output_dir+"/output", relations) }
         @timer.time(:generating) { @guides.write(@output_dir+"/guides") }
-        @timer.time(:generating) { write_examples(@output_dir+"/output/exampleData.js") }
       end
 
       @timer.report
@@ -222,13 +221,6 @@ module JsDuck
     def write_search_data(filename, relations)
       search_data = SearchData.new.create(relations.classes)
       js = "Docs.searchData = " + JSON.generate( {:data => search_data} ) + ";"
-      File.open(filename, 'w') {|f| f.write(js) }
-    end
-
-    # Write examples in JSON form into a file.
-    def write_examples(filename)
-      examples = JSON.parse(IO.read(@template_dir+"/exampleData.json"))
-      js = "Docs.examplesData = " + JSON.generate( examples ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
     end
 

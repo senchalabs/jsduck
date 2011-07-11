@@ -1,5 +1,5 @@
 /**
- * Controller for both examples tab and inline examples.
+ * Controller for inline examples.
  */
 Ext.define('Docs.controller.Examples', {
     extend: 'Ext.app.Controller',
@@ -61,11 +61,6 @@ Ext.define('Docs.controller.Examples', {
                 },
                 afterload: function() {
                     this.replaceExampleDivs();
-                }
-            },
-            'gridpanel[cmpName=examplelist]': {
-                itemclick: function(view, record, item, index, event) {
-                    this.showExample(Ext.getCmp('standAloneCodeExample'), record.data.location);
                 }
             }
         });

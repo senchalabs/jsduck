@@ -8,20 +8,17 @@ Ext.define('Docs.controller.Classes', {
     requires: [
         'Docs.History',
         'Docs.Syntax',
-        'Docs.view.cls.Overview',
-        'Docs.view.cls.Examples'
+        'Docs.view.cls.Overview'
     ],
 
     stores: [
-        'Examples',
         'Favorites',
         'Settings'
     ],
 
     models: [
         'Favorite',
-        'Setting',
-        'Example'
+        'Setting'
     ],
 
     refs: [
@@ -230,7 +227,6 @@ Ext.define('Docs.controller.Classes', {
 
             if (!this.getOverview()) {
                 this.getTabPanel().add(Ext.create('Docs.view.cls.Overview'));
-                this.getTabPanel().add(Ext.create('Docs.view.cls.Examples'));
                 this.getTabPanel().setActiveTab(0);
             }
 
