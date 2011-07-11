@@ -17,7 +17,7 @@ Ext.define('Docs.controller.Search', {
         }
     ],
 
-    // Currentl page in search results and nr of items on one page
+    // Current page in search results and nr of items on one page
     pageIndex: 0,
     pageSize: 10,
 

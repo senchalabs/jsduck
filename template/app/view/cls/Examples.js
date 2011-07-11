@@ -1,3 +1,6 @@
+/**
+ * Panel with grid listing all examples and an area for viewing them.
+ */
 Ext.define('Docs.view.cls.Examples', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.classexamples',

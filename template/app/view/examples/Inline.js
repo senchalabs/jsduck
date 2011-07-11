@@ -2,7 +2,6 @@
  * Inline example tab panel. Allows code to be demonstrated and edited inline.
  */
 Ext.define('Docs.view.examples.Inline', {
-
     extend: 'Ext.Panel',
     alias: 'widget.inlineexample',
 
@@ -53,9 +52,6 @@ Ext.define('Docs.view.examples.Inline', {
     },
 
     initComponent: function() {
-
-        var self = this;
-
         Docs.view.examples.Inline.prototype.iframeId = Docs.view.examples.Inline.prototype.iframeId || 0;
         Docs.view.examples.Inline.prototype.iframeId = Docs.view.examples.Inline.prototype.iframeId + 1;
         this.iframeId = Docs.view.examples.Inline.prototype.iframeId;
@@ -83,10 +79,13 @@ Ext.define('Docs.view.examples.Inline', {
         this.callParent(arguments);
     },
 
+    /**
+     * Syncs the height with number of lines in code example.
+     */
     updateHeight: function() {
         var el = this.el.down('.CodeMirror-lines');
         if (el) {
-            this.setHeight(el.getHeight() + 5)
+            this.setHeight(el.getHeight() + 5);
         }
     }
 

@@ -1,5 +1,6 @@
 /**
- * Listeners should be defined here instead of in the view classes
+ * Controller responsible for loading classes, guides, and switching
+ * between pages.
  */
 Ext.define('Docs.controller.Classes', {
     extend: 'Ext.app.Controller',

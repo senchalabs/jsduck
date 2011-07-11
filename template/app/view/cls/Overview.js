@@ -17,7 +17,13 @@ Ext.define('Docs.view.cls.Overview', {
     bodyPadding: '20',
 
     initComponent: function() {
-        this.addEvents('afterload');
+        this.addEvents(
+            /**
+             * @event
+             * Fired after class docs loaded panel.
+             */
+            'afterload'
+        );
         this.callParent(arguments);
     },
 
@@ -48,7 +54,6 @@ Ext.define('Docs.view.cls.Overview', {
      * @param {Object} docClass
      */
     load: function(docClass) {
-
         this.docClass = docClass;
 
         if (this.toolbar) {

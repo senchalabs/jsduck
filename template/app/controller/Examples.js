@@ -1,5 +1,5 @@
 /**
- * Listeners should be defined here instead of in the view classes
+ * Controller for both examples tab and inline examples.
  */
 Ext.define('Docs.controller.Examples', {
     extend: 'Ext.app.Controller',
@@ -12,12 +12,10 @@ Ext.define('Docs.controller.Examples', {
     ],
 
     init: function() {
-
         this.control({
             'inlineexample': {
                 afterlayout: function(cmp) {
-
-                    if(!cmp.codeEditor) {
+                    if (!cmp.codeEditor) {
                         var codeBody = cmp.getComponent(0).body;
 
                         cmp.codeEditor = CodeMirror(codeBody, {
@@ -32,7 +30,7 @@ Ext.define('Docs.controller.Examples', {
             },
             'inlineexample [cmpName=code]': {
                 activate: function(cmp) {
-                    this.activateTab(cmp, 'code')
+                    this.activateTab(cmp, 'code');
                     var inlineEg = cmp.up('inlineexample');
                     if (inlineEg && inlineEg.codeEditor) {
                         // Weird bug on CodeMirror requires 2 refreshes...
@@ -51,7 +49,7 @@ Ext.define('Docs.controller.Examples', {
             },
             'inlineexample [cmpName=meta]': {
                 activate: function(cmp) {
-                    this.activateTab(cmp, 'info')
+                    this.activateTab(cmp, 'info');
                 }
             },
             'inlineexample toolbar button[iconCls=code]': {
@@ -100,9 +98,6 @@ Ext.define('Docs.controller.Examples', {
     },
 
     showExample: function(inlineEg, exampleId, stripComments, updateHeight) {
-
-        var self = this;
-
         // Works with Gists from GitHub
         if (exampleId.match(/^https:\/\/api\.github\.com/)) {
             Ext.data.JsonP.request({
@@ -113,15 +108,13 @@ Ext.define('Docs.controller.Examples', {
                 },
                 scope: this
             });
-
-        } else {
+        }
+        else {
             Ext.Ajax.request({
-                method  : 'GET',
-                url     : 'doc-resources/' + exampleId,
-                headers : { 'Content-Type' : 'application/json' },
-
-                success : function(response, opts) {
-
+                method: 'GET',
+                url: 'doc-resources/' + exampleId,
+                headers: { 'Content-Type' : 'application/json' },
+                success: function(response, opts) {
                     // Remove any trailing whitespace
                     var code = response.responseText.replace(/\s*$/, '');
 
@@ -134,33 +127,33 @@ Ext.define('Docs.controller.Examples', {
 
                     var activeItem = inlineEg.layout.getActiveItem();
                     if (activeItem.cmpName == 'preview') {
-                        self.refreshPreview(inlineEg);
+                        this.refreshPreview(inlineEg);
                     }
 
                     if (updateHeight) {
                         inlineEg.updateHeight();
                     }
-                }
+                },
+                scope: this
             });
         }
     },
 
     replaceExampleDivs: function() {
-        var self = this;
-
         Ext.Array.each(Ext.query('.inline-example'), function(inlineEg) {
             var egId = inlineEg.getAttribute('rel');
             var divId = inlineEg.getAttribute('id');
-            var eg = Ext.create('Docs.view.examples.Inline', {
+            Ext.create('Docs.view.examples.Inline', {
                 height: 200,
                 renderTo: divId,
                 listeners: {
-                    render: function() {
-                        self.showExample(this, egId, true, true);
-                    }
+                    render: function(cmp) {
+                        this.showExample(cmp, egId, true, true);
+                    },
+                    scope: this
                 }
             });
-        });
+        }, this);
     },
 
     refreshPreview: function(cmp) {
