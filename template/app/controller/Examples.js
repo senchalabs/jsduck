@@ -82,7 +82,7 @@ Ext.define('Docs.controller.Examples', {
             },
             'gridpanel[cmpName=examplelist]': {
                 itemclick: function(view, record, item, index, event) {
-                    this.showExample(Ext.getCmp('inlineCodeExample'), record.data.location);
+                    this.showExample(Ext.getCmp('standAloneCodeExample'), record.data.location);
                 }
             }
         });

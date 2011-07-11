@@ -30,7 +30,7 @@ Ext.define('Docs.view.cls.Examples', {
         {
             region: 'center',
             padding: '10',
-            id: 'inlineCodeExample',
+            id: 'standAloneCodeExample',
             xtype: 'inlineexample'
         }
     ]
