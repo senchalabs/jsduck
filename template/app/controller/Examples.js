@@ -104,7 +104,7 @@ Ext.define('Docs.controller.Examples', {
                 url: exampleId,
                 success: function(json) {
                     inlineEg.codeEditor.setValue(json.data.files["basic_grid_panel.js"].content);
-                    window.frames['egIframe' + inlineEg.iframeId].refreshPage(inlineEg.codeEditor.getValue(), '');
+                    window.frames[inlineEg.getIframeId()].refreshPage(inlineEg.codeEditor.getValue(), '');
                 },
                 scope: this
             });
@@ -157,7 +157,7 @@ Ext.define('Docs.controller.Examples', {
     },
 
     refreshPreview: function(cmp) {
-        document.getElementById('egIframe' + cmp.iframeId).contentWindow.refreshPage(cmp.codeEditor.getValue(), '');
+        document.getElementById(cmp.getIframeId()).contentWindow.refreshPage(cmp.codeEditor.getValue(), '');
     }
 
 });

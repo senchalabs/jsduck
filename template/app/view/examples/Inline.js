@@ -14,6 +14,10 @@ Ext.define('Docs.view.examples.Inline', {
         constrainTo: false
     },
 
+    statics: {
+        iframeId: 0
+    },
+
     dockedItems: [{
         xtype: 'toolbar',
         dock: 'left',
@@ -52,10 +56,6 @@ Ext.define('Docs.view.examples.Inline', {
     },
 
     initComponent: function() {
-        Docs.view.examples.Inline.prototype.iframeId = Docs.view.examples.Inline.prototype.iframeId || 0;
-        Docs.view.examples.Inline.prototype.iframeId = Docs.view.examples.Inline.prototype.iframeId + 1;
-        this.iframeId = Docs.view.examples.Inline.prototype.iframeId;
-
         this.items = [{
             cmpName: 'code',
             style: 'border: 0',
@@ -67,7 +67,7 @@ Ext.define('Docs.view.examples.Inline', {
         this.items.push({
             bodyPadding: 10,
             cmpName: 'preview',
-            html: '<iframe id="egIframe' + this.iframeId + '" src="egIframe.html" style="width: 100%; height: 100%; border: 0"></iframe>'
+            html: '<iframe id="' + this.getIframeId() + '" src="egIframe.html" style="width: 100%; height: 100%; border: 0"></iframe>'
         });
 
         this.items.push({
@@ -77,6 +77,18 @@ Ext.define('Docs.view.examples.Inline', {
         });
 
         this.callParent(arguments);
+    },
+
+    /**
+     * Returns iframe ID for this inline example component.
+     * @return {String}
+     */
+    getIframeId: function() {
+        if (!this.iframeId) {
+            this.statics().iframeId += 1;
+            this.iframeId = "egIframe" + this.statics().iframeId;
+        }
+        return this.iframeId;
     },
 
     /**
