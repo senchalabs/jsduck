@@ -171,18 +171,6 @@ Ext.define('Docs.view.cls.Overview', {
             '</div>'
         );
 
-        var egId = 0;
-        var replaceExample = function() {
-            var idx = cls.doc.match(/\{@example ([A-Za-z0-9_\/\.]+)\}/);
-            if (idx) {
-                cls.doc = cls.doc.replace(/\{@example ([A-Za-z0-9_\/\.]+)\}/, '<div class="inline-example" id="eg' + egId + '" rel="' + idx[1] + '"></div>');
-                egId += 1;
-                replaceExample();
-            }
-        }
-
-        replaceExample();
-
         return this.classTpl.apply({
             doc: cls.doc,
             hierarchy: this.renderHierarchy(cls),

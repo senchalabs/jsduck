@@ -48,6 +48,8 @@ module JsDuck
     # name actually exists.
     attr_accessor :relations
 
+    @@example_counter = 0
+
     def initialize
       @class_context = ""
       @doc_context = {}
@@ -55,8 +57,10 @@ module JsDuck
       @relations = {}
       @link_tpl = '<a href="%c%#%m">%a</a>'
       @img_tpl = '<img src="%u" alt="%a"/>'
+      @example_tpl = '<div class="inline-example" id="eg%i" rel="%u"></div>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
+      @example_re = /\{@example\s+(\S*?)\s*\}/m
     end
 
     # Replaces {@link} and {@img} tags, auto-generates links for
@@ -78,6 +82,8 @@ module JsDuck
           out += replace_link_tag(s.scan(@link_re))
         elsif s.check(@img_re)
           out += replace_img_tag(s.scan(@img_re))
+        elsif s.check(@example_re)
+          out += replace_example_tag(s.scan(@example_re))
         elsif s.check(/\{/)
           out += s.scan(/\{/)
         else
@@ -128,6 +134,10 @@ module JsDuck
       input.sub(@img_re) { img($1, $2) }
     end
 
+    def replace_example_tag(input)
+      input.sub(@example_re) { example($1) }
+    end
+
     def replace_class_names(input)
       input.gsub(/(\A|\s)([A-Z][A-Za-z0-9.]*[A-Za-z0-9])(?:(#)([A-Za-z0-9]+))?([.,]?(?:\s|\Z))/m) do
         before = $1
@@ -153,6 +163,20 @@ module JsDuck
           url
         when '%a'
           CGI.escapeHTML(alt_text||"")
+        else
+          $1
+        end
+      end
+    end
+
+    # applies the example template
+    def example(url)
+      @example_tpl.gsub(/(%\w)/) do
+        case $1
+        when '%u'
+          url
+        when '%i'
+          @@example_counter += 1
         else
           $1
         end
