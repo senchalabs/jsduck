@@ -133,14 +133,14 @@ module JsDuck
         before = $1
         cls = $2
         hash = $3
-        method = $4
+        member = $4
         after = $5
 
-        if @relations[cls]
-          label = method ? cls+"."+method : cls
-          before + link(cls, method, label) + after
+        if @relations[cls] && (!member || get_member(cls, member))
+          label = member ? cls+"."+member : cls
+          before + link(cls, member, label) + after
         else
-          before + cls + (hash || "") + (method || "") + after
+          before + cls + (hash || "") + (member || "") + after
         end
       end
     end
@@ -184,7 +184,7 @@ module JsDuck
       end
     end
 
-    def get_member(cls, member, type)
+    def get_member(cls, member, type=nil)
       @relations[cls] && @relations[cls].get_member(member, type)
     end
 

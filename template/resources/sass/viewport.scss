@@ -167,7 +167,7 @@ a {
   left: 20px;
   z-index: 5;
 
-  .item, .total {
+  .item, .footer {
     display: block;
     cursor: pointer;
     overflow: hidden;
@@ -198,10 +198,12 @@ a {
     background-color: #ffffaa; }
   .item.x-view-over {
     background-color: #ffffaa; }
-  .total {
+  .footer {
     cursor: auto;
     text-align: right;
-    font-size: 0.85em; } }
+    font-size: 0.85em;
+    a {
+      padding: 0 0.5em; } } }
 
 
 #center-container, #west-region-container {
@@ -236,6 +238,11 @@ a {
     background-attachment: fixed;
     background: #e9e9e9 url(../images/drag-bar-center.png) no-repeat center;
     border-width: 1px 0; } }
+
+// Use normal color for class-links in tree and favorites grid
+.class-tree, #favorites-grid {
+  .docClass, .docClass:hover {
+    color: #000; } }
 
 #footer {
   background: $docs-bg-color;
@@ -322,21 +329,14 @@ a {
         display: block; } }
     // Guides section at top left
     &.guides {
-      padding: 15px;
-      width: 560px;
+      padding: 15px 35px 15px 15px;
       line-height: 1.7em;
+      float: left;
       h1 {
         font-size: 1.7em !important; }
-      .lft {
+      .lft, .mid, .rgt {
         float: left;
-        width: 200px;
-        margin-left: 20px }
-      .mid {
-        float: left;
-        width: 100px;
         margin-left: 20px; }
-      .rgt {
-        margin-left: 370px; }
       a {
         display: block;
         height: 32px;
@@ -344,38 +344,15 @@ a {
         padding-left: 40px; }
       // Link to examples
       .examples {
+        clear: both;
         border-top: 1px solid #ebebeb;
         a {
           padding-left: 10px;
           margin: 10px 0 0 0;
           height: auto; } }
-      // Icons for each guide
-      .getting_started {
-        background: url(../images/guides.png) no-repeat 0px 0px; }
-      .drawing_and_charting {
-        background: url(../images/guides.png) no-repeat 0px -288px; }
-      .layouts_and_containers {
-        background: url(../images/guides.png) no-repeat 0px -130px; }
-      .application_architecture {
-        background: url(../images/guides.png) no-repeat 0px -98px; }
-      .class_system {
-        background: url(../images/guides.png) no-repeat 0px -31px; }
-      .data {
-        background: url(../images/guides.png) no-repeat 0px -66px; }
-      .grid {
-        background: url(../images/guides.png) no-repeat 0px -193px; }
-      .tree {
-        background: url(../images/guides.png) no-repeat 0px -228px; }
-      .components {
-        background: url(../images/guides.png) no-repeat 0px -160px; }
-      .theming {
-        background: url(../images/guides.png) no-repeat 0px -320px; }
-      .direct {
-        background: url(../images/guides.png) no-repeat 0px -387px; }
-      .accessibility {
-        background: url(../images/guides.png) no-repeat 0px -453px; }
-      .forms {
-        background: url(../images/guides.png) no-repeat 0px -258px; } }
+      // Default icon for guide
+      .guide {
+        background: url(../images/guide-icon.png) no-repeat; } }
     // Sections for class lists
     &.classes {
       clear: both;
@@ -421,29 +398,7 @@ a {
         &:hover {
           @include icon-fav-over; } } } }
   .x-panel-body {
-    background: $docs-bg-color; }
-  .sortBy {
-    position: relative;
-    padding-bottom: 10px;
-    #expandAll {
-      width: 13px;
-      height: 15px;
-      position: absolute;
-      top: 4px;
-      right: 40px;
-      display: block;
-      background: url(../images/expandcollapse.png) no-repeat -14px 2px; }
-    #collapseAll {
-      width: 13px;
-      height: 15px;
-      position: absolute;
-      top: 4px;
-      right: 20px;
-      display: block;
-      background: url(../images/expandcollapse.png) no-repeat 0 2px; } }
-  .favorites {
-    padding: 10px;
-    margin: 0 10px 10px 0; } }
+    background: $docs-bg-color; } }
 
 .x-scroller-vertical {
   border: 0; }
@@ -557,6 +512,18 @@ a {
     @include guides-h3-heading; }
   hr {
     display: none; } }
+
+#failure {
+  h1 {
+    padding: 10px 0;
+    font-family: $docs-heading-font;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+    font-size: 2.3em;
+    color: #66ab16; }
+  p {
+    margin: 0 0 0.8em; } }
+
 
 // Nice styles for headings inside documentation
 #center-container .doc-contents {
@@ -707,15 +674,9 @@ a {
         background-color: #aa0000; } } } }
 
 .expandAllMembers {
-  background: url(../images/expandcollapse.png) no-repeat -14px 2px !important; }
+  background: url(../images/expandcollapse.png) no-repeat -12px 2px !important; }
 .collapseAllMembers {
   background: url(../images/expandcollapse.png) no-repeat 2px 2px !important; }
-
-.member-links {
-  .expandAllMembers {
-    background: url(../images/expandcollapse.png) no-repeat -14px 2px; }
-  .collapseAllMembers {
-    background: url(../images/expandcollapse.png) no-repeat 2px 2px; } }
 
 
 .hover-menu-button {

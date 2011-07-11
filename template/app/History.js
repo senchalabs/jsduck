@@ -18,20 +18,20 @@ Ext.define("Docs.History", {
     navigate: function(token) {
         var url = this.parseToken(token);
         if (url.type === "api") {
-            Docs.App.getController('Classes').loadClass(url.key, true);
+            Docs.App.getController('Classes').loadClass(url.url, true);
         }
         else if (url.type === "guide") {
-            Docs.App.getController('Classes').showGuide(url.key, true);
+            Docs.App.getController('Classes').loadGuide(url.url, true);
         }
         else {
-            Ext.getCmp('card-panel').layout.setActiveItem(0);
+            Docs.App.getController('Classes').loadIndex(true);
         }
     },
 
     // Parses current browser location
     parseToken: function(token) {
         var matches = token && token.match(/\/(api|guide)\/(.*)/);
-        return matches ? {type: matches[1], key: matches[2]} : {};
+        return matches ? {type: matches[1], url: matches[0]} : {};
     },
 
     /**

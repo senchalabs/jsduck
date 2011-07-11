@@ -9,30 +9,33 @@ Ext.define('Docs.view.cls.Header', {
     height: 47,
     alias: 'widget.classheader',
 
-    tpl: Ext.create('Ext.XTemplate',
-        '<h1 class="{[this.getClass(values)]}">',
-            '<tpl if="private">',
-                '<span class="private">Private</span>',
-            '</tpl>',
-            '<a href="source/{href}" target="_blank">{name}</a>',
-            '<tpl if="xtypes.length &gt; 0">',
-                '<span>xtype: {[values.xtypes.join(", ")]}</span>',
-            '</tpl>',
-        '</h1>',
-        {
-            getClass: function(cls) {
-                if (cls.component) {
-                    return "component";
-                }
-                else if (cls.singleton) {
-                    return "singleton";
-                }
-                else {
-                    return "class";
+    initComponent: function() {
+        this.tpl = Ext.create('Ext.XTemplate',
+            '<h1 class="{[this.getClass(values)]}">',
+                '<tpl if="private">',
+                    '<span class="private">Private</span>',
+                '</tpl>',
+                '<a href="source/{href}" target="_blank">{name}</a>',
+                '<tpl if="xtypes.length &gt; 0">',
+                    '<span>xtype: {[values.xtypes.join(", ")]}</span>',
+                '</tpl>',
+            '</h1>',
+            {
+                getClass: function(cls) {
+                    if (cls.component) {
+                        return "component";
+                    }
+                    else if (cls.singleton) {
+                        return "singleton";
+                    }
+                    else {
+                        return "class";
+                    }
                 }
             }
-        }
-    ),
+        );
+        this.callParent();
+    },
 
     /**
      * Loads class name and icon to header.

@@ -57,7 +57,9 @@ module JsDuck
         old[tag] = old[tag] + new[tag]
       end
       old[:doc] = old[:doc].length > 0 ? old[:doc] : new[:doc]
-      old[:members][:cfg] = old[:members][:cfg] + new[:members][:cfg]
+      # Additionally the doc-comment can contain configs and constructor
+      old[:members][:cfg] += new[:members][:cfg]
+      old[:members][:method] += new[:members][:method]
     end
 
     # Tries to place members into classes where they belong.
@@ -145,7 +147,10 @@ module JsDuck
     end
 
     # Appends Ext4 options parameter to each event parameter list.
+    # But only when we are dealing with Ext4 codebase.
     def append_ext4_event_options
+      return unless ext4?
+
       options = {
         :tagname => :param,
         :name => "options",
@@ -155,6 +160,12 @@ module JsDuck
       @classes.each_value do |cls|
         cls[:members][:event].each {|e| e[:params] << options }
       end
+    end
+
+    # Are we dealing with ExtJS 4?
+    # True if any of the classes is defined with Ext.define()
+    def ext4?
+      @documentation.any? {|cls| cls[:code_type] == :ext_define }
     end
 
     def result

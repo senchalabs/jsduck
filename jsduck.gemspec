@@ -2,18 +2,21 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.7"
 
   s.name = 'jsduck'
-  s.version = '0.6'
-  s.date = '2011-04-27'
+  s.version = '2.0.pre2'
+  s.date = '2011-07-06'
   s.summary = "Simple JavaScript Duckumentation generator"
-  s.description = "Better ext-doc like JavaScript documentation generator for ExtJS"
-  s.homepage = "https://github.com/nene/jsduck"
-  s.authors = ["Rene Saarsoo"]
-  s.email = "nene@triin.net"
+  s.description = "Documentation generator for ExtJS 4"
+  s.homepage = "https://github.com/senchalabs/jsduck"
+  s.authors = ["Rene Saarsoo", "Nick Poulden"]
+  s.email = "rene.saarsoo@sencha.com"
   s.rubyforge_project = s.name
 
   s.files = `git ls-files`.split("\n").find_all do |file|
-    file !~ /spec.rb$/ && file !~ /benchmark/
+    file !~ /spec.rb$/ && file !~ /benchmark/ && file !~ /resources\/sass/
   end
+  # Add files not in git
+  s.files += ['template/extjs/ext-all.js']
+  s.files += Dir['template/resources/css/*.css']
 
   s.executables = ["jsduck"]
 

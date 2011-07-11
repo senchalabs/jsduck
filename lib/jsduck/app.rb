@@ -6,14 +6,16 @@ require 'jsduck/doc_formatter'
 require 'jsduck/class'
 require 'jsduck/tree'
 require 'jsduck/tree_icons'
-require 'jsduck/members'
+require 'jsduck/search_data'
 require 'jsduck/relations'
 require 'jsduck/aliases'
-require 'jsduck/page'
 require 'jsduck/exporter'
 require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
+require 'jsduck/guides'
+require 'jsduck/categories'
+require 'jsduck/jsonp'
 require 'json'
 require 'fileutils'
 
@@ -25,6 +27,8 @@ module JsDuck
     attr_accessor :output_dir
     attr_accessor :template_dir
     attr_accessor :guides_dir
+    attr_accessor :guides_order
+    attr_accessor :categories_path
     attr_accessor :template_links
     attr_accessor :input_files
     attr_accessor :export
@@ -36,12 +40,16 @@ module JsDuck
     attr_accessor :title
     attr_accessor :footer
     attr_accessor :extjs_path
-    attr_accessor :append_html
+    attr_accessor :local_storage_db
+    attr_accessor :head_html
+    attr_accessor :body_html
 
     def initialize
       @output_dir = nil
       @template_dir = nil
       @guides_dir = nil
+      @guides_order = nil
+      @categories_path = nil
       @template_links = false
       @input_files = []
       @warnings = true
@@ -52,9 +60,11 @@ module JsDuck
       @external_classes = []
       @show_private_classes = false
       @title = "Ext JS API Documentation"
-      @footer = 'Generated with <a href="https://github.com/nene/jsduck">JSDuck</a>.'
-      @extjs_path = "extjs/ext-debug.js"
-      @append_html = ""
+      @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
+      @extjs_path = "extjs/ext-all.js"
+      @local_storage_db = "docs"
+      @head_html = ""
+      @body_html = ""
       @timer = Timer.new
       @parallel = ParallelWrap.new
     end
@@ -77,6 +87,12 @@ module JsDuck
 
     # Call this after input parameters set
     def run
+      # Set default templates
+      @link_tpl ||= '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
+      # Note that we wrap image template inside <p> because {@img} often
+      # appears inline within text, but that just looks ugly in HTML
+      @img_tpl ||= '<p><img src="doc-resources/%u" alt="%a"></p>'
+
       parsed_files = @timer.time(:parsing) { parallel_parse(@input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       relations = @timer.time(:aggregating) { filter_classes(result) }
@@ -84,12 +100,27 @@ module JsDuck
       warn_globals(relations)
       warn_unnamed(relations)
 
-      clear_dir(@output_dir)
-      if @export == :json
+      @guides = Guides.new(get_doc_formatter(relations), @guides_order)
+      if @guides_dir
+        @timer.time(:parsing) { @guides.parse_dir(@guides_dir) }
+      end
+
+      @categories = Categories.new(get_doc_formatter(relations), relations)
+      if @categories_path
+        @timer.time(:parsing) do
+          @categories.parse(@categories_path)
+          @categories.validate
+        end
+      end
+
+      clear_dir(@output_dir) unless @export == :stdout
+      if @export == :stdout
+        @timer.time(:generating) { puts JSON.generate(relations.classes) }
+      elsif @export == :json
         FileUtils.mkdir(@output_dir)
         init_output_dirs(@output_dir)
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
-        @timer.time(:generating) { write_class(@output_dir+"/output", relations) }
+        @timer.time(:generating) { write_classes(@output_dir+"/output", relations) }
       else
         if @template_links
           link_template(@template_dir, @output_dir)
@@ -99,13 +130,10 @@ module JsDuck
         create_index_html(@template_dir, @output_dir)
         @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
         @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
-        @timer.time(:generating) { write_members(@output_dir+"/output/members.js", relations) }
-        @timer.time(:generating) { write_class(@output_dir+"/output", relations) }
-        @timer.time(:generating) { write_overview(@output_dir+"/output/overviewData.js", relations) }
+        @timer.time(:generating) { write_search_data(@output_dir+"/output/searchData.js", relations) }
+        @timer.time(:generating) { write_classes(@output_dir+"/output", relations) }
+        @timer.time(:generating) { @guides.write(@output_dir+"/guides") }
         @timer.time(:generating) { write_examples(@output_dir+"/output/exampleData.js") }
-        if @guides_dir
-          @timer.time(:generating) { write_guides(@guides_dir, @output_dir+"/guides", relations) }
-        end
       end
 
       @timer.report
@@ -179,37 +207,10 @@ module JsDuck
       end
     end
 
-    # prints warnings for missing classes in overviewData.json file,
-    # and writes overviewData to .js file
-    def write_overview(filename, relations)
-      overview = JSON.parse(IO.read(@template_dir+"/overviewData.json"))
-      overview_classes = {}
-
-      # Check that each class listed in overview file exists
-      overview["categories"].each_pair do |cat_name, cat|
-        cat["classes"].each do |cls_name|
-          unless relations[cls_name]
-            Logger.instance.warn("Class '#{cls_name}' in category '#{cat_name}' not found")
-          end
-          overview_classes[cls_name] = true
-        end
-      end
-
-      # Check that each existing non-private class is listed in overview file
-      relations.each do |cls|
-        unless overview_classes[cls[:name]] || cls[:private]
-          Logger.instance.warn("Class '#{cls[:name]}' not found in overview file")
-        end
-      end
-
-      js = "Docs.overviewData = " + JSON.generate( overview ) + ";"
-      File.open(filename, 'w') {|f| f.write(js) }
-    end
-
     # Given all classes, generates namespace tree and writes it
     # in JSON form into a file.
     def write_tree(filename, relations)
-      tree = Tree.new.create(relations.classes)
+      tree = Tree.new.create(relations.classes, @guides)
       icons = TreeIcons.new.extract_icons(tree)
       js = "Docs.classData = " + JSON.generate( tree ) + ";"
       js += "Docs.icons = " + JSON.generate( icons ) + ";"
@@ -218,42 +219,26 @@ module JsDuck
 
     # Given all classes, generates members data for search and writes in
     # in JSON form into a file.
-    def write_members(filename, relations)
-      members = Members.new.create(relations.classes)
-      js = "Docs.membersData = " + JSON.generate( {:data => members} ) + ";"
+    def write_search_data(filename, relations)
+      search_data = SearchData.new.create(relations.classes)
+      js = "Docs.searchData = " + JSON.generate( {:data => search_data} ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
     end
 
     # Write examples in JSON form into a file.
     def write_examples(filename)
-      overview = JSON.parse(IO.read(@template_dir+"/exampleData.json"))
-
-      js = "Docs.examplesData = " + JSON.generate( overview ) + ";"
+      examples = JSON.parse(IO.read(@template_dir+"/exampleData.json"))
+      js = "Docs.examplesData = " + JSON.generate( examples ) + ";"
       File.open(filename, 'w') {|f| f.write(js) }
     end
 
-
-    # Writes documentation page for each class
-    # We do it in parallel using as many processes as available CPU-s
-    def write_pages(path, relations)
-      cache = {}
-      @parallel.each(relations.classes) do |cls|
-        filename = path + "/" + cls[:name] + ".html"
-        Logger.instance.log("Writing to #{filename} ...")
-        page = Page.new(cls, relations, cache)
-        page.link_tpl = @link_tpl if @link_tpl
-        page.img_tpl = @img_tpl if @img_tpl
-        File.open(filename, 'w') {|f| f.write(page.to_html) }
-      end
-    end
-
     # Writes JsonP export file for each class
-    def write_class(path, relations)
+    def write_classes(path, relations)
       exporter = Exporter.new(relations, get_doc_formatter(relations))
       @parallel.each(relations.classes) do |cls|
         filename = path + "/" + cls[:name] + ".js"
         Logger.instance.log("Writing to #{filename} ...")
-        write_jsonp_file(filename, cls[:name].gsub(/\./, "_"), exporter.export(cls))
+        JsonP.write(filename, cls[:name].gsub(/\./, "_"), exporter.export(cls))
       end
     end
 
@@ -269,25 +254,6 @@ module JsDuck
       end
     end
 
-    # Writes JsonP export file for each guide
-    def write_guides(in_path, out_path, relations)
-      formatter = get_doc_formatter(relations)
-      FileUtils.mkdir(out_path)
-      Dir.glob(in_path + "/*").each do |in_dir|
-        if File.directory?(in_dir)
-          guide_name = File.basename(in_dir)
-          out_dir = out_path + "/" + guide_name
-          Logger.instance.log("Creating guide #{out_dir} ...")
-          FileUtils.cp_r(in_dir, out_dir)
-          formatter.doc_context = {:filename => out_dir + "/README.md", :linenr => 0}
-          guide = formatter.format(IO.read(out_dir + "/README.md"))
-          guide.gsub!(/<img src="/, "<img src=\"guides/#{guide_name}/")
-          write_jsonp_file(out_dir+"/README.js", guide_name, {:guide => guide})
-          FileUtils.rm(out_dir + "/README.md")
-        end
-      end
-    end
-
     # Creates and initializes DocFormatter
     def get_doc_formatter(relations)
       formatter = DocFormatter.new
@@ -295,13 +261,6 @@ module JsDuck
       formatter.img_tpl = @img_tpl if @img_tpl
       formatter.relations = relations
       formatter
-    end
-
-    # Turns hash into JSON and writes inside JavaScript that calls the
-    # given callback name
-    def write_jsonp_file(filename, callback_name, data)
-      jsonp = "Ext.data.JsonP." + callback_name + "(" + JSON.pretty_generate(data) + ");"
-      File.open(filename, 'w') {|f| f.write(jsonp) }
     end
 
     def copy_template(template_dir, dir)
@@ -334,9 +293,13 @@ module JsDuck
       Logger.instance.log("Creating #{dir}/index.html...")
       html = IO.read(template_dir+"/index.html")
       html.gsub!("{title}", @title)
-      html.gsub!("{footer}", @footer)
+      html.gsub!("{footer}", "<div id='footer-content' style='display: none'>#{@footer}</div>")
       html.gsub!("{extjs_path}", @extjs_path)
-      html.gsub!("{append_html}", @append_html)
+      html.gsub!("{local_storage_db}", @local_storage_db)
+      html.gsub!("{guides}", @guides.to_html)
+      html.gsub!("{categories}", @categories.to_html)
+      html.gsub!("{head_html}", @head_html)
+      html.gsub!("{body_html}", @body_html)
       FileUtils.rm(dir+"/index.html")
       File.open(dir+"/index.html", 'w') {|f| f.write(html) }
     end

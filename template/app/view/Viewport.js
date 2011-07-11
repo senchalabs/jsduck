@@ -43,9 +43,7 @@ Ext.define('Docs.view.Viewport', {
                         ui: 'hmm',
                         listeners: {
                             click: function() {
-                                this.setPageTitle("");
-                                Ext.getCmp('card-panel').layout.setActiveItem(0);
-                                Docs.History.push("");
+                                Docs.App.getController('Classes').loadIndex();
                             },
                             scope: this
                         }
@@ -170,11 +168,6 @@ Ext.define('Docs.view.Viewport', {
                                 //             xtype: 'button',
                                 //             iconCls: 'expandAllMembers',
                                 //             tooltip: "Expand all"
-                                //         },
-                                //         {
-                                //             xtype: 'button',
-                                //             iconCls: 'collapseAllMembers',
-                                //             tooltip: "Collapse all"
                                 //         }
                                 //     ]
                                 // }]
@@ -198,8 +191,7 @@ Ext.define('Docs.view.Viewport', {
                     items: [
                         {
                             autoScroll: true,
-                            xtype: 'indexcontainer',
-                            classData: Docs.overviewData
+                            xtype: 'indexcontainer'
                         },
                         {
                             xtype: 'classcontainer'
@@ -208,6 +200,10 @@ Ext.define('Docs.view.Viewport', {
                             autoScroll: true,
                             xtype: 'container',
                             id: 'guide'
+                        },
+                        {
+                            xtype: 'container',
+                            id: 'failure'
                         }
                     ]
                 }

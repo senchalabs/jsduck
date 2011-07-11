@@ -43,11 +43,9 @@ def run_jsduck(extra_options)
     "ruby", "bin/jsduck",
     # --external=Error to ignore the Error class that Ext.Error extends.
     "--external", "Error",
-    '--link', '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>',
-    # Note that we wrap image template inside <p> because {@img} often
-    # appears inline withing text, but that just looks ugly in HTML
-    '--img', '<p><img src="doc-resources/%u" alt="%a"></p>',
     "--guides", "#{SDK_DIR}/guides",
+    "--guides-order", "getting,class,application,layouts,data,grid,tree,drawing,forms,components,theming,direct",
+    "--categories", "#{SDK_DIR}/extjs/doc-resources/categories.json",
     "--output", "#{OUT_DIR}",
   ].concat(extra_options))
 
@@ -60,6 +58,7 @@ desc "Run JSDuck on ExtJS SDK"
 task :sdk do
   load_sdk_vars
   run_jsduck([
+    "--extjs-path", "extjs/ext-debug.js",
     # to create symbolic links to template files instead of copying them over.
     # Useful for development.  Turn off for deployment.
     "--template-links",
@@ -72,11 +71,15 @@ end
 def run_jsduck_export(extra_options, ext_dir)
   load_sdk_vars
   rev = `git rev-parse HEAD`.slice(0, 7)
+  head_html = <<-EOHTML
+    <link rel="canonical" href="http://docs.sencha.com/ext-js/4-0/" />
+    <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4">
+  EOHTML
 
   run_jsduck([
     "--title", "Ext JS 4.0.2a API Documentation",
-    "--footer", "ExtJS 4.0.2a Documentation from Sencha. Generated with <a href='https://github.com/nene/jsduck'>JSDuck</a> revison #{rev}",
-    "--extjs-path", "extjs/ext-all.js",
+    "--footer", "ExtJS 4.0.2a Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
+    "--head-html", head_html,
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",
@@ -94,7 +97,7 @@ desc "Run JSDuck on ExtJS SDK to create release version of docs app"
 task :export do
   load_sdk_vars
   run_jsduck_export([
-    "--append-html", <<-EOHTML
+    "--body-html", <<-EOHTML
     <div id="notice-text" style="display: none">
       Use <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a> for up to date documentation and features
     </div>
@@ -106,7 +109,7 @@ desc "Run JSDuck on ExtJS SDK to create live docs app"
 task :live_docs do
   load_sdk_vars
   run_jsduck_export([
-    "--append-html", <<-EOHTML
+    "--body-html", <<-EOHTML
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-1396058-10']);

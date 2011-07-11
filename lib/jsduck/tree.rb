@@ -20,9 +20,10 @@ module JsDuck
     # Given list of class documentation objects returns a
     # tree-structure that can be turned into JSON that's needed by
     # documentation browser interface.
-    def create(docs)
+    def create(docs, guides=[])
       docs.each {|cls| add_class(cls) }
       sort_tree(@root)
+      add_guides(guides)
       @root
     end
 
@@ -34,10 +35,10 @@ module JsDuck
 
     # Comparson method that sorts package nodes before class nodes.
     def compare(a, b)
-      if a[:isClass] == b[:isClass]
+      if a[:leaf] == b[:leaf]
         a[:text].casecmp(b[:text])
       else
-        a[:isClass] ? 1 : -1
+        a[:leaf] ? 1 : -1
       end
     end
 
@@ -64,12 +65,20 @@ module JsDuck
       package
     end
 
+    # When guides list not empty, add guides to tree
+    def add_guides(guides)
+      if guides.length > 0
+        pkg = package_node("guides")
+        guides.each {|g| pkg[:children] << guide_node(g) }
+        @root[:children] << pkg
+      end
+    end
+
     # Given full doc object for class creates class node
     def class_node(cls)
       return {
         :text => cls.short_name,
-        :clsName => cls.full_name,
-        :isClass => true,
+        :url => "/api/"+cls.full_name,
         :iconCls => class_icon(cls),
         :leaf => true
       }
@@ -91,6 +100,16 @@ module JsDuck
         :text => Class.short_name(name),
         :iconCls => "icon-pkg",
         :children => []
+      }
+    end
+
+    # Given full guide object creates guide node
+    def guide_node(guide)
+      return {
+        :text => guide[:title],
+        :url => "/guide/"+guide[:name],
+        :iconCls => "icon-guide",
+        :leaf => true
       }
     end
   end
