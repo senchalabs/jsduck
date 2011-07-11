@@ -75,58 +75,19 @@ Ext.define('Docs.controller.Examples', {
         });
     },
 
-    showExample: function(inlineEg, exampleId, stripComments, updateHeight) {
-        // Works with Gists from GitHub
-        if (exampleId.match(/^https:\/\/api\.github\.com/)) {
-            Ext.data.JsonP.request({
-                url: exampleId,
-                success: function(json) {
-                    inlineEg.codeEditor.setValue(json.data.files["basic_grid_panel.js"].content);
-                    window.frames[inlineEg.getIframeId()].refreshPage(inlineEg.codeEditor.getValue(), '');
-                },
-                scope: this
-            });
-        }
-        else {
-            Ext.Ajax.request({
-                method: 'GET',
-                url: 'doc-resources/' + exampleId,
-                headers: { 'Content-Type' : 'application/json' },
-                success: function(response, opts) {
-                    // Remove any trailing whitespace
-                    var code = response.responseText.replace(/\s*$/, '');
-
-                    // Remove comments
-                    if (stripComments) {
-                        code = code.replace(/\/\*\*[\s\S]*\*\/[\s\S]/, '');
-                    }
-
-                    inlineEg.codeEditor.setValue(code);
-
-                    var activeItem = inlineEg.layout.getActiveItem();
-                    if (activeItem.cmpName == 'preview') {
-                        this.refreshPreview(inlineEg);
-                    }
-
-                    if (updateHeight) {
-                        inlineEg.updateHeight();
-                    }
-                },
-                scope: this
-            });
-        }
-    },
-
     replaceExampleDivs: function() {
         Ext.Array.each(Ext.query('.inline-example'), function(inlineEg) {
-            var egId = inlineEg.getAttribute('rel');
-            var divId = inlineEg.getAttribute('id');
-            Ext.create('Docs.view.examples.Inline', {
+            // Grab code from <pre> element and replace it with new empty <div>
+            var code = inlineEg.innerHTML;
+            var div = document.createElement("div");
+            inlineEg.parentNode.replaceChild(div, inlineEg);
+            // Then render the example component inside the div
+            var eg = Ext.create('Docs.view.examples.Inline', {
                 height: 200,
-                renderTo: divId,
+                renderTo: div,
                 listeners: {
-                    render: function(cmp) {
-                        this.showExample(cmp, egId, true, true);
+                    afterrender: function(cmp) {
+                        this.updateExample(cmp, code);
                     },
                     scope: this
                 }
@@ -134,8 +95,20 @@ Ext.define('Docs.controller.Examples', {
         }, this);
     },
 
-    refreshPreview: function(cmp) {
-        document.getElementById(cmp.getIframeId()).contentWindow.refreshPage(cmp.codeEditor.getValue(), '');
+    // Updates code inside example component
+    updateExample: function(example, code) {
+        example.codeEditor.setValue(code);
+        var activeItem = example.layout.getActiveItem();
+        if (activeItem.cmpName == 'preview') {
+            this.refreshPreview(example);
+        }
+        example.updateHeight();
+    },
+
+    // Refreshes the preview of example
+    refreshPreview: function(example) {
+        var iframe = document.getElementById(example.getIframeId());
+        iframe.contentWindow.refreshPage(example.codeEditor.getValue(), '');
     }
 
 });

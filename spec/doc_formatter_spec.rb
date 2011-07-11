@@ -113,6 +113,20 @@ describe JsDuck::DocFormatter do
         '<img src="some/image.png" alt="foo&quot;bar"/>'
     end
 
+    # {@example ...}
+
+    it "replaces {@example foo.js} with source from foo.js file" do
+      @formatter.get_example = lambda { "Some code" }
+      @formatter.replace('{@example foo.js}').should ==
+        '<pre class="inline-example">Some code</pre>'
+    end
+
+    it "escapes HTML inside source of {@example}" do
+      @formatter.get_example = lambda { "Some <html> code" }
+      @formatter.replace('{@example foo.js}').should ==
+        '<pre class="inline-example">Some &lt;html&gt; code</pre>'
+    end
+
     # auto-conversion of identifiable ClassNames to links
     describe "auto-detect" do
       before do

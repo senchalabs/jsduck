@@ -29,6 +29,10 @@ module JsDuck
     # Default value: '<img src="%u" alt="%a"/>'
     attr_accessor :img_tpl
 
+    # Assign to this a function that retrieves the example code when
+    # passed in a filename
+    attr_accessor :get_example
+
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
     # Context#blah is meant.
@@ -48,8 +52,6 @@ module JsDuck
     # name actually exists.
     attr_accessor :relations
 
-    @@example_counter = 0
-
     def initialize
       @class_context = ""
       @doc_context = {}
@@ -57,7 +59,7 @@ module JsDuck
       @relations = {}
       @link_tpl = '<a href="%c%#%m">%a</a>'
       @img_tpl = '<img src="%u" alt="%a"/>'
-      @example_tpl = '<div class="inline-example" id="eg%i" rel="%u"></div>'
+      @example_tpl = '<pre class="inline-example">%a</pre>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
       @example_re = /\{@example\s+(\S*?)\s*\}/m
@@ -169,14 +171,18 @@ module JsDuck
       end
     end
 
-    # applies the example template
-    def example(url)
+    # Replaces example template with example read from file
+    def example(path)
       @example_tpl.gsub(/(%\w)/) do
         case $1
-        when '%u'
-          url
-        when '%i'
-          @@example_counter += 1
+        when '%a'
+          if @get_example
+            CGI.escapeHTML(@get_example.call(path))
+          else
+            file = @doc_context[:filename]
+            line = @doc_context[:linenr]
+            Logger.instance.warn("--examples not specified, but {@example} found in #{file} line #{line}.")
+          end
         else
           $1
         end

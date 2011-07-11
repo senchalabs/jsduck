@@ -99,6 +99,10 @@ opts = OptionParser.new do | opts |
     app.categories_path = path
   end
 
+  opts.on('--examples=PATH', "Path to examples directory.", " ") do |path|
+    app.examples_dir = path
+  end
+
   opts.on('--link=TPL',
     "HTML template for replacing {@link}.",
     "Possible placeholders:",
