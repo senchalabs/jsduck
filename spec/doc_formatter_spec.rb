@@ -301,6 +301,20 @@ describe JsDuck::DocFormatter do
       end
     end
 
+    shared_examples_for "example" do
+      it "creates <pre> with inline-example class" do
+        @html.should =~ /<pre class="inline-example">/m
+      end
+
+      it "removes the line with @example markup" do
+        @html.should_not =~ /@example/m
+      end
+
+      it "completely removes the first line and whitespace after it" do
+        @html.should =~ /code>if/m
+      end
+    end
+
     describe "code block beginning with @example" do
       before do
         @html = @formatter.format(<<-EOS.gsub(/^ *\|/, ""))
@@ -312,18 +326,22 @@ describe JsDuck::DocFormatter do
           |    }
         EOS
       end
+      it_should_behave_like "example"
+    end
 
-      it "creates <pre> with inline-example class" do
-        @html.should =~ /<pre class="inline-example">/m
+    describe "code block beginning with @example and title" do
+      before do
+        @html = @formatter.format(<<-EOS.gsub(/^ *\|/, ""))
+          |See example:
+          |
+          |    @example My little example
+          |
+          |    if (condition) {
+          |        doSomething();
+          |    }
+        EOS
       end
-
-      it "removes the line with @example markup" do
-        @html.should_not =~ /@example/m
-      end
-
-      it "completely removes the first line" do
-        @html.should =~ /code>if/m
-      end
+      it_should_behave_like "example"
     end
 
   end

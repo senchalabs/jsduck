@@ -63,7 +63,7 @@ module JsDuck
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
       @example_re = /\{@example\s+(\S*?)\s*\}/m
-      @example_annotation_re = /<pre><code>@example\s*\n/m
+      @example_annotation_re = /<pre><code>@example( +[^\n]*)?\s+/m
     end
 
     # Replaces {@link} and {@img} tags, auto-generates links for
