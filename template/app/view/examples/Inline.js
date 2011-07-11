@@ -39,12 +39,6 @@ Ext.define('Docs.view.examples.Inline', {
             {
                 padding: 0,
                 margin: 0,
-                iconCls: 'info',
-                tooltip: 'Meta Info'
-            },
-            {
-                padding: 0,
-                margin: 0,
                 iconCls: 'copy',
                 tooltip: 'Copy to Clipboard'
             }
@@ -68,12 +62,6 @@ Ext.define('Docs.view.examples.Inline', {
             bodyPadding: 10,
             cmpName: 'preview',
             html: '<iframe id="' + this.getIframeId() + '" src="egIframe.html" style="width: 100%; height: 100%; border: 0"></iframe>'
-        });
-
-        this.items.push({
-            bodyPadding: 10,
-            html: 'Meta Info',
-            cmpName: 'meta'
         });
 
         this.callParent(arguments);

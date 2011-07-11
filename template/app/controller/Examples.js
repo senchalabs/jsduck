@@ -40,11 +40,6 @@ Ext.define('Docs.controller.Examples', {
                     this.activateTab(cmp, 'preview');
                 }
             },
-            'inlineexample [cmpName=meta]': {
-                activate: function(cmp) {
-                    this.activateTab(cmp, 'info');
-                }
-            },
             'inlineexample toolbar button[iconCls=code]': {
                 click: function(cmp) {
                     cmp.up('inlineexample').layout.setActiveItem(0);
@@ -53,11 +48,6 @@ Ext.define('Docs.controller.Examples', {
             'inlineexample toolbar button[iconCls=preview]': {
                 click: function(cmp) {
                     cmp.up('inlineexample').layout.setActiveItem(1);
-                }
-            },
-            'inlineexample toolbar button[iconCls=info]': {
-                click: function(cmp) {
-                    cmp.up('inlineexample').layout.setActiveItem(2);
                 }
             },
             'classoverview': {
