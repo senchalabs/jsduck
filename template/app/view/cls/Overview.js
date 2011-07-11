@@ -12,7 +12,6 @@ Ext.define('Docs.view.cls.Overview', {
     ],
 
     cls: 'class-overview iScroll',
-    title: 'Overview',
     autoScroll: true,
     bodyPadding: '20',
 

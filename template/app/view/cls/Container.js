@@ -18,7 +18,7 @@ Ext.define('Docs.view.cls.Container', {
     initComponent: function() {
         this.items = [
             Ext.create('Docs.view.cls.Header'),
-            Ext.create('Docs.view.cls.TabPanel', {
+            Ext.create('Docs.view.cls.Overview', {
                 flex: 1
             })
         ];

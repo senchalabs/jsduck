@@ -7,8 +7,7 @@ Ext.define('Docs.controller.Classes', {
 
     requires: [
         'Docs.History',
-        'Docs.Syntax',
-        'Docs.view.cls.Overview'
+        'Docs.Syntax'
     ],
 
     stores: [
@@ -224,12 +223,6 @@ Ext.define('Docs.controller.Classes', {
         if (this.currentCls !== cls) {
             this.getViewport().setPageTitle(cls.name);
             this.getHeader().load(cls);
-
-            if (!this.getOverview()) {
-                this.getTabPanel().add(Ext.create('Docs.view.cls.Overview'));
-                this.getTabPanel().setActiveTab(0);
-            }
-
             this.getOverview().load(cls);
             this.getOverview().setLoading(false);
 
