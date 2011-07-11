@@ -295,14 +295,6 @@ module JsDuck
       FileUtils.rm(dir+"/index.html")
       File.open(dir+"/index.html", 'w') {|f| f.write(html) }
     end
-
-    def create_example_iframe(template_dir, dir)
-      Logger.instance.log("Creating #{dir}/egIframe.html...")
-      html = IO.read(template_dir+"/egIframe.html")
-      html.gsub!("{extjs_path}", @extjs_path)
-      FileUtils.rm(dir+"/egIframe.html")
-      File.open(dir+"/egIframendex.html", 'w') {|f| f.write(html) }
-    end
   end
 
 end
