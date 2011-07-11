@@ -59,10 +59,11 @@ module JsDuck
       @relations = {}
       @link_tpl = '<a href="%c%#%m">%a</a>'
       @img_tpl = '<img src="%u" alt="%a"/>'
-      @example_tpl = '<pre class="inline-example">%a</pre>'
+      @example_tpl = '<pre class="inline-example"><code>%a</code></pre>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
       @example_re = /\{@example\s+(\S*?)\s*\}/m
+      @example_annotation_re = /<pre><code>@example\s*\n/m
     end
 
     # Replaces {@link} and {@img} tags, auto-generates links for
@@ -72,6 +73,10 @@ module JsDuck
     # HTML from @link_tpl.
     #
     # Replaces {@img path/to/image.jpg Alt text} with HTML from @img_tpl.
+    #
+    # Replaces {@example path/to/example.js} with source from that file.
+    #
+    # Adds 'inline-example' class to code examples beginning with @example.
     #
     # Additionally replaces strings recognized as ClassNames with
     # links to these classes.  So one doesn even need to use the @link
@@ -86,10 +91,13 @@ module JsDuck
           out += replace_img_tag(s.scan(@img_re))
         elsif s.check(@example_re)
           out += replace_example_tag(s.scan(@example_re))
-        elsif s.check(/\{/)
-          out += s.scan(/\{/)
+        elsif s.check(@example_annotation_re)
+          s.scan(@example_annotation_re)
+          out += '<pre class="inline-example"><code>'
+        elsif s.check(/[{<]/)
+          out += s.scan(/[{<]/)
         else
-          out += replace_class_names(s.scan(/[^{]+/))
+          out += replace_class_names(s.scan(/[^{<]+/))
         end
       end
       out
