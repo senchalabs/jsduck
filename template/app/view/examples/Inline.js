@@ -6,6 +6,7 @@ Ext.define('Docs.view.examples.Inline', {
     extend: 'Ext.Panel',
     alias: 'widget.inlineexample',
 
+    componentCls: 'inline-example-cmp',
     layout: 'card',
     border: 0,
     resizable: {

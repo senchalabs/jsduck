@@ -148,7 +148,7 @@ Ext.define('Docs.controller.Examples', {
     replaceExampleDivs: function() {
         var self = this;
 
-        Ext.Array.each(Ext.query('.inlineExample'), function(inlineEg) {
+        Ext.Array.each(Ext.query('.inline-example'), function(inlineEg) {
             var egId = inlineEg.getAttribute('rel');
             var divId = inlineEg.getAttribute('id');
             var eg = Ext.create('Docs.view.examples.Inline', {

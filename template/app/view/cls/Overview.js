@@ -175,7 +175,7 @@ Ext.define('Docs.view.cls.Overview', {
         var replaceExample = function() {
             var idx = cls.doc.match(/\{@example ([A-Za-z0-9_\/\.]+)\}/);
             if (idx) {
-                cls.doc = cls.doc.replace(/\{@example ([A-Za-z0-9_\/\.]+)\}/, '<div class="inlineExample" id="eg' + egId + '" rel="' + idx[1] + '"></div>');
+                cls.doc = cls.doc.replace(/\{@example ([A-Za-z0-9_\/\.]+)\}/, '<div class="inline-example" id="eg' + egId + '" rel="' + idx[1] + '"></div>');
                 egId += 1;
                 replaceExample();
             }
