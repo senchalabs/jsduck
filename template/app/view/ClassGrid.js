@@ -48,7 +48,10 @@ Ext.define('Docs.view.ClassGrid', {
             },
             {
                 dataIndex: 'title',
-                flex: true
+                flex: true,
+                renderer: function(title, data, r) {
+                    return Ext.String.format('<a href="#{0}" rel="{0}" class="docClass">{1}</a>', r.get("url"), title);
+                }
             }
         ];
 
@@ -70,8 +73,10 @@ Ext.define('Docs.view.ClassGrid', {
         this.callParent(arguments);
 
         this.on("itemclick", function(view, record, item, index, event) {
-            // Don't fire urlclick when close button clicked
-            if (!event.getTarget("img")) {
+            // Only fire urlclick when the row background is clicked
+            // (that doesn't contain neither the link nor the close
+            // button).
+            if (!event.getTarget("img") && !event.getTarget("a")) {
                 this.fireEvent("urlclick", record.get("url"), event);
             }
         }, this);
