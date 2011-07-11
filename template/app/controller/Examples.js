@@ -4,13 +4,6 @@
 Ext.define('Docs.controller.Examples', {
     extend: 'Ext.app.Controller',
 
-    refs: [
-        {
-            ref: 'tab',
-            selector: 'inlineexample toolbar button'
-        }
-    ],
-
     init: function() {
         this.control({
             'inlineexample': {
