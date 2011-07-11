@@ -4,6 +4,9 @@
 Ext.define('Docs.view.cls.Examples', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.classexamples',
+    requires: [
+        'Docs.view.examples.Inline'
+    ],
 
     cls: 'iScroll',
     title: 'Examples',
