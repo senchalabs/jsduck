@@ -28,13 +28,14 @@ Ext.define('Docs.controller.Search', {
                     this.loadRecord(record);
                 },
                 changePage: function(dropdown, delta) {
-                    // don't hide dropdown
-                    clearTimeout(this.hideTimeout);
-                    this.getField().focus();
-
                     // increment page number and update search results display
                     this.pageIndex += delta;
                     this.search(this.getField().getValue());
+                },
+                footerClick: function(dropdown, delta) {
+                    // don't hide dropdown
+                    clearTimeout(this.hideTimeout);
+                    this.getField().focus();
                 }
             },
             '#search-field': {
