@@ -30,7 +30,14 @@ Ext.define('Docs.view.search.Dropdown', {
              * @param {Ext.view.View} this
              * @param {Number} delta  Either +1 for next page or -1 for previous page
              */
-            "changePage"
+            "changePage",
+            /**
+             * @event
+             * Fired when the footer area is clicked.
+             * Used to prevent hiding of dropdown.
+             * @param {Ext.view.View} this
+             */
+            "footerClick"
         );
 
         this.tpl = new Ext.XTemplate(
@@ -66,6 +73,12 @@ Ext.define('Docs.view.search.Dropdown', {
             }, this, {
                 preventDefault: true,
                 delegate: '.next'
+            });
+
+            this.el.addListener('click', function() {
+                this.fireEvent("footerClick", this);
+            }, this, {
+                delegate: '.footer'
             });
         }, this);
 
