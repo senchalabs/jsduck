@@ -195,7 +195,7 @@ def combine_js(html, base_dir)
   fname = "#{OUT_DIR}/app.js"
   File.open(fname, 'w') {|f| f.write(js.join("\n")) }
   yui_compress(fname)
-  html.sub(js_section_re, '<script type="text/javascript" src="app.js""></script>')
+  html.sub(js_section_re, '<script type="text/javascript" src="app.js"></script>')
 end
 
 # Use :export or :live_docs tasks instead of running this separately
