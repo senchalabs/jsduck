@@ -86,12 +86,19 @@ def run_jsduck_export(extra_options, ext_dir)
     "#{SDK_DIR}/platform/core/src",
   ].concat(extra_options))
 
+  # Empty th extjs dir
   system "rm #{OUT_DIR}/extjs"
+  system "mkdir -p #{OUT_DIR}/extjs/resources/css"
   system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
-  system "cp #{EXT_DIR}/ext-all.js #{OUT_DIR}/extjs"
-  system "cp -r #{ext_dir}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
-  system "rm -rf #{ext_dir}/resources/sass"
+  # Clean up SASS files
+  system "rm -rf #{OUT_DIR}/resources/sass"
   system "rm -rf #{OUT_DIR}/resources/.sass-cache"
+  # Copy over ext-all.js for Docs app
+  system "cp #{EXT_DIR}/ext-all.js #{OUT_DIR}/extjs"
+  # Copy the standard ExtJS files for use with inline examples
+  system "cp #{EXT_DIR}/ext-all-debug.js #{OUT_DIR}/extjs"
+  system "cp #{EXT_DIR}/resources/css/ext-all.css #{OUT_DIR}/extjs/resources/css"
+  system "cp -r #{EXT_DIR}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
 end
 
 desc "Run JSDuck on ExtJS SDK to create release version of docs app"
@@ -155,8 +162,46 @@ task :docs do
   ])
 end
 
+
+# Reads in all CSS files referenced between BEGIN CSS and END CSS markers.
+# Deletes those input CSS files and writes out concatenated CSS to
+# resources/css/app.css
+# Finally replaces the CSS section with <link> to that one CSS file.
+def combine_css(html, base_dir)
+  css_section_re = /<!-- BEGIN CSS -->.*<!-- END CSS -->/m
+  css = []
+  css_section_re.match(html)[0].each_line do |line|
+    if line =~ /<link rel="stylesheet" href="(.*?)"/
+      file = $1
+      css << IO.read(base_dir + "/" + file)
+      system("rm", base_dir + "/" + file)
+    end
+  end
+
+  File.open("#{OUT_DIR}/resources/css/app.css", 'w') {|f| f.write(css.join("\n")) }
+  html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/app.css" type="text/css" />')
+end
+
+# Same thing for JavaScript, result is written to: app.js
+def combine_js(html, base_dir)
+  js_section_re = /<!-- BEGIN JS -->.*<!-- END JS -->/m
+  js = []
+  js_section_re.match(html)[0].each_line do |line|
+    if line =~ /<script .* src="(.*)">/
+      file = $1
+      js << IO.read(base_dir + "/" + file)
+      system("rm", base_dir + "/" + file)
+    elsif line =~ /<script .*>(.*)<\/script>/
+      js << $1
+    end
+  end
+
+  File.open("#{OUT_DIR}/app.js", 'w') {|f| f.write(js.join("\n")) }
+  html.sub(js_section_re, '<script type="text/javascript" src="app.js""></script>')
+end
+
 # Note: This should be run *after* running the :export or :live_docs task
-desc "Compresses JavaScript files in output dir"
+desc "Compresses JavaScript and CSS files in output dir"
 task :compress do
   load_sdk_vars
   # Create JSB3 file for Docs app
@@ -172,6 +217,12 @@ task :compress do
   system("rm", "#{OUT_DIR}/app-all.js")
   # Remove the entire app/ dir
   system("rm", "-r", "#{OUT_DIR}/app")
+
+  # Concatenate CSS and JS files referenced in index.html file
+  html = IO.read("#{OUT_DIR}/index.html")
+  html = combine_css(html, OUT_DIR)
+  html = combine_js(html, OUT_DIR)
+  File.open("#{OUT_DIR}/index.html", 'w') {|f| f.write(html) }
 end
 
 task :default => :spec
