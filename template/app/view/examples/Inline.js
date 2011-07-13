@@ -50,21 +50,49 @@ Ext.define('Docs.view.examples.Inline', {
     },
 
     initComponent: function() {
-        this.items = [{
-            cmpName: 'code',
-            style: 'border: 0',
-            bodyPadding: 2,
-            bodyStyle: 'background: #f7f7f7',
-            autoScroll: true
-        }];
-
-        this.items.push({
-            bodyPadding: 10,
-            cmpName: 'preview',
-            html: '<iframe id="' + this.getIframeId() + '" src="egIframe.html" style="width: 100%; height: 100%; border: 0"></iframe>'
-        });
+        this.items = [
+            {
+                cmpName: 'code',
+                style: 'border: 0',
+                bodyPadding: 2,
+                bodyStyle: 'background: #f7f7f7',
+                autoScroll: true
+            }
+        ];
 
         this.callParent(arguments);
+    },
+
+    /**
+     * Activates the code card.
+     */
+    showCode: function() {
+        this.layout.setActiveItem(0);
+    },
+
+    /**
+     * Activates the code preview card.
+     * When called for the first time, creates the preview iframe.
+     * @param {Function} callback  Called when iframe is ready.
+     * @param {Object} scope
+     */
+    showPreview: function(callback, scope) {
+        if (!this.previewInitialized) {
+            this.add({
+                bodyPadding: 10,
+                cmpName: 'preview',
+                html: '<iframe id="' + this.getIframeId() + '" style="width: 100%; height: 100%; border: 0"></iframe>'
+            });
+            var iframe = document.getElementById(this.getIframeId());
+            iframe.onload = Ext.Function.bind(callback, scope);
+            iframe.src = "egIframe.html";
+            this.layout.setActiveItem(1);
+            this.previewInitialized = true;
+        }
+        else {
+            this.layout.setActiveItem(1);
+            callback.call(scope);
+        }
     },
 
     /**

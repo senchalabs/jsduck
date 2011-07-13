@@ -33,21 +33,20 @@ Ext.define('Docs.controller.Examples', {
                 }
             },
             'inlineexample [cmpName=preview]': {
-                show: function(card) {
-                    this.refreshPreview(card.ownerCt);
-                },
                 activate: function(cmp) {
                     this.activateTab(cmp, 'preview');
                 }
             },
             'inlineexample toolbar button[iconCls=code]': {
                 click: function(cmp) {
-                    cmp.up('inlineexample').layout.setActiveItem(0);
+                    cmp.up('inlineexample').showCode();
                 }
             },
             'inlineexample toolbar button[iconCls=preview]': {
                 click: function(cmp) {
-                    cmp.up('inlineexample').layout.setActiveItem(1);
+                    cmp.up('inlineexample').showPreview(function() {
+                        this.refreshPreview(cmp.up('inlineexample'));
+                    }, this);
                 }
             },
             'inlineexample toolbar button[iconCls=copy]': {
