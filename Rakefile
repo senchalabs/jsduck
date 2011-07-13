@@ -88,8 +88,9 @@ def run_jsduck_export(extra_options)
 
 end
 
-desc "Run JSDuck on ExtJS SDK to create release version of docs app"
-task :export do
+# Use the :export task instead
+desc "Base task for creating export"
+task :base_export do
   load_sdk_vars
   run_jsduck_export([
     "--body-html", <<-EOHTML
@@ -100,8 +101,9 @@ task :export do
   ])
 end
 
-desc "Run JSDuck on ExtJS SDK to create live docs app"
-task :live_docs do
+# Use the :live_docs task instead
+desc "Base task for creating live docs"
+task :base_live_docs do
   load_sdk_vars
   run_jsduck_export([
     "--body-html", <<-EOHTML
@@ -187,7 +189,7 @@ def combine_js(html, base_dir)
   html.sub(js_section_re, '<script type="text/javascript" src="app.js""></script>')
 end
 
-# Note: This should be run *after* running the :export or :live_docs task
+# Use :export or :live_docs tasks instead of running this separately
 desc "Compresses JavaScript and CSS files in output dir"
 task :compress do
   load_sdk_vars
@@ -223,5 +225,11 @@ task :compress do
   system "cp #{EXT_DIR}/resources/css/ext-all.css #{OUT_DIR}/extjs/resources/css"
   system "cp -r #{EXT_DIR}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
 end
+
+desc "Run JSDuck on ExtJS SDK to create release version of docs app"
+task :export => [:base_export, :compress]
+
+desc "Run JSDuck on ExtJS SDK to create live docs app"
+task :live_docs => [:base_live_docs, :compress]
 
 task :default => :spec
