@@ -167,7 +167,12 @@ def combine_css(html, base_dir)
     end
   end
 
-  File.open("#{OUT_DIR}/resources/css/app.css", 'w') {|f| f.write(css.join("\n")) }
+  fname = "#{OUT_DIR}/resources/css/app.css"
+  File.open(fname, 'w') {|f| f.write(css.join("\n")) }
+
+  # Compress the CSS in-place
+  system "java -jar $(dirname $(which sencha))/../jsbuilder/ycompressor/ycompressor.jar -o #{fname} #{fname}"
+
   html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/app.css" type="text/css" />')
 end
 
