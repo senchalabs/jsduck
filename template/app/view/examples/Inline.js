@@ -40,7 +40,7 @@ Ext.define('Docs.view.examples.Inline', {
                 padding: 0,
                 margin: 0,
                 iconCls: 'copy',
-                tooltip: 'Copy to Clipboard'
+                tooltip: 'Select'
             }
         ]
     }],

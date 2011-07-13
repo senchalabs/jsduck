@@ -50,6 +50,14 @@ Ext.define('Docs.controller.Examples', {
                     cmp.up('inlineexample').layout.setActiveItem(1);
                 }
             },
+            'inlineexample toolbar button[iconCls=copy]': {
+                click: function(cmp) {
+                    var editor = cmp.up('inlineexample').codeEditor;
+                    var lastLine = editor.lineCount() - 1;
+                    var lastCh = editor.getLine(lastLine).length;
+                    editor.setSelection({line: 0, ch: 0}, {line: lastLine, ch: lastCh});
+                }
+            },
             'classoverview': {
                 resize: function() {
                     Ext.Array.each(Ext.ComponentQuery.query('.inlineexample'), function(c) {
