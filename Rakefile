@@ -69,7 +69,7 @@ task :sdk do
   ])
 end
 
-def run_jsduck_export(extra_options, ext_dir)
+def run_jsduck_export(extra_options)
   load_sdk_vars
   rev = `git rev-parse HEAD`.slice(0, 7)
   head_html = <<-EOHTML
@@ -86,19 +86,6 @@ def run_jsduck_export(extra_options, ext_dir)
     "#{SDK_DIR}/platform/core/src",
   ].concat(extra_options))
 
-  # Empty th extjs dir
-  system "rm #{OUT_DIR}/extjs"
-  system "mkdir -p #{OUT_DIR}/extjs/resources/css"
-  system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
-  # Clean up SASS files
-  system "rm -rf #{OUT_DIR}/resources/sass"
-  system "rm -rf #{OUT_DIR}/resources/.sass-cache"
-  # Copy over ext-all.js for Docs app
-  system "cp #{EXT_DIR}/ext-all.js #{OUT_DIR}/extjs"
-  # Copy the standard ExtJS files for use with inline examples
-  system "cp #{EXT_DIR}/ext-all-debug.js #{OUT_DIR}/extjs"
-  system "cp #{EXT_DIR}/resources/css/ext-all.css #{OUT_DIR}/extjs/resources/css"
-  system "cp -r #{EXT_DIR}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
 end
 
 desc "Run JSDuck on ExtJS SDK to create release version of docs app"
@@ -110,7 +97,7 @@ task :export do
       Use <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a> for up to date documentation and features
     </div>
     EOHTML
-  ], EXT_DIR)
+  ])
 end
 
 desc "Run JSDuck on ExtJS SDK to create live docs app"
@@ -146,7 +133,7 @@ task :live_docs do
       }
     </script>
   EOHTML
-  ], "#{SDK_DIR}/extjs/build/sdk")
+  ])
 end
 
 desc "Run JSDuck on the Docs app itself"
@@ -223,6 +210,18 @@ task :compress do
   html = combine_css(html, OUT_DIR)
   html = combine_js(html, OUT_DIR)
   File.open("#{OUT_DIR}/index.html", 'w') {|f| f.write(html) }
+
+  # Clean up SASS files
+  system "rm -rf #{OUT_DIR}/resources/sass"
+  system "rm -rf #{OUT_DIR}/resources/.sass-cache"
+
+  # Empty the extjs dir, leave only the main JS file, CSS and images (for inline examples)
+  system "rm -rf #{OUT_DIR}/extjs"
+  system "mkdir -p #{OUT_DIR}/extjs/resources/css"
+  system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
+  system "cp #{EXT_DIR}/ext-all-debug.js #{OUT_DIR}/extjs"
+  system "cp #{EXT_DIR}/resources/css/ext-all.css #{OUT_DIR}/extjs/resources/css"
+  system "cp -r #{EXT_DIR}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
 end
 
 task :default => :spec

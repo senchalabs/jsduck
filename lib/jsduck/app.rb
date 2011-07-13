@@ -63,7 +63,7 @@ module JsDuck
       @show_private_classes = false
       @title = "Ext JS API Documentation"
       @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
-      @extjs_path = "extjs/ext-all.js"
+      @extjs_path = "extjs/ext.js"
       @local_storage_db = "docs"
       @head_html = ""
       @body_html = ""
