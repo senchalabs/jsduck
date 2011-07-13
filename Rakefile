@@ -151,6 +151,11 @@ task :docs do
   ])
 end
 
+# Compress JS/CSS file in-place
+# Using a hackish way to access yui-compressor
+def yui_compress(fname)
+  system "java -jar $(dirname $(which sencha))/../jsbuilder/ycompressor/ycompressor.jar -o #{fname} #{fname}"
+end
 
 # Reads in all CSS files referenced between BEGIN CSS and END CSS markers.
 # Deletes those input CSS files and writes out concatenated CSS to
@@ -169,10 +174,7 @@ def combine_css(html, base_dir)
 
   fname = "#{OUT_DIR}/resources/css/app.css"
   File.open(fname, 'w') {|f| f.write(css.join("\n")) }
-
-  # Compress the CSS in-place
-  system "java -jar $(dirname $(which sencha))/../jsbuilder/ycompressor/ycompressor.jar -o #{fname} #{fname}"
-
+  yui_compress(fname)
   html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/app.css" type="text/css" />')
 end
 
@@ -190,7 +192,9 @@ def combine_js(html, base_dir)
     end
   end
 
-  File.open("#{OUT_DIR}/app.js", 'w') {|f| f.write(js.join("\n")) }
+  fname = "#{OUT_DIR}/app.js"
+  File.open(fname, 'w') {|f| f.write(js.join("\n")) }
+  yui_compress(fname)
   html.sub(js_section_re, '<script type="text/javascript" src="app.js""></script>')
 end
 
