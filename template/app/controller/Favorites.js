@@ -34,10 +34,7 @@ Ext.define('Docs.controller.Favorites', {
                     Docs.Favorites.remove(url);
                 },
                 reorder: function() {
-                    // Hack to fix a bug in localStorage which prevents the order of
-                    // items being saved when they're changed
-                    var store = Ext.getStore('Favorites');
-                    store.getProxy().setIds(Ext.Array.map(store.data.items, function(i) { return i.data.id; }));
+                    Docs.Favorites.saveOrder();
                 }
             },
             'classtree': {

@@ -84,5 +84,16 @@ Ext.define("Docs.Favorites", {
      */
     getCount: function() {
         return this.store.getCount();
+    },
+
+    /**
+     * Save order of favorites in store.
+     *
+     * This needs to be called explicitly, because of a bug in
+     * localStorage which prevents the order of items being saved when
+     * they're changed.
+     */
+    saveOrder: function() {
+        this.store.getProxy().setIds(Ext.Array.map(this.store.data.items, function(i) { return i.data.id; }));
     }
 });
