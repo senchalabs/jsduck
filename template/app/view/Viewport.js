@@ -9,7 +9,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.cls.Container',
         'Docs.view.index.Container',
         'Docs.view.tree.Tree',
-        'Docs.view.ClassGrid',
+        'Docs.view.FavoritesPanel',
         'Docs.Favorites',
         'Docs.Settings',
         'Docs.History'
@@ -21,7 +21,6 @@ Ext.define('Docs.view.Viewport', {
 
     initComponent: function() {
         this.items = [
-
             {
                 region:'west',
                 width: 240,
@@ -80,67 +79,11 @@ Ext.define('Docs.view.Viewport', {
                         border: false,
                         items: [
                             {
+                                xtype: 'favoritespanel',
                                 id: 'classes-tab-panel',
-                                xtype: 'tabpanel',
                                 region: 'north',
                                 height: Docs.Settings.get('favorites-height') || 150,
-                                padding: '2 4 0 0',
-                                bodyPadding: '3 15 0 12',
-                                border: false,
-                                plain: true,
-                                split: true,
-                                listeners: {
-                                    afterRender: function() {
-                                        // Add 7px padding at left side of tab-bar
-                                        this.tabBar.insert(0, {width: 7, xtype: 'container'});
-                                    },
-                                    resize: function(cmp, w, h) {
-                                        Docs.Settings.set('favorites-height', h);
-                                    }
-                                },
-                                items: [
-                                    {
-                                        xtype: 'classgrid',
-                                        id: 'favorites-grid',
-                                        title: 'Favorites',
-                                        iconCls: 'icon-fav',
-                                        viewConfig: {
-                                            plugins: [{
-                                                pluginId: 'favGridDD',
-                                                ptype: 'gridviewdragdrop',
-                                                animate: true,
-                                                dragText: 'Drag and drop to reorganize'
-                                            }],
-                                            listeners: {
-                                                drop: function() {
-                                                    // Hack to fix a bug in localStorage which prevents the order of
-                                                    // items being saved when they're changed
-                                                    var store = Ext.getStore('Favorites');
-                                                    store.getProxy().setIds(Ext.Array.map(store.data.items, function(i) { return i.data.id; }));
-                                                }
-                                            }
-                                        },
-                                        store: Ext.getStore('Favorites'),
-                                        icons: Docs.icons,
-                                        listeners: {
-                                            closeclick: function(cls) {
-                                                Docs.Favorites.remove(cls);
-                                            },
-                                            // Prevent row highlighting when doing drag-drop
-                                            afterrender: function() {
-                                                var ddPlugin = this.getView().getPlugin('favGridDD');
-
-                                                ddPlugin.dragZone.onInitDrag = function() {
-                                                    Ext.getCmp('favorites-grid').addCls('drag');
-                                                    Ext.view.DragZone.prototype.onInitDrag.apply(this, arguments);
-                                                };
-                                                ddPlugin.dragZone.afterValidDrop = ddPlugin.dragZone.afterInvalidDrop = function() {
-                                                    Ext.getCmp('favorites-grid').removeCls('drag');
-                                                };
-                                            }
-                                        }
-                                    }
-                                ]
+                                hidden: Docs.Favorites.getCount() === 0
                             },
                             {
                                 region: 'center',

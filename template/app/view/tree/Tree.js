@@ -39,10 +39,16 @@ Ext.define('Docs.view.tree.Tree', {
 
         this.callParent();
 
+        Docs.Favorites.on("add", function(url) {
+            this.setFavorite(url, true);
+        }, this);
+        Docs.Favorites.on("remove", function(url) {
+            this.setFavorite(url, false);
+        }, this);
+
         // Add links for favoriting classes.
         // Do this after callParent, because the getRootNode() will
         // work after initComponent has run.
-        Docs.Favorites.setTree(this);
         this.initFavIcons();
     },
 
