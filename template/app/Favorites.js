@@ -9,7 +9,9 @@ Ext.define("Docs.Favorites", {
         observable: 'Ext.util.Observable'
     },
 
-    init: function() {
+    constructor: function() {
+        this.callParent(arguments);
+
         this.addEvents(
             /**
              * Fired when favorite added.
@@ -22,6 +24,9 @@ Ext.define("Docs.Favorites", {
              */
             "remove"
         );
+    },
+
+    init: function() {
         this.callParent(arguments);
 
         // For backwards compatibility with old Favorites Model
