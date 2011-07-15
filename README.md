@@ -159,7 +159,7 @@ reported bugs, submitted patches, and provided a lot of useful input.
 Changelog
 ---------
 
-* 2.0.pre3 - Fixes for the previous pre-release.
+* 2.0.pre4 - Fixes for the previous pre-release.
   * Paging of search results.
   * Support opening classes in tree in new tabs in IE and Firefox.
   * Include upgraded version of prettifier, fixing formatting in IE.
@@ -170,6 +170,8 @@ Changelog
   * Include missing ExtJS image files.
   * Don't exclude static members from singleton classes, simply print
     warning about using @static in singleton class.
+
+* 2.0.pre3 - Bogus release, skipped.
 
 * 2.0.pre2 - Fixes for the previous pre-release.
   * New --stdout command line option.
