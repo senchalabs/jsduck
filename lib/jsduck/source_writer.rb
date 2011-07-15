@@ -26,7 +26,7 @@ module JsDuck
     def uniq_html_filename(filename)
       fname = html_filename(filename)
       nr = 1
-      while File.exists?(fname)
+      while file_exists?(fname)
         nr += 1
         fname = html_filename(filename, nr)
       end
@@ -35,6 +35,12 @@ module JsDuck
 
     def html_filename(filename, nr=0)
       @output_dir + "/" + File.basename(filename, ".js") + (nr > 0 ? nr.to_s : "") + ".html"
+    end
+
+    # Case-insensitive check for file existance to avoid conflicts
+    # when source files dir is moved to Windows machine.
+    def file_exists?(filename)
+      Dir.glob(filename, File::FNM_CASEFOLD).length > 0
     end
 
     # Returns source wrapped inside HTML page

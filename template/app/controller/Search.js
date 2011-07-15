@@ -10,11 +10,31 @@ Ext.define('Docs.controller.Search', {
 
     stores: ['Search'],
 
+    refs: [
+        {
+            ref: 'field',
+            selector: '#search-field'
+        }
+    ],
+
+    // Currentl page in search results and nr of items on one page
+    pageIndex: 0,
+    pageSize: 10,
+
     init: function() {
         this.control({
             '#search-dropdown': {
                 itemclick: function(dropdown, record) {
                     this.loadRecord(record);
+                },
+                changePage: function(dropdown, delta) {
+                    // don't hide dropdown
+                    clearTimeout(this.hideTimeout);
+                    this.getField().focus();
+
+                    // increment page number and update search results display
+                    this.pageIndex += delta;
+                    this.search(this.getField().getValue());
                 }
             },
             '#search-field': {
@@ -56,6 +76,8 @@ Ext.define('Docs.controller.Search', {
                         record && this.loadRecord(record);
                     }
                     else {
+                        // A new search - reset paging back to first page
+                        this.pageIndex = 0;
                         // Wait a bit before actually performing the search.
                         // When user is typing fast, the value of el.value
                         // might not right away be the final value.  For example
@@ -81,7 +103,7 @@ Ext.define('Docs.controller.Search', {
                     // badly when you make a long mouse press on
                     // dropdown item.
                     var dropdown = this.getDropdown();
-                    Ext.Function.defer(dropdown.hide, 500, dropdown);
+                    this.hideTimeout = Ext.Function.defer(dropdown.hide, 500, dropdown);
                 }
             }
         });
@@ -103,10 +125,21 @@ Ext.define('Docs.controller.Search', {
 
     search: function(term) {
         // perform search and load results to store
-        var limit = 10;
         var results = this.filterMembers(term);
+
+        // Don't allow paging before first or after the last page.
+        if (this.pageIndex < 0) {
+            this.pageIndex = 0;
+        }
+        else if (this.pageIndex > Math.floor(results.length / this.pageSize)) {
+            this.pageIndex = Math.floor(results.length / this.pageSize);
+        }
+        var start = this.pageIndex * this.pageSize;
+        var end = start + this.pageSize;
+
         this.getDropdown().setTotal(results.length);
-        this.getDropdown().getStore().loadData(results.slice(0, limit));
+        this.getDropdown().setStart(start);
+        this.getDropdown().getStore().loadData(results.slice(start, end));
         // position dropdown below search box
         this.getDropdown().alignTo('search-field', 'bl', [-23, 2]);
         // hide dropdown when nothing found

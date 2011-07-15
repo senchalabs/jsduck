@@ -71,8 +71,12 @@ opts = OptionParser.new do | opts |
     app.footer = text
   end
 
-  opts.on('--append-html=HTML', "Extra code to append to the index.html page.", " ") do |html|
-    app.append_html = html
+  opts.on('--head-html=HTML', "HTML to append to the <head> section of index.html.", " ") do |html|
+    app.head_html = html
+  end
+
+  opts.on('--body-html=HTML', "HTML to append to the <body> section index.html.", " ") do |html|
+    app.body_html = html
   end
 
   opts.on('--guides=PATH', "Path to guides directory.",
@@ -152,6 +156,12 @@ opts = OptionParser.new do | opts |
     "Path for main ExtJS JavaScript file.  Useful for specifying",
     "something different than extjs/ext-all.js", " ") do |path|
     app.extjs_path = path
+  end
+
+  opts.on('--local-storage-db=NAME',
+    "Prefix for LocalStorage database names.",
+    "Defaults to 'docs'.", " ") do |name|
+    app.local_storage_db = name
   end
 
   opts.on('-h', '--help', "Prints this help message", " ") do

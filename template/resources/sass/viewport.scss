@@ -167,7 +167,7 @@ a {
   left: 20px;
   z-index: 5;
 
-  .item, .total {
+  .item, .footer {
     display: block;
     cursor: pointer;
     overflow: hidden;
@@ -198,10 +198,12 @@ a {
     background-color: #ffffaa; }
   .item.x-view-over {
     background-color: #ffffaa; }
-  .total {
+  .footer {
     cursor: auto;
     text-align: right;
-    font-size: 0.85em; } }
+    font-size: 0.85em;
+    a {
+      padding: 0 0.5em; } } }
 
 
 #center-container, #west-region-container {
@@ -245,6 +247,11 @@ a {
     background-attachment: fixed;
     background: #e9e9e9 url(../images/drag-bar-center.png) no-repeat center;
     border-width: 1px 0; } }
+
+// Use normal color for class-links in tree and favorites grid
+.class-tree, #favorites-grid {
+  .docClass, .docClass:hover {
+    color: #000; } }
 
 #footer {
   background: $docs-bg-color;

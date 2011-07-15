@@ -2,6 +2,12 @@ require "jsduck/class"
 
 describe JsDuck::Class do
 
+  # Avoid printed warnings in output
+  class JsDuck::Logger
+    def warn(msg)
+    end
+  end
+
   describe "#members" do
 
     before do
@@ -70,6 +76,16 @@ describe JsDuck::Class do
           :extends => "ParentClass",
           :mixins => ["MixinClass"],
           :singleton => true,
+          :members => {
+            :method => [
+              {:name => "sing", :owner => "Singleton"},
+            ]
+          },
+          :statics => {
+            :method => [
+              {:name => "singStat", :owner => "Singleton"},
+            ]
+          }
         });
       @classes["Singleton"] = @singletonChild
       @singletonChild.relations = @classes
@@ -133,8 +149,16 @@ describe JsDuck::Class do
           @members.should have_key("foo")
         end
 
-        it "inherites all instace members from mixins" do
+        it "inherits all instace members from mixins" do
           @members.should have_key("xxx")
+        end
+
+        it "lists its instance members" do
+          @members.should have_key("sing")
+        end
+
+        it "lists its static members as if they were instance members" do
+          @members.should have_key("singStat")
         end
       end
     end
@@ -181,6 +205,10 @@ describe JsDuck::Class do
         it "doesn't inherit any static members from mixins" do
           @members.should_not have_key("mixinA")
           @members.should_not have_key("mixinB")
+        end
+
+        it "doesn't list any of his own static members" do
+          @members.should_not have_key("singStat")
         end
       end
     end

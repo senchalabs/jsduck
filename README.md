@@ -159,13 +159,30 @@ reported bugs, submitted patches, and provided a lot of useful input.
 Changelog
 ---------
 
+* 2.0.pre3 - Fixes for the previous pre-release.
+  * Paging of search results.
+  * Support opening classes in tree in new tabs in IE and Firefox.
+  * Include upgraded version of prettifier, fixing formatting in IE.
+  * New --head-html and --body-html command line options.
+  * New --local-storage-db command line option.
+  * Avoid creating case-insensitively same source file names,
+    preventing duplicate file conflicts in Windows.
+  * Include missing ExtJS image files.
+  * Don't exclude static members from singleton classes, simply print
+    warning about using @static in singleton class.
+
 * 2.0.pre2 - Fixes for the previous pre-release.
   * New --stdout command line option.
   * Fix opening links in new tabs.
   * Few other small bugfixes and enhancements.
 
 * 2.0.pre - Completely overhauled Ext4-themed version.
-  * Currently in a pre-release state.
+  * A lot of changes since 0.6 releases.
+
+* 0.6.1 - Bug fixes.
+  * Fix scrolling to class members in Chrome 12.
+  * Make JSDuck work with Ruby 1.8.6.
+  * Upgrade the embedded ExtJS to 3.4.0.
 
 * 0.6 - JsDuck is now used for creating the official ExtJS4 documentation.
   * Automatic linking of class names found in comments.  Instead of writing

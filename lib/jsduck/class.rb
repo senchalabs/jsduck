@@ -120,11 +120,26 @@ module JsDuck
         all_members.delete_if {|key, member| !member[:inheritable] }
       end
 
-      (@doc[context][type] || []).each do |m|
-        all_members[m[:name]] = m if !m[:private]
+      all_members.merge!(local_members_hash(type, context))
+
+      # If singleton has static members, include them as if they were
+      # instance members.  Otherwise they will be completely excluded
+      # from the docs, as the static members block is not created for
+      # singletons.
+      if @doc[:singleton] && @doc[:statics][type].length > 0
+        all_members.merge!(local_members_hash(type, :statics))
       end
 
       all_members
+    end
+
+    # Helper method to get the direct members of this class
+    def local_members_hash(type, context)
+      local_members = {}
+      (@doc[context][type] || []).each do |m|
+        local_members[m[:name]] = m if !m[:private]
+      end
+      local_members
     end
 
     # Returns member by name.

@@ -26,6 +26,11 @@ Ext.define('Docs.view.tree.Tree', {
             "urlclick"
         );
 
+        this.nodeTpl = new Ext.XTemplate(
+            '<a href="#{url}" rel="{url}" class="docClass">{text}</a> ',
+            '<a rel="{url}" class="fav {show}"></a>'
+        );
+
         // Expand the main tree
         this.root.expanded = true;
         this.root.children[0].expanded = true;
@@ -48,8 +53,11 @@ Ext.define('Docs.view.tree.Tree', {
     addFavIcons: function(node) {
         if (node.get("leaf")) {
             var url = node.raw.url;
-            var show = Docs.Favorites.has(url) ? "show" : "";
-            node.set("text", node.get("text") + Ext.String.format('<a rel="{0}" class="fav {1}"></a>', url, show));
+            node.set("text", this.nodeTpl.apply({
+                text: node.get("text"),
+                url: url,
+                show: Docs.Favorites.has(url) ? "show" : ""
+            }));
             node.commit();
         }
     },
@@ -67,7 +75,9 @@ Ext.define('Docs.view.tree.Tree', {
                     Docs.Favorites.add(url, this.getNodeTitle(node));
                 }
             }
-            else {
+            // Only fire the event when not clicking on a link.
+            // Clicking on link is handled by the browser itself.
+            else if (!e.getTarget("a")) {
                 this.fireEvent("urlclick", url, e);
             }
         }
