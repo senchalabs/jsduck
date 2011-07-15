@@ -16,6 +16,10 @@ Gem::Specification.new do |s|
   end
   # Add files not in git
   s.files += ['template/extjs/ext-all.js']
+  s.files += ['template/extjs/resources/themes/images/default/tree/arrows.gif']
+  s.files += ['template/extjs/resources/themes/images/default/grid/loading.gif']
+  s.files += ['template/extjs/resources/themes/images/default/form/text-bg.gif']
+  s.files += ['template/extjs/resources/themes/images/default/form/checkbox.gif']
   s.files += Dir['template/resources/css/*.css']
 
   s.executables = ["jsduck"]
