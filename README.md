@@ -82,11 +82,16 @@ install the header files for compiling extension modules for ruby 1.8.
 For Debian systems you'll need the `ruby1.8-dev` package.  For Red Hat
 / CentOS / Fedora use the `ruby-devel` package.
 
+For **Windows** users out there, you can download the binary version,
+which includes Ruby interpreter and all dependencies bundled in a
+single .exe file.  Grab it from the [download page][].
+
 [v0.6]: https://github.com/senchalabs/jsduck/tree/v0.6
 [json]: http://flori.github.com/json/
 [RDiscount]: https://github.com/rtomayko/rdiscount
 [parallel]: https://github.com/grosser/parallel
 [RSpec]: http://rspec.info/
+[download page]: https://github.com/senchalabs/jsduck/downloads
 
 
 Usage
