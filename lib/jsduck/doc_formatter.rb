@@ -29,6 +29,10 @@ module JsDuck
     # Default value: '<img src="%u" alt="%a"/>'
     attr_accessor :img_tpl
 
+    # Assign to this a function that retrieves the example code when
+    # passed in a filename
+    attr_accessor :get_example
+
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
     # Context#blah is meant.
@@ -55,8 +59,11 @@ module JsDuck
       @relations = {}
       @link_tpl = '<a href="%c%#%m">%a</a>'
       @img_tpl = '<img src="%u" alt="%a"/>'
+      @example_tpl = '<pre class="inline-example"><code>%a</code></pre>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
+      @example_re = /\{@example\s+(\S*?)\s*\}/m
+      @example_annotation_re = /<pre><code>@example( +[^\n]*)?\s+/m
     end
 
     # Replaces {@link} and {@img} tags, auto-generates links for
@@ -66,6 +73,10 @@ module JsDuck
     # HTML from @link_tpl.
     #
     # Replaces {@img path/to/image.jpg Alt text} with HTML from @img_tpl.
+    #
+    # Replaces {@example path/to/example.js} with source from that file.
+    #
+    # Adds 'inline-example' class to code examples beginning with @example.
     #
     # Additionally replaces strings recognized as ClassNames with
     # links to these classes.  So one doesn even need to use the @link
@@ -78,10 +89,15 @@ module JsDuck
           out += replace_link_tag(s.scan(@link_re))
         elsif s.check(@img_re)
           out += replace_img_tag(s.scan(@img_re))
-        elsif s.check(/\{/)
-          out += s.scan(/\{/)
+        elsif s.check(@example_re)
+          out += replace_example_tag(s.scan(@example_re))
+        elsif s.check(@example_annotation_re)
+          s.scan(@example_annotation_re)
+          out += '<pre class="inline-example"><code>'
+        elsif s.check(/[{<]/)
+          out += s.scan(/[{<]/)
         else
-          out += replace_class_names(s.scan(/[^{]+/))
+          out += replace_class_names(s.scan(/[^{<]+/))
         end
       end
       out
@@ -128,6 +144,10 @@ module JsDuck
       input.sub(@img_re) { img($1, $2) }
     end
 
+    def replace_example_tag(input)
+      input.sub(@example_re) { example($1) }
+    end
+
     def replace_class_names(input)
       input.gsub(/(\A|\s)([A-Z][A-Za-z0-9.]*[A-Za-z0-9])(?:(#)([A-Za-z0-9]+))?([.,]?(?:\s|\Z))/m) do
         before = $1
@@ -153,6 +173,24 @@ module JsDuck
           url
         when '%a'
           CGI.escapeHTML(alt_text||"")
+        else
+          $1
+        end
+      end
+    end
+
+    # Replaces example template with example read from file
+    def example(path)
+      @example_tpl.gsub(/(%\w)/) do
+        case $1
+        when '%a'
+          if @get_example
+            CGI.escapeHTML(@get_example.call(path))
+          else
+            file = @doc_context[:filename]
+            line = @doc_context[:linenr]
+            Logger.instance.warn("--examples not specified, but {@example} found in #{file} line #{line}.")
+          end
         else
           $1
         end

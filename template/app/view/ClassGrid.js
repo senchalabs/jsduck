@@ -34,8 +34,28 @@ Ext.define('Docs.view.ClassGrid', {
              * Fired when close button in grid clicked.
              * @param {String} url  URL of the page that was closed. For example "/api/Ext.Ajax".
              */
-            "closeclick"
+            "closeclick",
+            /**
+             * @event
+             * Fired when items in grid reordered by drag-drop.
+             */
+            "reorder"
         );
+
+        this.viewConfig = {
+            plugins: [{
+                pluginId: 'ddPlugin',
+                ptype: 'gridviewdragdrop',
+                animate: true,
+                dragText: 'Drag and drop to reorganize'
+            }],
+            listeners: {
+                drop: function() {
+                    this.fireEvent("reorder");
+                },
+                scope: this
+            }
+        };
 
         this.columns = [
             {
@@ -81,9 +101,20 @@ Ext.define('Docs.view.ClassGrid', {
             }
         }, this);
 
-        // Initialize selection after rendering
         this.on("afterrender", function() {
+            // Initialize selection after rendering
             this.selectUrl(this.selectedUrl);
+
+            // Prevent row highlighting when doing drag-drop
+            var ddPlugin = this.getView().getPlugin('ddPlugin');
+            var self = this;
+            ddPlugin.dragZone.onInitDrag = function() {
+                self.addCls('drag');
+                Ext.view.DragZone.prototype.onInitDrag.apply(this, arguments);
+            };
+            ddPlugin.dragZone.afterValidDrop = ddPlugin.dragZone.afterInvalidDrop = function() {
+                self.removeCls('drag');
+            };
         }, this);
     },
 

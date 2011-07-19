@@ -23,7 +23,20 @@ Ext.define('Docs.view.tree.Tree', {
              * @param {String} url  URL of the page to load
              * @param {Ext.EventObject} e
              */
-            "urlclick"
+            "urlclick",
+            /**
+             * @event
+             * Fired when item marked as favorite
+             * @param {String} url  URL of the favorited tree node
+             * @param {String} title  Title for the favorite
+             */
+            "addfavorite",
+            /**
+             * @event
+             * Fired when favorite marking removed from tree node.
+             * @param {String} url  URL of the favorite
+             */
+            "removefavorite"
         );
 
         this.nodeTpl = new Ext.XTemplate(
@@ -42,7 +55,6 @@ Ext.define('Docs.view.tree.Tree', {
         // Add links for favoriting classes.
         // Do this after callParent, because the getRootNode() will
         // work after initComponent has run.
-        Docs.Favorites.setTree(this);
         this.initFavIcons();
     },
 
@@ -69,10 +81,10 @@ Ext.define('Docs.view.tree.Tree', {
             if (e.getTarget(".fav")) {
                 var favEl = Ext.get(e.getTarget(".fav"));
                 if (favEl.hasCls('show')) {
-                    Docs.Favorites.remove(url);
+                    this.fireEvent("removefavorite", url);
                 }
                 else {
-                    Docs.Favorites.add(url, this.getNodeTitle(node));
+                    this.fireEvent("addfavorite", url, this.getNodeTitle(node));
                 }
             }
             // Only fire the event when not clicking on a link.

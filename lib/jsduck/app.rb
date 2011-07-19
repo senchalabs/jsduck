@@ -27,6 +27,7 @@ module JsDuck
     attr_accessor :output_dir
     attr_accessor :template_dir
     attr_accessor :guides_dir
+    attr_accessor :examples_dir
     attr_accessor :guides_order
     attr_accessor :categories_path
     attr_accessor :template_links
@@ -48,6 +49,7 @@ module JsDuck
       @output_dir = nil
       @template_dir = nil
       @guides_dir = nil
+      @examples_dir = nil
       @guides_order = nil
       @categories_path = nil
       @template_links = false
@@ -61,7 +63,7 @@ module JsDuck
       @show_private_classes = false
       @title = "Ext JS API Documentation"
       @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
-      @extjs_path = "extjs/ext-all.js"
+      @extjs_path = "extjs/ext.js"
       @local_storage_db = "docs"
       @head_html = ""
       @body_html = ""
@@ -252,6 +254,7 @@ module JsDuck
       formatter.link_tpl = @link_tpl if @link_tpl
       formatter.img_tpl = @img_tpl if @img_tpl
       formatter.relations = relations
+      formatter.get_example = lambda {|path| IO.read(@examples_dir + "/" + path) } if @examples_dir
       formatter
     end
 

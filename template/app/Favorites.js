@@ -5,33 +5,33 @@ Ext.define("Docs.Favorites", {
     extend: 'Docs.LocalStore',
     storeName: 'Favorites',
     singleton: true,
+    mixins: {
+        observable: 'Ext.util.Observable'
+    },
+
+    constructor: function() {
+        this.callParent(arguments);
+
+        this.addEvents(
+            /**
+             * Fired when favorite added.
+             * @param {String} url The URL of the favorited page
+             */
+            "add",
+            /**
+             * Fired when favorite removed.
+             * @param {String} url The URL of the favorited page
+             */
+            "remove"
+        );
+    },
 
     init: function() {
         this.callParent(arguments);
 
-        // Populate favorites with Top 10 classes
-        if (this.store.data.items.length == 0) {
-            var top10 = [
-                'Ext.data.Store',
-                'Ext',
-                'Ext.grid.Panel',
-                'Ext.panel.Panel',
-                'Ext.form.field.ComboBox',
-                'Ext.data.Model',
-                'Ext.form.Panel',
-                'Ext.button.Button',
-                'Ext.tree.Panel',
-                'Ext.Component'
-            ];
-            this.store.add(Ext.Array.map(top10, function(clsName) {
-                return {url: "/api/"+clsName, title: clsName};
-            }));
-            this.syncStore();
-        }
-        
         // For backwards compatibility with old Favorites Model
         // convert the old-style records to new schema.
-        else if (!this.store.first().get("url")) {
+        if (this.store.first() && !this.store.first().get("url")) {
             this.store.each(function(r) {
                 r.set("title", r.data.cls);
                 r.set("url", "/api/"+r.get("cls"));
@@ -39,14 +39,6 @@ Ext.define("Docs.Favorites", {
             });
             this.syncStore();
         }
-    },
-
-    /**
-     * Associates Favorites with Docs TreePanel component.
-     * @param {Docs.view.tree.Tree} tree
-     */
-    setTree: function(tree) {
-        this.tree = tree;
     },
 
     /**
@@ -59,7 +51,7 @@ Ext.define("Docs.Favorites", {
         if (!this.has(url)) {
             this.store.add({url: url, title: title});
             this.syncStore();
-            this.tree.setFavorite(url, true);
+            this.fireEvent("add", url);
         }
     },
 
@@ -72,7 +64,7 @@ Ext.define("Docs.Favorites", {
         if (this.has(url)) {
             this.store.removeAt(this.store.findExact('url', url));
             this.syncStore();
-            this.tree.setFavorite(url, false);
+            this.fireEvent("remove", url);
         }
     },
 
@@ -84,5 +76,24 @@ Ext.define("Docs.Favorites", {
      */
     has: function(url) {
         return this.store.findExact('url', url) > -1;
+    },
+
+    /**
+     * Returns the number of favorites.
+     * @return {Number}
+     */
+    getCount: function() {
+        return this.store.getCount();
+    },
+
+    /**
+     * Save order of favorites in store.
+     *
+     * This needs to be called explicitly, because of a bug in
+     * localStorage which prevents the order of items being saved when
+     * they're changed.
+     */
+    saveOrder: function() {
+        this.store.getProxy().setIds(Ext.Array.map(this.store.data.items, function(i) { return i.data.id; }));
     }
 });

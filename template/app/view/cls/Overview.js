@@ -6,6 +6,7 @@ Ext.define('Docs.view.cls.Overview', {
     alias: 'widget.classoverview',
     requires: [
         'Docs.view.cls.Toolbar',
+        'Docs.view.examples.Inline',
         'Docs.Syntax',
         'Docs.Settings'
     ],
@@ -13,6 +14,17 @@ Ext.define('Docs.view.cls.Overview', {
     cls: 'class-overview iScroll',
     autoScroll: true,
     bodyPadding: '20',
+
+    initComponent: function() {
+        this.addEvents(
+            /**
+             * @event
+             * Fired after class docs loaded panel.
+             */
+            'afterload'
+        );
+        this.callParent(arguments);
+    },
 
     /**
      * Scrolls the specified element into view
@@ -66,6 +78,8 @@ Ext.define('Docs.view.cls.Overview', {
         if (Docs.Settings.get("hideInherited")) {
             this.filterMembers("", true);
         }
+
+        this.fireEvent('afterload');
     },
 
     /**
@@ -152,7 +166,7 @@ Ext.define('Docs.view.cls.Overview', {
         this.classTpl = this.classTpl || new Ext.XTemplate(
             '<div>',
                 '{hierarchy}',
-                 '<div class="doc-contents">',
+                '<div class="doc-contents">',
                     '{doc}',
                 '</div>',
                 '<div class="members">',

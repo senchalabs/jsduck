@@ -99,6 +99,10 @@ opts = OptionParser.new do | opts |
     app.categories_path = path
   end
 
+  opts.on('--examples=PATH', "Path to examples directory.", " ") do |path|
+    app.examples_dir = path
+  end
+
   opts.on('--link=TPL',
     "HTML template for replacing {@link}.",
     "Possible placeholders:",
@@ -154,7 +158,7 @@ opts = OptionParser.new do | opts |
 
   opts.on('--extjs-path=PATH',
     "Path for main ExtJS JavaScript file.  Useful for specifying",
-    "something different than extjs/ext-all.js", " ") do |path|
+    "something different than extjs/ext.js", " ") do |path|
     app.extjs_path = path
   end
 

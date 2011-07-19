@@ -113,6 +113,20 @@ describe JsDuck::DocFormatter do
         '<img src="some/image.png" alt="foo&quot;bar"/>'
     end
 
+    # {@example ...}
+
+    it "replaces {@example foo.js} with source from foo.js file" do
+      @formatter.get_example = lambda { "Some code" }
+      @formatter.replace('{@example foo.js}').should ==
+        '<pre class="inline-example"><code>Some code</code></pre>'
+    end
+
+    it "escapes HTML inside source of {@example}" do
+      @formatter.get_example = lambda { "Some <html> code" }
+      @formatter.replace('{@example foo.js}').should ==
+        '<pre class="inline-example"><code>Some &lt;html&gt; code</code></pre>'
+    end
+
     # auto-conversion of identifiable ClassNames to links
     describe "auto-detect" do
       before do
@@ -285,6 +299,49 @@ describe JsDuck::DocFormatter do
       it "avoids newline after <pre><code>" do
         @html.should_not =~ /<pre><code>\n/m
       end
+    end
+
+    shared_examples_for "example" do
+      it "creates <pre> with inline-example class" do
+        @html.should =~ /<pre class="inline-example">/m
+      end
+
+      it "removes the line with @example markup" do
+        @html.should_not =~ /@example/m
+      end
+
+      it "completely removes the first line and whitespace after it" do
+        @html.should =~ /code>if/m
+      end
+    end
+
+    describe "code block beginning with @example" do
+      before do
+        @html = @formatter.format(<<-EOS.gsub(/^ *\|/, ""))
+          |See example:
+          |
+          |    @example
+          |    if (condition) {
+          |        doSomething();
+          |    }
+        EOS
+      end
+      it_should_behave_like "example"
+    end
+
+    describe "code block beginning with @example and title" do
+      before do
+        @html = @formatter.format(<<-EOS.gsub(/^ *\|/, ""))
+          |See example:
+          |
+          |    @example My little example
+          |
+          |    if (condition) {
+          |        doSomething();
+          |    }
+        EOS
+      end
+      it_should_behave_like "example"
     end
 
   end

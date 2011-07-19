@@ -734,3 +734,24 @@ a {
       @include border-radius(2px);
       color: white;
       background: $docs-text-color; } } }
+
+// Inline example component buttons
+.inline-example-cmp {
+  span.x-btn-icon {
+    background: url(../images/example-icons.png) no-repeat;
+    opacity: 0.6;
+    &.code {
+      background-position: -2px -20px; }
+    &.preview {
+      background-position: -3px -62px; }
+    &.copy {
+      background-position: -2px -85px; } }
+  .active span.x-btn-icon {
+    background: url(../images/example-icons.png) no-repeat;
+    opacity: 1;
+    &.code {
+      background-position: -30px -20px; }
+    &.preview {
+      background-position: -31px -62px; }
+    &.copy {
+      background-position: -30px -85px; } } }
