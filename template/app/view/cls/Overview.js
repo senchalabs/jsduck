@@ -349,7 +349,7 @@ Ext.define('Docs.view.cls.Overview', {
 
     renderSignature: function(member) {
         this.signatureTpl = this.signatureTpl || new Ext.XTemplate(
-            '{before}<a href="#/api/{member}-{tagname}-{name}" class="name {expandable}">{name}</a>{params}{after}'
+            '{before}<a href="#/api/{owner}-{tagname}-{name}" class="name {expandable}">{name}</a>{params}{after}'
         );
 
         var cfg = Ext.apply({}, member);
