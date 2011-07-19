@@ -131,8 +131,8 @@ describe JsDuck::DocFormatter do
     describe "auto-detect" do
       before do
         @formatter.relations = JsDuck::Relations.new([
-          JsDuck::Class.new({:name => 'FooBar'}),
-          JsDuck::Class.new({:name => 'FooBar.Blah'}),
+          JsDuck::Class.new({:name => 'Foo.Bar'}),
+          JsDuck::Class.new({:name => 'Foo.Bar.Blah'}),
           JsDuck::Class.new({
             :name => 'Ext.form.Field',
             :members => {
@@ -143,7 +143,6 @@ describe JsDuck::DocFormatter do
             :name => 'Ext.XTemplate',
             :alternateClassNames => ['Ext.AltXTemplate']
           }),
-          JsDuck::Class.new({:name => 'MyClass'}),
           JsDuck::Class.new({
             :name => 'Ext',
             :members => {
@@ -158,19 +157,24 @@ describe JsDuck::DocFormatter do
           "John is lazy"
       end
 
-      it "doesn't recognize Foo.Bar as class name" do
-        @formatter.replace("Unknown Foo.Bar class").should ==
-          "Unknown Foo.Bar class"
+      it "doesn't recognize Bla.Bla as class name" do
+        @formatter.replace("Unknown Bla.Bla class").should ==
+          "Unknown Bla.Bla class"
       end
 
-      it "converts FooBar to class link" do
-        @formatter.replace("Look at FooBar").should ==
-          'Look at <a href="FooBar">FooBar</a>'
+      it "doesn't recognize Ext as class name" do
+        @formatter.replace("Talking about Ext JS").should ==
+          "Talking about Ext JS"
+      end
+
+      it "converts Foo.Bar to class link" do
+        @formatter.replace("Look at Foo.Bar").should ==
+          'Look at <a href="Foo.Bar">Foo.Bar</a>'
       end
 
       it "converts FooBar.Blah to class link" do
-        @formatter.replace("Look at FooBar.Blah").should ==
-          'Look at <a href="FooBar.Blah">FooBar.Blah</a>'
+        @formatter.replace("Look at Foo.Bar.Blah").should ==
+          'Look at <a href="Foo.Bar.Blah">Foo.Bar.Blah</a>'
       end
 
       it "converts Ext.form.Field to class link" do
@@ -189,13 +193,13 @@ describe JsDuck::DocFormatter do
       end
 
       it "converts ClassName ending with dot to class link" do
-        @formatter.replace("Look at MyClass.").should ==
-          'Look at <a href="MyClass">MyClass</a>.'
+        @formatter.replace("Look at Foo.Bar.").should ==
+          'Look at <a href="Foo.Bar">Foo.Bar</a>.'
       end
 
       it "converts ClassName ending with comma to class link" do
-        @formatter.replace("Look at MyClass, it's great!").should ==
-          'Look at <a href="MyClass">MyClass</a>, it\'s great!'
+        @formatter.replace("Look at Foo.Bar, it's great!").should ==
+          'Look at <a href="Foo.Bar">Foo.Bar</a>, it\'s great!'
       end
 
       it "converts Ext#encode to method link" do
@@ -209,13 +213,13 @@ describe JsDuck::DocFormatter do
       end
 
       it "doesn't create links inside {@link} tag" do
-        @formatter.replace("{@link MyClass a MyClass link}").should ==
-          '<a href="MyClass">a MyClass link</a>'
+        @formatter.replace("{@link Foo.Bar a Foo.Bar link}").should ==
+          '<a href="Foo.Bar">a Foo.Bar link</a>'
       end
 
       it "doesn't create links inside {@img} tag" do
-        @formatter.replace("{@img some/file.jpg a MyClass image}").should ==
-          '<img src="some/file.jpg" alt="a MyClass image"/>'
+        @formatter.replace("{@img some/file.jpg a Foo.Bar image}").should ==
+          '<img src="some/file.jpg" alt="a Foo.Bar image"/>'
       end
     end
 

@@ -156,7 +156,7 @@ module JsDuck
         member = $4
         after = $5
 
-        if @relations[cls] && (!member || get_member(cls, member))
+        if @relations[cls] && (member ? get_member(cls, member) : cls =~ /\./)
           label = member ? cls+"."+member : cls
           before + link(cls, member, label) + after
         else
