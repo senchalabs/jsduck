@@ -183,7 +183,7 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     renderHierarchy: function(cls) {
-        if (cls.superclasses.length === 0 && cls.allMixins.length === 0 && cls.alternateClassNames.length === 0) {
+        if (!cls["extends"] && cls.superclasses.length === 0 && cls.allMixins.length === 0 && cls.alternateClassNames.length === 0) {
             return "";
         }
 
@@ -209,13 +209,28 @@ Ext.define('Docs.view.cls.Overview', {
         );
 
         return this.hierarchyTpl.apply({
-            tree: cls.superclasses.length ? this.renderClassTree(cls.superclasses.concat(cls.name), true) : "",
+            tree: this.renderTree(cls),
             mixins: Ext.Array.map(cls.allMixins, this.renderLink, this),
             alternateClassNames: cls.alternateClassNames
         });
     },
 
-    renderClassTree: function(superclasses, firstChild) {
+    // Take care of the special case where class has parent for which we have no docs.
+    // In that case the "extends" property exists but "superclasses" is empty.
+    // We still create the tree, but without links in it.
+    renderTree: function(cls) {
+        if (cls.superclasses.length) {
+            return this.renderClassTree(cls.superclasses.concat(cls.name), {first: true, links: true});
+        }
+        else if (cls["extends"]) {
+            return this.renderClassTree([cls["extends"], cls.name], {first: true});
+        }
+        else {
+            return "";
+        }
+    },
+
+    renderClassTree: function(superclasses, o) {
         if (superclasses.length === 0) {
             return "";
         }
@@ -229,9 +244,9 @@ Ext.define('Docs.view.cls.Overview', {
 
         var name = superclasses[0];
         return this.classTreeTpl.apply({
-            firstChild: firstChild ? 'first-child' : '',
-            link: superclasses.length > 1 ? this.renderLink(name) : '<strong>'+name+'</strong>',
-            subtree: this.renderClassTree(superclasses.slice(1))
+            firstChild: o.first ? 'first-child' : '',
+            link: superclasses.length > 1 ? (o.links ? this.renderLink(name) : name) : '<strong>'+name+'</strong>',
+            subtree: this.renderClassTree(superclasses.slice(1), {links: o.links})
         });
     },
 
