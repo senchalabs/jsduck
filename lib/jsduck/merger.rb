@@ -141,7 +141,7 @@ module JsDuck
         :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
-        :return => detect_return(doc_map, name == "constructor" ? "Object" : "void"),
+        :return => detect_return(doc_map, name == "constructor" ? "Object" : "undefined"),
       }, doc_map)
     end
 
@@ -337,7 +337,7 @@ module JsDuck
       docs.find_all {|tag| tag[:tagname] == :param}
     end
 
-    def detect_return(doc_map, default_type="void")
+    def detect_return(doc_map, default_type="undefined")
       ret = doc_map[:return] ? doc_map[:return].first : {}
       return {
         :type => ret[:type] || default_type,

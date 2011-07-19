@@ -366,7 +366,7 @@ Ext.define('Docs.view.cls.Overview', {
         else {
             var ps = Ext.Array.map(member.params, this.renderShortParam, this).join(", ");
             cfg.params = '( <span class="pre">' + ps + "</span> )";
-            if (member.tagname === "method") {
+            if (member.tagname === "method" && member["return"].type !== "undefined") {
                 cfg.params += " : " + member["return"].type;
             }
         }

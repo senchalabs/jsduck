@@ -62,8 +62,8 @@ describe JsDuck::Aggregator do
   end
 
   shared_examples_for "no return" do
-    it "default return type is void" do
-      @doc[:return][:type].should == "void"
+    it "default return type is undefined" do
+      @doc[:return][:type].should == "undefined"
     end
   end
 
