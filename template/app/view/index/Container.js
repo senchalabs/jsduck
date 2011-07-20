@@ -28,7 +28,7 @@ Ext.define('Docs.view.index.Container', {
                     '<h1>Guides</h1>',
                     '{guides}',
                     '<div class="examples">',
-                        '<a href="http://dev.sencha.com/deploy/ext-4.0.2a/examples/index.html">View the Ext 4.0 examples &rarr;</a>',
+                        '<a href="../examples/index.html">View the examples &rarr;</a>',
                     '</div>',
                 '</div>',
             '</tpl>',

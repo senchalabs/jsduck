@@ -156,6 +156,7 @@ task :charts do
   load_sdk_vars
   system(*[
     "ruby", "bin/jsduck",
+    "--title", "Sencha Touch Charts API Documentation",
     "--external", "Error",
     "--ignore-global",
     "--guides", "#{SDK_DIR}/charts/guides",
