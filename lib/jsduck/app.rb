@@ -16,6 +16,7 @@ require 'jsduck/logger'
 require 'jsduck/guides'
 require 'jsduck/categories'
 require 'jsduck/jsonp'
+require 'jsduck/lint'
 require 'json'
 require 'fileutils'
 
@@ -99,8 +100,7 @@ module JsDuck
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       relations = @timer.time(:aggregating) { filter_classes(result) }
       Aliases.new(relations).resolve_all
-      warn_globals(relations)
-      warn_unnamed(relations)
+      Lint.new(relations).run
 
       @guides = Guides.new(get_doc_formatter(relations), @guides_order)
       if @guides_dir
@@ -177,35 +177,6 @@ module JsDuck
         end
       end
       Relations.new(classes, @external_classes)
-    end
-
-    # print warning for each global member
-    def warn_globals(relations)
-      global = relations["global"]
-      return unless global
-      global[:members].each_key do |type|
-        global.members(type).each do |member|
-          name = member[:name]
-          file = member[:filename]
-          line = member[:linenr]
-          Logger.instance.warn("Global #{type}: #{name} in #{file} line #{line}")
-        end
-      end
-    end
-
-    # print warning for each member with no name
-    def warn_unnamed(relations)
-      relations.each do |cls|
-        cls[:members].each_pair do |type, members|
-          members.each do |member|
-            if !member[:name] || member[:name] == ""
-              file = member[:filename]
-              line = member[:linenr]
-              Logger.instance.warn("Unnamed #{type} in #{file} line #{line}")
-            end
-          end
-        end
-      end
     end
 
     # Given all classes, generates namespace tree and writes it
