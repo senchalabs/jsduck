@@ -24,117 +24,59 @@ module JsDuck
 
   # The main application logic of jsduck
   class App
-    # These are basically input parameters for app
-    attr_accessor :output_dir
-    attr_accessor :template_dir
-    attr_accessor :guides_dir
-    attr_accessor :examples_dir
-    attr_accessor :guides_order
-    attr_accessor :categories_path
-    attr_accessor :template_links
-    attr_accessor :input_files
-    attr_accessor :export
-    attr_accessor :link_tpl
-    attr_accessor :img_tpl
-    attr_accessor :ignore_global
-    attr_accessor :external_classes
-    attr_accessor :show_private_classes
-    attr_accessor :title
-    attr_accessor :footer
-    attr_accessor :extjs_path
-    attr_accessor :local_storage_db
-    attr_accessor :head_html
-    attr_accessor :body_html
-
-    def initialize
-      @output_dir = nil
-      @template_dir = nil
-      @guides_dir = nil
-      @examples_dir = nil
-      @guides_order = nil
-      @categories_path = nil
-      @template_links = false
-      @input_files = []
-      @warnings = true
-      @export = nil
-      @link_tpl = nil
-      @img_tpl = nil
-      @ignore_global = false
-      @external_classes = []
-      @show_private_classes = false
-      @title = "Ext JS API Documentation"
-      @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
-      @extjs_path = "extjs/ext.js"
-      @local_storage_db = "docs"
-      @head_html = ""
-      @body_html = ""
+    # Initializes app with JsDuck::Options object
+    def initialize(opts)
+      @opts = opts
       @timer = Timer.new
-      @parallel = ParallelWrap.new
-    end
-
-    # Sets the nr of parallel processes to use.
-    # Set to 0 to disable parallelization completely.
-    def processes=(count)
-      @parallel = ParallelWrap.new(:in_processes => count)
-    end
-
-    # Sets warnings on or off
-    def warnings=(enabled)
-      Logger.instance.warnings = enabled
-    end
-
-    # Sets verbose mode on or off
-    def verbose=(enabled)
-      Logger.instance.verbose = enabled
+      # Sets the nr of parallel processes to use.
+      # Set to 0 to disable parallelization completely.
+      @parallel = ParallelWrap.new(:in_processes => @opts.processes)
+      # Sets warnings and verbose mode on or off
+      Logger.instance.warnings = @opts.warnings
+      Logger.instance.verbose = @opts.verbose
     end
 
     # Call this after input parameters set
     def run
-      # Set default templates
-      @link_tpl ||= '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
-      # Note that we wrap image template inside <p> because {@img} often
-      # appears inline within text, but that just looks ugly in HTML
-      @img_tpl ||= '<p><img src="doc-resources/%u" alt="%a"></p>'
-
-      parsed_files = @timer.time(:parsing) { parallel_parse(@input_files) }
+      parsed_files = @timer.time(:parsing) { parallel_parse(@opts.input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       relations = @timer.time(:aggregating) { filter_classes(result) }
       Aliases.new(relations).resolve_all
       Lint.new(relations).run
 
-      @guides = Guides.new(get_doc_formatter(relations), @guides_order)
-      if @guides_dir
-        @timer.time(:parsing) { @guides.parse_dir(@guides_dir) }
+      @guides = Guides.new(get_doc_formatter(relations), @opts.guides_order)
+      if @opts.guides_dir
+        @timer.time(:parsing) { @guides.parse_dir(@opts.guides_dir) }
       end
 
       @categories = Categories.new(get_doc_formatter(relations), relations)
-      if @categories_path
+      if @opts.categories_path
         @timer.time(:parsing) do
-          @categories.parse(@categories_path)
+          @categories.parse(@opts.categories_path)
           @categories.validate
         end
       end
 
-      clear_dir(@output_dir) unless @export == :stdout
-      if @export == :stdout
+      clear_dir(@opts.output_dir) unless @opts.export == :stdout
+      if @opts.export == :stdout
         @timer.time(:generating) { puts JSON.generate(relations.classes) }
-      elsif @export == :json
-        FileUtils.mkdir(@output_dir)
-        init_output_dirs(@output_dir)
-        @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
-        @timer.time(:generating) { write_classes(@output_dir+"/output", relations) }
+      elsif @opts.export == :json
+        FileUtils.mkdir(@opts.output_dir)
+        init_output_dirs(@opts.output_dir)
+        @timer.time(:generating) { write_src(@opts.output_dir+"/source", parsed_files) }
+        @timer.time(:generating) { write_classes(@opts.output_dir+"/output", relations) }
       else
-        if @template_links
-          link_template(@template_dir, @output_dir)
+        if @opts.template_links
+          link_template(@opts.template_dir, @opts.output_dir)
         else
-          copy_template(@template_dir, @output_dir)
+          copy_template(@opts.template_dir, @opts.output_dir)
         end
-        create_index_html(@template_dir, @output_dir)
-        @timer.time(:generating) { write_src(@output_dir+"/source", parsed_files) }
-        @timer.time(:generating) { write_tree(@output_dir+"/output/tree.js", relations) }
-        @timer.time(:generating) { write_search_data(@output_dir+"/output/searchData.js", relations) }
-        @timer.time(:generating) { write_classes(@output_dir+"/output", relations) }
-        @timer.time(:generating) { @guides.write(@output_dir+"/guides") }
+        create_index_html(@opts.template_dir, @opts.output_dir)
+        @timer.time(:generating) { write_src(@opts.output_dir+"/source", parsed_files) }
+        @timer.time(:generating) { write_tree(@opts.output_dir+"/output/tree.js", relations) }
+        @timer.time(:generating) { write_search_data(@opts.output_dir+"/output/searchData.js", relations) }
+        @timer.time(:generating) { write_classes(@opts.output_dir+"/output", relations) }
+        @timer.time(:generating) { @guides.write(@opts.output_dir+"/guides") }
       end
 
       @timer.report
@@ -156,7 +98,7 @@ module JsDuck
         agr.aggregate(file)
       end
       agr.classify_orphans
-      agr.create_global_class unless @ignore_global
+      agr.create_global_class unless @opts.ignore_global
       agr.append_ext4_event_options
       agr.result
     end
@@ -167,7 +109,7 @@ module JsDuck
       classes = []
       docs.each do |d|
         if d[:tagname] == :class
-          classes << Class.new(d) if !d[:private] || @show_private_classes
+          classes << Class.new(d) if !d[:private] || @opts.show_private_classes
         else
           type = d[:tagname].to_s
           name = d[:name]
@@ -176,7 +118,7 @@ module JsDuck
           Logger.instance.warn("Ignoring #{type}: #{name} in #{file} line #{line}")
         end
       end
-      Relations.new(classes, @external_classes)
+      Relations.new(classes, @opts.external_classes)
     end
 
     # Given all classes, generates namespace tree and writes it
@@ -209,7 +151,7 @@ module JsDuck
 
     # Writes formatted HTML source code for each input file
     def write_src(path, parsed_files)
-      src = SourceWriter.new(path, @export ? nil : :page)
+      src = SourceWriter.new(path, @opts.export ? nil : :page)
       # Can't be done in parallel, because file.html_filename= method
       # updates all the doc-objects related to the file
       parsed_files.each do |file|
@@ -222,10 +164,10 @@ module JsDuck
     # Creates and initializes DocFormatter
     def get_doc_formatter(relations)
       formatter = DocFormatter.new
-      formatter.link_tpl = @link_tpl if @link_tpl
-      formatter.img_tpl = @img_tpl if @img_tpl
+      formatter.link_tpl = @opts.link_tpl if @opts.link_tpl
+      formatter.img_tpl = @opts.img_tpl if @opts.img_tpl
       formatter.relations = relations
-      formatter.get_example = lambda {|path| IO.read(@examples_dir + "/" + path) } if @examples_dir
+      formatter.get_example = lambda {|path| IO.read(@opts.examples_dir + "/" + path) } if @opts.examples_dir
       formatter
     end
 
@@ -258,14 +200,14 @@ module JsDuck
     def create_index_html(template_dir, dir)
       Logger.instance.log("Creating #{dir}/index.html...")
       html = IO.read(template_dir+"/index.html")
-      html.gsub!("{title}", @title)
+      html.gsub!("{title}", @opts.title)
       html.gsub!("{footer}", "<div id='footer-content' style='display: none'>#{@footer}</div>")
-      html.gsub!("{extjs_path}", @extjs_path)
-      html.gsub!("{local_storage_db}", @local_storage_db)
+      html.gsub!("{extjs_path}", @opts.extjs_path)
+      html.gsub!("{local_storage_db}", @opts.local_storage_db)
       html.gsub!("{guides}", @guides.to_html)
       html.gsub!("{categories}", @categories.to_html)
-      html.gsub!("{head_html}", @head_html)
-      html.gsub!("{body_html}", @body_html)
+      html.gsub!("{head_html}", @opts.head_html)
+      html.gsub!("{body_html}", @opts.body_html)
       FileUtils.rm(dir+"/index.html")
       File.open(dir+"/index.html", 'w') {|f| f.write(html) }
     end
