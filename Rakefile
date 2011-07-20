@@ -151,6 +151,24 @@ task :docs do
   ])
 end
 
+desc "Run JSDuck on ExtJS charts"
+task :charts do
+  load_sdk_vars
+  system(*[
+    "ruby", "bin/jsduck",
+    "--external", "Error",
+    "--ignore-global",
+    "--guides", "#{SDK_DIR}/guides",
+    "--guides-order", "drawing,theming",
+    "--output", "#{OUT_DIR}",
+    "--no-warnings",
+    "#{SDK_DIR}/charts/src",
+  ])
+
+  system "cp -r #{SDK_DIR}/platform/doc-resources #{OUT_DIR}/doc-resources"
+end
+
+
 # Compress JS/CSS file in-place
 # Using a hackish way to access yui-compressor
 def yui_compress(fname)
