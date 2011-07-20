@@ -317,7 +317,7 @@ module JsDuck
           :name => ex[:name] || im[:name] || "",
           :doc => doc,
           # convert to boolean for JavaScript export, otherwise it's 0 or nil
-          :optional => !!(doc =~ /\(optional\)/),
+          :optional => !!(doc =~ /\(optional\)/i),
         }
       end
       params

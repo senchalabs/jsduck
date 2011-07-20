@@ -236,6 +236,37 @@ describe JsDuck::Aggregator do
     it_should_behave_like "parameter types"
   end
 
+  describe "method with optional parameters" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @param {String} x (optional) my comment 1
+         * @param {Number} y (Optional) my comment 2
+         * @param {Number} y my comment 3 (optional)
+         * @param {Number} z optional my comment 4
+         */
+        function foo(x, y) {}
+      EOS
+    end
+
+    it "recognizes (optional) at the beginning of comment" do
+      @doc[:params][0][:optional].should == true
+    end
+
+    it "recognizes mixed case (Optional) at the beginning of comment" do
+      @doc[:params][1][:optional].should == true
+    end
+
+    it "recognizes (optional) anywhere inside comment" do
+      @doc[:params][2][:optional].should == true
+    end
+
+    it "doesn't recognize 'optional' without parens" do
+      @doc[:params][3][:optional].should == false
+    end
+  end
+
   describe "@return documenting return value" do
     before do
       @doc = parse(<<-EOS)[0]
