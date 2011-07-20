@@ -26,11 +26,16 @@ module JsDuck
       end
     end
 
-    # print warning for each member with no name
+    # print warning for each member or parameter with no name
     def warn_unnamed
       each_member do |member|
         if !member[:name] || member[:name] == ""
           warn("Unnamed #{member[:tagname]}", member)
+        end
+        (member[:params] || []).each do |p|
+          if !p[:name] || p[:name] == ""
+            warn("Unnamed parameter", member)
+          end
         end
       end
     end
