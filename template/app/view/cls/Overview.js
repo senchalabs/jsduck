@@ -183,7 +183,11 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     renderHierarchy: function(cls) {
-        if (!cls["extends"] && cls.superclasses.length === 0 && cls.allMixins.length === 0 && cls.alternateClassNames.length === 0) {
+        if (!(cls["extends"] && cls["extends"] !== "Object") &&
+            cls.superclasses.length === 0 &&
+            cls.allMixins.length === 0 &&
+            cls.alternateClassNames.length === 0
+        ) {
             return "";
         }
 
@@ -222,7 +226,7 @@ Ext.define('Docs.view.cls.Overview', {
         if (cls.superclasses.length) {
             return this.renderClassTree(cls.superclasses.concat(cls.name), {first: true, links: true});
         }
-        else if (cls["extends"]) {
+        else if (cls["extends"] && cls["extends"] !== "Object") {
             return this.renderClassTree([cls["extends"], cls.name], {first: true});
         }
         else {
