@@ -78,7 +78,7 @@ module JsDuck
       end
 
       # Divide to three columns: lft, mid, rgt
-      col_height = (links.length / 3).ceil
+      col_height = (links.length / 3.0).ceil
       return <<-EOHTML
         <div id='guides-content' style='display:none'>
             <div class="lft">
