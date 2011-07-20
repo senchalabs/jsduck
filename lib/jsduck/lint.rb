@@ -21,46 +21,43 @@ module JsDuck
     def warn_globals
       global = @relations["global"]
       return unless global
-      global[:members].each_key do |type|
-        global.members(type).each do |member|
-          name = member[:name]
-          file = member[:filename]
-          line = member[:linenr]
-          Logger.instance.warn("Global #{type}: #{name} in #{file} line #{line}")
-        end
+      global.each_member do |member|
+        warn("Global #{member[:tagname]}: #{member[:name]}", member)
       end
     end
 
     # print warning for each member with no name
     def warn_unnamed
-      @relations.each do |cls|
-        cls[:members].each_pair do |type, members|
-          members.each do |member|
-            if !member[:name] || member[:name] == ""
-              file = member[:filename]
-              line = member[:linenr]
-              Logger.instance.warn("Unnamed #{type} in #{file} line #{line}")
-            end
-          end
+      each_member do |member|
+        if !member[:name] || member[:name] == ""
+          warn("Unnamed #{member[:tagname]}", member)
         end
       end
     end
 
     # print warning for each non-optional parameter that follows an optional parameter
     def warn_optional_params
-      @relations.each do |cls|
-        cls[:members][:method].each do |method|
+      each_member do |member|
+        if member[:tagname] == :method
           optional_found = false
-          method[:params].each do |p|
+          member[:params].each do |p|
             if optional_found && !p[:optional]
-              file = method[:filename]
-              line = method[:linenr]
-              Logger.instance.warn("Optional param can't be followed by regular param #{p[:name]} in #{file} line #{line}")
+              warn("Optional param can't be followed by regular param #{p[:name]}", member)
             end
             optional_found = optional_found || p[:optional]
           end
         end
       end
+    end
+
+    # Loops through all members of all classes
+    def each_member(&block)
+      @relations.each {|cls| cls.each_member(&block) }
+    end
+
+    # Prints warning + filename and linenumber from doc-context
+    def warn(msg, context)
+      Logger.instance.warn(msg + " in #{context[:filename]} line #{context[:linenr]}")
     end
 
   end
