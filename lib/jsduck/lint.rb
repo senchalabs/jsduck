@@ -15,6 +15,7 @@ module JsDuck
       warn_globals
       warn_unnamed
       warn_optional_params
+      warn_duplicate_params
     end
 
     # print warning for each global member
@@ -51,6 +52,19 @@ module JsDuck
             end
             optional_found = optional_found || p[:optional]
           end
+        end
+      end
+    end
+
+    # print warnings for duplicate parameter names
+    def warn_duplicate_params
+      each_member do |member|
+        params = {}
+        (member[:params] || []).each do |p|
+          if params[p[:name]]
+            warn("Duplicate parameter name #{p[:name]}", member)
+          end
+          params[p[:name]] = true
         end
       end
     end
