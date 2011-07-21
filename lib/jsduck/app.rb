@@ -139,13 +139,18 @@ module JsDuck
       File.open(@opts.output_dir+"/output/searchData.js", 'w') {|f| f.write(js) }
     end
 
-    # Writes JsonP export file for each class
+    # Writes JSON export or JsonP file for each class
     def write_classes
       exporter = Exporter.new(@relations, get_doc_formatter)
       @parallel.each(@relations.classes) do |cls|
-        filename = @opts.output_dir+"/output/" + cls[:name] + ".js"
+        filename = @opts.output_dir+"/output/" + cls[:name] + (@opts.export ? ".json" : ".js")
         Logger.instance.log("Writing to #{filename} ...")
-        JsonP.write(filename, cls[:name].gsub(/\./, "_"), exporter.export(cls))
+        data = exporter.export(cls)
+        if @opts.export
+          File.open(filename, 'w') {|f| f.write(JSON.pretty_generate(data)) }
+        else
+          JsonP.write(filename, cls[:name].gsub(/\./, "_"), data)
+        end
       end
     end
 
