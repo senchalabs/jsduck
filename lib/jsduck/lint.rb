@@ -73,18 +73,32 @@ module JsDuck
 
     # Check parameter types
     def warn_types
-      parser = TypeParser.new
+      parser = TypeParser.new(@relations)
       each_member do |member|
         (member[:params] || []).each do |p|
           if !parser.parse(p[:type])
-            warn("Incorrect parameter type syntax #{p[:type]}", member)
+            if parser.error == :syntax
+              warn("Incorrect parameter type syntax #{p[:type]}", member)
+            else
+              warn("Unknown parameter type #{p[:type]}", member)
+            end
           end
         end
+
         if member[:return] && !parser.parse(member[:return][:type])
-          warn("Incorrect return type syntax #{member[:return][:type]}", member)
+          if parser.error == :syntax
+            warn("Incorrect return type syntax #{member[:return][:type]}", member)
+          else
+            warn("Unknown return type #{member[:return][:type]}", member)
+          end
         end
+
         if member[:type] && !parser.parse(member[:type])
-          warn("Incorrect type syntax #{member[:type]}", member)
+          if parser.error == :syntax
+            warn("Incorrect type syntax #{member[:type]}", member)
+          else
+            warn("Unkown type #{member[:type]}", member)
+          end
         end
       end
     end

@@ -15,8 +15,32 @@ module JsDuck
   # Details are covered in spec.
   #
   class TypeParser
+    # Allows to check the type of error that was encountered.
+    # It will be either of the two:
+    # - :syntax - type definition syntax is incorrect
+    # - :name - one of the names of the types is unknown
+    attr_reader :error
+
+    # Initializes the parser with hash of valid type names
+    def initialize(relations={})
+      @relations = relations
+      @builtins = {
+        "Object" => true,
+        "String" => true,
+        "Number" => true,
+        "Boolean" => true,
+        "RegExp" => true,
+        "Function" => true,
+        "Array" => true,
+        "Date" => true,
+        "undefined" => true,
+        "Mixed" => true,
+      }
+    end
+
     def parse(str)
       @input = StringScanner.new(str)
+      @error = :syntax
 
       # Return immediately if base type doesn't match
       return false unless base_type
@@ -41,7 +65,18 @@ module JsDuck
     #
     # dot-separated identifiers followed by optional "[]"
     def base_type
-      @input.scan(/[a-zA-Z_]+(\.[a-zA-Z_]+)*(\[\])?/)
+      type = @input.scan(/[a-zA-Z_]+(\.[a-zA-Z_]+)*(\[\])?/)
+      return type && exists?(type)
+    end
+
+    def exists?(type)
+      stype = type.sub(/\[\]$/, "")
+      if @builtins[stype] || @relations[stype]
+        true
+      else
+        @error = :name
+        false
+      end
     end
 
   end

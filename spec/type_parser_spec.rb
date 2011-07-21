@@ -3,7 +3,11 @@ require "jsduck/type_parser"
 describe JsDuck::TypeParser do
 
   def parse(str)
-    JsDuck::TypeParser.new.parse(str)
+    types = {
+      "Ext.form.Panel" => true,
+      "Ext.Element" => true,
+    }
+    JsDuck::TypeParser.new(types).parse(str)
   end
 
   it "matches simple type" do
@@ -57,6 +61,10 @@ describe JsDuck::TypeParser do
   describe "doesn't match" do
     it "empty string" do
       parse("").should == false
+    end
+
+    it "unknown type name" do
+      parse("Blah").should == false
     end
 
     it "type ending with dot" do
