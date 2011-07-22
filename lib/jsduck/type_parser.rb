@@ -25,6 +25,7 @@ module JsDuck
     def initialize(relations={})
       @relations = relations
       @builtins = {
+        # JavaScript builtins
         "Object" => true,
         "String" => true,
         "Number" => true,
@@ -32,9 +33,18 @@ module JsDuck
         "RegExp" => true,
         "Function" => true,
         "Array" => true,
+        "Arguments" => true,
         "Date" => true,
+        "Error" => true,
         "undefined" => true,
-        "Mixed" => true,
+        # DOM
+        "HTMLElement" => true,
+        "XMLElement" => true,
+        "NodeList" => true,
+        "TextNode" => true,
+        "CSSStyleSheet" => true,
+        "CSSStyleRule" => true,
+        "Event" => true,
       }
     end
 
