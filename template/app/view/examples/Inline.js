@@ -86,7 +86,12 @@ Ext.define('Docs.view.examples.Inline', {
                 html: '<iframe id="' + this.getIframeId() + '" style="width: 100%; height: 100%; border: 0"></iframe>'
             });
             var iframe = document.getElementById(this.getIframeId());
-            iframe.onload = Ext.Function.bind(callback, scope);
+            // Something is not quite ready when onload fires.
+            // I'm unsure what I should wait for. So I'm currently adding just this nasty delay.
+            // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
+            iframe.onload = function() {
+                Ext.Function.defer(callback, 100, scope);
+            };
             iframe.src = "egIframe.html";
             this.layout.setActiveItem(1);
             this.previewInitialized = true;
