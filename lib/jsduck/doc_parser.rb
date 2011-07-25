@@ -23,7 +23,8 @@ module JsDuck
   class DocParser
     # Pass in :css to be able to parse CSS doc-comments
     def initialize(mode = :js)
-      @ident_pattern = (mode == :css) ? /\$[a-zA-Z0-9_-]*/ : /\w+/
+      @ident_pattern = (mode == :css) ? /\$[\w-]*/ : /\w+/
+      @ident_chain_pattern = (mode == :css) ? /\$[\w.-]*/ : /[\w.]+/
     end
 
     def parse(input)
@@ -183,12 +184,13 @@ module JsDuck
       skip_white
     end
 
-    # matches @param {type} variable ...
+    # matches @param {type} name ...
     def at_param
       match(/@param/)
       add_tag(:param)
       maybe_type
-      maybe_name
+      #maybe_name
+      maybe_ident_chain(:name)
       skip_white
     end
 
@@ -278,7 +280,7 @@ module JsDuck
       match(/@alias/)
       add_tag(:alias)
       skip_horiz_white
-      if look(/\w/)
+      if look(@ident_chain_pattern)
         @current_tag[:cls] = ident_chain
         if look(/#\w/)
           @input.scan(/#/)
@@ -347,7 +349,7 @@ module JsDuck
     # matches ident.chain if possible and sets it on @current_tag
     def maybe_ident_chain(propname)
       skip_horiz_white
-      if look(/\w/)
+      if look(@ident_chain_pattern)
         @current_tag[propname] = ident_chain
       end
     end
@@ -364,7 +366,7 @@ module JsDuck
     def class_list
       skip_horiz_white
       classes = []
-      while look(/\w/)
+      while look(@ident_chain_pattern)
         classes << ident_chain
         skip_horiz_white
       end
@@ -373,7 +375,7 @@ module JsDuck
 
     # matches chained.identifier.name and returns it
     def ident_chain
-      @input.scan(/[\w.]+/)
+      @input.scan(@ident_chain_pattern)
     end
 
     # matches identifier and returns its name

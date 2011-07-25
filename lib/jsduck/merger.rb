@@ -318,6 +318,7 @@ module JsDuck
           :doc => doc,
           # convert to boolean for JavaScript export, otherwise it's 0 or nil
           :optional => !!(doc =~ /\(optional\)/i),
+          :properties => ex[:properties] || [],
         }
       end
       params
@@ -334,7 +335,23 @@ module JsDuck
     end
 
     def detect_explicit_params(docs)
-      docs.find_all {|tag| tag[:tagname] == :param}
+      combine_properties(docs.find_all {|tag| tag[:tagname] == :param})
+    end
+
+    def combine_properties(raw_items)
+      items = []
+      previous = {}
+      raw_items.each do |it|
+        if it[:name] =~ /\.(.*)$/
+          it[:name] = $1
+          previous[:properties] = [] unless previous[:properties]
+          previous[:properties] << it
+        else
+          items << it
+          previous = it
+        end
+      end
+      items
     end
 
     def detect_return(doc_map, default_type="undefined")

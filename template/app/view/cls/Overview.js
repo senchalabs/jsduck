@@ -406,8 +406,7 @@ Ext.define('Docs.view.cls.Overview', {
 
         if (member.params && member.params.length > 0) {
             doc += '<h3 class="pa">Parameters</h3>';
-            var ps = Ext.Array.map(member.params, this.renderLongParam, this).join("");
-            doc += "<ul>" + ps + "</ul>";
+            doc += this.renderParams(member.params);
         }
 
         if (member["return"]) {
@@ -417,14 +416,24 @@ Ext.define('Docs.view.cls.Overview', {
         return doc;
     },
 
+    renderParams: function(params) {
+        return "<ul>" + Ext.Array.map(params, this.renderLongParam, this).join("") + "</ul>";
+    },
+
     renderLongParam: function(param) {
         this.paramTpl = this.paramTpl || new Ext.XTemplate(
             '<li>',
                 '<span class="pre">{name}</span> : {type}',
                 '<div class="sub-desc">',
                     '{doc}',
+                    '<tpl if="properties && properties.length">',
+                        '{[this.renderParams(values.properties)]}',
+                    '</tpl>',
                 '</div>',
-            '</li>'
+            '</li>',
+            {
+                renderParams: Ext.Function.bind(this.renderParams, this)
+            }
         );
 
         return this.paramTpl.apply(param);
