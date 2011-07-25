@@ -85,7 +85,7 @@ Ext.define('Docs.controller.Examples', {
     replaceExampleDivs: function() {
         Ext.Array.each(Ext.query('.inline-example'), function(inlineEg) {
             // Grab code from <pre> element and replace it with new empty <div>
-            var code = inlineEg.innerText;
+            var code = Ext.util.Format.stripTags(inlineEg.innerHTML);
             var div = document.createElement("div");
             inlineEg.parentNode.replaceChild(div, inlineEg);
             // Then render the example component inside the div
