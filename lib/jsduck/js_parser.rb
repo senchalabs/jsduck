@@ -77,6 +77,8 @@ module JsDuck
         var_declaration
       elsif look("Ext", ".", "define", "(", :string)
         ext_define
+      elsif look("Ext", ".", "ClassManager", ".", "create", "(", :string)
+        ext_define
       elsif look(:ident, ":") || look(:string, ":")
         property_literal
       elsif look(",", :ident, ":") || look(",", :string, ":")
@@ -179,9 +181,11 @@ module JsDuck
       }
     end
 
-    # <ext-define> := "Ext" "." "define" "(" <string> "," <ext-define-cfg>
+    # <ext-define> := "Ext" "." ["define" | "ClassManager" "." "create" ] "(" <string> "," <ext-define-cfg>
     def ext_define
-      name = match("Ext", ".", "define", "(", :string)
+      match("Ext", ".");
+      look("define") ? match("define") : match("ClassManager", ".", "create");
+      name = match("(", :string)
 
       if look(",", "{")
         match(",")

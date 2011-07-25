@@ -6,11 +6,10 @@
 Ext.define('Docs.view.Viewport', {
     extend: 'Ext.container.Viewport',
     requires: [
-        'Docs.view.cls.Header',
-        'Docs.view.cls.Overview',
+        'Docs.view.cls.Container',
         'Docs.view.index.Container',
         'Docs.view.tree.Tree',
-        'Docs.view.ClassGrid',
+        'Docs.view.FavoritesPanel',
         'Docs.Favorites',
         'Docs.Settings',
         'Docs.History'
@@ -22,7 +21,6 @@ Ext.define('Docs.view.Viewport', {
 
     initComponent: function() {
         this.items = [
-
             {
                 region:'west',
                 width: 240,
@@ -44,9 +42,7 @@ Ext.define('Docs.view.Viewport', {
                         ui: 'hmm',
                         listeners: {
                             click: function() {
-                                this.setPageTitle("");
-                                Ext.getCmp('card-panel').layout.setActiveItem(0);
-                                Docs.History.push("");
+                                Docs.App.getController('Classes').loadIndex();
                             },
                             scope: this
                         }
@@ -83,74 +79,41 @@ Ext.define('Docs.view.Viewport', {
                         border: false,
                         items: [
                             {
+                                xtype: 'favoritespanel',
                                 id: 'classes-tab-panel',
-                                xtype: 'tabpanel',
                                 region: 'north',
                                 height: Docs.Settings.get('favorites-height') || 150,
-                                padding: '2 4 0 0',
-                                bodyPadding: '3 15 0 12',
-                                border: false,
-                                plain: true,
-                                split: true,
-                                listeners: {
-                                    afterRender: function() {
-                                        // Add 7px padding at left side of tab-bar
-                                        this.tabBar.insert(0, {width: 7, xtype: 'container'});
-                                    },
-                                    resize: function(cmp, w, h) {
-                                        Docs.Settings.set('favorites-height', h);
-                                    }
-                                },
-                                items: [
-                                    {
-                                        xtype: 'classgrid',
-                                        id: 'favorites-grid',
-                                        title: 'Favorites',
-                                        iconCls: 'icon-fav',
-                                        viewConfig: {
-                                            plugins: [{
-                                                pluginId: 'favGridDD',
-                                                ptype: 'gridviewdragdrop',
-                                                animate: true,
-                                                dragText: 'Drag and drop to reorganize'
-                                            }],
-                                            listeners: {
-                                                drop: function() {
-                                                    // Hack to fix a bug in localStorage which prevents the order of
-                                                    // items being saved when they're changed
-                                                    var store = Ext.getStore('Favorites');
-                                                    store.getProxy().setIds(Ext.Array.map(store.data.items, function(i) { return i.data.id; }));
-                                                }
-                                            }
-                                        },
-                                        store: Ext.getStore('Favorites'),
-                                        icons: Docs.icons,
-                                        listeners: {
-                                            closeclick: function(cls) {
-                                                Docs.Favorites.remove(cls);
-                                            },
-                                            // Prevent row highlighting when doing drag-drop
-                                            afterrender: function() {
-                                                var ddPlugin = this.getView().getPlugin('favGridDD');
-
-                                                ddPlugin.dragZone.onInitDrag = function() {
-                                                    Ext.getCmp('favorites-grid').addCls('drag');
-                                                    Ext.view.DragZone.prototype.onInitDrag.apply(this, arguments);
-                                                };
-                                                ddPlugin.dragZone.afterValidDrop = ddPlugin.dragZone.afterInvalidDrop = function() {
-                                                    Ext.getCmp('favorites-grid').removeCls('drag');
-                                                };
-                                            }
-                                        }
-                                    }
-                                ]
+                                hidden: Docs.Favorites.getCount() === 0
                             },
                             {
                                 region: 'center',
                                 xtype: 'classtree',
-                                padding: '10 10 0 10',
-                                margin: '0 5 10 0',
+                                padding: '5 10 0 10',
+                                margin: '0 5 2 0',
                                 root: Docs.classData
+                                // dockedItems: [{
+                                //     xtype: 'toolbar',
+                                //     baseCls: null,
+                                //     dock: 'top',
+                                //     padding: '0 0 5 0',
+                                //     items: [
+                                //         {
+                                //             xtype: 'button',
+                                //             text: 'Sort by Package',
+                                //             menu: [
+                                //                 { text: 'by Category' },
+                                //                 { text: 'by Hierarchy' },
+                                //                 { text: 'by Popularity' }
+                                //             ]
+                                //         },
+                                //         { xtype: 'tbfill'},
+                                //         {
+                                //             xtype: 'button',
+                                //             iconCls: 'expandAllMembers',
+                                //             tooltip: "Expand all"
+                                //         }
+                                //     ]
+                                // }]
                             }
                         ]
                     }
@@ -171,24 +134,19 @@ Ext.define('Docs.view.Viewport', {
                     items: [
                         {
                             autoScroll: true,
-                            xtype: 'indexcontainer',
-                            classData: Docs.overviewData
+                            xtype: 'indexcontainer'
                         },
                         {
-                            xtype: 'container',
-                            layout: {
-                                type: 'vbox',
-                                align: 'stretch'
-                            },
-                            items: [
-                                {xtype: 'classheader'},
-                                {xtype: 'classoverview', flex: 1}
-                            ]
+                            xtype: 'classcontainer'
                         },
                         {
                             autoScroll: true,
                             xtype: 'container',
                             id: 'guide'
+                        },
+                        {
+                            xtype: 'container',
+                            id: 'failure'
                         }
                     ]
                 }

@@ -6,6 +6,7 @@ Ext.define('Docs.view.cls.Overview', {
     alias: 'widget.classoverview',
     requires: [
         'Docs.view.cls.Toolbar',
+        'Docs.view.examples.Inline',
         'Docs.Syntax',
         'Docs.Settings'
     ],
@@ -13,6 +14,17 @@ Ext.define('Docs.view.cls.Overview', {
     cls: 'class-overview iScroll',
     autoScroll: true,
     bodyPadding: '20',
+
+    initComponent: function() {
+        this.addEvents(
+            /**
+             * @event
+             * Fired after class docs loaded panel.
+             */
+            'afterload'
+        );
+        this.callParent(arguments);
+    },
 
     /**
      * Scrolls the specified element into view
@@ -26,7 +38,7 @@ Ext.define('Docs.view.cls.Overview', {
             var scrollOffset = el.getY() - (isMember ? 145 : 135);
             var docContent = this.getEl().down('.x-panel-body');
             var currentScroll = docContent.getScroll()['top'];
-            docContent.scrollTo('top', currentScroll + scrollOffset, true);
+            docContent.scrollTo('top', currentScroll + scrollOffset);
 
             if (isMember && el.down(".expandable")) {
                 el.addCls('open');
@@ -47,7 +59,16 @@ Ext.define('Docs.view.cls.Overview', {
             this.removeDocked(this.toolbar, true);
         }
         this.toolbar = Ext.create('Docs.view.cls.Toolbar', {
-            docClass: this.docClass
+            docClass: this.docClass,
+            listeners: {
+                hideInherited: function(hideInherited) {
+                    this.filterMembers(this.toolbar.getFilterValue(), hideInherited);
+                },
+                filter: function(search) {
+                    this.filterMembers(search, Docs.Settings.get("hideInherited"));
+                },
+                scope: this
+            }
         });
         this.addDocked(this.toolbar);
 
@@ -55,15 +76,97 @@ Ext.define('Docs.view.cls.Overview', {
         Docs.Syntax.highlight(this.getEl());
 
         if (Docs.Settings.get("hideInherited")) {
-            this.toolbar.hideInherited(true);
+            this.filterMembers("", true);
         }
+
+        this.fireEvent('afterload');
+    },
+
+    /**
+     * Filters members by search string and inheritance.
+     * @param {String} search
+     * @param {Boolean} hideInherited
+     * @private
+     */
+    filterMembers: function(search, hideInherited) {
+        Docs.Settings.set("hideInherited", hideInherited);
+        var isSearch = search.length > 0;
+
+        // Hide the class documentation when filtering
+        Ext.Array.forEach(Ext.query('.doc-contents, .hierarchy'), function(el) {
+            Ext.get(el).setStyle({display: isSearch ? 'none' : 'block'});
+        });
+
+        // Hide members who's name doesn't match with the search string
+        // and hide inherited members if hideInherited=true
+        var re = new RegExp(Ext.String.escapeRegex(search), "i");
+        this.eachMember(function(m) {
+            var el = Ext.get(m.tagname + "-" + m.name);
+            var byInheritance = !hideInherited || (m.owner === this.docClass.name);
+            var byFilter = !isSearch || re.test(m.name);
+            if (byInheritance && byFilter) {
+                el.setStyle({display: 'block'});
+            }
+            else {
+                el.setStyle({display: 'none'});
+            }
+        }, this);
+
+        // Remove all first-child classes
+        Ext.Array.forEach(Ext.query('.member.first-child'), function(m) {
+            Ext.get(m).removeCls('first-child');
+        });
+
+        Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
+            var sectionId = '#m-' + type;
+
+            // Hide the section completely if all items in it are hidden
+            var visibleEls = this.getVisibleElements(sectionId + " .member");
+            var section = Ext.query(sectionId)[0];
+            section && Ext.get(section).setStyle({display: visibleEls.length > 0 ? 'block' : 'none'});
+
+            // Hide subsections completely if all items in them are hidden
+            Ext.Array.forEach(Ext.query(sectionId+" .subsection"), function(subsection) {
+                var visibleEls = this.getVisibleElements(".member", subsection);
+                if (visibleEls.length > 0) {
+                    // add first-child class to first member in subsection
+                    visibleEls[0].addCls('first-child');
+                    // make sure subsection is visible
+                    Ext.get(subsection).setStyle({display: 'block'});
+                }
+                else {
+                    // Hide subsection completely if empty
+                    Ext.get(subsection).setStyle({display: 'none'});
+                }
+            }, this);
+        }, this);
+
+        this.toolbar.hideInherited(hideInherited);
+    },
+
+    getVisibleElements: function(selector, root) {
+        var els = Ext.Array.map(Ext.query(selector, root), function(node) {
+            return Ext.get(node);
+        });
+        return Ext.Array.filter(els, function(el) {
+            return el.isVisible();
+        });
+    },
+
+    // Loops through each member of class
+    eachMember: function(callback, scope) {
+        Ext.Array.forEach(['members', 'statics'], function(group) {
+            Ext.Object.each(this.docClass[group], function(type, members) {
+                Ext.Array.forEach(members, callback, scope);
+            }, this);
+        }, this);
     },
 
     renderClass: function(cls) {
         this.classTpl = this.classTpl || new Ext.XTemplate(
             '<div>',
                 '{hierarchy}',
-                 '<div class="doc-contents">',
+                '<div class="doc-contents">',
                     '{doc}',
                 '</div>',
                 '<div class="members">',
@@ -80,7 +183,11 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     renderHierarchy: function(cls) {
-        if (cls.superclasses.length === 0 && cls.allMixins.length === 0 && cls.alternateClassNames.length === 0) {
+        if (!(cls["extends"] && cls["extends"] !== "Object") &&
+            cls.superclasses.length === 0 &&
+            cls.allMixins.length === 0 &&
+            cls.alternateClassNames.length === 0
+        ) {
             return "";
         }
 
@@ -106,13 +213,28 @@ Ext.define('Docs.view.cls.Overview', {
         );
 
         return this.hierarchyTpl.apply({
-            tree: cls.superclasses.length ? this.renderClassTree(cls.superclasses.concat(cls.name), true) : "",
+            tree: this.renderTree(cls),
             mixins: Ext.Array.map(cls.allMixins, this.renderLink, this),
             alternateClassNames: cls.alternateClassNames
         });
     },
 
-    renderClassTree: function(superclasses, firstChild) {
+    // Take care of the special case where class has parent for which we have no docs.
+    // In that case the "extends" property exists but "superclasses" is empty.
+    // We still create the tree, but without links in it.
+    renderTree: function(cls) {
+        if (cls.superclasses.length) {
+            return this.renderClassTree(cls.superclasses.concat(cls.name), {first: true, links: true});
+        }
+        else if (cls["extends"] && cls["extends"] !== "Object") {
+            return this.renderClassTree([cls["extends"], cls.name], {first: true});
+        }
+        else {
+            return "";
+        }
+    },
+
+    renderClassTree: function(superclasses, o) {
         if (superclasses.length === 0) {
             return "";
         }
@@ -126,9 +248,9 @@ Ext.define('Docs.view.cls.Overview', {
 
         var name = superclasses[0];
         return this.classTreeTpl.apply({
-            firstChild: firstChild ? 'first-child' : '',
-            link: superclasses.length > 1 ? this.renderLink(name) : '<strong>'+name+'</strong>',
-            subtree: this.renderClassTree(superclasses.slice(1))
+            firstChild: o.first ? 'first-child' : '',
+            link: superclasses.length > 1 ? (o.links ? this.renderLink(name) : name) : '<strong>'+name+'</strong>',
+            subtree: this.renderClassTree(superclasses.slice(1), {links: o.links})
         });
     },
 
@@ -231,7 +353,7 @@ Ext.define('Docs.view.cls.Overview', {
 
     renderSignature: function(member) {
         this.signatureTpl = this.signatureTpl || new Ext.XTemplate(
-            '{before}<a href="#/api/{member}-{tagname}-{name}" class="name {expandable}">{name}</a>{params}{after}'
+            '{before}<a href="#/api/{owner}-{tagname}-{name}" class="name {expandable}">{name}</a>{params}{after}'
         );
 
         var cfg = Ext.apply({}, member);
@@ -248,7 +370,7 @@ Ext.define('Docs.view.cls.Overview', {
         else {
             var ps = Ext.Array.map(member.params, this.renderShortParam, this).join(", ");
             cfg.params = '( <span class="pre">' + ps + "</span> )";
-            if (member.tagname === "method") {
+            if (member.tagname === "method" && member["return"].type !== "undefined") {
                 cfg.params += " : " + member["return"].type;
             }
         }

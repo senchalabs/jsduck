@@ -50,7 +50,9 @@ module JsDuck
     # Returns source code as HTML with lines starting doc-comments specially marked.
     def to_html
       linenr = 0
-      return @contents.lines.map do |line|
+      lines = []
+      # Use #each_line instead of #lines to support Ruby 1.6
+      @contents.each_line do |line|
         linenr += 1;
         line = CGI.escapeHTML(line)
         # wrap the line in as many spans as there are links to this line number.
@@ -59,8 +61,9 @@ module JsDuck
             line = "<span id='#{id(doc)}'>#{line}</span>"
           end
         end
-        line
-      end.join()
+        lines << line
+      end
+      lines.join()
     end
 
     def id(doc)

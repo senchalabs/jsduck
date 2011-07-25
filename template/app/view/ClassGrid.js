@@ -23,32 +23,55 @@ Ext.define('Docs.view.ClassGrid', {
     initComponent: function() {
         this.addEvents(
             /**
-             * @event classclick
+             * @event
              * Fired when class in grid clicked.
-             * @param {String} name  Name of the class that was selected. For example "Ext.Ajax".
+             * @param {String} url  URL of the page that was selected. For example "/api/Ext.Ajax".
              * @param {Ext.EventObject} e
              */
-            "classclick",
+            "urlclick",
             /**
-             * @event closeclick
+             * @event
              * Fired when close button in grid clicked.
-             * @param {String} name  Name of the class that was closed. For example "Ext.Ajax".
+             * @param {String} url  URL of the page that was closed. For example "/api/Ext.Ajax".
              */
-            "closeclick"
+            "closeclick",
+            /**
+             * @event
+             * Fired when items in grid reordered by drag-drop.
+             */
+            "reorder"
         );
+
+        this.viewConfig = {
+            plugins: [{
+                pluginId: 'ddPlugin',
+                ptype: 'gridviewdragdrop',
+                animate: true,
+                dragText: 'Drag and drop to reorganize'
+            }],
+            listeners: {
+                drop: function() {
+                    this.fireEvent("reorder");
+                },
+                scope: this
+            }
+        };
 
         this.columns = [
             {
                 width: 18,
-                dataIndex: 'cls',
-                renderer: function(cls, data) {
-                    data.tdCls = this.icons[cls];
+                dataIndex: 'url',
+                renderer: function(url, data) {
+                    data.tdCls = this.icons[url];
                 },
                 scope: this
             },
             {
-                dataIndex: 'cls',
-                flex: true
+                dataIndex: 'title',
+                flex: true,
+                renderer: function(title, data, r) {
+                    return Ext.String.format('<a href="#{0}" rel="{0}" class="docClass">{1}</a>', r.get("url"), title);
+                }
             }
         ];
 
@@ -60,7 +83,7 @@ Ext.define('Docs.view.ClassGrid', {
                     icon: 'resources/images/x12.png',
                     tooltip: 'Delete',
                     handler: function(view, rowIndex) {
-                        this.fireEvent("closeclick", this.getStore().getAt(rowIndex).get("cls"));
+                        this.fireEvent("closeclick", this.getStore().getAt(rowIndex).get("url"));
                     },
                     scope: this
                 }
@@ -70,28 +93,41 @@ Ext.define('Docs.view.ClassGrid', {
         this.callParent(arguments);
 
         this.on("itemclick", function(view, record, item, index, event) {
-            // Don't fire classclick when close button clicked
-            if (!event.getTarget("img")) {
-                this.fireEvent("classclick", record.get("cls"), event);
+            // Only fire urlclick when the row background is clicked
+            // (that doesn't contain neither the link nor the close
+            // button).
+            if (!event.getTarget("img") && !event.getTarget("a")) {
+                this.fireEvent("urlclick", record.get("url"), event);
             }
         }, this);
 
-        // Initialize selection after rendering
         this.on("afterrender", function() {
-            this.selectClass(this.selectedClass);
+            // Initialize selection after rendering
+            this.selectUrl(this.selectedUrl);
+
+            // Prevent row highlighting when doing drag-drop
+            var ddPlugin = this.getView().getPlugin('ddPlugin');
+            var self = this;
+            ddPlugin.dragZone.onInitDrag = function() {
+                self.addCls('drag');
+                Ext.view.DragZone.prototype.onInitDrag.apply(this, arguments);
+            };
+            ddPlugin.dragZone.afterValidDrop = ddPlugin.dragZone.afterInvalidDrop = function() {
+                self.removeCls('drag');
+            };
         }, this);
     },
 
     /**
-     * Selects class if grid contains such class.
+     * Selects page if grid contains such.
      * Fires no events while selecting.
-     * @param {String} cls  class name.
+     * @param {String} url  page URL.
      */
-    selectClass: function(cls) {
-        this.selectedClass = cls;
+    selectUrl: function(url) {
+        this.selectedUrl = url;
         // when grid hasn't been rendered yet, trying to select will give us error.
         if (this.rendered) {
-            var index = this.getStore().findExact('cls', cls);
+            var index = this.getStore().findExact('url', url);
             this.selectIndex(index);
         }
     },

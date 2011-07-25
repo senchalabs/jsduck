@@ -113,12 +113,26 @@ describe JsDuck::DocFormatter do
         '<img src="some/image.png" alt="foo&quot;bar"/>'
     end
 
+    # {@example ...}
+
+    it "replaces {@example foo.js} with source from foo.js file" do
+      @formatter.get_example = lambda { "Some code" }
+      @formatter.replace('{@example foo.js}').should ==
+        '<pre class="inline-example"><code>Some code</code></pre>'
+    end
+
+    it "escapes HTML inside source of {@example}" do
+      @formatter.get_example = lambda { "Some <html> code" }
+      @formatter.replace('{@example foo.js}').should ==
+        '<pre class="inline-example"><code>Some &lt;html&gt; code</code></pre>'
+    end
+
     # auto-conversion of identifiable ClassNames to links
     describe "auto-detect" do
       before do
         @formatter.relations = JsDuck::Relations.new([
-          JsDuck::Class.new({:name => 'FooBar'}),
-          JsDuck::Class.new({:name => 'FooBar.Blah'}),
+          JsDuck::Class.new({:name => 'Foo.Bar'}),
+          JsDuck::Class.new({:name => 'Foo.Bar.Blah'}),
           JsDuck::Class.new({
             :name => 'Ext.form.Field',
             :members => {
@@ -129,7 +143,6 @@ describe JsDuck::DocFormatter do
             :name => 'Ext.XTemplate',
             :alternateClassNames => ['Ext.AltXTemplate']
           }),
-          JsDuck::Class.new({:name => 'MyClass'}),
           JsDuck::Class.new({
             :name => 'Ext',
             :members => {
@@ -144,19 +157,24 @@ describe JsDuck::DocFormatter do
           "John is lazy"
       end
 
-      it "doesn't recognize Foo.Bar as class name" do
-        @formatter.replace("Unknown Foo.Bar class").should ==
-          "Unknown Foo.Bar class"
+      it "doesn't recognize Bla.Bla as class name" do
+        @formatter.replace("Unknown Bla.Bla class").should ==
+          "Unknown Bla.Bla class"
       end
 
-      it "converts FooBar to class link" do
-        @formatter.replace("Look at FooBar").should ==
-          'Look at <a href="FooBar">FooBar</a>'
+      it "doesn't recognize Ext as class name" do
+        @formatter.replace("Talking about Ext JS").should ==
+          "Talking about Ext JS"
+      end
+
+      it "converts Foo.Bar to class link" do
+        @formatter.replace("Look at Foo.Bar").should ==
+          'Look at <a href="Foo.Bar">Foo.Bar</a>'
       end
 
       it "converts FooBar.Blah to class link" do
-        @formatter.replace("Look at FooBar.Blah").should ==
-          'Look at <a href="FooBar.Blah">FooBar.Blah</a>'
+        @formatter.replace("Look at Foo.Bar.Blah").should ==
+          'Look at <a href="Foo.Bar.Blah">Foo.Bar.Blah</a>'
       end
 
       it "converts Ext.form.Field to class link" do
@@ -175,13 +193,13 @@ describe JsDuck::DocFormatter do
       end
 
       it "converts ClassName ending with dot to class link" do
-        @formatter.replace("Look at MyClass.").should ==
-          'Look at <a href="MyClass">MyClass</a>.'
+        @formatter.replace("Look at Foo.Bar.").should ==
+          'Look at <a href="Foo.Bar">Foo.Bar</a>.'
       end
 
       it "converts ClassName ending with comma to class link" do
-        @formatter.replace("Look at MyClass, it's great!").should ==
-          'Look at <a href="MyClass">MyClass</a>, it\'s great!'
+        @formatter.replace("Look at Foo.Bar, it's great!").should ==
+          'Look at <a href="Foo.Bar">Foo.Bar</a>, it\'s great!'
       end
 
       it "converts Ext#encode to method link" do
@@ -195,13 +213,13 @@ describe JsDuck::DocFormatter do
       end
 
       it "doesn't create links inside {@link} tag" do
-        @formatter.replace("{@link MyClass a MyClass link}").should ==
-          '<a href="MyClass">a MyClass link</a>'
+        @formatter.replace("{@link Foo.Bar a Foo.Bar link}").should ==
+          '<a href="Foo.Bar">a Foo.Bar link</a>'
       end
 
       it "doesn't create links inside {@img} tag" do
-        @formatter.replace("{@img some/file.jpg a MyClass image}").should ==
-          '<img src="some/file.jpg" alt="a MyClass image"/>'
+        @formatter.replace("{@img some/file.jpg a Foo.Bar image}").should ==
+          '<img src="some/file.jpg" alt="a Foo.Bar image"/>'
       end
     end
 
@@ -285,6 +303,49 @@ describe JsDuck::DocFormatter do
       it "avoids newline after <pre><code>" do
         @html.should_not =~ /<pre><code>\n/m
       end
+    end
+
+    shared_examples_for "example" do
+      it "creates <pre> with inline-example class" do
+        @html.should =~ /<pre class="inline-example">/m
+      end
+
+      it "removes the line with @example markup" do
+        @html.should_not =~ /@example/m
+      end
+
+      it "completely removes the first line and whitespace after it" do
+        @html.should =~ /code>if/m
+      end
+    end
+
+    describe "code block beginning with @example" do
+      before do
+        @html = @formatter.format(<<-EOS.gsub(/^ *\|/, ""))
+          |See example:
+          |
+          |    @example
+          |    if (condition) {
+          |        doSomething();
+          |    }
+        EOS
+      end
+      it_should_behave_like "example"
+    end
+
+    describe "code block beginning with @example and title" do
+      before do
+        @html = @formatter.format(<<-EOS.gsub(/^ *\|/, ""))
+          |See example:
+          |
+          |    @example My little example
+          |
+          |    if (condition) {
+          |        doSomething();
+          |    }
+        EOS
+      end
+      it_should_behave_like "example"
     end
 
   end

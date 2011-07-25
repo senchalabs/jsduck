@@ -8,9 +8,7 @@ Ext.define('Docs.view.index.Container', {
     cls: 'class-list',
 
     initComponent: function() {
-        var data = this.classData;
-
-        var tpl = new Ext.XTemplate(
+        this.tpl = new Ext.XTemplate(
             '<h1 class="top">{title}</h1>',
             '<tpl if="notice">',
                 '<div class="notice">{notice}</div>',
@@ -25,63 +23,40 @@ Ext.define('Docs.view.index.Container', {
                     '<li class="icon icon-guide">Guide</li>',
                 '</ul>',
             '</div>',
-            '<div class="section guides">',
-                '<h1>Guides</h1>',
-                '<div class="lft">',
-                    '<a class="guide getting_started" rel="getting_started" href="#/guide/getting_started">Getting Started</a>',
-                    '<a class="guide class_system" rel="class_system" href="#/guide/class_system">Class System</a>',
-                    '<a class="guide application_architecture" rel="application_architecture" href="#/guide/application_architecture">MVC Architecture</a>',
-                    '<a class="guide layouts_and_containers" rel="layouts_and_containers" href="#/guide/layouts_and_containers">Layouts and Containers</a>',
-                '</div>',
-                '<div class="mid">',
-                    '<a class="guide data" rel="data" href="#/guide/data">Data</a>',
-                    '<a class="guide grid" rel="grid" href="#/guide/grid">Grids</a>',
-                    '<a class="guide tree" rel="tree" href="#/guide/tree">Trees</a>',
-                    '<a class="guide drawing_and_charting" rel="drawing_and_charting" href="#/guide/drawing_and_charting">Charts</a>',
-                '</div>',
-                '<div class="rgt">',
-                    '<a class="guide components" rel="components" href="#/guide/components">Components</a>',
-                    '<a class="guide theming" rel="theming" href="#/guide/theming">Theming</a>',
-                    '<a class="guide direct" rel="direct" href="#/guide/direct">Direct</a>',
-                    '<a class="guide accessibility" rel="accessibility" href="#/guide/accessibility">Accessibility</a>',
-                '</div>',
-                '<div class="examples">',
-                    '<a href="http://dev.sencha.com/deploy/ext-4.0.3/examples/index.html">View the Ext 4.0 examples &rarr;</a>',
-                '</div>',
-            '</div>',
-            '<tpl for="organisation">',
-                '<div class="section classes">',
-                    '<h1>{name}</h1>',
-                    '<tpl for="categories">',
-                        '<div class="{align}">',
-                        '<tpl for="items">',
-                            '<h3>{.}</h3>',
-                            '<div class="links">',
-                                '{[this.renderClasses(values)]}',
-                            '</div>',
-                        '</tpl>',
-                        '</div>',
-                    '</tpl>',
-                    '<div style="clear:both"></div>',
+            '<tpl if="guides">',
+                '<div class="section guides">',
+                    '<h1>Guides</h1>',
+                    '{guides}',
+                    '<div class="examples">',
+                        '<a href="../examples/index.html">View the examples &rarr;</a>',
+                    '</div>',
                 '</div>',
             '</tpl>',
-            {
-                renderClasses: function(category) {
-                    return Ext.Array.map(data.categories[category].classes, function(cls) {
-                        return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{0}</a>', cls);
-                    }).join("\n");
-                }
-            }
+            '{categories}'
         );
-
-        var notice = Ext.get("notice-text");
-        this.html = tpl.apply(Ext.apply({
-            // Use the same title as in <title>
-            title: Ext.query("title")[0].innerHTML,
-            // If page contains div with notice-text extract the text and show it as notice
-            notice: notice && notice.dom.innerHTML
-        }, data));
-
+        this.data = this.extractData();
+        
         this.callParent(arguments);
+    },
+
+    // Extracts HTML from hidden elements in page
+    extractData: function() {
+        var data = {
+            notice: Ext.get("notice-text"),
+            guides: Ext.get("guides-content"),
+            categories: Ext.get("categories-content")
+        };
+        for (var i in data) {
+            var el = data[i];
+            if (el) {
+                // If page contains the div then extract its contents,
+                // after that remove the original
+                data[i] = el.dom.innerHTML;
+                el.remove();
+            }
+        }
+        // Extract <title> text
+        data.title = Ext.query("title")[0].innerHTML;
+        return data;
     }
 });

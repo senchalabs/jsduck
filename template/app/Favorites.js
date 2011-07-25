@@ -5,70 +5,95 @@ Ext.define("Docs.Favorites", {
     extend: 'Docs.LocalStore',
     storeName: 'Favorites',
     singleton: true,
+    mixins: {
+        observable: 'Ext.util.Observable'
+    },
+
+    constructor: function() {
+        this.callParent(arguments);
+
+        this.addEvents(
+            /**
+             * Fired when favorite added.
+             * @param {String} url The URL of the favorited page
+             */
+            "add",
+            /**
+             * Fired when favorite removed.
+             * @param {String} url The URL of the favorited page
+             */
+            "remove"
+        );
+    },
 
     init: function() {
         this.callParent(arguments);
 
-        // Populate favorites with Top 10 classes
-        if (this.store.data.items.length == 0) {
-            this.store.add([
-                { cls: 'Ext.data.Store' },
-                { cls: 'Ext' },
-                { cls: 'Ext.grid.Panel' },
-                { cls: 'Ext.panel.Panel' },
-                { cls: 'Ext.form.field.ComboBox' },
-                { cls: 'Ext.data.Model' },
-                { cls: 'Ext.form.Panel' },
-                { cls: 'Ext.button.Button' },
-                { cls: 'Ext.tree.Panel' },
-                { cls: 'Ext.Component' }
-            ]);
+        // For backwards compatibility with old Favorites Model
+        // convert the old-style records to new schema.
+        if (this.store.first() && !this.store.first().get("url")) {
+            this.store.each(function(r) {
+                r.set("title", r.data.cls);
+                r.set("url", "/api/"+r.get("cls"));
+                r.set("cls", "");
+            });
             this.syncStore();
         }
-
     },
 
     /**
-     * Associates Favorites with Docs TreePanel component.
-     * @param {Docs.view.tree.Tree} tree
-     */
-    setTree: function(tree) {
-        this.tree = tree;
-    },
-
-    /**
-     * Adds class to favorites
+     * Adds page to favorites
      *
-     * @param {String} cls  the class to add
+     * @param {String} url  the page to add
+     * @param {String} title  title for Favorites entry
      */
-    add: function(cls) {
-        if (!this.has(cls)) {
-            this.store.add({cls: cls});
+    add: function(url, title) {
+        if (!this.has(url)) {
+            this.store.add({url: url, title: title});
             this.syncStore();
-            this.tree.setFavorite(cls, true);
+            this.fireEvent("add", url);
         }
     },
 
     /**
-     * Removes class from favorites.
+     * Removes page from favorites.
      *
-     * @param {String} cls  the class to remove
+     * @param {String} url  the page URL to remove
      */
-    remove: function(cls) {
-        if (this.has(cls)) {
-            this.store.removeAt(this.store.findExact('cls', cls));
+    remove: function(url) {
+        if (this.has(url)) {
+            this.store.removeAt(this.store.findExact('url', url));
             this.syncStore();
-            this.tree.setFavorite(cls, false);
+            this.fireEvent("remove", url);
         }
     },
 
     /**
-     * Checks if class is in favorites
+     * Checks if page exists in favorites
      *
-     * @param {String} cls  the classname to check
-     * @return {Boolean} true when class exists in favorites.
+     * @param {String} url  the URL to check
+     * @return {Boolean} true when present
      */
-    has: function(cls) {
-        return this.store.findExact('cls', cls) > -1;
+    has: function(url) {
+        return this.store.findExact('url', url) > -1;
+    },
+
+    /**
+     * Returns the number of favorites.
+     * @return {Number}
+     */
+    getCount: function() {
+        return this.store.getCount();
+    },
+
+    /**
+     * Save order of favorites in store.
+     *
+     * This needs to be called explicitly, because of a bug in
+     * localStorage which prevents the order of items being saved when
+     * they're changed.
+     */
+    saveOrder: function() {
+        this.store.getProxy().setIds(Ext.Array.map(this.store.data.items, function(i) { return i.data.id; }));
     }
 });

@@ -3,39 +3,51 @@
 <head>
   <title>{title}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
   <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
-  <link rel="canonical" href="http://docs.sencha.com/ext-js/4-0/"/>
+  <!-- BEGIN CSS -->
   <link rel="stylesheet" href="resources/css/reset.css" type="text/css" />
   <link rel="stylesheet" href="resources/css/docs-ext.css" type="text/css" />
   <link rel="stylesheet" href="resources/css/scrollbars.css" type="text/css" />
   <link rel="stylesheet" href="resources/css/viewport.css" type="text/css" />
-  <link rel="stylesheet" href="prettify/prettify.css" type="text/css" />
-
-  <script type="text/javascript" src="http://use.typekit.com/uxj6dew.js"></script>
-  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-
+  <link rel="stylesheet" href="resources/prettify/prettify.css" type="text/css" />
+  <link rel="stylesheet" href="resources/codemirror/codemirror.css" type="text/css" />
+  <link rel="stylesheet" href="resources/codemirror/default.css" type="text/css" />
+  <!-- END CSS -->
   <!--[if IE]>
     <link rel="stylesheet" href="resources/css/ie.css" type="text/css" />
   <![endif]-->
 
+  <script type="text/javascript" src="http://use.typekit.com/uxj6dew.js"></script>
+  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+  <script type="text/javascript">Docs = {localStorageDb: "{local_storage_db}"};</script>
+  <!-- BEGIN JS -->
+  <script type="text/javascript" src="resources/codemirror/codemirror.js"></script>
+  <script type="text/javascript" src="resources/codemirror/javascript.js"></script>
   <script type="text/javascript" src="{extjs_path}"></script>
-  <script type="text/javascript" src="prettify/prettify.js"></script>
-
-  <script type="text/javascript"> Ext.ns("Docs"); </script>
+  <script type="text/javascript" src="resources/prettify/prettify.js"></script>
   <script type="text/javascript" src="app.js"></script>
-
+  <!-- END JS -->
   <script type="text/javascript" src="output/tree.js"></script>
-  <script type="text/javascript" src="output/members.js"></script>
-  <script type="text/javascript" src="output/overviewData.js"></script>
+  <script type="text/javascript" src="output/searchData.js"></script>
+
+  {head_html}
 
 </head>
 <body id="ext-body" class="iScroll">
-    <div id="loading"><span class="title"></span><span class="logo"></span></div>
-    <form id="history-form" class="x-hide-display">
-        <input type="hidden" id="x-history-field" />
-        <iframe id="x-history-frame"></iframe>
-    </form>
-    <div id="footer-content" style="display: none">{footer}</div>
-    {append_html}
+
+  <div id="loading"><span class="title"></span><span class="logo"></span></div>
+
+  <form id="history-form" class="x-hide-display">
+      <input type="hidden" id="x-history-field" />
+      <iframe id="x-history-frame"></iframe>
+  </form>
+
+  {guides}
+  {categories}
+  {footer}
+
+  {body_html}
+
 </body>
 </html>

@@ -26,7 +26,7 @@ module JsDuck
     def uniq_html_filename(filename)
       fname = html_filename(filename)
       nr = 1
-      while File.exists?(fname)
+      while file_exists?(fname)
         nr += 1
         fname = html_filename(filename, nr)
       end
@@ -37,6 +37,12 @@ module JsDuck
       @output_dir + "/" + File.basename(filename, ".js") + (nr > 0 ? nr.to_s : "") + ".html"
     end
 
+    # Case-insensitive check for file existance to avoid conflicts
+    # when source files dir is moved to Windows machine.
+    def file_exists?(filename)
+      Dir.glob(filename, File::FNM_CASEFOLD).length > 0
+    end
+
     # Returns source wrapped inside HTML page
     def wrap_page(source)
       return <<-EOHTML
@@ -45,8 +51,8 @@ module JsDuck
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>The source code</title>
-  <link href="../prettify/prettify.css" type="text/css" rel="stylesheet" />
-  <script type="text/javascript" src="../prettify/prettify.js"></script>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
   <style type="text/css">
     .highlight { display: block; background-color: #ddd; }
   </style>

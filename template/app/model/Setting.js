@@ -6,6 +6,6 @@ Ext.define('Docs.model.Setting', {
     extend: 'Ext.data.Model',
     proxy: {
         type: ('localStorage' in window && window['localStorage'] !== null) ? 'localstorage' : 'memory',
-        id  : 'docs-settings'
+        id: Docs.localStorageDb + '-settings'
     }
 });

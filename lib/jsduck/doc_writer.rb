@@ -136,7 +136,9 @@ module JsDuck
           }),
         maybe_html2text(p),
         privat(p[:private]),
+        protect(p[:protected]),
         static(p[:static]),
+        inheritable(p[:inheritable]),
         aliass(p[:alias]),
       ]
     end
@@ -148,7 +150,9 @@ module JsDuck
         m[:params].map {|p| param(p) },
         retrn(m[:return]),
         privat(m[:private]),
+        protect(m[:protected]),
         static(m[:static]),
+        inheritable(m[:inheritable]),
         aliass(m[:alias]),
       ]
     end
@@ -163,11 +167,11 @@ module JsDuck
     end
 
     def retrn(r)
-      return nil if !r || r[:type] == "void" && r[:doc] == ""
+      return nil if !r || r[:type] == "undefined" && r[:doc] == ""
 
       return html2text([
         "@return",
-        type(r[:type], "void"),
+        type(r[:type], "undefined"),
         doc(r[:doc]),
       ].compact.join(" "))
     end
@@ -184,8 +188,16 @@ module JsDuck
       p ? "@private" : nil
     end
 
+    def protect(p)
+      p ? "@protected" : nil
+    end
+
     def static(s)
       s ? "@static" : nil
+    end
+
+    def inheritable(s)
+      s ? "@inheritable" : nil
     end
 
     def aliass(a)

@@ -3,7 +3,7 @@ module JsDuck
 
   # Creates list of all members in all classes that is used by the
   # searching feature in UI.
-  class Members
+  class SearchData
     # Given list of class documentation objects returns an array of
     # hashes describing all the members.
     def create(docs)

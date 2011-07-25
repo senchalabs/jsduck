@@ -116,6 +116,8 @@ module JsDuck
         :author => detect_author(doc_map),
         :docauthor => detect_docauthor(doc_map),
         :singleton => !!doc_map[:singleton],
+        # Used by Aggregator to determine if we're dealing with Ext4 code
+        :code_type => code[:type],
       }, doc_map)
     end
 
@@ -139,7 +141,7 @@ module JsDuck
         :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
-        :return => detect_return(doc_map, name == "constructor" ? "Object" : "void"),
+        :return => detect_return(doc_map, name == "constructor" ? "Object" : "undefined"),
       }, doc_map)
     end
 
@@ -316,7 +318,7 @@ module JsDuck
           :name => ex[:name] || im[:name] || "",
           :doc => doc,
           # convert to boolean for JavaScript export, otherwise it's 0 or nil
-          :optional => !!(doc =~ /\(optional\)/),
+          :optional => !!(doc =~ /\(optional\)/i),
         }
       end
       params
@@ -336,7 +338,7 @@ module JsDuck
       docs.find_all {|tag| tag[:tagname] == :param}
     end
 
-    def detect_return(doc_map, default_type="void")
+    def detect_return(doc_map, default_type="undefined")
       ret = doc_map[:return] ? doc_map[:return].first : {}
       return {
         :type => ret[:type] || default_type,
