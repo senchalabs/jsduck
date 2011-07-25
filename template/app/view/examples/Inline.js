@@ -13,6 +13,8 @@ Ext.define('Docs.view.examples.Inline', {
         handles: 's',
         constrainTo: false
     },
+    // Make too long examples scrollable
+    maxHeight: 400,
 
     statics: {
         iframeId: 0

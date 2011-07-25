@@ -735,8 +735,10 @@ a {
       color: white;
       background: $docs-text-color; } } }
 
-// Inline example component buttons
 .inline-example-cmp {
+  // add padding to make right scrollbar visible
+  padding-right: 25px;
+  // Inline example component buttons
   span.x-btn-icon {
     background: url(../images/example-icons.png) no-repeat;
     opacity: 0.6;
