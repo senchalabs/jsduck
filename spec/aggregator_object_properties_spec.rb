@@ -132,4 +132,30 @@ describe JsDuck::Aggregator do
       it_should_behave_like "object with properties"
     end
   end
+
+  describe "property with properties" do
+    before do
+      @doc = parse(<<-EOS)
+        /**
+         * @property {Object} coord Geographical coordinates
+         * @property {Object} coord.lat Latitude
+         * @property {Number} coord.lat.numerator Numerator part of a fraction
+         * @property {Number} coord.lat.denominator Denominator part of a fraction
+         * @property {Number} coord.lng Longitude
+         */
+      EOS
+    end
+
+    it "is interpreted as single property" do
+      @doc.length.should == 1
+    end
+
+    describe "the property" do
+      before do
+        @obj = @doc[0]
+      end
+
+      it_should_behave_like "object with properties"
+    end
+  end
 end
