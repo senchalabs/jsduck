@@ -404,20 +404,47 @@ Ext.define('Docs.view.cls.Overview', {
             doc += '</div>';
         }
 
-        if (member.params && member.params.length > 0) {
-            doc += '<h3 class="pa">Parameters</h3>';
-            doc += this.renderParams(member.params);
-        }
-
-        if (member["return"]) {
-            doc += this.renderReturn(member["return"]);
-        }
+        doc += this.renderParamsAndReturn(member);
 
         return doc;
     },
 
-    renderParams: function(params) {
-        return "<ul>" + Ext.Array.map(params, this.renderLongParam, this).join("") + "</ul>";
+    // Handles both rendering of method parameters and return value.
+    // Plus the rendering of object properties, which could also be
+    // functions in which case they too will be rendered with
+    // parameters and return value.
+    renderParamsAndReturn: function(item) {
+        var doc = "";
+        var params, ret;
+
+        if (item.params && item.params.length > 0) {
+            params = item.params;
+        }
+        else if (item.properties && item.properties.length > 0) {
+            params = item.properties;
+            // If the name of last property is "return"
+            // remove it from params list and handle it separately afterwards
+            if (params[params.length-1].name === "return") {
+                ret = params[params.length-1];
+                params = params.slice(0, params.length-1);
+            }
+        }
+
+        if (params) {
+            if (item.type === "Function" || item.tagname === "method" || item.tagname === "event") {
+                doc += '<h3 class="pa">Parameters</h3>';
+            }
+            doc += "<ul>" + Ext.Array.map(params, this.renderLongParam, this).join("") + "</ul>";
+        }
+
+        if (item["return"]) {
+            doc += this.renderReturn(item["return"]);
+        }
+        else if (ret) {
+            doc += this.renderReturn(ret);
+        }
+
+        return doc;
     },
 
     renderLongParam: function(param) {
@@ -427,12 +454,12 @@ Ext.define('Docs.view.cls.Overview', {
                 '<div class="sub-desc">',
                     '{doc}',
                     '<tpl if="properties && properties.length">',
-                        '{[this.renderParams(values.properties)]}',
+                        '{[this.renderParamsAndReturn(values)]}',
                     '</tpl>',
                 '</div>',
             '</li>',
             {
-                renderParams: Ext.Function.bind(this.renderParams, this)
+                renderParamsAndReturn: Ext.Function.bind(this.renderParamsAndReturn, this)
             }
         );
 
