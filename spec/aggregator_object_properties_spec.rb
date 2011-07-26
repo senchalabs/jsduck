@@ -15,7 +15,9 @@ describe JsDuck::Aggregator do
         /**
          * Some function
          * @param {Object} coord Geographical coordinates
-         * @param {Number} coord.lat Latitude
+         * @param {Object} coord.lat Latitude
+         * @param {Number} coord.lat.numerator Numerator part of a fraction
+         * @param {Number} coord.lat.denominator Denominator part of a fraction
          * @param {Number} coord.lng Longitude
          */
         function foo(x, y) {}
@@ -57,11 +59,27 @@ describe JsDuck::Aggregator do
         end
 
         it "has type" do
-          @prop[:type].should == "Number"
+          @prop[:type].should == "Object"
         end
 
         it "has doc" do
           @prop[:doc].should == "Latitude"
+        end
+
+        it "contains 2 subproperties" do
+          @prop[:properties].length.should == 2
+        end
+
+        describe "first subproperty" do
+          it "has name without namespace" do
+            @prop[:properties][0][:name].should == "numerator"
+          end
+        end
+
+        describe "second subproperty" do
+          it "has name without namespace" do
+            @prop[:properties][1][:name].should == "denominator"
+          end
         end
       end
 

@@ -339,16 +339,22 @@ module JsDuck
     end
 
     def combine_properties(raw_items)
+      # build name-index of all items
+      index = {}
+      raw_items.each {|it| index[it[:name]] = it }
+
+      # If item name has no dots, add it directly to items array.
+      # Otherwise look up the parent of item and add it as the
+      # property of that parent.
       items = []
-      previous = {}
       raw_items.each do |it|
-        if it[:name] =~ /\.(.*)$/
-          it[:name] = $1
-          previous[:properties] = [] unless previous[:properties]
-          previous[:properties] << it
+        if it[:name] =~ /^(.+)\.([^.]+)$/
+          it[:name] = $2
+          parent = index[$1]
+          parent[:properties] = [] unless parent[:properties]
+          parent[:properties] << it
         else
           items << it
-          previous = it
         end
       end
       items
