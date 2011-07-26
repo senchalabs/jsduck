@@ -81,7 +81,7 @@ Ext.define('Docs.view.examples.Inline', {
     showPreview: function(callback, scope) {
         if (!this.previewInitialized) {
             this.add({
-                bodyPadding: 10,
+                bodyPadding: '0 10',
                 cmpName: 'preview',
                 html: '<iframe id="' + this.getIframeId() + '" style="width: 100%; height: 100%; border: 0"></iframe>'
             });
