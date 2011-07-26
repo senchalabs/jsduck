@@ -107,6 +107,35 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "event parameter with properties" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @event
+         * Some event
+         * @param {Object} coord Geographical coordinates
+         * @param {Object} coord.lat Latitude
+         * @param {Number} coord.lat.numerator Numerator part of a fraction
+         * @param {Number} coord.lat.denominator Denominator part of a fraction
+         * @param {Number} coord.lng Longitude
+         */
+        "foo"
+      EOS
+    end
+
+    it "is interpreted as single parameter" do
+      @doc[:params].length.should == 1
+    end
+
+    describe "single param" do
+      before do
+        @obj = @doc[:params][0]
+      end
+
+      it_should_behave_like "object with properties"
+    end
+  end
+
   describe "cfg with properties" do
     before do
       @doc = parse(<<-EOS)
