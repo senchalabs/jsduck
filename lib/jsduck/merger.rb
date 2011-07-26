@@ -164,6 +164,7 @@ module JsDuck
         :owner => detect_owner(doc_map) || owner,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
+        :properties => detect_subproperties(docs),
       }, doc_map)
     end
 
@@ -338,6 +339,10 @@ module JsDuck
       combine_properties(docs.find_all {|tag| tag[:tagname] == :param})
     end
 
+    def detect_subproperties(docs)
+      combine_properties(docs.find_all {|tag| tag[:tagname] == :cfg})[0][:properties]
+    end
+
     def combine_properties(raw_items)
       # build name-index of all items
       index = {}
@@ -369,11 +374,15 @@ module JsDuck
     end
 
     # Combines :doc-s of most tags
-    # Ignores tags that have doc comment themselves
+    # Ignores tags that have doc comment themselves and subproperty tags
     def detect_doc(docs)
       ignore_tags = [:param, :return]
-      doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) }
+      doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) && !subproperty?(tag) }
       doc_tags.map { |tag| tag[:doc] }.compact.join(" ")
+    end
+
+    def subproperty?(tag)
+      tag[:tagname] == :cfg && tag[:name] =~ /\./
     end
 
     # Build map of at-tags for quick lookup

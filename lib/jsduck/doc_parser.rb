@@ -189,7 +189,6 @@ module JsDuck
       match(/@param/)
       add_tag(:param)
       maybe_type
-      #maybe_name
       maybe_ident_chain(:name)
       skip_white
     end
@@ -207,7 +206,7 @@ module JsDuck
       match(/@cfg/)
       add_tag(:cfg)
       maybe_type
-      maybe_name
+      maybe_ident_chain(:name)
       skip_white
     end
 
