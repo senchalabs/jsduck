@@ -193,11 +193,17 @@ module JsDuck
       skip_white
     end
 
-    # matches @return {type} ...
+    # matches @return {type} [ return.name ] ...
     def at_return
       match(/@returns?/)
       add_tag(:return)
       maybe_type
+      skip_white
+      if look(/return\.\w/)
+        @current_tag[:name] = ident_chain
+      else
+        @current_tag[:name] = "return"
+      end
       skip_white
     end
 

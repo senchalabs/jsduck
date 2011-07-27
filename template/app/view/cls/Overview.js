@@ -474,9 +474,15 @@ Ext.define('Docs.view.cls.Overview', {
                     '<span class="pre">{type}</span>',
                     '<div class="sub-desc">',
                         '{doc}',
+                        '<tpl if="properties && properties.length">',
+                            '{[this.renderParamsAndReturn(values)]}',
+                        '</tpl>',
                     '</div>',
                 '</li>',
-            '</ul>'
+            '</ul>',
+            {
+                renderParamsAndReturn: Ext.Function.bind(this.renderParamsAndReturn, this)
+            }
         );
 
         return this.returnTpl.apply(returnDoc);

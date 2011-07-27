@@ -11,7 +11,7 @@ describe JsDuck::Aggregator do
 
   shared_examples_for "object with properties" do
     it "has name" do
-      @obj[:name].should == "coord"
+      @obj[:name].should == @name
     end
 
     it "has type" do
@@ -101,6 +101,7 @@ describe JsDuck::Aggregator do
     describe "single param" do
       before do
         @obj = @doc[:params][0]
+        @name = "coord"
       end
 
       it_should_behave_like "object with properties"
@@ -130,6 +131,7 @@ describe JsDuck::Aggregator do
     describe "single param" do
       before do
         @obj = @doc[:params][0]
+        @name = "coord"
       end
 
       it_should_behave_like "object with properties"
@@ -156,6 +158,7 @@ describe JsDuck::Aggregator do
     describe "the config" do
       before do
         @obj = @doc[0]
+        @name = "coord"
       end
 
       it_should_behave_like "object with properties"
@@ -182,9 +185,30 @@ describe JsDuck::Aggregator do
     describe "the property" do
       before do
         @obj = @doc[0]
+        @name = "coord"
       end
 
       it_should_behave_like "object with properties"
     end
   end
+
+  describe "method return value with properties" do
+    before do
+      @obj = parse(<<-EOS)[0][:return]
+        /**
+         * Some function
+         * @return {Object} Geographical coordinates
+         * @return {Object} return.lat Latitude
+         * @return {Number} return.lat.numerator Numerator part of a fraction
+         * @return {Number} return.lat.denominator Denominator part of a fraction
+         * @return {Number} return.lng Longitude
+         */
+        function foo() {}
+      EOS
+      @name = "return"
+    end
+
+    it_should_behave_like "object with properties"
+  end
+
 end

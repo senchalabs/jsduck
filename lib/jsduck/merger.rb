@@ -371,7 +371,9 @@ module JsDuck
       ret = doc_map[:return] ? doc_map[:return].first : {}
       return {
         :type => ret[:type] || default_type,
+        :name => ret[:name] || "return",
         :doc => ret[:doc] || "",
+        :properties => doc_map[:return] ? detect_subproperties(doc_map[:return], :return) : []
       }
     end
 
