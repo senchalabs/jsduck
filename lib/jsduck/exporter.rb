@@ -49,11 +49,12 @@ module JsDuck
       @formatter.doc_context = m
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
       m[:deprecated][:text] = @formatter.format(m[:deprecated][:text]) if m[:deprecated]
-      if m[:params] || @formatter.too_long?(m[:doc])
+      if m[:params] || (m[:properties] && m[:properties].length > 0) || @formatter.too_long?(m[:doc])
         m[:shortDoc] = @formatter.shorten(m[:doc])
       end
       m[:params] = format_params(m[:params]) if m[:params]
       m[:return] = format_return(m[:return]) if m[:return]
+      m[:properties] = format_subproperties(m[:properties]) if m[:properties]
       m
     end
 
@@ -61,6 +62,7 @@ module JsDuck
       params.map do |p|
         p = p.clone
         p[:doc] = @formatter.format(p[:doc]) if p[:doc]
+        p[:properties] = format_subproperties(p[:properties]) if p[:properties]
         p
       end
     end
@@ -69,6 +71,15 @@ module JsDuck
       r = r.clone
       r[:doc] = @formatter.format(r[:doc]) if r[:doc]
       r
+    end
+
+    def format_subproperties(items)
+      items.map do |it|
+        it = it.clone
+        it[:doc] = @formatter.format(it[:doc]) if it[:doc]
+        it[:properties] = format_subproperties(it[:properties]) if it[:properties]
+        it
+      end
     end
 
   end

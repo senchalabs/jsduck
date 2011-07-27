@@ -164,6 +164,7 @@ module JsDuck
         :owner => detect_owner(doc_map) || owner,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
+        :properties => detect_subproperties(docs, :cfg),
       }, doc_map)
     end
 
@@ -175,6 +176,7 @@ module JsDuck
         :owner => detect_owner(doc_map),
         :type => detect_type(:property, doc_map, code),
         :doc => detect_doc(docs),
+        :properties => detect_subproperties(docs, :property),
       }, doc_map)
     end
 
@@ -318,6 +320,7 @@ module JsDuck
           :doc => doc,
           # convert to boolean for JavaScript export, otherwise it's 0 or nil
           :optional => !!(doc =~ /\(optional\)/i),
+          :properties => ex[:properties] || [],
         }
       end
       params
@@ -334,23 +337,61 @@ module JsDuck
     end
 
     def detect_explicit_params(docs)
-      docs.find_all {|tag| tag[:tagname] == :param}
+      combine_properties(docs.find_all {|tag| tag[:tagname] == :param})
+    end
+
+    def detect_subproperties(docs, tagname)
+      prop_docs = docs.find_all {|tag| tag[:tagname] == tagname}
+      prop_docs.length > 0 ? combine_properties(prop_docs)[0][:properties] : []
+    end
+
+    def combine_properties(raw_items)
+      # First item can't be namespaced, if it is ignore the rest.
+      if raw_items[0] && raw_items[0][:name] =~ /\./
+        return [raw_items[0]]
+      end
+
+      # build name-index of all items
+      index = {}
+      raw_items.each {|it| index[it[:name]] = it }
+
+      # If item name has no dots, add it directly to items array.
+      # Otherwise look up the parent of item and add it as the
+      # property of that parent.
+      items = []
+      raw_items.each do |it|
+        if it[:name] =~ /^(.+)\.([^.]+)$/
+          it[:name] = $2
+          parent = index[$1]
+          parent[:properties] = [] unless parent[:properties]
+          parent[:properties] << it
+        else
+          items << it
+        end
+      end
+      items
     end
 
     def detect_return(doc_map, default_type="undefined")
       ret = doc_map[:return] ? doc_map[:return].first : {}
       return {
         :type => ret[:type] || default_type,
+        :name => ret[:name] || "return",
         :doc => ret[:doc] || "",
+        :properties => doc_map[:return] ? detect_subproperties(doc_map[:return], :return) : []
       }
     end
 
     # Combines :doc-s of most tags
-    # Ignores tags that have doc comment themselves
+    # Ignores tags that have doc comment themselves and subproperty tags
     def detect_doc(docs)
       ignore_tags = [:param, :return]
-      doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) }
+      doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) && !subproperty?(tag) }
       doc_tags.map { |tag| tag[:doc] }.compact.join(" ")
+    end
+
+    def subproperty?(tag)
+      (tag[:tagname] == :cfg || tag[:tagname] == :property) && tag[:name] =~ /\./
     end
 
     # Build map of at-tags for quick lookup
