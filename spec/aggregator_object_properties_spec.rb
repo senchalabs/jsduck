@@ -211,4 +211,74 @@ describe JsDuck::Aggregator do
     it_should_behave_like "object with properties"
   end
 
+  # Tests with buggy syntax
+
+  describe "config option with properties in wrong order" do
+    before do
+      @obj = parse(<<-EOS)[0]
+        /**
+         * @cfg {Object} coord Geographical coordinates
+         * @cfg {Number} coord.lat.numerator Numerator part of a fraction
+         * @cfg {Number} coord.lat.denominator Denominator part of a fraction
+         * @cfg {Object} coord.lat Latitude
+         * @cfg {Number} coord.lng Longitude
+         */
+      EOS
+      @name = "coord"
+    end
+
+    it_should_behave_like "object with properties"
+  end
+
+  describe "only namespaced config options" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} coord.lat Latitude
+         * @cfg {Number} coord.lng Latitude
+         */
+      EOS
+    end
+
+    it "interpreted as just one config" do
+      @doc[:name].should == "coord.lat"
+    end
+  end
+
+  describe "normal config option name with dot after it" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} coord. Coordinate
+         */
+      EOS
+    end
+
+    it "has no dot in name" do
+      @doc[:name].should == "coord"
+    end
+
+    it "has dot in doc" do
+      @doc[:doc].should == ". Coordinate"
+    end
+  end
+
+  describe "normal config option name with dot before it" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} .coord Coordinate
+         */
+      EOS
+    end
+
+    it "has empty name" do
+      @doc[:name].should == ""
+    end
+
+    it "has dot in doc" do
+      @doc[:doc].should == ".coord Coordinate"
+    end
+  end
+
 end

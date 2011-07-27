@@ -346,6 +346,11 @@ module JsDuck
     end
 
     def combine_properties(raw_items)
+      # First item can't be namespaced, if it is ignore the rest.
+      if raw_items[0] && raw_items[0][:name] =~ /\./
+        return [raw_items[0]]
+      end
+
       # build name-index of all items
       index = {}
       raw_items.each {|it| index[it[:name]] = it }

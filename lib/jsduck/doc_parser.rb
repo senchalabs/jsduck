@@ -24,7 +24,7 @@ module JsDuck
     # Pass in :css to be able to parse CSS doc-comments
     def initialize(mode = :js)
       @ident_pattern = (mode == :css) ? /\$[\w-]*/ : /\w+/
-      @ident_chain_pattern = (mode == :css) ? /\$[\w.-]*/ : /[\w.]+/
+      @ident_chain_pattern = (mode == :css) ? /\$[\w-]+(\.[\w-]+)*/ : /\w+(\.\w+)*/
     end
 
     def parse(input)
