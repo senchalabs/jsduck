@@ -9,33 +9,33 @@ Ext.define('Docs.view.index.Container', {
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
-            '<h1 class="top">{title}</h1>',
+            // '<h1 class="top">{title}</h1>',
             '<tpl if="notice">',
                 '<div class="notice">{notice}</div>',
             '</tpl>',
-            '<div class="section legend">',
-                '<h4>Legend</h4>',
-                '<ul>',
-                    '<li class="icon icon-pkg">Package</li>',
-                    '<li class="icon icon-class">Class</li>',
-                    '<li class="icon icon-singleton">Singleton</li>',
-                    '<li class="icon icon-component">Component</li>',
-                    '<li class="icon icon-guide">Guide</li>',
-                '</ul>',
-            '</div>',
-            '<tpl if="guides">',
-                '<div class="section guides">',
-                    '<h1>Guides</h1>',
-                    '{guides}',
-                    '<div class="examples">',
-                        '<a href="../examples/index.html">View the examples &rarr;</a>',
-                    '</div>',
-                '</div>',
-            '</tpl>',
+            // '<div class="section legend">',
+            //     '<h4>Legend</h4>',
+            //     '<ul>',
+            //         '<li class="icon icon-pkg">Package</li>',
+            //         '<li class="icon icon-class">Class</li>',
+            //         '<li class="icon icon-singleton">Singleton</li>',
+            //         '<li class="icon icon-component">Component</li>',
+            //         '<li class="icon icon-guide">Guide</li>',
+            //     '</ul>',
+            // '</div>',
+            // '<tpl if="guides">',
+            //     '<div class="section guides">',
+            //         '<h1>Guides</h1>',
+            //         '{guides}',
+            //         '<div class="examples">',
+            //             '<a href="../examples/index.html">View the examples &rarr;</a>',
+            //         '</div>',
+            //     '</div>',
+            // '</tpl>',
             '{categories}'
         );
         this.data = this.extractData();
-        
+
         this.callParent(arguments);
     },
 

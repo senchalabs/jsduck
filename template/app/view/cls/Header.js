@@ -3,10 +3,10 @@
  */
 Ext.define('Docs.view.cls.Header', {
     extend: 'Ext.container.Container',
-    padding: '5 0 17 0',
+    padding: '10 0 17 0',
     // Initially the component will be empty and so the initial height
     // will not be correct if not set explicitly
-    height: 47,
+    height: 50,
     alias: 'widget.classheader',
 
     initComponent: function() {
