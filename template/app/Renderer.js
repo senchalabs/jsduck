@@ -298,6 +298,7 @@ Ext.define('Docs.Renderer', {
         this.paramTpl = this.paramTpl || new Ext.XTemplate(
             '<li>',
                 '<span class="pre">{name}</span> : {type}',
+                '<tpl if="optional"> (optional)</tpl>',
                 '<div class="sub-desc">',
                     '{doc}',
                     '<tpl if="properties && properties.length">',
