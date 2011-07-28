@@ -184,12 +184,30 @@ module JsDuck
       skip_white
     end
 
-    # matches @param {type} name ...
+    # matches @param {type} [name] (optional) ...
     def at_param
       match(/@param/)
       add_tag(:param)
       maybe_type
-      maybe_ident_chain(:name)
+      skip_horiz_white
+
+      if look(/\[/)
+        match(/\[/)
+        maybe_ident_chain(:name)
+        skip_horiz_white
+        if look(/\]/)
+          match(/\]/)
+          @current_tag[:optional] = true
+        end
+      else
+        maybe_ident_chain(:name)
+      end
+
+      skip_horiz_white
+      if look(/\(optional\)/i)
+        match(/\(optional\)/i)
+        @current_tag[:optional] = true
+      end
       skip_white
     end
 
