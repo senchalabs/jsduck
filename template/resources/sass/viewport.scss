@@ -141,11 +141,23 @@ a {
   @include border-radius(8px); }
 
 .logo {
-  background: url(../images/icon.png) 0 -787px no-repeat; }
+  background: url(../images/logo.png) 0 0 no-repeat;
+  color: #fff;
+  font-family: $docs-font;
+  line-height: 20px;
+  margin: 10px 0 0 8px;
+  padding-left: 21px;
+  font-size: 1.1em;
+  span {
+    font-weight: bold;
+    padding-right: 3px; } }
 
 .search {
   background: url(../images/search-box.png) no-repeat;
-  padding: 3px 0 0 25px; }
+  padding: 3px 0 0 25px;
+  .x-panel-body-default {
+    border: 0;
+    background: none;  } }
 .search .x-form-text {
   border: 0; background: 0; }
 #search-field .reset {
@@ -205,9 +217,9 @@ a {
     a {
       padding: 0 0.5em; } } }
 
-
-#center-container, #west-region-container {
-  background: $docs-bg-color url(../images/headBG.png) repeat-x; }
+#north-region {
+  @include vertical-gradient(#074e7c, #095f93);
+}
 
 #nested-west-region-container {
   background: $docs-bg-color;
@@ -295,9 +307,6 @@ a {
       padding: 0.1em 0 0.4em 2em; } } }
 
 .card-panel {
-  background: #fff;
-  @include border-radius(5px);
-  @include box-shadow(0, 0, 4px, rgba(0, 0, 0, 0.4));
   line-height: 1.5em;
   h3 {
     font-size: 1.2em;
@@ -315,7 +324,7 @@ a {
     background-color: #f7f7f7;
     border: 1px solid #ebebeb;
     padding: 0 15px 15px 10px;
-    margin: 0 20px 20px 0;
+    margin: 0 10px 20px 0;
     // Icons legend, floated to right
     &.legend {
       width: 120px;
@@ -375,6 +384,8 @@ a {
 
 
 #nested-west-region-container {
+  .x-grid-cell {
+    background: none; }
   .x-grid-cell-inner {
     font-family: $docs-font;
     font-size: 13px;
@@ -398,6 +409,7 @@ a {
         &:hover {
           @include icon-fav-over; } } } }
   .x-panel-body {
+    border-color: #d4d4d4;
     background: $docs-bg-color; } }
 
 .x-scroller-vertical {
@@ -760,3 +772,97 @@ a {
       background-position: -31px -62px; }
     &.copy {
       background-position: -30px -85px; } } }
+
+.doctabs {
+  @include icons;
+  padding-left: 10px;
+
+  .doctab {
+    position: relative;
+    display: inline-block;
+    margin-left: -8px;
+    cursor: pointer;
+    .l {
+      position: absolute;
+      top: 0;
+      left: 0px;
+      width: 9px;
+      height: 29px;
+      background: url(../images/tab-l.png) no-repeat;
+      z-index: 3;
+    }
+    .r {
+      position: absolute;
+      right: 0px;
+      top: 0;
+      width: 9px;
+      height: 29px;
+      background: url(../images/tab-r.png) no-repeat;
+      z-index: 5;
+    }
+    .m {
+      z-index: 5;
+      padding: 6px 12px 0 6px;
+      text-align: center;
+      margin: 0 7px;
+      background: url(../images/tab-m.png) repeat-x;
+      height: 29px;
+      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+      font-family: $docs-font;
+      font-weight: bold;
+      font-size: 11px;
+      a {
+        color: #2e3841;
+        padding-left: 22px;
+        padding-bottom: 5px;
+        line-height: 16px;
+        display: block;
+      }
+    }
+  }
+  .doctab.active {
+    border-width: 0;
+    .l {
+      background: url(../images/taba-l.png) no-repeat -2px -3px;
+      z-index: 6;
+      width: 13px;
+    }
+    .r {
+      background: url(../images/taba-r.png) no-repeat 2px -3px;
+      z-index: 5;
+      width: 13px;
+    }
+    .m {
+      background: url(../images/taba-m.png) repeat-x 0 -3px;
+      z-index: 5;
+    }
+  }
+  .doctab.home .m a {
+    background: url(../images/tab-icons.png) no-repeat 7px 0;
+    padding-left: 16px; padding-right: 4px;
+  }
+  .doctab.api .m a {
+    background: url(../images/tab-icons.png) no-repeat 8px -20px;
+    padding-left: 16px; padding-right: 4px;
+  }
+  .doctab.videos .m a {
+    background: url(../images/tab-icons.png) no-repeat 8px -38px;
+    padding-left: 16px; padding-right: 4px;
+  }
+  .doctab.guides .m a {
+    background: url(../images/tab-icons.png) no-repeat 9px -55px;
+    padding-left: 16px; padding-right: 4px;
+  }
+  .doctab.themes .m a {
+    background: url(../images/tab-icons.png) no-repeat 8px -73px;
+    padding-left: 16px; padding-right: 4px;
+  }
+}
+
+
+
+
+
+
+
+

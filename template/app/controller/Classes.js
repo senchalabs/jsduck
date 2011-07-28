@@ -239,7 +239,7 @@ Ext.define('Docs.controller.Classes', {
 
         this.currentCls = cls;
 
-        this.getFavoritesGrid().selectUrl("/api/"+cls.name);
+        // this.getFavoritesGrid().selectUrl("/api/"+cls.name);
     },
 
     /**

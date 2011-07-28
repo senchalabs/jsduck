@@ -23,7 +23,8 @@ Ext.define('Docs.Application', {
         'Classes',
         'Search',
         'Examples',
-        'Favorites'
+        'Favorites',
+        'Tabs'
     ],
 
     launch: function() {
@@ -52,7 +53,7 @@ Ext.define('Docs.Application', {
         }
 
         setInterval(function(){
-            Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 1000)
+            Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
         }, 1000)
     }
 
