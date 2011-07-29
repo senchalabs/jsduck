@@ -35,27 +35,12 @@ Ext.define('Docs.Application', {
 
         Ext.create('Docs.view.Viewport');
 
-        // Update favorites grid height between browser tabs if changed
-        // Ext.getStore('Settings').on('load', function(store) {
-        //     var favHeight = Docs.Settings.get('favorites-height');
-        //     if (favHeight) {
-        //         var tabPanel = Ext.getCmp('classes-tab-panel');
-        //         tabPanel.suspendEvents();
-        //         tabPanel.setHeight(favHeight);
-        //         tabPanel.resumeEvents();
-        //     }
-        // });
-
         Docs.History.init();
 
         // When google analytics event tracking script present on page
         if (Docs.initEventTracking) {
             Docs.initEventTracking();
         }
-
-        setInterval(function(){
-            Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
-        }, 1000)
     }
 
 });
