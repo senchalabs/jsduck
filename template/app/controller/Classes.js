@@ -228,10 +228,6 @@ Ext.define('Docs.controller.Classes', {
 
             this.getTree().selectUrl("/api/"+cls.name);
             this.fireEvent('showClass', cls.name);
-
-            var iconCls = this.getTree().findRecordByUrl("/api/"+cls.name);
-            var clsName = cls.name.match(/([^\.]+)$/)[0];
-            Ext.getCmp('doctabs').addTab({href: '#/api/' + cls.name, text: clsName, iconCls: iconCls.raw.iconCls})
         }
 
         if (anchor) {
@@ -242,8 +238,6 @@ Ext.define('Docs.controller.Classes', {
         }
 
         this.currentCls = cls;
-
-        // this.getFavoritesGrid().selectUrl("/api/"+cls.name);
     },
 
     /**
@@ -258,24 +252,25 @@ Ext.define('Docs.controller.Classes', {
 
         noHistory || Docs.History.push(url);
 
-        var name = url.match(/^\/guide\/(.*)$/)[1];
-        Ext.data.JsonP.request({
-            url: this.getBaseUrl() + "/guides/" + name + "/README.js",
-            callbackName: name,
-            success: function(json) {
-                this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
-                Ext.getCmp("guide").update(json.guide);
-                Ext.getCmp('card-panel').layout.setActiveItem(2);
-                Docs.Syntax.highlight(Ext.get("guide"));
-                this.fireEvent('showGuide', name);
-                this.getTree().selectUrl(url);
-                this.getFavoritesGrid().selectUrl(url);
-            },
-            failure: function(response, opts) {
-                this.showFailure("Guide <b>"+name+"</b> was not found.");
-            },
-            scope: this
-        });
+        var name = url.match(/^\/guide\/(.*)$/);
+        if (name) {
+            Ext.data.JsonP.request({
+                url: this.getBaseUrl() + "/guides/" + name[1] + "/README.js",
+                callbackName: name[1],
+                success: function(json) {
+                    this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
+                    Ext.getCmp("guide").update(json.guide);
+                    Ext.getCmp('card-panel').layout.setActiveItem(2);
+                    Docs.Syntax.highlight(Ext.get("guide"));
+                    this.fireEvent('showGuide', name[1]);
+                    this.getTree().selectUrl(url);
+                },
+                failure: function(response, opts) {
+                    this.showFailure("Guide <b>"+name[1]+"</b> was not found.");
+                },
+                scope: this
+            });
+        }
     },
 
     /**

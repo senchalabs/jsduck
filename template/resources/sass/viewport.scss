@@ -60,7 +60,7 @@ $docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
   .icon-component {
     background: url(../images/icons.png) no-repeat -3px -137px !important; }
   .icon-guide {
-    background: url(../images/icons.png) no-repeat -3px -5px !important; }
+    background: url(../images/icons.png) no-repeat -3px -7px !important; }
   .icon-event {
     background: url(../images/icons.png) no-repeat -3px -245px !important; }
   .icon-property {
@@ -508,7 +508,7 @@ a {
   margin-bottom: 4px; }
 
 #guide {
-  padding-right: 10px;
+  padding: 10px;
   font-size: 14px;
   h1 {
     background: url(../images/doc-m.png) no-repeat -5px -5px;
@@ -860,7 +860,7 @@ a {
     }
   }
   .doctab.home .m a {
-    background: url(../images/tab-icons.png) no-repeat 7px 0;
+    background: url(../images/tab-icons.png) no-repeat 7px 1px;
     padding-left: 16px; padding-right: 4px; padding-bottom: 20px;
   }
   .doctab.api .m a {
