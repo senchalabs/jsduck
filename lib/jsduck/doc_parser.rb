@@ -189,29 +189,8 @@ module JsDuck
       match(/@param/)
       add_tag(:param)
       maybe_type
-      skip_horiz_white
-
-      if look(/\[/)
-        match(/\[/)
-        maybe_ident_chain(:name)
-        skip_horiz_white
-        if look(/=/)
-          match(/=/)
-          @current_tag[:default] = match(/[^\]]*/).strip
-        end
-        if look(/\]/)
-          match(/\]/)
-          @current_tag[:optional] = true
-        end
-      else
-        maybe_ident_chain(:name)
-      end
-
-      skip_horiz_white
-      if look(/\(optional\)/i)
-        match(/\(optional\)/i)
-        @current_tag[:optional] = true
-      end
+      maybe_name_with_default
+      maybe_optional
       skip_white
     end
 
@@ -234,7 +213,8 @@ module JsDuck
       match(/@cfg/)
       add_tag(:cfg)
       maybe_type
-      maybe_ident_chain(:name)
+      maybe_name_with_default
+      maybe_optional
       skip_white
     end
 
@@ -362,6 +342,35 @@ module JsDuck
       skip_horiz_white
       if look(/\{/)
         @current_tag[:type] = typedef
+      end
+    end
+
+    # matches: <ident-chain> | "[" <ident-chain> [ "=" <default-value> ] "]"
+    def maybe_name_with_default
+      skip_horiz_white
+      if look(/\[/)
+        match(/\[/)
+        maybe_ident_chain(:name)
+        skip_horiz_white
+        if look(/=/)
+          match(/=/)
+          @current_tag[:default] = match(/[^\]]*/).strip
+        end
+        if look(/\]/)
+          match(/\]/)
+        end
+        @current_tag[:optional] = true
+      else
+        maybe_ident_chain(:name)
+      end
+    end
+
+    # matches: "(optional)"
+    def maybe_optional
+      skip_horiz_white
+      if look(/\(optional\)/i)
+        match(/\(optional\)/i)
+        @current_tag[:optional] = true
       end
     end
 

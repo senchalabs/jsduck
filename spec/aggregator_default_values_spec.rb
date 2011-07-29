@@ -117,4 +117,30 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg with explicit default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=128.6] Something
+         */
+      EOS
+    end
+    it "has default value" do
+      @doc[:default].should == "128.6"
+    end
+  end
+
+  describe "cfg with explicit long default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=/hmm.../] Something
+         */
+      EOS
+    end
+    it "has default value" do
+      @doc[:default].should == "/hmm.../"
+    end
+  end
+
 end

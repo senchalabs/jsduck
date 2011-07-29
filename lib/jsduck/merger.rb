@@ -164,6 +164,7 @@ module JsDuck
         :owner => detect_owner(doc_map) || owner,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
+        :default => detect_default(:cfg, doc_map),
         :properties => detect_subproperties(docs, :cfg),
       }, doc_map)
     end
@@ -268,6 +269,13 @@ module JsDuck
       elsif code[:type] == :ext_define
         # Classes defined with Ext.define will automatically inherit from Ext.Base
         code[:extend] || "Ext.Base"
+      end
+    end
+
+    def detect_default(tagname, doc_map)
+      main_tag = doc_map[tagname] ? doc_map[tagname].first : {}
+      if main_tag[:default]
+        main_tag[:default]
       end
     end
 
