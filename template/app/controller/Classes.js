@@ -231,7 +231,7 @@ Ext.define('Docs.controller.Classes', {
 
             var iconCls = this.getTree().findRecordByUrl("/api/"+cls.name);
             var clsName = cls.name.match(/([^\.]+)$/)[0];
-            Ext.getCmp('doctabs').addTab({cls: '#/api/' + cls.name, clsName: clsName, icn: iconCls.raw.iconCls})
+            Ext.getCmp('doctabs').addTab({href: '#/api/' + cls.name, text: clsName, iconCls: iconCls.raw.iconCls})
         }
 
         if (anchor) {

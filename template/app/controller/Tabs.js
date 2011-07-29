@@ -1,3 +1,6 @@
+/**
+ * Controller for tabs. Adds listeners for clicking tabs and their corresponding 'close' buttons
+ */
 Ext.define('Docs.controller.Tabs', {
     extend: 'Ext.app.Controller',
 
@@ -18,13 +21,13 @@ Ext.define('Docs.controller.Tabs', {
                     cmp.el.addListener('click', function(evt, el) {
                         cmp.justClosed = true;
                         var docTab = Ext.get(el).up('.doctab');
+                        Ext.getCmp('doctabs').removeTab(docTab.down('.docClass').getAttribute('href'));
                         docTab.animate({
                             to: { top: 30 }
                         }).animate({
                             to: { width: 10 },
                             listeners: {
                                 afteranimate: function() {
-                                    Ext.getCmp('doctabs').removeTab(docTab.down('.docClass').getAttribute('href'));
                                     docTab.remove();
                                 },
                                 scope: this
