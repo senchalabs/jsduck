@@ -808,7 +808,7 @@ a {
     }
     .m {
       z-index: 5;
-      padding: 6px 12px 0 6px;
+      padding: 6px 10px 0 6px;
       margin: 0 7px;
       background: url(../images/tab-m.png) repeat-x;
       height: 29px;
@@ -827,7 +827,7 @@ a {
         overflow: hidden;
       }
       a.docClass {
-        padding-left: 7px;
+        padding-left: 5px;
       }
       a.icn {
         padding-left: 15px;
@@ -861,23 +861,23 @@ a {
   }
   .doctab.home .m a {
     background: url(../images/tab-icons.png) no-repeat 7px 1px;
-    padding-left: 16px; padding-right: 4px; padding-bottom: 20px;
+    padding-left: 16px; padding-right: 6px; padding-bottom: 20px;
   }
   .doctab.api .m a {
     background: url(../images/tab-icons.png) no-repeat 8px -20px;
-    padding-left: 16px; padding-right: 4px;
+    padding-left: 16px; padding-right: 6px;
   }
   .doctab.videos .m a {
     background: url(../images/tab-icons.png) no-repeat 8px -38px;
-    padding-left: 16px; padding-right: 4px;
+    padding-left: 16px; padding-right: 6px;
   }
   .doctab.guides .m a {
     background: url(../images/tab-icons.png) no-repeat 9px -55px;
-    padding-left: 16px; padding-right: 4px;
+    padding-left: 16px; padding-right: 6px;
   }
   .doctab.themes .m a {
     background: url(../images/tab-icons.png) no-repeat 8px -73px;
-    padding-left: 16px; padding-right: 4px;
+    padding-left: 16px; padding-right: 6px;
   }
 }
 

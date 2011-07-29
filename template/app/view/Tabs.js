@@ -1,5 +1,6 @@
 /**
- * Handles the custom Tab bar functionality and tracking of Tabs. This is a cu
+ * Handles the Tab bar functionality and tracking of Tabs.
+ * This is a custom implementation and has nothing to do with regular Ext tabs.
  */
 Ext.define('Docs.view.Tabs', {
     extend: 'Ext.container.Container',

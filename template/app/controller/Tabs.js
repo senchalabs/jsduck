@@ -1,5 +1,5 @@
 /**
- * Controller for tabs. Adds listeners for clicking tabs and their corresponding 'close' buttons
+ * Controller for tabs. Adds listeners for clicking tabs and their 'close' buttons
  */
 Ext.define('Docs.controller.Tabs', {
     extend: 'Ext.app.Controller',
