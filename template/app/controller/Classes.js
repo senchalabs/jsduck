@@ -114,7 +114,22 @@ Ext.define('Docs.controller.Classes', {
                 afterrender: function(cmp) {
                     // Expand member when clicked
                     cmp.el.addListener('click', function(cmp, el) {
-                        Ext.get(Ext.get(el).up('.member')).toggleCls('open');
+                        var member = Ext.get(el).up('.member'),
+                            docClass = member.down('.meta .docClass'),
+                            clsName = docClass.getAttribute('rel'),
+                            memberName = member.getAttribute('id'),
+                            baseUrl = '/api/' + this.currentCls.name;
+
+                        Docs.classState[baseUrl] = Docs.classState[baseUrl] || {};
+                        Docs.classState[baseUrl][memberName] = Docs.classState[baseUrl][memberName] || {};
+
+                        if (member.hasCls('open')) {
+                            Docs.classState[baseUrl][memberName].expanded = false;
+                        } else {
+                            Docs.classState[baseUrl][memberName].expanded = true;
+                            this.fireEvent('showMember', clsName, memberName);
+                        }
+                        member.toggleCls('open');
                     }, this, {
                         preventDefault: true,
                         delegate: '.expandable'

@@ -31,6 +31,7 @@ Ext.define('Docs.Application', {
         Docs.App = this;
         Docs.Favorites.init();
         Docs.Settings.init();
+        Docs.classState = {};
 
         Ext.create('Docs.view.Viewport');
 

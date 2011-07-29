@@ -157,7 +157,7 @@ Ext.define('Docs.Renderer', {
 
     renderMemberDiv: function(member, index) {
         this.memberTpl = this.memberTpl || new Ext.XTemplate(
-            '<div id="{tagname}-{name}" class="member {firstChild} {inherited}">',
+            '<div id="{tagname}-{name}" class="member {firstChild} {inherited} {[values.open ? " open" : ""]}">',
                 // leftmost column: expand button
                 '<a href="#" class="side {expandable}">',
                     '<span>&nbsp;</span>',
@@ -184,6 +184,13 @@ Ext.define('Docs.Renderer', {
             }
         );
 
+        var memberName = member.tagname + '-' + member.name,
+            open;
+
+        if (Docs.classState && Docs.classState['/api/' + this.cls.name] && Docs.classState['/api/' + this.cls.name][memberName]) {
+            open = Docs.classState['/api/' + this.cls.name][memberName].expanded;
+        }
+
         return this.memberTpl.apply(Ext.apply({
             // use classname "first-child" when it's first member in its category
             firstChild: (index === 0) ? "first-child" : "",
@@ -194,7 +201,8 @@ Ext.define('Docs.Renderer', {
             // method params signature or property type signature
             signature: this.renderSignature(member),
             // full documentation together with optional parameters and return value
-            longDoc: this.renderLongDoc(member)
+            longDoc: this.renderLongDoc(member),
+            open: open
         }, member));
     },
 
