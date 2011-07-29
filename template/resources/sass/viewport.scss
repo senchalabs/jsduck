@@ -776,12 +776,18 @@ a {
 .doctabs {
   @include icons;
   padding-left: 10px;
+  height: 19px;
+  position: relative;
 
   .doctab {
     position: relative;
-    display: inline-block;
+    display: block;
+    float: left;
+    overflow: hidden;
+    top: 0;
     margin-left: -8px;
     cursor: pointer;
+    height: 28px;
     .l {
       position: absolute;
       top: 0;
@@ -803,20 +809,36 @@ a {
     .m {
       z-index: 5;
       padding: 6px 12px 0 6px;
-      text-align: center;
       margin: 0 7px;
       background: url(../images/tab-m.png) repeat-x;
       height: 29px;
+      overflow: hidden;
+      white-space: nowrap;
       text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
       font-family: $docs-font;
       font-weight: bold;
       font-size: 11px;
       a {
-        color: #2e3841;
-        padding-left: 22px;
         padding-bottom: 5px;
         line-height: 16px;
         display: block;
+        color: #2e3841;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      a.docClass {
+        padding-left: 7px;
+      }
+      a.icn {
+        padding-left: 15px;
+        padding-bottom: 0;
+        float: left;
+      }
+      a.icn.close {
+        background: url(../images/x122.png) no-repeat 2px -14px !important;
+      }
+      a.icn.close.ovr {
+        background: url(../images/x122.png) no-repeat 2px 2px !important;
       }
     }
   }
@@ -839,7 +861,7 @@ a {
   }
   .doctab.home .m a {
     background: url(../images/tab-icons.png) no-repeat 7px 0;
-    padding-left: 16px; padding-right: 4px;
+    padding-left: 16px; padding-right: 4px; padding-bottom: 20px;
   }
   .doctab.api .m a {
     background: url(../images/tab-icons.png) no-repeat 8px -20px;

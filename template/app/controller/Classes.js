@@ -196,14 +196,14 @@ Ext.define('Docs.controller.Classes', {
         var cls = matches[1];
         var member = matches[2];
 
+        if (this.getOverview()) {
+            this.getOverview().setLoading(true);
+        }
+
         if (this.cache[cls]) {
             this.showClass(this.cache[cls], member);
         }
         else {
-            if (this.getOverview()) {
-                this.getOverview().setLoading(true);
-            }
-
             Ext.data.JsonP.request({
                 url: this.getBaseUrl() + '/output/' + cls + '.js',
                 callbackName: cls.replace(/\./g, '_'),
@@ -228,6 +228,10 @@ Ext.define('Docs.controller.Classes', {
 
             this.getTree().selectUrl("/api/"+cls.name);
             this.fireEvent('showClass', cls.name);
+
+            var iconCls = this.getTree().findRecordByUrl("/api/"+cls.name);
+            var clsName = cls.name.match(/([^\.]+)$/)[0];
+            Ext.getCmp('doctabs').addTab({cls: '#/api/' + cls.name, clsName: clsName, icn: iconCls.raw.iconCls})
         }
 
         if (anchor) {

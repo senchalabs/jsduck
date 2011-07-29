@@ -1,56 +1,114 @@
 Ext.define('Docs.view.Tabs', {
     extend: 'Ext.container.Container',
+    alias: 'widget.doctabs',
+    id: 'doctabs',
 
-    componentCls: 'hover-menu',
-    itemSelector: 'div.item',
-    deferEmptyText: false,
+    componentCls: 'doctabs',
 
-    /**
-     * @cfg {Number} colHeight  maximum number of items in one column.
-     * When more than that, items are placed into multiple columns.
-     * Defaults to 25 (current maximum length of history).
-     */
-    columnHeight: 25,
-    /**
-     * @cfg {Boolean} showCloseButtons  true to show "x" after each menu item.
-     * Defaults to false.
-     */
-    showCloseButtons: false,
+    openTabs: [],
 
     initComponent: function() {
-        this.renderTo = Ext.getBody();
 
-        this.tpl = new Ext.XTemplate(
-            '<table>',
-            '<tr>',
-                '<td>',
-                '<tpl for=".">',
-                    '<div class="item">',
-                        '{[this.renderLink(values)]}',
-                        '<tpl if="this.showCloseButtons">',
-                            '<a class="close" href="#" rel="{cls}">x</a>',
-                        '</tpl>',
-                    '</div>',
-                    // Start new column when columnHeight reached
-                    '<tpl if="xindex % this.columnHeight === 0 && xcount &gt; xindex">',
-                        '</td><td>',
-                    '</tpl>',
-                '</tpl>',
-                '</td>',
-            '</tr>',
-            '</table>',
-            {
-                columnHeight: this.columnHeight,
-                showCloseButtons: this.showCloseButtons,
-                renderLink: function(values) {
-                    var url = values.url || values.cls;
-                    var label = values.label || values.cls;
-                    var stat = values['static'] ? '<span class="static">static</span>' : "";
-                    return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{1} {2}</a>', url, label, stat);
-                }
-            }
-        );
+        this.html = [
+            '<div class="doctab home"><div class="l"></div><div class="m"><a class="docClass" href="#">&nbsp;</a></div><div class="r"></div></div>',
+            '<div class="doctab api active"><div class="l"></div><div class="m"><a class="docClass" href="#">&nbsp;</a></div><div class="r"></div></div>',
+            '<div class="doctab videos"><div class="l"></div><div class="m"><a class="docClass" href="#">&nbsp;</a></div><div class="r"></div></div>',
+            '<div class="doctab guides"><div class="l"></div><div class="m"><a class="docClass" href="#">&nbsp;</a></div><div class="r"></div></div>',
+            '<div class="doctab themes"><div class="l"></div><div class="m"><a class="docClass" href="#">&nbsp;</a></div><div class="r"></div></div>',
+            '<div style="float: left; width: 8px">&nbsp;</div>'
+        ].join('');
 
         this.callParent();
+    },
+
+    addTab: function(item) {
+
+        if (!Ext.Array.contains(this.openTabs, item.cls)) {
+            var tpl = Ext.create('Ext.XTemplate',
+                '<div class="doctab" style="visibility: hidden">',
+                    '<div class="l"></div>',
+                    '<div class="m">',
+                        '<a class="icn {icn}" href="#">&nbsp;</a>',
+                        '<a class="docClass" href="{cls}">{clsName}</a>',
+                    '</div>',
+                '<div class="r"></div>',
+                '</div>'
+            )
+            var docTab = Ext.get(tpl.append(this.el.dom, item));
+            var width = docTab.getWidth();
+            docTab.setStyle('width', '10px')
+            docTab.setStyle({visibility: 'visible'})
+            docTab.animate({
+                to: { width: width }
+            });
+
+            this.openTabs.push(item.cls);
+        }
+        this.activateTab(item.cls)
+    },
+
+    activateTab: function(url) {
+        this.activeTab = Ext.Array.indexOf(this.openTabs, url);
+        Ext.Array.each(Ext.query('.doctab a[class=docClass]'), function(d) {
+            Ext.get(d).up('.doctab').removeCls('active');
+        });
+        var activeTab = Ext.query('.doctab a[href="' + url + '"]')[0];
+        if (activeTab) Ext.get(activeTab).up('.doctab').addCls('active');
+    },
+
+    removeTab: function(url) {
+        var idx = Ext.Array.indexOf(this.openTabs, url);
+        if (idx !== false) {
+            Ext.Array.erase(this.openTabs, idx, 1);
+            if (this.activeTab > idx) this.activeTab -= 1;
+        }
+        // console.log("Total", this.openTabs.length, "Clicked: ", idx, "Active: ", this.activeTab, this.openTabs)
+        if (idx == this.activeTab) {
+            if (this.openTabs.length == 0) {
+                // Go to home screen
+            } else  {
+                if (idx == 0) idx = 1;
+                Docs.App.getController('Classes').handleUrlClick(this.openTabs[idx - 1], {});
+            }
+        }
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -10,6 +10,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.index.Container',
         'Docs.view.tree.Tree',
         'Docs.view.FavoritesPanel',
+        'Docs.view.Tabs',
         'Docs.Favorites',
         'Docs.Settings',
         'Docs.History'
@@ -69,22 +70,8 @@ Ext.define('Docs.view.Viewport', {
 
                     },
                     {
-                        xtype: 'container',
-                        componentCls: 'doctabs',
-                        width: '100%',
-                        html: [
-                            '<div class="doctab home"><div class="l"></div><div class="m"><a href="#">&nbsp;</a></div><div class="r"></div></div>',
-                            '<div class="doctab api"><div class="l"></div><div class="m"><a href="#">&nbsp;</a></div><div class="r"></div></div>',
-                            '<div class="doctab videos"><div class="l"></div><div class="m"><a href="#">&nbsp;</a></div><div class="r"></div></div>',
-                            '<div class="doctab guides"><div class="l"></div><div class="m"><a href="#">&nbsp;</a></div><div class="r"></div></div>',
-                            '<div class="doctab themes"><div class="l"></div><div class="m"><a href="#">&nbsp;</a></div><div class="r"></div></div>',
-                            '<div style="position: relative; display: inline-block; width: 8px"></div>',
-                            '<div class="doctab"><div class="l"></div><div class="m"><a class="icon-class" href="#/api/Ext.Base">Base</a></div><div class="r"></div></div>',
-                            '<div class="doctab"><div class="l"></div><div class="m"><a class="icon-component" href="#/api/Ext.grid.Panel">Grid</a></div><div class="r"></div></div>',
-                            '<div class="doctab active"><div class="l"></div><div class="m"><a class="icon-singleton" href="#/api/Ext.Ajax">AJAX</a></div><div class="r"></div></div>',
-                            '<div class="doctab"><div class="l"></div><div class="m"><a class="icon-component" href="#/api/Ext.panel.Panel">Panel</a></div><div class="r"></div></div>',
-                            '<div class="doctab"><div class="l"></div><div class="m"><a class="icon-component" href="#/api/Ext.form.field.ComboBox">ComboBox</a></div><div class="r"></div></div>'
-                        ].join('')
+                        xtype: 'doctabs',
+                        width: '100%'
                     }
                 ]
             },
