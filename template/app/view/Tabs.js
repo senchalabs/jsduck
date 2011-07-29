@@ -100,7 +100,7 @@ Ext.define('Docs.view.Tabs', {
         }
         if (idx == this.activeTab) {
             if (this.openTabs.length == 0) {
-                // Go to home screen
+                Docs.App.getController('Classes').loadIndex();
             } else {
                 if (idx == this.openTabs.length) idx -= 1;
                 Docs.App.getController('Classes').handleUrlClick(this.openTabs[idx], {});

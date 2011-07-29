@@ -140,6 +140,12 @@ Ext.define('Docs.controller.Classes', {
                         preventDefault: true,
                         delegate: '.not-expandable'
                     });
+
+                    cmp.body.addListener('scroll', function(cmp, el) {
+                        var baseUrl = '/api/' + this.currentCls.name;
+                        Docs.classState[baseUrl] = Docs.classState[baseUrl] || {};
+                        Docs.classState[baseUrl]['scrollOffset'] = el.scrollTop;
+                    }, this);
                 }
             }
         });
@@ -249,7 +255,9 @@ Ext.define('Docs.controller.Classes', {
             this.getOverview().scrollToEl("#" + anchor);
             this.fireEvent('showMember', cls.name, anchor);
         } else {
-            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', 0);
+            var baseUrl = '/api/' + cls.name,
+                offset = (Docs.classState[baseUrl] && Docs.classState[baseUrl].scrollOffset) || 0;
+            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', offset);
         }
 
         this.currentCls = cls;
