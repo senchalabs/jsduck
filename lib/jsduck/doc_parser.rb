@@ -195,6 +195,10 @@ module JsDuck
         match(/\[/)
         maybe_ident_chain(:name)
         skip_horiz_white
+        if look(/=/)
+          match(/=/)
+          @current_tag[:default] = match(/[^\]]*/).strip
+        end
         if look(/\]/)
           match(/\]/)
           @current_tag[:optional] = true

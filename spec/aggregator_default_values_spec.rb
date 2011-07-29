@@ -87,4 +87,34 @@ describe JsDuck::Aggregator do
     it_should_behave_like "optional parameter"
   end
 
+  describe "parameter with explicit default value" do
+    before do
+      @param = parse(<<-EOS)[0][:params][0]
+        /**
+         * @param {Number} [foo=42] Something
+         */
+        function foo() {
+      EOS
+    end
+    it_should_behave_like "optional parameter"
+    it "has default value" do
+      @param[:default].should == "42"
+    end
+  end
+
+  describe "parameter with explicit long default value" do
+    before do
+      @param = parse(<<-EOS)[0][:params][0]
+        /**
+         * @param {Number} [foo="Hello, my dear!"] Something
+         */
+        function foo() {
+      EOS
+    end
+    it_should_behave_like "optional parameter"
+    it "has default value" do
+      @param[:default].should == '"Hello, my dear!"'
+    end
+  end
+
 end

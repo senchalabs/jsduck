@@ -319,6 +319,7 @@ module JsDuck
           :name => ex[:name] || im[:name] || "",
           :doc => doc,
           :optional => ex[:optional] || false,
+          :default => ex[:default],
           :properties => ex[:properties] || [],
         }
       end
