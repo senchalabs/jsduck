@@ -234,4 +234,46 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg with implicit default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} foo Something
+         */
+        foo: 18
+      EOS
+    end
+    it "detects the default value" do
+      @doc[:default].should == '18'
+    end
+  end
+
+  describe "cfg with implicit default string value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} foo Something
+         */
+        foo: "Hello"
+      EOS
+    end
+    it "detects the default value" do
+      @doc[:default].should == '"Hello"'
+    end
+  end
+
+  describe "cfg with implicit default regex value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} foo Something
+         */
+        foo: /[a-z]/
+      EOS
+    end
+    it "detects the default value" do
+      @doc[:default].should == '/[a-z]/'
+    end
+  end
+
 end

@@ -164,7 +164,7 @@ module JsDuck
         :owner => detect_owner(doc_map) || owner,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
-        :default => detect_default(:cfg, doc_map),
+        :default => detect_default(:cfg, doc_map, code),
         :properties => detect_subproperties(docs, :cfg),
       }, doc_map)
     end
@@ -272,10 +272,12 @@ module JsDuck
       end
     end
 
-    def detect_default(tagname, doc_map)
+    def detect_default(tagname, doc_map, code)
       main_tag = doc_map[tagname] ? doc_map[tagname].first : {}
       if main_tag[:default]
         main_tag[:default]
+      elsif code[:type] == :assignment && code[:right]
+        code[:right][:value]
       end
     end
 

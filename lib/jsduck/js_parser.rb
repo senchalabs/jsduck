@@ -161,13 +161,13 @@ module JsDuck
       elsif look("Ext", ".", "extend")
         ext_extend
       elsif look(:string)
-        {:type => :literal, :class => "String"}
+        {:type => :literal, :class => "String", :value => '"' + match(:string) + '"'}
       elsif look("true") || look("false")
-        {:type => :literal, :class => "Boolean"}
+        {:type => :literal, :class => "Boolean", :value => match(:ident)}
       elsif look(:number)
-        {:type => :literal, :class => "Number"}
+        {:type => :literal, :class => "Number", :value => match(:number)}
       elsif look(:regex)
-        {:type => :literal, :class => "RegExp"}
+        {:type => :literal, :class => "RegExp", :value => match(:regex)}
       end
     end
 
