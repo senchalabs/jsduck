@@ -44,13 +44,14 @@ Ext.define('Docs.view.Viewport', {
                             {
                                 cls: 'search',
                                 id: 'search-container',
-                                width: 200,
-                                margin: '3 0 0 0',
+                                width: 230,
+                                margin: '5 0 0 0',
                                 items: [
                                     {
                                         xtype: 'triggerfield',
                                         triggerCls: 'reset',
                                         emptyText: 'Search',
+                                        width: 170,
                                         id: 'search-field',
                                         enableKeyEvents: true,
                                         hideTrigger: true,
@@ -130,106 +131,6 @@ Ext.define('Docs.view.Viewport', {
                 ]
             }
         ];
-
-        // this.items = [
-        //     {
-        //         width: 240,
-        //         id: 'west-region-container',
-        //         padding: '5 0 0 0',
-        //         layout: 'vbox',
-        //         defaults: {
-        //             xtype: 'container',
-        //             width: "100%"
-        //         },
-        //         items: [
-        //             {
-        //                 cls: 'search',
-        //                 id: 'search-container',
-        //                 margin: '0 0 0 5',
-        //                 height: 40,
-        //                 items: [
-        //                     {
-        //                         xtype: 'triggerfield',
-        //                         triggerCls: 'reset',
-        //                         emptyText: 'Search',
-        //                         id: 'search-field',
-        //                         enableKeyEvents: true,
-        //                         hideTrigger: true,
-        //                         onTriggerClick: function() {
-        //                             this.reset();
-        //                             this.focus();
-        //                             this.setHideTrigger(true);
-        //                             Ext.getCmp('search-dropdown').hide();
-        //                         }
-        //                     },
-        //                     {
-        //                         xtype: 'searchdropdown'
-        //                     }
-        //                 ]
-        //             },
-        //             {
-        //                 id: 'nested-west-region-container',
-        //                 flex: 1,
-        //                 layout: 'border',
-        //                 border: false,
-        //                 items: [
-        //                     {
-        //                         xtype: 'favoritespanel',
-        //                         id: 'classes-tab-panel',
-        //                         region: 'north',
-        //                         height: Docs.Settings.get('favorites-height') || 150,
-        //                         hidden: Docs.Favorites.getCount() === 0
-        //                     },
-        //                     {
-        //                         region: 'center',
-        //                         xtype: 'classtree',
-        //                         padding: '5 10 0 10',
-        //                         margin: '0 5 2 0',
-        //                         root: Docs.classData
-        //                     }
-        //                 ]
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         region: 'center',
-        //         id: 'center-container',
-        //         layout: 'fit',
-        //         minWidth: 800,
-        //         padding: '20 20 5 0',
-        //         items: {
-        //             id: 'card-panel',
-        //             cls: 'card-panel',
-        //             xtype: 'container',
-        //             layout: 'card',
-        //             padding: '20',
-        //             items: [
-        //                 {
-        //                     autoScroll: true,
-        //                     xtype: 'indexcontainer'
-        //                 },
-        //                 {
-        //                     xtype: 'classcontainer'
-        //                 },
-        //                 {
-        //                     autoScroll: true,
-        //                     xtype: 'container',
-        //                     id: 'guide'
-        //                 },
-        //                 {
-        //                     xtype: 'container',
-        //                     id: 'failure'
-        //                 }
-        //             ]
-        //         }
-        //     },
-        //     {
-        //         region: 'south',
-        //         id: 'footer',
-        //         contentEl: 'footer-content',
-        //         height: 15
-        //     }
-        // ];
 
         this.callParent(arguments);
     },

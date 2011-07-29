@@ -154,7 +154,7 @@ a {
 
 .search {
   background: url(../images/search-box.png) no-repeat;
-  padding: 3px 0 0 25px;
+  padding: 2px 0 0 25px;
   .x-panel-body-default {
     border: 0;
     background: none;  } }
@@ -165,7 +165,7 @@ a {
   width: 16px;
   height: 16px;
   border: 0;
-  margin: 3px 0 0 9px; }
+  margin: 2px 0 0 14px; }
 
 
 #search-dropdown {
@@ -175,8 +175,8 @@ a {
   background: white;
   position: absolute;
   width: 190px;
-  top: 23px;
-  left: 20px;
+  top: 18px;
+  left: 23px;
   z-index: 5;
 
   .item, .footer {
