@@ -102,44 +102,135 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "parameter with explicit long default value" do
+  describe "parameter with explicit string default value" do
     before do
       @param = parse(<<-EOS)[0][:params][0]
         /**
-         * @param {Number} [foo="Hello, my dear!"] Something
+         * @param {Number} [foo="Hello, my [dear]!"] Something
          */
         function foo() {
       EOS
     end
     it_should_behave_like "optional parameter"
     it "has default value" do
-      @param[:default].should == '"Hello, my dear!"'
+      @param[:default].should == '"Hello, my [dear]!"'
     end
   end
 
-  describe "cfg with explicit default value" do
+  describe "cfg with explicit regex default value" do
     before do
       @doc = parse(<<-EOS)[0]
         /**
-         * @cfg {Number} [foo=128.6] Something
+         * @cfg {Number} [foo=/[0-9]+/] Something
          */
       EOS
     end
     it "has default value" do
-      @doc[:default].should == "128.6"
+      @doc[:default].should == "/[0-9]+/"
     end
   end
 
-  describe "cfg with explicit long default value" do
+  describe "cfg with explicit boolean default value" do
     before do
       @doc = parse(<<-EOS)[0]
         /**
-         * @cfg {Number} [foo=/hmm.../] Something
+         * @cfg {Number} [foo=true] Something
          */
       EOS
     end
     it "has default value" do
-      @doc[:default].should == "/hmm.../"
+      @doc[:default].should == "true"
+    end
+  end
+
+  describe "cfg with explicit array default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=["foo", 5, /[a-z]/]] Something
+         */
+      EOS
+    end
+    it "has default value" do
+      @doc[:default].should == '["foo", 5, /[a-z]/]'
+    end
+  end
+
+  describe "cfg with explicit object default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo={"foo": 5, bar: [1, 2, 3]}] Something
+         */
+      EOS
+    end
+    it "has default value" do
+      @doc[:default].should == '{"foo": 5, bar: [1, 2, 3]}'
+    end
+  end
+
+  describe "cfg with rubbish as default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=!haa] Something
+         */
+      EOS
+    end
+    it "has no default value" do
+      @doc[:default].should == nil
+    end
+  end
+
+  describe "cfg with rubbish after default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=7 and me too] Something
+         */
+      EOS
+    end
+    it "has a correct default value" do
+      @doc[:default].should == '7'
+    end
+  end
+
+  describe "cfg with bogus array literal as default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=[ho, ho]] Something
+         */
+      EOS
+    end
+    it "has as much of the array as possible for default value" do
+      @doc[:default].should == '[]'
+    end
+  end
+
+  describe "cfg with bogus object literal as default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo={ho:5, ho}] Something
+         */
+      EOS
+    end
+    it "has as much of the object as possible for default value" do
+      @doc[:default].should == '{ho: 5}'
+    end
+  end
+
+  describe "cfg with unfinished object literal as default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo={ho:5] Something
+         */
+      EOS
+    end
+    it "has as much of the object as possible for default value" do
+      @doc[:default].should == '{ho: 5}'
     end
   end
 
