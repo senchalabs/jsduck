@@ -87,11 +87,13 @@ Ext.define('Docs.view.Viewport', {
                         id: 'nested-west-region-container',
                         border: 1,
                         layout: 'fit',
+                        resizable: true,
+                        resizeHandles: 'e',
                         bodyPadding: '14 9',
                         autoHeight: true,
+                        width: 220,
                         items: [{
                             xtype: 'classtree',
-                            width: 220,
                             root: Docs.classData
                         }]
                     },
