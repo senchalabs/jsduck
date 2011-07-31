@@ -9,6 +9,8 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.cls.Container',
         'Docs.view.index.Container',
         'Docs.view.tree.Tree',
+        'Docs.view.examples.Index',
+        'Docs.view.examples.Tree',
         'Docs.view.FavoritesPanel',
         'Docs.view.Tabs',
         'Docs.Favorites',
@@ -86,16 +88,24 @@ Ext.define('Docs.view.Viewport', {
                         region: 'west',
                         id: 'nested-west-region-container',
                         border: 1,
-                        layout: 'fit',
+                        layout: 'card',
                         resizable: true,
                         resizeHandles: 'e',
+                        collapsible: true,
+                        hideCollapseTool: true,
+                        animCollapse: true,
                         bodyPadding: '14 9',
                         autoHeight: true,
                         width: 220,
-                        items: [{
-                            xtype: 'classtree',
-                            root: Docs.classData
-                        }]
+                        items: [
+                            {
+                                xtype: 'classtree',
+                                root: Docs.classData
+                            },
+                            {
+                                xtype: 'examplestree'
+                            }
+                        ]
                     },
                     {
                         region: 'center',
@@ -125,6 +135,16 @@ Ext.define('Docs.view.Viewport', {
                                 {
                                     xtype: 'container',
                                     id: 'failure'
+                                },
+                                {
+                                    xtype: 'examplesindex',
+                                    id: 'examples'
+                                },
+                                {
+                                    id: 'example',
+                                    xtype: 'container',
+                                    layout: 'fit',
+                                    html: '<iframe style="width: 100%; height: 100%; border: 0;" id="exampleIframe" src="extjs/examples/feed-viewer/feed-viewer.html" scrolling="yes"></iframe>'
                                 }
                             ]
                         }

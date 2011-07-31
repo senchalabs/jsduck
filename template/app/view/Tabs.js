@@ -17,7 +17,7 @@ Ext.define('Docs.view.Tabs', {
             '<tpl for=".">',
                 '<div class="doctab {cls}{active}">',
                     '<div class="l"></div>',
-                    '<div class="m"><a class="docClass" href="#">&nbsp;</a></div>',
+                    '<div class="m"><a class="docClass" href="{href}">&nbsp;</a></div>',
                     '<div class="r"></div>',
                 '</div>',
             '</tpl>',
@@ -25,11 +25,11 @@ Ext.define('Docs.view.Tabs', {
         );
 
         this.html = tpl.applyTemplate([
-            { cls: 'home' },
-            { cls: 'api', active: " active" },
-            { cls: 'videos' },
-            { cls: 'guides' },
-            { cls: 'themes' }
+            { cls: 'home',   href: '#' },
+            { cls: 'api',    href: '#/api', active: " active" },
+            { cls: 'videos', href: '#/videos' },
+            { cls: 'guides', href: '#/guides' },
+            { cls: 'themes', href: '#/examples' }
         ]);
 
         this.callParent();

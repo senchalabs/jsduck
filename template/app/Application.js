@@ -22,6 +22,7 @@ Ext.define('Docs.Application', {
     controllers: [
         'Classes',
         'Search',
+        'InlineExamples',
         'Examples',
         'Favorites',
         'Tabs'

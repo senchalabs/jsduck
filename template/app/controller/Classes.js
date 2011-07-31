@@ -211,6 +211,7 @@ Ext.define('Docs.controller.Classes', {
         }
 
         Ext.getCmp('card-panel').layout.setActiveItem(1);
+        Ext.getCmp('nested-west-region-container').layout.setActiveItem(0);
 
         // separate class and member name
         var matches = url.match(/^\/api\/(.*?)(?:-(.*))?$/);

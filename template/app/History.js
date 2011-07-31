@@ -23,6 +23,9 @@ Ext.define("Docs.History", {
         else if (url.type === "guide") {
             Docs.App.getController('Classes').loadGuide(url.url, true);
         }
+        else if (url.url === "/examples") {
+            Docs.App.getController('Examples').loadIndex();
+        }
         else {
             Docs.App.getController('Classes').loadIndex(true);
         }
@@ -30,7 +33,7 @@ Ext.define("Docs.History", {
 
     // Parses current browser location
     parseToken: function(token) {
-        var matches = token && token.match(/\/(api|guide)\/(.*)/);
+        var matches = token && token.match(/\/(api|guide|examples|videos)(\/(.*))?/);
         return matches ? {type: matches[1], url: matches[0]} : {};
     },
 
