@@ -20,8 +20,8 @@ module JsDuck
   #
   class Lexer
     def initialize(input)
-      @input = StringScanner.new(input)
-      tokenize
+      @input = input.is_a?(StringScanner) ? input : StringScanner.new(input)
+      @tokens = []
     end
 
     # Tests if given pattern matches the tokens that follow at current
@@ -33,17 +33,25 @@ module JsDuck
     #     look(:ident, "=", :regex)
     #
     def look(*tokens)
-      i = 0
-      tokens.all? do |t|
-        tok = @tokens[i]
-        i += 1
-        return false if tok == nil
-        if t.instance_of?(Symbol)
+      pos = @input.pos
+      buffered = 0
+      ok = tokens.all? do |t|
+        tok = next_token
+        if tok
+          @tokens << tok
+          buffered += 1
+        end
+        if tok == nil
+          false
+        elsif t.instance_of?(Symbol)
           tok[:type] == t
         else
           tok[:value] == t
         end
       end
+      @input.pos = pos
+      @tokens.pop(buffered)
+      return ok
     end
 
     # Returns the value of next token, moving the current token cursor
@@ -57,16 +65,19 @@ module JsDuck
     # pointing to the line where the doc-comment began.
     #
     def next(full=false)
-      tok = @tokens.shift
+      @tokens << tok = next_token
       full ? tok : tok[:value]
     end
 
     # True when no more tokens.
     def empty?
-      @tokens.empty?
+      pos = @input.pos
+      tok = next_token
+      @input.pos = pos
+      return !tok
     end
 
-    # Goes through the whole input and tokenizes it
+    # Parses out next token from input stream.
     #
     # For efficency we look for tokens in order of frequency in
     # JavaScript source code:
@@ -79,28 +90,27 @@ module JsDuck
     # The remaining token types are less frequent, so these are left
     # to the end.
     #
-    def tokenize
-      @tokens = []
+    def next_token
       while !@input.eos? do
         skip_white
         if @input.check(/[.(),;={}:]/)
-          @tokens << {
+          return {
             :type => :operator,
             :value => @input.scan(/./)
           }
         elsif @input.check(/[a-zA-Z_]/)
           value = @input.scan(/\w+/)
-          @tokens << {
+          return {
             :type => KEYWORDS[value] ? :keyword : :ident,
             :value => value
           }
         elsif @input.check(/'/)
-          @tokens << {
+          return {
             :type => :string,
             :value => @input.scan(/'([^'\\]|\\.)*'/).sub(/^'(.*)'$/, "\\1")
           }
         elsif @input.check(/"/)
-          @tokens << {
+          return {
             :type => :string,
             :value => @input.scan(/"([^"\\]|\\.)*"/).sub(/^"(.*)"$/, "\\1")
           }
@@ -108,7 +118,7 @@ module JsDuck
           # Several things begin with dash:
           # - comments, regexes, division-operators
           if @input.check(/\/\*\*/)
-            @tokens << {
+            return {
               :type => :doc_comment,
               # Calculate current line number, starting with 1
               :linenr => @input.string[0...@input.pos].count("\n") + 1,
@@ -121,30 +131,30 @@ module JsDuck
             # skip line comment
             @input.scan_until(/\n|\Z/)
           elsif regex?
-            @tokens << {
+            return {
               :type => :regex,
               :value => @input.scan(/\/([^\/\\]|\\.)*\/[gim]*/)
             }
           else
-            @tokens << {
+            return {
               :type => :operator,
               :value => @input.scan(/\//)
             }
           end
         elsif @input.check(/[0-9]+/)
           nr = @input.scan(/[0-9]+(\.[0-9]*)?/)
-          @tokens << {
+          return {
             :type => :number,
             :value => nr
           }
         elsif @input.check(/\$/)
           value = @input.scan(/\$\w*/)
-          @tokens << {
+          return {
             :type => :ident,
             :value => value
           }
         elsif  @input.check(/./)
-          @tokens << {
+          return {
             :type => :operator,
             :value => @input.scan(/./)
           }
