@@ -19,9 +19,15 @@ module JsDuck
   # comments are ignored just as whitespace.
   #
   class Lexer
+    # Input can be either a String or StringScanner.
+    #
+    # In the latter case we ensure that only #next will advance the
+    # scanpointer of StringScanner - this allows context-switching
+    # while parsing some string.  Specifically we need this feature to
+    # parse some JavaScript inside doc-comments.
     def initialize(input)
       @input = input.is_a?(StringScanner) ? input : StringScanner.new(input)
-      @tokens = []
+      @buffer = []
     end
 
     # Tests if given pattern matches the tokens that follow at current
@@ -33,15 +39,12 @@ module JsDuck
     #     look(:ident, "=", :regex)
     #
     def look(*tokens)
-      pos = @input.pos
-      buffered = 0
-      ok = tokens.all? do |t|
-        tok = next_token
-        if tok
-          @tokens << tok
-          buffered += 1
-        end
-        if tok == nil
+      buffer_tokens(tokens.length)
+      i = 0
+      tokens.all? do |t|
+        tok = @buffer[i]
+        i += 1
+        if !tok
           false
         elsif t.instance_of?(Symbol)
           tok[:type] == t
@@ -49,9 +52,6 @@ module JsDuck
           tok[:value] == t
         end
       end
-      @input.pos = pos
-      @tokens.pop(buffered)
-      return ok
     end
 
     # Returns the value of next token, moving the current token cursor
@@ -65,16 +65,36 @@ module JsDuck
     # pointing to the line where the doc-comment began.
     #
     def next(full=false)
-      @tokens << tok = next_token
+      buffer_tokens(1)
+      tok = @buffer.shift
+      # advance the scanpointer to the position after this token
+      @input.pos = tok[:pos]
       full ? tok : tok[:value]
     end
 
     # True when no more tokens.
     def empty?
-      pos = @input.pos
-      tok = next_token
-      @input.pos = pos
-      return !tok
+      buffer_tokens(1)
+      return !@buffer.first
+    end
+
+    # Ensures next n tokens are read in buffer
+    #
+    # At the end of buffering the initial position scanpointer is
+    # restored.  Only the #next method will advance the scanpointer in
+    # a way that's visible outside this class.
+    def buffer_tokens(n)
+      prev_pos = @input.pos
+      @input.pos = @buffer.last[:pos] if @buffer.last
+      (n - @buffer.length).times do
+        @previous_token = tok = next_token
+        if tok
+          # remember scanpointer position after each token
+          tok[:pos] = @input.pos
+          @buffer << tok
+        end
+      end
+      @input.pos = prev_pos
     end
 
     # Parses out next token from input stream.
@@ -170,9 +190,9 @@ module JsDuck
     # - closing square-bracket ]
     # Otherwise it's a beginning of regex
     def regex?
-      if @tokens.last
-        type = @tokens.last[:type]
-        value = @tokens.last[:value]
+      if @previous_token
+        type = @previous_token[:type]
+        value = @previous_token[:value]
         if type == :ident || type == :number
           return false
         elsif type == :keyword && value == "this"
