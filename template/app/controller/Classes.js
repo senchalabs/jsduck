@@ -191,6 +191,7 @@ Ext.define('Docs.controller.Classes', {
             Docs.History.push("");
         }
         this.getViewport().setPageTitle("");
+        Ext.getCmp('nested-west-region-container').layout.setActiveItem(0);
         Ext.getCmp('card-panel').layout.setActiveItem(0);
     },
 

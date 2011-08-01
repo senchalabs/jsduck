@@ -38,7 +38,20 @@ Ext.define('Docs.view.examples.Tree', {
     },
 
     onItemClick: function(view, node, item, index, e) {
-        Ext.getCmp('card-panel').layout.setActiveItem('example');
-        Ext.get('exampleIframe').dom.setAttribute('src', 'extjs/examples/' + node.raw.url)
+
+        var url = node.raw.url;
+
+        if (url) {
+            Ext.getCmp('card-panel').layout.setActiveItem('example');
+            Ext.get('exampleIframe').dom.setAttribute('src', 'extjs/examples/' + node.raw.url)
+        }
+        else if (!node.isLeaf()) {
+            if (node.isExpanded()) {
+                node.collapse(false);
+            }
+            else {
+                node.expand(false);
+            }
+        }
     }
 });
