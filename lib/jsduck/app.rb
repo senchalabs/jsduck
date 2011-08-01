@@ -124,10 +124,28 @@ module JsDuck
     # Given all classes, generates namespace tree and writes it
     # in JSON form into a file.
     def write_tree
-      tree = Tree.new.create(@relations.classes, @guides)
+      tree = Tree.new.create(@relations.classes)
       icons = TreeIcons.new.extract_icons(tree)
+      guides = Tree.new.create(@relations.classes)
       js = "Docs.classData = " + JSON.generate( tree ) + ";"
       js += "Docs.icons = " + JSON.generate( icons ) + ";"
+
+      if @guides.length > 0
+        pkg = {
+          :text => 'Guides',
+          :children => []
+        }
+        @guides.each {|g|
+          pkg[:children] << {
+            :text => g[:title],
+            :url => "/guide/"+g[:name],
+            :iconCls => "icon-guide",
+            :leaf => true
+          }
+        }
+      end
+
+      js += "Docs.guideData = " + JSON.generate( pkg ) + ";"
       File.open(@opts.output_dir+"/output/tree.js", 'w') {|f| f.write(js) }
     end
 
