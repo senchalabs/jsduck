@@ -23,11 +23,11 @@ Ext.define("Docs.History", {
         else if (url.type === "api") {
             Docs.App.getController('Classes').loadClass(url.url, true);
         }
-        else if (url.url === "/guides") {
+        else if (url.url === "/guide") {
             Docs.App.getController('Guides').loadIndex(true);
         }
         else if (url.type === "guide") {
-            Docs.App.getController('Classes').loadGuide(url.url, true);
+            Docs.App.getController('Guides').loadGuide(url.url, true);
         }
         else if (url.url === "/videos") {
             Docs.App.getController('Videos').loadIndex(true);
@@ -48,7 +48,7 @@ Ext.define("Docs.History", {
 
     // Parses current browser location
     parseToken: function(token) {
-        var matches = token && token.match(/\/(api|guides|examples|videos)(\/(.*))?/);
+        var matches = token && token.match(/\/(api|guide|examples|videos)(\/(.*))?/);
         return matches ? {type: matches[1], url: matches[0]} : {};
     },
 

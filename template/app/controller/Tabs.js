@@ -67,7 +67,7 @@ Ext.define('Docs.controller.Tabs', {
         cmp.el.addListener('click', function(event, el) {
             cmp.justClosed = true;
             var docTab = Ext.get(el).up('.doctab');
-            Ext.getCmp('doctabs').removeTab(docTab.down('.docClass').getAttribute('href'));
+            Ext.getCmp('doctabs').removeTab(docTab.down('.tabUrl').getAttribute('href'));
             docTab.animate({
                 to: { top: 30 }
             }).animate({

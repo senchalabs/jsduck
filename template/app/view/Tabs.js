@@ -28,7 +28,7 @@ Ext.define('Docs.view.Tabs', {
             { cls: 'home',   href: '#' },
             { cls: 'api',    href: '#/api' },
             { cls: 'videos', href: '#/videos' },
-            { cls: 'guides', href: '#/guides' },
+            { cls: 'guides', href: '#/guide' },
             { cls: 'themes', href: '#/examples' }
         ]);
 

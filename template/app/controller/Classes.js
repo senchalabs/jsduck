@@ -63,13 +63,7 @@ Ext.define('Docs.controller.Classes', {
              * @param {String} cls  name of the class.
              * @param {String} anchor  name of the member in form type-name like "method-bind".
              */
-            "showMember",
-            /**
-             * @event showGuide
-             * Fired after guide shown. Used for analytics event tracking.
-             * @param {String} guide  name of the guide.
-             */
-            "showGuide"
+            "showMember"
         );
 
         Ext.getBody().addListener('click', function(event, el) {
@@ -88,17 +82,6 @@ Ext.define('Docs.controller.Classes', {
             'classgrid': {
                 urlclick: function(url, event) {
                     this.handleUrlClick(url, event, this.getFavoritesGrid());
-                }
-            },
-
-            'indexcontainer': {
-                afterrender: function(cmp) {
-                    cmp.el.addListener('click', function(event, el) {
-                        this.handleUrlClick(el.href, event);
-                    }, this, {
-                        preventDefault: true,
-                        delegate: '.guide'
-                    });
                 }
             },
 
@@ -162,12 +145,7 @@ Ext.define('Docs.controller.Classes', {
             view && view.selectUrl(this.activeUrl ? this.activeUrl : "");
         }
         else {
-            if (/^\/api\//.test(url)) {
-                this.loadClass(url);
-            }
-            else {
-                this.loadGuide(url);
-            }
+            this.loadClass(url);
         }
     },
 
@@ -206,15 +184,17 @@ Ext.define('Docs.controller.Classes', {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     loadClass: function(url, noHistory) {
+
+        Ext.getCmp('card-panel').layout.setActiveItem('classcontainer');
+        Ext.getCmp('tree-container').show();
+        Ext.getCmp('tree-container').layout.setActiveItem(0);
+
         if (this.activeUrl === url) return;
         this.activeUrl = url;
 
         if (!noHistory) {
             Docs.History.push(url);
         }
-
-        Ext.getCmp('card-panel').layout.setActiveItem('classcontainer');
-        Ext.getCmp('tree-container').layout.setActiveItem(0);
 
         // separate class and member name
         var matches = url.match(/^\/api\/(.*?)(?:-(.*))?$/);
@@ -237,7 +217,7 @@ Ext.define('Docs.controller.Classes', {
                     this.showClass(json, member);
                 },
                 failure: function(response, opts) {
-                    this.showFailure("Class <b>"+cls+"</b> was not found.");
+                    this.getController('Index').showFailure("Class <b>"+cls+"</b> was not found.");
                 },
                 scope: this
             });
@@ -245,11 +225,13 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
+
+        this.getOverview().setLoading(false);
+
         if (this.currentCls !== cls) {
             this.getViewport().setPageTitle(cls.name);
             this.getHeader().load(cls);
             this.getOverview().load(cls);
-            this.getOverview().setLoading(false);
 
             this.getTree().selectUrl("/api/"+cls.name);
             this.fireEvent('showClass', cls.name);
@@ -265,58 +247,6 @@ Ext.define('Docs.controller.Classes', {
         }
 
         this.currentCls = cls;
-    },
-
-    /**
-     * Loads guide.
-     *
-     * @param {String} url  URL of the guide
-     * @param {Boolean} noHistory  true to disable adding entry to browser history
-     */
-    loadGuide: function(url, noHistory) {
-        if (this.activeUrl === url) return;
-        this.activeUrl = url;
-
-        noHistory || Docs.History.push(url);
-
-        var name = url.match(/^\/guide\/(.*)$/);
-        if (name) {
-            Ext.data.JsonP.request({
-                url: this.getBaseUrl() + "/guides/" + name[1] + "/README.js",
-                callbackName: name[1],
-                success: function(json) {
-                    this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
-                    Ext.getCmp("guide").update(json.guide);
-                    Ext.getCmp('card-panel').layout.setActiveItem(2);
-                    Docs.Syntax.highlight(Ext.get("guide"));
-                    this.fireEvent('showGuide', name[1]);
-                    this.getTree().selectUrl(url);
-                },
-                failure: function(response, opts) {
-                    this.showFailure("Guide <b>"+name[1]+"</b> was not found.");
-                },
-                scope: this
-            });
-        }
-    },
-
-    /**
-     * Displays page with 404 error message.
-     * @param {String} msg
-     * @private
-     */
-    showFailure: function(msg) {
-        this.getOverview().setLoading(false);
-        var tpl = new Ext.XTemplate(
-            "<h1>Oops...</h1>",
-            "<p>{msg}</p>",
-            "<p>Maybe it was renamed to something else? Or maybe it has passed away permanently to the 404 land? ",
-            "This would be sad. Hopefully it's just a bug in our side. ",
-            "Report it to <a href='http://www.sencha.com/forum/showthread.php?135036'>Sencha Forum</a> if you feel so.</p>",
-            "<p>Sorry for all this :(</p>"
-        );
-        Ext.getCmp("failure").update(tpl.apply({msg: msg}));
-        Ext.getCmp('card-panel').layout.setActiveItem("failure");
     },
 
     /**
