@@ -1,4 +1,6 @@
 require 'strscan'
+require 'jsduck/js_literal_parser'
+require 'jsduck/js_literal_builder'
 
 module JsDuck
 
@@ -391,88 +393,8 @@ module JsDuck
     end
 
     def literal
-      skip_horiz_white
-      if look(/[0-9]/)
-        number_literal
-      elsif look(/["']/)
-        string_literal
-      elsif look(/\//)
-        regex_literal
-      elsif look(/\[/)
-        array_literal
-      elsif look(/\{/)
-        object_literal
-      elsif look(/true|false/)
-        boolean_literal
-      end
-    end
-
-    def string_literal
-      if look(/"/)
-        match(/"([^"\\]|\\.)*"/)
-      elsif look(/'/)
-        match(/'([^'\\]|\\.)*'/)
-      end
-    end
-
-    def regex_literal
-      match(/\/([^\/\\]|\\.)*\/[gim]*/)
-    end
-
-    def number_literal
-      match(/[0-9]+(\.[0-9]*)?/)
-    end
-
-    def boolean_literal
-      match(/true|false/)
-    end
-
-    def array_literal
-      match(/\[/)
-      r = []
-      lit = literal
-      while lit
-        r << lit
-        skip_horiz_white
-        match(/,/)
-        lit = literal
-      end
-      match(/\]/)
-      "[" + r.join(", ") + "]"
-    end
-
-    def object_literal
-      match(/\{/)
-      r = []
-      lit = object_literal_pair
-      while lit
-        r << lit
-        skip_horiz_white
-        match(/,/)
-        lit = object_literal_pair
-      end
-      match(/\}/)
-      "{" + r.join(", ") + "}"
-    end
-
-    def object_literal_pair
-      skip_horiz_white
-      if look(/\w/)
-        key = ident
-      elsif look(/['"]/)
-        key = string_literal
-      else
-        return
-      end
-
-      skip_horiz_white
-      match(/:/)
-
-      skip_horiz_white
-      value = literal
-      return if !value
-
-      key + ": " + value
+      lit = JsLiteralParser.new(@input).literal
+      lit ? JsLiteralBuilder.new.to_s(lit) : nil
     end
 
     # matches {...} and returns text inside brackets

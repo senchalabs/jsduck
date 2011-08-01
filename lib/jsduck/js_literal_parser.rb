@@ -57,11 +57,14 @@ module JsDuck
     def object_literal
       match("{")
       r = []
-      while (lit = object_literal_pair)
+      while (look(:ident) || look(:string))
+        lit = object_literal_pair
+        return unless lit
         r << lit
         break unless look(",")
         match(",")
       end
+
       return unless look("}")
       match("}")
       return {:type => :object, :value => r}
@@ -72,8 +75,6 @@ module JsDuck
         key = match(:ident)
       elsif look(:string)
         key = match(:string)
-      else
-        return
       end
 
       return unless look(":")

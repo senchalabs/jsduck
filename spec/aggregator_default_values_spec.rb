@@ -203,8 +203,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has as much of the array as possible for default value" do
-      @doc[:default].should == '[]'
+    it "has nil as default value" do
+      @doc[:default].should == nil
     end
   end
 
@@ -216,8 +216,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has as much of the object as possible for default value" do
-      @doc[:default].should == '{ho: 5}'
+    it "has nil as default value" do
+      @doc[:default].should == nil
     end
   end
 
@@ -229,8 +229,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has as much of the object as possible for default value" do
-      @doc[:default].should == '{ho: 5}'
+    it "has nil as default value" do
+      @doc[:default].should == nil
     end
   end
 
