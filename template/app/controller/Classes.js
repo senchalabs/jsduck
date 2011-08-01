@@ -191,8 +191,10 @@ Ext.define('Docs.controller.Classes', {
             Docs.History.push("");
         }
         this.getViewport().setPageTitle("");
-        Ext.getCmp('nested-west-region-container').layout.setActiveItem(0);
-        Ext.getCmp('card-panel').layout.setActiveItem(0);
+        Ext.getCmp('doctabs').activateTab('#/api');
+        Ext.getCmp('tree-container').show();
+        Ext.getCmp('tree-container').layout.setActiveItem(0);
+        Ext.getCmp('card-panel').layout.setActiveItem('classindex');
     },
 
     cache: {},
@@ -211,8 +213,8 @@ Ext.define('Docs.controller.Classes', {
             Docs.History.push(url);
         }
 
-        Ext.getCmp('card-panel').layout.setActiveItem(1);
-        Ext.getCmp('nested-west-region-container').layout.setActiveItem(0);
+        Ext.getCmp('card-panel').layout.setActiveItem('classcontainer');
+        Ext.getCmp('tree-container').layout.setActiveItem(0);
 
         // separate class and member name
         var matches = url.match(/^\/api\/(.*?)(?:-(.*))?$/);

@@ -99,8 +99,14 @@ Ext.define('Docs.controller.Tabs', {
                 Ext.get(t).removeCls('active');
             });
             Ext.get(el).addCls('active');
+            window.location = Ext.get(el).down('.tabUrl').getAttribute('href');
         }, this, {
             delegate: '.doctab'
+        });
+
+        cmp.el.addListener('click', Ext.emptyFn, this, {
+            delegate: '.tabUrl',
+            preventDefault: true
         });
 
         cmp.el.addListener('mouseover', function(event, el) {

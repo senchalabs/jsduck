@@ -221,7 +221,7 @@ a {
   @include vertical-gradient(#074e7c, #095f93);
 }
 
-#nested-west-region-container {
+#tree-container {
   background: $docs-bg-color;
   #classes-tab-panel {
     .x-grid-row td {
@@ -383,7 +383,7 @@ a {
           font-weight: bold; } } } } }
 
 
-#nested-west-region-container {
+#tree-container {
   .x-grid-cell {
     background: none; }
   .x-grid-cell-inner {
@@ -881,7 +881,72 @@ a {
   }
 }
 
+.all-demos {
+    padding: 5px 10px;
+}
+.all-demos dd {
+    cursor: pointer;
+    float: left;
+    height: 100px;
+    margin: 10px;
+    width: 300px;
+    zoom: 1;
+    line-height: 1em;
+}
+.all-demos dd img {
+    border: 1px solid #ddd;
+    float:left;
+    height:90px;
+    margin:5px 0 0 5px;
+    width:120px;
+}
 
+.all-demos dd div {
+    float:left;
+    margin-left:10px;
+    width:160px;
+}
+
+.all-demos dd h4 {
+    color: #555;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 0;
+}
+.all-demos dd p {
+    color: #777;
+    font-size: 13px;
+}
+.all-demos dd.over {
+    background: #F5FDE3 url(../../extjs/examples/shared/extjs/images/sample-over.gif) no-repeat;
+}
+
+#sample-ct {
+    padding:2px;
+}
+
+.all-demos h2 {
+    border-bottom: 2px solid #99bbe8;
+    cursor:pointer;
+    padding-top:6px;
+}
+.all-demos h2 div {
+    background: transparent url(../../extjs/resources/themes/images/default/grid/group-expand-sprite.gif) no-repeat 2px -45px;
+    color: #3764a0;
+    padding:4px 4px 4px 17px;
+}
+.all-demos .collapsed h2 div {
+    background-position: 2px 5px;
+}
+.all-demos .collapsed dl {
+    display: none;
+}
+.all-demos dd h4 span.new-sample{
+    color: red;
+}
+.all-demos dd h4 span.updated-sample{
+    color: blue;
+}
 
 
 

@@ -6,12 +6,16 @@
 Ext.define('Docs.view.Viewport', {
     extend: 'Ext.container.Viewport',
     requires: [
+        'Docs.view.cls.Index',
         'Docs.view.cls.Container',
-        'Docs.view.index.Container',
         'Docs.view.tree.Tree',
+        'Docs.view.index.Welcome',
         'Docs.view.examples.Index',
+        'Docs.view.examples.List',
         'Docs.view.examples.Tree',
         'Docs.view.FavoritesPanel',
+        'Docs.view.videos.Index',
+        'Docs.view.guides.Index',
         'Docs.view.Tabs',
         'Docs.Favorites',
         'Docs.Settings',
@@ -86,7 +90,7 @@ Ext.define('Docs.view.Viewport', {
                 items: [
                     {
                         region: 'west',
-                        id: 'nested-west-region-container',
+                        id: 'tree-container',
                         border: 1,
                         layout: 'card',
                         resizable: true,
@@ -122,10 +126,21 @@ Ext.define('Docs.view.Viewport', {
                             items: [
                                 {
                                     autoScroll: true,
-                                    xtype: 'indexcontainer'
+                                    xtype: 'welcomecontainer'
                                 },
                                 {
-                                    xtype: 'classcontainer'
+                                    autoScroll: true,
+                                    xtype: 'classindex',
+                                    id: 'classindex'
+                                },
+                                {
+                                    xtype: 'classcontainer',
+                                    id: 'classcontainer'
+                                },
+                                {
+                                    autoScroll: true,
+                                    xtype: 'guideindex',
+                                    id: 'guides'
                                 },
                                 {
                                     autoScroll: true,
@@ -145,6 +160,10 @@ Ext.define('Docs.view.Viewport', {
                                     xtype: 'container',
                                     layout: 'fit',
                                     html: '<iframe style="width: 100%; height: 100%; border: 0;" id="exampleIframe" src="extjs/examples/feed-viewer/feed-viewer.html" scrolling="yes"></iframe>'
+                                },
+                                {
+                                    xtype: 'videoindex',
+                                    id: 'videos'
                                 }
                             ]
                         }

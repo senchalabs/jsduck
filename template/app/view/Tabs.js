@@ -17,7 +17,7 @@ Ext.define('Docs.view.Tabs', {
             '<tpl for=".">',
                 '<div class="doctab {cls}{active}">',
                     '<div class="l"></div>',
-                    '<div class="m"><a class="docClass" href="{href}">&nbsp;</a></div>',
+                    '<div class="m"><a class="tabUrl" href="{href}">&nbsp;</a></div>',
                     '<div class="r"></div>',
                 '</div>',
             '</tpl>',
@@ -26,7 +26,7 @@ Ext.define('Docs.view.Tabs', {
 
         this.html = tpl.applyTemplate([
             { cls: 'home',   href: '#' },
-            { cls: 'api',    href: '#/api', active: " active" },
+            { cls: 'api',    href: '#/api' },
             { cls: 'videos', href: '#/videos' },
             { cls: 'guides', href: '#/guides' },
             { cls: 'themes', href: '#/examples' }
@@ -51,7 +51,7 @@ Ext.define('Docs.view.Tabs', {
                     '<div class="l"></div>',
                     '<div class="m">',
                         '<a class="icn {iconCls}" href="#">&nbsp;</a>',
-                        '<a class="docClass" href="{href}">{text}</a>',
+                        '<a class="tabUrl" href="{href}">{text}</a>',
                     '</div>',
                 '<div class="r"></div>',
                 '</div>'
@@ -79,7 +79,7 @@ Ext.define('Docs.view.Tabs', {
      */
     activateTab: function(url) {
         this.activeTab = Ext.Array.indexOf(this.openTabs, url);
-        Ext.Array.each(Ext.query('.doctab a[class=docClass]'), function(d) {
+        Ext.Array.each(Ext.query('.doctab a[class=tabUrl]'), function(d) {
             Ext.get(d).up('.doctab').removeCls('active');
         });
         var activeTab = Ext.query('.doctab a[href="' + url + '"]')[0];

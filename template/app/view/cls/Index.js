@@ -2,9 +2,9 @@
  * List of classes on front page.
  * Together with links to guides and icons legend.
  */
-Ext.define('Docs.view.index.Container', {
+Ext.define('Docs.view.cls.Index', {
     extend: 'Ext.container.Container',
-    alias : 'widget.indexcontainer',
+    alias : 'widget.classindex',
     cls: 'class-list',
 
     initComponent: function() {

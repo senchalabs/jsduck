@@ -25,6 +25,8 @@ Ext.define('Docs.Application', {
         'InlineExamples',
         'Examples',
         'Favorites',
+        'Guides',
+        'Videos',
         'Tabs'
     ],
 
@@ -42,6 +44,10 @@ Ext.define('Docs.Application', {
         if (Docs.initEventTracking) {
             Docs.initEventTracking();
         }
+
+        setInterval(function(){
+            Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
+        }, 1000)
     }
 
 });

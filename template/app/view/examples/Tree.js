@@ -13,6 +13,16 @@ Ext.define('Docs.view.examples.Tree', {
 
     initComponent: function() {
 
+        this.addEvents(
+            /**
+             * @event
+             * Fired when link in tree was clicked on and needs to be loaded.
+             * @param {String} url  URL of the example to load
+             * @param {Ext.EventObject} e
+             */
+            "exampleclick"
+        );
+
         this.root = {
             allowDrag: false,
             children: [],
@@ -22,7 +32,10 @@ Ext.define('Docs.view.examples.Tree', {
         Ext.Array.each(Ext.samples.samplesCatalog, function(sampleGroup) {
 
             var children = Ext.Array.map(sampleGroup.samples, function(sample) {
-                return Ext.apply(sample, { leaf: true })
+                return Ext.apply(sample, {
+                    leaf: true,
+                    url: '/examples/' + sample.url
+                });
             });
 
             this.root.children.push({
@@ -42,8 +55,7 @@ Ext.define('Docs.view.examples.Tree', {
         var url = node.raw.url;
 
         if (url) {
-            Ext.getCmp('card-panel').layout.setActiveItem('example');
-            Ext.get('exampleIframe').dom.setAttribute('src', 'extjs/examples/' + node.raw.url)
+            this.fireEvent('exampleclick', url, e)
         }
         else if (!node.isLeaf()) {
             if (node.isExpanded()) {
