@@ -1,11 +1,13 @@
 require 'jsduck/lexer'
 require 'jsduck/doc_parser'
+require 'jsduck/js_literal_parser'
+require 'jsduck/js_literal_builder'
 
 module JsDuck
 
-  class JsParser
+  class JsParser < JsLiteralParser
     def initialize(input)
-      @lex = Lexer.new(input)
+      super(input)
       @doc_parser = DocParser.new
       @docs = []
     end
@@ -86,7 +88,7 @@ module JsDuck
       elsif look(:ident) || look("this")
         maybe_assignment
       elsif look(:string)
-        {:type => :assignment, :left => [match(:string)]}
+        {:type => :assignment, :left => [match(:string)[:value]]}
       else
         {:type => :nop}
       end
@@ -97,7 +99,7 @@ module JsDuck
       match("function")
       return {
         :type => :function,
-        :name => look(:ident) ? match(:ident) : nil,
+        :name => look(:ident) ? match(:ident)[:value] : nil,
         :params => function_parameters,
         :body => function_body,
       }
@@ -106,9 +108,9 @@ module JsDuck
     # <function-parameters> := "(" [ <ident> [ "," <ident> ]* ] ")"
     def function_parameters
       match("(")
-      params = look(:ident) ? [{:name => match(:ident)}] : []
+      params = look(:ident) ? [{:name => match(:ident)[:value]}] : []
       while look(",", :ident) do
-        params << {:name => match(",", :ident)}
+        params << {:name => match(",", :ident)[:value]}
       end
       match(")")
       return params
@@ -142,33 +144,52 @@ module JsDuck
     # <ident-chain> := [ "this" | <ident> ]  [ "." <ident> ]*
     def ident_chain
       if look("this")
-        chain = [match("this")]
+        chain = [match("this")[:value]]
       else
-        chain = [match(:ident)]
+        chain = [match(:ident)[:value]]
       end
 
       while look(".", :ident) do
-        chain << match(".", :ident)
+        chain << match(".", :ident)[:value]
       end
       return chain
     end
 
     # <expression> := <function> | <ext-extend> | <literal>
-    # <literal> := <string> | <boolean> | <number> | <regex>
     def expression
       if look("function")
         function
       elsif look("Ext", ".", "extend")
         ext_extend
-      elsif look(:string)
-        {:type => :literal, :class => "String", :value => '"' + match(:string) + '"'}
-      elsif look("true") || look("false")
-        {:type => :literal, :class => "Boolean", :value => match(:ident)}
-      elsif look(:number)
-        {:type => :literal, :class => "Number", :value => match(:number)}
-      elsif look(:regex)
-        {:type => :literal, :class => "RegExp", :value => match(:regex)}
+      else
+        my_literal
       end
+    end
+
+    # <literal> := ...see JsLiteralParser...
+    def my_literal
+      lit = literal
+      return unless lit
+
+      cls_map = {
+        :string => "String",
+        :number => "Number",
+        :regex => "RegExp",
+        :array => "Array",
+        :object => "Object",
+      }
+
+      if cls_map[lit[:type]]
+        cls = cls_map[lit[:type]]
+      elsif lit[:type] == :ident && (lit[:value] == "true" || lit[:value] == "false")
+        cls = "Boolean"
+      else
+        cls = nil
+      end
+
+      value = JsLiteralBuilder.new.to_s(lit)
+
+      {:type => :literal, :class => cls, :value => value}
     end
 
     # <ext-extend> := "Ext" "." "extend" "(" <ident-chain> "," ...
@@ -184,7 +205,7 @@ module JsDuck
     def ext_define
       match("Ext", ".");
       look("define") ? match("define") : match("ClassManager", ".", "create");
-      name = match("(", :string)
+      name = match("(", :string)[:value]
 
       if look(",", "{")
         match(",")
@@ -238,7 +259,7 @@ module JsDuck
 
     # <ext-define-extend> := "extend" ":" <string>
     def ext_define_extend
-      match("extend", ":", :string)
+      match("extend", ":", :string)[:value]
     end
 
     # <ext-define-alternate-class-names> := "alternateClassName" ":" <string-or-list>
@@ -256,7 +277,7 @@ module JsDuck
     # <string-or-list> := ( <string> | <array-of-strings> )
     def string_or_list
       if look(:string)
-        [ match(:string) ]
+        [ match(:string)[:value] ]
       elsif look("[")
         array_of_strings
       else
@@ -269,7 +290,7 @@ module JsDuck
       match("mixins", ":", "{")
       mixins = []
       while look(:ident, ":", :string)
-        mixins << match(:ident, ":", :string)
+        mixins << match(:ident, ":", :string)[:value]
         match(",") if look(",")
       end
       match("}") if look("}")
@@ -281,7 +302,7 @@ module JsDuck
       match("[")
       strs = []
       while look(:string)
-        strs << match(:string)
+        strs << match(:string)[:value]
         match(",") if look(",")
       end
 
@@ -295,7 +316,7 @@ module JsDuck
 
     # <property-literal> := ( <ident> | <string> ) ":" <expression>
     def property_literal
-      left = look(:ident) ? match(:ident) : match(:string)
+      left = look(:ident) ? match(:ident)[:value] : match(:string)[:value]
       match(":")
       right = expression
       return {
@@ -305,21 +326,6 @@ module JsDuck
       }
     end
 
-    # Matches all arguments, returns the value of last match
-    # When the whole sequence doesn't match, throws exception
-    def match(*args)
-      if look(*args)
-        last = nil
-        args.length.times { last = @lex.next }
-        last
-      else
-        throw "Expected: " + args.join(", ")
-      end
-    end
-
-    def look(*args)
-      @lex.look(*args)
-    end
   end
 
 end

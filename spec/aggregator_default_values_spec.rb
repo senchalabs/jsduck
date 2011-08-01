@@ -238,7 +238,7 @@ describe JsDuck::Aggregator do
     before do
       @doc = parse(<<-EOS)[0]
         /**
-         * @cfg {Number} foo Something
+         * @cfg foo Something
          */
         foo: 18
       EOS
@@ -252,7 +252,7 @@ describe JsDuck::Aggregator do
     before do
       @doc = parse(<<-EOS)[0]
         /**
-         * @cfg {Number} foo Something
+         * @cfg foo Something
          */
         foo: "Hello"
       EOS
@@ -266,13 +266,41 @@ describe JsDuck::Aggregator do
     before do
       @doc = parse(<<-EOS)[0]
         /**
-         * @cfg {Number} foo Something
+         * @cfg foo Something
          */
         foo: /[a-z]/
       EOS
     end
     it "detects the default value" do
       @doc[:default].should == '/[a-z]/'
+    end
+  end
+
+  describe "cfg with implicit default array value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg foo Something
+         */
+        foo: [1, 2, 3]
+      EOS
+    end
+    it "detects the default value" do
+      @doc[:default].should == '[1, 2, 3]'
+    end
+  end
+
+  describe "cfg with implicit default object value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg foo Something
+         */
+        foo: {foo: 3, bar: "2"}
+      EOS
+    end
+    it "detects the default value" do
+      @doc[:default].should == '{foo: 3, bar: "2"}'
     end
   end
 
