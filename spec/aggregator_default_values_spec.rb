@@ -304,4 +304,30 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "a normal config option" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg foo Something
+         */
+      EOS
+    end
+    it "is optional by default" do
+      @doc[:optional].should == true
+    end
+  end
+
+  describe "a config option labeled as required" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg foo (required) Something
+         */
+      EOS
+    end
+    it "has optional flag set to false" do
+      @doc[:optional].should == false
+    end
+  end
+
 end

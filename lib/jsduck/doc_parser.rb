@@ -216,7 +216,7 @@ module JsDuck
       add_tag(:cfg)
       maybe_type
       maybe_name_with_default
-      maybe_optional
+      maybe_required
       skip_white
     end
 
@@ -373,6 +373,15 @@ module JsDuck
       if look(/\(optional\)/i)
         match(/\(optional\)/i)
         @current_tag[:optional] = true
+      end
+    end
+
+    # matches: "(required)"
+    def maybe_required
+      skip_horiz_white
+      if look(/\(required\)/i)
+        match(/\(required\)/i)
+        @current_tag[:optional] = false
       end
     end
 

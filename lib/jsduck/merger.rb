@@ -164,6 +164,7 @@ module JsDuck
         :owner => detect_owner(doc_map) || owner,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
+        :optional => detect_optional(:cfg, doc_map),
         :default => detect_default(:cfg, doc_map, code),
         :properties => detect_subproperties(docs, :cfg),
       }, doc_map)
@@ -279,6 +280,11 @@ module JsDuck
       elsif code[:type] == :assignment && code[:right]
         code[:right][:value]
       end
+    end
+
+    def detect_optional(tagname, doc_map)
+      main_tag = doc_map[tagname] ? doc_map[tagname].first : {}
+      return main_tag[:optional] != false
     end
 
     # for detecting mixins and alternateClassNames
