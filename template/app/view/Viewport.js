@@ -104,10 +104,16 @@ Ext.define('Docs.view.Viewport', {
                         items: [
                             {
                                 xtype: 'classtree',
+                                cmpName: 'classtree',
                                 root: Docs.classData
                             },
                             {
                                 xtype: 'examplestree'
+                            },
+                            {
+                                xtype: 'classtree',
+                                cmpName: 'guidetree',
+                                root: Docs.guideData
                             }
                         ]
                     },

@@ -3,7 +3,7 @@
  * between pages.
  */
 Ext.define('Docs.controller.Classes', {
-    extend: 'Ext.app.Controller',
+    extend: 'Docs.controller.Content',
 
     requires: [
         'Docs.History',
@@ -39,7 +39,7 @@ Ext.define('Docs.controller.Classes', {
         },
         {
             ref: 'tree',
-            selector: 'classtree'
+            selector: 'classtree[cmpName=classtree]'
         },
         {
             ref: 'favoritesGrid',
@@ -74,7 +74,7 @@ Ext.define('Docs.controller.Classes', {
         });
 
         this.control({
-            'classtree': {
+            'classtree[cmpName=classtree]': {
                 urlclick: function(url, event) {
                     this.handleUrlClick(url, event, this.getTree());
                 }
@@ -147,15 +147,6 @@ Ext.define('Docs.controller.Classes', {
         else {
             this.loadClass(url);
         }
-    },
-
-    // Code for the middle mouse button
-    MIDDLE: 1,
-
-    // True when middle mouse button pressed or shift/ctrl key pressed
-    // together with mouse button (for Mac)
-    opensNewWindow: function(event) {
-        return event.button === this.MIDDLE || event.shiftKey || event.ctrlKey;
     },
 
     /**
@@ -247,14 +238,6 @@ Ext.define('Docs.controller.Classes', {
         }
 
         this.currentCls = cls;
-    },
-
-    /**
-     * Returns base URL used for making AJAX requests.
-     * @return {String} URL
-     */
-    getBaseUrl: function() {
-        return document.location.href.replace(/#.*/, "").replace(/index.html/, "");
     }
 
 });

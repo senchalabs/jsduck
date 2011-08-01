@@ -43,7 +43,6 @@ Ext.define('Docs.view.cls.Index', {
     extractData: function() {
         var data = {
             notice: Ext.get("notice-text"),
-            guides: Ext.get("guides-content"),
             categories: Ext.get("categories-content")
         };
         for (var i in data) {

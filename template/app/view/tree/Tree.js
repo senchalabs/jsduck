@@ -40,7 +40,7 @@ Ext.define('Docs.view.tree.Tree', {
         );
 
         this.nodeTpl = new Ext.XTemplate(
-            '<a href="#{url}" rel="{url}" class="docClass">{text}</a> ',
+            '<a href="#{url}" rel="{url}">{text}</a> ',
             '<a rel="{url}" class="fav {show}"></a>'
         );
 

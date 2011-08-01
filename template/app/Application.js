@@ -20,6 +20,7 @@ Ext.define('Docs.Application', {
     ],
 
     controllers: [
+        'Content',
         'Classes',
         'Search',
         'InlineExamples',
@@ -45,9 +46,9 @@ Ext.define('Docs.Application', {
             Docs.initEventTracking();
         }
 
-        setInterval(function(){
-            Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
-        }, 1000)
+        // setInterval(function(){
+        //     Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
+        // }, 1000)
     }
 
 });

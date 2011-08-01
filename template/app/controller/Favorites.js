@@ -51,7 +51,7 @@ Ext.define('Docs.controller.Favorites', {
             add: function(url) {
                 // Show favorites when first favorite added
                 if (Docs.Favorites.getCount() > 0) {
-                    this.getPanel().show();
+                    // this.getPanel().show();
                 }
                 // Add favorite marking to tree
                 this.getTree().setFavorite(url, true);
@@ -59,7 +59,7 @@ Ext.define('Docs.controller.Favorites', {
             remove: function(url) {
                 // Hide favorites when favorites list empty
                 if (Docs.Favorites.getCount() === 0) {
-                    this.getPanel().hide();
+                    // this.getPanel().hide();
                 }
                 // remove favorite marking from tree
                 this.getTree().setFavorite(url, false);

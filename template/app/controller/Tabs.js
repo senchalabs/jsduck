@@ -6,8 +6,12 @@ Ext.define('Docs.controller.Tabs', {
 
     refs: [
         {
-            ref: 'tree',
-            selector: 'classtree'
+            ref: 'classTree',
+            selector: 'classtree[cmpName=classtree]'
+        },
+        {
+            ref: 'guideTree',
+            selector: 'classtree[cmpName=guidetree]'
         }
     ],
 
@@ -15,10 +19,14 @@ Ext.define('Docs.controller.Tabs', {
 
         this.getController('Classes').addListener({
             showClass: function(cls) {
-                this.addTabFromTree("/api/"+cls);
+                this.addTabFromTree("/api/"+cls, this.getClassTree());
             },
+            scope: this
+        });
+
+        this.getController('Guides').addListener({
             showGuide: function(guide) {
-                this.addTabFromTree("/guide/"+guide);
+                this.addTabFromTree("/guide/"+guide, this.getGuideTree());
             },
             scope: this
         });
@@ -37,8 +45,8 @@ Ext.define('Docs.controller.Tabs', {
      * Adds a tab based on information from the class tree
      * @param {String} url The url of the record in the tree
      */
-    addTabFromTree: function(url) {
-        var treeRecord = this.getTree().findRecordByUrl(url);
+    addTabFromTree: function(url, tree) {
+        var treeRecord = tree.findRecordByUrl(url);
         Ext.getCmp('doctabs').addTab({
             href: '#' + treeRecord.raw.url,
             text: treeRecord.raw.text,

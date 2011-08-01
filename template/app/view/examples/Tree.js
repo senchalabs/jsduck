@@ -40,8 +40,7 @@ Ext.define('Docs.view.examples.Tree', {
 
             this.root.children.push({
                 text: sampleGroup.title,
-                children: children,
-                expanded: true
+                children: children
             })
         }, this);
 
