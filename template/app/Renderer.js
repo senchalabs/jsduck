@@ -212,7 +212,8 @@ Ext.define('Docs.Renderer', {
         }
 
         if (member.tagname === "cfg" || member.tagname === "property") {
-            cfg.params = "<span> : " + member.type + "</span>";
+            var defaultValue = member["default"] ? " (default: " + Ext.htmlEncode(member["default"]) + ")" : "";
+            cfg.params = "<span> : " + member.type + defaultValue + "</span>";
         }
         else {
             var ps = Ext.Array.map(member.params, this.renderShortParam, this).join(", ");
