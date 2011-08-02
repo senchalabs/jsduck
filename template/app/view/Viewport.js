@@ -34,20 +34,21 @@ Ext.define('Docs.view.Viewport', {
                 region: 'north',
                 id: 'north-region',
                 height: 65,
-                width: '100%',
-                layout: 'vbox',
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
+                },
                 items: [
                     {
                         height: 37,
-                        width: '100%',
                         xtype: 'container',
                         layout: 'hbox',
                         items: [
                             {
                                 xtype: 'container',
+                                flex: 1,
                                 html: '<div class="logo"><span>Sencha Docs</span> Ext JS 4.0</div>'
                             },
-                            { xtype: 'container', flex: 1 },
                             {
                                 xtype: 'searchcontainer',
                                 id: 'search-container',
@@ -58,8 +59,7 @@ Ext.define('Docs.view.Viewport', {
 
                     },
                     {
-                        xtype: 'doctabs',
-                        width: '100%'
+                        xtype: 'doctabs'
                     }
                 ]
             },
@@ -80,7 +80,7 @@ Ext.define('Docs.view.Viewport', {
                         hideCollapseTool: true,
                         animCollapse: true,
                         bodyPadding: '14 9',
-                        autoHeight: true,
+                        // autoHeight: true,
                         width: 220,
                         items: [
                             {
@@ -146,7 +146,7 @@ Ext.define('Docs.view.Viewport', {
                                     id: 'example',
                                     xtype: 'container',
                                     layout: 'fit',
-                                    html: '<iframe style="width: 100%; height: 100%; border: 0;" id="exampleIframe" src="extjs/examples/feed-viewer/feed-viewer.html" scrolling="yes"></iframe>'
+                                    html: '<iframe style="width: 100%; height: 100%; border: 0;" id="exampleIframe" src="egIframe.html" scrolling="yes"></iframe>'
                                 },
                                 {
                                     xtype: 'videoindex',
