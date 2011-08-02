@@ -49,7 +49,7 @@ module JsDuck
       @formatter.doc_context = m
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
       m[:deprecated][:text] = @formatter.format(m[:deprecated][:text]) if m[:deprecated]
-      if m[:params] || (m[:properties] && m[:properties].length > 0) || @formatter.too_long?(m[:doc])
+      if m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || @formatter.too_long?(m[:doc])
         m[:shortDoc] = @formatter.shorten(m[:doc])
       end
       m[:params] = format_params(m[:params]) if m[:params]

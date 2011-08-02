@@ -533,7 +533,7 @@ a {
     @include guides-h3-heading; } }
 
 .class-overview {
-  .deprecated-signature, .protected-signature, .static-signature {
+  .deprecated-signature, .protected-signature, .static-signature, .required-signature {
     font-weight: bold;
     text-transform: uppercase;
     color: white;
@@ -546,6 +546,8 @@ a {
   .protected-signature {
     background-color: #aaa; }
   .static-signature {
+    background-color: $docs-text-color; }
+  .required-signature {
     background-color: $docs-text-color; }
   .constructor-signature {
     margin-left: 0;

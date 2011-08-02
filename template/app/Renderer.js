@@ -212,8 +212,7 @@ Ext.define('Docs.Renderer', {
         }
 
         if (member.tagname === "cfg" || member.tagname === "property") {
-            var defaultValue = member["default"] ? " (default: " + Ext.htmlEncode(member["default"]) + ")" : "";
-            cfg.params = "<span> : " + member.type + defaultValue + "</span>";
+            cfg.params = "<span> : " + member.type + "</span>";
         }
         else {
             var ps = Ext.Array.map(member.params, this.renderShortParam, this).join(", ");
@@ -223,14 +222,18 @@ Ext.define('Docs.Renderer', {
             }
         }
 
+        cfg.after = "";
         if (member['protected']) {
-            cfg.after = "<strong class='protected-signature'>protected</strong>";
+            cfg.after += "<strong class='protected-signature'>protected</strong>";
         }
         if (member['static']) {
-            cfg.after = "<strong class='static-signature'>static</strong>";
+            cfg.after += "<strong class='static-signature'>static</strong>";
         }
         if (member.deprecated) {
-            cfg.after = "<strong class='deprecated-signature'>deprecated</strong>";
+            cfg.after += "<strong class='deprecated-signature'>deprecated</strong>";
+        }
+        if (member.tagname === "cfg" && !member.optional) {
+            cfg.after += "<strong class='required-signature'>required</strong>";
         }
 
         return this.signatureTpl.apply(cfg);
@@ -244,6 +247,10 @@ Ext.define('Docs.Renderer', {
     renderLongDoc: function(member) {
         var doc = member.doc;
 
+        if (member["default"]) {
+            doc += "<p>Defaults to: <code>" + Ext.String.htmlEncode(member["default"]) + "</code></p>";
+        }
+
         if (member.deprecated) {
             var v = member.deprecated.version ? "since " + member.deprecated.version : "";
             doc += '<div class="deprecated">';
@@ -251,7 +258,7 @@ Ext.define('Docs.Renderer', {
             doc += member.deprecated.text;
             doc += '</div>';
         }
-
+        
         doc += this.renderParamsAndReturn(member);
 
         return doc;
@@ -302,6 +309,9 @@ Ext.define('Docs.Renderer', {
                 '<tpl if="optional"> (optional)</tpl>',
                 '<div class="sub-desc">',
                     '{doc}',
+                    '<tpl if="values[&quot;default&quot;]">',
+                        '<p>Defaults to: <code>{[Ext.String.htmlEncode(values["default"])]}</code></p>',
+                    '</tpl>',
                     '<tpl if="properties && properties.length">',
                         '{[this.renderParamsAndReturn(values)]}',
                     '</tpl>',
