@@ -35,7 +35,7 @@ Ext.define('Docs.Application', {
         Docs.App = this;
         Docs.Favorites.init();
         Docs.Settings.init();
-        Docs.classState = {};
+        Docs.contentState = {};
 
         Ext.create('Docs.view.Viewport');
 
@@ -46,9 +46,9 @@ Ext.define('Docs.Application', {
             Docs.initEventTracking();
         }
 
-        setInterval(function(){
-            Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
-        }, 1000)
+        // setInterval(function(){
+        //     Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
+        // }, 1000)
     }
 
 });

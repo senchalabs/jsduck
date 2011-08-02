@@ -1,5 +1,5 @@
 /**
- * Controller for inline examples.
+ * Controller for Examples showcase
  */
 Ext.define('Docs.controller.Examples', {
     extend: 'Ext.app.Controller',

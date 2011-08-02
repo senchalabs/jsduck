@@ -187,8 +187,8 @@ Ext.define('Docs.Renderer', {
         var memberName = member.tagname + '-' + member.name,
             open;
 
-        if (Docs.classState && Docs.classState['/api/' + this.cls.name] && Docs.classState['/api/' + this.cls.name][memberName]) {
-            open = Docs.classState['/api/' + this.cls.name][memberName].expanded;
+        if (Docs.contentState && Docs.contentState['/api/' + this.cls.name] && Docs.contentState['/api/' + this.cls.name][memberName]) {
+            open = Docs.contentState['/api/' + this.cls.name][memberName].expanded;
         }
 
         return this.memberTpl.apply(Ext.apply({
@@ -266,7 +266,7 @@ Ext.define('Docs.Renderer', {
             doc += member.deprecated.text;
             doc += '</div>';
         }
-        
+
         doc += this.renderParamsAndReturn(member);
 
         return doc;

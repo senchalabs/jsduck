@@ -1,6 +1,5 @@
 /**
- * Controller responsible for loading classes, guides, and switching
- * between pages.
+ * Controller responsible for loading classes
  */
 Ext.define('Docs.controller.Classes', {
     extend: 'Docs.controller.Content',
@@ -103,13 +102,13 @@ Ext.define('Docs.controller.Classes', {
                             memberName = member.getAttribute('id'),
                             baseUrl = '/api/' + this.currentCls.name;
 
-                        Docs.classState[baseUrl] = Docs.classState[baseUrl] || {};
-                        Docs.classState[baseUrl][memberName] = Docs.classState[baseUrl][memberName] || {};
+                        Docs.contentState[baseUrl] = Docs.contentState[baseUrl] || {};
+                        Docs.contentState[baseUrl][memberName] = Docs.contentState[baseUrl][memberName] || {};
 
                         if (member.hasCls('open')) {
-                            Docs.classState[baseUrl][memberName].expanded = false;
+                            Docs.contentState[baseUrl][memberName].expanded = false;
                         } else {
-                            Docs.classState[baseUrl][memberName].expanded = true;
+                            Docs.contentState[baseUrl][memberName].expanded = true;
                             this.fireEvent('showMember', clsName, memberName);
                         }
                         member.toggleCls('open');
@@ -126,8 +125,8 @@ Ext.define('Docs.controller.Classes', {
 
                     cmp.body.addListener('scroll', function(cmp, el) {
                         var baseUrl = '/api/' + this.currentCls.name;
-                        Docs.classState[baseUrl] = Docs.classState[baseUrl] || {};
-                        Docs.classState[baseUrl]['scrollOffset'] = el.scrollTop;
+                        Docs.contentState[baseUrl] = Docs.contentState[baseUrl] || {};
+                        Docs.contentState[baseUrl]['scrollOffset'] = el.scrollTop;
                     }, this);
                 }
             }
@@ -180,7 +179,10 @@ Ext.define('Docs.controller.Classes', {
         Ext.getCmp('tree-container').show();
         Ext.getCmp('tree-container').layout.setActiveItem(0);
 
-        if (this.activeUrl === url) return;
+        if (this.activeUrl === url) {
+            this.scrollContent();
+            return;
+        }
         this.activeUrl = url;
 
         if (!noHistory) {
@@ -228,16 +230,20 @@ Ext.define('Docs.controller.Classes', {
             this.fireEvent('showClass', cls.name);
         }
 
+        this.currentCls = cls;
+
         if (anchor) {
             this.getOverview().scrollToEl("#" + anchor);
             this.fireEvent('showMember', cls.name, anchor);
         } else {
-            var baseUrl = '/api/' + cls.name,
-                offset = (Docs.classState[baseUrl] && Docs.classState[baseUrl].scrollOffset) || 0;
-            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', offset);
+            this.scrollContent();
         }
+    },
 
-        this.currentCls = cls;
+    scrollContent: function() {
+        var baseUrl = '/api/' + this.currentCls.name,
+            offset = (Docs.contentState[baseUrl] && Docs.contentState[baseUrl].scrollOffset) || 0;
+        this.getOverview().getEl().down('.x-panel-body').scrollTo('top', offset);
     }
 
 });

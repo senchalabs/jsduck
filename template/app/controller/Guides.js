@@ -1,5 +1,5 @@
 /**
- * Controller for Welcome page
+ * Guides Controller
  */
 Ext.define('Docs.controller.Guides', {
     extend: 'Docs.controller.Content',
@@ -14,6 +14,8 @@ Ext.define('Docs.controller.Guides', {
             selector: 'classtree[cmpName=guidetree]'
         }
     ],
+
+    cache: {},
 
     init: function() {
         this.addEvents(
@@ -59,6 +61,9 @@ Ext.define('Docs.controller.Guides', {
         }
     },
 
+    /**
+     * Loads the guides index
+     */
     loadIndex: function() {
         Ext.getCmp('doctabs').activateTab('#/guide');
         Ext.getCmp('card-panel').layout.setActiveItem('guides');
@@ -73,6 +78,7 @@ Ext.define('Docs.controller.Guides', {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     loadGuide: function(url, noHistory) {
+
         Ext.getCmp('card-panel').layout.setActiveItem('guide');
         Ext.getCmp('tree-container').show();
         Ext.getCmp('tree-container').layout.setActiveItem(2);
@@ -84,23 +90,39 @@ Ext.define('Docs.controller.Guides', {
 
         var name = url.match(/^\/guide\/(.*)$/);
         if (name) {
-            Ext.data.JsonP.request({
-                url: this.getBaseUrl() + "/guides/" + name[1] + "/README.js",
-                callbackName: name[1],
-                success: function(json) {
-                    this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
-                    Ext.getCmp("guide").update(json.guide);
-
-                    Docs.Syntax.highlight(Ext.get("guide"));
-                    this.fireEvent('showGuide', name[1]);
-                    this.getTree().selectUrl(url);
-                },
-                failure: function(response, opts) {
-                    this.getController('Index').showFailure("Guide <b>"+name[1]+"</b> was not found.");
-                },
-                scope: this
-            });
+            if (this.cache[name[1]]) {
+                this.showGuide(this.cache[name[1]], url, name[1]);
+            } else {
+                Ext.data.JsonP.request({
+                    url: this.getBaseUrl() + "/guides/" + name[1] + "/README.js",
+                    callbackName: name[1],
+                    success: function(json) {
+                        this.cache[name[1]] = json;
+                        this.showGuide(json, url, name[1]);
+                    },
+                    failure: function(response, opts) {
+                        this.getController('Index').showFailure("Guide <b>"+name[1]+"</b> was not found.");
+                    },
+                    scope: this
+                });
+            }
         }
+    },
+
+    /**
+     * Shows guide.
+     *
+     * @param {Object} json Guide json
+     * @param {String} url URL of the guide
+     * @param {Boolean} name Name of the guide
+     */
+    showGuide: function(json, url, name) {
+        this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
+        Ext.getCmp("guide").update(json.guide);
+
+        Docs.Syntax.highlight(Ext.get("guide"));
+        this.fireEvent('showGuide', name);
+        this.getTree().selectUrl(url);
     }
 
 });

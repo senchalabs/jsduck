@@ -16,7 +16,6 @@ Ext.define('Docs.controller.Index', {
      * @private
      */
     showFailure: function(msg) {
-        this.getOverview().setLoading(false);
         var tpl = new Ext.XTemplate(
             "<h1>Oops...</h1>",
             "<p>{msg}</p>",
