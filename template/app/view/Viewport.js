@@ -17,6 +17,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.videos.Index',
         'Docs.view.guides.Index',
         'Docs.view.Tabs',
+        'Docs.view.search.Container',
         'Docs.Favorites',
         'Docs.Settings',
         'Docs.History'
@@ -48,30 +49,10 @@ Ext.define('Docs.view.Viewport', {
                             },
                             { xtype: 'container', flex: 1 },
                             {
-                                cls: 'search',
+                                xtype: 'searchcontainer',
                                 id: 'search-container',
                                 width: 230,
                                 margin: '5 0 0 0',
-                                items: [
-                                    {
-                                        xtype: 'triggerfield',
-                                        triggerCls: 'reset',
-                                        emptyText: 'Search',
-                                        width: 170,
-                                        id: 'search-field',
-                                        enableKeyEvents: true,
-                                        hideTrigger: true,
-                                        onTriggerClick: function() {
-                                            this.reset();
-                                            this.focus();
-                                            this.setHideTrigger(true);
-                                            Ext.getCmp('search-dropdown').hide();
-                                        }
-                                    },
-                                    {
-                                        xtype: 'searchdropdown'
-                                    }
-                                ]
                             }
                         ]
 
