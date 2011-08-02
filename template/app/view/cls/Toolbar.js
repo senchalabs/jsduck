@@ -74,7 +74,7 @@ Ext.define('Docs.view.cls.Toolbar', {
         this.items = this.items.concat([
             { xtype: 'tbspacer', width: 10 },
             this.filterField = Ext.widget("textfield", {
-                emptyText: 'Find class members...',
+                emptyText: 'Filter class members',
                 enableKeyEvents: true,
                 listeners: {
                     keyup: function(cmp) {
