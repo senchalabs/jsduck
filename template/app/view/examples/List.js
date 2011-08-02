@@ -3,9 +3,7 @@ Ext.define('Docs.view.examples.List', {
     alias: 'widget.samplepanel',
 
     cls          : 'demos',
-    itemSelector : 'dd',
-    trackOver    : true,
-    overItemCls  : 'over',
+    itemSelector : 'dl',
 
     tpl          : Ext.create('Ext.XTemplate',
         '<div id="sample-ct">',
@@ -49,6 +47,22 @@ Ext.define('Docs.view.examples.List', {
          * @param {Ext.EventObject} e
          */
         this.addEvents('exampleclick');
+
+        this.on({
+            'afterrender': function(cmp) {
+                cmp.el.addListener('mouseover', function(evt, el) {
+                    Ext.get(el).addCls('over')
+                }, this, {
+                    delegate: 'dd'
+                });
+                cmp.el.addListener('mouseout', function(evt, el) {
+                    Ext.get(el).removeCls('over')
+                }, this, {
+                    delegate: 'dd'
+                });
+            }
+        })
+
         this.callParent(arguments);
     },
 

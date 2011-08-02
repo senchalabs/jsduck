@@ -23,7 +23,7 @@ Ext.define('Docs.view.examples.Index', {
             Ext.create('Docs.view.examples.List', {
                 store: store
             })
-        ]
+        ];
 
         this.callParent(arguments);
     }
