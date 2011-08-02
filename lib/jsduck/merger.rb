@@ -115,7 +115,7 @@ module JsDuck
         :xtypes => detect_xtypes(doc_map, code),
         :author => detect_author(doc_map),
         :docauthor => detect_docauthor(doc_map),
-        :singleton => !!doc_map[:singleton],
+        :singleton => detect_singleton(doc_map, code),
         # Used by Aggregator to determine if we're dealing with Ext4 code
         :code_type => code[:type],
       }, doc_map)
@@ -318,6 +318,10 @@ module JsDuck
 
     def detect_deprecated(doc_map)
       doc_map[:deprecated] ? doc_map[:deprecated].first : nil
+    end
+
+    def detect_singleton(doc_map, code)
+      !!(doc_map[:singleton] || code[:type] == :ext_define && code[:singleton])
     end
 
     def detect_params(docs, code)

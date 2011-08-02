@@ -220,7 +220,7 @@ module JsDuck
       cfg
     end
 
-    # <ext-define-cfg> := "{" ( <extend> | <mixins> | <alternate-class-name> | <alias> | <?> )*
+    # <ext-define-cfg> := "{" ( <extend> | <mixins> | <alternate-class-name> | <alias> | <singleton> | <?> )*
     def ext_define_cfg
       match("{")
       cfg = {}
@@ -238,6 +238,9 @@ module JsDuck
           found = true
         elsif look("alias", ":")
           cfg[:alias] = ext_define_alias
+          found = true
+        elsif look("singleton", ":", "true")
+          cfg[:singleton] = ext_define_singleton
           found = true
         elsif look(:ident, ":")
           match(:ident, ":")
@@ -263,6 +266,12 @@ module JsDuck
     def ext_define_alias
       match("alias", ":")
       string_or_list
+    end
+
+    # <ext-define-singleton> := "singleton" ":" "true"
+    def ext_define_singleton
+      match("singleton", ":", "true")
+      true
     end
 
     # <string-or-list> := ( <string> | <array-literal> )

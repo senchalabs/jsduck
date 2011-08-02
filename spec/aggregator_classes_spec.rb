@@ -198,6 +198,9 @@ describe JsDuck::Aggregator do
     it "detects implied xtype" do
       @doc[:xtypes].should == ["foo"]
     end
+    it "detects implied singleton" do
+      @doc[:singleton].should == true
+    end
   end
 
   describe "basic Ext.define() in code" do
@@ -211,7 +214,8 @@ describe JsDuck::Aggregator do
             bar: 'Foo.Bar'
           },
           alias: 'widget.foo',
-          alternateClassName: 'JustClass'
+          alternateClassName: 'JustClass',
+          singleton: true
         });
       EOS
     end
@@ -234,9 +238,10 @@ describe JsDuck::Aggregator do
       @doc = parse(<<-EOS)[0]
         /** */
         Ext.define('MyClass', {
-          singleton: true,
+          blah: true,
           extend: 'Your.Class',
           alias: ['widget.foo', 'something.bar'],
+          singleton: true,
           alternateClassName: ['JustClass'],
           requires: ['Hohooo', 'hahaa'],
           mixins: {
