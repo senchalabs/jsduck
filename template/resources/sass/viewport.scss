@@ -948,8 +948,18 @@ a {
     color: blue;
 }
 
+.x-form-trigger.reset {
+  background: url(../images/x12.png) no-repeat 2px 3px;
+  padding: 0; margin: 0; border: 0;
+}
 
-
-
+.member-filter .x-form-trigger-wrap {
+  height: 20px;
+  border-style: solid;
+  border-color: #bebebe;
+  border-width: 1px 1px 1px 0;
+  margin-left: -1px;
+  background: url('../../extjs/resources/themes/images/default/form/text-bg.gif')
+}
 
 

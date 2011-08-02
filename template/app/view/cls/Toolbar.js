@@ -44,6 +44,8 @@ Ext.define('Docs.view.cls.Toolbar', {
         this.items = [];
         this.memberButtons = {};
 
+        var self = this;
+
         var memberTitles = {
             cfg: "Configs",
             property: "Properties",
@@ -74,11 +76,15 @@ Ext.define('Docs.view.cls.Toolbar', {
         this.items = this.items.concat([
             { xtype: 'tbspacer', width: 10 },
             this.filterField = Ext.widget("textfield", {
+                triggerCls: 'reset',
+                cls: 'member-filter',
+                hideTrigger: true,
                 emptyText: 'Filter class members',
                 enableKeyEvents: true,
                 listeners: {
                     keyup: function(cmp) {
                         this.fireEvent("filter", cmp.getValue());
+                        cmp.setHideTrigger(cmp.getValue().length === 0);
                     },
                     specialkey: function(cmp, event) {
                         if (event.keyCode === Ext.EventObject.ESC) {
@@ -87,7 +93,13 @@ Ext.define('Docs.view.cls.Toolbar', {
                         }
                     },
                     scope: this
-                }
+                },
+                onTriggerClick: function() {
+                    this.reset();
+                    this.focus();
+                    self.fireEvent('filter', '');
+                    this.setHideTrigger(true);
+                },
             }),
             { xtype: 'tbfill' },
             {
