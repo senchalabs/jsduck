@@ -220,66 +220,98 @@ module JsDuck
       cfg
     end
 
-    # <ext-define-cfg> := "{" ( <extend> | <mixins> | <alternate-class-name> | <alias> | <requires> | <uses> | <singleton> | <?> )*
+    # <ext-define-cfg> := "{" ( <extend> | <mixins> | <alternate-class-name> | <alias> |
+    #                           <requires> | <uses> | <singleton> | <?> )*
     def ext_define_cfg
       match("{")
       cfg = {}
       found = true
       while found
         found = false
-        if look("extend", ":", :string)
-          cfg[:extend] = ext_define_extend
-          found = true
-        elsif look("mixins", ":", "{")
-          cfg[:mixins] = ext_define_mixins
-          found = true
-        elsif look("alternateClassName", ":")
-          cfg[:alternateClassNames] = ext_define_alternate_class_names
-          found = true
-        elsif look("alias", ":")
-          cfg[:alias] = ext_define_alias
-          found = true
-        elsif look("requires", ":")
-          match("requires", ":")
-          cfg[:requires] = string_or_list
-          found = true
-        elsif look("uses", ":")
-          match("uses", ":")
-          cfg[:uses] = string_or_list
-          found = true
-        elsif look("singleton", ":", "true")
-          cfg[:singleton] = ext_define_singleton
-          found = true
-        elsif look(:ident, ":")
-          match(:ident, ":")
-          found = literal
+        if found = ext_define_extend
+          cfg[:extend] = found
+        elsif found = ext_define_mixins
+          cfg[:mixins] = found
+        elsif found = ext_define_alternate_class_name
+          cfg[:alternateClassNames] = found
+        elsif found = ext_define_alias
+          cfg[:alias] = found
+        elsif found = ext_define_requires
+          cfg[:requires] = found
+        elsif found = ext_define_uses
+          cfg[:uses] = found
+        elsif found = ext_define_singleton
+          cfg[:singleton] = found
+        elsif found = ext_define_whatever
+          # ignore this
         end
         match(",") if look(",")
       end
       cfg
     end
 
-    # <ext-define-extend> := "extend" ":" <string>
+    # <extend> := "extend" ":" <string>
     def ext_define_extend
-      match("extend", ":", :string)[:value]
+      if look("extend", ":", :string)
+        match("extend", ":", :string)[:value]
+      end
     end
 
-    # <ext-define-alternate-class-names> := "alternateClassName" ":" <string-or-list>
-    def ext_define_alternate_class_names
-      match("alternateClassName", ":")
-      string_or_list
+    # <mixins> := "mixins" ":" <object-literal>
+    def ext_define_mixins
+      if look("mixins", ":", "{")
+        match("mixins", ":")
+        lit = literal
+        lit && lit[:value].map {|x| x[:value][:value] }
+      end
     end
 
-    # <ext-define-alias> := "alias" ":" <string-or-list>
+    # <alternate-class-name> := "alternateClassName" ":" <string-or-list>
+    def ext_define_alternate_class_name
+      if look("alternateClassName", ":")
+        match("alternateClassName", ":")
+        string_or_list
+      end
+    end
+
+    # <alias> := "alias" ":" <string-or-list>
     def ext_define_alias
-      match("alias", ":")
-      string_or_list
+      if look("alias", ":")
+        match("alias", ":")
+        string_or_list
+      end
     end
 
-    # <ext-define-singleton> := "singleton" ":" "true"
+    # <requires> := "requires" ":" <string-or-list>
+    def ext_define_requires
+      if look("requires", ":")
+        match("requires", ":")
+        string_or_list
+      end
+    end
+
+    # <uses> := "uses" ":" <string-or-list>
+    def ext_define_uses
+      if look("uses", ":")
+        match("uses", ":")
+        string_or_list
+      end
+    end
+
+    # <singleton> := "singleton" ":" "true"
     def ext_define_singleton
-      match("singleton", ":", "true")
-      true
+      if look("singleton", ":", "true")
+        match("singleton", ":", "true")
+        true
+      end
+    end
+
+    # <?> := <ident> ":" <literal>
+    def ext_define_whatever
+      if look(:ident, ":")
+        match(:ident, ":")
+        literal
+      end
     end
 
     # <string-or-list> := ( <string> | <array-literal> )
@@ -292,13 +324,6 @@ module JsDuck
       else
         []
       end
-    end
-
-    # <ext-define-mixins> := "mixins" ":" <object-literal>
-    def ext_define_mixins
-      match("mixins", ":")
-      lit = literal
-      lit && lit[:value].map {|x| x[:value][:value] }
     end
 
     # <property-literal> := ( <ident> | <string> ) ":" <expression>
