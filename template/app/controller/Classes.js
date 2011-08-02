@@ -241,9 +241,11 @@ Ext.define('Docs.controller.Classes', {
     },
 
     scrollContent: function() {
-        var baseUrl = '/api/' + this.currentCls.name,
-            offset = (Docs.contentState[baseUrl] && Docs.contentState[baseUrl].scrollOffset) || 0;
-        this.getOverview().getEl().down('.x-panel-body').scrollTo('top', offset);
+        if (this.currentCls) {
+            var baseUrl = '/api/' + this.currentCls.name,
+                offset = (Docs.contentState[baseUrl] && Docs.contentState[baseUrl].scrollOffset) || 0;
+            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', offset);
+        }
     }
 
 });

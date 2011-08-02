@@ -42,8 +42,17 @@ Ext.define('Docs.controller.Guides', {
                         delegate: '.guide'
                     });
                 }
+            },
+            '#guide': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('scroll', function(cmp, el) {
+                        var baseUrl = this.activeUrl;
+                        Docs.contentState[baseUrl] = Docs.contentState[baseUrl] || {};
+                        Docs.contentState[baseUrl]['scrollOffset'] = el.scrollTop;
+                    }, this);
+                }
             }
-        })
+        });
     },
 
     // We don't want to select the class that was opened in another window,
@@ -83,7 +92,7 @@ Ext.define('Docs.controller.Guides', {
         Ext.getCmp('tree-container').show();
         Ext.getCmp('tree-container').layout.setActiveItem(2);
 
-        if (this.activeUrl === url) return;
+        if (this.activeUrl === url) return this.scrollContent();
         this.activeUrl = url;
 
         noHistory || Docs.History.push(url);
@@ -121,8 +130,14 @@ Ext.define('Docs.controller.Guides', {
         Ext.getCmp("guide").update(json.guide);
 
         Docs.Syntax.highlight(Ext.get("guide"));
+        this.scrollContent();
         this.fireEvent('showGuide', name);
         this.getTree().selectUrl(url);
+    },
+
+    scrollContent: function() {
+        var offset = (Docs.contentState[this.activeUrl] && Docs.contentState[this.activeUrl].scrollOffset) || 0;
+        Ext.get('guide').scrollTo('top', offset);
     }
 
 });
