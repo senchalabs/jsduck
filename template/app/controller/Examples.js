@@ -34,15 +34,15 @@ Ext.define('Docs.controller.Examples', {
     },
 
     loadExample: function(url, noHistory) {
+        Ext.getCmp('card-panel').layout.setActiveItem('example');
+        Ext.getCmp('tree-container').layout.setActiveItem(1);
 
         if (this.activeUrl === url) return;
         this.activeUrl = url;
 
         noHistory || Docs.History.push(url);
 
-        Ext.getCmp('card-panel').layout.setActiveItem('example');
-        Ext.getCmp('tree-container').layout.setActiveItem(1);
-
-        Ext.get('exampleIframe').dom.setAttribute('src', 'extjs/' + url);
+        var ifr = document.getElementById("exampleIframe");
+        ifr.contentWindow.location.replace('extjs/' + url);
     }
 });

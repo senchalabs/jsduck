@@ -5,7 +5,7 @@
 Ext.define('Docs.view.cls.Index', {
     extend: 'Ext.container.Container',
     alias : 'widget.classindex',
-    cls: 'class-list',
+    cls: 'class-list iScroll',
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(

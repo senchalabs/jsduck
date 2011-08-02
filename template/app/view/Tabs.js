@@ -103,7 +103,7 @@ Ext.define('Docs.view.Tabs', {
                 Docs.App.getController('Classes').loadIndex();
             } else {
                 if (idx == this.openTabs.length) idx -= 1;
-                Docs.App.getController('Classes').handleUrlClick(this.openTabs[idx], {});
+                window.location = this.openTabs[idx];
             }
         }
     }

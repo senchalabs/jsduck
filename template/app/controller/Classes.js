@@ -157,7 +157,7 @@ Ext.define('Docs.controller.Classes', {
     loadIndex: function(noHistory) {
         this.activeUrl = "";
         if (!noHistory) {
-            Docs.History.push("");
+            Docs.History.push("#/api");
         }
         this.getViewport().setPageTitle("");
         Ext.getCmp('doctabs').activateTab('#/api');

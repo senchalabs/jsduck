@@ -72,6 +72,7 @@ Ext.define('Docs.view.Viewport', {
                     {
                         region: 'west',
                         id: 'tree-container',
+                        cls: 'iScroll',
                         border: 1,
                         layout: 'card',
                         resizable: true,
@@ -80,7 +81,6 @@ Ext.define('Docs.view.Viewport', {
                         hideCollapseTool: true,
                         animCollapse: true,
                         bodyPadding: '14 9',
-                        // autoHeight: true,
                         width: 220,
                         items: [
                             {
@@ -132,7 +132,8 @@ Ext.define('Docs.view.Viewport', {
                                 {
                                     autoScroll: true,
                                     xtype: 'container',
-                                    id: 'guide'
+                                    id: 'guide',
+                                    cls: 'iScroll'
                                 },
                                 {
                                     xtype: 'container',
@@ -146,7 +147,7 @@ Ext.define('Docs.view.Viewport', {
                                     id: 'example',
                                     xtype: 'container',
                                     layout: 'fit',
-                                    html: '<iframe style="width: 100%; height: 100%; border: 0;" id="exampleIframe" src="egIframe.html" scrolling="yes"></iframe>'
+                                    html: '<iframe style="width: 100%; height: 100%; border: 0;" id="exampleIframe" src="egIframe.html"></iframe>'
                                 },
                                 {
                                     xtype: 'videoindex',
