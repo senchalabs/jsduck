@@ -241,16 +241,7 @@ module JsDuck
           found = true
         elsif look(:ident, ":")
           match(:ident, ":")
-          if look(:string) || look(:number) || look(:regex) ||
-              look("true") || look("false") ||
-              look("null") || look("undefined")
-            # Some key with literal value -- ignore
-            @lex.next
-            found = true
-          elsif look("[")
-            # Some key with array of strings -- ignore
-            found = array_of_strings
-          end
+          found = literal
         end
         match(",") if look(",")
       end
@@ -274,44 +265,23 @@ module JsDuck
       string_or_list
     end
 
-    # <string-or-list> := ( <string> | <array-of-strings> )
+    # <string-or-list> := ( <string> | <array-literal> )
     def string_or_list
-      if look(:string)
-        [ match(:string)[:value] ]
-      elsif look("[")
-        array_of_strings
+      lit = literal
+      if lit && lit[:type] == :string
+        [ lit[:value] ]
+      elsif lit && lit[:type] == :array
+        lit[:value].map {|x| x[:value] }
       else
         []
       end
     end
 
-    # <ext-define-mixins> := "mixins" ":" "{" [ <ident> ":" <string> ","? ]* "}"
+    # <ext-define-mixins> := "mixins" ":" <object-literal>
     def ext_define_mixins
-      match("mixins", ":", "{")
-      mixins = []
-      while look(:ident, ":", :string)
-        mixins << match(:ident, ":", :string)[:value]
-        match(",") if look(",")
-      end
-      match("}") if look("}")
-      mixins
-    end
-
-    # <array-of-strings> := "[" [ <string> ","? ]* "]"
-    def array_of_strings
-      match("[")
-      strs = []
-      while look(:string)
-        strs << match(:string)[:value]
-        match(",") if look(",")
-      end
-
-      if look("]")
-        match("]")
-        strs
-      else
-        false
-      end
+      match("mixins", ":")
+      lit = literal
+      lit && lit[:value].map {|x| x[:value][:value] }
     end
 
     # <property-literal> := ( <ident> | <string> ) ":" <expression>
