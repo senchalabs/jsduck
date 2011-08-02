@@ -201,6 +201,12 @@ describe JsDuck::Aggregator do
     it "detects implied singleton" do
       @doc[:singleton].should == true
     end
+    it "detects required classes" do
+      @doc[:requires].should == ["ClassA", "ClassB"]
+    end
+    it "detects used classes" do
+      @doc[:uses].should == ["ClassC"]
+    end
   end
 
   describe "basic Ext.define() in code" do
@@ -215,7 +221,9 @@ describe JsDuck::Aggregator do
           },
           alias: 'widget.foo',
           alternateClassName: 'JustClass',
-          singleton: true
+          singleton: true,
+          requires: ['ClassA', 'ClassB'],
+          uses: 'ClassC'
         });
       EOS
     end
@@ -240,10 +248,13 @@ describe JsDuck::Aggregator do
         Ext.define('MyClass', {
           blah: true,
           extend: 'Your.Class',
+          uses: ['ClassC'],
+          conf: {foo: 10},
           alias: ['widget.foo', 'something.bar'],
           singleton: true,
           alternateClassName: ['JustClass'],
-          requires: ['Hohooo', 'hahaa'],
+          stuff: ["foo", "bar"],
+          requires: ['ClassA', 'ClassB'],
           mixins: {
             obs: 'Ext.util.Observable',
             bar: 'Foo.Bar'
