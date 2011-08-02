@@ -34,15 +34,19 @@ Ext.define('Docs.controller.Examples', {
     },
 
     loadExample: function(url, noHistory) {
-        Ext.getCmp('card-panel').layout.setActiveItem('example');
-        Ext.getCmp('tree-container').layout.setActiveItem(1);
 
-        if (this.activeUrl === url) return;
+        if (this.activeUrl === url) return this.activateExampleCard();
         this.activeUrl = url;
 
         noHistory || Docs.History.push(url);
 
         var ifr = document.getElementById("exampleIframe");
         ifr.contentWindow.location.replace('extjs/' + url);
+        setTimeout(this.activateExampleCard, 150); // Prevent previous example from flashing up
+    },
+
+    activateExampleCard: function() {
+        Ext.getCmp('card-panel').layout.setActiveItem('example');
+        Ext.getCmp('tree-container').layout.setActiveItem(1);
     }
 });
