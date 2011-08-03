@@ -15,7 +15,7 @@ Ext.define('Docs.view.cls.Container', {
         align: 'stretch'
     },
 
-    padding: '5 10',
+    padding: '5 10 0 10',
 
     initComponent: function() {
         this.items = [

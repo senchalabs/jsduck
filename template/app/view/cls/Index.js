@@ -6,7 +6,7 @@ Ext.define('Docs.view.cls.Index', {
     extend: 'Ext.container.Container',
     alias : 'widget.classindex',
     cls: 'class-list iScroll',
-    margin: '15',
+    margin: '15 10',
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
@@ -24,15 +24,6 @@ Ext.define('Docs.view.cls.Index', {
             //         '<li class="icon icon-guide">Guide</li>',
             //     '</ul>',
             // '</div>',
-            // '<tpl if="guides">',
-            //     '<div class="section guides">',
-            //         '<h1>Guides</h1>',
-            //         '{guides}',
-            //         '<div class="examples">',
-            //             '<a href="../examples/index.html">View the examples &rarr;</a>',
-            //         '</div>',
-            //     '</div>',
-            // '</tpl>',
             '{categories}'
         );
         this.data = this.extractData();

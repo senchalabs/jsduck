@@ -2,7 +2,7 @@ Ext.define('Docs.view.guides.Index', {
     extend: 'Ext.container.Container',
     alias : 'widget.guideindex',
     cls: 'class-list iScroll',
-    margin: '15',
+    margin: '15 10',
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
