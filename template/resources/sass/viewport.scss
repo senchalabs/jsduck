@@ -962,4 +962,24 @@ a {
   background: url('../../extjs/resources/themes/images/default/form/text-bg.gif')
 }
 
+.x-tree-arrows .x-tree-elbow-plus,
+.x-tree-arrows .x-tree-elbow-minus,
+.x-tree-arrows .x-tree-elbow-end-plus,
+.x-tree-arrows .x-tree-elbow-end-minus {
+  background: url('../images/arrows.png') no-repeat 2px 1px;
+}
 
+.x-tree-arrows .x-tree-expander-over .x-tree-elbow-plus,
+.x-tree-arrows .x-tree-expander-over .x-tree-elbow-end-plus {
+  background-position: 2px 1px;
+}
+
+.x-tree-arrows .x-grid-tree-node-expanded .x-tree-elbow-plus,
+.x-tree-arrows .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
+  background-position: -12px 1px;
+}
+
+.x-tree-arrows .x-grid-tree-node-expanded .x-tree-expander-over .x-tree-elbow-plus,
+.x-tree-arrows .x-grid-tree-node-expanded .x-tree-expander-over .x-tree-elbow-end-plus {
+  background-position: -12px 1px;
+}
