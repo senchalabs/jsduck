@@ -52,9 +52,9 @@ Ext.define('Docs.view.videos.Tree', {
 
     onItemClick: function(view, node, item, index, e) {
 
-        var url = node.raw.id;
+        var id = node.raw.id;
 
-        if (url) {
+        if (id) {
             this.fireEvent('videoclick', id, e)
         }
         else if (!node.isLeaf()) {

@@ -26,6 +26,7 @@ Ext.define('Docs.view.videos.Index', {
 
         this.callParent(arguments);
     }
+
 });
 
 Docs.videos = [

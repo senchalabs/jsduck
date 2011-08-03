@@ -1,6 +1,6 @@
 Ext.define('Docs.view.videos.List', {
     extend: 'Ext.view.View',
-    alias: 'widget.samplepanel',
+    alias: 'widget.videolist',
 
     cls          : 'demos',
     itemSelector : 'dl',
@@ -63,7 +63,7 @@ Ext.define('Docs.view.videos.List', {
         var t = e.getTarget('dd', 5, true);
 
         if (t && !e.getTarget('a', 2)) {
-            var url = t.getAttributeNS('ext', 'id');
+            var id = t.getAttributeNS('ext', 'id');
             this.fireEvent('videoclick', id);
         }
 

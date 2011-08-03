@@ -4,6 +4,7 @@ Ext.define('Docs.view.examples.Index', {
     autoScroll : true,
 
     cls : 'all-demos',
+    margin: '10 0 0 0',
 
     initComponent: function() {
 
@@ -20,6 +21,7 @@ Ext.define('Docs.view.examples.Index', {
         });
 
         this.items = [
+            { xtype: 'container', html: '<h1 class="eg">Examples</h1>' },
             Ext.create('Docs.view.examples.List', {
                 store: store
             })
