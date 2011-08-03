@@ -70,6 +70,7 @@ module JsDuck
     def format_return(r)
       r = r.clone
       r[:doc] = @formatter.format(r[:doc]) if r[:doc]
+      r[:properties] = format_subproperties(r[:properties]) if r[:properties]
       r
     end
 
