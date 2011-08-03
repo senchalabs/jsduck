@@ -27,11 +27,11 @@ Ext.define('Docs.view.videos.List', {
     initComponent: function() {
         /**
          * @event
-         * Fired when an example is clicked
-         * @param {String} url  URL of the example to load
+         * Fired when an video is clicked
+         * @param {String} id ID of the video to load
          * @param {Ext.EventObject} e
          */
-        this.addEvents('exampleclick');
+        this.addEvents('videoclick');
 
         this.on({
             'afterrender': function(cmp) {
@@ -49,24 +49,24 @@ Ext.define('Docs.view.videos.List', {
         })
 
         this.callParent(arguments);
-    }
+    },
 
-    // onContainerClick: function(e) {
-    //     var group = e.getTarget('h2', 3, true);
-    //
-    //     if (group) {
-    //         group.up('div').toggleCls('collapsed');
-    //     }
-    // },
-    //
-    // onItemClick : function(record, item, index, e){
-    //     var t = e.getTarget('dd', 5, true);
-    //
-    //     if (t && !e.getTarget('a', 2)) {
-    //         var url = t.getAttributeNS('ext', 'url');
-    //         this.fireEvent('exampleclick', url);
-    //     }
-    //
-    //     return this.callParent(arguments);
-    // }
+    onContainerClick: function(e) {
+        var group = e.getTarget('h2', 3, true);
+
+        if (group) {
+            group.up('div').toggleCls('collapsed');
+        }
+    },
+
+    onItemClick : function(record, item, index, e){
+        var t = e.getTarget('dd', 5, true);
+
+        if (t && !e.getTarget('a', 2)) {
+            var url = t.getAttributeNS('ext', 'id');
+            this.fireEvent('videoclick', id);
+        }
+
+        return this.callParent(arguments);
+    }
 });

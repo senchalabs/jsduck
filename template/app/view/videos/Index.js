@@ -33,16 +33,10 @@ Docs.videos = [
         group: 'Ext JS',
         videos: [
             {
-                "id": "17733892",
-                "title": "SenchaCon 2010: Ext JS 4 Architecture",
-                "description": "Ext JS 4 has a thoroughly revamped architecture that enables faster performance and more developer flexibility. In this session, we will take a tour through the revamped architecture of Ext JS 4.x, taking a high-level look at the updated data package, component hierarchy and core APIs. Afterwards, developers will have an understanding of why Ext JS 4 works the way it does and how best to leverage its underlying APIs.\n\nPresented by Ed Spencer.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/110/628/110628273_200.jpg"
-            },
-            {
-                "id": "17673342",
-                "title": "SenchaCon 2010: Charting & Data Visualization in Ext JS 4",
-                "description": "The exciting future of full JavaScript-powered charts and data visualizations coming in Ext JS 4.0! No Flash required! \n\nPresented by Jamie Avins.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/110/173/110173068_200.jpg"
+                "id": "22863837",
+                "title": "Ext JS 4 - The Most Advanced JavaScript Framework for Web Apps",
+                "description": "Ext JS 4 represents a major upgrade of the flagship Sencha JavaScript framework, which is used by more than one million developers to create amazing cross-browser app experiences that execute with precision and performance. Highlights of the release include major enhancements to the drawing and charting capabilities of Ext JS, comprehensive cross-browser support, and an improved data package — all based on a modern architecture.",
+                "thumb": "http://b.vimeocdn.com/ts/148/397/148397103_200.jpg"
             },
             {
                 "id": "17666102",
@@ -57,10 +51,22 @@ Docs.videos = [
                 "thumb": "http://b.vimeocdn.com/ts/166/239/166239450_200.jpg"
             },
             {
-                "id": "23046756",
-                "title": "Ext JS 3 to 4 Migration (Part 2 of 2)",
-                "description": "In this video tutorial series Brian Moeskau teaches you how to use the Ext compatibility layer to migrate existing Ext 3 applications to Ext 4. The tutorial covers setup, debugging, dealing with common problems, and techniques for properly updating your application code.\n\nPart 1 focuses on the initial setup of the compatibility layer and getting a demo Ext 3 application running under Ext 4 in compatibility mode.\n\nSee Part 1: http://vimeo.com/23027769\n\nPart 2 builds on the first video, migrating the demo application off of the compatibility layer and getting it fully converted to Ext 4, including using the new class system and dynamic loading.\n\nSee the accompanying blog post for more details and to download the Ext 3 to 4 Migration Pack: http://www.sencha.com/blog/ext-js-3-to-4-migration",
-                "thumb": "http://b.vimeocdn.com/ts/149/936/149936004_200.jpg"
+                "id": "17733892",
+                "title": "SenchaCon 2010: Ext JS 4 Architecture",
+                "description": "Ext JS 4 has a thoroughly revamped architecture that enables faster performance and more developer flexibility. In this session, we will take a tour through the revamped architecture of Ext JS 4.x, taking a high-level look at the updated data package, component hierarchy and core APIs. Afterwards, developers will have an understanding of why Ext JS 4 works the way it does and how best to leverage its underlying APIs.\n\nPresented by Ed Spencer.\n\nCheck out http://sencha.com/conference for more session videos.",
+                "thumb": "http://b.vimeocdn.com/ts/110/628/110628273_200.jpg"
+            },
+            {
+                "id": "17917111",
+                "title": "SenchaCon 2010: The Ext JS 4 Layout System",
+                "description": "Ext JS 4 has a fully refactored layout engine with higher efficiency and performance. During this session, you'll learn all the in-depth details with a hands-on coding review of the updated ContainerLayouts and newly introduced ComponentLayouts. \n\nPresented by Jamie Avins.\n\nCheck out http://sencha.com/conference for more session videos.",
+                "thumb": "http://b.vimeocdn.com/ts/112/023/112023545_200.jpg"
+            },
+            {
+                "id": "17673342",
+                "title": "SenchaCon 2010: Charting & Data Visualization in Ext JS 4",
+                "description": "The exciting future of full JavaScript-powered charts and data visualizations coming in Ext JS 4.0! No Flash required! \n\nPresented by Jamie Avins.\n\nCheck out http://sencha.com/conference for more session videos.",
+                "thumb": "http://b.vimeocdn.com/ts/110/173/110173068_200.jpg"
             },
             {
                 "id": "23027769",
@@ -69,10 +75,10 @@ Docs.videos = [
                 "thumb": "http://b.vimeocdn.com/ts/149/792/149792412_200.jpg"
             },
             {
-                "id": "22863837",
-                "title": "Ext JS 4 - The Most Advanced JavaScript Framework for Web Apps",
-                "description": "Ext JS 4 represents a major upgrade of the flagship Sencha JavaScript framework, which is used by more than one million developers to create amazing cross-browser app experiences that execute with precision and performance. Highlights of the release include major enhancements to the drawing and charting capabilities of Ext JS, comprehensive cross-browser support, and an improved data package — all based on a modern architecture.",
-                "thumb": "http://b.vimeocdn.com/ts/148/397/148397103_200.jpg"
+                "id": "23046756",
+                "title": "Ext JS 3 to 4 Migration (Part 2 of 2)",
+                "description": "In this video tutorial series Brian Moeskau teaches you how to use the Ext compatibility layer to migrate existing Ext 3 applications to Ext 4. The tutorial covers setup, debugging, dealing with common problems, and techniques for properly updating your application code.\n\nPart 1 focuses on the initial setup of the compatibility layer and getting a demo Ext 3 application running under Ext 4 in compatibility mode.\n\nSee Part 1: http://vimeo.com/23027769\n\nPart 2 builds on the first video, migrating the demo application off of the compatibility layer and getting it fully converted to Ext 4, including using the new class system and dynamic loading.\n\nSee the accompanying blog post for more details and to download the Ext 3 to 4 Migration Pack: http://www.sencha.com/blog/ext-js-3-to-4-migration",
+                "thumb": "http://b.vimeocdn.com/ts/149/936/149936004_200.jpg"
             },
             {
                 "id": "19159630",
@@ -99,12 +105,6 @@ Docs.videos = [
                 "thumb": "http://b.vimeocdn.com/ts/112/046/112046224_200.jpg"
             },
             {
-                "id": "17917111",
-                "title": "SenchaCon 2010: The Ext JS 4 Layout System",
-                "description": "Ext JS 4 has a fully refactored layout engine with higher efficiency and performance. During this session, you'll learn all the in-depth details with a hands-on coding review of the updated ContainerLayouts and newly introduced ComponentLayouts. \n\nPresented by Jamie Avins.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/112/023/112023545_200.jpg"
-            },
-            {
                 "id": "18080793",
                 "title": "SenchaCon 2010: Debugging Your Ext JS Code",
                 "description": "To err is human, to code flawlessly is divine. During this session, you'll learn how to debug your JavaScript, Data, and Ext JS based applications using commonly available tools and advanced insight into the Ext JS component framework and life-cycle.\n\nPresented by Aaron Conran & Jarred Nicholls.\n\nCheck out http://sencha.com/​conference for more session videos.",
@@ -115,6 +115,18 @@ Docs.videos = [
     {
         group: "Sencha Touch",
         videos: [
+            {
+                "id": "17677004",
+                "title": "SenchaCon 2010: Sencha Touch for the Mobile Web",
+                "description": "Sencha Touch leverages HTML5 and CSS3 to provide a robust web app framework for webkit based mobile browsers. This session is a high-level introduction to Sencha Touch. We will cover components and data handling, theming, best practices, and deployment, and talk about the roadmap for Sencha Touch 2.0.\n\nPresented by David Kaneda.\n\nCheck out http://sencha.com/conference for more session videos.",
+                "thumb": "http://b.vimeocdn.com/ts/110/201/110201978_200.jpg"
+            },
+            {
+                "id": "17705448",
+                "title": "SenchaCon 2010: Structuring Your Sencha Touch Application",
+                "description": "In this session you'll learn about the recommended application structure for Sencha Touch (or Ext JS) applications. The new application structure enables any Sencha developer to quickly understand any Sencha application using the new Sencha MVC package.\n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
+                "thumb": "http://b.vimeocdn.com/ts/110/423/110423355_200.jpg"
+            },
             {
                 "id": "17838527",
                 "title": "SenchaCon 2010: Mobile Development Challenges & Solutions",
@@ -134,22 +146,10 @@ Docs.videos = [
                 "thumb": "http://b.vimeocdn.com/ts/111/138/111138013_200.jpg"
             },
             {
-                "id": "17705448",
-                "title": "SenchaCon 2010: Structuring Your Sencha Touch Application",
-                "description": "In this session you'll learn about the recommended application structure for Sencha Touch (or Ext JS) applications. The new application structure enables any Sencha developer to quickly understand any Sencha application using the new Sencha MVC package.\n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/110/423/110423355_200.jpg"
-            },
-            {
                 "id": "17699976",
                 "title": "SenchaCon 2010: Performance Optimization for Sencha Touch",
                 "description": "Mobile devices have very limited processing power compared to modern desktops. It's essential to keep performance optimization in mind when developing Touch applications. Here, we'll discuss how to keep your mobile web app fast and lightweight. We'll learn about such techniques as keeping your DOM slim, managing troublesome CSS3 properties, and other ways to keep your app sleek and responsive.\n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
                 "thumb": "http://b.vimeocdn.com/ts/110/383/110383037_200.jpg"
-            },
-            {
-                "id": "17677004",
-                "title": "SenchaCon 2010: Sencha Touch for the Mobile Web",
-                "description": "Sencha Touch leverages HTML5 and CSS3 to provide a robust web app framework for webkit based mobile browsers. This session is a high-level introduction to Sencha Touch. We will cover components and data handling, theming, best practices, and deployment, and talk about the roadmap for Sencha Touch 2.0.\n\nPresented by David Kaneda.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/110/201/110201978_200.jpg"
             },
             {
                 "id": "17414405",
@@ -158,16 +158,16 @@ Docs.videos = [
                 "thumb": "http://b.vimeocdn.com/ts/108/175/108175461_200.jpg"
             },
             {
-                "id": "16289990",
-                "title": "XTemplates in Sencha Touch,        Part 2 of 2",
-                "description": "Drew Neil (@nelstrom) has created a two-part series describing how to use XTemplates, a powerful templating system in Ext JS and Sencha Touch that allows developers to easily format views around dynamic data.\n\nCheck out part 1 here: http://vimeo.com/16289757\n\nGithub repo: http://github.com/nelstrom/Sencha-Touch-templates-demo\n\nRead more about Sencha Touch at http://sencha.com/touch/",
-                "thumb": "http://b.vimeocdn.com/ts/995/124/99512436_200.jpg"
-            },
-            {
                 "id": "16289757",
                 "title": "XTemplates in Sencha Touch,        Part 1 of 2",
                 "description": "Drew Neil (@nelstrom) has created a two-part series describing how to use XTemplates, a powerful templating system in Ext JS and Sencha Touch that allows developers to easily format views around dynamic data.\n\nCheck out part 2 here: http://vimeo.com/16289990\n\nGitHub repo: http://github.com/nelstrom/Sencha-Touch-templates-demo\n\nRead more about Sencha Touch at http://sencha.com/touch/",
                 "thumb": "http://b.vimeocdn.com/ts/995/102/99510249_200.jpg"
+            },
+            {
+                "id": "16289990",
+                "title": "XTemplates in Sencha Touch,        Part 2 of 2",
+                "description": "Drew Neil (@nelstrom) has created a two-part series describing how to use XTemplates, a powerful templating system in Ext JS and Sencha Touch that allows developers to easily format views around dynamic data.\n\nCheck out part 1 here: http://vimeo.com/16289757\n\nGithub repo: http://github.com/nelstrom/Sencha-Touch-templates-demo\n\nRead more about Sencha Touch at http://sencha.com/touch/",
+                "thumb": "http://b.vimeocdn.com/ts/995/124/99512436_200.jpg"
             },
             {
                 "id": "15888504",
@@ -339,7 +339,7 @@ Docs.videos = [
         ]
     },
     {
-        groups: 'Animator and Designer',
+        group: 'Animator and Designer',
         videos: [
             {
                 "id": "16219994",
