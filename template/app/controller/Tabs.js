@@ -12,6 +12,10 @@ Ext.define('Docs.controller.Tabs', {
         {
             ref: 'guideTree',
             selector: 'classtree[cmpName=guidetree]'
+        },
+        {
+            ref: 'exampleTree',
+            selector: 'examplestree'
         }
     ],
 
@@ -27,6 +31,13 @@ Ext.define('Docs.controller.Tabs', {
         this.getController('Guides').addListener({
             showGuide: function(guide) {
                 this.addTabFromTree("/guide/"+guide, this.getGuideTree());
+            },
+            scope: this
+        });
+
+        this.getController('Examples').addListener({
+            showExample: function(example) {
+                this.addTabFromTree(example, this.getExampleTree());
             },
             scope: this
         });

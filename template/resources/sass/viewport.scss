@@ -73,6 +73,10 @@ $docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
     background: url(../images/icons.png) no-repeat -3px -299px !important; }
   .icon-fav {
     background: url(../images/icons.png) no-repeat -3px -328px !important; }
+  .icon-example {
+    background: url(../images/icons.png) no-repeat -3px -409px !important; }
+  .icon-video {
+    background: url(../images/icons.png) no-repeat -3px -438px !important; }
   .icon-hist {
     background: url(../images/icons.png) no-repeat -3px -380px !important; } }
 
@@ -876,7 +880,7 @@ a {
     padding-left: 16px; padding-right: 6px;
   }
   .doctab.themes .m a {
-    background: url(../images/tab-icons.png) no-repeat 8px -73px;
+    background: url(../images/tab-icons.png) no-repeat 7px -93px;
     padding-left: 16px; padding-right: 6px;
   }
 }

@@ -29,19 +29,22 @@ Ext.define('Docs.view.videos.Tree', {
             text: 'Videos'
         };
 
-        Ext.Array.each(Docs.videos, function(group) {
+        Ext.Array.each(Docs.videos, function(group, idx) {
 
             var children = Ext.Array.map(group.videos, function(video) {
                 return Ext.apply(video, {
                     leaf: true,
                     text: video.title,
-                    url: '/videos/' + video.id
+                    url: '/videos/' + video.id,
+                    iconCls: 'icon-video'
                 });
             });
 
             this.root.children.push({
+                expanded: idx == 0,
                 text: group.group,
-                children: children
+                children: children,
+                iconCls: 'icon-pkg'
             })
         }, this);
 

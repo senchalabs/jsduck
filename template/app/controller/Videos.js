@@ -73,7 +73,6 @@ Ext.define('Docs.controller.Videos', {
     prev: function() {
         if (!this.currentVideo) return;
         var idx = Ext.Array.indexOf(this.videoIds(), this.currentVideo);
-        console.log(this.videoIds()[this.videoIds().length - 1])
         this.setUrl((idx == 0) ? this.videoIds()[this.videoIds().length - 1] : this.videoIds()[idx - 1]);
     },
 

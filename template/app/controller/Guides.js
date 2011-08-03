@@ -33,6 +33,11 @@ Ext.define('Docs.controller.Guides', {
                     this.handleUrlClick(url, event, this.getTree());
                 }
             },
+            'guidespanel': {
+                guideclick: function(url) {
+                    this.loadGuide('#/' + url);
+                }
+            },
             'indexcontainer': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(event, el) {

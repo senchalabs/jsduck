@@ -12,6 +12,16 @@ Ext.define('Docs.controller.Examples', {
     ],
 
     init: function() {
+
+        this.addEvents(
+            /**
+             * @event showExample
+             * Fired after an example is shown. Used for analytics event tracking.
+             * @param {String} example name of the example.
+             */
+            "showExample"
+        );
+
         this.control({
             'examplestree': {
                 exampleclick: function(url, event) {
@@ -39,6 +49,8 @@ Ext.define('Docs.controller.Examples', {
         this.activeUrl = url;
 
         noHistory || Docs.History.push(url);
+
+        this.fireEvent('showExample', url);
 
         var ifr = document.getElementById("exampleIframe");
         ifr.contentWindow.location.replace('extjs/' + url);
