@@ -35,6 +35,8 @@ Ext.define('Docs.view.Tabs', {
         this.callParent();
     },
 
+    tabQueue: [],
+
     /**
      * Adds a new tab to the Tab bar
      *
@@ -43,7 +45,7 @@ Ext.define('Docs.view.Tabs', {
      * @param {String} tab.text Text to be used on the tab
      * @param {String} tab.iconCls CSS class to be used as the icon
      */
-    addTab: function(tab) {
+    addTab: function(tab, noAnimate) {
 
         if (!Ext.Array.contains(this.openTabs, tab.href)) {
             var tpl = Ext.create('Ext.XTemplate',
@@ -58,13 +60,17 @@ Ext.define('Docs.view.Tabs', {
             )
             var docTab = Ext.get(tpl.append(this.el.dom, tab));
 
-            // Effect to 'slide' the tab out when it is created.
-            var width = docTab.getWidth();
-            docTab.setStyle('width', '10px')
-            docTab.setStyle({visibility: 'visible'})
-            docTab.animate({
-                to: { width: width }
-            });
+            if (noAnimate) {
+                docTab.setStyle({ visibility: 'visible' });
+            } else {
+                // Effect to 'slide' the tab out when it is created.
+                var width = docTab.getWidth();
+                docTab.setStyle('width', '10px');
+                docTab.setStyle({ visibility: 'visible' });
+                docTab.animate({
+                    to: { width: width }
+                });
+            }
 
             this.openTabs.push(tab.href);
         }

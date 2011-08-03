@@ -82,7 +82,7 @@ Ext.define('Docs.view.Viewport', {
                         hideCollapseTool: true,
                         animCollapse: true,
                         bodyPadding: '14 9',
-                        width: 220,
+                        width: 240,
                         items: [
                             {
                                 xtype: 'classtree',

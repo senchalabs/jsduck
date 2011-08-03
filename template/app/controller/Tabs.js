@@ -36,7 +36,12 @@ Ext.define('Docs.controller.Tabs', {
                 afterrender: function(cmp) {
                     this.addTabIconListeners(cmp);
                     this.addTabListeners(cmp);
-                }
+
+                    Ext.getStore('Favorites').each(function(f) {
+                        this.addTabFromTree(f.data.url, this.getClassTree(), true);
+                    }, this);
+                },
+                scope: this
             }
         });
     },
@@ -45,13 +50,15 @@ Ext.define('Docs.controller.Tabs', {
      * Adds a tab based on information from the class tree
      * @param {String} url The url of the record in the tree
      */
-    addTabFromTree: function(url, tree) {
+    addTabFromTree: function(url, tree, noAnimate) {
         var treeRecord = tree.findRecordByUrl(url);
-        Ext.getCmp('doctabs').addTab({
-            href: '#' + treeRecord.raw.url,
-            text: treeRecord.raw.text,
-            iconCls: treeRecord.raw.iconCls
-        })
+        if (treeRecord && treeRecord.raw) {
+            Ext.getCmp('doctabs').addTab({
+                href: '#' + treeRecord.raw.url,
+                text: treeRecord.raw.text,
+                iconCls: treeRecord.raw.iconCls
+            }, noAnimate);
+        }
     },
 
     /**
