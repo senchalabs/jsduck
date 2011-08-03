@@ -304,6 +304,40 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg with implicit name followed by code field with another name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg foo
+         */
+        bar: true
+      EOS
+    end
+    it "doesn't get the default value from code" do
+      @doc[:default].should == nil
+    end
+    it "doesn't get the type from code" do
+      @doc[:type].should == "Object"
+    end
+  end
+
+  describe "cfg without implicit name followed by code" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg
+         */
+        bar: true
+      EOS
+    end
+    it "gets default value from code" do
+      @doc[:default].should == "true"
+    end
+    it "gets the type from code" do
+      @doc[:type].should == "Boolean"
+    end
+  end
+
   describe "a normal config option" do
     before do
       @doc = parse(<<-EOS)[0]

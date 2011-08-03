@@ -246,22 +246,21 @@ module JsDuck
     def detect_type(tagname, doc_map, code)
       main_tag = doc_map[tagname] ? doc_map[tagname].first : {}
       if main_tag[:type]
-        main_tag[:type]
+        return main_tag[:type]
       elsif doc_map[:type]
-        doc_map[:type].first[:type]
-      elsif code[:type] == :function
-        "Function"
-      elsif code[:type] == :assignment && code[:right]
-        if code[:right][:type] == :function
-          "Function"
-        elsif code[:right][:type] == :literal
-          code[:right][:class]
-        else
-          "Object"
+        return doc_map[:type].first[:type]
+      elsif code_matches_doc?(tagname, doc_map, code)
+        if code[:type] == :function
+          return "Function"
+        elsif code[:type] == :assignment && code[:right]
+          if code[:right][:type] == :function
+            return "Function"
+          elsif code[:right][:type] == :literal
+            return code[:right][:class]
+          end
         end
-      else
-        "Object"
       end
+      return "Object"
     end
 
     def detect_extends(doc_map, code)
@@ -279,9 +278,17 @@ module JsDuck
       main_tag = doc_map[tagname] ? doc_map[tagname].first : {}
       if main_tag[:default]
         main_tag[:default]
-      elsif code[:type] == :assignment && code[:right]
+      elsif code_matches_doc?(tagname, doc_map, code) && code[:type] == :assignment && code[:right]
         code[:right][:value]
       end
+    end
+
+    # True if the name detected from code matches with explicitly documented name.
+    # Also true when no explicit name documented.
+    def code_matches_doc?(tagname, doc_map, code)
+      explicit_name = detect_name(tagname, doc_map, {})
+      implicit_name = detect_name(tagname, {}, code)
+      return explicit_name == "" || explicit_name == implicit_name
     end
 
     def detect_optional(tagname, doc_map)
