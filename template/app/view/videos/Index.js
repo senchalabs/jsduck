@@ -2,9 +2,9 @@ Ext.define('Docs.view.videos.Index', {
     extend: 'Ext.container.Container',
     alias : 'widget.videoindex',
 
+    cls : 'all-demos iScroll',
+    margin: '10 0 0 0',
     autoScroll : true,
-
-    cls : 'all-demos',
 
     initComponent: function() {
 
@@ -19,6 +19,7 @@ Ext.define('Docs.view.videos.Index', {
         });
 
         this.items = [
+            { xtype: 'container', html: '<h1 class="eg">Videos</h1>' },
             Ext.create('Docs.view.videos.List', {
                 store: store
             })

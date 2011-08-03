@@ -15,6 +15,8 @@ Ext.define('Docs.view.cls.Container', {
         align: 'stretch'
     },
 
+    padding: '5 10',
+
     initComponent: function() {
         this.items = [
             Ext.create('Docs.view.cls.Header'),

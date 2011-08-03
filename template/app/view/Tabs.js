@@ -27,8 +27,8 @@ Ext.define('Docs.view.Tabs', {
         this.html = tpl.applyTemplate([
             { cls: 'home',   href: '#' },
             { cls: 'api',    href: '#/api' },
-            { cls: 'videos', href: '#/videos' },
             { cls: 'guides', href: '#/guide' },
+            { cls: 'videos', href: '#/videos' },
             { cls: 'themes', href: '#/examples' }
         ]);
 

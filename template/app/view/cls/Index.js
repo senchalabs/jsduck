@@ -6,10 +6,11 @@ Ext.define('Docs.view.cls.Index', {
     extend: 'Ext.container.Container',
     alias : 'widget.classindex',
     cls: 'class-list iScroll',
+    margin: '15',
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
-            // '<h1 class="top">{title}</h1>',
+            '<h1 class="top" style="padding-bottom: 10px">{title}</h1>',
             '<tpl if="notice">',
                 '<div class="notice">{notice}</div>',
             '</tpl>',

@@ -3,7 +3,7 @@ Ext.define('Docs.view.examples.Index', {
     alias : 'widget.examplesindex',
     autoScroll : true,
 
-    cls : 'all-demos',
+    cls : 'all-demos iScroll',
     margin: '10 0 0 0',
 
     initComponent: function() {

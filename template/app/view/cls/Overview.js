@@ -15,7 +15,8 @@ Ext.define('Docs.view.cls.Overview', {
 
     cls: 'class-overview iScroll',
     autoScroll: true,
-    bodyPadding: '20',
+    border: false,
+    bodyPadding: '20 0',
 
     initComponent: function() {
         this.addEvents(

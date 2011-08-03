@@ -8,7 +8,7 @@ Ext.define('Docs.view.videos.List', {
     tpl          : Ext.create('Ext.XTemplate',
         '<div id="sample-ct">',
             '<tpl for=".">',
-            '<div><a name="{id}"></a><h2><div>{group}</div></h2>',
+            '<div class="{[xindex == 1 ? "" : " collapsed"]}"><a name="{id}"></a><h2><div>{group}</div></h2>',
             '<dl>',
                 '<tpl for="videos">',
                     '<dd ext:id="{id}"><img src="{thumb}"/>',
