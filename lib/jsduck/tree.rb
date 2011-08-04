@@ -20,10 +20,9 @@ module JsDuck
     # Given list of class documentation objects returns a
     # tree-structure that can be turned into JSON that's needed by
     # documentation browser interface.
-    def create(docs, guides=[])
+    def create(docs)
       docs.each {|cls| add_class(cls) }
       sort_tree(@root)
-      add_guides(guides)
       @root
     end
 
@@ -65,15 +64,6 @@ module JsDuck
       package
     end
 
-    # When guides list not empty, add guides to tree
-    def add_guides(guides)
-      if guides.length > 0
-        pkg = package_node("guides")
-        guides.each {|g| pkg[:children] << guide_node(g) }
-        @root[:children] << pkg
-      end
-    end
-
     # Given full doc object for class creates class node
     def class_node(cls)
       return {
@@ -100,16 +90,6 @@ module JsDuck
         :text => Class.short_name(name),
         :iconCls => "icon-pkg",
         :children => []
-      }
-    end
-
-    # Given full guide object creates guide node
-    def guide_node(guide)
-      return {
-        :text => guide[:title],
-        :url => "/guide/"+guide[:name],
-        :iconCls => "icon-guide",
-        :leaf => true
       }
     end
   end

@@ -162,33 +162,3 @@ describe JsDuck::Tree do
   end
 
 end
-
-describe JsDuck::Tree do
-
-  before do
-    @tree = JsDuck::Tree.new.create(
-      [JsDuck::Class.new({:tagname => :class, :name => "Foo"})],
-      [{:name => "g1", :title => "Guide 1"}, {:name => "g2", :title => "Guide 2"}]
-    )
-  end
-
-  it "places guides last" do
-    @tree[:children][1][:text].should == 'guides'
-    @tree[:children][1][:children].length.should == 2
-  end
-
-end
-
-describe JsDuck::Tree do
-
-  before do
-    @tree = JsDuck::Tree.new.create(
-      [JsDuck::Class.new({:tagname => :class, :name => "Foo"})]
-    )
-  end
-
-  it "doesn't add guides if there aren't any" do
-    @tree[:children].length.should == 1
-  end
-
-end

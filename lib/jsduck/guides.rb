@@ -94,6 +94,23 @@ module JsDuck
       EOHTML
     end
 
+    # Creates tree-structure containing all guides
+    def to_tree
+      return {} if @guides.length == 0
+
+      return {
+        :text => 'Guides',
+        :children => @guides.map do |g|
+          {
+            :text => g[:title],
+            :url => "/guide/"+g[:name],
+            :iconCls => "icon-guide",
+            :leaf => true
+          }
+        end
+      }
+    end
+
     # Iterates over each guide
     def each(&block)
       @guides.each &block
