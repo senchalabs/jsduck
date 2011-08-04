@@ -5,7 +5,7 @@ Ext.define('Docs.view.videos.Index', {
     extend: 'Ext.container.Container',
     alias: 'widget.videoindex',
     requires: [
-        'Docs.view.videos.List'
+        'Docs.view.ThumbList'
     ],
 
     cls: 'all-demos iScroll',
@@ -25,9 +25,27 @@ Ext.define('Docs.view.videos.Index', {
             data: catalog
         });
 
+        var tpl = Ext.create('Ext.XTemplate',
+            '<div id="sample-ct">',
+                '<tpl for=".">',
+                '<div><a name="{id}"></a><h2><div>{group}</div></h2>',
+                '<dl>',
+                    '<tpl for="videos">',
+                        '<dd ext:id="{id}"><img src="{thumb}"/>',
+                            '<div><h4>{title}',
+                            '</h4><p>{[values.description.substr(0,100)]}</p></div>',
+                        '</dd>',
+                    '</tpl>',
+                '<div style="clear:left"></div></dl></div>',
+                '</tpl>',
+            '</div>'
+        );
+
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Videos</h1>' },
-            Ext.create('Docs.view.videos.List', {
+            Ext.create('Docs.view.ThumbList', {
+                urlField: 'id',
+                tpl: tpl,
                 store: store
             })
         ];

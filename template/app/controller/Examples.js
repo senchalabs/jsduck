@@ -27,8 +27,8 @@ Ext.define('Docs.controller.Examples', {
                     this.loadExample(url);
                 }
             },
-            'samplepanel': {
-                exampleclick: function(url) {
+            'examplesindex > thumblist': {
+                urlclick: function(url) {
                     this.loadExample(url);
                 }
             }

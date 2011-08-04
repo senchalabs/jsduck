@@ -1,37 +1,33 @@
 /**
- * View showing a list of videos.
+ * View showing a list of clickable items with thumbnails.
  */
-Ext.define('Docs.view.videos.List', {
+Ext.define('Docs.view.ThumbList', {
     extend: 'Ext.view.View',
-    alias: 'widget.videolist',
+    alias: 'widget.thumblist',
 
     cls: 'demos',
     itemSelector: 'dl',
+
+    /**
+     * @cfg
+     * Name of the model field from which to read the URL for urlclick event.
+     */
+    urlField: 'url',
+
+    /**
+     * @cfg {Ext.XTemplate/String[]} tpl (required)
+     * The template to use for rendering.
+     * Clickable items must be wrapped inside `<dl>` element.
+     */
 
     initComponent: function() {
         this.addEvents(
             /**
              * @event
-             * Fired when an video is clicked
-             * @param {String} id ID of the video to load
+             * Fired when an item in list is clicked.
+             * @param {String} url  URL of the item to load
              */
-            'videoclick'
-        );
-
-        this.tpl = Ext.create('Ext.XTemplate',
-            '<div id="sample-ct">',
-                '<tpl for=".">',
-                '<div><a name="{id}"></a><h2><div>{group}</div></h2>',
-                '<dl>',
-                    '<tpl for="videos">',
-                        '<dd ext:id="{id}"><img src="{thumb}"/>',
-                            '<div><h4>{title}',
-                            '</h4><p>{[values.description.substr(0,100)]}</p></div>',
-                        '</dd>',
-                    '</tpl>',
-                '<div style="clear:left"></div></dl></div>',
-                '</tpl>',
-            '</div>'
+            'urlclick'
         );
 
         this.on({
@@ -64,8 +60,8 @@ Ext.define('Docs.view.videos.List', {
         var t = e.getTarget('dd', 5, true);
 
         if (t && !e.getTarget('a', 2)) {
-            var id = t.getAttributeNS('ext', 'id');
-            this.fireEvent('videoclick', id);
+            var url = t.getAttributeNS('ext', this.urlField);
+            this.fireEvent('urlclick', url);
         }
 
         return this.callParent(arguments);

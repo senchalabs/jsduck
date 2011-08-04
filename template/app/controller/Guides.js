@@ -33,8 +33,8 @@ Ext.define('Docs.controller.Guides', {
                     this.handleUrlClick(url, event, this.getTree());
                 }
             },
-            'guidespanel': {
-                guideclick: function(url) {
+            'guideindex > thumblist': {
+                urlclick: function(url) {
                     this.loadGuide('#/' + url);
                 }
             },

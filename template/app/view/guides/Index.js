@@ -5,7 +5,7 @@ Ext.define('Docs.view.guides.Index', {
     extend: 'Ext.container.Container',
     alias: 'widget.guideindex',
     requires: [
-        'Docs.view.guides.List'
+        'Docs.view.ThumbList'
     ],
 
     cls: 'all-demos iScroll',
@@ -25,9 +25,25 @@ Ext.define('Docs.view.guides.Index', {
             data: catalog
         });
 
+        var tpl = Ext.create('Ext.XTemplate',
+            '<div id="sample-ct">',
+                '<tpl for=".">',
+                '<div><a name="{url}"></a><h2><div>{group}</div></h2>',
+                '<dl>',
+                    '<tpl for="guides">',
+                        '<dd ext:url="guide/{name}"><img src="guides/{name}/icon-lg.png"/>',
+                            '<div><h4>{title}</h4><p>{description}</p></div>',
+                        '</dd>',
+                    '</tpl>',
+                '<div style="clear:left"></div></dl></div>',
+                '</tpl>',
+            '</div>'
+        );
+
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Guides</h1>' },
-            Ext.create('Docs.view.guides.List', {
+            Ext.create('Docs.view.ThumbList', {
+                tpl: tpl,
                 store: store
             })
         ];

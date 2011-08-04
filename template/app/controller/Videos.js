@@ -6,9 +6,9 @@ Ext.define('Docs.controller.Videos', {
 
     init: function() {
         this.control({
-            'videolist': {
-                videoclick: function(id) {
-                    this.openVideo(id);
+            'videoindex > thumblist': {
+                urlclick: function(url) {
+                    this.openVideo(url);
                 }
             },
             'videostree': {
