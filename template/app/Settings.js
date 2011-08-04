@@ -10,7 +10,7 @@ Ext.define("Docs.Settings", {
      * Saves a setting
      *
      * @param {String} key  Name of the setting
-     * @param {Mixed} value  Value of the setting
+     * @param {Object} value  Value of the setting
      */
     set: function(key, value) {
         var index = this.store.findExact("key", key);
@@ -30,7 +30,7 @@ Ext.define("Docs.Settings", {
      * Gets value of a setting.
      *
      * @param {String} key  Name of the setting
-     * @return {Mixed} value of the setting or undefined.
+     * @return {Object} value of the setting or undefined.
      */
     get: function(key) {
         var index = this.store.findExact("key", key);
