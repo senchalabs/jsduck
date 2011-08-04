@@ -108,13 +108,33 @@ Ext.define('Docs.view.Tabs', {
         }
         if (idx === this.activeTab) {
             if (this.openTabs.length === 0) {
-                Docs.App.getController('Classes').loadIndex();
-            } else {
+                Docs.App.getController(this.getControllerName(url)).loadIndex();
+            }
+            else {
                 if (idx === this.openTabs.length) {
                     idx -= 1;
                 }
                 window.location = this.openTabs[idx];
             }
+        }
+    },
+
+    // Determines controller name from URL
+    getControllerName: function(url) {
+        if (/#\/api/.test(url)) {
+            return 'Classes';
+        }
+        else if (/#\/guide/.test(url)) {
+            return 'Guides';
+        }
+        else if (/#\/video/.test(url)) {
+            return 'Videos';
+        }
+        else if (/#\/example/.test(url)) {
+            return 'Examples';
+        }
+        else {
+            return 'Index';
         }
     }
 });
