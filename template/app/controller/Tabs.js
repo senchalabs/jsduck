@@ -79,13 +79,13 @@ Ext.define('Docs.controller.Tabs', {
         cmp.el.addListener('mouseover', function(event, el) {
             Ext.get(el).addCls('ovr');
         }, this, {
-            delegate: '.icn'
+            delegate: '.close'
         });
 
         cmp.el.addListener('mouseout', function(event, el) {
             Ext.get(el).removeCls('ovr');
         }, this, {
-            delegate: '.icn'
+            delegate: '.close'
         });
 
         cmp.el.addListener('click', function(event, el) {
@@ -104,7 +104,7 @@ Ext.define('Docs.controller.Tabs', {
                 }
             });
         }, this, {
-            delegate: '.icn',
+            delegate: '.close',
             preventDefault: true
         });
     },

@@ -50,8 +50,9 @@ Ext.define('Docs.view.Tabs', {
                 '<div class="doctab" style="visibility: hidden">',
                     '<div class="l"></div>',
                     '<div class="m">',
-                        '<a class="icn {iconCls}" href="#">&nbsp;</a>',
+                        '<span class="icn {iconCls}">&nbsp;</span>',
                         '<a class="tabUrl" href="{href}">{text}</a>',
+                        '<a class="close" href="#">&nbsp;</a>',
                     '</div>',
                 '<div class="r"></div>',
                 '</div>'

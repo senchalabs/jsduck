@@ -812,7 +812,8 @@ a {
     }
     .m {
       z-index: 5;
-      padding: 6px 10px 0 6px;
+      position: relative;
+      padding: 6px 3px 0 6px;
       margin: 0 7px;
       background: url(../images/tab-m.png) repeat-x;
       height: 29px;
@@ -822,6 +823,7 @@ a {
       font-family: $docs-font;
       font-weight: bold;
       font-size: 11px;
+      span,
       a {
         padding-bottom: 5px;
         line-height: 16px;
@@ -829,20 +831,28 @@ a {
         color: #2e3841;
         white-space: nowrap;
         overflow: hidden;
-      }
-      a.docClass {
-        padding-left: 5px;
-      }
-      a.icn {
-        padding-left: 15px;
-        padding-bottom: 0;
         float: left;
       }
-      a.icn.close {
-        background: url(../images/x122.png) no-repeat 2px -14px !important;
+      a.tabUrl {
+        padding: 0 14px 0 17px;
       }
-      a.icn.close.ovr {
-        background: url(../images/x122.png) no-repeat 2px 2px !important;
+      span.icn {
+        display: block;
+        position: absolute;
+        left: 3px;
+        padding-left: 15px;
+        padding-bottom: 0;
+      }
+      a.close {
+        position: absolute;
+        width: 11px;
+        height: 11px;
+        top: 8px;
+        right: 3px;;
+        background: url(../images/tab-c.png) no-repeat 0 2px !important;
+      }
+      a.close.ovr {
+        background: url(../images/tab-c.png) no-repeat 0 -10px !important;
       }
     }
   }
