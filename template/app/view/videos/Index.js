@@ -1,21 +1,25 @@
+/**
+ * Container for videos listing.
+ */
 Ext.define('Docs.view.videos.Index', {
     extend: 'Ext.container.Container',
-    alias : 'widget.videoindex',
+    alias: 'widget.videoindex',
 
-    cls : 'all-demos iScroll',
+    cls: 'all-demos iScroll',
     margin: '10 0 0 0',
-    autoScroll : true,
+    autoScroll: true,
 
     initComponent: function() {
+        var catalog = Docs.videos;
 
-        for (var i = 0, c; c = Docs.videos[i]; i++) {
+        Ext.Array.forEach(catalog, function(c, i) {
             c.id = 'sample-' + i;
-        }
+        });
 
         var store = Ext.create('Ext.data.JsonStore', {
-            idProperty : 'id',
-            fields     : ['id', 'title', 'description', 'thumb'],
-            data       : Docs.videos
+            idProperty: 'id',
+            fields: ['id', 'title', 'description', 'thumb'],
+            data: catalog
         });
 
         this.items = [

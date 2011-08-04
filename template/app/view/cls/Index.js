@@ -1,6 +1,5 @@
 /**
- * List of classes on front page.
- * Together with links to guides and icons legend.
+ * List of classes, grouped into categories.
  */
 Ext.define('Docs.view.cls.Index', {
     extend: 'Ext.container.Container',
@@ -14,16 +13,6 @@ Ext.define('Docs.view.cls.Index', {
             '<tpl if="notice">',
                 '<div class="notice">{notice}</div>',
             '</tpl>',
-            // '<div class="section legend">',
-            //     '<h4>Legend</h4>',
-            //     '<ul>',
-            //         '<li class="icon icon-pkg">Package</li>',
-            //         '<li class="icon icon-class">Class</li>',
-            //         '<li class="icon icon-singleton">Singleton</li>',
-            //         '<li class="icon icon-component">Component</li>',
-            //         '<li class="icon icon-guide">Guide</li>',
-            //     '</ul>',
-            // '</div>',
             '{categories}'
         );
         this.data = this.extractData();

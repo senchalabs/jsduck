@@ -92,12 +92,13 @@ Ext.define('Docs.controller.Guides', {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     loadGuide: function(url, noHistory) {
-
         Ext.getCmp('card-panel').layout.setActiveItem('guide');
         Ext.getCmp('tree-container').show();
         Ext.getCmp('tree-container').layout.setActiveItem(2);
 
-        if (this.activeUrl === url) return this.scrollContent();
+        if (this.activeUrl === url) {
+            return this.scrollContent();
+        }
         this.activeUrl = url;
 
         noHistory || Docs.History.push(url);

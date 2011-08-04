@@ -1,11 +1,14 @@
+/**
+ * View showing a list of guides.
+ */
 Ext.define('Docs.view.guides.List', {
     extend: 'Ext.view.View',
     alias: 'widget.guidespanel',
 
-    cls          : 'demos',
-    itemSelector : 'dl',
+    cls: 'demos',
+    itemSelector: 'dl',
 
-    tpl          : Ext.create('Ext.XTemplate',
+    tpl: Ext.create('Ext.XTemplate',
         '<div id="sample-ct">',
             '<tpl for=".">',
             '<div><a name="{url}"></a><h2><div>{group}</div></h2>',
@@ -17,35 +20,38 @@ Ext.define('Docs.view.guides.List', {
                 '</tpl>',
             '<div style="clear:left"></div></dl></div>',
             '</tpl>',
-        '</div>', {
-         isExperimental: function(status){
-             return status == 'experimental';
-         }
-    }),
+        '</div>',
+        {
+            isExperimental: function(status) {
+                return status === 'experimental';
+            }
+        }
+    ),
 
     initComponent: function() {
-        /**
-         * @event
-         * Fired when an guide is clicked
-         * @param {String} url  URL of the guide to load
-         * @param {Ext.EventObject} e
-         */
-        this.addEvents('guideclick');
+        this.addEvents(
+            /**
+             * @event
+             * Fired when an guide is clicked
+             * @param {String} url  URL of the guide to load
+             */
+            'guideclick'
+        );
 
         this.on({
             'afterrender': function(cmp) {
                 cmp.el.addListener('mouseover', function(evt, el) {
-                    Ext.get(el).addCls('over')
+                    Ext.get(el).addCls('over');
                 }, this, {
                     delegate: 'dd'
                 });
                 cmp.el.addListener('mouseout', function(evt, el) {
-                    Ext.get(el).removeCls('over')
+                    Ext.get(el).removeCls('over');
                 }, this, {
                     delegate: 'dd'
                 });
             }
-        })
+        });
 
         this.callParent(arguments);
     },

@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.view.examples.Tree', {
     extend: 'Docs.view.tree.Tree',
-    alias : 'widget.examplestree',
+    alias: 'widget.examplestree',
 
     useArrows: true,
     rootVisible: false,
@@ -12,7 +12,6 @@ Ext.define('Docs.view.examples.Tree', {
     bodyBorder: false,
 
     initComponent: function() {
-
         this.addEvents(
             /**
              * @event
@@ -30,7 +29,6 @@ Ext.define('Docs.view.examples.Tree', {
         };
 
         Ext.Array.each(Ext.samples.samplesCatalog, function(sampleGroup) {
-
             var children = Ext.Array.map(sampleGroup.samples, function(sample) {
                 return Ext.apply(sample, {
                     leaf: true,
@@ -43,7 +41,7 @@ Ext.define('Docs.view.examples.Tree', {
                 text: sampleGroup.title,
                 children: children,
                 iconCls: 'icon-pkg'
-            })
+            });
         }, this);
 
         this.on("itemclick", this.onItemClick, this);
@@ -52,11 +50,10 @@ Ext.define('Docs.view.examples.Tree', {
     },
 
     onItemClick: function(view, node, item, index, e) {
-
         var url = node.raw.url;
 
         if (url) {
-            this.fireEvent('exampleclick', url, e)
+            this.fireEvent('exampleclick', url, e);
         }
         else if (!node.isLeaf()) {
             if (node.isExpanded()) {

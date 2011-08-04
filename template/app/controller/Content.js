@@ -1,5 +1,5 @@
 /**
- * Controller for Welcome page
+ * Base class for Classes controller.
  */
 Ext.define('Docs.controller.Content', {
     extend: 'Ext.app.Controller',

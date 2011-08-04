@@ -1,23 +1,25 @@
+/**
+ * Container for guides listing.
+ */
 Ext.define('Docs.view.guides.Index', {
     extend: 'Ext.container.Container',
-    alias : 'widget.guideindex',
-    autoScroll : true,
+    alias: 'widget.guideindex',
 
-    cls : 'all-demos iScroll',
+    cls: 'all-demos iScroll',
     margin: '10 0 0 0',
+    autoScroll: true,
 
     initComponent: function() {
-
         var catalog = Docs.guides;
 
-        for (var i = 0, c; c = catalog[i]; i++) {
+        Ext.Array.forEach(catalog, function(c, i) {
             c.id = 'sample-' + i;
-        }
+        });
 
         var store = Ext.create('Ext.data.JsonStore', {
-            idProperty : 'url',
-            fields     : ['url', 'title', 'guides'],
-            data       : catalog
+            idProperty: 'url',
+            fields: ['url', 'title', 'guides'],
+            data: catalog
         });
 
         this.items = [

@@ -1,23 +1,25 @@
+/**
+ * Container for examples listing.
+ */
 Ext.define('Docs.view.examples.Index', {
     extend: 'Ext.container.Container',
-    alias : 'widget.examplesindex',
-    autoScroll : true,
+    alias: 'widget.examplesindex',
 
-    cls : 'all-demos iScroll',
+    cls: 'all-demos iScroll',
     margin: '10 0 0 0',
+    autoScroll: true,
 
     initComponent: function() {
-
         var catalog = Ext.samples.samplesCatalog;
 
-        for (var i = 0, c; c = catalog[i]; i++) {
+        Ext.Array.forEach(catalog, function(c, i) {
             c.id = 'sample-' + i;
-        }
+        });
 
         var store = Ext.create('Ext.data.JsonStore', {
-            idProperty : 'id',
-            fields     : ['id', 'title', 'samples'],
-            data       : catalog
+            idProperty: 'id',
+            fields: ['id', 'title', 'samples'],
+            data: catalog
         });
 
         this.items = [

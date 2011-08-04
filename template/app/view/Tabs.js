@@ -12,7 +12,6 @@ Ext.define('Docs.view.Tabs', {
     openTabs: [],
 
     initComponent: function() {
-
         var tpl = new Ext.XTemplate(
             '<tpl for=".">',
                 '<div class="doctab {cls}{active}">',
@@ -46,7 +45,6 @@ Ext.define('Docs.view.Tabs', {
      * @param {String} tab.iconCls CSS class to be used as the icon
      */
     addTab: function(tab, noAnimate) {
-
         if (!Ext.Array.contains(this.openTabs, tab.href)) {
             var tpl = Ext.create('Ext.XTemplate',
                 '<div class="doctab" style="visibility: hidden">',
@@ -57,7 +55,7 @@ Ext.define('Docs.view.Tabs', {
                     '</div>',
                 '<div class="r"></div>',
                 '</div>'
-            )
+            );
             var docTab = Ext.get(tpl.append(this.el.dom, tab));
 
             if (noAnimate) {
@@ -75,7 +73,7 @@ Ext.define('Docs.view.Tabs', {
             this.openTabs.push(tab.href);
         }
 
-        this.activateTab(tab.href)
+        this.activateTab(tab.href);
     },
 
     /**
@@ -89,7 +87,9 @@ Ext.define('Docs.view.Tabs', {
             Ext.get(d).up('.doctab').removeCls('active');
         });
         var activeTab = Ext.query('.doctab a[href="' + url + '"]')[0];
-        if (activeTab) Ext.get(activeTab).up('.doctab').addCls('active');
+        if (activeTab) {
+            Ext.get(activeTab).up('.doctab').addCls('active');
+        }
     },
 
     /**
@@ -102,13 +102,17 @@ Ext.define('Docs.view.Tabs', {
         var idx = Ext.Array.indexOf(this.openTabs, url);
         if (idx !== false) {
             Ext.Array.erase(this.openTabs, idx, 1);
-            if (this.activeTab > idx) this.activeTab -= 1;
+            if (this.activeTab > idx) {
+                this.activeTab -= 1;
+            }
         }
-        if (idx == this.activeTab) {
-            if (this.openTabs.length == 0) {
+        if (idx === this.activeTab) {
+            if (this.openTabs.length === 0) {
                 Docs.App.getController('Classes').loadIndex();
             } else {
-                if (idx == this.openTabs.length) idx -= 1;
+                if (idx === this.openTabs.length) {
+                    idx -= 1;
+                }
                 window.location = this.openTabs[idx];
             }
         }

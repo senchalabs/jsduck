@@ -20,7 +20,6 @@ Ext.define('Docs.controller.Tabs', {
     ],
 
     init: function() {
-
         this.getController('Classes').addListener({
             showClass: function(cls) {
                 this.addTabFromTree("/api/"+cls, this.getClassTree());
@@ -77,7 +76,6 @@ Ext.define('Docs.controller.Tabs', {
      * @private
      */
     addTabIconListeners: function(cmp) {
-
         cmp.el.addListener('mouseover', function(event, el) {
             Ext.get(el).addCls('ovr');
         }, this, {

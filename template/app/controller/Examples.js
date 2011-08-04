@@ -12,7 +12,6 @@ Ext.define('Docs.controller.Examples', {
     ],
 
     init: function() {
-
         this.addEvents(
             /**
              * @event showExample
@@ -44,8 +43,9 @@ Ext.define('Docs.controller.Examples', {
     },
 
     loadExample: function(url, noHistory) {
-
-        if (this.activeUrl === url) return this.activateExampleCard();
+        if (this.activeUrl === url) {
+            return this.activateExampleCard();
+        }
         this.activeUrl = url;
 
         noHistory || Docs.History.push(url);

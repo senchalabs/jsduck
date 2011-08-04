@@ -1,9 +1,9 @@
 /**
- * The examples tree
+ * The videos tree
  */
 Ext.define('Docs.view.videos.Tree', {
     extend: 'Ext.tree.Panel',
-    alias : 'widget.videostree',
+    alias: 'widget.videostree',
 
     useArrows: true,
     rootVisible: false,
@@ -12,7 +12,6 @@ Ext.define('Docs.view.videos.Tree', {
     bodyBorder: false,
 
     initComponent: function() {
-
         this.addEvents(
             /**
              * @event
@@ -30,7 +29,6 @@ Ext.define('Docs.view.videos.Tree', {
         };
 
         Ext.Array.each(Docs.videos, function(group, idx) {
-
             var children = Ext.Array.map(group.videos, function(video) {
                 return Ext.apply(video, {
                     leaf: true,
@@ -45,7 +43,7 @@ Ext.define('Docs.view.videos.Tree', {
                 text: group.group,
                 children: children,
                 iconCls: 'icon-pkg'
-            })
+            });
         }, this);
 
         this.on("itemclick", this.onItemClick, this);
@@ -54,11 +52,10 @@ Ext.define('Docs.view.videos.Tree', {
     },
 
     onItemClick: function(view, node, item, index, e) {
-
         var id = node.raw.id;
 
         if (id) {
-            this.fireEvent('videoclick', id, e)
+            this.fireEvent('videoclick', id, e);
         }
         else if (!node.isLeaf()) {
             if (node.isExpanded()) {

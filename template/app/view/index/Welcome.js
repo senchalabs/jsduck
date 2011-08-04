@@ -1,6 +1,5 @@
 /**
- * List of classes on front page.
- * Together with links to guides and icons legend.
+ * The Welcome page of docs app.
  */
 Ext.define('Docs.view.index.Welcome', {
     extend: 'Ext.container.Container',
