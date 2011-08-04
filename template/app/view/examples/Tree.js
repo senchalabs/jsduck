@@ -2,7 +2,7 @@
  * The examples tree
  */
 Ext.define('Docs.view.examples.Tree', {
-    extend: 'Docs.view.tree.Tree',
+    extend: 'Docs.view.cls.Tree',
     alias: 'widget.examplestree',
 
     useArrows: true,

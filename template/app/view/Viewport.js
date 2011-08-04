@@ -9,7 +9,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.index.Welcome',
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
-        'Docs.view.tree.Tree',
+        'Docs.view.cls.Tree',
         'Docs.view.guides.Index',
         'Docs.view.videos.Index',
         'Docs.view.videos.Tree',
