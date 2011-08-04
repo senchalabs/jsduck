@@ -43,6 +43,11 @@ Ext.define('Docs.view.ThumbList', {
             c.id = 'sample-' + i;
         });
 
+        this.store = Ext.create('Ext.data.JsonStore', {
+            fields: ['id', 'title', 'items'],
+            data: this.data
+        });
+
         // Place itemTpl inside main template
         this.tpl = new Ext.XTemplate(Ext.Array.flatten([
             '<div id="sample-ct">',
