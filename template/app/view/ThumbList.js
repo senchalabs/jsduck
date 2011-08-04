@@ -21,6 +21,13 @@ Ext.define('Docs.view.ThumbList', {
      */
     itemTpl: [],
 
+    /**
+     * @cfg {Object[]} data (required)
+     * The data to display in this view. Each object represents one group:
+     * @cfg {String} data.title The name for the group.
+     * @cfg {Object[]} data.items The items inside the group.
+     */
+
     initComponent: function() {
         this.addEvents(
             /**
@@ -31,6 +38,12 @@ Ext.define('Docs.view.ThumbList', {
             'urlclick'
         );
 
+        // Generate ID-s for data
+        Ext.Array.forEach(this.data, function(c, i) {
+            c.id = 'sample-' + i;
+        });
+
+        // Place itemTpl inside main template
         this.tpl = new Ext.XTemplate(Ext.Array.flatten([
             '<div id="sample-ct">',
                 '<tpl for=".">',

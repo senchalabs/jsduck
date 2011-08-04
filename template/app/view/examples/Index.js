@@ -13,18 +13,6 @@ Ext.define('Docs.view.examples.Index', {
     autoScroll: true,
 
     initComponent: function() {
-        var catalog = Ext.samples.samplesCatalog;
-
-        Ext.Array.forEach(catalog, function(c, i) {
-            c.id = 'sample-' + i;
-        });
-
-        var store = Ext.create('Ext.data.JsonStore', {
-            idProperty: 'id',
-            fields: ['id', 'title', 'items'],
-            data: catalog
-        });
-
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Examples</h1>' },
             Ext.create('Docs.view.ThumbList', {
@@ -43,7 +31,7 @@ Ext.define('Docs.view.examples.Index', {
                         '</h4><p>{desc}</p></div>',
                     '</dd>'
                 ],
-                store: store
+                data: Ext.samples.samplesCatalog
             })
         ];
 
