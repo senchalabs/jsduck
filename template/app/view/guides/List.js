@@ -30,12 +30,7 @@ Ext.define('Docs.view.guides.List', {
                     '</tpl>',
                 '<div style="clear:left"></div></dl></div>',
                 '</tpl>',
-            '</div>',
-            {
-                isExperimental: function(status) {
-                    return status === 'experimental';
-                }
-            }
+            '</div>'
         );
 
         this.on({

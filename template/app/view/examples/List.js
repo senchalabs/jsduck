@@ -26,13 +26,13 @@ Ext.define('Docs.view.examples.List', {
                     '<tpl for="samples">',
                         '<dd ext:url="{url}"><img src="extjs/examples/shared/screens/{icon}"/>',
                             '<div><h4>{text}',
-                                '<tpl if="this.isNew(values.status)">',
+                                '<tpl if="status === \'new\'">',
                                     '<span class="new-sample"> (New)</span>',
                                 '</tpl>',
-                                '<tpl if="this.isUpdated(values.status)">',
+                                '<tpl if="status === \'updated\'">',
                                     '<span class="updated-sample"> (Updated)</span>',
                                 '</tpl>',
-                                '<tpl if="this.isExperimental(values.status)">',
+                                '<tpl if="status === \'experimental\'">',
                                     '<span class="new-sample"> (Experimental)</span>',
                                 '</tpl>',
                             '</h4><p>{desc}</p></div>',
@@ -40,18 +40,7 @@ Ext.define('Docs.view.examples.List', {
                     '</tpl>',
                 '<div style="clear:left"></div></dl></div>',
                 '</tpl>',
-            '</div>',
-            {
-                isExperimental: function(status) {
-                    return status === 'experimental';
-                },
-                isNew: function(status) {
-                    return status === 'new';
-                },
-                isUpdated: function(status) {
-                    return status === 'updated';
-                }
-            }
+            '</div>'
         );
 
         this.on({
