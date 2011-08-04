@@ -15,10 +15,11 @@ Ext.define('Docs.view.ThumbList', {
     urlField: 'url',
 
     /**
-     * @cfg {Ext.XTemplate/String[]} tpl (required)
-     * The template to use for rendering.
-     * Clickable items must be wrapped inside `<dl>` element.
+     * @cfg {String[]} itemTpl
+     * The template to use for rendering a single item.
+     * The template should create a single `<dd>` element.
      */
+    itemTpl: [],
 
     initComponent: function() {
         this.addEvents(
@@ -29,6 +30,21 @@ Ext.define('Docs.view.ThumbList', {
              */
             'urlclick'
         );
+
+        this.tpl = new Ext.XTemplate(Ext.Array.flatten([
+            '<div id="sample-ct">',
+                '<tpl for=".">',
+                '<div><a name="{id}"></a><h2><div>{title}</div></h2>',
+                '<dl>',
+                    '<tpl for="items">',
+                        this.itemTpl,
+                    '</tpl>',
+                '<div style="clear:left"></div></dl></div>',
+                '</tpl>',
+            '</div>'
+        ]));
+        // Hide itemTpl config from parent class
+        this.itemTpl = undefined;
 
         this.on({
             'afterrender': function(cmp) {
