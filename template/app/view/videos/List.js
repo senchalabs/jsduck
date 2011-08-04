@@ -8,27 +8,6 @@ Ext.define('Docs.view.videos.List', {
     cls: 'demos',
     itemSelector: 'dl',
 
-    tpl: Ext.create('Ext.XTemplate',
-        '<div id="sample-ct">',
-            '<tpl for=".">',
-            '<div class="{[xindex == 1 ? "" : " collapsed"]}"><a name="{id}"></a><h2><div>{group}</div></h2>',
-            '<dl>',
-                '<tpl for="videos">',
-                    '<dd ext:id="{id}"><img src="{thumb}"/>',
-                        '<div><h4>{title}',
-                        '</h4><p>{[values.description.substr(0,100)]}</p></div>',
-                    '</dd>',
-                '</tpl>',
-            '<div style="clear:left"></div></dl></div>',
-            '</tpl>',
-        '</div>',
-        {
-            desc: function(status) {
-                return status === 'experimental';
-            }
-        }
-    ),
-
     initComponent: function() {
         this.addEvents(
             /**
@@ -37,6 +16,27 @@ Ext.define('Docs.view.videos.List', {
              * @param {String} id ID of the video to load
              */
             'videoclick'
+        );
+
+        this.tpl = Ext.create('Ext.XTemplate',
+            '<div id="sample-ct">',
+                '<tpl for=".">',
+                '<div class="{[xindex == 1 ? "" : " collapsed"]}"><a name="{id}"></a><h2><div>{group}</div></h2>',
+                '<dl>',
+                    '<tpl for="videos">',
+                        '<dd ext:id="{id}"><img src="{thumb}"/>',
+                            '<div><h4>{title}',
+                            '</h4><p>{[values.description.substr(0,100)]}</p></div>',
+                        '</dd>',
+                    '</tpl>',
+                '<div style="clear:left"></div></dl></div>',
+                '</tpl>',
+            '</div>',
+            {
+                desc: function(status) {
+                    return status === 'experimental';
+                }
+            }
         );
 
         this.on({

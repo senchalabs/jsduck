@@ -8,26 +8,6 @@ Ext.define('Docs.view.guides.List', {
     cls: 'demos',
     itemSelector: 'dl',
 
-    tpl: Ext.create('Ext.XTemplate',
-        '<div id="sample-ct">',
-            '<tpl for=".">',
-            '<div><a name="{url}"></a><h2><div>{group}</div></h2>',
-            '<dl>',
-                '<tpl for="guides">',
-                    '<dd ext:url="guide/{name}"><img src="guides/{name}/icon-lg.png"/>',
-                        '<div><h4>{title}</h4><p>{description}</p></div>',
-                    '</dd>',
-                '</tpl>',
-            '<div style="clear:left"></div></dl></div>',
-            '</tpl>',
-        '</div>',
-        {
-            isExperimental: function(status) {
-                return status === 'experimental';
-            }
-        }
-    ),
-
     initComponent: function() {
         this.addEvents(
             /**
@@ -36,6 +16,26 @@ Ext.define('Docs.view.guides.List', {
              * @param {String} url  URL of the guide to load
              */
             'guideclick'
+        );
+
+        this.tpl = Ext.create('Ext.XTemplate',
+            '<div id="sample-ct">',
+                '<tpl for=".">',
+                '<div><a name="{url}"></a><h2><div>{group}</div></h2>',
+                '<dl>',
+                    '<tpl for="guides">',
+                        '<dd ext:url="guide/{name}"><img src="guides/{name}/icon-lg.png"/>',
+                            '<div><h4>{title}</h4><p>{description}</p></div>',
+                        '</dd>',
+                    '</tpl>',
+                '<div style="clear:left"></div></dl></div>',
+                '</tpl>',
+            '</div>',
+            {
+                isExperimental: function(status) {
+                    return status === 'experimental';
+                }
+            }
         );
 
         this.on({

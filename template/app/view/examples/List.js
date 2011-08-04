@@ -8,42 +8,6 @@ Ext.define('Docs.view.examples.List', {
     cls: 'demos',
     itemSelector: 'dl',
 
-    tpl: Ext.create('Ext.XTemplate',
-        '<div id="sample-ct">',
-            '<tpl for=".">',
-            '<div><a name="{id}"></a><h2><div>{title}</div></h2>',
-            '<dl>',
-                '<tpl for="samples">',
-                    '<dd ext:url="{url}"><img src="extjs/examples/shared/screens/{icon}"/>',
-                        '<div><h4>{text}',
-                            '<tpl if="this.isNew(values.status)">',
-                                '<span class="new-sample"> (New)</span>',
-                            '</tpl>',
-                            '<tpl if="this.isUpdated(values.status)">',
-                                '<span class="updated-sample"> (Updated)</span>',
-                            '</tpl>',
-                            '<tpl if="this.isExperimental(values.status)">',
-                                '<span class="new-sample"> (Experimental)</span>',
-                            '</tpl>',
-                        '</h4><p>{desc}</p></div>',
-                    '</dd>',
-                '</tpl>',
-            '<div style="clear:left"></div></dl></div>',
-            '</tpl>',
-        '</div>',
-        {
-            isExperimental: function(status) {
-                return status === 'experimental';
-            },
-            isNew: function(status) {
-                return status === 'new';
-            },
-            isUpdated: function(status) {
-                return status === 'updated';
-            }
-        }
-    ),
-
     initComponent: function() {
         this.addEvents(
             /**
@@ -52,6 +16,42 @@ Ext.define('Docs.view.examples.List', {
              * @param {String} url  URL of the example to load
              */
             'exampleclick'
+        );
+
+        this.tpl = Ext.create('Ext.XTemplate',
+            '<div id="sample-ct">',
+                '<tpl for=".">',
+                '<div><a name="{id}"></a><h2><div>{title}</div></h2>',
+                '<dl>',
+                    '<tpl for="samples">',
+                        '<dd ext:url="{url}"><img src="extjs/examples/shared/screens/{icon}"/>',
+                            '<div><h4>{text}',
+                                '<tpl if="this.isNew(values.status)">',
+                                    '<span class="new-sample"> (New)</span>',
+                                '</tpl>',
+                                '<tpl if="this.isUpdated(values.status)">',
+                                    '<span class="updated-sample"> (Updated)</span>',
+                                '</tpl>',
+                                '<tpl if="this.isExperimental(values.status)">',
+                                    '<span class="new-sample"> (Experimental)</span>',
+                                '</tpl>',
+                            '</h4><p>{desc}</p></div>',
+                        '</dd>',
+                    '</tpl>',
+                '<div style="clear:left"></div></dl></div>',
+                '</tpl>',
+            '</div>',
+            {
+                isExperimental: function(status) {
+                    return status === 'experimental';
+                },
+                isNew: function(status) {
+                    return status === 'new';
+                },
+                isUpdated: function(status) {
+                    return status === 'updated';
+                }
+            }
         );
 
         this.on({

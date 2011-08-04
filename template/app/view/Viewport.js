@@ -4,22 +4,17 @@
 Ext.define('Docs.view.Viewport', {
     extend: 'Ext.container.Viewport',
     requires: [
+        'Docs.view.search.Container',
+        'Docs.view.Tabs',
+        'Docs.view.index.Welcome',
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
         'Docs.view.tree.Tree',
-        'Docs.view.index.Welcome',
+        'Docs.view.guides.Index',
+        'Docs.view.videos.Index',
         'Docs.view.videos.Tree',
         'Docs.view.examples.Index',
-        'Docs.view.examples.List',
-        'Docs.view.examples.Tree',
-        'Docs.view.FavoritesPanel',
-        'Docs.view.videos.Index',
-        'Docs.view.guides.Index',
-        'Docs.view.Tabs',
-        'Docs.view.search.Container',
-        'Docs.Favorites',
-        'Docs.Settings',
-        'Docs.History'
+        'Docs.view.examples.Tree'
     ],
 
     id: 'viewport',

@@ -4,6 +4,9 @@
 Ext.define('Docs.view.examples.Index', {
     extend: 'Ext.container.Container',
     alias: 'widget.examplesindex',
+    requires: [
+        'Docs.view.examples.List'
+    ],
 
     cls: 'all-demos iScroll',
     margin: '10 0 0 0',

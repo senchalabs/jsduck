@@ -4,6 +4,9 @@
 Ext.define('Docs.view.videos.Index', {
     extend: 'Ext.container.Container',
     alias: 'widget.videoindex',
+    requires: [
+        'Docs.view.videos.List'
+    ],
 
     cls: 'all-demos iScroll',
     margin: '10 0 0 0',
