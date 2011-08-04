@@ -846,6 +846,18 @@ a {
       }
     }
   }
+  .doctab.highlight {
+    border-width: 0;
+    .l {
+      background-image: url(../images/tabh-l.png);
+    }
+    .r {
+      background-image: url(../images/tabh-r.png);
+    }
+    .m {
+      background-image: url(../images/tabh-m.png);
+    }
+  }
   .doctab.active {
     border-width: 0;
     .l {

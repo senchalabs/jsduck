@@ -116,291 +116,291 @@ Docs.videos = [
             }
         ]
     },
-    {
-        title: "Sencha Touch",
-        items: [
-            {
-                "id": "17677004",
-                "title": "SenchaCon 2010: Sencha Touch for the Mobile Web",
-                "description": "Sencha Touch leverages HTML5 and CSS3 to provide a robust web app framework for webkit based mobile browsers. This session is a high-level introduction to Sencha Touch. We will cover components and data handling, theming, best practices, and deployment, and talk about the roadmap for Sencha Touch 2.0.\n\nPresented by David Kaneda.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/110/201/110201978_200.jpg"
-            },
-            {
-                "id": "17705448",
-                "title": "SenchaCon 2010: Structuring Your Sencha Touch Application",
-                "description": "In this session you'll learn about the recommended application structure for Sencha Touch (or Ext JS) applications. The new application structure enables any Sencha developer to quickly understand any Sencha application using the new Sencha MVC package.\n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/110/423/110423355_200.jpg"
-            },
-            {
-                "id": "17838527",
-                "title": "SenchaCon 2010: Mobile Development Challenges & Solutions",
-                "description": "Mobile web development is becoming exciting again! HTML5 capable mobile devices have blown away the old conventions about how to develop mobile web experiences. But significant challenges still remain. Please join our panel of mobile technology and device experts as they discuss the big challenges in mobile web development as well as what's next for the mobile web. Panel.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/434/111434781_200.jpg"
-            },
-            {
-                "id": "17806772",
-                "title": "SenchaCon 2010: Creating Native Apps with Sencha and PhoneGap",
-                "description": "Creating native, cross-platform mobile applications doesn't need to be any more complicated than creating a mobile web app. In this session, we will discuss using PhoneGap to create installable web apps that work seamlessly across iOS, Android, BlackBerry and other platforms. We'll look at what features of your web server you can port to the client side, and how to manage syncing with a remote server to create the best mobile experience, online or off.\n\nPresented by Andrew Lunny.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/189/111189208_200.jpg"
-            },
-            {
-                "id": "17799772",
-                "title": "SenchaCon 2010: Developing Mobile Web Apps for RIM BB6",
-                "description": "After years of false starts, the mobile web is finally getting it right by essentially keeping desktop web standards as is, providing enticing HTML5 capabilities, and having frameworks addressing user experience issues unique to the mobile form factor. RIM has built its BlackBerry WebWorks platform using de-facto standards such as WebKit, and great implementations of key web standards such as HTML5, CSS3, SVG and JavaScript. BlackBerry WebWorks enables developers to use modern web technologies to build mobile applications. In this session, we will review the core aspects of this new platform, and provide a few best practices and code samples.\n\nPresented by Laurent Hasson.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/138/111138013_200.jpg"
-            },
-            {
-                "id": "17699976",
-                "title": "SenchaCon 2010: Performance Optimization for Sencha Touch",
-                "description": "Mobile devices have very limited processing power compared to modern desktops. It's essential to keep performance optimization in mind when developing Touch applications. Here, we'll discuss how to keep your mobile web app fast and lightweight. We'll learn about such techniques as keeping your DOM slim, managing troublesome CSS3 properties, and other ways to keep your app sleek and responsive.\n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/110/383/110383037_200.jpg"
-            },
-            {
-                "id": "17414405",
-                "title": "Sencha Touch - Intro to Listeners",
-                "description": "Drew Neil (@nelstrom) describes the basics of how listeners work in Sencha Touch. This tutorial is perfect for beginners who want to understand how to create custom behavior and functionality inside their Sencha Touch mobile app.\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices. Learn more at http://sencha.com/touch\n\nGitHub repo: http://github.com/nelstrom/Sencha-Touch-listeners-demo",
-                "thumb": "http://b.vimeocdn.com/ts/108/175/108175461_200.jpg"
-            },
-            {
-                "id": "16289757",
-                "title": "XTemplates in Sencha Touch,        Part 1 of 2",
-                "description": "Drew Neil (@nelstrom) has created a two-part series describing how to use XTemplates, a powerful templating system in Ext JS and Sencha Touch that allows developers to easily format views around dynamic data.\n\nCheck out part 2 here: http://vimeo.com/16289990\n\nGitHub repo: http://github.com/nelstrom/Sencha-Touch-templates-demo\n\nRead more about Sencha Touch at http://sencha.com/touch/",
-                "thumb": "http://b.vimeocdn.com/ts/995/102/99510249_200.jpg"
-            },
-            {
-                "id": "16289990",
-                "title": "XTemplates in Sencha Touch,        Part 2 of 2",
-                "description": "Drew Neil (@nelstrom) has created a two-part series describing how to use XTemplates, a powerful templating system in Ext JS and Sencha Touch that allows developers to easily format views around dynamic data.\n\nCheck out part 1 here: http://vimeo.com/16289757\n\nGithub repo: http://github.com/nelstrom/Sencha-Touch-templates-demo\n\nRead more about Sencha Touch at http://sencha.com/touch/",
-                "thumb": "http://b.vimeocdn.com/ts/995/124/99512436_200.jpg"
-            },
-            {
-                "id": "15888504",
-                "title": "Sencha Touch - Intro to Layouts",
-                "description": "Drew Neil (@nelstrom) describes the basics of how layouts work in Sencha Touch. This tutorial is perfect for beginners who want to understand how to create components and buttons inside their Sencha Touch mobile app.\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices. Learn more at http://sencha.com/touch",
-                "thumb": "http://b.vimeocdn.com/ts/964/302/96430249_200.jpg"
-            },
-            {
-                "id": "15879797",
-                "title": "Sencha Touch - Intro to Panels",
-                "description": "Drew Neil (@nelstrom) describes the basics of how panels work in Sencha Touch. This tutorial is perfect for beginners who want to understand how to create components and buttons inside their Sencha Touch mobile app.\n\nGithub repo: http://github.com/nelstrom/Sencha-Touch-panels-demo\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices. Learn more at http://sencha.com/touch",
-                "thumb": "http://b.vimeocdn.com/ts/964/296/96429682_200.jpg"
-            },
-            {
-                "id": "15672696",
-                "title": "Sencha Touch - Create a Twitter App w/ Geolocation",
-                "description": "Drew Neil (@nelstrom) demonstrates how to create a Geolocation-powered Twitter mobile app with Sencha Touch in this 12:30 tutorial video.\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices. Learn more at http://sencha.com/touch",
-                "thumb": "http://b.vimeocdn.com/ts/948/005/94800528_200.jpg"
-            },
-            {
-                "id": "15672257",
-                "title": "Sencha Touch - Layouts Walkthrough",
-                "description": "Brian Suda describes and demonstrates how Sencha Touch layouts work in this nine minute tutorial. \n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices.\n\nHopefully these tutorials give you a head start on your next great mobile web app! Enter our App Contest today! http://sencha.com/contest",
-                "thumb": "http://b.vimeocdn.com/ts/947/950/94795088_200.jpg"
-            },
-            {
-                "id": "12636777",
-                "title": "Sencha Touch Introduction",
-                "description": "See more at:\n\nhttp://www.sencha.com/products/touch/",
-                "thumb": "http://b.vimeocdn.com/ts/712/681/71268191_200.jpg"
-            },
-            {
-                "id": "26784522",
-                "title": "Sencha Touch - Working With Forms",
-                "description": "Drew Neil (@nelstrom) demonstrates how to use Sencha Touch to create applications that allow users to interact with data through forms, and using a simple MVC pattern.\n\nThe GitHub repo for the application is at https://github.com/senchalearn/Forms-demo\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS, BlackBerry OS, and Google Android devices. Learn more at http://sencha.com/​touch",
-                "thumb": "http://b.vimeocdn.com/ts/177/225/177225322_200.jpg"
-            },
-            {
-                "id": "26651228",
-                "title": "Sencha Touch Charts",
-                "description": "Introducing Sencha Touch Charts — the world’s first HTML5-based, mobile charting and drawing product. Sencha Touch Charts enables you to build complex radar, bar, line, stacked, and pie charts wiith stunning interactivity and incredible ease of use. Visualizing rich data on the mobile web has never been easier.",
-                "thumb": "http://b.vimeocdn.com/ts/176/207/176207932_200.jpg"
-            },
-            {
-                "id": "24475654",
-                "title": "Sencha Touch - An Introduction to Carousels",
-                "description": "Drew Neil (@nelstrom) demonstrates how to use Sencha Touch to create carousel-based apps, such as this artist's portfolio.\n\nHe also gives a brief introduction to the src.sencha.io resizing service.\n\nThe GitHub repo for the application is at https://github.com/nelstrom/Sencha-Touch-Carousel-demo\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS, BlackBerry OS, and Google Android devices. Learn more at http://sencha.com/​touch",
-                "thumb": "http://b.vimeocdn.com/ts/160/390/160390728_200.jpg"
-            },
-            {
-                "id": "23358554",
-                "title": "Sencha Touch & PhoneGap demo,          SourceDevCon 2011",
-                "description": "This is the final demo from James Pearce's PhoneGap session at Source DevCon, 2011.\n\nThe standard SeattleBars application is enhanced to add a button to each detail page, which in turn fires the createContact() function, containing the code to add a new record via the PhoneGap contacts API.\n\nThe new contact record contains name, telephone number, and photo. The PhoneGap notification API is used to alert the user to the API's success.\n\nThe source code for this demo can be found in Jesse MacFadyen's fork of the app: https://github.com/purplecabbage/seattlebars",
-                "thumb": "http://b.vimeocdn.com/ts/152/004/152004852_200.jpg"
-            },
-            {
-                "id": "22499845",
-                "title": "Sencha Touch running on a Sony Touch TV/PC",
-                "description": "The Sencha Touch kitchen sync demo app, running on a Sony Touch TV/PC",
-                "thumb": "http://b.vimeocdn.com/ts/145/472/145472382_200.jpg"
-            },
-            {
-                "id": "22264545",
-                "title": "Sencha Touch UI for iPad",
-                "description": "Sencha Touch user interface walkthrough for large touchscreens like Apple iPad.\n\nThis video showcases Sencha Touch 1.0, which was released November 14th, 2010. Learn more at http://sencha.com/touch",
-                "thumb": "http://b.vimeocdn.com/ts/143/765/143765029_200.jpg"
-            },
-            {
-                "id": "22251762",
-                "title": "Sencha Touch Tabs and Toolbars",
-                "description": "Drew Neil (@nelstrom) demonstrates how to use Sencha Touch to create a tabbed interface with icons, and how toolbars can be used to hold buttons, or a titlebar.\n\nGitHub repo: https://github.com/nelstrom/Sencha-Touch-tabs-and-toolbars-demo\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices. Learn more at http://sencha.com/touch",
-                "thumb": "http://b.vimeocdn.com/ts/143/657/143657434_200.jpg"
-            },
-            {
-                "id": "20672408",
-                "title": "Sencha Labs EventRecorder for Android",
-                "description": "The WebKit team at Sencha Inc. has created an open source tool essential to anyone doing web app development on Android mobile devices.\n\nRead more about this project on our blog: http://www.sencha.com/blog/event-recorder-for-android-web-applications/",
-                "thumb": "http://b.vimeocdn.com/ts/132/808/132808875_200.jpg"
-            },
-            {
-                "id": "20580117",
-                "title": "Sencha Touch - Intro to Nested List Component",
-                "description": "Drew Neil (@nelstrom) demonstrates using the NestedList Component in Sencha Touch. Sencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices.\n\nGitHub repo: https://github.com/nelstrom/Sencha-Touch-nested-list-demo",
-                "thumb": "http://b.vimeocdn.com/ts/144/050/144050526_200.jpg"
-            },
-            {
-                "id": "19245335",
-                "title": "Sencha Touch - Intro to List Component",
-                "description": "Drew Neil (@nelstrom) demonstrates using the List Component in Sencha Touch. Sencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices.\n\nGitHub repo: https://github.com/nelstrom/Sencha-Touch-list-view-demo",
-                "thumb": "http://b.vimeocdn.com/ts/144/050/144050468_200.jpg"
-            },
-            {
-                "id": "18446970",
-                "title": "SenchaCon 2010: Developing Mobile Web Apps for RIM BB6",
-                "description": "After years of false starts, the mobile web is finally getting it right by essentially keeping desktop web standards as is, providing enticing HTML5 capabilities, and having frameworks addressing user experience issues unique to the mobile form factor. RIM has built its BlackBerry WebWorks platform using de-facto standards such as WebKit, and great implementations of key web standards such as HTML5, CSS3, SVG and JavaScript. BlackBerry WebWorks enables developers to use modern web technologies to build mobile applications. In this session, we will review the core aspects of this new platform, and provide a few best practices and code samples.\n\nPresented by Laurent Hasson.\n\nCheck out http://sencha.com/​conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/116/043/116043775_200.jpg"
-            },
-            {
-                "id": "18036452",
-                "title": "SenchaCon 2010: Serving Mobile Apps from Content Management Systems",
-                "description": "Hundreds of millions of web sites around the world are served from Content Management Systems like WordPress and Drupal. How do you equip these platforms to deal with the inevitable rise of mobile web technologies? In this session, we will explore how to create great mobile sites and apps from your existing content, using Sencha Touch.\n\nPresented by James Pearce.\n\nCheck out http://sencha.com/​conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/112/915/112915586_200.jpg"
-            },
-            {
-                "id": "17882927",
-                "title": "SenchaCon 2010: Performance Optimization for Sencha Touch",
-                "description": "Mobile devices have very limited processing power compared to modern desktops. It's essential to keep performance optimization in mind when developing Touch applications. Here, we'll discuss how to keep your mobile web app fast and lightweight. We'll learn about such techniques as keeping your DOM slim, managing troublesome CSS3 properties, and other ways to keep your app sleek and responsive. \n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/768/111768410_200.jpg"
-            },
-            {
-                "id": "17879651",
-                "title": "SenchaCon 2010: Theming Sencha Touch",
-                "description": "Sencha Touch features a novel theming system built on top of SASS & Compass. This session will show you how to quickly customize the look and feel of your application, extend core styles, and optimize your stylesheets to download faster. Lot of code samples and walkthroughs included. \n\nPresented by David Kaneda.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/744/111744470_200.jpg"
-            },
-            {
-                "id": "17853133",
-                "title": "SenchaCon 2010: Debugging Sencha Touch Apps",
-                "description": "Debugging applications on mobile devices is challenging. Although simulators exist, tooling is limited. Luckily, with some accomodations, you can debug your mobile web applications using most desktop tools. In this session, we'll go over what works, what doesn't and how to use tools appropriately to debug your mobile web app. \n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/533/111533399_200.jpg"
-            },
-            {
-                "id": "18134446",
-                "title": "Introduction to Sencha Touch: Hello World",
-                "description": "Ready to build your first mobile web app with Sencha Touch? We recently conducted a great introductory webinar, which provides step-by-step instructions for getting started with Sencha Touch. We run through the absolute basics of building your first Sencha Touch app in the time-honored tradition of displaying the words \"Hello World.\"\n\nPresented by James Pearce.\n\nCheck out http://sencha.com/​conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/113/695/113695030_200.jpg"
-            },
-            {
-                "id": "18093057",
-                "title": "SenchaCon 2010: Designing The Mobile User Experience",
-                "description": "Creating mobile applications that people love to use is a challenging task. In this session, we'll go over the steps required to create a great user experience for different categories of applications and use contexts. We'll review great, and not-so-great mobile design examples and provide practical tips and best practices.\n\nPresented by Brian Fling.\n\nCheck out http://sencha.com/​conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/113/368/113368889_200.jpg"
-            }
-        ]
-    },
-    {
-        title: 'EXT GWT',
-        items: [
-            {
-                "id": "17796860",
-                "title": "SenchaCon 2010: Best Practices in Ext GWT",
-                "description": "Ext GWT provides a solid foundation to build rich internet applications. In this session, you will learn the best practices used to build these applications. Topics include how to use HTML templates and HtmlLayout, MVC / MVP, RPC, and managing data.\n\nPresented by Darrell Meyer.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/115/111115670_200.jpg"
-            },
-            {
-                "id": "17735654",
-                "title": "SenchaCon 2010: Building Custom Components in Ext GWT",
-                "description": "Although Ext GWT contains a very rich component toolkit, it is often necessary to extend existing components or create completely new custom components. In this session, you will learn how to effectively create custom Ext GWT components via custom HTML, CSS and code.\n\nPresented by Rasmus Ersmarker.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/110/642/110642455_200.jpg"
-            },
-            {
-                "id": "17707091",
-                "title": "SenchaCon 2010: Advanced Performance Tuning in Ext GWT",
-                "description": "Application performance is critical to a usable user interface. Learn about the tools and techniques that Ext GWT developers can use to tune client-side code. Get detailed instructions on how to use the available performance profiling tools including Speed Tracer, Firebug, and Visual Studio.\n\nPresented by Darrell Meyer.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/110/432/110432008_200.jpg"
-            },
-            {
-                "id": "17681624",
-                "title": "SenchaCon 2010: Introducing Ext GWT 3",
-                "description": "Ext GWT 3 is coming! Learn about the new features in Ext GWT 3.0, including the implementation of the GWT handler design, UIBinder support, component lifecycle changes, and new and improved components such as the tri-state tree panel and tree grid and pivot grid.\n\nPresented by Darrell Meyer.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/110/237/110237369_200.jpg"
-            },
-            {
-                "id": "18318520",
-                "title": "SenchaCon 2010: Data Loading for Ext GWT",
-                "description": "The Ext GWT Data Loading API provides a powerful and flexible mechanism for retrieving remote or local data and binding the data to user interface components. During this session, you will learn will learn the difference between Data Loaders, Proxies and Readers and how they work together.\n\nPresented by Darrell Meyer & Sven Brunken.\n\nCheck out http://sencha.com/​conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/115/068/115068126_200.jpg"
-            }
-        ]
-    },
-    {
-        title: 'Animator and Designer',
-        items: [
-            {
-                "id": "16219994",
-                "title": "Sencha Animator Bouncing Ball Demo",
-                "description": "Introducing Sencha Animator, a powerful desktop application to create awesome CSS3 animations for WebKit browsers and touchscreen mobile devices. \n\nMake your static content come to life quickly and easily, without the dependency of third-party plugins or writing a single line of CSS code. In no time at all, you’ll be creating rich experiences for today’s most popular devices; including Apple iPhone/iPad, BlackBerry Torch and Google Android.\n\nRead more: http://www.sencha.com/​products/​animator/​",
-                "thumb": "http://b.vimeocdn.com/ts/989/313/98931329_200.jpg"
-            },
-            {
-                "id": "16219355",
-                "title": "Sencha Animator Introduction",
-                "description": "Introducing Sencha Animator, a powerful desktop application to create awesome CSS3 animations for WebKit browsers and touchscreen mobile devices. \n\nMake your static content come to life quickly and easily, without the dependency of third-party plugins or writing a single line of CSS code. In no time at all, you’ll be creating rich experiences for today’s most popular devices; including Apple iPhone/iPad, BlackBerry Torch and Google Android.\n\nRead more: http://www.sencha.com/products/animator/",
-                "thumb": "http://b.vimeocdn.com/ts/989/288/98928805_200.jpg"
-            },
-            {
-                "id": "25109950",
-                "title": "Sencha Animator Rocking Boat Demo",
-                "description": "",
-                "thumb": "http://b.vimeocdn.com/ts/165/147/165147784_200.jpg"
-            },
-            {
-                "id": "23624568",
-                "title": "Sencha Animator - 1.0 Beta 1 Highlights",
-                "description": "Luca Candela gives you a tour of the highlighted features in Sencha Animator 1.0 Beta 1, including the gradient editor, custom easing, scene support, click actions, and previewing in your browser.\n\nSencha Animator is a desktop app to create CSS3 animations for WebKit browsers and touchscreen mobile devices. Find out more about Sencha Animator: http://sencha.com/animator",
-                "thumb": "http://b.vimeocdn.com/ts/153/994/153994732_200.jpg"
-            },
-            {
-                "id": "23624550",
-                "title": "Sencha Animator - Making a Loading Bar",
-                "description": "Arne Bech (@arnebech) shows you how to make an indefinite loading bar with HTML5 and CSS3 animations created with Sencha Animator.\n\nDownload the project files: http://dev.sencha.com/animator/demos/LoadingBar.zip \n\nSencha Animator is a desktop app to create CSS3 animations for WebKit browsers and touchscreen mobile devices. Find out more about Sencha Animator: http://sencha.com/animator",
-                "thumb": "http://b.vimeocdn.com/ts/153/994/153994330_200.jpg"
-            },
-            {
-                "id": "17858901",
-                "title": "SenchaCon 2010: Creating CSS3 Animations with Sencha Animator",
-                "description": "CSS3 animations are a new tool in the armory of web developers and designers. In this session, we'll walk you through the building blocks of a CSS3 animation and show you how to create them with Sencha Animator, our new CSS3 Animation builder. We'll also talk about the limitations of today's CSS3 animations, and how to leverage some of the more obscure CSS3 properties to get around them. \n\nPresented by Michael Mullany.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/584/111584318_200.jpg"
-            },
-            {
-                "id": "14588615",
-                "title": "Ext Designer screencast",
-                "description": "Build a simple product browser in less than five minutes.",
-                "thumb": "http://b.vimeocdn.com/ts/126/241/126241425_200.jpg"
-            },
-            {
-                "id": "17921733",
-                "title": "SenchaCon 2010: Advanced Techniques for Ext Designer",
-                "description": "Ext Designer enables developers and non-developers alike to rapidly prototype their UI and Data Stores. In this session, learn how to best utilize and integrate the Ext Designer with your project. Discover the features and advanced techniques of the Ext Designer that promote reusable component-oriented development across all of your projects. We'll also show you Ext Designer working with Sencha Touch projects.\n\nPresented by Jarred Nicholls and Aaron Conran.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/112/055/112055350_200.jpg"
-            },
-            {
-                "id": "18299682",
-                "title": "SenchaCon 2010: Bring Your Own Laptop: Ext Designer Hands-on",
-                "description": "Bring your laptop to this hands-on session and learn to build a Movie Store app using Ext Designer. You will understand how to export your project and add behavior to your Ext JS app using your favorite IDE.\n\nPresented by Ashvin Radiya.\n\nCheck out http://sencha.com/​conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/114/922/114922536_200.jpg"
-            }
-        ]
-    },
+    // {
+    //     title: "Sencha Touch",
+    //     items: [
+    //         {
+    //             "id": "17677004",
+    //             "title": "SenchaCon 2010: Sencha Touch for the Mobile Web",
+    //             "description": "Sencha Touch leverages HTML5 and CSS3 to provide a robust web app framework for webkit based mobile browsers. This session is a high-level introduction to Sencha Touch. We will cover components and data handling, theming, best practices, and deployment, and talk about the roadmap for Sencha Touch 2.0.\n\nPresented by David Kaneda.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/110/201/110201978_200.jpg"
+    //         },
+    //         {
+    //             "id": "17705448",
+    //             "title": "SenchaCon 2010: Structuring Your Sencha Touch Application",
+    //             "description": "In this session you'll learn about the recommended application structure for Sencha Touch (or Ext JS) applications. The new application structure enables any Sencha developer to quickly understand any Sencha application using the new Sencha MVC package.\n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/110/423/110423355_200.jpg"
+    //         },
+    //         {
+    //             "id": "17838527",
+    //             "title": "SenchaCon 2010: Mobile Development Challenges & Solutions",
+    //             "description": "Mobile web development is becoming exciting again! HTML5 capable mobile devices have blown away the old conventions about how to develop mobile web experiences. But significant challenges still remain. Please join our panel of mobile technology and device experts as they discuss the big challenges in mobile web development as well as what's next for the mobile web. Panel.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/111/434/111434781_200.jpg"
+    //         },
+    //         {
+    //             "id": "17806772",
+    //             "title": "SenchaCon 2010: Creating Native Apps with Sencha and PhoneGap",
+    //             "description": "Creating native, cross-platform mobile applications doesn't need to be any more complicated than creating a mobile web app. In this session, we will discuss using PhoneGap to create installable web apps that work seamlessly across iOS, Android, BlackBerry and other platforms. We'll look at what features of your web server you can port to the client side, and how to manage syncing with a remote server to create the best mobile experience, online or off.\n\nPresented by Andrew Lunny.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/111/189/111189208_200.jpg"
+    //         },
+    //         {
+    //             "id": "17799772",
+    //             "title": "SenchaCon 2010: Developing Mobile Web Apps for RIM BB6",
+    //             "description": "After years of false starts, the mobile web is finally getting it right by essentially keeping desktop web standards as is, providing enticing HTML5 capabilities, and having frameworks addressing user experience issues unique to the mobile form factor. RIM has built its BlackBerry WebWorks platform using de-facto standards such as WebKit, and great implementations of key web standards such as HTML5, CSS3, SVG and JavaScript. BlackBerry WebWorks enables developers to use modern web technologies to build mobile applications. In this session, we will review the core aspects of this new platform, and provide a few best practices and code samples.\n\nPresented by Laurent Hasson.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/111/138/111138013_200.jpg"
+    //         },
+    //         {
+    //             "id": "17699976",
+    //             "title": "SenchaCon 2010: Performance Optimization for Sencha Touch",
+    //             "description": "Mobile devices have very limited processing power compared to modern desktops. It's essential to keep performance optimization in mind when developing Touch applications. Here, we'll discuss how to keep your mobile web app fast and lightweight. We'll learn about such techniques as keeping your DOM slim, managing troublesome CSS3 properties, and other ways to keep your app sleek and responsive.\n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/110/383/110383037_200.jpg"
+    //         },
+    //         {
+    //             "id": "17414405",
+    //             "title": "Sencha Touch - Intro to Listeners",
+    //             "description": "Drew Neil (@nelstrom) describes the basics of how listeners work in Sencha Touch. This tutorial is perfect for beginners who want to understand how to create custom behavior and functionality inside their Sencha Touch mobile app.\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices. Learn more at http://sencha.com/touch\n\nGitHub repo: http://github.com/nelstrom/Sencha-Touch-listeners-demo",
+    //             "thumb": "http://b.vimeocdn.com/ts/108/175/108175461_200.jpg"
+    //         },
+    //         {
+    //             "id": "16289757",
+    //             "title": "XTemplates in Sencha Touch,        Part 1 of 2",
+    //             "description": "Drew Neil (@nelstrom) has created a two-part series describing how to use XTemplates, a powerful templating system in Ext JS and Sencha Touch that allows developers to easily format views around dynamic data.\n\nCheck out part 2 here: http://vimeo.com/16289990\n\nGitHub repo: http://github.com/nelstrom/Sencha-Touch-templates-demo\n\nRead more about Sencha Touch at http://sencha.com/touch/",
+    //             "thumb": "http://b.vimeocdn.com/ts/995/102/99510249_200.jpg"
+    //         },
+    //         {
+    //             "id": "16289990",
+    //             "title": "XTemplates in Sencha Touch,        Part 2 of 2",
+    //             "description": "Drew Neil (@nelstrom) has created a two-part series describing how to use XTemplates, a powerful templating system in Ext JS and Sencha Touch that allows developers to easily format views around dynamic data.\n\nCheck out part 1 here: http://vimeo.com/16289757\n\nGithub repo: http://github.com/nelstrom/Sencha-Touch-templates-demo\n\nRead more about Sencha Touch at http://sencha.com/touch/",
+    //             "thumb": "http://b.vimeocdn.com/ts/995/124/99512436_200.jpg"
+    //         },
+    //         {
+    //             "id": "15888504",
+    //             "title": "Sencha Touch - Intro to Layouts",
+    //             "description": "Drew Neil (@nelstrom) describes the basics of how layouts work in Sencha Touch. This tutorial is perfect for beginners who want to understand how to create components and buttons inside their Sencha Touch mobile app.\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices. Learn more at http://sencha.com/touch",
+    //             "thumb": "http://b.vimeocdn.com/ts/964/302/96430249_200.jpg"
+    //         },
+    //         {
+    //             "id": "15879797",
+    //             "title": "Sencha Touch - Intro to Panels",
+    //             "description": "Drew Neil (@nelstrom) describes the basics of how panels work in Sencha Touch. This tutorial is perfect for beginners who want to understand how to create components and buttons inside their Sencha Touch mobile app.\n\nGithub repo: http://github.com/nelstrom/Sencha-Touch-panels-demo\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices. Learn more at http://sencha.com/touch",
+    //             "thumb": "http://b.vimeocdn.com/ts/964/296/96429682_200.jpg"
+    //         },
+    //         {
+    //             "id": "15672696",
+    //             "title": "Sencha Touch - Create a Twitter App w/ Geolocation",
+    //             "description": "Drew Neil (@nelstrom) demonstrates how to create a Geolocation-powered Twitter mobile app with Sencha Touch in this 12:30 tutorial video.\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices. Learn more at http://sencha.com/touch",
+    //             "thumb": "http://b.vimeocdn.com/ts/948/005/94800528_200.jpg"
+    //         },
+    //         {
+    //             "id": "15672257",
+    //             "title": "Sencha Touch - Layouts Walkthrough",
+    //             "description": "Brian Suda describes and demonstrates how Sencha Touch layouts work in this nine minute tutorial. \n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices.\n\nHopefully these tutorials give you a head start on your next great mobile web app! Enter our App Contest today! http://sencha.com/contest",
+    //             "thumb": "http://b.vimeocdn.com/ts/947/950/94795088_200.jpg"
+    //         },
+    //         {
+    //             "id": "12636777",
+    //             "title": "Sencha Touch Introduction",
+    //             "description": "See more at:\n\nhttp://www.sencha.com/products/touch/",
+    //             "thumb": "http://b.vimeocdn.com/ts/712/681/71268191_200.jpg"
+    //         },
+    //         {
+    //             "id": "26784522",
+    //             "title": "Sencha Touch - Working With Forms",
+    //             "description": "Drew Neil (@nelstrom) demonstrates how to use Sencha Touch to create applications that allow users to interact with data through forms, and using a simple MVC pattern.\n\nThe GitHub repo for the application is at https://github.com/senchalearn/Forms-demo\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS, BlackBerry OS, and Google Android devices. Learn more at http://sencha.com/​touch",
+    //             "thumb": "http://b.vimeocdn.com/ts/177/225/177225322_200.jpg"
+    //         },
+    //         {
+    //             "id": "26651228",
+    //             "title": "Sencha Touch Charts",
+    //             "description": "Introducing Sencha Touch Charts — the world’s first HTML5-based, mobile charting and drawing product. Sencha Touch Charts enables you to build complex radar, bar, line, stacked, and pie charts wiith stunning interactivity and incredible ease of use. Visualizing rich data on the mobile web has never been easier.",
+    //             "thumb": "http://b.vimeocdn.com/ts/176/207/176207932_200.jpg"
+    //         },
+    //         {
+    //             "id": "24475654",
+    //             "title": "Sencha Touch - An Introduction to Carousels",
+    //             "description": "Drew Neil (@nelstrom) demonstrates how to use Sencha Touch to create carousel-based apps, such as this artist's portfolio.\n\nHe also gives a brief introduction to the src.sencha.io resizing service.\n\nThe GitHub repo for the application is at https://github.com/nelstrom/Sencha-Touch-Carousel-demo\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS, BlackBerry OS, and Google Android devices. Learn more at http://sencha.com/​touch",
+    //             "thumb": "http://b.vimeocdn.com/ts/160/390/160390728_200.jpg"
+    //         },
+    //         {
+    //             "id": "23358554",
+    //             "title": "Sencha Touch & PhoneGap demo,          SourceDevCon 2011",
+    //             "description": "This is the final demo from James Pearce's PhoneGap session at Source DevCon, 2011.\n\nThe standard SeattleBars application is enhanced to add a button to each detail page, which in turn fires the createContact() function, containing the code to add a new record via the PhoneGap contacts API.\n\nThe new contact record contains name, telephone number, and photo. The PhoneGap notification API is used to alert the user to the API's success.\n\nThe source code for this demo can be found in Jesse MacFadyen's fork of the app: https://github.com/purplecabbage/seattlebars",
+    //             "thumb": "http://b.vimeocdn.com/ts/152/004/152004852_200.jpg"
+    //         },
+    //         {
+    //             "id": "22499845",
+    //             "title": "Sencha Touch running on a Sony Touch TV/PC",
+    //             "description": "The Sencha Touch kitchen sync demo app, running on a Sony Touch TV/PC",
+    //             "thumb": "http://b.vimeocdn.com/ts/145/472/145472382_200.jpg"
+    //         },
+    //         {
+    //             "id": "22264545",
+    //             "title": "Sencha Touch UI for iPad",
+    //             "description": "Sencha Touch user interface walkthrough for large touchscreens like Apple iPad.\n\nThis video showcases Sencha Touch 1.0, which was released November 14th, 2010. Learn more at http://sencha.com/touch",
+    //             "thumb": "http://b.vimeocdn.com/ts/143/765/143765029_200.jpg"
+    //         },
+    //         {
+    //             "id": "22251762",
+    //             "title": "Sencha Touch Tabs and Toolbars",
+    //             "description": "Drew Neil (@nelstrom) demonstrates how to use Sencha Touch to create a tabbed interface with icons, and how toolbars can be used to hold buttons, or a titlebar.\n\nGitHub repo: https://github.com/nelstrom/Sencha-Touch-tabs-and-toolbars-demo\n\nSencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices. Learn more at http://sencha.com/touch",
+    //             "thumb": "http://b.vimeocdn.com/ts/143/657/143657434_200.jpg"
+    //         },
+    //         {
+    //             "id": "20672408",
+    //             "title": "Sencha Labs EventRecorder for Android",
+    //             "description": "The WebKit team at Sencha Inc. has created an open source tool essential to anyone doing web app development on Android mobile devices.\n\nRead more about this project on our blog: http://www.sencha.com/blog/event-recorder-for-android-web-applications/",
+    //             "thumb": "http://b.vimeocdn.com/ts/132/808/132808875_200.jpg"
+    //         },
+    //         {
+    //             "id": "20580117",
+    //             "title": "Sencha Touch - Intro to Nested List Component",
+    //             "description": "Drew Neil (@nelstrom) demonstrates using the NestedList Component in Sencha Touch. Sencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices.\n\nGitHub repo: https://github.com/nelstrom/Sencha-Touch-nested-list-demo",
+    //             "thumb": "http://b.vimeocdn.com/ts/144/050/144050526_200.jpg"
+    //         },
+    //         {
+    //             "id": "19245335",
+    //             "title": "Sencha Touch - Intro to List Component",
+    //             "description": "Drew Neil (@nelstrom) demonstrates using the List Component in Sencha Touch. Sencha Touch is a JavaScript framework for mobile touchscreens like Apple iOS and Google Android devices.\n\nGitHub repo: https://github.com/nelstrom/Sencha-Touch-list-view-demo",
+    //             "thumb": "http://b.vimeocdn.com/ts/144/050/144050468_200.jpg"
+    //         },
+    //         {
+    //             "id": "18446970",
+    //             "title": "SenchaCon 2010: Developing Mobile Web Apps for RIM BB6",
+    //             "description": "After years of false starts, the mobile web is finally getting it right by essentially keeping desktop web standards as is, providing enticing HTML5 capabilities, and having frameworks addressing user experience issues unique to the mobile form factor. RIM has built its BlackBerry WebWorks platform using de-facto standards such as WebKit, and great implementations of key web standards such as HTML5, CSS3, SVG and JavaScript. BlackBerry WebWorks enables developers to use modern web technologies to build mobile applications. In this session, we will review the core aspects of this new platform, and provide a few best practices and code samples.\n\nPresented by Laurent Hasson.\n\nCheck out http://sencha.com/​conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/116/043/116043775_200.jpg"
+    //         },
+    //         {
+    //             "id": "18036452",
+    //             "title": "SenchaCon 2010: Serving Mobile Apps from Content Management Systems",
+    //             "description": "Hundreds of millions of web sites around the world are served from Content Management Systems like WordPress and Drupal. How do you equip these platforms to deal with the inevitable rise of mobile web technologies? In this session, we will explore how to create great mobile sites and apps from your existing content, using Sencha Touch.\n\nPresented by James Pearce.\n\nCheck out http://sencha.com/​conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/112/915/112915586_200.jpg"
+    //         },
+    //         {
+    //             "id": "17882927",
+    //             "title": "SenchaCon 2010: Performance Optimization for Sencha Touch",
+    //             "description": "Mobile devices have very limited processing power compared to modern desktops. It's essential to keep performance optimization in mind when developing Touch applications. Here, we'll discuss how to keep your mobile web app fast and lightweight. We'll learn about such techniques as keeping your DOM slim, managing troublesome CSS3 properties, and other ways to keep your app sleek and responsive. \n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/111/768/111768410_200.jpg"
+    //         },
+    //         {
+    //             "id": "17879651",
+    //             "title": "SenchaCon 2010: Theming Sencha Touch",
+    //             "description": "Sencha Touch features a novel theming system built on top of SASS & Compass. This session will show you how to quickly customize the look and feel of your application, extend core styles, and optimize your stylesheets to download faster. Lot of code samples and walkthroughs included. \n\nPresented by David Kaneda.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/111/744/111744470_200.jpg"
+    //         },
+    //         {
+    //             "id": "17853133",
+    //             "title": "SenchaCon 2010: Debugging Sencha Touch Apps",
+    //             "description": "Debugging applications on mobile devices is challenging. Although simulators exist, tooling is limited. Luckily, with some accomodations, you can debug your mobile web applications using most desktop tools. In this session, we'll go over what works, what doesn't and how to use tools appropriately to debug your mobile web app. \n\nPresented by Tommy Maintz.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/111/533/111533399_200.jpg"
+    //         },
+    //         {
+    //             "id": "18134446",
+    //             "title": "Introduction to Sencha Touch: Hello World",
+    //             "description": "Ready to build your first mobile web app with Sencha Touch? We recently conducted a great introductory webinar, which provides step-by-step instructions for getting started with Sencha Touch. We run through the absolute basics of building your first Sencha Touch app in the time-honored tradition of displaying the words \"Hello World.\"\n\nPresented by James Pearce.\n\nCheck out http://sencha.com/​conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/113/695/113695030_200.jpg"
+    //         },
+    //         {
+    //             "id": "18093057",
+    //             "title": "SenchaCon 2010: Designing The Mobile User Experience",
+    //             "description": "Creating mobile applications that people love to use is a challenging task. In this session, we'll go over the steps required to create a great user experience for different categories of applications and use contexts. We'll review great, and not-so-great mobile design examples and provide practical tips and best practices.\n\nPresented by Brian Fling.\n\nCheck out http://sencha.com/​conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/113/368/113368889_200.jpg"
+    //         }
+    //     ]
+    // },
+    // {
+    //     title: 'EXT GWT',
+    //     items: [
+    //         {
+    //             "id": "17796860",
+    //             "title": "SenchaCon 2010: Best Practices in Ext GWT",
+    //             "description": "Ext GWT provides a solid foundation to build rich internet applications. In this session, you will learn the best practices used to build these applications. Topics include how to use HTML templates and HtmlLayout, MVC / MVP, RPC, and managing data.\n\nPresented by Darrell Meyer.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/111/115/111115670_200.jpg"
+    //         },
+    //         {
+    //             "id": "17735654",
+    //             "title": "SenchaCon 2010: Building Custom Components in Ext GWT",
+    //             "description": "Although Ext GWT contains a very rich component toolkit, it is often necessary to extend existing components or create completely new custom components. In this session, you will learn how to effectively create custom Ext GWT components via custom HTML, CSS and code.\n\nPresented by Rasmus Ersmarker.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/110/642/110642455_200.jpg"
+    //         },
+    //         {
+    //             "id": "17707091",
+    //             "title": "SenchaCon 2010: Advanced Performance Tuning in Ext GWT",
+    //             "description": "Application performance is critical to a usable user interface. Learn about the tools and techniques that Ext GWT developers can use to tune client-side code. Get detailed instructions on how to use the available performance profiling tools including Speed Tracer, Firebug, and Visual Studio.\n\nPresented by Darrell Meyer.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/110/432/110432008_200.jpg"
+    //         },
+    //         {
+    //             "id": "17681624",
+    //             "title": "SenchaCon 2010: Introducing Ext GWT 3",
+    //             "description": "Ext GWT 3 is coming! Learn about the new features in Ext GWT 3.0, including the implementation of the GWT handler design, UIBinder support, component lifecycle changes, and new and improved components such as the tri-state tree panel and tree grid and pivot grid.\n\nPresented by Darrell Meyer.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/110/237/110237369_200.jpg"
+    //         },
+    //         {
+    //             "id": "18318520",
+    //             "title": "SenchaCon 2010: Data Loading for Ext GWT",
+    //             "description": "The Ext GWT Data Loading API provides a powerful and flexible mechanism for retrieving remote or local data and binding the data to user interface components. During this session, you will learn will learn the difference between Data Loaders, Proxies and Readers and how they work together.\n\nPresented by Darrell Meyer & Sven Brunken.\n\nCheck out http://sencha.com/​conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/115/068/115068126_200.jpg"
+    //         }
+    //     ]
+    // },
+    // {
+    //     title: 'Animator and Designer',
+    //     items: [
+    //         {
+    //             "id": "16219994",
+    //             "title": "Sencha Animator Bouncing Ball Demo",
+    //             "description": "Introducing Sencha Animator, a powerful desktop application to create awesome CSS3 animations for WebKit browsers and touchscreen mobile devices. \n\nMake your static content come to life quickly and easily, without the dependency of third-party plugins or writing a single line of CSS code. In no time at all, you’ll be creating rich experiences for today’s most popular devices; including Apple iPhone/iPad, BlackBerry Torch and Google Android.\n\nRead more: http://www.sencha.com/​products/​animator/​",
+    //             "thumb": "http://b.vimeocdn.com/ts/989/313/98931329_200.jpg"
+    //         },
+    //         {
+    //             "id": "16219355",
+    //             "title": "Sencha Animator Introduction",
+    //             "description": "Introducing Sencha Animator, a powerful desktop application to create awesome CSS3 animations for WebKit browsers and touchscreen mobile devices. \n\nMake your static content come to life quickly and easily, without the dependency of third-party plugins or writing a single line of CSS code. In no time at all, you’ll be creating rich experiences for today’s most popular devices; including Apple iPhone/iPad, BlackBerry Torch and Google Android.\n\nRead more: http://www.sencha.com/products/animator/",
+    //             "thumb": "http://b.vimeocdn.com/ts/989/288/98928805_200.jpg"
+    //         },
+    //         {
+    //             "id": "25109950",
+    //             "title": "Sencha Animator Rocking Boat Demo",
+    //             "description": "",
+    //             "thumb": "http://b.vimeocdn.com/ts/165/147/165147784_200.jpg"
+    //         },
+    //         {
+    //             "id": "23624568",
+    //             "title": "Sencha Animator - 1.0 Beta 1 Highlights",
+    //             "description": "Luca Candela gives you a tour of the highlighted features in Sencha Animator 1.0 Beta 1, including the gradient editor, custom easing, scene support, click actions, and previewing in your browser.\n\nSencha Animator is a desktop app to create CSS3 animations for WebKit browsers and touchscreen mobile devices. Find out more about Sencha Animator: http://sencha.com/animator",
+    //             "thumb": "http://b.vimeocdn.com/ts/153/994/153994732_200.jpg"
+    //         },
+    //         {
+    //             "id": "23624550",
+    //             "title": "Sencha Animator - Making a Loading Bar",
+    //             "description": "Arne Bech (@arnebech) shows you how to make an indefinite loading bar with HTML5 and CSS3 animations created with Sencha Animator.\n\nDownload the project files: http://dev.sencha.com/animator/demos/LoadingBar.zip \n\nSencha Animator is a desktop app to create CSS3 animations for WebKit browsers and touchscreen mobile devices. Find out more about Sencha Animator: http://sencha.com/animator",
+    //             "thumb": "http://b.vimeocdn.com/ts/153/994/153994330_200.jpg"
+    //         },
+    //         {
+    //             "id": "17858901",
+    //             "title": "SenchaCon 2010: Creating CSS3 Animations with Sencha Animator",
+    //             "description": "CSS3 animations are a new tool in the armory of web developers and designers. In this session, we'll walk you through the building blocks of a CSS3 animation and show you how to create them with Sencha Animator, our new CSS3 Animation builder. We'll also talk about the limitations of today's CSS3 animations, and how to leverage some of the more obscure CSS3 properties to get around them. \n\nPresented by Michael Mullany.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/111/584/111584318_200.jpg"
+    //         },
+    //         {
+    //             "id": "14588615",
+    //             "title": "Ext Designer screencast",
+    //             "description": "Build a simple product browser in less than five minutes.",
+    //             "thumb": "http://b.vimeocdn.com/ts/126/241/126241425_200.jpg"
+    //         },
+    //         {
+    //             "id": "17921733",
+    //             "title": "SenchaCon 2010: Advanced Techniques for Ext Designer",
+    //             "description": "Ext Designer enables developers and non-developers alike to rapidly prototype their UI and Data Stores. In this session, learn how to best utilize and integrate the Ext Designer with your project. Discover the features and advanced techniques of the Ext Designer that promote reusable component-oriented development across all of your projects. We'll also show you Ext Designer working with Sencha Touch projects.\n\nPresented by Jarred Nicholls and Aaron Conran.\n\nCheck out http://sencha.com/conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/112/055/112055350_200.jpg"
+    //         },
+    //         {
+    //             "id": "18299682",
+    //             "title": "SenchaCon 2010: Bring Your Own Laptop: Ext Designer Hands-on",
+    //             "description": "Bring your laptop to this hands-on session and learn to build a Movie Store app using Ext Designer. You will understand how to export your project and add behavior to your Ext JS app using your favorite IDE.\n\nPresented by Ashvin Radiya.\n\nCheck out http://sencha.com/​conference for more session videos.",
+    //             "thumb": "http://b.vimeocdn.com/ts/114/922/114922536_200.jpg"
+    //         }
+    //     ]
+    // },
     {
         title: 'Miscelaneous',
         items: [
@@ -410,24 +410,24 @@ Docs.videos = [
                 "description": "HTML5 has emerged as this year's web technology buzzword, but it's quickly become overloaded and overused. In this session, we'll walk through the various parts of \"HTML5\" separating out the core spec from its satellite specs, as well as the CSS3 family. We'll also take a look at the state of implementations on mobile and desktop browsers.\n\nPresented by Michael Mullany.\n\nCheck out http://sencha.com/conference for more session videos.",
                 "thumb": "http://b.vimeocdn.com/ts/111/160/111160207_200.jpg"
             },
-            {
-                "id": "17628355",
-                "title": "SenchaCon 2010: Welcome and Keynote Address",
-                "description": "See what the future holds for Sencha products and endeavors. Presented by CEO Abe Elias and team.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/109/825/109825415_200.jpg"
-            },
+            // {
+            //     "id": "17628355",
+            //     "title": "SenchaCon 2010: Welcome and Keynote Address",
+            //     "description": "See what the future holds for Sencha products and endeavors. Presented by CEO Abe Elias and team.\n\nCheck out http://sencha.com/conference for more session videos.",
+            //     "thumb": "http://b.vimeocdn.com/ts/109/825/109825415_200.jpg"
+            // },
             {
                 "id": "17131795",
                 "title": "Sencha Customer Testimonials",
                 "description": "Hear how AdMob, Widgetbox, Marketo, and Momentum Design Lab use Sencha frameworks to develop amazing web applications.",
                 "thumb": "http://b.vimeocdn.com/ts/105/981/105981266_200.jpg"
             },
-            {
-                "id": "16874581",
-                "title": "Sencha Touch App Contest Winner,        Cahit Gurguc with DailyCrossword",
-                "description": "Cahit Gurguc, the winner of our Sencha Touch App Contest, sent us his acceptance speech from Turkey. We showed it during our keynote address at SenchaCon 2010 in San Francisco to a packed room of over 500 people.\n\nSee more at http://sencha.com/contest",
-                "thumb": "http://b.vimeocdn.com/ts/103/997/103997434_200.jpg"
-            },
+            // {
+            //     "id": "16874581",
+            //     "title": "Sencha Touch App Contest Winner,        Cahit Gurguc with DailyCrossword",
+            //     "description": "Cahit Gurguc, the winner of our Sencha Touch App Contest, sent us his acceptance speech from Turkey. We showed it during our keynote address at SenchaCon 2010 in San Francisco to a packed room of over 500 people.\n\nSee more at http://sencha.com/contest",
+            //     "thumb": "http://b.vimeocdn.com/ts/103/997/103997434_200.jpg"
+            // },
             {
                 "id": "17844271",
                 "title": "SenchaCon 2010: All About HTML5 Offline Storage",
@@ -458,18 +458,18 @@ Docs.videos = [
                 "description": "Great User Experiences savs money in training and support and makes money in strong word-of-mouth marketing as well as customer referrals. However, the techniques and process to make great UX happen are often counter-intuitive and tricky. This session will demystify UX greatness and show you how you can create the optimal desktop user experience. This session will be content-rich with many topics covered.",
                 "thumb": "http://b.vimeocdn.com/ts/118/390/118390396_200.jpg"
             },
-            {
-                "id": "17874381",
-                "title": "SenchaCon 2010: Introduction to jQTouch",
-                "description": "jQTouch, a Sencha Labs project, is a popular jQuery plugin for creating mobile web sites. It adds animations and simple behaviors to web content, and embodies a progressive enhancement/degradation approach to mobile web design. \n\nPresented by Sid Maestre.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/707/111707108_200.jpg"
-            },
-            {
-                "id": "17872119",
-                "title": "SenchaCon 2010: Developing in HTML5: Widgetbox & Sencha Touch",
-                "description": "The future of mobile is with cross platform mobile web apps. In this session you'll discover how Widgetbox used Sencha Touch to rebuild their existing HTML5 mobile apps from the ground up. Using real-life product examples, we'll cover all aspects of developing on top of the Sencha framework including using Javascript, styling in CSS3, and taking advantage of performance optimization and workarounds. \n\nPresented by Giles Goodwin.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/689/111689944_200.jpg"
-            },
+            // {
+            //     "id": "17874381",
+            //     "title": "SenchaCon 2010: Introduction to jQTouch",
+            //     "description": "jQTouch, a Sencha Labs project, is a popular jQuery plugin for creating mobile web sites. It adds animations and simple behaviors to web content, and embodies a progressive enhancement/degradation approach to mobile web design. \n\nPresented by Sid Maestre.\n\nCheck out http://sencha.com/conference for more session videos.",
+            //     "thumb": "http://b.vimeocdn.com/ts/111/707/111707108_200.jpg"
+            // },
+            // {
+            //     "id": "17872119",
+            //     "title": "SenchaCon 2010: Developing in HTML5: Widgetbox & Sencha Touch",
+            //     "description": "The future of mobile is with cross platform mobile web apps. In this session you'll discover how Widgetbox used Sencha Touch to rebuild their existing HTML5 mobile apps from the ground up. Using real-life product examples, we'll cover all aspects of developing on top of the Sencha framework including using Javascript, styling in CSS3, and taking advantage of performance optimization and workarounds. \n\nPresented by Giles Goodwin.\n\nCheck out http://sencha.com/conference for more session videos.",
+            //     "thumb": "http://b.vimeocdn.com/ts/111/689/111689944_200.jpg"
+            // },
             {
                 "id": "18312985",
                 "title": "SenchaCon 2010: JavaScript: Advanced Scoping & Other Puzzles",
@@ -484,16 +484,16 @@ Docs.videos = [
             },
             {
                 "id": "18077379",
-                "title": "SenchaCon 2010: Server-side JavaScript with Node,          Connect & Express",
+                "title": "SenchaCon 2010: Server-side JavaScript with Node, Connect & Express",
                 "description": "Node.js has unleashed a new wave of interest in server side Javascript. In this session, you'll learn how to get productive with node.js by leveraging Connect and Express node middleware. Connect makes it simple to stack layers and build complex web services with minimal effort and maximum reuse. We'll also walk quickly through Express - an easy-to-use framework built on top of Connect that makes development even faster.\n\nPresented by Tim Casewell & Ryan Dahl.\n\nCheck out http://sencha.com/​conference for more session videos.",
                 "thumb": "http://b.vimeocdn.com/ts/113/250/113250420_200.jpg"
             },
-            {
-                "id": "17912546",
-                "title": "SenchaCon 2010: Payments anywhere using PayPal Web API's",
-                "description": "Lightweight web API's have exploded in the last few years. Payments, advertising and analytics services all have web API's that are easily integrated into mobile applications. In this session, you'll get a close look at the PayPal API and how it can be integrated into Sencha Touch applications. \n\nPresented by Praveen Alavilli of PayPal.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/990/111990039_200.jpg"
-            },
+            // {
+            //     "id": "17912546",
+            //     "title": "SenchaCon 2010: Payments anywhere using PayPal Web API's",
+            //     "description": "Lightweight web API's have exploded in the last few years. Payments, advertising and analytics services all have web API's that are easily integrated into mobile applications. In this session, you'll get a close look at the PayPal API and how it can be integrated into Sencha Touch applications. \n\nPresented by Praveen Alavilli of PayPal.\n\nCheck out http://sencha.com/conference for more session videos.",
+            //     "thumb": "http://b.vimeocdn.com/ts/111/990/111990039_200.jpg"
+            // },
             {
                 "id": "18537381",
                 "title": "SenchaCon 2010: The \"In Action\" Pattern for RIA Development",
@@ -506,12 +506,12 @@ Docs.videos = [
                 "description": "An intro to Jasmine: BDD for JavaScript. We'll talk about why you want to use a test framework for JavaScript testing, why use Jasmine, and review its features, syntax and infrastructure, including how best to incorporate into a Sencha application. \n\nPresented by Davis Frank.\n\nCheck out http://sencha.com/​conference for more session videos.",
                 "thumb": "http://b.vimeocdn.com/ts/113/422/113422915_200.jpg"
             },
-            {
-                "id": "17834923",
-                "title": "SenchaCon 2010: Introduction to Raphaël",
-                "description": "Flash is not the only choice for cross-browser graphics on the web! In this session, you will learn about Raphaël, a rich SVG javascript library for developing vector graphics applications on the web, and walk through its API. Raphaël provides an adapter that makes drawing vector art cross-browser compatible and easy. Learn about the many possibilities for creating web applications using Raphaël.\n\nPresented by Dmitry Baranovskiy.\n\nCheck out http://sencha.com/conference for more session videos.",
-                "thumb": "http://b.vimeocdn.com/ts/111/407/111407235_200.jpg"
-            },
+            // {
+            //     "id": "17834923",
+            //     "title": "SenchaCon 2010: Introduction to Raphaël",
+            //     "description": "Flash is not the only choice for cross-browser graphics on the web! In this session, you will learn about Raphaël, a rich SVG javascript library for developing vector graphics applications on the web, and walk through its API. Raphaël provides an adapter that makes drawing vector art cross-browser compatible and easy. Learn about the many possibilities for creating web applications using Raphaël.\n\nPresented by Dmitry Baranovskiy.\n\nCheck out http://sencha.com/conference for more session videos.",
+            //     "thumb": "http://b.vimeocdn.com/ts/111/407/111407235_200.jpg"
+            // },
             {
                 "id": "26506883",
                 "title": "Theming Sencha Frameworks with Sass and Compass",

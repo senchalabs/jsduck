@@ -101,7 +101,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                     this.focus();
                     self.fireEvent('filter', '');
                     this.setHideTrigger(true);
-                },
+                }
             }),
             { xtype: 'tbfill' },
             {
