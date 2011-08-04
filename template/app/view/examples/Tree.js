@@ -29,7 +29,7 @@ Ext.define('Docs.view.examples.Tree', {
         };
 
         Ext.Array.each(Ext.samples.samplesCatalog, function(sampleGroup) {
-            var children = Ext.Array.map(sampleGroup.samples, function(sample) {
+            var children = Ext.Array.map(sampleGroup.items, function(sample) {
                 return Ext.apply(sample, {
                     leaf: true,
                     url: '/examples/' + sample.url,

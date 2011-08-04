@@ -21,16 +21,16 @@ Ext.define('Docs.view.videos.Index', {
 
         var store = Ext.create('Ext.data.JsonStore', {
             idProperty: 'id',
-            fields: ['id', 'title', 'description', 'thumb'],
+            fields: ['id', 'title', 'items'],
             data: catalog
         });
 
         var tpl = Ext.create('Ext.XTemplate',
             '<div id="sample-ct">',
                 '<tpl for=".">',
-                '<div><a name="{id}"></a><h2><div>{group}</div></h2>',
+                '<div><a name="{id}"></a><h2><div>{title}</div></h2>',
                 '<dl>',
-                    '<tpl for="videos">',
+                    '<tpl for="items">',
                         '<dd ext:id="{id}"><img src="{thumb}"/>',
                             '<div><h4>{title}',
                             '</h4><p>{[values.description.substr(0,100)]}</p></div>',
@@ -57,8 +57,8 @@ Ext.define('Docs.view.videos.Index', {
 
 Docs.videos = [
     {
-        group: 'Ext JS',
-        videos: [
+        title: 'Ext JS',
+        items: [
             {
                 "id": "22863837",
                 "title": "Ext JS 4 - The Most Advanced JavaScript Framework for Web Apps",
@@ -140,8 +140,8 @@ Docs.videos = [
         ]
     },
     {
-        group: "Sencha Touch",
-        videos: [
+        title: "Sencha Touch",
+        items: [
             {
                 "id": "17677004",
                 "title": "SenchaCon 2010: Sencha Touch for the Mobile Web",
@@ -331,8 +331,8 @@ Docs.videos = [
         ]
     },
     {
-        group: 'EXT GWT',
-        videos: [
+        title: 'EXT GWT',
+        items: [
             {
                 "id": "17796860",
                 "title": "SenchaCon 2010: Best Practices in Ext GWT",
@@ -366,8 +366,8 @@ Docs.videos = [
         ]
     },
     {
-        group: 'Animator and Designer',
-        videos: [
+        title: 'Animator and Designer',
+        items: [
             {
                 "id": "16219994",
                 "title": "Sencha Animator Bouncing Ball Demo",
@@ -425,8 +425,8 @@ Docs.videos = [
         ]
     },
     {
-        group: 'Miscelaneous',
-        videos: [
+        title: 'Miscelaneous',
+        items: [
             {
                 "id": "17802908",
                 "title": "SenchaCon 2010: HTML5: State of the Union",
@@ -550,8 +550,8 @@ Docs.videos = [
         ]
     },
     {
-        group: 'Archived',
-        videos: [
+        title: 'Archived',
+        items: [
             {
                 "id": "25777031",
                 "title": "Tour of Ext 1.x",

@@ -21,16 +21,16 @@ Ext.define('Docs.view.guides.Index', {
 
         var store = Ext.create('Ext.data.JsonStore', {
             idProperty: 'url',
-            fields: ['url', 'title', 'guides'],
+            fields: ['id', 'title', 'items'],
             data: catalog
         });
 
         var tpl = Ext.create('Ext.XTemplate',
             '<div id="sample-ct">',
                 '<tpl for=".">',
-                '<div><a name="{url}"></a><h2><div>{group}</div></h2>',
+                '<div><a name="{id}"></a><h2><div>{title}</div></h2>',
                 '<dl>',
-                    '<tpl for="guides">',
+                    '<tpl for="items">',
                         '<dd ext:url="guide/{name}"><img src="guides/{name}/icon-lg.png"/>',
                             '<div><h4>{title}</h4><p>{description}</p></div>',
                         '</dd>',
@@ -54,8 +54,8 @@ Ext.define('Docs.view.guides.Index', {
 
 Docs.guides = [
     {
-        group: 'Official Ext JS 4.0 Guides',
-        guides: [
+        title: 'Official Ext JS 4.0 Guides',
+        items: [
             {
                 "name": "getting_started",
                 "title": "Getting Started with Ext JS 4",

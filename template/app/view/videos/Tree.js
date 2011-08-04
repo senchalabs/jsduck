@@ -29,7 +29,7 @@ Ext.define('Docs.view.videos.Tree', {
         };
 
         Ext.Array.each(Docs.videos, function(group, idx) {
-            var children = Ext.Array.map(group.videos, function(video) {
+            var children = Ext.Array.map(group.items, function(video) {
                 return Ext.apply(video, {
                     leaf: true,
                     text: video.title,
@@ -40,7 +40,7 @@ Ext.define('Docs.view.videos.Tree', {
 
             this.root.children.push({
                 expanded: idx == 0,
-                text: group.group,
+                text: group.title,
                 children: children,
                 iconCls: 'icon-pkg'
             });

@@ -21,7 +21,7 @@ Ext.define('Docs.view.examples.Index', {
 
         var store = Ext.create('Ext.data.JsonStore', {
             idProperty: 'id',
-            fields: ['id', 'title', 'samples'],
+            fields: ['id', 'title', 'items'],
             data: catalog
         });
 
@@ -30,7 +30,7 @@ Ext.define('Docs.view.examples.Index', {
                 '<tpl for=".">',
                 '<div><a name="{id}"></a><h2><div>{title}</div></h2>',
                 '<dl>',
-                    '<tpl for="samples">',
+                    '<tpl for="items">',
                         '<dd ext:url="{url}"><img src="extjs/examples/shared/screens/{icon}"/>',
                             '<div><h4>{text}',
                                 '<tpl if="status === \'new\'">',
