@@ -14,7 +14,7 @@ Ext.define('Docs.view.Tabs', {
     initComponent: function() {
         var tpl = new Ext.XTemplate(
             '<tpl for=".">',
-                '<div class="doctab {cls}{active}">',
+                '<div class="doctab overview {cls}{active}">',
                     '<div class="l"></div>',
                     '<div class="m"><a class="tabUrl" href="{href}">&nbsp;</a></div>',
                     '<div class="r"></div>',
@@ -24,11 +24,11 @@ Ext.define('Docs.view.Tabs', {
         );
 
         this.html = tpl.applyTemplate([
-            { cls: 'home',   href: '#' },
-            { cls: 'api',    href: '#/api' },
+            { cls: 'index',   href: '#' },
+            { cls: 'classes',    href: '#/api' },
             { cls: 'guides', href: '#/guide' },
             { cls: 'videos', href: '#/videos' },
-            { cls: 'themes', href: '#/examples' }
+            { cls: 'examples', href: '#/examples' }
         ]);
 
         this.callParent();
@@ -85,12 +85,20 @@ Ext.define('Docs.view.Tabs', {
     activateTab: function(url) {
         this.activeTab = Ext.Array.indexOf(this.openTabs, url);
         Ext.Array.each(Ext.query('.doctab a[class=tabUrl]'), function(d) {
-            Ext.get(d).up('.doctab').removeCls('active');
+            Ext.get(d).up('.doctab').removeCls(['active', 'highlight']);
         });
         var activeTab = Ext.query('.doctab a[href="' + url + '"]')[0];
         if (activeTab) {
-            Ext.get(activeTab).up('.doctab').addCls('active');
+            var docTab = Ext.get(activeTab).up('.doctab');
+            docTab.addCls('active');
+            if (!docTab.hasCls('overview')) {
+                var overviewTab = Ext.query('.doctab.' + this.getControllerName(url).toLowerCase());
+                if (overviewTab && overviewTab[0]) {
+                    Ext.get(overviewTab[0]).addCls('highlight');
+                }
+            }
         }
+        window.location = url;
     },
 
     /**

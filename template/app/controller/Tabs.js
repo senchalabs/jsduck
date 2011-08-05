@@ -119,11 +119,13 @@ Ext.define('Docs.controller.Tabs', {
                 cmp.justClosed = false;
                 return;
             }
-            Ext.Array.each(Ext.get(el).up('.doctabs').query('.doctab'), function(t) {
-                Ext.get(t).removeCls('active');
-            });
-            Ext.get(el).addCls('active');
-            window.location = Ext.get(el).down('.tabUrl').getAttribute('href');
+            var url = Ext.get(el).down('.tabUrl').getAttribute('href');
+            Ext.getCmp('doctabs').activateTab(url);
+            // Ext.Array.each(Ext.get(el).up('.doctabs').query('.doctab'), function(t) {
+            //     Ext.get(t).removeCls('active');
+            // });
+            // Ext.get(el).addCls('active');
+            // window.location = Ext.get(el).down('.tabUrl').getAttribute('href');
         }, this, {
             delegate: '.doctab'
         });

@@ -885,25 +885,25 @@ a {
       z-index: 5;
     }
   }
-  .doctab.home .m a {
+  .doctab.index .m a {
     background: url(../images/tab-icons.png) no-repeat 7px 1px;
-    padding-left: 16px; padding-right: 6px; padding-bottom: 20px;
+    padding-left: 16px; padding-right: 12px; padding-bottom: 20px;
   }
-  .doctab.api .m a {
+  .doctab.classes .m a {
     background: url(../images/tab-icons.png) no-repeat 8px -20px;
-    padding-left: 16px; padding-right: 6px;
+    padding-left: 16px; padding-right: 12px;
   }
   .doctab.videos .m a {
     background: url(../images/tab-icons.png) no-repeat 8px -38px;
-    padding-left: 16px; padding-right: 6px;
+    padding-left: 16px; padding-right: 12px;
   }
   .doctab.guides .m a {
     background: url(../images/tab-icons.png) no-repeat 9px -55px;
-    padding-left: 16px; padding-right: 6px;
+    padding-left: 16px; padding-right: 12px;
   }
-  .doctab.themes .m a {
+  .doctab.examples .m a {
     background: url(../images/tab-icons.png) no-repeat 7px -93px;
-    padding-left: 16px; padding-right: 6px;
+    padding-left: 16px; padding-right: 12px;
   }
 }
 
