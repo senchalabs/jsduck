@@ -58,9 +58,12 @@ Ext.define('Docs.controller.Tabs', {
                     this.addTabIconListeners(cmp);
                     this.addTabListeners(cmp);
 
-                    Ext.getStore('Favorites').each(function(f) {
-                        this.addTabFromTree(f.data.url, this.getClassTree(), true, true);
-                    }, this);
+                    // var prevTabs = Docs.Settings.get('openTabs');
+                    // if (prevTabs) {
+                    //     prevTabs.each(function(f) {
+                    //         this.addTabFromTree(f, this.getClassTree(), true, true);
+                    //     }, this);
+                    // }
                 },
                 scope: this
             }

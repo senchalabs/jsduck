@@ -72,6 +72,7 @@ Ext.define('Docs.view.Tabs', {
             }
 
             this.openTabs.push(tab.href);
+            Docs.Settings.set('openTabs', this.openTabs);
         }
 
         if (!noActivate) {
@@ -113,6 +114,7 @@ Ext.define('Docs.view.Tabs', {
         var idx = Ext.Array.indexOf(this.openTabs, url);
         if (idx !== false) {
             Ext.Array.erase(this.openTabs, idx, 1);
+            Docs.Settings.set('openTabs', this.openTabs);
             if (this.activeTab > idx) {
                 this.activeTab -= 1;
             }
