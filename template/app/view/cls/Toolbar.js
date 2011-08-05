@@ -77,7 +77,7 @@ Ext.define('Docs.view.cls.Toolbar', {
 
         this.items = this.items.concat([
             { xtype: 'tbspacer', width: 10 },
-            this.filterField = Ext.widget("textfield", {
+            this.filterField = Ext.widget("triggerfield", {
                 triggerCls: 'reset',
                 cls: 'member-filter',
                 hideTrigger: true,
