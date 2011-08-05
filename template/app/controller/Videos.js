@@ -41,7 +41,7 @@ Ext.define('Docs.controller.Videos', {
             videoId = videoRe[0];
 
         if (this.currentVideo === videoId) {
-            return this.activateExampleCard();
+            return this.activateVideoCard();
         }
         this.currentVideo = videoId;
 
@@ -50,12 +50,13 @@ Ext.define('Docs.controller.Videos', {
 
         var ifr = document.getElementById("videoplayer");
         ifr.contentWindow.location.replace(this.getUrl(videoId));
-        this.activateExampleCard();
+        this.activateVideoCard();
     },
 
-    activateExampleCard: function() {
+    activateVideoCard: function() {
         Ext.getCmp('card-panel').layout.setActiveItem('video');
         Ext.getCmp('tree-container').layout.setActiveItem(3);
+        Ext.getCmp('tree-container').show();
     },
 
     getUrl: function(videoId) {

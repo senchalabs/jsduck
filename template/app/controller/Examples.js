@@ -60,5 +60,6 @@ Ext.define('Docs.controller.Examples', {
     activateExampleCard: function() {
         Ext.getCmp('card-panel').layout.setActiveItem('example');
         Ext.getCmp('tree-container').layout.setActiveItem(1);
+        Ext.getCmp('tree-container').show();
     }
 });
