@@ -15,6 +15,7 @@ require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
 require 'jsduck/guides'
 require 'jsduck/videos'
+require 'jsduck/examples'
 require 'jsduck/categories'
 require 'jsduck/json_duck'
 require 'jsduck/lint'
@@ -56,6 +57,11 @@ module JsDuck
         @timer.time(:parsing) { @videos.parse(@opts.videos) }
       end
 
+      @examples = Examples.new
+      if @opts.examples
+        @timer.time(:parsing) { @examples.parse(@opts.examples) }
+      end
+
       @categories = Categories.new(get_doc_formatter, @relations)
       if @opts.categories_path
         @timer.time(:parsing) do
@@ -84,6 +90,7 @@ module JsDuck
         @timer.time(:generating) { write_classes }
         @timer.time(:generating) { @guides.write(@opts.output_dir+"/guides") }
         @timer.time(:generating) { @videos.write(@opts.output_dir+"/videos") }
+        @timer.time(:generating) { @examples.write(@opts.output_dir+"/examples") }
       end
 
       @timer.report
@@ -137,6 +144,7 @@ module JsDuck
         :icons => icons,
         :guides => @guides.to_array,
         :videos => @videos.to_array,
+        :examples => @examples.to_array,
         :search => SearchData.new.create(@relations.classes),
       }) + ";\n"
       File.open(@opts.output_dir+"/data.js", 'w') {|f| f.write(js) }

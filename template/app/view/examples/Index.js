@@ -31,7 +31,7 @@ Ext.define('Docs.view.examples.Index', {
                         '</h4><p>{desc}</p></div>',
                     '</dd>'
                 ],
-                data: Ext.samples.samplesCatalog
+                data: Docs.data.examples
             })
         ];
 

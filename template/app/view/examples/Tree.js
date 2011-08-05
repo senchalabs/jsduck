@@ -28,8 +28,8 @@ Ext.define('Docs.view.examples.Tree', {
             text: 'Examples'
         };
 
-        Ext.Array.each(Ext.samples.samplesCatalog, function(sampleGroup) {
-            var children = Ext.Array.map(sampleGroup.items, function(sample) {
+        Ext.Array.each(Docs.data.examples, function(group) {
+            var children = Ext.Array.map(group.items, function(sample) {
                 return Ext.apply(sample, {
                     leaf: true,
                     url: '/examples/' + sample.url,
@@ -38,7 +38,7 @@ Ext.define('Docs.view.examples.Tree', {
             });
 
             this.root.children.push({
-                text: sampleGroup.title,
+                text: group.title,
                 children: children,
                 iconCls: 'icon-pkg'
             });

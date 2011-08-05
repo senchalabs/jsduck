@@ -20,6 +20,7 @@ module JsDuck
     attr_accessor :body_html
     attr_accessor :guides
     attr_accessor :videos
+    attr_accessor :examples
     attr_accessor :categories_path
     attr_accessor :inline_examples_dir
     attr_accessor :pretty_json
@@ -51,6 +52,7 @@ module JsDuck
       @body_html = ""
       @guides = nil
       @videos = nil
+      @examples = nil
       @categories_path = nil
       @inline_examples_dir = nil
       @pretty_json = false
@@ -141,6 +143,11 @@ module JsDuck
         opts.on('--videos=PATH',
           "Path to JSON file describing the videos.", " ") do |path|
           @videos = path
+        end
+
+        opts.on('--examples=PATH',
+          "Path JSON file describing the examples.", " ") do |path|
+          @examples = path
         end
 
         opts.on('--categories=PATH',
