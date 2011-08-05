@@ -28,7 +28,7 @@ Ext.define('Docs.view.videos.Tree', {
             text: 'Videos'
         };
 
-        Ext.Array.each(Docs.videos, function(group, idx) {
+        Ext.Array.each(Docs.data.videos, function(group, idx) {
             var children = Ext.Array.map(group.items, function(video) {
                 return Ext.apply(video, {
                     leaf: true,

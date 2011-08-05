@@ -28,7 +28,7 @@ Ext.define('Docs.view.guides.Tree', {
             text: 'Guides'
         };
 
-        Ext.Array.each(Docs.guides, function(group) {
+        Ext.Array.each(Docs.data.guides, function(group) {
             var children = Ext.Array.map(group.items, function(guide) {
                 return {
                     leaf: true,

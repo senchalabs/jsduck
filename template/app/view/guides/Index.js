@@ -21,7 +21,7 @@ Ext.define('Docs.view.guides.Index', {
                         '<div><h4>{title}</h4><p>{description}</p></div>',
                     '</dd>'
                 ],
-                data: Docs.guides
+                data: Docs.data.guides
             })
         ];
 

@@ -23,7 +23,7 @@ Ext.define('Docs.view.videos.Index', {
                         '</h4><p>{[values.description.substr(0,100)]}</p></div>',
                     '</dd>'
                 ],
-                data: Docs.videos
+                data: Docs.data.videos
             })
         ];
 

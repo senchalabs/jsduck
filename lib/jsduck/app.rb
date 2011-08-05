@@ -80,8 +80,7 @@ module JsDuck
         end
         create_index_html
         @timer.time(:generating) { write_src(parsed_files) }
-        @timer.time(:generating) { write_tree }
-        @timer.time(:generating) { write_search_data }
+        @timer.time(:generating) { write_app_data }
         @timer.time(:generating) { write_classes }
         @timer.time(:generating) { @guides.write(@opts.output_dir+"/guides") }
         @timer.time(:generating) { @videos.write(@opts.output_dir+"/videos") }
@@ -129,23 +128,18 @@ module JsDuck
       Relations.new(classes, @opts.external_classes)
     end
 
-    # Writes classes tree, icons map, and guides tree to tree.js
-    def write_tree
+    # Writes classes, guides, videos, and search data to one big .js file
+    def write_app_data
       tree = Tree.new.create(@relations.classes)
       icons = TreeIcons.new.extract_icons(tree)
-      js = "Docs.classData = " + JsonDuck.generate( tree ) + ";"
-      js += "Docs.icons = " + JsonDuck.generate( icons ) + ";"
-      js += "Docs.guides = " + JsonDuck.generate( @guides.to_array ) + ";"
-      js += "Docs.videos = " + JsonDuck.generate( @videos.to_array ) + ";"
-      File.open(@opts.output_dir+"/output/tree.js", 'w') {|f| f.write(js) }
-    end
-
-    # Given all classes, generates members data for search and writes in
-    # in JSON form into a file.
-    def write_search_data
-      search_data = SearchData.new.create(@relations.classes)
-      js = "Docs.searchData = " + JsonDuck.generate( {:data => search_data} ) + ";"
-      File.open(@opts.output_dir+"/output/searchData.js", 'w') {|f| f.write(js) }
+      js = "Docs.data = " + JsonDuck.generate({
+        :classes => tree,
+        :icons => icons,
+        :guides => @guides.to_array,
+        :videos => @videos.to_array,
+        :search => SearchData.new.create(@relations.classes),
+      }) + ";\n"
+      File.open(@opts.output_dir+"/data.js", 'w') {|f| f.write(js) }
     end
 
     # Writes JSON export or JsonP file for each class

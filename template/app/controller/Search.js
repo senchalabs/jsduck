@@ -162,7 +162,7 @@ Ext.define('Docs.controller.Search', {
         var reBeg = new RegExp("^" + safeText, "i");
         var reMid = new RegExp(safeText, "i");
 
-        Ext.Array.forEach(Docs.searchData.data, function(r) {
+        Ext.Array.forEach(Docs.data.search, function(r) {
             // when search text has "." in it, search from the full name (e.g. "Ext.Component.focus")
             // Otherwise search from just the member name (e.g. "focus" or "Component")
             var name = hasDot ? r.cls + (r.type === "cls" ? "" : "." + r.member) : r.member;

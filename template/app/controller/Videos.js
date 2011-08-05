@@ -77,7 +77,7 @@ Ext.define('Docs.controller.Videos', {
 
     videoIds: function() {
         if (!this._videoIds) {
-            this._videoIds = Ext.Array.flatten(Ext.Array.map(Docs.videos, function(v) { return Ext.Array.map(v.videos, function(w) { return w.id; }); }));
+            this._videoIds = Ext.Array.flatten(Ext.Array.map(Docs.data.videos, function(v) { return Ext.Array.map(v.videos, function(w) { return w.id; }); }));
         }
         return this._videoIds;
     }

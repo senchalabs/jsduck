@@ -79,7 +79,7 @@ Ext.define('Docs.view.Viewport', {
                         items: [
                             {
                                 xtype: 'classtree',
-                                root: Docs.classData
+                                root: Docs.data.classes
                             },
                             {
                                 xtype: 'examplestree'

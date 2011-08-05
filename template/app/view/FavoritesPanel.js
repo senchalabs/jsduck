@@ -32,7 +32,7 @@ Ext.define('Docs.view.FavoritesPanel', {
                 title: 'Favorites',
                 iconCls: 'icon-fav',
                 store: Ext.getStore('Favorites'),
-                icons: Docs.icons
+                icons: Docs.data.icons
             }
         ];
 
