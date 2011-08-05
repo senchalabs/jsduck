@@ -48,7 +48,7 @@ Ext.define('Docs.controller.Tabs', {
                     this.addTabListeners(cmp);
 
                     Ext.getStore('Favorites').each(function(f) {
-                        this.addTabFromTree(f.data.url, this.getClassTree(), true);
+                        this.addTabFromTree(f.data.url, this.getClassTree(), true, true);
                     }, this);
                 },
                 scope: this
@@ -60,14 +60,14 @@ Ext.define('Docs.controller.Tabs', {
      * Adds a tab based on information from the class tree
      * @param {String} url The url of the record in the tree
      */
-    addTabFromTree: function(url, tree, noAnimate) {
+    addTabFromTree: function(url, tree, noAnimate, noActivate) {
         var treeRecord = tree.findRecordByUrl(url);
         if (treeRecord && treeRecord.raw) {
             Ext.getCmp('doctabs').addTab({
                 href: '#' + treeRecord.raw.url,
                 text: treeRecord.raw.text,
                 iconCls: treeRecord.raw.iconCls
-            }, noAnimate);
+            }, noAnimate, noActivate);
         }
     },
 
@@ -121,11 +121,6 @@ Ext.define('Docs.controller.Tabs', {
             }
             var url = Ext.get(el).down('.tabUrl').getAttribute('href');
             Ext.getCmp('doctabs').activateTab(url);
-            // Ext.Array.each(Ext.get(el).up('.doctabs').query('.doctab'), function(t) {
-            //     Ext.get(t).removeCls('active');
-            // });
-            // Ext.get(el).addCls('active');
-            // window.location = Ext.get(el).down('.tabUrl').getAttribute('href');
         }, this, {
             delegate: '.doctab'
         });
@@ -133,24 +128,6 @@ Ext.define('Docs.controller.Tabs', {
         cmp.el.addListener('click', Ext.emptyFn, this, {
             delegate: '.tabUrl',
             preventDefault: true
-        });
-
-        cmp.el.addListener('mouseover', function(event, el) {
-            var icn = Ext.get(el).down('.icn');
-            if (icn) {
-                icn.addCls('close');
-            }
-        }, this, {
-            delegate: '.doctab'
-        });
-
-        cmp.el.addListener('mouseout', function(event, el) {
-            var icn = Ext.get(el).down('.icn');
-            if (icn) {
-                icn.removeCls('close');
-            }
-        }, this, {
-            delegate: '.doctab'
         });
     }
 

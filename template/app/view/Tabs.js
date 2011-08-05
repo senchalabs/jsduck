@@ -44,7 +44,7 @@ Ext.define('Docs.view.Tabs', {
      * @param {String} tab.text Text to be used on the tab
      * @param {String} tab.iconCls CSS class to be used as the icon
      */
-    addTab: function(tab, noAnimate) {
+    addTab: function(tab, noAnimate, noActivate) {
         if (!Ext.Array.contains(this.openTabs, tab.href)) {
             var tpl = Ext.create('Ext.XTemplate',
                 '<div class="doctab" style="visibility: hidden">',
@@ -74,7 +74,9 @@ Ext.define('Docs.view.Tabs', {
             this.openTabs.push(tab.href);
         }
 
-        this.activateTab(tab.href);
+        if (!noActivate) {
+            this.activateTab(tab.href);
+        }
     },
 
     /**
