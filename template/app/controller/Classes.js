@@ -73,7 +73,7 @@ Ext.define('Docs.controller.Classes', {
         });
 
         this.control({
-            'classtree[cmpName=classtree]': {
+            'classtree': {
                 urlclick: function(url, event) {
                     this.handleUrlClick(url, event, this.getTree());
                 }
