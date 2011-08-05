@@ -24,10 +24,10 @@ Ext.define('Docs.view.Tabs', {
         );
 
         this.html = tpl.applyTemplate([
-            { cls: 'index',   href: '#' },
-            { cls: 'classes',    href: '#/api' },
-            { cls: 'guides', href: '#/guide' },
-            { cls: 'videos', href: '#/videos' },
+            { cls: 'index',    href: '#' },
+            { cls: 'classes',  href: '#/api' },
+            { cls: 'guides',   href: '#/guide' },
+            { cls: 'videos',   href: '#/videos' },
             { cls: 'examples', href: '#/examples' }
         ]);
 
@@ -125,7 +125,7 @@ Ext.define('Docs.view.Tabs', {
                 if (idx === this.openTabs.length) {
                     idx -= 1;
                 }
-                window.location = this.openTabs[idx];
+                this.activateTab(this.openTabs[idx]);
             }
         }
     },
