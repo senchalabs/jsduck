@@ -18,8 +18,7 @@ module JsDuck
     attr_accessor :footer
     attr_accessor :head_html
     attr_accessor :body_html
-    attr_accessor :guides_dir
-    attr_accessor :guides_order
+    attr_accessor :guides
     attr_accessor :categories_path
     attr_accessor :examples_dir
     attr_accessor :link_tpl
@@ -48,8 +47,7 @@ module JsDuck
       @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
       @head_html = ""
       @body_html = ""
-      @guides_dir = nil
-      @guides_order = nil
+      @guides = nil
       @categories_path = nil
       @examples_dir = nil
       @link_tpl = '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
@@ -128,19 +126,12 @@ module JsDuck
           @body_html = html
         end
 
-        opts.on('--guides=PATH', "Path to guides directory.",
-          "Each subdirectory of that is treated as a guide",
-          "and is expectd to contain a REAME.md file,",
-          "which will be converted into a README.js.", " ") do |path|
-          @guides_dir = path
-        end
-
-        opts.on('--guides-order=a,b,c', Array,
-          "The order in which the guides should appear. When",
-          "a guide name is not specified here, it will be excluded.",
-          "You don't have to write the whole name of the guide,",
-          "just the beginning of it, as long as it's unique.", " ") do |list|
-          @guides_order = list
+        opts.on('--guides=PATH',
+          "Path to JSON file describing the guides. The file",
+          "should be in a dir containing the actual guides.",
+          "A guide is a dir containing README.md, icon.png,",
+          "and other images referenced by the README.md file.", " ") do |path|
+          @guides = path
         end
 
         opts.on('--categories=PATH',

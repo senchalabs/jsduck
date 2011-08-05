@@ -11,6 +11,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.cls.Container',
         'Docs.view.cls.Tree',
         'Docs.view.guides.Index',
+        'Docs.view.guides.Tree',
         'Docs.view.videos.Index',
         'Docs.view.videos.Tree',
         'Docs.view.examples.Index',
@@ -78,16 +79,13 @@ Ext.define('Docs.view.Viewport', {
                         items: [
                             {
                                 xtype: 'classtree',
-                                cmpName: 'classtree',
                                 root: Docs.classData
                             },
                             {
                                 xtype: 'examplestree'
                             },
                             {
-                                xtype: 'classtree',
-                                cmpName: 'guidetree',
-                                root: Docs.guideData
+                                xtype: 'guidestree'
                             },
                             {
                                 xtype: 'videostree'

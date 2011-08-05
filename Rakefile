@@ -43,9 +43,8 @@ def run_jsduck(extra_options)
     "ruby", "bin/jsduck",
     # --external=Error to ignore the Error class that Ext.Error extends.
     "--external", "Error",
-    "--guides", "#{SDK_DIR}/guides",
+    "--guides", "#{SDK_DIR}/guides/guides.json",
     "--examples", "#{SDK_DIR}/extjs/doc-resources",
-    "--guides-order", "getting,class,application,layouts,data,grid,tree,drawing,forms,components,theming,direct",
     "--categories", "#{SDK_DIR}/extjs/doc-resources/categories.json",
     "--output", "#{OUT_DIR}",
   ].concat(extra_options))
@@ -53,8 +52,7 @@ def run_jsduck(extra_options)
   # Finally copy over the images that documentation links to.
   system "cp -r #{SDK_DIR}/extjs/doc-resources #{OUT_DIR}/doc-resources"
   system "cp -r #{SDK_DIR}/platform/doc-resources/* #{OUT_DIR}/doc-resources"
-  # And copy guides.js and videos.js
-  system "cp #{SDK_DIR}/guides/guides.js #{OUT_DIR}/guides/"
+  # And copy videos.js
   system "cp #{SDK_DIR}/guides/videos.js #{OUT_DIR}/guides/"
 end
 

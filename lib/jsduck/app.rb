@@ -44,9 +44,9 @@ module JsDuck
       Aliases.new(@relations).resolve_all
       Lint.new(@relations).run
 
-      @guides = Guides.new(get_doc_formatter, @opts.guides_order)
-      if @opts.guides_dir
-        @timer.time(:parsing) { @guides.parse_dir(@opts.guides_dir) }
+      @guides = Guides.new(get_doc_formatter)
+      if @opts.guides
+        @timer.time(:parsing) { @guides.parse(@opts.guides) }
       end
 
       @categories = Categories.new(get_doc_formatter, @relations)
@@ -127,7 +127,7 @@ module JsDuck
       icons = TreeIcons.new.extract_icons(tree)
       js = "Docs.classData = " + JSON.generate( tree ) + ";"
       js += "Docs.icons = " + JSON.generate( icons ) + ";"
-      js += "Docs.guideData = " + JSON.generate( @guides.to_tree ) + ";"
+      js += "Docs.guides = " + JSON.generate( @guides.to_array ) + ";"
       File.open(@opts.output_dir+"/output/tree.js", 'w') {|f| f.write(js) }
     end
 
@@ -209,7 +209,6 @@ module JsDuck
       html.gsub!("{footer}", "<div id='footer-content' style='display: none'>#{@footer}</div>")
       html.gsub!("{extjs_path}", @opts.extjs_path)
       html.gsub!("{local_storage_db}", @opts.local_storage_db)
-      html.gsub!("{guides}", @guides.to_html)
       html.gsub!("{categories}", @categories.to_html)
       html.gsub!("{head_html}", @opts.head_html)
       html.gsub!("{body_html}", @opts.body_html)
