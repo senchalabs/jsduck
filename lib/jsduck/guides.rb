@@ -1,7 +1,6 @@
-require 'jsduck/jsonp'
 require 'jsduck/logger'
+require 'jsduck/json_duck'
 require 'fileutils'
-require 'json'
 
 module JsDuck
 
@@ -15,7 +14,7 @@ module JsDuck
     # Parses guides config file
     def parse(filename)
       @path = File.dirname(filename)
-      @guides = JSON.parse(IO.read(filename))
+      @guides = JsonDuck.read(filename)
     end
 
     # Writes all guides to given dir in JsonP format
@@ -26,7 +25,7 @@ module JsDuck
       @guides.each {|group| group["items"].each {|g| write_guide(g, dir) } }
       # Write the JSON to output dir, so it's available in released
       # version of docs and people can use it with JSDuck by themselves.
-      File.open(dir+"/guides.json", 'w') {|f| f.write(JSON.generate(@guides)) }
+      JsonDuck.write_json(dir+"/guides.json", @guides)
     end
 
     def write_guide(guide, dir)
@@ -45,7 +44,7 @@ module JsDuck
       name = File.basename(in_dir)
       html.gsub!(/<img src="/, "<img src=\"guides/#{name}/")
 
-      JsonP.write(out_dir+"/README.js", name, {:guide => html})
+      JsonDuck.write_jsonp(out_dir+"/README.js", name, {:guide => html})
     end
 
     # Returns all guides as array

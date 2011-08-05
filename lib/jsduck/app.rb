@@ -16,9 +16,8 @@ require 'jsduck/logger'
 require 'jsduck/guides'
 require 'jsduck/videos'
 require 'jsduck/categories'
-require 'jsduck/jsonp'
+require 'jsduck/json_duck'
 require 'jsduck/lint'
-require 'json'
 require 'fileutils'
 
 module JsDuck
@@ -35,6 +34,8 @@ module JsDuck
       # Sets warnings and verbose mode on or off
       Logger.instance.warnings = @opts.warnings
       Logger.instance.verbose = @opts.verbose
+      # Turn JSON pretty-printing on/off
+      JsonDuck.pretty = @opts.pretty_json
     end
 
     # Call this after input parameters set
@@ -65,7 +66,7 @@ module JsDuck
 
       clear_output_dir unless @opts.export == :stdout
       if @opts.export == :stdout
-        @timer.time(:generating) { puts JSON.generate(@relations.classes) }
+        @timer.time(:generating) { puts JsonDuck.generate(@relations.classes) }
       elsif @opts.export == :json
         FileUtils.mkdir(@opts.output_dir)
         init_output_dirs
@@ -132,10 +133,10 @@ module JsDuck
     def write_tree
       tree = Tree.new.create(@relations.classes)
       icons = TreeIcons.new.extract_icons(tree)
-      js = "Docs.classData = " + JSON.generate( tree ) + ";"
-      js += "Docs.icons = " + JSON.generate( icons ) + ";"
-      js += "Docs.guides = " + JSON.generate( @guides.to_array ) + ";"
-      js += "Docs.videos = " + JSON.generate( @videos.to_array ) + ";"
+      js = "Docs.classData = " + JsonDuck.generate( tree ) + ";"
+      js += "Docs.icons = " + JsonDuck.generate( icons ) + ";"
+      js += "Docs.guides = " + JsonDuck.generate( @guides.to_array ) + ";"
+      js += "Docs.videos = " + JsonDuck.generate( @videos.to_array ) + ";"
       File.open(@opts.output_dir+"/output/tree.js", 'w') {|f| f.write(js) }
     end
 
@@ -143,7 +144,7 @@ module JsDuck
     # in JSON form into a file.
     def write_search_data
       search_data = SearchData.new.create(@relations.classes)
-      js = "Docs.searchData = " + JSON.generate( {:data => search_data} ) + ";"
+      js = "Docs.searchData = " + JsonDuck.generate( {:data => search_data} ) + ";"
       File.open(@opts.output_dir+"/output/searchData.js", 'w') {|f| f.write(js) }
     end
 
@@ -155,9 +156,9 @@ module JsDuck
         Logger.instance.log("Writing to #{filename} ...")
         data = exporter.export(cls)
         if @opts.export
-          File.open(filename, 'w') {|f| f.write(JSON.pretty_generate(data)) }
+          JsonDuck.write_json(filename, data)
         else
-          JsonP.write(filename, cls[:name].gsub(/\./, "_"), data)
+          JsonDuck.write_jsonp(filename, cls[:name].gsub(/\./, "_"), data)
         end
       end
     end

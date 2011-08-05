@@ -1,5 +1,5 @@
 require 'jsduck/logger'
-require 'json'
+require 'jsduck/json_duck'
 
 module JsDuck
 
@@ -13,7 +13,7 @@ module JsDuck
 
     # Parses categories in JSON file
     def parse(path)
-      @categories = JSON.parse(IO.read(path))["categories"]
+      @categories = JsonDuck.read(path)["categories"]
     end
 
     # Prints warnings for missing classes in categories file
