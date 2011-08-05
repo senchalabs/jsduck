@@ -44,6 +44,7 @@ def run_jsduck(extra_options)
     # --external=Error to ignore the Error class that Ext.Error extends.
     "--external", "Error",
     "--guides", "#{SDK_DIR}/guides/guides.json",
+    "--videos", "#{SDK_DIR}/guides/videos.json",
     "--examples", "#{SDK_DIR}/extjs/doc-resources",
     "--categories", "#{SDK_DIR}/extjs/doc-resources/categories.json",
     "--output", "#{OUT_DIR}",
@@ -52,8 +53,6 @@ def run_jsduck(extra_options)
   # Finally copy over the images that documentation links to.
   system "cp -r #{SDK_DIR}/extjs/doc-resources #{OUT_DIR}/doc-resources"
   system "cp -r #{SDK_DIR}/platform/doc-resources/* #{OUT_DIR}/doc-resources"
-  # And copy videos.js
-  system "cp #{SDK_DIR}/guides/videos.js #{OUT_DIR}/guides/"
 end
 
 desc "Run JSDuck on ExtJS SDK"

@@ -14,6 +14,7 @@ require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
 require 'jsduck/guides'
+require 'jsduck/videos'
 require 'jsduck/categories'
 require 'jsduck/jsonp'
 require 'jsduck/lint'
@@ -47,6 +48,11 @@ module JsDuck
       @guides = Guides.new(get_doc_formatter)
       if @opts.guides
         @timer.time(:parsing) { @guides.parse(@opts.guides) }
+      end
+
+      @videos = Videos.new
+      if @opts.videos
+        @timer.time(:parsing) { @videos.parse(@opts.videos) }
       end
 
       @categories = Categories.new(get_doc_formatter, @relations)
@@ -128,6 +134,7 @@ module JsDuck
       js = "Docs.classData = " + JSON.generate( tree ) + ";"
       js += "Docs.icons = " + JSON.generate( icons ) + ";"
       js += "Docs.guides = " + JSON.generate( @guides.to_array ) + ";"
+      js += "Docs.videos = " + JSON.generate( @videos.to_array ) + ";"
       File.open(@opts.output_dir+"/output/tree.js", 'w') {|f| f.write(js) }
     end
 

@@ -19,6 +19,7 @@ module JsDuck
     attr_accessor :head_html
     attr_accessor :body_html
     attr_accessor :guides
+    attr_accessor :videos
     attr_accessor :categories_path
     attr_accessor :examples_dir
     attr_accessor :link_tpl
@@ -48,6 +49,7 @@ module JsDuck
       @head_html = ""
       @body_html = ""
       @guides = nil
+      @videos = nil
       @categories_path = nil
       @examples_dir = nil
       @link_tpl = '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
@@ -132,6 +134,11 @@ module JsDuck
           "A guide is a dir containing README.md, icon.png,",
           "and other images referenced by the README.md file.", " ") do |path|
           @guides = path
+        end
+
+        opts.on('--videos=PATH',
+          "Path to JSON file describing the videos.", " ") do |path|
+          @videos = path
         end
 
         opts.on('--categories=PATH',
