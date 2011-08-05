@@ -83,6 +83,7 @@ module JsDuck
         @timer.time(:generating) { write_search_data }
         @timer.time(:generating) { write_classes }
         @timer.time(:generating) { @guides.write(@opts.output_dir+"/guides") }
+        @timer.time(:generating) { @videos.write(@opts.output_dir+"/videos") }
       end
 
       @timer.report

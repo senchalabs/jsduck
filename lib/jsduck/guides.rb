@@ -20,11 +20,13 @@ module JsDuck
 
     # Writes all guides to given dir in JsonP format
     def write(dir)
-      # Skip it all when we have no guides
       return if @guides.length == 0
 
-      FileUtils.mkdir(dir)
+      FileUtils.mkdir(dir) unless File.exists?(dir)
       @guides.each {|group| group["items"].each {|g| write_guide(g, dir) } }
+      # Write the JSON to output dir, so it's available in released
+      # version of docs and people can use it with JSDuck by themselves.
+      File.open(dir+"/guides.json", 'w') {|f| f.write(JSON.generate(@guides)) }
     end
 
     def write_guide(guide, dir)
