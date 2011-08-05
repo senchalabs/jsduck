@@ -53,6 +53,9 @@ def run_jsduck(extra_options)
   # Finally copy over the images that documentation links to.
   system "cp -r #{SDK_DIR}/extjs/doc-resources #{OUT_DIR}/doc-resources"
   system "cp -r #{SDK_DIR}/platform/doc-resources/* #{OUT_DIR}/doc-resources"
+  # And copy guides.js and videos.js
+  system "cp #{SDK_DIR}/guides/guides.js #{OUT_DIR}/guides/"
+  system "cp #{SDK_DIR}/guides/videos.js #{OUT_DIR}/guides/"
 end
 
 desc "Run JSDuck on ExtJS SDK"
