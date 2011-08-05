@@ -45,7 +45,7 @@ def run_jsduck(extra_options)
     "--external", "Error",
     "--guides", "#{SDK_DIR}/guides/guides.json",
     "--videos", "#{SDK_DIR}/guides/videos.json",
-    "--examples", "#{SDK_DIR}/extjs/doc-resources",
+    "--inline-examples", "#{SDK_DIR}/extjs/doc-resources",
     "--categories", "#{SDK_DIR}/extjs/doc-resources/categories.json",
     "--output", "#{OUT_DIR}",
   ].concat(extra_options))

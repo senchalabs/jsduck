@@ -21,7 +21,7 @@ module JsDuck
     attr_accessor :guides
     attr_accessor :videos
     attr_accessor :categories_path
-    attr_accessor :examples_dir
+    attr_accessor :inline_examples_dir
     attr_accessor :pretty_json
     attr_accessor :link_tpl
     attr_accessor :img_tpl
@@ -52,7 +52,7 @@ module JsDuck
       @guides = nil
       @videos = nil
       @categories_path = nil
-      @examples_dir = nil
+      @inline_examples_dir = nil
       @pretty_json = false
       @link_tpl = '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
@@ -148,8 +148,8 @@ module JsDuck
           @categories_path = path
         end
 
-        opts.on('--examples=PATH', "Path to examples directory.", " ") do |path|
-          @examples_dir = path
+        opts.on('--inline-examples=PATH', "Path to inline examples directory.", " ") do |path|
+          @inline_examples_dir = path
         end
 
         opts.on('--pretty-json', "Turn on pretty-printing of JSON.", " ") do
