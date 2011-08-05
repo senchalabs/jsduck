@@ -5,15 +5,25 @@ Ext.define('Docs.controller.Videos', {
     extend: 'Ext.app.Controller',
 
     init: function() {
+
+        this.addEvents(
+            /**
+             * @event showVideo
+             * Fired after a video is shown. Used for analytics event tracking.
+             * @param {String} video name of the video.
+             */
+            "showVideo"
+        );
+
         this.control({
             'videoindex > thumblist': {
                 urlclick: function(url) {
-                    this.openVideo(url);
+                    this.loadVideo(url);
                 }
             },
             'videostree': {
-                videoclick: function(id) {
-                    this.openVideo(id);
+                videoclick: function(url) {
+                    this.loadVideo(url);
                 }
             }
         });
@@ -26,32 +36,26 @@ Ext.define('Docs.controller.Videos', {
         Ext.getCmp('tree-container').show();
     },
 
-    openVideo: function(videoId) {
+    loadVideo: function(url, noHistory) {
+        var videoRe = url.match(/[0-9]+$/),
+            videoId = videoRe[0];
+
+        if (this.currentVideo === videoId) {
+            return this.activateExampleCard();
+        }
         this.currentVideo = videoId;
 
-        Ext.create('Ext.Window', {
-            title: 'Video',
-            width: 660,
-            height: 431,
-            modal: true,
-            html: '<iframe id="videoplayer" src="' + this.getUrl(videoId) + '" width="640" height="360" frameborder="0" style="margin: 5px auto 0 auto; display: block;"></iframe>',
-            bbar: [
-                '->',
-                {
-                    xtype: 'button',
-                    text: '&laquo; Previous',
-                    handler: this.prev,
-                    scope: this
-                },
-                '-',
-                {
-                    xtype: 'button',
-                    text: 'Next &raquo;',
-                    handler: this.next,
-                    scope: this
-                }
-            ]
-        }).show();
+        noHistory || Docs.History.push('#' + url);
+        this.fireEvent('showVideo', url);
+
+        var ifr = document.getElementById("videoplayer");
+        ifr.contentWindow.location.replace(this.getUrl(videoId));
+        this.activateExampleCard();
+    },
+
+    activateExampleCard: function() {
+        Ext.getCmp('card-panel').layout.setActiveItem('video');
+        Ext.getCmp('tree-container').layout.setActiveItem(3);
     },
 
     getUrl: function(videoId) {

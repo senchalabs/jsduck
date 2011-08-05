@@ -16,6 +16,10 @@ Ext.define('Docs.controller.Tabs', {
         {
             ref: 'exampleTree',
             selector: 'examplestree'
+        },
+        {
+            ref: 'videoTree',
+            selector: 'videostree'
         }
     ],
 
@@ -41,6 +45,13 @@ Ext.define('Docs.controller.Tabs', {
             scope: this
         });
 
+        this.getController('Videos').addListener({
+            showVideo: function(video) {
+                this.addTabFromTree(video, this.getVideoTree());
+            },
+            scope: this
+        });
+
         this.control({
             'container [componentCls=doctabs]': {
                 afterrender: function(cmp) {
@@ -62,6 +73,7 @@ Ext.define('Docs.controller.Tabs', {
      */
     addTabFromTree: function(url, tree, noAnimate, noActivate) {
         var treeRecord = tree.findRecordByUrl(url);
+        console.log(url, tree, treeRecord)
         if (treeRecord && treeRecord.raw) {
             Ext.getCmp('doctabs').addTab({
                 href: '#' + treeRecord.raw.url,

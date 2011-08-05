@@ -835,6 +835,9 @@ a {
       }
       a.tabUrl {
         padding: 0 14px 0 17px;
+        max-width: 180px;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
       span.icn {
         display: block;

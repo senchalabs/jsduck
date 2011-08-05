@@ -2,7 +2,7 @@
  * The videos tree
  */
 Ext.define('Docs.view.videos.Tree', {
-    extend: 'Ext.tree.Panel',
+    extend: 'Docs.view.cls.Tree',
     alias: 'widget.videostree',
 
     useArrows: true,
@@ -16,7 +16,7 @@ Ext.define('Docs.view.videos.Tree', {
             /**
              * @event
              * Fired when link in tree was clicked on and needs to be loaded.
-             * @param {String} url  URL of the example to load
+             * @param {String} url  URL of the video to load
              * @param {Ext.EventObject} e
              */
             "videoclick"
@@ -52,10 +52,10 @@ Ext.define('Docs.view.videos.Tree', {
     },
 
     onItemClick: function(view, node, item, index, e) {
-        var id = node.raw.id;
+        var url = node.raw.url;
 
-        if (id) {
-            this.fireEvent('videoclick', id, e);
+        if (url) {
+            this.fireEvent('videoclick', url, e);
         }
         else if (!node.isLeaf()) {
             if (node.isExpanded()) {

@@ -104,6 +104,7 @@ Ext.define('Docs.view.Viewport', {
                             cls: 'card-panel',
                             xtype: 'container',
                             layout: 'card',
+                            deferredRender: true,
                             items: [
                                 {
                                     autoScroll: true,
@@ -146,6 +147,11 @@ Ext.define('Docs.view.Viewport', {
                                 {
                                     xtype: 'videoindex',
                                     id: 'videos'
+                                },
+                                {
+                                    xtype: 'container',
+                                    id: 'video',
+                                    html: '<iframe id="videoplayer" src="egIframe.html" width="640" height="360" frameborder="0" style="margin: 5px auto 0 auto; display: block;"></iframe>'
                                 }
                             ]
                         }
