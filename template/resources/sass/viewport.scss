@@ -413,6 +413,7 @@ a {
     position: relative;
     -webkit-transition: background-color 0.15s linear;
     @include icons;
+    a { color: #000; }
     a.fav {
       display: block;
       width: 15px;

@@ -66,7 +66,7 @@ module JsDuck
       @processes = nil
       @template_dir = File.dirname(File.dirname(File.dirname(__FILE__))) + "/template"
       @template_links = false
-      @extjs_path = "extjs/ext.js"
+      @extjs_path = "extjs/ext-all.js"
       @local_storage_db = "docs"
     end
 

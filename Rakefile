@@ -60,7 +60,7 @@ desc "Run JSDuck on ExtJS SDK"
 task :sdk do
   load_sdk_vars
   run_jsduck([
-    "--extjs-path", "extjs/ext-debug.js",
+    "--extjs-path", "extjs/ext-all.js",
     # to create symbolic links to template files instead of copying them over.
     # Useful for development.  Turn off for deployment.
     "--template-links",
@@ -243,14 +243,17 @@ task :compress do
 
   # Clean up SASS files
   system "rm -rf #{OUT_DIR}/resources/sass"
+  system "rm -rf #{OUT_DIR}/resources/codemirror"
+  system "rm -rf #{OUT_DIR}/resources/prettify"
   system "rm -rf #{OUT_DIR}/resources/.sass-cache"
 
   # Empty the extjs dir, leave only the main JS file, CSS and images (for inline examples)
   system "rm -rf #{OUT_DIR}/extjs"
   system "mkdir -p #{OUT_DIR}/extjs/resources/css"
   system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
-  system "cp #{EXT_DIR}/ext-all-debug.js #{OUT_DIR}/extjs"
+  system "cp #{EXT_DIR}/ext-all.js #{OUT_DIR}/extjs"
   system "cp #{EXT_DIR}/resources/css/ext-all.css #{OUT_DIR}/extjs/resources/css"
+  system "cp -r #{EXT_DIR}/examples #{OUT_DIR}/extjs"
   system "cp -r #{EXT_DIR}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
 end
 
