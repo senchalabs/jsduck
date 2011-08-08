@@ -10,12 +10,10 @@ Ext.define('Docs.controller.Classes', {
     ],
 
     stores: [
-        'Favorites',
         'Settings'
     ],
 
     models: [
-        'Favorite',
         'Setting'
     ],
 
@@ -76,11 +74,6 @@ Ext.define('Docs.controller.Classes', {
             'classtree': {
                 urlclick: function(url, event) {
                     this.handleUrlClick(url, event, this.getTree());
-                }
-            },
-            'classgrid': {
-                urlclick: function(url, event) {
-                    this.handleUrlClick(url, event, this.getFavoritesGrid());
                 }
             },
 

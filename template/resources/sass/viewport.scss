@@ -71,19 +71,12 @@ $docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
     background: url(../images/icons.png) no-repeat -3px -219px !important; }
   .icon-subclass {
     background: url(../images/icons.png) no-repeat -3px -299px !important; }
-  .icon-fav {
-    background: url(../images/icons.png) no-repeat -3px -328px !important; }
   .icon-example {
     background: url(../images/icons.png) no-repeat -3px -409px !important; }
   .icon-video {
     background: url(../images/icons.png) no-repeat -3px -438px !important; }
   .icon-hist {
     background: url(../images/icons.png) no-repeat -3px -380px !important; } }
-
-@mixin icon-fav {
-  background: url(../images/icons.png) no-repeat -4px -353px; }
-@mixin icon-fav-over {
-  background: url(../images/icons.png) no-repeat -4px -326px; }
 
 @mixin gray-h4 {
   h4 {
@@ -255,8 +248,8 @@ a {
     background: #e9e9e9 url(../images/drag-bar-center.png) no-repeat center;
     border-width: 1px 0; } }
 
-// Use normal color for class-links in tree and favorites grid
-.class-tree, #favorites-grid {
+// Use normal color for class-links in tree
+.class-tree {
   .docClass, .docClass:hover {
     color: #000; } }
 
@@ -413,23 +406,10 @@ a {
     position: relative;
     -webkit-transition: background-color 0.15s linear;
     @include icons;
-    a { color: #000; }
-    a.fav {
-      display: block;
-      width: 15px;
-      height: 15px;
-      position: absolute;
-      right: 7px;
-      top: 0;
-      &.show {
-        @include icon-fav-over; } } }
+    a { color: #000; } }
   .x-grid-row-over {
     .x-grid-cell-inner {
-      -webkit-transition: background-color 0.15s linear;
-      a.fav {
-        @include icon-fav;
-        &:hover {
-          @include icon-fav-over; } } } }
+      -webkit-transition: background-color 0.15s linear; } }
   .x-panel-body {
     border-color: #d4d4d4;
     background: $docs-bg-color; } }

@@ -9,7 +9,6 @@ Ext.define('Docs.Application', {
     name: 'Docs',
 
     requires: [
-        'Docs.Favorites',
         'Docs.History',
         'Docs.Settings'
     ],
@@ -26,7 +25,6 @@ Ext.define('Docs.Application', {
         'Search',
         'InlineExamples',
         'Examples',
-        'Favorites',
         'Guides',
         'Videos',
         'Tabs'
@@ -34,7 +32,6 @@ Ext.define('Docs.Application', {
 
     launch: function() {
         Docs.App = this;
-        Docs.Favorites.init();
         Docs.Settings.init();
         Docs.contentState = {};
 
