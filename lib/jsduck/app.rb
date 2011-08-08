@@ -122,7 +122,7 @@ module JsDuck
       classes = []
       docs.each do |d|
         if d[:tagname] == :class
-          classes << Class.new(d) if !d[:private] || @opts.show_private_classes
+          classes << Class.new(d)
         else
           type = d[:tagname].to_s
           name = d[:name]

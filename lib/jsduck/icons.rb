@@ -8,6 +8,7 @@ module JsDuck
         {
           :name => cls[:name],
           :extends => cls[:extends],
+          :private => cls[:private],
           :icon => icon(cls),
         }
       end

@@ -7,7 +7,14 @@ Ext.define('Docs.view.cls.PackageLogic', {
      * @cfg {String} classes.name
      * @cfg {String} classes.extends
      * @cfg {String} classes.icon
+     * @cfg {Boolean} classes.private
      */
+
+    /**
+     * @cfg
+     * True to include private classes to tree.
+     */
+    showPrivateClasses: false,
 
     /**
      * Initializes tree creator.
@@ -55,6 +62,9 @@ Ext.define('Docs.view.cls.PackageLogic', {
     // When package for the class exists, add class node to that
     // package; otherwise create the package first.
     addClass: function(cls) {
+        if (cls["private"] && !this.showPrivateClasses) {
+            return;
+        }
         var parentName = this.packageName(cls.name);
         var parent = this.packages[parentName] || this.addPackage(parentName);
         parent.children.push(this.classNode(cls));

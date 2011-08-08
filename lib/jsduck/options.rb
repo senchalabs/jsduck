@@ -8,7 +8,6 @@ module JsDuck
 
     attr_accessor :output_dir
     attr_accessor :ignore_global
-    attr_accessor :show_private_classes
     attr_accessor :external_classes
     attr_accessor :warnings
     attr_accessor :verbose
@@ -40,7 +39,6 @@ module JsDuck
 
       @output_dir = nil
       @ignore_global = false
-      @show_private_classes = false
       @external_classes = []
       @warnings = true
       @verbose = false
@@ -87,10 +85,6 @@ module JsDuck
 
         opts.on('--ignore-global', "Turns off the creation of global class.", " ") do
           @ignore_global = true
-        end
-
-        opts.on('--private-classes', "Include private classes to docs.", " ") do
-          @show_private_classes = true
         end
 
         opts.on('--external=CLASSNAME',
