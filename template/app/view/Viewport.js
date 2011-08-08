@@ -7,15 +7,13 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.search.Container',
         'Docs.view.Tabs',
         'Docs.view.index.Welcome',
+        'Docs.view.DocTree',
+        'Docs.view.GroupTree',
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
-        'Docs.view.DocTree',
         'Docs.view.guides.Index',
-        'Docs.view.guides.Tree',
         'Docs.view.videos.Index',
-        'Docs.view.videos.Tree',
-        'Docs.view.examples.Index',
-        'Docs.view.examples.Tree'
+        'Docs.view.examples.Index'
     ],
 
     id: 'viewport',
@@ -83,16 +81,43 @@ Ext.define('Docs.view.Viewport', {
                                 root: Docs.data.classes
                             },
                             {
-                                xtype: 'exampletree',
-                                id: 'exampletree'
+                                xtype: 'grouptree',
+                                id: 'exampletree',
+                                data: Docs.data.examples,
+                                convert: function(example) {
+                                    return {
+                                        leaf: true,
+                                        text: example.text,
+                                        url: '/example/' + example.url,
+                                        iconCls: 'icon-example'
+                                    };
+                                }
                             },
                             {
-                                xtype: 'guidetree',
-                                id: 'guidetree'
+                                xtype: 'grouptree',
+                                id: 'guidetree',
+                                data: Docs.data.guides,
+                                convert: function(guide) {
+                                    return {
+                                        leaf: true,
+                                        text: guide.title,
+                                        url: '/guide/' + guide.name,
+                                        iconCls: 'icon-guide'
+                                    };
+                                }
                             },
                             {
-                                xtype: 'videotree',
-                                id: 'videotree'
+                                xtype: 'grouptree',
+                                id: 'videotree',
+                                data: Docs.data.videos,
+                                convert: function(video) {
+                                    return {
+                                        leaf: true,
+                                        text: video.title,
+                                        url: '/video/' + video.id,
+                                        iconCls: 'icon-video'
+                                    };
+                                }
                             }
                         ]
                     },
