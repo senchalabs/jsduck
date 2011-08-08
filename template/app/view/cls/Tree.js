@@ -6,8 +6,8 @@ Ext.define('Docs.view.cls.Tree', {
     alias: 'widget.classtree',
 
     /**
-     * @cfg {Object[]} data (required)
-     * An array of classes
+     * @cfg {Object} data (required)
+     * An hash of classes
      */
 
     initComponent: function() {
@@ -16,18 +16,9 @@ Ext.define('Docs.view.cls.Tree', {
             text: 'Root'
         };
         this.packages = {"": this.root};
-        this.lookup = this.buildLookupTable(this.data);
         Ext.Array.forEach(this.data, this.addClass, this);
         this.sortTree(this.root);
         this.callParent();
-    },
-
-    buildLookupTable: function(classes) {
-        var table = {};
-        Ext.Array.forEach(classes, function(cls) {
-            table[cls.name] = cls;
-        });
-        return table;
     },
 
     // Sorts all child nodes, and recursively all child packages.
@@ -78,7 +69,7 @@ Ext.define('Docs.view.cls.Tree', {
       return {
         text: this.shortName(cls.name),
         url: "/api/"+cls.name,
-        iconCls: this.classIcon(cls),
+        iconCls: cls.icon,
         leaf: true
       };
     },
@@ -90,29 +81,6 @@ Ext.define('Docs.view.cls.Tree', {
         iconCls: "icon-pkg",
         children: []
       };
-    },
-
-    classIcon: function(cls) {
-        if (cls.singleton) {
-            return "icon-singleton";
-        }
-        else if (this.isComponent(cls)) {
-            return "icon-component";
-        }
-        else {
-            return "icon-class";
-        }
-    },
-
-    // True when class is a component
-    isComponent: function(cls) {
-        if (cls.name === "Ext.Component") {
-            return true;
-        }
-        else {
-            var parent = this.lookup[cls["extends"]];
-            return parent ? this.isComponent(parent) : false;
-        }
     },
 
     // Utility method that given a package or class name finds the name

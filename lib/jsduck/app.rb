@@ -4,8 +4,7 @@ require 'jsduck/source_file'
 require 'jsduck/source_writer'
 require 'jsduck/doc_formatter'
 require 'jsduck/class'
-require 'jsduck/tree'
-require 'jsduck/tree_icons'
+require 'jsduck/icons'
 require 'jsduck/search_data'
 require 'jsduck/relations'
 require 'jsduck/aliases'
@@ -137,18 +136,8 @@ module JsDuck
 
     # Writes classes, guides, videos, and search data to one big .js file
     def write_app_data
-      tree = Tree.new.create(@relations.classes)
-      icons = TreeIcons.new.extract_icons(tree)
-      classes = @relations.classes.map do |cls|
-        {
-          :name => cls[:name],
-          :singleton => cls[:singleton],
-          :extends => cls[:extends],
-        }
-      end
       js = "Docs.data = " + JsonDuck.generate({
-        :classes => classes,
-        :icons => icons,
+        :classes => Icons.new.create(@relations.classes),
         :guides => @guides.to_array,
         :videos => @videos.to_array,
         :examples => @examples.to_array,
