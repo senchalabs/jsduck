@@ -1,11 +1,11 @@
 /**
- * The class tree
+ * The base tree class for classes/guides/videos/examples.
  */
-Ext.define('Docs.view.cls.Tree', {
+Ext.define('Docs.view.DocTree', {
     extend: 'Ext.tree.Panel',
-    alias : 'widget.classtree',
+    alias: 'widget.doctree',
 
-    cls: 'class-tree iScroll',
+    cls: 'doc-tree iScroll',
     useArrows: true,
     rootVisible: false,
 

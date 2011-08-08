@@ -9,7 +9,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.index.Welcome',
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
-        'Docs.view.cls.Tree',
+        'Docs.view.DocTree',
         'Docs.view.guides.Index',
         'Docs.view.guides.Tree',
         'Docs.view.videos.Index',
@@ -78,7 +78,7 @@ Ext.define('Docs.view.Viewport', {
                         width: 240,
                         items: [
                             {
-                                xtype: 'classtree',
+                                xtype: 'doctree',
                                 id: 'classtree',
                                 root: Docs.data.classes
                             },

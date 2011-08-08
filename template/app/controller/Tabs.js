@@ -7,7 +7,7 @@ Ext.define('Docs.controller.Tabs', {
     refs: [
         {
             ref: 'classTree',
-            selector: 'classtree'
+            selector: '#classtree'
         },
         {
             ref: 'guideTree',

@@ -2,7 +2,7 @@
  * The videos tree
  */
 Ext.define('Docs.view.videos.Tree', {
-    extend: 'Docs.view.cls.Tree',
+    extend: 'Docs.view.DocTree',
     alias: 'widget.videotree',
 
     initComponent: function() {
@@ -14,12 +14,12 @@ Ext.define('Docs.view.videos.Tree', {
 
         Ext.Array.each(Docs.data.videos, function(group, idx) {
             var children = Ext.Array.map(group.items, function(video) {
-                return Ext.apply(video, {
+                return {
                     leaf: true,
                     text: video.title,
                     url: '/video/' + video.id,
                     iconCls: 'icon-video'
-                });
+                };
             });
 
             this.root.children.push({

@@ -2,7 +2,7 @@
  * The guides tree
  */
 Ext.define('Docs.view.guides.Tree', {
-    extend: 'Docs.view.cls.Tree',
+    extend: 'Docs.view.DocTree',
     alias: 'widget.guidetree',
 
     initComponent: function() {

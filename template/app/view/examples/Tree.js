@@ -2,7 +2,7 @@
  * The examples tree
  */
 Ext.define('Docs.view.examples.Tree', {
-    extend: 'Docs.view.cls.Tree',
+    extend: 'Docs.view.DocTree',
     alias: 'widget.exampletree',
 
     initComponent: function() {
@@ -14,11 +14,12 @@ Ext.define('Docs.view.examples.Tree', {
 
         Ext.Array.each(Docs.data.examples, function(group) {
             var children = Ext.Array.map(group.items, function(sample) {
-                return Ext.apply(sample, {
+                return {
                     leaf: true,
+                    text: sample.text,
                     url: '/example/' + sample.url,
                     iconCls: 'icon-example'
-                });
+                };
             });
 
             this.root.children.push({

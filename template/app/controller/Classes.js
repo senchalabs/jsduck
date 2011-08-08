@@ -36,7 +36,7 @@ Ext.define('Docs.controller.Classes', {
         },
         {
             ref: 'tree',
-            selector: 'classtree'
+            selector: '#classtree'
         },
         {
             ref: 'favoritesGrid',
