@@ -42,9 +42,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
     // Sorts all child nodes, and recursively all child packages.
     sortTree: function(node) {
       node.children.sort(this.compare, this);
-      Ext.Array.forEach(node.children, function(c) {
-          c.children && this.sortTree(c);
-      }, this);
+      Ext.Array.forEach(node.children, this.sortTree, this);
     },
 
     // Comparson method that sorts package nodes before class nodes.
@@ -65,9 +63,25 @@ Ext.define('Docs.view.cls.PackageLogic', {
         if (cls["private"] && !this.showPrivateClasses) {
             return;
         }
-        var parentName = this.packageName(cls.name);
-        var parent = this.packages[parentName] || this.addPackage(parentName);
-        parent.children.push(this.classNode(cls));
+        if (this.packages[cls.name]) {
+            // node already exists. This happes with classes like Ext
+            // that are both a package and a class.
+            // Just add icon and URL to the node.
+            var pkg = this.packages[cls.name];
+            var node = this.classNode(cls);
+            pkg.iconCls = node.iconCls;
+            pkg.url = node.url;
+        }
+        else {
+            var parentName = this.packageName(cls.name);
+            var parent = this.packages[parentName] || this.addPackage(parentName);
+            if (parent.leaf) {
+                parent.leaf = false;
+            }
+            var node = this.classNode(cls);
+            parent.children.push(node);
+            this.packages[name] = node;
+        }
     },
 
     // When parent package exists, add new package node into it, also
@@ -91,7 +105,8 @@ Ext.define('Docs.view.cls.PackageLogic', {
         text: this.shortName(cls.name),
         url: "/api/"+cls.name,
         iconCls: cls.icon,
-        leaf: true
+        leaf: true,
+        children: []
       };
     },
 
