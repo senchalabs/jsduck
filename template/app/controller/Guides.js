@@ -11,7 +11,7 @@ Ext.define('Docs.controller.Guides', {
         },
         {
             ref: 'tree',
-            selector: 'guidestree'
+            selector: 'guidetree'
         }
     ],
 
@@ -28,7 +28,7 @@ Ext.define('Docs.controller.Guides', {
         );
 
         this.control({
-            'guidestree': {
+            'guidetree': {
                 guideclick: function(url, event) {
                     this.handleUrlClick(url, event, this.getTree());
                 }

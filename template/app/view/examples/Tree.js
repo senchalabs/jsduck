@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.view.examples.Tree', {
     extend: 'Docs.view.cls.Tree',
-    alias: 'widget.examplestree',
+    alias: 'widget.exampletree',
 
     useArrows: true,
     rootVisible: false,

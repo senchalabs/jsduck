@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.view.videos.Tree', {
     extend: 'Docs.view.cls.Tree',
-    alias: 'widget.videostree',
+    alias: 'widget.videotree',
 
     useArrows: true,
     rootVisible: false,

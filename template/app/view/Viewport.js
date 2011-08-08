@@ -82,13 +82,13 @@ Ext.define('Docs.view.Viewport', {
                                 root: Docs.data.classes
                             },
                             {
-                                xtype: 'examplestree'
+                                xtype: 'exampletree'
                             },
                             {
-                                xtype: 'guidestree'
+                                xtype: 'guidetree'
                             },
                             {
-                                xtype: 'videostree'
+                                xtype: 'videotree'
                             }
                         ]
                     },

@@ -20,7 +20,7 @@ Ext.define('Docs.controller.Videos', {
                     this.loadVideo(url);
                 }
             },
-            'videostree': {
+            'videotree': {
                 videoclick: function(url) {
                     this.loadVideo(url);
                 }

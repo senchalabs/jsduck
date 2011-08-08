@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.view.guides.Tree', {
     extend: 'Docs.view.cls.Tree',
-    alias: 'widget.guidestree',
+    alias: 'widget.guidetree',
 
     useArrows: true,
     rootVisible: false,

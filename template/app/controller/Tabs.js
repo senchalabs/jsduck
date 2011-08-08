@@ -11,15 +11,15 @@ Ext.define('Docs.controller.Tabs', {
         },
         {
             ref: 'guideTree',
-            selector: 'guidestree'
+            selector: 'guidetree'
         },
         {
             ref: 'exampleTree',
-            selector: 'examplestree'
+            selector: 'exampletree'
         },
         {
             ref: 'videoTree',
-            selector: 'videostree'
+            selector: 'videotree'
         }
     ],
 

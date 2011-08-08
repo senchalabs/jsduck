@@ -7,7 +7,7 @@ Ext.define('Docs.controller.Examples', {
     refs: [
         {
             ref: 'tree',
-            selector: 'examplestree'
+            selector: 'exampletree'
         }
     ],
 
@@ -22,7 +22,7 @@ Ext.define('Docs.controller.Examples', {
         );
 
         this.control({
-            'examplestree': {
+            'exampletree': {
                 exampleclick: function(url, event) {
                     this.loadExample(url);
                 }
