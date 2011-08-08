@@ -5,23 +5,7 @@ Ext.define('Docs.view.videos.Tree', {
     extend: 'Docs.view.cls.Tree',
     alias: 'widget.videotree',
 
-    useArrows: true,
-    rootVisible: false,
-
-    border: false,
-    bodyBorder: false,
-
     initComponent: function() {
-        this.addEvents(
-            /**
-             * @event
-             * Fired when link in tree was clicked on and needs to be loaded.
-             * @param {String} url  URL of the video to load
-             * @param {Ext.EventObject} e
-             */
-            "videoclick"
-        );
-
         this.root = {
             allowDrag: false,
             children: [],
@@ -39,31 +23,12 @@ Ext.define('Docs.view.videos.Tree', {
             });
 
             this.root.children.push({
-                expanded: idx == 0,
                 text: group.title,
                 children: children,
                 iconCls: 'icon-pkg'
             });
         }, this);
 
-        this.on("itemclick", this.onItemClick, this);
-
         this.callParent();
-    },
-
-    onItemClick: function(view, node, item, index, e) {
-        var url = node.raw.url;
-
-        if (url) {
-            this.fireEvent('videoclick', url, e);
-        }
-        else if (!node.isLeaf()) {
-            if (node.isExpanded()) {
-                node.collapse(false);
-            }
-            else {
-                node.expand(false);
-            }
-        }
     }
 });

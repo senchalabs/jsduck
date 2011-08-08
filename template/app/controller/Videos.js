@@ -15,13 +15,13 @@ Ext.define('Docs.controller.Videos', {
         );
 
         this.control({
-            'videoindex > thumblist': {
+            'videotree': {
                 urlclick: function(url) {
                     this.loadVideo(url);
                 }
             },
-            'videotree': {
-                videoclick: function(url) {
+            'videoindex > thumblist': {
+                urlclick: function(url) {
                     this.loadVideo(url);
                 }
             }

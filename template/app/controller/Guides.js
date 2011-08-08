@@ -29,7 +29,7 @@ Ext.define('Docs.controller.Guides', {
 
         this.control({
             'guidetree': {
-                guideclick: function(url, event) {
+                urlclick: function(url, event) {
                     this.handleUrlClick(url, event, this.getTree());
                 }
             },

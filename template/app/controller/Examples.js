@@ -23,7 +23,7 @@ Ext.define('Docs.controller.Examples', {
 
         this.control({
             'exampletree': {
-                exampleclick: function(url, event) {
+                urlclick: function(url, event) {
                     this.loadExample(url);
                 }
             },
