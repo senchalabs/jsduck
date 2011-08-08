@@ -16,7 +16,6 @@ Ext.define('Docs.view.videos.Index', {
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Ext JS Videos</h1>' },
             Ext.create('Docs.view.ThumbList', {
-                urlField: 'url',
                 itemTpl: [
                     '<dd ext:url="{url}"><img src="{thumb}"/>',
                         '<div><h4>{title}',

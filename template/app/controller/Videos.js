@@ -5,7 +5,6 @@ Ext.define('Docs.controller.Videos', {
     extend: 'Ext.app.Controller',
 
     init: function() {
-
         this.addEvents(
             /**
              * @event showVideo
