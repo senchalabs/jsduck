@@ -5,7 +5,8 @@ Ext.define('Docs.view.cls.Tree', {
     extend: 'Docs.view.DocTree',
     alias: 'widget.classtree',
     requires: [
-        'Docs.view.cls.PackageLogic'
+        'Docs.view.cls.PackageLogic',
+        'Docs.view.cls.InheritanceLogic'
     ],
 
     /**

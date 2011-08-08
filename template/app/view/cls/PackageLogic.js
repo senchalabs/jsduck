@@ -2,27 +2,7 @@
  * Creates package-based tree-structure.
  */
 Ext.define('Docs.view.cls.PackageLogic', {
-    /**
-     * @cfg {Object[]} classes (required) An array of classes.
-     * @cfg {String} classes.name
-     * @cfg {String} classes.extends
-     * @cfg {String} classes.icon
-     * @cfg {Boolean} classes.private
-     */
-
-    /**
-     * @cfg
-     * True to include private classes to tree.
-     */
-    showPrivateClasses: false,
-
-    /**
-     * Initializes tree creator.
-     * @param {Object} cfg
-     */
-    constructor: function(cfg) {
-        Ext.apply(this, cfg);
-    },
+    extend: 'Docs.view.cls.Logic',
 
     /**
      * Creates the tree.
