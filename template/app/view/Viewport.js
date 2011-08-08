@@ -79,16 +79,20 @@ Ext.define('Docs.view.Viewport', {
                         items: [
                             {
                                 xtype: 'classtree',
+                                id: 'classtree',
                                 root: Docs.data.classes
                             },
                             {
-                                xtype: 'exampletree'
+                                xtype: 'exampletree',
+                                id: 'exampletree'
                             },
                             {
-                                xtype: 'guidetree'
+                                xtype: 'guidetree',
+                                id: 'guidetree'
                             },
                             {
-                                xtype: 'videotree'
+                                xtype: 'videotree',
+                                id: 'videotree'
                             }
                         ]
                     },

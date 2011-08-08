@@ -161,7 +161,7 @@ Ext.define('Docs.controller.Classes', {
         this.getViewport().setPageTitle("");
         Ext.getCmp('doctabs').activateTab('#/api');
         Ext.getCmp('tree-container').show();
-        Ext.getCmp('tree-container').layout.setActiveItem(0);
+        Ext.getCmp('tree-container').layout.setActiveItem('classtree');
         Ext.getCmp('card-panel').layout.setActiveItem('classindex');
     },
 
@@ -177,7 +177,7 @@ Ext.define('Docs.controller.Classes', {
 
         Ext.getCmp('card-panel').layout.setActiveItem('classcontainer');
         Ext.getCmp('tree-container').show();
-        Ext.getCmp('tree-container').layout.setActiveItem(0);
+        Ext.getCmp('tree-container').layout.setActiveItem('classtree');
 
         if (this.activeUrl === url) {
             this.scrollContent();
