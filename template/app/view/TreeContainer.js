@@ -5,7 +5,7 @@ Ext.define('Docs.view.TreeContainer', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.treecontainer',
     requires: [
-        'Docs.view.DocTree',
+        'Docs.view.cls.Tree',
         'Docs.view.GroupTree'
     ],
 
@@ -20,9 +20,9 @@ Ext.define('Docs.view.TreeContainer', {
     initComponent: function() {
         this.items = [
             {
-                xtype: 'doctree',
+                xtype: 'classtree',
                 id: 'classtree',
-                root: Docs.data.classes
+                data: Docs.data.classes
             },
             {
                 xtype: 'grouptree',

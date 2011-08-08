@@ -139,8 +139,15 @@ module JsDuck
     def write_app_data
       tree = Tree.new.create(@relations.classes)
       icons = TreeIcons.new.extract_icons(tree)
+      classes = @relations.classes.map do |cls|
+        {
+          :name => cls[:name],
+          :singleton => cls[:singleton],
+          :extends => cls[:extends],
+        }
+      end
       js = "Docs.data = " + JsonDuck.generate({
-        :classes => tree,
+        :classes => classes,
         :icons => icons,
         :guides => @guides.to_array,
         :videos => @videos.to_array,
