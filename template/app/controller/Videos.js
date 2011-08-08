@@ -30,7 +30,7 @@ Ext.define('Docs.controller.Videos', {
 
     loadIndex: function() {
         Ext.getCmp('doctabs').activateTab('#/video');
-        Ext.getCmp('card-panel').layout.setActiveItem('videos');
+        Ext.getCmp('card-panel').layout.setActiveItem('videoindex');
         Ext.getCmp('tree-container').layout.setActiveItem('videotree');
         Ext.getCmp('tree-container').show();
     },

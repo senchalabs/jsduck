@@ -174,7 +174,6 @@ Ext.define('Docs.controller.Classes', {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     loadClass: function(url, noHistory) {
-
         Ext.getCmp('card-panel').layout.setActiveItem('classcontainer');
         Ext.getCmp('tree-container').show();
         Ext.getCmp('tree-container').layout.setActiveItem('classtree');

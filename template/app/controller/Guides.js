@@ -80,7 +80,7 @@ Ext.define('Docs.controller.Guides', {
      */
     loadIndex: function() {
         Ext.getCmp('doctabs').activateTab('#/guide');
-        Ext.getCmp('card-panel').layout.setActiveItem('guides');
+        Ext.getCmp('card-panel').layout.setActiveItem('guideindex');
         Ext.getCmp('tree-container').show();
         Ext.getCmp('tree-container').layout.setActiveItem('guidetree');
     },

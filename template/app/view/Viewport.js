@@ -126,7 +126,7 @@ Ext.define('Docs.view.Viewport', {
                                 {
                                     autoScroll: true,
                                     xtype: 'guideindex',
-                                    id: 'guides'
+                                    id: 'guideindex'
                                 },
                                 {
                                     autoScroll: true,
@@ -139,8 +139,8 @@ Ext.define('Docs.view.Viewport', {
                                     id: 'failure'
                                 },
                                 {
-                                    xtype: 'examplesindex',
-                                    id: 'examples'
+                                    xtype: 'exampleindex',
+                                    id: 'exampleindex'
                                 },
                                 {
                                     id: 'example',
@@ -150,7 +150,7 @@ Ext.define('Docs.view.Viewport', {
                                 },
                                 {
                                     xtype: 'videoindex',
-                                    id: 'videos'
+                                    id: 'videoindex'
                                 },
                                 {
                                     xtype: 'container',
