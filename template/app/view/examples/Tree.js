@@ -32,7 +32,7 @@ Ext.define('Docs.view.examples.Tree', {
             var children = Ext.Array.map(group.items, function(sample) {
                 return Ext.apply(sample, {
                     leaf: true,
-                    url: '/examples/' + sample.url,
+                    url: '/example/' + sample.url,
                     iconCls: 'icon-example'
                 });
             });

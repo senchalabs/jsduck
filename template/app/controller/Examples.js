@@ -36,7 +36,7 @@ Ext.define('Docs.controller.Examples', {
     },
 
     loadIndex: function() {
-        Ext.getCmp('doctabs').activateTab('#/examples');
+        Ext.getCmp('doctabs').activateTab('#/example');
         Ext.getCmp('card-panel').layout.setActiveItem('examples');
         Ext.getCmp('tree-container').layout.setActiveItem(1);
         Ext.getCmp('tree-container').show();
@@ -53,7 +53,7 @@ Ext.define('Docs.controller.Examples', {
         this.fireEvent('showExample', url);
 
         var ifr = document.getElementById("exampleIframe");
-        ifr.contentWindow.location.replace('extjs/' + url);
+        ifr.contentWindow.location.replace('extjs/' + url.replace(/\/example\//, "/examples/"));
         setTimeout(this.activateExampleCard, 150); // Prevent previous example from flashing up
     },
 

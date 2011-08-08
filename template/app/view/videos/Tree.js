@@ -33,7 +33,7 @@ Ext.define('Docs.view.videos.Tree', {
                 return Ext.apply(video, {
                     leaf: true,
                     text: video.title,
-                    url: '/videos/' + video.id,
+                    url: '/video/' + video.id,
                     iconCls: 'icon-video'
                 });
             });

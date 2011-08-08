@@ -27,8 +27,8 @@ Ext.define('Docs.view.Tabs', {
             { cls: 'index',    href: '#' },
             { cls: 'classes',  href: '#/api' },
             { cls: 'guides',   href: '#/guide' },
-            { cls: 'videos',   href: '#/videos' },
-            { cls: 'examples', href: '#/examples' }
+            { cls: 'videos',   href: '#/video' },
+            { cls: 'examples', href: '#/example' }
         ]);
 
         this.callParent();
