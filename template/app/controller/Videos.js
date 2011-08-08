@@ -31,8 +31,7 @@ Ext.define('Docs.controller.Videos', {
     loadIndex: function() {
         Ext.getCmp('doctabs').activateTab('#/video');
         Ext.getCmp('card-panel').layout.setActiveItem('videoindex');
-        Ext.getCmp('tree-container').layout.setActiveItem('videotree');
-        Ext.getCmp('tree-container').show();
+        Ext.getCmp('treecontainer').showTree('videotree');
     },
 
     loadVideo: function(url, noHistory) {
@@ -54,8 +53,7 @@ Ext.define('Docs.controller.Videos', {
 
     activateVideoCard: function() {
         Ext.getCmp('card-panel').layout.setActiveItem('video');
-        Ext.getCmp('tree-container').layout.setActiveItem('videotree');
-        Ext.getCmp('tree-container').show();
+        Ext.getCmp('treecontainer').showTree('videotree');
     },
 
     getUrl: function(videoId) {

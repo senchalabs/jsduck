@@ -153,8 +153,7 @@ Ext.define('Docs.controller.Classes', {
         }
         this.getViewport().setPageTitle("");
         Ext.getCmp('doctabs').activateTab('#/api');
-        Ext.getCmp('tree-container').show();
-        Ext.getCmp('tree-container').layout.setActiveItem('classtree');
+        Ext.getCmp('treecontainer').showTree('classtree');
         Ext.getCmp('card-panel').layout.setActiveItem('classindex');
     },
 
@@ -168,8 +167,7 @@ Ext.define('Docs.controller.Classes', {
      */
     loadClass: function(url, noHistory) {
         Ext.getCmp('card-panel').layout.setActiveItem('classcontainer');
-        Ext.getCmp('tree-container').show();
-        Ext.getCmp('tree-container').layout.setActiveItem('classtree');
+        Ext.getCmp('treecontainer').showTree('classtree');
 
         if (this.activeUrl === url) {
             this.scrollContent();

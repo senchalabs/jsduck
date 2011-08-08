@@ -38,8 +38,7 @@ Ext.define('Docs.controller.Examples', {
     loadIndex: function() {
         Ext.getCmp('doctabs').activateTab('#/example');
         Ext.getCmp('card-panel').layout.setActiveItem('exampleindex');
-        Ext.getCmp('tree-container').layout.setActiveItem('exampletree');
-        Ext.getCmp('tree-container').show();
+        Ext.getCmp('treecontainer').showTree('exampletree');
     },
 
     loadExample: function(url, noHistory) {
@@ -59,7 +58,6 @@ Ext.define('Docs.controller.Examples', {
 
     activateExampleCard: function() {
         Ext.getCmp('card-panel').layout.setActiveItem('example');
-        Ext.getCmp('tree-container').layout.setActiveItem('exampletree');
-        Ext.getCmp('tree-container').show();
+        Ext.getCmp('treecontainer').showTree('exampletree');
     }
 });

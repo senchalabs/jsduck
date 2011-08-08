@@ -81,8 +81,7 @@ Ext.define('Docs.controller.Guides', {
     loadIndex: function() {
         Ext.getCmp('doctabs').activateTab('#/guide');
         Ext.getCmp('card-panel').layout.setActiveItem('guideindex');
-        Ext.getCmp('tree-container').show();
-        Ext.getCmp('tree-container').layout.setActiveItem('guidetree');
+        Ext.getCmp('treecontainer').showTree('guidetree');
     },
 
     /**
@@ -93,8 +92,7 @@ Ext.define('Docs.controller.Guides', {
      */
     loadGuide: function(url, noHistory) {
         Ext.getCmp('card-panel').layout.setActiveItem('guide');
-        Ext.getCmp('tree-container').show();
-        Ext.getCmp('tree-container').layout.setActiveItem('guidetree');
+        Ext.getCmp('treecontainer').showTree('guidetree');
 
         if (this.activeUrl === url) {
             return this.scrollContent();

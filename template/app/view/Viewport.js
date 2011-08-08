@@ -6,9 +6,8 @@ Ext.define('Docs.view.Viewport', {
     requires: [
         'Docs.view.search.Container',
         'Docs.view.Tabs',
+        'Docs.view.TreeContainer',
         'Docs.view.index.Welcome',
-        'Docs.view.DocTree',
-        'Docs.view.GroupTree',
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
         'Docs.view.guides.Index',
@@ -63,63 +62,11 @@ Ext.define('Docs.view.Viewport', {
                 items: [
                     {
                         region: 'west',
-                        id: 'tree-container',
-                        cls: 'iScroll',
+                        xtype: 'treecontainer',
+                        id: 'treecontainer',
                         border: 1,
-                        layout: 'card',
-                        resizable: true,
-                        resizeHandles: 'e',
-                        collapsible: true,
-                        hideCollapseTool: true,
-                        animCollapse: true,
                         bodyPadding: '14 9',
-                        width: 240,
-                        items: [
-                            {
-                                xtype: 'doctree',
-                                id: 'classtree',
-                                root: Docs.data.classes
-                            },
-                            {
-                                xtype: 'grouptree',
-                                id: 'exampletree',
-                                data: Docs.data.examples,
-                                convert: function(example) {
-                                    return {
-                                        leaf: true,
-                                        text: example.text,
-                                        url: '/example/' + example.url,
-                                        iconCls: 'icon-example'
-                                    };
-                                }
-                            },
-                            {
-                                xtype: 'grouptree',
-                                id: 'guidetree',
-                                data: Docs.data.guides,
-                                convert: function(guide) {
-                                    return {
-                                        leaf: true,
-                                        text: guide.title,
-                                        url: '/guide/' + guide.name,
-                                        iconCls: 'icon-guide'
-                                    };
-                                }
-                            },
-                            {
-                                xtype: 'grouptree',
-                                id: 'videotree',
-                                data: Docs.data.videos,
-                                convert: function(video) {
-                                    return {
-                                        leaf: true,
-                                        text: video.title,
-                                        url: '/video/' + video.id,
-                                        iconCls: 'icon-video'
-                                    };
-                                }
-                            }
-                        ]
+                        width: 240
                     },
                     {
                         region: 'center',

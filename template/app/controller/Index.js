@@ -7,7 +7,7 @@ Ext.define('Docs.controller.Index', {
     loadIndex: function() {
         Ext.getCmp('doctabs').activateTab('#');
         Ext.getCmp('card-panel').layout.setActiveItem('welcome');
-        Ext.getCmp('tree-container').hide();
+        Ext.getCmp('treecontainer').hide();
     },
 
     /**
