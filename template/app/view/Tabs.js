@@ -105,14 +105,14 @@ Ext.define('Docs.view.Tabs', {
                 }
             }
         }
-        window.location = url;
     },
 
     /**
      * Removes a tab from the tab bar. If the tab to be removed is the current tab,
-     * activate the tab to the right.
+     * returns url of the tab on the right.
      *
      * @param {String} url URL of the tab to remove
+     * @return {String} URL of the tab to activate next, or undefined.
      */
     removeTab: function(url) {
         var idx = Ext.Array.indexOf(this.openTabs, url);
@@ -131,9 +131,10 @@ Ext.define('Docs.view.Tabs', {
                 if (idx === this.openTabs.length) {
                     idx -= 1;
                 }
-                this.activateTab(this.openTabs[idx]);
+                return this.openTabs[idx];
             }
         }
+        return undefined;
     },
 
     // Determines controller name from URL
