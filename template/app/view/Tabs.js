@@ -43,8 +43,11 @@ Ext.define('Docs.view.Tabs', {
      * @param {String} tab.href URL of the resource
      * @param {String} tab.text Text to be used on the tab
      * @param {String} tab.iconCls CSS class to be used as the icon
+     * @param {Object} opts Options object:
+     * @param {Boolean} opts.animate True to animate the addition
+     * @param {Boolean} opts.activate True to activate the tab
      */
-    addTab: function(tab, noAnimate, noActivate) {
+    addTab: function(tab, opts) {
         if (!Ext.Array.contains(this.openTabs, tab.href)) {
             var tpl = Ext.create('Ext.XTemplate',
                 '<div class="doctab" style="visibility: hidden">',
@@ -59,9 +62,7 @@ Ext.define('Docs.view.Tabs', {
             );
             var docTab = Ext.get(tpl.append(this.el.dom, tab));
 
-            if (noAnimate) {
-                docTab.setStyle({ visibility: 'visible' });
-            } else {
+            if (opts.animate) {
                 // Effect to 'slide' the tab out when it is created.
                 var width = docTab.getWidth();
                 docTab.setStyle('width', '10px');
@@ -70,12 +71,15 @@ Ext.define('Docs.view.Tabs', {
                     to: { width: width }
                 });
             }
+            else {
+                docTab.setStyle({ visibility: 'visible' });
+            }
 
             this.openTabs.push(tab.href);
             Docs.Settings.set('openTabs', this.openTabs);
         }
 
-        if (!noActivate) {
+        if (opts.activate) {
             this.activateTab(tab.href);
         }
     },

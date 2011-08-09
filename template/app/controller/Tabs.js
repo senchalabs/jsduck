@@ -74,14 +74,14 @@ Ext.define('Docs.controller.Tabs', {
      * Adds a tab based on information from the class tree
      * @param {String} url The url of the record in the tree
      */
-    addTabFromTree: function(url, tree, noAnimate, noActivate) {
+    addTabFromTree: function(url, tree) {
         var treeRecord = tree.findRecordByUrl(url);
         if (treeRecord && treeRecord.raw) {
             Ext.getCmp('doctabs').addTab({
                 href: '#' + treeRecord.raw.url,
                 text: treeRecord.raw.text,
                 iconCls: treeRecord.raw.iconCls
-            }, noAnimate, noActivate);
+            }, {animate: true, activate: true});
         }
     },
 
