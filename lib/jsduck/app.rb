@@ -83,7 +83,11 @@ module JsDuck
         else
           copy_template
         end
-        create_index_html
+        create_template_html
+        if !@opts.seo
+          FileUtils.rm(@opts.output_dir+"/index.php")
+          FileUtils.cp(@opts.output_dir+"/template.html", @opts.output_dir+"/index.html")
+        end
         @timer.time(:generating) { write_src(parsed_files) }
         @timer.time(:generating) { write_app_data }
         @timer.time(:generating) { write_classes }
@@ -211,9 +215,9 @@ module JsDuck
       FileUtils.mkdir(@opts.output_dir + "/source")
     end
 
-    def create_index_html
-      Logger.instance.log("Creating #{@opts.output_dir}/index.html...")
-      html = IO.read(@opts.template_dir+"/index.html")
+    def create_template_html
+      Logger.instance.log("Creating #{@opts.output_dir}/template.html...")
+      html = IO.read(@opts.template_dir+"/template.html")
       html.gsub!("{title}", @opts.title)
       html.gsub!("{footer}", "<div id='footer-content' style='display: none'>#{@footer}</div>")
       html.gsub!("{extjs_path}", @opts.extjs_path)
@@ -221,8 +225,8 @@ module JsDuck
       html.gsub!("{categories}", @categories.to_html)
       html.gsub!("{head_html}", @opts.head_html)
       html.gsub!("{body_html}", @opts.body_html)
-      FileUtils.rm(@opts.output_dir+"/index.html")
-      File.open(@opts.output_dir+"/index.html", 'w') {|f| f.write(html) }
+      FileUtils.rm(@opts.output_dir+"/template.html")
+      File.open(@opts.output_dir+"/template.html", 'w') {|f| f.write(html) }
     end
   end
 

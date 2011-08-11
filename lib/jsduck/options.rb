@@ -26,6 +26,7 @@ module JsDuck
     attr_accessor :link_tpl
     attr_accessor :img_tpl
     attr_accessor :export
+    attr_accessor :seo
 
     # Debugging
     attr_accessor :processes
@@ -59,6 +60,7 @@ module JsDuck
       # appears inline within text, but that just looks ugly in HTML
       @img_tpl = '<p><img src="doc-resources/%u" alt="%a"></p>'
       @export = nil
+      @seo = false
 
       # Debugging
       @processes = nil
@@ -185,6 +187,10 @@ module JsDuck
 
         opts.on('--stdout', "Writes JSON export to STDOUT instead of writing to the filesystem", " ") do
           @export = :stdout
+        end
+
+        opts.on('--seo', "Creates index.php that handles search engine traffic.", " ") do
+          @seo = true
         end
 
         opts.separator "Debugging:"

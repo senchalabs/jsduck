@@ -64,6 +64,7 @@ task :sdk do
     # to create symbolic links to template files instead of copying them over.
     # Useful for development.  Turn off for deployment.
     "--template-links",
+    "--seo",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",
@@ -107,6 +108,7 @@ desc "Base task for creating live docs"
 task :base_live_docs do
   load_sdk_vars
   run_jsduck_export([
+    "--seo",
     "--body-html", <<-EOHTML
     <script type="text/javascript">
       var _gaq = _gaq || [];
@@ -223,8 +225,10 @@ end
 desc "Compresses JavaScript and CSS files in output dir"
 task :compress do
   load_sdk_vars
+  # Detect if we are using index.html or template.html
+  index_html = File.exists?("#{OUT_DIR}/index.html") ? "#{OUT_DIR}/index.html" : "#{OUT_DIR}/template.html"
   # Create JSB3 file for Docs app
-  system("sencha", "create", "jsb", "-a", "#{OUT_DIR}/index.html", "-p", "#{OUT_DIR}/app.jsb3")
+  system("sencha", "create", "jsb", "-a", index_html, "-p", "#{OUT_DIR}/app.jsb3")
   # Concatenate files listed in JSB3 file
   system("sencha", "build", "-p", "#{OUT_DIR}/app.jsb3", "-d", OUT_DIR)
   # Remove intermediate build files
@@ -236,10 +240,10 @@ task :compress do
   system("rm", "-r", "#{OUT_DIR}/app")
 
   # Concatenate CSS and JS files referenced in index.html file
-  html = IO.read("#{OUT_DIR}/index.html")
+  html = IO.read(index_html)
   html = combine_css(html, OUT_DIR)
   html = combine_js(html, OUT_DIR)
-  File.open("#{OUT_DIR}/index.html", 'w') {|f| f.write(html) }
+  File.open(index_html, 'w') {|f| f.write(html) }
 
   # Clean up SASS files
   system "rm -rf #{OUT_DIR}/resources/sass"
