@@ -29,7 +29,7 @@ Ext.define('Docs.controller.Videos', {
     },
 
     loadIndex: function() {
-        Ext.getCmp('doctabs').activateTab('#/video');
+        Ext.getCmp('doctabs').activateTab('#!/video');
         Ext.getCmp('card-panel').layout.setActiveItem('videoindex');
         Ext.getCmp('treecontainer').showTree('videotree');
     },
@@ -43,7 +43,7 @@ Ext.define('Docs.controller.Videos', {
         }
         this.currentVideo = videoId;
 
-        noHistory || Docs.History.push('#' + url);
+        noHistory || Docs.History.push(url);
         this.fireEvent('showVideo', url);
 
         var ifr = document.getElementById("videoplayer");

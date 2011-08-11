@@ -36,7 +36,7 @@ Ext.define('Docs.controller.Examples', {
     },
 
     loadIndex: function() {
-        Ext.getCmp('doctabs').activateTab('#/example');
+        Ext.getCmp('doctabs').activateTab('#!/example');
         Ext.getCmp('card-panel').layout.setActiveItem('exampleindex');
         Ext.getCmp('treecontainer').showTree('exampletree');
     },

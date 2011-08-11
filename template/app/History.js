@@ -16,6 +16,7 @@ Ext.define("Docs.History", {
 
     // Parses current URL and navigates to the page
     navigate: function(token) {
+        token = token.replace(/^!/, "");
         var url = this.parseToken(token);
         if (url.url == "/api") {
             Docs.App.getController('Classes').loadIndex(true);
@@ -58,6 +59,9 @@ Ext.define("Docs.History", {
      * @param {String} token  the part of URL after #
      */
     push: function(token) {
+        if (!/^#!?/.test(token)) {
+          token = "#!"+token;
+        }
         Ext.util.History.add(token);
     }
 });

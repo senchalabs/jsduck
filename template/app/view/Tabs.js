@@ -25,10 +25,10 @@ Ext.define('Docs.view.Tabs', {
 
         this.html = tpl.applyTemplate([
             { cls: 'index',    href: '#' },
-            { cls: 'classes',  href: '#/api' },
-            { cls: 'guides',   href: '#/guide' },
-            { cls: 'videos',   href: '#/video' },
-            { cls: 'examples', href: '#/example' }
+            { cls: 'classes',  href: '#!/api' },
+            { cls: 'guides',   href: '#!/guide' },
+            { cls: 'videos',   href: '#!/video' },
+            { cls: 'examples', href: '#!/example' }
         ]);
 
         this.callParent();
@@ -139,16 +139,16 @@ Ext.define('Docs.view.Tabs', {
 
     // Determines controller name from URL
     getControllerName: function(url) {
-        if (/#\/api/.test(url)) {
+        if (/#!?\/api/.test(url)) {
             return 'Classes';
         }
-        else if (/#\/guide/.test(url)) {
+        else if (/#!?\/guide/.test(url)) {
             return 'Guides';
         }
-        else if (/#\/video/.test(url)) {
+        else if (/#!?\/video/.test(url)) {
             return 'Videos';
         }
-        else if (/#\/example/.test(url)) {
+        else if (/#!?\/example/.test(url)) {
             return 'Examples';
         }
         else {

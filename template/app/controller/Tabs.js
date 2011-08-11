@@ -78,7 +78,7 @@ Ext.define('Docs.controller.Tabs', {
         var treeRecord = tree.findRecordByUrl(url);
         if (treeRecord && treeRecord.raw) {
             Ext.getCmp('doctabs').addTab({
-                href: '#' + treeRecord.raw.url,
+                href: '#!' + treeRecord.raw.url,
                 text: treeRecord.raw.text,
                 iconCls: treeRecord.raw.iconCls
             }, {animate: true, activate: true});
@@ -108,7 +108,7 @@ Ext.define('Docs.controller.Tabs', {
             var next = Ext.getCmp('doctabs').removeTab(docTab.down('.tabUrl').getAttribute('href'));
             if (next) {
                 Ext.getCmp('doctabs').activateTab(next);
-                Docs.History.push(next.replace(/#/, ""));
+                Docs.History.push(next);
             }
             docTab.animate({
                 to: { top: 30 }
@@ -139,7 +139,7 @@ Ext.define('Docs.controller.Tabs', {
             }
             var url = Ext.get(el).down('.tabUrl').getAttribute('href');
             Ext.getCmp('doctabs').activateTab(url);
-            Docs.History.push(url.replace(/#/, ""));
+            Docs.History.push(url);
         }, this, {
             delegate: '.doctab'
         });

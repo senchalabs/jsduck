@@ -129,11 +129,11 @@ Ext.define('Docs.controller.Classes', {
     // We don't want to select the class that was opened in another window,
     // so restore the previous selection.
     handleUrlClick: function(url, event, view) {
-        // Remove everything up to #
-        url = url.replace(/.*#/, "");
+        // Remove everything up to #!
+        url = url.replace(/.*#!?/, "");
 
         if (this.opensNewWindow(event)) {
-            window.open("#"+url);
+            window.open("#!"+url);
             view && view.selectUrl(this.activeUrl ? this.activeUrl : "");
         }
         else {
@@ -149,10 +149,10 @@ Ext.define('Docs.controller.Classes', {
     loadIndex: function(noHistory) {
         this.activeUrl = "";
         if (!noHistory) {
-            Docs.History.push("#/api");
+            Docs.History.push("#!/api");
         }
         this.getViewport().setPageTitle("");
-        Ext.getCmp('doctabs').activateTab('#/api');
+        Ext.getCmp('doctabs').activateTab('#!/api');
         Ext.getCmp('treecontainer').showTree('classtree');
         Ext.getCmp('card-panel').layout.setActiveItem('classindex');
     },

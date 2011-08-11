@@ -54,7 +54,7 @@ module JsDuck
       @categories_path = nil
       @inline_examples_dir = nil
       @pretty_json = false
-      @link_tpl = '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
+      @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
       # appears inline within text, but that just looks ugly in HTML
       @img_tpl = '<p><img src="doc-resources/%u" alt="%a"></p>'
@@ -166,7 +166,7 @@ module JsDuck
           "%# - inserts '#' if member name present",
           "%- - inserts '-' if member name present",
           "%a - anchor text for link",
-          "Default is: '<a href=\"#/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'", " ") do |tpl|
+          "Default is: '<a href=\"#!/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'", " ") do |tpl|
           @link_tpl = tpl
         end
 

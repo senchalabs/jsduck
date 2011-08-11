@@ -102,7 +102,7 @@ Ext.define('Docs.Renderer', {
     },
 
     renderLink: function(className) {
-        return Ext.String.format('<a href="#/api/{0}" rel="{0}" class="docClass">{0}</a>', className);
+        return Ext.String.format('<a href="#!/api/{0}" rel="{0}" class="docClass">{0}</a>', className);
     },
 
     renderMembers: function(cls) {
@@ -165,7 +165,7 @@ Ext.define('Docs.Renderer', {
                 // member name and type + link to owner class and source
                 '<div class="title">',
                     '<div class="meta">',
-                        '<a href="#/api/{owner}" rel="{owner}" class="definedIn docClass">{owner}</a><br/>',
+                        '<a href="#!/api/{owner}" rel="{owner}" class="definedIn docClass">{owner}</a><br/>',
                         '<a href="source/{href}" target="_blank" class="viewSource">view source</a>',
                     '</div>',
                     '{signature}',
@@ -208,7 +208,7 @@ Ext.define('Docs.Renderer', {
 
     renderSignature: function(member) {
         this.signatureTpl = this.signatureTpl || new Ext.XTemplate(
-            '{before}<a href="#/api/{owner}-{tagname}-{name}" class="name {expandable}">{name}</a>{params}{after}'
+            '{before}<a href="#!/api/{owner}-{tagname}-{name}" class="name {expandable}">{name}</a>{params}{after}'
         );
 
         var cfg = Ext.apply({}, member);

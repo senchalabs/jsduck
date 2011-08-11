@@ -35,7 +35,7 @@ Ext.define('Docs.controller.Guides', {
             },
             'guideindex > thumblist': {
                 urlclick: function(url) {
-                    this.loadGuide('#/' + url);
+                    this.loadGuide('#!/' + url);
                 }
             },
             'indexcontainer': {
@@ -63,11 +63,11 @@ Ext.define('Docs.controller.Guides', {
     // We don't want to select the class that was opened in another window,
     // so restore the previous selection.
     handleUrlClick: function(url, event, view) {
-        // Remove everything up to #
-        url = url.replace(/.*#/, "");
+        // Remove everything up to #!
+        url = url.replace(/.*#!?/, "");
 
         if (this.opensNewWindow(event)) {
-            window.open("#"+url);
+            window.open("#!"+url);
             view && view.selectUrl(this.activeUrl ? this.activeUrl : "");
         }
         else {
@@ -79,7 +79,7 @@ Ext.define('Docs.controller.Guides', {
      * Loads the guides index
      */
     loadIndex: function() {
-        Ext.getCmp('doctabs').activateTab('#/guide');
+        Ext.getCmp('doctabs').activateTab('#!/guide');
         Ext.getCmp('card-panel').layout.setActiveItem('guideindex');
         Ext.getCmp('treecontainer').showTree('guidetree');
     },

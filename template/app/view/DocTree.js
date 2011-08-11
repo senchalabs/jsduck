@@ -36,7 +36,7 @@ Ext.define('Docs.view.DocTree', {
         // Do this after callParent, because the getRootNode() will
         // work after initComponent has run.
         this.nodeTpl = new Ext.XTemplate(
-            '<a href="#{url}" rel="{url}">{text}</a>'
+            '<a href="#!{url}" rel="{url}">{text}</a>'
         );
         this.initNodeLinks();
     },
