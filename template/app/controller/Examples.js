@@ -27,7 +27,7 @@ Ext.define('Docs.controller.Examples', {
                     this.loadExample(url);
                 }
             },
-            'examplesindex > thumblist': {
+            'exampleindex > thumblist': {
                 urlclick: function(url) {
                     this.loadExample(url);
                 }

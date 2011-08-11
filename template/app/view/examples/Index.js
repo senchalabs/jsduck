@@ -17,7 +17,7 @@ Ext.define('Docs.view.examples.Index', {
             { xtype: 'container', html: '<h1 class="eg">Ext JS Examples</h1>' },
             Ext.create('Docs.view.ThumbList', {
                 itemTpl: [
-                    '<dd ext:url="{url}"><img src="extjs/examples/shared/screens/{icon}"/>',
+                    '<dd ext:url="/example/{url}"><img src="extjs/examples/shared/screens/{icon}"/>',
                         '<div><h4>{text}',
                             '<tpl if="status === \'new\'">',
                                 '<span class="new-sample"> (New)</span>',
