@@ -22,7 +22,7 @@ function print_members($title, $type, $members) {
   echo '</div>';
 }
 
-function print_page($title, $body, $members) {
+function print_page($title, $cls) {
   echo "<!DOCTYPE html>";
   echo '<html>';
   echo "<head>";
@@ -39,20 +39,22 @@ function print_page($title, $body, $members) {
   echo '<div id="north-region" style="padding: 1px 0 11px 11px"><div class="logo"><span><a href="http://docs.sencha.com">Sencha Docs</a></span> <a href="http://docs.sencha.com/ext-js/4-0">Ext JS 4.0</a></div></div>';
   echo '<div id="center-container" class="class-overview" style="padding: 20px">';
   echo "<h1>$title</h1>";
-  echo $body;
+  echo $cls["doc"];
 
   echo '<div class="members">';
-  if ($members["property"]) {
-    print_members('Properties', 'property', $members["property"]);
-  }
-  if ($members["method"]) {
-    print_members('Methods', 'method', $members["property"]);
-  }
-  if ($members["cfg"]) {
-    print_members('Configs', 'cfg', $members["property"]);
-  }
-  if ($members["event"]) {
-    print_members('Events', 'event', $members["property"]);
+  $sections = array(
+    "cfg" => "Configs",
+    "property" => "Properties",
+    "method" => "Methods",
+    "event" => "Events",
+  );
+  foreach ($sections as $key => $title) {
+    if ($cls["members"][$key]) {
+      print_members("Instance ".$title, $key, $cls["members"][$key]);
+    }
+    if ($cls["statics"][$key]) {
+      print_members("Static ".$title, $key, $cls["statics"][$key]);
+    }
   }
   echo '</div>';
 
@@ -68,7 +70,7 @@ if (isset($_GET["_escaped_fragment_"])) {
     $contents = preg_replace('/^.*?\(/', "", $contents);
     $contents = preg_replace('/\);\s*$/', "", $contents);
     $json = json_decode($contents, true);
-    print_page($json["name"], $json["doc"], $json["members"]);
+    print_page($json["name"], $json);
   }
   else {
     echo "Not implemented";
