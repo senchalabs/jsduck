@@ -8,6 +8,7 @@ Ext.define('Docs.view.cls.Header', {
     // will not be correct if not set explicitly
     height: 55,
     alias: 'widget.classheader',
+    cls: 'classheader',
 
     initComponent: function() {
         this.tpl = Ext.create('Ext.XTemplate',
@@ -20,6 +21,7 @@ Ext.define('Docs.view.cls.Header', {
                     '<span>xtype: {[values.xtypes.join(", ")]}</span>',
                 '</tpl>',
             '</h1>',
+            '<a class="print" href="?_escaped_fragment_=/api/{name}" target="_blank">Print</a>',
             {
                 getClass: function(cls) {
                     if (cls.component) {

@@ -284,6 +284,16 @@ a {
       color: #e7ba27;
       letter-spacing: 0px; } }
 
+  .classheader .print {
+    background: url(../images/print.png) no-repeat;
+    position: absolute;
+    right: 0;
+    top: 5px;
+    display: block;
+    text-indent: -9999px;
+    width: 32px;
+    height: 32px; }
+
   h1.class {
     a {
       background: url(../images/class-m.png) no-repeat 0 -5px;
