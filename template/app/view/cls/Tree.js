@@ -15,7 +15,7 @@ Ext.define('Docs.view.cls.Tree', {
      */
 
     initComponent: function() {
-        var tree = new Docs.view.cls.PackageLogic({classes: this.data});
+        var tree = new Docs.view.cls.PackageLogic({classes: this.data, showPrivateClasses: true});
         this.root = tree.create();
         this.callParent();
     }
