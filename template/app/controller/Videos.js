@@ -35,19 +35,18 @@ Ext.define('Docs.controller.Videos', {
     },
 
     loadVideo: function(url, noHistory) {
-        var videoRe = url.match(/[0-9]+$/),
-            videoId = videoRe[0];
+        var videoId = url.match(/[0-9]+$/)[0];
 
         if (this.currentVideo === videoId) {
-            return this.activateVideoCard();
+            this.activateVideoCard();
+            return;
         }
         this.currentVideo = videoId;
 
         noHistory || Docs.History.push(url);
         this.fireEvent('showVideo', url);
 
-        var ifr = document.getElementById("videoplayer");
-        ifr.contentWindow.location.replace(this.getUrl(videoId));
+        Ext.getCmp('video').load(this.getVideo(videoId));
         this.activateVideoCard();
     },
 
@@ -56,31 +55,16 @@ Ext.define('Docs.controller.Videos', {
         Ext.getCmp('treecontainer').showTree('videotree');
     },
 
-    getUrl: function(videoId) {
-        return 'http://player.vimeo.com/video/' + videoId + '?portrait=0&amp;color=4CC208';
-    },
-
-    setUrl: function(videoId) {
-        this.currentVideo = videoId;
-        document.getElementById('videoplayer').setAttribute('src', this.getUrl(videoId));
-    },
-
-    next: function() {
-        if (!this.currentVideo) return;
-        var idx = Ext.Array.indexOf(this.videoIds(), this.currentVideo);
-        this.setUrl((idx == this.videoIds().length) ? 0 : this.videoIds()[idx + 1]);
-    },
-
-    prev: function() {
-        if (!this.currentVideo) return;
-        var idx = Ext.Array.indexOf(this.videoIds(), this.currentVideo);
-        this.setUrl((idx == 0) ? this.videoIds()[this.videoIds().length - 1] : this.videoIds()[idx - 1]);
-    },
-
-    videoIds: function() {
-        if (!this._videoIds) {
-            this._videoIds = Ext.Array.flatten(Ext.Array.map(Docs.data.videos, function(v) { return Ext.Array.map(v.videos, function(w) { return w.id; }); }));
+    // Given an ID returns corresponding video description object
+    getVideo: function(id) {
+        if (!this.map) {
+            this.map = {};
+            Ext.Array.forEach(Docs.data.videos, function(group) {
+                Ext.Array.forEach(group.items, function(v) {
+                    this.map[v.id] = v;
+                }, this);
+            }, this);
         }
-        return this._videoIds;
+        return this.map[id];
     }
 });

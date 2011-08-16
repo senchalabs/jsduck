@@ -12,6 +12,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.cls.Container',
         'Docs.view.guides.Index',
         'Docs.view.videos.Index',
+        'Docs.view.videos.Container',
         'Docs.view.examples.Index'
     ],
 
@@ -125,7 +126,7 @@ Ext.define('Docs.view.Viewport', {
                                     id: 'videoindex'
                                 },
                                 {
-                                    xtype: 'container',
+                                    xtype: 'videocontainer',
                                     id: 'video',
                                     html: '<iframe id="videoplayer" src="egIframe.html" width="640" height="360" frameborder="0" style="margin: 15px;"></iframe>'
                                 }

@@ -778,6 +778,13 @@ a {
     &.copy {
       background-position: -30px -85px; } } }
 
+
+// Some margins for the stuff on video page.
+#video {
+  iframe, p, h1 {
+    margin: 15px; } }
+
+
 .doctabs {
   @include icons;
   padding-left: 10px;
