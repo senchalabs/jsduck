@@ -71,6 +71,10 @@ function print_page($title, $body) {
   echo "</html>";
 }
 
+function print_index_page() {
+  echo file_get_contents("template.html");
+}
+
 function jsonp_decode($jsonp) {
   $jsonp = preg_replace('/^.*?\(/', "", $jsonp);
   $jsonp = preg_replace('/\);\s*$/', "", $jsonp);
@@ -89,13 +93,19 @@ function decode_file($filename) {
 if (isset($_GET["_escaped_fragment_"])) {
   $fragment = $_GET["_escaped_fragment_"];
   try {
-    if (preg_match('/^\/api\/([^-]*)/', $fragment, $m)) {
+    if (preg_match('/^\/api\/([^-]+)/', $fragment, $m)) {
       $json = decode_file("output/".$m[1].".js");
       print_page($json["name"], format_class($json));
     }
-    elseif (preg_match('/^\/guide\/([^-]*)/', $fragment, $m)) {
+    elseif (preg_match('/^\/api\/?$/', $fragment, $m)) {
+      print_index_page();
+    }
+    elseif (preg_match('/^\/guide\/(.+)/', $fragment, $m)) {
       $json = decode_file("guides/".$m[1]."/README.js");
       print_page($json["title"], $json["guide"]);
+    }
+    elseif (preg_match('/^\/guide\/?$/', $fragment, $m)) {
+      print_index_page();
     }
     else {
       print_page("Not implemented", "<p>Support for <code>$fragment</code> not implemented.</p>");
@@ -106,7 +116,7 @@ if (isset($_GET["_escaped_fragment_"])) {
   }
 }
 else {
-  echo file_get_contents("template.html");
+  print_index_page();
 }
 
 ?>
