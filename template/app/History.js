@@ -16,7 +16,6 @@ Ext.define("Docs.History", {
 
     // Parses current URL and navigates to the page
     navigate: function(token) {
-        token = token.replace(/^!/, "");
         var url = this.parseToken(token);
         if (url.url == "/api") {
             Docs.App.getController('Classes').loadIndex(true);
@@ -49,8 +48,8 @@ Ext.define("Docs.History", {
 
     // Parses current browser location
     parseToken: function(token) {
-        var matches = token && token.match(/\/(api|guide|example|video)(\/(.*))?/);
-        return matches ? {type: matches[1], url: matches[0]} : {};
+        var matches = token && token.match(/!?(\/(api|guide|example|video)(\/(.*))?)/);
+        return matches ? {type: matches[2], url: matches[1]} : {};
     },
 
     /**
