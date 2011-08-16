@@ -223,6 +223,7 @@ module JsDuck
       html.gsub!("{extjs_path}", @opts.extjs_path)
       html.gsub!("{local_storage_db}", @opts.local_storage_db)
       html.gsub!("{categories}", @categories.to_html)
+      html.gsub!("{guides}", @guides.to_html)
       html.gsub!("{head_html}", @opts.head_html)
       html.gsub!("{body_html}", @opts.body_html)
       FileUtils.rm(@opts.output_dir+"/template.html")

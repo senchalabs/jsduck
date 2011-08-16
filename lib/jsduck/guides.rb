@@ -52,6 +52,25 @@ module JsDuck
       @guides
     end
 
+    # Returns HTML listing of guides
+    def to_html
+      return "" if @guides.length == 0
+
+      html = @guides.map do |group|
+        [
+          "<h3>#{group['title']}</h3>",
+          "<ul>",
+          group["items"].map {|g| "<li><a href='#!/guide/#{g['name']}'>#{g['title']}</a></li>" },
+          "</ul>",
+        ]
+      end.flatten.join("\n")
+
+      return <<-EOHTML
+        <div id='guides-content' style='display:none'>
+            #{html}
+        </div>
+      EOHTML
+    end
   end
 
 end
