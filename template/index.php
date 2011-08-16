@@ -1,28 +1,53 @@
 <?php
 
-function print_members($title, $type, $members) {
-  echo '<div id="m-' . $type . '"><div class="definedBy">Defined By</div>';
-  echo   '<h3 class="members-title">' . $title . '</h3>';
-  echo   '<div class="subsection">';
-  foreach($members as $idx => $property) {
-    echo   '<div id="' . $property["tagname"] . '-' . $property["name"] . '" class="member open' . ($idx == 0 ? ' first-child' : '') . '">';
-    echo   '  <a class="side expandable"><span>&nbsp;</span></a>';
-    echo   '  <div class="title">';
-    echo   '    <div class="meta">';
-    echo   '      <a href="#!/api/' . $property["owner"] . '" class="definedIn">' . $property["owner"] . '</a>';
-    echo   '    </div>';
-    echo   '    <a href="#!/api/' . $property["owner"] . '-' . $property["tagname"] . '-' . $property["name"] . '" class="name">';
-    echo          $property["name"];
-    echo       '</a><span> : ' . $property["params"] . '</span>';
-    echo   '  </div>';
-    echo   '  <div class="description long">' . $property["doc"] . '</div>';
-    echo   '</div>';
+function format_members($title, $type, $members) {
+  $html = '<div id="m-' . $type . '"><div class="definedBy">Defined By</div>';
+  $html .=   '<h3 class="members-title">' . $title . '</h3>';
+  $html .=   '<div class="subsection">';
+  foreach ($members as $idx => $property) {
+    $html .= '<div id="' . $property["tagname"] . '-' . $property["name"] . '" class="member open' . ($idx == 0 ? ' first-child' : '') . '">';
+    $html .= '  <a class="side expandable"><span>&nbsp;</span></a>';
+    $html .= '  <div class="title">';
+    $html .= '    <div class="meta">';
+    $html .= '      <a href="#!/api/' . $property["owner"] . '" class="definedIn">' . $property["owner"] . '</a>';
+    $html .= '    </div>';
+    $html .= '    <a href="#!/api/' . $property["owner"] . '-' . $property["tagname"] . '-' . $property["name"] . '" class="name">';
+    $html .=        $property["name"];
+    $html .=     '</a><span> : ' . $property["params"] . '</span>';
+    $html .= '  </div>';
+    $html .= '  <div class="description long">' . $property["doc"] . '</div>';
+    $html .= '</div>';
   }
-  echo   '</div>';
-  echo '</div>';
+  $html .=   '</div>';
+  $html .= '</div>';
+  return $html;
 }
 
-function print_page($title, $cls) {
+function format_class($cls) {
+  $html = "<h1>" . $cls["name"] . "</h1>";
+  $html .= $cls["doc"];
+  $html .= '<div class="members">';
+
+  $sections = array(
+    "cfg" => "Configs",
+    "property" => "Properties",
+    "method" => "Methods",
+    "event" => "Events",
+  );
+  foreach ($sections as $key => $title) {
+    if ($cls["members"][$key]) {
+      $html .= format_members("Instance ".$title, $key, $cls["members"][$key]);
+    }
+    if ($cls["statics"][$key]) {
+      $html .= format_members("Static ".$title, $key, $cls["statics"][$key]);
+    }
+  }
+
+  $html .= '</div>';
+  return $html;
+}
+
+function print_page($title, $body) {
   echo "<!DOCTYPE html>";
   echo '<html>';
   echo "<head>";
@@ -38,42 +63,32 @@ function print_page($title, $cls) {
   echo '<body>';
   echo '<div id="north-region" style="padding: 1px 0 11px 11px"><div class="logo"><span><a href="http://docs.sencha.com">Sencha Docs</a></span> <a href="http://docs.sencha.com/ext-js/4-0">Ext JS 4.0</a></div></div>';
   echo '<div id="center-container" class="class-overview" style="padding: 20px">';
-  echo "<h1>$title</h1>";
-  echo $cls["doc"];
 
-  echo '<div class="members">';
-  $sections = array(
-    "cfg" => "Configs",
-    "property" => "Properties",
-    "method" => "Methods",
-    "event" => "Events",
-  );
-  foreach ($sections as $key => $title) {
-    if ($cls["members"][$key]) {
-      print_members("Instance ".$title, $key, $cls["members"][$key]);
-    }
-    if ($cls["statics"][$key]) {
-      print_members("Static ".$title, $key, $cls["statics"][$key]);
-    }
-  }
-  echo '</div>';
+  echo $body;
 
   echo '</div>';
   echo "</body>";
   echo "</html>";
 }
 
+function jsonp_decode($jsonp) {
+  $jsonp = preg_replace('/^.*?\(/', "", $jsonp);
+  $jsonp = preg_replace('/\);\s*$/', "", $jsonp);
+  return json_decode($jsonp, true);
+}
+
 if (isset($_GET["_escaped_fragment_"])) {
   $fragment = $_GET["_escaped_fragment_"];
   if (preg_match('/^\/api\/([^-]*)/', $fragment, $m)) {
-    $contents = file_get_contents("output/".$m[1].".js");
-    $contents = preg_replace('/^.*?\(/', "", $contents);
-    $contents = preg_replace('/\);\s*$/', "", $contents);
-    $json = json_decode($contents, true);
-    print_page($json["name"], $json);
+    $json = jsonp_decode(file_get_contents("output/".$m[1].".js"));
+    print_page($json["name"], format_class($json));
+  }
+  elseif (preg_match('/^\/guide\/([^-]*)/', $fragment, $m)) {
+    $json = jsonp_decode(file_get_contents("guides/".$m[1]."/README.js"));
+    print_page($json["title"], $json["guide"]);
   }
   else {
-    echo "Not implemented";
+    print_page("Not implemented", "<p>Support for <code>$fragment</code> not implemented.</p>");
   }
 }
 else {

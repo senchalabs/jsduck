@@ -44,7 +44,7 @@ module JsDuck
       name = File.basename(in_dir)
       html.gsub!(/<img src="/, "<img src=\"guides/#{name}/")
 
-      JsonDuck.write_jsonp(out_dir+"/README.js", name, {:guide => html})
+      JsonDuck.write_jsonp(out_dir+"/README.js", name, {:guide => html, :title => guide["title"]})
     end
 
     # Returns all guides as array
