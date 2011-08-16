@@ -77,18 +77,32 @@ function jsonp_decode($jsonp) {
   return json_decode($jsonp, true);
 }
 
-if (isset($_GET["_escaped_fragment_"])) {
-  $fragment = $_GET["_escaped_fragment_"];
-  if (preg_match('/^\/api\/([^-]*)/', $fragment, $m)) {
-    $json = jsonp_decode(file_get_contents("output/".$m[1].".js"));
-    print_page($json["name"], format_class($json));
-  }
-  elseif (preg_match('/^\/guide\/([^-]*)/', $fragment, $m)) {
-    $json = jsonp_decode(file_get_contents("guides/".$m[1]."/README.js"));
-    print_page($json["title"], $json["guide"]);
+function decode_file($filename) {
+  if (file_exists($filename)) {
+    return jsonp_decode(file_get_contents($filename));
   }
   else {
-    print_page("Not implemented", "<p>Support for <code>$fragment</code> not implemented.</p>");
+    throw new Exception("File $filename not found");
+  }
+}
+
+if (isset($_GET["_escaped_fragment_"])) {
+  $fragment = $_GET["_escaped_fragment_"];
+  try {
+    if (preg_match('/^\/api\/([^-]*)/', $fragment, $m)) {
+      $json = decode_file("output/".$m[1].".js");
+      print_page($json["name"], format_class($json));
+    }
+    elseif (preg_match('/^\/guide\/([^-]*)/', $fragment, $m)) {
+      $json = decode_file("guides/".$m[1]."/README.js");
+      print_page($json["title"], $json["guide"]);
+    }
+    else {
+      print_page("Not implemented", "<p>Support for <code>$fragment</code> not implemented.</p>");
+    }
+  }
+  catch (Exception $e) {
+    print_page($e->getMessage(), $e->getMessage());
   }
 }
 else {
