@@ -145,6 +145,8 @@ a {
   margin: 10px 0 0 8px;
   padding-left: 21px;
   font-size: 1.1em;
+  a {
+    color: #fff; }
   span {
     font-weight: bold;
     padding-right: 3px; } }
@@ -581,7 +583,7 @@ a {
     font-size: 0.9em; }
   .definedBy {
     float: right;
-    padding: 20px 20px 0 0;
+    padding: 0 20px 0 0;
     font-weight: bold;
     color: #666666; }
   .subsection .definedBy {
@@ -590,18 +592,18 @@ a {
   h3.pa {
     padding: 10px 0 5px 0; }
   h3.members-title {
-    margin: 15px 0 5px 0;
-    padding-left: 30px;
+    margin: 20px 0 5px 0;
+    padding: 0 0 0 30px;
     font-size: 1.3em;
     font-weight: bold; }
   #m-cfg .members-title {
-    background: url(../images/configs.png) no-repeat 0 15px; }
+    background: url(../images/configs.png) no-repeat 0 -1px; }
   #m-property .members-title {
-    background: url(../images/properties.png) no-repeat 0 19px; }
+    background: url(../images/properties.png) no-repeat 0 4px; }
   #m-method .members-title {
-    background: url(../images/methods.png) no-repeat 0 16px; }
+    background: url(../images/methods.png) no-repeat 0 2px; }
   #m-event .members-title {
-    background: url(../images/events.png) no-repeat 0 11px; }
+    background: url(../images/events.png) no-repeat 0 -2px; }
   h4.members-subtitle {
     padding-left: 30px;
     margin: 10px 0 7px 0; }
@@ -803,9 +805,9 @@ a {
       position: absolute;
       right: 0px;
       top: 0;
-      width: 9px;
+      width: 26px;
       height: 29px;
-      background: url(../images/tab-r.png) no-repeat;
+      background: url(../images/tab-rf.png) no-repeat;
       z-index: 5;
     }
     .m {
@@ -844,17 +846,18 @@ a {
         padding-left: 15px;
         padding-bottom: 0;
       }
-      a.close {
-        position: absolute;
-        width: 11px;
-        height: 11px;
-        top: 8px;
-        right: 3px;;
-        background: url(../images/tab-c.png) no-repeat 0 2px !important;
-      }
-      a.close.ovr {
-        background: url(../images/tab-c.png) no-repeat 0 -10px !important;
-      }
+    }
+    a.close {
+      position: absolute;
+      width: 11px;
+      height: 11px;
+      top: 8px;
+      right: 9px;
+      z-index: 6;
+      background: url(../images/tab-c.png) no-repeat 0 2px !important;
+    }
+    a.close.ovr {
+      background: url(../images/tab-c.png) no-repeat 0 -10px !important;
     }
   }
   .doctab.highlight {
@@ -864,6 +867,7 @@ a {
     }
     .r {
       background-image: url(../images/tabh-r.png);
+      width: 10px;
     }
     .m {
       background-image: url(../images/tabh-m.png);
@@ -877,14 +881,17 @@ a {
       width: 13px;
     }
     .r {
-      background: url(../images/taba-r.png) no-repeat 2px -3px;
+      background: url(../images/taba-rf.png) no-repeat 2px -3px;
       z-index: 5;
-      width: 13px;
+      width: 28px;
     }
     .m {
       background: url(../images/taba-m.png) repeat-x 0 -3px;
       z-index: 5;
     }
+  }
+  .doctab.overview .m {
+    z-index: 6;
   }
   .doctab.index .m a {
     background: url(../images/tab-icons.png) no-repeat 7px 1px;

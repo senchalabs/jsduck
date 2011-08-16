@@ -55,20 +55,19 @@ Ext.define('Docs.view.Tabs', {
                     '<div class="m">',
                         '<span class="icn {iconCls}">&nbsp;</span>',
                         '<a class="tabUrl" href="{href}">{text}</a>',
-                        '<a class="close" href="#">&nbsp;</a>',
                     '</div>',
-                '<div class="r"></div>',
+                '<div class="r"><a class="close" href="#">&nbsp;</a></div>',
                 '</div>'
             );
             var docTab = Ext.get(tpl.append(this.el.dom, tab));
+            docTab.dom.initialWidth = docTab.getWidth();
 
             if (opts.animate) {
                 // Effect to 'slide' the tab out when it is created.
-                var width = docTab.getWidth();
                 docTab.setStyle('width', '10px');
                 docTab.setStyle({ visibility: 'visible' });
                 docTab.animate({
-                    to: { width: width }
+                    to: { width: docTab.dom.initialWidth }
                 });
             }
             else {
@@ -81,6 +80,34 @@ Ext.define('Docs.view.Tabs', {
 
         if (opts.activate) {
             this.activateTab(tab.href);
+        }
+
+        this.recalculateWidths();
+    },
+
+    recalculateWidths: function() {
+
+        var maxWidth = Ext.getCmp('doctabs').getWidth() - 240;
+        var numTabs = Ext.query('.doctab').length - 5;
+
+        var tabsWidth = Ext.Array.sum(Ext.Array.map(Ext.query('.doctab'), function(t){
+            var docTab = Ext.get(t);
+            return docTab.dom.initialWidth - 5 || 0;
+        }));
+
+        if (tabsWidth > maxWidth) {
+            var tabDelta = Math.ceil((tabsWidth - maxWidth) / numTabs);
+
+            Ext.Array.each(Ext.query('.doctab'), function(t){
+                var docTab = Ext.get(t);
+                if (!docTab.hasCls('overview')) {
+                    var width = docTab.dom.initialWidth;
+                    var newWidth = (width - tabDelta) > 60 ? (width - tabDelta) : 60;
+                    docTab.animate({
+                        to: { width: newWidth }
+                    });
+                }
+            });
         }
     },
 
@@ -156,3 +183,14 @@ Ext.define('Docs.view.Tabs', {
         }
     }
 });
+
+
+
+// Ext.Array.each(Ext.query('.doctab'), function(t){
+//     var docTab = Ext.get(t);
+//     if (!docTab.hasCls('overview')) {
+//         docTab.animate({
+//             to: { width: 60 }
+//         });
+//     }
+// });
