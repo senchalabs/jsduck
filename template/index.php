@@ -60,7 +60,7 @@ function print_page($title, $body) {
 
   echo "<title>$title | Ext JS 4.0 API Docs | Sencha</title>";
   echo "</head>";
-  echo '<body>';
+  echo '<body style="background: #fff;">';
   echo '<div id="north-region" style="padding: 1px 0 11px 11px"><div class="logo"><span><a href="http://docs.sencha.com">Sencha Docs</a></span> <a href="http://docs.sencha.com/ext-js/4-0">Ext JS 4.0</a></div></div>';
   echo '<div id="center-container" class="class-overview" style="padding: 20px">';
 
@@ -102,7 +102,7 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
     }
     elseif (preg_match('/^\/guide\/(.+)/', $fragment, $m)) {
       $json = decode_file("guides/".$m[1]."/README.js");
-      print_page($json["title"], $json["guide"]);
+      print_page($json["title"], '<div id="guide" style="padding: 1px">' . $json["guide"] . '</div>');
     }
     elseif (preg_match('/^\/guide\/?$/', $fragment, $m)) {
       print_index_page();
