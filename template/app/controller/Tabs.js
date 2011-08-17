@@ -65,6 +65,15 @@ Ext.define('Docs.controller.Tabs', {
                     //     }, this);
                     // }
                 },
+                resize: function() {
+                    Ext.getCmp('doctabs').resizeTabs();
+                },
+                scope: this
+            },
+            '#tabOverflowMenu menuitem': {
+                click: function(cmp) {
+                    this.activateTab(cmp.href, true);
+                },
                 scope: this
             }
         });
@@ -110,6 +119,7 @@ Ext.define('Docs.controller.Tabs', {
                 Ext.getCmp('doctabs').activateTab(next);
                 Docs.History.push(next);
             }
+            docTab.dom.removed = true;
             docTab.animate({
                 to: { top: 30 }
             }).animate({
@@ -138,8 +148,7 @@ Ext.define('Docs.controller.Tabs', {
                 return;
             }
             var url = Ext.get(el).down('.tabUrl').getAttribute('href');
-            Ext.getCmp('doctabs').activateTab(url);
-            Docs.History.push(url);
+            this.activateTab(url);
         }, this, {
             delegate: '.doctab'
         });
@@ -148,6 +157,11 @@ Ext.define('Docs.controller.Tabs', {
             delegate: '.tabUrl',
             preventDefault: true
         });
+    },
+
+    activateTab: function(url, activateOverview) {
+        Ext.getCmp('doctabs').activateTab(url, activateOverview);
+        Docs.History.push(url);
     }
 
 });

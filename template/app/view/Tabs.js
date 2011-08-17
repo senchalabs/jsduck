@@ -10,6 +10,11 @@ Ext.define('Docs.view.Tabs', {
     componentCls: 'doctabs',
 
     openTabs: [],
+    tabBarTabs: [],
+    overflowTabs: [],
+
+    tabWidth: 140,
+    minTabWidth: 80,
 
     initComponent: function() {
         var tpl = new Ext.XTemplate(
@@ -20,7 +25,8 @@ Ext.define('Docs.view.Tabs', {
                     '<div class="r"></div>',
                 '</div>',
             '</tpl>',
-            '<div style="float: left; width: 8px">&nbsp;</div>'
+            '<div style="float: left; width: 8px">&nbsp;</div>',
+            '<div id="tabOverflow"></div>'
         );
 
         this.html = tpl.applyTemplate([
@@ -32,6 +38,20 @@ Ext.define('Docs.view.Tabs', {
         ]);
 
         this.callParent();
+    },
+
+    listeners: {
+        afterrender: function() {
+            Ext.create('Ext.button.Button', {
+                baseCls: null,
+                renderTo: 'tabOverflow',
+                menu: {
+                    id: 'tabOverflowMenu',
+                    plain: true,
+                    items: []
+                }
+            });
+        }
     },
 
     tabQueue: [],
@@ -48,66 +68,134 @@ Ext.define('Docs.view.Tabs', {
      * @param {Boolean} opts.activate True to activate the tab
      */
     addTab: function(tab, opts) {
-        if (!Ext.Array.contains(this.openTabs, tab.href)) {
-            var tpl = Ext.create('Ext.XTemplate',
-                '<div class="doctab" style="visibility: hidden">',
-                    '<div class="l"></div>',
-                    '<div class="m">',
-                        '<span class="icn {iconCls}">&nbsp;</span>',
-                        '<a class="tabUrl" href="{href}">{text}</a>',
-                    '</div>',
-                '<div class="r"><a class="close" href="#">&nbsp;</a></div>',
-                '</div>'
-            );
-            var docTab = Ext.get(tpl.append(this.el.dom, tab));
-            docTab.dom.initialWidth = docTab.getWidth();
 
-            if (opts.animate) {
-                // Effect to 'slide' the tab out when it is created.
-                docTab.setStyle('width', '10px');
-                docTab.setStyle({ visibility: 'visible' });
-                docTab.animate({
-                    to: { width: docTab.dom.initialWidth }
-                });
-            }
-            else {
-                docTab.setStyle({ visibility: 'visible' });
-            }
+        // If there is room add tab
+        // If no room, move last tab to overflow menu and update with current tab
+
+        if (!Ext.Array.contains(this.openTabs, tab.href)) {
 
             this.openTabs.push(tab.href);
             Docs.Settings.set('openTabs', this.openTabs);
+
+            if (this.overflowing()) {
+                Ext.get('tabOverflow').show();
+            } else {
+                this.addTabToBar(tab, opts);
+            }
+
+            Ext.getCmp('tabOverflowMenu').add({
+                text: tab.text,
+                iconCls: tab.iconCls,
+                origIcon: tab.iconCls,
+                href: tab.href,
+                cls: 'x-menu-item-checked' + (this.overflowing() ? ' overflow' : '')
+            });
         }
 
         if (opts.activate) {
             this.activateTab(tab.href);
         }
 
-        this.recalculateWidths();
+        this.resizeTabs();
     },
 
-    recalculateWidths: function() {
+    addTabToBar: function(tab, opts) {
 
-        var maxWidth = Ext.getCmp('doctabs').getWidth() - 240;
-        var numTabs = Ext.query('.doctab').length - 5;
+        this.tabBarTabs.push(tab.url);
 
-        var tabsWidth = Ext.Array.sum(Ext.Array.map(Ext.query('.doctab'), function(t){
-            var docTab = Ext.get(t);
-            return docTab.dom.initialWidth - 5 || 0;
-        }));
+        var tpl = Ext.create('Ext.XTemplate',
+            '<div class="doctab" style="visibility: hidden">',
+                '<div class="l"></div>',
+                '<div class="m">',
+                    '<span class="icn {iconCls}">&nbsp;</span>',
+                    '<a class="tabUrl" href="{href}">{text}</a>',
+                '</div>',
+            '<div class="r"><a class="close" href="#">&nbsp;</a></div>',
+            '</div>'
+        );
+        var docTab = Ext.get(tpl.append(this.el.dom, tab));
 
-        if (tabsWidth > maxWidth) {
-            var tabDelta = Math.ceil((tabsWidth - maxWidth) / numTabs);
+        if (opts.animate) {
+            // Effect to 'slide' the tab out when it is created.
+            docTab.setStyle('width', '10px');
+            docTab.setStyle({ visibility: 'visible' });
+            docTab.animate({
+                to: { width: this.tabWidth - this.tabDelta() }
+            });
+        }
+        else {
+            docTab.setStyle({ visibility: 'visible' });
+        }
+    },
+
+    /**
+     * Returns the width of the Tab Bar
+     * @return {Number} Tab bar width
+     */
+    tabBarWidth: function() {
+        return Ext.getCmp('doctabs').getWidth() - 240;
+    },
+
+    /**
+     * Returns the cumulative width of all visible tabs
+     * @return {Number} Tabs width
+     */
+    totalTabsWidth: function() {
+        return this.openTabs.length * this.tabWidth;
+    },
+
+    /**
+     * Returns the cumulative width of all visible tabs
+     * @return {Number} Tabs width
+     */
+    minTabsWidth: function() {
+        return this.openTabs.length * this.minTabWidth;
+    },
+
+    maxVisibleTabs: function() {
+        return Math.ceil(this.tabBarWidth() / this.minTabWidth);
+    },
+
+    /**
+     * Returns the width delta to be applied to each tab for them to fit within the tab bar
+     * @return {Number} Number of pixels
+     */
+    tabDelta: function() {
+
+        var numTabs = this.maxVisibleTabs();
+        if (this.openTabs.length < numTabs) numTabs = this.openTabs.length;
+
+        var delta = Math.ceil((this.totalTabsWidth() - this.tabBarWidth()) / this.openTabs.length);
+        return (delta < 0) ? 0 : delta;
+    },
+
+    /**
+     * Returns true if the tab bar is overflowing
+     */
+    overflowing: function() {
+        return ((this.openTabs.length - 1) * this.minTabWidth) > this.tabBarWidth();
+    },
+
+    /**
+     * Resizes the tabs
+     */
+    resizeTabs: function() {
+
+        clearTimeout(this.resizeTabsTimer);
+
+        if (this.totalTabsWidth() > this.tabBarWidth()) {
+
+            var tabDelta = this.tabDelta();
 
             Ext.Array.each(Ext.query('.doctab'), function(t){
                 var docTab = Ext.get(t);
-                if (!docTab.hasCls('overview')) {
-                    var width = docTab.dom.initialWidth;
-                    var newWidth = (width - tabDelta) > 60 ? (width - tabDelta) : 60;
+                if (!docTab.dom.removed && !docTab.hasCls('overview')) {
+                    var newWidth = (this.tabWidth - tabDelta) > this.minTabWidth ? (this.tabWidth - tabDelta) : this.minTabWidth;
                     docTab.animate({
                         to: { width: newWidth }
                     });
                 }
-            });
+            }, this);
         }
     },
 
@@ -116,7 +204,7 @@ Ext.define('Docs.view.Tabs', {
      *
      * @param {String} url URL of the tab to activate
      */
-    activateTab: function(url) {
+    activateTab: function(url, activateOverview) {
         this.activeTab = Ext.Array.indexOf(this.openTabs, url);
         Ext.Array.each(Ext.query('.doctab a[class=tabUrl]'), function(d) {
             Ext.get(d).up('.doctab').removeCls(['active', 'highlight']);
@@ -126,12 +214,19 @@ Ext.define('Docs.view.Tabs', {
             var docTab = Ext.get(activeTab).up('.doctab');
             docTab.addCls('active');
             if (!docTab.hasCls('overview')) {
-                var overviewTab = Ext.query('.doctab.' + this.getControllerName(url).toLowerCase());
-                if (overviewTab && overviewTab[0]) {
-                    Ext.get(overviewTab[0]).addCls('highlight');
-                }
+                activateOverview = true;
             }
         }
+        if (activateOverview) {
+            var overviewTab = Ext.query('.doctab.' + this.getControllerName(url).toLowerCase());
+            if (overviewTab && overviewTab[0]) {
+                Ext.get(overviewTab[0]).addCls('highlight');
+            }
+        }
+
+        Ext.Array.each(Ext.ComponentQuery.query('#tabOverflowMenu menuitem'), function(menuItem) {
+            menuItem.setIconCls(menuItem.href == url ? undefined : menuItem.origIcon);
+        });
     },
 
     /**
@@ -149,7 +244,21 @@ Ext.define('Docs.view.Tabs', {
             if (this.activeTab > idx) {
                 this.activeTab -= 1;
             }
+
+            Ext.Array.each(Ext.ComponentQuery.query('#tabOverflowMenu menuitem[href=' + url + ']'), function(menuItem) {
+                Ext.getCmp('tabOverflowMenu').remove(menuItem);
+            });
         }
+
+        if (this.resizeTabsTimer) {
+            clearTimeout(this.resizeTabsTimer);
+        }
+
+        var self = this;
+        this.resizeTabsTimer = setTimeout(function(){
+            self.resizeTabs();
+        }, 1000);
+
         if (idx === this.activeTab) {
             if (this.openTabs.length === 0) {
                 Docs.App.getController(this.getControllerName(url)).loadIndex();
@@ -183,14 +292,3 @@ Ext.define('Docs.view.Tabs', {
         }
     }
 });
-
-
-
-// Ext.Array.each(Ext.query('.doctab'), function(t){
-//     var docTab = Ext.get(t);
-//     if (!docTab.hasCls('overview')) {
-//         docTab.animate({
-//             to: { width: 60 }
-//         });
-//     }
-// });
