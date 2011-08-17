@@ -1,5 +1,5 @@
 /**
- * Base class for Classes controller.
+ * Base class for all controllers that deal with showing content.
  */
 Ext.define('Docs.controller.Content', {
     extend: 'Ext.app.Controller',

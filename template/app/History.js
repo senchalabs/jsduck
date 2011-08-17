@@ -42,7 +42,7 @@ Ext.define("Docs.History", {
             Docs.App.getController('Examples').loadExample(url.url, true);
         }
         else {
-            Docs.App.getController('Index').loadIndex(true);
+            Docs.App.getController('Welcome').loadIndex(true);
         }
     },
 

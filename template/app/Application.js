@@ -19,7 +19,7 @@ Ext.define('Docs.Application', {
     ],
 
     controllers: [
-        'Index',
+        'Welcome',
         'Content',
         'Classes',
         'Search',

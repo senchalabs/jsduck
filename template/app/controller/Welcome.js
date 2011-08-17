@@ -1,7 +1,7 @@
 /**
  * Controller for Welcome page
  */
-Ext.define('Docs.controller.Index', {
+Ext.define('Docs.controller.Welcome', {
     extend: 'Docs.controller.Content',
 
     refs: [

@@ -1,7 +1,7 @@
 /**
  * The Welcome page of docs app.
  */
-Ext.define('Docs.view.index.Welcome', {
+Ext.define('Docs.view.welcome.Index', {
     extend: 'Ext.container.Container',
     alias : 'widget.welcomeindex',
     cls: 'welcome iScroll',

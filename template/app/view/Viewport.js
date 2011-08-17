@@ -7,7 +7,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.search.Container',
         'Docs.view.Tabs',
         'Docs.view.TreeContainer',
-        'Docs.view.index.Welcome',
+        'Docs.view.welcome.Index',
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
         'Docs.view.guides.Index',
