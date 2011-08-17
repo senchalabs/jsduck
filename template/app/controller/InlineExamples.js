@@ -51,6 +51,7 @@ Ext.define('Docs.controller.InlineExamples', {
             },
             'inlineexample toolbar button[iconCls=copy]': {
                 click: function(cmp) {
+                    cmp.up('inlineexample').showCode();
                     var editor = cmp.up('inlineexample').codeEditor;
                     var lastLine = editor.lineCount() - 1;
                     var lastCh = editor.getLine(lastLine).length;
