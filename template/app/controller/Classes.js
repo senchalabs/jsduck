@@ -44,7 +44,8 @@ Ext.define('Docs.controller.Classes', {
         }
     ],
 
-    activeUrl: null,
+    cache: {},
+    scrollState: {},
 
     init: function() {
         this.addEvents(
@@ -93,7 +94,7 @@ Ext.define('Docs.controller.Classes', {
                             docClass = member.down('.meta .docClass'),
                             clsName = docClass.getAttribute('rel'),
                             memberName = member.getAttribute('id'),
-                            baseUrl = '/api/' + this.currentCls.name;
+                            baseUrl = '#!/api/' + this.currentCls.name;
 
                         Docs.contentState[baseUrl] = Docs.contentState[baseUrl] || {};
                         Docs.contentState[baseUrl][memberName] = Docs.contentState[baseUrl][memberName] || {};
@@ -117,9 +118,7 @@ Ext.define('Docs.controller.Classes', {
                     });
 
                     cmp.body.addListener('scroll', function(cmp, el) {
-                        var baseUrl = '/api/' + this.currentCls.name;
-                        Docs.contentState[baseUrl] = Docs.contentState[baseUrl] || {};
-                        Docs.contentState[baseUrl]['scrollOffset'] = el.scrollTop;
+                        this.scrollState['#!/api/' + this.currentCls.name] = el.scrollTop;
                     }, this);
                 }
             }
@@ -134,7 +133,7 @@ Ext.define('Docs.controller.Classes', {
 
         if (this.opensNewWindow(event)) {
             window.open(url);
-            view && view.selectUrl(this.activeUrl ? this.activeUrl : "");
+            view && view.selectUrl(this.currentCls ? "#!/api/"+this.currentCls.name : "");
         }
         else {
             this.loadClass(url);
@@ -147,7 +146,6 @@ Ext.define('Docs.controller.Classes', {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     loadIndex: function(noHistory) {
-        this.activeUrl = "";
         if (!noHistory) {
             Docs.History.push("#!/api");
         }
@@ -156,8 +154,6 @@ Ext.define('Docs.controller.Classes', {
         Ext.getCmp('treecontainer').showTree('classtree');
         Ext.getCmp('card-panel').layout.setActiveItem('classindex');
     },
-
-    cache: {},
 
     /**
      * Loads class.
@@ -211,6 +207,7 @@ Ext.define('Docs.controller.Classes', {
             this.getHeader().load(cls);
             this.getOverview().load(cls);
         }
+        this.currentCls = cls;
 
         if (anchor) {
             this.getOverview().scrollToEl("#" + anchor);
@@ -222,14 +219,12 @@ Ext.define('Docs.controller.Classes', {
 
         this.getTree().selectUrl("#!/api/"+cls.name);
         this.fireEvent('showClass', cls.name);
-        this.currentCls = cls;
     },
 
     scrollContent: function() {
         if (this.currentCls) {
-            var baseUrl = '/api/' + this.currentCls.name,
-                offset = (Docs.contentState[baseUrl] && Docs.contentState[baseUrl].scrollOffset) || 0;
-            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', offset);
+            var baseUrl = '#!/api/' + this.currentCls.name;
+            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', this.scrollState[baseUrl] || 0);
         }
     }
 
