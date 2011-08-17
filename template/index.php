@@ -90,8 +90,8 @@ function decode_file($filename) {
   }
 }
 
-if (isset($_GET["_escaped_fragment_"])) {
-  $fragment = $_GET["_escaped_fragment_"];
+if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
+  $fragment = $_GET["_escaped_fragment_"] ? $_GET["_escaped_fragment_"] : $_GET["print"];
   try {
     if (preg_match('/^\/api\/([^-]+)/', $fragment, $m)) {
       $json = decode_file("output/".$m[1].".js");

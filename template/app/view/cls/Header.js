@@ -21,7 +21,7 @@ Ext.define('Docs.view.cls.Header', {
                     '<span>xtype: {[values.xtypes.join(", ")]}</span>',
                 '</tpl>',
             '</h1>',
-            '<a class="print" href="?_escaped_fragment_=/api/{name}" target="_blank">Print</a>',
+            '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>',
             {
                 getClass: function(cls) {
                     if (cls.component) {
