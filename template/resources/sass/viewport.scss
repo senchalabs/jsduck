@@ -220,36 +220,6 @@ a {
   @include vertical-gradient(#074e7c, #095f93);
 }
 
-#treecontainer {
-  background: $docs-bg-color;
-  #classes-tab-panel {
-    .x-grid-row td {
-      background: none;
-      border: 0;
-      cursor: pointer;
-      img {
-        display: none;
-        margin-top: 1px; } }
-    .x-grid-row-over td {
-      background-color: #f0f0f0; }
-    .x-grid-row-over td img {
-      display: block; }
-    .drag {
-      .x-grid-row-over td {
-        background: none; }
-      .x-grid-row-over td img {
-        display: none; } }
-    .x-grid-cell-inner {
-      padding: 2px 2px 3px 2px; } }
-  .x-splitter {
-    background: #ccc;
-    border-style: solid;
-    border-color: $docs-border-color;
-    height: 6px !important;
-    background-attachment: fixed;
-    background: #e9e9e9 url(../images/drag-bar-center.png) no-repeat center;
-    border-width: 1px 0; } }
-
 #footer {
   background: $docs-bg-color;
   color: gray;
@@ -416,10 +386,7 @@ a {
     font-size: 13px;
     position: relative;
     -webkit-transition: background-color 0.15s linear;
-    @include icons;
-    // Use normal color for class-links in tree
-    a {
-      color: #000; } }
+    @include icons; }
   // Use gray for private classes
   .private .x-grid-cell-inner a {
     color: #666; }
