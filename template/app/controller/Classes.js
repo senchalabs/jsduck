@@ -3,6 +3,8 @@
  */
 Ext.define('Docs.controller.Classes', {
     extend: 'Docs.controller.Content',
+    baseUrl: '#!/api',
+    title: 'Classes',
 
     requires: [
         'Docs.History',
@@ -21,6 +23,10 @@ Ext.define('Docs.controller.Classes', {
         {
             ref: 'viewport',
             selector: '#viewport'
+        },
+        {
+            ref: 'index',
+            selector: '#classindex'
         },
         {
             ref: 'header',
@@ -85,14 +91,6 @@ Ext.define('Docs.controller.Classes', {
                 }
             },
 
-            'classindex': {
-                afterrender: function(cmp) {
-                    cmp.el.addListener('scroll', function(cmp, el) {
-                        this.setScrollState('#!/api', el.scrollTop);
-                    }, this);
-                }
-            },
-
             'classoverview': {
                 afterrender: function(cmp) {
                     // Expand member when clicked
@@ -153,14 +151,8 @@ Ext.define('Docs.controller.Classes', {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     loadIndex: function(noHistory) {
-        if (!noHistory) {
-            Docs.History.push("#!/api");
-        }
-        this.getViewport().setPageTitle("Classes");
-        Ext.getCmp('doctabs').activateTab('#!/api');
         Ext.getCmp('treecontainer').showTree('classtree');
-        Ext.getCmp('card-panel').layout.setActiveItem('classindex');
-        Ext.getCmp('classindex').getEl().scrollTo('top', this.getScrollState("#!/api"));
+        this.callParent(arguments);
     },
 
     /**

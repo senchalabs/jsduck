@@ -7,6 +7,33 @@ Ext.define('Docs.controller.Content', {
     // Code for the middle mouse button
     MIDDLE: 1,
 
+    /**
+     * @cfg {String} baseUrl (required)
+     * The base URL of pages served by this controller.
+     */
+
+    /**
+     * @cfg {String} title
+     * Title to display while index view active.
+     */
+    title: "",
+
+    onLaunch: function() {
+        this.getIndex().on('afterrender', function() {
+            cmp.el.addListener('scroll', function(cmp, el) {
+                this.setScrollState(this.baseUrl, el.scrollTop);
+            }, this);
+        }, this);
+    },
+
+    loadIndex: function(noHistory) {
+        noHistory || Docs.History.push(this.baseUrl);
+        this.getViewport().setPageTitle(this.title);
+        Ext.getCmp('doctabs').activateTab(this.baseUrl);
+        Ext.getCmp('card-panel').layout.setActiveItem(this.getIndex());
+        this.getIndex().getEl().scrollTo('top', this.getScrollState("#"));
+    },
+
     // True when middle mouse button pressed or shift/ctrl key pressed
     // together with mouse button (for Mac)
     opensNewWindow: function(event) {

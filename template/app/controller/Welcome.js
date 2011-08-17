@@ -3,32 +3,22 @@
  */
 Ext.define('Docs.controller.Welcome', {
     extend: 'Docs.controller.Content',
+    baseUrl: "#",
 
     refs: [
         {
             ref: 'viewport',
             selector: '#viewport'
+        },
+        {
+            ref: 'index',
+            selector: '#welcomeindex'
         }
     ],
 
-    init: function() {
-        this.control({
-            'welcomeindex': {
-                afterrender: function(cmp) {
-                    cmp.el.addListener('scroll', function(cmp, el) {
-                        this.setScrollState('#', el.scrollTop);
-                    }, this);
-                }
-            }
-        });
-    },
-
     loadIndex: function() {
-        this.getViewport().setPageTitle("");
-        Ext.getCmp('doctabs').activateTab('#');
-        Ext.getCmp('card-panel').layout.setActiveItem('welcomeindex');
         Ext.getCmp('treecontainer').hide();
-        Ext.getCmp('welcomeindex').getEl().scrollTo('top', this.getScrollState("#"));
+        this.callParent([true]);
     },
 
     /**

@@ -3,11 +3,17 @@
  */
 Ext.define('Docs.controller.Videos', {
     extend: 'Docs.controller.Content',
+    baseUrl: '#!/video',
+    title: 'Videos',
 
     refs: [
         {
             ref: 'viewport',
             selector: '#viewport'
+        },
+        {
+            ref: 'index',
+            selector: '#videoindex'
         },
         {
             ref: 'tree',
@@ -31,13 +37,6 @@ Ext.define('Docs.controller.Videos', {
                     this.loadVideo(url);
                 }
             },
-            'videoindex': {
-                afterrender: function(cmp) {
-                    cmp.el.addListener('scroll', function(cmp, el) {
-                        this.setScrollState('#!/video', el.scrollTop);
-                    }, this);
-                }
-            },
             'videoindex > thumblist': {
                 urlclick: function(url) {
                     this.loadVideo(url);
@@ -47,12 +46,8 @@ Ext.define('Docs.controller.Videos', {
     },
 
     loadIndex: function() {
-        Docs.History.push("#!/video");
-        this.getViewport().setPageTitle("Videos");
-        Ext.getCmp('doctabs').activateTab('#!/video');
-        Ext.getCmp('card-panel').layout.setActiveItem('videoindex');
         Ext.getCmp('treecontainer').showTree('videotree');
-        Ext.getCmp('videoindex').getEl().scrollTo('top', this.getScrollState("#!/video"));
+        this.callParent();
     },
 
     loadVideo: function(url, noHistory) {

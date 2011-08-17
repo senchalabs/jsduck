@@ -3,11 +3,17 @@
  */
 Ext.define('Docs.controller.Guides', {
     extend: 'Docs.controller.Content',
+    baseUrl: '#!/guide',
+    title: 'Guides',
 
     refs: [
         {
             ref: 'viewport',
             selector: '#viewport'
+        },
+        {
+            ref: 'index',
+            selector: '#guideindex'
         },
         {
             ref: 'tree',
@@ -31,13 +37,6 @@ Ext.define('Docs.controller.Guides', {
             '#guidetree': {
                 urlclick: function(url, event) {
                     this.handleUrlClick(url, event, this.getTree());
-                }
-            },
-            'guideindex': {
-                afterrender: function(cmp) {
-                    cmp.el.addListener('scroll', function(cmp, el) {
-                        this.setScrollState('#!/guide', el.scrollTop);
-                    }, this);
                 }
             },
             'guideindex > thumblist': {
@@ -84,12 +83,8 @@ Ext.define('Docs.controller.Guides', {
      * Loads the guides index
      */
     loadIndex: function() {
-        Docs.History.push("#!/guide");
-        this.getViewport().setPageTitle("Guides");
-        Ext.getCmp('doctabs').activateTab('#!/guide');
-        Ext.getCmp('card-panel').layout.setActiveItem('guideindex');
         Ext.getCmp('treecontainer').showTree('guidetree');
-        Ext.getCmp('guideindex').getEl().scrollTo('top', this.getScrollState("#!/guide"));
+        this.callParent();
     },
 
     /**

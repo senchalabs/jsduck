@@ -3,11 +3,17 @@
  */
 Ext.define('Docs.controller.Examples', {
     extend: 'Docs.controller.Content',
+    baseUrl: '#!/example',
+    title: 'Examples',
 
     refs: [
         {
             ref: 'viewport',
             selector: '#viewport'
+        },
+        {
+            ref: 'index',
+            selector: '#exampleindex'
         },
         {
             ref: 'tree',
@@ -31,13 +37,6 @@ Ext.define('Docs.controller.Examples', {
                     this.loadExample(url);
                 }
             },
-            'exampleindex': {
-                afterrender: function(cmp) {
-                    cmp.el.addListener('scroll', function(cmp, el) {
-                        this.setScrollState('#!/example', el.scrollTop);
-                    }, this);
-                }
-            },
             'exampleindex > thumblist': {
                 urlclick: function(url) {
                     this.loadExample(url);
@@ -47,12 +46,8 @@ Ext.define('Docs.controller.Examples', {
     },
 
     loadIndex: function() {
-        Docs.History.push("#!/example");
-        this.getViewport().setPageTitle("Examples");
-        Ext.getCmp('doctabs').activateTab('#!/example');
-        Ext.getCmp('card-panel').layout.setActiveItem('exampleindex');
         Ext.getCmp('treecontainer').showTree('exampletree');
-        Ext.getCmp('exampleindex').getEl().scrollTo('top', this.getScrollState("#!/example"));
+        this.callParent();
     },
 
     loadExample: function(url, noHistory) {
