@@ -32,7 +32,7 @@ Ext.define('Docs.view.TreeContainer', {
                     return {
                         leaf: true,
                         text: example.text,
-                        url: '/example/' + example.url,
+                        url: '#!/example/' + example.url,
                         iconCls: 'icon-example'
                     };
                 }
@@ -45,7 +45,7 @@ Ext.define('Docs.view.TreeContainer', {
                     return {
                         leaf: true,
                         text: guide.title,
-                        url: '/guide/' + guide.name,
+                        url: '#!/guide/' + guide.name,
                         iconCls: 'icon-guide'
                     };
                 }
@@ -58,7 +58,7 @@ Ext.define('Docs.view.TreeContainer', {
                     return {
                         leaf: true,
                         text: video.title,
-                        url: '/video/' + video.id,
+                        url: '#!/video/' + video.id,
                         iconCls: 'icon-video'
                     };
                 }

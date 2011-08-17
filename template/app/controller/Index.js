@@ -4,7 +4,15 @@
 Ext.define('Docs.controller.Index', {
     extend: 'Ext.app.Controller',
 
+    refs: [
+        {
+            ref: 'viewport',
+            selector: '#viewport'
+        }
+    ],
+
     loadIndex: function() {
+        this.getViewport().setPageTitle("");
         Ext.getCmp('doctabs').activateTab('#');
         Ext.getCmp('card-panel').layout.setActiveItem('welcome');
         Ext.getCmp('treecontainer').hide();

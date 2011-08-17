@@ -35,7 +35,7 @@ Ext.define('Docs.controller.Guides', {
             },
             'guideindex > thumblist': {
                 urlclick: function(url) {
-                    this.loadGuide('#!/' + url);
+                    this.loadGuide(url);
                 }
             },
             'indexcontainer': {
@@ -64,10 +64,10 @@ Ext.define('Docs.controller.Guides', {
     // so restore the previous selection.
     handleUrlClick: function(url, event, view) {
         // Remove everything up to #!
-        url = url.replace(/.*#!?/, "");
+        url = url.replace(/.*#!?/, "#!");
 
         if (this.opensNewWindow(event)) {
-            window.open("#!"+url);
+            window.open(url);
             view && view.selectUrl(this.activeUrl ? this.activeUrl : "");
         }
         else {
@@ -79,6 +79,8 @@ Ext.define('Docs.controller.Guides', {
      * Loads the guides index
      */
     loadIndex: function() {
+        Docs.History.push("#!/guide");
+        this.getViewport().setPageTitle("Guides");
         Ext.getCmp('doctabs').activateTab('#!/guide');
         Ext.getCmp('card-panel').layout.setActiveItem('guideindex');
         Ext.getCmp('treecontainer').showTree('guidetree');
@@ -93,32 +95,27 @@ Ext.define('Docs.controller.Guides', {
     loadGuide: function(url, noHistory) {
         Ext.getCmp('card-panel').layout.setActiveItem('guide');
         Ext.getCmp('treecontainer').showTree('guidetree');
-
-        if (this.activeUrl === url) {
-            return this.scrollContent();
-        }
-        this.activeUrl = url;
+        var name = url.match(/^#!\/guide\/(.*)$/)[1];
 
         noHistory || Docs.History.push(url);
 
-        var name = url.match(/^\/guide\/(.*)$/);
-        if (name) {
-            if (this.cache[name[1]]) {
-                this.showGuide(this.cache[name[1]], url, name[1]);
-            } else {
-                Ext.data.JsonP.request({
-                    url: this.getBaseUrl() + "/guides/" + name[1] + "/README.js",
-                    callbackName: name[1],
-                    success: function(json) {
-                        this.cache[name[1]] = json;
-                        this.showGuide(json, url, name[1]);
-                    },
-                    failure: function(response, opts) {
-                        this.getController('Index').showFailure("Guide <b>"+name[1]+"</b> was not found.");
-                    },
-                    scope: this
-                });
-            }
+        if (this.cache[name]) {
+            this.showGuide(this.cache[name], url, name);
+        }
+        else {
+            this.cache[name] = "in-progress";
+            Ext.data.JsonP.request({
+                url: this.getBaseUrl() + "/guides/" + name + "/README.js",
+                callbackName: name,
+                success: function(json) {
+                    this.cache[name] = json;
+                    this.showGuide(json, url, name);
+                },
+                failure: function(response, opts) {
+                    this.getController('Index').showFailure("Guide <b>"+name+"</b> was not found.");
+                },
+                scope: this
+            });
         }
     },
 
@@ -130,13 +127,18 @@ Ext.define('Docs.controller.Guides', {
      * @param {Boolean} name Name of the guide
      */
     showGuide: function(json, url, name) {
-        this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
-        Ext.getCmp("guide").update(json.guide);
-
-        Docs.Syntax.highlight(Ext.get("guide"));
+        if (json === "in-progress") {
+            return;
+        }
+        this.getViewport().setPageTitle(json.title);
+        if (this.activeUrl !== url) {
+            Ext.getCmp("guide").update(json.guide);
+            Docs.Syntax.highlight(Ext.get("guide"));
+        }
         this.scrollContent();
         this.fireEvent('showGuide', name);
         this.getTree().selectUrl(url);
+        this.activeUrl = url;
     },
 
     scrollContent: function() {

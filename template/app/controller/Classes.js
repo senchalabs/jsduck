@@ -130,10 +130,10 @@ Ext.define('Docs.controller.Classes', {
     // so restore the previous selection.
     handleUrlClick: function(url, event, view) {
         // Remove everything up to #!
-        url = url.replace(/.*#!?/, "");
+        url = url.replace(/.*#!?/, "#!");
 
         if (this.opensNewWindow(event)) {
-            window.open("#!"+url);
+            window.open(url);
             view && view.selectUrl(this.activeUrl ? this.activeUrl : "");
         }
         else {
@@ -151,7 +151,7 @@ Ext.define('Docs.controller.Classes', {
         if (!noHistory) {
             Docs.History.push("#!/api");
         }
-        this.getViewport().setPageTitle("");
+        this.getViewport().setPageTitle("Classes");
         Ext.getCmp('doctabs').activateTab('#!/api');
         Ext.getCmp('treecontainer').showTree('classtree');
         Ext.getCmp('card-panel').layout.setActiveItem('classindex');
@@ -169,18 +169,10 @@ Ext.define('Docs.controller.Classes', {
         Ext.getCmp('card-panel').layout.setActiveItem('classcontainer');
         Ext.getCmp('treecontainer').showTree('classtree');
 
-        if (this.activeUrl === url) {
-            this.scrollContent();
-            return;
-        }
-        this.activeUrl = url;
-
-        if (!noHistory) {
-            Docs.History.push(url);
-        }
+        noHistory || Docs.History.push(url);
 
         // separate class and member name
-        var matches = url.match(/^\/api\/(.*?)(?:-(.*))?$/);
+        var matches = url.match(/^#!\/api\/(.*?)(?:-(.*))?$/);
         var cls = matches[1];
         var member = matches[2];
 
@@ -192,6 +184,7 @@ Ext.define('Docs.controller.Classes', {
             this.showClass(this.cache[cls], member);
         }
         else {
+            this.cache[cls] = "in-progress";
             Ext.data.JsonP.request({
                 url: this.getBaseUrl() + '/output/' + cls + '.js',
                 callbackName: cls.replace(/\./g, '_'),
@@ -208,26 +201,28 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-
+        if (cls === "in-progress") {
+            return;
+        }
         this.getOverview().setLoading(false);
 
+        this.getViewport().setPageTitle(cls.name);
         if (this.currentCls !== cls) {
-            this.getViewport().setPageTitle(cls.name);
             this.getHeader().load(cls);
             this.getOverview().load(cls);
-
-            this.getTree().selectUrl("/api/"+cls.name);
-            this.fireEvent('showClass', cls.name);
         }
-
-        this.currentCls = cls;
 
         if (anchor) {
             this.getOverview().scrollToEl("#" + anchor);
             this.fireEvent('showMember', cls.name, anchor);
-        } else {
+        }
+        else {
             this.scrollContent();
         }
+
+        this.getTree().selectUrl("#!/api/"+cls.name);
+        this.fireEvent('showClass', cls.name);
+        this.currentCls = cls;
     },
 
     scrollContent: function() {

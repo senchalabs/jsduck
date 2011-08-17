@@ -54,7 +54,7 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
     classNode: function(cls) {
       return {
         text: cls.name,
-        url: "/api/"+cls.name,
+        url: "#!/api/"+cls.name,
         iconCls: cls.icon
       };
     },

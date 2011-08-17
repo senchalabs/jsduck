@@ -6,6 +6,10 @@ Ext.define('Docs.controller.Examples', {
 
     refs: [
         {
+            ref: 'viewport',
+            selector: '#viewport'
+        },
+        {
             ref: 'tree',
             selector: '#exampletree'
         }
@@ -36,28 +40,45 @@ Ext.define('Docs.controller.Examples', {
     },
 
     loadIndex: function() {
+        Docs.History.push("#!/example");
+        this.getViewport().setPageTitle("Examples");
         Ext.getCmp('doctabs').activateTab('#!/example');
         Ext.getCmp('card-panel').layout.setActiveItem('exampleindex');
         Ext.getCmp('treecontainer').showTree('exampletree');
     },
 
     loadExample: function(url, noHistory) {
-        if (this.activeUrl === url) {
-            return this.activateExampleCard();
+        var example = this.getExample(url);
+        this.getViewport().setPageTitle(example.text);
+        if (this.activeUrl !== url) {
+            var ifr = document.getElementById("exampleIframe");
+            ifr.contentWindow.location.replace('extjs/examples/' + example.url);
+            setTimeout(this.activateExampleCard, 150); // Prevent previous example from flashing up
         }
-        this.activeUrl = url;
-
+        else {
+            this.activateExampleCard();
+        }
         noHistory || Docs.History.push(url);
-
         this.fireEvent('showExample', url);
-
-        var ifr = document.getElementById("exampleIframe");
-        ifr.contentWindow.location.replace('extjs/' + url.replace(/\/example\//, "/examples/"));
-        setTimeout(this.activateExampleCard, 150); // Prevent previous example from flashing up
+        this.getTree().selectUrl(url);
+        this.activeUrl = url;
     },
 
     activateExampleCard: function() {
         Ext.getCmp('card-panel').layout.setActiveItem('example');
         Ext.getCmp('treecontainer').showTree('exampletree');
+    },
+
+    // Given an URL returns corresponding example description object
+    getExample: function(url) {
+        if (!this.map) {
+            this.map = {};
+            Ext.Array.forEach(Docs.data.examples, function(group) {
+                Ext.Array.forEach(group.items, function(e) {
+                    this.map["#!/example/"+e.url] = e;
+                }, this);
+            }, this);
+        }
+        return this.map[url];
     }
 });

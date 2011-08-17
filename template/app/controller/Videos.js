@@ -4,6 +4,17 @@
 Ext.define('Docs.controller.Videos', {
     extend: 'Ext.app.Controller',
 
+    refs: [
+        {
+            ref: 'viewport',
+            selector: '#viewport'
+        },
+        {
+            ref: 'tree',
+            selector: '#videotree'
+        }
+    ],
+
     init: function() {
         this.addEvents(
             /**
@@ -29,30 +40,27 @@ Ext.define('Docs.controller.Videos', {
     },
 
     loadIndex: function() {
+        Docs.History.push("#!/video");
+        this.getViewport().setPageTitle("Videos");
         Ext.getCmp('doctabs').activateTab('#!/video');
         Ext.getCmp('card-panel').layout.setActiveItem('videoindex');
         Ext.getCmp('treecontainer').showTree('videotree');
     },
 
     loadVideo: function(url, noHistory) {
-        var videoId = url.match(/[0-9]+$/)[0];
-
-        if (this.currentVideo === videoId) {
-            this.activateVideoCard();
-            return;
-        }
-        this.currentVideo = videoId;
-
-        noHistory || Docs.History.push(url);
-        this.fireEvent('showVideo', url);
-
-        Ext.getCmp('video').load(this.getVideo(videoId));
-        this.activateVideoCard();
-    },
-
-    activateVideoCard: function() {
         Ext.getCmp('card-panel').layout.setActiveItem('video');
         Ext.getCmp('treecontainer').showTree('videotree');
+        var videoId = url.match(/[0-9]+$/)[0];
+
+        var video = this.getVideo(videoId);
+        this.getViewport().setPageTitle(video.title);
+        if (this.activeUrl !== url) {
+            Ext.getCmp('video').load(video);
+        }
+        noHistory || Docs.History.push(url);
+        this.fireEvent('showVideo', url);
+        this.getTree().selectUrl(url);
+        this.activeUrl = url;
     },
 
     // Given an ID returns corresponding video description object

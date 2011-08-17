@@ -26,14 +26,14 @@ Ext.define('Docs.controller.Tabs', {
     init: function() {
         this.getController('Classes').addListener({
             showClass: function(cls) {
-                this.addTabFromTree("/api/"+cls, this.getClassTree());
+                this.addTabFromTree("#!/api/"+cls, this.getClassTree());
             },
             scope: this
         });
 
         this.getController('Guides').addListener({
             showGuide: function(guide) {
-                this.addTabFromTree("/guide/"+guide, this.getGuideTree());
+                this.addTabFromTree("#!/guide/"+guide, this.getGuideTree());
             },
             scope: this
         });
@@ -78,7 +78,7 @@ Ext.define('Docs.controller.Tabs', {
         var treeRecord = tree.findRecordByUrl(url);
         if (treeRecord && treeRecord.raw) {
             Ext.getCmp('doctabs').addTab({
-                href: '#!' + treeRecord.raw.url,
+                href: treeRecord.raw.url,
                 text: treeRecord.raw.text,
                 iconCls: treeRecord.raw.iconCls
             }, {animate: true, activate: true});
