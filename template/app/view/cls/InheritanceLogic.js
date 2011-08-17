@@ -55,7 +55,8 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
       return {
         text: cls.name,
         url: "#!/api/"+cls.name,
-        iconCls: cls.icon
+        iconCls: cls.icon,
+        cls: cls["private"] ? "private" : ""
       };
     },
 
