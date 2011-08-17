@@ -85,6 +85,14 @@ Ext.define('Docs.controller.Classes', {
                 }
             },
 
+            'classindex': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('scroll', function(cmp, el) {
+                        this.setScrollState('#!/api', el.scrollTop);
+                    }, this);
+                }
+            },
+
             'classoverview': {
                 afterrender: function(cmp) {
                     // Expand member when clicked
@@ -152,6 +160,7 @@ Ext.define('Docs.controller.Classes', {
         Ext.getCmp('doctabs').activateTab('#!/api');
         Ext.getCmp('treecontainer').showTree('classtree');
         Ext.getCmp('card-panel').layout.setActiveItem('classindex');
+        Ext.getCmp('classindex').getEl().scrollTo('top', this.getScrollState("#!/api"));
     },
 
     /**

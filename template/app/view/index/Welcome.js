@@ -3,8 +3,7 @@
  */
 Ext.define('Docs.view.index.Welcome', {
     extend: 'Ext.container.Container',
-    alias : 'widget.welcomecontainer',
-    id : 'welcome',
+    alias : 'widget.welcomeindex',
     cls: 'welcome iScroll',
 
     html: [

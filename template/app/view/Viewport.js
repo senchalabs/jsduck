@@ -85,7 +85,8 @@ Ext.define('Docs.view.Viewport', {
                             items: [
                                 {
                                     autoScroll: true,
-                                    xtype: 'welcomecontainer'
+                                    xtype: 'welcomeindex',
+                                    id: 'welcomeindex'
                                 },
                                 {
                                     autoScroll: true,

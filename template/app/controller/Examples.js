@@ -2,7 +2,7 @@
  * Controller for Examples showcase
  */
 Ext.define('Docs.controller.Examples', {
-    extend: 'Ext.app.Controller',
+    extend: 'Docs.controller.Content',
 
     refs: [
         {
@@ -31,6 +31,13 @@ Ext.define('Docs.controller.Examples', {
                     this.loadExample(url);
                 }
             },
+            'exampleindex': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('scroll', function(cmp, el) {
+                        this.setScrollState('#!/example', el.scrollTop);
+                    }, this);
+                }
+            },
             'exampleindex > thumblist': {
                 urlclick: function(url) {
                     this.loadExample(url);
@@ -45,6 +52,7 @@ Ext.define('Docs.controller.Examples', {
         Ext.getCmp('doctabs').activateTab('#!/example');
         Ext.getCmp('card-panel').layout.setActiveItem('exampleindex');
         Ext.getCmp('treecontainer').showTree('exampletree');
+        Ext.getCmp('exampleindex').getEl().scrollTo('top', this.getScrollState("#!/example"));
     },
 
     loadExample: function(url, noHistory) {

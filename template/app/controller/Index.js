@@ -2,7 +2,7 @@
  * Controller for Welcome page
  */
 Ext.define('Docs.controller.Index', {
-    extend: 'Ext.app.Controller',
+    extend: 'Docs.controller.Content',
 
     refs: [
         {
@@ -11,11 +11,24 @@ Ext.define('Docs.controller.Index', {
         }
     ],
 
+    init: function() {
+        this.control({
+            'welcomeindex': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('scroll', function(cmp, el) {
+                        this.setScrollState('#', el.scrollTop);
+                    }, this);
+                }
+            }
+        });
+    },
+
     loadIndex: function() {
         this.getViewport().setPageTitle("");
         Ext.getCmp('doctabs').activateTab('#');
-        Ext.getCmp('card-panel').layout.setActiveItem('welcome');
+        Ext.getCmp('card-panel').layout.setActiveItem('welcomeindex');
         Ext.getCmp('treecontainer').hide();
+        Ext.getCmp('welcomeindex').getEl().scrollTo('top', this.getScrollState("#"));
     },
 
     /**

@@ -33,6 +33,13 @@ Ext.define('Docs.controller.Guides', {
                     this.handleUrlClick(url, event, this.getTree());
                 }
             },
+            'guideindex': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('scroll', function(cmp, el) {
+                        this.setScrollState('#!/guide', el.scrollTop);
+                    }, this);
+                }
+            },
             'guideindex > thumblist': {
                 urlclick: function(url) {
                     this.loadGuide(url);
@@ -82,6 +89,7 @@ Ext.define('Docs.controller.Guides', {
         Ext.getCmp('doctabs').activateTab('#!/guide');
         Ext.getCmp('card-panel').layout.setActiveItem('guideindex');
         Ext.getCmp('treecontainer').showTree('guidetree');
+        Ext.getCmp('guideindex').getEl().scrollTo('top', this.getScrollState("#!/guide"));
     },
 
     /**
