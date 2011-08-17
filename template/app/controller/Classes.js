@@ -45,7 +45,6 @@ Ext.define('Docs.controller.Classes', {
     ],
 
     cache: {},
-    scrollState: {},
 
     init: function() {
         this.addEvents(
@@ -118,7 +117,7 @@ Ext.define('Docs.controller.Classes', {
                     });
 
                     cmp.body.addListener('scroll', function(cmp, el) {
-                        this.scrollState['#!/api/' + this.currentCls.name] = el.scrollTop;
+                        this.setScrollState('#!/api/' + this.currentCls.name, el.scrollTop);
                     }, this);
                 }
             }
@@ -224,7 +223,7 @@ Ext.define('Docs.controller.Classes', {
     scrollContent: function() {
         if (this.currentCls) {
             var baseUrl = '#!/api/' + this.currentCls.name;
-            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', this.scrollState[baseUrl] || 0);
+            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', this.getScrollState(baseUrl));
         }
     }
 

@@ -16,7 +16,6 @@ Ext.define('Docs.controller.Guides', {
     ],
 
     cache: {},
-    scrollState: {},
 
     init: function() {
         this.addEvents(
@@ -52,7 +51,7 @@ Ext.define('Docs.controller.Guides', {
             '#guide': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('scroll', function(cmp, el) {
-                        this.scrollState[this.activeUrl] = el.scrollTop;
+                        this.setScrollState(this.activeUrl, el.scrollTop);
                     }, this);
                 }
             }
@@ -141,7 +140,7 @@ Ext.define('Docs.controller.Guides', {
     },
 
     scrollContent: function() {
-        Ext.get('guide').scrollTo('top', this.scrollState[this.activeUrl] || 0);
+        Ext.get('guide').scrollTo('top', this.getScrollState(this.activeUrl));
     }
 
 });

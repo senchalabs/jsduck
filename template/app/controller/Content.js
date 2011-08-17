@@ -19,6 +19,19 @@ Ext.define('Docs.controller.Content', {
      */
     getBaseUrl: function() {
         return document.location.href.replace(/#.*/, "").replace(/index.html/, "");
-    }
+    },
 
+    /**
+     * Mediates Tabs controller getScrollState()
+     */
+    getScrollState: function(url) {
+        return Docs.App.getController('Tabs').getScrollState(url);
+    },
+
+    /**
+     * Mediates Tabs controller setScrollState()
+     */
+    setScrollState: function(url, scroll) {
+        Docs.App.getController('Tabs').setScrollState(url, scroll);
+    }
 });

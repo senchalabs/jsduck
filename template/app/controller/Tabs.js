@@ -23,6 +23,8 @@ Ext.define('Docs.controller.Tabs', {
         }
     ],
 
+    scrollState: {},
+
     init: function() {
         this.getController('Classes').addListener({
             showClass: function(cls) {
@@ -114,7 +116,10 @@ Ext.define('Docs.controller.Tabs', {
         cmp.el.addListener('click', function(event, el) {
             cmp.justClosed = true;
             var docTab = Ext.get(el).up('.doctab');
-            var next = Ext.getCmp('doctabs').removeTab(docTab.down('.tabUrl').getAttribute('href'));
+            var url = docTab.down('.tabUrl').getAttribute('href');
+            // Forget the scrollstate of a tab after closing
+            delete this.scrollState[url];
+            var next = Ext.getCmp('doctabs').removeTab(url);
             if (next) {
                 Ext.getCmp('doctabs').activateTab(next);
                 Docs.History.push(next);
@@ -162,6 +167,26 @@ Ext.define('Docs.controller.Tabs', {
     activateTab: function(url, activateOverview) {
         Ext.getCmp('doctabs').activateTab(url, activateOverview);
         Docs.History.push(url);
+    },
+
+    /**
+     * Saves scrollstate of a tab.
+     *
+     * @param {String} url  URL of the tab.
+     * @param {Number} scroll  the scroll amount.
+     */
+    setScrollState: function(url, scroll) {
+        this.scrollState[url] = scroll;
+    },
+
+    /**
+     * Returns scrollstate of a tab.
+     *
+     * @param {String} url  URL of the tab.
+     * @return {Number} the scroll amount.
+     */
+    getScrollState: function(url) {
+        return this.scrollState[url] || 0;
     }
 
 });
