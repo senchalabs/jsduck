@@ -853,8 +853,7 @@ a {
       }
       a.tabUrl {
         padding: 0 14px 0 17px;
-        max-width: 180px;
-        text-overflow: ellipsis;
+        width: 140px;
         overflow: hidden;
       }
       span.icn {
@@ -911,6 +910,9 @@ a {
   .doctab.overview .m {
     z-index: 6;
   }
+  .doctab.overview .m a.tabUrl{
+    width: auto !important;
+  }
   .doctab.index .m a {
     background: url(../images/tab-icons.png) no-repeat 7px 1px;
     padding-left: 16px; padding-right: 12px; padding-bottom: 20px;
@@ -931,6 +933,23 @@ a {
     background: url(../images/tab-icons.png) no-repeat 7px -93px;
     padding-left: 16px; padding-right: 12px;
   }
+
+  #tabOverflow {
+    position: absolute;
+    right: 5px;
+    top: 8px;
+    button {
+      display: block;
+      width: 14px;
+      height: 20px;
+      background: url(../images/tab-overflow.png) no-repeat;
+      border: 0;
+    }
+  }
+}
+
+.overflow {
+  background: #e3e3e3;
 }
 
 .all-demos {
