@@ -1,6 +1,6 @@
 .iScroll ::-webkit-scrollbar,
 .iScroll::-webkit-scrollbar {
-  width:7px;
+  width:6px;
   height:9px;
 }
 .iScroll ::-webkit-scrollbar-button:start:decrement,
@@ -20,12 +20,21 @@
 .iScroll ::-webkit-scrollbar-thumb:vertical,
 .iScroll::-webkit-scrollbar-thumb:vertical {
   height:50px;
-  background-color:rgba(0,0,0,0.15);
+  background-color:rgba(0,0,0,0.12);
   -webkit-border-radius:4px;
 }
 .iScroll ::-webkit-scrollbar-thumb:horizontal,
 .iScroll::-webkit-scrollbar-thumb:horizontal {
   width:50px;
-  background-color: rgba(0,0,0,0.15);
+  background-color: rgba(0,0,0,0.12);
+  -webkit-border-radius:4px;
+}
+
+
+
+#treecontainer .iScroll ::-webkit-scrollbar-thumb:vertical,
+#treecontainer .iScroll::-webkit-scrollbar-thumb:vertical {
+  height:50px;
+  background-color:rgba(0,0,0,0.06);
   -webkit-border-radius:4px;
 }

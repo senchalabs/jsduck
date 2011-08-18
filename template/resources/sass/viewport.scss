@@ -1012,3 +1012,144 @@ a {
 #guideindex,
 #classindex {
   padding: 10px; }
+
+
+  pre, code, kbd, samp, tt {
+    font-family: "Menlo","Courier New",Courier,monospace;
+  }
+
+  #tree-container .x-grid-cell-inner {
+    font-family: Helvetica, Arial, clean, sans-serif;
+    font-size: 12px;
+  }
+  #center-container h1.class a,
+  #center-container h1.component a,
+  #center-container h1.singleton a { /* You should really give these a class of Page Title rather than call out individually */
+    margin-left: -3px;
+  }
+
+  #center-container .doc-contents h1,
+  #center-container .doc-contents h2 {
+    letter-spacing: 0;
+  }
+
+  .class-overview p, #guide p {
+    color: #484848;
+    margin: 0 0 1em;
+    padding: 0 12em 0 0;
+  }
+
+  .class-overview pre, #guide pre {
+    margin: 10px 12em 14px 0;
+  }
+
+  .class-overview .hierarchy {
+    margin: 0 0 80px 60px;
+  }
+
+  .inline-example-cmp {
+    margin-bottom: 1em;
+  }
+
+  .members .member.first-child {
+    border-width: 1px 0;
+  }
+
+  .members .member {
+    border-color: #E0E0E0;
+    border-width: 0 0 1px 0;
+    padding: 10px 22px;
+  }
+
+  .members .member a.side {
+      background: none;
+      cursor: default !important;
+  }
+  .members .member a.side.expandable {
+      cursor: pointer;
+  }
+  .members .member.open a.side.expandable {
+      background: #EBF3FE;
+  }
+
+  .members .member a.side.expandable span {
+    background: url(../images/member-collapsed.gif) no-repeat 3px 13px;
+  }
+  .members .member a.side.expandable:hover span {
+    background: url(../images/member-hover.gif) no-repeat 3px 13px;
+  }
+  .members .member.open a.side.expandable span {
+      background: url(../images/member-expanded.gif) no-repeat 2px 12px;
+  }
+
+
+  .members .member a.side span {
+    display: block;
+    height: 30px;
+    width: 15px;
+  }
+
+  .members .member a.definedIn,
+  .members .member a.viewSource {
+      font-family: Helvetica,Arial,clean, sans-serif;
+  }
+
+  .hover-menu a {
+    font-family: Helvetica, Arial, clean, sans-serif;
+    font-size: 12px;
+  }
+
+
+
+  .x-resizable-over .x-resizable-handle-east {
+    cursor: col-resize;
+  }
+  .x-resizable-handle-east {
+    width: 6px;
+  }
+
+  .x-resizable-over .x-resizable-handle-east, .x-resizable-over .x-resizable-handle-west, .x-resizable-pinned .x-resizable-handle-east, .x-resizable-pinned .x-resizable-handle-west {
+    background: none;
+    border: solid black;
+    border-width: 0 1px 0 0;
+  }
+
+  .x-panel-body-default {
+    border-width: 0 1px 0 0;
+  }
+
+  #container-1019[role="presentation"] {
+    padding: 0;
+  }
+
+
+  #m-property {
+    margin-bottom: 40px;
+  }
+
+  #treecontainer .x-panel-body{
+    background: transparent;
+  }
+
+  #treecontainer{
+    background: #f8f8f8;
+    background: -moz-linear-gradient(top, #ffffff 0%, #f8f8f8 10px);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(10px,#f8f8f8));
+    background: -webkit-linear-gradient(top, #ffffff 0%,#f8f8f8 10px);
+    background: -o-linear-gradient(top, #ffffff 0%,#f8f8f8  5px);
+    background: -ms-linear-gradient(top, #ffffff 0%,#f8f8f8 5px);
+    background: linear-gradient(top, #ffffff 0%,#f8f8f8  5px);
+  }
+
+  .class-overview {
+
+    .x-toolbar-default {
+      border-radius: 2px;
+      border-color: #e4e4e4;
+      border-width: 1px;
+      box-shadow: inset rgba(255,255,255,0.5) 0 1px 0;
+    }
+    .x-panel-body {
+        padding-right:8px;
+    }
+  }
