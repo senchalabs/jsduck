@@ -9,12 +9,11 @@ Ext.define('Docs.view.Tabs', {
 
     componentCls: 'doctabs',
 
-    openTabs: [],
-    tabBarTabs: [],
-    overflowTabs: [],
-
-    tabWidth: 140,
     minTabWidth: 80,
+    maxTabWidth: 140,
+
+    tabs: [],
+    tabsInBar: [],
 
     initComponent: function() {
         var tpl = new Ext.XTemplate(
@@ -54,10 +53,8 @@ Ext.define('Docs.view.Tabs', {
         }
     },
 
-    tabQueue: [],
-
     /**
-     * Adds a new tab to the Tab bar
+     * Adds a new tab
      *
      * @param {Object} tab
      * @param {String} tab.href URL of the resource
@@ -69,39 +66,114 @@ Ext.define('Docs.view.Tabs', {
      */
     addTab: function(tab, opts) {
 
-        // If there is room add tab
-        // If no room, move last tab to overflow menu and update with current tab
+        // console.log("Adding tab", tab, opts)
 
-        if (!Ext.Array.contains(this.openTabs, tab.href)) {
+        if (!this.hasTab(tab.href)) {
 
-            this.openTabs.push(tab.href);
-            Docs.Settings.set('openTabs', this.openTabs);
+            this.tabs.push(tab.href);
 
-            if (this.overflowing()) {
-                Ext.get('tabOverflow').show();
-            } else {
+            if (this.roomForNewTab()) {
                 this.addTabToBar(tab, opts);
             }
-
-            Ext.getCmp('tabOverflowMenu').add({
-                text: tab.text,
-                iconCls: tab.iconCls,
-                origIcon: tab.iconCls,
-                href: tab.href,
-                cls: 'x-menu-item-checked' + (this.overflowing() ? ' overflow' : '')
-            });
+            this.addTabToOverflow(tab, opts);
         }
-
-        if (opts.activate) {
-            this.activateTab(tab.href);
-        }
-
-        this.resizeTabs();
+        this.activateTab(tab.href);
     },
 
+    /**
+     * Removes a tab. If the tab to be closed is currently active, activate a neighboring tab.
+     *
+     * @param {String} url URL of the tab to remove
+     */
+    removeTab: function(url) {
+
+        if (!this.hasTab(url)) return false;
+
+        if (this.inTabBar(url)) {
+            this.removeTabFromBar(url);
+        }
+
+        var idx = Ext.Array.indexOf(this.tabs, url);
+        if (idx !== false) {
+            Ext.Array.erase(this.tabs, idx, 1);
+        }
+
+        if (this.activeTab == url) {
+            if (this.tabs.length === 0) {
+                Docs.App.getController(this.getControllerName(url)).loadIndex();
+            }
+            else {
+                if (idx === this.tabs.length) {
+                    idx -= 1;
+                }
+                this.activateTab(this.tabs[idx]);
+            }
+        }
+    },
+
+    /**
+     * Activates a tab
+     *
+     * @param {String} url URL of tab
+     */
+    activateTab: function(url) {
+
+        // console.log("Activating", url);
+
+        this.activeTab = url;
+
+        if (!this.inTabBar(url)) {
+            this.swapLastTabWith(url);
+        }
+
+        Ext.Array.each(Ext.query('.doctab a[class=tabUrl]'), function(d) {
+            Ext.get(d).up('.doctab').removeCls(['active', 'highlight']);
+        });
+
+        var activeTab = Ext.query('.doctab a[href="' + url + '"]')[0];
+        if (activeTab) {
+            var docTab = Ext.get(activeTab).up('.doctab');
+            docTab.addCls('active');
+        }
+
+        this.highlightOverviewTab(url);
+    },
+
+    /**
+     *  Refreshes tabs and overflow. Useful for window resize event.
+     */
+    refresh: function() {
+
+    },
+
+    // Private methods
+
+    /**
+     * @private
+     * Determines if the tab bar has room for a new tab.
+     * @return {Boolean} True if tab bar has room for a new tab
+     */
+    roomForNewTab: function() {
+        return this.tabsInBar.length < this.maxTabsInBar();
+    },
+
+    /**
+     * @private
+     * @return {Boolean} True if we are already tracking a tab with the given URL
+     */
+    hasTab: function(url) {
+        return Ext.Array.contains(this.tabs, url);
+    },
+
+    /**
+     * @private
+     * Adds a tab to the tab bar
+     */
     addTabToBar: function(tab, opts) {
 
-        this.tabBarTabs.push(tab.url);
+        // console.log("Adding tab to bar", tab.href)
+
+        this.tabsInBar.push(tab.href);
 
         var tpl = Ext.create('Ext.XTemplate',
             '<div class="doctab" style="visibility: hidden">',
@@ -120,160 +192,141 @@ Ext.define('Docs.view.Tabs', {
             docTab.setStyle('width', '10px');
             docTab.setStyle({ visibility: 'visible' });
             docTab.animate({
-                to: { width: this.tabWidth - this.tabDelta() }
+                to: { width: this.tabWidth() }
             });
         }
         else {
             docTab.setStyle({ visibility: 'visible' });
         }
+
+        this.resizeTabs();
     },
 
     /**
-     * Returns the width of the Tab Bar
-     * @return {Number} Tab bar width
+     * @private
+     * @return {Boolean} true if the tab is in the tab bar
+     */
+    inTabBar: function(url) {
+        return Ext.Array.contains(this.tabsInBar, url);
+    },
+
+    /**
+     * @private
+     */
+    removeTabFromBar: function(url) {
+
+        var idx = Ext.Array.indexOf(this.tabsInBar, url);
+        Ext.Array.erase(this.tabsInBar, idx, 1);
+
+        var docTab = Ext.get(Ext.query('.doctab a[href="' + url + '"]')[0]).up('.doctab');
+
+        docTab.dom.removed = true;
+        docTab.animate({
+            to: { top: 30 }
+        }).animate({
+            to: { width: 10 },
+            listeners: {
+                afteranimate: function() {
+                    docTab.remove();
+                },
+                scope: this
+            }
+        });
+        this.resizeTabs();
+    },
+
+    /**
+     * @private
+     * Adds a tab to the overflow list
+     */
+    addTabToOverflow: function(tab, opts) {
+
+        var overflow = this.inTabBar(tab.href);
+        if (this.tabs.length > this.tabsInBar.length && this.tabsInBar.length == this.maxTabsInBar()) {
+            // Add 'overflow' class to last visible tab in overflow dropdown
+        }
+
+        Ext.getCmp('tabOverflowMenu').add({
+            text: tab.text,
+            iconCls: tab.iconCls,
+            origIcon: tab.iconCls,
+            href: tab.href,
+            cls: 'x-menu-item-checked' + (overflow ? '' : ' overflow')
+        });
+    },
+
+    /**
+     * @private
+     * Swaps the last tab with teh given tab currently in the overflow list
+     */
+    swapLastTabWith: function(url) {
+        console.log("Swap last tab with", url);
+    },
+
+    /**
+     * @private
+     */
+    highlightOverviewTab: function(url) {
+        var overviewTab = Ext.query('.doctab.' + this.getControllerName(url).toLowerCase());
+        if (overviewTab && overviewTab[0]) {
+            Ext.get(overviewTab[0]).addCls('highlight');
+        }
+    },
+
+    /**
+     * @private
+     * @return {Number} Maximum number of tabs we can fit in the tab bar
+     */
+    maxTabsInBar: function() {
+        return Math.floor(this.tabBarWidth() / this.minTabWidth);
+    },
+
+    /**
+     * @private
+     * @return {Number} Width of a tab in the tab bar
+     */
+    tabWidth: function() {
+
+        var width = Math.floor(this.tabBarWidth() / this.tabsInBar.length) + 6;
+
+        if (width > this.maxTabWidth) {
+            return this.maxTabWidth;
+        }
+        else if (width < this.minTabWidth) {
+            return this.minTabWidth;
+        }
+        else {
+            return width;
+        }
+    },
+
+    /**
+     * @private
+     * @return {Number} Width of the tab bar (not including the static tabs)
      */
     tabBarWidth: function() {
-        return Ext.getCmp('doctabs').getWidth() - 240;
+        return this.getWidth() - 265;
     },
 
     /**
-     * Returns the cumulative width of all visible tabs
-     * @return {Number} Tabs width
-     */
-    totalTabsWidth: function() {
-        return this.openTabs.length * this.tabWidth;
-    },
-
-    /**
-     * Returns the cumulative width of all visible tabs
-     * @return {Number} Tabs width
-     */
-    minTabsWidth: function() {
-        return this.openTabs.length * this.minTabWidth;
-    },
-
-    maxVisibleTabs: function() {
-        return Math.ceil(this.tabBarWidth() / this.minTabWidth);
-    },
-
-    /**
-     * Returns the width delta to be applied to each tab for them to fit within the tab bar
-     * @return {Number} Number of pixels
-     */
-    tabDelta: function() {
-
-        var numTabs = this.maxVisibleTabs();
-        if (this.openTabs.length < numTabs) numTabs = this.openTabs.length;
-
-        var delta = Math.ceil((this.totalTabsWidth() - this.tabBarWidth()) / this.openTabs.length);
-        return (delta < 0) ? 0 : delta;
-    },
-
-    /**
-     * Returns true if the tab bar is overflowing
-     */
-    overflowing: function() {
-        return ((this.openTabs.length - 1) * this.minTabWidth) > this.tabBarWidth();
-    },
-
-    /**
-     * Resizes the tabs
+     * @private
+     * Resize tabs in the tab bar
      */
     resizeTabs: function() {
-
-        clearTimeout(this.resizeTabsTimer);
-
-        if (this.totalTabsWidth() > this.tabBarWidth()) {
-
-            var tabDelta = this.tabDelta();
-
-            Ext.Array.each(Ext.query('.doctab'), function(t){
-                var docTab = Ext.get(t);
-                if (!docTab.dom.removed && !docTab.hasCls('overview')) {
-                    var newWidth = (this.tabWidth - tabDelta) > this.minTabWidth ? (this.tabWidth - tabDelta) : this.minTabWidth;
-                    docTab.animate({
-                        to: { width: newWidth }
-                    });
-                }
-            }, this);
-        }
+        Ext.Array.each(Ext.query('.doctab'), function(t){
+            var docTab = Ext.get(t);
+            if (!docTab.dom.removed && !docTab.hasCls('overview')) {
+                docTab.animate({
+                    to: { width: this.tabWidth() }
+                });
+            }
+        }, this);
     },
 
     /**
-     * Activates a tab
-     *
-     * @param {String} url URL of the tab to activate
+     * @private
+     * Determines controller name from a URL
      */
-    activateTab: function(url, activateOverview) {
-        this.activeTab = Ext.Array.indexOf(this.openTabs, url);
-        Ext.Array.each(Ext.query('.doctab a[class=tabUrl]'), function(d) {
-            Ext.get(d).up('.doctab').removeCls(['active', 'highlight']);
-        });
-        var activeTab = Ext.query('.doctab a[href="' + url + '"]')[0];
-        if (activeTab) {
-            var docTab = Ext.get(activeTab).up('.doctab');
-            docTab.addCls('active');
-            if (!docTab.hasCls('overview')) {
-                activateOverview = true;
-            }
-        }
-        if (activateOverview) {
-            var overviewTab = Ext.query('.doctab.' + this.getControllerName(url).toLowerCase());
-            if (overviewTab && overviewTab[0]) {
-                Ext.get(overviewTab[0]).addCls('highlight');
-            }
-        }
-
-        Ext.Array.each(Ext.ComponentQuery.query('#tabOverflowMenu menuitem'), function(menuItem) {
-            menuItem.setIconCls(menuItem.href == url ? undefined : menuItem.origIcon);
-        });
-    },
-
-    /**
-     * Removes a tab from the tab bar. If the tab to be removed is the current tab,
-     * returns url of the tab on the right.
-     *
-     * @param {String} url URL of the tab to remove
-     * @return {String} URL of the tab to activate next, or undefined.
-     */
-    removeTab: function(url) {
-        var idx = Ext.Array.indexOf(this.openTabs, url);
-        if (idx !== false) {
-            Ext.Array.erase(this.openTabs, idx, 1);
-            Docs.Settings.set('openTabs', this.openTabs);
-            if (this.activeTab > idx) {
-                this.activeTab -= 1;
-            }
-
-            Ext.Array.each(Ext.ComponentQuery.query('#tabOverflowMenu menuitem[href=' + url + ']'), function(menuItem) {
-                Ext.getCmp('tabOverflowMenu').remove(menuItem);
-            });
-        }
-
-        if (this.resizeTabsTimer) {
-            clearTimeout(this.resizeTabsTimer);
-        }
-
-        var self = this;
-        this.resizeTabsTimer = setTimeout(function(){
-            self.resizeTabs();
-        }, 1000);
-
-        if (idx === this.activeTab) {
-            if (this.openTabs.length === 0) {
-                Docs.App.getController(this.getControllerName(url)).loadIndex();
-            }
-            else {
-                if (idx === this.openTabs.length) {
-                    idx -= 1;
-                }
-                return this.openTabs[idx];
-            }
-        }
-        return undefined;
-    },
-
-    // Determines controller name from URL
     getControllerName: function(url) {
         if (/#!?\/api/.test(url)) {
             return 'Classes';
