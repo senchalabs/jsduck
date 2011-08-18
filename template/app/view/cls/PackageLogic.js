@@ -21,8 +21,8 @@ Ext.define('Docs.view.cls.PackageLogic', {
 
     // Sorts all child nodes, and recursively all child packages.
     sortTree: function(node) {
-      node.children.sort(this.compare, this);
-      Ext.Array.forEach(node.children, this.sortTree, this);
+        node.children.sort(this.compare);
+        Ext.Array.forEach(node.children, this.sortTree, this);
     },
 
     // Comparson method that sorts package nodes before class nodes.
