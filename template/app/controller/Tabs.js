@@ -20,6 +20,10 @@ Ext.define('Docs.controller.Tabs', {
         {
             ref: 'videoTree',
             selector: '#videotree'
+        },
+        {
+            ref: 'doctabs',
+            selector: '#doctabs'
         }
     ],
 
@@ -59,22 +63,15 @@ Ext.define('Docs.controller.Tabs', {
                 afterrender: function(cmp) {
                     this.addTabIconListeners(cmp);
                     this.addTabListeners(cmp);
-
-                    // var prevTabs = Docs.Settings.get('openTabs');
-                    // if (prevTabs) {
-                    //     prevTabs.each(function(f) {
-                    //         this.addTabFromTree(f, this.getClassTree(), true, true);
-                    //     }, this);
-                    // }
                 },
                 resize: function() {
-                    Ext.getCmp('doctabs').resizeTabs();
+                    Ext.getCmp('doctabs').refresh();
                 },
                 scope: this
             },
             '#tabOverflowMenu menuitem': {
                 click: function(cmp) {
-                    this.activateTab(cmp.href, true);
+                    Docs.History.push(cmp.href);
                 },
                 scope: this
             }
@@ -88,11 +85,11 @@ Ext.define('Docs.controller.Tabs', {
     addTabFromTree: function(url, tree) {
         var treeRecord = tree.findRecordByUrl(url);
         if (treeRecord && treeRecord.raw) {
-            Ext.getCmp('doctabs').addTab({
+            this.getDoctabs().addTab({
                 href: treeRecord.raw.url,
                 text: treeRecord.raw.text,
                 iconCls: treeRecord.raw.iconCls
-            }, {animate: true, activate: true});
+            }, { animate: true, activate: true });
         }
     },
 
@@ -115,27 +112,9 @@ Ext.define('Docs.controller.Tabs', {
 
         cmp.el.addListener('click', function(event, el) {
             cmp.justClosed = true;
-            var docTab = Ext.get(el).up('.doctab');
-            var url = docTab.down('.tabUrl').getAttribute('href');
-            // Forget the scrollstate of a tab after closing
+            var url = Ext.get(el).up('.doctab').down('.tabUrl').getAttribute('href');
             delete this.scrollState[url];
-            var next = Ext.getCmp('doctabs').removeTab(url);
-            if (next) {
-                Ext.getCmp('doctabs').activateTab(next);
-                Docs.History.push(next);
-            }
-            docTab.dom.removed = true;
-            docTab.animate({
-                to: { top: 30 }
-            }).animate({
-                to: { width: 10 },
-                listeners: {
-                    afteranimate: function() {
-                        docTab.remove();
-                    },
-                    scope: this
-                }
-            });
+            Ext.getCmp('doctabs').removeTab(url);
         }, this, {
             delegate: '.close',
             preventDefault: true
@@ -153,7 +132,7 @@ Ext.define('Docs.controller.Tabs', {
                 return;
             }
             var url = Ext.get(el).down('.tabUrl').getAttribute('href');
-            this.activateTab(url);
+            Docs.History.push(url);
         }, this, {
             delegate: '.doctab'
         });
@@ -162,11 +141,6 @@ Ext.define('Docs.controller.Tabs', {
             delegate: '.tabUrl',
             preventDefault: true
         });
-    },
-
-    activateTab: function(url, activateOverview) {
-        Ext.getCmp('doctabs').activateTab(url, activateOverview);
-        Docs.History.push(url);
     },
 
     /**
