@@ -10,13 +10,22 @@ Ext.define('Docs.view.Tabs', {
     componentCls: 'doctabs',
 
     minTabWidth: 80,
-    maxTabWidth: 140,
+    maxTabWidth: 160,
 
     tabs: [],
     tabsInBar: [],
+    tabCache: {},
+
+    staticTabs: [
+        { cls: 'index',    href: '#' },
+        { cls: 'classes',  href: '#!/api' },
+        { cls: 'guides',   href: '#!/guide' },
+        { cls: 'videos',   href: '#!/video' },
+        { cls: 'examples', href: '#!/example' }
+    ],
 
     initComponent: function() {
-        var tpl = new Ext.XTemplate(
+        this.tpl = Ext.create('Ext.XTemplate',
             '<tpl for=".">',
                 '<div class="doctab overview {cls}{active}">',
                     '<div class="l"></div>',
@@ -25,31 +34,32 @@ Ext.define('Docs.view.Tabs', {
                 '</div>',
             '</tpl>',
             '<div style="float: left; width: 8px">&nbsp;</div>',
-            '<div id="tabOverflow"></div>'
+            '<div id="tabOverflow" style="visibility: hidden"></div>'
         );
 
-        this.html = tpl.applyTemplate([
-            { cls: 'index',    href: '#' },
-            { cls: 'classes',  href: '#!/api' },
-            { cls: 'guides',   href: '#!/guide' },
-            { cls: 'videos',   href: '#!/video' },
-            { cls: 'examples', href: '#!/example' }
-        ]);
+        this.html = this.tpl.applyTemplate(this.staticTabs);
+
+        this.tabTpl = Ext.create('Ext.XTemplate',
+            '<div class="doctab',
+                    '{[values.active ? (" active") : ""]}',
+                '" style="',
+                    '{[values.width ? ("width: " + values.width + "px;") : ""]}',
+                    '{[values.visible ? "" : "visibility: hidden;"]}">',
+                '<div class="l"></div>',
+                '<div class="m">',
+                    '<span class="icn {iconCls}">&nbsp;</span>',
+                    '<a class="tabUrl" href="{href}">{text}</a>',
+                '</div>',
+            '<div class="r"><a class="close" href="#">&nbsp;</a></div>',
+            '</div>'
+        );
 
         this.callParent();
     },
 
     listeners: {
         afterrender: function() {
-            Ext.create('Ext.button.Button', {
-                baseCls: null,
-                renderTo: 'tabOverflow',
-                menu: {
-                    id: 'tabOverflowMenu',
-                    plain: true,
-                    items: []
-                }
-            });
+            this.createOverflow();
         }
     },
 
@@ -68,6 +78,8 @@ Ext.define('Docs.view.Tabs', {
 
         // console.log("Adding tab", tab, opts)
 
+        this.tabCache[tab.href] = tab;
+
         if (!this.hasTab(tab.href)) {
 
             this.tabs.push(tab.href);
@@ -78,6 +90,10 @@ Ext.define('Docs.view.Tabs', {
             this.addTabToOverflow(tab, opts);
         }
         this.activateTab(tab.href);
+
+        if (this.tabs.length > this.maxTabsInBar()) {
+            Ext.get('tabOverflow').show();
+        }
     },
 
     /**
@@ -89,13 +105,16 @@ Ext.define('Docs.view.Tabs', {
 
         if (!this.hasTab(url)) return false;
 
-        if (this.inTabBar(url)) {
-            this.removeTabFromBar(url);
-        }
-
         var idx = Ext.Array.indexOf(this.tabs, url);
         if (idx !== false) {
             Ext.Array.erase(this.tabs, idx, 1);
+        }
+        var idx = Ext.Array.indexOf(this.tabsInBar, url);
+        if (idx !== false) {
+            Ext.Array.erase(this.tabsInBar, idx, 1);
+        }
+        if (this.tabs[this.tabsInBar.length]) {
+            this.tabsInBar.push(this.tabs[this.tabsInBar.length]);
         }
 
         if (this.activeTab == url) {
@@ -108,6 +127,13 @@ Ext.define('Docs.view.Tabs', {
                 }
                 this.activateTab(this.tabs[idx]);
             }
+        }
+
+        // console.log(this.tabsInBar.length, this.tabs.length)
+        if (this.tabs.length >= this.maxTabsInBar()) {
+            this.refresh();
+        } else {
+            this.removeTabFromBar(url);
         }
     },
 
@@ -122,7 +148,7 @@ Ext.define('Docs.view.Tabs', {
 
         this.activeTab = url;
 
-        if (!this.inTabBar(url)) {
+        if (!this.inTabs(url)) {
             this.swapLastTabWith(url);
         }
 
@@ -144,9 +170,46 @@ Ext.define('Docs.view.Tabs', {
      */
     refresh: function() {
 
+        var html = this.tpl.applyTemplate(this.staticTabs)
+
+        var len = this.maxTabsInBar() < this.tabs.length ? this.maxTabsInBar() : this.tabs.length;
+        var tw = this.tabWidth();
+
+        this.tabsInBar = [];
+
+        for (var i=0; i< len; i++) {
+
+            var tab = this.tabCache[this.tabs[i]];
+
+            this.tabsInBar.push(tab.href);
+
+            var tabData = Ext.apply(tab, {
+                visible: true,
+                active: this.activeTab === tab.href,
+                width: tw
+            });
+
+            html += this.tabTpl.applyTemplate(tabData);
+        }
+
+        this.el.dom.innerHTML = html;
+
+        // console.log(this.activeTab, this.tabs[len-1])
+        if (this.activeTab != this.tabs[len-1]) {
+            // this.activateTab(this.tabs[len-1]);
+            Docs.History.push(this.tabs[len-1]);
+        }
+
+        this.createOverflow();
     },
 
     // Private methods
+
+    tabData: function() {
+        return Ext.Array.map(this.tabs, function(t){
+            return this.tabCache[t];
+        }, this);
+    },
 
     /**
      * @private
@@ -175,17 +238,7 @@ Ext.define('Docs.view.Tabs', {
 
         this.tabsInBar.push(tab.href);
 
-        var tpl = Ext.create('Ext.XTemplate',
-            '<div class="doctab" style="visibility: hidden">',
-                '<div class="l"></div>',
-                '<div class="m">',
-                    '<span class="icn {iconCls}">&nbsp;</span>',
-                    '<a class="tabUrl" href="{href}">{text}</a>',
-                '</div>',
-            '<div class="r"><a class="close" href="#">&nbsp;</a></div>',
-            '</div>'
-        );
-        var docTab = Ext.get(tpl.append(this.el.dom, tab));
+        var docTab = Ext.get(this.tabTpl.append(this.el.dom, tab));
 
         if (opts.animate) {
             // Effect to 'slide' the tab out when it is created.
@@ -212,13 +265,19 @@ Ext.define('Docs.view.Tabs', {
 
     /**
      * @private
+     * @return {Boolean} true if the tab is in the tab bar or static tabs
+     */
+    inTabs: function(url) {
+        var urls = Ext.Array.pluck(this.staticTabs, 'href').concat(this.tabsInBar);
+        return Ext.Array.contains(urls, url);
+    },
+
+    /**
+     * @private
      */
     removeTabFromBar: function(url) {
 
-        var idx = Ext.Array.indexOf(this.tabsInBar, url);
-        Ext.Array.erase(this.tabsInBar, idx, 1);
-
-        var docTab = Ext.get(Ext.query('.doctab a[href="' + url + '"]')[0]).up('.doctab');
+        var docTab = this.getTabEl(url);
 
         docTab.dom.removed = true;
         docTab.animate({
@@ -228,11 +287,11 @@ Ext.define('Docs.view.Tabs', {
             listeners: {
                 afteranimate: function() {
                     docTab.remove();
+                    this.resizeTabs();
                 },
                 scope: this
             }
         });
-        this.resizeTabs();
     },
 
     /**
@@ -241,9 +300,15 @@ Ext.define('Docs.view.Tabs', {
      */
     addTabToOverflow: function(tab, opts) {
 
-        var overflow = this.inTabBar(tab.href);
-        if (this.tabs.length > this.tabsInBar.length && this.tabsInBar.length == this.maxTabsInBar()) {
+        var inTabBar = this.inTabBar(tab.href);
+        var idx = Ext.Array.indexOf(this.tabs, tab.href);
+
+        if (this.tabs.length > this.tabsInBar.length && idx == this.maxTabsInBar()) {
             // Add 'overflow' class to last visible tab in overflow dropdown
+            var prevMenuItem = Ext.ComponentQuery.query('#tabOverflowMenu menuitem[href=' + this.tabs[idx-1] + ']');
+            Ext.Array.each(prevMenuItem, function(item) {
+                item.addCls('overflow');
+            });
         }
 
         Ext.getCmp('tabOverflowMenu').add({
@@ -251,16 +316,22 @@ Ext.define('Docs.view.Tabs', {
             iconCls: tab.iconCls,
             origIcon: tab.iconCls,
             href: tab.href,
-            cls: 'x-menu-item-checked' + (overflow ? '' : ' overflow')
+            cls: 'x-menu-item-checked' + (inTabBar ? '' : ' overflow')
         });
     },
 
     /**
      * @private
-     * Swaps the last tab with teh given tab currently in the overflow list
+     * Swaps the last tab with the given tab currently in the overflow list
      */
     swapLastTabWith: function(url) {
-        console.log("Swap last tab with", url);
+        var lastTab = this.getTabEl(this.tabsInBar[this.tabsInBar.length - 1]);
+        if (lastTab) {
+            var newTab = this.tabTpl.append(document.body, this.tabCache[url]);
+            lastTab.dom.parentNode.replaceChild(newTab, lastTab.dom);
+            this.tabsInBar[this.tabsInBar.length - 1] = url;
+            Ext.get(newTab).setStyle({ visibility: 'visible', width: String(this.tabWidth()) + 'px' });
+        }
     },
 
     /**
@@ -286,7 +357,6 @@ Ext.define('Docs.view.Tabs', {
      * @return {Number} Width of a tab in the tab bar
      */
     tabWidth: function() {
-
         var width = Math.floor(this.tabBarWidth() / this.tabsInBar.length) + 6;
 
         if (width > this.maxTabWidth) {
@@ -321,6 +391,42 @@ Ext.define('Docs.view.Tabs', {
                 });
             }
         }, this);
+    },
+
+    getTabEl: function(url) {
+        var doctab = Ext.query('.doctab a[href="' + url + '"]');
+        if (doctab && doctab[0]) {
+            return Ext.get(doctab[0]).up('.doctab');
+        }
+    },
+
+    /**
+     * @private
+     * Creates the overflow button and add items
+     */
+    createOverflow: function() {
+
+        if (this.overflowButton) {
+            this.overflowButton.destroy();
+        }
+
+        this.overflowButton = Ext.create('Ext.button.Button', {
+            baseCls: null,
+            renderTo: 'tabOverflow',
+            menu: {
+                id: 'tabOverflowMenu',
+                plain: true,
+                items: []
+            }
+        });
+
+        Ext.Array.each(this.tabs, function(tab) {
+            this.addTabToOverflow(this.tabCache[tab]);
+        }, this);
+
+        if (this.tabs.length > this.maxTabsInBar()) {
+            Ext.get('tabOverflow').show();
+        }
     },
 
     /**
