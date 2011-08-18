@@ -12,6 +12,7 @@ require 'jsduck/exporter'
 require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
+require 'jsduck/welcome'
 require 'jsduck/guides'
 require 'jsduck/videos'
 require 'jsduck/examples'
@@ -45,6 +46,11 @@ module JsDuck
       @relations = @timer.time(:aggregating) { filter_classes(result) }
       Aliases.new(@relations).resolve_all
       Lint.new(@relations).run
+
+      @welcome = Welcome.new
+      if @opts.welcome
+        @timer.time(:parsing) { @welcome.parse(@opts.welcome) }
+      end
 
       @guides = Guides.new(get_doc_formatter)
       if @opts.guides
@@ -222,6 +228,7 @@ module JsDuck
       html.gsub!("{footer}", "<div id='footer-content' style='display: none'>#{@footer}</div>")
       html.gsub!("{extjs_path}", @opts.extjs_path)
       html.gsub!("{local_storage_db}", @opts.local_storage_db)
+      html.gsub!("{welcome}", @welcome.to_html)
       html.gsub!("{categories}", @categories.to_html)
       html.gsub!("{guides}", @guides.to_html)
       html.gsub!("{head_html}", @opts.head_html)

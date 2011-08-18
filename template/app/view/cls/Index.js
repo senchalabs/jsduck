@@ -3,10 +3,13 @@
  */
 Ext.define('Docs.view.cls.Index', {
     extend: 'Ext.container.Container',
-    alias : 'widget.classindex',
+    alias: 'widget.classindex',
+    requires: [
+        'Docs.ContentGrabber'
+    ],
     cls: 'class-list iScroll',
     margin: '15 10',
-    autoScroll : true,
+    autoScroll: true,
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
@@ -16,28 +19,12 @@ Ext.define('Docs.view.cls.Index', {
             '</tpl>',
             '{categories}'
         );
-        this.data = this.extractData();
+        this.data = {
+            notice: Docs.ContentGrabber.get("notice-text"),
+            categories: Docs.ContentGrabber.get("categories-content"),
+            title: Ext.query("title")[0].innerHTML
+        };
 
         this.callParent(arguments);
-    },
-
-    // Extracts HTML from hidden elements in page
-    extractData: function() {
-        var data = {
-            notice: Ext.get("notice-text"),
-            categories: Ext.get("categories-content")
-        };
-        for (var i in data) {
-            var el = data[i];
-            if (el) {
-                // If page contains the div then extract its contents,
-                // after that remove the original
-                data[i] = el.dom.innerHTML;
-                el.remove();
-            }
-        }
-        // Extract <title> text
-        data.title = Ext.query("title")[0].innerHTML;
-        return data;
     }
 });

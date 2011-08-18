@@ -17,6 +17,7 @@ module JsDuck
     attr_accessor :footer
     attr_accessor :head_html
     attr_accessor :body_html
+    attr_accessor :welcome
     attr_accessor :guides
     attr_accessor :videos
     attr_accessor :examples
@@ -49,6 +50,7 @@ module JsDuck
       @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
       @head_html = ""
       @body_html = ""
+      @welcome = nil
       @guides = nil
       @videos = nil
       @examples = nil
@@ -126,6 +128,11 @@ module JsDuck
 
         opts.on('--body-html=HTML', "HTML to append to the <body> section index.html.", " ") do |html|
           @body_html = html
+        end
+
+        opts.on('--welcome=PATH',
+          "Path to HTML file with content for welcome page.", " ") do |path|
+          @welcome = path
         end
 
         opts.on('--guides=PATH',
