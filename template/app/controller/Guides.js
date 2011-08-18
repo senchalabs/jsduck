@@ -133,8 +133,10 @@ Ext.define('Docs.controller.Guides', {
         }
         this.getViewport().setPageTitle(json.title);
         if (this.activeUrl !== url) {
-            Ext.getCmp("guide").update('<a class="print guide" href="?print=/guide/' + name + '" target="_blank">Print</a>' + json.guide);
-            Docs.Syntax.highlight(Ext.get("guide"));
+            Ext.getCmp("guide").load({
+                name: name,
+                content: json.guide
+            });
         }
         this.activeUrl = url;
         this.scrollContent();

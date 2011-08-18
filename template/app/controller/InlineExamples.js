@@ -59,17 +59,21 @@ Ext.define('Docs.controller.InlineExamples', {
                 }
             },
             'classoverview': {
-                resize: function() {
-                    Ext.Array.each(Ext.ComponentQuery.query('.inlineexample'), function(c) {
-                        if (c.codeEditor) {
-                            c.doLayout();
-                            c.codeEditor.refresh();
-                        }
-                    });
-                },
-                afterload: function() {
-                    this.replaceExampleDivs();
-                }
+                resize: this.adjustSize,
+                afterload: this.replaceExampleDivs
+            },
+            'guidecontainer': {
+                resize: this.adjustSize,
+                afterload: this.replaceExampleDivs
+            }
+        });
+    },
+
+    adjustSize: function() {
+        Ext.Array.each(Ext.ComponentQuery.query('.inlineexample'), function(c) {
+            if (c.codeEditor) {
+                c.doLayout();
+                c.codeEditor.refresh();
             }
         });
     },

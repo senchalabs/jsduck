@@ -11,6 +11,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
         'Docs.view.guides.Index',
+        'Docs.view.guides.Container',
         'Docs.view.videos.Index',
         'Docs.view.videos.Container',
         'Docs.view.examples.Index'
@@ -108,7 +109,7 @@ Ext.define('Docs.view.Viewport', {
                                 },
                                 {
                                     autoScroll: true,
-                                    xtype: 'container',
+                                    xtype: 'guidecontainer',
                                     id: 'guide',
                                     cls: 'iScroll'
                                 },
