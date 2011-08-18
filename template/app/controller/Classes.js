@@ -123,6 +123,21 @@ Ext.define('Docs.controller.Classes', {
                         this.setScrollState('#!/api/' + this.currentCls.name, el.scrollTop);
                     }, this);
                 }
+            },
+
+            'treecontainer': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('dblclick', function() {
+                        if (cmp.getWidth() < 30) {
+                            cmp.setWidth(cmp.expandedWidth);
+                        } else {
+                            cmp.expandedWidth = cmp.getWidth();
+                            cmp.setWidth(20);
+                        }
+                    }, this, {
+                        delegate: '.x-resizable-handle'
+                    });
+                }
             }
         });
     },
