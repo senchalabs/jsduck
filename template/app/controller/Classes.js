@@ -98,16 +98,13 @@ Ext.define('Docs.controller.Classes', {
                         var member = Ext.get(el).up('.member'),
                             docClass = member.down('.meta .docClass'),
                             clsName = docClass.getAttribute('rel'),
-                            memberName = member.getAttribute('id'),
-                            baseUrl = '#!/api/' + this.currentCls.name;
-
-                        Docs.contentState[baseUrl] = Docs.contentState[baseUrl] || {};
-                        Docs.contentState[baseUrl][memberName] = Docs.contentState[baseUrl][memberName] || {};
+                            memberName = member.getAttribute('id');
 
                         if (member.hasCls('open')) {
-                            Docs.contentState[baseUrl][memberName].expanded = false;
-                        } else {
-                            Docs.contentState[baseUrl][memberName].expanded = true;
+                            this.getMember(memberName).expanded = false;
+                        }
+                        else {
+                            this.getMember(memberName).expanded = true;
                             this.fireEvent('showMember', clsName, memberName);
                         }
                         member.toggleCls('open');
@@ -128,6 +125,20 @@ Ext.define('Docs.controller.Classes', {
                 }
             }
         });
+    },
+
+    // Given a member name like "cfg-items", returns the corresponding member object from currentCls.
+    getMember: function(longName) {
+        var parts = longName.split(/-/);
+        var type = parts[0];
+        var name = parts[1];
+        var matches = [];
+        Ext.Array.forEach(['members', 'statics'], function(cat) {
+            matches = matches.concat(Ext.Array.filter(this.currentCls[cat][type], function(m) {
+                return m.name === name;
+            }, this));
+        }, this);
+        return matches[0];
     },
 
     // We don't want to select the class that was opened in another window,

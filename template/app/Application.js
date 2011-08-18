@@ -32,7 +32,6 @@ Ext.define('Docs.Application', {
     launch: function() {
         Docs.App = this;
         Docs.Settings.init();
-        Docs.contentState = {};
 
         Ext.create('Docs.view.Viewport');
 
