@@ -19,10 +19,8 @@ Ext.define('Docs.controller.Content', {
     title: "",
 
     onLaunch: function() {
-        this.getIndex().on('afterrender', function() {
-            cmp.el.addListener('scroll', function(cmp, el) {
-                this.setScrollState(this.baseUrl, el.scrollTop);
-            }, this);
+        this.getIndex().getEl().addListener('scroll', function(cmp, el) {
+            this.setScrollState(this.baseUrl, el.scrollTop);
         }, this);
     },
 
@@ -31,7 +29,7 @@ Ext.define('Docs.controller.Content', {
         this.getViewport().setPageTitle(this.title);
         Ext.getCmp('doctabs').activateTab(this.baseUrl);
         Ext.getCmp('card-panel').layout.setActiveItem(this.getIndex());
-        this.getIndex().getEl().scrollTo('top', this.getScrollState("#"));
+        this.getIndex().getEl().scrollTo('top', this.getScrollState(this.baseUrl));
     },
 
     // True when middle mouse button pressed or shift/ctrl key pressed
