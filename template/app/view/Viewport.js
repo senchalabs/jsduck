@@ -89,6 +89,10 @@ Ext.define('Docs.view.Viewport', {
                                     id: 'welcomeindex'
                                 },
                                 {
+                                    xtype: 'container',
+                                    id: 'failure'
+                                },
+                                {
                                     autoScroll: true,
                                     xtype: 'classindex',
                                     id: 'classindex'
@@ -109,8 +113,12 @@ Ext.define('Docs.view.Viewport', {
                                     cls: 'iScroll'
                                 },
                                 {
-                                    xtype: 'container',
-                                    id: 'failure'
+                                    xtype: 'videoindex',
+                                    id: 'videoindex'
+                                },
+                                {
+                                    xtype: 'videocontainer',
+                                    id: 'video'
                                 },
                                 {
                                     xtype: 'exampleindex',
@@ -121,15 +129,6 @@ Ext.define('Docs.view.Viewport', {
                                     xtype: 'container',
                                     layout: 'fit',
                                     html: '<iframe style="width: 100%; height: 100%; border: 0;" id="exampleIframe" src="egIframe.html"></iframe>'
-                                },
-                                {
-                                    xtype: 'videoindex',
-                                    id: 'videoindex'
-                                },
-                                {
-                                    xtype: 'videocontainer',
-                                    id: 'video',
-                                    html: '<iframe id="videoplayer" src="egIframe.html" width="640" height="360" frameborder="0" style="margin: 15px;"></iframe>'
                                 }
                             ]
                         }
