@@ -126,6 +126,7 @@ Ext.define('Docs.view.Tabs', {
                     idx -= 1;
                 }
                 this.activateTab(this.tabs[idx]);
+                Docs.History.push(this.tabs[idx]);
             }
         }
 
@@ -166,27 +167,25 @@ Ext.define('Docs.view.Tabs', {
     },
 
     /**
-     *  Refreshes tabs and overflow. Useful for window resize event.
+     *  Re-renders tabs and overflow. Useful for window resize event.
      */
     refresh: function() {
 
         var html = this.tpl.applyTemplate(this.staticTabs)
 
         var len = this.maxTabsInBar() < this.tabs.length ? this.maxTabsInBar() : this.tabs.length;
-        var tw = this.tabWidth();
+        this.tabsInBar = this.tabs.slice(0, len);
 
-        this.tabsInBar = [];
+        // console.log("Total tabs:", this.tabs.length, "Max tabs:", this.maxTabsInBar(), "Tab bar width:", this.tabBarWidth(), "Tabs in bar:", this.tabsInBar.length, "Tab width:", tw)
 
         for (var i=0; i< len; i++) {
 
             var tab = this.tabCache[this.tabs[i]];
 
-            this.tabsInBar.push(tab.href);
-
             var tabData = Ext.apply(tab, {
                 visible: true,
                 active: this.activeTab === tab.href,
-                width: tw
+                width: this.tabWidth()
             });
 
             html += this.tabTpl.applyTemplate(tabData);
@@ -196,10 +195,11 @@ Ext.define('Docs.view.Tabs', {
 
         // console.log(this.activeTab, this.tabs[len-1])
         if (this.activeTab != this.tabs[len-1]) {
-            // this.activateTab(this.tabs[len-1]);
-            Docs.History.push(this.tabs[len-1]);
+            this.activateTab(this.activeTab);
+            Docs.History.push(this.activeTab);
         }
 
+        this.highlightOverviewTab(this.activeTab);
         this.createOverflow();
     },
 
@@ -287,7 +287,7 @@ Ext.define('Docs.view.Tabs', {
             listeners: {
                 afteranimate: function() {
                     docTab.remove();
-                    this.resizeTabs();
+                    this.shouldResize = true;
                 },
                 scope: this
             }
@@ -383,6 +383,7 @@ Ext.define('Docs.view.Tabs', {
      * Resize tabs in the tab bar
      */
     resizeTabs: function() {
+        this.shouldResize = false;
         Ext.Array.each(Ext.query('.doctab'), function(t){
             var docTab = Ext.get(t);
             if (!docTab.dom.removed && !docTab.hasCls('overview')) {

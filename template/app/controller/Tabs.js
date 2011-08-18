@@ -63,6 +63,12 @@ Ext.define('Docs.controller.Tabs', {
                 afterrender: function(cmp) {
                     this.addTabIconListeners(cmp);
                     this.addTabListeners(cmp);
+
+                    cmp.el.on('mouseleave', function() {
+                        if (cmp.shouldResize) {
+                            cmp.resizeTabs();
+                        }
+                    })
                 },
                 resize: function() {
                     Ext.getCmp('doctabs').refresh();
