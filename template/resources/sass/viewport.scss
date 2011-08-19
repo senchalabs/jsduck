@@ -1047,11 +1047,12 @@ a {
   .class-overview p, #guide p {
     color: #484848;
     margin: 0 0 1em;
-    padding: 0 12em 0 0;
+    max-width: 900px;
   }
 
   .class-overview pre, #guide pre {
-    margin: 10px 12em 14px 0;
+    margin: 10px 0 14px 0;
+    max-width: 900px;
   }
 
   .class-overview .hierarchy {
