@@ -1127,9 +1127,10 @@ a {
     margin-bottom: 40px;
   }
 
-  #treecontainer .x-panel-body{
+  #treecontainer > .x-panel-body {
     background: transparent;
-    border: 0 !important;
+    border-color: #ebebeb;
+    border-width: 0 1px 0 0 !important;
   }
 
   #treecontainer{
