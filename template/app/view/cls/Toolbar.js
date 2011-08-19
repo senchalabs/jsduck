@@ -168,7 +168,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     // creates store tha holds link records
     createStore: function(records) {
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'cls', 'url', 'label', 'inherited', 'static']
+            fields: ['id', 'cls', 'url', 'label', 'inherited', 'static', 'protected']
         });
         store.add(records);
         return store;
@@ -181,6 +181,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             url: member ? cls+"-"+member.tagname+"-"+member.name : cls,
             label: member ? ((member.name === "constructor") ? cls : member.name) : cls,
             inherited: member ? member.owner !== cls : false,
+            'protected': member ? member['protected'] : false,
             'static': member ? member['static'] : false
         };
     },

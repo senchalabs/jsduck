@@ -715,6 +715,7 @@ a {
       top: 3px;
       &:hover {
         @include opacity(1); } }
+    span.protected,
     span.static {
       font-size: 0.6em;
       text-transform: uppercase;
@@ -722,7 +723,9 @@ a {
       padding: 0 0.5em;
       @include border-radius(2px);
       color: white;
-      background: $docs-text-color; } } }
+      background: $docs-text-color; }
+    span.protected {
+      background-color: #aaa; } } }
 
 .inline-example-cmp {
   margin-bottom: 10px;
