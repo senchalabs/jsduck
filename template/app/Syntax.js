@@ -12,11 +12,16 @@ Ext.define("Docs.Syntax", {
      * which to perform the highlighting.
      */
     highlight: function(root) {
-        Ext.Array.forEach(Ext.query("pre > code", root.dom || root), function(el) {
-            el = Ext.get(el);
+        Ext.Array.forEach(Ext.query("pre > code", root.dom || root), function(code) {
+            code = Ext.get(code);
+            var pre = code.parent();
+            // Disable inline examples in IE (too slow)
+            if (Ext.isIE && pre.hasCls("inline-example")) {
+                pre.removeCls("inline-example");
+            }
             // Don't prettify inline examples, these are highlighted anyway
-            if (!el.parent().hasCls("inline-example")) {
-                el.addCls("prettyprint");
+            if (!pre.hasCls("inline-example")) {
+                code.addCls("prettyprint");
             }
         });
         prettyPrint();
