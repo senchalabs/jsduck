@@ -252,11 +252,13 @@ task :compress do
   system "rm -rf #{OUT_DIR}/resources/prettify"
   system "rm -rf #{OUT_DIR}/resources/.sass-cache"
 
-  # Empty the extjs dir, leave only the main JS file, CSS and images (for inline examples)
+  # Empty the extjs dir, leave only the main JS files, CSS and images
   system "rm -rf #{OUT_DIR}/extjs"
   system "mkdir -p #{OUT_DIR}/extjs/resources/css"
   system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
   system "cp #{EXT_DIR}/ext-all.js #{OUT_DIR}/extjs"
+  system "cp #{EXT_DIR}/ext-all-debug.js #{OUT_DIR}/extjs"
+  system "cp #{EXT_DIR}/bootstrap.js #{OUT_DIR}/extjs"
   system "cp #{EXT_DIR}/resources/css/ext-all.css #{OUT_DIR}/extjs/resources/css"
   system "cp -r #{EXT_DIR}/examples #{OUT_DIR}/extjs"
   system "cp -r #{EXT_DIR}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
