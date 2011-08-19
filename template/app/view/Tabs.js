@@ -17,11 +17,11 @@ Ext.define('Docs.view.Tabs', {
     tabCache: {},
 
     staticTabs: [
-        { cls: 'index',    href: '#' },
-        { cls: 'classes',  href: '#!/api' },
-        { cls: 'guides',   href: '#!/guide' },
-        { cls: 'videos',   href: '#!/video' },
-        { cls: 'examples', href: '#!/example' }
+        { cls: 'index',    href: '#',          tooltip: 'Home' },
+        { cls: 'classes',  href: '#!/api',     tooltip: 'API documentation' },
+        { cls: 'guides',   href: '#!/guide',   tooltip: 'Guides' },
+        { cls: 'videos',   href: '#!/video',   tooltip: 'Videos' },
+        { cls: 'examples', href: '#!/example', tooltip: 'Examples' }
     ],
 
     initComponent: function() {
@@ -201,6 +201,7 @@ Ext.define('Docs.view.Tabs', {
 
         this.highlightOverviewTab(this.activeTab);
         this.createOverflow();
+        this.addToolTips();
     },
 
     // Private methods
@@ -428,6 +429,18 @@ Ext.define('Docs.view.Tabs', {
         if (this.tabs.length > this.maxTabsInBar()) {
             Ext.get('tabOverflow').show();
         }
+    },
+
+    addToolTips: function() {
+        Ext.Array.each(this.staticTabs, function(tab) {
+            var el = Ext.get(Ext.query('.doctab.' + tab.cls)[0])
+            if (el) {
+                Ext.create('Ext.tip.ToolTip', {
+                    target: el,
+                    html: tab.tooltip
+                });
+            }
+        });
     },
 
     /**
