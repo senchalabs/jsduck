@@ -195,20 +195,22 @@ end
 # Deletes those input CSS files and writes out concatenated CSS to
 # resources/css/app.css
 # Finally replaces the CSS section with <link> to that one CSS file.
-def combine_css(html, base_dir)
+def combine_css(html, base_dir, opts = :write)
   css_section_re = /<!-- BEGIN CSS -->.*<!-- END CSS -->/m
   css = []
   css_section_re.match(html)[0].each_line do |line|
     if line =~ /<link rel="stylesheet" href="(.*?)"/
       file = $1
       css << IO.read(base_dir + "/" + file)
-      system("rm", base_dir + "/" + file)
+      system("rm", base_dir + "/" + file) if opts == :write
     end
   end
 
-  fname = "#{OUT_DIR}/resources/css/app.css"
-  File.open(fname, 'w') {|f| f.write(css.join("\n")) }
-  yui_compress(fname)
+  if opts == :write
+    fname = "#{OUT_DIR}/resources/css/app.css"
+    File.open(fname, 'w') {|f| f.write(css.join("\n")) }
+    yui_compress(fname)
+  end
   html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/app.css" type="text/css" />')
 end
 
@@ -251,6 +253,15 @@ task :compress do
   system("mv", "#{OUT_DIR}/app-all.js", "#{OUT_DIR}/app.js")
   # Remove the entire app/ dir
   system("rm", "-r", "#{OUT_DIR}/app")
+
+  # Optionally concatenate CSS in print-template.html file
+  print_template = "#{OUT_DIR}/print-template.html";
+  if File.exists?(print_template)
+    html = IO.read(print_template);
+    # Just modify HTML to link app.css, don't write files.
+    html = combine_css(html, OUT_DIR, :replace_html_only)
+    File.open(print_template, 'w') {|f| f.write(html) }
+  end
 
   # Concatenate CSS and JS files referenced in index.html file
   html = IO.read(index_html)

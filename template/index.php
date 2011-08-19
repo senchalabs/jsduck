@@ -48,26 +48,8 @@ function format_class($cls) {
 }
 
 function print_page($title, $body) {
-  echo "<!DOCTYPE html>";
-  echo '<html>';
-  echo "<head>";
-  echo "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />";
-  echo "<meta name=\"description\" content=\"Official ExtJS 4.0 API Documentation for $title from Sencha. Examples, guides, screencasts and comments on how to use $title.\" />";
-  echo '<link rel="stylesheet" href="resources/css/reset.css" type="text/css" />';
-  echo '<link rel="stylesheet" href="resources/css/docs-ext.css" type="text/css" />';
-  echo '<link rel="stylesheet" href="resources/css/viewport.css" type="text/css" />';
-
-  echo "<title>$title | Ext JS 4.0 API Docs | Sencha</title>";
-  echo "</head>";
-  echo '<body style="background: #fff;">';
-  echo '<div id="north-region" style="padding: 1px 0 11px 11px"><div class="logo"><span><a href="http://docs.sencha.com">Sencha Docs</a></span> <a href="http://docs.sencha.com/ext-js/4-0">Ext JS 4.0</a></div></div>';
-  echo '<div id="center-container" class="class-overview" style="padding: 20px">';
-
-  echo $body;
-
-  echo '</div>';
-  echo "</body>";
-  echo "</html>";
+  $html = file_get_contents('print-template.html');
+  echo preg_replace(array('/\{title}/', '/\{body}/'), array($title, $body), $html);
 }
 
 function print_index_page() {
