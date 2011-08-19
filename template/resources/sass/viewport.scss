@@ -779,7 +779,7 @@ a {
       left: 0px;
       width: 9px;
       height: 29px;
-      background: url(../images/tab-l.png) no-repeat;
+      background: url(../images/tabs.png) no-repeat -8px -141px;
       z-index: 3;
     }
     .r {
@@ -788,7 +788,7 @@ a {
       top: 0;
       width: 26px;
       height: 29px;
-      background: url(../images/tab-rf.png) no-repeat;
+      background: url(../images/tabs.png) no-repeat 0 -239px;
       z-index: 5;
     }
     .m {
@@ -796,7 +796,7 @@ a {
       position: relative;
       padding: 6px 3px 0 6px;
       margin: 0 7px;
-      background: url(../images/tab-m.png) repeat-x;
+      background: url(../images/tabs.png) repeat-x 0 -173px;
       height: 29px;
       overflow: hidden;
       white-space: nowrap;
@@ -834,39 +834,39 @@ a {
       top: 8px;
       right: 9px;
       z-index: 6;
-      background: url(../images/tab-c.png) no-repeat 0 2px !important;
+      background: url(../images/tabs.png) no-repeat -8px -111px !important;
     }
     a.close.ovr {
-      background: url(../images/tab-c.png) no-repeat 0 -10px !important;
+      background: url(../images/tabs.png) no-repeat -8px -123px !important;
     }
   }
   .doctab.highlight {
     border-width: 0;
     .l {
-      background-image: url(../images/tabh-l.png);
+      background: url(../images/tabs.png) no-repeat -9px -271px;
     }
     .r {
-      background-image: url(../images/tabh-r.png);
+      background: url(../images/tabs.png) no-repeat -9px -335px;
       width: 10px;
     }
     .m {
-      background-image: url(../images/tabh-m.png);
+      background: url(../images/tabs.png) repeat-x 0 -303px;
     }
   }
   .doctab.active {
     border-width: 0;
     .l {
-      background: url(../images/taba-l.png) no-repeat -2px -3px;
+      background: url(../images/tabs.png) no-repeat -9px -369px;
       z-index: 6;
       width: 13px;
     }
     .r {
-      background: url(../images/taba-rf.png) no-repeat 2px -3px;
+      background: url(../images/tabs.png) no-repeat 3px -479px;
       z-index: 5;
       width: 28px;
     }
     .m {
-      background: url(../images/taba-m.png) repeat-x 0 -3px;
+      background: url(../images/tabs.png) repeat-x 0 -405px;
       z-index: 5;
     }
   }
@@ -877,23 +877,23 @@ a {
     width: auto !important;
   }
   .doctab.index .m a {
-    background: url(../images/tab-icons.png) no-repeat 7px 1px;
+    background: url(../images/tabs.png) no-repeat 1px 1px;
     padding-left: 16px; padding-right: 12px; padding-bottom: 20px;
   }
   .doctab.classes .m a {
-    background: url(../images/tab-icons.png) no-repeat 8px -20px;
-    padding-left: 16px; padding-right: 12px;
-  }
-  .doctab.videos .m a {
-    background: url(../images/tab-icons.png) no-repeat 8px -38px;
+    background: url(../images/tabs.png) no-repeat 2px -20px;
     padding-left: 16px; padding-right: 12px;
   }
   .doctab.guides .m a {
-    background: url(../images/tab-icons.png) no-repeat 9px -55px;
+    background: url(../images/tabs.png) no-repeat 3px -55px;
+    padding-left: 16px; padding-right: 12px;
+  }
+  .doctab.videos .m a {
+    background: url(../images/tabs.png) no-repeat 2px -38px;
     padding-left: 16px; padding-right: 12px;
   }
   .doctab.examples .m a {
-    background: url(../images/tab-icons.png) no-repeat 7px -93px;
+    background: url(../images/tabs.png) no-repeat 1px -93px;
     padding-left: 16px; padding-right: 12px;
   }
 
@@ -905,7 +905,7 @@ a {
       display: block;
       width: 14px;
       height: 20px;
-      background: url(../images/tab-overflow.png) no-repeat;
+      background: url(../images/tabs.png) no-repeat -7px -513px;
       border: 0;
     }
   }
