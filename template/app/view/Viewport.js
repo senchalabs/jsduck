@@ -59,7 +59,6 @@ Ext.define('Docs.view.Viewport', {
                 region: 'center',
                 layout: 'border',
                 minWidth: 800,
-                // padding: '4 3',
                 items: [
                     {
                         region: 'west',
