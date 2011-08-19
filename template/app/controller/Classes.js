@@ -159,8 +159,8 @@ Ext.define('Docs.controller.Classes', {
     // We don't want to select the class that was opened in another window,
     // so restore the previous selection.
     handleUrlClick: function(url, event, view) {
-        // Remove everything up to #!
-        url = url.replace(/.*#!?/, "#!");
+
+        url = Docs.History.cleanUrl(url);
 
         if (this.opensNewWindow(event)) {
             window.open(url);

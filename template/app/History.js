@@ -58,9 +58,17 @@ Ext.define("Docs.History", {
      * @param {String} token  the part of URL after #
      */
     push: function(token) {
+        token = this.cleanUrl(token);
         if (!/^#!?/.test(token)) {
-          token = "#!"+token;
+            token = "#!"+token;
         }
         Ext.util.History.add(token);
+    },
+
+    /**
+     * Given a URL, removes anything before a #
+     */
+    cleanUrl: function(url) {
+        return url.replace(/^[^#]+#/, '#');
     }
 });

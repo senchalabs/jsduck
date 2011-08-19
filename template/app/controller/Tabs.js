@@ -119,6 +119,7 @@ Ext.define('Docs.controller.Tabs', {
         cmp.el.addListener('click', function(event, el) {
             cmp.justClosed = true;
             var url = Ext.get(el).up('.doctab').down('.tabUrl').getAttribute('href');
+            url = Docs.History.cleanUrl(url);
             delete this.scrollState[url];
             Ext.getCmp('doctabs').removeTab(url);
         }, this, {
