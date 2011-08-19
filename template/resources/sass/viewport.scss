@@ -512,6 +512,13 @@ a {
     @include guides-h3-heading; } }
 
 .class-overview {
+  .private {
+    border: 1px solid #999;
+    @include border-radius(5px);
+    color: #600;
+    background-color: #fee;
+    padding: 10px 50px;
+    text-align: center; }
   .deprecated-signature, .protected-signature, .static-signature, .required-signature {
     font-weight: bold;
     text-transform: uppercase;

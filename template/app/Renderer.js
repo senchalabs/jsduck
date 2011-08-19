@@ -15,6 +15,11 @@ Ext.define('Docs.Renderer', {
                 '{hierarchy}',
                 '<div class="doc-contents">',
                     '{doc}',
+                    '<tpl if="private">',
+                        '<p class="private"><strong>NB!</strong> ',
+                        'This is a private utility class for internal use by the framework. ',
+                        'Don\'t rely on its existance.</p>',
+                    '</tpl>',
                 '</div>',
                 '<div class="members">',
                     '{members}',
@@ -24,6 +29,7 @@ Ext.define('Docs.Renderer', {
 
         return this.classTpl.apply({
             doc: cls.doc,
+            "private": cls["private"],
             hierarchy: this.renderHierarchy(cls),
             members: this.renderMembers(cls)
         });
