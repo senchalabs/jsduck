@@ -56,7 +56,6 @@ function print_page($title, $body) {
   echo '<link rel="stylesheet" href="resources/css/reset.css" type="text/css" />';
   echo '<link rel="stylesheet" href="resources/css/docs-ext.css" type="text/css" />';
   echo '<link rel="stylesheet" href="resources/css/viewport.css" type="text/css" />';
-  echo '<link rel="stylesheet" href="resources/css/print.css" type="text/css" media="print" />';
 
   echo "<title>$title | Ext JS 4.0 API Docs | Sencha</title>";
   echo "</head>";
