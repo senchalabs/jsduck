@@ -13,6 +13,7 @@
 }
 .iScroll ::-webkit-scrollbar-track-piece,
 .iScroll::-webkit-scrollbar-track-piece {
+  margin: 10px 0;
   -webkit-border-radius:0;
   -webkit-border-bottom-right-radius:4px;
   -webkit-border-bottom-left-radius:4px;
@@ -29,7 +30,6 @@
   background-color: rgba(0,0,0,0.12);
   -webkit-border-radius:4px;
 }
-
 
 
 #treecontainer .iScroll ::-webkit-scrollbar-thumb:vertical,

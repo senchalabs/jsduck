@@ -60,14 +60,13 @@ Ext.define('Docs.view.Viewport', {
                 region: 'center',
                 layout: 'border',
                 minWidth: 800,
-                // padding: '4 3',
                 items: [
                     {
                         region: 'west',
                         xtype: 'treecontainer',
                         id: 'treecontainer',
                         border: 1,
-                        bodyPadding: '14 9',
+                        bodyPadding: '10 9 4 9',
                         width: 240
                     },
                     {
