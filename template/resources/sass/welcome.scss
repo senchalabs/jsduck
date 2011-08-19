@@ -89,7 +89,6 @@ $docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
   }
 
   .auto_columns {
-    overflow: hidden;
     width: 100%;
     &::after {
       clear: both;
@@ -108,6 +107,7 @@ $docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
     width: 48%;
     padding-right: 2%;
     float: left;
+    position: relative;
     // ExtJS switches everything to border-box, revert it.
     box-sizing: content-box;
   }
@@ -209,8 +209,8 @@ $docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
 
   .feature-img {
     position: absolute;
-    right: 50px;
-    top: -50px;
+    right: 20px;
+    top: -100px;
   }
 
   footer {

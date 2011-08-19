@@ -131,9 +131,21 @@ task :base_live_docs do
               },
               showMember: function(cls, anchor) {
                   _gaq.push(['_trackEvent', 'Classes', 'Member', cls + ' - ' + anchor]);
-              },
+              }
+          });
+          Docs.App.getController('Guides').addListener({
               showGuide: function(guide) {
                   _gaq.push(['_trackEvent', 'Guides', 'Show', guide]);
+              }
+          });
+          Docs.App.getController('Videos').addListener({
+              showVideo: function(video) {
+                  _gaq.push(['_trackEvent', 'Video', 'Show', video]);
+              }
+          });
+          Docs.App.getController('Examples').addListener({
+              showExample: function(example) {
+                  _gaq.push(['_trackEvent', 'Example', 'Show', example]);
               }
           });
       }
