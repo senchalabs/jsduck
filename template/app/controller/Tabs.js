@@ -3,6 +3,7 @@
  */
 Ext.define('Docs.controller.Tabs', {
     extend: 'Ext.app.Controller',
+    requires: ['Docs.Settings'],
 
     refs: [
         {
@@ -32,28 +33,28 @@ Ext.define('Docs.controller.Tabs', {
     init: function() {
         this.getController('Classes').addListener({
             showClass: function(cls) {
-                this.addTabFromTree("#!/api/"+cls, this.getClassTree());
+                this.addTabFromTree("#!/api/"+cls);
             },
             scope: this
         });
 
         this.getController('Guides').addListener({
             showGuide: function(guide) {
-                this.addTabFromTree("#!/guide/"+guide, this.getGuideTree());
+                this.addTabFromTree("#!/guide/"+guide);
             },
             scope: this
         });
 
         this.getController('Examples').addListener({
             showExample: function(example) {
-                this.addTabFromTree(example, this.getExampleTree());
+                this.addTabFromTree(example);
             },
             scope: this
         });
 
         this.getController('Videos').addListener({
             showVideo: function(video) {
-                this.addTabFromTree(video, this.getVideoTree());
+                this.addTabFromTree(video);
             },
             scope: this
         });
@@ -84,18 +85,53 @@ Ext.define('Docs.controller.Tabs', {
         });
     },
 
+    // Open all tabs from previous session
+    onLaunch: function() {
+        var tabs = Docs.Settings.get('tabs');
+        if (tabs) {
+            Ext.Array.forEach(tabs, this.addTabFromTree, this);
+        }
+    },
+
     /**
      * Adds a tab based on information from the class tree
      * @param {String} url The url of the record in the tree
+     * @private
      */
-    addTabFromTree: function(url, tree) {
+    addTabFromTree: function(url) {
+        var tree = this.getTree(url);
         var treeRecord = tree.findRecordByUrl(url);
         if (treeRecord && treeRecord.raw) {
+            // Init scrollstate when tab opened.
+            if (!this.scrollState[url]) {
+                this.scrollState[url] = 0;
+            }
+            this.saveTabs();
             this.getDoctabs().addTab({
                 href: treeRecord.raw.url,
                 text: treeRecord.raw.text,
                 iconCls: treeRecord.raw.iconCls
             }, { animate: true, activate: true });
+        }
+    },
+
+    // Determines tree from an URL
+    getTree: function(url) {
+        if (/#!?\/api/.test(url)) {
+            return this.getClassTree();
+        }
+        else if (/#!?\/guide/.test(url)) {
+            return this.getGuideTree();
+        }
+        else if (/#!?\/video/.test(url)) {
+            return this.getVideoTree();
+        }
+        else if (/#!?\/example/.test(url)) {
+            return this.getExampleTree();
+        }
+        else {
+            // default to classtree, just in case
+            return this.getClassTree();
         }
     },
 
@@ -121,6 +157,7 @@ Ext.define('Docs.controller.Tabs', {
             var url = Ext.get(el).up('.doctab').down('.tabUrl').getAttribute('href');
             url = Docs.History.cleanUrl(url);
             delete this.scrollState[url];
+            this.saveTabs();
             Ext.getCmp('doctabs').removeTab(url);
         }, this, {
             delegate: '.close',
@@ -168,6 +205,15 @@ Ext.define('Docs.controller.Tabs', {
      */
     getScrollState: function(url) {
         return this.scrollState[url] || 0;
+    },
+
+    // Use the scrollState cache as a source for open tabs.
+    // Filter out the always-open tabs and save the others.
+    saveTabs: function() {
+        var urls = Ext.Object.getKeys(this.scrollState);
+        Docs.Settings.set('tabs', Ext.Array.filter(urls, function(url) {
+            return /#!\/[a-z]+\/./.test(url);
+        }));
     }
 
 });
