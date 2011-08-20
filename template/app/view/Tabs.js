@@ -75,13 +75,9 @@ Ext.define('Docs.view.Tabs', {
      * @param {Boolean} opts.activate True to activate the tab
      */
     addTab: function(tab, opts) {
-
-        // console.log("Adding tab", tab, opts)
-
         this.tabCache[tab.href] = tab;
 
         if (!this.hasTab(tab.href)) {
-
             this.tabs.push(tab.href);
 
             if (this.roomForNewTab()) {
@@ -102,8 +98,9 @@ Ext.define('Docs.view.Tabs', {
      * @param {String} url URL of the tab to remove
      */
     removeTab: function(url) {
-
-        if (!this.hasTab(url)) return false;
+        if (!this.hasTab(url)) {
+            return;
+        }
 
         var idx = Ext.Array.indexOf(this.tabs, url);
         if (idx !== false) {
@@ -117,7 +114,7 @@ Ext.define('Docs.view.Tabs', {
             this.tabsInBar.push(this.tabs[this.tabsInBar.length]);
         }
 
-        if (this.activeTab == url) {
+        if (this.activeTab === url) {
             if (this.tabs.length === 0) {
                 Docs.App.getController(this.getControllerName(url)).loadIndex();
             }
@@ -144,9 +141,6 @@ Ext.define('Docs.view.Tabs', {
      * @param {String} url URL of tab
      */
     activateTab: function(url) {
-
-        // console.log("Activating", url);
-
         this.activeTab = url;
 
         if (!this.inTabs(url)) {
@@ -170,16 +164,12 @@ Ext.define('Docs.view.Tabs', {
      *  Re-renders tabs and overflow. Useful for window resize event.
      */
     refresh: function() {
-
-        var html = this.tpl.applyTemplate(this.staticTabs)
+        var html = this.tpl.applyTemplate(this.staticTabs);
 
         var len = this.maxTabsInBar() < this.tabs.length ? this.maxTabsInBar() : this.tabs.length;
         this.tabsInBar = this.tabs.slice(0, len);
 
-        // console.log("Total tabs:", this.tabs.length, "Max tabs:", this.maxTabsInBar(), "Tab bar width:", this.tabBarWidth(), "Tabs in bar:", this.tabsInBar.length, "Tab width:", tw)
-
         for (var i=0; i< len; i++) {
-
             var tab = this.tabCache[this.tabs[i]];
 
             var tabData = Ext.apply(tab, {
@@ -193,8 +183,7 @@ Ext.define('Docs.view.Tabs', {
 
         this.el.dom.innerHTML = html;
 
-        // console.log(this.activeTab, this.tabs[len-1])
-        if (this.activeTab != this.tabs[len-1]) {
+        if (this.activeTab !== this.tabs[len-1]) {
             this.activateTab(this.activeTab);
             Docs.History.push(this.activeTab);
         }
@@ -234,9 +223,6 @@ Ext.define('Docs.view.Tabs', {
      * Adds a tab to the tab bar
      */
     addTabToBar: function(tab, opts) {
-
-        // console.log("Adding tab to bar", tab.href)
-
         this.tabsInBar.push(tab.href);
 
         var docTab = Ext.get(this.tabTpl.append(this.el.dom, tab));
@@ -277,7 +263,6 @@ Ext.define('Docs.view.Tabs', {
      * @private
      */
     removeTabFromBar: function(url) {
-
         var docTab = this.getTabEl(url);
 
         docTab.dom.removed = true;
@@ -300,11 +285,10 @@ Ext.define('Docs.view.Tabs', {
      * Adds a tab to the overflow list
      */
     addTabToOverflow: function(tab, opts) {
-
         var inTabBar = this.inTabBar(tab.href);
         var idx = Ext.Array.indexOf(this.tabs, tab.href);
 
-        if (this.tabs.length > this.tabsInBar.length && idx == this.maxTabsInBar()) {
+        if (this.tabs.length > this.tabsInBar.length && idx === this.maxTabsInBar()) {
             // Add 'overflow' class to last visible tab in overflow dropdown
             var prevMenuItem = Ext.ComponentQuery.query('#tabOverflowMenu menuitem[href=' + this.tabs[idx-1] + ']');
             Ext.Array.each(prevMenuItem, function(item) {
@@ -407,7 +391,6 @@ Ext.define('Docs.view.Tabs', {
      * Creates the overflow button and add items
      */
     createOverflow: function() {
-
         if (this.overflowButton) {
             this.overflowButton.destroy();
         }
@@ -433,7 +416,7 @@ Ext.define('Docs.view.Tabs', {
 
     addToolTips: function() {
         Ext.Array.each(this.staticTabs, function(tab) {
-            var el = Ext.get(Ext.query('.doctab.' + tab.cls)[0])
+            var el = Ext.get(Ext.query('.doctab.' + tab.cls)[0]);
             if (el) {
                 Ext.create('Ext.tip.ToolTip', {
                     target: el,

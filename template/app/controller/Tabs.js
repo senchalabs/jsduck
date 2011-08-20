@@ -68,7 +68,7 @@ Ext.define('Docs.controller.Tabs', {
                         if (cmp.shouldResize) {
                             cmp.resizeTabs();
                         }
-                    })
+                    });
                 },
                 resize: function() {
                     Ext.getCmp('doctabs').refresh();
