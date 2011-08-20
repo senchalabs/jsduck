@@ -285,7 +285,10 @@ task :compress do
   system "mkdir #{OUT_DIR}/extjs/builds"
   system "cp #{EXT_DIR}/builds/ext-core.js #{OUT_DIR}/extjs/builds/ext-core.js"
   system "cp #{EXT_DIR}/resources/css/ext-all.css #{OUT_DIR}/extjs/resources/css"
+  system "cp #{EXT_DIR}/release-notes.html #{OUT_DIR}/extjs"
   system "cp -r #{EXT_DIR}/examples #{OUT_DIR}/extjs"
+  system "cp -r #{EXT_DIR}/overview #{OUT_DIR}/extjs"
+  system "cp -r #{EXT_DIR}/welcome #{OUT_DIR}/extjs"
   system "cp -r #{EXT_DIR}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
 end
 
