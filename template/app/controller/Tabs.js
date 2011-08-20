@@ -89,16 +89,20 @@ Ext.define('Docs.controller.Tabs', {
     onLaunch: function() {
         var tabs = Docs.Settings.get('tabs');
         if (tabs) {
-            Ext.Array.forEach(tabs, this.addTabFromTree, this);
+            Ext.Array.forEach(tabs, function(url) {
+                this.addTabFromTree(url, {});
+            }, this);
         }
     },
 
     /**
      * Adds a tab based on information from the class tree
      * @param {String} url The url of the record in the tree
+     * @param {Object} [opts={animate: true, activate: true}] Specify to override defaults.
      * @private
      */
-    addTabFromTree: function(url) {
+    addTabFromTree: function(url, opts) {
+        opts = opts || { animate: true, activate: true };
         var tree = this.getTree(url);
         var treeRecord = tree.findRecordByUrl(url);
         if (treeRecord && treeRecord.raw) {
@@ -111,7 +115,7 @@ Ext.define('Docs.controller.Tabs', {
                 href: treeRecord.raw.url,
                 text: treeRecord.raw.text,
                 iconCls: treeRecord.raw.iconCls
-            }, { animate: true, activate: true });
+            }, opts);
         }
     },
 

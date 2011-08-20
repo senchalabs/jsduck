@@ -85,7 +85,9 @@ Ext.define('Docs.view.Tabs', {
             }
             this.addTabToOverflow(tab, opts);
         }
-        this.activateTab(tab.href);
+        if (opts.activate) {
+            this.activateTab(tab.href);
+        }
 
         if (this.tabs.length > this.maxTabsInBar()) {
             Ext.get('tabOverflow').show();
