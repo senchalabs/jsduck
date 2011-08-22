@@ -59,23 +59,26 @@ Ext.define('Docs.controller.InlineExamples', {
                 }
             },
             'classoverview': {
-                resize: this.adjustSize,
+                resize: this.createResizer('.class-overview'),
                 afterload: this.replaceExampleDivs
             },
             'guidecontainer': {
-                resize: this.adjustSize,
+                resize: this.createResizer('.guide-container'),
                 afterload: this.replaceExampleDivs
             }
         });
     },
 
-    adjustSize: function() {
-        Ext.Array.each(Ext.ComponentQuery.query('.inlineexample'), function(c) {
-            if (c.codeEditor) {
-                c.doLayout();
-                c.codeEditor.refresh();
-            }
-        });
+    // Creates function to resize examples inside a specified container
+    createResizer: function(container) {
+        return function() {
+            Ext.Array.each(Ext.ComponentQuery.query(container + ' .inlineexample'), function(c) {
+                if (c.codeEditor && c.isVisible()) {
+                    c.doLayout();
+                    c.codeEditor.refresh();
+                }
+            });
+        };
     },
 
     activateTab: function(cmp, buttonCls) {
