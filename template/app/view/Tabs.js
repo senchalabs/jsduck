@@ -11,6 +11,7 @@ Ext.define('Docs.view.Tabs', {
 
     minTabWidth: 80,
     maxTabWidth: 160,
+    animDuration: 150,
 
     tabs: [],
     tabsInBar: [],
@@ -269,9 +270,11 @@ Ext.define('Docs.view.Tabs', {
 
         docTab.dom.removed = true;
         docTab.animate({
-            to: { top: 30 }
+            to: { top: 30 },
+            duration: this.animDuration
         }).animate({
             to: { width: 10 },
+            duration: this.animDuration,
             listeners: {
                 afteranimate: function() {
                     docTab.remove();
