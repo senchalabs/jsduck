@@ -430,7 +430,7 @@ a {
         background: none;
         padding-left: 15px; } } } }
 
-.class-overview, #guide {
+.class-overview, .guide-container {
   min-height: 100px;
   .clr {
     clear: both; }
@@ -476,7 +476,7 @@ a {
   line-height: 16px;
   margin-bottom: 4px; }
 
-#guide {
+#center-container .guide-container {
   padding: 10px;
   font-size: 14px;
   h1 {
@@ -1045,13 +1045,13 @@ a {
     letter-spacing: 0;
   }
 
-  .class-overview p, #guide p {
+  .class-overview p, .guide-container p {
     color: #484848;
     margin: 0 0 1em;
     max-width: 900px;
   }
 
-  .class-overview pre, #guide pre {
+  .class-overview pre, .guide-container pre {
     margin: 10px 0 14px 0;
     max-width: 900px;
   }
