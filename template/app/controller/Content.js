@@ -19,6 +19,16 @@ Ext.define('Docs.controller.Content', {
     title: "",
 
     onLaunch: function() {
+        var cmp = this.getIndex();
+        if (cmp.rendered) {
+            this.initScrollListener();
+        }
+        else {
+            cmp.on('afterrender', this.initScrollListener, this);
+        }
+    },
+
+    initScrollListener: function() {
         this.getIndex().getEl().addListener('scroll', function(cmp, el) {
             this.setScrollState(this.baseUrl, el.scrollTop);
         }, this);

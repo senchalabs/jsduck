@@ -80,8 +80,10 @@ Ext.define('Docs.view.Viewport', {
                             id: 'card-panel',
                             cls: 'card-panel',
                             xtype: 'container',
-                            layout: 'card',
-                            deferredRender: true,
+                            layout: {
+                                type: 'card',
+                                deferredRender: true
+                            },
                             items: [
                                 {
                                     autoScroll: true,
