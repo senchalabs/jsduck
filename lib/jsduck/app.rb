@@ -9,6 +9,7 @@ require 'jsduck/search_data'
 require 'jsduck/relations'
 require 'jsduck/aliases'
 require 'jsduck/exporter'
+require 'jsduck/renderer'
 require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
@@ -167,6 +168,13 @@ module JsDuck
           JsonDuck.write_json(filename, data)
         else
           JsonDuck.write_jsonp(filename, cls[:name].gsub(/\./, "_"), data)
+        end
+      end
+      # Print export: needs to be done non-parallel
+      if @opts.seo
+        renderer = Renderer.new(@opts)
+        @relations.classes.each do |cls|
+          renderer.write(exporter.export(cls))
         end
       end
     end

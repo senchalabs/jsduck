@@ -26,6 +26,12 @@ module JsDuck
       File.open(filename, 'w') {|f| f.write(self.generate(data)) }
     end
 
+    # Like write_jsonp, but instead of function call, writes assignment to a variable
+    def self.write_assignment(filename, variable_name, data)
+      jsonp = variable_name + "=" + self.generate(data) + ";"
+      File.open(filename, 'w') {|f| f.write(jsonp) }
+    end
+
     # Generates JSON from object
     def self.generate(data)
       @@pretty ? JSON.pretty_generate(data) : JSON.generate(data)

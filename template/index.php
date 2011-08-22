@@ -1,52 +1,5 @@
 <?php
 
-function format_members($title, $type, $members) {
-  $html = '<div id="m-' . $type . '"><div class="definedBy">Defined By</div>';
-  $html .=   '<h3 class="members-title">' . $title . '</h3>';
-  $html .=   '<div class="subsection">';
-  foreach ($members as $idx => $property) {
-    $html .= '<div id="' . $property["tagname"] . '-' . $property["name"] . '" class="member open' . ($idx == 0 ? ' first-child' : '') . '">';
-    $html .= '  <a class="side expandable"><span>&nbsp;</span></a>';
-    $html .= '  <div class="title">';
-    $html .= '    <div class="meta">';
-    $html .= '      <a href="#!/api/' . $property["owner"] . '" class="definedIn">' . $property["owner"] . '</a>';
-    $html .= '    </div>';
-    $html .= '    <a href="#!/api/' . $property["owner"] . '-' . $property["tagname"] . '-' . $property["name"] . '" class="name">';
-    $html .=        $property["name"];
-    $html .=     '</a><span> : ' . $property["params"] . '</span>';
-    $html .= '  </div>';
-    $html .= '  <div class="description long">' . $property["doc"] . '</div>';
-    $html .= '</div>';
-  }
-  $html .=   '</div>';
-  $html .= '</div>';
-  return $html;
-}
-
-function format_class($cls) {
-  $html = "<h1>" . $cls["name"] . "</h1>";
-  $html .= $cls["doc"];
-  $html .= '<div class="members">';
-
-  $sections = array(
-    "cfg" => "Configs",
-    "property" => "Properties",
-    "method" => "Methods",
-    "event" => "Events",
-  );
-  foreach ($sections as $key => $title) {
-    if ($cls["members"][$key]) {
-      $html .= format_members("Instance ".$title, $key, $cls["members"][$key]);
-    }
-    if ($cls["statics"][$key]) {
-      $html .= format_members("Static ".$title, $key, $cls["statics"][$key]);
-    }
-  }
-
-  $html .= '</div>';
-  return $html;
-}
-
 function print_page($title, $body) {
   $html = file_get_contents('print-template.html');
   echo preg_replace(array('/\{title}/', '/\{body}/'), array($title, $body), $html);
@@ -75,8 +28,9 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
   $fragment = $_GET["_escaped_fragment_"] ? $_GET["_escaped_fragment_"] : $_GET["print"];
   try {
     if (preg_match('/^\/api\/([^-]+)/', $fragment, $m)) {
-      $json = decode_file("output/".$m[1].".js");
-      print_page($json["name"], format_class($json));
+      $className = $m[1];
+      $html = file_get_contents("output-print/".$className.".html");
+      print_page($className, "<h1>" . $className . "</h1>\n" . $html);
     }
     elseif (preg_match('/^\/api\/?$/', $fragment, $m)) {
       print_index_page();
