@@ -1,8 +1,10 @@
 <?php
 
-function print_page($title, $body) {
+function print_page($title, $body, $fragment) {
+  $uri = 'http://' . $_SERVER["HTTP_HOST"] . preg_replace('/\?.*$/', '', $_SERVER["REQUEST_URI"]);
+  $canonical = $uri."#!".$fragment;
   $html = file_get_contents('print-template.html');
-  echo preg_replace(array('/\{title}/', '/\{body}/'), array($title, $body), $html);
+  echo preg_replace(array('/\{title}/', '/\{body}/', '/\{canonical}/'), array($title, $body, $canonical), $html);
 }
 
 function print_index_page() {
@@ -30,20 +32,20 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
     if (preg_match('/^\/api\/([^-]+)/', $fragment, $m)) {
       $className = $m[1];
       $html = file_get_contents("output-print/".$className.".html");
-      print_page($className, "<h1>" . $className . "</h1>\n" . $html);
+      print_page($className, "<h1>" . $className . "</h1>\n" . $html, $fragment);
     }
     elseif (preg_match('/^\/api\/?$/', $fragment, $m)) {
       print_index_page();
     }
     elseif (preg_match('/^\/guide\/(.+)/', $fragment, $m)) {
       $json = decode_file("guides/".$m[1]."/README.js");
-      print_page($json["title"], '<div id="guide" style="padding: 1px">' . $json["guide"] . '</div>');
+      print_page($json["title"], '<div id="guide" style="padding: 1px">' . $json["guide"] . '</div>', $fragment);
     }
     elseif (preg_match('/^\/guide\/?$/', $fragment, $m)) {
       print_index_page();
     }
     else {
-      print_page("Not implemented", "<p>Support for <code>$fragment</code> not implemented.</p>");
+      print_index_page();
     }
   }
   catch (Exception $e) {
