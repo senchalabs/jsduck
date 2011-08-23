@@ -14,7 +14,8 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.guides.Container',
         'Docs.view.videos.Index',
         'Docs.view.videos.Container',
-        'Docs.view.examples.Index'
+        'Docs.view.examples.Index',
+        'Docs.view.examples.Container'
     ],
 
     id: 'viewport',
@@ -127,10 +128,8 @@ Ext.define('Docs.view.Viewport', {
                                     id: 'exampleindex'
                                 },
                                 {
-                                    id: 'example',
-                                    xtype: 'container',
-                                    layout: 'fit',
-                                    html: '<iframe style="width: 100%; height: 100%; border: 0;" id="exampleIframe" src="egIframe.html"></iframe>'
+                                    xtype: 'examplecontainer',
+                                    id: 'example'
                                 }
                             ]
                         }

@@ -18,6 +18,10 @@ Ext.define('Docs.controller.Examples', {
         {
             ref: 'tree',
             selector: '#exampletree'
+        },
+        {
+            ref: 'page',
+            selector: '#example'
         }
     ],
 
@@ -54,9 +58,9 @@ Ext.define('Docs.controller.Examples', {
         var example = this.getExample(url);
         this.getViewport().setPageTitle(example.text);
         if (this.activeUrl !== url) {
+            this.getPage().clear();
             this.activateExampleCard();
-            var ifr = document.getElementById("exampleIframe");
-            ifr.contentWindow.location.replace('extjs/examples/' + example.url);
+            this.getPage().load(example);
         }
         else {
             this.activateExampleCard();
