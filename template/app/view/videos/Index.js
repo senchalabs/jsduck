@@ -19,7 +19,7 @@ Ext.define('Docs.view.videos.Index', {
                 itemTpl: [
                     '<dd ext:url="#!/video/{id}"><img src="{thumb}"/>',
                         '<div><h4>{title}',
-                        '</h4><p>{[values.description.substr(0,80)]}</p></div>',
+                        '</h4><p>{[values.description.substr(0,80)]}...</p></div>',
                     '</dd>'
                 ],
                 data: Docs.data.videos
