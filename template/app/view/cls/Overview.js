@@ -76,7 +76,9 @@ Ext.define('Docs.view.cls.Overview', {
         });
         this.addDocked(this.toolbar);
 
-        this.update(this.renderer.render(docClass));
+        //this.update(this.renderer.render(docClass));
+        this.update(docClass.html);
+
         Docs.Syntax.highlight(this.getEl());
 
         if (Docs.Settings.get("hideInherited")) {

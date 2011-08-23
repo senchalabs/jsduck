@@ -160,10 +160,12 @@ module JsDuck
     # Writes JSON export or JsonP file for each class
     def write_classes
       exporter = Exporter.new(@relations, get_doc_formatter)
+      renderer = Renderer.new(@opts)
       @parallel.each(@relations.classes) do |cls|
         filename = @opts.output_dir+"/output/" + cls[:name] + (@opts.export ? ".json" : ".js")
         Logger.instance.log("Writing to #{filename} ...")
         data = exporter.export(cls)
+        data[:html] = renderer.render(data)
         if @opts.export
           JsonDuck.write_json(filename, data)
         else
@@ -172,7 +174,6 @@ module JsDuck
       end
       # Print export: needs to be done non-parallel
       if @opts.seo
-        renderer = Renderer.new(@opts)
         @relations.classes.each do |cls|
           renderer.write(exporter.export(cls))
         end
