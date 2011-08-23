@@ -80,6 +80,27 @@ Ext.define('Docs.controller.Classes', {
             'classtree': {
                 urlclick: function(url, event) {
                     this.handleUrlClick(url, event, this.getTree());
+                },
+                afterrender: function(cmp) {
+                    cmp.el.addListener('click', function(e, el) {
+                        var clicked = Ext.get(el),
+                            selected = Ext.query('.cls-group.selected');
+
+                        if (selected === clicked) {
+                            return false;
+                        }
+
+                        Ext.select('.cls-group').removeCls('selected');
+                        clicked.addCls('selected');
+
+                        if (clicked.hasCls('packages')) {
+                            this.getTree().setLogic(Docs.view.cls.PackageLogic);
+                        } else {
+                            this.getTree().setLogic(Docs.view.cls.InheritanceLogic);
+                        }
+                    }, this, {
+                        delegate: '.cls-group'
+                    });
                 }
             },
 

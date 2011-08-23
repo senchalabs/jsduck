@@ -17,29 +17,16 @@ Ext.define('Docs.view.cls.Tree', {
     initComponent: function() {
         this.setLogic(Docs.view.cls.PackageLogic);
 
-        this.buttons = [
-            {
-                xtype: 'button',
-                text: 'By package',
-                toggleGroup: 'logic',
-                pressed: true,
-                allowDepress: false,
-                handler: function() {
-                    this.setLogic(Docs.view.cls.PackageLogic);
-                },
-                scope: this
-            },
-            {
-                xtype: 'button',
-                text: 'By inheritance',
-                toggleGroup: 'logic',
-                allowDepress: false,
-                handler: function() {
-                    this.setLogic(Docs.view.cls.InheritanceLogic);
-                },
-                scope: this
-            }
-        ];
+        this.dockedItems = [{
+            xtype: 'container',
+            dock: 'bottom',
+            cls: 'cls-grouping',
+            html: [
+                '<div class="cls-group packages selected">By Package</div>',
+                // '<div class="cls-group categories">Categories</div>',
+                '<div class="cls-group hierarchy">By Inheritance</div>',
+            ].join('')
+        }];
 
         this.callParent();
     },

@@ -1182,3 +1182,28 @@ a {
   .members .member { padding: 5px; }
   .members h3.members-title { padding: 5px; }
 }
+
+.cls-grouping {
+  padding: 5px 0 2px 0;
+  text-align: center;
+  div {
+    display: inline-block;
+    color: #4d4d4d;
+    font-size: 11px;
+    font-weight: bold;
+    float: left;
+    margin: 0 3px;
+    padding: 1px 13px 2px 13px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    &.selected {
+      color: #fff;
+      border: 1px solid #727a81;
+      background-color: #646b72;
+      @include vertical-gradient(#646b72, #8d949b);
+      box-shadow: inset #5b6167 0 0 1px;
+      @include border-radius(10px);
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+    }
+  }
+}
