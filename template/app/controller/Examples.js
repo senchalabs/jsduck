@@ -54,9 +54,9 @@ Ext.define('Docs.controller.Examples', {
         var example = this.getExample(url);
         this.getViewport().setPageTitle(example.text);
         if (this.activeUrl !== url) {
+            this.activateExampleCard();
             var ifr = document.getElementById("exampleIframe");
             ifr.contentWindow.location.replace('extjs/examples/' + example.url);
-            setTimeout(this.activateExampleCard, 150); // Prevent previous example from flashing up
         }
         else {
             this.activateExampleCard();
