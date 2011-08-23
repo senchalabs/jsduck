@@ -9,9 +9,26 @@ Ext.define("Docs.History", {
      */
     init: function() {
         Ext.util.History.init(function() {
-            this.navigate(Ext.util.History.getToken());
+            this.historyLoaded = true;
+            this.initialNavigate();
         }, this);
+
         Ext.util.History.on("change", this.navigate, this);
+    },
+
+    /**
+     * Called from Tabs controller to notify that initial tabs loading had been done.
+     */
+    notifyTabsLoaded: function() {
+        this.tabsLoaded = true;
+        this.initialNavigate();
+    },
+
+    // Invoke initial navigation only after both tabs and history are loaded
+    initialNavigate: function() {
+        if (this.tabsLoaded && this.historyLoaded) {
+            this.navigate(Ext.util.History.getToken());
+        }
     },
 
     // Parses current URL and navigates to the page

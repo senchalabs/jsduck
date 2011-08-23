@@ -3,7 +3,10 @@
  */
 Ext.define('Docs.controller.Tabs', {
     extend: 'Ext.app.Controller',
-    requires: ['Docs.Settings'],
+    requires: [
+        'Docs.History',
+        'Docs.Settings'
+    ],
 
     refs: [
         {
@@ -93,6 +96,7 @@ Ext.define('Docs.controller.Tabs', {
                 this.addTabFromTree(url, {});
             }, this);
         }
+        Docs.History.notifyTabsLoaded();
     },
 
     /**
