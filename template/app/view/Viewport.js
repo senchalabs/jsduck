@@ -136,6 +136,12 @@ Ext.define('Docs.view.Viewport', {
                         }
                     }
                 ]
+            },
+            {
+                region: 'south',
+                id: 'footer',
+                height: 20,
+                contentEl: 'footer-content'
             }
         ];
 

@@ -65,7 +65,6 @@ task :sdk do
     # to create symbolic links to template files instead of copying them over.
     # Useful for development.  Turn off for deployment.
     "--template-links",
-    "--seo",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",
@@ -82,7 +81,7 @@ def run_jsduck_export(extra_options)
 
   run_jsduck([
     "--title", "Ext JS 4.0 API Documentation",
-    "--footer", "ExtJS 4.0 Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
+    "--footer", "ExtJS 4.0.5 Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
     "--head-html", head_html,
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",

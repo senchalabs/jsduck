@@ -233,7 +233,7 @@ module JsDuck
       Logger.instance.log("Creating #{@opts.output_dir}/template.html...")
       html = IO.read(@opts.template_dir+"/template.html")
       html.gsub!("{title}", @opts.title)
-      html.gsub!("{footer}", "<div id='footer-content' style='display: none'>#{@footer}</div>")
+      html.gsub!("{footer}", "<div id='footer-content' style='display: none'>#{@opts.footer}</div>")
       html.gsub!("{extjs_path}", @opts.extjs_path)
       html.gsub!("{local_storage_db}", @opts.local_storage_db)
       html.gsub!("{welcome}", @welcome.to_html)
