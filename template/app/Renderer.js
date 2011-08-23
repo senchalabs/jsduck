@@ -3,6 +3,16 @@
  */
 Ext.define('Docs.Renderer', {
     /**
+     * @cfg {Boolean} expandAll
+     * True to expand all members initially.
+     */
+    expandAll: false,
+
+    constructor: function(cfg) {
+        Ext.apply(this, cfg||{});
+    },
+
+    /**
      * Renders class object into HTML documentation.
      * @param {Object} cls Class documentation object.
      * @return {String} HTML
@@ -198,7 +208,7 @@ Ext.define('Docs.Renderer', {
             // use classname "inherited" when member is not defined in this class
             inherited: member.owner === this.cls.name ? "not-inherited" : "inherited",
             // use classname "open" to expand member description
-            open: member.expanded ? "open" : "",
+            open: member.expanded || this.expandAll ? "open" : "",
             // method params signature or property type signature
             signature: this.renderSignature(member),
             // full documentation together with optional parameters and return value

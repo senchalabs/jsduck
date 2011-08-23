@@ -12,7 +12,8 @@ if (phantom.args.length === 0) {
         else {
             page.injectJs(address.replace(/print.html$/, "output-print/data.js"));
             var html = page.evaluate(function () {
-                return new Docs.Renderer().render(window.jsonData);
+                var r = new Docs.Renderer({expandAll: true});
+                return r.render(window.jsonData);
             });
             console.log(html);
         }
