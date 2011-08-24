@@ -180,10 +180,11 @@ module JsDuck
         filename = @opts.output_dir+"/output/" + cls[:name] + (@opts.export ? ".json" : ".js")
         Logger.instance.log("Writing to #{filename} ...")
         data = exporter.export(cls)
-        data[:html] = renderer.render(data)
         if @opts.export
           JsonDuck.write_json(filename, data)
         else
+          data[:html] = renderer.render(data)
+          data = exporter.compact(data)
           JsonDuck.write_jsonp(filename, cls[:name].gsub(/\./, "_"), data)
         end
       end
