@@ -122,10 +122,10 @@ Ext.define('Docs.controller.Classes', {
                             memberName = member.getAttribute('id');
 
                         if (member.hasCls('open')) {
-                            this.getMember(memberName).expanded = false;
+                            this.setExpanded(memberName, false);
                         }
                         else {
-                            this.getMember(memberName).expanded = true;
+                            this.setExpanded(memberName, true);
                             this.fireEvent('showMember', clsName, memberName);
                         }
                         member.toggleCls('open');
@@ -163,24 +163,31 @@ Ext.define('Docs.controller.Classes', {
         });
     },
 
-    // Given a member name like "cfg-items", returns the corresponding member object from currentCls.
-    getMember: function(longName) {
-        var parts = longName.split(/-/);
-        var type = parts[0];
-        var name = parts[1];
-        var matches = [];
-        Ext.Array.forEach(['members', 'statics'], function(cat) {
-            matches = matches.concat(Ext.Array.filter(this.currentCls[cat][type], function(m) {
-                return m.name === name;
-            }, this));
+    // Remembers the expanded state of a member of current class
+    setExpanded: function(member, expanded) {
+        var cls = this.currentCls;
+        if (!cls.expanded) {
+            cls.expanded = {};
+        }
+
+        if (expanded) {
+            cls.expanded[member] = expanded;
+        }
+        else {
+            delete cls.expanded[member];
+        }
+    },
+
+    // Expands
+    applyExpanded: function(cls) {
+        Ext.Object.each(cls.expanded || {}, function(member) {
+            Ext.get(member).addCls("open");
         }, this);
-        return matches[0];
     },
 
     // We don't want to select the class that was opened in another window,
     // so restore the previous selection.
     handleUrlClick: function(url, event, view) {
-
         url = Docs.History.cleanUrl(url);
 
         if (this.opensNewWindow(event)) {
@@ -253,6 +260,7 @@ Ext.define('Docs.controller.Classes', {
         if (this.currentCls !== cls) {
             this.getHeader().load(cls);
             this.getOverview().load(cls);
+            this.applyExpanded(cls);
         }
         this.currentCls = cls;
 
