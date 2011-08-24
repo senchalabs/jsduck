@@ -46,7 +46,6 @@ module JsDuck
       parsed_files = @timer.time(:parsing) { parallel_parse(@opts.input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       @relations = @timer.time(:aggregating) { filter_classes(result) }
-      @timer.time(:generating) { format_classes }
       Aliases.new(@relations).resolve_all
       Lint.new(@relations).run
 
@@ -85,6 +84,7 @@ module JsDuck
         FileUtils.mkdir(@opts.output_dir)
         init_output_dirs
         @timer.time(:generating) { write_src(parsed_files) }
+        @timer.time(:generating) { format_classes }
         @timer.time(:generating) { write_classes }
       else
         if @opts.template_links
@@ -98,6 +98,7 @@ module JsDuck
           FileUtils.cp(@opts.output_dir+"/template.html", @opts.output_dir+"/index.html")
         end
         @timer.time(:generating) { write_src(parsed_files) }
+        @timer.time(:generating) { format_classes }
         @timer.time(:generating) { write_app_data }
         @timer.time(:generating) { write_classes }
         @timer.time(:generating) { @guides.write(@opts.output_dir+"/guides") }
