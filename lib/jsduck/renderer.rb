@@ -12,8 +12,8 @@ module JsDuck
           "<div>",
             render_hierarchy,
             "<div class='doc-contents'>",
-              @cls[:doc],
               render_private_class_notice,
+              @cls[:doc],
             "</div>",
             "<div class='members'>",
               render_member_sections,
@@ -25,11 +25,9 @@ module JsDuck
     def render_private_class_notice
       return if !@cls[:private]
       return [
-        "<tpl if='private'>",
-          "<p class='private'><strong>NOTE</strong> ",
-          "This is a private utility class for internal use by the framework. ",
-          "Don't rely on its existence.</p>",
-        "</tpl>",
+        "<p class='private'><strong>NOTE</strong> ",
+        "This is a private utility class for internal use by the framework. ",
+        "Don't rely on its existence.</p>",
       ]
     end
 
