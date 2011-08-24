@@ -62,6 +62,7 @@ task :sdk do
   load_sdk_vars
   run_jsduck([
     "--extjs-path", "extjs/ext-all-debug.js",
+    "--seo",
     # to create symbolic links to template files instead of copying them over.
     # Useful for development.  Turn off for deployment.
     "--template-links",

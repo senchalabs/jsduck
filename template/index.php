@@ -31,8 +31,8 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
   try {
     if (preg_match('/^\/api\/([^-]+)/', $fragment, $m)) {
       $className = $m[1];
-      $html = file_get_contents("output-print/".$className.".html");
-      print_page($className, "<h1>" . $className . "</h1>\n" . $html, $fragment);
+      $json = decode_file("output/".$className.".js");
+      print_page($className, "<h1>" . $className . "</h1>\n" . $json["html"], $fragment);
     }
     elseif (preg_match('/^\/api\/?$/', $fragment, $m)) {
       print_index_page();
