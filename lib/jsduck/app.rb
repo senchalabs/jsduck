@@ -3,6 +3,7 @@ require 'jsduck/aggregator'
 require 'jsduck/source_file'
 require 'jsduck/source_writer'
 require 'jsduck/doc_formatter'
+require 'jsduck/class_formatter'
 require 'jsduck/class'
 require 'jsduck/icons'
 require 'jsduck/search_data'
@@ -45,6 +46,7 @@ module JsDuck
       parsed_files = @timer.time(:parsing) { parallel_parse(@opts.input_files) }
       result = @timer.time(:aggregating) { aggregate(parsed_files) }
       @relations = @timer.time(:aggregating) { filter_classes(result) }
+      @timer.time(:generating) { format_classes }
       Aliases.new(@relations).resolve_all
       Lint.new(@relations).run
 
@@ -145,6 +147,19 @@ module JsDuck
       Relations.new(classes, @opts.external_classes)
     end
 
+    # Formats each class
+    def format_classes
+      formatter = ClassFormatter.new(@relations, get_doc_formatter)
+      # Format all doc-objects in parallel
+      formatted_docs = @parallel.map(@relations.classes) do |cls|
+        formatter.format(cls.internal_doc)
+      end
+      # Then merge the data back to classes sequentially
+      formatted_docs.each do |doc|
+        @relations[doc[:name]].internal_doc = doc
+      end
+    end
+
     # Writes classes, guides, videos, and search data to one big .js file
     def write_app_data
       js = "Docs.data = " + JsonDuck.generate({
@@ -159,7 +174,7 @@ module JsDuck
 
     # Writes JSON export or JsonP file for each class
     def write_classes
-      exporter = Exporter.new(@relations, get_doc_formatter)
+      exporter = Exporter.new(@relations)
       renderer = Renderer.new
       @parallel.each(@relations.classes) do |cls|
         filename = @opts.output_dir+"/output/" + cls[:name] + (@opts.export ? ".json" : ".js")

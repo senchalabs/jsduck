@@ -15,6 +15,16 @@ module JsDuck
       @relations = nil
     end
 
+    # Accessors for internal doc object.  These are used to run
+    # ClassFormatter on the internal doc object and then assign it
+    # back.
+    def internal_doc
+      @doc
+    end
+    def internal_doc=(doc)
+      @doc = doc
+    end
+
     def [](key)
       @doc[key]
     end
