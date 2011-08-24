@@ -8,7 +8,6 @@ Ext.define('Docs.view.cls.Overview', {
     requires: [
         'Docs.view.cls.Toolbar',
         'Docs.view.examples.Inline',
-        'Docs.Renderer',
         'Docs.Syntax',
         'Docs.Settings'
     ],
@@ -26,7 +25,6 @@ Ext.define('Docs.view.cls.Overview', {
              */
             'afterload'
         );
-        this.renderer = new Docs.Renderer();
         this.callParent(arguments);
     },
 
@@ -76,7 +74,6 @@ Ext.define('Docs.view.cls.Overview', {
         });
         this.addDocked(this.toolbar);
 
-        //this.update(this.renderer.render(docClass));
         this.update(docClass.html);
 
         Docs.Syntax.highlight(this.getEl());
