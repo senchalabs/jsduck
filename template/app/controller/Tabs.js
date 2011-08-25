@@ -10,6 +10,26 @@ Ext.define('Docs.controller.Tabs', {
 
     refs: [
         {
+            ref: 'welcomeIndex',
+            selector: '#welcomeindex'
+        },
+        {
+            ref: 'classIndex',
+            selector: '#classindex'
+        },
+        {
+            ref: 'guideIndex',
+            selector: '#guideindex'
+        },
+        {
+            ref: 'videoIndex',
+            selector: '#videoindex'
+        },
+        {
+            ref: 'exampleIndex',
+            selector: '#exampleindex'
+        },
+        {
             ref: 'classTree',
             selector: '#classtree'
         },
@@ -90,6 +110,14 @@ Ext.define('Docs.controller.Tabs', {
 
     // Open all tabs from previous session
     onLaunch: function() {
+        this.getDoctabs().setStaticTabs(Ext.Array.filter([
+            this.getWelcomeIndex().getTab(),
+            this.getClassIndex().getTab(),
+            this.getGuideIndex().getTab(),
+            this.getVideoIndex().getTab(),
+            this.getExampleIndex().getTab()
+        ], function(x){return x;}));
+
         var tabs = Docs.Settings.get('tabs');
         if (tabs) {
             Ext.Array.forEach(tabs, function(url) {

@@ -11,7 +11,16 @@ Ext.define('Docs.view.welcome.Index', {
 
     initComponent: function() {
         this.html = Docs.ContentGrabber.get('welcome-content');
+        this.hasContent = !!this.html;
 
         this.callParent(arguments);
+    },
+
+    /**
+     * Returns tab config for the welcome page.
+     * @return {Object}
+     */
+    getTab: function() {
+        return this.hasContent ? {cls: 'index', href: '#', tooltip: 'Home'} : false;
     }
 });

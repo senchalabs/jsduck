@@ -25,7 +25,9 @@ Ext.define('Docs.view.DocTree', {
 
         // Expand the main tree
         this.root.expanded = true;
-        this.root.children[0].expanded = true;
+        if (this.root.children[0]) {
+            this.root.children[0].expanded = true;
+        }
 
         this.on("itemclick", this.onItemClick, this);
 

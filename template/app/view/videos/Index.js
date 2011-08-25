@@ -27,5 +27,13 @@ Ext.define('Docs.view.videos.Index', {
         ];
 
         this.callParent(arguments);
+    },
+
+    /**
+     * Returns tab config for videos page.
+     * @return {Object}
+     */
+    getTab: function() {
+        return Docs.data.videos.length > 0 ? {cls: 'videos', href: '#!/video', tooltip: 'Videos'} : false;
     }
 });

@@ -16,14 +16,7 @@ Ext.define('Docs.view.Tabs', {
     tabs: [],
     tabsInBar: [],
     tabCache: {},
-
-    staticTabs: [
-        { cls: 'index',    href: '#',          tooltip: 'Home' },
-        { cls: 'classes',  href: '#!/api',     tooltip: 'API documentation' },
-        { cls: 'guides',   href: '#!/guide',   tooltip: 'Guides' },
-        { cls: 'videos',   href: '#!/video',   tooltip: 'Videos' },
-        { cls: 'examples', href: '#!/example', tooltip: 'Examples' }
-    ],
+    staticTabs: [],
 
     initComponent: function() {
         this.tpl = Ext.create('Ext.XTemplate',
@@ -62,6 +55,19 @@ Ext.define('Docs.view.Tabs', {
         afterrender: function() {
             this.createOverflow();
         }
+    },
+
+    /**
+     * Sets the static tabs to display.
+     *
+     * @param {Object[]} tabs Array of tab configs with the following structure:
+     * @param {String} tabs.cls CSS classname for tab
+     * @param {String} tabs.href URL to activate when clicking tab
+     * @param {String} tabs.tooltip Tooltip to show when hovering the tab
+     */
+    setStaticTabs: function(tabs) {
+        this.staticTabs = tabs;
+        this.refresh();
     },
 
     /**

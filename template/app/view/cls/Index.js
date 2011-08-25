@@ -26,5 +26,13 @@ Ext.define('Docs.view.cls.Index', {
         };
 
         this.callParent(arguments);
+    },
+
+    /**
+     * Returns tab config for classes page.
+     * @return {Object}
+     */
+    getTab: function() {
+        return {cls: 'classes', href: '#!/api', tooltip: 'API Documentation'};
     }
 });

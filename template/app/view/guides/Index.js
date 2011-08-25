@@ -26,5 +26,13 @@ Ext.define('Docs.view.guides.Index', {
         ];
 
         this.callParent(arguments);
+    },
+
+    /**
+     * Returns tab config for guides page.
+     * @return {Object}
+     */
+    getTab: function() {
+        return Docs.data.guides.length > 0 ? {cls: 'guides', href: '#!/guide', tooltip: 'Guides'} : false;
     }
 });

@@ -36,5 +36,13 @@ Ext.define('Docs.view.examples.Index', {
         ];
 
         this.callParent(arguments);
+    },
+
+    /**
+     * Returns tab config for examples page.
+     * @return {Object}
+     */
+    getTab: function() {
+        return Docs.data.examples.length > 0 ? {cls: 'examples', href: '#!/example', tooltip: 'Examples'} : false;
     }
 });
