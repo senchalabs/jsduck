@@ -221,7 +221,7 @@ module JsDuck
     def render_long_doc(m)
       doc = [m[:doc]]
 
-      if m[:default]
+      if m[:default] && m[:default] != "undefined"
         doc << "<p>Defaults to: <code>" + CGI.escapeHTML(m[:default]) + "</code></p>"
       end
 
