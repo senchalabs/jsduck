@@ -37,5 +37,13 @@ Ext.define('Docs.controller.Welcome', {
         );
         Ext.getCmp("failure").update(tpl.apply({msg: msg}));
         Ext.getCmp('card-panel').layout.setActiveItem("failure");
+    },
+
+    /**
+     * True if welcome page is available.
+     * @return {Boolean}
+     */
+    isActive: function() {
+        return !!this.getIndex().getTab();
     }
 });

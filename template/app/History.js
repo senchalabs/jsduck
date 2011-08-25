@@ -59,7 +59,12 @@ Ext.define("Docs.History", {
             Docs.App.getController('Examples').loadExample(url.url, true);
         }
         else {
-            Docs.App.getController('Welcome').loadIndex(true);
+            if (Docs.App.getController('Welcome').isActive()) {
+                Docs.App.getController('Welcome').loadIndex(true);
+            }
+            else {
+                Docs.App.getController('Classes').loadIndex(true);
+            }
         }
     },
 
