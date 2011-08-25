@@ -89,6 +89,14 @@ describe JsDuck::Lexer do
     it "when escaped single-quote inside single-quoted string" do
       lex(@s+@b+@s+@s   + ' "blah"').should == [[:string, @b+@s], [:string, "blah"]]
     end
+
+    it "when newlines escaped inside double-quoted string" do
+      lex(@d+"A\\\nB"+@d).should == [[:string, "A\\\nB"]]
+    end
+
+    it "when newlines escaped inside single-quoted string" do
+      lex(@s+"A\\\nB"+@s).should == [[:string, "A\\\nB"]]
+    end
   end
 
   it "identifies $ as beginning of identifier" do
