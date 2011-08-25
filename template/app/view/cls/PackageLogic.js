@@ -60,7 +60,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
             }
             var node = this.classNode(cls);
             parent.children.push(node);
-            this.packages[name] = node;
+            this.packages[cls.name] = node;
         }
     },
 
