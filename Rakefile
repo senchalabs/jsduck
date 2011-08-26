@@ -199,6 +199,8 @@ task :touch do
     "#{SDK_DIR}/touch/src/widgets",
     "#{SDK_DIR}/touch/src/platform/src"
   ])
+  # Finally copy over the images that documentation links to.
+  system "cp -r #{SDK_DIR}/touch/doc-resources #{OUT_DIR}/doc-resources"
 end
 
 # Compress JS/CSS file in-place
