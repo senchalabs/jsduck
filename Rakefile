@@ -79,8 +79,8 @@ def run_jsduck_export(extra_options)
   EOHTML
 
   run_jsduck([
-    "--title", "Ext JS 4.0 API Documentation",
-    "--footer", "ExtJS 4.0.5 Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
+    "--title", "Sencha Docs - Ext JS 4.0",
+    "--footer", "Ext JS 4.0.5 Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
     "--head-html", head_html,
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
@@ -170,8 +170,7 @@ task :charts do
   load_sdk_vars
   system(*[
     "ruby", "bin/jsduck",
-    "--title", "Sencha Touch Charts API Documentation",
-    "--external", "Error",
+    "--title", "Sencha Docs - Touch Charts",
     "--ignore-global",
     "--guides", "#{SDK_DIR}/charts/guides",
     "--output", "#{OUT_DIR}",
@@ -187,7 +186,8 @@ task :touch do
   load_sdk_vars
   system(*[
     "ruby", "bin/jsduck",
-    "--title", "Sencha Touch API Documentation",
+    "--title", "Sencha Docs - Touch 1.0",
+    "--seo",
     "--categories", "#{SDK_DIR}/touch/doc-resources/categories.json",
     "--output", "#{OUT_DIR}",
     "#{SDK_DIR}/touch/src/core",

@@ -93,6 +93,7 @@ module JsDuck
           copy_template
         end
         create_template_html
+        create_print_template_html
         if !@opts.seo
           FileUtils.rm(@opts.output_dir+"/index.php")
           FileUtils.cp(@opts.output_dir+"/template.html", @opts.output_dir+"/index.html")
@@ -242,19 +243,38 @@ module JsDuck
     end
 
     def create_template_html
-      Logger.instance.log("Creating #{@opts.output_dir}/template.html...")
-      html = IO.read(@opts.template_dir+"/template.html")
-      html.gsub!("{title}", @opts.title)
-      html.gsub!("{footer}", "<div id='footer-content' style='display: none'>#{@opts.footer}</div>")
-      html.gsub!("{extjs_path}", @opts.extjs_path)
-      html.gsub!("{local_storage_db}", @opts.local_storage_db)
-      html.gsub!("{welcome}", @welcome.to_html)
-      html.gsub!("{categories}", @categories.to_html)
-      html.gsub!("{guides}", @guides.to_html)
-      html.gsub!("{head_html}", @opts.head_html)
-      html.gsub!("{body_html}", @opts.body_html)
-      FileUtils.rm(@opts.output_dir+"/template.html")
-      File.open(@opts.output_dir+"/template.html", 'w') {|f| f.write(html) }
+      write_template("template.html", {
+        "{title}" => @opts.title,
+        "{header}" => @opts.header,
+        "{footer}" => "<div id='footer-content' style='display: none'>#{@opts.footer}</div>",
+        "{extjs_path}" => @opts.extjs_path,
+        "{local_storage_db}" => @opts.local_storage_db,
+        "{welcome}" => @welcome.to_html,
+        "{categories}" => @categories.to_html,
+        "{guides}" => @guides.to_html,
+        "{head_html}" => @opts.head_html,
+        "{body_html}" => @opts.body_html,
+      })
+    end
+
+    def create_print_template_html
+      write_template("print-template.html", {
+        "{title}" => @opts.title,
+        "{header}" => @opts.header,
+      })
+    end
+
+    # Opens file in template dir, replaces {keys} inside it, writes to output dir
+    def write_template(filename, replacements)
+      in_file = @opts.template_dir + '/' + filename
+      out_file = @opts.output_dir + '/' + filename
+      Logger.instance.log("Creating #{out_file}...")
+      html = IO.read(in_file)
+      html.gsub!(/\{.*?\}/) do |key|
+        replacements[key] ? replacements[key] : key
+      end
+      FileUtils.rm(out_file)
+      File.open(out_file, 'w') {|f| f.write(html) }
     end
   end
 

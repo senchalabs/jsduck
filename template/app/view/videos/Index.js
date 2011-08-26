@@ -14,7 +14,7 @@ Ext.define('Docs.view.videos.Index', {
 
     initComponent: function() {
         this.items = [
-            { xtype: 'container', html: '<h1 class="eg">Ext JS Videos</h1>' },
+            { xtype: 'container', html: '<h1 class="eg">Videos</h1>' },
             Ext.create('Docs.view.ThumbList', {
                 itemTpl: [
                     '<dd ext:url="#!/video/{id}"><img src="{thumb}"/>',

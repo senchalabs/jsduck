@@ -41,7 +41,7 @@ Ext.define('Docs.view.Viewport', {
                             {
                                 xtype: 'container',
                                 flex: 1,
-                                html: '<div class="logo"><span>Sencha Docs</span> Ext JS 4.0</div>'
+                                contentEl: 'header-content'
                             },
                             {
                                 xtype: 'searchcontainer',

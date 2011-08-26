@@ -4,7 +4,7 @@
 Ext.define('Docs.controller.Classes', {
     extend: 'Docs.controller.Content',
     baseUrl: '#!/api',
-    title: 'Classes',
+    title: 'API Documentation',
 
     requires: [
         'Docs.History',

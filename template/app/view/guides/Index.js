@@ -14,7 +14,7 @@ Ext.define('Docs.view.guides.Index', {
 
     initComponent: function() {
         this.items = [
-            { xtype: 'container', html: '<h1 class="eg">Ext JS Guides</h1>' },
+            { xtype: 'container', html: '<h1 class="eg">Guides</h1>' },
             Ext.create('Docs.view.ThumbList', {
                 itemTpl: [
                     '<dd ext:url="#!/guide/{name}"><img src="guides/{name}/icon-lg.png"/>',

@@ -13,7 +13,7 @@ Ext.define('Docs.view.cls.Index', {
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
-            '<h1 class="top" style="padding-bottom: 10px">{title}</h1>',
+            '<h1 class="top" style="padding-bottom: 10px">API Documentation</h1>',
             '<tpl if="notice">',
                 '<div class="notice">{notice}</div>',
             '</tpl>',
@@ -21,8 +21,7 @@ Ext.define('Docs.view.cls.Index', {
         );
         this.data = {
             notice: Docs.ContentGrabber.get("notice-text"),
-            categories: Docs.ContentGrabber.get("categories-content"),
-            title: Ext.query("title")[0].innerHTML
+            categories: Docs.ContentGrabber.get("categories-content")
         };
 
         this.callParent(arguments);

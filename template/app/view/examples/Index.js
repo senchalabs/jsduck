@@ -14,7 +14,7 @@ Ext.define('Docs.view.examples.Index', {
 
     initComponent: function() {
         this.items = [
-            { xtype: 'container', html: '<h1 class="eg">Ext JS Examples</h1>' },
+            { xtype: 'container', html: '<h1 class="eg">Examples</h1>' },
             Ext.create('Docs.view.ThumbList', {
                 itemTpl: [
                     '<dd ext:url="#!/example/{url}"><img src="extjs/examples/shared/screens/{icon}"/>',

@@ -137,7 +137,7 @@ a {
   padding: 8px 0; margin: 0 20px 15px 0;
   @include border-radius(8px); }
 
-.logo {
+#header-content {
   background: url(../images/logo.png) 0 0 no-repeat;
   color: #fff;
   font-family: $docs-font;
@@ -147,7 +147,7 @@ a {
   font-size: 1.1em;
   a {
     color: #fff; }
-  span {
+  strong {
     font-weight: bold;
     padding-right: 3px; } }
 

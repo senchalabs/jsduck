@@ -14,6 +14,7 @@ module JsDuck
 
     # Customizing output
     attr_accessor :title
+    attr_accessor :header
     attr_accessor :footer
     attr_accessor :head_html
     attr_accessor :body_html
@@ -67,7 +68,8 @@ module JsDuck
       @verbose = false
 
       # Customizing output
-      @title = "Ext JS API Documentation"
+      @title = "Sencha Docs - Ext JS"
+      @header = "<strong>Sencha Docs</strong> Ext JS"
       @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
       @head_html = ""
       @body_html = ""
@@ -131,13 +133,14 @@ module JsDuck
         opts.separator ""
 
         opts.on('--title=TEXT',
-          "Custom title for the documentation @",
-          "Defaults to 'ExtJS API Documentation'", " ") do |text|
+          "Custom title text for the documentation.",
+          "Defaults to 'Sencha Docs - Ext JS'", " ") do |text|
           @title = text
+          @header = text.sub(/^(.*?) +- +/, "<strong>\\1 </strong>")
         end
 
         opts.on('--footer=TEXT',
-          "Custom footer text for the documentation @",
+          "Custom footer text for the documentation.",
           "Defaults to: 'Generated with JSDuck.'", " ") do |text|
           @footer = text
         end

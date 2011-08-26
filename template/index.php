@@ -1,10 +1,10 @@
 <?php
 
-function print_page($title, $body, $fragment) {
+function print_page($subtitle, $body, $fragment) {
   $uri = 'http://' . $_SERVER["HTTP_HOST"] . preg_replace('/\?.*$/', '', $_SERVER["REQUEST_URI"]);
   $canonical = $uri."#!".$fragment;
   $html = file_get_contents('print-template.html');
-  echo preg_replace(array('/\{title}/', '/\{body}/', '/\{canonical}/'), array($title, $body, $canonical), $html);
+  echo preg_replace(array('/\{subtitle}/', '/\{body}/', '/\{canonical}/'), array($subtitle, $body, $canonical), $html);
 }
 
 function print_index_page() {
