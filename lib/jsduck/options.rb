@@ -41,7 +41,28 @@ module JsDuck
 
       @output_dir = nil
       @ignore_global = false
-      @external_classes = []
+      @external_classes = [
+        # JavaScript builtins
+        "Object",
+        "String",
+        "Number",
+        "Boolean",
+        "RegExp",
+        "Function",
+        "Array",
+        "Arguments",
+        "Date",
+        "Error",
+        # DOM
+        "HTMLElement",
+        "XMLElement",
+        "NodeList",
+        "TextNode",
+        "CSSStyleSheet",
+        "CSSStyleRule",
+        "Event",
+      ]
+
       @warnings = true
       @verbose = false
 
@@ -91,12 +112,11 @@ module JsDuck
           @ignore_global = true
         end
 
-        opts.on('--external=CLASSNAME',
-          "Declares an external class.  When declared as",
-          "external, inheriting from this class will not",
-          "trigger warnings.  Useful when you are extending",
-          "a class for which you can not supply source code.", " ") do |classname|
-          @external_classes << classname
+        opts.on('--external=Foo,Bar,Baz', Array,
+          "Declares list of external classes.  These classes",
+          "will then not generate warnings when used in type",
+          "definitions or inherited from.", " ") do |classes|
+          @external_classes += classes
         end
 
         opts.on('--no-warnings', "Turns off warnings.", " ") do

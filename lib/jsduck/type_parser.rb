@@ -24,28 +24,6 @@ module JsDuck
     # Initializes the parser with hash of valid type names
     def initialize(relations={})
       @relations = relations
-      @builtins = {
-        # JavaScript builtins
-        "Object" => true,
-        "String" => true,
-        "Number" => true,
-        "Boolean" => true,
-        "RegExp" => true,
-        "Function" => true,
-        "Array" => true,
-        "Arguments" => true,
-        "Date" => true,
-        "Error" => true,
-        "undefined" => true,
-        # DOM
-        "HTMLElement" => true,
-        "XMLElement" => true,
-        "NodeList" => true,
-        "TextNode" => true,
-        "CSSStyleSheet" => true,
-        "CSSStyleRule" => true,
-        "Event" => true,
-      }
     end
 
     def parse(str)
@@ -81,7 +59,7 @@ module JsDuck
 
     def exists?(type)
       stype = type.sub(/\[\]$/, "")
-      if @builtins[stype] || @relations[stype]
+      if @relations[stype] || @relations.ignore?(stype) || stype == "undefined"
         true
       else
         @error = :name

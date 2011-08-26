@@ -13,7 +13,7 @@ module JsDuck
 
     def initialize(classes = [], ignorables = [])
       @classes = classes
-      @ignorables = {"Object" => true}
+      @ignorables = {}
       ignorables.each {|classname| @ignorables[classname] = true }
 
       # First build class lookup table; building lookup tables for

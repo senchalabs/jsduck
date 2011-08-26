@@ -1,13 +1,17 @@
+require "jsduck/relations"
 require "jsduck/type_parser"
 
 describe JsDuck::TypeParser do
 
   def parse(str)
-    types = {
-      "Ext.form.Panel" => true,
-      "Ext.Element" => true,
-    }
-    JsDuck::TypeParser.new(types).parse(str)
+    relations = JsDuck::Relations.new([], [
+      "String",
+      "Number",
+      "RegExp",
+      "Ext.form.Panel",
+      "Ext.Element",
+    ])
+    JsDuck::TypeParser.new(relations).parse(str)
   end
 
   it "matches simple type" do
