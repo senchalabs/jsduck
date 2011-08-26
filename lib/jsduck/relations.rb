@@ -49,6 +49,12 @@ module JsDuck
       @classes.each(&block)
     end
 
+    # Returns list of all classes.  This method allows us to treat
+    # Relations as array and therefore easily mock it
+    def to_a
+      @classes
+    end
+
     def reg_subclasses(cls)
       if !cls.parent
         # do nothing

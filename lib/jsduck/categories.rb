@@ -14,6 +14,21 @@ module JsDuck
     # Parses categories in JSON file
     def parse(path)
       @categories = JsonDuck.read(path)["categories"]
+
+      # Perform expansion on all class names containing * wildcard
+      @categories.each do |cat|
+        cat["groups"].each do |group|
+          group["classes"] = group["classes"].map do |name|
+            expand(name) # name =~ /\*/ ? expand(name) : name
+          end.flatten
+        end
+      end
+    end
+
+    # Expands class name like 'Foo.*' into multiple class names.
+    def expand(name)
+      re = Regexp.new("^" + name.split(/\*/, -1).map {|part| Regexp.escape(part) }.join('.*') + "$")
+      @relations.to_a.find_all {|cls| re =~ cls[:name] && !cls[:private] }.map {|cls| cls[:name] }.sort
     end
 
     # Prints warnings for missing classes in categories file
