@@ -188,6 +188,7 @@ task :touch do
   system(*[
     "ruby", "bin/jsduck",
     "--title", "Sencha Touch API Documentation",
+    "--categories", "#{SDK_DIR}/touch/doc-resources/categories.json",
     "--output", "#{OUT_DIR}",
     "#{SDK_DIR}/touch/src/core",
     "#{SDK_DIR}/touch/src/data",
