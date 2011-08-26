@@ -182,6 +182,23 @@ task :charts do
   system "cp -r #{SDK_DIR}/platform/doc-resources #{OUT_DIR}/doc-resources"
 end
 
+desc "Run JSDuck on Sencha Touch"
+task :touch do
+  load_sdk_vars
+  system(*[
+    "ruby", "bin/jsduck",
+    "--title", "Sencha Touch API Documentation",
+    "--output", "#{OUT_DIR}",
+    "#{SDK_DIR}/touch/src/core",
+    "#{SDK_DIR}/touch/src/data",
+    "#{SDK_DIR}/touch/src/gestures",
+    "#{SDK_DIR}/touch/src/layout",
+    "#{SDK_DIR}/touch/src/plugins",
+    "#{SDK_DIR}/touch/src/util",
+    "#{SDK_DIR}/touch/src/widgets",
+    "#{SDK_DIR}/touch/src/platform/src"
+  ])
+end
 
 # Compress JS/CSS file in-place
 # Using a hackish way to access yui-compressor
