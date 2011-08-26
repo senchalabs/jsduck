@@ -68,15 +68,6 @@ the stable but quite old [0.6][v0.6] version):
 
     $ [sudo] gem install --pre jsduck
 
-For hacking fork it from github:
-
-    $ git clone git://github.com/senchalabs/jsduck.git
-    $ cd jsduck
-    $ rake --tasks
-
-JsDuck depends on [json][], [RDiscount][], and [parallel][]; plus
-[RSpec][] for tests.
-
 If you encounter errors during gem installation, you may need to
 install the header files for compiling extension modules for ruby 1.8.
 For Debian systems you'll need the `ruby1.8-dev` package.  For Red Hat
@@ -87,12 +78,7 @@ which includes Ruby interpreter and all dependencies bundled in a
 single .exe file.  Grab it from the [download page][].
 
 [v0.6]: https://github.com/senchalabs/jsduck/tree/v0.6
-[json]: http://flori.github.com/json/
-[RDiscount]: https://github.com/rtomayko/rdiscount
-[parallel]: https://github.com/grosser/parallel
-[RSpec]: http://rspec.info/
 [download page]: https://github.com/senchalabs/jsduck/downloads
-
 
 Usage
 -----
@@ -126,6 +112,54 @@ to generate a lot of warnings.  These should be fixed in some later
 releases.
 
 [official]: http://docs.sencha.com/ext-js/4-0/
+
+
+Hacking it
+----------
+
+For hacking fork it from github:
+
+    $ git clone git://github.com/senchalabs/jsduck.git
+
+JsDuck depends on [json][], [RDiscount][], and [parallel][]; plus
+[RSpec][] for tests and [compass][] for compiling the stylesheets.
+Make sure you have these installed:
+
+    $ gem list
+
+First smoke test. Run the testsuite:
+
+    $ cd jsduck
+    $ rake
+
+Unfortunately all other rake tasks are currently meant for internal
+usage in Sencha, but don't worry, if everything is green, continue
+with some configuration. Copy an ExtJS 4 download inside
+template/extjs directory (you might just create a symlink if you wish
+so):
+
+    $ cp -r path/to/ext-4.0.2a template/extjs
+
+Now you are ready to generate the stylesheets:
+
+    $ compass compile template/resources/sass
+
+This might generate some warnings, but if there's no fatal errors, you
+should be OK to actually run JSDuck:
+
+    $ ./bin/jsuck  --output /out/dir  /input/files
+
+For developing the Ruby side, try to please the unit tests.  For
+JavaScript side, use the --template-links option so you don't have to
+run jsduck every time you change a .js file.
+
+Happy hacking.
+
+[json]: http://flori.github.com/json/
+[RDiscount]: https://github.com/rtomayko/rdiscount
+[parallel]: https://github.com/grosser/parallel
+[RSpec]: http://rspec.info/
+[compass]: http://compass-style.org/
 
 
 Documenting your code with JSDuck
