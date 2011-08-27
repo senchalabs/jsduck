@@ -371,7 +371,7 @@ Ext.define('Docs.view.Tabs', {
      * @return {Number} Width of the tab bar (not including the static tabs)
      */
     tabBarWidth: function() {
-        return this.getWidth() - 265;
+        return this.getWidth() - (this.staticTabs.length * 50) - 15;
     },
 
     /**
