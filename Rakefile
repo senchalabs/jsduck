@@ -37,7 +37,7 @@ def load_sdk_vars
   end
 end
 
-def run_jsduck(extra_options)
+def run_on_sdk(extra_options)
   # Pass multiple arguments to system, so we'll take advantage of the built-in escaping
   system(*[
     "ruby", "bin/jsduck",
@@ -58,7 +58,7 @@ end
 desc "Run JSDuck on ExtJS SDK"
 task :sdk do
   load_sdk_vars
-  run_jsduck([
+  run_on_sdk([
     "--extjs-path", "extjs/ext-all-debug.js",
     "--seo",
     # to create symbolic links to template files instead of copying them over.
@@ -70,7 +70,7 @@ task :sdk do
   ])
 end
 
-def run_jsduck_export(extra_options)
+def run_sdk_export(extra_options)
   load_sdk_vars
   rev = `git rev-parse HEAD`.slice(0, 7)
   head_html = <<-EOHTML
@@ -78,7 +78,7 @@ def run_jsduck_export(extra_options)
     <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4">
   EOHTML
 
-  run_jsduck([
+  run_on_sdk([
     "--title", "Sencha Docs - Ext JS 4.0",
     "--footer", "Ext JS 4.0.5 Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
     "--head-html", head_html,
@@ -91,9 +91,9 @@ end
 
 # Use the :export task instead
 desc "Base task for creating export"
-task :base_export do
+task :base_export_sdk do
   load_sdk_vars
-  run_jsduck_export([
+  run_sdk_export([
     "--body-html", <<-EOHTML
     <div id="notice-text" style="display: none">
       Use <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a> for up to date documentation and features
@@ -104,9 +104,9 @@ end
 
 # Use the :live_docs task instead
 desc "Base task for creating live docs"
-task :base_live_docs do
+task :base_live_sdk do
   load_sdk_vars
-  run_jsduck_export([
+  run_sdk_export([
     "--seo",
     "--body-html", <<-EOHTML
     <script type="text/javascript">
@@ -155,7 +155,7 @@ end
 desc "Run JSDuck on the Docs app itself"
 task :docs do
   load_sdk_vars
-  run_jsduck([
+  run_on_sdk([
     "--template-links",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
@@ -181,14 +181,21 @@ task :charts do
   system "cp -r #{SDK_DIR}/platform/doc-resources #{OUT_DIR}/doc-resources"
 end
 
-desc "Run JSDuck on Sencha Touch"
-task :touch do
+def run_on_touch(*extra_options)
   load_sdk_vars
+  rev = `git rev-parse HEAD`.slice(0, 7)
+  head_html = <<-EOHTML
+    <link rel="canonical" href="http://docs.sencha.com/touch/1-0/" />
+    <meta name="description" content="Sencha Touch 1.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch">
+  EOHTML
+
   system(*[
     "ruby", "bin/jsduck",
     "--title", "Sencha Docs - Touch 1.0",
     "--seo",
     "--categories", "#{SDK_DIR}/touch/doc-resources/categories.json",
+    "--footer", "Sencha Touch 1.0 Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
+    "--head-html", head_html,
     "--output", "#{OUT_DIR}",
     "#{SDK_DIR}/touch/src/core",
     "#{SDK_DIR}/touch/src/data",
@@ -198,9 +205,20 @@ task :touch do
     "#{SDK_DIR}/touch/src/util",
     "#{SDK_DIR}/touch/src/widgets",
     "#{SDK_DIR}/touch/src/platform/src"
-  ])
+  ].concat(extra_options))
+
   # Finally copy over the images that documentation links to.
   system "cp -r #{SDK_DIR}/touch/doc-resources #{OUT_DIR}/doc-resources"
+end
+
+desc "Run JSDuck on Sencha Touch"
+task :touch do
+  run_on_touch("--template-links")
+end
+
+desc "Base task for creating live Sencta Touch docs"
+task :base_live_touch do
+  run_on_touch
 end
 
 # Compress JS/CSS file in-place
@@ -300,6 +318,10 @@ task :compress do
   system "cp #{EXT_DIR}/ext-all.js #{OUT_DIR}/extjs"
   system "cp #{EXT_DIR}/ext-all-debug.js #{OUT_DIR}/extjs"
   system "cp #{EXT_DIR}/bootstrap.js #{OUT_DIR}/extjs"
+end
+
+desc "Copy over SDK examples"
+task :copy_sdk_examples do
   system "mkdir #{OUT_DIR}/extjs/builds"
   system "cp #{EXT_DIR}/builds/ext-core.js #{OUT_DIR}/extjs/builds/ext-core.js"
   system "cp #{EXT_DIR}/resources/css/ext-all.css #{OUT_DIR}/extjs/resources/css"
@@ -310,9 +332,12 @@ task :compress do
 end
 
 desc "Run JSDuck on ExtJS SDK to create release version of docs app"
-task :export => [:base_export, :compress]
+task :export => [:base_export_sdk, :compress, :copy_sdk_examples]
 
 desc "Run JSDuck on ExtJS SDK to create live docs app"
-task :live_docs => [:base_live_docs, :compress]
+task :live_sdk => [:base_live_sdk, :compress, :copy_sdk_examples]
+
+desc "Run JSDuck on Sencha Touch to create live docs app"
+task :live_touch => [:base_live_touch, :compress]
 
 task :default => :spec
