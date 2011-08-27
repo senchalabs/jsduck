@@ -194,6 +194,7 @@ def run_on_touch(*extra_options)
     "--title", "Sencha Docs - Touch 1.0",
     "--seo",
     "--categories", "#{SDK_DIR}/touch/doc-resources/categories.json",
+    "--videos", "#{SDK_DIR}/touch/doc-resources/videos.json",
     "--footer", "Sencha Touch 1.0 Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
     "--head-html", head_html,
     "--output", "#{OUT_DIR}",
