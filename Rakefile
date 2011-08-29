@@ -205,7 +205,8 @@ def run_on_touch(*extra_options)
     "#{SDK_DIR}/touch/src/plugins",
     "#{SDK_DIR}/touch/src/util",
     "#{SDK_DIR}/touch/src/widgets",
-    "#{SDK_DIR}/touch/src/platform/src"
+    "#{SDK_DIR}/touch/src/platform/src",
+    "#{SDK_DIR}/touch/resources/themes/stylesheets/sencha-touch/default",
   ].concat(extra_options))
 
   # Finally copy over the images that documentation links to.

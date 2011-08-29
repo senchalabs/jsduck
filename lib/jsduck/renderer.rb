@@ -99,6 +99,8 @@ module JsDuck
         {:type => :property, :title => "Properties"},
         {:type => :method, :title => "Methods"},
         {:type => :event, :title => "Events"},
+        {:type => :css_var, :title => "CSS Variables"},
+        {:type => :css_mixin, :title => "CSS Mixins"},
       ]
 
       # Skip rendering empty sections
@@ -179,7 +181,7 @@ module JsDuck
         name = @cls[:name]
       end
 
-      if m[:tagname] == :cfg || m[:tagname] == :property
+      if m[:tagname] == :cfg || m[:tagname] == :property || m[:tagname] == :css_var
         params = "<span> : #{m[:type]}</span>"
       else
         ps = m[:params].map {|p| render_short_param(p) }.join(", ")
