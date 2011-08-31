@@ -21,27 +21,36 @@ module JsDuck
     # - :name - one of the names of the types is unknown
     attr_reader :error
 
-    # Initializes the parser with hash of valid type names
-    def initialize(relations={})
+    # When parsing was successful, then contains the output HTML - the
+    # input type-definition with types themselves replaced with links.
+    attr_reader :out
+
+    # Initializes the parser with hash of valid type names and doc_formatter.
+    def initialize(relations={}, formatter={})
       @relations = relations
+      @formatter = formatter
     end
 
     def parse(str)
       @input = StringScanner.new(str)
       @error = :syntax
+      @out = []
 
       # Return immediately if base type doesn't match
       return false unless base_type
 
       # Go through enumeration of types, separated with "/"
       while @input.check(/\//)
-        @input.scan(/\//)
+        @out << @input.scan(/\//)
         # Fail if there's no base type after "/"
         return false unless base_type
       end
 
       # The definition might end with an ellipsis
-      @input.scan(/\.\.\./)
+      @out << "..." if @input.scan(/\.\.\./)
+
+      # Concatenate all output
+      @out = @out.join
 
       # Success if we have reached the end of input
       return @input.eos?
@@ -53,18 +62,22 @@ module JsDuck
     #
     # dot-separated identifiers followed by optional "[]"
     def base_type
-      type = @input.scan(/[a-zA-Z_]+(\.[a-zA-Z_]+)*(\[\])?/)
-      return type && exists?(type)
-    end
+      type = @input.scan(/[a-zA-Z_]+(\.[a-zA-Z_]+)*/)
 
-    def exists?(type)
-      stype = type.sub(/\[\]$/, "")
-      if @relations[stype] || @relations.ignore?(stype) || stype == "undefined"
-        true
+      if !type
+        return false
+      elsif @relations[type]
+        @out << @formatter.link(type, nil, type)
+      elsif @relations.ignore?(type) || type == "undefined"
+        @out << type
       else
         @error = :name
-        false
+        return false
       end
+
+      @out << "[]" if @input.scan(/\[\]/)
+
+      true
     end
 
   end

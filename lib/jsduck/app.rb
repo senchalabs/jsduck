@@ -152,6 +152,8 @@ module JsDuck
     # Formats each class
     def format_classes
       formatter = ClassFormatter.new(@relations, get_doc_formatter)
+      # Don't format types when exporting
+      formatter.include_types = !@opts.export
       # Format all doc-objects in parallel
       formatted_docs = @parallel.map(@relations.classes) do |cls|
         formatter.format(cls.internal_doc)

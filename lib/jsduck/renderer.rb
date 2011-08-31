@@ -182,12 +182,12 @@ module JsDuck
       end
 
       if m[:tagname] == :cfg || m[:tagname] == :property || m[:tagname] == :css_var
-        params = "<span> : #{m[:type]}</span>"
+        params = "<span> : #{m[:html_type]}</span>"
       else
         ps = m[:params].map {|p| render_short_param(p) }.join(", ")
         params = "( <span class='pre'>#{ps}</span> )"
         if m[:tagname] == :method && m[:return][:type] != "undefined"
-          params += " : " + m[:return][:type]
+          params += " : " + m[:return][:html_type]
         end
       end
 
@@ -216,7 +216,7 @@ module JsDuck
     end
 
     def render_short_param(param)
-      p = param[:type] + " " + param[:name]
+      p = param[:html_type] + " " + param[:name]
       return param[:optional] ? "["+p+"]" : p
     end
 
@@ -285,7 +285,7 @@ module JsDuck
       return [
         "<li>",
           "<span class='pre'>#{p[:name]}</span> : ",
-          p[:type],
+          p[:html_type],
           p[:optional] ? " (optional)" : "",
           "<div class='sub-desc'>",
             p[:doc],
@@ -301,7 +301,7 @@ module JsDuck
         "<h3 class='pa'>Returns</h3>",
         "<ul>",
           "<li>",
-            "<span class='pre'>#{ret[:type]}</span>",
+            "<span class='pre'>#{ret[:html_type]}</span>",
             "<div class='sub-desc'>",
               ret[:doc],
               ret[:properties] && ret[:properties].length > 0 ? render_params_and_return(ret) : "",
