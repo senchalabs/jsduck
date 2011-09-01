@@ -90,7 +90,7 @@ Ext.define('Docs.controller.Tabs', {
 
                     cmp.el.on('mouseleave', function() {
                         if (cmp.shouldResize) {
-                            cmp.resizeTabs();
+                            cmp.resizeTabs({animate: true});
                         }
                     });
                 },
@@ -101,7 +101,7 @@ Ext.define('Docs.controller.Tabs', {
             },
             '#tabOverflowMenu menuitem': {
                 click: function(cmp) {
-                    Docs.History.push(cmp.href);
+                    Docs.History.push(cmp.href, { navigate: true });
                 },
                 scope: this
             }
@@ -121,7 +121,7 @@ Ext.define('Docs.controller.Tabs', {
         var tabs = Docs.Settings.get('tabs');
         if (tabs) {
             Ext.Array.forEach(tabs, function(url) {
-                this.addTabFromTree(url, {});
+                this.addTabFromTree(url, {animate: false});
             }, this);
         }
         Docs.History.notifyTabsLoaded();
@@ -142,7 +142,6 @@ Ext.define('Docs.controller.Tabs', {
             if (!this.scrollState[url]) {
                 this.scrollState[url] = 0;
             }
-            this.saveTabs();
             this.getDoctabs().addTab({
                 href: treeRecord.raw.url,
                 text: treeRecord.raw.text,
@@ -193,7 +192,6 @@ Ext.define('Docs.controller.Tabs', {
             var url = Ext.get(el).up('.doctab').down('.tabUrl').getAttribute('href');
             url = Docs.History.cleanUrl(url);
             delete this.scrollState[url];
-            this.saveTabs();
             Ext.getCmp('doctabs').removeTab(url);
         }, this, {
             delegate: '.close',
@@ -212,7 +210,7 @@ Ext.define('Docs.controller.Tabs', {
                 return;
             }
             var url = Ext.get(el).down('.tabUrl').getAttribute('href');
-            Docs.History.push(url);
+            Docs.History.push(url, { navigate: true });
         }, this, {
             delegate: '.doctab'
         });
@@ -241,15 +239,6 @@ Ext.define('Docs.controller.Tabs', {
      */
     getScrollState: function(url) {
         return this.scrollState[url] || 0;
-    },
-
-    // Use the scrollState cache as a source for open tabs.
-    // Filter out the always-open tabs and save the others.
-    saveTabs: function() {
-        var urls = Ext.Object.getKeys(this.scrollState);
-        Docs.Settings.set('tabs', Ext.Array.filter(urls, function(url) {
-            return /#!\/[a-z]+\/./.test(url);
-        }));
     }
 
 });

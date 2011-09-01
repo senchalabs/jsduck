@@ -99,6 +99,8 @@ Ext.define('Docs.view.Tabs', {
         if (this.tabs.length > this.maxTabsInBar()) {
             Ext.get('tabOverflow').show();
         }
+
+        this.saveTabs();
     },
 
     /**
@@ -142,6 +144,8 @@ Ext.define('Docs.view.Tabs', {
         } else {
             this.removeTabFromBar(url);
         }
+
+        this.saveTabs();
     },
 
     /**
@@ -202,6 +206,12 @@ Ext.define('Docs.view.Tabs', {
         this.addToolTips();
     },
 
+    closeAllTabs: function() {
+        this.tabs = this.tabsInBar = [ this.activeTab ];
+        this.refresh();
+        this.saveTabs();
+    },
+
     // Private methods
 
     tabData: function() {
@@ -248,7 +258,7 @@ Ext.define('Docs.view.Tabs', {
             docTab.setStyle({ visibility: 'visible' });
         }
 
-        this.resizeTabs();
+        this.resizeTabs(opts);
     },
 
     /**
@@ -307,12 +317,15 @@ Ext.define('Docs.view.Tabs', {
             });
         }
 
-        Ext.getCmp('tabOverflowMenu').add({
+        // Insert before 'close all tabs' button
+        var insertIdx = Ext.getCmp('tabOverflowMenu').items.length - 1;
+
+        Ext.getCmp('tabOverflowMenu').insert(insertIdx, {
             text: tab.text,
             iconCls: tab.iconCls,
             origIcon: tab.iconCls,
             href: tab.href,
-            cls: 'x-menu-item-checked' + (inTabBar ? '' : ' overflow')
+            cls: (inTabBar ? '' : ' overflow')
         });
     },
 
@@ -378,14 +391,18 @@ Ext.define('Docs.view.Tabs', {
      * @private
      * Resize tabs in the tab bar
      */
-    resizeTabs: function() {
+    resizeTabs: function(opts) {
         this.shouldResize = false;
         Ext.Array.each(Ext.query('.doctab'), function(t){
             var docTab = Ext.get(t);
             if (!docTab.dom.removed && !docTab.hasCls('overview')) {
-                docTab.animate({
-                    to: { width: this.tabWidth() }
-                });
+                if (opts && opts.animate) {
+                    docTab.animate({
+                        to: { width: this.tabWidth() }
+                    });
+                } else {
+                    docTab.setWidth(this.tabWidth());
+                }
             }
         }, this);
     },
@@ -412,7 +429,15 @@ Ext.define('Docs.view.Tabs', {
             menu: {
                 id: 'tabOverflowMenu',
                 plain: true,
-                items: []
+                items: [{
+                    text: 'Close all tabs',
+                    iconCls: 'close',
+                    cls: 'overflow close-all',
+                    handler: function() {
+                        this.closeAllTabs();
+                    },
+                    scope: this
+                }]
             }
         });
 
@@ -435,6 +460,10 @@ Ext.define('Docs.view.Tabs', {
                 });
             }
         });
+    },
+
+    saveTabs: function() {
+        Docs.Settings.set('tabs', this.tabs);
     },
 
     /**

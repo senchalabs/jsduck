@@ -85,12 +85,16 @@ Ext.define("Docs.History", {
      *
      * @param {String} token  the part of URL after #
      */
-    push: function(token) {
+    push: function(token, opts) {
         token = this.cleanUrl(token);
         if (!/^#!?/.test(token)) {
             token = "#!"+token;
         }
-        this.noNavigate = true;
+        if (opts && opts.navigate) {
+            this.noNavigate = false;
+        } else {
+            this.noNavigate = true;
+        }
         Ext.util.History.add(token);
     },
 
