@@ -246,7 +246,7 @@ Ext.define('Docs.view.Tabs', {
 
         var docTab = Ext.get(this.tabTpl.append(this.el.dom, tab));
 
-        if (opts.animate) {
+        if (opts.animate && !Ext.isIE) {
             // Effect to 'slide' the tab out when it is created.
             docTab.setStyle('width', '10px');
             docTab.setStyle({ visibility: 'visible' });
@@ -285,20 +285,24 @@ Ext.define('Docs.view.Tabs', {
         var docTab = this.getTabEl(url);
 
         docTab.dom.removed = true;
-        docTab.animate({
-            to: { top: 30 },
-            duration: this.animDuration
-        }).animate({
-            to: { width: 10 },
-            duration: this.animDuration,
-            listeners: {
-                afteranimate: function() {
-                    docTab.remove();
-                    this.shouldResize = true;
-                },
-                scope: this
-            }
-        });
+        if (Ext.isIE) {
+            docTab.remove();
+        } else {
+            docTab.animate({
+                to: { top: 30 },
+                duration: this.animDuration
+            }).animate({
+                to: { width: 10 },
+                duration: this.animDuration,
+                listeners: {
+                    afteranimate: function() {
+                        docTab.remove();
+                        this.shouldResize = true;
+                    },
+                    scope: this
+                }
+            });
+        }
     },
 
     /**
@@ -396,7 +400,7 @@ Ext.define('Docs.view.Tabs', {
         Ext.Array.each(Ext.query('.doctab'), function(t){
             var docTab = Ext.get(t);
             if (!docTab.dom.removed && !docTab.hasCls('overview')) {
-                if (opts && opts.animate) {
+                if (opts && opts.animate && !Ext.isIE) {
                     docTab.animate({
                         to: { width: this.tabWidth() }
                     });
