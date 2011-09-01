@@ -80,7 +80,7 @@ def run_sdk_export(extra_options)
 
   run_on_sdk([
     "--title", "Sencha Docs - Ext JS 4.0",
-    "--footer", "Ext JS 4.0.5 Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
+    "--footer", "Ext JS 4.0.6 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{rev}",
     "--head-html", head_html,
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
