@@ -24,7 +24,7 @@ Ext.define('Docs.view.cls.Tree', {
             html: [
                 '<div class="cls-group packages selected">By Package</div>',
                 // '<div class="cls-group categories">Categories</div>',
-                '<div class="cls-group hierarchy">By Inheritance</div>',
+                '<div class="cls-group hierarchy">By Inheritance</div>'
             ].join('')
         }];
 
