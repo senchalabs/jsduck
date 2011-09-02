@@ -1171,7 +1171,7 @@ a {
 .cls-grouping {
   padding: 5px 0 2px 0;
   text-align: center;
-  div {
+  button {
     display: inline-block;
     color: #4d4d4d;
     font-size: 11px;
@@ -1181,6 +1181,7 @@ a {
     padding: 1px 13px 2px 13px;
     border: 1px solid transparent;
     cursor: pointer;
+    background: transparent;
     &.selected {
       color: #fff;
       border: 1px solid #727a81;

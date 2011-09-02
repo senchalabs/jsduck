@@ -84,22 +84,22 @@ Ext.define('Docs.controller.Classes', {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(e, el) {
                         var clicked = Ext.get(el),
-                            selected = Ext.query('.cls-group.selected');
+                            selected = Ext.get(Ext.query('.cls-grouping button.selected')[0]);
 
-                        if (selected === clicked) {
-                            return false;
+                        if (selected.dom === clicked.dom) {
+                            return;
                         }
 
-                        Ext.select('.cls-group').removeCls('selected');
+                        selected.removeCls('selected');
                         clicked.addCls('selected');
 
-                        if (clicked.hasCls('packages')) {
+                        if (clicked.hasCls('by-package')) {
                             this.getTree().setLogic(Docs.view.cls.PackageLogic);
                         } else {
                             this.getTree().setLogic(Docs.view.cls.InheritanceLogic);
                         }
                     }, this, {
-                        delegate: '.cls-group'
+                        delegate: 'button'
                     });
                 }
             },
