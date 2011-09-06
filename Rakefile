@@ -10,11 +10,6 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = "spec/**/*_spec.rb"
 end
 
-desc "Run compass to generate CSS files"
-task :sass do
-  system "compass compile --quiet template/resources/sass"
-end
-
 def load_sdk_vars
   if File.exists?("sdk-vars.rb")
     require "sdk-vars.rb"
@@ -30,196 +25,6 @@ def load_sdk_vars
     puts "    EXT_DIR='/path/to/ext/dir'"
     exit 1
   end
-end
-
-def run_on_sdk(extra_options)
-  # Pass multiple arguments to system, so we'll take advantage of the built-in escaping
-  system(*[
-    "ruby", "bin/jsduck",
-    "--welcome", "template/welcome.html",
-    "--guides", "#{SDK_DIR}/guides/guides.json",
-    "--videos", "#{SDK_DIR}/guides/videos.json",
-    "--examples", "#{SDK_DIR}/extjs/examples/examples.json",
-    "--inline-examples", "#{SDK_DIR}/extjs/doc-resources",
-    "--categories", "#{SDK_DIR}/extjs/doc-resources/categories.json",
-    "--output", "#{OUT_DIR}",
-  ].concat(extra_options))
-
-  # Finally copy over the images that documentation links to.
-  system "cp -r #{SDK_DIR}/extjs/doc-resources #{OUT_DIR}/doc-resources"
-  system "cp -r #{SDK_DIR}/platform/doc-resources/* #{OUT_DIR}/doc-resources"
-end
-
-desc "Run JSDuck on ExtJS SDK"
-task :sdk => :sass do
-  load_sdk_vars
-  run_on_sdk([
-    "--extjs-path", "extjs/ext-all-debug.js",
-    "--seo",
-    # to create symbolic links to template files instead of copying them over.
-    # Useful for development.  Turn off for deployment.
-    "--template-links",
-    "--template", "template",
-    "#{SDK_DIR}/extjs/src",
-    "#{SDK_DIR}/platform/src",
-    "#{SDK_DIR}/platform/core/src",
-  ])
-end
-
-def run_sdk_export(extra_options)
-  load_sdk_vars
-  rev = `git rev-parse HEAD`.slice(0, 7)
-  head_html = <<-EOHTML
-    <link rel="canonical" href="http://docs.sencha.com/ext-js/4-0/" />
-    <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4">
-  EOHTML
-
-  run_on_sdk([
-    "--title", "Sencha Docs - Ext JS 4.0",
-    "--footer", "Ext JS 4.0.6 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{rev}",
-    "--head-html", head_html,
-    "#{SDK_DIR}/extjs/src",
-    "#{SDK_DIR}/platform/src",
-    "#{SDK_DIR}/platform/core/src",
-  ].concat(extra_options))
-
-end
-
-# Use the :export task instead
-desc "Base task for creating export"
-task :base_export_sdk do
-  load_sdk_vars
-  run_sdk_export([
-    "--body-html", <<-EOHTML
-    <div id="notice-text" style="display: none">
-      Use <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a> for up to date documentation and features
-    </div>
-    EOHTML
-  ])
-end
-
-# Use the :live_docs task instead
-desc "Base task for creating live docs"
-task :base_live_sdk do
-  load_sdk_vars
-  run_sdk_export([
-    "--seo",
-    "--body-html", <<-EOHTML
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-1396058-10']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-        var ga = document.createElement('script');
-        ga.type = 'text/javascript';
-        ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(ga, s);
-      })();
-
-      Docs.initEventTracking = function() {
-          Docs.App.getController('Classes').addListener({
-              showClass: function(cls) {
-                  _gaq.push(['_trackEvent', 'Classes', 'Show', cls]);
-              },
-              showMember: function(cls, anchor) {
-                  _gaq.push(['_trackEvent', 'Classes', 'Member', cls + ' - ' + anchor]);
-              }
-          });
-          Docs.App.getController('Guides').addListener({
-              showGuide: function(guide) {
-                  _gaq.push(['_trackEvent', 'Guides', 'Show', guide]);
-              }
-          });
-          Docs.App.getController('Videos').addListener({
-              showVideo: function(video) {
-                  _gaq.push(['_trackEvent', 'Video', 'Show', video]);
-              }
-          });
-          Docs.App.getController('Examples').addListener({
-              showExample: function(example) {
-                  _gaq.push(['_trackEvent', 'Example', 'Show', example]);
-              }
-          });
-      }
-    </script>
-  EOHTML
-  ])
-end
-
-desc "Run JSDuck on the Docs app itself"
-task :docs do
-  load_sdk_vars
-  run_on_sdk([
-    "--template-links",
-    "#{SDK_DIR}/extjs/src",
-    "#{SDK_DIR}/platform/src",
-    "#{SDK_DIR}/platform/core/src",
-    "template/app",
-    "template/app.js",
-  ])
-end
-
-desc "Run JSDuck on ExtJS charts"
-task :charts do
-  load_sdk_vars
-  system(*[
-    "ruby", "bin/jsduck",
-    "--title", "Sencha Docs - Touch Charts",
-    "--ignore-global",
-    "--guides", "#{SDK_DIR}/charts/guides",
-    "--output", "#{OUT_DIR}",
-    "--no-warnings",
-    "#{SDK_DIR}/charts/src",
-  ])
-
-  system "cp -r #{SDK_DIR}/platform/doc-resources #{OUT_DIR}/doc-resources"
-end
-
-def run_on_touch(*extra_options)
-  load_sdk_vars
-  rev = `git rev-parse HEAD`.slice(0, 7)
-  head_html = <<-EOHTML
-    <link rel="canonical" href="http://docs.sencha.com/touch/1-0/" />
-    <meta name="description" content="Sencha Touch 1.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch">
-  EOHTML
-
-  system(*[
-    "ruby", "bin/jsduck",
-    "--title", "Sencha Docs - Touch 1.0",
-    "--seo",
-    "--categories", "#{SDK_DIR}/touch/doc-resources/categories.json",
-    "--videos", "#{SDK_DIR}/touch/doc-resources/videos.json",
-    "--footer", "Sencha Touch 1.0 Documentation from Sencha. Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
-    "--head-html", head_html,
-    "--output", "#{OUT_DIR}",
-    "#{SDK_DIR}/touch/src/core",
-    "#{SDK_DIR}/touch/src/data",
-    "#{SDK_DIR}/touch/src/gestures",
-    "#{SDK_DIR}/touch/src/layout",
-    "#{SDK_DIR}/touch/src/plugins",
-    "#{SDK_DIR}/touch/src/util",
-    "#{SDK_DIR}/touch/src/widgets",
-    "#{SDK_DIR}/touch/src/platform/src",
-    "#{SDK_DIR}/touch/resources/themes/stylesheets/sencha-touch/default",
-  ].concat(extra_options))
-
-  # Finally copy over the images that documentation links to.
-  system "cp -r #{SDK_DIR}/touch/doc-resources #{OUT_DIR}/doc-resources"
-end
-
-desc "Run JSDuck on Sencha Touch"
-task :touch do
-  run_on_touch([
-    "--template-links",
-    "--template", "template"
-  ])
-end
-
-desc "Base task for creating live Sencta Touch docs"
-task :base_live_touch do
-  run_on_touch
 end
 
 # Compress JS/CSS file in-place
@@ -273,9 +78,8 @@ def combine_js(html, dir)
   html.sub(js_section_re, '<script type="text/javascript" src="app.js"></script>')
 end
 
-# Use :export or :live_docs tasks instead of running this separately
-desc "Compress JavaScript and CSS files of JSDuck"
-task :compress => :sass do
+# Compress JavaScript and CSS files of JSDuck
+def compress
   load_sdk_vars
 
   # Clean up template-min/ left over from previous compress task
@@ -329,30 +133,216 @@ task :compress => :sass do
   system "cp -r #{EXT_DIR}/resources/themes/images/default #{dir}/extjs/resources/themes/images"
 end
 
-desc "Copy over SDK examples"
-task :copy_sdk_examples do
-  system "mkdir #{OUT_DIR}/extjs/builds"
-  system "cp #{EXT_DIR}/builds/ext-core.js #{OUT_DIR}/extjs/builds/ext-core.js"
-  system "cp #{EXT_DIR}/release-notes.html #{OUT_DIR}/extjs"
-  system "cp -r #{EXT_DIR}/examples #{OUT_DIR}/extjs"
-  system "cp -r #{EXT_DIR}/welcome #{OUT_DIR}/extjs"
+
+class JsDuckRunner
+  def initialize
+    @options = []
+    load_sdk_vars
+    @sdk_dir = SDK_DIR
+    @out_dir = OUT_DIR
+    @ext_dir = EXT_DIR
+  end
+
+  def add_options(options)
+    @options += options
+  end
+
+  def add_sdk
+    rev = `git rev-parse HEAD`.slice(0, 7)
+    head_html = <<-EOHTML
+      <link rel="canonical" href="http://docs.sencha.com/ext-js/4-0/" />
+      <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4">
+    EOHTML
+    @options += [
+    ]
+
+    @options += [
+      "--title", "Sencha Docs - Ext JS 4.0",
+      "--head-html", head_html,
+      "--footer", "Ext JS 4.0.6 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{rev}",
+      "--welcome", "template/welcome.html",
+      "--guides", "#{@sdk_dir}/guides/guides.json",
+      "--videos", "#{@sdk_dir}/guides/videos.json",
+      "--examples", "#{@sdk_dir}/extjs/examples/examples.json",
+      "--inline-examples", "#{@sdk_dir}/extjs/doc-resources",
+      "--categories", "#{@sdk_dir}/extjs/doc-resources/categories.json",
+      "--output", "#{@out_dir}",
+      "#{@sdk_dir}/extjs/src",
+      "#{@sdk_dir}/platform/src",
+      "#{@sdk_dir}/platform/core/src",
+    ]
+  end
+
+  def add_touch
+    rev = `git rev-parse HEAD`.slice(0, 7)
+    head_html = <<-EOHTML
+      <link rel="canonical" href="http://docs.sencha.com/touch/1-0/" />
+      <meta name="description" content="Sencha Touch 1.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch">
+    EOHTML
+
+    @options += [
+      "--title", "Sencha Docs - Touch 1.0",
+      "--head-html", head_html,
+      "--footer", "Sencha Touch 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
+      "--categories", "#{@sdk_dir}/touch/doc-resources/categories.json",
+      "--videos", "#{@sdk_dir}/touch/doc-resources/videos.json",
+      "--output", "#{@out_dir}",
+      "#{@sdk_dir}/touch/src/core",
+      "#{@sdk_dir}/touch/src/data",
+      "#{@sdk_dir}/touch/src/gestures",
+      "#{@sdk_dir}/touch/src/layout",
+      "#{@sdk_dir}/touch/src/plugins",
+      "#{@sdk_dir}/touch/src/util",
+      "#{@sdk_dir}/touch/src/widgets",
+      "#{@sdk_dir}/touch/src/platform/src",
+      "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
+    ]
+  end
+
+  def add_debug
+    @options += [
+      "--extjs-path", "extjs/ext-all-debug.js",
+      "--template-links",
+      "--template", "template",
+    ]
+  end
+
+  def add_seo
+    @options += [
+      "--seo",
+    ]
+  end
+
+  def add_sdk_export_notice
+    @options += [
+      "--body-html", <<-EOHTML
+      <div id="notice-text" style="display: none">
+        Use <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a> for up to date documentation and features
+      </div>
+      EOHTML
+    ]
+  end
+
+  def add_google_analytics
+    @options += [
+      "--body-html", <<-EOHTML
+      <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-1396058-10']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+          var ga = document.createElement('script');
+          ga.type = 'text/javascript';
+          ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(ga, s);
+        })();
+
+        Docs.initEventTracking = function() {
+            Docs.App.getController('Classes').addListener({
+                showClass: function(cls) {
+                    _gaq.push(['_trackEvent', 'Classes', 'Show', cls]);
+                },
+                showMember: function(cls, anchor) {
+                    _gaq.push(['_trackEvent', 'Classes', 'Member', cls + ' - ' + anchor]);
+                }
+            });
+            Docs.App.getController('Guides').addListener({
+                showGuide: function(guide) {
+                    _gaq.push(['_trackEvent', 'Guides', 'Show', guide]);
+                }
+            });
+            Docs.App.getController('Videos').addListener({
+                showVideo: function(video) {
+                    _gaq.push(['_trackEvent', 'Video', 'Show', video]);
+                }
+            });
+            Docs.App.getController('Examples').addListener({
+                showExample: function(example) {
+                    _gaq.push(['_trackEvent', 'Example', 'Show', example]);
+                }
+            });
+        }
+      </script>
+    EOHTML
+    ]
+  end
+
+  # Copy over the images that SDK documentation links to
+  def copy_sdk_images
+    system "cp -r #{@sdk_dir}/extjs/doc-resources #{@out_dir}/doc-resources"
+    system "cp -r #{@sdk_dir}/platform/doc-resources/* #{@out_dir}/doc-resources"
+  end
+
+  # Copy over the images that Sencha Touch documentation links to.
+  def copy_touch_images
+    system "cp -r #{@sdk_dir}/touch/doc-resources #{@out_dir}/doc-resources"
+  end
+
+  # Copy over SDK examples
+  def copy_sdk_examples
+    system "mkdir #{@out_dir}/extjs/builds"
+    system "cp #{@ext_dir}/builds/ext-core.js #{@out_dir}/extjs/builds/ext-core.js"
+    system "cp #{@ext_dir}/release-notes.html #{@out_dir}/extjs"
+    system "cp -r #{@ext_dir}/examples #{@out_dir}/extjs"
+    system "cp -r #{@ext_dir}/welcome #{@out_dir}/extjs"
+  end
+
+  def run
+    # Pass multiple arguments to system, so we'll take advantage of the built-in escaping
+    system(*["ruby", "bin/jsduck"].concat(@options))
+  end
 end
 
-desc "Build gem locally"
-task :build_gem do
+# Run compass to generate CSS files
+task :sass do
+  system "compass compile --quiet template/resources/sass"
+end
+
+desc "Run JSDuck on Ext JS SDK\n" +
+     "sdk         - creates debug/development version\n" +
+     "sdk[export] - creates export version\n" +
+     "sdk[live]   - create live version for deployment\n"
+task :sdk, [:mode] => :sass do |t, args|
+  mode = args[:mode] || "debug"
+  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
+  compress if mode == "export" || mode == "live"
+
+  runner = JsDuckRunner.new
+  runner.add_sdk
+  runner.add_debug if mode == "debug"
+  runner.add_seo if mode == "debug" || mode == "live"
+  runner.add_export_notice if mode == "export"
+  runner.add_google_analytics if mode == "live"
+  runner.run
+
+  runner.copy_sdk_images
+
+  runner.copy_sdk_examples if mode == "export" || mode == "live"
+end
+
+desc "Run JSDuck on Sencha Touch\n" +
+     "touch       - creates debug/development version\n" +
+     "touch[live] - create live version for deployment\n"
+task :touch, [:mode] => :sass do |t, args|
+  mode = args[:mode] || "debug"
+  throw "Unknown mode #{mode}" unless ["debug", "live"].include?(mode)
+  compress if mode == "live"
+
+  runner = JsDuckRunner.new
+  runner.add_touch
+  runner.add_debug if mode == "debug"
+  runner.add_seo if mode == "debug" || mode == "live"
+  runner.run
+
+  runner.copy_touch_images
+end
+
+desc "Build JSDuck gem"
+task :gem => :sass do
+  compress
   system "gem build jsduck.gemspec"
 end
-
-desc "Run JSDuck on ExtJS SDK to create release version of docs app"
-task :export => [:compress, :base_export_sdk, :copy_sdk_examples]
-
-desc "Run JSDuck on ExtJS SDK to create live docs app"
-task :live_sdk => [:compress, :base_live_sdk, :copy_sdk_examples]
-
-desc "Run JSDuck on Sencha Touch to create live docs app"
-task :live_touch => [:compress, :base_live_touch]
-
-desc "Create gemfile for release"
-task :build => [:compress, :build_gem]
 
 task :default => :spec
