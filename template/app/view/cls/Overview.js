@@ -58,7 +58,12 @@ Ext.define('Docs.view.cls.Overview', {
         this.docClass = docClass;
 
         if (this.toolbar) {
-            this.removeDocked(this.toolbar, true);
+            // Workaround for bug in ExtJS.
+            // 1. autoDestroy needs to be set to fals explicitly
+            // 2. using autoDestroy=true doesn't work, don't know why
+            //    but destroying the toolbar explicitly afterwards works fine.
+            this.removeDocked(this.toolbar, false);
+            this.toolbar.destroy();
         }
         this.toolbar = Ext.create('Docs.view.cls.Toolbar', {
             docClass: this.docClass,
