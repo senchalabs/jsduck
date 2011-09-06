@@ -308,9 +308,9 @@ task :compress do
   File.open(index_html, 'w') {|f| f.write(html) }
 
   # Clean up SASS files
+  # (But keep prettify lib, which is needed for source files)
   system "rm -rf #{OUT_DIR}/resources/sass"
   system "rm -rf #{OUT_DIR}/resources/codemirror"
-  system "rm -rf #{OUT_DIR}/resources/prettify"
   system "rm -rf #{OUT_DIR}/resources/.sass-cache"
 
   # Empty the extjs dir, leave only the main JS files, CSS and images
