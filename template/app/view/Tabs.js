@@ -134,11 +134,10 @@ Ext.define('Docs.view.Tabs', {
                     idx -= 1;
                 }
                 this.activateTab(this.tabs[idx]);
-                Docs.History.push(this.tabs[idx]);
+                Docs.History.push(this.tabs[idx], {navigate: true});
             }
         }
 
-        // console.log(this.tabsInBar.length, this.tabs.length)
         if (this.tabs.length >= this.maxTabsInBar()) {
             this.refresh();
         } else {
