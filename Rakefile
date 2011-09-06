@@ -10,6 +10,11 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = "spec/**/*_spec.rb"
 end
 
+desc "Run compass to generate CSS files"
+task :sass do
+  system "compass compile --quiet template/resources/sass"
+end
+
 def load_sdk_vars
   if File.exists?("sdk-vars.rb")
     require "sdk-vars.rb"
@@ -46,7 +51,7 @@ def run_on_sdk(extra_options)
 end
 
 desc "Run JSDuck on ExtJS SDK"
-task :sdk do
+task :sdk => :sass do
   load_sdk_vars
   run_on_sdk([
     "--extjs-path", "extjs/ext-all-debug.js",
@@ -270,7 +275,7 @@ end
 
 # Use :export or :live_docs tasks instead of running this separately
 desc "Compress JavaScript and CSS files of JSDuck"
-task :compress do
+task :compress => :sass do
   load_sdk_vars
 
   # Clean up template-min/ left over from previous compress task
