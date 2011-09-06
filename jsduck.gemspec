@@ -12,15 +12,10 @@ Gem::Specification.new do |s|
   s.rubyforge_project = s.name
 
   s.files = `git ls-files`.split("\n").find_all do |file|
-    file !~ /spec.rb$/ && file !~ /benchmark/ && file !~ /resources\/sass/
+    file !~ /spec.rb$/ && file !~ /benchmark/ && file !~ /template\//
   end
   # Add files not in git
-  s.files += ['template/extjs/ext-all.js']
-  s.files += ['template/extjs/resources/themes/images/default/tree/arrows.gif']
-  s.files += ['template/extjs/resources/themes/images/default/grid/loading.gif']
-  s.files += ['template/extjs/resources/themes/images/default/form/text-bg.gif']
-  s.files += ['template/extjs/resources/themes/images/default/form/checkbox.gif']
-  s.files += Dir['template/resources/css/*.css']
+  s.files += Dir['template-min/**/*']
 
   s.executables = ["jsduck"]
 

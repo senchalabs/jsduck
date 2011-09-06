@@ -10,16 +10,6 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = "spec/**/*_spec.rb"
 end
 
-desc "Build gem locally"
-task :build do
-  system "gem build jsduck.gemspec"
-end
-
-desc "Install gem locally"
-task :install => :build do
-  system "gem install --user-install jsduck"
-end
-
 def load_sdk_vars
   if File.exists?("sdk-vars.rb")
     require "sdk-vars.rb"
@@ -64,6 +54,7 @@ task :sdk do
     # to create symbolic links to template files instead of copying them over.
     # Useful for development.  Turn off for deployment.
     "--template-links",
+    "--template", "template",
     "#{SDK_DIR}/extjs/src",
     "#{SDK_DIR}/platform/src",
     "#{SDK_DIR}/platform/core/src",
@@ -215,7 +206,10 @@ end
 
 desc "Run JSDuck on Sencha Touch"
 task :touch do
-  run_on_touch("--template-links")
+  run_on_touch([
+    "--template-links",
+    "--template", "template"
+  ])
 end
 
 desc "Base task for creating live Sencta Touch docs"
@@ -233,19 +227,19 @@ end
 # Deletes those input CSS files and writes out concatenated CSS to
 # resources/css/app.css
 # Finally replaces the CSS section with <link> to that one CSS file.
-def combine_css(html, base_dir, opts = :write)
+def combine_css(html, dir, opts = :write)
   css_section_re = /<!-- BEGIN CSS -->.*<!-- END CSS -->/m
   css = []
   css_section_re.match(html)[0].each_line do |line|
     if line =~ /<link rel="stylesheet" href="(.*?)"/
       file = $1
-      css << IO.read(base_dir + "/" + file)
-      system("rm", base_dir + "/" + file) if opts == :write
+      css << IO.read(dir + "/" + file)
+      system("rm", dir + "/" + file) if opts == :write
     end
   end
 
   if opts == :write
-    fname = "#{OUT_DIR}/resources/css/app.css"
+    fname = "#{dir}/resources/css/app.css"
     File.open(fname, 'w') {|f| f.write(css.join("\n")) }
     yui_compress(fname)
   end
@@ -253,93 +247,107 @@ def combine_css(html, base_dir, opts = :write)
 end
 
 # Same thing for JavaScript, result is written to: app.js
-def combine_js(html, base_dir)
+def combine_js(html, dir)
   js_section_re = /<!-- BEGIN JS -->.*<!-- END JS -->/m
   js = []
   js_section_re.match(html)[0].each_line do |line|
     if line =~ /<script .* src="(.*)">/
       file = $1
-      js << IO.read(base_dir + "/" + file)
+      js << IO.read(dir + "/" + file)
       if file !~ /ext\.js/
-        system("rm", base_dir + "/" + file)
+        system("rm", dir + "/" + file)
       end
     elsif line =~ /<script .*>(.*)<\/script>/
       js << $1
     end
   end
 
-  fname = "#{OUT_DIR}/app.js"
+  fname = "#{dir}/app.js"
   File.open(fname, 'w') {|f| f.write(js.join("\n")) }
   yui_compress(fname)
   html.sub(js_section_re, '<script type="text/javascript" src="app.js"></script>')
 end
 
 # Use :export or :live_docs tasks instead of running this separately
-desc "Compresses JavaScript and CSS files in output dir"
+desc "Compress JavaScript and CSS files of JSDuck"
 task :compress do
   load_sdk_vars
-  # Detect if we are using index.html or template.html
-  index_html = File.exists?("#{OUT_DIR}/index.html") ? "#{OUT_DIR}/index.html" : "#{OUT_DIR}/template.html"
+
+  # Clean up template-min/ left over from previous compress task
+  system("rm", "-rf", "template-min")
+  # Copy template/ files to template-min/
+  system("cp", "-r", "template", "template-min")
+  # Now do everything that follows in template-min/ dir
+  dir = "template-min"
+
   # Create JSB3 file for Docs app
-  system("sencha", "create", "jsb", "-a", index_html, "-p", "#{OUT_DIR}/app.jsb3")
+  system("sencha", "create", "jsb", "-a", "#{dir}/build-js.html", "-p", "#{dir}/app.jsb3")
   # Concatenate files listed in JSB3 file
-  system("sencha", "build", "-p", "#{OUT_DIR}/app.jsb3", "-d", OUT_DIR)
+  system("sencha", "build", "-p", "#{dir}/app.jsb3", "-d", dir)
   # Remove intermediate build files
-  system("rm", "#{OUT_DIR}/app.jsb3")
-  system("rm", "#{OUT_DIR}/all-classes.js")
+  system("rm", "#{dir}/app.jsb3")
+  system("rm", "#{dir}/all-classes.js")
   # Replace app.js with app-all.js
-  system("mv", "#{OUT_DIR}/app-all.js", "#{OUT_DIR}/app.js")
+  system("mv", "#{dir}/app-all.js", "#{dir}/app.js")
   # Remove the entire app/ dir
-  system("rm", "-r", "#{OUT_DIR}/app")
+  system("rm", "-r", "#{dir}/app")
 
-  # Optionally concatenate CSS in print-template.html file
-  print_template = "#{OUT_DIR}/print-template.html";
-  if File.exists?(print_template)
-    html = IO.read(print_template);
-    # Just modify HTML to link app.css, don't write files.
-    html = combine_css(html, OUT_DIR, :replace_html_only)
-    File.open(print_template, 'w') {|f| f.write(html) }
-  end
+  # Concatenate CSS in print-template.html file
+  print_template = "#{dir}/print-template.html";
+  html = IO.read(print_template);
+  # Just modify HTML to link app.css, don't write files.
+  html = combine_css(html, dir, :replace_html_only)
+  File.open(print_template, 'w') {|f| f.write(html) }
 
-  # Concatenate CSS and JS files referenced in index.html file
-  html = IO.read(index_html)
-  html = combine_css(html, OUT_DIR)
-  html = combine_js(html, OUT_DIR)
-  File.open(index_html, 'w') {|f| f.write(html) }
+  # Concatenate CSS and JS files referenced in template.html file
+  template_html = "#{dir}/template.html"
+  html = IO.read(template_html)
+  html = combine_css(html, dir)
+  html = combine_js(html, dir)
+  File.open(template_html, 'w') {|f| f.write(html) }
 
   # Clean up SASS files
   # (But keep prettify lib, which is needed for source files)
-  system "rm -rf #{OUT_DIR}/resources/sass"
-  system "rm -rf #{OUT_DIR}/resources/codemirror"
-  system "rm -rf #{OUT_DIR}/resources/.sass-cache"
+  system "rm -rf #{dir}/resources/sass"
+  system "rm -rf #{dir}/resources/codemirror"
+  system "rm -rf #{dir}/resources/.sass-cache"
 
   # Empty the extjs dir, leave only the main JS files, CSS and images
-  system "rm -rf #{OUT_DIR}/extjs"
-  system "mkdir -p #{OUT_DIR}/extjs/resources/css"
-  system "mkdir -p #{OUT_DIR}/extjs/resources/themes/images"
-  system "cp #{EXT_DIR}/ext-all.js #{OUT_DIR}/extjs"
-  system "cp #{EXT_DIR}/ext-all-debug.js #{OUT_DIR}/extjs"
-  system "cp #{EXT_DIR}/bootstrap.js #{OUT_DIR}/extjs"
+  system "rm -rf #{dir}/extjs"
+  system "mkdir #{dir}/extjs"
+  system "cp #{EXT_DIR}/ext-all.js #{dir}/extjs"
+  system "cp #{EXT_DIR}/ext-all-debug.js #{dir}/extjs"
+  system "cp #{EXT_DIR}/bootstrap.js #{dir}/extjs"
+  system "mkdir -p #{dir}/extjs/resources/css"
+  system "cp #{EXT_DIR}/resources/css/ext-all.css #{dir}/extjs/resources/css"
+  system "mkdir -p #{dir}/extjs/resources/themes/images"
+  system "cp -r #{EXT_DIR}/resources/themes/images/default #{dir}/extjs/resources/themes/images"
 end
 
 desc "Copy over SDK examples"
 task :copy_sdk_examples do
   system "mkdir #{OUT_DIR}/extjs/builds"
   system "cp #{EXT_DIR}/builds/ext-core.js #{OUT_DIR}/extjs/builds/ext-core.js"
-  system "cp #{EXT_DIR}/resources/css/ext-all.css #{OUT_DIR}/extjs/resources/css"
   system "cp #{EXT_DIR}/release-notes.html #{OUT_DIR}/extjs"
   system "cp -r #{EXT_DIR}/examples #{OUT_DIR}/extjs"
   system "cp -r #{EXT_DIR}/welcome #{OUT_DIR}/extjs"
-  system "cp -r #{EXT_DIR}/resources/themes/images/default #{OUT_DIR}/extjs/resources/themes/images"
+end
+
+desc "Build gem locally"
+task :build_gem do
+  system "gem build jsduck.gemspec"
 end
 
 desc "Run JSDuck on ExtJS SDK to create release version of docs app"
-task :export => [:base_export_sdk, :compress, :copy_sdk_examples]
+task :export => [:compress, :base_export_sdk, :copy_sdk_examples]
 
 desc "Run JSDuck on ExtJS SDK to create live docs app"
-task :live_sdk => [:base_live_sdk, :compress, :copy_sdk_examples]
+task :live_sdk => [:compress, :base_live_sdk, :copy_sdk_examples]
 
 desc "Run JSDuck on Sencha Touch to create live docs app"
-task :live_touch => [:base_live_touch, :compress]
+task :live_touch => [:compress, :base_live_touch]
+
+desc "Create gemfile for release"
+task :build => [:compress, :build_gem]
 
 task :default => :spec

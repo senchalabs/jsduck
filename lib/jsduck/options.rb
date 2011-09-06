@@ -89,7 +89,7 @@ module JsDuck
 
       # Debugging
       @processes = nil
-      @template_dir = File.dirname(File.dirname(File.dirname(__FILE__))) + "/template"
+      @template_dir = File.dirname(File.dirname(File.dirname(__FILE__))) + "/template-min"
       @template_links = false
       @extjs_path = "extjs/ext-all.js"
       @local_storage_db = "docs"
