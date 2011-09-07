@@ -36,7 +36,7 @@ module JsDuck
       @formatter.doc_context = m
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
       m[:deprecated][:text] = @formatter.format(m[:deprecated][:text]) if m[:deprecated]
-      if m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || @formatter.too_long?(m[:doc])
+      if expandable?(m) || @formatter.too_long?(m[:doc])
         m[:shortDoc] = @formatter.shorten(m[:doc])
       end
       m[:html_type] = format_type(m[:type]) if m[:type] && @include_types
@@ -44,6 +44,10 @@ module JsDuck
       m[:return] = format_item(m[:return]) if m[:return]
       m[:properties] = m[:properties].map {|b| format_item(b) } if m[:properties]
       m
+    end
+
+    def expandable?(m)
+      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:deprecated]
     end
 
     def format_item(it)
