@@ -148,18 +148,15 @@ class JsDuckRunner
   end
 
   def add_sdk
-    rev = `git rev-parse HEAD`.slice(0, 7)
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/ext-js/4-0/" />
       <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4">
     EOHTML
-    @options += [
-    ]
 
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
       "--head-html", head_html,
-      "--footer", "Ext JS 4.0.6 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{rev}",
+      "--footer", "Ext JS 4.0.6 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{revision}",
       "--welcome", "template/welcome.html",
       "--guides", "#{@sdk_dir}/guides/guides.json",
       "--videos", "#{@sdk_dir}/guides/videos.json",
@@ -173,8 +170,18 @@ class JsDuckRunner
     ]
   end
 
+  def add_ext4
+    @options += [
+      "--title", "Sencha Docs - Ext JS 4.0",
+      "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
+      "--ignore-global",
+      "--no-warnings",
+      "--output", "#{@out_dir}",
+      "#{@ext_dir}/src",
+    ]
+  end
+
   def add_touch
-    rev = `git rev-parse HEAD`.slice(0, 7)
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/touch/1-0/" />
       <meta name="description" content="Sencha Touch 1.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch">
@@ -183,7 +190,7 @@ class JsDuckRunner
     @options += [
       "--title", "Sencha Docs - Touch 1.0",
       "--head-html", head_html,
-      "--footer", "Sencha Touch 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{rev}",
+      "--footer", "Sencha Touch 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/touch/doc-resources/categories.json",
       "--videos", "#{@sdk_dir}/touch/doc-resources/videos.json",
       "--output", "#{@out_dir}",
@@ -197,6 +204,11 @@ class JsDuckRunner
       "#{@sdk_dir}/touch/src/platform/src",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
+  end
+
+  # Returns shortened hash of naming current git revision
+  def revision
+    `git rev-parse HEAD`.slice(0, 7)
   end
 
   def add_debug
@@ -275,6 +287,11 @@ class JsDuckRunner
     system "cp -r #{@sdk_dir}/platform/doc-resources/* #{@out_dir}/doc-resources"
   end
 
+  # Copy over the images that Ext4 documentation links to
+  def copy_ext4_images
+    system "cp -r #{@ext_dir}/docs/doc-resources #{@out_dir}/doc-resources"
+  end
+
   # Copy over the images that Sencha Touch documentation links to.
   def copy_touch_images
     system "cp -r #{@sdk_dir}/touch/doc-resources #{@out_dir}/doc-resources"
@@ -320,6 +337,23 @@ task :sdk, [:mode] => :sass do |t, args|
   runner.copy_sdk_images
 
   runner.copy_sdk_examples if mode == "export" || mode == "live"
+end
+
+desc "Run JSDuck on official Ext JS 4.0.2a build\n" +
+     "ext4             - creates debug/development version\n" +
+     "ext4[export]     - creates export/deployable version\n"
+task :ext4, [:mode] => :sass do |t, args|
+  mode = args[:mode] || "debug"
+  throw "Unknown mode #{mode}" unless ["debug", "export"].include?(mode)
+  compress if mode == "export"
+
+  runner = JsDuckRunner.new
+  runner.add_ext4
+  runner.add_debug if mode == "debug"
+  runner.add_seo
+  runner.run
+
+  runner.copy_ext4_images
 end
 
 desc "Run JSDuck on Sencha Touch\n" +
