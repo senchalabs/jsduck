@@ -20,9 +20,12 @@ def load_sdk_vars
     puts
     puts "For example:"
     puts
-    puts "    SDK_DIR='/path/to/SDK'"
+    puts "    # path to Ext JS 4 build"
+    puts "    EXT_DIR='/path/to/ext-4.0.6'"
+    puts "    # where to output the docs"
     puts "    OUT_DIR='/path/to/ouput/dir'"
-    puts "    EXT_DIR='/path/to/ext/dir'"
+    puts "    # path to SDK (for developers at Sencha)"
+    puts "    SDK_DIR='/path/to/SDK'"
     exit 1
   end
 end
@@ -317,7 +320,7 @@ task :sass do
   system "compass compile --quiet template/resources/sass"
 end
 
-desc "Run JSDuck on Ext JS SDK\n" +
+desc "Run JSDuck on Ext JS SDK (for internal use at Sencha)\n" +
      "sdk         - creates debug/development version\n" +
      "sdk[export] - creates export version\n" +
      "sdk[live]   - create live version for deployment\n"
@@ -356,7 +359,7 @@ task :ext4, [:mode] => :sass do |t, args|
   runner.copy_ext4_images
 end
 
-desc "Run JSDuck on Sencha Touch\n" +
+desc "Run JSDuck on Sencha Touch (for internal use at Sencha)\n" +
      "touch       - creates debug/development version\n" +
      "touch[live] - create live version for deployment\n"
 task :touch, [:mode] => :sass do |t, args|
