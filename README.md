@@ -122,8 +122,9 @@ For hacking fork it from github:
     $ git clone git://github.com/senchalabs/jsduck.git
 
 JsDuck depends on [json][], [RDiscount][], and [parallel][]; plus
-[RSpec][] for tests and [compass][] for compiling the stylesheets.
-Make sure you have these installed:
+[RSpec][] for tests, [compass][] for compiling the stylesheets, and
+[Sencha SDK tools][sdk-tools] for combining JavaScript files.  Make
+sure you have these installed:
 
     $ gem list
 
@@ -132,26 +133,53 @@ First smoke test. Run the testsuite:
     $ cd jsduck
     $ rake
 
-Unfortunately all other rake tasks are currently meant for internal
-usage in Sencha, but don't worry, if everything is green, continue
-with some configuration. Copy an ExtJS 4 download inside
-template/extjs directory (you might just create a symlink if you wish
-so):
+If everything is green continue with some configuration.  Copy an
+ExtJS 4 download inside template/extjs directory (you might just
+create a symlink if you wish so):
 
     $ cp -r path/to/ext-4.0.2a template/extjs
 
-Now you are ready to generate the stylesheets:
+Now create a file `sdk-vars.rb` inside the jsduck directory.  Use the
+following template:
 
-    $ compass compile template/resources/sass
+    # path to Ext JS 4 build
+    EXT_DIR='/path/to/ext-4.0.2a'
+    # where to output the docs
+    OUT_DIR='/path/to/ouput/dir'
+    # path to SDK (for developers at Sencha)
+    SDK_DIR='/path/to/SDK'
 
-This might generate some warnings, but if there's no fatal errors, you
-should be OK to actually run JSDuck:
+These config options define the input and output directories for the
+ext4 rake task.  Leave out the SDK_DIR option if you are not a Sencha
+developer.  Now run the task:
 
-    $ ./bin/jsuck  --output /out/dir  /input/files
+    $ rake ext4
 
-For developing the Ruby side, try to please the unit tests.  For
-JavaScript side, use the --template-links option so you don't have to
-run jsduck every time you change a .js file.
+This will generate a development/debug version of the docs app into
+the output directory you specified in `sdk-vars.rb` file.  Open up the
+directory in your web browser and see if everything looks fine.  (This
+task only creates the class documentation, don't worry about guides,
+examples, etc being missing, and the index page of api docs blank).
+
+This rake task is most suitable when developing the JavaScript side of
+the app, as it only symlinks the files in template/ directory,
+allowing you to modify the files there and see the results by just
+refreshing the browser window (and not having to run the rake task
+again and again).
+
+To generate a stand-alone version of documentation (which you could
+upload to some server), add export parameter to the rake task:
+
+    $ rake ext4[export]
+
+This will combine and compress the javascript files using Sencha SDK
+Tools and does not create symlinks to the development directory.
+
+For developing the Ruby side, try to please the unit tests.
+
+If you are a Sencha developer, use the `sdk` and `touch` tasks instead
+to generate either extjs or touch docs from the corresponding branches
+in SDK repository.
 
 Happy hacking.
 
@@ -160,6 +188,7 @@ Happy hacking.
 [parallel]: https://github.com/grosser/parallel
 [RSpec]: http://rspec.info/
 [compass]: http://compass-style.org/
+[sdk-tools]: http://www.sencha.com/products/sdk-tools/
 
 
 Documenting your code with JSDuck
