@@ -427,7 +427,7 @@ Ext.define('Docs.view.Tabs', {
         }
 
         this.overflowButton = Ext.create('Ext.button.Button', {
-            baseCls: null,
+            baseCls: "",
             renderTo: 'tabOverflow',
             menu: {
                 id: 'tabOverflowMenu',
