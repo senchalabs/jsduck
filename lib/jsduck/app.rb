@@ -272,7 +272,7 @@ module JsDuck
       out_file = @opts.output_dir + '/' + filename
       Logger.instance.log("Creating #{out_file}...")
       html = IO.read(in_file)
-      html.gsub!(/\{.*?\}/) do |key|
+      html.gsub!(/\{\w+\}/) do |key|
         replacements[key] ? replacements[key] : key
       end
       FileUtils.rm(out_file)
