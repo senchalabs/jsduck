@@ -66,11 +66,12 @@ module JsDuck
 
       @warnings = true
       @verbose = false
+      @version = "3.0.pre"
 
       # Customizing output
       @title = "Sencha Docs - Ext JS"
       @header = "<strong>Sencha Docs</strong> Ext JS"
-      @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
+      @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a> #{@version}.'
       @head_html = ""
       @body_html = ""
       @welcome = nil
@@ -260,6 +261,11 @@ module JsDuck
 
         opts.on('-h', '--help', "Prints this help message", " ") do
           puts opts
+          exit
+        end
+
+        opts.on('--version', "Prints JSDuck version", " ") do
+          puts "JSDuck " + @version
           exit
         end
       end
