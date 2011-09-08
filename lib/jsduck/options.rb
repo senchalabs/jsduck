@@ -71,7 +71,7 @@ module JsDuck
       # Customizing output
       @title = "Sencha Docs - Ext JS"
       @header = "<strong>Sencha Docs</strong> Ext JS"
-      @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a> #{@version}.'
+      @footer = "Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> #{@version}."
       @head_html = ""
       @body_html = ""
       @welcome = nil
