@@ -63,7 +63,7 @@ Getting it
 ----------
 
 Standard rubygems install should do (use the `--pre` switch to get the
-latest 2.0 version which this README documents, otherwise you will get
+latest 3.0 version which this README documents, otherwise you will get
 the stable but quite old [0.6][v0.6] version):
 
     $ [sudo] gem install --pre jsduck
@@ -83,33 +83,42 @@ single .exe file.  Grab it from the [download page][].
 Usage
 -----
 
-Just call it from command line with output directory and a directory
-containing your JavaScript files:
+For the simplest test-run just pass in the src/ dir of Ext JS 4:
 
-    $ jsduck your/project/js --verbose --output your/docs
+    $ jsduck ext-4.0.2a/src --output your/docs
 
-The `--verbose` flag creates a lot of output, but at least you will
-see that something is happening.
+Running JSDuck with the current ext-4.0.2a release is expected to
+generate a lot of warnings.  Because of the bugs in doc-comments a
+global class will also get created.  You can disable this by adding
+`--ignore-global` switch.  If you are bothered by the excessive amount
+of warnings, use the `--no-warnings` switch.  Now it might look like
+nothing is happening... check out the `--verbose` flag.  For more
+command line options type `jsduck --help`.
 
+The latest ext-4.0.6 release will produce only few warnings, so use
+that if you can get it.
 
-## Generating Docs for ExtJS 4
+Finally, to get more similar result to the [official Ext JS 4
+documentation][official], copy over the doc-resources directory, which
+contains the images referenced by the documentation:
 
-For the simplest test-run just pass in the src/ dir of ExtJS 4.  But
-to get more similar result to the [official ExtJS 4
-documentation][official], you should pass in some extra options and
-copy over the doc-resources directory, which contains the images
-referenced by the documentation:
-
-    $ jsduck ext-4.0.2a/src --output your/docs --ignore-global --exclude Error
     $ cp -r ext-4.0.2a/docs/doc-resources your/docs/doc-resources
 
-The `--ignore-global` will avoid the creation of a `global` class.
-The `--exclude Error` will ignore references to the `Error` class,
-which would otherwise result in several warnings.
+Note that the resulting documentation will only contain the API
+documentation.  Guides, videos and examples will not be present.
+These can be added using more command line options, but for now those
+aren't well documented as the ext-4.0.2a release doesn't contain the
+source files for these.
 
-Still, running JSDuck with the current ext-4.0.2a release is expected
-to generate a lot of warnings.  These should be fixed in some later
-releases.
+To generate docs for your own project, simply add as many other input
+directories as needed:
+
+    $ jsduck ext-4.0.2a/src project1/js project2/js --output your/docs
+
+Of course you don't have to include the whole Ext JS into your
+documentation, but if your project is built on top of it, it makes
+sense to do so - otherwise you won't be able to see which methods your
+classes inherit from Ext JS classes.
 
 [official]: http://docs.sencha.com/ext-js/4-0/
 
@@ -226,6 +235,21 @@ reported bugs, submitted patches, and provided a lot of useful input.
 
 Changelog
 ---------
+
+* 3.0.pre - Completely new theme with tabs
+  * Tabs are back
+  * Separate front page
+  * Guides in separate section
+  * New Videos section
+  * New Examples section
+  * Inline examples
+  * Syntax for documenting object properties.
+  * Syntax for documenting default values.
+  * New Syntax for optional parameters.
+  * Syntax for required configs.
+  * Print view and support for Google AJAX crawling.
+  * No more --show-private-classes option, private classes now always shown.
+  * Lots and lots of other fixes...
 
 * 2.0.pre4 - Fixes for the previous pre-release.
   * Paging of search results.
