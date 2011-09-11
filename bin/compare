@@ -98,7 +98,7 @@ html << <<-EOHTML
 <title>#{title}</title>
 <style type="text/css">
 body { font-family: Georgia, serif; }
-h2 { font-size: medium; font-weight: normal; }
+li h2 { font-size: medium; font-weight: normal; }
 li ul { display: none; }
 </style>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
@@ -113,8 +113,9 @@ $(function() {
 </head>
 <body>
 <h1>#{title}</h1>
-<ul>
 EOHTML
+
+html << "<ul>"
 diff_data.sort! {|a, b| a[:name] <=> b[:name] }
 diff_data.each do |cls|
   html << "<li>"
@@ -145,6 +146,17 @@ diff_data.each do |cls|
   html << "</li>"
 end
 html << "</ul>"
+
+html << "<h2>Summary</h2>"
+dd = diff_data
+html << "<p>" + dd.find_all {|c| !c[:found] }.length.to_s + " classes not found</p>"
+html << "<p>" + dd.find_all {|c| c[:found] && c[:name] == c[:new_name] }.length.to_s + " classes with same name</p>"
+html << "<p>" + dd.find_all {|c| c[:found] && c[:name] != c[:new_name] }.length.to_s + " renamed classes</p>"
+html << "<p>" + dd.find_all {|c| c[:diff].length > 0 }.length.to_s + " classes with missing members</p>"
+html << "<p>" + dd.map {|c| c[:diff].length }.inject {|sum,x| sum + x }.to_s + " missing members</p>"
+html << "<p>" + dd.map {|c| c[:diff].find_all {|m| !m[:other]}.length }.inject {|sum,x| sum + x }.to_s + " completely missing members</p>"
+
+
 html << "</body>"
 html << "</html>"
 
