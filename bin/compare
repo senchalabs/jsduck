@@ -88,12 +88,14 @@ end
 # end
 
 # do HTML output
+title = "Comparison of Ext 3.4.0 and Ext 4.0.6"
+#title = "Comparison of Touch 1.1.1 and Touch 2.0.0"
 html = []
 html << <<-EOHTML
 <!DOCTYPE html>
 <html>
 <head>
-<title>Comparison of Ext 3.4 and Ext 4.0</title>
+<title>#{title}</title>
 <style type="text/css">
 body { font-family: Georgia, serif; }
 h2 { font-size: medium; font-weight: normal; }
@@ -110,7 +112,7 @@ $(function() {
 </script>
 </head>
 <body>
-<h1>Comparison of Ext 3.4 and Ext 4.0</h1>
+<h1>#{title}</h1>
 <ul>
 EOHTML
 diff_data.sort! {|a, b| a[:name] <=> b[:name] }
