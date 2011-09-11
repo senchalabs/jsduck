@@ -114,7 +114,7 @@ module JsDuck
     def parallel_parse(filenames)
       @parallel.map(filenames) do |fname|
         Logger.instance.log("Parsing #{fname} ...")
-        SourceFile.new(IO.read(fname), fname)
+        SourceFile.new(IO.read(fname), fname, @opts)
       end
     end
 

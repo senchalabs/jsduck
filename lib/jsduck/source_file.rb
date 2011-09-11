@@ -15,9 +15,10 @@ module JsDuck
     attr_reader :docs
     attr_reader :html_filename
 
-    def initialize(contents, filename="")
+    def initialize(contents, filename="", options=nil)
       @contents = contents
       @filename = filename
+      @options = options
       @html_filename = ""
       @links = {}
 
@@ -80,7 +81,7 @@ module JsDuck
       if @filename =~ /\.s?css$/
         CssParser.new(@contents).parse
       else
-        JsParser.new(@contents).parse
+        JsParser.new(@contents, @options && @options.ext_namespaces).parse
       end
     end
 

@@ -6,10 +6,11 @@ require 'jsduck/js_literal_builder'
 module JsDuck
 
   class JsParser < JsLiteralParser
-    def initialize(input)
+    def initialize(input, namespaces = nil)
       super(input)
       @doc_parser = DocParser.new
       @docs = []
+      @ext_namespaces = namespaces || ["Ext"]
     end
 
     # Parses the whole JavaScript block and returns array where for
@@ -76,9 +77,9 @@ module JsDuck
         function
       elsif look("var")
         var_declaration
-      elsif look("Ext", ".", "define", "(", :string)
+      elsif ext_look(:ns, ".", "define", "(", :string)
         ext_define
-      elsif look("Ext", ".", "ClassManager", ".", "create", "(", :string)
+      elsif ext_look(:ns, ".", "ClassManager", ".", "create", "(", :string)
         ext_define
       elsif look(:ident, ":") || look(:string, ":")
         property_literal
@@ -159,7 +160,7 @@ module JsDuck
     def expression
       if look("function")
         function
-      elsif look("Ext", ".", "extend")
+      elsif ext_look(:ns, ".", "extend")
         ext_extend
       else
         my_literal
@@ -194,7 +195,7 @@ module JsDuck
 
     # <ext-extend> := "Ext" "." "extend" "(" <ident-chain> "," ...
     def ext_extend
-      match("Ext", ".", "extend", "(")
+      match(:ident, ".", "extend", "(")
       return {
         :type => :ext_extend,
         :extend => ident_chain,
@@ -203,7 +204,7 @@ module JsDuck
 
     # <ext-define> := "Ext" "." ["define" | "ClassManager" "." "create" ] "(" <string> "," <ext-define-cfg>
     def ext_define
-      match("Ext", ".");
+      match(:ident, ".");
       look("define") ? match("define") : match("ClassManager", ".", "create");
       name = match("(", :string)[:value]
 
@@ -336,6 +337,15 @@ module JsDuck
         :left => [left],
         :right => right,
       }
+    end
+
+    # Like look() but tries to match as the first argument all the
+    # names listed in @ext_namespaces
+    def ext_look(placeholder, *args)
+      @ext_namespaces.each do |ns|
+        return true if look(ns, *args)
+      end
+      return false
     end
 
   end

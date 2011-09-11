@@ -36,6 +36,7 @@ module JsDuck
     attr_accessor :template_links
     attr_accessor :extjs_path
     attr_accessor :local_storage_db
+    attr_accessor :ext_namespaces
 
     def initialize
       @input_files = []
@@ -94,6 +95,7 @@ module JsDuck
       @template_links = false
       @extjs_path = "extjs/ext-all.js"
       @local_storage_db = "docs"
+      @ext_namespaces = ["Ext"]
     end
 
     def parse!(argv)
@@ -257,6 +259,11 @@ module JsDuck
           "Prefix for LocalStorage database names.",
           "Defaults to 'docs'.", " ") do |name|
           @local_storage_db = name
+        end
+
+        opts.on('--ext-namespaces=Ext,Foo', Array,
+          "Namespace(s) of ExtJS. Defaults to 'Ext'.", " ") do |ns|
+          @ext_namespaces = ns
         end
 
         opts.on('-h', '--help', "Prints this help message", " ") do
