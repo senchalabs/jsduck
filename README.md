@@ -129,20 +129,10 @@ Hacking it
 See [Hacking guide](https://github.com/senchalabs/jsduck/wiki/Hacking) in wiki.
 
 
-Documenting your code with JSDuck
----------------------------------
+Documenting your code
+---------------------
 
-Here's an overview of [all the available @tags][tags], and how to use
-them:
-
-* [Class](https://github.com/senchalabs/jsduck/wiki/Class)
-* [Constructor](https://github.com/senchalabs/jsduck/wiki/Constructor)
-* [Config options](https://github.com/senchalabs/jsduck/wiki/Cfg)
-* [Properties](https://github.com/senchalabs/jsduck/wiki/Property)
-* [Methods](https://github.com/senchalabs/jsduck/wiki/Method)
-* [Events](https://github.com/senchalabs/jsduck/wiki/Event)
-
-[tags]: https://github.com/senchalabs/jsduck/wiki/List-of-supported-@tags
+For all the JSDuck supported see [Guide](https://github.com/senchalabs/jsduck/wiki/Guide) in wiki. 
 
 
 Copying
