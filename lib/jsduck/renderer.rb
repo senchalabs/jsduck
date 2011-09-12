@@ -321,6 +321,7 @@ module JsDuck
     end
 
     def render_return(ret)
+      return if ret[:type] == "undefined"
       return [
         "<h3 class='pa'>Returns</h3>",
         "<ul>",
