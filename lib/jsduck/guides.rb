@@ -29,9 +29,18 @@ module JsDuck
     end
 
     def write_guide(guide, dir)
-      in_dir = @path + "/" + guide["name"]
+      guide_dir = @path + "/guides/" + guide["name"]
+      tutorial_dir = @path + "/tutorials/" + guide["name"]
       out_dir = dir + "/" + guide["name"]
-      return Logger.instance.warn("Guide #{in_dir} not found") unless File.exists?(in_dir)
+
+      if File.exists?(guide_dir)
+        in_dir = guide_dir
+      elsif File.exists?(tutorial_dir)
+        in_dir = tutorial_dir
+      else
+        return Logger.instance.warn("Guide #{guide_dir} / #{tutorial_dir} not found")
+      end
+
       guide_file = in_dir + "/README.md"
       return Logger.instance.warn("README.md not found in #{in_dir}") unless File.exists?(guide_file)
 

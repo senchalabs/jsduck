@@ -161,11 +161,11 @@ class JsDuckRunner
       "--head-html", head_html,
       "--footer", "Ext JS 4.0.6 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{revision}",
       "--welcome", "template/welcome.html",
-      "--guides", "#{@sdk_dir}/guides/guides.json",
-      "--videos", "#{@sdk_dir}/guides/videos.json",
+      "--guides", "#{@sdk_dir}/extjs/docs/guides.json",
+      "--videos", "#{@sdk_dir}/extjs/docs/videos.json",
       "--examples", "#{@sdk_dir}/extjs/examples/examples.json",
-      "--inline-examples", "#{@sdk_dir}/extjs/doc-resources",
-      "--categories", "#{@sdk_dir}/extjs/doc-resources/categories.json",
+      "--inline-examples", "#{@sdk_dir}/extjs/docs/resources",
+      "--categories", "#{@sdk_dir}/extjs/docs/categories.json",
       "--output", "#{@out_dir}",
       "#{@sdk_dir}/extjs/src",
       "#{@sdk_dir}/platform/src",
@@ -286,8 +286,8 @@ class JsDuckRunner
 
   # Copy over the images that SDK documentation links to
   def copy_sdk_images
-    system "cp -r #{@sdk_dir}/extjs/doc-resources #{@out_dir}/doc-resources"
-    system "cp -r #{@sdk_dir}/platform/doc-resources/* #{@out_dir}/doc-resources"
+    system "cp -r #{@sdk_dir}/extjs/docs/resources #{@out_dir}/doc-resources"
+    system "cp -r #{@sdk_dir}/platform/docs/resources/* #{@out_dir}/doc-resources"
   end
 
   # Copy over the images that Ext4 documentation links to
