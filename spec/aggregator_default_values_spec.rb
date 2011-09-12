@@ -304,6 +304,20 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg with implicit string value starting with Ext.baseCSSPrefix" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg foo Something
+         */
+        foo: Ext.baseCSSPrefix + "foo"
+      EOS
+    end
+    it "replaces Ext.baseCSSPrefix with 'x-'" do
+      @doc[:default].should == '"x-foo"'
+    end
+  end
+
   describe "cfg with implicit name followed by code field with another name" do
     before do
       @doc = parse(<<-EOS)[0]

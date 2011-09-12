@@ -156,12 +156,14 @@ module JsDuck
       return chain
     end
 
-    # <expression> := <function> | <ext-extend> | <literal>
+    # <expression> := <function> | <ext-extend> | <ext-base-css-prefix> | <literal>
     def expression
       if look("function")
         function
       elsif ext_look(:ns, ".", "extend")
         ext_extend
+      elsif ext_look(:ns, ".", "baseCSSPrefix", "+", :string)
+        ext_base_css_prefix
       else
         my_literal
       end
@@ -199,6 +201,16 @@ module JsDuck
       return {
         :type => :ext_extend,
         :extend => ident_chain,
+      }
+    end
+
+    # <ext-base-css-prefix> := "Ext" "." "baseCSSPrefix" "+" <string>
+    def ext_base_css_prefix
+      match(:ident, ".", "baseCSSPrefix", "+")
+      return {
+        :type => :literal,
+        :class => "String",
+        :value => '"x-' + match(:string)[:value] + '"',
       }
     end
 
