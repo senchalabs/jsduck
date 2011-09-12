@@ -15,7 +15,7 @@ module JsDuck
     attr_reader :docs
     attr_reader :html_filename
 
-    def initialize(contents, filename="", options=nil)
+    def initialize(contents, filename="", options={})
       @contents = contents
       @filename = filename
       @options = options
@@ -79,9 +79,9 @@ module JsDuck
     # Parses the file depending on filename as JS or CSS
     def parse
       if @filename =~ /\.s?css$/
-        CssParser.new(@contents).parse
+        CssParser.new(@contents, @options).parse
       else
-        JsParser.new(@contents, @options && @options.ext_namespaces).parse
+        JsParser.new(@contents, @options).parse
       end
     end
 

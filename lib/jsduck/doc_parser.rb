@@ -24,9 +24,14 @@ module JsDuck
   #
   class DocParser
     # Pass in :css to be able to parse CSS doc-comments
-    def initialize(mode = :js)
+    def initialize(mode = :js, meta_tags = nil)
       @ident_pattern = (mode == :css) ? /\$?[\w-]+/ : /[$\w]\w*/
       @ident_chain_pattern = (mode == :css) ? /\$?[\w-]+(\.[\w-]+)*/ : /[$\w]\w*(\.\w+)*/
+
+      @meta_tags_map = {}
+      (meta_tags || []).each do |tag|
+        @meta_tags_map[tag[:name]] = true
+      end
     end
 
     def parse(input)
@@ -106,10 +111,6 @@ module JsDuck
           at_member
         elsif look(/@alias\b/)
           at_alias
-        elsif look(/@author\b/)
-          at_author
-        elsif look(/@docauthor\b/)
-          at_docauthor
         elsif look(/@deprecated\b/)
           at_deprecated
         elsif look(/@var\b/)
@@ -129,7 +130,16 @@ module JsDuck
           # this is detected just to be ignored
           boolean_at_tag(/@abstract/, :abstract)
         elsif look(/@/)
-          @current_tag[:doc] += @input.scan(/@/)
+          @input.scan(/@/)
+          if @meta_tags_map[look(/\w+/)]
+            add_tag(:meta)
+            @current_tag[:name] = match(/\w+/)
+            skip_horiz_white
+            @current_tag[:content] = @input.scan(/.*$/)
+            skip_white
+          else
+            @current_tag[:doc] += "@"
+          end
         elsif look(/[^@]/)
           @current_tag[:doc] += @input.scan(/[^@]+/)
         end
@@ -300,24 +310,6 @@ module JsDuck
           @current_tag[:member] = ident
         end
       end
-      skip_white
-    end
-
-    # matches @author some name ... newline
-    def at_author
-      match(/@author/)
-      add_tag(:author)
-      skip_horiz_white
-      @current_tag[:name] = @input.scan(/.*$/)
-      skip_white
-    end
-
-    # matches @docauthor some name ... newline
-    def at_docauthor
-      match(/@docauthor/)
-      add_tag(:docauthor)
-      skip_horiz_white
-      @current_tag[:name] = @input.scan(/.*$/)
       skip_white
     end
 

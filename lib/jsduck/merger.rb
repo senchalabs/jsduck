@@ -113,8 +113,7 @@ module JsDuck
         :mixins => detect_list(:mixins, doc_map, code),
         :alternateClassNames => detect_list(:alternateClassNames, doc_map, code),
         :xtypes => detect_xtypes(doc_map, code),
-        :author => detect_author(doc_map),
-        :docauthor => detect_docauthor(doc_map),
+        :meta => detect_meta(doc_map),
         :singleton => detect_singleton(doc_map, code),
         :requires => detect_list(:requires, doc_map, code),
         :uses => detect_list(:uses, doc_map, code),
@@ -317,12 +316,8 @@ module JsDuck
       end
     end
 
-    def detect_author(doc_map)
-      doc_map[:author] ? doc_map[:author].first[:name] : nil
-    end
-
-    def detect_docauthor(doc_map)
-      doc_map[:docauthor] ? doc_map[:docauthor].first[:name] : nil
+    def detect_meta(doc_map)
+      doc_map[:meta] ? doc_map[:meta].map {|tag| {:name => tag[:name], :content => tag[:content]} } : []
     end
 
     def detect_deprecated(doc_map)

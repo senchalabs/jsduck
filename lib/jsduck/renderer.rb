@@ -5,6 +5,10 @@ module JsDuck
   # Ruby-side implementation of class docs Renderer.
   # Uses PhantomJS to run Docs.Renderer JavaScript.
   class Renderer
+    def initialize(options={})
+      @options = options
+    end
+
     def render(cls)
         @cls = cls
 
@@ -14,6 +18,7 @@ module JsDuck
             "<div class='doc-contents'>",
               render_private_class_notice,
               @cls[:doc],
+              render_meta_data,
             "</div>",
             "<div class='members'>",
               render_member_sections,
@@ -29,6 +34,25 @@ module JsDuck
         "This is a private utility class for internal use by the framework. ",
         "Don't rely on its existence.</p>",
       ]
+    end
+
+    def render_meta_data
+      return if !@cls[:meta] || @cls[:meta].length == 0
+
+      html = ["<ul class='meta-data'>"]
+
+      @options[:meta_tags].each do |meta|
+        title = meta[:title]
+        items = @cls[:meta].find_all {|m| m[:name] == meta[:name]}.map {|m| m[:content] }
+        content = meta[:strip] ? items.map {|m| m.gsub(meta[:strip], "") } : items
+        if items.length > 0
+          html << "<li><strong>#{CGI.escapeHTML(title)}:</strong> #{CGI.escapeHTML(content.join(', '))}</li>"
+        end
+      end
+
+      html << "</ul>"
+
+      html
     end
 
     def render_hierarchy

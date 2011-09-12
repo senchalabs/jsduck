@@ -9,6 +9,7 @@ module JsDuck
     attr_accessor :output_dir
     attr_accessor :ignore_global
     attr_accessor :external_classes
+    attr_accessor :meta_tags
     attr_accessor :warnings
     attr_accessor :verbose
 
@@ -64,6 +65,10 @@ module JsDuck
         "CSSStyleRule",
         "Event",
       ]
+      @meta_tags = [
+        {:name => "author", :title => "Author", :strip => / *<.*?> */},
+        {:name => "docauthor", :title => "Documentation author", :strip => / *<.*?> */},
+      ]
 
       @warnings = true
       @verbose = false
@@ -98,6 +103,12 @@ module JsDuck
       @ext_namespaces = ["Ext"]
     end
 
+    # Make options object behave like hash.
+    # This allows us to substitute it with hash in unit tests.
+    def [](key)
+      send(key)
+    end
+
     def parse!(argv)
       create_option_parser.parse!(argv).each {|fname| read_filenames(fname) }
       validate
@@ -122,6 +133,15 @@ module JsDuck
           "will then not generate warnings when used in type",
           "definitions or inherited from.", " ") do |classes|
           @external_classes += classes
+        end
+
+        opts.on('--meta-tags @name=Title,...', Array,
+          "Defines custom meta-data tags in addition to",
+          "@author and @docauthor.  Experimantal!", " ") do |tags|
+          tags.each do |t|
+            t = t.split(/=/)
+            @meta_tags << {:name => t[0].sub(/^@/, ""), :title => t[1]}
+          end
         end
 
         opts.on('--no-warnings', "Turns off warnings.", " ") do

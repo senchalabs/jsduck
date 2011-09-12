@@ -512,7 +512,12 @@ a {
   h1, h2 {
     @include guides-h2-heading; }
   h3 {
-    @include guides-h3-heading; } }
+    @include guides-h3-heading; }
+  .meta-data {
+    padding: 10px 15px 15px 10px;
+    strong {
+      font-weight: bold;
+      color: gray; } } }
 
 .class-overview {
   .private {

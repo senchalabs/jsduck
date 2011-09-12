@@ -6,11 +6,11 @@ require 'jsduck/js_literal_builder'
 module JsDuck
 
   class JsParser < JsLiteralParser
-    def initialize(input, namespaces = nil)
+    def initialize(input, options = {})
       super(input)
-      @doc_parser = DocParser.new
+      @doc_parser = DocParser.new(:js, options[:meta_tags])
       @docs = []
-      @ext_namespaces = namespaces || ["Ext"]
+      @ext_namespaces = options[:ext_namespaces] || ["Ext"]
     end
 
     # Parses the whole JavaScript block and returns array where for

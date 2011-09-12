@@ -4,9 +4,9 @@ require 'jsduck/doc_parser'
 module JsDuck
 
   class CssParser
-    def initialize(input)
+    def initialize(input, options = {})
       @lex = Lexer.new(input)
-      @doc_parser = DocParser.new(:css)
+      @doc_parser = DocParser.new(:css, options[:meta_tags])
       @docs = []
     end
 
