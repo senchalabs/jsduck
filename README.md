@@ -1,7 +1,7 @@
 JsDuck
 ======
 
-API documentation generator for ExtJS 4.
+API documentation generator for Ext JS 4.
 
            ,~~.
           (  6 )-_,
@@ -10,53 +10,19 @@ API documentation generator for ExtJS 4.
        \ `-' /    hjw
     ~'`~'`~'`~'`~
 
-JsDuck aims to be a better documentation generator for [ExtJS][] than
-the old [ext-doc][] was.
+JsDuck aims to be a better documentation generator for [Ext JS][] than
+the old [ext-doc][] was. It is used by Sencha to generate the official
+[Ext JS 4 documentation][ext4-docs].
 
-The standard way to give some structure to the JavaDoc-style code
-documentation is to use HTML in doc-comments.  Although the resulting
-documentation will look pretty, this is often achieved by sacrificing
-the readability of comments - HTML can get quite ugly.
+The highlights of JSDuck are [Markdown][] support and keeping you DRY
+by inferring a lot of information from code.  Read the [Guide][] for
+full overview.
 
-JsDuck does not like it.  Although it can handle comments written in
-HTML, it prefers a friendlier [Markdown][] syntax:
-
-    /**
-     * Basic text field.  Can be used as a direct replacement for traditional
-     * text inputs, or as the base class for more sophisticated input controls
-     * (like Ext.form.TextArea and Ext.form.ComboBox).
-     *
-     * Validation
-     * ----------
-     *
-     * The validation procedure is described in the documentation for
-     * {@link #validateValue}.
-     *
-     * Alter Validation Behavior
-     * -------------------------
-     *
-     * Validation behavior for each field can be configured:
-     *
-     * - `{@link Ext.form.TextField#invalidText invalidText}` :
-     *   the default validation message to show if any validation step above
-     *   does not provide a message when invalid
-     * - `{@link Ext.form.TextField#maskRe maskRe}` :
-     *   filter out keystrokes before any validation occurs
-     * - `{@link Ext.form.TextField#stripCharsRe stripCharsRe}` :
-     *   filter characters after being typed in, but before being validated
-     *
-     * @xtype textfield
-     */
-    Ext.define('Ext.form.field.Text', {
-        extend: 'Ext.form.field.Base',
-
-As you can see, JsDuck can infer several things from the code (like
-`@class` and `@extends` in this case), so you don't have to repeat
-yourself.
-
-[ExtJS]: http://www.sencha.com/products/js/
+[Ext JS]: http://www.sencha.com/products/js/
 [ext-doc]: http://ext-doc.org/
 [Markdown]: http://daringfireball.net/projects/markdown/
+[ext4-docs]: http://docs.sencha.com/ext-js/4-0/
+[Guide]: https://github.com/senchalabs/jsduck/wiki/Guide
 
 
 Getting it
@@ -132,7 +98,7 @@ See [Hacking guide](https://github.com/senchalabs/jsduck/wiki/Hacking) in wiki.
 Documenting your code
 ---------------------
 
-For all the JSDuck supported see [Guide](https://github.com/senchalabs/jsduck/wiki/Guide) in wiki. 
+All the supported syntax is described in the [Guide][]. 
 
 
 Copying
