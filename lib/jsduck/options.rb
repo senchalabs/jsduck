@@ -96,7 +96,8 @@ module JsDuck
 
       # Debugging
       @processes = nil
-      @template_dir = File.dirname(File.dirname(File.dirname(__FILE__))) + "/template-min"
+      @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
+      @template_dir = @root_dir + "/template-min"
       @template_links = false
       @extjs_path = "extjs/ext-all.js"
       @local_storage_db = "docs"
@@ -133,6 +134,11 @@ module JsDuck
           "will then not generate warnings when used in type",
           "definitions or inherited from.", " ") do |classes|
           @external_classes += classes
+        end
+
+        opts.on('--builtin-classes',
+          "Includes docs for JavaScript builtin classes.", " ") do
+          read_filenames(@root_dir + "/js-classes")
         end
 
         opts.on('--meta-tags @name=Title,...', Array,
