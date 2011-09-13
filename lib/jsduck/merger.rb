@@ -264,7 +264,9 @@ module JsDuck
 
     def detect_extends(doc_map, code)
       if doc_map[:extends]
-        doc_map[:extends].first[:extends]
+        cls = doc_map[:extends].first[:extends]
+        # Ignore extending of the Object class
+        cls == "Object" ? nil : cls
       elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :ext_extend
         code[:right][:extend].join(".")
       elsif code[:type] == :ext_define
