@@ -154,11 +154,15 @@
  * | `\r`             | Matches a carriage return. 
  * |                  | 
  * | `\s`             | Matches a single white space character, including space, tab, form feed, line feed and 
- * |                  | other unicode spaces.
+ * |                  | other unicode spaces. Equivalent to:
+ * |                  | 
+ * |                  | `[\t\n\v\f\r \u00a0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]`
  * |                  | 
  * |                  | For example, `/\s\w*\/` matches ' bar' in "foo bar."
  * |                  | 
- * | `\S`             | Matches a single character other than white space.
+ * | `\S`             | Matches a single character other than white space. Equivalent to:
+ * |                  | 
+ * |                  | `[^\t\n\v\f\r \u00a0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]`
  * |                  | 
  * |                  | For example, `/\S\w*\/` matches 'foo' in "foo bar." 
  * |                  | 
@@ -195,14 +199,6 @@
  * The constructor of the regular expression object, for example, new RegExp("ab+c"), provides runtime 
  * compilation of the regular expression. Use the constructor function when you know the regular expression 
  * pattern will be changing, or you don't know the pattern and are getting it from another source, such as user input.
- *
- * 1. ^Equivalent to:
- * 
- * [\t\n\v\f\r \u00a0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]
- * 
- * 1. ^Equivalent to:
- * 
- * [^\t\n\v\f\r \u00a0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000]
  *
  */
  
