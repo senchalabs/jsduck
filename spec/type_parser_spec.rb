@@ -60,6 +60,10 @@ describe JsDuck::TypeParser do
     it "complex alteration" do
       parse("Ext.form.Panel[]/Number/Ext.Element...").should == true
     end
+
+    it "in the middle" do
+      parse("Number.../String").should == true
+    end
   end
 
   describe "doesn't match" do
@@ -89,10 +93,6 @@ describe JsDuck::TypeParser do
 
     it "/ at the end" do
       parse("Number/").should == false
-    end
-
-    it "... in the middle" do
-      parse("Number.../String").should == false
     end
   end
 

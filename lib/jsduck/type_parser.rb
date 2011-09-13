@@ -46,9 +46,6 @@ module JsDuck
         return false unless base_type
       end
 
-      # The definition might end with an ellipsis
-      @out << "..." if @input.scan(/\.\.\./)
-
       # Concatenate all output
       @out = @out.join
 
@@ -58,7 +55,7 @@ module JsDuck
 
     # The basic type
     #
-    #     <ident> [ "." <ident> ]* [ "[]" ]
+    #     <ident> [ "." <ident> ]* [ "[]" ] [ "..." ]
     #
     # dot-separated identifiers followed by optional "[]"
     def base_type
@@ -76,6 +73,8 @@ module JsDuck
       end
 
       @out << "[]" if @input.scan(/\[\]/)
+
+      @out << "..." if @input.scan(/\.\.\./)
 
       true
     end
