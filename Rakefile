@@ -167,7 +167,7 @@ class JsDuckRunner
       "--inline-examples", "#{@sdk_dir}/extjs/doc-resources",
       "--categories", "#{@sdk_dir}/extjs/doc-resources/categories.json",
       "--output", "#{@out_dir}",
-      "js_classes",
+      "--builtin-classes",
       "#{@sdk_dir}/extjs/src",
       "#{@sdk_dir}/platform/src",
       "#{@sdk_dir}/platform/core/src",
