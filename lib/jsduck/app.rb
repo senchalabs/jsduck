@@ -82,8 +82,6 @@ module JsDuck
         @timer.time(:generating) { puts JsonDuck.generate(@relations.classes) }
       elsif @opts.export == :json
         FileUtils.mkdir(@opts.output_dir)
-        init_output_dirs
-        @timer.time(:generating) { write_src(parsed_files) }
         @timer.time(:generating) { format_classes }
         @timer.time(:generating) { write_classes }
       else
@@ -180,8 +178,9 @@ module JsDuck
     def write_classes
       exporter = Exporter.new(@relations)
       renderer = Renderer.new(@opts)
+      dir = @opts.output_dir + (@opts.export ? "" : "/output")
       @parallel.each(@relations.classes) do |cls|
-        filename = @opts.output_dir+"/output/" + cls[:name] + (@opts.export ? ".json" : ".js")
+        filename = dir + "/" + cls[:name] + (@opts.export ? ".json" : ".js")
         Logger.instance.log("Writing to #{filename} ...")
         data = exporter.export(cls)
         if @opts.export
