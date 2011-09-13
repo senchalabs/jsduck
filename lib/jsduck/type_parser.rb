@@ -55,7 +55,7 @@ module JsDuck
 
     # The basic type
     #
-    #     <ident> [ "." <ident> ]* [ "[]" ] [ "..." ]
+    #     <ident> [ "." <ident> ]* [ "[]" ]* [ "..." ]
     #
     # dot-separated identifiers followed by optional "[]"
     def base_type
@@ -72,7 +72,9 @@ module JsDuck
         return false
       end
 
-      @out << "[]" if @input.scan(/\[\]/)
+      while @input.scan(/\[\]/)
+        @out << "[]"
+      end
 
       @out << "..." if @input.scan(/\.\.\./)
 

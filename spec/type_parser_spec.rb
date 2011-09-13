@@ -30,6 +30,14 @@ describe JsDuck::TypeParser do
     parse("Ext.form.Panel[]").should == true
   end
 
+  it "matches 2D array" do
+    parse("String[][]").should == true
+  end
+
+  it "matches 3D array" do
+    parse("String[][][]").should == true
+  end
+
   describe "matches alteration of" do
     it "simple types" do
       parse("Number/String").should == true
