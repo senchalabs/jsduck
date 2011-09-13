@@ -28,6 +28,12 @@
  *     // equivalent to o = new Boolean(false);  
  *     var o = new Object(Boolean()); 
  */
+
+/**
+ * @method constructor
+ * Creates new Object.
+ * @param {Object} [value] The value to wrap.
+ */
  
 //Properties
 

@@ -33,27 +33,20 @@
  * function body, "return a + b".
  */
  
-//Parameters
- 
 /**
+ * @method constructor
+ * Creates new Function object.
+ * 
  * @param arg1, arg2, ... argN
  * Names to be used by the function as formal argument names. Each must be a 
  * string that corresponds to a valid JavaScript identifier or a list of such 
  * strings separated with a comma; for example "`x`", "`theValue`", or "`a,b`".
- */
- 
-/**
  * @param functionBody
  * A string containing the JavaScript statements comprising the function 
  * definition.
  */
 
 // Properties
-
-/**
- * @property constructor
- * Specifies the function that creates an object's prototype.
- */
 
 /**
  * @property length

@@ -134,15 +134,15 @@
  *
  */
 
-// Properties
-
 /**
- * @property constructor
- * Specifies the function that creates an object's prototype.
- *
- * Returns a reference to the Array function that created the instance's prototype. Note that the value of 
- * this property is a reference to the function itself, not a string containing the function's name.
+ * @method constructor
+ * Creates new Array object.
+ * 
+ * @param {Number/Object...} items Either a number that specifies the length of array or any number of items
+ * for the array.
  */
+
+// Properties
 
 /**
  * @property length

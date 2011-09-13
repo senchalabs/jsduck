@@ -70,11 +70,10 @@
  * A similar result can be achieved using the `localeCompare` method inherited by `String` instances.
  */
  
-//Properties
- 
 /**
- * @property prototype
- * Allows the addition of properties to a `String` object.
+ * @method constructor
+ * Creates new String object.
+ * @param {Object} value The value to wrap into String object.
  */
   
 //Methods
@@ -126,14 +125,6 @@
  */
  
 //Properties
- 
-/**
- * @property constructor
- * Specifies the function that creates an object's prototype.
- *
- * Returns a reference to the String function that created the instance's prototype. Note that the value of this property is a 
- * reference to the function itself, not a string containing the function's name.
- */
  
 /**
  * @property length

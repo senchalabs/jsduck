@@ -206,40 +206,22 @@
  *
  */
  
-//Parameters
- 
 /**
+ * @method constructor
+ * Creates new regular expression object.
+ * 
  * @param pattern
  * The text of the regular expression.
- */
- 
-/**
  * @param flags
  * If specified, flags can have any combination of the following values:
- */
-
-/**
  * @param g
  * global match
- */
- 
-/**
  * @param i
  * ignore case
- */
- 
-/**
  * @param m
  * Treat beginning and end characters (^ and $) as working over multiple lines 
  * (i.e., match the beginning or end of _each_ line (delimited by \n or \r), not 
  * only the very beginning or end of the whole input string)
- */
- 
-//Properties
- 
-/**
- * @property prototype
- * Allows the addition of properties to all objects.
  */
  
 //Methods
@@ -358,15 +340,6 @@
 
 // Note that several of the RegExp properties have both long and short (Perl-like) names. Both names always refer to the same value. Perl is the programming language from which JavaScript modeled its regular expressions.
 
-/**
- * @property constructor
- * Specifies the function that creates an object's prototype.
- *
- * Returns a reference to the RegExp function that created the instance's prototype. Note that the 
- * value of this property is a reference to the function itself, not a string containing the function's 
- * name.
- */
- 
 /**
  * @property global
  * Whether to test the regular expression against all possible matches in a 

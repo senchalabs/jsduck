@@ -83,6 +83,36 @@
  *     print(ISODateString(d)); // prints something like 2009-09-28T19:03:12Z
  */
 
+/**
+ * @method constructor
+ * Creates new Date object.
+ *
+ * @param {Number} milliseconds
+ * Integer value representing the number of milliseconds since 1 January 1970 
+ * 00:00:00 UTC (Unix Epoch).
+ * @param {String} dateString
+ * String value representing a date. The string should be in a format recognized 
+ * by the parse method (IETF-compliant RFC 1123 timestamps).
+ * @param {Number} year
+ * Integer value representing the year. For compatibility (in order to avoid the
+ * Y2K problem), you should always specify the year in full; use 1998, rather 
+ * than 98.
+ * @param {Number} month
+ * Integer value representing the month, beginning with 0 for January to 11 
+ * for December.
+ * @param {Number} day
+ * Integer value representing the day of the month (1-31).
+ * @param {Number} hour
+ * Integer value representing the hour of the day (0-23).
+ * @param {Number} minute
+ * Integer value representing the minute segment (0-59) of a time reading.
+ * @param {Number} second
+ * Integer value representing the second segment (0-59) of a time reading.
+ * @param {Number} millisecond
+ * Integer value representing the millisecond segment (0-999) of a time reading.
+ */
+
+
 //Methods
 
 /**
@@ -189,68 +219,6 @@
  * @return {Date} Number of milliseconds since January 1, 1970, 00:00:00, universal time.
  */
  
-//Parameters
- 
-/**
- * @param {Number} milliseconds
- * Integer value representing the number of milliseconds since 1 January 1970 
- * 00:00:00 UTC (Unix Epoch).
- */
-  
-/**
- * @param {String} dateString
- * String value representing a date. The string should be in a format recognized 
- * by the parse method (IETF-compliant RFC 1123 timestamps).
- */
-  
-/**
- * @param {Number} year
- * Integer value representing the year. For compatibility (in order to avoid the
- * Y2K problem), you should always specify the year in full; use 1998, rather 
- * than 98.
- */
-  
-/**
- * @param {Number} month
- * Integer value representing the month, beginning with 0 for January to 11 
- * for December.
- */
-  
-/**
- * @param {Number} day
- * Integer value representing the day of the month (1-31).
- */
-  
-/**
- * @param {Number} hour
- * Integer value representing the hour of the day (0-23).
- */
-  
-/**
- * @param {Number} minute
- * Integer value representing the minute segment (0-59) of a time reading.
- */
-  
-/**
- * @param {Number} second
- * Integer value representing the second segment (0-59) of a time reading.
- */
-  
-/**
- * @param {Number} millisecond
- * Integer value representing the millisecond segment (0-999) of a time reading.
- */
-
-//Properties
-
-/**
- * @property constructor
- * Returns the function that created an instance. This is the `Date` constructor by default.
- *
- * Note that the value of this property is a reference to the function itself, not a string containing 
- * the function's name.
- */
-
 //Methods
 
 /**

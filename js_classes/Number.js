@@ -35,12 +35,12 @@
  * `Number` as a function:
  */
 
-//Parameters
-
-///**
-// * @param value
-// * The numeric value of the object being created.
-// */
+/**
+ * @method constructor
+ * Creates new Number object.
+ * @param value
+ * The numeric value of the object being created.
+ */
 
 //Properties
 
@@ -170,22 +170,6 @@
  *     }
  */
  
-/**
- * @property prototype
- * Allows the addition of properties to a `Number` object.
- *
- * All `Number` instances inherit from `Number.prototype`. The prototype object of the `Number` 
- * constructor can be modified to affect all `Number` instances.
- */
-
-//Properties
-
-/**
- * @property constructor
- * Returns the function that created this object's instance. By default this is 
- * the `Number` object.
- */
-
 //Methods
  
 /**

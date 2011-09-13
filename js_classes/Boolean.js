@@ -60,16 +60,10 @@
  *
  */
  
-//Properties
-
 /**
- * @property prototype
- * Defines a property that is shared by all Boolean objects.
- */
- 
-/**
- * @property constructor
- * Returns the function that created an instance's prototype. This is the `Boolean` function by default.
+ * @method constructor
+ * Creates a new boolean object.
+ * @param {Object} value Either a truthy or falsy value to create the corresponding Boolean object.
  */
  
 //Methods
