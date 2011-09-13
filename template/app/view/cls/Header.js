@@ -17,9 +17,7 @@ Ext.define('Docs.view.cls.Header', {
                     '<span class="private">Private</span>',
                 '</tpl>',
                 '<a href="source/{href}" target="_blank">{name}</a>',
-                '<tpl if="xtypes.length &gt; 0">',
-                    '<span>xtype: {[values.xtypes.join(", ")]}</span>',
-                '</tpl>',
+                '{[this.renderXTypes(values.xtypes)]}',
             '</h1>',
             '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>',
             {
@@ -32,6 +30,26 @@ Ext.define('Docs.view.cls.Header', {
                     }
                     else {
                         return "class";
+                    }
+                },
+                renderXTypes: function(xtypes) {
+                    var map = {
+                        widget: "xtype",
+                        plugin: "ptype",
+                        feature: "ftype"
+                    };
+                    var r = [];
+                    Ext.Object.each(map, function(ns, title) {
+                        if (xtypes[ns]) {
+                            r.push(title + ": " + xtypes[ns].join(", "));
+                        }
+                    });
+
+                    if (r.length > 0) {
+                        return "<span>" + r.join(", ") + "</span>";
+                    }
+                    else {
+                        return "";
                     }
                 }
             }

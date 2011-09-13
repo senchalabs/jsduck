@@ -51,7 +51,7 @@ describe JsDuck::Aggregator do
       @doc[:singleton].should == true
     end
     it "detects xtype" do
-      @doc[:xtypes].should == ["nicely"]
+      @doc[:xtypes].should == {"widget" => ["nicely"]}
     end
   end
 
@@ -130,7 +130,7 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "collects all xtypes together" do
-      @doc[:xtypes].should == ["foo", "bar"]
+      @doc[:xtypes].should == {"widget" => ["foo", "bar"]}
     end
   end
 
@@ -197,7 +197,7 @@ describe JsDuck::Aggregator do
       @doc[:alternateClassNames].should == ["JustClass"]
     end
     it "detects implied xtype" do
-      @doc[:xtypes].should == ["foo"]
+      @doc[:xtypes].should == {"widget" => ["foo"]}
     end
     it "detects implied singleton" do
       @doc[:singleton].should == true
@@ -251,7 +251,7 @@ describe JsDuck::Aggregator do
           extend: 'Your.Class',
           uses: ['ClassC'],
           conf: {foo: 10},
-          alias: ['widget.foo', 'something.bar'],
+          alias: ['widget.foo'],
           singleton: true,
           alternateClassName: ['JustClass'],
           stuff: ["foo", "bar"],
@@ -349,7 +349,7 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "detects xtype" do
-      @doc[:xtypes].should == ["nicely"]
+      @doc[:xtypes].should == {"widget" => ["nicely"]}
     end
   end
 
@@ -528,7 +528,7 @@ describe JsDuck::Aggregator do
     end
 
     it "combines all @xtypes" do
-      @classes[0][:xtypes].length.should == 2
+      @classes[0][:xtypes]["widget"].length.should == 2
     end
 
     it "combines all configs" do

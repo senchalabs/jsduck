@@ -167,13 +167,13 @@ Ext.define('Docs.controller.Search', {
             // Otherwise search from just the member name (e.g. "focus" or "Component")
             var name = hasDot ? r.cls + (r.type === "cls" ? "" : "." + r.member) : r.member;
 
-            if (r.xtypes && Ext.Array.some(r.xtypes, function(x) {return reFull.test(x);})) {
+            if (r.xtypes && this.matchXType(r.xtypes, reFull)) {
                 results[xFull].push(r);
             }
             else if (reFull.test(name)) {
                 results[r.type === "cls" ? clsFull : mFull].push(r);
             }
-            else if (r.xtypes && Ext.Array.some(r.xtypes, function(x) {return reBeg.test(x);})) {
+            else if (r.xtypes && this.matchXType(r.xtypes, reBeg)) {
                 results[xBeg].push(r);
             }
             else if (reBeg.test(name)) {
@@ -182,9 +182,21 @@ Ext.define('Docs.controller.Search', {
             else if (reMid.test(name)) {
                 results[r.type === "cls" ? clsMid : mMid].push(r);
             }
-        });
+        }, this);
 
         return Ext.Array.flatten(results);
+    },
+
+    // true if xtype, ptype, ftype, etc matches regex
+    matchXType: function(xtypes, regex) {
+        for (var key in xtypes) {
+            if (xtypes.hasOwnProperty(key)) {
+                if (Ext.Array.some(xtypes[key], function(x) {return regex.test(x);})) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 });
