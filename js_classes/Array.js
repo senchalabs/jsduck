@@ -186,7 +186,7 @@
  *     var popped = myFish.pop();
  *     alert(popped); // Alerts 'surgeon'
  *
- * @return {Mixed} The last element in the array
+ * @return {Object} The last element in the array
  */
 
 /**
@@ -211,7 +211,7 @@
  *     var sports = ["soccer", "baseball"];
  *     sports.push("football", "swimming");
  *
- * @param {Mixed} element1,...,elementN The elements to add to the end of the array.
+ * @param {Object...} elements The elements to add to the end of the array.
  * @return {Number} The new length property of the object upon which the method was called.
  */
 
@@ -264,7 +264,7 @@
  *     myFish after: clown,mandarin,surgeon
  *     Removed this element: angel
  *
- * @return {Mixed} The first element of the array prior to shifting.
+ * @return {Object} The first element of the array prior to shifting.
  */
 
 /**
@@ -312,7 +312,7 @@
  *     });  
  *     print(numbers);   
  *
- * @param {Mixed} compareFunction Specifies a function that defines the sort order. If omitted, the 
+ * @param {Function} compareFunction Specifies a function that defines the sort order. If omitted, the 
  * array is sorted lexicographically (in dictionary order) according to the string conversion of each 
  * element.
  * @return {Array} A reference to the array
@@ -362,7 +362,7 @@
  * @param {Number} howMany An integer indicating the number of old array elements to remove. If 
  * `howMany` is 0, no elements are removed. In this case, you should specify at least one new element. 
  * If no `howMany` parameter is specified all elements after index are removed.
- * @param {Mixed} element1, ..., elementN The elements to add to the array. If you don't specify any 
+ * @param {Object...} elements The elements to add to the array. If you don't specify any 
  * elements, `splice` simply removes elements from the array.
  * @return {Array} An array containing the removed elements. If only one element is removed, an array 
  * of one element is returned..
@@ -393,7 +393,7 @@
  *     myFish after: ["drum", "lion", "angel", "clown"]
  *     New length: 4
  *
- * @param {Mixed} element1, ..., elementN The elements to add to the front of the array.
+ * @param {Object...} elements The elements to add to the front of the array.
  * @return {Number} The array's new length.
  */
 
@@ -448,7 +448,7 @@
  *     // creates array ["a", "b", "c", 1, 2, 3], leaving alpha unchanged  
  *     var alphaNumeric = alpha.concat(1, [2, 3]);  
  *
- * @param {Mixed} ValueN Arrays and/or values to concatenate to the resulting array.
+ * @param {Object...} values Arrays and/or values to concatenate to the resulting array.
  * @return {Array} New array.
  */
 
@@ -466,7 +466,7 @@
  *     var myVar2 = a.join(", ");  // assigns "Wind, Rain, Fire" to myVar2
  *     var myVar3 = a.join(" + "); // assigns "Wind + Rain + Fire" to myVar3
  *
- * @param {String} Separator Specifies a string to separate each element of the array. The separator 
+ * @param {String} separator Specifies a string to separate each element of the array. The separator 
  * is converted to a string if necessary. If omitted, the array elements are separated with a comma.
  * @return {String} A string of the array elements.
  */

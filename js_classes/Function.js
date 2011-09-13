@@ -158,12 +158,12 @@
  * 
  *     var min = minOfArray([5, 6, 2, 3, 7]);  
  *
- * @param {Mixed} thisArg The value of this provided for the call to fun. Note that this may not be 
+ * @param {Object} thisArg The value of this provided for the call to fun. Note that this may not be 
  * the actual value seen by the method: if the method is a function in non-strict mode code, null and 
  * undefined will be replaced with the global object, and primitive values will be boxed.
  * @param {Array} argsArray An array like object, specifying the arguments with which fun should be 
  * called, or null or undefined if no arguments should be provided to the function.
- * @return {Mixed} Returns what the function returns.
+ * @return {Object} Returns what the function returns.
  */
  
 /**
@@ -224,11 +224,11 @@
  *     }).call(animals[i], i);  
  *     }  
  *
- * @param {Mixed} thisArg The value of this provided for the call to `fun`.Note that this may not be 
+ * @param {Object} thisArg The value of this provided for the call to `fun`.Note that this may not be 
  * the actual value seen by the method: if the method is a function in non-strict mode code, `null` 
  * and `undefined` will be replaced with the global object, and primitive values will be boxed.
- * @param {Mixed} arg1, arg2, ... Arguments for the object.
- * @return {Mixed} Returns what the function returns.
+ * @param {Object...} args Arguments for the object.
+ * @return {Object} Returns what the function returns.
  */
  
 /**

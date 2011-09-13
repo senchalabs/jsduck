@@ -290,7 +290,6 @@
  * 
  * This will display an alert containing 'hello world!';
  *
- * @param {Mixed} regexp The name of the regular expression. It can be a variable name or a literal.
  * @param {String} str The string against which to match the regular expression.
  * @return {Array} Array of results or `NULL`.
  */
@@ -314,7 +313,6 @@
  *         document.write (str + midstring + re.source);  
  *     }  
  *
- * @param {Mixed} regexp The name of the regular expression. It can be a variable name or a literal.
  * @param {String} str The string against which to match the regular expression.
  * @return {Boolean} true if string contains any matches, otherwise returns false.
  */

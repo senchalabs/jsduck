@@ -332,7 +332,7 @@
  * conversion, if only `"[object type]"`. But many objects do not convert to number, boolean, or 
  * function.
  *
- * @return {Mixed} Returns value of the object or the object itself.
+ * @return {Object} Returns value of the object or the object itself.
  */
  
 //Properties
