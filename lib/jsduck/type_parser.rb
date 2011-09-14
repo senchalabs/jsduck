@@ -59,7 +59,7 @@ module JsDuck
     #
     # dot-separated identifiers followed by optional "[]"
     def base_type
-      type = @input.scan(/[a-zA-Z_]+(\.[a-zA-Z_]+)*/)
+      type = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*/)
 
       if !type
         return false

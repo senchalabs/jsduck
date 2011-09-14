@@ -10,6 +10,7 @@ describe JsDuck::TypeParser do
       "RegExp",
       "Ext.form.Panel",
       "Ext.Element",
+      "Ext.fx2.Anim",
     ])
     JsDuck::TypeParser.new(relations).parse(str)
   end
@@ -20,6 +21,10 @@ describe JsDuck::TypeParser do
 
   it "matches namespaced type" do
     parse("Ext.form.Panel").should == true
+  end
+
+  it "matches type name containing number" do
+    parse("Ext.fx2.Anim").should == true
   end
 
   it "matches array of simple types" do
