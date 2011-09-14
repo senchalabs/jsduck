@@ -39,7 +39,7 @@ Ext.define('Docs.view.cls.Header', {
                         feature: "ftype"
                     };
                     var r = [];
-                    Ext.Object.each(map, function(ns, title) {
+                    xtypes && Ext.Object.each(map, function(ns, title) {
                         if (xtypes[ns]) {
                             r.push(title + ": " + xtypes[ns].join(", "));
                         }
