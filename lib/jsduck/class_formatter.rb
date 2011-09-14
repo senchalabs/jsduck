@@ -39,10 +39,14 @@ module JsDuck
       if expandable?(m) || @formatter.too_long?(m[:doc])
         m[:shortDoc] = @formatter.shorten(m[:doc])
       end
-      m[:html_type] = format_type(m[:type]) if m[:type] && @include_types
-      m[:params] = m[:params].map {|p| format_item(p) } if m[:params]
-      m[:return] = format_item(m[:return]) if m[:return]
-      m[:properties] = m[:properties].map {|b| format_item(b) } if m[:properties]
+
+      # We don't validate and format CSS var and mixin type definitions
+      is_css_tag = m[:tagname] == :css_var || m[:tagname] == :css_mixin
+
+      m[:html_type] = (@include_types && !is_css_tag) ? format_type(m[:type]) : m[:type] if m[:type]
+      m[:params] = m[:params].map {|p| format_item(p, is_css_tag) } if m[:params]
+      m[:return] = format_item(m[:return], is_css_tag) if m[:return]
+      m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
       m
     end
 
@@ -50,10 +54,10 @@ module JsDuck
       m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:deprecated]
     end
 
-    def format_item(it)
+    def format_item(it, is_css_tag)
       it[:doc] = @formatter.format(it[:doc]) if it[:doc]
-      it[:html_type] = format_type(it[:type]) if it[:type] && @include_types
-      it[:properties] = it[:properties].map {|s| format_item(s) } if it[:properties]
+      it[:html_type] = (@include_types && !is_css_tag) ? format_type(it[:type]) : it[:type] if it[:type]
+      it[:properties] = it[:properties].map {|s| format_item(s, is_css_tag) } if it[:properties]
       it
     end
 
