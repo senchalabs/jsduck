@@ -198,6 +198,7 @@ class JsDuckRunner
       "--categories", "#{@sdk_dir}/touch/doc-resources/categories.json",
       "--videos", "#{@sdk_dir}/touch/doc-resources/videos.json",
       "--output", "#{@out_dir}",
+      "--external=google.maps.Map,google.maps.LatLng",
       "#{@sdk_dir}/touch/src/core",
       "#{@sdk_dir}/touch/src/data",
       "#{@sdk_dir}/touch/src/gestures",
