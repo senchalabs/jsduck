@@ -28,7 +28,7 @@ Ext.define('Docs.view.Tabs', {
                 '</div>',
             '</tpl>',
             '<div style="float: left; width: 8px">&nbsp;</div>',
-            '<div id="tabOverflow" style="visibility: hidden"></div>'
+            '<div id="tabOverflow"></div>'
         );
 
         this.html = this.tpl.applyTemplate(this.staticTabs);
@@ -94,10 +94,6 @@ Ext.define('Docs.view.Tabs', {
         }
         if (opts.activate) {
             this.activateTab(tab.href);
-        }
-
-        if (this.tabs.length > this.maxTabsInBar()) {
-            Ext.get('tabOverflow').show();
         }
 
         this.saveTabs();
@@ -447,10 +443,6 @@ Ext.define('Docs.view.Tabs', {
         Ext.Array.each(this.tabs, function(tab) {
             this.addTabToOverflow(this.tabCache[tab]);
         }, this);
-
-        if (this.tabs.length > this.maxTabsInBar()) {
-            Ext.get('tabOverflow').show();
-        }
     },
 
     addToolTips: function() {
