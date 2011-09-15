@@ -92,8 +92,6 @@ def compress
   # Now do everything that follows in template-min/ dir
   dir = "template-min"
 
-  # Create JSB3 file for Docs app
-  system("sencha", "create", "jsb", "-a", "#{dir}/build-js.html", "-p", "#{dir}/app.jsb3")
   # Concatenate files listed in JSB3 file
   system("sencha", "build", "-p", "#{dir}/app.jsb3", "-d", dir)
   # Remove intermediate build files
@@ -320,6 +318,12 @@ end
 # Run compass to generate CSS files
 task :sass do
   system "compass compile --quiet template/resources/sass"
+end
+
+desc "Updates JSB3 file for Docs app.\n"+
+     "Run this before every commit that changes JS dependencies."
+task :jsb do
+  system("sencha", "create", "jsb", "-a", "template/build-js.html", "-p", "template/app.jsb3")
 end
 
 desc "Run JSDuck on Ext JS SDK (for internal use at Sencha)\n" +
