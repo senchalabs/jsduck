@@ -132,6 +132,11 @@
  * | `[1], ...[n]`    | Read-only elements that specify the parenthesized substring matches, if included in   | [1]: bB [2]: d
  * |                  | the regular expression. The number of possible parenthesized substrings is unlimited. |
  *
+ * <div class="notice">
+ * Documentation for this class comes from <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array">MDN</a>
+ * and is available under <a href="http://creativecommons.org/licenses/by-sa/2.0/">Creative Commons: Attribution-Sharealike license</a>.
+ * </div>
+ *
  */
 
 /**
