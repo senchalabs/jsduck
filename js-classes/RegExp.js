@@ -200,6 +200,10 @@
  * compilation of the regular expression. Use the constructor function when you know the regular expression
  * pattern will be changing, or you don't know the pattern and are getting it from another source, such as user input.
  *
+ * <div class="notice">
+ * Documentation for this class comes from <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/RegExp">MDN</a>
+ * and is available under <a href="http://creativecommons.org/licenses/by-sa/2.0/">Creative Commons: Attribution-Sharealike license</a>.
+ * </div>
  */
 
 /**

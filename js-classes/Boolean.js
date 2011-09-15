@@ -58,6 +58,10 @@
  *     bfalseString = new Boolean("false");
  *     bSuLin = new Boolean("Su Lin");
  *
+ * <div class="notice">
+ * Documentation for this class comes from <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean">MDN</a>
+ * and is available under <a href="http://creativecommons.org/licenses/by-sa/2.0/">Creative Commons: Attribution-Sharealike license</a>.
+ * </div>
  */
 
 /**
