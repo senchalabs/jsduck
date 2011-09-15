@@ -123,6 +123,8 @@ module JsDuck
           boolean_at_tag(/@(private|ignore|hide)/, :private)
         elsif look(/@protected\b/)
           boolean_at_tag(/@protected/, :protected)
+        elsif look(/@accessor\b/)
+          boolean_at_tag(/@accessor/, :accessor)
         elsif look(/@markdown\b/)
           # this is detected just to be ignored
           boolean_at_tag(/@markdown/, :markdown)

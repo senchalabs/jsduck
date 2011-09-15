@@ -1,4 +1,5 @@
 require 'jsduck/class'
+require 'jsduck/accessors'
 
 module JsDuck
 
@@ -162,6 +163,14 @@ module JsDuck
       }
       @classes.each_value do |cls|
         cls[:members][:event].each {|e| e[:params] << options }
+      end
+    end
+
+    # Creates accessor method for configs marked with @accessor
+    def create_accessors
+      accessors = Accessors.new
+      @classes.each_value do |cls|
+        accessors.create(cls)
       end
     end
 
