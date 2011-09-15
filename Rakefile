@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'rake'
+require 'json'
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
@@ -197,16 +198,23 @@ class JsDuckRunner
       "--videos", "#{@sdk_dir}/touch/doc-resources/videos.json",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
-      "#{@sdk_dir}/touch/src/core",
-      "#{@sdk_dir}/touch/src/data",
-      "#{@sdk_dir}/touch/src/gestures",
-      "#{@sdk_dir}/touch/src/layout",
-      "#{@sdk_dir}/touch/src/plugins",
-      "#{@sdk_dir}/touch/src/util",
-      "#{@sdk_dir}/touch/src/widgets",
-      "#{@sdk_dir}/touch/src/platform/src",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
+
+    @options += extract_jsb_build_files("#{@sdk_dir}/touch/sencha-touch.jsb3")
+  end
+
+  # Extracts files of first build in jsb file
+  def extract_jsb_build_files(jsb_file)
+    json = JSON.parse(IO.read(jsb_file))
+    basedir = File.dirname(jsb_file)
+
+    return json["builds"][0]["packages"].map do |package_id|
+      package = json["packages"].find {|p| p["id"] == package_id }
+      package["files"].map do |file|
+        basedir + "/" + file["path"] + file["name"]
+      end
+    end.flatten
   end
 
   # Returns shortened hash of naming current git revision
