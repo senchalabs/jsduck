@@ -86,7 +86,11 @@ documentation, but if your project is built on top of it, it makes
 sense to do so - otherwise you won't be able to see which methods your
 classes inherit from Ext JS classes.
 
+To create guides, videos and other sections, read about the
+[Advanced Usage][adv] in wiki.
+
 [official]: http://docs.sencha.com/ext-js/4-0/
+[adv]: https://github.com/senchalabs/jsduck/wiki/Advanced-Usage
 
 
 Hacking it
