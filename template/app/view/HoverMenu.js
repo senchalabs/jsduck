@@ -46,11 +46,12 @@ Ext.define('Docs.view.HoverMenu', {
                 columnHeight: this.columnHeight,
                 showCloseButtons: this.showCloseButtons,
                 renderLink: function(values) {
-                    var url = values.url || values.cls,
-                        label = values.label || values.cls,
-                        stat = values['static'] ? '<span class="static">static</span>' : "",
-                        prot = values['protected'] ? '<span class="protected">protected</span>' : "";
-                    return Ext.String.format('<a href="#!/api/{0}" rel="{0}" class="docClass">{1} {2} {3}</a>', url, label, stat, prot);
+                    var url = values.url || values.cls;
+                    var label = values.label || values.cls;
+                    var tags = Ext.Array.map(['static', 'protected', 'deprecated', 'template', 'required'], function(tag) {
+                        return values[tag] ? '<span class="'+tag+'">'+tag+'</span>' : '';
+                    }).join(' ');
+                    return Ext.String.format('<a href="#!/api/{0}" rel="{0}" class="docClass">{1} {2}</a>', url, label, tags);
                 }
             }
         );

@@ -729,6 +729,9 @@ a {
       &:hover {
         @include opacity(1); } }
     span.protected,
+    span.template,
+    span.deprecated,
+    span.required,
     span.static {
       font-size: 0.6em;
       text-transform: uppercase;
@@ -736,9 +739,12 @@ a {
       padding: 0 0.5em;
       @include border-radius(2px);
       color: white;
-      background: $docs-text-color; }
-    span.protected {
-      background-color: #aaa; } } }
+      background: #aaa; }
+    span.deprecated {
+      background-color: #a00; }
+    span.required,
+    span.static {
+      background-color: $docs-text-color; } } }
 
 .inline-example-cmp {
   margin-bottom: 10px;

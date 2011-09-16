@@ -360,8 +360,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "is optional by default" do
-      @doc[:optional].should == true
+    it "is not required by default" do
+      @doc[:required].should == false
     end
   end
 
@@ -373,8 +373,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has optional flag set to false" do
-      @doc[:optional].should == false
+    it "has required flag set to true" do
+      @doc[:required].should == true
     end
   end
 
