@@ -202,7 +202,11 @@ Ext.define('Docs.view.Tabs', {
     },
 
     closeAllTabs: function() {
-        this.tabs = this.tabsInBar = [ this.activeTab ];
+        if (this.inTabBar(this.activeTab)) {
+            this.tabs = this.tabsInBar = [ this.activeTab ];
+        } else {
+            this.tabs = this.tabsInBar = [];
+        }
         this.refresh();
         this.saveTabs();
     },
