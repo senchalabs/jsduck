@@ -143,6 +143,7 @@ module JsDuck
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :return => detect_return(doc_map, name == "constructor" ? "Object" : "undefined"),
+        :template => !!doc_map[:template],
       }, doc_map)
     end
 

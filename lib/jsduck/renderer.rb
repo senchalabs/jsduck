@@ -228,6 +228,9 @@ module JsDuck
       if m[:tagname] == :cfg && !m[:optional]
         after += "<strong class='required-signature'>required</strong>"
       end
+      if m[:template]
+        after += "<strong class='template-signature'>template</strong>"
+      end
 
       uri = "#!/api/#{m[:owner]}-#{m[:tagname]}-#{m[:name]}"
 
@@ -257,6 +260,15 @@ module JsDuck
           "<div class='deprecated'>",
           "<p>This #{m[:tagname]} has been <strong>deprecated</strong> #{v}</p>",
           m[:deprecated][:text],
+          "</div>",
+        ]
+      end
+
+      if m[:template]
+        doc << [
+          "<div class='template'>",
+          "<p>This is a template method. A hook into the functionality of this class.",
+          "Feel free to override it in child classes.</p>",
           "</div>",
         ]
       end

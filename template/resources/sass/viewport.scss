@@ -527,7 +527,7 @@ a {
     background-color: #fee;
     padding: 10px 50px;
     text-align: center; }
-  .deprecated-signature, .protected-signature, .static-signature, .required-signature {
+  .deprecated-signature, .protected-signature, .static-signature, .required-signature, .template-signature {
     font-weight: bold;
     text-transform: uppercase;
     color: white;
@@ -537,7 +537,7 @@ a {
     padding: 0 3px; }
   .deprecated-signature {
     background-color: #aa0000; }
-  .protected-signature {
+  .protected-signature, .template-signature {
     background-color: #aaa; }
   .static-signature {
     background-color: $docs-text-color; }
@@ -655,6 +655,12 @@ a {
       font-weight: bold; }
     .title {
       padding-bottom: 3px; }
+    .template {
+      border: 1px solid #999;
+      @include border-radius(5px);
+      background-color: #eee;
+      padding: 10px 50px;
+      text-align: center; }
     .deprecated {
       border: 1px solid #999;
       @include border-radius(5px);
