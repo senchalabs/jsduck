@@ -30,6 +30,8 @@ Ext.define('Docs.view.DocTree', {
         }
 
         this.on("itemclick", this.onItemClick, this);
+        this.on("beforeitemcollapse", this.handleBeforeExpandCollapse, this);
+        this.on("beforeitemexpand", this.handleBeforeExpandCollapse, this);
 
         this.callParent();
 
@@ -95,6 +97,12 @@ Ext.define('Docs.view.DocTree', {
         return this.getRootNode().findChildBy(function(n) {
             return url === n.raw.url;
         }, this, true);
+    },
+
+    handleBeforeExpandCollapse: function(node) {
+        if(this.getView().isAnimating(node)) {
+            return false;
+        }
     }
 
 });
