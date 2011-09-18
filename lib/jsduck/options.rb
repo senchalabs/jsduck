@@ -292,8 +292,33 @@ module JsDuck
           @ext_namespaces = ns
         end
 
-        opts.on('-h', '--help', "Prints this help message", " ") do
-          puts opts
+        opts.on('-h', '--help[=full]',
+          "Prints the short help message or the full help.", " ") do |v|
+          if v == 'full'
+            puts opts
+          else
+            puts opts.banner
+
+            show_help = false
+            main_opts = [
+              /--output/,
+              /--no-warnings/,
+              /--verbose/,
+              /--help/,
+              /--version/,
+            ]
+            opts.summarize([], opts.summary_width) do |helpline|
+              if main_opts.any? {|re| helpline =~ re }
+                puts helpline
+                show_help = true
+              elsif helpline =~ /^\s*$/ && show_help == true
+                puts helpline
+                show_help = false
+              elsif show_help == true
+                puts helpline
+              end
+            end
+          end
           exit
         end
 
