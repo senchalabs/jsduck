@@ -300,6 +300,10 @@ module JsDuck
             puts opts.banner
             puts "For example:"
             puts
+            puts "    # Documentation for builtin JavaScript classes like Array and String"
+            puts "    jsduck --output output/dir  --builtin-classes"
+            puts
+            puts "    # Documentation for your own JavaScript"
             puts "    jsduck --output output/dir  input-file.js some/input/dir"
             puts
             puts "The main options:"
@@ -308,6 +312,7 @@ module JsDuck
             show_help = false
             main_opts = [
               /--output/,
+              /--builtin-classes/,
               /--no-warnings/,
               /--verbose/,
               /--help/,
