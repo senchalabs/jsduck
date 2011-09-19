@@ -293,11 +293,17 @@ module JsDuck
         end
 
         opts.on('-h', '--help[=full]',
-          "Prints the short help message or the full help.", " ") do |v|
+          "Short help or --help=full for all available options.", " ") do |v|
           if v == 'full'
             puts opts
           else
             puts opts.banner
+            puts "For example:"
+            puts
+            puts "    jsduck --output output/dir  input-file.js some/input/dir"
+            puts
+            puts "The main options:"
+            puts
 
             show_help = false
             main_opts = [
