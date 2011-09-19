@@ -121,7 +121,7 @@ module JsDuck
 
         opts.on('-o', '--output=PATH',
           "Directory to output all this amazing documentation.",
-          "This option MUST be specified.", " ") do |path|
+          "This option MUST be specified (unless --stdout).", " ") do |path|
           @output_dir = path
         end
 
