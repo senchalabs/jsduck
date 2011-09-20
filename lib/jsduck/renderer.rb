@@ -168,7 +168,7 @@ module JsDuck
       inherited = owner == @cls[:name] ? "not-inherited" : "inherited"
 
       return [
-        "<div id='#{m[:static] ? 'static-' : ''}#{m[:tagname]}-#{m[:name]}' class='member #{first_child} #{inherited}'>",
+        "<div id='#{m[:id]}' class='member #{first_child} #{inherited}'>",
           # leftmost column: expand button
           "<a href='#' class='side #{expandable}'>",
             "<span>&nbsp;</span>",
@@ -232,7 +232,7 @@ module JsDuck
         after += "<strong class='template-signature'>template</strong>"
       end
 
-      uri = "#!/api/#{m[:owner]}#{m[:static]?'-static':''}-#{m[:tagname]}-#{m[:name]}"
+      uri = "#!/api/#{m[:owner]}-#{m[:id]}"
 
       return [
         before,

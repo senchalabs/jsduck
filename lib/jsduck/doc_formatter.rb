@@ -202,17 +202,14 @@ module JsDuck
       # Use the canonical class name for link (not some alternateClassName)
       cls = @relations[cls].full_name
       # prepend type name to member name
-      if member
-        m_tag = get_member(cls, member, type)
-        member = (m_tag[:static] ? "static-" : "") + m_tag[:tagname].to_s + "-" + member
-      end
+      member = member && get_member(cls, member, type)
 
       @link_tpl.gsub(/(%[\w#-])/) do
         case $1
         when '%c'
           cls
         when '%m'
-          member ? member : ""
+          member ? member[:id] : ""
         when '%#'
           member ? "#" : ""
         when '%-'

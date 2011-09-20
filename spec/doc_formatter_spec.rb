@@ -10,10 +10,10 @@ describe JsDuck::DocFormatter do
       JsDuck::Class.new({
         :name => "Context",
         :members => {
-          :method => [{:name => "bar", :tagname => :method}]
+          :method => [{:name => "bar", :id => "method-bar"}]
         },
         :statics => {
-          :method => [{:name => "id", :tagname => :method, :static => true}],
+          :method => [{:name => "id", :id => "static-method-id"}],
         },
       }),
       JsDuck::Class.new({
@@ -22,10 +22,10 @@ describe JsDuck::DocFormatter do
       JsDuck::Class.new({
         :name => "Foo",
         :members => {
-          :cfg => [{:name => "bar", :tagname => :cfg}],
+          :cfg => [{:name => "bar", :id => "cfg-bar"}],
         },
         :statics => {
-          :method => [{:name => "id", :tagname => :method, :static => true}],
+          :method => [{:name => "id", :id => "static-method-id"}],
         },
         :alternateClassNames => ["FooBar"]
       }),
@@ -136,7 +136,7 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({
             :name => 'Ext.form.Field',
             :members => {
-              :method => [{:name => "getValues", :tagname => :method}]
+              :method => [{:name => "getValues", :id => "method-getValues"}]
             }
           }),
           JsDuck::Class.new({
@@ -146,7 +146,7 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({
             :name => 'Ext',
             :members => {
-              :method => [{:name => "encode", :tagname => :method}]
+              :method => [{:name => "encode", :id => "method-encode"}]
             }
           }),
         ])
@@ -229,8 +229,8 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({
             :name => 'Foo',
             :members => {
-              :method => [{:name => "select", :tagname => :method}],
-              :event => [{:name => "select", :tagname => :event}],
+              :method => [{:name => "select", :id => "method-select"}],
+              :event => [{:name => "select", :id => "event-select"}],
             }
           })
         ])

@@ -70,7 +70,7 @@ module JsDuck
       else
         # when creation of global class is skipped,
         # this owner property can be nil.
-        (doc[:owner] || "global").gsub(/\./, '-') + (doc[:static] ? "-static" : "") + "-" + doc[:tagname].to_s + "-" + doc[:name]
+        (doc[:owner] || "global").gsub(/\./, '-') + "-" + doc[:id]
       end
     end
 

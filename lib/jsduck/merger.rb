@@ -209,7 +209,7 @@ module JsDuck
 
     # Detects properties common for each doc-object and adds them
     def add_shared(hash, doc_map)
-      return hash.merge({
+      hash.merge!({
         :private => !!doc_map[:private],
         :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
@@ -217,6 +217,12 @@ module JsDuck
         :deprecated => detect_deprecated(doc_map),
         :alias => doc_map[:alias] ? doc_map[:alias].first : nil,
       })
+      hash[:id] = create_member_id(hash)
+      return hash
+    end
+
+    def create_member_id(m)
+      "#{m[:static] ? 'static-' : ''}#{m[:tagname]}-#{m[:name]}"
     end
 
     def detect_name(tagname, doc_map, code, name_type = :last_name)

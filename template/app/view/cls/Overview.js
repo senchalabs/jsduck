@@ -109,7 +109,7 @@ Ext.define('Docs.view.cls.Overview', {
         // and hide inherited members if hideInherited=true
         var re = new RegExp(Ext.String.escapeRegex(search), "i");
         this.eachMember(function(m) {
-            var el = Ext.get((m['static'] ? "static-" : "") + m.tagname + "-" + m.name);
+            var el = Ext.get(m.id);
             var byInheritance = !hideInherited || (m.owner === this.docClass.name);
             var byFilter = !isSearch || re.test(m.name);
             if (byInheritance && byFilter) {
