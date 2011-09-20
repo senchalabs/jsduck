@@ -49,17 +49,24 @@ single .exe file.  Grab it from the [download page][].
 Usage
 -----
 
-For the simplest test-run just pass in the src/ dir of Ext JS 4:
+For the simplest test-run just use the `--builtin-classes` option to
+automatically produce documentation for JavaScript builtin classes
+like Array, String and Object:
 
-    $ jsduck ext-4.0.2a/src --output your/docs
+    $ jsduck --builtin-classes --output your/docs
+
+You can also use `--verbose` option to see what's actually happening.
+
+To generate docs for Ext JS 4 add path to the corresponding src/ dir:
+
+    $ jsduck --builtin-classes --output your/docs  extjs-4.0.2a/src
 
 Running JSDuck with the current ext-4.0.2a release is expected to
 generate a lot of warnings.  Because of the bugs in doc-comments a
 global class will also get created.  You can disable this by adding
 `--ignore-global` switch.  If you are bothered by the excessive amount
-of warnings, use the `--no-warnings` switch.  Now it might look like
-nothing is happening... check out the `--verbose` flag.  For more
-command line options type `jsduck --help`.
+of warnings, use the `--no-warnings` switch.  For full list of command
+line options type `jsduck --help=full`.
 
 The latest ext-4.0.6 release will produce only few warnings, so use
 that if you can get it.
@@ -79,7 +86,7 @@ source files for these.
 To generate docs for your own project, simply add as many other input
 directories as needed:
 
-    $ jsduck ext-4.0.2a/src project1/js project2/js --output your/docs
+    $ jsduck --builtin-classes ext-4.0.2a/src project1/js project2/js --output your/docs
 
 Of course you don't have to include the whole Ext JS into your
 documentation, but if your project is built on top of it, it makes
@@ -102,7 +109,7 @@ See [Hacking guide](https://github.com/senchalabs/jsduck/wiki/Hacking) in wiki.
 Documenting your code
 ---------------------
 
-All the supported syntax is described in the [Guide][]. 
+All the supported syntax is described in the [Guide][].
 
 
 Copying
