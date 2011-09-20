@@ -347,7 +347,7 @@ task :sdk, [:mode] => :sass do |t, args|
   runner.add_sdk
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_export_notice if mode == "export"
+  runner.add_sdk_export_notice if mode == "export"
   runner.add_google_analytics if mode == "live"
   runner.run
 
