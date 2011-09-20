@@ -13,7 +13,7 @@ describe JsDuck::DocFormatter do
           :method => [{:name => "bar", :tagname => :method}]
         },
         :statics => {
-          :method => [{:name => "id", :tagname => :method}],
+          :method => [{:name => "id", :tagname => :method, :static => true}],
         },
       }),
       JsDuck::Class.new({
@@ -25,7 +25,7 @@ describe JsDuck::DocFormatter do
           :cfg => [{:name => "bar", :tagname => :cfg}],
         },
         :statics => {
-          :method => [{:name => "id", :tagname => :method}],
+          :method => [{:name => "id", :tagname => :method, :static => true}],
         },
         :alternateClassNames => ["FooBar"]
       }),
@@ -48,7 +48,7 @@ describe JsDuck::DocFormatter do
 
     it "replaces {@link Foo#id} with link to static class member" do
       @formatter.replace("Look at {@link Foo#id}").should ==
-        'Look at <a href="Foo#method-id">Foo.id</a>'
+        'Look at <a href="Foo#static-method-id">Foo.id</a>'
     end
 
     it "uses context to replace {@link #bar} with link to class member" do
@@ -58,7 +58,7 @@ describe JsDuck::DocFormatter do
 
     it "uses context to replace {@link #id} with link to static class member" do
       @formatter.replace("Look at {@link #id}").should ==
-        'Look at <a href="Context#method-id">id</a>'
+        'Look at <a href="Context#static-method-id">id</a>'
     end
 
     it "allows use of custom link text" do
