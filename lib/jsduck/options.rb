@@ -122,7 +122,7 @@ module JsDuck
         opts.on('-o', '--output=PATH',
           "Directory to output all this amazing documentation.",
           "This option MUST be specified (unless --stdout).", " ") do |path|
-          @output_dir = path
+          @output_dir = canonical(path)
         end
 
         opts.on('--ignore-global', "Turns off the creation of global class.", " ") do
@@ -184,7 +184,7 @@ module JsDuck
 
         opts.on('--welcome=PATH',
           "Path to HTML file with content for welcome page.", " ") do |path|
-          @welcome = path
+          @welcome = canonical(path)
         end
 
         opts.on('--guides=PATH',
@@ -192,26 +192,26 @@ module JsDuck
           "should be in a dir containing the actual guides.",
           "A guide is a dir containing README.md, icon.png,",
           "and other images referenced by the README.md file.", " ") do |path|
-          @guides = path
+          @guides = canonical(path)
         end
 
         opts.on('--videos=PATH',
           "Path to JSON file describing the videos.", " ") do |path|
-          @videos = path
+          @videos = canonical(path)
         end
 
         opts.on('--examples=PATH',
           "Path JSON file describing the examples.", " ") do |path|
-          @examples = path
+          @examples = canonical(path)
         end
 
         opts.on('--categories=PATH',
           "Path to JSON file which defines categories for classes.", " ") do |path|
-          @categories_path = path
+          @categories_path = canonical(path)
         end
 
         opts.on('--inline-examples=PATH', "Path to inline examples directory.", " ") do |path|
-          @inline_examples_dir = path
+          @inline_examples_dir = canonical(path)
         end
 
         opts.on('--pretty-json', "Turn on pretty-printing of JSON.", " ") do
@@ -265,7 +265,7 @@ module JsDuck
 
         opts.on('--template=PATH',
           "Directory containing doc-browser UI template.", " ") do |path|
-          @template_dir = path
+          @template_dir = canonical(path)
         end
 
         opts.on('--template-links',
@@ -278,7 +278,7 @@ module JsDuck
         opts.on('--extjs-path=PATH',
           "Path for main ExtJS JavaScript file.  Useful for specifying",
           "something different than extjs/ext.js", " ") do |path|
-          @extjs_path = path
+          @extjs_path = path # NB! must be relative path
         end
 
         opts.on('--local-storage-db=NAME',
@@ -351,6 +351,15 @@ module JsDuck
       else
         $stderr.puts "Warning: File #{fname} not found"
       end
+    end
+
+    # Converts relative path to full path
+    #
+    # Especially important for running on Windows where C:\foo\bar
+    # pathnames are converted to C:/foo/bar which ruby can work on
+    # more easily.
+    def canonical(path)
+      File.expand_path(path)
     end
 
     # Runs checks on the options
