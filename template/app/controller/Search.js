@@ -118,7 +118,7 @@ Ext.define('Docs.controller.Search', {
     loadRecord: function(record) {
         var name = record.get("cls");
         if (record.get("type") !== 'cls') {
-            name += '-' + record.get("type") + '-' + record.get("member");
+            name += '-' + record.get("id");
         }
         Docs.App.getController('Classes').loadClass("#!/api/"+name);
         this.getDropdown().hide();
