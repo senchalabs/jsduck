@@ -19,7 +19,7 @@ Ext.define('Docs.view.cls.Header', {
                 '<a href="source/{href}" target="_blank">{name}</a>',
                 '{[this.renderXTypes(values.xtypes)]}',
             '</h1>',
-            '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>',
+            Docs.showPrintButton ? '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>' : '',
             {
                 getClass: function(cls) {
                     if (cls.component) {

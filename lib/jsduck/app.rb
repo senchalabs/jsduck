@@ -251,6 +251,7 @@ module JsDuck
         "{footer}" => "<div id='footer-content' style='display: none'>#{@opts.footer}</div>",
         "{extjs_path}" => @opts.extjs_path,
         "{local_storage_db}" => @opts.local_storage_db,
+        "{show_print_button}" => @opts.seo ? "true" : "false",
         "{welcome}" => @welcome.to_html,
         "{categories}" => @categories.to_html,
         "{guides}" => @guides.to_html,

@@ -25,7 +25,7 @@ Ext.define('Docs.view.guides.Container', {
      */
     load: function(guide) {
         this.tpl = this.tpl || new Ext.XTemplate(
-            '<a class="print guide" href="?print=/guide/{name}" target="_blank">Print</a>',
+            Docs.showPrintButton ? '<a class="print guide" href="?print=/guide/{name}" target="_blank">Print</a>' : '',
             '{content}'
         );
 
