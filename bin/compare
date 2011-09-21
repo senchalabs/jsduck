@@ -4,6 +4,7 @@
 # For running when gem not installed
 $:.unshift File.dirname(File.dirname(__FILE__)) + "/lib"
 
+require "rubygems"
 require "jsduck/json_duck"
 
 def read_class(filename)
