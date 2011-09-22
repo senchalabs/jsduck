@@ -11,15 +11,17 @@ def read_class(filename)
   JsDuck::JsonDuck.read(filename)
 end
 
-def read_all_classes(dir)
+def read_all_classes(dir, ignore_private=false)
   map = {}
   Dir[dir+"/*.json"].each do |filename|
     print "."
     STDOUT.flush
     cls = read_class(filename)
-    map[cls["name"]] = cls
-    cls["alternateClassNames"].each do |name|
-      map[name] = cls
+    unless ignore_private && cls["private"]
+      map[cls["name"]] = cls
+      cls["alternateClassNames"].each do |name|
+        map[name] = cls
+      end
     end
   end
   puts "OK"
@@ -58,7 +60,7 @@ end
 
 
 
-old_classes = read_all_classes(ARGV[0])
+old_classes = read_all_classes(ARGV[0], :ignore_private)
 new_classes = read_all_classes(ARGV[1])
 out_file = ARGV[2]
 
