@@ -76,18 +76,6 @@ old_classes.each_value do |cls|
   }
 end
 
-# do console output
-# diff_data.each do |cls|
-#   if cls[:found]
-#     puts cls[:name] + (cls[:new_name] == cls[:name] ? " ok" : " --> "+cls[:new_name])
-#     cls[:diff].each do |m|
-#       puts "    " + m[:type] + " " + m[:name]
-#     end
-#   else
-#     puts cls[:name] + " NOT FOUND"
-#   end
-# end
-
 # do HTML output
 title = "Comparison of Ext 3.4.0 and Ext 4.0.6"
 #title = "Comparison of Touch 1.1.1 and Touch 2.0.0"
