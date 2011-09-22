@@ -238,8 +238,8 @@ class JsDuckRunner
       "--videos", "#{@animator_dir}/docs/videos.json",
       "--guides", "#{@animator_dir}/docs/guides.json",
       "--examples", "#{@animator_dir}/docs/examples/examples.json",
-        "--output", "#{@out_dir}",
-      "--builtin-classes"
+      "--output", "#{@out_dir}",
+      "#{@animator_dir}/docs/docs"
     ]
   end
 
@@ -462,11 +462,12 @@ task :touch2, [:mode] => :sass do |t, args|
 end
 
 desc "Run JSDuck on Sencha Animator (for internal use at Sencha)\n" +
-     "animator       - creates debug/development version\n" +
-     "animator[live] - create live version for deployment\n"
+     "animator         - creates debug/development version\n" +
+     "animator[export] - create live version for deployment\n"
+     "animator[live]   - create live version for deployment\n"
 task :animator, [:mode] => :sass do |t, args|
   mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "live"].include?(mode)
+  throw "Unknown mode #{mode}" unless ["debug", "live", "export"].include?(mode)
   compress if mode == "live"
 
   runner = JsDuckRunner.new
