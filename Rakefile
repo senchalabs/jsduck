@@ -204,6 +204,26 @@ class JsDuckRunner
     @options += extract_jsb_build_files("#{@sdk_dir}/touch/sencha-touch.jsb3")
   end
 
+  def add_touch2
+    head_html = <<-EOHTML
+      <link rel="canonical" href="http://docs.sencha.com/touch/2-0/" />
+      <meta name="description" content="Sencha Touch 2.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch">
+    EOHTML
+
+    @options += [
+      "--title", "Sencha Docs - Touch 2.0",
+      "--head-html", head_html,
+      "--footer", "Sencha Touch 2.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
+      "--categories", "#{@sdk_dir}/touch/docs/categories.json",
+      "--videos", "#{@sdk_dir}/touch/docs/videos.json",
+      "--output", "#{@out_dir}",
+      "--external=google.maps.Map,google.maps.LatLng",
+      "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
+    ]
+
+    @options += extract_jsb_build_files("#{@sdk_dir}/touch/touch.jsb3")
+  end
+
   # Extracts files of first build in jsb file
   def extract_jsb_build_files(jsb_file)
     json = JSON.parse(IO.read(jsb_file))
@@ -308,6 +328,11 @@ class JsDuckRunner
     system "cp -r #{@sdk_dir}/touch/doc-resources #{@out_dir}/doc-resources"
   end
 
+  # Copy over the images that Sencha Touch documentation links to.
+  def copy_touch2_images
+    system "cp -r #{@sdk_dir}/touch/docs/resources #{@out_dir}/doc-resources"
+  end
+
   # Copy over SDK examples
   def copy_sdk_examples
     system "mkdir #{@out_dir}/extjs/builds"
@@ -347,7 +372,7 @@ task :sdk, [:mode] => :sass do |t, args|
   runner.add_sdk
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_sdk_export_notice if mode == "export"
+  runner.add_export_notice if mode == "export"
   runner.add_google_analytics if mode == "live"
   runner.run
 
@@ -388,6 +413,23 @@ task :touch, [:mode] => :sass do |t, args|
   runner.run
 
   runner.copy_touch_images
+end
+
+desc "Run JSDuck on Sencha Touch 2 (for internal use at Sencha)\n" +
+     "touch2       - creates debug/development version\n" +
+     "touch2[live] - create live version for deployment\n"
+task :touch2, [:mode] => :sass do |t, args|
+  mode = args[:mode] || "debug"
+  throw "Unknown mode #{mode}" unless ["debug", "live"].include?(mode)
+  compress if mode == "live"
+
+  runner = JsDuckRunner.new
+  runner.add_touch2
+  runner.add_debug if mode == "debug"
+  runner.add_seo if mode == "debug" || mode == "live"
+  runner.run
+
+  runner.copy_touch2_images
 end
 
 desc "Build JSDuck gem"
