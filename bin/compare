@@ -1,0 +1,164 @@
+#!/usr/bin/env ruby
+# Compare .json files of different ExtJS versions
+
+# For running when gem not installed
+$:.unshift File.dirname(File.dirname(__FILE__)) + "/lib"
+
+require "rubygems"
+require "jsduck/json_duck"
+
+def read_class(filename)
+  JsDuck::JsonDuck.read(filename)
+end
+
+def read_all_classes(dir)
+  map = {}
+  Dir[dir+"/*.json"].each do |filename|
+    print "."
+    STDOUT.flush
+    cls = read_class(filename)
+    map[cls["name"]] = cls
+    cls["alternateClassNames"].each do |name|
+      map[name] = cls
+    end
+  end
+  puts "OK"
+  map
+end
+
+# Gathers class members that are in cls1, but are missing in cls2
+def compare_classes(cls1, cls2)
+  diff = []
+  cls1["members"].each_pair do |group_name, group_items|
+    group_items.find_all {|m1| !m1["private"] && !m1["protected"] && m1["owner"] == cls1["name"] }.each do |m1|
+      match = cls2["members"][group_name].find do |m2|
+        m2["name"] == m1["name"] && !m2["protected"] && !m2["private"]
+      end
+      if !match && m1["name"] != "constructor" && m1["name"] != ""
+        other = nil
+        ["cfg", "property", "method", "event"].each do |g|
+          other = other || cls2["members"][g].find {|m2| m2["name"] == m1["name"] }
+          other = other || cls2["statics"][g].find {|m2| m2["name"] == m1["name"] }
+        end
+        diff << {
+          :type => group_name,
+          :name => m1["name"],
+          :other => other ? {
+            :type => other["tagname"],
+            :static => other["static"],
+            :private => other["private"],
+            :protected => other["protected"],
+          } : nil
+        }
+      end
+    end
+  end
+  diff
+end
+
+
+
+old_classes = read_all_classes(ARGV[0])
+new_classes = read_all_classes(ARGV[1])
+out_file = ARGV[2]
+
+diff_data = []
+old_classes.each_value do |cls|
+  new_cls = new_classes[cls["name"]]
+  # Remap classes like Array to Ext.Array
+  new_cls = new_classes["Ext."+cls["name"]] unless new_cls
+
+  diff_data << {
+    :name => cls["name"],
+    :found => !!new_cls,
+    :new_name => new_cls && new_cls["name"],
+    :diff => new_cls ? compare_classes(cls, new_cls) : [],
+  }
+end
+
+# do console output
+# diff_data.each do |cls|
+#   if cls[:found]
+#     puts cls[:name] + (cls[:new_name] == cls[:name] ? " ok" : " --> "+cls[:new_name])
+#     cls[:diff].each do |m|
+#       puts "    " + m[:type] + " " + m[:name]
+#     end
+#   else
+#     puts cls[:name] + " NOT FOUND"
+#   end
+# end
+
+# do HTML output
+title = "Comparison of Ext 3.4.0 and Ext 4.0.6"
+#title = "Comparison of Touch 1.1.1 and Touch 2.0.0"
+html = []
+html << <<-EOHTML
+<!DOCTYPE html>
+<html>
+<head>
+<title>#{title}</title>
+<style type="text/css">
+body { font-family: Georgia, serif; }
+li h2 { font-size: medium; font-weight: normal; }
+li ul { display: none; }
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
+<script>
+$(function() {
+    $("h2 > a").live("click", function() {
+        $("ul", $(this).parent().parent()).toggle();
+        return false;
+    });
+});
+</script>
+</head>
+<body>
+<h1>#{title}</h1>
+EOHTML
+
+html << "<ul>"
+diff_data.sort! {|a, b| a[:name] <=> b[:name] }
+diff_data.each do |cls|
+  html << "<li>"
+  if cls[:found]
+    new_name = (cls[:new_name] == cls[:name] ? "" : " --> " + cls[:new_name])
+    diff_count = cls[:diff].length > 0 ? "(#{cls[:diff].length} missing members)" : ""
+    link = cls[:diff].length > 0 ? "<a href='#expand'>#{cls[:name]}</a>" : cls[:name]
+    html << "<h2>#{link} #{new_name} #{diff_count}</h2>"
+    if cls[:diff].length > 0
+      html << "<ul>"
+      cls[:diff].each do |m|
+        html << "<li>"
+        html << m[:type] + " " + m[:name]
+        if m[:other]
+          o = m[:other]
+          stat = o[:static] ? 'static' : ''
+          priv = o[:private] ? 'private' : ''
+          prot = o[:protected] ? 'protected' : ''
+          html << " (found #{stat} #{priv} #{prot} #{o[:type]} with the same name)"
+        end
+        html << "</li>"
+      end
+      html << "</ul>"
+    end
+  else
+    html << "<h2>" + cls[:name] + " <b>not found</b></h2>"
+  end
+  html << "</li>"
+end
+html << "</ul>"
+
+html << "<h2>Summary</h2>"
+dd = diff_data
+html << "<p>" + dd.find_all {|c| !c[:found] }.length.to_s + " classes not found</p>"
+html << "<p>" + dd.find_all {|c| c[:found] && c[:name] == c[:new_name] }.length.to_s + " classes with same name</p>"
+html << "<p>" + dd.find_all {|c| c[:found] && c[:name] != c[:new_name] }.length.to_s + " renamed classes</p>"
+html << "<p>" + dd.find_all {|c| c[:diff].length > 0 }.length.to_s + " classes with missing members</p>"
+html << "<p>" + dd.map {|c| c[:diff].length }.inject {|sum,x| sum + x }.to_s + " missing members</p>"
+html << "<p>" + dd.map {|c| c[:diff].find_all {|m| !m[:other]}.length }.inject {|sum,x| sum + x }.to_s + " completely missing members</p>"
+
+
+html << "</body>"
+html << "</html>"
+
+File.open(out_file, 'w') {|f| f.write(html.join("\n")) }
