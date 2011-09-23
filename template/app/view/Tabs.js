@@ -286,6 +286,7 @@ Ext.define('Docs.view.Tabs', {
         docTab.dom.removed = true;
         if (Ext.isIE) {
             docTab.remove();
+            this.createOverflow();
         } else {
             docTab.animate({
                 to: { top: 30 },
@@ -297,6 +298,7 @@ Ext.define('Docs.view.Tabs', {
                     afteranimate: function() {
                         docTab.remove();
                         this.shouldResize = true;
+                        this.createOverflow();
                     },
                     scope: this
                 }
