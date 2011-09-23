@@ -1,7 +1,7 @@
 JsDuck
 ======
 
-API documentation generator for ExtJS 4.
+API documentation generator for Ext JS 4.
 
            ,~~.
           (  6 )-_,
@@ -10,72 +10,29 @@ API documentation generator for ExtJS 4.
        \ `-' /    hjw
     ~'`~'`~'`~'`~
 
-JsDuck aims to be a better documentation generator for [ExtJS][] than
-the old [ext-doc][] was.
+JsDuck aims to be a better documentation generator for [Ext JS][] than
+the old [ext-doc][] was. It is used by Sencha to generate the official
+[Ext JS 4 documentation][ext4-docs].
 
-The standard way to give some structure to the JavaDoc-style code
-documentation is to use HTML in doc-comments.  Although the resulting
-documentation will look pretty, this is often achieved by sacrificing
-the readability of comments - HTML can get quite ugly.
+The highlights of JSDuck are [Markdown][] support and keeping you DRY
+by inferring a lot of information from code.  Read the [Guide][] for
+full overview.
 
-JsDuck does not like it.  Although it can handle comments written in
-HTML, it prefers a friendlier [Markdown][] syntax:
-
-    /**
-     * Basic text field.  Can be used as a direct replacement for traditional
-     * text inputs, or as the base class for more sophisticated input controls
-     * (like Ext.form.TextArea and Ext.form.ComboBox).
-     *
-     * Validation
-     * ----------
-     *
-     * The validation procedure is described in the documentation for
-     * {@link #validateValue}.
-     *
-     * Alter Validation Behavior
-     * -------------------------
-     *
-     * Validation behavior for each field can be configured:
-     *
-     * - `{@link Ext.form.TextField#invalidText invalidText}` :
-     *   the default validation message to show if any validation step above
-     *   does not provide a message when invalid
-     * - `{@link Ext.form.TextField#maskRe maskRe}` :
-     *   filter out keystrokes before any validation occurs
-     * - `{@link Ext.form.TextField#stripCharsRe stripCharsRe}` :
-     *   filter characters after being typed in, but before being validated
-     *
-     * @xtype textfield
-     */
-    Ext.define('Ext.form.field.Text', {
-        extend: 'Ext.form.field.Base',
-
-As you can see, JsDuck can infer several things from the code (like
-`@class` and `@extends` in this case), so you don't have to repeat
-yourself.
-
-[ExtJS]: http://www.sencha.com/products/js/
+[Ext JS]: http://www.sencha.com/products/js/
 [ext-doc]: http://ext-doc.org/
 [Markdown]: http://daringfireball.net/projects/markdown/
+[ext4-docs]: http://docs.sencha.com/ext-js/4-0/
+[Guide]: https://github.com/senchalabs/jsduck/wiki/Guide
 
 
 Getting it
 ----------
 
 Standard rubygems install should do (use the `--pre` switch to get the
-latest 2.0 version which this README documents, otherwise you will get
+latest 3.0 version which this README documents, otherwise you will get
 the stable but quite old [0.6][v0.6] version):
 
     $ [sudo] gem install --pre jsduck
-
-For hacking fork it from github:
-
-    $ git clone git://github.com/senchalabs/jsduck.git
-    $ cd jsduck
-    $ rake --tasks
-
-JsDuck depends on [json][], [RDiscount][], and [parallel][]; plus
-[RSpec][] for tests.
 
 If you encounter errors during gem installation, you may need to
 install the header files for compiling extension modules for ruby 1.8.
@@ -87,61 +44,72 @@ which includes Ruby interpreter and all dependencies bundled in a
 single .exe file.  Grab it from the [download page][].
 
 [v0.6]: https://github.com/senchalabs/jsduck/tree/v0.6
-[json]: http://flori.github.com/json/
-[RDiscount]: https://github.com/rtomayko/rdiscount
-[parallel]: https://github.com/grosser/parallel
-[RSpec]: http://rspec.info/
 [download page]: https://github.com/senchalabs/jsduck/downloads
-
 
 Usage
 -----
 
-Just call it from command line with output directory and a directory
-containing your JavaScript files:
+For the simplest test-run just use the `--builtin-classes` option to
+automatically produce documentation for JavaScript builtin classes
+like Array, String and Object:
 
-    $ jsduck your/project/js --verbose --output your/docs
+    $ jsduck --builtin-classes --output your/docs
 
-The `--verbose` flag creates a lot of output, but at least you will
-see that something is happening.
+You can also use `--verbose` option to see what's actually happening.
 
+To generate docs for Ext JS 4 add path to the corresponding src/ dir:
 
-## Generating Docs for ExtJS 4
+    $ jsduck --builtin-classes --output your/docs  extjs-4.0.2a/src
 
-For the simplest test-run just pass in the src/ dir of ExtJS 4.  But
-to get more similar result to the [official ExtJS 4
-documentation][official], you should pass in some extra options and
-copy over the doc-resources directory, which contains the images
-referenced by the documentation:
+Running JSDuck with the current ext-4.0.2a release is expected to
+generate a lot of warnings.  Because of the bugs in doc-comments a
+global class will also get created.  You can disable this by adding
+`--ignore-global` switch.  If you are bothered by the excessive amount
+of warnings, use the `--no-warnings` switch.  For full list of command
+line options type `jsduck --help=full`.
 
-    $ jsduck ext-4.0.2a/src --output your/docs --ignore-global --exclude Error
+The latest ext-4.0.6 release will produce only few warnings, so use
+that if you can get it.
+
+Finally, to get more similar result to the [official Ext JS 4
+documentation][official], copy over the doc-resources directory, which
+contains the images referenced by the documentation:
+
     $ cp -r ext-4.0.2a/docs/doc-resources your/docs/doc-resources
 
-The `--ignore-global` will avoid the creation of a `global` class.
-The `--exclude Error` will ignore references to the `Error` class,
-which would otherwise result in several warnings.
+Note that the resulting documentation will only contain the API
+documentation.  Guides, videos and examples will not be present.
+These can be added using more command line options, but for now those
+aren't well documented as the ext-4.0.2a release doesn't contain the
+source files for these.
 
-Still, running JSDuck with the current ext-4.0.2a release is expected
-to generate a lot of warnings.  These should be fixed in some later
-releases.
+To generate docs for your own project, simply add as many other input
+directories as needed:
+
+    $ jsduck --builtin-classes ext-4.0.2a/src project1/js project2/js --output your/docs
+
+Of course you don't have to include the whole Ext JS into your
+documentation, but if your project is built on top of it, it makes
+sense to do so - otherwise you won't be able to see which methods your
+classes inherit from Ext JS classes.
+
+To create guides, videos and other sections, read about the
+[Advanced Usage][adv] in wiki.
 
 [official]: http://docs.sencha.com/ext-js/4-0/
+[adv]: https://github.com/senchalabs/jsduck/wiki/Advanced-Usage
 
 
-Documenting your code with JSDuck
----------------------------------
+Hacking it
+----------
 
-Here's an overview of [all the available @tags][tags], and how to use
-them:
+See [Hacking guide](https://github.com/senchalabs/jsduck/wiki/Hacking) in wiki.
 
-* [Class](https://github.com/senchalabs/jsduck/wiki/Class)
-* [Constructor](https://github.com/senchalabs/jsduck/wiki/Constructor)
-* [Config options](https://github.com/senchalabs/jsduck/wiki/Cfg)
-* [Properties](https://github.com/senchalabs/jsduck/wiki/Property)
-* [Methods](https://github.com/senchalabs/jsduck/wiki/Method)
-* [Events](https://github.com/senchalabs/jsduck/wiki/Event)
 
-[tags]: https://github.com/senchalabs/jsduck/wiki/List-of-supported-@tags
+Documenting your code
+---------------------
+
+All the supported syntax is described in the [Guide][].
 
 
 Copying
@@ -164,86 +132,4 @@ reported bugs, submitted patches, and provided a lot of useful input.
 Changelog
 ---------
 
-* 2.0.pre4 - Fixes for the previous pre-release.
-  * Paging of search results.
-  * Support opening classes in tree in new tabs in IE and Firefox.
-  * Include upgraded version of prettifier, fixing formatting in IE.
-  * New --head-html and --body-html command line options.
-  * New --local-storage-db command line option.
-  * Avoid creating case-insensitively same source file names,
-    preventing duplicate file conflicts in Windows.
-  * Include missing ExtJS image files.
-  * Don't exclude static members from singleton classes, simply print
-    warning about using @static in singleton class.
-
-* 2.0.pre3 - Bogus release, skipped.
-
-* 2.0.pre2 - Fixes for the previous pre-release.
-  * New --stdout command line option.
-  * Fix opening links in new tabs.
-  * Few other small bugfixes and enhancements.
-
-* 2.0.pre - Completely overhauled Ext4-themed version.
-  * A lot of changes since 0.6 releases.
-
-* 0.6.1 - Bug fixes.
-  * Fix scrolling to class members in Chrome 12.
-  * Make JSDuck work with Ruby 1.8.6.
-  * Upgrade the embedded ExtJS to 3.4.0.
-
-* 0.6 - JsDuck is now used for creating the official ExtJS4 documentation.
-  * Automatic linking of class names found in comments.  Instead of writing
-    `{@link Ext.Panel}` one can simply write `Ext.Panel` and link will be
-    automatically created.
-  * In generated docs, method return types and parameter types are also
-    automatically linked to classes if such class is included to docs.
-  * Support for `{@img}` tag for including images to documentation.
-    The markup created by `{@link}` and `{@img}` tags can now be customized using
-    the --img and --link command line options to supply HTML templates.
-  * Links to source code are no more simply links to line numbers.
-    Instead the source code files will contain ID-s like `MyClass-cfg-style`.
-  * New tags: `@docauthor`, `@alternateClassName`, `@mixins`.
-    The latter two Ext4 class properties are both detected from code and
-    can also be defined (or overriden) in doc-comments.
-  * Global methods are now placed to separate "global" class.
-    Creation of this can be turned off using `--ignore-global`.
-  * Much improved search feature.
-    Search results are now ordered so that best matches are at the top.
-    No more is there a select-box to match at beginning/middle/end -
-    we automatically search first by exact match, then beginning and
-    finally by middle.  Additionally the search no more lists a lot of
-    duplicates - only the class that defines a method is listed, ignoring
-    all the classes that inherit it.
-  * Support for doc-comments in [SASS](http://sass-lang.com/) .scss files:
-    For now, it's possible to document SASS variables and mixins.
-  * Several bug fixes.
-
-* 0.5 - Search and export
-  * Search from the actually generated docs (not through sencha.com)
-  * JSON export with --json switch.
-  * Listing of mixed into classes.
-  * Option to control or disable parallel processing.
-  * Accepting directories as input (those are scanned for .js files)
-  * Many bug fixes.
-
-* 0.4 - Ext4 support
-  * Support for Ext.define() syntax from ExtJS 4.
-  * Showing @xtype and @author information on generated pages.
-  * Showing filename and line number in warnings.
-  * Fix for event showing the same doc as method with same name.
-
-* 0.3 - Performance improvements
-  * Significant peed improvements - most importantly utilizing
-    multiple CPU-s (if available) to speed things up.  On my 4-core
-    box JsDuck is now even faster than ext-doc.
-  * Printing of performance info in verbose mode
-  * Support for comma-first coding style
-  * Few other fixes to JavaScript parsing
-
-* 0.2 - most features of ext-doc supported.
-  * Links from documentation to source code
-  * Syntax highlighting of code examples
-  * Tree of parent classes
-  * List of subclasses
-
-* 0.1 - initial version.
+See [Changelog](https://github.com/senchalabs/jsduck/wiki/Changelog) page in wiki.

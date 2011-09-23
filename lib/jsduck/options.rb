@@ -8,23 +8,28 @@ module JsDuck
 
     attr_accessor :output_dir
     attr_accessor :ignore_global
-    attr_accessor :show_private_classes
     attr_accessor :external_classes
+    attr_accessor :meta_tags
     attr_accessor :warnings
     attr_accessor :verbose
 
     # Customizing output
     attr_accessor :title
+    attr_accessor :header
     attr_accessor :footer
     attr_accessor :head_html
     attr_accessor :body_html
-    attr_accessor :guides_dir
-    attr_accessor :guides_order
+    attr_accessor :welcome
+    attr_accessor :guides
+    attr_accessor :videos
+    attr_accessor :examples
     attr_accessor :categories_path
-    attr_accessor :examples_dir
+    attr_accessor :inline_examples_dir
+    attr_accessor :pretty_json
     attr_accessor :link_tpl
     attr_accessor :img_tpl
     attr_accessor :export
+    attr_accessor :seo
 
     # Debugging
     attr_accessor :processes
@@ -32,38 +37,77 @@ module JsDuck
     attr_accessor :template_links
     attr_accessor :extjs_path
     attr_accessor :local_storage_db
+    attr_accessor :ext_namespaces
 
     def initialize
       @input_files = []
 
       @output_dir = nil
       @ignore_global = false
-      @show_private_classes = false
-      @external_classes = []
+      @external_classes = [
+        # JavaScript builtins
+        "Object",
+        "String",
+        "Number",
+        "Boolean",
+        "RegExp",
+        "Function",
+        "Array",
+        "Arguments",
+        "Date",
+        "Error",
+        # DOM
+        "HTMLElement",
+        "XMLElement",
+        "NodeList",
+        "TextNode",
+        "CSSStyleSheet",
+        "CSSStyleRule",
+        "Event",
+      ]
+      @meta_tags = [
+        {:name => "author", :title => "Author", :strip => / *<.*?> */},
+        {:name => "docauthor", :title => "Documentation author", :strip => / *<.*?> */},
+      ]
+
       @warnings = true
       @verbose = false
+      @version = "3.0.pre2"
 
       # Customizing output
-      @title = "Ext JS API Documentation"
-      @footer = 'Generated with <a href="https://github.com/senchalabs/jsduck">JSDuck</a>.'
+      @title = "Sencha Docs - Ext JS"
+      @header = "<strong>Sencha Docs</strong> Ext JS"
+      @footer = "Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> #{@version}."
       @head_html = ""
       @body_html = ""
-      @guides_dir = nil
-      @guides_order = nil
+      @welcome = nil
+      @guides = nil
+      @videos = nil
+      @examples = nil
       @categories_path = nil
-      @examples_dir = nil
-      @link_tpl = '<a href="#/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
+      @inline_examples_dir = nil
+      @pretty_json = false
+      @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
       # appears inline within text, but that just looks ugly in HTML
       @img_tpl = '<p><img src="doc-resources/%u" alt="%a"></p>'
       @export = nil
+      @seo = false
 
       # Debugging
       @processes = nil
-      @template_dir = File.dirname(File.dirname(File.dirname(__FILE__))) + "/template"
+      @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
+      @template_dir = @root_dir + "/template-min"
       @template_links = false
-      @extjs_path = "extjs/ext.js"
+      @extjs_path = "extjs/ext-all.js"
       @local_storage_db = "docs"
+      @ext_namespaces = ["Ext"]
+    end
+
+    # Make options object behave like hash.
+    # This allows us to substitute it with hash in unit tests.
+    def [](key)
+      send(key)
     end
 
     def parse!(argv)
@@ -77,24 +121,33 @@ module JsDuck
 
         opts.on('-o', '--output=PATH',
           "Directory to output all this amazing documentation.",
-          "This option MUST be specified.", " ") do |path|
-          @output_dir = path
+          "This option MUST be specified (unless --stdout).", " ") do |path|
+          @output_dir = canonical(path)
         end
 
         opts.on('--ignore-global', "Turns off the creation of global class.", " ") do
           @ignore_global = true
         end
 
-        opts.on('--private-classes', "Include private classes to docs.", " ") do
-          @show_private_classes = true
+        opts.on('--external=Foo,Bar,Baz', Array,
+          "Declares list of external classes.  These classes",
+          "will then not generate warnings when used in type",
+          "definitions or inherited from.", " ") do |classes|
+          @external_classes += classes
         end
 
-        opts.on('--external=CLASSNAME',
-          "Declares an external class.  When declared as",
-          "external, inheriting from this class will not",
-          "trigger warnings.  Useful when you are extending",
-          "a class for which you can not supply source code.", " ") do |classname|
-          @external_classes << classname
+        opts.on('--builtin-classes',
+          "Includes docs for JavaScript builtin classes.", " ") do
+          read_filenames(@root_dir + "/js-classes")
+        end
+
+        opts.on('--meta-tags @name=Title,...', Array,
+          "Defines custom meta-data tags in addition to",
+          "@author and @docauthor.  Experimantal!", " ") do |tags|
+          tags.each do |t|
+            t = t.split(/=/)
+            @meta_tags << {:name => t[0].sub(/^@/, ""), :title => t[1]}
+          end
         end
 
         opts.on('--no-warnings', "Turns off warnings.", " ") do
@@ -109,13 +162,14 @@ module JsDuck
         opts.separator ""
 
         opts.on('--title=TEXT',
-          "Custom title for the documentation @",
-          "Defaults to 'ExtJS API Documentation'", " ") do |text|
+          "Custom title text for the documentation.",
+          "Defaults to 'Sencha Docs - Ext JS'", " ") do |text|
           @title = text
+          @header = text.sub(/^(.*?) +- +/, "<strong>\\1 </strong>")
         end
 
         opts.on('--footer=TEXT',
-          "Custom footer text for the documentation @",
+          "Custom footer text for the documentation.",
           "Defaults to: 'Generated with JSDuck.'", " ") do |text|
           @footer = text
         end
@@ -128,28 +182,40 @@ module JsDuck
           @body_html = html
         end
 
-        opts.on('--guides=PATH', "Path to guides directory.",
-          "Each subdirectory of that is treated as a guide",
-          "and is expectd to contain a REAME.md file,",
-          "which will be converted into a README.js.", " ") do |path|
-          @guides_dir = path
+        opts.on('--welcome=PATH',
+          "Path to HTML file with content for welcome page.", " ") do |path|
+          @welcome = canonical(path)
         end
 
-        opts.on('--guides-order=a,b,c', Array,
-          "The order in which the guides should appear. When",
-          "a guide name is not specified here, it will be excluded.",
-          "You don't have to write the whole name of the guide,",
-          "just the beginning of it, as long as it's unique.", " ") do |list|
-          @guides_order = list
+        opts.on('--guides=PATH',
+          "Path to JSON file describing the guides. The file",
+          "should be in a dir containing the actual guides.",
+          "A guide is a dir containing README.md, icon.png,",
+          "and other images referenced by the README.md file.", " ") do |path|
+          @guides = canonical(path)
+        end
+
+        opts.on('--videos=PATH',
+          "Path to JSON file describing the videos.", " ") do |path|
+          @videos = canonical(path)
+        end
+
+        opts.on('--examples=PATH',
+          "Path JSON file describing the examples.", " ") do |path|
+          @examples = canonical(path)
         end
 
         opts.on('--categories=PATH',
           "Path to JSON file which defines categories for classes.", " ") do |path|
-          @categories_path = path
+          @categories_path = canonical(path)
         end
 
-        opts.on('--examples=PATH', "Path to examples directory.", " ") do |path|
-          @examples_dir = path
+        opts.on('--inline-examples=PATH', "Path to inline examples directory.", " ") do |path|
+          @inline_examples_dir = canonical(path)
+        end
+
+        opts.on('--pretty-json', "Turn on pretty-printing of JSON.", " ") do
+          @pretty_json = true
         end
 
         opts.on('--link=TPL',
@@ -161,7 +227,7 @@ module JsDuck
           "%# - inserts '#' if member name present",
           "%- - inserts '-' if member name present",
           "%a - anchor text for link",
-          "Default is: '<a href=\"#/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'", " ") do |tpl|
+          "Default is: '<a href=\"#!/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'", " ") do |tpl|
           @link_tpl = tpl
         end
 
@@ -182,6 +248,10 @@ module JsDuck
           @export = :stdout
         end
 
+        opts.on('--seo', "Creates index.php that handles search engine traffic.", " ") do
+          @seo = true
+        end
+
         opts.separator "Debugging:"
         opts.separator ""
 
@@ -195,7 +265,7 @@ module JsDuck
 
         opts.on('--template=PATH',
           "Directory containing doc-browser UI template.", " ") do |path|
-          @template_dir = path
+          @template_dir = canonical(path)
         end
 
         opts.on('--template-links',
@@ -208,7 +278,7 @@ module JsDuck
         opts.on('--extjs-path=PATH',
           "Path for main ExtJS JavaScript file.  Useful for specifying",
           "something different than extjs/ext.js", " ") do |path|
-          @extjs_path = path
+          @extjs_path = path # NB! must be relative path
         end
 
         opts.on('--local-storage-db=NAME',
@@ -217,8 +287,54 @@ module JsDuck
           @local_storage_db = name
         end
 
-        opts.on('-h', '--help', "Prints this help message", " ") do
-          puts opts
+        opts.on('--ext-namespaces=Ext,Foo', Array,
+          "Namespace(s) of ExtJS. Defaults to 'Ext'.", " ") do |ns|
+          @ext_namespaces = ns
+        end
+
+        opts.on('-h', '--help[=full]',
+          "Short help or --help=full for all available options.", " ") do |v|
+          if v == 'full'
+            puts opts
+          else
+            puts opts.banner
+            puts "For example:"
+            puts
+            puts "    # Documentation for builtin JavaScript classes like Array and String"
+            puts "    jsduck --output output/dir  --builtin-classes"
+            puts
+            puts "    # Documentation for your own JavaScript"
+            puts "    jsduck --output output/dir  input-file.js some/input/dir"
+            puts
+            puts "The main options:"
+            puts
+
+            show_help = false
+            main_opts = [
+              /--output/,
+              /--builtin-classes/,
+              /--no-warnings/,
+              /--verbose/,
+              /--help/,
+              /--version/,
+            ]
+            opts.summarize([], opts.summary_width) do |helpline|
+              if main_opts.any? {|re| helpline =~ re }
+                puts helpline
+                show_help = true
+              elsif helpline =~ /^\s*$/ && show_help == true
+                puts helpline
+                show_help = false
+              elsif show_help == true
+                puts helpline
+              end
+            end
+          end
+          exit
+        end
+
+        opts.on('--version', "Prints JSDuck version", " ") do
+          puts "JSDuck " + @version
           exit
         end
       end
@@ -235,6 +351,15 @@ module JsDuck
       else
         $stderr.puts "Warning: File #{fname} not found"
       end
+    end
+
+    # Converts relative path to full path
+    #
+    # Especially important for running on Windows where C:\foo\bar
+    # pathnames are converted to C:/foo/bar which ruby can work on
+    # more easily.
+    def canonical(path)
+      File.expand_path(path)
     end
 
     # Runs checks on the options

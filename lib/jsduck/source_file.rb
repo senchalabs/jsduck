@@ -15,9 +15,10 @@ module JsDuck
     attr_reader :docs
     attr_reader :html_filename
 
-    def initialize(contents, filename="")
+    def initialize(contents, filename="", options={})
       @contents = contents
       @filename = filename
+      @options = options
       @html_filename = ""
       @links = {}
 
@@ -72,7 +73,7 @@ module JsDuck
       else
         # when creation of global class is skipped,
         # this owner property can be nil.
-        (doc[:owner] || "global").gsub(/\./, '-') + "-" + doc[:tagname].to_s + "-" + doc[:name]
+        (doc[:owner] || "global").gsub(/\./, '-') + "-" + doc[:id]
       end
     end
 
@@ -81,9 +82,9 @@ module JsDuck
     # Parses the file depending on filename as JS or CSS
     def parse
       if @filename =~ /\.s?css$/
-        CssParser.new(@contents).parse
+        CssParser.new(@contents, @options).parse
       else
-        JsParser.new(@contents).parse
+        JsParser.new(@contents, @options).parse
       end
     end
 

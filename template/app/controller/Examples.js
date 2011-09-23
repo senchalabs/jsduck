@@ -1,121 +1,91 @@
 /**
- * Controller for inline examples.
+ * Controller for Examples showcase
  */
 Ext.define('Docs.controller.Examples', {
-    extend: 'Ext.app.Controller',
+    extend: 'Docs.controller.Content',
+    baseUrl: '#!/example',
+    title: 'Examples',
+
+    refs: [
+        {
+            ref: 'viewport',
+            selector: '#viewport'
+        },
+        {
+            ref: 'index',
+            selector: '#exampleindex'
+        },
+        {
+            ref: 'tree',
+            selector: '#exampletree'
+        },
+        {
+            ref: 'page',
+            selector: '#example'
+        }
+    ],
 
     init: function() {
-        this.control({
-            'inlineexample': {
-                afterlayout: function(cmp) {
-                    if (!cmp.codeEditor) {
-                        var codeBody = cmp.getComponent(0).body;
+        this.addEvents(
+            /**
+             * @event showExample
+             * Fired after an example is shown. Used for analytics event tracking.
+             * @param {String} example name of the example.
+             */
+            "showExample"
+        );
 
-                        cmp.codeEditor = CodeMirror(codeBody, {
-                            mode:  "javascript",
-                            indentUnit: 4,
-                            onChange: function(e) {
-                                cmp.updateHeight();
-                            }
-                        });
-                    }
+        this.control({
+            '#exampletree': {
+                urlclick: function(url, event) {
+                    this.loadExample(url);
                 }
             },
-            'inlineexample [cmpName=code]': {
-                activate: function(cmp) {
-                    this.activateTab(cmp, 'code');
-                    var inlineEg = cmp.up('inlineexample');
-                    if (inlineEg && inlineEg.codeEditor) {
-                        // Weird bug on CodeMirror requires 2 refreshes...
-                        inlineEg.codeEditor.refresh();
-                        inlineEg.codeEditor.refresh();
-                    }
-                }
-            },
-            'inlineexample [cmpName=preview]': {
-                activate: function(cmp) {
-                    this.activateTab(cmp, 'preview');
-                }
-            },
-            'inlineexample toolbar button[iconCls=code]': {
-                click: function(cmp) {
-                    cmp.up('inlineexample').showCode();
-                }
-            },
-            'inlineexample toolbar button[iconCls=preview]': {
-                click: function(cmp) {
-                    cmp.up('inlineexample').showPreview(function() {
-                        this.refreshPreview(cmp.up('inlineexample'));
-                    }, this);
-                }
-            },
-            'inlineexample toolbar button[iconCls=copy]': {
-                click: function(cmp) {
-                    var editor = cmp.up('inlineexample').codeEditor;
-                    var lastLine = editor.lineCount() - 1;
-                    var lastCh = editor.getLine(lastLine).length;
-                    editor.setSelection({line: 0, ch: 0}, {line: lastLine, ch: lastCh});
-                }
-            },
-            'classoverview': {
-                resize: function() {
-                    Ext.Array.each(Ext.ComponentQuery.query('.inlineexample'), function(c) {
-                        if (c.codeEditor) {
-                            c.doLayout();
-                            c.codeEditor.refresh();
-                        }
-                    });
-                },
-                afterload: function() {
-                    this.replaceExampleDivs();
+            'exampleindex > thumblist': {
+                urlclick: function(url) {
+                    this.loadExample(url);
                 }
             }
         });
     },
 
-    activateTab: function(cmp, buttonCls) {
-        Ext.Array.each(cmp.up('inlineexample').query('toolbar button'), function(b) {
-            b.removeCls('active');
-        });
-        Ext.Array.each(cmp.up('inlineexample').query('toolbar button[iconCls=' + buttonCls + ']'), function(b) {
-            b.addCls('active');
-        });
+    loadIndex: function() {
+        Ext.getCmp('treecontainer').showTree('exampletree');
+        this.callParent();
     },
 
-    replaceExampleDivs: function() {
-        Ext.Array.each(Ext.query('.inline-example'), function(inlineEg) {
-            // Grab code from <pre> element and replace it with new empty <div>
-            var code = inlineEg.innerText;
-            var div = document.createElement("div");
-            inlineEg.parentNode.replaceChild(div, inlineEg);
-            // Then render the example component inside the div
-            var eg = Ext.create('Docs.view.examples.Inline', {
-                height: 200,
-                renderTo: div,
-                listeners: {
-                    afterrender: function(cmp) {
-                        this.updateExample(cmp, code);
-                    },
-                    scope: this
-                }
-            });
-        }, this);
-    },
-
-    // Updates code inside example component
-    updateExample: function(example, code) {
-        example.codeEditor.setValue(code);
-        var activeItem = example.layout.getActiveItem();
-        if (activeItem.cmpName == 'preview') {
-            this.refreshPreview(example);
+    loadExample: function(url, noHistory) {
+        var example = this.getExample(url);
+        this.getViewport().setPageTitle(example.text);
+        if (this.activeUrl !== url) {
+            this.getPage().clear();
+            this.activateExampleCard();
+            this.getPage().load(example);
         }
-        example.updateHeight();
+        else {
+            this.activateExampleCard();
+        }
+        noHistory || Docs.History.push(url);
+        this.fireEvent('showExample', url);
+        this.getTree().selectUrl(url);
+        this.activeUrl = url;
     },
 
-    // Refreshes the preview of example
-    refreshPreview: function(example) {
-        var iframe = document.getElementById(example.getIframeId());
-        iframe.contentWindow.refreshPage(example.codeEditor.getValue(), '');
-    }
+    activateExampleCard: function() {
+        Ext.getCmp('card-panel').layout.setActiveItem('example');
+        Ext.getCmp('treecontainer').showTree('exampletree');
+    },
 
+    // Given an URL returns corresponding example description object
+    getExample: function(url) {
+        if (!this.map) {
+            this.map = {};
+            Ext.Array.forEach(Docs.data.examples, function(group) {
+                Ext.Array.forEach(group.items, function(e) {
+                    this.map["#!/example/"+e.url] = e;
+                }, this);
+            }, this);
+        }
+        return this.map[url];
+    }
 });

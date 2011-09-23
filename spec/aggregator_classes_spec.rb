@@ -5,7 +5,8 @@ describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    meta_tags = [{:name => "author"}, {:name => "docauthor"}]
+    agr.aggregate(JsDuck::SourceFile.new(string, "", {:meta_tags => meta_tags}))
     agr.result
   end
 
@@ -50,7 +51,7 @@ describe JsDuck::Aggregator do
       @doc[:singleton].should == true
     end
     it "detects xtype" do
-      @doc[:xtypes].should == ["nicely"]
+      @doc[:xtypes].should == {"widget" => ["nicely"]}
     end
   end
 
@@ -129,7 +130,7 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "collects all xtypes together" do
-      @doc[:xtypes].should == ["foo", "bar"]
+      @doc[:xtypes].should == {"widget" => ["foo", "bar"]}
     end
   end
 
@@ -196,7 +197,16 @@ describe JsDuck::Aggregator do
       @doc[:alternateClassNames].should == ["JustClass"]
     end
     it "detects implied xtype" do
-      @doc[:xtypes].should == ["foo"]
+      @doc[:xtypes].should == {"widget" => ["foo"]}
+    end
+    it "detects implied singleton" do
+      @doc[:singleton].should == true
+    end
+    it "detects required classes" do
+      @doc[:requires].should == ["ClassA", "ClassB"]
+    end
+    it "detects used classes" do
+      @doc[:uses].should == ["ClassC"]
     end
   end
 
@@ -211,7 +221,10 @@ describe JsDuck::Aggregator do
             bar: 'Foo.Bar'
           },
           alias: 'widget.foo',
-          alternateClassName: 'JustClass'
+          alternateClassName: 'JustClass',
+          singleton: true,
+          requires: ['ClassA', 'ClassB'],
+          uses: 'ClassC'
         });
       EOS
     end
@@ -234,11 +247,15 @@ describe JsDuck::Aggregator do
       @doc = parse(<<-EOS)[0]
         /** */
         Ext.define('MyClass', {
-          singleton: true,
+          blah: true,
           extend: 'Your.Class',
-          alias: ['widget.foo', 'something.bar'],
+          uses: ['ClassC'],
+          conf: {foo: 10},
+          alias: ['widget.foo'],
+          singleton: true,
           alternateClassName: ['JustClass'],
-          requires: ['Hohooo', 'hahaa'],
+          stuff: ["foo", "bar"],
+          requires: ['ClassA', 'ClassB'],
           mixins: {
             obs: 'Ext.util.Observable',
             bar: 'Foo.Bar'
@@ -332,41 +349,30 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "detects xtype" do
-      @doc[:xtypes].should == ["nicely"]
+      @doc[:xtypes].should == {"widget" => ["nicely"]}
     end
   end
 
-  describe "class with @author" do
+  describe "class with meta-tags" do
     before do
       @doc = parse(<<-EOS)[0]
         /**
          * @class MyClass
          * @author John Doe
+         * @author Steve Jobs
+         * @docauthor Kill Bill
          * Comment here.
          */
       EOS
     end
 
     it_should_behave_like "class"
-    it "detects author name" do
-      @doc[:author].should == "John Doe"
-    end
-  end
-
-  describe "class with @docauthor" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * @docauthor John Doe
-         * Comment here.
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "detects documentation author name" do
-      @doc[:docauthor].should == "John Doe"
+    it "detects @author and @docauthor tags" do
+      @doc[:meta].should == [
+        {:name => "author", :content => "John Doe"},
+        {:name => "author", :content => "Steve Jobs"},
+        {:name => "docauthor", :content => "Kill Bill"},
+      ]
     end
   end
 
@@ -522,7 +528,7 @@ describe JsDuck::Aggregator do
     end
 
     it "combines all @xtypes" do
-      @classes[0][:xtypes].length.should == 2
+      @classes[0][:xtypes]["widget"].length.should == 2
     end
 
     it "combines all configs" do

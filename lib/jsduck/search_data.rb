@@ -10,11 +10,13 @@ module JsDuck
       list = []
       docs.each do |cls|
         list << class_node(cls)
-        [:cfg, :property, :method, :event].each do |type|
-          cls.members(type).each do |m|
-            # skip inherited items and constructors
-            if m[:owner] == cls.full_name && m[:name] != cls.short_name
-              list << member_node(m, cls)
+        [:members, :statics].each do |group|
+          [:cfg, :property, :method, :event].each do |type|
+            cls.members(type, group).each do |m|
+              # skip inherited items and constructors
+              if m[:owner] == cls.full_name && m[:name] != cls.short_name
+                list << member_node(m, cls)
+              end
             end
           end
         end
@@ -38,6 +40,7 @@ module JsDuck
         :cls => cls.full_name,
         :member => member[:name],
         :type => member[:tagname],
+        :id => member[:id],
       }
     end
 

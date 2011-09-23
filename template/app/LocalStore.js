@@ -1,7 +1,7 @@
 /**
  * Provides methods dealing with localStorage- and memory-store.
  *
- * Base class for Favorites and Settings.
+ * Base class for Settings.
  */
 Ext.define("Docs.LocalStore", {
     storeName: '',
@@ -17,6 +17,7 @@ Ext.define("Docs.LocalStore", {
         this.store = Ext.getStore(this.storeName);
 
         if (this.localStorage) {
+            this.cleanup();
             this.store.load();
             if (window.addEventListener) {
                 window.addEventListener("storage", Ext.Function.bind(this.onStorageChange, this), false);
@@ -40,6 +41,18 @@ Ext.define("Docs.LocalStore", {
      */
     syncStore: function() {
         this.localStorage && this.store.sync();
-    }
+    },
 
+    // Removes all extra stuff from localstorage that isn't needed any
+    // more. Like old favorites and mistakenly created '{local_storage_db}...' keys.
+    cleanup: function() {
+        var re = new RegExp("^" + Ext.escapeRe(Docs.localStorageDb + '-settings'));
+        // remove all entries from localstorage where key doesn't match the regex
+        for (var i=0; i<window.localStorage.length; i++) {
+            var key = window.localStorage.key(i);
+            if (!re.test(key)) {
+                window.localStorage.removeItem(key);
+            }
+        }
+    }
 });

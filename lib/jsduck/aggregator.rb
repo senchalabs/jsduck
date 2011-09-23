@@ -1,4 +1,5 @@
 require 'jsduck/class'
+require 'jsduck/accessors'
 
 module JsDuck
 
@@ -50,11 +51,14 @@ module JsDuck
 
     # Merges new class-doc into old one.
     def merge_classes(old, new)
-      [:extends, :xtype, :singleton, :private, :protected].each do |tag|
+      [:extends, :singleton, :private, :protected].each do |tag|
         old[tag] = old[tag] || new[tag]
       end
-      [:mixins, :alternateClassNames, :xtypes].each do |tag|
+      [:mixins, :alternateClassNames].each do |tag|
         old[tag] = old[tag] + new[tag]
+      end
+      new[:xtypes].each_pair do |key, xtypes|
+        old[:xtypes][key] = (old[:xtypes][key] || []) + xtypes
       end
       old[:doc] = old[:doc].length > 0 ? old[:doc] : new[:doc]
       # Additionally the doc-comment can contain configs and constructor
@@ -159,6 +163,14 @@ module JsDuck
       }
       @classes.each_value do |cls|
         cls[:members][:event].each {|e| e[:params] << options }
+      end
+    end
+
+    # Creates accessor method for configs marked with @accessor
+    def create_accessors
+      accessors = Accessors.new
+      @classes.each_value do |cls|
+        accessors.create(cls)
       end
     end
 

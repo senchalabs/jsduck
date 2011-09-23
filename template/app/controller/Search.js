@@ -118,9 +118,9 @@ Ext.define('Docs.controller.Search', {
     loadRecord: function(record) {
         var name = record.get("cls");
         if (record.get("type") !== 'cls') {
-            name += '-' + record.get("type") + '-' + record.get("member");
+            name += '-' + record.get("id");
         }
-        Docs.App.getController('Classes').loadClass("/api/"+name);
+        Docs.App.getController('Classes').loadClass("#!/api/"+name);
         this.getDropdown().hide();
     },
 
@@ -142,7 +142,7 @@ Ext.define('Docs.controller.Search', {
         this.getDropdown().setStart(start);
         this.getDropdown().getStore().loadData(results.slice(start, end));
         // position dropdown below search box
-        this.getDropdown().alignTo('search-field', 'bl', [-23, 2]);
+        this.getDropdown().alignTo('search-field', 'bl', [-12, -2]);
         // hide dropdown when nothing found
         if (results.length === 0) {
             this.getDropdown().hide();
@@ -162,18 +162,18 @@ Ext.define('Docs.controller.Search', {
         var reBeg = new RegExp("^" + safeText, "i");
         var reMid = new RegExp(safeText, "i");
 
-        Ext.Array.forEach(Docs.searchData.data, function(r) {
+        Ext.Array.forEach(Docs.data.search, function(r) {
             // when search text has "." in it, search from the full name (e.g. "Ext.Component.focus")
             // Otherwise search from just the member name (e.g. "focus" or "Component")
             var name = hasDot ? r.cls + (r.type === "cls" ? "" : "." + r.member) : r.member;
 
-            if (r.xtypes && Ext.Array.some(r.xtypes, function(x) {return reFull.test(x);})) {
+            if (r.xtypes && this.matchXType(r.xtypes, reFull)) {
                 results[xFull].push(r);
             }
             else if (reFull.test(name)) {
                 results[r.type === "cls" ? clsFull : mFull].push(r);
             }
-            else if (r.xtypes && Ext.Array.some(r.xtypes, function(x) {return reBeg.test(x);})) {
+            else if (r.xtypes && this.matchXType(r.xtypes, reBeg)) {
                 results[xBeg].push(r);
             }
             else if (reBeg.test(name)) {
@@ -182,9 +182,21 @@ Ext.define('Docs.controller.Search', {
             else if (reMid.test(name)) {
                 results[r.type === "cls" ? clsMid : mMid].push(r);
             }
-        });
+        }, this);
 
         return Ext.Array.flatten(results);
+    },
+
+    // true if xtype, ptype, ftype, etc matches regex
+    matchXType: function(xtypes, regex) {
+        for (var key in xtypes) {
+            if (xtypes.hasOwnProperty(key)) {
+                if (Ext.Array.some(xtypes[key], function(x) {return regex.test(x);})) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 });

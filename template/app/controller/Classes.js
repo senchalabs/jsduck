@@ -1,9 +1,10 @@
 /**
- * Controller responsible for loading classes, guides, and switching
- * between pages.
+ * Controller responsible for loading classes
  */
 Ext.define('Docs.controller.Classes', {
-    extend: 'Ext.app.Controller',
+    extend: 'Docs.controller.Content',
+    baseUrl: '#!/api',
+    title: 'API Documentation',
 
     requires: [
         'Docs.History',
@@ -11,12 +12,10 @@ Ext.define('Docs.controller.Classes', {
     ],
 
     stores: [
-        'Favorites',
         'Settings'
     ],
 
     models: [
-        'Favorite',
         'Setting'
     ],
 
@@ -24,6 +23,10 @@ Ext.define('Docs.controller.Classes', {
         {
             ref: 'viewport',
             selector: '#viewport'
+        },
+        {
+            ref: 'index',
+            selector: '#classindex'
         },
         {
             ref: 'header',
@@ -39,7 +42,7 @@ Ext.define('Docs.controller.Classes', {
         },
         {
             ref: 'tree',
-            selector: 'classtree'
+            selector: '#classtree'
         },
         {
             ref: 'favoritesGrid',
@@ -47,7 +50,7 @@ Ext.define('Docs.controller.Classes', {
         }
     ],
 
-    activeUrl: null,
+    cache: {},
 
     init: function() {
         this.addEvents(
@@ -63,17 +66,11 @@ Ext.define('Docs.controller.Classes', {
              * @param {String} cls  name of the class.
              * @param {String} anchor  name of the member in form type-name like "method-bind".
              */
-            "showMember",
-            /**
-             * @event showGuide
-             * Fired after guide shown. Used for analytics event tracking.
-             * @param {String} guide  name of the guide.
-             */
-            "showGuide"
+            "showMember"
         );
 
         Ext.getBody().addListener('click', function(event, el) {
-            this.handleUrlClick(el.href, event);
+            this.handleUrlClick(decodeURI(el.href), event);
         }, this, {
             preventDefault: true,
             delegate: '.docClass'
@@ -83,21 +80,26 @@ Ext.define('Docs.controller.Classes', {
             'classtree': {
                 urlclick: function(url, event) {
                     this.handleUrlClick(url, event, this.getTree());
-                }
-            },
-            'classgrid': {
-                urlclick: function(url, event) {
-                    this.handleUrlClick(url, event, this.getFavoritesGrid());
-                }
-            },
-
-            'indexcontainer': {
+                },
                 afterrender: function(cmp) {
-                    cmp.el.addListener('click', function(event, el) {
-                        this.handleUrlClick(el.href, event);
+                    cmp.el.addListener('click', function(e, el) {
+                        var clicked = Ext.get(el),
+                            selected = Ext.get(Ext.query('.cls-grouping button.selected')[0]);
+
+                        if (selected.dom === clicked.dom) {
+                            return;
+                        }
+
+                        selected.removeCls('selected');
+                        clicked.addCls('selected');
+
+                        if (clicked.hasCls('by-package')) {
+                            this.getTree().setLogic(Docs.view.cls.PackageLogic);
+                        } else {
+                            this.getTree().setLogic(Docs.view.cls.InheritanceLogic);
+                        }
                     }, this, {
-                        preventDefault: true,
-                        delegate: '.guide'
+                        delegate: 'button'
                     });
                 }
             },
@@ -114,7 +116,19 @@ Ext.define('Docs.controller.Classes', {
                 afterrender: function(cmp) {
                     // Expand member when clicked
                     cmp.el.addListener('click', function(cmp, el) {
-                        Ext.get(Ext.get(el).up('.member')).toggleCls('open');
+                        var member = Ext.get(el).up('.member'),
+                            docClass = member.down('.meta .docClass'),
+                            clsName = docClass.getAttribute('rel'),
+                            memberName = member.getAttribute('id');
+
+                        if (member.hasCls('open')) {
+                            this.setExpanded(memberName, false);
+                        }
+                        else {
+                            this.setExpanded(memberName, true);
+                            this.fireEvent('showMember', clsName, memberName);
+                        }
+                        member.toggleCls('open');
                     }, this, {
                         preventDefault: true,
                         delegate: '.expandable'
@@ -125,38 +139,64 @@ Ext.define('Docs.controller.Classes', {
                         preventDefault: true,
                         delegate: '.not-expandable'
                     });
+
+                    cmp.body.addListener('scroll', function(cmp, el) {
+                        this.setScrollState('#!/api/' + this.currentCls.name, el.scrollTop);
+                    }, this);
+                }
+            },
+
+            'treecontainer': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('dblclick', function() {
+                        if (cmp.getWidth() < 30) {
+                            cmp.setWidth(cmp.expandedWidth);
+                        } else {
+                            cmp.expandedWidth = cmp.getWidth();
+                            cmp.setWidth(20);
+                        }
+                    }, this, {
+                        delegate: '.x-resizable-handle'
+                    });
                 }
             }
         });
     },
 
-    // We don't want to select the class that was opened in another window,
-    // so restore the previous selection.
-    handleUrlClick: function(url, event, view) {
-        // Remove everything up to #
-        url = url.replace(/.*#/, "");
+    // Remembers the expanded state of a member of current class
+    setExpanded: function(member, expanded) {
+        var cls = this.currentCls;
+        if (!cls.expanded) {
+            cls.expanded = {};
+        }
 
-        if (this.opensNewWindow(event)) {
-            window.open("#"+url);
-            view && view.selectUrl(this.activeUrl ? this.activeUrl : "");
+        if (expanded) {
+            cls.expanded[member] = expanded;
         }
         else {
-            if (/^\/api\//.test(url)) {
-                this.loadClass(url);
-            }
-            else {
-                this.loadGuide(url);
-            }
+            delete cls.expanded[member];
         }
     },
 
-    // Code for the middle mouse button
-    MIDDLE: 1,
+    // Expands
+    applyExpanded: function(cls) {
+        Ext.Object.each(cls.expanded || {}, function(member) {
+            Ext.get(member).addCls("open");
+        }, this);
+    },
 
-    // True when middle mouse button pressed or shift/ctrl key pressed
-    // together with mouse button (for Mac)
-    opensNewWindow: function(event) {
-        return event.button === this.MIDDLE || event.shiftKey || event.ctrlKey;
+    // We don't want to select the class that was opened in another window,
+    // so restore the previous selection.
+    handleUrlClick: function(url, event, view) {
+        url = Docs.History.cleanUrl(url);
+
+        if (this.opensNewWindow(event)) {
+            window.open(url);
+            view && view.selectUrl(this.currentCls ? "#!/api/"+this.currentCls.name : "");
+        }
+        else {
+            this.loadClass(url);
+        }
     },
 
     /**
@@ -165,15 +205,9 @@ Ext.define('Docs.controller.Classes', {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     loadIndex: function(noHistory) {
-        this.activeUrl = "";
-        if (!noHistory) {
-            Docs.History.push("");
-        }
-        this.getViewport().setPageTitle("");
-        Ext.getCmp('card-panel').layout.setActiveItem(0);
+        Ext.getCmp('treecontainer').showTree('classtree');
+        this.callParent(arguments);
     },
-
-    cache: {},
 
     /**
      * Loads class.
@@ -182,28 +216,25 @@ Ext.define('Docs.controller.Classes', {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     loadClass: function(url, noHistory) {
-        if (this.activeUrl === url) return;
-        this.activeUrl = url;
+        Ext.getCmp('card-panel').layout.setActiveItem('classcontainer');
+        Ext.getCmp('treecontainer').showTree('classtree');
 
-        if (!noHistory) {
-            Docs.History.push(url);
-        }
-
-        Ext.getCmp('card-panel').layout.setActiveItem(1);
+        noHistory || Docs.History.push(url);
 
         // separate class and member name
-        var matches = url.match(/^\/api\/(.*?)(?:-(.*))?$/);
+        var matches = url.match(/^#!\/api\/(.*?)(?:-(.*))?$/);
         var cls = matches[1];
         var member = matches[2];
+
+        if (this.getOverview()) {
+            this.getOverview().setLoading(true);
+        }
 
         if (this.cache[cls]) {
             this.showClass(this.cache[cls], member);
         }
         else {
-            if (this.getOverview()) {
-                this.getOverview().setLoading(true);
-            }
-
+            this.cache[cls] = "in-progress";
             Ext.data.JsonP.request({
                 url: this.getBaseUrl() + '/output/' + cls + '.js',
                 callbackName: cls.replace(/\./g, '_'),
@@ -212,7 +243,7 @@ Ext.define('Docs.controller.Classes', {
                     this.showClass(json, member);
                 },
                 failure: function(response, opts) {
-                    this.showFailure("Class <b>"+cls+"</b> was not found.");
+                    this.getController('Index').showFailure("Class <b>"+cls+"</b> was not found.");
                 },
                 scope: this
             });
@@ -220,85 +251,36 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
+        if (cls === "in-progress") {
+            return;
+        }
+        this.getOverview().setLoading(false);
+
+        this.getViewport().setPageTitle(cls.name);
         if (this.currentCls !== cls) {
-            this.getViewport().setPageTitle(cls.name);
             this.getHeader().load(cls);
             this.getOverview().load(cls);
-            this.getOverview().setLoading(false);
-
-            this.getTree().selectUrl("/api/"+cls.name);
-            this.fireEvent('showClass', cls.name);
+            this.applyExpanded(cls);
         }
+        this.currentCls = cls;
 
         if (anchor) {
             this.getOverview().scrollToEl("#" + anchor);
             this.fireEvent('showMember', cls.name, anchor);
-        } else {
-            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', 0);
+        }
+        else {
+            this.scrollContent();
         }
 
-        this.currentCls = cls;
-
-        this.getFavoritesGrid().selectUrl("/api/"+cls.name);
+        this.getTree().selectUrl("#!/api/"+cls.name);
+        this.fireEvent('showClass', cls.name);
     },
 
-    /**
-     * Loads guide.
-     *
-     * @param {String} url  URL of the guide
-     * @param {Boolean} noHistory  true to disable adding entry to browser history
-     */
-    loadGuide: function(url, noHistory) {
-        if (this.activeUrl === url) return;
-        this.activeUrl = url;
-
-        noHistory || Docs.History.push(url);
-
-        var name = url.match(/^\/guide\/(.*)$/)[1];
-        Ext.data.JsonP.request({
-            url: this.getBaseUrl() + "/guides/" + name + "/README.js",
-            callbackName: name,
-            success: function(json) {
-                this.getViewport().setPageTitle(json.guide.match(/<h1>(.*)<\/h1>/)[1]);
-                Ext.getCmp("guide").update(json.guide);
-                Ext.getCmp('card-panel').layout.setActiveItem(2);
-                Docs.Syntax.highlight(Ext.get("guide"));
-                this.fireEvent('showGuide', name);
-                this.getTree().selectUrl(url);
-                this.getFavoritesGrid().selectUrl(url);
-            },
-            failure: function(response, opts) {
-                this.showFailure("Guide <b>"+name+"</b> was not found.");
-            },
-            scope: this
-        });
-    },
-
-    /**
-     * Displays page with 404 error message.
-     * @param {String} msg
-     * @private
-     */
-    showFailure: function(msg) {
-        this.getOverview().setLoading(false);
-        var tpl = new Ext.XTemplate(
-            "<h1>Oops...</h1>",
-            "<p>{msg}</p>",
-            "<p>Maybe it was renamed to something else? Or maybe it has passed away permanently to the 404 land? ",
-            "This would be sad. Hopefully it's just a bug in our side. ",
-            "Report it to <a href='http://www.sencha.com/forum/showthread.php?135036'>Sencha Forum</a> if you feel so.</p>",
-            "<p>Sorry for all this :(</p>"
-        );
-        Ext.getCmp("failure").update(tpl.apply({msg: msg}));
-        Ext.getCmp('card-panel').layout.setActiveItem("failure");
-    },
-
-    /**
-     * Returns base URL used for making AJAX requests.
-     * @return {String} URL
-     */
-    getBaseUrl: function() {
-        return document.location.href.replace(/#.*/, "").replace(/index.html/, "");
+    scrollContent: function() {
+        if (this.currentCls) {
+            var baseUrl = '#!/api/' + this.currentCls.name;
+            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', this.getScrollState(baseUrl));
+        }
     }
 
 });

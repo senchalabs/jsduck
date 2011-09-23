@@ -21,49 +21,33 @@ module JsDuck
     # - :name - one of the names of the types is unknown
     attr_reader :error
 
-    # Initializes the parser with hash of valid type names
-    def initialize(relations={})
+    # When parsing was successful, then contains the output HTML - the
+    # input type-definition with types themselves replaced with links.
+    attr_reader :out
+
+    # Initializes the parser with hash of valid type names and doc_formatter.
+    def initialize(relations={}, formatter={})
       @relations = relations
-      @builtins = {
-        # JavaScript builtins
-        "Object" => true,
-        "String" => true,
-        "Number" => true,
-        "Boolean" => true,
-        "RegExp" => true,
-        "Function" => true,
-        "Array" => true,
-        "Arguments" => true,
-        "Date" => true,
-        "Error" => true,
-        "undefined" => true,
-        # DOM
-        "HTMLElement" => true,
-        "XMLElement" => true,
-        "NodeList" => true,
-        "TextNode" => true,
-        "CSSStyleSheet" => true,
-        "CSSStyleRule" => true,
-        "Event" => true,
-      }
+      @formatter = formatter
     end
 
     def parse(str)
       @input = StringScanner.new(str)
       @error = :syntax
+      @out = []
 
       # Return immediately if base type doesn't match
       return false unless base_type
 
       # Go through enumeration of types, separated with "/"
       while @input.check(/\//)
-        @input.scan(/\//)
+        @out << @input.scan(/\//)
         # Fail if there's no base type after "/"
         return false unless base_type
       end
 
-      # The definition might end with an ellipsis
-      @input.scan(/\.\.\./)
+      # Concatenate all output
+      @out = @out.join
 
       # Success if we have reached the end of input
       return @input.eos?
@@ -71,22 +55,30 @@ module JsDuck
 
     # The basic type
     #
-    #     <ident> [ "." <ident> ]* [ "[]" ]
+    #     <ident> [ "." <ident> ]* [ "[]" ]* [ "..." ]
     #
     # dot-separated identifiers followed by optional "[]"
     def base_type
-      type = @input.scan(/[a-zA-Z_]+(\.[a-zA-Z_]+)*(\[\])?/)
-      return type && exists?(type)
-    end
+      type = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*/)
 
-    def exists?(type)
-      stype = type.sub(/\[\]$/, "")
-      if @builtins[stype] || @relations[stype]
-        true
+      if !type
+        return false
+      elsif @relations[type]
+        @out << @formatter.link(type, nil, type)
+      elsif @relations.ignore?(type) || type == "undefined"
+        @out << type
       else
         @error = :name
-        false
+        return false
       end
+
+      while @input.scan(/\[\]/)
+        @out << "[]"
+      end
+
+      @out << "..." if @input.scan(/\.\.\./)
+
+      true
     end
 
   end

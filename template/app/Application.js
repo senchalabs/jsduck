@@ -9,7 +9,6 @@ Ext.define('Docs.Application', {
     name: 'Docs',
 
     requires: [
-        'Docs.Favorites',
         'Docs.History',
         'Docs.Settings'
     ],
@@ -20,29 +19,21 @@ Ext.define('Docs.Application', {
     ],
 
     controllers: [
+        'Welcome',
         'Classes',
         'Search',
+        'InlineExamples',
         'Examples',
-        'Favorites'
+        'Guides',
+        'Videos',
+        'Tabs'
     ],
 
     launch: function() {
         Docs.App = this;
-        Docs.Favorites.init();
         Docs.Settings.init();
 
         Ext.create('Docs.view.Viewport');
-
-        // Update favorites grid height between browser tabs if changed
-        Ext.getStore('Settings').on('load', function(store) {
-            var favHeight = Docs.Settings.get('favorites-height');
-            if (favHeight) {
-                var tabPanel = Ext.getCmp('classes-tab-panel');
-                tabPanel.suspendEvents();
-                tabPanel.setHeight(favHeight);
-                tabPanel.resumeEvents();
-            }
-        });
 
         Docs.History.init();
 
@@ -50,6 +41,10 @@ Ext.define('Docs.Application', {
         if (Docs.initEventTracking) {
             Docs.initEventTracking();
         }
+
+        // setInterval(function(){
+        //     Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
+        // }, 1000);
     }
 
 });

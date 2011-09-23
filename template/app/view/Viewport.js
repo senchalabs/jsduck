@@ -1,18 +1,21 @@
 /**
  * The main viewport, split in to a west and center region.
- * The North region should also be shown by default in the packaged
- * (non-live) version of the docs. TODO: close button on north region.
  */
 Ext.define('Docs.view.Viewport', {
     extend: 'Ext.container.Viewport',
     requires: [
+        'Docs.view.search.Container',
+        'Docs.view.Tabs',
+        'Docs.view.TreeContainer',
+        'Docs.view.welcome.Index',
+        'Docs.view.cls.Index',
         'Docs.view.cls.Container',
-        'Docs.view.index.Container',
-        'Docs.view.tree.Tree',
-        'Docs.view.FavoritesPanel',
-        'Docs.Favorites',
-        'Docs.Settings',
-        'Docs.History'
+        'Docs.view.guides.Index',
+        'Docs.view.guides.Container',
+        'Docs.view.videos.Index',
+        'Docs.view.videos.Container',
+        'Docs.view.examples.Index',
+        'Docs.view.examples.Container'
     ],
 
     id: 'viewport',
@@ -22,140 +25,122 @@ Ext.define('Docs.view.Viewport', {
     initComponent: function() {
         this.items = [
             {
-                region:'west',
-                width: 240,
-                id: 'west-region-container',
-                padding: '5 0 0 0',
-                layout: 'vbox',
-                defaults: {
-                    xtype: 'container',
-                    width: "100%"
+                region: 'north',
+                id: 'north-region',
+                height: 65,
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
                 },
                 items: [
                     {
-                        xtype: 'button',
-                        cls: 'logo',
-                        height: 60,
-                        margin: '0 0 10 10',
-                        width: 220,
-                        border: 0,
-                        ui: 'hmm',
-                        listeners: {
-                            click: function() {
-                                Docs.App.getController('Classes').loadIndex();
-                            },
-                            scope: this
-                        }
-                    },
-                    {
-                        cls: 'search',
-                        id: 'search-container',
-                        margin: '0 0 0 5',
-                        height: 40,
+                        height: 37,
+                        xtype: 'container',
+                        layout: 'hbox',
                         items: [
                             {
-                                xtype: 'triggerfield',
-                                triggerCls: 'reset',
-                                emptyText: 'Search',
-                                id: 'search-field',
-                                enableKeyEvents: true,
-                                hideTrigger: true,
-                                onTriggerClick: function() {
-                                    this.reset();
-                                    this.focus();
-                                    this.setHideTrigger(true);
-                                    Ext.getCmp('search-dropdown').hide();
-                                }
+                                xtype: 'container',
+                                flex: 1,
+                                contentEl: 'header-content'
                             },
                             {
-                                xtype: 'searchdropdown'
+                                xtype: 'searchcontainer',
+                                id: 'search-container',
+                                width: 230,
+                                margin: '5 0 0 0'
                             }
                         ]
+
                     },
                     {
-                        id: 'nested-west-region-container',
-                        flex: 1,
-                        layout: 'border',
-                        border: false,
-                        items: [
-                            {
-                                xtype: 'favoritespanel',
-                                id: 'classes-tab-panel',
-                                region: 'north',
-                                height: Docs.Settings.get('favorites-height') || 150,
-                                hidden: Docs.Favorites.getCount() === 0
-                            },
-                            {
-                                region: 'center',
-                                xtype: 'classtree',
-                                padding: '5 10 0 10',
-                                margin: '0 5 2 0',
-                                root: Docs.classData
-                                // dockedItems: [{
-                                //     xtype: 'toolbar',
-                                //     baseCls: null,
-                                //     dock: 'top',
-                                //     padding: '0 0 5 0',
-                                //     items: [
-                                //         {
-                                //             xtype: 'button',
-                                //             text: 'Sort by Package',
-                                //             menu: [
-                                //                 { text: 'by Category' },
-                                //                 { text: 'by Hierarchy' },
-                                //                 { text: 'by Popularity' }
-                                //             ]
-                                //         },
-                                //         { xtype: 'tbfill'},
-                                //         {
-                                //             xtype: 'button',
-                                //             iconCls: 'expandAllMembers',
-                                //             tooltip: "Expand all"
-                                //         }
-                                //     ]
-                                // }]
-                            }
-                        ]
+                        xtype: 'doctabs'
                     }
                 ]
             },
             {
                 region: 'center',
-                id: 'center-container',
-                layout: 'fit',
+                layout: 'border',
                 minWidth: 800,
-                padding: '20 20 5 0',
-                items: {
-                    id: 'card-panel',
-                    cls: 'card-panel',
-                    xtype: 'container',
-                    layout: 'card',
-                    padding: '20',
-                    items: [
-                        {
-                            autoScroll: true,
-                            xtype: 'indexcontainer'
-                        },
-                        {
-                            xtype: 'classcontainer'
-                        },
-                        {
-                            autoScroll: true,
+                items: [
+                    {
+                        region: 'west',
+                        xtype: 'treecontainer',
+                        id: 'treecontainer',
+                        border: 1,
+                        bodyPadding: '10 9 4 9',
+                        width: 240
+                    },
+                    {
+                        region: 'center',
+                        id: 'center-container',
+                        layout: 'fit',
+                        minWidth: 800,
+                        border: false,
+                        padding: '5 10',
+                        items: {
+                            id: 'card-panel',
+                            cls: 'card-panel',
                             xtype: 'container',
-                            id: 'guide'
-                        },
-                        {
-                            xtype: 'container',
-                            id: 'failure'
+                            layout: {
+                                type: 'card',
+                                deferredRender: true
+                            },
+                            items: [
+                                {
+                                    autoScroll: true,
+                                    xtype: 'welcomeindex',
+                                    id: 'welcomeindex'
+                                },
+                                {
+                                    xtype: 'container',
+                                    id: 'failure'
+                                },
+                                {
+                                    autoScroll: true,
+                                    xtype: 'classindex',
+                                    id: 'classindex'
+                                },
+                                {
+                                    xtype: 'classcontainer',
+                                    id: 'classcontainer'
+                                },
+                                {
+                                    autoScroll: true,
+                                    xtype: 'guideindex',
+                                    id: 'guideindex'
+                                },
+                                {
+                                    autoScroll: true,
+                                    xtype: 'guidecontainer',
+                                    id: 'guide',
+                                    cls: 'iScroll'
+                                },
+                                {
+                                    xtype: 'videoindex',
+                                    id: 'videoindex'
+                                },
+                                {
+                                    xtype: 'videocontainer',
+                                    id: 'video'
+                                },
+                                {
+                                    xtype: 'exampleindex',
+                                    id: 'exampleindex'
+                                },
+                                {
+                                    xtype: 'examplecontainer',
+                                    id: 'example'
+                                }
+                            ]
                         }
-                    ]
-                }
+                    }
+                ]
             },
             {
                 region: 'south',
                 id: 'footer',
-                contentEl: 'footer-content',
-                height: 15
+                height: 20,
+                contentEl: 'footer-content'
             }
         ];
 

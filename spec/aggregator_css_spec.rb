@@ -37,6 +37,21 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "CSS @var with @member" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /**
+         * @var {measurement} $button-height Default height for buttons.
+         * @member Ext.Button
+         */
+      EOCSS
+    end
+
+    it "detects owner" do
+      @doc[:owner].should == "Ext.Button"
+    end
+  end
+
   describe "CSS doc-comment followed by @mixin" do
     before do
       @doc = parse(<<-EOCSS)[0]

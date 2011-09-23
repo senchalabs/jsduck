@@ -12,6 +12,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     dock: 'top',
     cls: 'member-links',
     padding: '3 5',
+    style: 'border-width: 1px 1px 1px 1px !important;',
 
     /**
      * @cfg {Object} docClass
@@ -44,6 +45,8 @@ Ext.define('Docs.view.cls.Toolbar', {
         this.items = [];
         this.memberButtons = {};
 
+        var self = this;
+
         var memberTitles = {
             cfg: "Configs",
             property: "Properties",
@@ -73,12 +76,16 @@ Ext.define('Docs.view.cls.Toolbar', {
 
         this.items = this.items.concat([
             { xtype: 'tbspacer', width: 10 },
-            this.filterField = Ext.widget("textfield", {
-                emptyText: 'Find class members...',
+            this.filterField = Ext.widget("triggerfield", {
+                triggerCls: 'reset',
+                cls: 'member-filter',
+                hideTrigger: true,
+                emptyText: 'Filter class members',
                 enableKeyEvents: true,
                 listeners: {
                     keyup: function(cmp) {
                         this.fireEvent("filter", cmp.getValue());
+                        cmp.setHideTrigger(cmp.getValue().length === 0);
                     },
                     specialkey: function(cmp, event) {
                         if (event.keyCode === Ext.EventObject.ESC) {
@@ -87,6 +94,12 @@ Ext.define('Docs.view.cls.Toolbar', {
                         }
                     },
                     scope: this
+                },
+                onTriggerClick: function() {
+                    this.reset();
+                    this.focus();
+                    self.fireEvent('filter', '');
+                    this.setHideTrigger(true);
                 }
             }),
             { xtype: 'tbfill' },
@@ -154,7 +167,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     // creates store tha holds link records
     createStore: function(records) {
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'cls', 'url', 'label', 'inherited', 'static']
+            fields: ['id', 'cls', 'url', 'label', 'inherited', 'static', 'protected', 'deprecated', 'template', 'required']
         });
         store.add(records);
         return store;
@@ -164,10 +177,14 @@ Ext.define('Docs.view.cls.Toolbar', {
     createLinkRecord: function(cls, member) {
         return {
             cls: cls,
-            url: member ? cls+"-"+member.tagname+"-"+member.name : cls,
-            label: member ? ((member.name === "constructor") ? cls : member.name) : cls,
+            url: member ? (cls + "-" + member.id) : cls,
+            label: member ? ((member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name) : cls,
             inherited: member ? member.owner !== cls : false,
-            'static': member ? member['static'] : false
+            'protected': member ? member['protected'] : false,
+            'static': member ? member['static'] : false,
+            deprecated: member ? member['deprecated'] : false,
+            template: member ? member['template'] : false,
+            required: member ? member['required'] : false
         };
     },
 

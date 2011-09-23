@@ -1,5 +1,4 @@
 require 'jsduck/logger'
-require 'jsduck/type_parser'
 
 module JsDuck
 
@@ -17,7 +16,6 @@ module JsDuck
       warn_unnamed
       warn_optional_params
       warn_duplicate_params
-      warn_types
     end
 
     # print warning for each global member
@@ -67,38 +65,6 @@ module JsDuck
             warn("Duplicate parameter name #{p[:name]}", member)
           end
           params[p[:name]] = true
-        end
-      end
-    end
-
-    # Check parameter types
-    def warn_types
-      parser = TypeParser.new(@relations)
-      each_member do |member|
-        (member[:params] || []).each do |p|
-          if !parser.parse(p[:type])
-            if parser.error == :syntax
-              warn("Incorrect parameter type syntax #{p[:type]}", member)
-            else
-              warn("Unknown parameter type #{p[:type]}", member)
-            end
-          end
-        end
-
-        if member[:return] && !parser.parse(member[:return][:type])
-          if parser.error == :syntax
-            warn("Incorrect return type syntax #{member[:return][:type]}", member)
-          else
-            warn("Unknown return type #{member[:return][:type]}", member)
-          end
-        end
-
-        if member[:type] && !parser.parse(member[:type])
-          if parser.error == :syntax
-            warn("Incorrect type syntax #{member[:type]}", member)
-          else
-            warn("Unkown type #{member[:type]}", member)
-          end
         end
       end
     end

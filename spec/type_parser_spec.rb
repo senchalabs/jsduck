@@ -1,13 +1,18 @@
+require "jsduck/relations"
 require "jsduck/type_parser"
 
 describe JsDuck::TypeParser do
 
   def parse(str)
-    types = {
-      "Ext.form.Panel" => true,
-      "Ext.Element" => true,
-    }
-    JsDuck::TypeParser.new(types).parse(str)
+    relations = JsDuck::Relations.new([], [
+      "String",
+      "Number",
+      "RegExp",
+      "Ext.form.Panel",
+      "Ext.Element",
+      "Ext.fx2.Anim",
+    ])
+    JsDuck::TypeParser.new(relations).parse(str)
   end
 
   it "matches simple type" do
@@ -18,12 +23,24 @@ describe JsDuck::TypeParser do
     parse("Ext.form.Panel").should == true
   end
 
+  it "matches type name containing number" do
+    parse("Ext.fx2.Anim").should == true
+  end
+
   it "matches array of simple types" do
     parse("Number[]").should == true
   end
 
   it "matches array of namespaced types" do
     parse("Ext.form.Panel[]").should == true
+  end
+
+  it "matches 2D array" do
+    parse("String[][]").should == true
+  end
+
+  it "matches 3D array" do
+    parse("String[][][]").should == true
   end
 
   describe "matches alteration of" do
@@ -56,6 +73,10 @@ describe JsDuck::TypeParser do
     it "complex alteration" do
       parse("Ext.form.Panel[]/Number/Ext.Element...").should == true
     end
+
+    it "in the middle" do
+      parse("Number.../String").should == true
+    end
   end
 
   describe "doesn't match" do
@@ -85,10 +106,6 @@ describe JsDuck::TypeParser do
 
     it "/ at the end" do
       parse("Number/").should == false
-    end
-
-    it "... in the middle" do
-      parse("Number.../String").should == false
     end
   end
 

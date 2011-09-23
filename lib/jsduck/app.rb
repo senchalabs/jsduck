@@ -3,21 +3,24 @@ require 'jsduck/aggregator'
 require 'jsduck/source_file'
 require 'jsduck/source_writer'
 require 'jsduck/doc_formatter'
+require 'jsduck/class_formatter'
 require 'jsduck/class'
-require 'jsduck/tree'
-require 'jsduck/tree_icons'
+require 'jsduck/icons'
 require 'jsduck/search_data'
 require 'jsduck/relations'
 require 'jsduck/aliases'
 require 'jsduck/exporter'
+require 'jsduck/renderer'
 require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
+require 'jsduck/welcome'
 require 'jsduck/guides'
+require 'jsduck/videos'
+require 'jsduck/examples'
 require 'jsduck/categories'
-require 'jsduck/jsonp'
+require 'jsduck/json_duck'
 require 'jsduck/lint'
-require 'json'
 require 'fileutils'
 
 module JsDuck
@@ -34,6 +37,8 @@ module JsDuck
       # Sets warnings and verbose mode on or off
       Logger.instance.warnings = @opts.warnings
       Logger.instance.verbose = @opts.verbose
+      # Turn JSON pretty-printing on/off
+      JsonDuck.pretty = @opts.pretty_json
     end
 
     # Call this after input parameters set
@@ -44,9 +49,24 @@ module JsDuck
       Aliases.new(@relations).resolve_all
       Lint.new(@relations).run
 
-      @guides = Guides.new(get_doc_formatter, @opts.guides_order)
-      if @opts.guides_dir
-        @timer.time(:parsing) { @guides.parse_dir(@opts.guides_dir) }
+      @welcome = Welcome.new
+      if @opts.welcome
+        @timer.time(:parsing) { @welcome.parse(@opts.welcome) }
+      end
+
+      @guides = Guides.new(get_doc_formatter)
+      if @opts.guides
+        @timer.time(:parsing) { @guides.parse(@opts.guides) }
+      end
+
+      @videos = Videos.new
+      if @opts.videos
+        @timer.time(:parsing) { @videos.parse(@opts.videos) }
+      end
+
+      @examples = Examples.new
+      if @opts.examples
+        @timer.time(:parsing) { @examples.parse(@opts.examples) }
       end
 
       @categories = Categories.new(get_doc_formatter, @relations)
@@ -59,11 +79,10 @@ module JsDuck
 
       clear_output_dir unless @opts.export == :stdout
       if @opts.export == :stdout
-        @timer.time(:generating) { puts JSON.generate(@relations.classes) }
+        @timer.time(:generating) { puts JsonDuck.generate(@relations.classes) }
       elsif @opts.export == :json
         FileUtils.mkdir(@opts.output_dir)
-        init_output_dirs
-        @timer.time(:generating) { write_src(parsed_files) }
+        @timer.time(:generating) { format_classes }
         @timer.time(:generating) { write_classes }
       else
         if @opts.template_links
@@ -71,12 +90,19 @@ module JsDuck
         else
           copy_template
         end
-        create_index_html
+        create_template_html
+        create_print_template_html
+        if !@opts.seo
+          FileUtils.rm(@opts.output_dir+"/index.php")
+          FileUtils.cp(@opts.output_dir+"/template.html", @opts.output_dir+"/index.html")
+        end
         @timer.time(:generating) { write_src(parsed_files) }
-        @timer.time(:generating) { write_tree }
-        @timer.time(:generating) { write_search_data }
+        @timer.time(:generating) { format_classes }
+        @timer.time(:generating) { write_app_data }
         @timer.time(:generating) { write_classes }
         @timer.time(:generating) { @guides.write(@opts.output_dir+"/guides") }
+        @timer.time(:generating) { @videos.write(@opts.output_dir+"/videos") }
+        @timer.time(:generating) { @examples.write(@opts.output_dir+"/examples") }
       end
 
       @timer.report
@@ -86,7 +112,7 @@ module JsDuck
     def parallel_parse(filenames)
       @parallel.map(filenames) do |fname|
         Logger.instance.log("Parsing #{fname} ...")
-        SourceFile.new(IO.read(fname), fname)
+        SourceFile.new(IO.read(fname), fname, @opts)
       end
     end
 
@@ -99,6 +125,7 @@ module JsDuck
       end
       agr.classify_orphans
       agr.create_global_class unless @opts.ignore_global
+      agr.create_accessors
       agr.append_ext4_event_options
       agr.result
     end
@@ -109,7 +136,7 @@ module JsDuck
       classes = []
       docs.each do |d|
         if d[:tagname] == :class
-          classes << Class.new(d) if !d[:private] || @opts.show_private_classes
+          classes << Class.new(d)
         else
           type = d[:tagname].to_s
           name = d[:name]
@@ -121,35 +148,48 @@ module JsDuck
       Relations.new(classes, @opts.external_classes)
     end
 
-    # Given all classes, generates namespace tree and writes it
-    # in JSON form into a file.
-    def write_tree
-      tree = Tree.new.create(@relations.classes, @guides)
-      icons = TreeIcons.new.extract_icons(tree)
-      js = "Docs.classData = " + JSON.generate( tree ) + ";"
-      js += "Docs.icons = " + JSON.generate( icons ) + ";"
-      File.open(@opts.output_dir+"/output/tree.js", 'w') {|f| f.write(js) }
+    # Formats each class
+    def format_classes
+      formatter = ClassFormatter.new(@relations, get_doc_formatter)
+      # Don't format types when exporting
+      formatter.include_types = !@opts.export
+      # Format all doc-objects in parallel
+      formatted_docs = @parallel.map(@relations.classes) do |cls|
+        formatter.format(cls.internal_doc)
+      end
+      # Then merge the data back to classes sequentially
+      formatted_docs.each do |doc|
+        @relations[doc[:name]].internal_doc = doc
+      end
     end
 
-    # Given all classes, generates members data for search and writes in
-    # in JSON form into a file.
-    def write_search_data
-      search_data = SearchData.new.create(@relations.classes)
-      js = "Docs.searchData = " + JSON.generate( {:data => search_data} ) + ";"
-      File.open(@opts.output_dir+"/output/searchData.js", 'w') {|f| f.write(js) }
+    # Writes classes, guides, videos, and search data to one big .js file
+    def write_app_data
+      js = "Docs.data = " + JsonDuck.generate({
+        :classes => Icons.new.create(@relations.classes),
+        :guides => @guides.to_array,
+        :videos => @videos.to_array,
+        :examples => @examples.to_array,
+        :search => SearchData.new.create(@relations.classes),
+      }) + ";\n"
+      File.open(@opts.output_dir+"/data.js", 'w') {|f| f.write(js) }
     end
 
     # Writes JSON export or JsonP file for each class
     def write_classes
-      exporter = Exporter.new(@relations, get_doc_formatter)
+      exporter = Exporter.new(@relations)
+      renderer = Renderer.new(@opts)
+      dir = @opts.output_dir + (@opts.export ? "" : "/output")
       @parallel.each(@relations.classes) do |cls|
-        filename = @opts.output_dir+"/output/" + cls[:name] + (@opts.export ? ".json" : ".js")
+        filename = dir + "/" + cls[:name] + (@opts.export ? ".json" : ".js")
         Logger.instance.log("Writing to #{filename} ...")
         data = exporter.export(cls)
         if @opts.export
-          File.open(filename, 'w') {|f| f.write(JSON.pretty_generate(data)) }
+          JsonDuck.write_json(filename, data)
         else
-          JsonP.write(filename, cls[:name].gsub(/\./, "_"), data)
+          data[:html] = renderer.render(data)
+          data = exporter.compact(data)
+          JsonDuck.write_jsonp(filename, cls[:name].gsub(/\./, "_"), data)
         end
       end
     end
@@ -172,7 +212,9 @@ module JsDuck
       formatter.link_tpl = @opts.link_tpl if @opts.link_tpl
       formatter.img_tpl = @opts.img_tpl if @opts.img_tpl
       formatter.relations = @relations
-      formatter.get_example = lambda {|path| IO.read(@opts.examples_dir + "/" + path) } if @opts.examples_dir
+      if @opts.inline_examples_dir
+        formatter.get_example = lambda {|path| IO.read(@opts.inline_examples_dir + "/" + path) }
+      end
       formatter
     end
 
@@ -202,19 +244,40 @@ module JsDuck
       FileUtils.mkdir(@opts.output_dir + "/source")
     end
 
-    def create_index_html
-      Logger.instance.log("Creating #{@opts.output_dir}/index.html...")
-      html = IO.read(@opts.template_dir+"/index.html")
-      html.gsub!("{title}", @opts.title)
-      html.gsub!("{footer}", "<div id='footer-content' style='display: none'>#{@footer}</div>")
-      html.gsub!("{extjs_path}", @opts.extjs_path)
-      html.gsub!("{local_storage_db}", @opts.local_storage_db)
-      html.gsub!("{guides}", @guides.to_html)
-      html.gsub!("{categories}", @categories.to_html)
-      html.gsub!("{head_html}", @opts.head_html)
-      html.gsub!("{body_html}", @opts.body_html)
-      FileUtils.rm(@opts.output_dir+"/index.html")
-      File.open(@opts.output_dir+"/index.html", 'w') {|f| f.write(html) }
+    def create_template_html
+      write_template("template.html", {
+        "{title}" => @opts.title,
+        "{header}" => @opts.header,
+        "{footer}" => "<div id='footer-content' style='display: none'>#{@opts.footer}</div>",
+        "{extjs_path}" => @opts.extjs_path,
+        "{local_storage_db}" => @opts.local_storage_db,
+        "{show_print_button}" => @opts.seo ? "true" : "false",
+        "{welcome}" => @welcome.to_html,
+        "{categories}" => @categories.to_html,
+        "{guides}" => @guides.to_html,
+        "{head_html}" => @opts.head_html,
+        "{body_html}" => @opts.body_html,
+      })
+    end
+
+    def create_print_template_html
+      write_template("print-template.html", {
+        "{title}" => @opts.title,
+        "{header}" => @opts.header,
+      })
+    end
+
+    # Opens file in template dir, replaces {keys} inside it, writes to output dir
+    def write_template(filename, replacements)
+      in_file = @opts.template_dir + '/' + filename
+      out_file = @opts.output_dir + '/' + filename
+      Logger.instance.log("Creating #{out_file}...")
+      html = IO.read(in_file)
+      html.gsub!(/\{\w+\}/) do |key|
+        replacements[key] ? replacements[key] : key
+      end
+      FileUtils.rm(out_file)
+      File.open(out_file, 'w') {|f| f.write(html) }
     end
   end
 

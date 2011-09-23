@@ -89,6 +89,14 @@ describe JsDuck::Lexer do
     it "when escaped single-quote inside single-quoted string" do
       lex(@s+@b+@s+@s   + ' "blah"').should == [[:string, @b+@s], [:string, "blah"]]
     end
+
+    it "when newlines escaped inside double-quoted string" do
+      lex(@d+"A\\\nB"+@d).should == [[:string, "A\\\nB"]]
+    end
+
+    it "when newlines escaped inside single-quoted string" do
+      lex(@s+"A\\\nB"+@s).should == [[:string, "A\\\nB"]]
+    end
   end
 
   it "identifies $ as beginning of identifier" do
@@ -134,6 +142,36 @@ describe JsDuck::Lexer do
 
     it "doc-comment" do
       lex("/** ").should == [[:doc_comment, "/** ", 1]]
+    end
+  end
+
+  describe "passing StringScanner to constructor" do
+    before do
+      @scanner = StringScanner.new("5 + 5")
+      @lex = JsDuck::Lexer.new(@scanner)
+    end
+
+    it "uses that StringScanner for parsing" do
+      @lex.look(:number).should == true
+    end
+
+    it "doesn't advance the scan pointer when nothing done" do
+      @scanner.rest.should == "5 + 5"
+    end
+
+    it "#look doesn't advance the scan pointer" do
+      @lex.look(:number)
+      @scanner.rest.should == "5 + 5"
+    end
+
+    it "#empty? doesn't advance the scan pointer" do
+      @lex.empty?
+      @scanner.rest.should == "5 + 5"
+    end
+
+    it "#next advances the scan pointer only until the end of token (excluding whitespace after token)" do
+      @lex.next
+      @scanner.rest.should == " + 5"
     end
   end
 

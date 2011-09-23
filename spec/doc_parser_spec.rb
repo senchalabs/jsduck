@@ -99,5 +99,23 @@ describe JsDuck::DocParser do
     end
   end
 
+  describe "doc-comment without *-s on left side" do
+    before do
+      @tag = parse_single("/**
+        @event blah
+        Some comment.
+        More text.
+
+            code sample
+      */")[0]
+    end
+    it "detects the @event tag" do
+      @tag[:tagname].should == :event
+    end
+    it "trims whitespace at beginning of lines up to first line" do
+      @tag[:doc].should == "Some comment.\nMore text.\n\n    code sample"
+    end
+  end
+
 end
 

@@ -13,7 +13,7 @@ module JsDuck
 
     def initialize(classes = [], ignorables = [])
       @classes = classes
-      @ignorables = {"Object" => true}
+      @ignorables = {}
       ignorables.each {|classname| @ignorables[classname] = true }
 
       # First build class lookup table; building lookup tables for
@@ -47,6 +47,12 @@ module JsDuck
 
     def each(&block)
       @classes.each(&block)
+    end
+
+    # Returns list of all classes.  This method allows us to treat
+    # Relations as array and therefore easily mock it
+    def to_a
+      @classes
     end
 
     def reg_subclasses(cls)

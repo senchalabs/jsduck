@@ -1,17 +1,11 @@
-require 'jsduck/doc_formatter'
-
 module JsDuck
 
   # Export class data as hash with :cfg being replace with :cfgs and
   # including all the inherited members too.  Same for :properties,
   # :methods, and :events.
-  #
-  # Also all the :doc elements will be formatted - converted from
-  # markdown to HTML and @links resolved.
   class Exporter
-    def initialize(relations, formatter)
+    def initialize(relations)
       @relations = relations
-      @formatter = formatter
     end
 
     # Returns all data in Class object as hash.
@@ -27,50 +21,32 @@ module JsDuck
       h[:subclasses] = @relations.subclasses(cls).collect {|c| c.full_name }
       h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c.full_name }
       h[:allMixins] = cls.all_mixins.collect {|c| c.full_name }
-      format_class(h)
+      h
     end
 
-    # converts :doc properties from markdown to html and resolve @links
-    def format_class(c)
-      @formatter.class_context = c[:name]
-      @formatter.doc_context = c
-      c[:doc] = @formatter.format(c[:doc]) if c[:doc]
-      c[:members].each_pair do |type, members|
-        c[:members][type] = members.map {|m| format_member(m) }
+    # removes extra data from export
+    def compact(cls)
+      cls.delete(:doc)
+      cls[:members] = compact_members_group(cls[:members])
+      cls[:statics] = compact_members_group(cls[:statics])
+      cls
+    end
+
+    def compact_members_group(group)
+      c_group = {}
+      group.each_pair do |type, members|
+        c_group[type] = members.map {|m| compact_member(m) }
       end
-      c[:statics].each_pair do |type, members|
-        c[:statics][type] = members.map {|m| format_member(m) }
+      c_group
+    end
+
+    def compact_member(m)
+      m_copy = {}
+      [:name, :tagname, :owner, :protected, :static, :deprecated, :required, :template, :id].each do |key|
+        m_copy[key] = m[key]
       end
-      c
+      m_copy
     end
-
-    def format_member(m)
-      m = m.clone
-      @formatter.doc_context = m
-      m[:doc] = @formatter.format(m[:doc]) if m[:doc]
-      m[:deprecated][:text] = @formatter.format(m[:deprecated][:text]) if m[:deprecated]
-      if m[:params] || @formatter.too_long?(m[:doc])
-        m[:shortDoc] = @formatter.shorten(m[:doc])
-      end
-      m[:params] = format_params(m[:params]) if m[:params]
-      m[:return] = format_return(m[:return]) if m[:return]
-      m
-    end
-
-    def format_params(params)
-      params.map do |p|
-        p = p.clone
-        p[:doc] = @formatter.format(p[:doc]) if p[:doc]
-        p
-      end
-    end
-
-    def format_return(r)
-      r = r.clone
-      r[:doc] = @formatter.format(r[:doc]) if r[:doc]
-      r
-    end
-
   end
 
 end
