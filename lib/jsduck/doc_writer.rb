@@ -211,11 +211,11 @@ module JsDuck
 
     # Does HTML to Markdown magic using python script.
     def html2text(html)
-      File.open("temp.html", 'w') {|f| f.write(html) }
-      `python html2text.py --wrap #{@wrap} temp.html > temp.text`
-      text = IO.read("temp.text")
-      FileUtils.rm("temp.html")
-      FileUtils.rm("temp.text")
+      File.open("bin/temp.html", 'w') {|f| f.write(html) }
+      `python bin/html2text.py --wrap #{@wrap} bin/temp.html > bin/temp.text`
+      text = IO.read("bin/temp.text")
+      FileUtils.rm("bin/temp.html")
+      FileUtils.rm("bin/temp.text")
       return text.strip
     end
   end
