@@ -27,6 +27,8 @@ def load_sdk_vars
     puts "    OUT_DIR='/path/to/ouput/dir'"
     puts "    # path to SDK (for developers at Sencha)"
     puts "    SDK_DIR='/path/to/SDK'"
+    puts "    # path to Animator (for developers at Sencha)"
+    puts "    ANIMATOR_DIR='/path/to/Animator'"
     exit 1
   end
 end
