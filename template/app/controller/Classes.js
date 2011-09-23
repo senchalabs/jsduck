@@ -70,7 +70,7 @@ Ext.define('Docs.controller.Classes', {
         );
 
         Ext.getBody().addListener('click', function(event, el) {
-            this.handleUrlClick(el.href, event);
+            this.handleUrlClick(decodeURI(el.href), event);
         }, this, {
             preventDefault: true,
             delegate: '.docClass'
