@@ -79,7 +79,7 @@ module JsDuck
 
     # creates @extends when not detectable from source code
     def at_extends(cls)
-      if cls[:code][:type] == :ext_define && cls[:code][:extend] == cls[:extends]
+      if cls[:code][:type] == :ext_define && (cls[:code][:extend] == cls[:extends] || cls[:extends] == "Ext.Base")
         nil
       elsif cls[:extends]
         "@extends " + cls[:extends]
