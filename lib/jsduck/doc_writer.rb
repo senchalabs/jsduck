@@ -64,7 +64,7 @@ module JsDuck
         maybe_html2text(cls),
         # configs defined inside class-comment
         cls[:members][:cfg].find_all {|c| !c[:orig_comment] }.map {|c| cfg(c) },
-        constructor(cls),
+        cls[:orig_comment] =~ /@constructor/ ? constructor(cls) : nil,
       ]
     end
 
