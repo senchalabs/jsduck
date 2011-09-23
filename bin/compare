@@ -65,17 +65,19 @@ new_classes = read_all_classes(ARGV[1])
 out_file = ARGV[2]
 
 diff_data = []
-old_classes.each_value do |cls|
-  new_cls = new_classes[cls["name"]]
-  # Remap classes like Array to Ext.Array
-  new_cls = new_classes["Ext."+cls["name"]] unless new_cls
+old_classes.each_pair do |name, cls|
+  if name == cls["name"]
+    new_cls = new_classes[cls["name"]]
+    # Remap classes like Array to Ext.Array
+    new_cls = new_classes["Ext."+cls["name"]] unless new_cls
 
-  diff_data << {
-    :name => cls["name"],
-    :found => !!new_cls,
-    :new_name => new_cls && new_cls["name"],
-    :diff => new_cls ? compare_classes(cls, new_cls) : [],
-  }
+    diff_data << {
+      :name => cls["name"],
+      :found => !!new_cls,
+      :new_name => new_cls && new_cls["name"],
+      :diff => new_cls ? compare_classes(cls, new_cls) : [],
+    }
+  end
 end
 
 # do HTML output
