@@ -4,9 +4,38 @@
  * Renders the example inside iframe.
  */
 Ext.define('Docs.view.examples.Container', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.examplecontainer',
     layout: 'fit',
+
+    cls: 'example-container iScroll',
+    autoScroll: true,
+    bodyPadding: '10 0 5 0',
+
+    initComponent: function() {
+
+        this.dockedItems = [{
+            xtype: 'container',
+            dock: 'top',
+            html: [
+                '<h1>Kitchen Sink Example</h1>',
+                '<div class="cls-grouping example-toolbar">',
+                    '<div class="devices">',
+                        '<button class="selected ipad">iPad</button>',
+                        '<button class="iphone">iPhone</button>',
+                        // '<button class="nexus">Nexus S</button>',
+                    '</div>',
+                    '<span class="separator">&nbsp;</span>',
+                    '<div class="orientations">',
+                        '<button class="landscape selected">Landscape</button>',
+                        '<button class="portrait">Portrait</button>',
+                    '<div>',
+                '</div>'
+            ].join('')
+        }];
+
+        this.callParent(arguments);
+    },
 
     /**
      * Loads example into the page.
@@ -14,7 +43,9 @@ Ext.define('Docs.view.examples.Container', {
      */
     load: function(example) {
         this.tpl = this.tpl || new Ext.XTemplate(
-            '<iframe style="width: 100%; height: 100%; border: 0;" src="extjs/examples/{url}"></iframe>'
+            '<div class="touchExample ipad landscape">',
+                '<iframe style="width: 1024px; height: 768px; border: 0;" src="touch/examples/{url}"></iframe>',
+            '</div>'
         );
 
         this.update(this.tpl.apply(example));

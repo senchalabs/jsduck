@@ -353,6 +353,7 @@ class JsDuckRunner
   # Copy over the images that Sencha Touch documentation links to.
   def copy_touch2_images
     system "cp -r #{@sdk_dir}/touch/docs/resources #{@out_dir}/doc-resources"
+    system "cp -r #{@sdk_dir}/touch/build #{@out_dir}/touch"
   end
 
   # Copy over the images that Animator documentation links to.

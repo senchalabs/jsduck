@@ -6,6 +6,9 @@ Ext.define('Docs.controller.Examples', {
     baseUrl: '#!/example',
     title: 'Examples',
 
+    orientation: 'landscape',
+    device: 'ipad',
+
     refs: [
         {
             ref: 'viewport',
@@ -44,6 +47,35 @@ Ext.define('Docs.controller.Examples', {
             'exampleindex > thumblist': {
                 urlclick: function(url) {
                     this.loadExample(url);
+                }
+            },
+            'examplecontainer': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('click', function(e, el) {
+                        this.changeDevice('ipad');
+                    }, this, {
+                        delegate: 'button.ipad'
+                    });
+                    cmp.el.addListener('click', function(e, el) {
+                        this.changeDevice('iphone');
+                    }, this, {
+                        delegate: 'button.iphone'
+                    });
+                    cmp.el.addListener('click', function(e, el) {
+                        this.changeDevice('nexus');
+                    }, this, {
+                        delegate: 'button.nexus'
+                    });
+                    cmp.el.addListener('click', function(e, el) {
+                        this.changeOrientation('portrait');
+                    }, this, {
+                        delegate: 'button.portrait'
+                    });
+                    cmp.el.addListener('click', function(e, el) {
+                        this.changeOrientation('landscape');
+                    }, this, {
+                        delegate: 'button.landscape'
+                    });
                 }
             }
         });
@@ -87,5 +119,61 @@ Ext.define('Docs.controller.Examples', {
             }, this);
         }
         return this.map[url];
+    },
+
+    changeOrientation: function(orientation) {
+
+        if (this.orientation === orientation) {
+            return false;
+        }
+        this.orientation = orientation;
+
+        var container = Ext.get(Ext.query('.touchExample')[0]),
+            iframe = Ext.get(Ext.query('.touchExample iframe')[0]);
+
+        Ext.Array.each(Ext.query('.example-toolbar .orientations button'), function(el) {
+            Ext.get(el).removeCls('selected');
+        });
+        Ext.get(Ext.query('.example-toolbar .orientations button.' + this.orientation)).addCls('selected');
+
+        container.removeCls(['portrait', 'landscape']);
+        container.addCls(this.orientation);
+
+        this.updateIframeDimensions(iframe);
+    },
+
+    changeDevice: function(device) {
+
+        if (this.device === device) {
+            return false;
+        }
+        this.device = device;
+
+        var container = Ext.get(Ext.query('.touchExample')[0]),
+            iframe = Ext.get(Ext.query('.touchExample iframe')[0]);
+
+        Ext.Array.each(Ext.query('.example-toolbar .devices button'), function(el) {
+            Ext.get(el).removeCls('selected');
+        });
+        Ext.get(Ext.query('.example-toolbar .devices button.' + this.device)).addCls('selected');
+
+        container.removeCls(['iphone', 'ipad']);
+        container.addCls(this.device);
+
+        this.updateIframeDimensions(iframe);
+    },
+
+    updateIframeDimensions: function(iframe) {
+        if (this.device == 'ipad') {
+            iframe.setStyle({
+                width: this.orientation == 'landscape' ? '1024px' : '768px',
+                height: this.orientation == 'landscape' ? '768px' : '1024px',
+            });
+        } else {
+            iframe.setStyle({
+                width: this.orientation == 'landscape' ? '480px' : '320px',
+                height: this.orientation == 'landscape' ? '320px' : '480px',
+            });
+        }
     }
 });
