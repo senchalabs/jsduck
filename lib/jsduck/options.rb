@@ -364,7 +364,7 @@ module JsDuck
 
     # Runs checks on the options
     def validate
-      if @input_files.length == 0
+      if @input_files.length == 0 && !@welcome && !@guides && !@videos && !@examples
         puts "You should specify some input files, otherwise there's nothing I can do :("
         exit(1)
       elsif @export != :stdout

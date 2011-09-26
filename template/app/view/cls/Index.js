@@ -28,10 +28,10 @@ Ext.define('Docs.view.cls.Index', {
     },
 
     /**
-     * Returns tab config for classes page.
+     * Returns tab config for classes page if at least one class.
      * @return {Object}
      */
     getTab: function() {
-        return {cls: 'classes', href: '#!/api', tooltip: 'API Documentation'};
+        return Docs.data.classes.length > 0 ? {cls: 'classes', href: '#!/api', tooltip: 'API Documentation'} : false;
     }
 });
