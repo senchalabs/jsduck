@@ -42,9 +42,17 @@ Ext.define('Docs.view.examples.Container', {
      * @param {Object} example Example object
      */
     load: function(example) {
+
+        example = Ext.applyIf(example, {
+            device: 'ipad',
+            orientation: 'landscape',
+            width: '1024px',
+            height: '768px'
+        });
+
         this.tpl = this.tpl || new Ext.XTemplate(
-            '<div class="touchExample ipad landscape">',
-                '<iframe style="width: 1024px; height: 768px; border: 0;" src="touch/examples/{url}"></iframe>',
+            '<div class="touchExample {device} {orientation}">',
+                '<iframe style="width: {width}; height: {height}; border: 0;" src="touch/examples/{url}"></iframe>',
             '</div>'
         );
 

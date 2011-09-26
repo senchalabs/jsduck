@@ -139,7 +139,7 @@ Ext.define('Docs.controller.Examples', {
         container.removeCls(['portrait', 'landscape']);
         container.addCls(this.orientation);
 
-        this.updateIframeDimensions(iframe);
+        iframe.setStyle(this.iFrameDimensions());
     },
 
     changeDevice: function(device) {
@@ -160,20 +160,27 @@ Ext.define('Docs.controller.Examples', {
         container.removeCls(['iphone', 'ipad']);
         container.addCls(this.device);
 
-        this.updateIframeDimensions(iframe);
+        var example = this.getExample(this.activeUrl);
+        example.orientation = this.orientation;
+        example.device = this.device;
+        Ext.apply(example, this.iFrameDimensions());
+
+        this.getPage().clear();
+        this.activateExampleCard();
+        this.getPage().load(example);
     },
 
-    updateIframeDimensions: function(iframe) {
+    iFrameDimensions: function() {
         if (this.device == 'ipad') {
-            iframe.setStyle({
+            return {
                 width: this.orientation == 'landscape' ? '1024px' : '768px',
                 height: this.orientation == 'landscape' ? '768px' : '1024px',
-            });
+            };
         } else {
-            iframe.setStyle({
+            return {
                 width: this.orientation == 'landscape' ? '480px' : '320px',
                 height: this.orientation == 'landscape' ? '320px' : '480px',
-            });
+            };
         }
     }
 });
