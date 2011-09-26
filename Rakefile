@@ -219,6 +219,8 @@ class JsDuckRunner
       "--footer", "Sencha Touch 2.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/touch/docs/categories.json",
       "--videos", "#{@sdk_dir}/touch/docs/videos.json",
+      "--guides", "#{@sdk_dir}/touch/docs/guides.json",
+      "--examples", "#{@sdk_dir}/touch/docs/examples.json",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
@@ -240,8 +242,7 @@ class JsDuckRunner
       "--videos", "#{@animator_dir}/docs/videos.json",
       "--guides", "#{@animator_dir}/docs/guides.json",
       "--examples", "#{@animator_dir}/docs/examples/examples.json",
-      "--output", "#{@out_dir}",
-      "#{@animator_dir}/docs/docs"
+      "--output", "#{@out_dir}"
     ]
   end
 
