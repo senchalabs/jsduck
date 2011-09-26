@@ -25,7 +25,10 @@ module JsDuck
     # Ignores duplicate warnings - only prints the first one.
     # Works best when --processes=0, but it reduces the amount of
     # warnings greatly also when run multiple processes.
-    def warn(msg)
+    #
+    # Optionally filename and line number will be inserted to message.
+    def warn(msg, filename=nil, line=0)
+      msg = filename ? "#{filename} line #{line} #{msg}" : msg
       if @warnings && !@shown_warnings[msg]
         $stderr.puts "Warning: " + msg
         @shown_warnings[msg] = true

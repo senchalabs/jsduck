@@ -142,7 +142,7 @@ module JsDuck
           name = d[:name]
           file = d[:filename]
           line = d[:linenr]
-          Logger.instance.warn("Ignoring #{type}: #{name} in #{file} line #{line}")
+          Logger.instance.warn("Ignoring #{type}: #{name}", file, line)
         end
       end
       Relations.new(classes, @opts.external_classes)
