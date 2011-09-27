@@ -241,7 +241,6 @@ class JsDuckRunner
       "--guides", "#{@animator_dir}/docs/guides.json",
       "--examples", "#{@animator_dir}/docs/examples/examples.json",
       "--output", "#{@out_dir}",
-      "#{@animator_dir}/docs/docs"
     ]
   end
 
