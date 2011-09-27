@@ -36,6 +36,10 @@ module JsDuck
     # This will hold list of all image paths gathered from {@img} tags.
     attr_accessor :images
 
+    # Base path to prefix images from {@img} tags.
+    # Defaults to no prefix.
+    attr_accessor :img_path
+
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
     # Context#blah is meant.
@@ -175,7 +179,7 @@ module JsDuck
       @img_tpl.gsub(/(%\w)/) do
         case $1
         when '%u'
-          "images/" + url
+          @img_path ? (@img_path + "/" + url) : url
         when '%a'
           CGI.escapeHTML(alt_text||"")
         else
