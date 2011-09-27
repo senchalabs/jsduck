@@ -33,6 +33,9 @@ module JsDuck
     # passed in a filename
     attr_accessor :get_example
 
+    # This will hold list of all image paths gathered from {@img} tags.
+    attr_accessor :images
+
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
     # Context#blah is meant.
@@ -57,6 +60,7 @@ module JsDuck
       @doc_context = {}
       @max_length = 120
       @relations = {}
+      @images = []
       @link_tpl = '<a href="%c%#%m">%a</a>'
       @img_tpl = '<img src="%u" alt="%a"/>'
       @example_tpl = '<pre class="inline-example"><code>%a</code></pre>'
@@ -167,10 +171,11 @@ module JsDuck
 
     # applies the image template
     def img(url, alt_text)
+      @images << url
       @img_tpl.gsub(/(%\w)/) do
         case $1
         when '%u'
-          url
+          "images/" + url
         when '%a'
           CGI.escapeHTML(alt_text||"")
         else

@@ -170,6 +170,8 @@ class JsDuckRunner
       "--categories", "#{@sdk_dir}/extjs/docs/categories.json",
       "--output", "#{@out_dir}",
       "--builtin-classes",
+      "--images", "#{@sdk_dir}/extjs/docs/resources",
+      "--images", "#{@sdk_dir}/platform/docs/resources",
       "#{@sdk_dir}/extjs/src",
       "#{@sdk_dir}/platform/src",
       "#{@sdk_dir}/platform/core/src",
@@ -182,6 +184,7 @@ class JsDuckRunner
       "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--ignore-global",
       "--no-warnings",
+      "--images", "#{@ext_dir}/docs/doc-resources",
       "--output", "#{@out_dir}",
       "#{@ext_dir}/src",
     ]
@@ -201,6 +204,7 @@ class JsDuckRunner
       "--videos", "#{@sdk_dir}/touch/doc-resources/videos.json",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
+      "--images", "#{@sdk_dir}/touch/doc-resources",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 
@@ -221,6 +225,7 @@ class JsDuckRunner
       "--videos", "#{@sdk_dir}/touch/docs/videos.json",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
+      "--images", "#{@sdk_dir}/touch/docs/resources",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 
@@ -332,32 +337,6 @@ class JsDuckRunner
     ]
   end
 
-  # Copy over the images that SDK documentation links to
-  def copy_sdk_images
-    system "cp -r #{@sdk_dir}/extjs/docs/resources #{@out_dir}/doc-resources"
-    system "cp -r #{@sdk_dir}/platform/docs/resources/* #{@out_dir}/doc-resources"
-  end
-
-  # Copy over the images that Ext4 documentation links to
-  def copy_ext4_images
-    system "cp -r #{@ext_dir}/docs/doc-resources #{@out_dir}/doc-resources"
-  end
-
-  # Copy over the images that Sencha Touch documentation links to.
-  def copy_touch_images
-    system "cp -r #{@sdk_dir}/touch/doc-resources #{@out_dir}/doc-resources"
-  end
-
-  # Copy over the images that Sencha Touch documentation links to.
-  def copy_touch2_images
-    system "cp -r #{@sdk_dir}/touch/docs/resources #{@out_dir}/doc-resources"
-  end
-
-  # Copy over the images that Animator documentation links to.
-  def copy_animator_images
-    system "cp -r #{@animator_dir}/docs/resources #{@out_dir}/doc-resources"
-  end
-
   # Copy over SDK examples
   def copy_sdk_examples
     system "mkdir #{@out_dir}/extjs/builds"
@@ -406,8 +385,6 @@ task :sdk, [:mode] => :sass do |t, args|
   runner.add_google_analytics if mode == "live"
   runner.run
 
-  runner.copy_sdk_images
-
   runner.copy_sdk_examples if mode == "export" || mode == "live"
 end
 
@@ -424,8 +401,6 @@ task :ext4, [:mode] => :sass do |t, args|
   runner.add_debug if mode == "debug"
   runner.add_seo
   runner.run
-
-  runner.copy_ext4_images
 end
 
 desc "Run JSDuck on Sencha Touch (for internal use at Sencha)\n" +
@@ -441,8 +416,6 @@ task :touch, [:mode] => :sass do |t, args|
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.run
-
-  runner.copy_touch_images
 end
 
 desc "Run JSDuck on Sencha Touch 2 (for internal use at Sencha)\n" +
@@ -458,8 +431,6 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.run
-
-  runner.copy_touch2_images
 end
 
 desc "Run JSDuck on Sencha Animator (for internal use at Sencha)\n" +
@@ -477,7 +448,6 @@ task :animator, [:mode] => :sass do |t, args|
   runner.add_seo if mode == "debug" || mode == "live"
   runner.run
 
-  runner.copy_animator_images
   runner.copy_animator_examples
 end
 
