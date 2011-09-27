@@ -13,7 +13,7 @@ module JsDuck
 
     # Parses categories in JSON file
     def parse(path)
-      @categories = JsonDuck.read(path)["categories"]
+      @categories = JsonDuck.read(path)
 
       # Perform expansion on all class names containing * wildcard
       @categories.each do |cat|
