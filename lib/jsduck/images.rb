@@ -6,8 +6,22 @@ module JsDuck
   # Looks up images from directories specified through --images option.
   class Images
     def initialize(paths)
-      @paths = paths
+      @paths = scan_for_images(paths)
       @images = {}
+    end
+
+    # Scans each path for image files, building a hash of paths where
+    # each path points to a hash of image files found in that path.
+    def scan_for_images(paths)
+      map = {}
+      paths.each do |path|
+        # Scans directory for image files
+        map[path] = {}
+        Dir[path+"/**/*.{png,jpg,jpeg,gif}"].each do |img|
+          map[path][img] = false
+        end
+      end
+      map
     end
 
     # Adds relative image path of an image
@@ -24,21 +38,33 @@ module JsDuck
           Logger.instance.warn("Image #{img} not found")
         end
       end
+      report_unused
     end
 
     # Attempts to copy one image, returns true on success
     def copy_img(img, output_dir)
-      @paths.each do |path|
+      @paths.each_pair do |path, map|
         filename = path + "/" + img
-        if File.exists?(filename)
+        if map.has_key?(filename)
           dest = output_dir + "/" + img
           FileUtils.makedirs(File.dirname(dest))
           FileUtils.cp(filename, dest)
           Logger.instance.log("Copy #{filename} to #{dest} ...")
+          # mark file as used.
+          map[filename] = true
           return true
         end
       end
       return false
+    end
+
+    # Report unused images
+    def report_unused
+      @paths.each_pair do |path, map|
+        map.each_pair do |img, used|
+          Logger.instance.warn("Image #{img} not used") unless used
+        end
+      end
     end
 
   end
