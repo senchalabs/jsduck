@@ -13,11 +13,14 @@ Ext.define('Docs.view.examples.Index', {
     autoScroll: true,
 
     initComponent: function() {
+        var baseUrl = Docs.touchExamplesUi ? "touch/examples" : "extjs/examples/shared/screens";
+
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Examples</h1>' },
             Ext.create('Docs.view.ThumbList', {
                 itemTpl: [
-                    '<dd ext:url="#!/example/{url}"><img src="touch/examples/{icon}"/>',
+                    '<dd ext:url="#!/example/{url}">',
+                        '<img src="'+baseUrl+'/{icon}"/>',
                         '<div><h4>{text}',
                             '<tpl if="status === \'new\'">',
                                 '<span class="new-sample"> (New)</span>',

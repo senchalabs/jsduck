@@ -262,6 +262,7 @@ module JsDuck
         "{extjs_path}" => @opts.extjs_path,
         "{local_storage_db}" => @opts.local_storage_db,
         "{show_print_button}" => @opts.seo ? "true" : "false",
+        "{touch_examples_ui}" => @opts.touch_examples_ui ? "true" : "false",
         "{welcome}" => @welcome.to_html,
         "{categories}" => @categories.to_html,
         "{guides}" => @guides.to_html,

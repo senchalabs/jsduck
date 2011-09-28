@@ -225,6 +225,7 @@ class JsDuckRunner
       "--videos", "#{@sdk_dir}/touch/docs/videos.json",
       "--guides", "#{@sdk_dir}/touch/docs/guides.json",
       "--examples", "#{@sdk_dir}/touch/docs/examples.json",
+      "--touch-examples-ui",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
       "--images", "#{@sdk_dir}/touch/docs/resources",

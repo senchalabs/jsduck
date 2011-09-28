@@ -15,7 +15,8 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.videos.Index',
         'Docs.view.videos.Container',
         'Docs.view.examples.Index',
-        'Docs.view.examples.Container'
+        'Docs.view.examples.Container',
+        'Docs.view.examples.TouchContainer'
     ],
 
     id: 'viewport',
@@ -128,7 +129,7 @@ Ext.define('Docs.view.Viewport', {
                                     id: 'exampleindex'
                                 },
                                 {
-                                    xtype: 'examplecontainer',
+                                    xtype: Docs.touchExamplesUi ? 'touchexamplecontainer' : 'examplecontainer',
                                     id: 'example'
                                 }
                             ]

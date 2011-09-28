@@ -46,7 +46,7 @@ Ext.define('Docs.controller.Examples', {
                     this.loadExample(url);
                 }
             },
-            'examplecontainer': {
+            'touchexamplecontainer': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(e, el) {
                         this.changeDevice('tablet');
