@@ -1208,25 +1208,25 @@ a {
       @include border-radius(10px);
       text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35); } } }
 
-.ipad.landscape {
+.tablet.landscape {
   padding: 113px 119px;
   width: 1271px;
   height: 1001px;
   background: url(../images/ipad-l.jpg) no-repeat; }
 
-.ipad.portrait {
+.tablet.portrait {
   padding: 113px 119px;
   width: 1001px;
   height: 1271px;
   background: url(../images/ipad-p.jpg) no-repeat; }
 
-.iphone.landscape {
+.phone.landscape {
   padding: 22px 127px;
   width: 724px;
   height: 368px;
   background: url(../images/iphone-l.jpg) no-repeat; }
 
-.iphone.portrait {
+.phone.portrait {
   padding: 127px 26px;
   width: 368px;
   height: 724px;

@@ -6,9 +6,6 @@ Ext.define('Docs.controller.Examples', {
     baseUrl: '#!/example',
     title: 'Examples',
 
-    orientation: 'landscape',
-    device: 'ipad',
-
     refs: [
         {
             ref: 'viewport',
@@ -52,14 +49,14 @@ Ext.define('Docs.controller.Examples', {
             'examplecontainer': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(e, el) {
-                        this.changeDevice('ipad');
+                        this.changeDevice('tablet');
                     }, this, {
-                        delegate: 'button.ipad'
+                        delegate: 'button.tablet'
                     });
                     cmp.el.addListener('click', function(e, el) {
-                        this.changeDevice('iphone');
+                        this.changeDevice('phone');
                     }, this, {
-                        delegate: 'button.iphone'
+                        delegate: 'button.phone'
                     });
                     cmp.el.addListener('click', function(e, el) {
                         this.changeOrientation('portrait');
@@ -117,64 +114,10 @@ Ext.define('Docs.controller.Examples', {
     },
 
     changeOrientation: function(orientation) {
-        if (this.orientation === orientation) {
-            return;
-        }
-        this.orientation = orientation;
-
-        var container = Ext.get(Ext.query('.touchExample')[0]);
-        var iframe = Ext.get(Ext.query('.touchExample iframe')[0]);
-
-        Ext.Array.each(Ext.query('.example-toolbar .orientations button'), function(el) {
-            Ext.get(el).removeCls('selected');
-        });
-        Ext.get(Ext.query('.example-toolbar .orientations button.' + this.orientation)).addCls('selected');
-
-        container.removeCls(['portrait', 'landscape']);
-        container.addCls(this.orientation);
-
-        iframe.setStyle(this.iFrameDimensions());
+        this.getPage().setOrientation(orientation);
     },
 
     changeDevice: function(device) {
-        if (this.device === device) {
-            return;
-        }
-        this.device = device;
-
-        var container = Ext.get(Ext.query('.touchExample')[0]);
-        var iframe = Ext.get(Ext.query('.touchExample iframe')[0]);
-
-        Ext.Array.each(Ext.query('.example-toolbar .devices button'), function(el) {
-            Ext.get(el).removeCls('selected');
-        });
-        Ext.get(Ext.query('.example-toolbar .devices button.' + this.device)).addCls('selected');
-
-        container.removeCls(['iphone', 'ipad']);
-        container.addCls(this.device);
-
-        var example = this.getExample(this.activeUrl);
-        example.orientation = this.orientation;
-        example.device = this.device;
-        Ext.apply(example, this.iFrameDimensions());
-
-        this.getPage().clear();
-        this.activateExampleCard();
-        this.getPage().load(example);
-    },
-
-    iFrameDimensions: function() {
-        if (this.device === 'ipad') {
-            return {
-                width: this.orientation === 'landscape' ? '1024px' : '768px',
-                height: this.orientation === 'landscape' ? '768px' : '1024px'
-            };
-        }
-        else {
-            return {
-                width: this.orientation === 'landscape' ? '480px' : '320px',
-                height: this.orientation === 'landscape' ? '320px' : '480px'
-            };
-        }
+        this.getPage().setDevice(device);
     }
 });
