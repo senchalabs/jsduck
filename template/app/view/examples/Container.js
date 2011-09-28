@@ -22,7 +22,6 @@ Ext.define('Docs.view.examples.Container', {
                     '<div class="devices">',
                         '<button class="selected ipad">iPad</button>',
                         '<button class="iphone">iPhone</button>',
-                        // '<button class="nexus">Nexus S</button>',
                     '</div>',
                     '<span class="separator">&nbsp;</span>',
                     '<div class="orientations">',

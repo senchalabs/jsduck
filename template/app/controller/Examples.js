@@ -62,11 +62,6 @@ Ext.define('Docs.controller.Examples', {
                         delegate: 'button.iphone'
                     });
                     cmp.el.addListener('click', function(e, el) {
-                        this.changeDevice('nexus');
-                    }, this, {
-                        delegate: 'button.nexus'
-                    });
-                    cmp.el.addListener('click', function(e, el) {
                         this.changeOrientation('portrait');
                     }, this, {
                         delegate: 'button.portrait'
