@@ -228,7 +228,6 @@ class JsDuckRunner
       "--touch-examples-ui",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
-      "--images", "#{@sdk_dir}/touch/docs/resources",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 
