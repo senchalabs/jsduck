@@ -13,7 +13,6 @@ Ext.define('Docs.view.examples.Container', {
     bodyPadding: '10 0 5 0',
 
     initComponent: function() {
-
         this.dockedItems = [{
             xtype: 'container',
             dock: 'top',
@@ -42,7 +41,6 @@ Ext.define('Docs.view.examples.Container', {
      * @param {Object} example Example object
      */
     load: function(example) {
-
         example = Ext.applyIf(example, {
             device: 'ipad',
             orientation: 'landscape',

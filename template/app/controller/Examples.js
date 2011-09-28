@@ -122,14 +122,13 @@ Ext.define('Docs.controller.Examples', {
     },
 
     changeOrientation: function(orientation) {
-
         if (this.orientation === orientation) {
-            return false;
+            return;
         }
         this.orientation = orientation;
 
-        var container = Ext.get(Ext.query('.touchExample')[0]),
-            iframe = Ext.get(Ext.query('.touchExample iframe')[0]);
+        var container = Ext.get(Ext.query('.touchExample')[0]);
+        var iframe = Ext.get(Ext.query('.touchExample iframe')[0]);
 
         Ext.Array.each(Ext.query('.example-toolbar .orientations button'), function(el) {
             Ext.get(el).removeCls('selected');
@@ -143,14 +142,13 @@ Ext.define('Docs.controller.Examples', {
     },
 
     changeDevice: function(device) {
-
         if (this.device === device) {
-            return false;
+            return;
         }
         this.device = device;
 
-        var container = Ext.get(Ext.query('.touchExample')[0]),
-            iframe = Ext.get(Ext.query('.touchExample iframe')[0]);
+        var container = Ext.get(Ext.query('.touchExample')[0]);
+        var iframe = Ext.get(Ext.query('.touchExample iframe')[0]);
 
         Ext.Array.each(Ext.query('.example-toolbar .devices button'), function(el) {
             Ext.get(el).removeCls('selected');
@@ -171,15 +169,16 @@ Ext.define('Docs.controller.Examples', {
     },
 
     iFrameDimensions: function() {
-        if (this.device == 'ipad') {
+        if (this.device === 'ipad') {
             return {
-                width: this.orientation == 'landscape' ? '1024px' : '768px',
-                height: this.orientation == 'landscape' ? '768px' : '1024px',
+                width: this.orientation === 'landscape' ? '1024px' : '768px',
+                height: this.orientation === 'landscape' ? '768px' : '1024px'
             };
-        } else {
+        }
+        else {
             return {
-                width: this.orientation == 'landscape' ? '480px' : '320px',
-                height: this.orientation == 'landscape' ? '320px' : '480px',
+                width: this.orientation === 'landscape' ? '480px' : '320px',
+                height: this.orientation === 'landscape' ? '320px' : '480px'
             };
         }
     }
