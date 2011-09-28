@@ -49,9 +49,9 @@ module JsDuck
       FileUtils.cp_r(in_dir, out_dir)
 
       @formatter.doc_context = {:filename => guide_file, :linenr => 0}
-      html = @formatter.format(IO.read(guide_file))
       name = File.basename(in_dir)
-      html.gsub!(/<img src="/, "<img src=\"guides/#{name}/")
+      @formatter.img_path = "guides/#{name}"
+      html = @formatter.format(IO.read(guide_file))
 
       JsonDuck.write_jsonp(out_dir+"/README.js", name, {:guide => html, :title => guide["title"]})
     end

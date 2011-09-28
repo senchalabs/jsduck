@@ -26,6 +26,7 @@ module JsDuck
     attr_accessor :categories_path
     attr_accessor :inline_examples_dir
     attr_accessor :pretty_json
+    attr_accessor :images
     attr_accessor :link_tpl
     attr_accessor :img_tpl
     attr_accessor :export
@@ -87,10 +88,11 @@ module JsDuck
       @categories_path = nil
       @inline_examples_dir = nil
       @pretty_json = false
+      @images = []
       @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
       # appears inline within text, but that just looks ugly in HTML
-      @img_tpl = '<p><img src="doc-resources/%u" alt="%a"></p>'
+      @img_tpl = '<p><img src="%u" alt="%a"></p>'
       @export = nil
       @seo = false
 
@@ -216,6 +218,13 @@ module JsDuck
 
         opts.on('--pretty-json', "Turn on pretty-printing of JSON.", " ") do
           @pretty_json = true
+        end
+
+        opts.on('--images=PATH',
+          "Search path for including images referenced by",
+          "{@img} tag. Several paths can be specified by",
+          "using the option multiple times.", " ") do |path|
+          @images << path
         end
 
         opts.on('--link=TPL',

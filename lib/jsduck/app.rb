@@ -19,6 +19,7 @@ require 'jsduck/guides'
 require 'jsduck/videos'
 require 'jsduck/examples'
 require 'jsduck/categories'
+require 'jsduck/images'
 require 'jsduck/json_duck'
 require 'jsduck/lint'
 require 'fileutils'
@@ -48,6 +49,8 @@ module JsDuck
       @relations = @timer.time(:aggregating) { filter_classes(result) }
       Aliases.new(@relations).resolve_all
       Lint.new(@relations).run
+
+      @images = Images.new(@opts.images)
 
       @welcome = Welcome.new
       if @opts.welcome
@@ -103,6 +106,7 @@ module JsDuck
         @timer.time(:generating) { @guides.write(@opts.output_dir+"/guides") }
         @timer.time(:generating) { @videos.write(@opts.output_dir+"/videos") }
         @timer.time(:generating) { @examples.write(@opts.output_dir+"/examples") }
+        @timer.time(:generating) { @images.copy(@opts.output_dir+"/images") }
       end
 
       @timer.report
@@ -150,16 +154,22 @@ module JsDuck
 
     # Formats each class
     def format_classes
-      formatter = ClassFormatter.new(@relations, get_doc_formatter)
+      doc_formatter = get_doc_formatter
+      doc_formatter.img_path = "images"
+      class_formatter = ClassFormatter.new(@relations, doc_formatter)
       # Don't format types when exporting
-      formatter.include_types = !@opts.export
+      class_formatter.include_types = !@opts.export
       # Format all doc-objects in parallel
-      formatted_docs = @parallel.map(@relations.classes) do |cls|
-        formatter.format(cls.internal_doc)
+      formatted_classes = @parallel.map(@relations.classes) do |cls|
+        {
+          :doc => class_formatter.format(cls.internal_doc),
+          :images => doc_formatter.images
+        }
       end
       # Then merge the data back to classes sequentially
-      formatted_docs.each do |doc|
-        @relations[doc[:name]].internal_doc = doc
+      formatted_classes.each do |cls|
+        @relations[cls[:doc][:name]].internal_doc = cls[:doc]
+        cls[:images].each {|img| @images.add(img) }
       end
     end
 
