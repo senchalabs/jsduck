@@ -38,6 +38,7 @@ module JsDuck
     attr_accessor :template_links
     attr_accessor :extjs_path
     attr_accessor :local_storage_db
+    attr_accessor :touch_examples_ui
     attr_accessor :ext_namespaces
 
     def initialize
@@ -103,6 +104,7 @@ module JsDuck
       @template_links = false
       @extjs_path = "extjs/ext-all.js"
       @local_storage_db = "docs"
+      @touch_examples_ui = false
       @ext_namespaces = ["Ext"]
     end
 
@@ -294,6 +296,11 @@ module JsDuck
           "Prefix for LocalStorage database names.",
           "Defaults to 'docs'.", " ") do |name|
           @local_storage_db = name
+        end
+
+        opts.on('--touch-examples-ui',
+          "Use phone/tablet UI for examples.", " ") do
+          @touch_examples_ui = true
         end
 
         opts.on('--ext-namespaces=Ext,Foo', Array,

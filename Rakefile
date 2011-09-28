@@ -223,6 +223,9 @@ class JsDuckRunner
       "--footer", "Sencha Touch 2.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/touch/docs/categories.json",
       "--videos", "#{@sdk_dir}/touch/docs/videos.json",
+      "--guides", "#{@sdk_dir}/touch/docs/guides.json",
+      "--examples", "#{@sdk_dir}/touch/docs/examples.json",
+      "--touch-examples-ui",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
       "--images", "#{@sdk_dir}/touch/docs/resources",
@@ -351,6 +354,11 @@ class JsDuckRunner
     system "cp -r #{@animator_dir}/docs/examples #{@out_dir}/extjs"
   end
 
+  # Copy over Sencha Touch
+  def copy_touch2_build
+    system "cp -r #{@sdk_dir}/touch/build #{@out_dir}/touch"
+  end
+
   def run
     # Pass multiple arguments to system, so we'll take advantage of the built-in escaping
     system(*["ruby", "bin/jsduck"].concat(@options))
@@ -431,6 +439,8 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.run
+
+  runner.copy_touch2_build
 end
 
 desc "Run JSDuck on Sencha Animator (for internal use at Sencha)\n" +
