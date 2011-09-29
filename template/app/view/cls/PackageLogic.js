@@ -108,16 +108,9 @@ Ext.define('Docs.view.cls.PackageLogic', {
 
     // Utility method that given full package or class name extracts
     // the "class"-part of the name.
-    //
-    // Because we try to emulate ext-doc, it's not as simple as just
-    // taking the last part.
     shortName: function(name) {
       var parts = name.split(/\./);
-      var srt = parts.pop();
-      while (parts.length > 1 && /^[A-Z]/.test(parts[parts.length-1])) {
-        srt = parts.pop() + "." + srt;
-      }
-      return srt;
+      return parts.pop();
     }
 
 });
