@@ -24,7 +24,6 @@ module JsDuck
     attr_accessor :videos
     attr_accessor :examples
     attr_accessor :categories_path
-    attr_accessor :inline_examples_dir
     attr_accessor :pretty_json
     attr_accessor :images
     attr_accessor :link_tpl
@@ -87,7 +86,6 @@ module JsDuck
       @videos = nil
       @examples = nil
       @categories_path = nil
-      @inline_examples_dir = nil
       @pretty_json = false
       @images = []
       @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
@@ -212,10 +210,6 @@ module JsDuck
         opts.on('--categories=PATH',
           "Path to JSON file which defines categories for classes.", " ") do |path|
           @categories_path = canonical(path)
-        end
-
-        opts.on('--inline-examples=PATH', "Path to inline examples directory.", " ") do |path|
-          @inline_examples_dir = canonical(path)
         end
 
         opts.on('--pretty-json', "Turn on pretty-printing of JSON.", " ") do

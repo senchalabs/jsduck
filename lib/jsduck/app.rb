@@ -222,9 +222,6 @@ module JsDuck
       formatter.link_tpl = @opts.link_tpl if @opts.link_tpl
       formatter.img_tpl = @opts.img_tpl if @opts.img_tpl
       formatter.relations = @relations
-      if @opts.inline_examples_dir
-        formatter.get_example = lambda {|path| IO.read(@opts.inline_examples_dir + "/" + path) }
-      end
       formatter
     end
 
