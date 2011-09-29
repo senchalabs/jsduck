@@ -348,6 +348,20 @@ describe JsDuck::DocFormatter do
       it_should_behave_like "example"
     end
 
+    describe "@example code block indented more than 4 spaces" do
+      before do
+        @html = @formatter.format(<<-EOS.gsub(/^ *\|/, ""))
+          |See example:
+          |
+          |      @example
+          |      if (condition) {
+          |          doSomething();
+          |      }
+        EOS
+      end
+      it_should_behave_like "example"
+    end
+
   end
 
   describe "#shorten" do
