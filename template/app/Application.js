@@ -19,8 +19,10 @@ Ext.define('Docs.Application', {
     ],
 
     controllers: [
+        'Auth',
         'Welcome',
         'Classes',
+        'Comments',
         'Search',
         'InlineExamples',
         'Examples',
@@ -46,5 +48,4 @@ Ext.define('Docs.Application', {
         //     Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
         // }, 1000);
     }
-
 });

@@ -32,12 +32,13 @@ Ext.define('Docs.view.cls.Overview', {
      * Scrolls the specified element into view
      *
      * @param {String} query  DomQuery selector string.
+     * @param {String} offset  Additional scroll offset.
      */
-    scrollToEl: function(query) {
-        var el = Ext.get(Ext.query(query)[0]);
+    scrollToEl: function(query, offset) {
+        var el = (typeof query == 'string') ? Ext.get(Ext.query(query)[0]) : query;
         if (el) {
             var isMember = el.hasCls("member");
-            var scrollOffset = el.getY() - (isMember ? 165 : 155);
+            var scrollOffset = el.getY() - (isMember ? 165 : 155) + (offset || 0);
             var docContent = this.getEl().down('.x-panel-body');
             var currentScroll = docContent.getScroll()['top'];
             docContent.scrollTo('top', currentScroll + scrollOffset);

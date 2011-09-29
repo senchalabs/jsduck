@@ -8,6 +8,8 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.Tabs',
         'Docs.view.TreeContainer',
         'Docs.view.welcome.Index',
+        'Docs.view.auth.Login',
+        'Docs.view.Comments',
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
         'Docs.view.guides.Index',
@@ -45,13 +47,18 @@ Ext.define('Docs.view.Viewport', {
                                 contentEl: 'header-content'
                             },
                             {
+                                id: 'loginContainer',
+                                xtype: 'authentication',
+                                width: 500,
+                                padding: '10 20 0 0'
+                            },
+                            {
                                 xtype: 'searchcontainer',
                                 id: 'search-container',
                                 width: 230,
-                                margin: '5 0 0 0'
+                                margin: '4 0 0 0'
                             }
                         ]
-
                     },
                     {
                         xtype: 'doctabs'
@@ -69,7 +76,16 @@ Ext.define('Docs.view.Viewport', {
                         id: 'treecontainer',
                         border: 1,
                         bodyPadding: '10 9 4 9',
-                        width: 240
+                        width: 240,
+                        dockedItems: [
+                            {
+                                dock: 'bottom',
+                                id: 'footer',
+                                xtype: 'container',
+                                height: 20,
+                                contentEl: 'footer-content'
+                            }
+                        ]
                     },
                     {
                         region: 'center',
@@ -136,12 +152,6 @@ Ext.define('Docs.view.Viewport', {
                         }
                     }
                 ]
-            },
-            {
-                region: 'south',
-                id: 'footer',
-                height: 20,
-                contentEl: 'footer-content'
             }
         ];
 
