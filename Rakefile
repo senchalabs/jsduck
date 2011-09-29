@@ -166,7 +166,6 @@ class JsDuckRunner
       "--guides", "#{@sdk_dir}/extjs/docs/guides.json",
       "--videos", "#{@sdk_dir}/extjs/docs/videos.json",
       "--examples", "#{@sdk_dir}/extjs/examples/examples.json",
-      "--inline-examples", "#{@sdk_dir}/extjs/docs/resources",
       "--categories", "#{@sdk_dir}/extjs/docs/categories.json",
       "--output", "#{@out_dir}",
       "--builtin-classes",
@@ -228,10 +227,27 @@ class JsDuckRunner
       "--touch-examples-ui",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
-      "--images", "#{@sdk_dir}/touch/docs/resources",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 
+    @options += extract_jsb_build_files("#{@sdk_dir}/touch/touch.jsb3")
+  end
+
+  def add_touch_export
+    @options += [
+      "--json",
+      "--output", "#{@out_dir}/../export/touch1",
+      "--external=google.maps.Map,google.maps.LatLng",
+    ]
+    @options += extract_jsb_build_files("#{@sdk_dir}/touch/sencha-touch.jsb3")
+  end
+
+  def add_touch2_export
+    @options += [
+      "--json",
+      "--output", "#{@out_dir}/../export/touch2",
+      "--external=google.maps.Map,google.maps.LatLng",
+    ]
     @options += extract_jsb_build_files("#{@sdk_dir}/touch/touch.jsb3")
   end
 
@@ -441,6 +457,19 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.run
 
   runner.copy_touch2_build
+end
+
+desc "Run JSDuck JSON Export (for internal use at Sencha)\n" +
+     "export[touch]  - creates export for Touch 1\n" +
+     "export[touch2] - creates export for Touch 2"
+task :export, [:mode] do |t, args|
+  mode = args[:mode]
+  throw "Unknown mode #{mode}" unless ["touch", "touch2"].include?(mode)
+
+  runner = JsDuckRunner.new
+  runner.add_touch_export if mode == "touch"
+  runner.add_touch2_export if mode == "touch2"
+  runner.run
 end
 
 desc "Run JSDuck on Sencha Animator (for internal use at Sencha)\n" +

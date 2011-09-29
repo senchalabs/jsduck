@@ -80,9 +80,14 @@ old_classes.each_pair do |name, cls|
   end
 end
 
+# Choose title based on filename
+if out_file =~ /touch/
+  title = "Comparison of Touch 1.1.1 and Touch 2.0.0"
+else
+  title = "Comparison of Ext 4.0.7 and Ext 4.1.0"
+end
+
 # do HTML output
-title = "Comparison of Ext 4.0.7 and Ext 4.1.0"
-#title = "Comparison of Touch 1.1.1 and Touch 2.0.0"
 html = []
 html << <<-EOHTML
 <!DOCTYPE html>

@@ -270,12 +270,18 @@ module JsDuck
       end
     end
 
-    # <mixins> := "mixins" ":" <object-literal>
+    # <mixins> := "mixins" ":" [ <object-literal> | <array-literal> ]
     def ext_define_mixins
-      if look("mixins", ":", "{")
+      if look("mixins", ":")
         match("mixins", ":")
         lit = literal
-        lit && lit[:value].map {|x| x[:value][:value] }
+        if lit && lit[:type] == :object
+          lit[:value].map {|x| x[:value][:value] }
+        elsif lit && lit[:type] == :array
+          lit[:value].map {|x| x[:value] }
+        else
+          nil
+        end
       end
     end
 
