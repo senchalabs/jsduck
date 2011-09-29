@@ -261,9 +261,9 @@ class JsDuckRunner
       "--title", "Sencha Docs - Animator 1.0",
       "--head-html", head_html,
       "--footer", "Sencha Animator 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
-      "--videos", "#{@animator_dir}/docs/videos.json",
+      # "--videos", "#{@animator_dir}/docs/videos.json",
       "--guides", "#{@animator_dir}/docs/guides.json",
-      "--examples", "#{@animator_dir}/docs/examples/examples.json",
+      # "--examples", "#{@animator_dir}/docs/examples/examples.json",
       "--output", "#{@out_dir}",
     ]
   end
