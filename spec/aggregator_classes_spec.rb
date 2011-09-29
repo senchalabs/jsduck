@@ -256,10 +256,10 @@ describe JsDuck::Aggregator do
           alternateClassName: ['JustClass'],
           stuff: ["foo", "bar"],
           requires: ['ClassA', 'ClassB'],
-          mixins: {
-            obs: 'Ext.util.Observable',
-            bar: 'Foo.Bar'
-          }
+          mixins: [
+            'Ext.util.Observable',
+            'Foo.Bar'
+          ]
         });
       EOS
     end
