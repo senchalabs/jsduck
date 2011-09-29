@@ -638,6 +638,10 @@
                     "name": "Panel.js"
                 },
                 {
+                    "path": "app/view/examples/",
+                    "name": "TouchContainer.js"
+                },
+                {
                     "path": "app/view/cls/",
                     "name": "Toolbar.js"
                 },
