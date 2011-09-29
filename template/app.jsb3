@@ -626,10 +626,6 @@
                     "name": "TouchContainer.js"
                 },
                 {
-                    "path": "app/view/cls/",
-                    "name": "Toolbar.js"
-                },
-                {
                     "path": "app/view/examples/",
                     "name": "Inline.js"
                 },
