@@ -68,8 +68,9 @@ Ext.define("Docs.History", {
             if (Docs.App.getController('Welcome').isActive()) {
                 Docs.App.getController('Welcome').loadIndex(true);
             }
-            else {
-                Docs.App.getController('Classes').loadIndex(true);
+            else if (!this.noRepeatNav) {
+                this.noRepeatNav = true; // Prevent infinite nav loop
+                this.navigate(Ext.getCmp('doctabs').staticTabs[0].href);
             }
         }
     },
