@@ -387,13 +387,13 @@ module JsDuck
         elsif !File.exists?(File.dirname(@output_dir))
           puts "Oh noes!  The parent directory for #{@output_dir} doesn't exist."
           exit(1)
-        elsif !File.exists?(@template_dir + "/extjs")
+        elsif !@export && !File.exists?(@template_dir + "/extjs")
           puts "Oh noes!  The template directory does not contain extjs/ directory :("
           puts "Please copy ExtJS over to template/extjs or create symlink."
           puts "For example:"
           puts "    $ cp -r /path/to/ext-4.0.0 " + @template_dir + "/extjs"
           exit(1)
-        elsif !File.exists?(@template_dir + "/resources/css")
+        elsif !@export && !File.exists?(@template_dir + "/resources/css")
           puts "Oh noes!  CSS files for custom ExtJS theme missing :("
           puts "Please compile SASS files in template/resources/sass with compass."
           puts "For example:"
