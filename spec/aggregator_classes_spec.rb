@@ -5,8 +5,7 @@ describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    meta_tags = [{:name => "author"}, {:name => "docauthor"}]
-    agr.aggregate(JsDuck::SourceFile.new(string, "", {:meta_tags => meta_tags}))
+    agr.aggregate(JsDuck::SourceFile.new(string))
     agr.result
   end
 
@@ -350,29 +349,6 @@ describe JsDuck::Aggregator do
     it_should_behave_like "class"
     it "detects xtype" do
       @doc[:xtypes].should == {"widget" => ["nicely"]}
-    end
-  end
-
-  describe "class with meta-tags" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * @author John Doe
-         * @author Steve Jobs
-         * @docauthor Kill Bill
-         * Comment here.
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "detects @author and @docauthor tags" do
-      @doc[:meta].should == [
-        {:name => "author", :content => "John Doe"},
-        {:name => "author", :content => "Steve Jobs"},
-        {:name => "docauthor", :content => "Kill Bill"},
-      ]
     end
   end
 

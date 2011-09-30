@@ -1,4 +1,5 @@
 require 'optparse'
+require 'jsduck/meta_tag'
 
 module JsDuck
 
@@ -68,10 +69,8 @@ module JsDuck
         # Special anything-goes type
         "Mixed",
       ]
-      @meta_tags = [
-        {:name => "author", :title => "Author", :strip => / *<.*?> */},
-        {:name => "docauthor", :title => "Documentation author", :strip => / *<.*?> */},
-      ]
+      @meta_tags = []
+      @meta_tags_path = File.dirname(__FILE__) + "/sencha_tags"
 
       @warnings = true
       @verbose = false
@@ -117,6 +116,12 @@ module JsDuck
     def parse!(argv)
       create_option_parser.parse!(argv).each {|fname| read_filenames(fname) }
       validate
+      # Instanciate all loaded MetaTag implementations
+      require @meta_tags_path
+      @meta_tags = []
+      MetaTag.descendants.each do |cls|
+        @meta_tags << cls.new
+      end
     end
 
     def create_option_parser
@@ -145,13 +150,10 @@ module JsDuck
           read_filenames(@root_dir + "/js-classes")
         end
 
-        opts.on('--meta-tags @name=Title,...', Array,
-          "Defines custom meta-data tags in addition to",
-          "@author and @docauthor.  Experimantal!", " ") do |tags|
-          tags.each do |t|
-            t = t.split(/=/)
-            @meta_tags << {:name => t[0].sub(/^@/, ""), :title => t[1]}
-          end
+        opts.on('--meta-tags=PATH',
+          "Path to Ruby file with custom meta-tag implementations.",
+          "Experimantal!", " ") do |path|
+          @meta_tags_path = path
         end
 
         opts.on('--no-warnings', "Turns off warnings.", " ") do

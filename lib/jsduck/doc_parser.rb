@@ -30,7 +30,7 @@ module JsDuck
 
       @meta_tags_map = {}
       (meta_tags || []).each do |tag|
-        @meta_tags_map[tag[:name]] = true
+        @meta_tags_map[tag.name] = tag
       end
     end
 
@@ -146,7 +146,8 @@ module JsDuck
           boolean_at_tag(/@abstract/, :abstract)
         elsif look(/@/)
           @input.scan(/@/)
-          if @meta_tags_map[look(/\w+/)]
+          meta_tag = @meta_tags_map[look(/\w+/)]
+          if meta_tag
             add_tag(:meta)
             @current_tag[:name] = match(/\w+/)
             skip_horiz_white

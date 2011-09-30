@@ -159,6 +159,9 @@ module JsDuck
       class_formatter = ClassFormatter.new(@relations, doc_formatter)
       # Don't format types when exporting
       class_formatter.include_types = !@opts.export
+      # Inject formatter to all meta-tags.
+      @opts.meta_tags.each {|tag| tag.formatter = doc_formatter }
+      class_formatter.meta_tags = @opts.meta_tags
       # Format all doc-objects in parallel
       formatted_classes = @parallel.map(@relations.classes) do |cls|
         {
@@ -188,7 +191,7 @@ module JsDuck
     # Writes JSON export or JsonP file for each class
     def write_classes
       exporter = Exporter.new(@relations)
-      renderer = Renderer.new(@opts)
+      renderer = Renderer.new
       dir = @opts.output_dir + (@opts.export ? "" : "/output")
       @parallel.each(@relations.classes) do |cls|
         filename = dir + "/" + cls[:name] + (@opts.export ? ".json" : ".js")
