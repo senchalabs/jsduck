@@ -65,6 +65,8 @@ module JsDuck
         "CSSStyleSheet",
         "CSSStyleRule",
         "Event",
+        # Special anything-goes type
+        "Mixed",
       ]
       @meta_tags = [
         {:name => "author", :title => "Author", :strip => / *<.*?> */},
