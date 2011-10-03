@@ -61,7 +61,8 @@ module JsDuck
       if @relations[classname]
         @relations[classname]
       elsif !@relations.ignore?(classname)
-        Logger.instance.warn("Class #{classname} not found", @doc[:filename], @doc[:linenr])
+        context = @doc[:files][0]
+        Logger.instance.warn("Class #{classname} not found", context[:filename], context[:linenr])
         nil
       end
     end

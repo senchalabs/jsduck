@@ -24,7 +24,7 @@ module JsDuck
     def format(cls)
       @cls = cls
       @formatter.class_context = cls[:name]
-      @formatter.doc_context = cls
+      @formatter.doc_context = cls[:files][0]
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
       cls[:members].each_pair do |type, members|
         cls[:members][type] = members.reject {|m| m[:private] }.map {|m| format_member(m) }
@@ -46,7 +46,7 @@ module JsDuck
     end
 
     def format_member(m)
-      @formatter.doc_context = m
+      @formatter.doc_context = m[:files][0]
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
       m[:deprecated][:text] = @formatter.format(m[:deprecated][:text]) if m[:deprecated]
       if expandable?(m) || @formatter.too_long?(m[:doc])

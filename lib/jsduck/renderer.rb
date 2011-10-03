@@ -55,14 +55,16 @@ module JsDuck
       has_parents = @cls[:extends] && @cls[:extends] != "Object"
       has_alt_names = @cls[:alternateClassNames].length > 0
       has_mixins = @cls[:superclasses].length > 0
+      has_files = @cls[:files].length > 0
 
-      return if !has_parents && !has_alt_names && !has_mixins
+      return if !has_parents && !has_alt_names && !has_mixins && !has_files
 
       return [
         '<pre class="hierarchy">',
         render_alternate_class_names,
         render_tree,
         render_mixins,
+        render_files,
         '</pre>'
       ]
     end
@@ -80,6 +82,19 @@ module JsDuck
       return [
         "<h4>Mixins</h4>",
         @cls[:allMixins].map {|name| "<div class='mixin'>#{render_link(name)}</div>" },
+      ]
+    end
+
+    def render_files
+      return if @cls[:files].length == 0
+
+      return [
+        "<h4>Files</h4>",
+        @cls[:files].map do |file|
+          url = "source/" + file[:href]
+          title = File.basename(file[:filename])
+          "<div class='file'><a href='#{url}' target='_blank'>#{title}</a></div>"
+        end
       ]
     end
 
@@ -173,7 +188,7 @@ module JsDuck
           "<div class='title'>",
             "<div class='meta'>",
               "<a href='#!/api/#{owner}' rel='#{owner}' class='definedIn docClass'>#{owner}</a><br/>",
-              "<a href='source/#{m[:href]}' target='_blank' class='viewSource'>view source</a>",
+              "<a href='source/#{m[:files][0][:href]}' target='_blank' class='viewSource'>view source</a>",
             "</div>",
             # method params signature or property type signature
             render_signature(m),

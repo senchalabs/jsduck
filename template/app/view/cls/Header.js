@@ -16,7 +16,7 @@ Ext.define('Docs.view.cls.Header', {
                 '<tpl if="private">',
                     '<span class="private">Private</span>',
                 '</tpl>',
-                '<a href="source/{href}" target="_blank">{name}</a>',
+                '<a href="source/{[values.files[0].href]}" target="_blank">{name}</a>',
                 '{[this.renderXTypes(values.xtypes)]}',
             '</h1>',
             Docs.showPrintButton ? '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>' : '',
