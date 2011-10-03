@@ -41,7 +41,7 @@ module JsDuck
       tag_names.each do |name|
         tags = @cls[:meta].find_all {|m| m[:name] == name }
         if tags.length > 0
-          content = tags.map{|t| t[:content] }.join(', ')
+          content = tags.map{|t| t[:doc] }.join(', ')
           html << "<li><strong>#{CGI.escapeHTML(tags[0][:title])}:</strong> #{content}</li>"
         end
       end

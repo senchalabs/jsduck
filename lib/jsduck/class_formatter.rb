@@ -41,7 +41,7 @@ module JsDuck
       if tag.hidden
         nil
       else
-        {:name => tag.name, :title => tag.title, :content => tag.transform(meta[:content])}
+        {:name => tag.name, :title => tag.title, :doc => tag.transform(meta[:doc])}
       end
     end
 

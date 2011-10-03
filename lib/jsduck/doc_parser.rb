@@ -146,19 +146,33 @@ module JsDuck
           boolean_at_tag(/@abstract/, :abstract)
         elsif look(/@/)
           @input.scan(/@/)
-          meta_tag = @meta_tags_map[look(/\w+/)]
-          if meta_tag
-            add_tag(:meta)
-            @current_tag[:name] = match(/\w+/)
-            skip_horiz_white
-            @current_tag[:content] = @input.scan(/.*$/)
-            skip_white
+          tag = @meta_tags_map[look(/\w+/)]
+          if tag
+            meta_at_tag(tag)
           else
             @current_tag[:doc] += "@"
           end
         elsif look(/[^@]/)
           @current_tag[:doc] += @input.scan(/[^@]+/)
         end
+      end
+    end
+
+    # Matches the given meta-tag
+    def meta_at_tag(tag)
+      prev_tag = @current_tag
+
+      add_tag(:meta)
+      @current_tag[:name] = match(/\w+/)
+      skip_horiz_white
+
+      # Fors singleline tags, scan to the end of line and finish the
+      # tag.  For multiline tags we leave the tag open for :doc
+      # addition just like with built-in multiline tags.
+      unless tag.multiline
+        @current_tag[:doc] = @input.scan(/.*$/).strip
+        skip_white
+        @current_tag = prev_tag
       end
     end
 

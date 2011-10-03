@@ -337,7 +337,7 @@ module JsDuck
     end
 
     def detect_meta(doc_map)
-      doc_map[:meta] ? doc_map[:meta].map {|tag| {:name => tag[:name], :content => tag[:content]} } : []
+      doc_map[:meta] ? doc_map[:meta].map {|tag| {:name => tag[:name], :doc => tag[:doc]} } : []
     end
 
     def detect_deprecated(doc_map)
@@ -429,7 +429,7 @@ module JsDuck
     # Combines :doc-s of most tags
     # Ignores tags that have doc comment themselves and subproperty tags
     def detect_doc(docs)
-      ignore_tags = [:param, :return]
+      ignore_tags = [:param, :return, :meta]
       doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) && !subproperty?(tag) }
       doc_tags.map { |tag| tag[:doc] }.compact.join(" ")
     end

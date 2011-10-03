@@ -11,6 +11,9 @@ module JsDuck
     # Title to use when rendering the meta-tag info
     attr_reader :title
 
+    # True to include all lines up to next @tag as part of this meta-tag
+    attr_reader :multiline
+
     # True to not render the meta tag at all
     attr_reader :hidden
 
