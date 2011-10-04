@@ -9,7 +9,7 @@ module JsDuck
     # not added.
     def create(cls)
       # Grab all configs tagged as @accessor
-      accessors = cls[:members][:cfg].find_all {|cfg| cfg[:accessor] }
+      accessors = cls[:members][:cfg].find_all {|cfg| cfg[:accessor] && !cfg[:private] }
 
       # Build lookup tables of method and event names
       methods = build_lookup_table(cls[:members][:method])

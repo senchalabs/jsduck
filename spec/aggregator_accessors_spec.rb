@@ -119,6 +119,23 @@ describe JsDuck::Aggregator do
 
   end
 
+  describe "@accessor tag on private cfg" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class MyClass */
+          /**
+           * @cfg {String} foo
+           * @private
+           * @accessor
+           */
+      EOF
+    end
+
+    it "doesn't create any accessors" do
+      @docs[0][:members][:method].length.should == 0
+    end
+  end
+
   describe "@cfg foo with @evented @accessor" do
     before do
       @docs = parse(<<-EOF)
