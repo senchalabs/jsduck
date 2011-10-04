@@ -161,6 +161,40 @@ Ext.define('Docs.view.Comments', {
         }, this);
     },
 
+    renderHoverMenuMeta: function() {
+
+        return;
+
+        var clsName = Docs.App.getController('Classes').currentCls.name,
+            elId = clsName.replace(/\./g, '-'),
+            commentsMeta = Docs.App.getController('Comments').commentMeta,
+            commentsMetaTotals = Docs.App.getController('Comments').commentMetaTotals;
+
+        console.log(Ext.query('.hover-menu')[0].innerHTML);
+
+        Ext.Array.each(Ext.query('.member a.name'), function(a) {
+
+            var memberId = a.getAttribute('href').replace(/^.*\//, ''),
+                memberEl = Ext.get(a).up('.member'),
+                descriptionEl = memberEl.down('.long'),
+                id = ('class-' + memberId).replace(/\./g, '-');
+
+
+            var hoverMember = Ext.query('.hover-menu a[rel="' + memberId + '"]')
+            console.log(memberId, '.hover-menu a[rel="' + memberId + '"]', hoverMember);
+
+            // Add to hover menu too
+            if (hoverMember && hoverMember[0]) {
+                this.memberCommentsTpl.append(hoverMember[0], {
+                    num: commentsMeta[memberId] || 0,
+                    id: id
+                });
+            }
+
+        }, this);
+
+    },
+
     updateCommentMeta: function() {
 
         var clsName = Docs.App.getController('Classes').currentCls.name,

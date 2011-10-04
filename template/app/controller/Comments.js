@@ -65,9 +65,18 @@ Ext.define('Docs.controller.Comments', {
                             delegate: delegate[0]
                         });
                     }, this);
+                },
+
+                afterload: function() {
+                    Docs.view.Comments.renderHoverMenuMeta()
                 }
             },
 
+            'classoverview toolbar hovermenubutton': {
+                afterrender: function(cmp) {
+                    // console.log("Button rendered")
+                }
+            },
             'classoverview toolbar': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function() {

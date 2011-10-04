@@ -270,6 +270,7 @@ Ext.define('Docs.controller.Classes', {
 
         this.getViewport().setPageTitle(cls.name);
         if (this.currentCls !== cls) {
+            this.currentCls = cls;
             this.getHeader().load(cls);
             this.getOverview().load(cls);
             this.applyExpanded(cls);
