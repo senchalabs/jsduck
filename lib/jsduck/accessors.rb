@@ -32,9 +32,10 @@ module JsDuck
     end
 
     def create_getter(cfg)
+      name = "get" + upcase_first(cfg[:name])
       return {
         :tagname => :method,
-        :name => "get" + upcase_first(cfg[:name]),
+        :name => name,
         :doc => "Returns the value of {@link #cfg-#{cfg[:name]}}.",
         :params => [],
         :return => {
@@ -43,13 +44,15 @@ module JsDuck
         },
         :owner => cfg[:owner],
         :files => cfg[:files],
+        :id => "method-" + name,
       }
     end
 
     def create_setter(cfg)
+      name = "set" + upcase_first(cfg[:name]);
       return {
         :tagname => :method,
-        :name => "set" + upcase_first(cfg[:name]),
+        :name => name,
         :doc => "Sets the value of {@link #cfg-#{cfg[:name]}}.",
         :params => [{
             :type => cfg[:type],
@@ -62,6 +65,7 @@ module JsDuck
         },
         :owner => cfg[:owner],
         :files => cfg[:files],
+        :id => "method-" + name,
       }
     end
 
