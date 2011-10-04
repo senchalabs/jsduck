@@ -55,7 +55,7 @@ module JsDuck
       has_parents = @cls[:extends] && @cls[:extends] != "Object"
       has_alt_names = @cls[:alternateClassNames].length > 0
       has_mixins = @cls[:superclasses].length > 0
-      has_files = @cls[:files].length > 0
+      has_files = @cls[:files].length > 0 && @cls[:files][0][:filename] != ""
 
       return if !has_parents && !has_alt_names && !has_mixins && !has_files
 
@@ -86,7 +86,7 @@ module JsDuck
     end
 
     def render_files
-      return if @cls[:files].length == 0
+      return if @cls[:files].length == 0 || @cls[:files][0][:filename] == ""
 
       return [
         "<h4>Files</h4>",

@@ -145,7 +145,7 @@ module JsDuck
         :members => Class.default_members_hash,
         :statics => Class.default_members_hash,
         :meta => [],
-        :files => [{:filename => "", :html_filename => "", :linenr => 0}],
+        :files => [{:filename => "", :linenr => 0}],
       })
     end
 
