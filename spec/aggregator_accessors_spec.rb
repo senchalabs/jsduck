@@ -119,5 +119,117 @@ describe JsDuck::Aggregator do
 
   end
 
+  describe "@cfg foo with @evented @accessor" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class MyClass */
+          /**
+           * @cfg {String} foo
+           * Original comment.
+           * @accessor
+           * @evented
+           */
+      EOF
+      @events = @docs[0][:members][:event]
+    end
+
+    it "creates foochange event" do
+      @events[0][:name].should == "foochange"
+    end
+
+    it "creates documentation for foochange event" do
+      @events[0][:doc].should ==
+        "Fires when the {@link #cfg-foo} configuration is changed by {@link #method-setFoo}.\n\n" +
+        "Note that this event is fired *before* the value of {@link #cfg-foo} has been updated, " +
+        "and that you can return false from any listener to the foochange event " +
+        "to cancel the change."
+    end
+
+    it "has 3 params" do
+      @events[0][:params].length.should == 3
+    end
+
+    describe "1st param" do
+      before do
+        @param = @events[0][:params][0]
+      end
+
+      it "is this" do
+        @param[:name].should == "this"
+      end
+
+      it "is the same type as the class" do
+        @param[:type].should == "MyClass"
+      end
+
+      it "has documentation" do
+        @param[:doc].should == "The MyClass instance."
+      end
+    end
+
+    describe "2nd param" do
+      before do
+        @param = @events[0][:params][1]
+      end
+
+      it "is value" do
+        @param[:name].should == "value"
+      end
+
+      it "is the same type as the cfg" do
+        @param[:type].should == "String"
+      end
+
+      it "has documentation" do
+        @param[:doc].should == "The new value being set."
+      end
+    end
+
+    describe "3rd param" do
+      before do
+        @param = @events[0][:params][2]
+      end
+
+      it "is oldValue" do
+        @param[:name].should == "oldValue"
+      end
+
+      it "is the same type as the cfg" do
+        @param[:type].should == "String"
+      end
+
+      it "has documentation" do
+        @param[:doc].should == "The existing value."
+      end
+    end
+
+  end
+
+  describe "@evented @accessor with existing event" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class MyClass */
+          /**
+           * @cfg {String} fooBar
+           * @accessor
+           * @evented
+           */
+          /**
+           * @event foobarchange
+           * Event comment.
+           */
+      EOF
+      @events = @docs[0][:members][:event]
+    end
+
+    it "doesn't create any additional events" do
+      @events.length.should == 1
+    end
+
+    it "leaves the existing event as is." do
+      @events[0][:doc].should == "Event comment."
+    end
+  end
+
 end
 

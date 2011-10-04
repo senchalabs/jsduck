@@ -11,11 +11,9 @@ module JsDuck
       # Grab all configs tagged as @accessor
       accessors = cls[:members][:cfg].find_all {|cfg| cfg[:accessor] }
 
-      # Build lookup table of method names
-      methods = {}
-      cls[:members][:method].each do |m|
-        methods[m[:name]] = m;
-      end
+      # Build lookup tables of method and event names
+      methods = build_lookup_table(cls[:members][:method])
+      events = build_lookup_table(cls[:members][:event])
 
       accessors.each do |cfg|
         # add getter if no method with same name exists
@@ -28,7 +26,21 @@ module JsDuck
         if !methods[set[:name]]
           cls[:members][:method] << set
         end
+        # for evented accessors
+        if cfg[:evented]
+          # add event if no event with same name exists
+          ev = create_event(cfg)
+          if !events[ev[:name]]
+            cls[:members][:event] << ev
+          end
+        end
       end
+    end
+
+    def build_lookup_table(members)
+      map = {}
+      members.each {|m| map[m[:name]] = m }
+      map
     end
 
     def create_getter(cfg)
@@ -66,6 +78,41 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :id => "method-" + name,
+      }
+    end
+
+    def create_event(cfg)
+      name = cfg[:name].downcase + "change"
+      setter_name = "set" + upcase_first(cfg[:name]);
+      return {
+        :tagname => :event,
+        :name => name,
+        :doc =>
+          "Fires when the {@link ##{cfg[:id]}} configuration is changed by {@link #method-#{setter_name}}." +
+          "\n\n" +
+          "Note that this event is fired *before* the value of {@link ##{cfg[:id]}} has been updated, " +
+          "and that you can return false from any listener to the #{name} event " +
+          "to cancel the change.",
+        :params => [
+          {
+            :name => "this",
+            :type => cfg[:owner],
+            :doc => "The #{cfg[:owner]} instance."
+          },
+          {
+            :name => "value",
+            :type => cfg[:type],
+            :doc => "The new value being set."
+          },
+          {
+            :name => "oldValue",
+            :type => cfg[:type],
+            :doc => "The existing value."
+          },
+        ],
+        :owner => cfg[:owner],
+        :files => cfg[:files],
+        :id => "event-" + name,
       }
     end
 

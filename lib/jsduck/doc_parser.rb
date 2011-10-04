@@ -136,6 +136,8 @@ module JsDuck
           boolean_at_tag(/@protected/, :protected)
         elsif look(/@accessor\b/)
           boolean_at_tag(/@accessor/, :accessor)
+        elsif look(/@evented\b/)
+          boolean_at_tag(/@evented/, :evented)
         elsif look(/@template\b/)
           boolean_at_tag(/@template/, :template)
         elsif look(/@markdown\b/)

@@ -170,6 +170,7 @@ module JsDuck
         :default => detect_default(:cfg, doc_map, code),
         :properties => detect_subproperties(docs, :cfg),
         :accessor => !!doc_map[:accessor],
+        :evented => !!doc_map[:evented],
       }, doc_map)
     end
 
