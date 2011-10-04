@@ -42,6 +42,7 @@ module JsDuck
           :doc => "",
         },
         :owner => cfg[:owner],
+        :files => cfg[:files],
       }
     end
 
@@ -60,6 +61,7 @@ module JsDuck
           :doc => "",
         },
         :owner => cfg[:owner],
+        :files => cfg[:files],
       }
     end
 
