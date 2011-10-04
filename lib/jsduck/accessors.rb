@@ -57,6 +57,7 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :id => "method-" + name,
+        :deprecated => cfg[:deprecated],
       }
     end
 
@@ -78,6 +79,7 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :id => "method-" + name,
+        :deprecated => cfg[:deprecated],
       }
     end
 
@@ -113,6 +115,7 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :id => "event-" + name,
+        :deprecated => cfg[:deprecated],
       }
     end
 
