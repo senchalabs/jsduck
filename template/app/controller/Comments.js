@@ -82,7 +82,7 @@ Ext.define('Docs.controller.Comments', {
 
             'hovermenu': {
                 viewready : function(cmp) {
-                    Docs.view.Comments.renderHoverMenuMeta(cmp.el)
+                    Docs.view.Comments.renderHoverMenuMeta(cmp.el);
                 }
             }
         });
@@ -311,7 +311,6 @@ Ext.define('Docs.controller.Comments', {
 
     toggleNewComment: function(cmp, el) {
         if (!this.loggedIn) {
-            this.getAuthentication().showLogin();
             return;
         }
 

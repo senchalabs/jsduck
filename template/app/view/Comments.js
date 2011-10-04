@@ -161,6 +161,7 @@ Ext.define('Docs.view.Comments', {
 
             var memberId = a.getAttribute('href').replace(/^.*\//, ''),
                 memberEl = Ext.get(a).up('.member'),
+                definedCls = memberEl.down('.meta a.definedIn').getAttribute('rel'),
                 descriptionEl = memberEl.down('.long'),
                 id = ('class-' + memberId).replace(/\./g, '-');
 
@@ -173,16 +174,8 @@ Ext.define('Docs.view.Comments', {
                 num: commentsMeta[memberId] || 0,
                 id: id
             });
-            Docs.App.getController('Comments').commentIdMap['comments-' + id] = ['class', clsName, memberEl.getAttribute('id')];
 
-            // var hoverMember = Ext.query('.hover-menu a[rel="' + memberId + '"]')
-            // console.log(hoverMember); //'.hover-menu a[rel="' + memberId + '"]')
-
-            // // Add to hover menu too
-            // var hoverMember = Ext.query('.hover-menu a[rel="' + row.key[1] + '-' + row.key[2] + '-' + row.key[3] + '"]');
-            // if (hoverMember && hoverMember[0]) {
-            //     this.memberCommentsTpl.append(hoverMember[0], [row.value.num]);
-            // }
+            Docs.App.getController('Comments').commentIdMap['comments-' + id] = ['class', definedCls, memberEl.getAttribute('id')];
 
         }, this);
     },
@@ -192,9 +185,16 @@ Ext.define('Docs.view.Comments', {
         var commentsMeta = Docs.App.getController('Comments').commentMeta;
 
         Ext.Array.each(cmp.query('a.docClass'), function(a) {
-            var memberId = a.getAttribute('rel');
-            if (commentsMeta[memberId]) {
-                this.memberCommentsTpl.append(a, [commentsMeta[memberId] || 0]);
+            var rel = Ext.get(a.getAttribute('rel').replace(/^([^-]+\-)/, ''));
+
+            if (rel) {
+                var docClass = rel.down('.meta a.docClass'),
+                    clsName = docClass.getAttribute('rel'),
+                    memberId = clsName + '-' + rel;
+
+                if (commentsMeta[memberId]) {
+                    this.memberCommentsTpl.append(a, [commentsMeta[memberId] || 0]);
+                }
             }
         }, this);
     },
