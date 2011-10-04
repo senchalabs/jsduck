@@ -4,6 +4,7 @@
 Ext.define('Docs.view.HoverMenu', {
     extend: 'Ext.view.View',
 
+    alias: 'widget.hovermenu',
     componentCls: 'hover-menu',
     itemSelector: 'div.item',
     deferEmptyText: false,

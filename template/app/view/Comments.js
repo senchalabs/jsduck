@@ -11,7 +11,7 @@ Ext.define('Docs.view.Comments', {
                     '<a href="#" class="name expandComments">View {[values.num == 1 ? "1 comment" : values.num + " comments"]}</a>',
                 '</tpl>',
                 '<tpl if="num == 0">',
-                    '<a href="#" class="name expandComments">No comments</a>',
+                    '<a href="#" class="name expandComments">No comments. Click to add</a>',
                 '</tpl>',
             '</div>'
         ];
@@ -83,21 +83,47 @@ Ext.define('Docs.view.Comments', {
                         '<input type="submit" class="newCommentSubmit" value="Post comment" />',
                     '</div>',
                     '<div class="commentGuideTxt" style="display: none">',
-                        '<h4>Commenting Guide</h4>',
                         '<ul>',
                             '<li>Comments should be an <strong>extension</strong> of the documentation.</li>',
                             '<li>For any <em>questions</em> about code or usage, please use the <a href="http://www.sencha.com/forum" target="_blank">Forum</a>.</li>',
                             '<li>Comments may be edited or deleted at any time by a moderator.</li>',
-                            '<li>Comments will be formatted using the Markdown syntax:',
-                                '<ul>',
-                                    '<li>Code snippets should be indented with 4 spaces</li>',
-                                    '<li>Unordered list items should start with a dash, <code> - like this</code></li>',
-                                    '<li>Ordered list items should start with a number, <code> 1. like this</code></li>',
-                                    '<li>Italic items should be surrounded with an underscore, <code>_like this_</code></li>',
-                                    '<li>Bold items should be surrounded with two stars, <code>**like this**</code></li>',
-                                '</ul>',
-                            '</li>',
+                            '<li>Comments will be formatted using the Markdown syntax, eg:</li>',
                         '</ul>',
+                        '<div class="markdown preview">',
+                            '<h4>Markdown</h4>',
+                            '<pre>',
+                                "Here is a **bold** item\n",
+                                "Here is an _italic_ item\n",
+                                "Here is an `inline` code snippet\n",
+                                "\n",
+                                "    Indent with 4 spaces\n",
+                                "    for a code snippet\n",
+                                "\n",
+                                "1. Here is a numbered list\n",
+                                "2. Second numbered list item\n",
+                                "\n",
+                                "- Here is an unordered list\n",
+                                "- Second unordered list item\n",
+                            '</pre>',
+                        '</div>',
+                        '<div class="markdown result">',
+                            '<h4>Result</h4>',
+                            'Here is a <strong>bold</strong> item<br/>',
+                            'Here is an <em>italic</em> item<br/>',
+                            'Here is an <code>inline</code> code snippet<br/>',
+                            '<pre>',
+                            "Indent with 4 spaces\n",
+                            "for a code snippet",
+                            '</pre>',
+                            '<ol>',
+                                '<li>Here is a numbered list</li>',
+                                '<li>Second numbered list item</li>',
+                            '</ol>',
+                            '<ul>',
+                                '<li>Here is an unordered list</li>',
+                                '<li>Second unordered list item</li>',
+                            '</ul>',
+                        '</div>',
                     '</div>',
                 '</form>',
             '</div>'
@@ -161,38 +187,16 @@ Ext.define('Docs.view.Comments', {
         }, this);
     },
 
-    renderHoverMenuMeta: function() {
+    renderHoverMenuMeta: function(cmp) {
 
-        return;
+        var commentsMeta = Docs.App.getController('Comments').commentMeta;
 
-        var clsName = Docs.App.getController('Classes').currentCls.name,
-            elId = clsName.replace(/\./g, '-'),
-            commentsMeta = Docs.App.getController('Comments').commentMeta,
-            commentsMetaTotals = Docs.App.getController('Comments').commentMetaTotals;
-
-        console.log(Ext.query('.hover-menu')[0].innerHTML);
-
-        Ext.Array.each(Ext.query('.member a.name'), function(a) {
-
-            var memberId = a.getAttribute('href').replace(/^.*\//, ''),
-                memberEl = Ext.get(a).up('.member'),
-                descriptionEl = memberEl.down('.long'),
-                id = ('class-' + memberId).replace(/\./g, '-');
-
-
-            var hoverMember = Ext.query('.hover-menu a[rel="' + memberId + '"]')
-            console.log(memberId, '.hover-menu a[rel="' + memberId + '"]', hoverMember);
-
-            // Add to hover menu too
-            if (hoverMember && hoverMember[0]) {
-                this.memberCommentsTpl.append(hoverMember[0], {
-                    num: commentsMeta[memberId] || 0,
-                    id: id
-                });
+        Ext.Array.each(cmp.query('a.docClass'), function(a) {
+            var memberId = a.getAttribute('rel');
+            if (commentsMeta[memberId]) {
+                this.memberCommentsTpl.append(a, [commentsMeta[memberId] || 0]);
             }
-
         }, this);
-
     },
 
     updateCommentMeta: function() {
