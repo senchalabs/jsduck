@@ -54,7 +54,7 @@ module JsDuck
       [:extends, :singleton, :private, :protected].each do |tag|
         old[tag] = old[tag] || new[tag]
       end
-      [:mixins, :alternateClassNames, :files].each do |tag|
+      [:mixins, :alternateClassNames, :meta, :files].each do |tag|
         old[tag] = old[tag] + new[tag]
       end
       new[:xtypes].each_pair do |key, xtypes|
@@ -144,6 +144,7 @@ module JsDuck
         :alternateClassNames => [],
         :members => Class.default_members_hash,
         :statics => Class.default_members_hash,
+        :meta => [],
         :files => [{:filename => "", :html_filename => "", :linenr => 0}],
       })
     end
