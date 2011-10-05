@@ -80,27 +80,20 @@ Ext.define('Docs.view.examples.Inline', {
 
     /**
      * Activates the code preview card.
-     * When called for the first time, creates the preview iframe.
      * @param {Function} callback  Called when iframe is ready.
      * @param {Object} scope
      */
     showPreview: function(callback, scope) {
-        if (!this.previewInitialized) {
-            var iframe = document.getElementById(this.getIframeId());
-            // Something is not quite ready when onload fires.
-            // I'm unsure what I should wait for. So I'm currently adding just this nasty delay.
-            // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
-            iframe.onload = function() {
-                Ext.Function.defer(callback, 100, scope);
-            };
-            iframe.src = Docs.touchExamplesUi ? "touchIframe.html" : "extIframe.html";
-            this.layout.setActiveItem(1);
-            this.previewInitialized = true;
-        }
-        else {
-            this.layout.setActiveItem(1);
-            callback.call(scope);
-        }
+        var iframe = document.getElementById(this.getIframeId());
+        // Something is not quite ready when onload fires.
+        // I'm unsure what I should wait for. So I'm currently adding just this nasty delay.
+        // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
+        iframe.onload = function() {
+            Ext.Function.defer(callback, 100, scope);
+        };
+        iframe.src = Docs.touchExamplesUi ? "touchIframe.html" : "extIframe.html";
+        this.layout.setActiveItem(1);
+        this.previewInitialized = true;
     },
 
     getHtml: function() {
