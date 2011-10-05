@@ -154,7 +154,7 @@ Ext.define('Docs.view.Comments', {
             width: 24,
             margin: '0 4 0 0',
             cls: 'comment-btn',
-            html: String(commentsMetaTotals[clsName] || '0')
+            html: String(commentsMeta[clsName] || '0')
         });
 
         Ext.Array.each(Ext.query('.member a.name'), function(a) {
@@ -185,10 +185,11 @@ Ext.define('Docs.view.Comments', {
         var commentsMeta = Docs.App.getController('Comments').commentMeta;
 
         Ext.Array.each(cmp.query('a.docClass'), function(a) {
-            var rel = Ext.get(a.getAttribute('rel').replace(/^([^-]+\-)/, ''));
+            var rel = a.getAttribute('rel').replace(/^([^-]+\-)/, ''),
+                relEl = Ext.get(rel);
 
-            if (rel) {
-                var docClass = rel.down('.meta a.docClass'),
+            if (relEl) {
+                var docClass = relEl.down('.meta a.docClass'),
                     clsName = docClass.getAttribute('rel'),
                     memberId = clsName + '-' + rel;
 
