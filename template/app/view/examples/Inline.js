@@ -83,7 +83,7 @@ Ext.define('Docs.view.examples.Inline', {
             this.add({
                 bodyPadding: '0 10',
                 cmpName: 'preview',
-                html: '<iframe id="' + this.getIframeId() + '" style="width: 100%; height: 100%; border: 0"></iframe>'
+                html: this.getHtml()
             });
             var iframe = document.getElementById(this.getIframeId());
             // Something is not quite ready when onload fires.
@@ -92,7 +92,7 @@ Ext.define('Docs.view.examples.Inline', {
             iframe.onload = function() {
                 Ext.Function.defer(callback, 100, scope);
             };
-            iframe.src = "egIframe.html";
+            iframe.src = Docs.touchExamplesUi ? "touchIframe.html" : "extIframe.html";
             this.layout.setActiveItem(1);
             this.previewInitialized = true;
         }
@@ -100,6 +100,22 @@ Ext.define('Docs.view.examples.Inline', {
             this.layout.setActiveItem(1);
             callback.call(scope);
         }
+    },
+
+    getHtml: function() {
+        if (Docs.touchExamplesUi) {
+            var tpl = new Ext.XTemplate(
+                '<div class="touchExample phone landscape">',
+                    '<iframe id="{id}" style="width: 480px; height: 320px; border: 0;"></iframe>',
+                '</div>'
+            );
+        }
+        else {
+            var tpl = new Ext.XTemplate(
+                '<iframe id="{id}" style="width: 100%; height: 100%; border: 0"></iframe>'
+            );
+        }
+        return tpl.apply({id: this.getIframeId()});
     },
 
     /**
@@ -120,7 +136,7 @@ Ext.define('Docs.view.examples.Inline', {
     updateHeight: function() {
         var el = this.el.down('.CodeMirror-lines');
         if (el) {
-            this.setHeight(el.getHeight() + 5);
+            this.setHeight(Docs.touchExamplesUi ? 320+50 : el.getHeight() + 5);
         }
     }
 
