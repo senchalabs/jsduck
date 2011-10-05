@@ -59,8 +59,14 @@ Ext.define('Docs.view.examples.Inline', {
                 bodyPadding: 2,
                 bodyStyle: 'background: #f7f7f7',
                 autoScroll: true
+            },
+            {
+                bodyPadding: '0 10',
+                cmpName: 'preview',
+                html: this.getHtml()
             }
         ];
+        this.activeItem = Docs.touchExamplesUi ? 1 : 0;
 
         this.callParent(arguments);
     },
@@ -80,11 +86,6 @@ Ext.define('Docs.view.examples.Inline', {
      */
     showPreview: function(callback, scope) {
         if (!this.previewInitialized) {
-            this.add({
-                bodyPadding: '0 10',
-                cmpName: 'preview',
-                html: this.getHtml()
-            });
             var iframe = document.getElementById(this.getIframeId());
             // Something is not quite ready when onload fires.
             // I'm unsure what I should wait for. So I'm currently adding just this nasty delay.

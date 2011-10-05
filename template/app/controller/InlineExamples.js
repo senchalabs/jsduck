@@ -116,7 +116,9 @@ Ext.define('Docs.controller.InlineExamples', {
         example.codeEditor.setValue(code);
         var activeItem = example.layout.getActiveItem();
         if (activeItem.cmpName == 'preview') {
-            this.refreshPreview(example);
+            example.showPreview(function() {
+                this.refreshPreview(example);
+            }, this);
         }
         example.updateHeight();
     },
