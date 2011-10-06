@@ -8,10 +8,13 @@
     <link rel="stylesheet" type="text/css" href="touch/resources/css/sencha-touch.css">
 
     <script type="text/javascript">
-        var refreshPage = function(code) {
+        var refreshPage = function(code, raw) {
             try {
                 document.body.innerHTML = '';
-                eval("Ext.setup({onReady: function(){" + code + "}});");
+                if (!raw) {
+                    code = "Ext.setup({onReady: function(){" + code + "}});";
+                }
+                eval(code);
             } catch (e) {
                 document.body.innerHTML = e;
             }
