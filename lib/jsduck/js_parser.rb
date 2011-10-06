@@ -234,7 +234,7 @@ module JsDuck
     end
 
     # <ext-define-cfg> := "{" ( <extend> | <mixins> | <alternate-class-name> | <alias> |
-    #                           <requires> | <uses> | <singleton> | <?> )*
+    #                           <xtype> | <requires> | <uses> | <singleton> | <?> )*
     def ext_define_cfg
       match("{")
       cfg = {}
@@ -249,6 +249,8 @@ module JsDuck
           cfg[:alternateClassNames] = found
         elsif found = ext_define_alias
           cfg[:alias] = found
+        elsif found = ext_define_xtype
+          cfg[:xtype] = found
         elsif found = ext_define_requires
           cfg[:requires] = found
         elsif found = ext_define_uses
@@ -297,6 +299,14 @@ module JsDuck
     def ext_define_alias
       if look("alias", ":")
         match("alias", ":")
+        string_or_list
+      end
+    end
+
+    # <xtype> := "xtype" ":" <string-or-list>
+    def ext_define_xtype
+      if look("xtype", ":")
+        match("xtype", ":")
         string_or_list
       end
     end

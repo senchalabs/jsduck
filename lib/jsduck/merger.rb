@@ -320,9 +320,16 @@ module JsDuck
     def detect_xtypes(doc_map, code)
       if doc_map[:xtype]
         {"widget" => doc_map[:xtype].map {|tag| tag[:name] } }
-      elsif code[:alias]
+      elsif code[:xtype] || code[:alias]
         xtypes = {}
-        code[:alias].each do |a|
+        (code[:xtype] || []).each do |a|
+          if xtypes["widget"]
+            xtypes["widget"] << a
+          else
+            xtypes["widget"] = [a]
+          end
+        end
+        (code[:alias] || []).each do |a|
           if a =~ /^(\w+)\.(\w+)$/
             if xtypes[$1]
               xtypes[$1] << $2

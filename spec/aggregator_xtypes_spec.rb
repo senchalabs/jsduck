@@ -114,6 +114,43 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "Ext.define() with xtype property" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+          xtype: 'foo'
+        });
+      EOS
+    end
+    it_should_behave_like "single xtype"
+  end
+
+  describe "Ext.define() with array xtype property" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+          xtype: ['foo', 'bar']
+        });
+      EOS
+    end
+    it_should_behave_like "multiple xtypes"
+  end
+
+  describe "Ext.define() with both xtype and alias" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+          xtype: 'foo',
+          alias: 'widget.bar'
+        });
+      EOS
+    end
+    it_should_behave_like "multiple xtypes"
+  end
+
   describe "one class many times" do
     before do
       @doc = parse(<<-EOS)[0]
