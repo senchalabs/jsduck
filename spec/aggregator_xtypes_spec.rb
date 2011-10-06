@@ -1,0 +1,136 @@
+require "jsduck/aggregator"
+require "jsduck/source_file"
+
+describe JsDuck::Aggregator do
+
+  def parse(string)
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.result
+  end
+
+  shared_examples_for "single xtype" do
+    it "detects xtype" do
+      @doc[:xtypes].should == {"widget" => ["foo"]}
+    end
+  end
+
+  shared_examples_for "multiple xtypes" do
+    it "collects all xtypes together" do
+      @doc[:xtypes].should == {"widget" => ["foo", "bar"]}
+    end
+  end
+
+  describe "class with @xtype" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @xtype foo
+         */
+      EOS
+    end
+    it_should_behave_like "single xtype"
+  end
+
+  describe "@xtype after @constructor" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * Comment here.
+         * @constructor
+         * This constructs the class
+         * @xtype foo
+         */
+      EOS
+    end
+    it_should_behave_like "single xtype"
+  end
+
+  describe "class with multiple @xtypes" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @xtype foo
+         * @xtype bar
+         * Some documentation.
+         */
+      EOS
+    end
+    it_should_behave_like "multiple xtypes"
+  end
+
+  describe "Ext.define() with simple alias" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+          alias: 'widget.foo'
+        });
+      EOS
+    end
+    it_should_behave_like "single xtype"
+  end
+
+  describe "Ext.define() with @xtype overriding alias" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @xtype foo
+         */
+        Ext.define('MyClass', {
+          alias: 'widget.xxx'
+        });
+      EOS
+    end
+    it_should_behave_like "single xtype"
+  end
+
+  describe "Ext.define() with array of aliases" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+          alias: ['widget.foo', 'widget.bar']
+        });
+      EOS
+    end
+    it_should_behave_like "multiple xtypes"
+  end
+
+  describe "Ext.define() with different kinds of aliases" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+          alias: ['store.json', 'store.ajax', 'component.myclass']
+        });
+      EOS
+    end
+    it "collects all aliases together" do
+      @doc[:xtypes].should == {"store" => ["json", "ajax"], "component" => ["myclass"]}
+    end
+  end
+
+  describe "one class many times" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class Foo
+         */
+        /**
+         * @class Foo
+         * @xtype foo
+         */
+        /**
+         * @class Foo
+         * @xtype bar
+         */
+      EOS
+    end
+    it_should_behave_like "multiple xtypes"
+  end
+
+end

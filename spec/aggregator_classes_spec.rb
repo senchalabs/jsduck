@@ -28,7 +28,6 @@ describe JsDuck::Aggregator do
          * @alternateClassNames AltClass
          * Some documentation.
          * @singleton
-         * @xtype nicely
          */
       EOS
     end
@@ -48,9 +47,6 @@ describe JsDuck::Aggregator do
     end
     it "detects singleton" do
       @doc[:singleton].should == true
-    end
-    it "detects xtype" do
-      @doc[:xtypes].should == {"widget" => ["nicely"]}
     end
   end
 
@@ -112,24 +108,6 @@ describe JsDuck::Aggregator do
     it_should_behave_like "class"
     it "collects all alternateClassNames together" do
       @doc[:alternateClassNames].should == ["AltClass1", "AltClass2"]
-    end
-  end
-
-  describe "class with multiple @xtypes" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * @xtype foo
-         * @xtype bar
-         * Some documentation.
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "collects all xtypes together" do
-      @doc[:xtypes].should == {"widget" => ["foo", "bar"]}
     end
   end
 
@@ -195,9 +173,6 @@ describe JsDuck::Aggregator do
     it "detects implied alternateClassNames" do
       @doc[:alternateClassNames].should == ["JustClass"]
     end
-    it "detects implied xtype" do
-      @doc[:xtypes].should == {"widget" => ["foo"]}
-    end
     it "detects implied singleton" do
       @doc[:singleton].should == true
     end
@@ -219,7 +194,6 @@ describe JsDuck::Aggregator do
             obs: 'Ext.util.Observable',
             bar: 'Foo.Bar'
           },
-          alias: 'widget.foo',
           alternateClassName: 'JustClass',
           singleton: true,
           requires: ['ClassA', 'ClassB'],
@@ -250,7 +224,6 @@ describe JsDuck::Aggregator do
           extend: 'Your.Class',
           uses: ['ClassC'],
           conf: {foo: 10},
-          alias: ['widget.foo'],
           singleton: true,
           alternateClassName: ['JustClass'],
           stuff: ["foo", "bar"],
@@ -330,25 +303,6 @@ describe JsDuck::Aggregator do
     end
     it "has method with default return type Object" do
       @doc[:members][:method][0][:return][:type].should == "Object"
-    end
-  end
-
-  describe "@xtype after @constructor" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * Comment here.
-         * @constructor
-         * This constructs the class
-         * @xtype nicely
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "detects xtype" do
-      @doc[:xtypes].should == {"widget" => ["nicely"]}
     end
   end
 
@@ -461,7 +415,6 @@ describe JsDuck::Aggregator do
          * @mixins Mix1
          * @alternateClassNames AltClassic
          * Second description.
-         * @xtype xfoo
          * @private
          * @cfg c2
          */
@@ -474,7 +427,6 @@ describe JsDuck::Aggregator do
          * @mixins Mix2
          * @singleton
          * Third description.
-         * @xtype xxxfoo
          * @cfg c3
          */
           /** @method fun3 */
@@ -501,10 +453,6 @@ describe JsDuck::Aggregator do
 
     it "is private when one doc-block is private" do
       @classes[0][:private].should == true
-    end
-
-    it "combines all @xtypes" do
-      @classes[0][:xtypes]["widget"].length.should == 2
     end
 
     it "combines all configs" do
