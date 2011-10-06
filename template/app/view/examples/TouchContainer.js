@@ -111,7 +111,7 @@ Ext.define('Docs.view.examples.TouchContainer', {
         // device dimensions in landscape orientation
         var landscape = {
             phone: {width: '480px', height: '320px'},
-            tablet: {width: '1024px', height: '768px'}
+            tablet: {width: '512px', height: '384px'}
         }[this.example.device];
 
         // return landscape w/h or swap the dimensions
