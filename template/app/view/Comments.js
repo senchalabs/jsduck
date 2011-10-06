@@ -1,6 +1,7 @@
 Ext.define('Docs.view.Comments', {
 
     singleton: true,
+    requires: ['Docs.view.auth.Login'],
 
     constructor: function() {
 
