@@ -293,7 +293,7 @@ describe JsDuck::DocFormatter do
 
     shared_examples_for "example" do
       it "creates <pre> with inline-example class" do
-        @html.should =~ /<pre class="inline-example">/m
+        @html.should =~ /<pre class='inline-example *'>/m
       end
 
       it "removes the line with @example markup" do
@@ -319,19 +319,21 @@ describe JsDuck::DocFormatter do
       it_should_behave_like "example"
     end
 
-    describe "code block beginning with @example and title" do
+    describe "code block beginning with @example and an extra CSS class" do
       before do
         @html = @formatter.format(<<-EOS.gsub(/^ *\|/, ""))
           |See example:
           |
-          |    @example My little example
+          |    @example landscape
           |
           |    if (condition) {
           |        doSomething();
           |    }
         EOS
       end
-      it_should_behave_like "example"
+      it "creates <pre> with inline-example and extra class" do
+        @html.should =~ /<pre class='inline-example landscape'>/m
+      end
     end
 
     describe "@example code block indented more than 4 spaces" do

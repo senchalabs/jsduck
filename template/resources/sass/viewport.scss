@@ -1210,23 +1210,35 @@ a {
 
 .tablet.landscape {
   padding: 56px 59px;
-  background: url(../images/ipad-l2.jpg) no-repeat; }
+  background: url(../images/ipad-l2.jpg) no-repeat;
+  iframe {
+    width: 512px;
+    height: 384px; } }
 
 .tablet.portrait {
   padding: 56px 59px;
-  background: url(../images/ipad-p2.jpg) no-repeat; }
+  background: url(../images/ipad-p2.jpg) no-repeat;
+  iframe {
+    width: 384px;
+    height: 512px; } }
 
 .phone.landscape {
   padding: 22px 127px;
   width: 724px;
   height: 368px;
-  background: url(../images/iphone-l.jpg) no-repeat; }
+  background: url(../images/iphone-l.jpg) no-repeat;
+  iframe {
+    width: 480px;
+    height: 320px; } }
 
 .phone.portrait {
   padding: 127px 26px;
   width: 368px;
   height: 724px;
-  background: url(../images/iphone-p.jpg) no-repeat; }
+  background: url(../images/iphone-p.jpg) no-repeat;
+  iframe {
+    width: 320px;
+    height: 480px; } }
 
 .example-container {
   h1 {

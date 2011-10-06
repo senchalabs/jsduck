@@ -90,8 +90,11 @@ module JsDuck
         elsif s.check(@img_re)
           out += replace_img_tag(s.scan(@img_re))
         elsif s.check(@example_annotation_re)
-          s.scan(@example_annotation_re)
-          out += '<pre class="inline-example"><code>'
+          # Match possible classnames following @example and add them
+          # as CSS classes inside <pre> element.
+          s.scan(@example_annotation_re) =~ @example_annotation_re
+          css_classes = ($1 || "").strip
+          out += "<pre class='inline-example #{css_classes}'><code>"
         elsif s.check(/[{<]/)
           out += s.scan(/[{<]/)
         else

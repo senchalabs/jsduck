@@ -73,13 +73,18 @@ Ext.define('Docs.controller.InlineExamples', {
             // Grab code from <pre> element and replace it with new empty <div>
             // Strip tags and replace HTML entities with their values
             var code = Ext.String.htmlDecode(Ext.util.Format.stripTags(inlineEg.innerHTML));
+            var options = {};
+            Ext.Array.forEach(inlineEg.className.split(/ +/), function(cssClass) {
+                options[cssClass] = true;
+            });
             var div = document.createElement("div");
             inlineEg.parentNode.replaceChild(div, inlineEg);
             // Then render the example component inside the div
             var eg = Ext.create('Docs.view.examples.Inline', {
                 height: 200,
                 renderTo: div,
-                value: code
+                value: code,
+                options: options
             });
         }, this);
     }

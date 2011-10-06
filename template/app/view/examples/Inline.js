@@ -58,7 +58,8 @@ Ext.define('Docs.view.examples.Inline', {
                 }
             }),
             this.preview = Ext.create('Docs.view.examples.InlinePreview', {
-                cmpName: 'preview'
+                cmpName: 'preview',
+                options: this.options
             })
         ];
 

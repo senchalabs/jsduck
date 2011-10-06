@@ -18,17 +18,24 @@ Ext.define('Docs.view.examples.InlinePreview', {
     getHtml: function() {
         if (Docs.touchExamplesUi) {
             var tpl = new Ext.XTemplate(
-                '<div class="touchExample phone landscape">',
-                    '<iframe id="{id}" style="width: 480px; height: 320px; border: 0;"></iframe>',
+                '<div class="touchExample {device} {orientation}">',
+                    '<iframe id="{id}" style="border: 0;"></iframe>',
                 '</div>'
             );
+            return tpl.apply({
+                id: this.getIframeId(),
+                device: this.options.tablet ? "tablet" : "phone",
+                orientation: this.options.portrait ? "portrait" : "landscape"
+            });
         }
         else {
             var tpl = new Ext.XTemplate(
                 '<iframe id="{id}" style="width: 100%; height: 100%; border: 0"></iframe>'
             );
+            return tpl.apply({
+                id: this.getIframeId()
+            });
         }
-        return tpl.apply({id: this.getIframeId()});
     },
 
     /**
