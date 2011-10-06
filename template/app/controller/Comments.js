@@ -20,10 +20,20 @@ Ext.define('Docs.controller.Comments', {
 
     init: function() {
 
+        this.addEvents('afterMetaLoad');
+
         this.getController('Classes').on({
             showClass: function(cls, opts) {
                 if (opts.reRendered) {
-                    Docs.view.Comments.renderCommentMeta();
+                    if (this.commentMeta) {
+                        Docs.view.Comments.renderCommentMeta();
+                    } else {
+                        this.addListener('afterMetaLoad', function() {
+                            Docs.view.Comments.renderCommentMeta();
+                        }, this, {
+                            single: true
+                        });
+                    }
                 }
             },
             showIndex: function() {
@@ -82,7 +92,15 @@ Ext.define('Docs.controller.Comments', {
 
             'hovermenu': {
                 viewready : function(cmp) {
-                    Docs.view.Comments.renderHoverMenuMeta(cmp.el);
+                    if (this.commentMeta) {
+                        Docs.view.Comments.renderHoverMenuMeta(cmp.el);
+                    } else {
+                        this.addListener('afterMetaLoad', function() {
+                            Docs.view.Comments.renderHoverMenuMeta(cmp.el);
+                        }, this, {
+                            single: true
+                        });
+                    }
                 }
             }
         });
@@ -97,7 +115,7 @@ Ext.define('Docs.controller.Comments', {
             method: 'GET',
             params: {
                 reduce: true,
-                group_level: 3,
+                group_level: 3
             },
             success: function(response) {
 
@@ -109,6 +127,8 @@ Ext.define('Docs.controller.Comments', {
                     this.updateMeta(r.key, r.value.num);
                 }, this);
 
+                this.fireEvent('afterMetaLoad');
+
                 if (this.renderMetaToClassIndex) {
                     this.updateClassIndex();
                 }
@@ -119,8 +139,8 @@ Ext.define('Docs.controller.Comments', {
 
     fetchComments: function(id, callback) {
 
-        var startkey = JSON.stringify(this.commentId(id)),
-            endkey = JSON.stringify(this.commentId(id).concat([{}])),
+        var startkey = Ext.JSON.encode(this.commentId(id)),
+            endkey = Ext.JSON.encode(this.commentId(id).concat([{}])),
             currentUser = this.getController('Auth').currentUser;
 
         Ext.data.JsonP.request({
@@ -148,7 +168,7 @@ Ext.define('Docs.controller.Comments', {
         var comments = Ext.get(el).up('.comments'),
             id = comments.getAttribute('id'),
             comment = comments.down('textarea').getValue(),
-            target = JSON.stringify(this.commentId(id));
+            target = Ext.JSON.encode(this.commentId(id));
 
         Ext.Ajax.request({
             url: this.addSid(this.baseUrl + '/comments'),
@@ -232,7 +252,7 @@ Ext.define('Docs.controller.Comments', {
             method: 'POST',
             params: { vote: direction },
             callback: function(options, success, response) {
-                var data = JSON.parse(response.responseText);
+                var data = Ext.JSON.parse(response.responseText);
 
                 Ext.Array.each(meta.query('.vote a'), function(voteEl) {
                     Ext.get(voteEl).removeCls('selected');

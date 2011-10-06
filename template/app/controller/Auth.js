@@ -12,6 +12,8 @@ Ext.define('Docs.controller.Auth', {
         }
     ],
 
+    enabled: true,
+
     init: function() {
 
         this.sid = Ext.util.Cookies.get('sid');
@@ -29,6 +31,10 @@ Ext.define('Docs.controller.Auth', {
              */
             "loggedOut"
         );
+
+        if (Ext.isIE) {
+            this.enabled = Ext.ieVersion >= 8;
+        }
 
         this.control({
             'authentication': {
@@ -48,8 +54,7 @@ Ext.define('Docs.controller.Auth', {
                     });
 
                     this.getSession();
-                },
-                login: this.login
+                }
             }
         });
     },
@@ -58,6 +63,10 @@ Ext.define('Docs.controller.Auth', {
      * Checks if a user is logged in server side and sets up a local session if they are.
      */
     getSession: function() {
+
+        if (!this.enabled) {
+            return;
+        }
 
         // if (window.XDomainRequest) {
         //     xdr = new XDomainRequest();
@@ -80,14 +89,15 @@ Ext.define('Docs.controller.Auth', {
             method: 'GET',
             cors: true,
             callback: function(options, success, response) {
-                if (success) {
-                    this.currentUser = JSON.parse(response.responseText);
 
-                    if (this.currentUser) {
-                        this.loggedIn();
-                    } else {
-                        this.getAuth().showLoggedOut();
-                    }
+                if (response && response.responseText) {
+                    this.currentUser = JSON.parse(response.responseText);
+                }
+
+                if (this.currentUser) {
+                    this.loggedIn();
+                } else {
+                    this.getAuth().showLoggedOut();
                 }
             },
             scope: this
@@ -186,5 +196,19 @@ Ext.define('Docs.controller.Auth', {
         } else {
             Ext.util.Cookies.clear('sid');
         }
+    },
+
+    submitLogin: function(el) {
+        var form = Ext.get(el),
+            username = form.down('input[name=username]').getValue(),
+            password = form.down('input[name=password]').getValue(),
+            rememberEl = form.down('input[name=remember]'),
+            submitEl = form.down('input[type=submit]')
+
+        var remember = rememberEl ? Boolean(rememberEl.getAttribute('checked')) : false;
+
+        this.login(username, password, remember, submitEl);
+
+        return false;
     }
 });

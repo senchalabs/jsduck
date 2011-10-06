@@ -689,9 +689,10 @@ a {
     border-color: #e0e0e0;
     position: relative;
     padding: 0 0 10px 25px;
-    min-height: 40px;
     @include member-expander;
-    .name { padding-top: 10px; display: block; font-weight: normal !important; }
+    .name { padding: 10px 0 0 0; display: block; font-weight: normal !important; }
+    &.open {
+      min-height: 40px; }
     .new-comment {
       form.loginForm {
         position: relative;

@@ -25,7 +25,7 @@ Ext.define('Docs.view.Comments', {
         this.commentsMetaTpl = Ext.create('Ext.XTemplate', commentsMeta.join(''));
 
         this.memberCommentsTpl = Ext.create('Ext.Template',
-            '<strong class="member-comments">{0}</strong>'
+            '<span class="member-comments">{0}</span>'
         );
 
         var commentTplHtml = [
@@ -129,12 +129,20 @@ Ext.define('Docs.view.Comments', {
             '</div>'
         );
 
-        this.loggedOutCommentTpl = Ext.create('Ext.XTemplate',
-            '<div class="new-comment">',
-                '<span class="new-comment-a"><span></span>Sign in to post a comment:</span>',
-                Docs.view.auth.Login.prototype.loginTplHtml.join(''),
-            '</div>'
-        );
+        if (Ext.isIE && Ext.ieVersion <= 7) {
+            this.loggedOutCommentTpl = Ext.create('Ext.XTemplate',
+                '<div class="new-comment">',
+                    '<span class="new-comment-a"><span></span>Sorry, adding comments is only supported in IE 8+</span>',
+                '</div>'
+            );
+        } else {
+            this.loggedOutCommentTpl = Ext.create('Ext.XTemplate',
+                '<div class="new-comment">',
+                    '<span class="new-comment-a"><span></span>Sign in to post a comment:</span>',
+                    Docs.view.auth.Login.prototype.loginTplHtml.join(''),
+                '</div>'
+            );
+        }
     },
 
     renderCommentMeta: function() {
