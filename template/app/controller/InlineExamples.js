@@ -6,30 +6,13 @@ Ext.define('Docs.controller.InlineExamples', {
 
     init: function() {
         this.control({
-            'inlineexample': {
-                afterlayout: function(cmp) {
-                    if (!cmp.codeEditor) {
-                        var codeBody = cmp.getComponent(0).body;
-
-                        cmp.codeEditor = CodeMirror(codeBody, {
-                            mode:  "javascript",
-                            indentUnit: 4,
-                            onChange: function(e) {
-                                cmp.updateHeight();
-                            }
-                        });
-                    }
-                }
-            },
             'inlineexample [cmpName=code]': {
                 activate: function(cmp) {
                     this.activateTab(cmp, 'code');
-                    var inlineEg = cmp.up('inlineexample');
-                    if (inlineEg && inlineEg.codeEditor) {
-                        // Weird bug on CodeMirror requires 2 refreshes...
-                        inlineEg.codeEditor.refresh();
-                        inlineEg.codeEditor.refresh();
-                    }
+                    var editor = cmp.up('inlineexample').editor;
+                    // Weird bug on CodeMirror requires 2 refreshes...
+                    editor.refresh();
+                    editor.refresh();
                 }
             },
             'inlineexample [cmpName=preview]': {
@@ -44,18 +27,13 @@ Ext.define('Docs.controller.InlineExamples', {
             },
             'inlineexample toolbar button[iconCls=preview]': {
                 click: function(cmp) {
-                    cmp.up('inlineexample').showPreview(function() {
-                        this.refreshPreview(cmp.up('inlineexample'));
-                    }, this);
+                    cmp.up('inlineexample').showPreview();
                 }
             },
             'inlineexample toolbar button[iconCls=copy]': {
                 click: function(cmp) {
                     cmp.up('inlineexample').showCode();
-                    var editor = cmp.up('inlineexample').codeEditor;
-                    var lastLine = editor.lineCount() - 1;
-                    var lastCh = editor.getLine(lastLine).length;
-                    editor.setSelection({line: 0, ch: 0}, {line: lastLine, ch: lastCh});
+                    cmp.up('inlineexample').editor.selectAll();
                 }
             },
             'classoverview': {
@@ -73,9 +51,9 @@ Ext.define('Docs.controller.InlineExamples', {
     createResizer: function(container) {
         return function() {
             Ext.Array.each(Ext.ComponentQuery.query(container + ' .inlineexample'), function(c) {
-                if (c.codeEditor && c.isVisible()) {
+                if (c.editor && c.isVisible()) {
                     c.doLayout();
-                    c.codeEditor.refresh();
+                    c.editor.refresh();
                 }
             });
         };
@@ -101,32 +79,8 @@ Ext.define('Docs.controller.InlineExamples', {
             var eg = Ext.create('Docs.view.examples.Inline', {
                 height: 200,
                 renderTo: div,
-                listeners: {
-                    afterrender: function(cmp) {
-                        this.updateExample(cmp, code);
-                    },
-                    scope: this
-                }
+                value: code
             });
         }, this);
-    },
-
-    // Updates code inside example component
-    updateExample: function(example, code) {
-        example.codeEditor.setValue(code);
-        var activeItem = example.layout.getActiveItem();
-        if (activeItem.cmpName == 'preview') {
-            example.showPreview(function() {
-                this.refreshPreview(example);
-            }, this);
-        }
-        example.updateHeight();
-    },
-
-    // Refreshes the preview of example
-    refreshPreview: function(example) {
-        var iframe = document.getElementById(example.getIframeId());
-        iframe.contentWindow.refreshPage(example.codeEditor.getValue(), '');
     }
-
 });

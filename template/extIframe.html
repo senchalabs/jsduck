@@ -7,15 +7,12 @@
     <script type="text/javascript" src="extjs/ext-all.js"></script>
     <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css">
 
-    <style id="iframeCSS" type="text/css"></style>
     <script type="text/javascript">
-        var refreshPage = function(code, css) {
+        var refreshPage = function(code) {
             try {
                 document.body.innerHTML = '';
                 eval(code);
-                Ext.get('iframeCSS').update(css);
             } catch (e) {
-                alert(e);
                 document.body.innerHTML = e;
             }
         }

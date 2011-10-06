@@ -4,6 +4,10 @@
 Ext.define('Docs.view.examples.Inline', {
     extend: 'Ext.Panel',
     alias: 'widget.inlineexample',
+    requires: [
+        'Docs.view.examples.InlineEditor',
+        'Docs.view.examples.InlinePreview'
+    ],
 
     componentCls: 'inline-example-cmp',
     layout: 'card',
@@ -15,10 +19,6 @@ Ext.define('Docs.view.examples.Inline', {
     },
     // Make too long examples scrollable
     maxHeight: 400,
-
-    statics: {
-        iframeId: 0
-    },
 
     dockedItems: [{
         xtype: 'toolbar',
@@ -47,28 +47,35 @@ Ext.define('Docs.view.examples.Inline', {
         ]
     }],
 
-    defaults: {
-        border: 0
-    },
-
     initComponent: function() {
         this.items = [
-            {
+            this.editor = Ext.create('Docs.view.examples.InlineEditor', {
                 cmpName: 'code',
-                style: 'border: 0',
-                bodyPadding: 2,
-                bodyStyle: 'background: #f7f7f7',
-                autoScroll: true
-            },
-            {
-                bodyPadding: '0 10',
-                cmpName: 'preview',
-                html: this.getHtml()
-            }
+                value: this.value,
+                listeners: {
+                    change: this.updateHeight,
+                    scope: this
+                }
+            }),
+            this.preview = Ext.create('Docs.view.examples.InlinePreview', {
+                cmpName: 'preview'
+            })
         ];
+
         this.activeItem = Docs.touchExamplesUi ? 1 : 0;
 
+        this.on("afterrender", this.init, this);
+
         this.callParent(arguments);
+    },
+
+    // Updates code inside example component
+    init: function() {
+        var activeItem = this.layout.getActiveItem();
+        if (activeItem.cmpName === 'preview') {
+            this.showPreview();
+        }
+        this.updateHeight();
     },
 
     /**
@@ -79,58 +86,21 @@ Ext.define('Docs.view.examples.Inline', {
     },
 
     /**
-     * Activates the code preview card.
-     * @param {Function} callback  Called when iframe is ready.
-     * @param {Object} scope
+     * Activates the preview card.
      */
-    showPreview: function(callback, scope) {
-        var iframe = document.getElementById(this.getIframeId());
-        // Something is not quite ready when onload fires.
-        // I'm unsure what I should wait for. So I'm currently adding just this nasty delay.
-        // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
-        iframe.onload = function() {
-            Ext.Function.defer(callback, 100, scope);
-        };
-        iframe.src = Docs.touchExamplesUi ? "touchIframe.html" : "extIframe.html";
+    showPreview: function() {
+        this.preview.update(this.editor.getValue());
         this.layout.setActiveItem(1);
-        this.previewInitialized = true;
     },
 
-    getHtml: function() {
+    // Syncs the height with number of lines in code example.
+    updateHeight: function() {
         if (Docs.touchExamplesUi) {
-            var tpl = new Ext.XTemplate(
-                '<div class="touchExample phone landscape">',
-                    '<iframe id="{id}" style="width: 480px; height: 320px; border: 0;"></iframe>',
-                '</div>'
-            );
+            this.setHeight(320+50);
         }
         else {
-            var tpl = new Ext.XTemplate(
-                '<iframe id="{id}" style="width: 100%; height: 100%; border: 0"></iframe>'
-            );
-        }
-        return tpl.apply({id: this.getIframeId()});
-    },
-
-    /**
-     * Returns iframe ID for this inline example component.
-     * @return {String}
-     */
-    getIframeId: function() {
-        if (!this.iframeId) {
-            this.statics().iframeId += 1;
-            this.iframeId = "egIframe" + this.statics().iframeId;
-        }
-        return this.iframeId;
-    },
-
-    /**
-     * Syncs the height with number of lines in code example.
-     */
-    updateHeight: function() {
-        var el = this.el.down('.CodeMirror-lines');
-        if (el) {
-            this.setHeight(Docs.touchExamplesUi ? 320+50 : el.getHeight() + 5);
+            var editorHeight = this.editor.getHeight();
+            editorHeight && this.setHeight(editorHeight + 5);
         }
     }
 
