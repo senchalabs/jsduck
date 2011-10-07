@@ -86,7 +86,7 @@ Ext.define('Docs.view.examples.TouchContainer', {
             iframe.onload = function() {
                 var style = document.createElement("style");
                 // Scale to 70% of original. Default font-size is 114%
-                style.innerHTML = "body {font-size: 79.8% !important}";
+                style.innerHTML = "body { font-size: 79.8% !important; } html { overflow: hidden };";
                 iframe.contentWindow.document.body.appendChild(style);
             };
         }

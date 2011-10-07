@@ -36,8 +36,13 @@ Ext.define('Docs.view.examples.Device', {
         this.tpl = new Ext.XTemplate(
             '<div class="touchExample {device} {orientation}">',
                 '<iframe id={id} style="width: {width}; height: {height}; border: 0;" ',
-                        'src="{url}"></iframe>',
-            '</div>'
+                        'src="{[this.deviceUrl(values)]}"></iframe>',
+            '</div>',
+            {
+                deviceUrl: function(values) {
+                     return values.url + "?deviceType=" + (values.device === 'tablet' ? 'Tablet' : 'Phone')
+                }
+            }
         );
     },
 
