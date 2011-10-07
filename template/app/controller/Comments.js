@@ -1,7 +1,8 @@
 Ext.define('Docs.controller.Comments', {
     extend: 'Ext.app.Controller',
 
-    baseUrl: 'http://projects.sencha.com/auth',
+    // baseUrl: 'http://projects.sencha.com/auth',
+    baseUrl: 'http://127.0.0.1/sencha/jsduck_out/auth',
 
     refs: [
         {
@@ -215,13 +216,16 @@ Ext.define('Docs.controller.Comments', {
         var id = Ext.get(el).up('.comment').getAttribute('id'),
             cls = Ext.get(el).up('.comments').getAttribute('id');
 
-        this.updateMeta(this.commentId(cls), -1);
-
         Ext.Ajax.request({
             url: this.addSid(this.baseUrl + '/comments/' + id + '/delete'),
             cors: true,
             method: 'POST',
             callback: function(options, success, response) {
+
+                console.log(options, success, response)
+                var data = Ext.JSON.decode(response.responseText);
+
+                this.updateMeta(this.commentId(cls), -1);
                 Ext.get(id).remove();
             },
             scope: this
@@ -239,6 +243,7 @@ Ext.define('Docs.controller.Comments', {
     vote: function(direction, el) {
 
         if (!this.getController('Auth').isLoggedIn() || Ext.get(el).hasCls('selected')) {
+            this.showError('Please login to vote on this comment', el);
             return false;
         }
 
@@ -252,7 +257,7 @@ Ext.define('Docs.controller.Comments', {
             method: 'POST',
             params: { vote: direction },
             callback: function(options, success, response) {
-                var data = Ext.JSON.parse(response.responseText);
+                var data = Ext.JSON.decode(response.responseText);
 
                 Ext.Array.each(meta.query('.vote a'), function(voteEl) {
                     Ext.get(voteEl).removeCls('selected');
@@ -390,5 +395,22 @@ Ext.define('Docs.controller.Comments', {
             curDisplay = guideText.getStyle('display');
 
         guideText.setStyle('display', (curDisplay == 'none') ? 'block' : 'none');
+    },
+
+    showError: function(msg, el) {
+
+        if (this.errorTip) {
+            this.errorTip.update(msg);
+            this.errorTip.setTarget(el);
+            this.errorTip.show();
+        } else {
+            this.errorTip = Ext.create('Ext.tip.ToolTip', {
+                anchor: 'right',
+                target: el,
+                html: msg
+            });
+            this.errorTip.show();
+        }
+
     }
 });

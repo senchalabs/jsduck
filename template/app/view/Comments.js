@@ -35,7 +35,7 @@ Ext.define('Docs.view.Comments', {
                     '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
                           '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
                     '<div class="author">{author}</div>',
-                    '<tpl if="this.isMod()"><a href="#" class="del">Delete</a></tpl>',
+                    '<tpl if="this.isMod() || this.isAuthor(values.author)"><a href="#" class="del">Delete</a></tpl>',
                     '<div class="time">{[this.date(values.createdAt)]}</div>',
                     '<div class="vote">',
                         '<a href="#" class="up{[values.upVote ? " selected" : ""]}" title="Vote Up">&nbsp;</a>',
@@ -53,6 +53,9 @@ Ext.define('Docs.view.Comments', {
             },
             isMod: function() {
                 return Docs.App.getController('Auth').currentUser.mod;
+            },
+            isAuthor: function(author) {
+                return Docs.App.getController('Auth').currentUser.userName == author;
             }
         };
 

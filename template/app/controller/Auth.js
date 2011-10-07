@@ -3,7 +3,8 @@ Ext.define('Docs.controller.Auth', {
 
     requires: ['Ext.util.Cookies'],
 
-    authServer: 'http://projects.sencha.com/auth',
+    // authServer: 'http://projects.sencha.com/auth',
+    authServer: 'http://127.0.0.1/sencha/jsduck_out/auth',
 
     refs: [
          {
