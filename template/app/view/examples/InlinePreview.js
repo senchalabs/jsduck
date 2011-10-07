@@ -3,6 +3,10 @@
  */
 Ext.define('Docs.view.examples.InlinePreview', {
     extend: 'Ext.Panel',
+    requires: [
+        'Docs.view.examples.Device'
+    ],
+
     bodyPadding: '0 10',
 
     statics: {
@@ -17,16 +21,11 @@ Ext.define('Docs.view.examples.InlinePreview', {
 
     getHtml: function() {
         if (Docs.touchExamplesUi) {
-            var tpl = new Ext.XTemplate(
-                '<div class="touchExample {device} {orientation}">',
-                    '<iframe id="{id}" style="border: 0;"></iframe>',
-                '</div>'
-            );
-            return tpl.apply({
+            return Ext.create('Docs.view.examples.Device', {
                 id: this.getIframeId(),
                 device: this.options.tablet ? "tablet" : "phone",
                 orientation: this.options.portrait ? "portrait" : "landscape"
-            });
+            }).toHtml();
         }
         else {
             var tpl = new Ext.XTemplate(
