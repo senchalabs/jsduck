@@ -18,7 +18,7 @@ Ext.define('Docs.view.examples.Inline', {
         constrainTo: false
     },
     // Make too long examples scrollable
-    maxHeight: 400,
+    maxHeight: 890,
 
     dockedItems: [{
         xtype: 'toolbar',
@@ -97,7 +97,7 @@ Ext.define('Docs.view.examples.Inline', {
     // Syncs the height with number of lines in code example.
     updateHeight: function() {
         if (Docs.touchExamplesUi) {
-            this.setHeight(320+50);
+            this.setHeight(this.preview.getHeight());
         }
         else {
             var editorHeight = this.editor.getHeight();

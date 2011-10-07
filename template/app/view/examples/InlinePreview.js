@@ -62,6 +62,14 @@ Ext.define('Docs.view.examples.InlinePreview', {
             this.iframeId = "egIframe" + this.statics().iframeId;
         }
         return this.iframeId;
+    },
+
+    /**
+     * Returns the current height of the preview.
+     * @return {Number}
+     */
+    getHeight: function() {
+        return document.getElementById(this.getIframeId()).parentNode.clientHeight;
     }
 
 });
