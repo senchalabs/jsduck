@@ -118,8 +118,8 @@ module JsDuck
             :type => :operator,
             :value => @input.scan(/./)
           }
-        elsif @input.check(/[a-zA-Z_]/)
-          value = @input.scan(/\w+/)
+        elsif @input.check(/[a-zA-Z_$]/)
+          value = @input.scan(/[$\w]+/)
           return {
             :type => KEYWORDS[value] ? :keyword : :ident,
             :value => value
@@ -166,12 +166,6 @@ module JsDuck
           return {
             :type => :number,
             :value => nr
-          }
-        elsif @input.check(/\$/)
-          value = @input.scan(/\$\w*/)
-          return {
-            :type => :ident,
-            :value => value
           }
         elsif  @input.check(/./)
           return {
