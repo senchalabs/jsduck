@@ -7,12 +7,17 @@
     <script type="text/javascript" src="touch/sencha-touch-all.js"></script>
     <link rel="stylesheet" type="text/css" href="touch/resources/css/sencha-touch.css">
 
+    <style id="iframe-css" type="text/css"></style>
     <script type="text/javascript">
-        var refreshPage = function(code, raw) {
+        var refreshPage = function(code, options) {
             try {
                 document.body.innerHTML = '';
-                if (!raw) {
+                if (!options.raw) {
                     code = "Ext.setup({onReady: function(){" + code + "}});";
+                }
+                if (options.tablet) {
+                    // Scale example down to 70% size. Default font-size is 114%
+                    Ext.get('iframe-css').update("body {font-size: 79.8% !important}");
                 }
                 eval(code);
             } catch (e) {

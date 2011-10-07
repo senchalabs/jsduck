@@ -6,8 +6,11 @@
 Ext.define('Docs.view.examples.TouchContainer', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.touchexamplecontainer',
-    layout: 'fit',
+    requires: [
+        'Docs.view.examples.Device'
+    ],
 
+    layout: 'fit',
     cls: 'example-container iScroll',
     autoScroll: true,
     bodyPadding: '10 0 5 0',
@@ -32,14 +35,6 @@ Ext.define('Docs.view.examples.TouchContainer', {
             ].join('')
         }];
 
-        // Template for the DIV containing device image and iframe
-        this.tpl = new Ext.XTemplate(
-            '<div class="touchExample {device} {orientation}">',
-                '<iframe style="width: {width}; height: {height}; border: 0;" ',
-                        'src="touch/examples/{url}"></iframe>',
-            '</div>'
-        );
-
         this.callParent(arguments);
     },
 
@@ -48,17 +43,18 @@ Ext.define('Docs.view.examples.TouchContainer', {
      * @param {Object} example Example object
      */
     load: function(example) {
-        // Copy example config over new object containing default values.
-        // Don't modify the supplied config itself.
-        this.example = Ext.apply({
-            device: 'phone',
-            orientation: 'landscape'
-        }, example);
+        this.title = example.text + " Example";
+        this.device = Ext.create('Docs.view.examples.Device', {
+            url: "touch/examples/" + example.url,
+            device: example.device || "phone",
+            orientation: example.orientation || "landscape"
+        });
+        this.refresh();
+    },
 
-        // Add dimensions of the current device in current orientation
-        Ext.apply(this.example, this.getIFrameSize());
-
-        this.update(this.tpl.apply(this.example));
+    refresh: function() {
+        this.update(this.device.toHtml());
+        this.updateScale();
         this.updateTitle();
         this.updateButtons();
     },
@@ -69,8 +65,8 @@ Ext.define('Docs.view.examples.TouchContainer', {
      * @param {String} device Either "phone" or "tablet"
      */
     setDevice: function(device) {
-        this.example.device = device;
-        this.load(this.example);
+        this.device.setDevice(device);
+        this.refresh();
     },
 
     /**
@@ -79,24 +75,37 @@ Ext.define('Docs.view.examples.TouchContainer', {
      * @param {String} orientation Either "portrait" or "landscape"
      */
     setOrientation: function(orientation) {
-        this.example.orientation = orientation;
-        this.load(this.example);
+        this.device.setOrientation(orientation);
+        this.refresh();
+    },
+
+    // Scale down the example when in tablet mode
+    updateScale: function() {
+        if (this.device.getDevice() === "tablet") {
+            var iframe = Ext.query('iframe', this.el.dom)[0];
+            iframe.onload = function() {
+                var style = document.createElement("style");
+                // Scale to 70% of original. Default font-size is 114%
+                style.innerHTML = "body {font-size: 79.8% !important}";
+                iframe.contentWindow.document.body.appendChild(style);
+            };
+        }
     },
 
     updateTitle: function() {
-        Ext.get(Ext.query('.example-title')).update(this.example.text + " Example");
+        Ext.get(Ext.query('.example-title')).update(this.title);
     },
 
     updateButtons: function() {
         Ext.Array.each(Ext.query('.example-toolbar .orientations button'), function(el) {
             Ext.get(el).removeCls('selected');
         });
-        Ext.get(Ext.query('.example-toolbar .orientations button.' + this.example.orientation)).addCls('selected');
+        Ext.get(Ext.query('.example-toolbar .orientations button.' + this.device.getOrientation())).addCls('selected');
 
         Ext.Array.each(Ext.query('.example-toolbar .devices button'), function(el) {
             Ext.get(el).removeCls('selected');
         });
-        Ext.get(Ext.query('.example-toolbar .devices button.' + this.example.device)).addCls('selected');
+        Ext.get(Ext.query('.example-toolbar .devices button.' + this.device.getDevice())).addCls('selected');
     },
 
     /**
@@ -104,22 +113,6 @@ Ext.define('Docs.view.examples.TouchContainer', {
      */
     clear: function() {
         this.update('');
-    },
-
-    // Returns width and height of current device iframe.
-    getIFrameSize: function() {
-        // device dimensions in landscape orientation
-        var landscape = {
-            phone: {width: '480px', height: '320px'},
-            tablet: {width: '512px', height: '384px'}
-        }[this.example.device];
-
-        // return landscape w/h or swap the dimensions
-        if (this.example.orientation === 'landscape') {
-            return landscape;
-        }
-        else {
-            return {width: landscape.height, height: landscape.width};
-        }
     }
+
 });

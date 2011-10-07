@@ -25,6 +25,14 @@ describe JsDuck::Lexer do
     ]
   end
 
+  it "handles $ in identifiers" do
+    lex("$fo$o").should == [[:ident, "$fo$o"]]
+  end
+
+  it "handles numbers in identifiers" do
+    lex("x2").should == [[:ident, "x2"]]
+  end
+
   describe "differenciates regex from division" do
 
     it "when regex after operator" do

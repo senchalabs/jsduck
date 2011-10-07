@@ -3,6 +3,10 @@
  */
 Ext.define('Docs.view.examples.InlinePreview', {
     extend: 'Ext.Panel',
+    requires: [
+        'Docs.view.examples.Device'
+    ],
+
     bodyPadding: '0 10',
 
     statics: {
@@ -17,16 +21,11 @@ Ext.define('Docs.view.examples.InlinePreview', {
 
     getHtml: function() {
         if (Docs.touchExamplesUi) {
-            var tpl = new Ext.XTemplate(
-                '<div class="touchExample {device} {orientation}">',
-                    '<iframe id="{id}" style="border: 0;"></iframe>',
-                '</div>'
-            );
-            return tpl.apply({
+            return Ext.create('Docs.view.examples.Device', {
                 id: this.getIframeId(),
                 device: this.options.tablet ? "tablet" : "phone",
                 orientation: this.options.portrait ? "portrait" : "landscape"
-            });
+            }).toHtml();
         }
         else {
             var tpl = new Ext.XTemplate(
@@ -43,14 +42,14 @@ Ext.define('Docs.view.examples.InlinePreview', {
      * @param {String} code  The code to run inside iframe.
      */
     update: function(code) {
-        var options = this.options.raw;
+        var options = this.options;
         var iframe = document.getElementById(this.getIframeId());
         // Something is not quite ready when onload fires.
         // I'm unsure what I should wait for. So I'm currently adding just this nasty delay.
         // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
         iframe.onload = function() {
             Ext.Function.defer(function() {
-                iframe.contentWindow.refreshPage(code, options.raw);
+                iframe.contentWindow.refreshPage(code, options);
             }, 100);
         };
         iframe.src = Docs.touchExamplesUi ? "touchIframe.html" : "extIframe.html";
@@ -63,6 +62,14 @@ Ext.define('Docs.view.examples.InlinePreview', {
             this.iframeId = "egIframe" + this.statics().iframeId;
         }
         return this.iframeId;
+    },
+
+    /**
+     * Returns the current height of the preview.
+     * @return {Number}
+     */
+    getHeight: function() {
+        return document.getElementById(this.getIframeId()).parentNode.clientHeight;
     }
 
 });
