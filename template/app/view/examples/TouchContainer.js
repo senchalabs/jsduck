@@ -90,8 +90,8 @@ Ext.define('Docs.view.examples.TouchContainer', {
             var iframe = Ext.query('iframe', this.el.dom)[0];
             iframe.onload = function() {
                 var style = document.createElement("style");
-                // default font-size is 114%
-                style.innerHTML = "body {font-size: 57% !important}";
+                // Scale to 70% of original. Default font-size is 114%
+                style.innerHTML = "body {font-size: 79.8% !important}";
                 iframe.contentWindow.document.body.appendChild(style);
             };
         }
@@ -125,7 +125,7 @@ Ext.define('Docs.view.examples.TouchContainer', {
         // device dimensions in landscape orientation
         var landscape = {
             phone: {width: '480px', height: '320px'},
-            tablet: {width: '512px', height: '384px'}
+            tablet: {width: '717px', height: '538px'}
         }[this.example.device];
 
         // return landscape w/h or swap the dimensions
