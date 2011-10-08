@@ -10,7 +10,7 @@ module JsDuck
 
         return [
           "<div>",
-            render_hierarchy,
+            render_sidebar,
             "<div class='doc-contents'>",
               render_private_class_notice,
               @cls[:doc],
@@ -51,22 +51,18 @@ module JsDuck
       html
     end
 
-    def render_hierarchy
-      has_parents = @cls[:extends] && @cls[:extends] != "Object"
-      has_alt_names = @cls[:alternateClassNames].length > 0
-      has_mixins = @cls[:superclasses].length > 0
-      has_files = @cls[:files].length > 0 && @cls[:files][0][:filename] != ""
-
-      return if !has_parents && !has_alt_names && !has_mixins && !has_files
-
-      return [
-        '<pre class="hierarchy">',
+    def render_sidebar
+      items = [
         render_alternate_class_names,
         render_tree,
         render_mixins,
         render_files,
-        '</pre>'
       ]
+      if items.compact.length > 0
+        return ['<pre class="hierarchy">', items, '</pre>']
+      else
+        return nil
+      end
     end
 
     def render_alternate_class_names
@@ -87,7 +83,6 @@ module JsDuck
 
     def render_files
       return if @cls[:files].length == 0 || @cls[:files][0][:filename] == ""
-
       return [
         "<h4>Files</h4>",
         @cls[:files].map do |file|
