@@ -55,7 +55,9 @@ module JsDuck
       items = [
         render_alternate_class_names,
         render_tree,
-        render_mixins,
+        render_dependencies(:allMixins, "Mixins"),
+        render_dependencies(:requires, "Requires"),
+        render_dependencies(:uses, "Uses"),
         render_files,
       ]
       if items.compact.length > 0
@@ -73,11 +75,11 @@ module JsDuck
       ]
     end
 
-    def render_mixins
-      return if @cls[:allMixins].length == 0
+    def render_dependencies(type, title)
+      return if !@cls[type] || @cls[type].length == 0
       return [
-        "<h4>Mixins</h4>",
-        @cls[:allMixins].map {|name| "<div class='mixin'>#{render_link(name)}</div>" },
+        "<h4>#{title}</h4>",
+        @cls[type].map {|name| "<div class='dependency'>#{render_link(name)}</div>" },
       ]
     end
 
@@ -88,7 +90,7 @@ module JsDuck
         @cls[:files].map do |file|
           url = "source/" + file[:href]
           title = File.basename(file[:filename])
-          "<div class='file'><a href='#{url}' target='_blank'>#{title}</a></div>"
+          "<div class='dependency'><a href='#{url}' target='_blank'>#{title}</a></div>"
         end
       ]
     end
