@@ -330,7 +330,7 @@ module JsDuck
           end
         end
         (code[:alias] || []).each do |a|
-          if a =~ /^(\w+)\.(\w+)$/
+          if a =~ /^([\w.]+)\.(\w+)$/
             if xtypes[$1]
               xtypes[$1] << $2
             else
