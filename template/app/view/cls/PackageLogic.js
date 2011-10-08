@@ -96,6 +96,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
       return {
         text: this.shortName(name),
         iconCls: "icon-pkg",
+        leaf: false,
         children: []
       };
     },
