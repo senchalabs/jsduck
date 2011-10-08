@@ -228,6 +228,7 @@ class JsDuckRunner
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
       "--builtin-classes",
+      "--img", "<p class='screenshot'><img src='%u' alt='%a'><span>%a</span></p>",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 

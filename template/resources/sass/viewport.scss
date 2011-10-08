@@ -406,9 +406,6 @@ a {
     padding: 10px 12px; } }
 
 .class-overview {
-  img.screenshot {
-    display: block;
-    padding: 10px 0; }
   .hierarchy {
     @include border-radius(5px);
     background-color: #f7f7f7;
@@ -506,6 +503,16 @@ a {
   p {
     margin: 0 0 0.8em; } }
 
+// Screenshot image created by {@img} tag. Centered.
+// With a span containing the caption for the image.
+p.screenshot {
+  img {
+    display: block;
+    margin: 0 auto; }
+  span {
+    display: block;
+    text-align: center;
+    font-size: smaller; }}
 
 // Nice styles for headings inside documentation
 #center-container .doc-contents {
