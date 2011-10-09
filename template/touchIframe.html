@@ -17,7 +17,7 @@
                 }
                 if (options.tablet) {
                     // Scale example down to 70% size. Default font-size is 114%
-                    Ext.get('iframe-css').update("body {font-size: 79.8% !important}");
+                    Ext.get('iframe-css').update("body {font-size: 79.8% !important} html {overflow: hidden}");
                 }
                 eval(code);
             } catch (e) {
