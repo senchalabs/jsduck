@@ -68,7 +68,7 @@ Ext.define('Docs.view.examples.Device', {
     getIframeSize: function() {
         // device dimensions in landscape orientation
         var landscape = {
-            phone: {width: '480px', height: '320px'},
+            phone: {width: '481px', height: '320px'},
             tablet: {width: '717px', height: '538px'}
         }[this.device];
 
