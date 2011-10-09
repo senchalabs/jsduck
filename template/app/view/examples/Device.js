@@ -40,7 +40,7 @@ Ext.define('Docs.view.examples.Device', {
             '</div>',
             {
                 deviceUrl: function(values) {
-                     return values.url + "?deviceType=" + (values.device === 'tablet' ? 'Tablet' : 'Phone')
+                     return values.url + "?deviceType=" + (values.device === 'tablet' ? 'Tablet' : 'Phone');
                 }
             }
         );
