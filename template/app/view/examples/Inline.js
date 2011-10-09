@@ -58,6 +58,11 @@ Ext.define('Docs.view.examples.Inline', {
     options: {},
 
     initComponent: function() {
+        this.options = Ext.apply({
+            device: "phone",
+            orientation: "landscape"
+        }, this.options);
+
         this.items = [
             this.editor = Ext.create('Docs.view.examples.InlineEditor', {
                 cmpName: 'code',
