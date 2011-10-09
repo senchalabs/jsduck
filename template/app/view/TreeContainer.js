@@ -40,7 +40,6 @@ Ext.define('Docs.view.TreeContainer', {
             {
                 xtype: 'grouptree',
                 id: 'guidetree',
-                expandRootChildren: true,
                 data: Docs.data.guides,
                 convert: function(guide) {
                     return {
