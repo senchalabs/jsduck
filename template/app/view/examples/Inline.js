@@ -54,6 +54,7 @@ Ext.define('Docs.view.examples.Inline', {
      * @cfg {String} options.device phone, miniphone or tablet
      * @cfg {String} options.orientation ladscape or portrait
      * @cfg {Boolean} options.raw True to turn off Ext.setup().
+     * @cfg {Boolean} options.preview True to start up in preview mode.
      */
     options: {},
 
@@ -78,7 +79,7 @@ Ext.define('Docs.view.examples.Inline', {
             })
         ];
 
-        this.activeItem = Docs.touchExamplesUi ? 1 : 0;
+        this.activeItem = this.options.preview ? 1 : 0;
 
         this.on("afterrender", this.init, this);
 
@@ -99,6 +100,7 @@ Ext.define('Docs.view.examples.Inline', {
      */
     showCode: function() {
         this.layout.setActiveItem(0);
+        this.updateHeight();
     },
 
     /**
@@ -107,13 +109,14 @@ Ext.define('Docs.view.examples.Inline', {
     showPreview: function() {
         this.preview.update(this.editor.getValue());
         this.layout.setActiveItem(1);
+        this.updateHeight();
     },
 
     // Syncs the height with number of lines in code example.
     updateHeight: function() {
-        if (Docs.touchExamplesUi) {
-            var height = this.preview.getHeight();
-            height > 0 && this.setHeight(height);
+        var previewHeight = this.preview.getHeight();
+        if (Docs.touchExamplesUi && previewHeight > 0) {
+            this.setHeight(previewHeight);
         }
         else {
             var editorHeight = this.editor.getHeight();
