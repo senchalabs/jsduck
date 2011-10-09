@@ -445,12 +445,13 @@ task :touch, [:mode] => :sass do |t, args|
 end
 
 desc "Run JSDuck on Sencha Touch 2 (for internal use at Sencha)\n" +
-     "touch2       - creates debug/development version\n" +
-     "touch2[live] - create live version for deployment\n"
+     "touch2         - creates debug/development version\n" +
+     "touch2[export] - creates export version\n" +
+     "touch2[live]   - create live version for deployment\n"
 task :touch2, [:mode] => :sass do |t, args|
   mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "live"].include?(mode)
-  compress if mode == "live"
+  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
+  compress if mode == "export" || mode == "live"
 
   runner = JsDuckRunner.new
   runner.add_touch2
