@@ -15,7 +15,7 @@ Ext.define('Docs.view.examples.Device', {
         id: undefined,
         /**
          * @cfg {String} device
-         * Either phone or tablet.
+         * Either phone, miniphone or tablet.
          * @accessor
          */
         device: 'phone',
@@ -69,6 +69,7 @@ Ext.define('Docs.view.examples.Device', {
         // device dimensions in landscape orientation
         var landscape = {
             phone: {width: '481px', height: '320px'},
+            miniphone: {width: '219px', height: '320px'},
             tablet: {width: '717px', height: '538px'}
         }[this.device];
 

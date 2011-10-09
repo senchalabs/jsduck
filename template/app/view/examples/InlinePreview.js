@@ -23,7 +23,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
         if (Docs.touchExamplesUi) {
             return Ext.create('Docs.view.examples.Device', {
                 id: this.getIframeId(),
-                device: this.options.tablet ? "tablet" : "phone",
+                device: this.options.tablet ? "tablet" : (this.options.miniphone ? "miniphone" : "phone"),
                 orientation: this.options.portrait ? "portrait" : "landscape"
             }).toHtml();
         }

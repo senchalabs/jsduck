@@ -1235,6 +1235,18 @@ p.screenshot {
   height: 724px;
   background: url(../images/iphone-p.jpg) no-repeat; }
 
+.miniphone.landscape {
+  padding: 22px 6px 26px 127px;
+  width: 350px;
+  height: 368px;
+  background: url(../images/iphone-small-l.jpg) no-repeat; }
+
+.miniphone.portrait {
+  padding: 127px 22px 6px 26px;
+  width: 368px;
+  height: 350px;
+  background: url(../images/iphone-small-p.jpg) no-repeat; }
+
 .example-container {
   h1 {
     padding: 15px 0 !important; } }
