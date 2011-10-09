@@ -28,9 +28,9 @@ module JsDuck
     #
     # Optionally filename and line number will be inserted to message.
     def warn(msg, filename=nil, line=0)
-      msg = filename ? "#{filename} line #{line} #{msg}" : msg
+      msg = filename ? "#{filename}:#{line}: #{msg}" : msg
       if @warnings && !@shown_warnings[msg]
-        $stderr.puts "Warning: " + msg
+        $stderr.puts msg
         @shown_warnings[msg] = true
       end
     end

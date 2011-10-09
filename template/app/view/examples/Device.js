@@ -69,7 +69,7 @@ Ext.define('Docs.view.examples.Device', {
         // device dimensions in landscape orientation
         var landscape = {
             phone: {width: '481px', height: '320px'},
-            miniphone: {width: '219px', height: '320px'},
+            miniphone: {width: '320px', height: '219px'},
             tablet: {width: '717px', height: '538px'}
         }[this.device];
 
