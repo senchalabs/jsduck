@@ -47,6 +47,16 @@ Ext.define('Docs.view.examples.Inline', {
         ]
     }],
 
+    /**
+     * @cfg {Object} options
+     * A set of options for configuring the preview:
+     *
+     * @cfg {String} options.device phone, miniphone or tablet
+     * @cfg {String} options.orientation ladscape or portrait
+     * @cfg {Boolean} options.raw True to turn off Ext.setup().
+     */
+    options: {},
+
     initComponent: function() {
         this.items = [
             this.editor = Ext.create('Docs.view.examples.InlineEditor', {

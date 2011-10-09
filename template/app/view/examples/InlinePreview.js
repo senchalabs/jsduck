@@ -13,6 +13,13 @@ Ext.define('Docs.view.examples.InlinePreview', {
         iframeId: 0
     },
 
+    /**
+     * @cfg {Object} options
+     * A set of options for configuring the preview.
+     * See docs of parent component.
+     */
+    options: {},
+
     initComponent: function() {
         this.html = this.getHtml();
 
@@ -23,8 +30,8 @@ Ext.define('Docs.view.examples.InlinePreview', {
         if (Docs.touchExamplesUi) {
             return Ext.create('Docs.view.examples.Device', {
                 id: this.getIframeId(),
-                device: this.options.tablet ? "tablet" : (this.options.miniphone ? "miniphone" : "phone"),
-                orientation: this.options.portrait ? "portrait" : "landscape"
+                device: this.options.device,
+                orientation: this.options.orientation
             }).toHtml();
         }
         else {

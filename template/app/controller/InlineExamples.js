@@ -74,8 +74,16 @@ Ext.define('Docs.controller.InlineExamples', {
             // Strip tags and replace HTML entities with their values
             var code = Ext.String.htmlDecode(Ext.util.Format.stripTags(inlineEg.innerHTML));
             var options = {};
-            Ext.Array.forEach(inlineEg.className.split(/ +/), function(cssClass) {
-                options[cssClass] = true;
+            Ext.Array.forEach(inlineEg.className.split(/ +/), function(cls) {
+                if (cls === "phone" || cls === "miniphone" || cls === "tablet") {
+                    options.device = cls;
+                }
+                else if (cls === "ladscape" || cls === "portrait") {
+                    options.orientation = cls;
+                }
+                else {
+                    options[cls] = true;
+                }
             });
             var div = document.createElement("div");
             inlineEg.parentNode.replaceChild(div, inlineEg);
