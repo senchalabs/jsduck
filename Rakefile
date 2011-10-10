@@ -452,11 +452,12 @@ desc "Run JSDuck on Sencha Touch 2 (for internal use at Sencha)\n" +
 task :touch2, [:mode] => :sass do |t, args|
   mode = args[:mode] || "debug"
   throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
-  compress if mode == "export" || mode == "live"
+  compress if mode == "live" || mode == "export"
 
   runner = JsDuckRunner.new
   runner.add_touch2
   runner.add_debug if mode == "debug"
+  runner.add_export_notice if mode == "export"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.run
 
