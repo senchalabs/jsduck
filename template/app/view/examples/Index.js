@@ -14,7 +14,9 @@ Ext.define('Docs.view.examples.Index', {
 
     initComponent: function() {
         this.cls += Docs.touchExamplesUi ? " touch-examples-ui" : "";
-        var baseUrl = Docs.touchExamplesUi ? "touch/examples" : "extjs/examples/shared/screens";
+        var touchExampleRoot = Docs.exampleBaseUrl ? Docs.exampleBaseUrl : "touch/examples";
+
+        var baseUrl = Docs.touchExamplesUi ? touchExampleRoot : "extjs/examples/shared/screens";
 
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Examples</h1>' },

@@ -254,6 +254,29 @@ class JsDuckRunner
     @options += extract_jsb_build_files("#{@sdk_dir}/touch/touch.jsb3")
   end
 
+  def set_touch2_src
+    relative_touch_path = "../"
+    touch_iframe = "template-min/touchIframe.html";
+
+    ["template-min/touchIframe.html", "template-min/touch-welcome.html"].each do |file|
+      html = IO.read(file);
+
+      touch_src_re = /((src|href)="touch)/m
+      out = []
+
+      html.each_line do |line|
+        out << line.sub(/((src|href)="touch\/)/, '\2="' + relative_touch_path)
+      end
+
+      File.open(file, 'w') {|f| f.write(out) }
+    end
+
+    @options += [
+      "--welcome", "template-min/touch-welcome.html",
+      "--body-html", '<script type="text/javascript">Docs.exampleBaseUrl = "' + relative_touch_path + 'examples/";</script>'
+    ]
+  end
+
   def add_animator
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/animator/1-0/" />
@@ -468,10 +491,11 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.add_touch2
   runner.add_debug if mode == "debug"
   runner.add_touch2_export_notice if mode == "export"
+  runner.set_touch2_src if mode == "export"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.run
 
-  runner.copy_touch2_build
+  runner.copy_touch2_build if mode != "export"
 end
 
 desc "Run JSDuck JSON Export (for internal use at Sencha)\n" +

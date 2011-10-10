@@ -14,6 +14,7 @@ Ext.define('Docs.view.examples.TouchContainer', {
     cls: 'example-container iScroll',
     autoScroll: true,
     bodyPadding: '10 0 5 0',
+    exampleBaseUrl: "touch/examples/",
 
     initComponent: function() {
         this.dockedItems = [{
@@ -39,6 +40,10 @@ Ext.define('Docs.view.examples.TouchContainer', {
             ].join('')
         }];
 
+        if (Docs.exampleBaseUrl) {
+            this.exampleBaseUrl = Docs.exampleBaseUrl;
+        }
+
         this.callParent(arguments);
     },
 
@@ -49,7 +54,7 @@ Ext.define('Docs.view.examples.TouchContainer', {
     load: function(example) {
         this.title = example.text + " Example";
         this.device = Ext.create('Docs.view.examples.Device', {
-            url: "touch/examples/" + example.url,
+            url: this.exampleBaseUrl + example.url,
             device: example.device || "phone",
             orientation: example.orientation || "landscape"
         });
