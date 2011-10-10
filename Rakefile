@@ -273,7 +273,8 @@ class JsDuckRunner
 
     @options += [
       "--welcome", "template-min/touch-welcome.html",
-      "--body-html", '<script type="text/javascript">Docs.exampleBaseUrl = "' + relative_touch_path + 'examples/";</script>'
+      "--body-html",
+        '<script type="text/javascript">Docs.exampleBaseUrl = "' + relative_touch_path + 'examples/";if (Ext.is.Phone) { window.location = "' + relative_touch_path + 'examples/"; }</script>'
     ]
   end
 
