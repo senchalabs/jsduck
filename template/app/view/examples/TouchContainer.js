@@ -91,17 +91,20 @@ Ext.define('Docs.view.examples.TouchContainer', {
     // Scale down the example when in tablet mode
     updateScale: function() {
         var iframe = Ext.query('iframe', this.el.dom)[0];
-        iframe.onload = Ext.Function.bind(function() {
-            var style = document.createElement("style");
-            var styleContent = "html { overflow: hidden }";
 
-            // Scale to 70% of original. Default font-size is 114%
-            if (this.device.getDevice() === "tablet") {
-                styleContent += "body { font-size: 79.8% !important; }";
-            }
-            style.innerHTML = styleContent;
-            iframe.contentWindow.document.body.appendChild(style);
-        }, this);
+        if (iframe) {
+            iframe.onload = Ext.Function.bind(function() {
+                var style = document.createElement("style");
+                var styleContent = "html { overflow: hidden }";
+
+                // Scale to 70% of original. Default font-size is 114%
+                if (this.device.getDevice() === "tablet") {
+                    styleContent += "body { font-size: 79.8% !important; }";
+                }
+                style.innerHTML = styleContent;
+                iframe.contentWindow.document.body.appendChild(style);
+            }, this);
+        }
     },
 
     updateTitle: function() {

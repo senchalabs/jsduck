@@ -1230,6 +1230,13 @@ p.screenshot {
       @include border-radius(10px);
       text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35); } } }
 
+.touchExample .wrong-browser {
+  margin-top: 120px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 120%;
+  color: #666; }
+
 .tablet.landscape {
   padding: 79px 83px;
   background: url(../images/ipad-l.jpg) no-repeat; }
