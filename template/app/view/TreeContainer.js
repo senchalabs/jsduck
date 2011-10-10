@@ -20,6 +20,12 @@ Ext.define('Docs.view.TreeContainer', {
     initComponent: function() {
         this.items = [
             {
+                // An empty item that's initially activated.
+                // We don't want to activate any of the trees when
+                // they are hidden, as that will cause the scrollbar
+                // to render improperly (or rather, not render at all)
+            },
+            {
                 xtype: 'classtree',
                 id: 'classtree',
                 data: Docs.data.classes
@@ -40,7 +46,6 @@ Ext.define('Docs.view.TreeContainer', {
             {
                 xtype: 'grouptree',
                 id: 'guidetree',
-                expandRootChildren: true,
                 data: Docs.data.guides,
                 convert: function(guide) {
                     return {

@@ -223,7 +223,9 @@ module JsDuck
     end
 
     def create_member_id(m)
-      "#{m[:static] ? 'static-' : ''}#{m[:tagname]}-#{m[:name]}"
+      # Sanitize $ in member names with something safer
+      name = m[:name].gsub(/\$/, 'S-')
+      "#{m[:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
     end
 
     def detect_name(tagname, doc_map, code, name_type = :last_name)
@@ -330,7 +332,7 @@ module JsDuck
           end
         end
         (code[:alias] || []).each do |a|
-          if a =~ /^(\w+)\.(\w+)$/
+          if a =~ /^([\w.]+)\.(\w+)$/
             if xtypes[$1]
               xtypes[$1] << $2
             else

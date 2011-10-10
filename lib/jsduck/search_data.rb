@@ -11,7 +11,7 @@ module JsDuck
       docs.each do |cls|
         list << class_node(cls)
         [:members, :statics].each do |group|
-          [:cfg, :property, :method, :event].each do |type|
+          cls[group].each_key do |type|
             cls.members(type, group).each do |m|
               # skip inherited items and constructors
               if m[:owner] == cls.full_name && m[:name] != cls.short_name

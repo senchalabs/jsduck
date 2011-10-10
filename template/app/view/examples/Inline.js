@@ -18,7 +18,7 @@ Ext.define('Docs.view.examples.Inline', {
         constrainTo: false
     },
     // Make too long examples scrollable
-    maxHeight: 890,
+    maxCodeHeight: 400,
 
     dockedItems: [{
         xtype: 'toolbar',
@@ -47,7 +47,23 @@ Ext.define('Docs.view.examples.Inline', {
         ]
     }],
 
+    /**
+     * @cfg {Object} options
+     * A set of options for configuring the preview:
+     *
+     * @cfg {String} options.device phone, miniphone or tablet
+     * @cfg {String} options.orientation ladscape or portrait
+     * @cfg {Boolean} options.raw True to turn off Ext.setup().
+     * @cfg {Boolean} options.preview True to start up in preview mode.
+     */
+    options: {},
+
     initComponent: function() {
+        this.options = Ext.apply({
+            device: "phone",
+            orientation: "landscape"
+        }, this.options);
+
         this.items = [
             this.editor = Ext.create('Docs.view.examples.InlineEditor', {
                 cmpName: 'code',
@@ -63,7 +79,7 @@ Ext.define('Docs.view.examples.Inline', {
             })
         ];
 
-        this.activeItem = Docs.touchExamplesUi ? 1 : 0;
+        this.activeItem = this.options.preview ? 1 : 0;
 
         this.on("afterrender", this.init, this);
 
@@ -84,6 +100,7 @@ Ext.define('Docs.view.examples.Inline', {
      */
     showCode: function() {
         this.layout.setActiveItem(0);
+        this.updateHeight();
     },
 
     /**
@@ -92,16 +109,18 @@ Ext.define('Docs.view.examples.Inline', {
     showPreview: function() {
         this.preview.update(this.editor.getValue());
         this.layout.setActiveItem(1);
+        this.updateHeight();
     },
 
     // Syncs the height with number of lines in code example.
     updateHeight: function() {
-        if (Docs.touchExamplesUi) {
-            this.setHeight(this.preview.getHeight());
+        var previewHeight = this.preview.getHeight();
+        if (Docs.touchExamplesUi && previewHeight > 0) {
+            this.setHeight(previewHeight);
         }
         else {
             var editorHeight = this.editor.getHeight();
-            editorHeight && this.setHeight(editorHeight + 5);
+            this.setHeight(Ext.Number.constrain(editorHeight, 0, this.maxCodeHeight));
         }
     }
 

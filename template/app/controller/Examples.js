@@ -68,6 +68,11 @@ Ext.define('Docs.controller.Examples', {
                     }, this, {
                         delegate: 'button.landscape'
                     });
+                    cmp.el.addListener('click', function(e, el) {
+                        this.openInNewWindow();
+                    }, this, {
+                        delegate: 'button.new-window'
+                    });
                 }
             }
         });
@@ -119,5 +124,10 @@ Ext.define('Docs.controller.Examples', {
 
     changeDevice: function(device) {
         this.getPage().setDevice(device);
+    },
+
+    openInNewWindow: function() {
+        var example = this.getExample(this.activeUrl);
+        window.open("touch/examples/" + example.url);
     }
 });

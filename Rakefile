@@ -95,6 +95,8 @@ def compress
   # Now do everything that follows in template-min/ dir
   dir = "template-min"
 
+  # Create JSB3 file for Docs app
+  system("sencha", "create", "jsb", "-a", "#{dir}/build-js.html", "-p", "#{dir}/app.jsb3")
   # Concatenate files listed in JSB3 file
   system("sencha", "build", "-p", "#{dir}/app.jsb3", "-d", dir)
   # Remove intermediate build files
@@ -221,6 +223,7 @@ class JsDuckRunner
       "--head-html", head_html,
       "--footer", "Sencha Touch 2.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/touch/docs/categories.json",
+      "--welcome", "template/touch-welcome.html",
       "--videos", "#{@sdk_dir}/touch/docs/videos.json",
       "--guides", "#{@sdk_dir}/touch/docs/guides.json",
       "--examples", "#{@sdk_dir}/touch/docs/examples.json",
@@ -228,6 +231,7 @@ class JsDuckRunner
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
       "--builtin-classes",
+      "--img", "<p class='screenshot'><img src='%u' alt='%a'><span>%a</span></p>",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 
@@ -250,6 +254,30 @@ class JsDuckRunner
       "--external=google.maps.Map,google.maps.LatLng",
     ]
     @options += extract_jsb_build_files("#{@sdk_dir}/touch/touch.jsb3")
+  end
+
+  def set_touch2_src
+    relative_touch_path = "../"
+    touch_iframe = "template-min/touchIframe.html";
+
+    ["template-min/touchIframe.html", "template-min/touch-welcome.html"].each do |file|
+      html = IO.read(file);
+
+      touch_src_re = /((src|href)="touch)/m
+      out = []
+
+      html.each_line do |line|
+        out << line.sub(/((src|href)="touch\/)/, '\2="' + relative_touch_path)
+      end
+
+      File.open(file, 'w') {|f| f.write(out) }
+    end
+
+    @options += [
+      "--welcome", "template-min/touch-welcome.html",
+      "--body-html",
+        '<script type="text/javascript">Docs.exampleBaseUrl = "' + relative_touch_path + 'examples/";if (Ext.is.Phone) { window.location = "' + relative_touch_path + 'examples/"; }</script>'
+    ]
   end
 
   def add_animator
@@ -306,6 +334,16 @@ class JsDuckRunner
       "--body-html", <<-EOHTML
       <div id="notice-text" style="display: none">
         Use <a href="http://docs.sencha.com/ext-js/4-0">http://docs.sencha.com/ext-js/4-0</a> for up to date documentation and features
+      </div>
+      EOHTML
+    ]
+  end
+
+  def add_touch2_export_notice
+    @options += [
+      "--body-html", <<-EOHTML
+      <div id="notice-text" style="display: none">
+        Use <a href="http://docs.sencha.com/touch/2-0">http://docs.sencha.com/touch/2-0</a> for up to date documentation and features
       </div>
       EOHTML
     ]
@@ -406,7 +444,7 @@ task :sdk, [:mode] => :sass do |t, args|
   runner.add_sdk
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_export_notice if mode == "export"
+  runner.add_sdk_export_notice if mode == "export"
   runner.add_google_analytics if mode == "live"
   runner.run
 
@@ -444,20 +482,23 @@ task :touch, [:mode] => :sass do |t, args|
 end
 
 desc "Run JSDuck on Sencha Touch 2 (for internal use at Sencha)\n" +
-     "touch2       - creates debug/development version\n" +
-     "touch2[live] - create live version for deployment\n"
+     "touch2         - creates debug/development version\n" +
+     "touch2[export] - creates export version\n" +
+     "touch2[live]   - create live version for deployment\n"
 task :touch2, [:mode] => :sass do |t, args|
   mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "live"].include?(mode)
-  compress if mode == "live"
+  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
+  compress if mode == "live" || mode == "export"
 
   runner = JsDuckRunner.new
   runner.add_touch2
   runner.add_debug if mode == "debug"
+  runner.add_touch2_export_notice if mode == "export"
+  runner.set_touch2_src if mode == "export"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.run
 
-  runner.copy_touch2_build
+  runner.copy_touch2_build if mode != "export"
 end
 
 desc "Run JSDuck JSON Export (for internal use at Sencha)\n" +

@@ -14,6 +14,7 @@ Ext.define('Docs.view.examples.TouchContainer', {
     cls: 'example-container iScroll',
     autoScroll: true,
     bodyPadding: '10 0 5 0',
+    exampleBaseUrl: "touch/examples/",
 
     initComponent: function() {
         this.dockedItems = [{
@@ -31,9 +32,17 @@ Ext.define('Docs.view.examples.TouchContainer', {
                         '<button class="landscape selected">Landscape</button>',
                         '<button class="portrait">Portrait</button>',
                     '<div>',
+                    '<span class="separator">&nbsp;</span>',
+                    '<div>',
+                        '<button class="new-window">Open in new window</button>',
+                    '<div>',
                 '</div>'
             ].join('')
         }];
+
+        if (Docs.exampleBaseUrl) {
+            this.exampleBaseUrl = Docs.exampleBaseUrl;
+        }
 
         this.callParent(arguments);
     },
@@ -45,7 +54,7 @@ Ext.define('Docs.view.examples.TouchContainer', {
     load: function(example) {
         this.title = example.text + " Example";
         this.device = Ext.create('Docs.view.examples.Device', {
-            url: "touch/examples/" + example.url,
+            url: this.exampleBaseUrl + example.url,
             device: example.device || "phone",
             orientation: example.orientation || "landscape"
         });
@@ -81,14 +90,20 @@ Ext.define('Docs.view.examples.TouchContainer', {
 
     // Scale down the example when in tablet mode
     updateScale: function() {
-        if (this.device.getDevice() === "tablet") {
-            var iframe = Ext.query('iframe', this.el.dom)[0];
-            iframe.onload = function() {
+        var iframe = Ext.query('iframe', this.el.dom)[0];
+
+        if (iframe) {
+            iframe.onload = Ext.Function.bind(function() {
                 var style = document.createElement("style");
+                var styleContent = "html { overflow: hidden }";
+
                 // Scale to 70% of original. Default font-size is 114%
-                style.innerHTML = "body {font-size: 79.8% !important}";
+                if (this.device.getDevice() === "tablet") {
+                    styleContent += "body { font-size: 79.8% !important; }";
+                }
+                style.innerHTML = styleContent;
                 iframe.contentWindow.document.body.appendChild(style);
-            };
+            }, this);
         }
     },
 

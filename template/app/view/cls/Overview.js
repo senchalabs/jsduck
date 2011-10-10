@@ -126,7 +126,7 @@ Ext.define('Docs.view.cls.Overview', {
             Ext.get(m).removeCls('first-child');
         });
 
-        Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
+        Ext.Array.forEach(['cfg', 'property', 'method', 'event', 'css_var', 'css_mixin'], function(type) {
             var sectionId = '#m-' + type;
 
             // Hide the section completely if all items in it are hidden

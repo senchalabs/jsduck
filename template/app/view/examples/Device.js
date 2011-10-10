@@ -15,7 +15,7 @@ Ext.define('Docs.view.examples.Device', {
         id: undefined,
         /**
          * @cfg {String} device
-         * Either phone or tablet.
+         * Either phone, miniphone or tablet.
          * @accessor
          */
         device: 'phone',
@@ -32,13 +32,28 @@ Ext.define('Docs.view.examples.Device', {
         Ext.apply(this, this.getIframeSize());
         this.id = this.id || Ext.id();
 
-        // Template for the DIV containing device image and iframe
-        this.tpl = new Ext.XTemplate(
-            '<div class="touchExample {device} {orientation}">',
-                '<iframe id={id} style="width: {width}; height: {height}; border: 0;" ',
-                        'src="{url}"></iframe>',
-            '</div>'
-        );
+        if (Ext.isWebKit) {
+            // Template for the DIV containing device image and iframe
+            this.tpl = new Ext.XTemplate(
+                '<div class="touchExample {device} {orientation}">',
+                    '<iframe id={id} style="width: {width}; height: {height}; border: 0;" ',
+                            'src="{[this.deviceUrl(values)]}"></iframe>',
+                '</div>',
+                {
+                    deviceUrl: function(values) {
+                         return values.url + "?deviceType=" + (values.device === 'tablet' ? 'Tablet' : 'Phone');
+                    }
+                }
+            );
+        } else {
+            this.tpl = new Ext.XTemplate(
+                '<div class="touchExample {device} {orientation}">',
+                    '<div id={id} class="wrong-browser" style="width: {width}; height: {height};">',
+                        '<div style="padding: 20px;">Sencha Touch only functions on WebKit based browsers. <br /><br />Please use Google Chrome or Safari to see live examples.</div>',
+                    '</div>',
+                '</div>'
+            );
+        }
     },
 
     /**
@@ -63,7 +78,8 @@ Ext.define('Docs.view.examples.Device', {
     getIframeSize: function() {
         // device dimensions in landscape orientation
         var landscape = {
-            phone: {width: '480px', height: '320px'},
+            phone: {width: '481px', height: '320px'},
+            miniphone: {width: '320px', height: '219px'},
             tablet: {width: '717px', height: '538px'}
         }[this.device];
 

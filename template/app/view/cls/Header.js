@@ -33,16 +33,14 @@ Ext.define('Docs.view.cls.Header', {
                     }
                 },
                 renderXTypes: function(xtypes) {
-                    var map = {
+                    var titles = {
                         widget: "xtype",
                         plugin: "ptype",
                         feature: "ftype"
                     };
                     var r = [];
-                    xtypes && Ext.Object.each(map, function(ns, title) {
-                        if (xtypes[ns]) {
-                            r.push(title + ": " + xtypes[ns].join(", "));
-                        }
+                    xtypes && Ext.Object.each(xtypes, function(ns, types) {
+                        r.push((titles[ns] || ns) + ": " + types.join(", "));
                     });
 
                     if (r.length > 0) {
