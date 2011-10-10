@@ -218,6 +218,11 @@ a {
 
 #north-region {
   @include vertical-gradient(#074e7c, #095f93);
+
+  .dropdown {
+    padding-right: 15px;
+    background: url(../images/down-arr.png) no-repeat bottom right;
+  }
 }
 
 #footer {
