@@ -1268,3 +1268,166 @@ p.screenshot {
     display: inline-block;
     float: left;
     width: 1px;} }
+
+
+#touch-welcome {
+  width: 900px;
+  margin: 30px auto;
+  position: relative;
+
+  h1 {
+    font-size: 280%;
+  }
+  h2 {
+    font-size: 200%;
+    margin-top: 10px;
+  }
+
+  h2, h3 {
+    color: #314E64;
+  }
+  h3 {
+    font-weight: bold;
+  }
+  .klavika {
+    font-family: "Klavika", klavika-web-1, klavika-web-2, sans-serif;
+    font-weight: 200 !important;
+  }
+
+  a.api-docs {
+    color: #516F83;
+    text-shadow: rgba(255, 255, 255, 0.8) 0 1px 0;
+    border: 1px solid #c2c2c2;
+    @include border-radius(3px);
+    @include vertical-gradient(#ffffff, #e8e8e8);
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 20px;
+    font-size: 110%;
+    font-weight: bold;
+    padding: 5px 10px;
+    span {
+      padding-right: 20px;
+      background: url(../images/link-arrow-next.png) no-repeat right center;
+    }
+  }
+
+  a.more-icon {
+    background: url(http://www.sencha.com/img/icon/more.png) no-repeat right center;
+    color: #126499;
+    font-size: 12px;
+    font-weight: bold;
+    padding-right: 16px;
+    white-space: nowrap;
+  }
+
+  .header {
+    padding: 30px 0;
+  }
+
+  .divider {
+    height: 1px;
+    margin: 20px 0;
+    background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(222,222,222,1) 50%, rgba(255,255,255,1) 100%);
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(222,222,222,1)), color-stop(100%,rgba(255,255,255,1)));
+  }
+
+  .get-started {
+    width: 470px;
+    float: left;
+
+    a.video {
+      float: left;
+      margin-right: 20px;
+      img {
+        width: 240px;
+        height: 180px;
+      }
+    }
+    ul {
+      margin: 5px 0 10px 0;
+    }
+  }
+
+  .whats-new {
+    background-color: #ECF5FC;
+    border: 1px solid #C7D1D8;
+    @include border-radius(5px);
+    margin-left: 520px;
+    padding: 0 20px 20px 20px;
+
+    h3 {
+      padding-bottom: 15px;
+    }
+
+    img {
+      float: left;
+      width: 140px;
+    }
+
+    .right {
+      margin-left: 160px;
+      ul {
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  .content-list {
+    position: relative;
+    width: 420px;
+    height: 190px;
+    h3 {
+      padding-bottom: 15px;
+    }
+    a.more-icon {
+      position: absolute;
+      top: 15px;
+      right: 10px;
+    }
+    .item {
+      font-weight: bold;
+      float: left;
+      margin: 0 10px;
+      text-align: center;
+      .thumb {
+        width: 120px;
+        height: 90px;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        @include vertical-gradient(#ffffff, #f9f9f9);
+        display: block;
+        img {
+          max-width: 118px;
+          max-height: 88px;
+        }
+      }
+    }
+    &.sample-apps,
+    &.components {
+      float: left;
+      .item {
+        .thumb {
+          img {
+            margin-top: 8px;
+          }
+        }
+      }
+    }
+    &.guides,
+    &.videos {
+      margin-left: 500px;
+      .item {
+        .thumb {
+          border: 0;
+        }
+      }
+    }
+  }
+
+  #sencha-stamp {
+    display: block;
+    margin: 20px auto;
+  }
+}

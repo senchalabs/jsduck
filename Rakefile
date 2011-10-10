@@ -221,6 +221,7 @@ class JsDuckRunner
       "--head-html", head_html,
       "--footer", "Sencha Touch 2.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/touch/docs/categories.json",
+      "--welcome", "template/touch-welcome.html",
       "--videos", "#{@sdk_dir}/touch/docs/videos.json",
       "--guides", "#{@sdk_dir}/touch/docs/guides.json",
       "--examples", "#{@sdk_dir}/touch/docs/examples.json",
