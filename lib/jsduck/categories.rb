@@ -15,6 +15,12 @@ module JsDuck
     def parse(path)
       @categories = JsonDuck.read(path)
 
+      # Don't crash if old syntax is used.
+      if @categories.is_a?(Hash) && @categories["categories"]
+        Logger.instance.warn('Update categories file to contain just the array inside {"categories": [...]}')
+        @categories = @categories["categories"]
+      end
+
       # Perform expansion on all class names containing * wildcard
       @categories.each do |cat|
         cat["groups"].each do |group|
