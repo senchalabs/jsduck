@@ -313,6 +313,16 @@ class JsDuckRunner
     ]
   end
 
+  def add_touch2_export_notice
+    @options += [
+      "--body-html", <<-EOHTML
+      <div id="notice-text" style="display: none">
+        Use <a href="http://docs.sencha.com/touch/2-0">http://docs.sencha.com/touch/2-0</a> for up to date documentation and features
+      </div>
+      EOHTML
+    ]
+  end
+
   def add_google_analytics
     @options += [
       "--body-html", <<-EOHTML
@@ -408,7 +418,7 @@ task :sdk, [:mode] => :sass do |t, args|
   runner.add_sdk
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_export_notice if mode == "export"
+  runner.add_sdk_export_notice if mode == "export"
   runner.add_google_analytics if mode == "live"
   runner.run
 
@@ -457,7 +467,7 @@ task :touch2, [:mode] => :sass do |t, args|
   runner = JsDuckRunner.new
   runner.add_touch2
   runner.add_debug if mode == "debug"
-  runner.add_export_notice if mode == "export"
+  runner.add_touch2_export_notice if mode == "export"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.run
 
