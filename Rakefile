@@ -414,6 +414,29 @@ class JsDuckRunner
     system "cp -r #{@sdk_dir}/touch/build #{@out_dir}/touch"
   end
 
+  def add_product_doc_urls
+    @options += [
+      "--body-html", <<-EOHTML
+      <script type="text/javascript">
+        Docs.otherProducts = [
+          {
+              text: 'Ext JS 4.0',
+              href: 'http://docs.sencha.com/ext-js/4-0'
+          },
+          {
+              text: 'Sencha Touch 2.0',
+              href: 'http://docs.sencha.com/touch/2-0'
+          },
+          {
+              text: 'Sencha Animator 1.0',
+              href: 'http://docs.sencha.com/animator/1-0'
+          }
+        ];
+      </script>
+      EOHTML
+    ]
+  end
+
   def run
     # Pass multiple arguments to system, so we'll take advantage of the built-in escaping
     system(*["ruby", "bin/jsduck"].concat(@options))
@@ -496,6 +519,7 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.add_touch2_export_notice if mode == "export"
   runner.set_touch2_src if mode == "export"
   runner.add_seo if mode == "debug" || mode == "live"
+  runner.add_product_doc_urls if mode == "live"
   runner.run
 
   runner.copy_touch2_build if mode != "export"
