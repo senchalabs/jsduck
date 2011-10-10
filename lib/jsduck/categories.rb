@@ -34,26 +34,26 @@ module JsDuck
     # Expands class name like 'Foo.*' into multiple class names.
     def expand(name)
       re = Regexp.new("^" + name.split(/\*/, -1).map {|part| Regexp.escape(part) }.join('.*') + "$")
-      @relations.to_a.find_all {|cls| re =~ cls[:name] && !cls[:private] }.map {|cls| cls[:name] }.sort
+      classes = @relations.to_a.find_all {|cls| re =~ cls[:name] && !cls[:private] }.map {|cls| cls[:name] }.sort
+      if classes.length == 0
+        Logger.instance.warn("No class found matching a pattern '#{name}' in categories file.")
+      end
+      classes
     end
 
     # Prints warnings for missing classes in categories file
     def validate
+      # Build a map of all classes listed in categories
       listed_classes = {}
-
-      # Check that each class listed in overview file exists
       @categories.each do |cat|
         cat["groups"].each do |group|
           group["classes"].each do |cls_name|
-            unless @relations[cls_name]
-              Logger.instance.warn("Class '#{cls_name}' in category '#{cat['name']}/#{group['name']}' not found")
-            end
             listed_classes[cls_name] = true
           end
         end
       end
 
-      # Check that each existing non-private class is listed in overview file
+      # Check that each existing non-private class is listed
       @relations.each do |cls|
         unless listed_classes[cls[:name]] || cls[:private]
           Logger.instance.warn("Class '#{cls[:name]}' not found in categories file")
