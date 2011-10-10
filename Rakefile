@@ -95,6 +95,8 @@ def compress
   # Now do everything that follows in template-min/ dir
   dir = "template-min"
 
+  # Create JSB3 file for Docs app
+  system("sencha", "create", "jsb", "-a", "#{dir}/build-js.html", "-p", "#{dir}/app.jsb3")
   # Concatenate files listed in JSB3 file
   system("sencha", "build", "-p", "#{dir}/app.jsb3", "-d", dir)
   # Remove intermediate build files
