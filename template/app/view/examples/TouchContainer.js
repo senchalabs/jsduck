@@ -82,7 +82,7 @@ Ext.define('Docs.view.examples.TouchContainer', {
     // Scale down the example when in tablet mode
     updateScale: function() {
         var iframe = Ext.query('iframe', this.el.dom)[0];
-        iframe.onload = function() {
+        iframe.onload = Ext.Function.bind(function() {
             var style = document.createElement("style");
             var styleContent = "html { overflow: hidden }";
 
@@ -92,7 +92,7 @@ Ext.define('Docs.view.examples.TouchContainer', {
             }
             style.innerHTML = styleContent;
             iframe.contentWindow.document.body.appendChild(style);
-        };
+        }, this);
     },
 
     updateTitle: function() {
