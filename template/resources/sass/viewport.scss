@@ -937,12 +937,27 @@ p.screenshot {
     zoom: 1;
     line-height: 1em;
 }
-.all-demos dd img {
-    border: 1px solid #ddd;
+.all-demos dd .thumb {
     float:left;
     height:90px;
     margin:5px 0 0 5px;
     width:120px;
+}
+.all-demos dd .thumb img {
+  border: 1px solid #ddd;
+  max-height:88px;
+  max-width:118px;
+  margin: auto;
+}
+
+// Special styles for Touch examples icons
+.all-demos.touch-examples-ui dd .thumb img {
+  border: 0;
+  margin: 7px 0 0 22px;
+}
+.all-demos.touch-examples-ui dd .thumb {
+  border: 1px solid #ddd;
+  @include vertical-gradient(#ffffff, #f9f9f9);
 }
 
 .all-demos dd div {
