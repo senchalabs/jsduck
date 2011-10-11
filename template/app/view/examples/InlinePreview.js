@@ -51,15 +51,18 @@ Ext.define('Docs.view.examples.InlinePreview', {
     update: function(code) {
         var options = this.options;
         var iframe = document.getElementById(this.getIframeId());
-        // Something is not quite ready when onload fires.
-        // I'm unsure what I should wait for. So I'm currently adding just this nasty delay.
-        // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
-        iframe.onload = function() {
-            Ext.Function.defer(function() {
-                iframe.contentWindow.refreshPage(code, options);
-            }, 100);
-        };
-        iframe.src = Docs.touchExamplesUi ? "touchIframe.html" : "extIframe.html";
+
+        if (iframe) {
+            // Something is not quite ready when onload fires.
+            // I'm unsure what I should wait for. So I'm currently adding just this nasty delay.
+            // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
+            iframe.onload = function() {
+                Ext.Function.defer(function() {
+                    iframe.contentWindow.refreshPage(code, options);
+                }, 100);
+            };
+            iframe.src = Docs.touchExamplesUi ? "touchIframe.html" : "extIframe.html";
+        }
     },
 
     // Returns iframe ID for this inline example component.

@@ -218,6 +218,11 @@ a {
 
 #north-region {
   @include vertical-gradient(#074e7c, #095f93);
+
+  .dropdown {
+    padding-right: 15px;
+    background: url(../images/down-arr.png) no-repeat bottom right;
+  }
 }
 
 #footer {
@@ -1229,6 +1234,13 @@ p.screenshot {
       box-shadow: inset #5b6167 0 0 1px;
       @include border-radius(10px);
       text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35); } } }
+
+.touchExample .wrong-browser {
+  margin-top: 120px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 120%;
+  color: #666; }
 
 .tablet.landscape {
   padding: 79px 83px;

@@ -5,6 +5,7 @@ Ext.define('Docs.view.Viewport', {
     extend: 'Ext.container.Viewport',
     requires: [
         'Docs.view.search.Container',
+        'Docs.view.Header',
         'Docs.view.Tabs',
         'Docs.view.TreeContainer',
         'Docs.view.welcome.Index',
@@ -24,6 +25,7 @@ Ext.define('Docs.view.Viewport', {
     defaults: { xtype: 'container' },
 
     initComponent: function() {
+
         this.items = [
             {
                 region: 'north',
@@ -40,10 +42,9 @@ Ext.define('Docs.view.Viewport', {
                         layout: 'hbox',
                         items: [
                             {
-                                xtype: 'container',
-                                flex: 1,
-                                contentEl: 'header-content'
+                                xtype: 'docheader'
                             },
+                            {   xtype: 'container', flex: 1 },
                             {
                                 xtype: 'searchcontainer',
                                 id: 'search-container',

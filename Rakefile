@@ -95,6 +95,8 @@ def compress
   # Now do everything that follows in template-min/ dir
   dir = "template-min"
 
+  # Create JSB3 file for Docs app
+  system("sencha", "create", "jsb", "-a", "#{dir}/build-js.html", "-p", "#{dir}/app.jsb3")
   # Concatenate files listed in JSB3 file
   system("sencha", "build", "-p", "#{dir}/app.jsb3", "-d", dir)
   # Remove intermediate build files
@@ -254,6 +256,30 @@ class JsDuckRunner
     @options += extract_jsb_build_files("#{@sdk_dir}/touch/touch.jsb3")
   end
 
+  def set_touch2_src
+    relative_touch_path = "../"
+    touch_iframe = "template-min/touchIframe.html";
+
+    ["template-min/touchIframe.html", "template-min/touch-welcome.html"].each do |file|
+      html = IO.read(file);
+
+      touch_src_re = /((src|href)="touch)/m
+      out = []
+
+      html.each_line do |line|
+        out << line.sub(/((src|href)="touch\/)/, '\2="' + relative_touch_path)
+      end
+
+      File.open(file, 'w') {|f| f.write(out) }
+    end
+
+    @options += [
+      "--welcome", "template-min/touch-welcome.html",
+      "--body-html",
+        '<script type="text/javascript">Docs.exampleBaseUrl = "' + relative_touch_path + 'examples/";if (Ext.is.Phone) { window.location = "' + relative_touch_path + 'examples/"; }</script>'
+    ]
+  end
+
   def add_animator
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/animator/1-0/" />
@@ -388,6 +414,29 @@ class JsDuckRunner
     system "cp -r #{@sdk_dir}/touch/build #{@out_dir}/touch"
   end
 
+  def add_product_doc_urls
+    @options += [
+      "--body-html", <<-EOHTML
+      <script type="text/javascript">
+        Docs.otherProducts = [
+          {
+              text: 'Ext JS 4.0',
+              href: 'http://docs.sencha.com/ext-js/4-0'
+          },
+          {
+              text: 'Sencha Touch 2.0',
+              href: 'http://docs.sencha.com/touch/2-0'
+          },
+          {
+              text: 'Sencha Animator 1.0',
+              href: 'http://docs.sencha.com/animator/1-0'
+          }
+        ];
+      </script>
+      EOHTML
+    ]
+  end
+
   def run
     # Pass multiple arguments to system, so we'll take advantage of the built-in escaping
     system(*["ruby", "bin/jsduck"].concat(@options))
@@ -468,10 +517,12 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.add_touch2
   runner.add_debug if mode == "debug"
   runner.add_touch2_export_notice if mode == "export"
+  runner.set_touch2_src if mode == "export"
   runner.add_seo if mode == "debug" || mode == "live"
+  runner.add_product_doc_urls if mode == "live"
   runner.run
 
-  runner.copy_touch2_build
+  runner.copy_touch2_build if mode != "export"
 end
 
 desc "Run JSDuck JSON Export (for internal use at Sencha)\n" +
