@@ -221,12 +221,12 @@ Ext.define('Docs.controller.Comments', {
             cors: true,
             method: 'POST',
             callback: function(options, success, response) {
-
-                console.log(options, success, response)
                 var data = Ext.JSON.decode(response.responseText);
 
-                this.updateMeta(this.commentId(cls), -1);
-                Ext.get(id).remove();
+                if (data.success) {
+                    this.updateMeta(this.commentId(cls), -1);
+                    Ext.get(id).remove();
+                }
             },
             scope: this
         });
@@ -242,8 +242,12 @@ Ext.define('Docs.controller.Comments', {
 
     vote: function(direction, el) {
 
-        if (!this.getController('Auth').isLoggedIn() || Ext.get(el).hasCls('selected')) {
+        if (!this.getController('Auth').isLoggedIn()) {
             this.showError('Please login to vote on this comment', el);
+            return false;
+        }
+        else if (Ext.get(el).hasCls('selected')) {
+            this.showError('You have already voted on this comment', el);
             return false;
         }
 
