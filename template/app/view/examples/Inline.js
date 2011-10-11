@@ -115,11 +115,11 @@ Ext.define('Docs.view.examples.Inline', {
     // Syncs the height with number of lines in code example.
     updateHeight: function() {
         var previewHeight = this.preview.getHeight();
+        var editorHeight = this.editor.getHeight();
         if (Docs.touchExamplesUi && previewHeight > 0) {
             this.setHeight(previewHeight);
         }
-        else {
-            var editorHeight = this.editor.getHeight();
+        else if (editorHeight > 0) {
             this.setHeight(Ext.Number.constrain(editorHeight, 0, this.maxCodeHeight));
         }
     }
