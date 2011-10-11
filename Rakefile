@@ -273,10 +273,19 @@ class JsDuckRunner
       File.open(file, 'w') {|f| f.write(out) }
     end
 
+    head_html = <<-EOHTML
+      <script type="text/javascript">
+        Docs.exampleBaseUrl = "#{relative_touch_path}examples/";
+        if (Ext.is.Phone) { window.location = "#{relative_touch_path}examples/"; }
+      </script>
+      <div id="notice-text" style="display: none">
+        Use <a href="http://docs.sencha.com/touch/2-0">http://docs.sencha.com/touch/2-0</a> for up to date documentation and features
+      </div>
+    EOHTML
+
     @options += [
       "--welcome", "template-min/touch-welcome.html",
-      "--body-html",
-        '<script type="text/javascript">Docs.exampleBaseUrl = "' + relative_touch_path + 'examples/";if (Ext.is.Phone) { window.location = "' + relative_touch_path + 'examples/"; }</script>'
+      "--body-html", head_html
     ]
   end
 
