@@ -1,8 +1,15 @@
+/**
+ * Retrieving and posting Comments
+ */
 Ext.define('Docs.controller.Comments', {
     extend: 'Ext.app.Controller',
 
     // baseUrl: 'http://projects.sencha.com/auth',
     baseUrl: 'http://127.0.0.1/sencha/jsduck_out/auth',
+
+    mixins: {
+        authMixin: 'Docs.controller.AuthHelpers'
+    },
 
     refs: [
         {
@@ -21,55 +28,50 @@ Ext.define('Docs.controller.Comments', {
 
     init: function() {
 
-        this.addEvents('afterMetaLoad');
+        this.addEvents(
+            /**
+             * @event add  Fired after a comment is added
+             * @param {String} key  Key of the comment
+             */
+            'add',
+
+            /**
+             * @event remove  Fired after a comment is removed
+             * @param {String} key  Key of the comment
+             */
+            'remove'
+        );
+
+        this.getController('Auth').on({
+            loggedIn:  function() {
+                Docs.view.Comments.renderNewCommentForms();
+            },
+            loggedOut: function() {
+                Docs.view.Comments.renderNewCommentForms()
+            }
+        });
 
         this.getController('Classes').on({
             showClass: function(cls, opts) {
                 if (opts.reRendered) {
-                    if (this.commentMeta) {
-                        Docs.view.Comments.renderCommentMeta();
-                    } else {
-                        this.addListener('afterMetaLoad', function() {
-                            Docs.view.Comments.renderCommentMeta();
-                        }, this, {
-                            single: true
-                        });
-                    }
+                    Docs.view.Comments.renderClassCommentContainers(this.currentCls);
                 }
-            },
-            showIndex: function() {
-                if (!this.commentMetaTotals) {
-                    this.renderMetaToClassIndex = true;
-                } else if (!this.renderedMetaToClassIndex) {
-                    this.updateClassIndex();
-                }
-            },
-            scope: this
+            }
         });
-
-        this.getController('Auth').addListener('loggedIn', function() {
-            this.loggedIn = true;
-            Docs.view.Comments.renderNewCommentForms();
-        }, this);
-
-        this.getController('Auth').addListener('loggedOut', function() {
-            this.loggedIn = false;
-            Docs.view.Comments.renderNewCommentForms();
-        }, this);
 
         this.control({
             'classoverview': {
                 afterrender: function(cmp) {
                     // Map user interactions to methods
                     Ext.Array.each([
-                        [ '.expandComments',   'click', this.toggleComments],
-                        [ '.newCommentSubmit', 'click', this.postComment],
-                        [ '.up',               'click', this.voteUp],
-                        [ '.down',             'click', this.voteDown],
-                        [ '.member-comments',  'click', this.showMemberComments],
-                        [ '.del',              'click', this.promptDeleteComment],
-                        [ '.new-comment-a',    'click', this.toggleNewComment],
-                        [ '.commentGuide',     'click', this.toggleCommentGuide]
+                        [ '.toggleComments',       'click', this.toggleComments],
+                        [ '.toggleMemberComments', 'click', this.showMemberComments],
+                        [ '.toggleNewComment',     'click', this.toggleNewComment],
+                        [ '.toggleCommentGuide',   'click', this.toggleCommentGuide],
+                        [ '.postComment',          'click', this.postComment],
+                        [ '.deleteComment',        'click', this.promptDeleteComment],
+                        [ '.voteCommentUp',        'click', this.voteUp],
+                        [ '.voteCommentDown',      'click', this.voteDown]
                     ], function(delegate) {
                         cmp.el.addListener(delegate[1], delegate[2], this, {
                             preventDefault: true,
@@ -89,52 +91,7 @@ Ext.define('Docs.controller.Comments', {
                         delegate: '.comment-btn'
                     });
                 }
-            },
-
-            'hovermenu': {
-                viewready : function(cmp) {
-                    if (this.commentMeta) {
-                        Docs.view.Comments.renderHoverMenuMeta(cmp.el);
-                    } else {
-                        this.addListener('afterMetaLoad', function() {
-                            Docs.view.Comments.renderHoverMenuMeta(cmp.el);
-                        }, this, {
-                            single: true
-                        });
-                    }
-                }
             }
-        });
-
-        this.fetchCommentMeta();
-    },
-
-    fetchCommentMeta: function() {
-
-        Ext.data.JsonP.request({
-            url: this.baseUrl + '/comments/_design/Comments/_view/by_target',
-            method: 'GET',
-            params: {
-                reduce: true,
-                group_level: 3
-            },
-            success: function(response) {
-
-                this.commentMeta = {};
-                this.commentMetaTotals = {};
-                this.commentIdMap = {};
-
-                Ext.Array.each(response.rows, function(r) {
-                    this.updateMeta(r.key, r.value.num);
-                }, this);
-
-                this.fireEvent('afterMetaLoad');
-
-                if (this.renderMetaToClassIndex) {
-                    this.updateClassIndex();
-                }
-            },
-            scope: this
         });
     },
 
@@ -162,7 +119,7 @@ Ext.define('Docs.controller.Comments', {
 
     postComment: function(cmp, el) {
 
-        if (!this.getController('Auth').isLoggedIn()) {
+        if (!this.loggedIn()) {
             return false;
         }
 
@@ -181,7 +138,7 @@ Ext.define('Docs.controller.Comments', {
             },
             callback: function(options, success, response) {
                 if (success) {
-                    this.updateMeta(this.commentId(id), 1);
+                    this.fireEvent('add', id);
                     comments.down('textarea').dom.value = '';
                     this.toggleNewComment(null, el);
                 }
@@ -193,7 +150,7 @@ Ext.define('Docs.controller.Comments', {
 
     promptDeleteComment: function(cmp, el) {
 
-        if (!this.getController('Auth').isLoggedIn()) {
+        if (!this.loggedIn()) {
             return false;
         }
 
@@ -224,7 +181,7 @@ Ext.define('Docs.controller.Comments', {
                 var data = Ext.JSON.decode(response.responseText);
 
                 if (data.success) {
-                    this.updateMeta(this.commentId(cls), -1);
+                    this.fireEvent('remove', cls);
                     Ext.get(id).remove();
                 }
             },
@@ -240,9 +197,12 @@ Ext.define('Docs.controller.Comments', {
         this.vote('down', el);
     },
 
+    /**
+     * @private
+     */
     vote: function(direction, el) {
 
-        if (!this.getController('Auth').isLoggedIn()) {
+        if (!this.loggedIn()) {
             this.showError('Please login to vote on this comment', el);
             return false;
         }
@@ -334,12 +294,12 @@ Ext.define('Docs.controller.Comments', {
         });
         Docs.view.Comments.commentsTpl.append(comments, data);
 
-        var commentTpl = (this.loggedIn ? Docs.view.Comments.loggedInCommentTpl : Docs.view.Comments.loggedOutCommentTpl);
-        commentTpl.overwrite(comments.down('.new-comment-wrap'), this.loggedIn ? this.getController('Auth').currentUser : {});
+        var commentTpl = (this.loggedIn() ? Docs.view.Comments.loggedInCommentTpl : Docs.view.Comments.loggedOutCommentTpl);
+        commentTpl.overwrite(comments.down('.new-comment-wrap'), this.loggedIn() ? this.getController('Auth').currentUser : {});
     },
 
     toggleNewComment: function(cmp, el) {
-        if (!this.loggedIn) {
+        if (!this.loggedIn()) {
             return;
         }
 
@@ -359,38 +319,8 @@ Ext.define('Docs.controller.Comments', {
         Docs.view.Comments.commentTpl.insertBefore(newCommentWrap, data);
     },
 
-    addSid: function(url) {
-        var sid = this.getController('Auth').sid;
-        return url + (url.match(/\?/) ? '&' : '?') + 'sid=' + sid;
-    },
-
-    updateClassIndex: function(meta) {
-
-        for(var c in this.commentMetaTotals) {
-            var cls = Ext.query('#classindex a[rel="' + c + '"]');
-            if (cls && cls[0]) {
-                Docs.view.Comments.memberCommentsTpl.append(cls[0], [String(this.commentMetaTotals[c])]);
-            }
-        }
-
-        this.renderedMetaToClassIndex = true;
-    },
-
-    updateMeta: function(key, value) {
-        var k = (key[2] === '') ? key[1] : key.slice(1,3).join('-'),
-            c = key[1],
-            divId = 'comments-class-' + k.replace(/\./g, '-');
-
-        this.commentMeta[k] = this.commentMeta[k] || 0;
-        this.commentMeta[k] += value;
-        this.commentMetaTotals[c] = this.commentMetaTotals[c] || 0;
-        this.commentMetaTotals[c] += value;
-
-        this.commentIdMap[divId] = key;
-    },
-
     commentId: function(id) {
-        return this.commentIdMap[id] || ['unknown'];
+        return Docs.commentMeta.idMap[id] || ['unknown'];
     },
 
     toggleCommentGuide: function(e, el) {

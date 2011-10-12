@@ -212,4 +212,5 @@ Ext.define('Docs.controller.Auth', {
 
         return false;
     }
+
 });

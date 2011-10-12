@@ -5,15 +5,23 @@ Ext.define('Docs.view.Comments', {
 
     constructor: function() {
 
+        var numComments = [
+            '<tpl if="num &gt; 0">',
+                'View {[values.num == 1 ? "1 comment" : values.num + " comments"]}',
+            '</tpl>',
+            '<tpl if="num == 0">',
+                'No comments. Click to add',
+            '</tpl>'
+        ];
+
+        this.numCommentsTpl = Ext.create('Ext.XTemplate',
+            numComments.join('')
+        );
+
         var commentsMeta = [
             '<div class="comments first-child" id="comments-{id}">',
-                '<a href="#" class="side expandComments"><span></span></a>',
-                '<tpl if="num &gt; 0">',
-                    '<a href="#" class="name expandComments">View {[values.num == 1 ? "1 comment" : values.num + " comments"]}</a>',
-                '</tpl>',
-                '<tpl if="num == 0">',
-                    '<a href="#" class="name expandComments">No comments. Click to add</a>',
-                '</tpl>',
+                '<a href="#" class="side toggleComments"><span></span></a>',
+                '<a href="#" class="name toggleComments">', numComments.join(''), '</a>',
             '</div>'
         ];
 
@@ -26,7 +34,7 @@ Ext.define('Docs.view.Comments', {
         this.commentsMetaTpl = Ext.create('Ext.XTemplate', commentsMeta.join(''));
 
         this.memberCommentsTpl = Ext.create('Ext.Template',
-            '<span class="member-comments">{0}</span>'
+            '<span class="toggleMemberComments">{0}</span>'
         );
 
         var commentTplHtml = [
@@ -35,12 +43,12 @@ Ext.define('Docs.view.Comments', {
                     '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
                           '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
                     '<div class="author">{author}</div>',
-                    '<tpl if="this.isMod() || this.isAuthor(values.author)"><a href="#" class="del">Delete</a></tpl>',
+                    '<tpl if="this.isMod() || this.isAuthor(values.author)"><a href="#" class="deleteComment">Delete</a></tpl>',
                     '<div class="time">{[this.date(values.createdAt)]}</div>',
                     '<div class="vote">',
-                        '<a href="#" class="up{[values.upVote ? " selected" : ""]}" title="Vote Up">&nbsp;</a>',
+                        '<a href="#" class="voteCommentUp{[values.upVote ? " selected" : ""]}" title="Vote Up">&nbsp;</a>',
                         '<span class="score">{score}</span>',
-                        '<a href="#" class="down{[values.downVote ? " selected" : ""]}" title="Vote Down">&nbsp;</a>',
+                        '<a href="#" class="voteCommentDown{[values.downVote ? " selected" : ""]}" title="Vote Down">&nbsp;</a>',
                     '</div>',
                 '</div>',
                 '<div class="content">{contentHtml}</div>',
@@ -76,15 +84,15 @@ Ext.define('Docs.view.Comments', {
 
         this.loggedInCommentTpl = Ext.create('Ext.XTemplate',
             '<div class="new-comment{[values.hide ? "" : " open"]}">',
-                '<a href="#" class="new-comment-a"><span></span>Post a comment</a>',
+                '<a href="#" class="toggleNewComment"><span></span>Post a comment</a>',
                 '<form class="newCommentForm">',
                     '<textarea></textarea>',
                     '<div class="com-meta">',
                         '<img class="avatar" width="25" height="25"',
                             ' src="http://www.gravatar.com/avatar/{emailHash}?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
                         '<div class="author">Logged in as {userName}</div>',
-                        '<a href="#" class="commentGuide">Toggle commenting guide</a>',
-                        '<input type="submit" class="newCommentSubmit" value="Post comment" />',
+                        '<a href="#" class="toggleCommentGuide">Toggle commenting guide</a>',
+                        '<input type="submit" class="postComment" value="Post comment" />',
                     '</div>',
                     '<div class="commentGuideTxt" style="display: none">',
                         '<ul>',
@@ -136,65 +144,96 @@ Ext.define('Docs.view.Comments', {
         if (Ext.isIE && Ext.ieVersion <= 7) {
             this.loggedOutCommentTpl = Ext.create('Ext.XTemplate',
                 '<div class="new-comment">',
-                    '<span class="new-comment-a"><span></span>Sorry, adding comments is only supported in IE 8+</span>',
+                    '<span class="toggleNewComment"><span></span>Sorry, adding comments is only supported in IE 8+</span>',
                 '</div>'
             );
         } else {
             this.loggedOutCommentTpl = Ext.create('Ext.XTemplate',
                 '<div class="new-comment">',
-                    '<span class="new-comment-a"><span></span>Sign in to post a comment:</span>',
+                    '<span class="toggleNewComment"><span></span>Sign in to post a comment:</span>',
                     Docs.view.auth.Login.prototype.loginTplHtml.join(''),
                 '</div>'
             );
         }
     },
 
-    renderCommentMeta: function() {
+    /**
+     * Renders the comment containers for the currently active class
+     */
+    renderClassCommentContainers: function(cls) {
 
-        var clsName = Docs.App.getController('Classes').currentCls.name,
-            elId = clsName.replace(/\./g, '-'),
-            commentsMeta = Docs.App.getController('Comments').commentMeta,
-            commentsMetaTotals = Docs.App.getController('Comments').commentMetaTotals;
-
-        this.classCommentsTpl.insertFirst(Ext.query('.members')[0], {
-            num: commentsMeta[clsName] || 0,
-            id: 'class-' + elId
-        });
-
+        // Add comment button to class toolbar
         Ext.ComponentQuery.query('classoverview toolbar')[0].insert(-2, {
             xtype: 'container',
+            id: 'classCommentToolbarBtn',
             width: 24,
             margin: '0 4 0 0',
             cls: 'comment-btn',
-            html: String(commentsMeta[clsName] || '0')
+            html: '0'
         });
 
-        Ext.Array.each(Ext.query('.member a.name'), function(a) {
+        // Insert class level comment container under class intro docs
+        this.classCommentsTpl.insertFirst(Ext.query('.members')[0], {
+            num: 0,
+            id: 'class-' + cls.name.replace('.', '-')
+        });
 
-            var memberId = a.getAttribute('href').replace(/^.*\//, ''),
-                memberEl = Ext.get(a).up('.member'),
-                definedCls = memberEl.down('.meta a.definedIn').getAttribute('rel'),
-                descriptionEl = memberEl.down('.long'),
-                id = ('class-' + memberId).replace(/\./g, '-');
+        // Add a comment container to each class member
+        Ext.Array.each(Ext.query('.member .long'), function(memberDoc) {
+            var id = Ext.get(memberDoc).up('.member').getAttribute('id');
+            this.commentsMetaTpl.append(memberDoc, {
+                num: 0,
+                id: 'class-' + cls.name.replace(/\./g, '-') + '-' + id.replace(/\./g, '-')
+            });
+        }, this);
+    },
 
-            if (commentsMeta[memberId]) {
-                var member = Ext.get(a).up('.title');
-                this.memberCommentsTpl.append(member, [commentsMeta[memberId]]);
-            }
+    /**
+     * Updates the comment meta information (i.e. number of comments) on a class page
+     */
+    updateClassCommentMeta: function(cls) {
 
-            this.commentsMetaTpl.append(descriptionEl, {
-                num: commentsMeta[memberId] || 0,
-                id: id
+        var clsMeta = Docs.commentMeta['class'][cls];
+        if (clsMeta) {
+
+            // Update toolbar icon
+            Ext.getCmp('classCommentToolbarBtn').update(clsMeta['']);
+
+            // Update class level comments meta
+            this.numCommentsTpl.overwrite(Ext.get(Ext.query('#m-comment a.name')[0]), {
+                num: clsMeta['']
             });
 
-            Docs.App.getController('Comments').commentIdMap['comments-' + id] = ['class', definedCls, memberEl.getAttribute('id')];
+            // Update class member comments meta
+            for (var memberId in clsMeta) {
+                if (memberId == '' || memberId == 'total') continue;
 
-        }, this);
+                var memberEl = Ext.get(Ext.query('#' + memberId)[0]);
+
+                if (memberEl) {
+                    var commentsWrap = memberEl.down('.comments a.name'),
+                        memberTitle = memberEl.down('.title'),
+                        memberTitleComments = memberTitle.down('.toggleMemberComments');
+
+                    this.numCommentsTpl.overwrite(commentsWrap, {
+                        num: clsMeta[memberId]
+                    });
+
+                    if (memberTitleComments) {
+                        memberTitleComments.update(clsMeta[memberId]);
+                    } else {
+                        this.memberCommentsTpl.append(memberTitle, [clsMeta[memberId]]);
+                    }
+                }
+            }
+        }
+
+        this.updateClassIndex();
     },
 
     renderHoverMenuMeta: function(cmp) {
 
-        var commentsMeta = Docs.App.getController('Comments').commentMeta;
+        var commentsMeta = Docs.App.getController('CommentsMeta').commentMeta;
 
         Ext.Array.each(cmp.query('a.docClass'), function(a) {
             var rel = a.getAttribute('rel').replace(/^([^-]+\-)/, ''),
@@ -212,26 +251,30 @@ Ext.define('Docs.view.Comments', {
         }, this);
     },
 
-    updateCommentMeta: function() {
-
-        var clsName = Docs.App.getController('Classes').currentCls.name,
-            elId = clsName.replace(/\./g, '-'),
-            commentsMeta = Docs.App.getController('Comments').commentMeta;
-
-        var str = this.classCommentsTpl.apply({
-            num: commentsMeta[clsName] || 0,
-            id: elId
-        })
-
-        Ext.get('m-comment').replaceWith(str);
-
-        Ext.get(Ext.query('#classcontainer .comment-btn')[0]).update(commentsMeta[clsName] || '0')
+    /**
+     * Update the Class index with number of comments on each class
+     */
+    updateClassIndex: function() {
+        for(var cls in Docs.commentMeta['class']) {
+            var clsEl = Ext.get(Ext.query('#classindex a[rel="' + cls + '"]')[0]);
+            if (clsEl) {
+                var existingMeta = clsEl.down('.toggleMemberComments');
+                if (existingMeta) {
+                    existingMeta.update(String(Docs.commentMeta['class'][cls]['total']));
+                } else {
+                    Docs.view.Comments.memberCommentsTpl.append(clsEl, [String(Docs.commentMeta['class'][cls]['total'])]);
+                }
+            }
+        }
     },
 
     renderNewCommentForms: function() {
+
+        var currentUser = Docs.App.getController('Auth').currentUser;
+
         Ext.Array.each(Ext.query('.new-comment-wrap'), function(newComment) {
-            if (Docs.App.getController('Comments').loggedIn) {
-                this.loggedInCommentTpl.overwrite(newComment, Docs.App.getController('Auth').currentUser);
+            if (Docs.App.getController('Auth').isLoggedIn()) {
+                this.loggedInCommentTpl.overwrite(newComment, currentUser);
             } else {
                 this.loggedOutCommentTpl.overwrite(newComment, {});
             }
@@ -249,7 +292,7 @@ Ext.define('Docs.view.Comments', {
                 id: id
             });
             memberEl.addCls('renderedComment');
-            Docs.App.getController('Comments').commentIdMap['comments-' + id] = ['class', cls, member];
+            Docs.App.getController('CommentsMeta').commentIdMap['comments-' + id] = ['class', cls, member];
         }
     }
 });

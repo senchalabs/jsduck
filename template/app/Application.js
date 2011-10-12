@@ -23,6 +23,7 @@ Ext.define('Docs.Application', {
         'Welcome',
         'Classes',
         'Comments',
+        'CommentsMeta',
         'Search',
         'InlineExamples',
         'Examples',

@@ -100,7 +100,7 @@ $docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
 
 @mixin member-expander {
 
-  &.open > a.side.expandComments,
+  &.open > a.side.toggleComments,
   &.open > a.side.expandable {
     background: #EBF3FE;
     span {
@@ -117,7 +117,7 @@ $docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
       width: 15px;
       height: 30px; }
     &.expandable,
-    &.expandComments {
+    &.toggleComments {
       cursor: pointer;
       span {
         background: url(../images/member-collapsed.gif) no-repeat 3px 13px; }
@@ -636,7 +636,7 @@ p.screenshot {
   .cfgGroup {
     margin: 10px 0 3px 0; } }
 
-.member-comments {
+.toggleMemberComments {
   cursor: pointer;
   background: url(../images/icons.png) no-repeat 2px -519px;
   padding-left: 21px;
@@ -712,7 +712,7 @@ p.screenshot {
         .username,
         .password {
           border: 1px solid #bbb; } }
-      .new-comment-a {
+      .toggleNewComment {
         display: inline-block;
         line-height: 22px;
         margin: 10px 10px 1px 4px;
@@ -798,7 +798,7 @@ p.screenshot {
       padding-left: 2px;
       &:hover {
         .com-meta {
-          .del {
+          .deleteComment {
             -webkit-transition: opacity 0.2s linear;
             opacity: 1; }
           .vote {
@@ -820,7 +820,7 @@ p.screenshot {
           right: 20px;
           color: #999;
           top: 0; }
-        .del {
+        .deleteComment {
           right: 100px;
           color: #999;
           opacity: 0;
@@ -832,7 +832,7 @@ p.screenshot {
           position: absolute;
           left: 2px;
           top: 33px;
-          .up {
+          .voteCommentUp {
             position: absolute;
             display: block;
             width: 20px;
@@ -844,7 +844,7 @@ p.screenshot {
             &:hover {
               opacity: 1 !important;
               background-position: -22px 0; } }
-          .down {
+          .voteCommentDown {
             position: absolute;
             display: block;
             width: 20px;
@@ -995,7 +995,7 @@ p.screenshot {
       top: 3px;
       &:hover {
         @include opacity(1); } }
-    .member-comments {
+    .toggleMemberComments {
       background: url(../images/icons.png) no-repeat 2px -519px;
       padding-left: 21px;
       font-weight: normal;
