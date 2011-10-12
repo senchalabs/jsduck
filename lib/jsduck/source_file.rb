@@ -23,7 +23,9 @@ module JsDuck
       @links = {}
 
       merger = Merger.new
+      merger.filename = @filename
       @docs = parse.map do |docset|
+        merger.linenr = docset[:linenr]
         link(docset[:linenr], merger.merge(docset[:comment], docset[:code]))
       end
     end
