@@ -371,7 +371,7 @@ module JsDuck
       end
     end
 
-    # matches: <ident-chain> | "[" <ident-chain> [ "=" <literal> ] "]"
+    # matches: <ident-chain> | "[" <ident-chain> [ "=" <default-value> ] "]"
     def maybe_name_with_default
       skip_horiz_white
       if look(/\[/)
@@ -381,7 +381,7 @@ module JsDuck
         if look(/=/)
           match(/=/)
           skip_horiz_white
-          @current_tag[:default] = literal
+          @current_tag[:default] = default_value
         end
         skip_horiz_white
         match(/\]/)
@@ -425,9 +425,20 @@ module JsDuck
       end
     end
 
-    def literal
+    # attempts to match javascript literal,
+    # when it fails grabs anything up to closing "]"
+    def default_value
+      start_pos = @input.pos
       lit = JsLiteralParser.new(@input).literal
-      lit ? JsLiteralBuilder.new.to_s(lit) : nil
+      if lit && look(/ *]/)
+        # When lital matched and there's nothing after it up to the closing "]"
+        JsLiteralBuilder.new.to_s(lit)
+      else
+        # Otherwise reset parsing position to where we started
+        # and rescan up to "]" using simple regex.
+        @input.pos = start_pos
+        match(/[^\]]*/)
+      end
     end
 
     # matches {...} and returns text inside brackets

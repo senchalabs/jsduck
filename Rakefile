@@ -179,6 +179,24 @@ class JsDuckRunner
     ]
   end
 
+  def add_ext3
+    @options += [
+      "--title", "Sencha Docs - Ext JS 3.4",
+      "--footer", "Ext JS 3.4 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
+      "--categories", "#{@sdk_dir}/../ext-3.4.0/src/categories.json",
+      "--ignore-global",
+      "--output", "#{@out_dir}",
+      "#{@sdk_dir}/../ext-3.4.0/src/core",
+      "#{@sdk_dir}/../ext-3.4.0/src/data",
+      "#{@sdk_dir}/../ext-3.4.0/src/dd",
+      "#{@sdk_dir}/../ext-3.4.0/src/direct",
+      "#{@sdk_dir}/../ext-3.4.0/src/ext-core/src",
+      "#{@sdk_dir}/../ext-3.4.0/src/state",
+      "#{@sdk_dir}/../ext-3.4.0/src/util",
+      "#{@sdk_dir}/../ext-3.4.0/src/widgets"
+    ]
+  end
+
   def add_ext4
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
@@ -193,14 +211,14 @@ class JsDuckRunner
 
   def add_touch
     head_html = <<-EOHTML
-      <link rel="canonical" href="http://docs.sencha.com/touch/1-0/" />
-      <meta name="description" content="Sencha Touch 1.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch">
+      <link rel="canonical" href="http://docs.sencha.com/touch/1-1/" />
+      <meta name="description" content="Sencha Touch 1.1 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch">
     EOHTML
 
     @options += [
-      "--title", "Sencha Docs - Touch 1.0",
+      "--title", "Sencha Docs - Touch 1.1",
       "--head-html", head_html,
-      "--footer", "Sencha Touch 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
+      "--footer", "Sencha Touch 1.1 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/touch/doc-resources/categories.json",
       "--videos", "#{@sdk_dir}/touch/doc-resources/videos.json",
       "--output", "#{@out_dir}",
@@ -287,6 +305,25 @@ class JsDuckRunner
       "--welcome", "template-min/touch-welcome.html",
       "--body-html", head_html
     ]
+  end
+
+  def add_touch_charts
+    head_html = <<-EOHTML
+      <link rel="canonical" href="http://docs.sencha.com/touch-charts/1-0/" />
+      <meta name="description" content="Sencha Touch Charts 1.0 API Documentation. Documentation on how to create Charts with Sencha Touch">
+    EOHTML
+
+    @options += [
+      "--title", "Sencha Docs - Touch Charts 1.0",
+      "--head-html", head_html,
+      "--footer", "Sencha Touch Charts 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a>",
+      "--categories", "#{@sdk_dir}/charts/docs/categories.json",
+      "--guides", "#{@sdk_dir}/charts/docs/guides.json",
+      "--images", "#{@sdk_dir}/charts/docs/resources",
+      "--output", "#{@out_dir}"
+    ]
+
+    @options += extract_jsb_build_files("#{@sdk_dir}/charts/touch-charts.jsb3")
   end
 
   def add_animator
@@ -399,9 +436,37 @@ class JsDuckRunner
                 }
             });
         }
+
+        Docs.otherProducts = [
+          {
+              text: 'Ext JS 4',
+              href: 'http://docs.sencha.com/ext-js/4-0'
+          },
+          {
+              text: 'Ext JS 3',
+              href: 'http://docs.sencha.com/ext-js/3-4'
+          },
+          {
+              text: 'Sencha Touch 2',
+              href: 'http://docs.sencha.com/touch/2-0'
+          },
+          {
+              text: 'Sencha Touch 1',
+              href: 'http://docs.sencha.com/touch/1-1'
+          },
+          {
+              text: 'Touch Charts',
+              href: 'http://docs.sencha.com/touch-charts/1-0'
+          },
+          {
+              text: 'Sencha Animator',
+              href: 'http://docs.sencha.com/animator/1-0'
+          }
+        ];
       </script>
     EOHTML
     ]
+
   end
 
   # Copy over SDK examples
@@ -421,29 +486,6 @@ class JsDuckRunner
   # Copy over Sencha Touch
   def copy_touch2_build
     system "cp -r #{@sdk_dir}/touch/build #{@out_dir}/touch"
-  end
-
-  def add_product_doc_urls
-    @options += [
-      "--body-html", <<-EOHTML
-      <script type="text/javascript">
-        Docs.otherProducts = [
-          {
-              text: 'Ext JS 4.0',
-              href: 'http://docs.sencha.com/ext-js/4-0'
-          },
-          {
-              text: 'Sencha Touch 2.0',
-              href: 'http://docs.sencha.com/touch/2-0'
-          },
-          {
-              text: 'Sencha Animator 1.0',
-              href: 'http://docs.sencha.com/animator/1-0'
-          }
-        ];
-      </script>
-      EOHTML
-    ]
   end
 
   def run
@@ -498,6 +540,23 @@ task :ext4, [:mode] => :sass do |t, args|
   runner.run
 end
 
+desc "Run JSDuck on official Ext JS 3.4 build\n" +
+     "ext3             - creates debug/development version\n" +
+     "ext3[export]     - creates export/deployable version\n"
+     "ext3[live]       - creates live version for deployment\n"
+task :ext3, [:mode] => :sass do |t, args|
+  mode = args[:mode] || "debug"
+  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
+  compress if mode == "export"
+
+  runner = JsDuckRunner.new
+  runner.add_ext3
+  runner.add_debug if mode == "debug"
+  runner.add_seo if mode == "live"
+  runner.add_google_analytics if mode == "live"
+  runner.run
+end
+
 desc "Run JSDuck on Sencha Touch (for internal use at Sencha)\n" +
      "touch       - creates debug/development version\n" +
      "touch[live] - create live version for deployment\n"
@@ -510,6 +569,7 @@ task :touch, [:mode] => :sass do |t, args|
   runner.add_touch
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
+  runner.add_google_analytics if mode == "live"
   runner.run
 end
 
@@ -528,10 +588,27 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.add_touch2_export_notice if mode == "export"
   runner.set_touch2_src if mode == "export"
   runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_product_doc_urls if mode == "live"
+  runner.add_google_analytics if mode == "live"
   runner.run
 
   runner.copy_touch2_build if mode != "export"
+end
+
+desc "Run JSDuck on Sencha Touch Charts (for internal use at Sencha)\n" +
+     "charts         - creates debug/development version\n" +
+     "charts[export] - create live version for deployment\n"
+     "charts[live]   - create live version for deployment\n"
+task :charts, [:mode] => :sass do |t, args|
+  mode = args[:mode] || "debug"
+  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
+  compress if mode == "live"
+
+  runner = JsDuckRunner.new
+  runner.add_touch_charts
+  runner.add_debug if mode == "debug"
+  runner.add_seo if mode == "debug" || mode == "live"
+  runner.add_google_analytics if mode == "live"
+  runner.run
 end
 
 desc "Run JSDuck JSON Export (for internal use at Sencha)\n" +
@@ -560,6 +637,7 @@ task :animator, [:mode] => :sass do |t, args|
   runner.add_animator
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
+  runner.add_google_analytics if mode == "live"
   runner.run
 
   runner.copy_animator_examples

@@ -169,6 +169,19 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg with this as default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=this] Something
+         */
+      EOS
+    end
+    it "has this as default value" do
+      @doc[:default].should == 'this'
+    end
+  end
+
   describe "cfg with rubbish as default value" do
     before do
       @doc = parse(<<-EOS)[0]
@@ -177,8 +190,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has no default value" do
-      @doc[:default].should == nil
+    it "has the rubbish as default value" do
+      @doc[:default].should == '!haa'
     end
   end
 
@@ -190,8 +203,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has a correct default value" do
-      @doc[:default].should == '7'
+    it "has everything up to ] as default value" do
+      @doc[:default].should == '7 and me too'
     end
   end
 
@@ -203,8 +216,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has nil as default value" do
-      @doc[:default].should == nil
+    it "has everything up to ] as default value" do
+      @doc[:default].should == '[ho, ho'
     end
   end
 
@@ -216,8 +229,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has nil as default value" do
-      @doc[:default].should == nil
+    it "has the bogus object literla as default value" do
+      @doc[:default].should == '{ho:5, ho}'
     end
   end
 
@@ -229,8 +242,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has nil as default value" do
-      @doc[:default].should == nil
+    it "has the unfinish object literal as default value" do
+      @doc[:default].should == '{ho:5'
     end
   end
 

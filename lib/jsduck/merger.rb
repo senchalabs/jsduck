@@ -1,3 +1,5 @@
+require 'jsduck/logger'
+
 module JsDuck
 
   # Takes data from doc-comment and code that follows it and combines
@@ -6,6 +8,15 @@ module JsDuck
   #
   # The main method merge() produces a hash as a result.
   class Merger
+    # Allow passing in filename and line for error reporting
+    attr_accessor :filename
+    attr_accessor :linenr
+
+    def initialize
+      @filename = ""
+      @linenr = 0
+    end
+
     def merge(docs, code)
       case detect_doc_type(docs, code)
       when :class
@@ -417,8 +428,12 @@ module JsDuck
         if it[:name] =~ /^(.+)\.([^.]+)$/
           it[:name] = $2
           parent = index[$1]
-          parent[:properties] = [] unless parent[:properties]
-          parent[:properties] << it
+          if parent
+            parent[:properties] = [] unless parent[:properties]
+            parent[:properties] << it
+          else
+            Logger.instance.warn("Ignoring subproperty #{$1}.#{$2}, no parent found with name '#{$1}'.", @filename, @linenr)
+          end
         else
           items << it
         end
