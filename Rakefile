@@ -183,8 +183,8 @@ class JsDuckRunner
     @options += [
       "--title", "Sencha Docs - Ext JS 3.4",
       "--footer", "Ext JS 3.4 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
+      "--categories", "#{@sdk_dir}/../ext-3.4.0/src/categories.json",
       "--ignore-global",
-      "--no-warnings",
       "--output", "#{@out_dir}",
       "#{@sdk_dir}/../ext-3.4.0/src/core",
       "#{@sdk_dir}/../ext-3.4.0/src/data",
@@ -305,6 +305,25 @@ class JsDuckRunner
       "--welcome", "template-min/touch-welcome.html",
       "--body-html", head_html
     ]
+  end
+
+  def add_touch_charts
+    head_html = <<-EOHTML
+      <link rel="canonical" href="http://docs.sencha.com/touch-charts/1-0/" />
+      <meta name="description" content="Sencha Touch Charts 1.0 API Documentation. Documentation on how to create Charts with Sencha Touch">
+    EOHTML
+
+    @options += [
+      "--title", "Sencha Docs - Touch Charts 1.0",
+      "--head-html", head_html,
+      "--footer", "Sencha Touch Charts 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a>",
+      "--categories", "#{@sdk_dir}/charts/docs/categories.json",
+      "--guides", "#{@sdk_dir}/charts/docs/guides.json",
+      "--images", "#{@sdk_dir}/charts/docs/resources",
+      "--output", "#{@out_dir}"
+    ]
+
+    @options += extract_jsb_build_files("#{@sdk_dir}/charts/touch-charts.jsb3")
   end
 
   def add_animator
@@ -436,6 +455,10 @@ class JsDuckRunner
               href: 'http://docs.sencha.com/touch/1-1'
           },
           {
+              text: 'Touch Charts',
+              href: 'http://docs.sencha.com/touch-charts/1-0'
+          },
+          {
               text: 'Sencha Animator',
               href: 'http://docs.sencha.com/animator/1-0'
           }
@@ -523,13 +546,13 @@ desc "Run JSDuck on official Ext JS 3.4 build\n" +
      "ext3[live]       - creates live version for deployment\n"
 task :ext3, [:mode] => :sass do |t, args|
   mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "export"].include?(mode)
+  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
   compress if mode == "export"
 
   runner = JsDuckRunner.new
   runner.add_ext3
   runner.add_debug if mode == "debug"
-  runner.add_seo
+  runner.add_seo if mode == "live"
   runner.add_google_analytics if mode == "live"
   runner.run
 end
@@ -569,6 +592,23 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.run
 
   runner.copy_touch2_build if mode != "export"
+end
+
+desc "Run JSDuck on Sencha Touch Charts (for internal use at Sencha)\n" +
+     "charts         - creates debug/development version\n" +
+     "charts[export] - create live version for deployment\n"
+     "charts[live]   - create live version for deployment\n"
+task :charts, [:mode] => :sass do |t, args|
+  mode = args[:mode] || "debug"
+  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
+  compress if mode == "live"
+
+  runner = JsDuckRunner.new
+  runner.add_touch_charts
+  runner.add_debug if mode == "debug"
+  runner.add_seo if mode == "debug" || mode == "live"
+  runner.add_google_analytics if mode == "live"
+  runner.run
 end
 
 desc "Run JSDuck JSON Export (for internal use at Sencha)\n" +
