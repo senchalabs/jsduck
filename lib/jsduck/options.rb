@@ -1,7 +1,5 @@
 require 'optparse'
-require 'jsduck/meta_tag'
-require 'jsduck/author_tag'
-require 'jsduck/doc_author_tag'
+require 'jsduck/meta_tag_loader'
 
 module JsDuck
 
@@ -118,44 +116,7 @@ module JsDuck
     def parse!(argv)
       create_option_parser.parse!(argv).each {|fname| read_filenames(fname) }
       validate
-      load_meta_tags
-    end
-
-    # Instanciate all loaded MetaTag implementations
-    def load_meta_tags
-      # instantiate builtin meta tags
-      @meta_tag_classes = MetaTag.descendants
-      @meta_tag_classes.each do |cls|
-        @meta_tags << cls.new
-      end
-
-      # Load user-defined meta-tags
-      @meta_tag_paths.each do |path|
-        if File.directory?(path)
-          Dir[path+"/**/*.rb"].each do |file|
-            require(file)
-            init_remaining_meta_tags
-          end
-        else
-          require(path)
-          init_remaining_meta_tags
-        end
-      end
-    end
-
-    # Instantiates meta tag classes that haven't been instantiated
-    # already. This is called after each meta-tags file is loaded so
-    # that the list of meta-tags will be in order specified from
-    # command line.
-    def init_remaining_meta_tags
-      MetaTag.descendants.each do |cls|
-        if !@meta_tag_classes.include?(cls)
-          @meta_tag_classes << cls
-          newtag = cls.new
-          @meta_tags = @meta_tags.find_all {|t| t.name != newtag.name }
-          @meta_tags << newtag
-        end
-      end
+      @meta_tags = MetaTagLoader.new.load(@meta_tag_paths)
     end
 
     def create_option_parser
