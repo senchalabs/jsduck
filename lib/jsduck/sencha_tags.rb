@@ -7,13 +7,11 @@ require "jsduck/meta_tag"
 class JsDuck::AuthorTag < JsDuck::MetaTag
   def initialize
     @name = "author"
-    @hidden = true
   end
 end
 
 class JsDuck::DocAuthorTag < JsDuck::MetaTag
   def initialize
     @name = "docauthor"
-    @hidden = true
   end
 end

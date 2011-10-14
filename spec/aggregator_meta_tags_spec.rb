@@ -44,11 +44,10 @@ describe JsDuck::Aggregator do
     end
 
     it "detects content of the defined tags" do
-      @doc[:meta].should == [
-        {:name => "author", :doc => "John Doe"},
-        {:name => "author", :doc => "Steve Jobs"},
-        {:name => "email", :doc => "Kill Bill"},
-      ]
+      @doc[:meta].should == {
+        "author" => ["John Doe", "Steve Jobs"],
+        "email" => ["Kill Bill"],
+      }
     end
   end
 
@@ -67,10 +66,10 @@ describe JsDuck::Aggregator do
     end
 
     it "detects tag content until next @tag" do
-      @doc[:meta].should == [
-        {:name => "long", :doc => "Some text\non multiple\nlines."},
-        {:name => "author", :doc => "Steve Jobs"},
-      ]
+      @doc[:meta].should == {
+        "long" => ["Some text\non multiple\nlines."],
+        "author" => ["Steve Jobs"],
+      }
     end
   end
 
@@ -86,10 +85,10 @@ describe JsDuck::Aggregator do
     end
 
     it "includes {@link} as part of tag content" do
-      @doc[:meta].should == [
-        {:name => "long", :doc => "Me {@link foo bar}"},
-        {:name => "author", :doc => "Me {@link foo bar}"},
-      ]
+      @doc[:meta].should == {
+        "long" => ["Me {@link foo bar}"],
+        "author" => ["Me {@link foo bar}"],
+      }
     end
   end
 end

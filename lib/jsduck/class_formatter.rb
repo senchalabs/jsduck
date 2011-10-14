@@ -9,8 +9,6 @@ module JsDuck
   class ClassFormatter
     # Set to false to disable HTML-formatting of type definitions.
     attr_accessor :include_types
-    # List of meta-tag implementations
-    attr_accessor :meta_tags
 
     def initialize(relations, formatter)
       @relations = relations
@@ -32,17 +30,7 @@ module JsDuck
       cls[:statics].each_pair do |type, members|
         cls[:statics][type] = members.reject {|m| m[:private] }.map {|m| format_member(m) }
       end
-      cls[:meta] = cls[:meta].map {|m| format_meta(m) }.compact
       cls
-    end
-
-    def format_meta(meta)
-      tag = @meta_tags.find {|tag| tag.name == meta[:name] }
-      if tag.hidden
-        nil
-      else
-        {:name => tag.name, :title => tag.title, :doc => tag.transform(meta[:doc])}
-      end
     end
 
     def format_member(m)
