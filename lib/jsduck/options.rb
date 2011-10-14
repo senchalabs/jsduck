@@ -72,6 +72,7 @@ module JsDuck
         "Mixed",
       ]
       @meta_tags = []
+      @meta_tag_paths = []
 
       @warnings = true
       @verbose = false
@@ -129,8 +130,12 @@ module JsDuck
       end
 
       # Load user-defined meta-tags
-      if @meta_tags_path
-        require @meta_tags_path
+      @meta_tag_paths.each do |path|
+        if File.directory?(path)
+          Dir[path+"/**/*.rb"].each {|file| require(file) }
+        else
+          require(path)
+        end
       end
       # Instanciate these meta tags.  When builtin implementation for
       # @tag already exists, replace it with user-defined one.
@@ -170,9 +175,9 @@ module JsDuck
         end
 
         opts.on('--meta-tags=PATH',
-          "Path to Ruby file with custom meta-tag implementations.",
-          "Experimantal!", " ") do |path|
-          @meta_tags_path = path
+          "Path to Ruby file or directory with custom",
+          "meta-tag implementations. Experimantal!", " ") do |path|
+          @meta_tag_paths << path
         end
 
         opts.on('--no-warnings', "Turns off warnings.", " ") do
