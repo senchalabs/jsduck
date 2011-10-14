@@ -16,8 +16,9 @@ module JsDuck
     #
     # It gets passed an array of contents gathered from all meta-tags
     # of given type. It should return an HTML string to inject into
-    # document.  For help in that it can use the #markdown method to
-    # easily support markdown inside the meta-tag.
+    # document.  For help in that it can use the #format method to
+    # easily support Markdown and {@link/img} tags inside the contents
+    # of meta-tag.
     #
     # By default the method returns nil, which means the tag will not
     # be rendered at all.
@@ -27,8 +28,10 @@ module JsDuck
     # This is used to inject the formatter object for #markdown method
     attr_accessor :formatter
 
-    # Helper method to format the text
-    def markdown(text)
+    # Helper method to format the text in standard JsDuck way.
+    # This means running it through Markdown engine and expanding
+    # {@link} and {@img} tags.
+    def format(text)
       @formatter.format(text)
     end
 
