@@ -5,7 +5,7 @@ Ext.define('Docs.controller.Comments', {
     extend: 'Ext.app.Controller',
 
     // baseUrl: 'http://projects.sencha.com/auth',
-    baseUrl: 'http://127.0.0.1/sencha/jsduck_out/auth',
+    baseUrl: 'http://192.168.1.237/sencha/jsduck_out/auth',
 
     mixins: {
         authMixin: 'Docs.controller.AuthHelpers'
@@ -227,7 +227,7 @@ Ext.define('Docs.controller.Comments', {
                     Ext.get(voteEl).removeCls('selected');
                 });
                 if (data.direction === 'up' || data.direction === 'down') {
-                    Ext.get(meta.query('.vote a.' + data.direction)[0]).addCls('selected');
+                    Ext.get(meta.query('.vote a.voteComment' + (data.direction == 'up' ? 'Up' : 'Down'))[0]).addCls('selected');
                 }
                 scoreEl.update(String(data.total));
             },

@@ -175,7 +175,7 @@ Ext.define('Docs.view.Comments', {
         // Insert class level comment container under class intro docs
         this.classCommentsTpl.insertFirst(Ext.query('.members')[0], {
             num: 0,
-            id: 'class-' + cls.name.replace('.', '-')
+            id: 'class-' + cls.name.replace(/\./g, '-')
         });
 
         // Add a comment container to each class member
@@ -194,7 +194,8 @@ Ext.define('Docs.view.Comments', {
     updateClassCommentMeta: function(cls) {
 
         var clsMeta = Docs.commentMeta['class'][cls];
-        if (clsMeta) {
+
+        if (clsMeta && clsMeta['']) {
 
             // Update toolbar icon
             Ext.getCmp('classCommentToolbarBtn').update(clsMeta['']);
@@ -203,49 +204,71 @@ Ext.define('Docs.view.Comments', {
             this.numCommentsTpl.overwrite(Ext.get(Ext.query('#m-comment a.name')[0]), {
                 num: clsMeta['']
             });
+        } else {
+            // Update toolbar icon
+            Ext.getCmp('classCommentToolbarBtn').update('0');
 
-            // Update class member comments meta
-            for (var memberId in clsMeta) {
-                if (memberId == '' || memberId == 'total') continue;
-
-                var memberEl = Ext.get(Ext.query('#' + memberId)[0]);
-
-                if (memberEl) {
-                    var commentsWrap = memberEl.down('.comments a.name'),
-                        memberTitle = memberEl.down('.title'),
-                        memberTitleComments = memberTitle.down('.toggleMemberComments');
-
-                    this.numCommentsTpl.overwrite(commentsWrap, {
-                        num: clsMeta[memberId]
-                    });
-
-                    if (memberTitleComments) {
-                        memberTitleComments.update(clsMeta[memberId]);
-                    } else {
-                        this.memberCommentsTpl.append(memberTitle, [clsMeta[memberId]]);
-                    }
-                }
-            }
+            // Update class level comments meta
+            this.numCommentsTpl.overwrite(Ext.get(Ext.query('#m-comment a.name')[0]), {
+                num: 0
+            });
         }
 
+        // Update class member comments meta
+        Ext.Array.each(Ext.query('.member'), function(memberDom) {
+
+            var memberEl = Ext.get(memberDom),
+                memberId = memberEl.getAttribute('id'),
+                memberCls = memberEl.down('.meta .docClass').getAttribute('rel'),
+                commentsWrap = memberEl.down('.comments a.name'),
+                memberTitle = memberEl.down('.title'),
+                numComments = Docs.commentMeta['class'][memberCls] && Docs.commentMeta['class'][memberCls][memberId],
+                memberTitleComments = memberTitle.down('.toggleMemberComments');
+
+            // console.log('updating', memberId, numComments, memberTitleComments)
+
+            if (numComments) {
+                this.numCommentsTpl.overwrite(commentsWrap, {
+                    num: numComments
+                });
+
+                if (memberTitleComments) {
+                    memberTitleComments.update(String(numComments));
+                } else {
+                    this.memberCommentsTpl.append(memberTitle, [numComments]);
+                }
+            } else {
+                if (memberTitleComments) memberTitleComments.remove();
+            }
+
+        }, this);
+
         this.updateClassIndex();
+        Ext.Array.each(Ext.ComponentQuery.query('hovermenu'), function(m) {
+            m.fireEvent('refresh', this)
+        });
     },
 
     renderHoverMenuMeta: function(cmp) {
 
-        var commentsMeta = Docs.App.getController('CommentsMeta').commentMeta;
-
         Ext.Array.each(cmp.query('a.docClass'), function(a) {
-            var rel = a.getAttribute('rel').replace(/^([^-]+\-)/, ''),
-                relEl = Ext.get(rel);
 
-            if (relEl) {
-                var docClass = relEl.down('.meta a.docClass'),
-                    clsName = docClass.getAttribute('rel'),
-                    memberId = clsName + '-' + rel;
+            var rel = "comments-class-" + a.getAttribute('rel').replace(/[^A-Za-z\-]/g, '-'),
+                relEl = Ext.get(a),
+                memberComments = relEl.down('.toggleMemberComments'),
+                key = Docs.commentMeta.idMap[rel];
 
-                if (commentsMeta[memberId]) {
-                    this.memberCommentsTpl.append(a, [commentsMeta[memberId] || 0]);
+            if (key && Docs.commentMeta[key[0]] && Docs.commentMeta[key[0]][key[1]]) {
+                var meta = Docs.commentMeta[key[0]][key[1]][key[2]];
+
+                if (memberComments) {
+                    if (!meta) {
+                        memberComments.remove()
+                    } else {
+                        memberComments.update(String(meta));
+                    }
+                } else if (meta) {
+                    this.memberCommentsTpl.append(a, [meta || 0]);
                 }
             }
         }, this);

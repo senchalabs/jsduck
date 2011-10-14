@@ -6,7 +6,7 @@ Ext.define('Docs.controller.CommentsMeta', {
     extend: 'Ext.app.Controller',
 
     // baseUrl: 'http://projects.sencha.com/auth',
-    baseUrl: 'http://127.0.0.1/sencha/jsduck_out/auth',
+    baseUrl: 'http://192.168.1.237/sencha/jsduck_out/auth',
 
     refs: [
         {
@@ -52,11 +52,7 @@ Ext.define('Docs.controller.CommentsMeta', {
 
         this.getController('Classes').on({
             showIndex: function() {
-                if (!this.commentMetaTotals) {
-                    this.renderMetaToClassIndex = true;
-                } else if (!this.renderedMetaToClassIndex) {
-                    this.updateClassIndex();
-                }
+                Docs.view.Comments.updateClassIndex();
             },
             showClass: function(cls, opts) {
                 if (opts.reRendered) {
@@ -69,16 +65,8 @@ Ext.define('Docs.controller.CommentsMeta', {
 
         this.control({
             'hovermenu': {
-                viewready : function(cmp) {
-                    if (this.commentMeta) {
-                        Docs.view.Comments.renderHoverMenuMeta(cmp.el);
-                    } else {
-                        this.addListener('afterMetaLoad', function() {
-                            Docs.view.Comments.renderHoverMenuMeta(cmp.el);
-                        }, this, {
-                            single: true
-                        });
-                    }
+                refresh : function(cmp) {
+                    Docs.view.Comments.renderHoverMenuMeta(cmp.el, {refresh: true});
                 }
             }
         });
@@ -134,13 +122,18 @@ Ext.define('Docs.controller.CommentsMeta', {
         });
     },
 
-    updateMeta: function(key, value) {
+    /**
+     * Update comment count info
+     * @param key Path to class / property
+     * @param delta Difference to comment number
+     */
+    updateMeta: function(key, delta) {
         Docs.commentMeta[key[0]] = Docs.commentMeta[key[0]] || {};
         Docs.commentMeta[key[0]][key[1]] = Docs.commentMeta[key[0]][key[1]] || { total: 0 };
         Docs.commentMeta[key[0]][key[1]][key[2]] = Docs.commentMeta[key[0]][key[1]][key[2]] || 0;
 
-        Docs.commentMeta[key[0]][key[1]][key[2]] += value;
-        Docs.commentMeta[key[0]][key[1]]['total'] += value;
+        Docs.commentMeta[key[0]][key[1]][key[2]] += delta;
+        Docs.commentMeta[key[0]][key[1]]['total'] += delta;
     },
 
     /**
@@ -154,8 +147,9 @@ Ext.define('Docs.controller.CommentsMeta', {
         if (cls.members) {
             for(member in cls.members) {
                 Ext.Array.each(cls.members[member], function(memberItem) {
-                    key = ['class', cls.name, memberItem.id];
-                    commentId = 'comments-' + key.join('-').replace(/\./g, '-');
+                    origKey = ['class', cls.name, memberItem.id];
+                    key = ['class', memberItem.owner, memberItem.id];
+                    commentId = 'comments-' + origKey.join('-').replace(/\./g, '-');
                     Docs.commentMeta.idMap[commentId] = key;
                 }, this);
             }
