@@ -52,7 +52,11 @@ Ext.define('Docs.controller.CommentsMeta', {
 
         this.getController('Classes').on({
             showIndex: function() {
-                Docs.view.Comments.updateClassIndex();
+                if (Docs.commentMeta) {
+                    Docs.view.Comments.updateClassIndex();
+                } else {
+                    this.updateClassIndex = true;
+                }
             },
             showClass: function(cls, opts) {
                 if (opts.reRendered) {
@@ -66,7 +70,7 @@ Ext.define('Docs.controller.CommentsMeta', {
         this.control({
             'hovermenu': {
                 refresh : function(cmp) {
-                    Docs.view.Comments.renderHoverMenuMeta(cmp.el, {refresh: true});
+                    Docs.view.Comments.renderHoverMenuMeta(cmp.el);
                 }
             }
         });
