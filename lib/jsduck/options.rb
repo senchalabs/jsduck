@@ -123,24 +123,34 @@ module JsDuck
 
     # Instanciate all loaded MetaTag implementations
     def load_meta_tags
-      # instanciate builtin meta tags
-      builtins = MetaTag.descendants
-      builtins.each do |cls|
+      # instantiate builtin meta tags
+      @meta_tag_classes = MetaTag.descendants
+      @meta_tag_classes.each do |cls|
         @meta_tags << cls.new
       end
 
       # Load user-defined meta-tags
       @meta_tag_paths.each do |path|
         if File.directory?(path)
-          Dir[path+"/**/*.rb"].each {|file| require(file) }
+          Dir[path+"/**/*.rb"].each do |file|
+            require(file)
+            init_remaining_meta_tags
+          end
         else
           require(path)
+          init_remaining_meta_tags
         end
       end
-      # Instanciate these meta tags.  When builtin implementation for
-      # @tag already exists, replace it with user-defined one.
+    end
+
+    # Instantiates meta tag classes that haven't been instantiated
+    # already. This is called after each meta-tags file is loaded so
+    # that the list of meta-tags will be in order specified from
+    # command line.
+    def init_remaining_meta_tags
       MetaTag.descendants.each do |cls|
-        if !builtins.include?(cls)
+        if !@meta_tag_classes.include?(cls)
+          @meta_tag_classes << cls
           newtag = cls.new
           @meta_tags = @meta_tags.find_all {|t| t.name != newtag.name }
           @meta_tags << newtag
