@@ -254,6 +254,12 @@ a {
       letter-spacing: 0;
       margin-left: 10px;
       font-size: 0.6em; }
+    span.class-source-tip {
+      font-size: 0.5em;
+      position: absolute;
+      top: 35px;
+      left: 100px;
+      display: none; }
     span.private {
       float: right;
       margin-right: 50px;
