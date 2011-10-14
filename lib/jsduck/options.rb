@@ -1,5 +1,7 @@
 require 'optparse'
 require 'jsduck/meta_tag'
+require 'jsduck/author_tag'
+require 'jsduck/doc_author_tag'
 
 module JsDuck
 
@@ -70,7 +72,6 @@ module JsDuck
         "Mixed",
       ]
       @meta_tags = []
-      @meta_tags_path = File.dirname(__FILE__) + "/sencha_tags"
 
       @warnings = true
       @verbose = false
@@ -116,11 +117,29 @@ module JsDuck
     def parse!(argv)
       create_option_parser.parse!(argv).each {|fname| read_filenames(fname) }
       validate
-      # Instanciate all loaded MetaTag implementations
-      require @meta_tags_path
-      @meta_tags = []
-      MetaTag.descendants.each do |cls|
+      load_meta_tags
+    end
+
+    # Instanciate all loaded MetaTag implementations
+    def load_meta_tags
+      # instanciate builtin meta tags
+      builtins = MetaTag.descendants
+      builtins.each do |cls|
         @meta_tags << cls.new
+      end
+
+      # Load user-defined meta-tags
+      if @meta_tags_path
+        require @meta_tags_path
+      end
+      # Instanciate these meta tags.  When builtin implementation for
+      # @tag already exists, replace it with user-defined one.
+      MetaTag.descendants.each do |cls|
+        if !builtins.include?(cls)
+          newtag = cls.new
+          @meta_tags = @meta_tags.find_all {|t| t.name != newtag.name }
+          @meta_tags << newtag
+        end
       end
     end
 
