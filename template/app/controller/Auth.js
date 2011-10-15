@@ -3,8 +3,7 @@ Ext.define('Docs.controller.Auth', {
 
     requires: ['Ext.util.Cookies'],
 
-    // authServer: 'http://projects.sencha.com/auth',
-    authServer: 'http://192.168.1.237/sencha/jsduck_out/auth',
+    authServer: 'http://projects.sencha.com/auth',
 
     refs: [
          {
@@ -78,7 +77,7 @@ Ext.define('Docs.controller.Auth', {
         //
         //         xdr.timeout = 2000;
         //         xdr.open('POST', 'http://projects.sencha.com/auth/login');
-        //         xdr.send('username=hmm&password=hmm');
+        //         xdr.send('username=user&password=pass');
         //     } else {
         //         alert('Failed to create');
         //     }

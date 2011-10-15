@@ -5,8 +5,7 @@
 Ext.define('Docs.controller.CommentsMeta', {
     extend: 'Ext.app.Controller',
 
-    // baseUrl: 'http://projects.sencha.com/auth',
-    baseUrl: 'http://192.168.1.237/sencha/jsduck_out/auth',
+    baseUrl: 'http://projects.sencha.com/auth',
 
     refs: [
         {
@@ -52,16 +51,29 @@ Ext.define('Docs.controller.CommentsMeta', {
 
         this.getController('Classes').on({
             showIndex: function() {
-                if (Docs.commentMeta) {
+                if (Docs.commentMeta['class']) {
                     Docs.view.Comments.updateClassIndex();
                 } else {
-                    this.updateClassIndex = true;
+                    this.addListener('afterLoad', function() {
+                        Docs.view.Comments.updateClassIndex();
+                    }, this, {
+                        single: true
+                    });
                 }
             },
             showClass: function(cls, opts) {
                 if (opts.reRendered) {
-                    this.createCommentIdMap(this.getController('Classes').currentCls);
-                    Docs.view.Comments.updateClassCommentMeta(cls);
+                    if (Docs.commentMeta['class']) {
+                        this.createCommentIdMap(this.getController('Classes').currentCls);
+                        Docs.view.Comments.updateClassCommentMeta(cls);
+                    } else {
+                        this.addListener('afterLoad', function() {
+                            this.createCommentIdMap(this.getController('Classes').currentCls);
+                            Docs.view.Comments.updateClassCommentMeta(cls);
+                        }, this, {
+                            single: true
+                        });
+                    }
                 }
             },
             scope: this
@@ -70,7 +82,15 @@ Ext.define('Docs.controller.CommentsMeta', {
         this.control({
             'hovermenu': {
                 refresh : function(cmp) {
-                    Docs.view.Comments.renderHoverMenuMeta(cmp.el);
+                    if (Docs.commentMeta['class']) {
+                        Docs.view.Comments.renderHoverMenuMeta(cmp.el);
+                    } else {
+                        this.addListener('afterLoad', function() {
+                            Docs.view.Comments.renderHoverMenuMeta(cmp.el);
+                        }, this, {
+                            single: true
+                        });
+                    }
                 }
             }
         });
@@ -79,7 +99,6 @@ Ext.define('Docs.controller.CommentsMeta', {
     },
 
     fetchCommentMeta: function() {
-
         Ext.data.JsonP.request({
             url: this.baseUrl + '/comments/_design/Comments/_view/by_target',
             method: 'GET',

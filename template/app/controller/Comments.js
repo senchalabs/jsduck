@@ -4,8 +4,7 @@
 Ext.define('Docs.controller.Comments', {
     extend: 'Ext.app.Controller',
 
-    // baseUrl: 'http://projects.sencha.com/auth',
-    baseUrl: 'http://192.168.1.237/sencha/jsduck_out/auth',
+    baseUrl: 'http://projects.sencha.com/auth',
 
     mixins: {
         authMixin: 'Docs.controller.AuthHelpers'
