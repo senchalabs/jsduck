@@ -5,6 +5,9 @@ module JsDuck
   # Ruby-side implementation of class docs Renderer.
   # Uses PhantomJS to run Docs.Renderer JavaScript.
   class Renderer
+    # List of meta-tag implementations
+    attr_accessor :meta_tags
+
     def render(cls)
         @cls = cls
 
@@ -33,22 +36,14 @@ module JsDuck
     end
 
     def render_meta_data
-      return if !@cls[:meta] || @cls[:meta].length == 0
-
-      html = ["<ul class='meta-data'>"]
-
-      tag_names = @cls[:meta].sort {|a, b| a[:title] <=> b[:title] }.map {|m| m[:name] }.uniq
-      tag_names.each do |name|
-        tags = @cls[:meta].find_all {|m| m[:name] == name }
-        if tags.length > 0
-          content = tags.map{|t| t[:doc] }.join(', ')
-          html << "<li><strong>#{CGI.escapeHTML(tags[0][:title])}:</strong> #{content}</li>"
+      @meta_tags.map do |tag|
+        contents = @cls[:meta][tag.name]
+        if contents
+          tag.to_html(contents)
+        else
+          nil
         end
       end
-
-      html << "</ul>"
-
-      html
     end
 
     def render_sidebar

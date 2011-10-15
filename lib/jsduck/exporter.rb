@@ -29,6 +29,7 @@ module JsDuck
       cls.delete(:doc)
       cls[:members] = compact_members_group(cls[:members])
       cls[:statics] = compact_members_group(cls[:statics])
+      cls[:files] = compact_files(cls[:files])
       cls
     end
 
@@ -47,6 +48,16 @@ module JsDuck
       end
       m_copy
     end
+
+    # Remove full path from filename for privacy considerations as the
+    # path can reveal information about the system where JSDuck was
+    # run.  The docs app doesn't need to have this information.
+    def compact_files(files)
+      files.map do |f|
+        {:filename => File.basename(f[:filename]), :href => f[:href]}
+      end
+    end
+
   end
 
 end

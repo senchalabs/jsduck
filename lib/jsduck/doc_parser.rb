@@ -430,7 +430,7 @@ module JsDuck
     def default_value
       start_pos = @input.pos
       lit = JsLiteralParser.new(@input).literal
-      if lit && look(/ *]/)
+      if lit && look(/ *\]/)
         # When lital matched and there's nothing after it up to the closing "]"
         JsLiteralBuilder.new.to_s(lit)
       else

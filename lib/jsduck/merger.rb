@@ -358,7 +358,12 @@ module JsDuck
     end
 
     def detect_meta(doc_map)
-      doc_map[:meta] ? doc_map[:meta].map {|tag| {:name => tag[:name], :doc => tag[:doc]} } : []
+      meta = {}
+      (doc_map[:meta] || []).map do |tag|
+        meta[tag[:name]] = [] unless meta[tag[:name]]
+        meta[tag[:name]] << tag[:doc]
+      end
+      meta
     end
 
     def detect_deprecated(doc_map)
