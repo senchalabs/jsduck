@@ -47,9 +47,9 @@ module JsDuck
         filename = path + "/" + img
         if map.has_key?(filename)
           dest = output_dir + "/" + img
+          Logger.instance.log("Copying image", dest)
           FileUtils.makedirs(File.dirname(dest))
           FileUtils.cp(filename, dest)
-          Logger.instance.log("Copy #{filename} to #{dest} ...")
           # mark file as used.
           map[filename] = true
           return true

@@ -110,7 +110,7 @@ module JsDuck
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
       @parallel.map(filenames) do |fname|
-        Logger.instance.log("Parsing #{fname} ...")
+        Logger.instance.log("Parsing", fname)
         SourceFile.new(IO.read(fname), fname, @opts)
       end
     end
@@ -119,7 +119,7 @@ module JsDuck
     def aggregate(parsed_files)
       agr = Aggregator.new
       parsed_files.each do |file|
-        Logger.instance.log("Aggregating #{file.filename} ...")
+        Logger.instance.log("Aggregating", file.filename)
         agr.aggregate(file)
       end
       agr.classify_orphans
@@ -191,7 +191,7 @@ module JsDuck
       dir = @opts.output_dir + (@opts.export ? "" : "/output")
       @parallel.each(@relations.classes) do |cls|
         filename = dir + "/" + cls[:name] + (@opts.export ? ".json" : ".js")
-        Logger.instance.log("Writing to #{filename} ...")
+        Logger.instance.log("Writing docs", filename)
         data = exporter.export(cls)
         if @opts.export
           JsonDuck.write_json(filename, data)
@@ -210,7 +210,7 @@ module JsDuck
       # updates all the doc-objects related to the file
       parsed_files.each do |file|
         html_filename = src.write(file.to_html, file.filename)
-        Logger.instance.log("Writing to #{html_filename} ...")
+        Logger.instance.log("Writing source", html_filename)
         file.html_filename = File.basename(html_filename)
       end
     end
@@ -225,13 +225,13 @@ module JsDuck
     end
 
     def copy_template
-      Logger.instance.log("Copying template files to #{@opts.output_dir}...")
+      Logger.instance.log("Copying template files to", @opts.output_dir)
       FileUtils.cp_r(@opts.template_dir, @opts.output_dir)
       init_output_dirs
     end
 
     def link_template
-      Logger.instance.log("Linking template files to #{@opts.output_dir}...")
+      Logger.instance.log("Linking template files to", @opts.output_dir)
       FileUtils.mkdir(@opts.output_dir)
       Dir.glob(@opts.template_dir + "/*").each do |file|
         File.symlink(File.expand_path(file), @opts.output_dir+"/"+File.basename(file))
@@ -278,7 +278,7 @@ module JsDuck
     def write_template(filename, replacements)
       in_file = @opts.template_dir + '/' + filename
       out_file = @opts.output_dir + '/' + filename
-      Logger.instance.log("Creating #{out_file}...")
+      Logger.instance.log("Writing", out_file)
       html = IO.read(in_file)
       html.gsub!(/\{\w+\}/) do |key|
         replacements[key] ? replacements[key] : key

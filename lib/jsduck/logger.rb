@@ -16,9 +16,11 @@ module JsDuck
       @shown_warnings = {}
     end
 
-    # Prints log message
-    def log(msg)
-      puts msg if @verbose
+    # Prints log message with optional filename appended
+    def log(msg, filename=nil)
+      if @verbose
+        puts msg + " " + format(filename) + "..."
+      end
     end
 
     # Prints warning message.
@@ -28,18 +30,25 @@ module JsDuck
     # warnings greatly also when run multiple processes.
     #
     # Optionally filename and line number will be inserted to message.
-    def warn(msg, filename=nil, line=0)
-      if filename
-        filename.gsub!('/', '\\') if OS::windows?
-        msg = "#{filename}:#{line}:Warning: #{msg}"
-      else
-        msg = "Warning: #{msg}"
-      end
+    def warn(msg, filename=nil, line=nil)
+      msg = "Warning: " + format(filename, line) + " " + msg
 
       if @warnings && !@shown_warnings[msg]
         $stderr.puts msg
         @shown_warnings[msg] = true
       end
+    end
+
+    # Formats filename and line number for output
+    def format(filename=nil, line=nil)
+      out = ""
+      if filename
+        out = OS::windows? ? filename.gsub('/', '\\') : filename
+        if line
+          out += ":#{line}:"
+        end
+      end
+      out
     end
   end
 
