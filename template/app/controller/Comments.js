@@ -2,9 +2,9 @@
  * Retrieving and posting Comments
  */
 Ext.define('Docs.controller.Comments', {
-    extend: 'Ext.app.Controller',
-
-    baseUrl: 'http://projects.sencha.com/auth',
+    extend: 'Docs.controller.Content',
+    baseUrl: '#!/comments',
+    title: 'Comments',
 
     mixins: {
         authMixin: 'Docs.controller.AuthHelpers'
@@ -12,16 +12,12 @@ Ext.define('Docs.controller.Comments', {
 
     refs: [
         {
-            ref: 'toolbar',
-            selector: 'classoverview toolbar'
+            ref: 'viewport',
+            selector: '#viewport'
         },
         {
-            ref: 'authentication',
-            selector: 'authentication'
-        },
-        {
-            ref: 'overview',
-            selector: 'classoverview'
+            ref: 'index',
+            selector: '#commentindex'
         }
     ],
 
@@ -94,14 +90,25 @@ Ext.define('Docs.controller.Comments', {
         });
     },
 
-    fetchComments: function(id, callback) {
+    loadIndex: function() {
+        this.fireEvent('loadIndex');
+        Ext.getCmp('treecontainer').hide();
+        if (!this.recentComments) {
+            this.fetchRecentComments('recentcomments');
+            this.recentComments = true;
+        }
+        this.callParent([true]);
+    },
+
+    fetchComments: function(id, callback, opts) {
 
         var startkey = Ext.JSON.encode(this.commentId(id)),
             endkey = Ext.JSON.encode(this.commentId(id).concat([{}])),
-            currentUser = this.getController('Auth').currentUser;
+            currentUser = this.getController('Auth').currentUser,
+            url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_target';
 
         Ext.data.JsonP.request({
-            url: this.baseUrl + '/comments/_design/Comments/_list/with_vote/by_target',
+            url: url,
             method: 'GET',
             params: {
                 reduce: false,
@@ -128,7 +135,7 @@ Ext.define('Docs.controller.Comments', {
             target = Ext.JSON.encode(this.commentId(id));
 
         Ext.Ajax.request({
-            url: this.addSid(this.baseUrl + '/comments'),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb),
             method: 'POST',
             cors: true,
             params: {
@@ -147,6 +154,31 @@ Ext.define('Docs.controller.Comments', {
         });
     },
 
+    /**
+     * Fetches the most recent comments
+     */
+    fetchRecentComments: function(id) {
+
+        var url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_date';
+
+        Ext.data.JsonP.request({
+            url: url,
+            method: 'GET',
+            params: {
+                descending: true,
+                limit: 10
+            },
+            success: function(response) {
+                this.renderComments(response.rows, id, {showCls: true, hideCommentForm: true});
+            },
+            scope: this
+        });
+    },
+
+    /**
+     * Promts the user for confirmation of comment deletion. Deleted the comment
+     * if the user confirms.
+     */
     promptDeleteComment: function(cmp, el) {
 
         if (!this.loggedIn()) {
@@ -167,13 +199,16 @@ Ext.define('Docs.controller.Comments', {
         });
     },
 
-    deleteComment: function(cmp, el) {
+    /**
+     * Sends a delete comment request to the server.
+     */
+    deleteComment: function(cmp, dom) {
 
         var id = Ext.get(el).up('.comment').getAttribute('id'),
             cls = Ext.get(el).up('.comments').getAttribute('id');
 
         Ext.Ajax.request({
-            url: this.addSid(this.baseUrl + '/comments/' + id + '/delete'),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + id + '/delete'),
             cors: true,
             method: 'POST',
             callback: function(options, success, response) {
@@ -215,7 +250,7 @@ Ext.define('Docs.controller.Comments', {
             scoreEl = meta.down('.score');
 
         Ext.Ajax.request({
-            url: this.addSid(this.baseUrl + '/comments/' + id),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + id),
             cors: true,
             method: 'POST',
             params: { vote: direction },
@@ -285,16 +320,24 @@ Ext.define('Docs.controller.Comments', {
         this.getOverview().scrollToEl(commentsDiv, -20);
     },
 
-    renderComments: function(rows, id) {
+    renderComments: function(rows, id, opts) {
+
+        opts = opts || {};
+
         var comments = Ext.get(id);
         var data = Ext.Array.map(rows, function(r) {
             r.value.id = r.id;
+            r.value = Ext.merge(r.value, opts);
             return r.value;
         });
         Docs.view.Comments.commentsTpl.append(comments, data);
 
-        var commentTpl = (this.loggedIn() ? Docs.view.Comments.loggedInCommentTpl : Docs.view.Comments.loggedOutCommentTpl);
-        commentTpl.overwrite(comments.down('.new-comment-wrap'), this.loggedIn() ? this.getController('Auth').currentUser : {});
+        if (opts.hideCommentForm) {
+            comments.addCls('hideCommentForm');
+        } else if (!comments.hasCls('hideCommentForm')) {
+            var commentTpl = (this.loggedIn() ? Docs.view.Comments.loggedInCommentTpl : Docs.view.Comments.loggedOutCommentTpl);
+            commentTpl.overwrite(comments.down('.new-comment-wrap'), this.loggedIn() ? this.getController('Auth').currentUser : {});
+        }
     },
 
     toggleNewComment: function(cmp, el) {

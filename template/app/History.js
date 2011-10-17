@@ -64,6 +64,9 @@ Ext.define("Docs.History", {
         else if (url.type === "example") {
             Docs.App.getController('Examples').loadExample(url.url, true);
         }
+        else if (url.url === "#!/comment") {
+            Docs.App.getController('Comments').loadIndex();
+        }
         else {
             if (Docs.App.getController('Welcome').isActive()) {
                 Docs.App.getController('Welcome').loadIndex(true);
@@ -77,7 +80,7 @@ Ext.define("Docs.History", {
 
     // Parses current browser location
     parseToken: function(token) {
-        var matches = token && token.match(/!?(\/(api|guide|example|video)(\/(.*))?)/);
+        var matches = token && token.match(/!?(\/(api|guide|example|video|comment)(\/(.*))?)/);
         return matches ? {type: matches[2], url: "#!"+matches[1]} : {};
     },
 

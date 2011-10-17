@@ -148,6 +148,7 @@ class JsDuckRunner
     @out_dir = OUT_DIR
     @ext_dir = EXT_DIR
     @animator_dir = ANIMATOR_DIR
+    @base_url = "http://projects.sencha.com/auth"
   end
 
   def add_options(options)
@@ -157,7 +158,8 @@ class JsDuckRunner
   def add_sdk
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/ext-js/4-0/" />
-      <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4">
+      <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4" />
+      <script type="text/javascript">Docs.enableComments = true; Docs.baseUrl = "#{@base_url}"; Docs.commentsDb = 'comments-ext-js-4';</script>
     EOHTML
 
     @options += [
@@ -212,7 +214,7 @@ class JsDuckRunner
   def add_touch
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/touch/1-1/" />
-      <meta name="description" content="Sencha Touch 1.1 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch">
+      <meta name="description" content="Sencha Touch 1.1 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch" />
     EOHTML
 
     @options += [
@@ -233,7 +235,8 @@ class JsDuckRunner
   def add_touch2
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/touch/2-0/" />
-      <meta name="description" content="Sencha Touch 2.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch">
+      <meta name="description" content="Sencha Touch 2.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch" />
+      <script type="text/javascript">Docs.enableComments = true; Docs.baseUrl = "#{@base_url}"; Docs.commentsDb = 'comments-touch-2';</script>
     EOHTML
 
     @options += [
@@ -310,7 +313,7 @@ class JsDuckRunner
   def add_touch_charts
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/touch-charts/1-0/" />
-      <meta name="description" content="Sencha Touch Charts 1.0 API Documentation. Documentation on how to create Charts with Sencha Touch">
+      <meta name="description" content="Sencha Touch Charts 1.0 API Documentation. Documentation on how to create Charts with Sencha Touch" />
     EOHTML
 
     @options += [
@@ -329,7 +332,7 @@ class JsDuckRunner
   def add_animator
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/animator/1-0/" />
-      <meta name="description" content="Sencha Animator 1.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch">
+      <meta name="description" content="Sencha Animator 1.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch" />
     EOHTML
 
     @options += [

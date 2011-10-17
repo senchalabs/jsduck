@@ -5,8 +5,6 @@
 Ext.define('Docs.controller.CommentsMeta', {
     extend: 'Ext.app.Controller',
 
-    baseUrl: 'http://projects.sencha.com/auth',
-
     refs: [
         {
             ref: 'toolbar',
@@ -79,6 +77,16 @@ Ext.define('Docs.controller.CommentsMeta', {
             scope: this
         });
 
+        // this.getController('Welcome').on({
+        //     loadIndex: function() {
+        //         if (!this.hasFetchedCommentLeaders) {
+        //             this.fetchCommentLeaders();
+        //             this.hasFetchedCommentLeaders = true;
+        //         }
+        //     },
+        //     scope: this
+        // });
+
         this.control({
             'hovermenu': {
                 refresh : function(cmp) {
@@ -100,7 +108,7 @@ Ext.define('Docs.controller.CommentsMeta', {
 
     fetchCommentMeta: function() {
         Ext.data.JsonP.request({
-            url: this.baseUrl + '/comments/_design/Comments/_view/by_target',
+            url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_target',
             method: 'GET',
             params: {
                 reduce: true,
@@ -129,7 +137,7 @@ Ext.define('Docs.controller.CommentsMeta', {
         if (!id) return;
 
         Ext.data.JsonP.request({
-            url: this.baseUrl + '/comments/_design/Comments/_list/with_vote/by_target',
+            url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_target',
             method: 'GET',
             params: {
                 reduce: false,
@@ -140,6 +148,33 @@ Ext.define('Docs.controller.CommentsMeta', {
             },
             success: function(response) {
                 console.log(response.rows)
+            },
+            scope: this
+        });
+    },
+
+    fetchCommentLeaders: function() {
+        Ext.data.JsonP.request({
+            url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_author',
+            method: 'GET',
+            params: {
+                reduce: true,
+                group_level: 1,
+                descending: true,
+                limit: 10
+            },
+            success: function(response) {
+
+                var tpl = Ext.create('Ext.XTemplate',
+                    '<h1>Comment reputation</h1>',
+                    '<table>',
+                    '<tpl for=".">',
+                        '<tr><td>{value}</td><td>{key}</td></tr>',
+                    '</tpl>',
+                    '</table>'
+                );
+
+                tpl.append(Ext.get(Ext.query('#welcomeindex .news .l')[0]), response.rows);
             },
             scope: this
         });

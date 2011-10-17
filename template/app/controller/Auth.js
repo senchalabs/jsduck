@@ -3,16 +3,12 @@ Ext.define('Docs.controller.Auth', {
 
     requires: ['Ext.util.Cookies'],
 
-    authServer: 'http://projects.sencha.com/auth',
-
     refs: [
          {
             ref: 'auth',
             selector: 'authentication'
         }
     ],
-
-    enabled: true,
 
     init: function() {
 
@@ -33,7 +29,7 @@ Ext.define('Docs.controller.Auth', {
         );
 
         if (Ext.isIE) {
-            this.enabled = Ext.ieVersion >= 8;
+            Docs.enableComments = Ext.ieVersion >= 8;
         }
 
         this.control({
@@ -64,27 +60,12 @@ Ext.define('Docs.controller.Auth', {
      */
     getSession: function() {
 
-        if (!this.enabled) {
+        if (!Docs.enableComments) {
             return;
         }
 
-        // if (window.XDomainRequest) {
-        //     xdr = new XDomainRequest();
-        //     if (xdr) {
-        //         xdr.onerror = function() { alert("XDR onerror"); };
-        //         xdr.ontimeout =  function() { alert("XDR timeout"); };
-        //         xdr.onload =  function() { alert("XDR load " + xdr.responseText); };
-        //
-        //         xdr.timeout = 2000;
-        //         xdr.open('POST', 'http://projects.sencha.com/auth/login');
-        //         xdr.send('username=user&password=pass');
-        //     } else {
-        //         alert('Failed to create');
-        //     }
-        // }
-
         Ext.Ajax.request({
-            url: this.authServer + '/session',
+            url: Docs.baseUrl + '/session',
             params: { sid: this.sid },
             method: 'GET',
             cors: true,
@@ -97,6 +78,7 @@ Ext.define('Docs.controller.Auth', {
                 if (this.currentUser) {
                     this.loggedIn();
                 } else {
+                    this.setSid(null);
                     this.getAuth().showLoggedOut();
                 }
             },
@@ -114,7 +96,7 @@ Ext.define('Docs.controller.Auth', {
     login: function(username, password, remember, submitEl) {
 
         Ext.Ajax.request({
-            url: this.authServer + '/login',
+            url: Docs.baseUrl + '/login',
             method: 'POST',
             cors: true,
             params: {
@@ -151,7 +133,7 @@ Ext.define('Docs.controller.Auth', {
      */
     logout: function() {
         Ext.Ajax.request({
-            url: this.authServer + '/logout?sid=' + this.sid,
+            url: Docs.baseUrl + '/logout?sid=' + this.sid,
             method: 'POST',
             cors: true,
             callback: function(){

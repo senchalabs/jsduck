@@ -42,7 +42,12 @@ Ext.define('Docs.view.Comments', {
                 '<div class="com-meta">',
                     '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
                           '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                    '<div class="author">{author}</div>',
+                    '<div class="author">',
+                        '{author}',
+                        '<tpl if="showCls">',
+                            '<span class="target"> on {[this.target(values.target)]}</span>',
+                        '</tpl>',
+                    '</div>',
                     '<tpl if="this.isMod() || this.isAuthor(values.author)"><a href="#" class="deleteComment">Delete</a></tpl>',
                     '<div class="time">{[this.date(values.createdAt)]}</div>',
                     '<div class="vote">',
@@ -64,6 +69,15 @@ Ext.define('Docs.view.Comments', {
             },
             isAuthor: function(author) {
                 return Docs.App.getController('Auth').currentUser.userName == author;
+            },
+            target: function(target) {
+                var url = target[1],
+                    title = target[1];
+                if (target[2] != '') {
+                    url += '-' + target[2];
+                    title += ' ' + target[2];
+                }
+                return '<a href="#" class="docClass" rel="' + url + '">' + title + '</a>';
             }
         };
 
@@ -296,7 +310,11 @@ Ext.define('Docs.view.Comments', {
         var currentUser = Docs.App.getController('Auth').currentUser;
 
         Ext.Array.each(Ext.query('.new-comment-wrap'), function(newComment) {
-            if (Docs.App.getController('Auth').isLoggedIn()) {
+
+            var hideCommentForm = Ext.get(newComment).up('.commentList').parent.hasCls('hideCommentForm');
+
+            if (hideCommentForm) {
+            } else if (Docs.App.getController('Auth').isLoggedIn()) {
                 this.loggedInCommentTpl.overwrite(newComment, currentUser);
             } else {
                 this.loggedOutCommentTpl.overwrite(newComment, {});

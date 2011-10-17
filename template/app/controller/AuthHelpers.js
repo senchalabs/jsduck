@@ -6,11 +6,6 @@ Ext.define('Docs.controller.AuthHelpers', {
     },
 
     loggedIn: function() {
-        if (!this.getController('Auth').isLoggedIn()) {
-            return false;
-        } else {
-            return true;
-        }
+        return this.getController('Auth').isLoggedIn();
     }
-
 });
