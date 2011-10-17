@@ -11,7 +11,6 @@ require 'jsduck/relations'
 require 'jsduck/aliases'
 require 'jsduck/exporter'
 require 'jsduck/renderer'
-require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
 require 'jsduck/welcome'
@@ -31,7 +30,6 @@ module JsDuck
     # Initializes app with JsDuck::Options object
     def initialize(opts)
       @opts = opts
-      @timer = Timer.new
       # Sets the nr of parallel processes to use.
       # Set to 0 to disable parallelization completely.
       @parallel = ParallelWrap.new(:in_processes => @opts.processes)
@@ -44,9 +42,9 @@ module JsDuck
 
     # Call this after input parameters set
     def run
-      parsed_files = @timer.time(:parsing) { parallel_parse(@opts.input_files) }
-      result = @timer.time(:aggregating) { aggregate(parsed_files) }
-      @relations = @timer.time(:aggregating) { filter_classes(result) }
+      parsed_files = parallel_parse(@opts.input_files)
+      result = aggregate(parsed_files)
+      @relations = filter_classes(result)
       Aliases.new(@relations).resolve_all
       Lint.new(@relations).run
 
@@ -54,39 +52,37 @@ module JsDuck
 
       @welcome = Welcome.new
       if @opts.welcome
-        @timer.time(:parsing) { @welcome.parse(@opts.welcome) }
+        @welcome.parse(@opts.welcome)
       end
 
       @guides = Guides.new(get_doc_formatter)
       if @opts.guides
-        @timer.time(:parsing) { @guides.parse(@opts.guides) }
+        @guides.parse(@opts.guides)
       end
 
       @videos = Videos.new
       if @opts.videos
-        @timer.time(:parsing) { @videos.parse(@opts.videos) }
+        @videos.parse(@opts.videos)
       end
 
       @examples = Examples.new
       if @opts.examples
-        @timer.time(:parsing) { @examples.parse(@opts.examples) }
+        @examples.parse(@opts.examples)
       end
 
       @categories = Categories.new(get_doc_formatter, @relations)
       if @opts.categories_path
-        @timer.time(:parsing) do
-          @categories.parse(@opts.categories_path)
-          @categories.validate
-        end
+        @categories.parse(@opts.categories_path)
+        @categories.validate
       end
 
       clear_output_dir unless @opts.export == :stdout
       if @opts.export == :stdout
-        @timer.time(:generating) { puts JsonDuck.generate(@relations.classes) }
+        puts JsonDuck.generate(@relations.classes)
       elsif @opts.export == :json
         FileUtils.mkdir(@opts.output_dir)
-        @timer.time(:generating) { format_classes }
-        @timer.time(:generating) { write_classes }
+        format_classes
+        write_classes
       else
         if @opts.template_links
           link_template
@@ -99,17 +95,16 @@ module JsDuck
           FileUtils.rm(@opts.output_dir+"/index.php")
           FileUtils.cp(@opts.output_dir+"/template.html", @opts.output_dir+"/index.html")
         end
-        @timer.time(:generating) { write_src(parsed_files) }
-        @timer.time(:generating) { format_classes }
-        @timer.time(:generating) { write_app_data }
-        @timer.time(:generating) { write_classes }
-        @timer.time(:generating) { @guides.write(@opts.output_dir+"/guides") }
-        @timer.time(:generating) { @videos.write(@opts.output_dir+"/videos") }
-        @timer.time(:generating) { @examples.write(@opts.output_dir+"/examples") }
-        @timer.time(:generating) { @images.copy(@opts.output_dir+"/images") }
+        write_src(parsed_files)
+        format_classes
+        write_app_data
+        write_classes
+        @guides.write(@opts.output_dir+"/guides")
+        @videos.write(@opts.output_dir+"/videos")
+        @examples.write(@opts.output_dir+"/examples")
+        @images.copy(@opts.output_dir+"/images")
       end
 
-      @timer.report
     end
 
     # Parses the files in parallel using as many processes as available CPU-s
