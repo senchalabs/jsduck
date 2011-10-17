@@ -114,7 +114,9 @@ module JsDuck
     end
 
     def parse!(argv)
-      create_option_parser.parse!(argv).each {|fname| read_filenames(fname) }
+      create_option_parser.parse!(argv).each do |fname|
+        read_filenames(canonical(fname))
+      end
       validate
       @meta_tags = MetaTagLoader.new.load(@meta_tag_paths)
     end
@@ -219,7 +221,7 @@ module JsDuck
           "Search path for including images referenced by",
           "{@img} tag. Several paths can be specified by",
           "using the option multiple times.", " ") do |path|
-          @images << path
+          @images << canonical(path)
         end
 
         opts.on('--link=TPL',
