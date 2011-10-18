@@ -74,6 +74,10 @@ describe JsDuck::Lexer do
     end
   end
 
+  it "allows [/] inside regex" do
+    lex("/ [/] /").should == [[:regex, "/ [/] /"]]
+  end
+
   describe "identifies strings" do
 
     before do
@@ -150,6 +154,18 @@ describe JsDuck::Lexer do
 
     it "doc-comment" do
       lex("/** ").should == [[:doc_comment, "/** ", 1]]
+    end
+
+    it "regex" do
+      lex("/[a-z] ").should == [[:regex, "/[a-z] "]]
+    end
+
+    it "single-quoted string" do
+      lex("' ").should == [[:string, " "]]
+    end
+
+    it "double-quoted string" do
+      lex('" ').should == [[:string, " "]]
     end
   end
 
