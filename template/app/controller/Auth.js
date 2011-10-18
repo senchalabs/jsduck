@@ -71,15 +71,17 @@ Ext.define('Docs.controller.Auth', {
             cors: true,
             callback: function(options, success, response) {
 
-                if (response && response.responseText) {
-                    this.currentUser = JSON.parse(response.responseText);
-                }
+                if (success) {
+                    if (response && response.responseText) {
+                        this.currentUser = JSON.parse(response.responseText);
+                    }
 
-                if (this.currentUser) {
-                    this.loggedIn();
-                } else {
-                    this.setSid(null);
-                    this.getAuth().showLoggedOut();
+                    if (this.currentUser) {
+                        this.loggedIn();
+                    } else {
+                        this.setSid(null);
+                        this.getAuth().showLoggedOut();
+                    }
                 }
             },
             scope: this

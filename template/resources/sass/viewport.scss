@@ -89,14 +89,20 @@ $docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
 @mixin green-button {
   box-shadow: inset #b3f33d 0 1px 0;
   color: #fff;
-  border: 1px solid #264901;
-  background-color: #91c632;
   text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
-  @include vertical-gradient(#91c632, #519700);
   @include border-radius(3px);
   cursor: pointer;
+  border: 1px solid #264901;
+  background-color: #91c632;
+  @include vertical-gradient(#91c632, #519700);
   &:hover {
-    @include vertical-gradient(#74b61e, #3d7e00); } }
+    @include vertical-gradient(#74b61e, #3d7e00); }
+  &.disabled {
+    border-color: #707070;
+    cursor: auto;
+    background-color: #acacac;
+    @include vertical-gradient(#bbb, #9c9c9c);
+    box-shadow: inset #d7d7d7 0 1px 0; } }
 
 @mixin member-expander {
 
@@ -1353,82 +1359,105 @@ pre, code, kbd, samp, tt {
         width: 26px;
         height: 26px;
         margin-right: 10px;
-        background: url(../images/comment.png) no-repeat 0 -29px; } }
-    form.newCommentForm {
-      display: none;
-      margin: 10px 55px 10px 40px;
-      border: 1px solid #c7d1d9;
-      padding: 15px;
-      @include border-radius(4px);
-      background: #ecf5fc;
-      .com-meta {
+        background: url(../images/comment.png) no-repeat 0 -29px; } } }
+  form.newCommentForm {
+    display: none; }
+  form.newCommentForm {
+    margin: 10px 55px 10px 40px; }
+  form.editCommentForm {
+    margin: 10px 55px 0px 0; }
+  form.editCommentForm,
+  form.newCommentForm {
+    position: relative;
+    border: 1px solid #c7d1d9;
+    padding: 10px 15px 15px 15px;
+    @include border-radius(4px);
+    background: #ecf5fc;
+    .action {
+      display: block;
+      font-weight: bold;
+      padding-bottom: 7px; }
+    .com-meta {
+      position: relative;
+      margin-top: 8px;
+      text-align: right;
+      font-weight: bold; }
+    img {
+      @include border-radius(2px);
+      position: absolute; left: 0;
+      margin-right: 10px; }
+    .author {
+      line-height: 25px;
+      position: absolute; left: 35px;
+      margin-bottom: 10px; }
+    .CodeMirror,
+    textarea {
+      border: 1px solid #ccc;
+      background: #fff;
+      @include border-radius(3px);
+      width: 100%;
+      padding: 3px;
+      border: auto; }
+    .CodeMirror .CodeMirror-scroll,
+    textarea {
+      min-height: 8em; }
+    input {
+      @include green-button();
+      width: 120px;
+      margin-left: 20px;
+      padding: 5px 8px;
+      font-size: 12px; }
+    .toggleCodeEditor {
+      position: absolute;
+      top: 15px;
+      text-indent: -9999px;
+      width: 20px;
+      background: url(../images/example-icons.png) no-repeat -2px -20px;
+      right: 15px;
+      &.selected,
+      &:hover {
+        background-position: -30px -20px; } }
+    .commentGuideTxt {
+      border-top: 1px solid #C7D1D9;
+      margin-top: 15px;
+      padding-top: 10px;
+      .markdown.preview {
+        float: left;
+        width: 310px;
+        pre {
+          border: 0;
+          padding: 0;
+          margin: 0;
+          line-height: 1.5em;
+          background: transparent; } }
+      .markdown.result {
+        margin-left: 320px;
+        width: 260px; }
+      .markdown {
+        background: #fff;
+        padding: 20px;
         position: relative;
-        margin-top: 8px;
-        text-align: right;
-        font-weight: bold; }
-      img {
-        @include border-radius(2px);
-        position: absolute; left: 0;
-        margin-right: 10px; }
-      .author {
-        line-height: 25px;
-        position: absolute; left: 35px;
-        margin-bottom: 10px; }
-      textarea {
-        border: 1px solid #ccc;
-        @include border-radius(3px);
-        width: 100%;
-        height: 8em;
-        padding: 3px;
-        border: auto; }
-      input {
-        @include green-button();
-        width: 120px;
-        margin-left: 20px;
-        padding: 5px 8px;
-        font-size: 12px; }
-      .commentGuideTxt {
-        border-top: 1px solid #C7D1D9;
-        margin-top: 15px;
-        padding-top: 10px;
-        .markdown.preview {
-          float: left;
-          width: 310px;
-          pre {
-            border: 0;
-            padding: 0;
-            margin: 0;
-            line-height: 1.5em;
-            background: transparent; } }
-        .markdown.result {
-          margin-left: 320px;
-          width: 260px; }
-        .markdown {
-          background: #fff;
-          padding: 20px;
-          position: relative;
-          @include border-radius(5px);
-          h4 {
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            padding: 5px 10px;
-            background: rgba(0,0,0,0.05); } }
-        code {
-          padding-left: 5px; }
-        ul {
-          margin-top: 5px; } } }
-    &.open {
-      form.newCommentForm {
-        display: block; } } } }
+        @include border-radius(5px);
+        h4 {
+          position: absolute;
+          top: 0px;
+          right: 0px;
+          padding: 5px 10px;
+          background: rgba(0,0,0,0.05); } }
+      code {
+        padding-left: 5px; }
+      ul {
+        margin-top: 5px; } } }
+  &.open {
+    form.newCommentForm {
+      display: block; } } }
 .comment {
   padding-top: 10px;
   padding-left: 2px;
   &:hover {
     .com-meta {
-      .deleteComment {
-        -webkit-transition: opacity 0.2s linear;
-        opacity: 1; }
+      .editComment,
+      .deleteComment,
       .vote {
         -webkit-transition: opacity 0.2s linear;
         opacity: 1; } } }
@@ -1460,9 +1489,13 @@ pre, code, kbd, samp, tt {
       opacity: 0;
       -webkit-transition: opacity 0.2s linear;
       position: absolute; }
-    .vote {
+    .editComment {
+      right: 150px;
+      color: #999;
       opacity: 0;
       -webkit-transition: opacity 0.2s linear;
+      position: absolute; }
+    .vote {
       position: absolute;
       left: 2px;
       top: 33px;
@@ -1495,12 +1528,12 @@ pre, code, kbd, samp, tt {
         position: absolute;
         width: 20px;
         top: 15px;
-        color: #777;
+        color: #aaa;
         text-align: center;
         font-size: 16px; } } }
   .content {
     min-height: 65px;
-    padding-left: 40px;
+    padding: 0 0 15px 40px;
     border-bottom: 1px solid #eee; } }
 
 // Welcome Pages

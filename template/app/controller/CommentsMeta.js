@@ -23,7 +23,8 @@ Ext.define('Docs.controller.CommentsMeta', {
     init: function() {
 
         Docs.commentMeta = {
-            idMap: {}
+            idMap: {},
+            'class': {}
         };
 
         this.addEvents(
@@ -49,7 +50,7 @@ Ext.define('Docs.controller.CommentsMeta', {
 
         this.getController('Classes').on({
             showIndex: function() {
-                if (Docs.commentMeta['class']) {
+                if (this.metaLoaded) {
                     Docs.view.Comments.updateClassIndex();
                 } else {
                     this.addListener('afterLoad', function() {
@@ -61,17 +62,16 @@ Ext.define('Docs.controller.CommentsMeta', {
             },
             showClass: function(cls, opts) {
                 if (opts.reRendered) {
-                    if (Docs.commentMeta['class']) {
-                        this.createCommentIdMap(this.getController('Classes').currentCls);
+                    if (this.metaLoaded) {
                         Docs.view.Comments.updateClassCommentMeta(cls);
                     } else {
                         this.addListener('afterLoad', function() {
-                            this.createCommentIdMap(this.getController('Classes').currentCls);
                             Docs.view.Comments.updateClassCommentMeta(cls);
                         }, this, {
                             single: true
                         });
                     }
+                    this.createCommentIdMap(this.getController('Classes').currentCls);
                 }
             },
             scope: this
@@ -90,7 +90,7 @@ Ext.define('Docs.controller.CommentsMeta', {
         this.control({
             'hovermenu': {
                 refresh : function(cmp) {
-                    if (Docs.commentMeta['class']) {
+                    if (this.metaLoaded) {
                         Docs.view.Comments.renderHoverMenuMeta(cmp.el);
                     } else {
                         this.addListener('afterLoad', function() {
@@ -120,6 +120,7 @@ Ext.define('Docs.controller.CommentsMeta', {
                     this.updateMeta(r.key, r.value.num);
                 }, this);
 
+                this.metaLoaded = true;
                 this.fireEvent('afterLoad');
                 Docs.view.Comments.updateClassIndex();
             },
@@ -198,7 +199,6 @@ Ext.define('Docs.controller.CommentsMeta', {
      * Creates a mapping between comment element IDs and CouchDB view keys
      */
     createCommentIdMap: function(cls) {
-
         var key, commentId, member
         Docs.commentMeta.idMap[('comments-class-' + cls.name).replace(/\./g, '-')] = ['class', cls.name, ''];
 

@@ -182,6 +182,11 @@ class JsDuckRunner
   end
 
   def add_ext3
+    head_html = <<-EOHTML
+      <link rel="canonical" href="http://docs.sencha.com/ext-js/3-4/" />
+      <meta name="description" content="Ext JS 3.4 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 3.4" />
+    EOHTML
+
     @options += [
       "--title", "Sencha Docs - Ext JS 3.4",
       "--footer", "Ext JS 3.4 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",

@@ -48,7 +48,7 @@ Ext.define('Docs.view.Comments', {
                             '<span class="target"> on {[this.target(values.target)]}</span>',
                         '</tpl>',
                     '</div>',
-                    '<tpl if="this.isMod() || this.isAuthor(values.author)"><a href="#" class="deleteComment">Delete</a></tpl>',
+                    '<tpl if="this.isMod() || this.isAuthor(values.author)"><a href="#" class="editComment">Edit</a><a href="#" class="deleteComment">Delete</a></tpl>',
                     '<div class="time">{[this.date(values.createdAt)]}</div>',
                     '<div class="vote">',
                         '<a href="#" class="voteCommentUp{[values.upVote ? " selected" : ""]}" title="Vote Up">&nbsp;</a>',
@@ -77,7 +77,7 @@ Ext.define('Docs.view.Comments', {
                     url += '-' + target[2];
                     title += ' ' + target[2];
                 }
-                return '<a href="#" class="docClass" rel="' + url + '">' + title + '</a>';
+                return '<a href="#!/api/' + url + '" class="docClass" rel="' + url + '">' + title + '</a>';
             }
         };
 
@@ -96,69 +96,93 @@ Ext.define('Docs.view.Comments', {
             commentTplMethods
         );
 
+        var commentMetaAndGuide = [
+            '<div class="com-meta">',
+                '<img class="avatar" width="25" height="25"',
+                    ' src="http://www.gravatar.com/avatar/{emailHash}?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
+                '<div class="author">Logged in as {userName}</div>',
+                '<a href="#" class="toggleCommentGuide">Help</a>',
+                '<input type="submit" class="{[values.update ? "update" : "post"]}Comment" value="{[values.update ? "Update" : "Post"]} comment" />',
+            '</div>',
+            '<div class="commentGuideTxt" style="display: none">',
+                '<ul>',
+                    '<li>Comments should be an <strong>extension</strong> of the documentation.</li>',
+                    '<li>For any <em>questions</em> about code or usage, please use the <a href="http://www.sencha.com/forum" target="_blank">Forum</a>.</li>',
+                    '<li>Comments may be edited or deleted at any time by a moderator.</li>',
+                    '<li>Avatars can be managed at <a href="http://www.gravatar.com" target="_blank">Gravatar</a> (use your forum email address).</li>',
+                    '<li>Comments will be formatted using the Markdown syntax, eg:</li>',
+                '</ul>',
+                '<div class="markdown preview">',
+                    '<h4>Markdown</h4>',
+                    '<pre>',
+                        "Here is a **bold** item\n",
+                        "Here is an _italic_ item\n",
+                        "Here is an `inline` code snippet\n",
+                        "\n",
+                        "    Indent with 4 spaces\n",
+                        "    for a code snippet\n",
+                        "\n",
+                        "1. Here is a numbered list\n",
+                        "2. Second numbered list item\n",
+                        "\n",
+                        "- Here is an unordered list\n",
+                        "- Second unordered list item\n",
+                    '</pre>',
+                '</div>',
+                '<div class="markdown result">',
+                    '<h4>Result</h4>',
+                    'Here is a <strong>bold</strong> item<br/>',
+                    'Here is an <em>italic</em> item<br/>',
+                    'Here is an <code>inline</code> code snippet<br/>',
+                    '<pre>',
+                    "Indent with 4 spaces\n",
+                    "for a code snippet",
+                    '</pre>',
+                    '<ol>',
+                        '<li>Here is a numbered list</li>',
+                        '<li>Second numbered list item</li>',
+                    '</ol>',
+                    '<ul>',
+                        '<li>Here is an unordered list</li>',
+                        '<li>Second unordered list item</li>',
+                    '</ul>',
+                '</div>',
+            '</div>'
+        ];
+
         this.loggedInCommentTpl = Ext.create('Ext.XTemplate',
             '<div class="new-comment{[values.hide ? "" : " open"]}">',
                 '<a href="#" class="toggleNewComment"><span></span>Post a comment</a>',
                 '<form class="newCommentForm">',
+                    '<span class="action">',
+                        'Action: ',
+                        '<select>',
+                            '<option value="comment">Post a comment</option>',
+                            '<option value="question">Ask a question</option>',
+                            '<option value="problem">Report a problem</option>',
+                            '<option value="problem">Request a feature</option>',
+                        '</select>',
+                    '</span>',
+                    // '<a href="#" class="toggleCodeEditor" title="Toggle code editor">Code editor</a>',
                     '<textarea></textarea>',
-                    '<div class="com-meta">',
-                        '<img class="avatar" width="25" height="25"',
-                            ' src="http://www.gravatar.com/avatar/{emailHash}?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                        '<div class="author">Logged in as {userName}</div>',
-                        '<a href="#" class="toggleCommentGuide">Toggle commenting guide</a>',
-                        '<input type="submit" class="postComment" value="Post comment" />',
-                    '</div>',
-                    '<div class="commentGuideTxt" style="display: none">',
-                        '<ul>',
-                            '<li>Comments should be an <strong>extension</strong> of the documentation.</li>',
-                            '<li>For any <em>questions</em> about code or usage, please use the <a href="http://www.sencha.com/forum" target="_blank">Forum</a>.</li>',
-                            '<li>Comments may be edited or deleted at any time by a moderator.</li>',
-                            '<li>Comments will be formatted using the Markdown syntax, eg:</li>',
-                        '</ul>',
-                        '<div class="markdown preview">',
-                            '<h4>Markdown</h4>',
-                            '<pre>',
-                                "Here is a **bold** item\n",
-                                "Here is an _italic_ item\n",
-                                "Here is an `inline` code snippet\n",
-                                "\n",
-                                "    Indent with 4 spaces\n",
-                                "    for a code snippet\n",
-                                "\n",
-                                "1. Here is a numbered list\n",
-                                "2. Second numbered list item\n",
-                                "\n",
-                                "- Here is an unordered list\n",
-                                "- Second unordered list item\n",
-                            '</pre>',
-                        '</div>',
-                        '<div class="markdown result">',
-                            '<h4>Result</h4>',
-                            'Here is a <strong>bold</strong> item<br/>',
-                            'Here is an <em>italic</em> item<br/>',
-                            'Here is an <code>inline</code> code snippet<br/>',
-                            '<pre>',
-                            "Indent with 4 spaces\n",
-                            "for a code snippet",
-                            '</pre>',
-                            '<ol>',
-                                '<li>Here is a numbered list</li>',
-                                '<li>Second numbered list item</li>',
-                            '</ol>',
-                            '<ul>',
-                                '<li>Here is an unordered list</li>',
-                                '<li>Second unordered list item</li>',
-                            '</ul>',
-                        '</div>',
-                    '</div>',
+                    commentMetaAndGuide.join(''),
                 '</form>',
             '</div>'
+        );
+
+        this.editCommentTpl = Ext.create('Ext.XTemplate',
+            '<form class="editCommentForm">',
+                '<span class="action">Edit comment</span>',
+                // '<a href="#" class="toggleCodeEditor" title="Toggle code editor">Code editor</a>',
+                '<textarea>{content}</textarea>',
+                commentMetaAndGuide.join(''),
+            '</form>'
         );
 
         if (Ext.isIE && Ext.ieVersion <= 7) {
             this.loggedOutCommentTpl = Ext.create('Ext.XTemplate',
                 '<div class="new-comment">',
-                    '<span class="toggleNewComment"><span></span>Sorry, adding comments is only supported in IE 8+</span>',
+                    '<span class="toggleNewComment"><span></span>Sorry, adding comments is not supported in IE 7 or earlier</span>',
                 '</div>'
             );
         } else {
@@ -239,8 +263,6 @@ Ext.define('Docs.view.Comments', {
                 numComments = Docs.commentMeta['class'][memberCls] && Docs.commentMeta['class'][memberCls][memberId],
                 memberTitleComments = memberTitle.down('.toggleMemberComments');
 
-            // console.log('updating', memberId, numComments, memberTitleComments)
-
             if (numComments) {
                 this.numCommentsTpl.overwrite(commentsWrap, {
                     num: numComments
@@ -311,7 +333,7 @@ Ext.define('Docs.view.Comments', {
 
         Ext.Array.each(Ext.query('.new-comment-wrap'), function(newComment) {
 
-            var hideCommentForm = Ext.get(newComment).up('.commentList').parent.hasCls('hideCommentForm');
+            var hideCommentForm = Ext.get(newComment).up('.comment-list').parent().hasCls('hideCommentForm');
 
             if (hideCommentForm) {
             } else if (Docs.App.getController('Auth').isLoggedIn()) {
