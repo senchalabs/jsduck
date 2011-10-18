@@ -151,6 +151,18 @@ describe JsDuck::Lexer do
     it "doc-comment" do
       lex("/** ").should == [[:doc_comment, "/** ", 1]]
     end
+
+    it "regex" do
+      lex("/[a-z] ").should == [[:regex, "/[a-z] "]]
+    end
+
+    it "single-quoted string" do
+      lex("' ").should == [[:string, " "]]
+    end
+
+    it "double-quoted string" do
+      lex('" ').should == [[:string, " "]]
+    end
   end
 
   describe "passing StringScanner to constructor" do

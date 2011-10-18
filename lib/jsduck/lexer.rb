@@ -127,12 +127,12 @@ module JsDuck
         elsif @input.check(/'/)
           return {
             :type => :string,
-            :value => @input.scan(/'([^'\\]|\\.)*'/m).sub(/^'(.*)'$/m, "\\1")
+            :value => @input.scan(/'([^'\\]|\\.)*('|\Z)/m).gsub(/\A'|'\Z/m, "")
           }
         elsif @input.check(/"/)
           return {
             :type => :string,
-            :value => @input.scan(/"([^"\\]|\\.)*"/m).sub(/^"(.*)"$/m, "\\1")
+            :value => @input.scan(/"([^"\\]|\\.)*("|\Z)/m).gsub(/\A"|"\Z/m, "")
           }
         elsif @input.check(/\//)
           # Several things begin with dash:
@@ -153,7 +153,7 @@ module JsDuck
           elsif regex?
             return {
               :type => :regex,
-              :value => @input.scan(/\/([^\/\\]|\\.)*\/[gim]*/)
+              :value => @input.scan(/\/([^\/\\]|\\.)*(\/[gim]*|\Z)/)
             }
           else
             return {
