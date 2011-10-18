@@ -74,6 +74,10 @@ describe JsDuck::Lexer do
     end
   end
 
+  it "allows [/] inside regex" do
+    lex("/ [/] /").should == [[:regex, "/ [/] /"]]
+  end
+
   describe "identifies strings" do
 
     before do

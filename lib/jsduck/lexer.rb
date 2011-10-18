@@ -153,7 +153,7 @@ module JsDuck
           elsif regex?
             return {
               :type => :regex,
-              :value => @input.scan(/\/([^\/\\]|\\.)*(\/[gim]*|\Z)/)
+              :value => @input.scan(META_REGEX)
             }
           else
             return {
@@ -201,6 +201,20 @@ module JsDuck
     def skip_white
       @input.scan(/\s+/)
     end
+
+    # A regex to match a regex
+    META_REGEX = %r{
+      /               (?# beginning    )
+      (
+        [^/\[\\]      (?# any character except \ / [    )
+        |
+        \\.           (?# an escaping \ followed by any character    )
+        |
+        \[ ([^\]\\]|\\.)* \]    (?# [...] containing any characters including /    )
+                                (?# except \ ] which have to be escaped    )
+      )*
+      (/[gim]*|\Z)   (?# ending + modifiers    )
+    }x
 
     KEYWORDS = {
       "break" => true,
