@@ -34,78 +34,46 @@ Ext.define('Docs.controller.CommentsMeta', {
             'afterLoad'
         );
 
+        this.getController('Auth').on({
+            available: function() {
+                this.fetchCommentMeta();
+            },
+            scope: this
+        });
+
         this.getController('Comments').on({
             add: function(id) {
-                this.updateMeta(Docs.commentMeta.idMap[id], 1);
-                var clsId = Docs.commentMeta.idMap[id];
-                Docs.view.Comments.updateClassCommentMeta(clsId[1]);
+                this.updateClassCommentMeta(id, 1);
             },
             remove: function(id) {
-                this.updateMeta(Docs.commentMeta.idMap[id], -1);
-                var clsId = Docs.commentMeta.idMap[id];
-                Docs.view.Comments.updateClassCommentMeta(clsId[1]);
+                this.updateClassCommentMeta(id, -1);
             },
             scope: this
         });
 
         this.getController('Classes').on({
             showIndex: function() {
-                if (this.metaLoaded) {
-                    Docs.view.Comments.updateClassIndex();
-                } else {
-                    this.addListener('afterLoad', function() {
-                        Docs.view.Comments.updateClassIndex();
-                    }, this, {
-                        single: true
-                    });
-                }
+                this.updateClassIndex();
             },
             showClass: function(cls, opts) {
                 if (opts.reRendered) {
-                    if (this.metaLoaded) {
-                        Docs.view.Comments.updateClassCommentMeta(cls);
-                    } else {
-                        this.addListener('afterLoad', function() {
-                            Docs.view.Comments.updateClassCommentMeta(cls);
-                        }, this, {
-                            single: true
-                        });
-                    }
                     this.createCommentIdMap(this.getController('Classes').currentCls);
+                    this.renderClassCommentMeta(cls);
                 }
             },
             scope: this
         });
 
-        // this.getController('Welcome').on({
-        //     loadIndex: function() {
-        //         if (!this.hasFetchedCommentLeaders) {
-        //             this.fetchCommentLeaders();
-        //             this.hasFetchedCommentLeaders = true;
-        //         }
-        //     },
-        //     scope: this
-        // });
-
         this.control({
             'hovermenu': {
-                refresh : function(cmp) {
-                    if (this.metaLoaded) {
-                        Docs.view.Comments.renderHoverMenuMeta(cmp.el);
-                    } else {
-                        this.addListener('afterLoad', function() {
-                            Docs.view.Comments.renderHoverMenuMeta(cmp.el);
-                        }, this, {
-                            single: true
-                        });
-                    }
-                }
+                refresh : this.refreshHoverMenu
             }
         });
-
-        this.fetchCommentMeta();
     },
 
+    /**
+     * Fetch all comment meta data and populate a local store
+     */
     fetchCommentMeta: function() {
         Ext.data.JsonP.request({
             url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_target',
@@ -122,39 +90,40 @@ Ext.define('Docs.controller.CommentsMeta', {
 
                 this.metaLoaded = true;
                 this.fireEvent('afterLoad');
-                Docs.view.Comments.updateClassIndex();
+                this.updateClassIndex();
             },
             scope: this
         });
     },
 
-    updateVoteMeta: function() {
-
-        var id = Docs.App.getController('Classes').currentCls.name,
-            startkey = Ext.JSON.encode(['class',id]),
-            endkey = Ext.JSON.encode(['class',id,{}]),
-            currentUser = this.getController('Auth').currentUser;
-
-        if (!id) return;
-
-        Ext.data.JsonP.request({
-            url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_target',
-            method: 'GET',
-            params: {
-                reduce: false,
-                startkey: startkey,
-                endkey: endkey,
-                user: currentUser && currentUser.userName,
-                votes: true
-            },
-            success: function(response) {
-                console.log(response.rows)
-            },
-            scope: this
-        });
-    },
+    // updateVoteMeta: function() {
+    //
+    //     var id = Docs.App.getController('Classes').currentCls.name,
+    //         startkey = Ext.JSON.encode(['class',id]),
+    //         endkey = Ext.JSON.encode(['class',id,{}]),
+    //         currentUser = this.getController('Auth').currentUser;
+    //
+    //     if (!id) return;
+    //
+    //     Ext.data.JsonP.request({
+    //         url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_target',
+    //         method: 'GET',
+    //         params: {
+    //             reduce: false,
+    //             startkey: startkey,
+    //             endkey: endkey,
+    //             user: currentUser && currentUser.userName,
+    //             votes: true
+    //         },
+    //         success: function(response) {
+    //             console.log(response.rows)
+    //         },
+    //         scope: this
+    //     });
+    // },
 
     fetchCommentLeaders: function() {
+
         Ext.data.JsonP.request({
             url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_author',
             method: 'GET',
@@ -182,6 +151,15 @@ Ext.define('Docs.controller.CommentsMeta', {
     },
 
     /**
+     * Called when a comment is added or removed. Updates the meta table, then refreshes the view
+     */
+    updateClassCommentMeta: function(id, delta) {
+        var clsId = Docs.commentMeta.idMap[id];
+        this.updateMeta(clsId, delta);
+        Docs.view.Comments.updateClassCommentMeta(clsId[1]);
+    },
+
+    /**
      * Update comment count info
      * @param key Path to class / property
      * @param delta Difference to comment number
@@ -196,7 +174,7 @@ Ext.define('Docs.controller.CommentsMeta', {
     },
 
     /**
-     * Creates a mapping between comment element IDs and CouchDB view keys
+     * Creates a mapping between comment element IDs and DB view keys.
      */
     createCommentIdMap: function(cls) {
         var key, commentId, member
@@ -212,6 +190,43 @@ Ext.define('Docs.controller.CommentsMeta', {
                 }, this);
             }
         }
-    }
+    },
 
+    refreshHoverMenu: function(cmp) {
+        if (this.metaLoaded) {
+            Docs.view.Comments.renderHoverMenuMeta(cmp.el);
+        } else {
+            this.addListener('afterLoad', function() {
+                Docs.view.Comments.renderHoverMenuMeta(cmp.el);
+            }, this, {
+                single: true
+            });
+        }
+    },
+
+    updateClassIndex: function() {
+        if (this.getController('Comments').commentsEnabled) {
+            if (this.metaLoaded) {
+                Docs.view.Comments.updateClassIndex();
+            } else {
+                this.addListener('afterLoad', function() {
+                    Docs.view.Comments.updateClassIndex();
+                }, this, {
+                    single: true
+                });
+            }
+        }
+    },
+
+    renderClassCommentMeta: function(cls) {
+        if (this.metaLoaded) {
+            Docs.view.Comments.updateClassCommentMeta(cls);
+        } else {
+            this.addListener('afterLoad', function() {
+                Docs.view.Comments.updateClassCommentMeta(cls);
+            }, this, {
+                single: true
+            });
+        }
+    }
 });

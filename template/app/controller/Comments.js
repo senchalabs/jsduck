@@ -42,32 +42,36 @@ Ext.define('Docs.controller.Comments', {
         );
 
         this.getController('Auth').on({
+            available: function() {
+                this.enableComments();
+            },
             loggedIn:  function() {
                 Docs.view.Comments.renderNewCommentForms();
             },
             loggedOut: function() {
-                Docs.view.Comments.renderNewCommentForms()
-            }
+                Docs.view.Comments.renderNewCommentForms();
+            },
+            scope: this
         });
 
         this.getController('Classes').on({
             showClass: function(cls, opts) {
                 if (opts.reRendered) {
-                    Docs.view.Comments.renderClassCommentContainers(this.currentCls);
+                    this.renderClassCommentContainers(cls);
                 }
-            }
+            },
+            scope: this
         });
 
         this.control({
             'viewport': {
                 afterrender: function(cmp) {
-                    // Map user interactions to methods
+                    // Map comment interactions to methods
                     Ext.Array.each([
                         [ '.toggleComments',       'click', this.toggleComments],
                         [ '.toggleMemberComments', 'click', this.showMemberComments],
                         [ '.toggleNewComment',     'click', this.toggleNewComment],
                         [ '.toggleCommentGuide',   'click', this.toggleCommentGuide],
-                        // [ '.toggleCodeEditor',     'click', this.toggleCodeEditor],
                         [ '.postComment',          'click', this.postComment],
                         [ '.updateComment',        'click', this.updateComment],
                         [ '.deleteComment',        'click', this.promptDeleteComment],
@@ -95,6 +99,14 @@ Ext.define('Docs.controller.Comments', {
                 }
             }
         });
+    },
+
+    enableComments: function() {
+        if (!this.commentsEnabled) {
+            // alert(this.getController('Classes').currentCls)
+            this.commentsEnabled = true;
+            // Docs.view.Comments.renderClassCommentContainers(this.getController('Classes').currentCls);
+        }
     },
 
     loadIndex: function() {
@@ -158,7 +170,7 @@ Ext.define('Docs.controller.Comments', {
                 comment: comment
             },
             callback: function(options, success, response) {
-                if (success) {
+                if (response && response.responseText) {
                     var data = Ext.JSON.decode(response.responseText);
                     this.fireEvent('add', id);
                     textarea.editor.setValue('');
@@ -261,7 +273,7 @@ Ext.define('Docs.controller.Comments', {
                     }), true);
 
                     var textarea = editForm.down('textarea').dom;
-                    this.makeCodeMirror(textarea);
+                    Docs.view.Comments.makeCodeMirror(textarea);
                 }
             },
             scope: this
@@ -404,6 +416,11 @@ Ext.define('Docs.controller.Comments', {
         this.getOverview().scrollToEl(commentsDiv, -20);
     },
 
+    renderClassCommentContainers: function() {
+        var cls = this.getController('Classes').currentCls;
+        Docs.view.Comments.renderClassCommentContainers(cls);
+    },
+
     renderComments: function(rows, id, opts) {
 
         opts = opts || {};
@@ -421,24 +438,19 @@ Ext.define('Docs.controller.Comments', {
         } else if (!comments.hasCls('hideCommentForm')) {
 
             var commentWrap = comments.down('.new-comment-wrap');
-
             if (this.loggedIn()) {
-                var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, this.getController('Auth').currentUser, true),
-                    textarea = wrap.down('textarea').dom;
+                var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, this.getController('Auth').currentUser, true);
 
-                this.makeCodeMirror(textarea);
+                if (wrap) {
+                    var textareaEl = wrap.down('textarea');
+                    if (textareaEl) {
+                        Docs.view.Comments.makeCodeMirror(textareaEl.dom);
+                    }
+                }
             } else {
                 Docs.view.Comments.loggedOutCommentTpl.overwrite(commentWrap, {});
             }
         }
-    },
-
-    makeCodeMirror: function(textarea) {
-        textarea.editor = CodeMirror.fromTextArea(textarea, {
-            enterMode: "keep",
-            mode: 'markdown',
-            indentUnit: 4
-        });
     },
 
     toggleNewComment: function(cmp, el) {

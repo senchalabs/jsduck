@@ -25,7 +25,13 @@ Ext.define('Docs.controller.Auth', {
              * @event loggedOut
              * Fired after user logs out
              */
-            "loggedOut"
+            "loggedOut",
+
+            /**
+             * @event available
+             * Fired if the authorisation is available
+             */
+            "available"
         );
 
         if (Ext.isIE) {
@@ -70,17 +76,13 @@ Ext.define('Docs.controller.Auth', {
             method: 'GET',
             cors: true,
             callback: function(options, success, response) {
-
-                if (success) {
-                    if (response && response.responseText) {
-                        this.currentUser = JSON.parse(response.responseText);
-                    }
-
+                if (response && response.responseText) {
+                    this.currentUser = JSON.parse(response.responseText);
+                    this.fireEvent('available');
                     if (this.currentUser) {
                         this.loggedIn();
                     } else {
-                        this.setSid(null);
-                        this.getAuth().showLoggedOut();
+                        this.loggedOut();
                     }
                 }
             },

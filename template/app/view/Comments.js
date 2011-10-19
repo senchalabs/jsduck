@@ -62,7 +62,11 @@ Ext.define('Docs.view.Comments', {
 
         var commentTplMethods = {
             date: function(date) {
-                return Ext.Date.format(new Date(date), 'm/d/y');
+                try {
+                    return Ext.Date.format(new Date(date), 'jS M \'y');
+                } catch(e) {
+                    return '';
+                }
             },
             isMod: function() {
                 return Docs.App.getController('Auth').currentUser.mod;
@@ -152,7 +156,7 @@ Ext.define('Docs.view.Comments', {
 
         this.loggedInCommentTpl = Ext.create('Ext.XTemplate',
             '<div class="new-comment{[values.hide ? "" : " open"]}">',
-                '<a href="#" class="toggleNewComment"><span></span>Post a comment</a>',
+                // '<a href="#" class="name toggleComments"><span></span>Viewing 8 comments</a>',
                 '<form class="newCommentForm">',
                     '<span class="action">',
                         'Action: ',
@@ -162,6 +166,7 @@ Ext.define('Docs.view.Comments', {
                             '<option value="problem">Report a problem</option>',
                             '<option value="problem">Request a feature</option>',
                         '</select>',
+                        ' on Ext.Base',
                     '</span>',
                     // '<a href="#" class="toggleCodeEditor" title="Toggle code editor">Code editor</a>',
                     '<textarea></textarea>',
@@ -337,11 +342,25 @@ Ext.define('Docs.view.Comments', {
 
             if (hideCommentForm) {
             } else if (Docs.App.getController('Auth').isLoggedIn()) {
-                this.loggedInCommentTpl.overwrite(newComment, currentUser);
+
+                // currentUser.
+
+                var wrap = this.loggedInCommentTpl.overwrite(newComment, currentUser, true),
+                    textarea = wrap.down('textarea').dom;
+
+                this.makeCodeMirror(textarea);
             } else {
                 this.loggedOutCommentTpl.overwrite(newComment, {});
             }
         }, this);
+    },
+
+    makeCodeMirror: function(textarea) {
+        textarea.editor = CodeMirror.fromTextArea(textarea, {
+            enterMode: "keep",
+            mode: 'markdown',
+            indentUnit: 4
+        });
     },
 
     showMember: function(cls, member) {
