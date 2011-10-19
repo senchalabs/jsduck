@@ -154,11 +154,36 @@ class JsDuckRunner
     @options += options
   end
 
-  def add_sdk
+  def add_sdk(mode = nil)
+
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/ext-js/4-0/" />
       <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4">
     EOHTML
+
+    if mode == 'export'
+
+      relative_sdk_path = "../"
+
+      ["template-min/extIframe.html", "template-min/welcome.html"].each do |file|
+        html = IO.read(file);
+
+        out = []
+
+        html.each_line do |line|
+          out << line.sub(/((src|href)="extjs\/)/, '\2="' + relative_sdk_path)
+        end
+
+        File.open(file, 'w') {|f| f.write(out) }
+      end
+
+      head_html = <<-EOHTML
+        <script type="text/javascript">
+          Docs.exampleBaseUrl = "#{relative_sdk_path}examples/";
+        </script>
+      EOHTML
+
+    end
 
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
@@ -515,7 +540,7 @@ task :sdk, [:mode] => :sass do |t, args|
   compress if mode == "export" || mode == "live"
 
   runner = JsDuckRunner.new
-  runner.add_sdk
+  runner.add_sdk(mode)
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_sdk_export_notice if mode == "export"
