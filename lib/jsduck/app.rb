@@ -74,6 +74,8 @@ module JsDuck
       if @opts.categories_path
         @categories.parse(@opts.categories_path)
         @categories.validate
+      else
+        @categories.auto_generate
       end
 
       clear_output_dir unless @opts.export == :stdout
