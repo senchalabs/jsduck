@@ -22,7 +22,7 @@ def load_sdk_vars
     puts "For example:"
     puts
     puts "    # path to Ext JS 4 build"
-    puts "    EXT_DIR='/path/to/ext-4.0.6'"
+    puts "    EXT_DIR='/path/to/ext-4.0.7'"
     puts "    # where to output the docs"
     puts "    OUT_DIR='/path/to/ouput/dir'"
     puts "    # path to SDK (for developers at Sencha)"
@@ -163,7 +163,7 @@ class JsDuckRunner
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
       "--head-html", head_html,
-      "--footer", "Ext JS 4.0.6 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{revision}",
+      "--footer", "Ext JS 4.0.7 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{revision}",
       "--welcome", "template/welcome.html",
       "--guides", "#{@sdk_dir}/extjs/docs/guides.json",
       "--videos", "#{@sdk_dir}/extjs/docs/videos.json",
