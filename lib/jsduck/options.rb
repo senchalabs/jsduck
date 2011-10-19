@@ -179,11 +179,11 @@ module JsDuck
         end
 
         opts.on('--head-html=HTML', "HTML to append to the <head> section of index.html.", " ") do |html|
-          @head_html = html
+          @head_html += html
         end
 
         opts.on('--body-html=HTML', "HTML to append to the <body> section index.html.", " ") do |html|
-          @body_html = html
+          @body_html += html
         end
 
         opts.on('--welcome=PATH',
