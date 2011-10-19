@@ -59,7 +59,10 @@ You can also use `--verbose` option to see what's actually happening.
 
 To generate docs for Ext JS 4 add path to the corresponding src/ dir:
 
-    $ jsduck --builtin-classes --output your/docs  extjs-4.0.2a/src
+    $ jsduck extjs-4.0.2a/src \
+             --builtin-classes \
+             --images extjs-4.0.2a/docs/doc-resources \
+             --output your/docs
 
 Running JSDuck with the current ext-4.0.2a release is expected to
 generate a lot of warnings.  Because of the bugs in doc-comments a
@@ -70,12 +73,6 @@ line options type `jsduck --help=full`.
 
 The latest ext-4.0.6 release will produce only few warnings, so use
 that if you can get it.
-
-Finally, to get more similar result to the [official Ext JS 4
-documentation][official], copy over the doc-resources directory, which
-contains the images referenced by the documentation:
-
-    $ cp -r ext-4.0.2a/docs/doc-resources your/docs/doc-resources
 
 Note that the resulting documentation will only contain the API
 documentation.  Guides, videos and examples will not be present.
@@ -96,7 +93,6 @@ classes inherit from Ext JS classes.
 To create guides, videos and other sections, read about the
 [Advanced Usage][adv] in wiki.
 
-[official]: http://docs.sencha.com/ext-js/4-0/
 [adv]: https://github.com/senchalabs/jsduck/wiki/Advanced-Usage
 
 
