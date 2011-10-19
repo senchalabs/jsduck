@@ -35,6 +35,8 @@ module JsDuck
           end.flatten
         end
       end
+
+      validate
     end
 
     # Expands class name like 'Foo.*' into multiple class names.

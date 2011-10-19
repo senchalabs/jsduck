@@ -73,7 +73,6 @@ module JsDuck
       @categories = Categories.new(get_doc_formatter, @relations)
       if @opts.categories_path
         @categories.parse(@opts.categories_path)
-        @categories.validate
       else
         @categories.auto_generate
       end
