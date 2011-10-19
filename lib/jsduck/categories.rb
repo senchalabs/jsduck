@@ -1,5 +1,6 @@
 require 'jsduck/logger'
 require 'jsduck/json_duck'
+require 'jsduck/auto_categories'
 
 module JsDuck
 
@@ -9,6 +10,11 @@ module JsDuck
       @doc_formatter = doc_formatter
       @relations = relations
       @categories = []
+    end
+
+    # Automatically divides all available classes into categories
+    def auto_generate
+      @categories = AutoCategories.new(@relations).generate
     end
 
     # Parses categories in JSON file
@@ -29,6 +35,8 @@ module JsDuck
           end.flatten
         end
       end
+
+      validate
     end
 
     # Expands class name like 'Foo.*' into multiple class names.

@@ -74,7 +74,7 @@ module JsDuck
 
       @warnings = true
       @verbose = false
-      @version = "3.0.pre2"
+      @version = "3.0.pre3"
 
       # Customizing output
       @title = "Sencha Docs - Ext JS"
@@ -97,7 +97,8 @@ module JsDuck
       @seo = false
 
       # Debugging
-      @processes = nil
+      # Turn multiprocessing off by default in Windows
+      @processes = OS::windows? ? 0 : nil
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
       @template_dir = @root_dir + "/template-min"
       @template_links = false
@@ -114,7 +115,9 @@ module JsDuck
     end
 
     def parse!(argv)
-      create_option_parser.parse!(argv).each {|fname| read_filenames(fname) }
+      create_option_parser.parse!(argv).each do |fname|
+        read_filenames(canonical(fname))
+      end
       validate
       @meta_tags = MetaTagLoader.new.load(@meta_tag_paths)
     end
@@ -219,7 +222,7 @@ module JsDuck
           "Search path for including images referenced by",
           "{@img} tag. Several paths can be specified by",
           "using the option multiple times.", " ") do |path|
-          @images << path
+          @images << canonical(path)
         end
 
         opts.on('--link=TPL',
@@ -262,7 +265,7 @@ module JsDuck
         # For debugging it's often useful to set --processes=0 to get deterministic results.
         opts.on('-p', '--processes=COUNT',
           "The number of parallel processes to use.",
-          "Defaults to the number of processors/cores.",
+          OS::windows? ? "Defaults to off in Windows." : "Defaults to the number of processors/cores.",
           "Set to 0 to disable parallel processing completely.", " ") do |count|
           @processes = count.to_i
         end

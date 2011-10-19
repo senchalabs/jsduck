@@ -13,10 +13,12 @@ Ext.define('Docs.view.examples.Index', {
     autoScroll: true,
 
     initComponent: function() {
-        this.cls += Docs.touchExamplesUi ? " touch-examples-ui" : "";
-        var touchExampleRoot = Docs.exampleBaseUrl ? Docs.exampleBaseUrl : "touch/examples";
 
-        var baseUrl = Docs.touchExamplesUi ? touchExampleRoot : "extjs/examples/shared/screens";
+        this.cls += Docs.touchExamplesUi ? " touch-examples-ui" : "";
+
+        var touchExampleRoot = Docs.exampleBaseUrl || "touch/examples",
+            extjsExampleRoot = Docs.exampleBaseUrl || "extjs/examples/",
+            baseUrl = Docs.touchExamplesUi ? touchExampleRoot : (extjsExampleRoot + "shared/screens");
 
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Examples</h1>' },

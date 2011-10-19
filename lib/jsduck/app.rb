@@ -11,7 +11,6 @@ require 'jsduck/relations'
 require 'jsduck/aliases'
 require 'jsduck/exporter'
 require 'jsduck/renderer'
-require 'jsduck/timer'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
 require 'jsduck/welcome'
@@ -31,7 +30,6 @@ module JsDuck
     # Initializes app with JsDuck::Options object
     def initialize(opts)
       @opts = opts
-      @timer = Timer.new
       # Sets the nr of parallel processes to use.
       # Set to 0 to disable parallelization completely.
       @parallel = ParallelWrap.new(:in_processes => @opts.processes)
@@ -44,9 +42,9 @@ module JsDuck
 
     # Call this after input parameters set
     def run
-      parsed_files = @timer.time(:parsing) { parallel_parse(@opts.input_files) }
-      result = @timer.time(:aggregating) { aggregate(parsed_files) }
-      @relations = @timer.time(:aggregating) { filter_classes(result) }
+      parsed_files = parallel_parse(@opts.input_files)
+      result = aggregate(parsed_files)
+      @relations = filter_classes(result)
       Aliases.new(@relations).resolve_all
       Lint.new(@relations).run
 
@@ -54,39 +52,38 @@ module JsDuck
 
       @welcome = Welcome.new
       if @opts.welcome
-        @timer.time(:parsing) { @welcome.parse(@opts.welcome) }
+        @welcome.parse(@opts.welcome)
       end
 
       @guides = Guides.new(get_doc_formatter)
       if @opts.guides
-        @timer.time(:parsing) { @guides.parse(@opts.guides) }
+        @guides.parse(@opts.guides)
       end
 
       @videos = Videos.new
       if @opts.videos
-        @timer.time(:parsing) { @videos.parse(@opts.videos) }
+        @videos.parse(@opts.videos)
       end
 
       @examples = Examples.new
       if @opts.examples
-        @timer.time(:parsing) { @examples.parse(@opts.examples) }
+        @examples.parse(@opts.examples)
       end
 
       @categories = Categories.new(get_doc_formatter, @relations)
       if @opts.categories_path
-        @timer.time(:parsing) do
-          @categories.parse(@opts.categories_path)
-          @categories.validate
-        end
+        @categories.parse(@opts.categories_path)
+      else
+        @categories.auto_generate
       end
 
       clear_output_dir unless @opts.export == :stdout
       if @opts.export == :stdout
-        @timer.time(:generating) { puts JsonDuck.generate(@relations.classes) }
+        puts JsonDuck.generate(@relations.classes)
       elsif @opts.export == :json
         FileUtils.mkdir(@opts.output_dir)
-        @timer.time(:generating) { format_classes }
-        @timer.time(:generating) { write_classes }
+        format_classes
+        write_classes
       else
         if @opts.template_links
           link_template
@@ -99,23 +96,22 @@ module JsDuck
           FileUtils.rm(@opts.output_dir+"/index.php")
           FileUtils.cp(@opts.output_dir+"/template.html", @opts.output_dir+"/index.html")
         end
-        @timer.time(:generating) { write_src(parsed_files) }
-        @timer.time(:generating) { format_classes }
-        @timer.time(:generating) { write_app_data }
-        @timer.time(:generating) { write_classes }
-        @timer.time(:generating) { @guides.write(@opts.output_dir+"/guides") }
-        @timer.time(:generating) { @videos.write(@opts.output_dir+"/videos") }
-        @timer.time(:generating) { @examples.write(@opts.output_dir+"/examples") }
-        @timer.time(:generating) { @images.copy(@opts.output_dir+"/images") }
+        write_src(parsed_files)
+        format_classes
+        write_app_data
+        write_classes
+        @guides.write(@opts.output_dir+"/guides")
+        @videos.write(@opts.output_dir+"/videos")
+        @examples.write(@opts.output_dir+"/examples")
+        @images.copy(@opts.output_dir+"/images")
       end
 
-      @timer.report
     end
 
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
       @parallel.map(filenames) do |fname|
-        Logger.instance.log("Parsing #{fname} ...")
+        Logger.instance.log("Parsing", fname)
         SourceFile.new(IO.read(fname), fname, @opts)
       end
     end
@@ -124,7 +120,7 @@ module JsDuck
     def aggregate(parsed_files)
       agr = Aggregator.new
       parsed_files.each do |file|
-        Logger.instance.log("Aggregating #{file.filename} ...")
+        Logger.instance.log("Aggregating", file.filename)
         agr.aggregate(file)
       end
       agr.classify_orphans
@@ -196,7 +192,7 @@ module JsDuck
       dir = @opts.output_dir + (@opts.export ? "" : "/output")
       @parallel.each(@relations.classes) do |cls|
         filename = dir + "/" + cls[:name] + (@opts.export ? ".json" : ".js")
-        Logger.instance.log("Writing to #{filename} ...")
+        Logger.instance.log("Writing docs", filename)
         data = exporter.export(cls)
         if @opts.export
           JsonDuck.write_json(filename, data)
@@ -215,7 +211,7 @@ module JsDuck
       # updates all the doc-objects related to the file
       parsed_files.each do |file|
         html_filename = src.write(file.to_html, file.filename)
-        Logger.instance.log("Writing to #{html_filename} ...")
+        Logger.instance.log("Writing source", html_filename)
         file.html_filename = File.basename(html_filename)
       end
     end
@@ -230,13 +226,13 @@ module JsDuck
     end
 
     def copy_template
-      Logger.instance.log("Copying template files to #{@opts.output_dir}...")
+      Logger.instance.log("Copying template files to", @opts.output_dir)
       FileUtils.cp_r(@opts.template_dir, @opts.output_dir)
       init_output_dirs
     end
 
     def link_template
-      Logger.instance.log("Linking template files to #{@opts.output_dir}...")
+      Logger.instance.log("Linking template files to", @opts.output_dir)
       FileUtils.mkdir(@opts.output_dir)
       Dir.glob(@opts.template_dir + "/*").each do |file|
         File.symlink(File.expand_path(file), @opts.output_dir+"/"+File.basename(file))
@@ -283,7 +279,7 @@ module JsDuck
     def write_template(filename, replacements)
       in_file = @opts.template_dir + '/' + filename
       out_file = @opts.output_dir + '/' + filename
-      Logger.instance.log("Creating #{out_file}...")
+      Logger.instance.log("Writing", out_file)
       html = IO.read(in_file)
       html.gsub!(/\{\w+\}/) do |key|
         replacements[key] ? replacements[key] : key

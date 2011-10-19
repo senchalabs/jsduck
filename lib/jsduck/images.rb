@@ -35,7 +35,7 @@ module JsDuck
     def copy(output_dir)
       @images.each_key do |img|
         unless copy_img(img, output_dir)
-          Logger.instance.warn("Image #{img} not found")
+          Logger.instance.warn("Image not found.", img)
         end
       end
       report_unused
@@ -47,9 +47,9 @@ module JsDuck
         filename = path + "/" + img
         if map.has_key?(filename)
           dest = output_dir + "/" + img
+          Logger.instance.log("Copying image", dest)
           FileUtils.makedirs(File.dirname(dest))
           FileUtils.cp(filename, dest)
-          Logger.instance.log("Copy #{filename} to #{dest} ...")
           # mark file as used.
           map[filename] = true
           return true
@@ -62,7 +62,7 @@ module JsDuck
     def report_unused
       @paths.each_pair do |path, map|
         map.each_pair do |img, used|
-          Logger.instance.warn("Image #{img} not used") unless used
+          Logger.instance.warn("Image not used.", img) unless used
         end
       end
     end

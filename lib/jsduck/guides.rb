@@ -44,7 +44,7 @@ module JsDuck
       guide_file = in_dir + "/README.md"
       return Logger.instance.warn("README.md not found in #{in_dir}") unless File.exists?(guide_file)
 
-      Logger.instance.log("Writing guide #{out_dir} ...")
+      Logger.instance.log("Writing guide", out_dir)
       # Copy the whole guide dir over
       FileUtils.cp_r(in_dir, out_dir)
 

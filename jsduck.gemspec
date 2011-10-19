@@ -2,10 +2,10 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.7"
 
   s.name = 'jsduck'
-  s.version = '3.0.pre2'
-  s.date = '2011-09-20'
+  s.version = '3.0.pre3'
+  s.date = '2011-10-17'
   s.summary = "Simple JavaScript Duckumentation generator"
-  s.description = "Documentation generator for ExtJS 4"
+  s.description = "Documentation generator for Sencha JS frameworks"
   s.homepage = "https://github.com/senchalabs/jsduck"
   s.authors = ["Rene Saarsoo", "Nick Poulden"]
   s.email = "rene.saarsoo@sencha.com"

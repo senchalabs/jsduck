@@ -22,7 +22,7 @@ def load_sdk_vars
     puts "For example:"
     puts
     puts "    # path to Ext JS 4 build"
-    puts "    EXT_DIR='/path/to/ext-4.0.6'"
+    puts "    EXT_DIR='/path/to/ext-4.0.7'"
     puts "    # where to output the docs"
     puts "    OUT_DIR='/path/to/ouput/dir'"
     puts "    # path to SDK (for developers at Sencha)"
@@ -155,17 +155,42 @@ class JsDuckRunner
     @options += options
   end
 
-  def add_sdk
+  def add_sdk(mode = nil)
+
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/ext-js/4-0/" />
       <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4" />
       <script type="text/javascript">Docs.enableComments = true; Docs.baseUrl = "#{@base_url}"; Docs.commentsDb = 'comments-ext-js-4';</script>
     EOHTML
 
+    if mode == 'export'
+
+      relative_sdk_path = "../"
+
+      ["template-min/extIframe.html", "template-min/welcome.html"].each do |file|
+        html = IO.read(file);
+
+        out = []
+
+        html.each_line do |line|
+          out << line.sub(/((src|href)="extjs\/)/, '\2="' + relative_sdk_path)
+        end
+
+        File.open(file, 'w') {|f| f.write(out) }
+      end
+
+      head_html = <<-EOHTML
+        <script type="text/javascript">
+          Docs.exampleBaseUrl = "#{relative_sdk_path}examples/";
+        </script>
+      EOHTML
+
+    end
+
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
       "--head-html", head_html,
-      "--footer", "Ext JS 4.0.6 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{revision}",
+      "--footer", "Ext JS 4.0.7 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{revision}",
       "--welcome", "template/welcome.html",
       "--guides", "#{@sdk_dir}/extjs/docs/guides.json",
       "--videos", "#{@sdk_dir}/extjs/docs/videos.json",
@@ -523,7 +548,7 @@ task :sdk, [:mode] => :sass do |t, args|
   compress if mode == "export" || mode == "live"
 
   runner = JsDuckRunner.new
-  runner.add_sdk
+  runner.add_sdk(mode)
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_sdk_export_notice if mode == "export"
