@@ -25,6 +25,10 @@ Ext.define('Docs.view.Comments', {
             '</div>'
         ];
 
+        this.loadingTpl = Ext.create('Ext.Template',
+            '<div class="loading">Loading...</div>'
+        );
+
         this.classCommentsTpl = Ext.create('Ext.XTemplate',
             '<div id="m-comment">',
                 '<h3 class="members-title">Comments</h3>',
@@ -106,7 +110,10 @@ Ext.define('Docs.view.Comments', {
                     ' src="http://www.gravatar.com/avatar/{emailHash}?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
                 '<div class="author">Logged in as {userName}</div>',
                 '<a href="#" class="toggleCommentGuide">Help</a>',
-                '<input type="submit" class="{[values.update ? "update" : "post"]}Comment" value="{[values.update ? "Update" : "Post"]} comment" />',
+                '<input type="submit" class="sub {[values.updateComment ? "update" : "post"]}Comment" value="{[values.updateComment ? "Update" : "Post"]} comment" />',
+                '<tpl if="updateComment">',
+                    ' or <a href="#" class="cancelUpdateComment">cancel</a>',
+                '</tpl>',
             '</div>',
             '<div class="commentGuideTxt" style="display: none">',
                 '<ul>',
@@ -122,6 +129,7 @@ Ext.define('Docs.view.Comments', {
                         "Here is a **bold** item\n",
                         "Here is an _italic_ item\n",
                         "Here is an `inline` code snippet\n",
+                        "Here is a [Link](#!/api)\n",
                         "\n",
                         "    Indent with 4 spaces\n",
                         "    for a code snippet\n",
@@ -138,6 +146,7 @@ Ext.define('Docs.view.Comments', {
                     'Here is a <strong>bold</strong> item<br/>',
                     'Here is an <em>italic</em> item<br/>',
                     'Here is an <code>inline</code> code snippet<br/>',
+                    'Here is a <a href="#!/api">Link</a><br/>',
                     '<pre>',
                     "Indent with 4 spaces\n",
                     "for a code snippet",
@@ -151,26 +160,54 @@ Ext.define('Docs.view.Comments', {
                         '<li>Second unordered list item</li>',
                     '</ul>',
                 '</div>',
+                '<ul>',
+                    '<li>Links will only work if they start with <code>#!/</code> or http://www.sencha.com',
+                '</ul>',
             '</div>'
         ];
 
         this.loggedInCommentTpl = Ext.create('Ext.XTemplate',
             '<div class="new-comment{[values.hide ? "" : " open"]}">',
-                // '<a href="#" class="name toggleComments"><span></span>Viewing 8 comments</a>',
                 '<form class="newCommentForm">',
                     '<span class="action">',
                         'Action: ',
-                        '<select>',
+                        '<select class="commentAction">',
                             '<option value="comment">Post a comment</option>',
                             '<option value="question">Ask a question</option>',
                             '<option value="problem">Report a problem</option>',
-                            '<option value="problem">Request a feature</option>',
+                            '<option value="feedback">Submit feedback</option>',
                         '</select>',
-                        ' on Ext.Base',
                     '</span>',
-                    // '<a href="#" class="toggleCodeEditor" title="Toggle code editor">Code editor</a>',
-                    '<textarea></textarea>',
-                    commentMetaAndGuide.join(''),
+                    '<div class="note question" style="display: none;">Please do not post questions. Instead, use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a>. Questions will be deleted without warning.</div>',
+                    '<div class="note problem" style="display: none;">',
+                        '<p>Please inform us of documentation problems:</p>',
+                        '<ul>',
+                            '<li>Typos</li>',
+                            '<li>Incorrect information</li>',
+                            '<li>Errors with examples</li>',
+                            '<li>Errors in the application</li>',
+                            '<li>Inappropriate comments</li>',
+                        '</ul>',
+                        '<p>Your feedback will <b>not appear</b> online and you are unlikely to receive a personal response. ',
+                            'However feedback is monitored closely by the Sencha Documentation team.</p>',
+                        '<p>For <b>SDK bugs</b>, please use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a>.</p>',
+                    '</div>',
+                    '<div class="note feedback" style="display: none;">',
+                        '<p>Your feedback will <b>not appear</b> online and you are unlikely to receive a personal response. ',
+                            'However feedback is monitored closely by the Sencha Documentation team.</p>',
+                        '<div style="padding-bottom: 5px;">Quality of documentation:</div>',
+                        '<p>',
+                            '<label><input name="feedback" type="radio" value="4" /> Excellent</label>',
+                            '<label><input name="feedback" type="radio" value="3" /> Good</label>',
+                            '<label><input name="feedback" type="radio" value="2" /> Fair</label>',
+                            '<label><input name="feedback" type="radio" value="1" /> Poor</label>',
+                        '</p>',
+                        '<p>Comments or suggestions:</p>',
+                    '</div>',
+                    '<div class="postCommentWrap">',
+                        '<textarea></textarea>',
+                        commentMetaAndGuide.join(''),
+                    '</div>',
                 '</form>',
             '</div>'
         );
@@ -178,7 +215,6 @@ Ext.define('Docs.view.Comments', {
         this.editCommentTpl = Ext.create('Ext.XTemplate',
             '<form class="editCommentForm">',
                 '<span class="action">Edit comment</span>',
-                // '<a href="#" class="toggleCodeEditor" title="Toggle code editor">Code editor</a>',
                 '<textarea>{content}</textarea>',
                 commentMetaAndGuide.join(''),
             '</form>'
@@ -343,24 +379,41 @@ Ext.define('Docs.view.Comments', {
             if (hideCommentForm) {
             } else if (Docs.App.getController('Auth').isLoggedIn()) {
 
-                // currentUser.
-
                 var wrap = this.loggedInCommentTpl.overwrite(newComment, currentUser, true),
                     textarea = wrap.down('textarea').dom;
 
-                this.makeCodeMirror(textarea);
+                this.makeCodeMirror(textarea, wrap);
             } else {
                 this.loggedOutCommentTpl.overwrite(newComment, {});
             }
         }, this);
     },
 
-    makeCodeMirror: function(textarea) {
+    makeCodeMirror: function(textarea, form) {
         textarea.editor = CodeMirror.fromTextArea(textarea, {
             enterMode: "keep",
             mode: 'markdown',
             indentUnit: 4
         });
+
+        var action = (form && form.down('.commentAction'));
+        if (action) {
+            action.on('change', function(evt, el) {
+                var val = Ext.get(el).getValue();
+                form.select('.note').setStyle({display: 'none'});
+                if (val == "question") {
+                    form.down('.note.question').setStyle({display: 'block'});
+                    form.down('.postCommentWrap').setStyle({display: 'none'});
+                } else {
+                    form.down('.postCommentWrap').setStyle({display: 'block'});
+                    if (val == "problem") {
+                        form.down('.note.problem').setStyle({display: 'block'});
+                    } else if (val == "feedback") {
+                        form.down('.note.feedback').setStyle({display: 'block'});
+                    }
+                }
+            });
+        }
     },
 
     showMember: function(cls, member) {

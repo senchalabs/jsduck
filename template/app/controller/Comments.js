@@ -74,6 +74,7 @@ Ext.define('Docs.controller.Comments', {
                         [ '.toggleCommentGuide',   'click', this.toggleCommentGuide],
                         [ '.postComment',          'click', this.postComment],
                         [ '.updateComment',        'click', this.updateComment],
+                        [ '.cancelUpdateComment',  'click', this.cancelUpdateComment],
                         [ '.deleteComment',        'click', this.promptDeleteComment],
                         [ '.editComment',          'click', this.editComment],
                         [ '.voteCommentUp',        'click', this.voteUp],
@@ -152,9 +153,19 @@ Ext.define('Docs.controller.Comments', {
             comments = postButton.up('.comments'),
             id = comments.getAttribute('id'),
             target = Ext.JSON.encode(this.commentId(id)),
-            textarea = comments.down('textarea').dom;
+            textarea = comments.down('textarea').dom,
+            comment = textarea.editor.getValue(),
+            action = comments.down('.commentAction').getValue(),
+            feedbacks = comments.select('[name=feedback]');
 
-        var comment = textarea.editor.getValue();
+        var feedbackRating = null;
+        if (feedbacks) {
+            feedbacks.each(function(feedback) {
+                if (feedback.dom.checked) {
+                    feedbackRating = feedback.dom.value;
+                }
+            });
+        }
 
         if (postButton.hasCls('disabled')) {
             return false;
@@ -167,7 +178,9 @@ Ext.define('Docs.controller.Comments', {
             cors: true,
             params: {
                 target: target,
-                comment: comment
+                comment: comment,
+                rating: feedbackRating,
+                action: action
             },
             callback: function(options, success, response) {
                 if (response && response.responseText) {
@@ -176,7 +189,11 @@ Ext.define('Docs.controller.Comments', {
                     textarea.editor.setValue('');
                     postButton.removeCls('disabled');
                     this.toggleNewComment(null, el);
-                    this.fetchComments(id, this.appendNewComment, {id: data.id});
+                    if (data.action == 'comment') {
+                        this.fetchComments(id, this.appendNewComment, {id: data.id});
+                    } else {
+                        Ext.Msg.alert('Thank you', 'Thank you for your feedback.');
+                    }
                 }
             },
             scope: this
@@ -264,16 +281,22 @@ Ext.define('Docs.controller.Comments', {
         Ext.Ajax.request({
             url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + commentId),
             method: 'GET',
+            cors: true,
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
                 if (data.success) {
-                    var editForm = Docs.view.Comments.editCommentTpl.overwrite(contentEl, Ext.merge(currentUser, {
+
+                    contentEl.dom.origContent = contentEl.dom.innerHTML;
+
+                    var commentData = Ext.merge(Ext.clone(currentUser), {
                         content: data.content,
-                        update: true
-                    }), true);
+                        updateComment: true
+                    });
+
+                    var editForm = Docs.view.Comments.editCommentTpl.overwrite(contentEl, commentData, true);
 
                     var textarea = editForm.down('textarea').dom;
-                    Docs.view.Comments.makeCodeMirror(textarea);
+                    Docs.view.Comments.makeCodeMirror(textarea, editForm);
                 }
             },
             scope: this
@@ -307,11 +330,22 @@ Ext.define('Docs.controller.Comments', {
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
                 if (data.success) {
-                    comment.down('.content').update(data.content);
+                    var contentEl = comment.down('.content');
+                    contentEl.update(data.content);
                 }
             },
             scope: this
         });
+    },
+
+    cancelUpdateComment: function(cmp, el) {
+        var cancelButton = Ext.get(el),
+            comment = cancelButton.up('.comment'),
+            content = comment.down('.content');
+
+        if (content && content.dom.origContent) {
+            content.update(content.dom.origContent);
+        }
     },
 
     voteUp: function(cmp, el) {
@@ -389,6 +423,7 @@ Ext.define('Docs.controller.Comments', {
             commentsList.setStyle('display', 'block');
         } else {
             var id = commentsDiv.getAttribute('id');
+            Docs.view.Comments.loadingTpl.append(commentsDiv);
             this.fetchComments(id, this.renderComments);
         }
     },
@@ -425,12 +460,18 @@ Ext.define('Docs.controller.Comments', {
 
         opts = opts || {};
 
-        var comments = Ext.get(id);
+        var comments = Ext.get(id),
+            loadingEl = comments.down('.loading');
         var data = Ext.Array.map(rows, function(r) {
             r.value.id = r.id;
             r.value = Ext.merge(r.value, opts);
             return r.value;
         });
+
+        if (loadingEl) {
+            loadingEl.remove();
+        }
+
         Docs.view.Comments.commentsTpl.append(comments, data);
 
         if (opts.hideCommentForm) {
@@ -444,7 +485,7 @@ Ext.define('Docs.controller.Comments', {
                 if (wrap) {
                     var textareaEl = wrap.down('textarea');
                     if (textareaEl) {
-                        Docs.view.Comments.makeCodeMirror(textareaEl.dom);
+                        Docs.view.Comments.makeCodeMirror(textareaEl.dom, wrap);
                     }
                 }
             } else {
@@ -497,23 +538,6 @@ Ext.define('Docs.controller.Comments', {
         guideText.setStyle('display', (curDisplay == 'none') ? 'block' : 'none');
     },
 
-    // toggleCodeEditor: function(e, el) {
-    //
-    //     var but = Ext.get(el),
-    //         textarea = but.up('form').down('textarea').dom;
-    //
-    //     if (but.hasCls('selected')) {
-    //         this.closeCodeEditor(but);
-    //     } else {
-    //         but.addCls('selected');
-    //         but.editor = CodeMirror.fromTextArea(textarea, {
-    //             enterMode: "keep",
-    //             mode: { name: 'markdown' },
-    //             indentUnit: 4
-    //         });
-    //     }
-    // },
-
     closeCodeEditor: function(but) {
         but.removeCls('selected');
         if (but.editor) {
@@ -535,6 +559,5 @@ Ext.define('Docs.controller.Comments', {
             });
             this.errorTip.show();
         }
-
     }
 });

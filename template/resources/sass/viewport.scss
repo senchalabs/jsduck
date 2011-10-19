@@ -1319,6 +1319,9 @@ pre, code, kbd, samp, tt {
 
 // Comments
 
+#m-comment {
+  .comments {
+    @include member-expander; } }
 #commentindex {
   padding: 5px; }
 #recentcomments {
@@ -1337,20 +1340,20 @@ pre, code, kbd, samp, tt {
   border-color: #e0e0e0;
   position: relative;
 
-  padding: 0 0 10px 45px;
+  padding: 0 0 10px 25px;
+  .loading {
+    font-weight: bold;
+    background: url(../images/ajax-loader.gif) no-repeat 0 9px;
+    padding: 8px 0 0 25px; }
   .name { padding: 10px 0 0 0px; display: block; font-weight: normal !important; }
-  a.side {
-    display: block;
-    height: 30px;
-    width: 28px;
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: url(../images/comment.png) no-repeat 0 -29px; }
   &.open {
     min-height: 40px; }
   .new-comment {
-    padding-left: 15px;
+    .note {
+      padding-bottom: 10px;
+      label {
+        margin-left: 20px;
+        display: block; }}
     form.loginForm {
       position: relative;
       display: inline-block;
@@ -1365,7 +1368,7 @@ pre, code, kbd, samp, tt {
   form.newCommentForm {
     display: none; }
   form.newCommentForm {
-    margin: 10px 55px 10px 5px; }
+    margin: 20px 55px 10px 5px; }
   form.editCommentForm {
     margin: 10px 55px 0px 0; }
   form.editCommentForm,
@@ -1383,7 +1386,8 @@ pre, code, kbd, samp, tt {
       position: relative;
       margin-top: 8px;
       text-align: right;
-      font-weight: bold; }
+      .toggleCommentGuide {
+        font-weight: bold; } }
     img {
       @include border-radius(2px);
       position: absolute; left: 0;
@@ -1403,8 +1407,9 @@ pre, code, kbd, samp, tt {
     .CodeMirror .CodeMirror-scroll,
     textarea {
       min-height: 8em; }
-    input {
+    input.sub {
       @include green-button();
+      font-weight: bold;
       width: 120px;
       margin-left: 20px;
       padding: 5px 8px;
@@ -1471,13 +1476,13 @@ pre, code, kbd, samp, tt {
      color: #666; } }
   .com-meta {
     position: relative;
-    font-weight: bold;
     text-size: 13px;
     img {
       @include border-radius(2px); }
     .author {
       position: absolute;
       left: 40px;
+      font-weight: bold;
       top: 2px;
       font-size: 14px; }
     .time {
@@ -1528,6 +1533,7 @@ pre, code, kbd, samp, tt {
           background-position: -22px -35px; } }
       .score {
         position: absolute;
+        font-weight: bold;
         width: 20px;
         top: 15px;
         color: #aaa;
