@@ -194,6 +194,7 @@ class JsDuckRunner
       "--videos", "#{@sdk_dir}/extjs/docs/videos.json",
       "--examples", "#{@sdk_dir}/extjs/examples/examples.json",
       "--categories", "#{@sdk_dir}/extjs/docs/categories.json",
+      "--local-storage-db", "ext-4",
       "--output", "#{@out_dir}",
       "--builtin-classes",
       "--images", "#{@sdk_dir}/extjs/docs/resources",
@@ -210,6 +211,7 @@ class JsDuckRunner
       "--footer", "Ext JS 3.4 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/../ext-3.4.0/src/categories.json",
       "--ignore-global",
+      "--local-storage-db", "ext-3",
       "--output", "#{@out_dir}",
       "#{@sdk_dir}/../ext-3.4.0/src/core",
       "#{@sdk_dir}/../ext-3.4.0/src/data",
@@ -229,6 +231,7 @@ class JsDuckRunner
       "--ignore-global",
       "--no-warnings",
       "--images", "#{@ext_dir}/docs/doc-resources",
+      "--local-storage-db", "ext-4",
       "--output", "#{@out_dir}",
       "#{@ext_dir}/src",
     ]
@@ -246,6 +249,7 @@ class JsDuckRunner
       "--footer", "Sencha Touch 1.1 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/touch/doc-resources/categories.json",
       "--videos", "#{@sdk_dir}/touch/doc-resources/videos.json",
+      "--local-storage-db", "touch-1",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
       "--images", "#{@sdk_dir}/touch/doc-resources",
@@ -271,6 +275,7 @@ class JsDuckRunner
       "--guides", "#{@sdk_dir}/touch/docs/guides.json",
       "--examples", "#{@sdk_dir}/touch/docs/examples.json",
       "--touch-examples-ui",
+      "--local-storage-db", "touch-2",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
       "--builtin-classes",
@@ -345,6 +350,7 @@ class JsDuckRunner
       "--categories", "#{@sdk_dir}/charts/docs/categories.json",
       "--guides", "#{@sdk_dir}/charts/docs/guides.json",
       "--images", "#{@sdk_dir}/charts/docs/resources",
+      "--local-storage-db", "touch-charts",
       "--output", "#{@out_dir}"
     ]
 
@@ -364,6 +370,7 @@ class JsDuckRunner
       # "--videos", "#{@animator_dir}/docs/videos.json",
       "--guides", "#{@animator_dir}/docs/guides.json",
       # "--examples", "#{@animator_dir}/docs/examples/examples.json",
+      "--local-storage-db", "animator",
       "--output", "#{@out_dir}",
     ]
   end
