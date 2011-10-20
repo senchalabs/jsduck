@@ -61,7 +61,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
                     iframe.contentWindow.refreshPage(code, options);
                 }, 100);
             };
-            iframe.src = Docs.touchExamplesUi ? "touchIframe.html" : "extIframe.html";
+            iframe.src = "eg-iframe.html";
         }
     },
 
@@ -69,7 +69,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
     getIframeId: function() {
         if (!this.iframeId) {
             this.statics().iframeId += 1;
-            this.iframeId = "egIframe" + this.statics().iframeId;
+            this.iframeId = "eg-iframe" + this.statics().iframeId;
         }
         return this.iframeId;
     },
