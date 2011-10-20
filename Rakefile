@@ -196,6 +196,7 @@ class JsDuckRunner
       "--videos", "#{@sdk_dir}/extjs/docs/videos.json",
       "--examples", "#{@sdk_dir}/extjs/examples/examples.json",
       "--categories", "#{@sdk_dir}/extjs/docs/categories.json",
+      "--local-storage-db", "ext-4",
       "--output", "#{@out_dir}",
       "--builtin-classes",
       "--images", "#{@sdk_dir}/extjs/docs/resources",
@@ -217,6 +218,7 @@ class JsDuckRunner
       "--footer", "Ext JS 3.4 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/../ext-3.4.0/src/categories.json",
       "--ignore-global",
+      "--local-storage-db", "ext-3",
       "--output", "#{@out_dir}",
       "#{@sdk_dir}/../ext-3.4.0/src/core",
       "#{@sdk_dir}/../ext-3.4.0/src/data",
@@ -236,6 +238,7 @@ class JsDuckRunner
       "--ignore-global",
       "--no-warnings",
       "--images", "#{@ext_dir}/docs/doc-resources",
+      "--local-storage-db", "ext-4",
       "--output", "#{@out_dir}",
       "#{@ext_dir}/src",
     ]
@@ -253,6 +256,7 @@ class JsDuckRunner
       "--footer", "Sencha Touch 1.1 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/touch/doc-resources/categories.json",
       "--videos", "#{@sdk_dir}/touch/doc-resources/videos.json",
+      "--local-storage-db", "touch-1",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
       "--images", "#{@sdk_dir}/touch/doc-resources",
@@ -279,10 +283,12 @@ class JsDuckRunner
       "--guides", "#{@sdk_dir}/touch/docs/guides.json",
       "--examples", "#{@sdk_dir}/touch/docs/examples.json",
       "--touch-examples-ui",
+      "--local-storage-db", "touch-2",
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
       "--builtin-classes",
       "--img", "<p class='screenshot'><img src='%u' alt='%a'><span>%a</span></p>",
+      "--eg-iframe", "template/touch-iframe.html",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 
@@ -353,10 +359,31 @@ class JsDuckRunner
       "--categories", "#{@sdk_dir}/charts/docs/categories.json",
       "--guides", "#{@sdk_dir}/charts/docs/guides.json",
       "--images", "#{@sdk_dir}/charts/docs/resources",
+      "--local-storage-db", "touch-charts",
       "--output", "#{@out_dir}"
     ]
 
     @options += extract_jsb_build_files("#{@sdk_dir}/charts/touch-charts.jsb3")
+  end
+
+  def add_sencha_io
+    head_html = <<-EOHTML
+      <link rel="canonical" href="http://docs.sencha.com/sencha-io/1-0/" />
+      <meta name="description" content="Sencha.io 1.0 API Documentation. Documentation on how to use the Sencha.io SDK" />
+    EOHTML
+
+    @options += [
+      "--title", "Sencha Docs - IO 1.0",
+      "--head-html", head_html,
+      "--footer", "Sencha.io 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a>",
+      "--guides", "#{@sdk_dir}/../sync/docs/guides.json",
+      "--images", "#{@sdk_dir}/../sync/docs/resources",
+      "--local-storage-db", "sencha-io",
+      "--ignore-global",
+      "--output", "#{@out_dir}"
+    ]
+
+    @options += extract_jsb_build_files("#{@sdk_dir}/../sync/sencha-io.jsb3")
   end
 
   def add_animator
@@ -372,6 +399,7 @@ class JsDuckRunner
       # "--videos", "#{@animator_dir}/docs/videos.json",
       "--guides", "#{@animator_dir}/docs/guides.json",
       # "--examples", "#{@animator_dir}/docs/examples/examples.json",
+      "--local-storage-db", "animator",
       "--output", "#{@out_dir}",
     ]
   end
@@ -638,6 +666,23 @@ task :charts, [:mode] => :sass do |t, args|
 
   runner = JsDuckRunner.new
   runner.add_touch_charts
+  runner.add_debug if mode == "debug"
+  runner.add_seo if mode == "debug" || mode == "live"
+  runner.add_google_analytics if mode == "live"
+  runner.run
+end
+
+desc "Run JSDuck on Sencha.IO Sync (for internal use at Sencha)\n" +
+     "senchaio         - creates debug/development version\n" +
+     "senchaio[export] - create live version for deployment\n"
+     "senchaio[live]   - create live version for deployment\n"
+task :senchaio, [:mode] => :sass do |t, args|
+  mode = args[:mode] || "debug"
+  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
+  compress if mode == "live"
+
+  runner = JsDuckRunner.new
+  runner.add_sencha_io
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"

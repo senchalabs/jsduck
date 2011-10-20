@@ -46,7 +46,7 @@ Ext.define("Docs.LocalStore", {
     // Removes all extra stuff from localstorage that isn't needed any
     // more. Like old favorites and mistakenly created '{local_storage_db}...' keys.
     cleanup: function() {
-        var re = new RegExp("^" + Ext.escapeRe(Docs.localStorageDb + '-settings'));
+        var re = /-settings/;
         // remove all entries from localstorage where key doesn't match the regex
         for (var i=0; i<window.localStorage.length; i++) {
             var key = window.localStorage.key(i);

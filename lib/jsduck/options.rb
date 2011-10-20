@@ -31,6 +31,7 @@ module JsDuck
     attr_accessor :img_tpl
     attr_accessor :export
     attr_accessor :seo
+    attr_accessor :eg_iframe
 
     # Debugging
     attr_accessor :processes
@@ -95,6 +96,7 @@ module JsDuck
       @img_tpl = '<p><img src="%u" alt="%a"></p>'
       @export = nil
       @seo = false
+      @eg_iframe = nil
 
       # Debugging
       # Turn multiprocessing off by default in Windows
@@ -257,6 +259,12 @@ module JsDuck
 
         opts.on('--seo', "Creates index.php that handles search engine traffic.", " ") do
           @seo = true
+        end
+
+        opts.on('--eg-iframe=PATH',
+          "An HTML file to use inside an iframe",
+          "to display inline examples.", " ") do |path|
+          @eg_iframe = canonical(path)
         end
 
         opts.separator "Debugging:"

@@ -29,6 +29,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
     getHtml: function() {
         if (Docs.touchExamplesUi) {
             return Ext.create('Docs.view.examples.Device', {
+                url: "eg-iframe.html",
                 id: this.getIframeId(),
                 device: this.options.device,
                 orientation: this.options.orientation
@@ -58,10 +59,10 @@ Ext.define('Docs.view.examples.InlinePreview', {
             // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
             iframe.onload = function() {
                 Ext.Function.defer(function() {
-                    iframe.contentWindow.refreshPage(code, options);
+                    iframe.contentWindow.loadInlineExample(code, options);
                 }, 100);
             };
-            iframe.src = Docs.touchExamplesUi ? "touchIframe.html" : "extIframe.html";
+            iframe.src = "eg-iframe.html";
         }
     },
 
@@ -69,7 +70,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
     getIframeId: function() {
         if (!this.iframeId) {
             this.statics().iframeId += 1;
-            this.iframeId = "egIframe" + this.statics().iframeId;
+            this.iframeId = "eg-iframe" + this.statics().iframeId;
         }
         return this.iframeId;
     },
