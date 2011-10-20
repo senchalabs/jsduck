@@ -163,8 +163,6 @@ module JsDuck
     def render_member(m, is_first)
       # use classname "first-child" when it's first member in its category
       first_child = is_first ? "first-child" : ""
-      # use classname "expandable" when member has shortened description
-      expandable = m[:shortDoc] ? "expandable" : "not-expandable"
       # shorthand to owner class
       owner = m[:owner]
       # use classname "inherited" when member is not defined in this class
@@ -173,7 +171,7 @@ module JsDuck
       return [
         "<div id='#{m[:id]}' class='member #{first_child} #{inherited}'>",
           # leftmost column: expand button
-          "<a href='#' class='side #{expandable}'>",
+          "<a href='#' class='side expandable'>",
             "<span>&nbsp;</span>",
           "</a>",
           # member name and type + link to owner class and source
