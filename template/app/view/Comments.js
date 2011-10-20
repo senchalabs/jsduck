@@ -178,7 +178,7 @@ Ext.define('Docs.view.Comments', {
                             '<option value="feedback">Submit feedback</option>',
                         '</select>',
                     '</span>',
-                    '<div class="note question" style="display: none;">Please do not post questions. Instead, use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a>. Questions will be deleted without warning.</div>',
+                    '<div class="note question" style="display: none;">Please use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a> to post questions. Questions posted on the Documentation will be deleted without warning.</div>',
                     '<div class="note problem" style="display: none;">',
                         '<p>Please inform us of documentation problems:</p>',
                         '<ul>',
