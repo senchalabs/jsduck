@@ -58,7 +58,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
             // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
             iframe.onload = function() {
                 Ext.Function.defer(function() {
-                    iframe.contentWindow.refreshPage(code, options);
+                    iframe.contentWindow.loadInlineExample(code, options);
                 }, 100);
             };
             iframe.src = "eg-iframe.html";
