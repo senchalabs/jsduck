@@ -358,6 +358,26 @@ class JsDuckRunner
     @options += extract_jsb_build_files("#{@sdk_dir}/charts/touch-charts.jsb3")
   end
 
+  def add_sencha_io
+    head_html = <<-EOHTML
+      <link rel="canonical" href="http://docs.sencha.com/sencha-io/1-0/" />
+      <meta name="description" content="Sencha.io 1.0 API Documentation. Documentation on how to use the Sencha.io SDK" />
+    EOHTML
+
+    @options += [
+      "--title", "Sencha Docs - IO 1.0",
+      "--head-html", head_html,
+      "--footer", "Sencha.io 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a>",
+      "--guides", "#{@sdk_dir}/../sync/docs/guides.json",
+      "--images", "#{@sdk_dir}/../sync/docs/resources",
+      "--local-storage-db", "sencha-io",
+      "--ignore-global",
+      "--output", "#{@out_dir}"
+    ]
+
+    @options += extract_jsb_build_files("#{@sdk_dir}/../sync/sencha-io.jsb3")
+  end
+
   def add_animator
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/animator/1-0/" />
@@ -638,6 +658,23 @@ task :charts, [:mode] => :sass do |t, args|
 
   runner = JsDuckRunner.new
   runner.add_touch_charts
+  runner.add_debug if mode == "debug"
+  runner.add_seo if mode == "debug" || mode == "live"
+  runner.add_google_analytics if mode == "live"
+  runner.run
+end
+
+desc "Run JSDuck on Sencha.IO Sync (for internal use at Sencha)\n" +
+     "senchaio         - creates debug/development version\n" +
+     "senchaio[export] - create live version for deployment\n"
+     "senchaio[live]   - create live version for deployment\n"
+task :senchaio, [:mode] => :sass do |t, args|
+  mode = args[:mode] || "debug"
+  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
+  compress if mode == "live"
+
+  runner = JsDuckRunner.new
+  runner.add_sencha_io
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"
