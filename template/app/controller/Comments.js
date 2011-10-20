@@ -167,6 +167,15 @@ Ext.define('Docs.controller.Comments', {
             });
         }
 
+        if (comment.replace(/( |\n|\t)+/g, '') == '') {
+            return false;
+        }
+
+        if (this.lastCommentPost && ((Math.ceil(Number(new Date()) / 1000)) - this.lastCommentPost) < 10) {
+            Ext.Msg.alert('Please wait', 'Please wait 10 seconds between posting comments.');
+            return false;
+        }
+
         if (postButton.hasCls('disabled')) {
             return false;
         }
@@ -189,6 +198,7 @@ Ext.define('Docs.controller.Comments', {
                     textarea.editor.setValue('');
                     postButton.removeCls('disabled');
                     this.toggleNewComment(null, el);
+                    this.lastCommentPost = Math.ceil(Number(new Date()) / 1000);
                     if (data.action == 'comment') {
                         this.fetchComments(id, this.appendNewComment, {id: data.id});
                     } else {

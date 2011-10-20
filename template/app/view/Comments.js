@@ -53,7 +53,7 @@ Ext.define('Docs.view.Comments', {
                         '</tpl>',
                     '</div>',
                     '<tpl if="this.isMod() || this.isAuthor(values.author)"><a href="#" class="editComment">Edit</a><a href="#" class="deleteComment">Delete</a></tpl>',
-                    '<div class="time">{[this.date(values.createdAt)]}</div>',
+                    '<div class="time" title="{[this.date(values.createdAt)]}">{[this.dateStr(values.createdAt)]}</div>',
                     '<div class="vote">',
                         '<a href="#" class="voteCommentUp{[values.upVote ? " selected" : ""]}" title="Vote Up">&nbsp;</a>',
                         '<span class="score">{score}</span>',
@@ -65,9 +65,34 @@ Ext.define('Docs.view.Comments', {
         ];
 
         var commentTplMethods = {
+            dateStr: function(date) {
+                try {
+                    var now = Math.ceil(Number(new Date()) / 1000),
+                        comment = Math.ceil(Number(new Date(date)) / 1000),
+                        diff = now - comment,
+                        str;
+
+                    if (diff < 60) {
+                        return String(diff) + ' seconds ago';
+                    } else if (diff < 3600) {
+                        str = String(Math.ceil(diff / (60)));
+                        return str + (str == "1" ? ' minute' : ' minutes') + ' ago';
+                    } else if (diff < 86400) {
+                        str = String(Math.ceil(diff / (3600)));
+                        return str + (str == "1" ? ' hour' : ' hours') + ' ago';
+                    } else if (diff < 60*60*24*365) {
+                        str = String(Math.ceil(diff / (60 * 60 * 24)));
+                        return str + (str == "1" ? ' day' : ' days') + ' ago';
+                    } else {
+                        return Ext.Date.format(new Date(date), 'jS M \'y');
+                    }
+                } catch(e) {
+                    return '';
+                }
+            },
             date: function(date) {
                 try {
-                    return Ext.Date.format(new Date(date), 'jS M \'y');
+                    return Ext.Date.format(new Date(date), 'jS F Y g:ia');
                 } catch(e) {
                     return '';
                 }
@@ -139,6 +164,9 @@ Ext.define('Docs.view.Comments', {
                         "\n",
                         "- Here is an unordered list\n",
                         "- Second unordered list item\n",
+                        "\n",
+                        "End a line with two spaces\n",
+                        "to create a line break\n",
                     '</pre>',
                 '</div>',
                 '<div class="markdown result">',
@@ -159,6 +187,7 @@ Ext.define('Docs.view.Comments', {
                         '<li>Here is an unordered list</li>',
                         '<li>Second unordered list item</li>',
                     '</ul>',
+                    'End a line with two spaces<br/>to create a line break<br/><br/>',
                 '</div>',
                 '<ul>',
                     '<li>Links will only work if they start with <code>#!/</code> or http://www.sencha.com',
@@ -175,7 +204,7 @@ Ext.define('Docs.view.Comments', {
                             '<option value="comment">Post a comment</option>',
                             '<option value="question">Ask a question</option>',
                             '<option value="problem">Report a problem</option>',
-                            '<option value="feedback">Submit feedback</option>',
+                            // '<option value="feedback">Submit feedback</option>',
                         '</select>',
                     '</span>',
                     '<div class="note question" style="display: none;">',
@@ -187,12 +216,9 @@ Ext.define('Docs.view.Comments', {
                             '<li>Typos</li>',
                             '<li>Incorrect information</li>',
                             '<li>Errors with examples</li>',
-                            '<li>Errors in the application</li>',
-                            '<li>Inappropriate comments</li>',
                         '</ul>',
-                        '<p>Your feedback will <b>not appear</b> online and you are unlikely to receive a personal response. ',
-                            'However feedback is monitored closely by the Sencha Documentation team.</p>',
-                        '<p>For <b>SDK bugs</b>, please use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a>.</p>',
+                        '<p>For <b>SDK bugs</b>, please use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a>.<br />',
+                        '   For Docs App bugs, please use the <a href="https://github.com/senchalabs/jsduck/issues" target="_blank">GitHub Issue tracker</a>.</p>',
                     '</div>',
                     '<div class="note feedback" style="display: none;">',
                         '<p>Your feedback will <b>not appear</b> online and you are unlikely to receive a personal response. ',
