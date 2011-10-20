@@ -31,6 +31,7 @@
   -moz-border-radius: 0;
   -webkit-border-radius: 0;
   -o-border-radius: 0;
+  max-width: none;
   border-radius: 0;
   border-width: 0; margin: 0; padding: 0; background: transparent;
   font-family: inherit;
