@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.required_rubygems_version = ">= 1.3.7"
+  s.required_rubygems_version = ">= 1.3.5"
 
   s.name = 'jsduck'
   s.version = '3.0'
