@@ -75,7 +75,7 @@ module JsDuck
 
       @warnings = true
       @verbose = false
-      @version = "3.0"
+      @version = "3.0.1"
 
       # Customizing output
       @title = "Sencha Docs - Ext JS"
