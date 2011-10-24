@@ -1,0 +1,237 @@
+// Styles for comment system
+@import "mixins";
+
+.comment-btn {
+  background: url(../images/icons.png) no-repeat 0 -464px !important;
+  color: #fff;
+  text-align: center;
+  line-height: 16px;
+  height: 20px;
+  text-shadow: 1px 1px 0 #58b0e0;
+  font-weight: bold;
+  cursor: pointer; }
+
+#m-comment {
+  .comments {
+    @include member-expander; } }
+#commentindex {
+  padding: 5px; }
+#recentcomments {
+  margin: 0 auto;
+  max-width: 900px; }
+.toggleMemberComments {
+  cursor: pointer;
+  background: url(../images/icons.png) no-repeat 2px -519px;
+  padding-left: 21px;
+  font-weight: normal;
+  font-size: 11px; }
+
+.comments {
+  border-width: 1px 0;
+  border-style: solid;
+  border-color: #e0e0e0;
+  position: relative;
+
+  padding: 0 0 10px 25px;
+  .loading {
+    font-weight: bold;
+    background: url(../images/ajax-loader.gif) no-repeat 0 9px;
+    padding: 8px 0 0 25px; }
+  .name { padding: 10px 0 0 0px; display: block; font-weight: normal !important; }
+  &.open {
+    min-height: 40px; }
+  .new-comment {
+    .note {
+      padding-bottom: 10px;
+      label {
+        margin-left: 20px;
+        display: block; }}
+    form.loginForm {
+      position: relative;
+      display: inline-block;
+      .username,
+      .password {
+        border: 1px solid #bbb; } }
+    .toggleNewComment {
+      display: inline-block;
+      line-height: 22px;
+      margin: 10px 10px 1px 4px;
+      font-weight: bold; } }
+  form.newCommentForm {
+    display: none; }
+  form.newCommentForm {
+    margin: 20px 55px 10px 5px; }
+  form.editCommentForm {
+    margin: 10px 55px 0px 0; }
+  form.editCommentForm,
+  form.newCommentForm {
+    position: relative;
+    border: 1px solid #c7d1d9;
+    padding: 10px 15px 15px 15px;
+    @include border-radius(4px);
+    background: #ecf5fc;
+    .action {
+      display: block;
+      font-weight: bold;
+      padding-bottom: 7px; }
+    .com-meta {
+      position: relative;
+      margin-top: 8px;
+      text-align: right;
+      .toggleCommentGuide {
+        font-weight: bold; } }
+    img {
+      @include border-radius(2px);
+      position: absolute; left: 0;
+      margin-right: 10px; }
+    .author {
+      line-height: 25px;
+      position: absolute; left: 35px;
+      margin-bottom: 10px; }
+    .CodeMirror,
+    textarea {
+      border: 1px solid #ccc;
+      background: #fff;
+      @include border-radius(3px);
+      width: 100%;
+      padding: 3px;
+      border: auto; }
+    .CodeMirror .CodeMirror-scroll,
+    textarea {
+      min-height: 8em; }
+    input.sub {
+      @include green-button();
+      font-weight: bold;
+      width: 120px;
+      margin-left: 20px;
+      padding: 5px 8px;
+      font-size: 12px; }
+    .toggleCodeEditor {
+      position: absolute;
+      top: 15px;
+      text-indent: -9999px;
+      width: 20px;
+      background: url(../images/example-icons.png) no-repeat -2px -20px;
+      right: 15px;
+      &.selected,
+      &:hover {
+        background-position: -30px -20px; } }
+    .commentGuideTxt {
+      border-top: 1px solid #C7D1D9;
+      margin-top: 15px;
+      padding-top: 10px;
+      .markdown.preview {
+        float: left;
+        width: 310px;
+        pre {
+          border: 0;
+          padding: 0;
+          margin: 0;
+          line-height: 1.5em;
+          background: transparent; } }
+      .markdown.result {
+        margin-left: 320px;
+        width: 260px; }
+      .markdown {
+        background: #fff;
+        padding: 20px;
+        position: relative;
+        @include border-radius(5px);
+        h4 {
+          position: absolute;
+          top: 0px;
+          right: 0px;
+          padding: 5px 10px;
+          background: rgba(0,0,0,0.05); } }
+      code {
+        padding-left: 5px; }
+      ul {
+        margin-top: 5px; } } }
+  &.open {
+    form.newCommentForm {
+      display: block; } } }
+.comment {
+  padding-top: 10px;
+  padding-left: 2px;
+  &:hover {
+    .com-meta {
+      .editComment,
+      .deleteComment,
+      .vote {
+        -webkit-transition: opacity 0.2s linear;
+        opacity: 1; } } }
+  .target {
+    color: #666;
+    font-size: 90%;
+    font-weight: normal;
+    a {
+     color: #666; } }
+  .com-meta {
+    position: relative;
+    text-size: 13px;
+    img {
+      @include border-radius(2px); }
+    .author {
+      position: absolute;
+      left: 40px;
+      font-weight: bold;
+      top: 2px;
+      font-size: 14px; }
+    .time {
+      position: absolute;
+      right: 20px;
+      color: #999;
+      top: 0; }
+    .deleteComment {
+      right: 110px;
+      color: #999;
+      opacity: 0;
+      -webkit-transition: opacity 0.2s linear;
+      position: absolute; }
+    .editComment {
+      right: 160px;
+      color: #999;
+      opacity: 0;
+      -webkit-transition: opacity 0.2s linear;
+      position: absolute; }
+    .vote {
+      position: absolute;
+      left: 2px;
+      top: 33px;
+      .voteCommentUp {
+        position: absolute;
+        display: block;
+        width: 20px;
+        height: 18px;
+        background: url(../images/vote-arrows.png) no-repeat;
+        &.selected {
+          opacity: 0.4;
+          background-position: -22px 0; }
+        &:hover {
+          opacity: 1 !important;
+          background-position: -22px 0; } }
+      .voteCommentDown {
+        position: absolute;
+        display: block;
+        width: 20px;
+        height: 18px;
+        top: 36px;
+        background: url(../images/vote-arrows.png) no-repeat 0 -35px;
+        &.selected {
+          background-position: -22px -35px;
+          opacity: 0.4; }
+        &:hover {
+          opacity: 1 !important;
+          background-position: -22px -35px; } }
+      .score {
+        position: absolute;
+        font-weight: bold;
+        width: 20px;
+        top: 15px;
+        color: #aaa;
+        text-align: center;
+        font-size: 16px; } } }
+  .content {
+    min-height: 65px;
+    padding: 0 0 15px 40px;
+    border-bottom: 1px solid #eee; } }

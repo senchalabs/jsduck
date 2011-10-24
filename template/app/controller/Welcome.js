@@ -16,7 +16,12 @@ Ext.define('Docs.controller.Welcome', {
         }
     ],
 
+    init: function() {
+        this.addEvents('loadIndex');
+    },
+
     loadIndex: function() {
+        this.fireEvent('loadIndex');
         Ext.getCmp('treecontainer').hide();
         this.callParent([true]);
     },

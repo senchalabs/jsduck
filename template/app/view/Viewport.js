@@ -9,6 +9,9 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.Tabs',
         'Docs.view.TreeContainer',
         'Docs.view.welcome.Index',
+        'Docs.view.auth.Login',
+        'Docs.view.comments.Index',
+        'Docs.view.Comments',
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
         'Docs.view.guides.Index',
@@ -46,13 +49,18 @@ Ext.define('Docs.view.Viewport', {
                             },
                             {   xtype: 'container', flex: 1 },
                             {
+                                id: 'loginContainer',
+                                xtype: 'authentication',
+                                width: 500,
+                                padding: '10 20 0 0'
+                            },
+                            {
                                 xtype: 'searchcontainer',
                                 id: 'search-container',
                                 width: 230,
-                                margin: '5 0 0 0'
+                                margin: '4 0 0 0'
                             }
                         ]
-
                     },
                     {
                         xtype: 'doctabs'
@@ -132,6 +140,10 @@ Ext.define('Docs.view.Viewport', {
                                 {
                                     xtype: Docs.touchExamplesUi ? 'touchexamplecontainer' : 'examplecontainer',
                                     id: 'example'
+                                },
+                                {
+                                    xtype: 'commentindex',
+                                    id: 'commentindex'
                                 }
                             ]
                         }

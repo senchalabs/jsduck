@@ -3,6 +3,8 @@
 //
 // Order from general -> specific
 
+@import "variables";
+
 $page-width: 900px;
 $body-color: #434343;
 $green: #4C8E0E;
@@ -10,14 +12,12 @@ $green-hover: #38690A;
 $graphite: #314E64;
 $light-blue: #B9D4E7;
 $link-color: #126499;
-$font-set: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-$docs-monospace-font: "Menlo", "Courier New", Courier, monospace;
 
 
 #extjs-welcome {
   -webkit-font-smoothing: antialiased;
   color: $body-color;
-  font: 14px/1.4em $font_set;
+  font: 14px/1.4em $docs-font;
 
   .logo {
     background: url(../images/logo-screen-noglow.png) no-repeat;
