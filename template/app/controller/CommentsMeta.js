@@ -21,7 +21,6 @@ Ext.define('Docs.controller.CommentsMeta', {
     ],
 
     init: function() {
-
         Docs.commentMeta = {
             idMap: {},
             'class': {}
@@ -83,7 +82,6 @@ Ext.define('Docs.controller.CommentsMeta', {
                 group_level: 3
             },
             success: function(response) {
-
                 Ext.Array.each(response.rows, function(r) {
                     this.updateMeta(r.key, r.value.num);
                 }, this);
@@ -97,7 +95,6 @@ Ext.define('Docs.controller.CommentsMeta', {
     },
 
     // updateVoteMeta: function() {
-    //
     //     var id = Docs.App.getController('Classes').currentCls.name,
     //         startkey = Ext.JSON.encode(['class',id]),
     //         endkey = Ext.JSON.encode(['class',id,{}]),
@@ -123,7 +120,6 @@ Ext.define('Docs.controller.CommentsMeta', {
     // },
 
     fetchCommentLeaders: function() {
-
         Ext.data.JsonP.request({
             url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_author',
             method: 'GET',
@@ -134,7 +130,6 @@ Ext.define('Docs.controller.CommentsMeta', {
                 limit: 10
             },
             success: function(response) {
-
                 var tpl = Ext.create('Ext.XTemplate',
                     '<h1>Comment reputation</h1>',
                     '<table>',
@@ -177,15 +172,14 @@ Ext.define('Docs.controller.CommentsMeta', {
      * Creates a mapping between comment element IDs and DB view keys.
      */
     createCommentIdMap: function(cls) {
-        var key, commentId, member
         Docs.commentMeta.idMap[('comments-class-' + cls.name).replace(/\./g, '-')] = ['class', cls.name, ''];
 
         if (cls.members) {
-            for(member in cls.members) {
+            for (var member in cls.members) {
                 Ext.Array.each(cls.members[member], function(memberItem) {
-                    origKey = ['class', cls.name, memberItem.id];
-                    key = ['class', memberItem.owner, memberItem.id];
-                    commentId = 'comments-' + origKey.join('-').replace(/\./g, '-');
+                    var origKey = ['class', cls.name, memberItem.id];
+                    var key = ['class', memberItem.owner, memberItem.id];
+                    var commentId = 'comments-' + origKey.join('-').replace(/\./g, '-');
                     Docs.commentMeta.idMap[commentId] = key;
                 }, this);
             }

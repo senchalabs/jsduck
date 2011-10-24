@@ -26,16 +26,17 @@ Ext.define('Docs.controller.Comments', {
     ],
 
     init: function() {
-
         this.addEvents(
             /**
-             * @event add  Fired after a comment is added
+             * @event add
+             * Fired after a comment is added
              * @param {String} key  Key of the comment
              */
             'add',
 
             /**
-             * @event remove  Fired after a comment is removed
+             * @event remove
+             * Fired after a comment is removed
              * @param {String} key  Key of the comment
              */
             'remove'
@@ -121,7 +122,6 @@ Ext.define('Docs.controller.Comments', {
     },
 
     fetchComments: function(id, callback, opts) {
-
         var startkey = Ext.JSON.encode(this.commentId(id)),
             endkey = Ext.JSON.encode(this.commentId(id).concat([{}])),
             currentUser = this.getController('Auth').currentUser,
@@ -144,7 +144,6 @@ Ext.define('Docs.controller.Comments', {
     },
 
     postComment: function(cmp, el) {
-
         if (!this.loggedIn()) {
             return false;
         }
@@ -214,7 +213,6 @@ Ext.define('Docs.controller.Comments', {
      * Fetches the most recent comments
      */
     fetchRecentComments: function(id) {
-
         var url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_date';
 
         Ext.data.JsonP.request({
@@ -236,7 +234,6 @@ Ext.define('Docs.controller.Comments', {
      * if the user confirms.
      */
     promptDeleteComment: function(cmp, el) {
-
         if (!this.loggedIn()) {
             return false;
         }
@@ -259,7 +256,6 @@ Ext.define('Docs.controller.Comments', {
      * Sends a delete comment request to the server.
      */
     deleteComment: function(cmp, el) {
-
         var id = Ext.get(el).up('.comment').getAttribute('id'),
             commentsEl = Ext.get(el).up('.comments'),
             cls = commentsEl && commentsEl.getAttribute('id');
@@ -295,7 +291,6 @@ Ext.define('Docs.controller.Comments', {
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
                 if (data.success) {
-
                     contentEl.dom.origContent = contentEl.dom.innerHTML;
 
                     var commentData = Ext.merge(Ext.clone(currentUser), {
@@ -314,7 +309,6 @@ Ext.define('Docs.controller.Comments', {
     },
 
     updateComment: function(cmp, el) {
-
         if (!this.loggedIn()) {
             return false;
         }
@@ -370,7 +364,6 @@ Ext.define('Docs.controller.Comments', {
      * @private
      */
     vote: function(direction, el) {
-
         if (!this.loggedIn()) {
             this.showError('Please login to vote on this comment', el);
             return false;
@@ -410,7 +403,6 @@ Ext.define('Docs.controller.Comments', {
     },
 
     toggleComments: function(cmp, el) {
-
         var commentsDiv = Ext.get(el).up('.comments');
 
         if (commentsDiv.hasCls('open')) {
@@ -421,7 +413,6 @@ Ext.define('Docs.controller.Comments', {
     },
 
     openComments: function(commentsDiv) {
-
         if (commentsDiv.hasCls('open')) return;
 
         var commentNum =  commentsDiv.down('.name'),
@@ -439,7 +430,6 @@ Ext.define('Docs.controller.Comments', {
     },
 
     closeComments: function(commentsDiv) {
-
         if (!commentsDiv.hasCls('open')) return;
 
         var commentNum =  commentsDiv.down('.name'),
@@ -467,7 +457,6 @@ Ext.define('Docs.controller.Comments', {
     },
 
     renderComments: function(rows, id, opts) {
-
         opts = opts || {};
 
         var comments = Ext.get(id),
@@ -487,7 +476,6 @@ Ext.define('Docs.controller.Comments', {
         if (opts.hideCommentForm) {
             comments.addCls('hideCommentForm');
         } else if (!comments.hasCls('hideCommentForm')) {
-
             var commentWrap = comments.down('.new-comment-wrap');
             if (this.loggedIn()) {
                 var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, this.getController('Auth').currentUser, true);
@@ -527,7 +515,7 @@ Ext.define('Docs.controller.Comments', {
                     data = row.value;
                     data.id = opts.id;
                 }
-            })
+            });
         } else {
             data = rows[rows.length - 1].value;
             data.id = rows[rows.length - 1].id;
@@ -556,7 +544,6 @@ Ext.define('Docs.controller.Comments', {
     },
 
     showError: function(msg, el) {
-
         if (this.errorTip) {
             this.errorTip.update(msg);
             this.errorTip.setTarget(el);

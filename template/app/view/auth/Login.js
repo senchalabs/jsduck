@@ -1,3 +1,6 @@
+/**
+ * View for login form.
+ */
 Ext.define('Docs.view.auth.Login', {
     extend: 'Ext.container.Container',
     alias: 'widget.authentication',

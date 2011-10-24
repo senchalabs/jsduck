@@ -1,3 +1,6 @@
+/**
+ * A mixin for Comments controller to help with authentication.
+ */
 Ext.define('Docs.controller.AuthHelpers', {
 
     addSid: function(url) {

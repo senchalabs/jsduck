@@ -1,17 +1,19 @@
+/**
+ * Authentication controller.
+ */
 Ext.define('Docs.controller.Auth', {
     extend: 'Ext.app.Controller',
 
     requires: ['Ext.util.Cookies'],
 
     refs: [
-         {
+        {
             ref: 'auth',
             selector: 'authentication'
         }
     ],
 
     init: function() {
-
         this.sid = Ext.util.Cookies.get('sid');
 
         this.addEvents(
@@ -65,7 +67,6 @@ Ext.define('Docs.controller.Auth', {
      * Checks if a user is logged in server side and sets up a local session if they are.
      */
     getSession: function() {
-
         if (!Docs.enableComments) {
             return;
         }
@@ -98,7 +99,6 @@ Ext.define('Docs.controller.Auth', {
      * @param {Ext.Element} submitEl
      */
     login: function(username, password, remember, submitEl) {
-
         Ext.Ajax.request({
             url: Docs.baseUrl + '/login',
             method: 'POST',
@@ -162,7 +162,7 @@ Ext.define('Docs.controller.Auth', {
      */
     loggedOut: function(user) {
         this.currentUser = {};
-        this.setSid(null)
+        this.setSid(null);
         this.getAuth().showLoggedOut();
         this.fireEvent('loggedOut');
     },
@@ -189,7 +189,7 @@ Ext.define('Docs.controller.Auth', {
             username = form.down('input[name=username]').getValue(),
             password = form.down('input[name=password]').getValue(),
             rememberEl = form.down('input[name=remember]'),
-            submitEl = form.down('input[type=submit]')
+            submitEl = form.down('input[type=submit]');
 
         var remember = rememberEl ? Boolean(rememberEl.getAttribute('checked')) : false;
 

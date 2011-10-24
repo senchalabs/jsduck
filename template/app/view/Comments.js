@@ -1,10 +1,11 @@
+/**
+ * View for rendering comments.
+ */
 Ext.define('Docs.view.Comments', {
-
     singleton: true,
     requires: ['Docs.view.auth.Login'],
 
     constructor: function() {
-
         var numComments = [
             '<tpl if="num &gt; 0">',
                 'View {[values.num == 1 ? "1 comment" : values.num + " comments"]}',
@@ -268,7 +269,6 @@ Ext.define('Docs.view.Comments', {
      * Renders the comment containers for the currently active class
      */
     renderClassCommentContainers: function(cls) {
-
         // Add comment button to class toolbar
         Ext.ComponentQuery.query('classoverview toolbar')[0].insert(-2, {
             xtype: 'container',
@@ -299,7 +299,6 @@ Ext.define('Docs.view.Comments', {
      * Updates the comment meta information (i.e. number of comments) on a class page
      */
     updateClassCommentMeta: function(cls) {
-
         var clsMeta = Docs.commentMeta['class'][cls];
 
         if (clsMeta && clsMeta['']) {
@@ -323,7 +322,6 @@ Ext.define('Docs.view.Comments', {
 
         // Update class member comments meta
         Ext.Array.each(Ext.query('.member'), function(memberDom) {
-
             var memberEl = Ext.get(memberDom),
                 memberId = memberEl.getAttribute('id'),
                 memberCls = memberEl.down('.meta .docClass').getAttribute('rel'),
@@ -350,14 +348,12 @@ Ext.define('Docs.view.Comments', {
 
         this.updateClassIndex();
         Ext.Array.each(Ext.ComponentQuery.query('hovermenu'), function(m) {
-            m.fireEvent('refresh', this)
+            m.fireEvent('refresh', this);
         });
     },
 
     renderHoverMenuMeta: function(cmp) {
-
         Ext.Array.each(cmp.query('a.docClass'), function(a) {
-
             var rel = "comments-class-" + a.getAttribute('rel').replace(/[^A-Za-z\-]/g, '-'),
                 relEl = Ext.get(a),
                 memberComments = relEl.down('.toggleMemberComments'),
@@ -368,7 +364,7 @@ Ext.define('Docs.view.Comments', {
 
                 if (memberComments) {
                     if (!meta) {
-                        memberComments.remove()
+                        memberComments.remove();
                     } else {
                         memberComments.update(String(meta));
                     }
@@ -397,16 +393,14 @@ Ext.define('Docs.view.Comments', {
     },
 
     renderNewCommentForms: function() {
-
         var currentUser = Docs.App.getController('Auth').currentUser;
 
         Ext.Array.each(Ext.query('.new-comment-wrap'), function(newComment) {
-
             var hideCommentForm = Ext.get(newComment).up('.comment-list').parent().hasCls('hideCommentForm');
 
             if (hideCommentForm) {
+                // Do nothing
             } else if (Docs.App.getController('Auth').isLoggedIn()) {
-
                 var wrap = this.loggedInCommentTpl.overwrite(newComment, currentUser, true),
                     textarea = wrap.down('textarea').dom;
 
@@ -445,7 +439,6 @@ Ext.define('Docs.view.Comments', {
     },
 
     showMember: function(cls, member) {
-
         var memberEl = Ext.get(member).down('.long'),
             id = ('class-' + cls + '-' + member).replace(/\./g, '-');
 
