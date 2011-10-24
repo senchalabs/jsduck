@@ -1,0 +1,100 @@
+// Styles for trees
+@import "variables";
+@import "mixins";
+
+#treecontainer {
+  background: #f8f8f8;
+  border: 0;
+  background: -moz-linear-gradient(top, #ffffff 0%, #f8f8f8 10px);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(10px,#f8f8f8));
+  background: -webkit-linear-gradient(top, #ffffff 0%,#f8f8f8 10px);
+  background: -o-linear-gradient(top, #ffffff 0%,#f8f8f8  5px);
+  background: -ms-linear-gradient(top, #ffffff 0%,#f8f8f8 5px);
+  background: linear-gradient(top, #ffffff 0%,#f8f8f8  5px);
+  a { color: #000; }
+  .x-grid-cell {
+    background: none; }
+  .x-grid-cell-inner {
+    font-family: $docs-font;
+    font-size: 13px;
+    position: relative;
+    -webkit-transition: background-color 0.15s linear;
+    @include icons; }
+  // Use gray for private classes
+  .private .x-grid-cell-inner a {
+    color: #666; }
+  .x-grid-row-over {
+    .x-grid-cell-inner {
+      -webkit-transition: background-color 0.15s linear; } }
+  .x-panel-body {
+    border-color: #d4d4d4;
+    background: $docs-bg-color; } }
+
+.x-scroller-vertical {
+  border: 0; }
+
+.x-tree-arrows .x-tree-elbow-plus,
+.x-tree-arrows .x-tree-elbow-minus,
+.x-tree-arrows .x-tree-elbow-end-plus,
+.x-tree-arrows .x-tree-elbow-end-minus {
+  background: url('../images/arrows.png') no-repeat 2px 1px;
+}
+
+.x-tree-arrows .x-tree-expander-over .x-tree-elbow-plus,
+.x-tree-arrows .x-tree-expander-over .x-tree-elbow-end-plus {
+  background-position: 2px 1px;
+}
+
+.x-tree-arrows .x-grid-tree-node-expanded .x-tree-elbow-plus,
+.x-tree-arrows .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
+  background-position: -12px 1px;
+}
+
+.x-tree-arrows .x-grid-tree-node-expanded .x-tree-expander-over .x-tree-elbow-plus,
+.x-tree-arrows .x-grid-tree-node-expanded .x-tree-expander-over .x-tree-elbow-end-plus {
+  background-position: -12px 1px;
+}
+
+#tree-container .x-grid-cell-inner {
+  font-family: Helvetica, Arial, clean, sans-serif;
+  font-size: 12px; }
+
+#treecontainer > .x-panel-body {
+  background: transparent;
+  border-color: #ebebeb;
+  border-width: 0 1px 0 0 !important; }
+
+.x-resizable-over .x-resizable-handle-east {
+  cursor: col-resize; }
+.x-resizable-handle-east {
+  width: 6px; }
+
+.x-resizable-over .x-resizable-handle-east, .x-resizable-over .x-resizable-handle-west, .x-resizable-pinned .x-resizable-handle-east, .x-resizable-pinned .x-resizable-handle-west {
+  background: none;
+  border: solid #bbb;
+  border-width: 0 1px 0 0; }
+
+// Buttons for choosing class tree grouping:
+//   By Package <-> By Inheritance
+.cls-grouping {
+  padding: 5px 0 2px 0;
+  text-align: center;
+  button {
+    display: inline-block;
+    color: #4d4d4d;
+    font-size: 11px;
+    font-weight: bold;
+    float: left;
+    margin: 0 3px;
+    padding: 1px 13px 2px 13px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: transparent;
+    &.selected {
+      color: #fff;
+      border: 1px solid #727a81;
+      background-color: #646b72;
+      @include vertical-gradient(#646b72, #8d949b);
+      box-shadow: inset #5b6167 0 0 1px;
+      @include border-radius(10px);
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35); } } }

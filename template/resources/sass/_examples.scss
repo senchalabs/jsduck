@@ -1,0 +1,87 @@
+// Styles for examples
+@import "mixins";
+
+.inline-example-cmp {
+  margin-bottom: 10px;
+  // add padding to make right scrollbar visible
+  padding-right: 25px;
+  // Inline example component buttons
+  span.x-btn-icon {
+    background: url(../images/example-icons.png) no-repeat;
+    opacity: 0.6;
+    &.code {
+      background-position: -2px -20px; }
+    &.preview {
+      background-position: -3px -62px; }
+    &.copy {
+      background-position: -2px -85px; } }
+  .active span.x-btn-icon {
+    background: url(../images/example-icons.png) no-repeat;
+    opacity: 1;
+    &.code {
+      background-position: -30px -20px; }
+    &.preview {
+      background-position: -31px -62px; }
+    &.copy {
+      background-position: -30px -85px; } } }
+
+.touchExample .wrong-browser {
+  margin-top: 120px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 120%;
+  color: #666; }
+
+.tablet.landscape {
+  padding: 79px 83px;
+  background: url(../images/ipad-l.jpg) no-repeat; }
+
+.tablet.portrait {
+  padding: 83px 83px;
+  background: url(../images/ipad-p.jpg) no-repeat; }
+
+.phone.landscape {
+  padding: 22px 127px;
+  width: 724px;
+  height: 368px;
+  background: url(../images/iphone-l.jpg) no-repeat; }
+
+.phone.portrait {
+  padding: 127px 26px;
+  width: 368px;
+  height: 724px;
+  background: url(../images/iphone-p.jpg) no-repeat; }
+
+.miniphone.landscape {
+  padding: 127px 22px 6px 26px;
+  width: 368px;
+  height: 350px;
+  background: url(../images/iphone-small-p.jpg) no-repeat; }
+
+.miniphone.portrait {
+  padding: 22px 6px 26px 127px;
+  width: 350px;
+  height: 368px;
+  background: url(../images/iphone-small-l.jpg) no-repeat; }
+
+.example-container {
+  h1 {
+    padding: 15px 0 !important; } }
+
+.example-toolbar {
+  height: 35px;
+  padding: 7px 5px;
+  width: 100%;
+  background: #E9E9E9;
+  border-radius: 2px;
+  border-color: #e4e4e4;
+  border-width: 1px !important;
+  border-style: solid;
+  @include vertical-gradient(#f1f1f1, #e9e9e9);
+  box-shadow: inset rgba(255,255,255,0.5) 0 1px 0;
+  .separator {
+    border-left: 1px solid #ccc;
+    margin: 0 10px;
+    display: inline-block;
+    float: left;
+    width: 1px;} }
