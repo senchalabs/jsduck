@@ -78,16 +78,7 @@ Ext.define('Docs.view.Viewport', {
                         id: 'treecontainer',
                         border: 1,
                         bodyPadding: '10 9 4 9',
-                        width: 240,
-                        dockedItems: [
-                            {
-                                dock: 'bottom',
-                                id: 'footer',
-                                xtype: 'container',
-                                height: 20,
-                                contentEl: 'footer-content'
-                            }
-                        ]
+                        width: 240
                     },
                     {
                         region: 'center',
@@ -158,6 +149,12 @@ Ext.define('Docs.view.Viewport', {
                         }
                     }
                 ]
+            },
+            {
+                region: 'south',
+                id: 'footer',
+                height: 20,
+                contentEl: 'footer-content'
             }
         ];
 
