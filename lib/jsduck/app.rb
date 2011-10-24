@@ -97,6 +97,7 @@ module JsDuck
           FileUtils.cp(@opts.output_dir+"/template.html", @opts.output_dir+"/index.html")
         end
         if @opts.eg_iframe
+          FileUtils.rm(@opts.output_dir+"/eg-iframe.html")
           FileUtils.cp(@opts.eg_iframe, @opts.output_dir+"/eg-iframe.html")
         end
         write_src(parsed_files)
