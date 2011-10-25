@@ -1,0 +1,69 @@
+// Styles for Docs.view.ThumbList component
+@import "mixins";
+
+.thumb-list {
+  // a minor bit of extra padding adjustment
+  padding: 2px;
+
+  dd {
+    cursor: pointer;
+    float: left;
+    height: 100px;
+    margin: 10px;
+    width: 300px;
+    zoom: 1;
+    line-height: 1em;
+    &.over {
+      background: #F5FDE3 url(../images/sample-over.gif) no-repeat; }
+    .thumb {
+      float: left;
+      height: 90px;
+      margin: 5px 0 0 5px;
+      width: 120px;
+      img {
+        border: 1px solid #ddd;
+        max-height: 88px;
+        max-width: 118px;
+        margin: auto; } }
+    div {
+      float: left;
+      margin-left: 10px;
+      width: 160px; }
+    h4 {
+      color: #555;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 3px 0;
+      span.new-sample {
+        color: red; }
+      span.updated-sample{
+        color: blue; } }
+    p {
+      color: #777;
+      font-size: 13px; } }
+
+
+  h2 {
+    border-bottom: 2px solid #99bbe8;
+    cursor: pointer;
+    padding-top: 6px;
+    div {
+      background: transparent url(../images/group-expand-sprite.gif) no-repeat 2px -45px;
+      color: #3764a0;
+      padding: 4px 4px 4px 17px; } }
+
+  .collapsed {
+    h2 div {
+      background-position: 2px 5px; }
+    dl {
+      display: none; } } }
+
+
+// Special styles for Touch examples icons
+.touch-examples-ui .thumb-list dd .thumb {
+  border: 1px solid #ddd;
+  @include vertical-gradient(#ffffff, #f9f9f9);
+  img {
+    border: 0;
+    margin: 7px 0 0 22px; } }
+

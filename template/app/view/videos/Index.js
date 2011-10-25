@@ -8,7 +8,7 @@ Ext.define('Docs.view.videos.Index', {
         'Docs.view.ThumbList'
     ],
 
-    cls: 'all-demos iScroll',
+    cls: 'iScroll',
     margin: '10 0 0 0',
     autoScroll: true,
 
