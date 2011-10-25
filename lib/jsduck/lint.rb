@@ -48,7 +48,7 @@ module JsDuck
           optional_found = false
           member[:params].each do |p|
             if optional_found && !p[:optional]
-              warn("Optional param can't be followed by regular param #{p[:name]}", member)
+              warn("Optional param followed by regular param #{p[:name]}", member)
             end
             optional_found = optional_found || p[:optional]
           end
