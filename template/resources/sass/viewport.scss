@@ -16,66 +16,9 @@
 @import "thumb_list";
 @import "categories";
 @import "failure";
+@import "class_header";
 
 @include icons;
-
-#center-container {
-  h1 {
-    font-family: $docs-heading-font;
-    letter-spacing: -1px;
-    padding-bottom: 5px;
-    padding-top: 2px;
-    border-bottom: 1px #f1f1f1;
-    font-size: 2.3em;
-    color: #66ab16;
-    a {
-      color: #66ab16; }
-    span {
-      color: #929292;
-      letter-spacing: 0;
-      margin-left: 10px;
-      font-size: 0.6em; }
-    span.class-source-tip {
-      font-size: 0.5em;
-      position: absolute;
-      top: 35px;
-      left: 100px;
-      display: none; }
-    span.private {
-      float: right;
-      margin-right: 50px;
-      font-weight: bold;
-      color: #e7ba27;
-      letter-spacing: 0px; } }
-
-  .print {
-    background: url(../images/print.png) no-repeat;
-    position: absolute;
-    right: 0;
-    top: 5px;
-    display: block;
-    text-indent: -9999px;
-    width: 32px;
-    height: 32px; }
-  .print.guide {
-    right: 15px;
-    top: 15px; }
-
-  h1.class {
-    a {
-      background: url(../images/class-m.png) no-repeat 0 -5px;
-      margin-left: -12px;
-      padding: 0.1em 0 0.4em 2em; } }
-  h1.component {
-    a {
-      background: url(../images/component-m.png) no-repeat 0 -5px;
-      margin-left: -12px;
-      padding: 0.1em 0 0.4em 2em; } }
-  h1.singleton {
-    a {
-      background: url(../images/singleton-m.png) no-repeat 0 -5px;
-      margin-left: -12px;
-      padding: 0.1em 0 0.4em 2em; } } }
 
 .card-panel {
   line-height: 1.5em;
@@ -375,11 +318,6 @@ p.screenshot {
 #classindex {
   padding: 15px 10px 10px 10px; }
 
-
-#center-container h1.class a,
-#center-container h1.component a,
-#center-container h1.singleton a { /* You should really give these a class of Page Title rather than call out individually */
-  margin-left: -3px; }
 
 #center-container .doc-contents h1,
 #center-container .doc-contents h2 {
