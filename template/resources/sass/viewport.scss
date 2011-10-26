@@ -160,25 +160,6 @@
           font-weight: bold; } } } } }
 
 
-.class-overview, .guide-container {
-  pre {
-    background-color: #f7f7f7;
-    border: solid 1px #e8e8e8;
-    @include border-radius(5px);
-    color: #314e64;
-    font-family: $docs-monospace-font;
-    padding: 10px 20px;
-    line-height: 1.3em;
-    margin: 10px 0 14px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    code {
-      font-family: $docs-monospace-font; }
-    i,em {
-      font-style: normal; } }
-  pre.prettyprint {
-    padding: 10px 12px; } }
-
 .class-overview {
   .hierarchy {
     @include border-radius(5px);
@@ -186,7 +167,7 @@
     border: 1px solid #ebebeb;
     padding: 0 15px 15px 10px;
     float: right;
-    margin: 0 0 20px 20px;
+    margin: 0 0 40px 60px;
     font-size: 12px;
     @include gray-h4;
     .dependency, .alternate-class-name {
@@ -206,14 +187,14 @@
   min-height: 100px;
   .clr {
     clear: both; }
+  p, ul {
+    color: #484848;
+    max-width: 900px; }
   p {
     padding: 0;
-    margin: 0 0 0.8em; }
-  p:last-child { margin: 0; }
-  em {
-    font-style: italic; }
-  strong {
-    font-weight: bold; }
+    margin: 0 0 1em; }
+  p:last-child {
+    margin: 0; }
   ul {
     margin: 0 0 1em 2em;
     li {
@@ -222,11 +203,33 @@
     margin: 0 0 1em 2em;
     li {
       list-style: decimal outside; } }
+  em {
+    font-style: italic; }
+  strong {
+    font-weight: bold; }
   h3 {
     font-weight: bold;
     font-size: 1.1em; }
   h4 {
-    font-weight: bold; } }
+    font-weight: bold; }
+  pre {
+    background-color: #f7f7f7;
+    border: solid 1px #e8e8e8;
+    @include border-radius(5px);
+    color: #314e64;
+    font-family: $docs-monospace-font;
+    padding: 10px 20px;
+    line-height: 1.3em;
+    margin: 10px 0 14px 0;
+    max-width: 900px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    code {
+      font-family: $docs-monospace-font; }
+    i,em {
+      font-style: normal; } }
+  pre.prettyprint {
+    padding: 10px 12px; } }
 
 @mixin guides-h2-heading {
   font-family: $docs-font;
@@ -380,22 +383,27 @@ p.screenshot {
         margin: 0; } } }
   a {
     text-decoration: none; }
-  .member.first-child {
-    border-width: 1px; }
   .member {
     position: relative;
     min-height: 2.5em;
+    border-color: #E0E0E0;
+    border-width: 0 0 1px 0;
+    padding: 10px 22px;
+    @include member-expander;
+    &.first-child {
+      border-width: 1px 0; }
     .long {
       display: none; }
     .meta {
       float: right;
       text-align: right; }
+    a.definedIn, a.viewSource {
+      font-family: "Helvetica", "Arial", sans-serif; }
     a.definedIn {
       color: #888888;
       font-size: 0.9em;
       &:hover {
         color: $docs-link-hover-color; } }
-    @include member-expander;
     a.viewSource {
       color: rgba(0, 0, 0, 0);
       -webkit-transition: color 0.2s linear;
@@ -464,35 +472,8 @@ p.screenshot {
 #center-container .doc-contents h2 {
   letter-spacing: 0; }
 
-.class-overview p, .guide-container p {
-  margin: 0 0 1em; }
-
-.class-overview p, .guide-container p,
-.class-overview ul, .guide-container ul {
-  color: #484848;
-  max-width: 900px; }
-
-.class-overview pre, .guide-container pre {
-  margin: 10px 0 14px 0;
-  max-width: 900px; }
-
-.class-overview .hierarchy {
-  margin: 0 0 40px 60px; }
-
 .inline-example-cmp {
   margin-bottom: 1em; }
-
-.members .member.first-child {
-  border-width: 1px 0; }
-
-.members .member {
-  border-color: #E0E0E0;
-  border-width: 0 0 1px 0;
-  padding: 10px 22px; }
-
-.members .member a.definedIn,
-.members .member a.viewSource {
-    font-family: Helvetica,Arial,clean, sans-serif; }
 
 .x-panel-body-default {
   border-width: 0; }
