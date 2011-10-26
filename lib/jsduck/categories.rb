@@ -75,7 +75,7 @@ module JsDuck
 
       html = @categories.map do |category|
         [
-          "<div class='section classes'>",
+          "<div class='section'>",
           "<h1>#{category['name']}</h1>",
           render_columns(category['groups']),
           "<div style='clear:both'></div>",
@@ -91,7 +91,7 @@ module JsDuck
     end
 
     def render_columns(groups)
-      align = ["lft", "mid", "rgt"]
+      align = ["left-column", "middle-column", "right-column"]
       i = -1
       return split(groups, 3).map do |col|
         i += 1

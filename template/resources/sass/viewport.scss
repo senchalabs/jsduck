@@ -14,16 +14,9 @@
 @import "hover_menu";
 @import "trees";
 @import "thumb_list";
+@import "categories";
 
 @include icons;
-
-.notice {
-  background-color: #ffc;
-  text-align: center;
-  color: #434343;
-  font-weight: bold;
-  padding: 8px 0; margin: 0 20px 15px 0;
-  @include border-radius(8px); }
 
 #center-container {
   h1 {
@@ -89,76 +82,6 @@
     font-size: 1.2em;
     padding: 1em 0 0.4em 0;
     font-weight: normal; } }
-
-// Styles for index page
-#center-container .class-list {
-  // Main heading at the top of the page
-  h1.top {
-    margin-bottom: 12px; }
-  // All sections are inside gray round-corners bubbles
-  .section {
-    @include border-radius(5px);
-    background-color: #f7f7f7;
-    border: 1px solid #ebebeb;
-    padding: 0 15px 15px 10px;
-    margin: 0 10px 20px 0;
-    // Icons legend, floated to right
-    &.legend {
-      width: 120px;
-      float: right;
-      @include gray-h4;
-      ul {
-        float: left; }
-      .icon {
-        padding-left: 22px; }
-      a {
-        display: block; } }
-    // Guides section at top left
-    &.guides {
-      padding: 15px 35px 15px 15px;
-      line-height: 1.7em;
-      float: left;
-      h1 {
-        font-size: 1.7em !important; }
-      .lft, .mid, .rgt {
-        float: left;
-        margin-left: 20px; }
-      a {
-        display: block;
-        height: 32px;
-        margin: 10px 0;
-        padding-left: 40px; }
-      // Link to examples
-      .examples {
-        clear: both;
-        border-top: 1px solid #ebebeb;
-        a {
-          padding-left: 10px;
-          margin: 10px 0 0 0;
-          height: auto; } }
-      // Default icon for guide
-      .guide {
-        background: url(../images/guide-icon.png) no-repeat; } }
-    // Sections for class lists
-    &.classes {
-      clear: both;
-      padding: 20px 10px 20px 20px;
-      .lft {
-        float: left;
-        width: 250px;
-        margin-left: 20px; }
-      .mid {
-        float: left;
-        width: 280px; }
-      .rgt {
-        float: left; }
-      .links {
-        margin-left: 1.5em;
-        a {
-          display: block; }
-        a.more {
-          font-weight: bold; } } } } }
-
 
 .class-overview {
   .hierarchy {

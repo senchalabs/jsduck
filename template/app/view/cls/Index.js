@@ -7,7 +7,7 @@ Ext.define('Docs.view.cls.Index', {
     requires: [
         'Docs.ContentGrabber'
     ],
-    cls: 'class-list iScroll',
+    cls: 'class-categories iScroll',
     margin: '15 10',
     autoScroll: true,
 
