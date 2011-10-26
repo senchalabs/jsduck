@@ -121,3 +121,23 @@
         span {
           background: url(../images/member-hover.gif) no-repeat 3px 13px; } } } } }
 
+@mixin guides-h2-heading {
+  font-family: $docs-font;
+  letter-spacing: -1px;
+  line-height: 20px;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 20px;
+  font-weight: bold;
+  color: #314e64;
+  margin: 30px 0 15px;
+  padding-bottom: 5px; }
+
+@mixin guides-h3-heading {
+  font-weight: bold;
+  color: #314e64;
+  margin-top: 0.5em;
+  padding-top: 16px;
+  font-size: 16px;
+  line-height: 16px;
+  margin-bottom: 4px; }
+

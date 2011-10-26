@@ -27,29 +27,6 @@
     padding: 1em 0 0.4em 0;
     font-weight: normal; } }
 
-.class-overview {
-  .hierarchy {
-    @include border-radius(5px);
-    background-color: #f7f7f7;
-    border: 1px solid #ebebeb;
-    padding: 0 15px 15px 10px;
-    float: right;
-    margin: 0 0 40px 60px;
-    font-size: 12px;
-    @include gray-h4;
-    .dependency, .alternate-class-name {
-      padding: 0 0 0 12px;
-      margin-top: 3px; }
-    .alternate-class-name {
-      color: $docs-text-color; }
-    .subclass {
-      background: url(../images/elbow-end.gif) no-repeat -5px 0;
-      margin-top: 3px;
-      padding: 0 0 0 12px;
-      &.first-child {
-        background: none;
-        padding-left: 15px; } } } }
-
 .class-overview, .guide-container {
   min-height: 100px;
   .clr {
@@ -98,25 +75,7 @@
   pre.prettyprint {
     padding: 10px 12px; } }
 
-@mixin guides-h2-heading {
-  font-family: $docs-font;
-  letter-spacing: -1px;
-  line-height: 20px;
-  border-bottom: 1px solid #f1f1f1;
-  font-size: 20px;
-  font-weight: bold;
-  color: #314e64;
-  margin: 30px 0 15px;
-  padding-bottom: 5px; }
-
-@mixin guides-h3-heading {
-  font-weight: bold;
-  color: #314e64;
-  margin-top: 0.5em;
-  padding-top: 16px;
-  font-size: 16px;
-  line-height: 16px;
-  margin-bottom: 4px; }
+@import "class_overview";
 
 #center-container .guide-container {
   padding: 10px;
@@ -147,166 +106,6 @@ p.screenshot {
     text-align: center;
     font-size: smaller; }}
 
-// Nice styles for headings inside documentation
-#center-container .doc-contents {
-  h1, h2 {
-    @include guides-h2-heading; }
-  h3 {
-    @include guides-h3-heading; } }
-
-.class-overview {
-  .private {
-    border: 1px solid #999;
-    @include border-radius(5px);
-    color: #600;
-    background-color: #fee;
-    padding: 10px 50px;
-    text-align: center; }
-  .deprecated-signature, .protected-signature, .static-signature, .required-signature, .template-signature {
-    font-weight: bold;
-    text-transform: uppercase;
-    color: white;
-    font-size: 0.7em;
-    @include border-radius(2px);
-    margin-left: 5px;
-    padding: 0 3px; }
-  .deprecated-signature {
-    background-color: #aa0000; }
-  .protected-signature, .template-signature {
-    background-color: #aaa; }
-  .static-signature {
-    background-color: $docs-text-color; }
-  .required-signature {
-    background-color: $docs-text-color; }
-  .constructor-signature {
-    margin-left: 0;
-    margin-right: 3px;
-    color: $docs-link-color; }
-  .cfgGroup {
-    margin: 10px 0 3px 0; } }
-
-.members {
-  color: #444444;
-  padding-top: 10px;
-  clear: both;
-  first-child: {
-    padding-top: 0; };
-  .pre {
-    font-family: $docs-monospace-font;
-    font-size: 0.9em; }
-  .definedBy {
-    float: right;
-    padding: 0 20px 0 0;
-    font-weight: bold;
-    color: #666666; }
-  .subsection .definedBy {
-    // do not lower definedBy float when inside subsection
-    padding-top: 0; }
-  h3.pa {
-    padding: 10px 0 5px 0; }
-  h3.members-title {
-    margin: 20px 0 5px 0;
-    padding: 0 0 0 30px;
-    font-size: 1.3em;
-    font-weight: bold; }
-  #m-cfg,
-  #m-property,
-  #m-method,
-  #m-event,
-  #m-comment {
-    margin-bottom: 40px; }
-  #m-cfg .members-title {
-    background: url(../images/configs.png) no-repeat 0 -1px; }
-  #m-property .members-title {
-      background: url(../images/properties.png) no-repeat 0 4px; }
-  #m-method .members-title {
-    background: url(../images/methods.png) no-repeat 0 2px; }
-  #m-event .members-title {
-    background: url(../images/events.png) no-repeat 0 -2px; }
-  #m-comment .members-title {
-    background: url(../images/icons.png) no-repeat 1px -490px; }
-  h4.members-subtitle {
-    padding-left: 30px;
-    margin: 10px 0 7px 0; }
-  ul ul {
-    list-style: circle;
-    margin-top: 1em; }
-  .sub-desc {
-    margin: 0.5em 0 1em; }
-  .description {
-    .short {
-      p {
-        margin: 0; } } }
-  a {
-    text-decoration: none; }
-  .member {
-    position: relative;
-    min-height: 2.5em;
-    border-color: #E0E0E0;
-    border-width: 0 0 1px 0;
-    padding: 10px 22px;
-    @include member-expander;
-    &.first-child {
-      border-width: 1px 0; }
-    .long {
-      display: none; }
-    .meta {
-      float: right;
-      text-align: right; }
-    a.definedIn, a.viewSource {
-      font-family: "Helvetica", "Arial", sans-serif; }
-    a.definedIn {
-      color: #888888;
-      font-size: 0.9em;
-      &:hover {
-        color: $docs-link-hover-color; } }
-    a.viewSource {
-      color: rgba(0, 0, 0, 0);
-      -webkit-transition: color 0.2s linear;
-      font-size: 0.9em;
-      &:hover {
-        color: $docs-link-hover-color; } }
-    &:hover {
-      a.viewSource {
-        color: rgba(128, 128, 128, 1);
-        -webkit-transition: color 0.2s linear; } }
-    &.open {
-      a.side.expandable {
-        @include horizontal-gradient(#ebf3fe, #d9e8fc);
-        span {
-          background: url(../images/member-expanded.gif) no-repeat 1px 2px; } }
-      .short {
-        display: none; }
-      .long {
-        display: block; } }
-    border-style: solid;
-    border-color: #d0d0d0;
-    border-width: 0 1px 1px 1px;
-    padding: 5px 22px;
-    .name {
-      font-weight: bold; }
-    .title {
-      padding-bottom: 3px; }
-    .template {
-      border: 1px solid #999;
-      @include border-radius(5px);
-      background-color: #eee;
-      padding: 10px 50px;
-      text-align: center; }
-    .deprecated {
-      border: 1px solid #999;
-      @include border-radius(5px);
-      color: #600;
-      background-color: #fee;
-      padding: 10px 50px;
-      text-align: center;
-      strong {
-        text-transform: uppercase;
-        color: white;
-        @include border-radius(2px);
-        padding: 0 3px;
-        background-color: #aa0000; } } } }
-
 // Some margins for the stuff on video page.
 #video {
   object, p, h1 {
@@ -318,10 +117,6 @@ p.screenshot {
 #classindex {
   padding: 15px 10px 10px 10px; }
 
-
-#center-container .doc-contents h1,
-#center-container .doc-contents h2 {
-  letter-spacing: 0; }
 
 .x-panel-body-default {
   border-width: 0; }
