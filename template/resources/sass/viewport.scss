@@ -10,6 +10,7 @@
 @import "header";
 @import "footer";
 @import "tabs";
+@import "toolbar";
 @import "hover_menu";
 @import "trees";
 @import "thumb_list";
@@ -442,11 +443,6 @@ p.screenshot {
         padding: 0 3px;
         background-color: #aa0000; } } } }
 
-.expandAllMembers {
-  background: url(../images/expandcollapse.png) no-repeat -12px 2px !important; }
-.collapseAllMembers {
-  background: url(../images/expandcollapse.png) no-repeat 2px 2px !important; }
-
 // Some margins for the stuff on video page.
 #video {
   object, p, h1 {
@@ -457,21 +453,6 @@ p.screenshot {
 #guideindex,
 #classindex {
   padding: 15px 10px 10px 10px; }
-
-.x-form-trigger.reset {
-  background: url(../images/x12.png) no-repeat 2px 3px;
-  padding: 0; margin: 0; border: 0;
-}
-
-.member-filter .x-form-trigger-wrap {
-  height: 20px;
-  border-style: solid;
-  border-color: #bebebe;
-  border-width: 1px 1px 1px 0;
-  margin-left: -1px;
-  background: url('../../extjs/resources/themes/images/default/form/text-bg.gif')
-}
-
 
 
 #center-container h1.class a,
@@ -519,14 +500,6 @@ p.screenshot {
 #container-1019[role="presentation"] {
   padding: 0; }
 
-.class-overview {
-  .x-toolbar-default {
-    border-radius: 2px;
-    border-color: #e4e4e4;
-    border-width: 1px;
-    box-shadow: inset rgba(255,255,255,0.5) 0 1px 0; }
-  .x-panel-body {
-      padding-right:8px; } }
 
 // Examples
 @import "examples";

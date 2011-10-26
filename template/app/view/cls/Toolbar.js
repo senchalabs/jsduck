@@ -117,11 +117,11 @@ Ext.define('Docs.view.cls.Toolbar', {
             },
             {
                 xtype: 'button',
-                iconCls: 'expandAllMembers',
+                iconCls: 'expand-all-members',
                 tooltip: "Expand all",
                 enableToggle: true,
                 toggleHandler: function(btn, pressed) {
-                    btn.setIconCls(pressed ? 'collapseAllMembers' : 'expandAllMembers');
+                    btn.setIconCls(pressed ? 'collapse-all-members' : 'expand-all-members');
                     btn.setTooltip(pressed ? "Collapse all" : "Expand all");
                     this.fireEvent("toggleExpanded", pressed);
                 },

@@ -1,0 +1,29 @@
+// Styles for class documentation toolbar
+
+// softer rounded corners on the toolbar
+.class-overview .x-toolbar-default {
+  border-radius: 2px;
+  border-color: #e4e4e4; }
+
+
+// The reset (X) button in filter-class-members text box
+.member-filter {
+  .x-form-trigger.reset {
+    background: url(../images/x12.png) no-repeat 2px 3px;
+    padding: 0;
+    margin: 0;
+    border: 0; }
+  .x-form-trigger-wrap {
+    height: 20px;
+    border-style: solid;
+    border-color: #bebebe;
+    border-width: 1px 1px 1px 0;
+    margin-left: -1px;
+    background: url('../images/text-bg.gif'); } }
+
+
+// Backgrounds for two states of the expand/collapse all button.
+.expand-all-members {
+  background: url(../images/expandcollapse.png) no-repeat -12px 2px; }
+.collapse-all-members {
+  background: url(../images/expandcollapse.png) no-repeat 2px 2px; }
