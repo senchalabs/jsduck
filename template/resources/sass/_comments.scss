@@ -11,7 +11,7 @@
   font-weight: bold;
   cursor: pointer; }
 
-#m-comment {
+.comments-section {
   .comments {
     @include member-expander; } }
 #commentindex {

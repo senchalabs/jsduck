@@ -31,8 +31,8 @@ Ext.define('Docs.view.Comments', {
         );
 
         this.classCommentsTpl = Ext.create('Ext.XTemplate',
-            '<div id="m-comment">',
-                '<h3 class="members-title">Comments</h3>',
+            '<div class="comments-section">',
+                '<h3 class="members-title icon-comment">Comments</h3>',
                 commentsMeta.join(''),
             '</div>'
         );
@@ -307,7 +307,7 @@ Ext.define('Docs.view.Comments', {
             Ext.getCmp('classCommentToolbarBtn').update(clsMeta['']);
 
             // Update class level comments meta
-            this.numCommentsTpl.overwrite(Ext.get(Ext.query('#m-comment a.name')[0]), {
+            this.numCommentsTpl.overwrite(Ext.get(Ext.query('.comments-section a.name')[0]), {
                 num: clsMeta['']
             });
         } else {
@@ -315,7 +315,7 @@ Ext.define('Docs.view.Comments', {
             Ext.getCmp('classCommentToolbarBtn').update('0');
 
             // Update class level comments meta
-            this.numCommentsTpl.overwrite(Ext.get(Ext.query('#m-comment a.name')[0]), {
+            this.numCommentsTpl.overwrite(Ext.get(Ext.query('.comments-section a.name')[0]), {
                 num: 0
             });
         }

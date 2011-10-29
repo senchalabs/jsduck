@@ -83,29 +83,18 @@
     padding-top: 0; }
   h3.pa {
     padding: 10px 0 5px 0; }
-  h3.members-title {
-    margin: 20px 0 5px 0;
-    padding: 0 0 0 30px;
-    font-size: 1.3em;
-    font-weight: bold; }
-  #m-cfg,
-  #m-property,
-  #m-method,
-  #m-event,
-  #m-comment {
+  .members-section, .comments-section {
     margin-bottom: 40px; }
-  #m-cfg .members-title {
-    background: url(../images/configs.png) no-repeat 0 -1px; }
-  #m-property .members-title {
-      background: url(../images/properties.png) no-repeat 0 4px; }
-  #m-method .members-title {
-    background: url(../images/methods.png) no-repeat 0 2px; }
-  #m-event .members-title {
-    background: url(../images/events.png) no-repeat 0 -2px; }
-  #m-comment .members-title {
-    background: url(../images/icons.png) no-repeat 1px -490px; }
+    h3.members-title {
+      margin: 20px 0 5px 0;
+      padding: 0 0 0 25px;
+      font-size: 1.3em;
+      font-weight: bold; }
+    @include icons;
+    .icon-comment {
+      background: url(../images/icons.png) no-repeat 1px -490px; }
   h4.members-subtitle {
-    padding-left: 30px;
+    padding-left: 25px;
     margin: 10px 0 7px 0; }
   ul ul {
     list-style: circle;

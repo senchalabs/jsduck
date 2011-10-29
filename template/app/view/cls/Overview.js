@@ -126,16 +126,13 @@ Ext.define('Docs.view.cls.Overview', {
             Ext.get(m).removeCls('first-child');
         });
 
-        Ext.Array.forEach(['cfg', 'property', 'method', 'event', 'css_var', 'css_mixin'], function(type) {
-            var sectionId = '#m-' + type;
-
+        Ext.Array.forEach(Ext.query('.members-section'), function(section) {
             // Hide the section completely if all items in it are hidden
-            var visibleEls = this.getVisibleElements(sectionId + " .member");
-            var section = Ext.query(sectionId)[0];
-            section && Ext.get(section).setStyle({display: visibleEls.length > 0 ? 'block' : 'none'});
+            var visibleEls = this.getVisibleElements(".member", section);
+            Ext.get(section).setStyle({display: visibleEls.length > 0 ? 'block' : 'none'});
 
             // Hide subsections completely if all items in them are hidden
-            Ext.Array.forEach(Ext.query(sectionId+" .subsection"), function(subsection) {
+            Ext.Array.forEach(Ext.query(".subsection", section), function(subsection) {
                 var visibleEls = this.getVisibleElements(".member", subsection);
                 if (visibleEls.length > 0) {
                     // add first-child class to first member in subsection

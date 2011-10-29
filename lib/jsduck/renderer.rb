@@ -136,9 +136,9 @@ module JsDuck
         statics = @cls[:statics][sec[:type]]
         if members.length > 0 || statics.length > 0
           [
-            "<div id='m-#{sec[:type]}'>",
+            "<div class='members-section'>",
               statics.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
-              "<h3 class='members-title'>#{sec[:title]}</h3>",
+              "<h3 class='members-title icon-#{sec[:type]}'>#{sec[:title]}</h3>",
               render_subsection(members, statics.length > 0 ? "Instance #{sec[:title]}" : nil),
               render_subsection(statics, "Static #{sec[:title]}"),
             "</div>",
