@@ -29,7 +29,7 @@ module JsDuck
       return {
         :cls => cls.full_name,
         :member => cls.short_name,
-        :type => :cls,
+        :type => :class,
         :xtypes => cls[:xtypes]
       }
     end

@@ -75,6 +75,7 @@
   z-index: 5;
 
   .item, .footer {
+    position: relative;
     display: block;
     cursor: pointer;
     overflow: hidden;
@@ -91,16 +92,17 @@
       font-size: 0.85em;
       overflow: hidden;
       text-overflow: ellipsis; } }
-  .item.cfg {
-    background: url(../images/configs.png) no-repeat 0 3px; }
-  .item.property {
-    background: url(../images/properties.png) no-repeat 3px 8px; }
-  .item.method {
-    background: url(../images/methods.png) no-repeat 3px 5px; }
-  .item.event {
-    background: url(../images/events.png) no-repeat 4px 0px; }
-  .item.cls {
-    background: url(../images/class-sm.png) no-repeat 3px 5px; }
+
+  // 18x18 div to just hold the icon
+  .icon {
+    position: absolute;
+    float: left;
+    top: 6px;
+    left: 4px;
+    width: 18px;
+    height: 18px; }
+  @include icons;
+
   .item.x-item-selected {
     background-color: #ffffaa; }
   .item.x-view-over {
