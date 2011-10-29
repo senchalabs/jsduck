@@ -42,31 +42,31 @@
 
 @mixin icons {
   .icon-pkg {
-    background: url(../images/icons.png) no-repeat -3px -57px !important; }
+    background: url(../images/icons.png) no-repeat -3px -57px; }
   .icon-class {
-    background: url(../images/icons.png) no-repeat -3px -84px !important; }
+    background: url(../images/icons.png) no-repeat -3px -84px; }
   .icon-singleton {
-    background: url(../images/icons.png) no-repeat -3px -111px !important; }
+    background: url(../images/icons.png) no-repeat -3px -111px; }
   .icon-component {
-    background: url(../images/icons.png) no-repeat -3px -137px !important; }
+    background: url(../images/icons.png) no-repeat -3px -137px; }
   .icon-guide {
-    background: url(../images/icons.png) no-repeat -3px -7px !important; }
+    background: url(../images/icons.png) no-repeat -3px -7px; }
   .icon-event {
-    background: url(../images/icons.png) no-repeat -3px -245px !important; }
+    background: url(../images/icons.png) no-repeat -3px -245px; }
   .icon-property {
-    background: url(../images/icons.png) no-repeat -3px -192px !important; }
+    background: url(../images/icons.png) no-repeat -3px -192px; }
   .icon-method {
-    background: url(../images/icons.png) no-repeat -3px -165px !important; }
+    background: url(../images/icons.png) no-repeat -3px -165px; }
   .icon-cfg {
-    background: url(../images/icons.png) no-repeat -3px -219px !important; }
+    background: url(../images/icons.png) no-repeat -3px -219px; }
   .icon-subclass {
-    background: url(../images/icons.png) no-repeat -3px -299px !important; }
+    background: url(../images/icons.png) no-repeat -3px -299px; }
   .icon-example {
-    background: url(../images/icons.png) no-repeat -3px -409px !important; }
+    background: url(../images/icons.png) no-repeat -3px -409px; }
   .icon-video {
-    background: url(../images/icons.png) no-repeat -3px -438px !important; }
+    background: url(../images/icons.png) no-repeat -3px -438px; }
   .icon-hist {
-    background: url(../images/icons.png) no-repeat -3px -380px !important; } }
+    background: url(../images/icons.png) no-repeat -3px -380px; } }
 
 @mixin gray-h4 {
   h4 {

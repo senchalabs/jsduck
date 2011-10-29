@@ -1,9 +1,11 @@
 // Styles for class documentation toolbar
+@import "mixins";
 
 // softer rounded corners on the toolbar
 .class-overview .x-toolbar-default {
   border-radius: 2px;
-  border-color: #e4e4e4; }
+  border-color: #e4e4e4;
+  @include icons; }
 
 
 // The reset (X) button in filter-class-members text box
