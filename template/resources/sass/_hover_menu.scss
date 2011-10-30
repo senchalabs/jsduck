@@ -49,23 +49,15 @@
       top: 3px;
       &:hover {
         @include opacity(1); } }
-    span.protected,
-    span.template,
-    span.deprecated,
-    span.required,
-    span.static {
+    span.signature {
       font-size: 0.6em;
       text-transform: uppercase;
       font-weight: bold;
       padding: 0 0.5em;
       @include border-radius(2px);
       color: white;
-      background: #aaa; }
-    span.deprecated {
-      background-color: #a00; }
-    span.required,
-    span.static {
-      background-color: $docs-text-color; } } }
+      background: #aaa;
+      @include signature-colors; } } }
 
 .hover-menu a {
   font-family: Helvetica, Arial, clean, sans-serif;

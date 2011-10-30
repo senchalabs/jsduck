@@ -41,23 +41,16 @@
     background-color: #fee;
     padding: 10px 50px;
     text-align: center; }
-  .deprecated-signature, .protected-signature, .static-signature, .required-signature, .template-signature {
+  .signature {
     font-weight: bold;
     text-transform: uppercase;
     color: white;
     font-size: 0.7em;
     @include border-radius(2px);
     margin-left: 5px;
-    padding: 0 3px; }
-  .deprecated-signature {
-    background-color: #aa0000; }
-  .protected-signature, .template-signature {
-    background-color: #aaa; }
-  .static-signature {
-    background-color: $docs-text-color; }
-  .required-signature {
-    background-color: $docs-text-color; }
-  .constructor-signature {
+    padding: 0 3px;
+    @include signature-colors; }
+  .new-keyword {
     margin-left: 0;
     margin-right: 3px;
     color: $docs-link-color; }
@@ -152,22 +145,19 @@
       font-weight: bold; }
     .title {
       padding-bottom: 3px; }
-    .template {
+    .signature-box {
       border: 1px solid #999;
       @include border-radius(5px);
-      background-color: #eee;
-      padding: 10px 50px;
-      text-align: center; }
-    .deprecated {
-      border: 1px solid #999;
-      @include border-radius(5px);
-      color: #600;
-      background-color: #fee;
       padding: 10px 50px;
       text-align: center;
-      strong {
-        text-transform: uppercase;
-        color: white;
-        @include border-radius(2px);
-        padding: 0 3px;
-        background-color: #aa0000; } } } }
+      &.template {
+        background-color: #eee; }
+      &.deprecated {
+        color: #600;
+        background-color: #fee;
+        strong {
+          text-transform: uppercase;
+          color: white;
+          @include border-radius(2px);
+          padding: 0 3px;
+          background-color: #aa0000; } } } } }

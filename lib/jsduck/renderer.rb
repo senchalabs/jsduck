@@ -202,7 +202,7 @@ module JsDuck
       name = m[:name]
       before = ""
       if m[:tagname] == :method && m[:name] == "constructor"
-        before = "<strong class='constructor-signature'>new</strong>"
+        before = "<strong class='new-keyword'>new</strong>"
         name = @cls[:name]
       end
 
@@ -218,19 +218,19 @@ module JsDuck
 
       after = ""
       if m[:protected]
-        after += "<strong class='protected-signature'>protected</strong>"
+        after += "<strong class='protected signature'>protected</strong>"
       end
       if m[:static]
-        after += "<strong class='static-signature'>static</strong>"
+        after += "<strong class='static signature'>static</strong>"
       end
       if m[:deprecated]
-        after += "<strong class='deprecated-signature'>deprecated</strong>"
+        after += "<strong class='deprecated signature'>deprecated</strong>"
       end
       if m[:required]
-        after += "<strong class='required-signature'>required</strong>"
+        after += "<strong class='required signature'>required</strong>"
       end
       if m[:template]
-        after += "<strong class='template-signature'>template</strong>"
+        after += "<strong class='template signature'>template</strong>"
       end
 
       uri = "#!/api/#{m[:owner]}-#{m[:id]}"
@@ -258,7 +258,7 @@ module JsDuck
       if m[:deprecated]
         v = m[:deprecated][:version] ? "since " + m[:deprecated][:version] : ""
         doc << [
-          "<div class='deprecated'>",
+          "<div class='signature-box deprecated'>",
           "<p>This #{m[:tagname]} has been <strong>deprecated</strong> #{v}</p>",
           m[:deprecated][:text],
           "</div>",
@@ -267,7 +267,7 @@ module JsDuck
 
       if m[:template]
         doc << [
-          "<div class='template'>",
+          "<div class='signature-box template'>",
           "<p>This is a template method. A hook into the functionality of this class.",
           "Feel free to override it in child classes.</p>",
           "</div>",
