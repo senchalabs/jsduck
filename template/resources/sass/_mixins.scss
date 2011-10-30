@@ -42,31 +42,29 @@
 
 @mixin icons {
   .icon-pkg {
-    background: url(../images/icons.png) no-repeat -3px -57px; }
+    background: url(../images/icons.png) no-repeat 0 -0px; }
   .icon-class {
-    background: url(../images/icons.png) no-repeat -3px -84px; }
+    background: url(../images/icons.png) no-repeat 0 -40px; }
   .icon-singleton {
-    background: url(../images/icons.png) no-repeat -3px -111px; }
-  .icon-component {
-    background: url(../images/icons.png) no-repeat -3px -137px; }
-  .icon-guide {
-    background: url(../images/icons.png) no-repeat -3px -7px; }
-  .icon-event {
-    background: url(../images/icons.png) no-repeat -3px -245px; }
-  .icon-property {
-    background: url(../images/icons.png) no-repeat -3px -192px; }
-  .icon-method {
-    background: url(../images/icons.png) no-repeat -3px -165px; }
-  .icon-cfg {
-    background: url(../images/icons.png) no-repeat -3px -218px; }
+    background: url(../images/icons.png) no-repeat 0 -80px; }
   .icon-subclass {
-    background: url(../images/icons.png) no-repeat -3px -299px; }
-  .icon-example {
-    background: url(../images/icons.png) no-repeat -3px -409px; }
+    background: url(../images/icons.png) no-repeat 0 -120px; }
+  .icon-component {
+    background: url(../images/icons.png) no-repeat 0 -160px; }
+  .icon-cfg {
+    background: url(../images/icons.png) no-repeat 0 -200px; }
+  .icon-property {
+    background: url(../images/icons.png) no-repeat 0 -240px; }
+  .icon-method {
+    background: url(../images/icons.png) no-repeat 0 -280px; }
+  .icon-event {
+    background: url(../images/icons.png) no-repeat 0 -320px; }
+  .icon-guide {
+    background: url(../images/icons.png) no-repeat 0 -360px; }
   .icon-video {
-    background: url(../images/icons.png) no-repeat -3px -438px; }
-  .icon-hist {
-    background: url(../images/icons.png) no-repeat -3px -380px; } }
+    background: url(../images/icons.png) no-repeat 0 -400px; }
+  .icon-example {
+    background: url(../images/icons.png) no-repeat 0 -440px; } }
 
 @mixin gray-h4 {
   h4 {
