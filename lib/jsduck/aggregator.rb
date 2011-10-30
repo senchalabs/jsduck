@@ -9,6 +9,7 @@ module JsDuck
     def initialize
       @documentation = []
       @classes = {}
+      @alt_names = {}
       @orphans = []
       @current_class = nil
     end
@@ -37,7 +38,7 @@ module JsDuck
     # When class exists, merge it with class node.
     # Otherwise add as new class.
     def add_class(cls)
-      old_cls = @classes[cls[:name]]
+      old_cls = @classes[cls[:name]] || @alt_names[cls[:name]]
       if old_cls
         merge_classes(old_cls, cls)
         @current_class = old_cls
@@ -45,6 +46,24 @@ module JsDuck
         @current_class = cls
         @documentation << cls
         @classes[cls[:name]] = cls
+
+        # Register all alternate names of class for lookup too
+        cls[:alternateClassNames].each do |altname|
+          if cls[:name] == altname
+            # A buggy documentation, ignore.
+          else
+            @alt_names[altname] = cls
+            # When an alternate name has been used as a class name before,
+            # then this is one crappy documentation, but attempt to handle
+            # it by merging the class with alt-name into this class.
+            if @classes[altname]
+              merge_classes(cls, @classes[altname])
+              @documentation.delete(@classes[altname])
+              @classes.delete(altname)
+            end
+          end
+        end
+
         insert_orphans(cls)
       end
     end

@@ -474,4 +474,54 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "class Foo following class with Foo as alternateClassName" do
+    before do
+      @classes = parse(<<-EOS)
+        /**
+         * @class Person
+         * @alternateClassName Foo
+         */
+        /**
+         * @class Foo
+         */
+      EOS
+    end
+
+    it "results in only one class" do
+      @classes.length.should == 1
+    end
+  end
+
+  describe "class Foo preceding class with Foo as alternateClassName" do
+    before do
+      @classes = parse(<<-EOS)
+        /**
+         * @class Foo
+         */
+        /**
+         * @class Person
+         * @alternateClassName Foo
+         */
+      EOS
+    end
+
+    it "results in only one class" do
+      @classes.length.should == 1
+    end
+  end
+
+  describe "Class with itself as alternateClassName" do
+    before do
+      @classes = parse(<<-EOS)
+        /**
+         * @class Foo
+         * @alternateClassName Foo
+         */
+      EOS
+    end
+
+    it "results still in one class" do
+      @classes.length.should == 1
+    end
+  end
 end
