@@ -2,7 +2,7 @@
 @import "mixins";
 
 .comment-btn {
-  background: url(../images/icons.png) no-repeat 0 -464px !important;
+  background: url(../images/comment-bubble.png) no-repeat;
   color: #fff;
   text-align: center;
   line-height: 16px;
@@ -21,7 +21,7 @@
   max-width: 900px; }
 .toggleMemberComments {
   cursor: pointer;
-  background: url(../images/icons.png) no-repeat 2px -519px;
+  background: url(../images/comment-bubble.png) no-repeat 2px -55px;
   padding-left: 21px;
   font-weight: normal;
   font-size: 11px; }
