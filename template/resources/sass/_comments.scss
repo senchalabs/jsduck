@@ -39,7 +39,10 @@
     padding: 8px 0 0 25px; }
   .name { padding: 10px 0 0 0px; display: block; font-weight: normal !important; }
   &.open {
-    min-height: 40px; }
+    min-height: 40px; } }
+
+.comment-list {
+  color: #444;
   .new-comment {
     .note {
       padding-bottom: 10px;

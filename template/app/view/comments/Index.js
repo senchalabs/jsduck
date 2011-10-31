@@ -5,7 +5,7 @@ Ext.define('Docs.view.comments.Index', {
     extend: 'Ext.container.Container',
     alias: 'widget.commentindex',
 
-    cls: 'iScroll',
+    cls: 'comment-index iScroll',
     margin: '10 0 0 0',
     autoScroll: true,
 
