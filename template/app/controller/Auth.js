@@ -175,10 +175,23 @@ Ext.define('Docs.controller.Auth', {
         return Boolean(this.sid);
     },
 
+    /**
+     * Sets the session ID.
+     * @param {String} sid  The session ID
+     * @param {Object} opts (optional)
+     * @param {Boolean} opts.remember  'Remember me' flag is set
+     */
     setSid: function(sid, opts) {
+
         this.sid = sid;
-        if (sid && opts && opts.remember) {
-            Ext.util.Cookies.set('sid', sid);
+
+        if (sid) {
+            var expires = null;
+            if (opts && opts.remember) {
+                expires = new Date();
+                expires.setTime(expires.getTime() + (60 * 60 * 24 * 30 * 1000)); // 30 days
+            }
+            Ext.util.Cookies.set('sid', sid, expires);
         } else {
             Ext.util.Cookies.clear('sid');
         }

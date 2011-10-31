@@ -198,10 +198,10 @@ Ext.define('Docs.controller.Comments', {
                     postButton.removeCls('disabled');
                     this.toggleNewComment(null, el);
                     this.lastCommentPost = Math.ceil(Number(new Date()) / 1000);
-                    if (data.action == 'comment') {
+                    if (data.success && data.id) {
                         this.fetchComments(id, this.appendNewComment, {id: data.id});
                     } else {
-                        Ext.Msg.alert('Thank you', 'Thank you for your feedback.');
+                        Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
                     }
                 }
             },
@@ -272,6 +272,8 @@ Ext.define('Docs.controller.Comments', {
                         this.fireEvent('remove', cls);
                     }
                     Ext.get(id).remove();
+                } else {
+                    Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
                 }
             },
             scope: this
