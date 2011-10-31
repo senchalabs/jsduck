@@ -52,6 +52,9 @@ Ext.define('Docs.view.Comments', {
                         '<tpl if="showCls">',
                             '<span class="target"> on {[this.target(values.target)]}</span>',
                         '</tpl>',
+                        '<tpl if="action == \'problem\'">',
+                            '<span class="problem">problem</span>',
+                        '</tpl>',
                     '</div>',
                     '<tpl if="this.isMod() || this.isAuthor(values.author)"><a href="#" class="editComment">Edit</a><a href="#" class="deleteComment">Delete</a></tpl>',
                     '<div class="time" title="{[this.date(values.createdAt)]}">{[this.dateStr(values.createdAt)]}</div>',
@@ -115,13 +118,15 @@ Ext.define('Docs.view.Comments', {
             },
             moreComments: function(values) {
                 var values = values[values.length - 1];
-                if (values.total_rows > (values.offset + values.limit)) {
+                if (values && values.total_rows > (values.offset + values.limit)) {
                     return [
                         '<a href="#" class="fetchMoreComments recent" rel="' + values.key.join(',') + '">',
                             '<span></span>Showing comments 1-' + (values.offset + values.limit) + ' of ' + values.total_rows + '. ',
                             'Click to load ' + values.limit + ' more...',
                         '</a>'
                     ].join('');
+                } else {
+                    return '';
                 }
             }
         };

@@ -76,8 +76,6 @@
       margin: 10px 10px 1px 4px;
       font-weight: bold; } }
   form.newCommentForm {
-    display: none; }
-  form.newCommentForm {
     margin: 20px 55px 10px 5px; }
   form.editCommentForm {
     margin: 10px 55px 0px 0; }
@@ -194,7 +192,14 @@
       left: 40px;
       font-weight: bold;
       top: 2px;
-      font-size: 14px; }
+      font-size: 14px;
+      .problem {
+        color: #fff;
+        @include border-radius(2px);
+        font-size: 0.7em;
+        margin-left: 10px;
+        padding: 0 3px 1px 3px;
+        background-color: #aa0000; } }
     .time {
       position: absolute;
       right: 20px;
