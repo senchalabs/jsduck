@@ -78,6 +78,7 @@ Ext.define('Docs.controller.Comments', {
                         [ '.cancelUpdateComment',  'click', this.cancelUpdateComment],
                         [ '.deleteComment',        'click', this.promptDeleteComment],
                         [ '.editComment',          'click', this.editComment],
+                        [ '.fetchMoreComments',    'click', this.fetchMoreComments],
                         [ '.voteCommentUp',        'click', this.voteUp],
                         [ '.voteCommentDown',      'click', this.voteDown]
                     ], function(delegate) {
@@ -212,21 +213,50 @@ Ext.define('Docs.controller.Comments', {
     /**
      * Fetches the most recent comments
      */
-    fetchRecentComments: function(id) {
-        var url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_date';
+    fetchRecentComments: function(id, startkey) {
+        var url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_date',
+            limit = 25;
+
+        var params = {
+            descending: true,
+            limit: limit
+        };
+
+        if (startkey) {
+            params.startkey = startkey;
+            params.skip = 1;
+        }
 
         Ext.data.JsonP.request({
             url: url,
             method: 'GET',
-            params: {
-                descending: true,
-                limit: 100
-            },
+            params: params,
             success: function(response) {
-                this.renderComments(response.rows, id, {showCls: true, hideCommentForm: true});
+                var opts = {
+                    showCls: true,
+                    hideCommentForm: true,
+                    limit: limit,
+                    offset: response.offset,
+                    total_rows: response.total_rows
+                };
+
+                if (startkey) {
+                    opts.append = true;
+                }
+
+                this.renderComments(response.rows, id, opts);
             },
             scope: this
         });
+    },
+
+    fetchMoreComments: function(cmp, el) {
+
+        var moreLink = Ext.get(el);
+
+        if (moreLink.hasCls('recent')) {
+            this.fetchRecentComments('recentcomments', '[' + moreLink.getAttribute('rel') + ']');
+        }
     },
 
     /**
@@ -463,8 +493,10 @@ Ext.define('Docs.controller.Comments', {
 
         var comments = Ext.get(id),
             loadingEl = comments.down('.loading');
+
         var data = Ext.Array.map(rows, function(r) {
             r.value.id = r.id;
+            r.value.key = r.key;
             r.value = Ext.merge(r.value, opts);
             return r.value;
         });
@@ -473,7 +505,25 @@ Ext.define('Docs.controller.Comments', {
             loadingEl.remove();
         }
 
-        Docs.view.Comments.commentsTpl.append(comments, data);
+        if (opts.append) {
+            var list = comments.down('.comment-list'),
+                more = comments.down('.fetchMoreComments'),
+                last = data[data.length - 1];
+
+            Docs.view.Comments.appendCommentsTpl.append(list, data);
+
+            if ((last.offset + last.limit) > last.total_rows) {
+                more.remove();
+            } else {
+                more.update(
+                    '<span></span>Showing comments 1-' + (last.offset + last.limit) + ' of ' + last.total_rows + '. ',
+                    'Click to load ' + last.limit + ' more...'
+                );
+                more.dom.setAttribute('rel', last.key.join(','));
+            }
+        } else {
+            Docs.view.Comments.commentsTpl.append(comments, data);
+        }
 
         if (opts.hideCommentForm) {
             comments.addCls('hideCommentForm');

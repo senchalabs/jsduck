@@ -112,6 +112,17 @@ Ext.define('Docs.view.Comments', {
                     title += ' ' + target[2];
                 }
                 return '<a href="#!/api/' + url + '" class="docClass" rel="' + url + '">' + title + '</a>';
+            },
+            moreComments: function(values) {
+                var values = values[values.length - 1];
+                if (values.total_rows > (values.offset + values.limit)) {
+                    return [
+                        '<a href="#" class="fetchMoreComments recent" rel="' + values.key.join(',') + '">',
+                            '<span></span>Showing comments 1-' + (values.offset + values.limit) + ' of ' + values.total_rows + '. ',
+                            'Click to load ' + values.limit + ' more...',
+                        '</a>'
+                    ].join('');
+                }
             }
         };
 
@@ -122,6 +133,14 @@ Ext.define('Docs.view.Comments', {
                 '</tpl>',
                 '<div class="new-comment-wrap"></div>',
             '</div>',
+            '{[this.moreComments(values)]}',
+            commentTplMethods
+        );
+
+        this.appendCommentsTpl = Ext.create('Ext.XTemplate',
+            '<tpl for=".">',
+                commentTplHtml.join(''),
+            '</tpl>',
             commentTplMethods
         );
 

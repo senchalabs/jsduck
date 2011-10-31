@@ -26,13 +26,28 @@
   font-weight: normal;
   font-size: 11px; }
 
+.fetchMoreComments {
+  display: block;
+  padding: 10px 0 5px 35px;
+  position: relative;
+  span {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 27px;
+    height: 28px;
+    background: url(../images/comment.png) no-repeat 0 -25px; }
+  &:hover span {
+    background-position: -59px -25px; } }
+
 .comments {
   border-width: 1px 0;
   border-style: solid;
   border-color: #e0e0e0;
   position: relative;
-
   padding: 0 0 10px 25px;
+
   .loading {
     font-weight: bold;
     background: url(../images/ajax-loader.gif) no-repeat 0 9px;
