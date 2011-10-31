@@ -586,6 +586,19 @@ task :sdk, [:mode] => :sass do |t, args|
   runner.copy_sdk_examples if mode == "export" || mode == "live"
 end
 
+desc "Run JSDuck on Docs app itself"
+task :docs do
+  runner = JsDuckRunner.new
+  runner.add_ext4
+  runner.add_options([
+    "--builtin-classes",
+    "template/app"
+  ])
+  runner.add_debug
+  runner.add_seo
+  runner.run
+end
+
 desc "Run JSDuck on official Ext JS 4.0.2a build\n" +
      "ext4             - creates debug/development version\n" +
      "ext4[export]     - creates export/deployable version\n"
