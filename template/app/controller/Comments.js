@@ -64,6 +64,13 @@ Ext.define('Docs.controller.Comments', {
             scope: this
         });
 
+        this.getController('Guides').on({
+            showGuide: function(guide) {
+                this.renderGuideCommentContainers(guide);
+            },
+            scope: this
+        });
+
         this.control({
             'viewport': {
                 afterrender: function(cmp) {
@@ -106,9 +113,7 @@ Ext.define('Docs.controller.Comments', {
 
     enableComments: function() {
         if (!this.commentsEnabled) {
-            // alert(this.getController('Classes').currentCls)
             this.commentsEnabled = true;
-            // Docs.view.Comments.renderClassCommentContainers(this.getController('Classes').currentCls);
         }
     },
 
@@ -486,6 +491,13 @@ Ext.define('Docs.controller.Comments', {
     renderClassCommentContainers: function() {
         var cls = this.getController('Classes').currentCls;
         Docs.view.Comments.renderClassCommentContainers(cls);
+    },
+
+    renderGuideCommentContainers: function(guide) {
+        Docs.view.Comments.classCommentsTpl.append(Ext.get('guide'), {
+            num: 0,
+            id: 'guide-' + guide
+        });
     },
 
     renderComments: function(rows, id, opts) {

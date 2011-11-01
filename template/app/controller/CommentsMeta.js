@@ -23,7 +23,8 @@ Ext.define('Docs.controller.CommentsMeta', {
     init: function() {
         Docs.commentMeta = {
             idMap: {},
-            'class': {}
+            'class': {},
+            guide: {}
         };
 
         this.addEvents(
@@ -42,10 +43,10 @@ Ext.define('Docs.controller.CommentsMeta', {
 
         this.getController('Comments').on({
             add: function(id) {
-                this.updateClassCommentMeta(id, 1);
+                this.updateCommentMeta(id, 1);
             },
             remove: function(id) {
-                this.updateClassCommentMeta(id, -1);
+                this.updateCommentMeta(id, -1);
             },
             scope: this
         });
@@ -59,6 +60,14 @@ Ext.define('Docs.controller.CommentsMeta', {
                     this.createCommentIdMap(this.getController('Classes').currentCls);
                     this.renderClassCommentMeta(cls);
                 }
+            },
+            scope: this
+        });
+
+        this.getController('Guides').on({
+            showGuide: function(guide, opts) {
+                Docs.commentMeta.idMap['comments-guide-' + guide] = ['guide', guide, ''];
+                this.renderGuideCommentMeta(guide);
             },
             scope: this
         });
@@ -148,10 +157,14 @@ Ext.define('Docs.controller.CommentsMeta', {
     /**
      * Called when a comment is added or removed. Updates the meta table, then refreshes the view
      */
-    updateClassCommentMeta: function(id, delta) {
+    updateCommentMeta: function(id, delta) {
         var clsId = Docs.commentMeta.idMap[id];
         this.updateMeta(clsId, delta);
-        Docs.view.Comments.updateClassCommentMeta(clsId[1]);
+        if (clsId[0] == 'guide') {
+            Docs.view.Comments.updateGuideCommentMeta(clsId[1]);
+        } else {
+            Docs.view.Comments.updateClassCommentMeta(clsId[1]);
+        }
     },
 
     /**
@@ -218,6 +231,18 @@ Ext.define('Docs.controller.CommentsMeta', {
         } else {
             this.addListener('afterLoad', function() {
                 Docs.view.Comments.updateClassCommentMeta(cls);
+            }, this, {
+                single: true
+            });
+        }
+    },
+
+    renderGuideCommentMeta: function(cls) {
+        if (this.metaLoaded) {
+            Docs.view.Comments.updateGuideCommentMeta(cls);
+        } else {
+            this.addListener('afterLoad', function() {
+                Docs.view.Comments.updateGuideCommentMeta(cls);
             }, this, {
                 single: true
             });

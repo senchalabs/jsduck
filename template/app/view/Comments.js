@@ -376,6 +376,26 @@ Ext.define('Docs.view.Comments', {
         });
     },
 
+    /**
+     * Updates the comment meta information (i.e. number of comments) on a class page
+     */
+    updateGuideCommentMeta: function(guide) {
+        var guideMeta = Docs.commentMeta['guide'][guide];
+
+        if (guideMeta && guideMeta['']) {
+
+            // Update class level comments meta
+            this.numCommentsTpl.overwrite(Ext.get(Ext.query('#guide .comments-section a.name')[0]), {
+                num: guideMeta['']
+            });
+        } else {
+            // Update class level comments meta
+            this.numCommentsTpl.overwrite(Ext.get(Ext.query('#guide .comments-section a.name')[0]), {
+                num: 0
+            });
+        }
+    },
+
     renderHoverMenuMeta: function(cmp) {
         Ext.Array.each(cmp.query('a.docClass'), function(a) {
             var rel = "comments-class-" + a.getAttribute('rel').replace(/[^A-Za-z\-]/g, '-'),
