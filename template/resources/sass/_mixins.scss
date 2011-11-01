@@ -29,10 +29,12 @@
   -moz-border-radius-bottomright: $size; }
 
 @mixin vertical-gradient($fromCol, $toCol) {
+  background: $fromCol;
   background: -webkit-gradient(linear, left top, left bottom, from($fromCol), to($toCol));
   background: -moz-linear-gradient(top, $fromCol, $toCol); }
 
 @mixin horizontal-gradient($fromCol, $toCol) {
+  background: $fromCol;
   background: -webkit-gradient(linear, left top, right top, from($fromCol), to($toCol));
   background: -moz-linear-gradient(left, $fromCol, $toCol); }
 
@@ -81,14 +83,12 @@
   @include border-radius(3px);
   cursor: pointer;
   border: 1px solid #264901;
-  background-color: #91c632;
   @include vertical-gradient(#91c632, #519700);
   &:hover {
     @include vertical-gradient(#74b61e, #3d7e00); }
   &.disabled {
     border-color: #707070;
     cursor: auto;
-    background-color: #acacac;
     @include vertical-gradient(#bbb, #9c9c9c);
     box-shadow: inset #d7d7d7 0 1px 0; } }
 
