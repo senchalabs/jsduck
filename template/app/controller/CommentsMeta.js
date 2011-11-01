@@ -24,7 +24,8 @@ Ext.define('Docs.controller.CommentsMeta', {
         Docs.commentMeta = {
             idMap: {},
             'class': {},
-            guide: {}
+            guide: {},
+            video: {}
         };
 
         this.addEvents(
@@ -68,6 +69,14 @@ Ext.define('Docs.controller.CommentsMeta', {
             showGuide: function(guide, opts) {
                 Docs.commentMeta.idMap['comments-guide-' + guide] = ['guide', guide, ''];
                 this.renderGuideCommentMeta(guide);
+            },
+            scope: this
+        });
+
+        this.getController('Videos').on({
+            showVideo: function(video, opts) {
+                Docs.commentMeta.idMap['comments-video-' + video] = ['video', video, ''];
+                this.renderVideoCommentMeta(video);
             },
             scope: this
         });
@@ -162,6 +171,8 @@ Ext.define('Docs.controller.CommentsMeta', {
         this.updateMeta(clsId, delta);
         if (clsId[0] == 'guide') {
             Docs.view.Comments.updateGuideCommentMeta(clsId[1]);
+        } else if (clsId[0] == 'video') {
+            Docs.view.Comments.updateVideoCommentMeta(clsId[1]);
         } else {
             Docs.view.Comments.updateClassCommentMeta(clsId[1]);
         }
@@ -243,6 +254,18 @@ Ext.define('Docs.controller.CommentsMeta', {
         } else {
             this.addListener('afterLoad', function() {
                 Docs.view.Comments.updateGuideCommentMeta(cls);
+            }, this, {
+                single: true
+            });
+        }
+    },
+
+    renderVideoCommentMeta: function(cls) {
+        if (this.metaLoaded) {
+            Docs.view.Comments.updateVideoCommentMeta(cls);
+        } else {
+            this.addListener('afterLoad', function() {
+                Docs.view.Comments.updateVideoCommentMeta(cls);
             }, this, {
                 single: true
             });

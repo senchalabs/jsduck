@@ -77,7 +77,7 @@ Ext.define('Docs.controller.Tabs', {
 
         this.getController('Videos').addListener({
             showVideo: function(video) {
-                this.addTabFromTree(video);
+                this.addTabFromTree("#!/video/"+video);
             },
             scope: this
         });

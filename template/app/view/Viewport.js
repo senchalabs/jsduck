@@ -130,8 +130,10 @@ Ext.define('Docs.view.Viewport', {
                                     id: 'videoindex'
                                 },
                                 {
+                                    autoScroll: true,
                                     xtype: 'videocontainer',
-                                    id: 'video'
+                                    id: 'video',
+                                    cls: 'iScroll'
                                 },
                                 {
                                     xtype: 'exampleindex',

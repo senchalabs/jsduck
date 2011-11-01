@@ -6,6 +6,7 @@
 Ext.define('Docs.view.videos.Container', {
     extend: 'Ext.container.Container',
     alias: 'widget.videocontainer',
+    componentCls: 'video-container',
 
     /**
      * Loads video into the page.

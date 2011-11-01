@@ -109,12 +109,21 @@ Ext.define('Docs.view.Comments', {
             },
             target: function(target) {
                 var url = target[1],
-                    title = target[1];
-                if (target[2] != '') {
+                    title = target[1],
+                    urlPrefix = '#!/api/';
+
+                if (target[0] == 'video') {
+                    title = 'Video ' + title;
+                    urlPrefix = '#!/video/';
+                } else if (target[0] == 'guide') {
+                    title = 'Guide ' + title;
+                    urlPrefix = '#!/guide/';
+                } else if (target[2] != '') {
                     url += '-' + target[2];
                     title += ' ' + target[2];
                 }
-                return '<a href="#!/api/' + url + '" class="docClass" rel="' + url + '">' + title + '</a>';
+
+                return '<a href="' + urlPrefix + url + '">' + title + '</a>';
             },
             moreComments: function(values) {
                 var values = values[values.length - 1];
@@ -376,24 +385,20 @@ Ext.define('Docs.view.Comments', {
         });
     },
 
-    /**
-     * Updates the comment meta information (i.e. number of comments) on a class page
-     */
     updateGuideCommentMeta: function(guide) {
         var guideMeta = Docs.commentMeta['guide'][guide];
 
-        if (guideMeta && guideMeta['']) {
+        this.numCommentsTpl.overwrite(Ext.get(Ext.query('#guide .comments-section a.name')[0]), {
+            num: guideMeta && guideMeta[''] ? guideMeta[''] : 0
+        });
+    },
 
-            // Update class level comments meta
-            this.numCommentsTpl.overwrite(Ext.get(Ext.query('#guide .comments-section a.name')[0]), {
-                num: guideMeta['']
-            });
-        } else {
-            // Update class level comments meta
-            this.numCommentsTpl.overwrite(Ext.get(Ext.query('#guide .comments-section a.name')[0]), {
-                num: 0
-            });
-        }
+    updateVideoCommentMeta: function(video) {
+        var videoMeta = Docs.commentMeta['video'][video];
+
+        this.numCommentsTpl.overwrite(Ext.get(Ext.query('#video .comments-section a.name')[0]), {
+            num: videoMeta && videoMeta[''] ? videoMeta[''] : 0
+        });
     },
 
     renderHoverMenuMeta: function(cmp) {

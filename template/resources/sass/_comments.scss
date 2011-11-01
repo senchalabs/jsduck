@@ -11,7 +11,8 @@
   font-weight: bold;
   cursor: pointer; }
 
-#center-container .guide-container h3.members-title.icon-comment {
+#center-container .guide-container h3.members-title.icon-comment,
+#center-container .video-container h3.members-title.icon-comment {
     padding: 0 0 5px 25px;
     margin: 30px 0 5px 0;
     background: url(../images/comment-bubble.png) no-repeat 1px -26px; }

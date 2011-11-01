@@ -73,6 +73,15 @@ Ext.define('Docs.controller.Comments', {
             scope: this
         });
 
+        this.getController('Videos').on({
+            showVideo: function(video, opts) {
+                if (opts.reRendered) {
+                    this.renderVideoCommentContainers(video);
+                }
+            },
+            scope: this
+        });
+
         this.control({
             'viewport': {
                 afterrender: function(cmp) {
@@ -499,6 +508,13 @@ Ext.define('Docs.controller.Comments', {
         Docs.view.Comments.classCommentsTpl.append(Ext.get('guide'), {
             num: 0,
             id: 'guide-' + guide
+        });
+    },
+
+    renderVideoCommentContainers: function(video) {
+        Docs.view.Comments.classCommentsTpl.append(Ext.get('video'), {
+            num: 0,
+            id: 'video-' + video
         });
     },
 
