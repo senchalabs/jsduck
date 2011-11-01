@@ -128,6 +128,8 @@ Ext.define('Docs.controller.Guides', {
      * @param {Boolean} name Name of the guide
      */
     showGuide: function(json, url, name) {
+        var reRendered = false;
+
         if (json === "in-progress") {
             return;
         }
@@ -137,10 +139,11 @@ Ext.define('Docs.controller.Guides', {
                 name: name,
                 content: json.guide
             });
+            reRendered = true;
         }
         this.activeUrl = url;
         this.scrollContent();
-        this.fireEvent('showGuide', name);
+        this.fireEvent('showGuide', name, { reRendered: reRendered });
         this.getTree().selectUrl(url);
     },
 

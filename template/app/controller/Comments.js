@@ -65,8 +65,10 @@ Ext.define('Docs.controller.Comments', {
         });
 
         this.getController('Guides').on({
-            showGuide: function(guide) {
-                this.renderGuideCommentContainers(guide);
+            showGuide: function(guide, opts) {
+                if (opts.reRendered) {
+                    this.renderGuideCommentContainers(guide);
+                }
             },
             scope: this
         });
