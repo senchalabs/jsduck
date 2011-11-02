@@ -22,27 +22,27 @@ Ext.define('Docs.view.examples.Inline', {
 
     dockedItems: [{
         xtype: 'toolbar',
-        dock: 'left',
-        padding: '0 2',
+        dock: 'top',
+        height: 30,
         style: 'background: none;',
         items: [
             {
                 iconCls: 'code',
                 padding: '0 2 0 0',
-                margin: 0,
-                tooltip: 'Code'
+                margin: '0 3 0 0',
+                text: 'Code'
             },
             {
                 padding: 0,
-                margin: 0,
+                margin: '0 3 0 0',
                 iconCls: 'preview',
-                tooltip: 'Preview'
+                text: 'Live Preview'
             },
             {
                 padding: 0,
                 margin: 0,
                 iconCls: 'copy',
-                tooltip: 'Select'
+                text: 'Select Code'
             }
         ]
     }],
@@ -115,7 +115,7 @@ Ext.define('Docs.view.examples.Inline', {
     // Syncs the height with number of lines in code example.
     updateHeight: function() {
         var previewHeight = this.preview.getHeight();
-        var editorHeight = this.editor.getHeight();
+        var editorHeight = this.editor.getHeight() + 30;
         if (Docs.touchExamplesUi && previewHeight > 0) {
             this.setHeight(previewHeight);
         }

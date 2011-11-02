@@ -6,24 +6,30 @@
   // add padding to make right scrollbar visible
   padding-right: 25px;
   // Inline example component buttons
+  span.x-btn-inner {
+    line-height: 12px;
+  }
+  .active span.x-btn-inner {
+    color: #57a7dc;
+  }
   span.x-btn-icon {
     background: url(../images/example-icons.png) no-repeat;
     opacity: 0.6;
     &.code {
-      background-position: -2px -20px; }
+      background-position: -2px -19px; }
     &.preview {
-      background-position: -3px -62px; }
+      background-position: -3px -65px; }
     &.copy {
-      background-position: -2px -85px; } }
+      background-position: -2px -88px; } }
   .active span.x-btn-icon {
     background: url(../images/example-icons.png) no-repeat;
     opacity: 1;
     &.code {
-      background-position: -30px -20px; }
+      background-position: -30px -19px; }
     &.preview {
-      background-position: -31px -62px; }
+      background-position: -31px -65px; }
     &.copy {
-      background-position: -30px -85px; } } }
+      background-position: -30px -88px; } } }
 
 .touchExample .wrong-browser {
   margin-top: 120px;
