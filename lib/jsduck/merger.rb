@@ -124,7 +124,6 @@ module JsDuck
         :mixins => detect_list(:mixins, doc_map, code),
         :alternateClassNames => detect_list(:alternateClassNames, doc_map, code),
         :xtypes => detect_xtypes(doc_map, code),
-        :meta => detect_meta(doc_map),
         :singleton => detect_singleton(doc_map, code),
         :requires => detect_list(:requires, doc_map, code),
         :uses => detect_list(:uses, doc_map, code),
@@ -228,6 +227,7 @@ module JsDuck
         :inheritable => !!doc_map[:inheritable],
         :deprecated => detect_deprecated(doc_map),
         :alias => doc_map[:alias] ? doc_map[:alias].first : nil,
+        :meta => detect_meta(doc_map),
       })
       hash[:id] = create_member_id(hash)
       return hash

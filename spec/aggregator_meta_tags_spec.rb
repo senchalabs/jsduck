@@ -91,4 +91,26 @@ describe JsDuck::Aggregator do
       }
     end
   end
+
+  describe "meta-tag inside class member" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @method foo
+         * Some description.
+         * @author John Doe
+         */
+      EOS
+    end
+
+    it "detects the meta tag" do
+      @doc[:meta].should == {
+        "author" => ["John Doe"],
+      }
+    end
+
+    it "leaves member description as is" do
+      @doc[:doc].should == "Some description."
+    end
+  end
 end

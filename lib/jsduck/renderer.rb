@@ -17,7 +17,7 @@ module JsDuck
             "<div class='doc-contents'>",
               render_private_class_notice,
               @cls[:doc],
-              render_meta_data,
+              render_meta_data(@cls[:meta]),
             "</div>",
             "<div class='members'>",
               render_member_sections,
@@ -35,9 +35,11 @@ module JsDuck
       ]
     end
 
-    def render_meta_data
+    def render_meta_data(meta_data)
+      return if meta_data.size == 0
+
       @meta_tags.map do |tag|
-        contents = @cls[:meta][tag.name]
+        contents = meta_data[tag.name]
         if contents
           tag.to_html(contents)
         else
@@ -273,6 +275,8 @@ module JsDuck
           "</div>",
         ]
       end
+
+      doc << render_meta_data(m[:meta])
 
       doc << render_params_and_return(m)
 
