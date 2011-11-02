@@ -130,10 +130,10 @@ module JsDuck
         file = @doc_context[:filename]
         line = @doc_context[:linenr]
         if !@relations[cls]
-          Logger.instance.warn("#{input} links to non-existing class", file, line)
+          Logger.instance.warn(:link, "#{input} links to non-existing class", file, line)
           text
         elsif member && !get_member(cls, member, type)
-          Logger.instance.warn("#{input} links to non-existing member", file, line)
+          Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
           text
         else
           link(cls, member, text, type)

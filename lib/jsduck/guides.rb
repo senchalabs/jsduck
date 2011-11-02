@@ -38,11 +38,11 @@ module JsDuck
       elsif File.exists?(tutorial_dir)
         in_dir = tutorial_dir
       else
-        return Logger.instance.warn("Guide #{guide_dir} / #{tutorial_dir} not found")
+        return Logger.instance.warn(:guide, "Guide #{guide_dir} / #{tutorial_dir} not found")
       end
 
       guide_file = in_dir + "/README.md"
-      return Logger.instance.warn("README.md not found in #{in_dir}") unless File.exists?(guide_file)
+      return Logger.instance.warn(:guide, "README.md not found in #{in_dir}") unless File.exists?(guide_file)
 
       Logger.instance.log("Writing guide", out_dir)
       # Copy the whole guide dir over

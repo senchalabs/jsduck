@@ -35,7 +35,7 @@ module JsDuck
     def copy(output_dir)
       @images.each_key do |img|
         unless copy_img(img, output_dir)
-          Logger.instance.warn("Image not found.", img)
+          Logger.instance.warn(:image, "Image not found.", img)
         end
       end
       report_unused
@@ -62,7 +62,7 @@ module JsDuck
     def report_unused
       @paths.each_pair do |path, map|
         map.each_pair do |img, used|
-          Logger.instance.warn("Image not used.", img) unless used
+          Logger.instance.warn(:image_unused, "Image not used.", img) unless used
         end
       end
     end

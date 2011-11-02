@@ -33,9 +33,6 @@ module JsDuck
       # Sets the nr of parallel processes to use.
       # Set to 0 to disable parallelization completely.
       @parallel = ParallelWrap.new(:in_processes => @opts.processes)
-      # Sets warnings and verbose mode on or off
-      Logger.instance.warnings = @opts.warnings
-      Logger.instance.verbose = @opts.verbose
       # Turn JSON pretty-printing on/off
       JsonDuck.pretty = @opts.pretty_json
     end
@@ -145,7 +142,9 @@ module JsDuck
           type = d[:tagname].to_s
           name = d[:name]
           file = d[:files][0]
-          Logger.instance.warn("Ignoring #{type}: #{name}", file[:filename], file[:linenr])
+          # This warning is shown when there are orphaned members,
+          # but the creation of global class has been turned off.
+          Logger.instance.warn(:global, "Ignoring #{type}: #{name}", file[:filename], file[:linenr])
         end
       end
       Relations.new(classes, @opts.external_classes)

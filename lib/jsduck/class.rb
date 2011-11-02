@@ -62,7 +62,7 @@ module JsDuck
         @relations[classname]
       elsif !@relations.ignore?(classname)
         context = @doc[:files][0]
-        Logger.instance.warn("Class #{classname} not found", context[:filename], context[:linenr])
+        Logger.instance.warn(:extend, "Class #{classname} not found", context[:filename], context[:linenr])
         nil
       end
     end
@@ -115,7 +115,7 @@ module JsDuck
       if @doc[:singleton] && context == :statics
         # Warn if singleton has static members
         if @doc[context][type].length > 0
-          Logger.instance.warn("Singleton class #{@doc[:name]} can't have static members, remove the @static tag.")
+          Logger.instance.warn(:sing_static, "Singleton class #{@doc[:name]} can't have static members, remove the @static tag.")
         end
         return {}
       end

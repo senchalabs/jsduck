@@ -1,5 +1,6 @@
 require 'optparse'
 require 'jsduck/meta_tag_loader'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -11,8 +12,6 @@ module JsDuck
     attr_accessor :ignore_global
     attr_accessor :external_classes
     attr_accessor :meta_tags
-    attr_accessor :warnings
-    attr_accessor :verbose
 
     # Customizing output
     attr_accessor :title
@@ -73,8 +72,6 @@ module JsDuck
       @meta_tags = []
       @meta_tag_paths = []
 
-      @warnings = true
-      @verbose = false
       @version = "3.0.1"
 
       # Customizing output
@@ -156,12 +153,13 @@ module JsDuck
           @meta_tag_paths << path
         end
 
-        opts.on('--no-warnings', "Turns off warnings.", " ") do
-          @warnings = false
+        opts.on('--no-warnings',
+          "Turns off all warnings. Same as --warnings=-all", " ") do
+          Logger.instance.set_warning(:all, false)
         end
 
         opts.on('-v', '--verbose', "This will fill up your console.", " ") do
-          @verbose = true
+          Logger.instance.verbose = true
         end
 
         opts.separator "Customizing output:"
@@ -270,6 +268,21 @@ module JsDuck
         opts.separator "Debugging:"
         opts.separator ""
 
+        opts.on('--warnings=+A,-B,+C', Array,
+          "Turns warnings selectively on/off.",
+          "+foo turns on a warning, -foo turns it off.",
+          "Possible warning types are:",
+          " ",
+          *Logger.instance.doc_warnings) do |warnings|
+          warnings.each do |op|
+            if op =~ /^([-+]?)(.*)$/
+              enable = !($1 == "-")
+              name = $2.to_sym
+              Logger.instance.set_warning(name, enable)
+            end
+          end
+        end
+
         # For debugging it's often useful to set --processes=0 to get deterministic results.
         opts.on('-p', '--processes=COUNT',
           "The number of parallel processes to use.",
@@ -369,7 +382,7 @@ module JsDuck
           @input_files << fname
         end
       else
-        $stderr.puts "Warning: File #{fname} not found"
+        Logger.instance.warn(nil, "File #{fname} not found")
       end
     end
 

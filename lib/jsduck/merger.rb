@@ -437,7 +437,7 @@ module JsDuck
             parent[:properties] = [] unless parent[:properties]
             parent[:properties] << it
           else
-            Logger.instance.warn("Ignoring subproperty #{$1}.#{$2}, no parent found with name '#{$1}'.", @filename, @linenr)
+            Logger.instance.warn(:subproperty, "Ignoring subproperty #{$1}.#{$2}, no parent found with name '#{$1}'.", @filename, @linenr)
           end
         else
           items << it
