@@ -30,7 +30,7 @@ Ext.define('Docs.view.examples.Inline', {
                 iconCls: 'code',
                 padding: '0 2 0 0',
                 margin: '0 3 0 0',
-                text: 'Code'
+                text: 'Code Editor'
             },
             {
                 padding: 0,
