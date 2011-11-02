@@ -1,5 +1,6 @@
 require 'jsduck/class'
 require 'jsduck/accessors'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -38,7 +39,12 @@ module JsDuck
     # When class exists, merge it with class node.
     # Otherwise add as new class.
     def add_class(cls)
-      old_cls = @classes[cls[:name]] || @alt_names[cls[:name]]
+      old_cls = @classes[cls[:name]]
+      if !old_cls && @alt_names[cls[:name]]
+        old_cls = @alt_names[cls[:name]]
+        warn_alt_name(cls[:name])
+      end
+
       if old_cls
         merge_classes(old_cls, cls)
         @current_class = old_cls
@@ -50,7 +56,8 @@ module JsDuck
         # Register all alternate names of class for lookup too
         cls[:alternateClassNames].each do |altname|
           if cls[:name] == altname
-            # A buggy documentation, ignore.
+            # A buggy documentation, warn.
+            warn_alt_name(altname)
           else
             @alt_names[altname] = cls
             # When an alternate name has been used as a class name before,
@@ -60,12 +67,17 @@ module JsDuck
               merge_classes(cls, @classes[altname])
               @documentation.delete(@classes[altname])
               @classes.delete(altname)
+              warn_alt_name(altname)
             end
           end
         end
 
         insert_orphans(cls)
       end
+    end
+
+    def warn_alt_name(name)
+      Logger.instance.warn(:alt_name, "Name #{name} used as both classname and alternate classname")
     end
 
     # Merges new class-doc into old one.

@@ -18,6 +18,7 @@ module JsDuck
         [:extend, "@extend or @mixin referring to unknown class"],
         [:link, "{@link} to unknown class or member"],
 
+        [:alt_name, "Name used as both classname and alternate classname"],
         [:name_missing, "Member or parameter has no name"],
         [:dup_param, "Method has two parameters with same name"],
         [:req_after_opt, "Required parameter comes after optional"],
