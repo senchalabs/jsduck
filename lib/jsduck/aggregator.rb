@@ -42,7 +42,7 @@ module JsDuck
       old_cls = @classes[cls[:name]]
       if !old_cls && @alt_names[cls[:name]]
         old_cls = @alt_names[cls[:name]]
-        warn_alt_name(cls[:name])
+        warn_alt_name(cls)
       end
 
       if old_cls
@@ -57,7 +57,7 @@ module JsDuck
         cls[:alternateClassNames].each do |altname|
           if cls[:name] == altname
             # A buggy documentation, warn.
-            warn_alt_name(altname)
+            warn_alt_name(cls)
           else
             @alt_names[altname] = cls
             # When an alternate name has been used as a class name before,
@@ -67,7 +67,7 @@ module JsDuck
               merge_classes(cls, @classes[altname])
               @documentation.delete(@classes[altname])
               @classes.delete(altname)
-              warn_alt_name(altname)
+              warn_alt_name(cls)
             end
           end
         end
@@ -76,8 +76,10 @@ module JsDuck
       end
     end
 
-    def warn_alt_name(name)
-      Logger.instance.warn(:alt_name, "Name #{name} used as both classname and alternate classname")
+    def warn_alt_name(cls)
+      file = cls[:files][0][:filename]
+      line = cls[:files][0][:linenr]
+      Logger.instance.warn(:alt_name, "Name #{cls[:name]} used as both classname and alternate classname", file, line)
     end
 
     # Merges new class-doc into old one.
