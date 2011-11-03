@@ -120,8 +120,8 @@ module JsDuck
           at_ftype
         elsif look(/@member\b/)
           at_member
-        elsif look(/@alias\b/)
-          at_alias
+        elsif look(/@inheritdoc\b/)
+          at_inheritdoc
         elsif look(/@deprecated\b/)
           at_deprecated
         elsif look(/@var\b/)
@@ -326,10 +326,10 @@ module JsDuck
       skip_white
     end
 
-    # matches @alias class.name#type-member
-    def at_alias
-      match(/@alias/)
-      add_tag(:alias)
+    # matches @inheritdoc class.name#type-member
+    def at_inheritdoc
+      match(/@inheritdoc/)
+      add_tag(:inheritdoc)
       skip_horiz_white
       if look(@ident_chain_pattern)
         @current_tag[:cls] = ident_chain

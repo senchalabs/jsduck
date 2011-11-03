@@ -226,7 +226,7 @@ module JsDuck
         :static => !!doc_map[:static],
         :inheritable => !!doc_map[:inheritable],
         :deprecated => detect_deprecated(doc_map),
-        :alias => doc_map[:alias] ? doc_map[:alias].first : nil,
+        :inheritdoc => doc_map[:inheritdoc] ? doc_map[:inheritdoc].first : nil,
         :meta => detect_meta(doc_map),
       })
       hash[:id] = create_member_id(hash)

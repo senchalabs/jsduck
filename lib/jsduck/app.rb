@@ -8,7 +8,7 @@ require 'jsduck/class'
 require 'jsduck/icons'
 require 'jsduck/search_data'
 require 'jsduck/relations'
-require 'jsduck/aliases'
+require 'jsduck/inherit_doc'
 require 'jsduck/exporter'
 require 'jsduck/renderer'
 require 'jsduck/parallel_wrap'
@@ -42,7 +42,7 @@ module JsDuck
       parsed_files = parallel_parse(@opts.input_files)
       result = aggregate(parsed_files)
       @relations = filter_classes(result)
-      Aliases.new(@relations).resolve_all
+      InheritDoc.new(@relations).resolve_all
       Lint.new(@relations).run
 
       @images = Images.new(@opts.images)

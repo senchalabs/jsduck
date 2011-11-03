@@ -2,7 +2,7 @@ require "jsduck/aggregator"
 require "jsduck/source_file"
 require "jsduck/class"
 require "jsduck/relations"
-require "jsduck/aliases"
+require "jsduck/inherit_doc"
 
 describe JsDuck::Aggregator do
 
@@ -10,25 +10,25 @@ describe JsDuck::Aggregator do
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))
     relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
-    JsDuck::Aliases.new(relations).resolve_all
+    JsDuck::InheritDoc.new(relations).resolve_all
     relations
   end
 
-  shared_examples_for "@alias" do
+  shared_examples_for "@inheritdoc" do
     it "original method keeps its name" do
       @orig[:name].should == "bar"
     end
 
-    it "alias keeps its name" do
-      @alias[:name].should == "foobar"
+    it "new method keeps its name" do
+      @inheritdoc[:name].should == "foobar"
     end
 
-    it "alias merges comment from original and its own comment" do
-      @alias[:doc].should == "Alias comment.\n\nOriginal comment."
+    it "inheritdoc merges comment from original and its own comment" do
+      @inheritdoc[:doc].should == "New comment.\n\nOriginal comment."
     end
   end
 
-  describe "@alias of method" do
+  describe "@inheritdoc of method" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
@@ -43,26 +43,26 @@ describe JsDuck::Aggregator do
         /** @class Core */
           /**
            * @method foobar
-           * Alias comment.
-           * @alias Foo#bar
+           * New comment.
+           * @inheritdoc Foo#bar
            */
       EOF
       @orig = @docs["Foo"][:members][:method][0]
-      @alias = @docs["Core"][:members][:method][0]
+      @inheritdoc = @docs["Core"][:members][:method][0]
     end
 
-    it_behaves_like "@alias"
+    it_behaves_like "@inheritdoc"
 
-    it "alias inherits parameters" do
-      @alias[:params].length.should == 2
+    it "inherits parameters" do
+      @inheritdoc[:params].length.should == 2
     end
 
-    it "alias inherits return value" do
-      @alias[:return][:type].should == "String"
+    it "inherits return value" do
+      @inheritdoc[:return][:type].should == "String"
     end
   end
 
-  describe "@alias of event" do
+  describe "@inheritdoc of event" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
@@ -76,26 +76,26 @@ describe JsDuck::Aggregator do
         /** @class Core */
           /**
            * @event foobar
-           * Alias comment.
-           * @alias Foo#bar
+           * New comment.
+           * @inheritdoc Foo#bar
            */
       EOF
       @orig = @docs["Foo"][:members][:event][0]
-      @alias = @docs["Core"][:members][:event][0]
+      @inheritdoc = @docs["Core"][:members][:event][0]
     end
 
-    it_behaves_like "@alias"
+    it_behaves_like "@inheritdoc"
 
-    it "alias inherits parameters" do
-      @alias[:params].length.should == 2
+    it "inherits parameters" do
+      @inheritdoc[:params].length.should == 2
     end
 
-    it "alias doesn't get return value" do
-      @alias[:return].should == nil
+    it "doesn't get return value" do
+      @inheritdoc[:return].should == nil
     end
   end
 
-  describe "@alias of cfg" do
+  describe "@inheritdoc of cfg" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
@@ -107,26 +107,26 @@ describe JsDuck::Aggregator do
         /** @class Core */
           /**
            * @cfg foobar
-           * Alias comment.
-           * @alias Foo#bar
+           * New comment.
+           * @inheritdoc Foo#bar
            */
       EOF
       @orig = @docs["Foo"][:members][:cfg][0]
-      @alias = @docs["Core"][:members][:cfg][0]
+      @inheritdoc = @docs["Core"][:members][:cfg][0]
     end
 
-    it_behaves_like "@alias"
+    it_behaves_like "@inheritdoc"
 
-    it "alias doesn't get parameters" do
-      @alias[:params].should == nil
+    it "doesn't get parameters" do
+      @inheritdoc[:params].should == nil
     end
 
-    it "alias doesn't get return value" do
-      @alias[:return].should == nil
+    it "doesn't get return value" do
+      @inheritdoc[:return].should == nil
     end
   end
 
-  describe "@alias of static method" do
+  describe "@inheritdoc of static method" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
@@ -139,19 +139,19 @@ describe JsDuck::Aggregator do
         /** @class Core */
           /**
            * @method foobar
-           * Alias comment.
-           * @alias Foo#bar
+           * New comment.
+           * @inheritdoc Foo#bar
            * @static
            */
       EOF
       @orig = @docs["Foo"][:statics][:method][0]
-      @alias = @docs["Core"][:statics][:method][0]
+      @inheritdoc = @docs["Core"][:statics][:method][0]
     end
 
-    it_behaves_like "@alias"
+    it_behaves_like "@inheritdoc"
   end
 
-  describe "@alias with type info" do
+  describe "@inheritdoc with type info" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
@@ -171,18 +171,18 @@ describe JsDuck::Aggregator do
         /** @class Core */
           /**
            * @cfg foobar
-           * Alias comment.
-           * @alias Foo#cfg-bar
+           * New comment.
+           * @inheritdoc Foo#cfg-bar
            */
       EOF
       @orig = @docs["Foo"][:members][:cfg][0]
-      @alias = @docs["Core"][:members][:cfg][0]
+      @inheritdoc = @docs["Core"][:members][:cfg][0]
     end
 
-    it_behaves_like "@alias"
+    it_behaves_like "@inheritdoc"
   end
 
-  describe "@alias without type info uses the type of itself" do
+  describe "@inheritdoc without type info uses the type of itself" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
@@ -202,18 +202,18 @@ describe JsDuck::Aggregator do
         /** @class Core */
           /**
            * @cfg foobar
-           * Alias comment.
-           * @alias Foo#bar
+           * New comment.
+           * @inheritdoc Foo#bar
            */
       EOF
       @orig = @docs["Foo"][:members][:cfg][0]
-      @alias = @docs["Core"][:members][:cfg][0]
+      @inheritdoc = @docs["Core"][:members][:cfg][0]
     end
 
-    it_behaves_like "@alias"
+    it_behaves_like "@inheritdoc"
   end
 
-  describe "recursive @aliases" do
+  describe "recursive @inheritdocs" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
@@ -228,26 +228,26 @@ describe JsDuck::Aggregator do
         /** @class HyperCore */
           /**
            * @method zap
-           * Alias2 comment.
-           * @alias Core#foobar
+           * New comment 2.
+           * @inheritdoc Core#foobar
            */
 
         /** @class Core */
           /**
            * @method foobar
-           * Alias comment.
-           * @alias Foo#bar
+           * New comment.
+           * @inheritdoc Foo#bar
            */
       EOF
       @orig = @docs["Foo"][:members][:method][0]
-      @alias = @docs["Core"][:members][:method][0]
-      @alias2 = @docs["HyperCore"][:members][:method][0]
+      @inheritdoc = @docs["Core"][:members][:method][0]
+      @inheritdoc2 = @docs["HyperCore"][:members][:method][0]
     end
 
-    it_behaves_like "@alias"
+    it_behaves_like "@inheritdoc"
 
-    it "alias2 inherites params from first method" do
-      @alias2[:params].length.should == 2
+    it "inheritdoc2 inherits params from first method" do
+      @inheritdoc2[:params].length.should == 2
     end
   end
 

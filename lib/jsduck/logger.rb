@@ -14,7 +14,7 @@ module JsDuck
       @verbose = false
       @warning_docs = [
         [:global, "Member doesn't belong to any class"],
-        [:alias, "@alias referring to unknown class or member"],
+        [:inheritdoc, "@inheritdoc referring to unknown class or member"],
         [:extend, "@extend or @mixin referring to unknown class"],
         [:link, "{@link} to unknown class or member"],
 
