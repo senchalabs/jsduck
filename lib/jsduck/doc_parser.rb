@@ -115,9 +115,11 @@ module JsDuck
         elsif look(/@type\b/)
           at_type
         elsif look(/@xtype\b/)
-          at_xtype
+          at_xtype(/@xtype/, "widget")
         elsif look(/@ftype\b/)
-          at_ftype
+          at_xtype(/@ftype/, "feature")
+        elsif look(/@ptype\b/)
+          at_xtype(/@ptype/, "plugin")
         elsif look(/@member\b/)
           at_member
         elsif look(/@inherit[dD]oc\b/)
@@ -316,21 +318,12 @@ module JsDuck
       skip_white
     end
 
-    # matches @xtype name
-    def at_xtype
-      match(/@xtype/)
+    # matches @xtype/ptype/ftype/... name
+    def at_xtype(tag, namespace)
+      match(tag)
       add_tag(:alias)
       skip_horiz_white
-      @current_tag[:name] = "widget." + (ident_chain || "")
-      skip_white
-    end
-
-    # matches @ftype name
-    def at_ftype
-      match(/@ftype/)
-      add_tag(:alias)
-      skip_horiz_white
-      @current_tag[:name] = "feature." + (ident_chain || "")
+      @current_tag[:name] = namespace + "." + (ident_chain || "")
       skip_white
     end
 

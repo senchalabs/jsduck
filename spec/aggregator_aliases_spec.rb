@@ -100,6 +100,34 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "class with @ftype" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @ftype foo
+         */
+      EOS
+    end
+    it "detects a feature alias" do
+      @doc[:aliases].should == {"feature" => ["foo"]}
+    end
+  end
+
+  describe "class with @ptype" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @ptype foo
+         */
+      EOS
+    end
+    it "detects a plugin alias" do
+      @doc[:aliases].should == {"plugin" => ["foo"]}
+    end
+  end
+
   describe "@xtype after @constructor" do
     before do
       @doc = parse(<<-EOS)[0]
