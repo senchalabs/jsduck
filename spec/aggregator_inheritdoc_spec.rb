@@ -62,6 +62,29 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "@inheritDoc" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @method bar
+           * Original comment.
+           */
+
+        /** @class Core */
+          /**
+           * @method foobar
+           * New comment.
+           * @inheritDoc Foo#bar
+           */
+      EOF
+      @orig = @docs["Foo"][:members][:method][0]
+      @inheritdoc = @docs["Core"][:members][:method][0]
+    end
+
+    it_behaves_like "@inheritdoc"
+  end
+
   describe "@inheritdoc of event" do
     before do
       @docs = parse(<<-EOF)
