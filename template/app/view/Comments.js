@@ -357,7 +357,7 @@ Ext.define('Docs.view.Comments', {
         Ext.Array.each(Ext.query('.member'), function(memberDom) {
             var memberEl = Ext.get(memberDom),
                 memberId = memberEl.getAttribute('id'),
-                memberCls = memberEl.down('.meta .docClass').getAttribute('rel'),
+                memberCls = memberEl.down('.meta .defined-in').getAttribute('rel'),
                 commentsWrap = memberEl.down('.comments a.name'),
                 memberTitle = memberEl.down('.title'),
                 numComments = Docs.commentMeta['class'][memberCls] && Docs.commentMeta['class'][memberCls][memberId],

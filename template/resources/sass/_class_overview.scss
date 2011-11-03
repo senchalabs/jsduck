@@ -115,21 +115,21 @@
     .meta {
       float: right;
       text-align: right; }
-    a.definedIn, a.viewSource {
-      font-family: "Helvetica", "Arial", sans-serif; }
-    a.definedIn {
+    .defined-in, .view-source {
+      font-family: "Helvetica", "Arial", sans-serif;
+      font-size: 0.9em; }
+    a.defined-in {
       color: #888888;
-      font-size: 0.9em;
       &:hover {
         color: $docs-link-hover-color; } }
-    a.viewSource {
+    a.view-source {
       color: rgba(0, 0, 0, 0);
       -webkit-transition: color 0.2s linear;
       font-size: 0.9em;
       &:hover {
         color: $docs-link-hover-color; } }
     &:hover {
-      a.viewSource {
+      a.view-source {
         color: rgba(128, 128, 128, 1);
         -webkit-transition: color 0.2s linear; } }
     &.open {

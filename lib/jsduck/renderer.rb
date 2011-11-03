@@ -167,11 +167,11 @@ module JsDuck
       first_child = is_first ? "first-child" : ""
       # shorthand to owner class
       owner = m[:owner]
-      # use classname "inherited" when member is not defined in this class
-      inherited = owner == @cls[:name] ? "not-inherited" : "inherited"
+      # is this method inherited from parent?
+      inherited = (owner != @cls[:name])
 
       return [
-        "<div id='#{m[:id]}' class='member #{first_child} #{inherited}'>",
+        "<div id='#{m[:id]}' class='member #{first_child} #{inherited ? 'inherited' : 'not-inherited'}'>",
           # leftmost column: expand button
           "<a href='#' class='side expandable'>",
             "<span>&nbsp;</span>",
@@ -179,8 +179,10 @@ module JsDuck
           # member name and type + link to owner class and source
           "<div class='title'>",
             "<div class='meta'>",
-              "<a href='#!/api/#{owner}' rel='#{owner}' class='definedIn docClass'>#{owner}</a><br/>",
-              "<a href='source/#{m[:files][0][:href]}' target='_blank' class='viewSource'>view source</a>",
+              inherited ? "<a href='#!/api/#{owner}' rel='#{owner}' class='defined-in docClass'>#{owner}</a>" :
+                          "<span class='defined-in' rel='#{owner}'>#{owner}</span>",
+              "<br/>",
+              "<a href='source/#{m[:files][0][:href]}' target='_blank' class='view-source'>view source</a>",
             "</div>",
             # method params signature or property type signature
             render_signature(m),

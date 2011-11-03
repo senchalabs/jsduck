@@ -125,7 +125,7 @@ Ext.define('Docs.controller.Classes', {
                     // Expand member when clicked
                     cmp.el.addListener('click', function(cmp, el) {
                         var member = Ext.get(el).up('.member'),
-                            docClass = member.down('.meta .docClass'),
+                            docClass = member.down('.meta .defined-in'),
                             clsName = docClass.getAttribute('rel'),
                             memberName = member.getAttribute('id');
 
