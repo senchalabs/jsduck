@@ -3,8 +3,13 @@ require "jsduck/source_file"
 require "jsduck/class"
 require "jsduck/relations"
 require "jsduck/inherit_doc"
+require "jsduck/logger"
 
 describe JsDuck::Aggregator do
+
+  before do
+    JsDuck::Logger.instance.set_warning(:inheritdoc, false)
+  end
 
   def parse(string)
     agr = JsDuck::Aggregator.new
@@ -285,6 +290,79 @@ describe JsDuck::Aggregator do
 
     it "inheritdoc2 inherits params from first method" do
       @inheritdoc2[:params].length.should == 2
+    end
+  end
+
+  describe "@inheritdoc without parameter" do
+    before do
+      @docs = parse(<<-EOF)
+        /**
+         * @class Parent
+         */
+          /**
+           * @method foo
+           * Original comment.
+           * @param arg1
+           * @param arg2
+           * @return {String}
+           */
+
+        /**
+         * @class Child
+         * @extends Parent
+         */
+          /**
+           * @method foo
+           * @inheritdoc
+           */
+      EOF
+      @method = @docs["Child"][:members][:method][0]
+    end
+
+    it "inherits docs from parent class method" do
+      @method[:doc].should == "Original comment."
+    end
+  end
+
+  describe "@inheritdoc without parent" do
+    before do
+      @docs = parse(<<-EOF)
+        /**
+         * @class Child
+         */
+          /**
+           * @method foo
+           * @inheritdoc
+           */
+      EOF
+      @method = @docs["Child"][:members][:method][0]
+    end
+
+    it "inherits nothing" do
+      @method[:doc].should == ""
+    end
+  end
+
+  describe "@inheritdoc without method in parent" do
+    before do
+      @docs = parse(<<-EOF)
+        /**
+         * @class Parent
+         */
+        /**
+         * @class Child
+         * @extends Parent
+         */
+          /**
+           * @method foo
+           * @inheritdoc
+           */
+      EOF
+      @method = @docs["Child"][:members][:method][0]
+    end
+
+    it "inherits nothing" do
+      @method[:doc].should == ""
     end
   end
 
