@@ -46,6 +46,34 @@ describe JsDuck::Aggregator do
     it_should_behave_like "multiple aliases"
   end
 
+  describe "class with @alias tag without name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @alias
+         */
+      EOS
+    end
+    it "ignores the alias" do
+      @doc[:aliases].should == {}
+    end
+  end
+
+  describe "class with @alias tag without namespace" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @alias foo
+         */
+      EOS
+    end
+    it "ignores the alias" do
+      @doc[:aliases].should == {}
+    end
+  end
+
   describe "class with @xtype" do
     before do
       @doc = parse(<<-EOS)[0]
@@ -56,6 +84,20 @@ describe JsDuck::Aggregator do
       EOS
     end
     it_should_behave_like "single alias"
+  end
+
+  describe "class with @xtype tag without name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @xtype
+         */
+      EOS
+    end
+    it "ignores the alias" do
+      @doc[:aliases].should == {}
+    end
   end
 
   describe "@xtype after @constructor" do

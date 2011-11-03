@@ -321,7 +321,7 @@ module JsDuck
       match(/@xtype/)
       add_tag(:alias)
       skip_horiz_white
-      @current_tag[:name] = "widget." + ident_chain
+      @current_tag[:name] = "widget." + (ident_chain || "")
       skip_white
     end
 
@@ -330,7 +330,7 @@ module JsDuck
       match(/@ftype/)
       add_tag(:alias)
       skip_horiz_white
-      @current_tag[:name] = "feature." + ident_chain
+      @current_tag[:name] = "feature." + (ident_chain || "")
       skip_white
     end
 
