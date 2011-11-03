@@ -62,8 +62,9 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "@inheritDoc" do
-    before do
+  # Helper to parse simple source codes to test if @inheritdoc tag
+  # aliases work
+  def parse_simple_source(at_tag)
       @docs = parse(<<-EOF)
         /** @class Foo */
           /**
@@ -75,11 +76,24 @@ describe JsDuck::Aggregator do
           /**
            * @method foobar
            * New comment.
-           * @inheritDoc Foo#bar
+           * #{at_tag} Foo#bar
            */
       EOF
       @orig = @docs["Foo"][:members][:method][0]
       @inheritdoc = @docs["Core"][:members][:method][0]
+  end
+
+  describe "@inheritDoc" do
+    before do
+      parse_simple_source("@inheritDoc")
+    end
+
+    it_behaves_like "@inheritdoc"
+  end
+
+  describe "@alias" do
+    before do
+      parse_simple_source("@alias")
     end
 
     it_behaves_like "@inheritdoc"
