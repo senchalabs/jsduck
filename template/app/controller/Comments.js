@@ -9,6 +9,10 @@ Ext.define('Docs.controller.Comments', {
     mixins: {
         authMixin: 'Docs.controller.AuthHelpers'
     },
+    
+    requires: [
+        "Docs.Syntax"
+    ],
 
     refs: [
         {
@@ -553,6 +557,7 @@ Ext.define('Docs.controller.Comments', {
             }
         } else {
             Docs.view.Comments.commentsTpl.append(comments, data);
+            Docs.Syntax.highlight(comments);
         }
 
         if (opts.hideCommentForm) {
@@ -604,6 +609,7 @@ Ext.define('Docs.controller.Comments', {
         }
 
         Docs.view.Comments.commentTpl.insertBefore(newCommentWrap, data);
+        Docs.Syntax.highlight(newCommentWrap.up(".comment-list"));
     },
 
     commentId: function(id) {
