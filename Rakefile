@@ -148,50 +148,23 @@ class JsDuckRunner
     @out_dir = OUT_DIR
     @ext_dir = EXT_DIR
     @animator_dir = ANIMATOR_DIR
-    @base_url = "http://projects.sencha.com/auth"
   end
 
   def add_options(options)
     @options += options
   end
 
-  def add_sdk(mode = nil)
-
+  def add_sdk
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/ext-js/4-0/" />
       <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4" />
-      <script type="text/javascript">Docs.enableComments = true; Docs.baseUrl = "#{@base_url}"; Docs.commentsDb = 'comments-ext-js-4';</script>
     EOHTML
-
-    if mode == 'export'
-
-      relative_sdk_path = "../"
-
-      ["template-min/extIframe.html", "template-min/welcome.html"].each do |file|
-        html = IO.read(file);
-
-        out = []
-
-        html.each_line do |line|
-          out << line.sub(/((src|href)="extjs\/)/, '\2="' + relative_sdk_path)
-        end
-
-        File.open(file, 'w') {|f| f.write(out) }
-      end
-
-      head_html = <<-EOHTML
-        <script type="text/javascript">
-          Docs.exampleBaseUrl = "#{relative_sdk_path}examples/";
-        </script>
-      EOHTML
-
-    end
 
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
       "--head-html", head_html,
       "--footer", "Ext JS 4.0.7 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{revision}",
-      "--welcome", "template/welcome.html",
+      "--welcome", "opt/extjs-welcome.html",
       "--guides", "#{@sdk_dir}/extjs/docs/guides.json",
       "--videos", "#{@sdk_dir}/extjs/docs/videos.json",
       "--examples", "#{@sdk_dir}/extjs/examples/examples.json",
@@ -205,6 +178,37 @@ class JsDuckRunner
       "#{@sdk_dir}/platform/src",
       "#{@sdk_dir}/platform/core/src",
     ]
+  end
+
+  def add_relative_examples_path
+    @options += ["--head-html", <<-EOHTML]
+      <script type="text/javascript">
+        Docs.exampleBaseUrl = "#{relative_sdk_path}examples/";
+      </script>
+    EOHTML
+  end
+
+  def add_comments(db_name)
+    comments_base_url = "http://projects.sencha.com/auth"
+    @options += ["--head-html", <<-EOHTML]
+      <script type="text/javascript">
+        Docs.enableComments = true;
+        Docs.baseUrl = "#{comments_base_url}";
+        Docs.commentsDb = "#{db_name}";
+      </script>
+    EOHTML
+  end
+
+  # For export of ExtJS, reference extjs from the parent dir
+  def make_paths_relative
+    relative_sdk_path = "../"
+    ["#{@out_dir}/eg-iframe.html", "#{@out_dir}/index.html"].each do |file|
+      out = []
+      IO.read(file).each_line do |line|
+        out << line.sub(/((src|href)="extjs\/)/, '\2="' + relative_sdk_path)
+      end
+      File.open(file, 'w') {|f| f.write(out) }
+    end
   end
 
   def add_ext3
@@ -270,7 +274,6 @@ class JsDuckRunner
     head_html = <<-EOHTML
       <link rel="canonical" href="http://docs.sencha.com/touch/2-0/" />
       <meta name="description" content="Sencha Touch 2.0 API Documentation from Sencha. Documentation on how to create Javascript applications with Sencha Touch" />
-      <script type="text/javascript">Docs.enableComments = true; Docs.baseUrl = "#{@base_url}"; Docs.commentsDb = 'comments-touch-2';</script>
     EOHTML
 
     @options += [
@@ -278,7 +281,7 @@ class JsDuckRunner
       "--head-html", head_html,
       "--footer", "Sencha Touch 2.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
       "--categories", "#{@sdk_dir}/touch/docs/categories.json",
-      "--welcome", "template/touch-welcome.html",
+      "--welcome", "opt/touch-welcome.html",
       "--videos", "#{@sdk_dir}/touch/docs/videos.json",
       "--guides", "#{@sdk_dir}/touch/docs/guides.json",
       "--examples", "#{@sdk_dir}/touch/docs/examples.json",
@@ -288,7 +291,7 @@ class JsDuckRunner
       "--external=google.maps.Map,google.maps.LatLng",
       "--builtin-classes",
       "--img", "<p class='screenshot'><img src='%u' alt='%a'><span>%a</span></p>",
-      "--eg-iframe", "template/touch-iframe.html",
+      "--eg-iframe", "opt/touch-iframe.html",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 
@@ -576,14 +579,16 @@ task :sdk, [:mode] => :sass do |t, args|
   compress if mode == "export" || mode == "live"
 
   runner = JsDuckRunner.new
-  runner.add_sdk(mode)
+  runner.add_sdk
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_sdk_export_notice if mode == "export"
   runner.add_google_analytics if mode == "live"
+  runner.add_comments('comments-ext-js-4') if mode == "debug" || mode == "live"
   runner.run
 
   runner.copy_sdk_examples if mode == "export" || mode == "live"
+  runner.make_paths_relative if mode == "export"
 end
 
 desc "Run JSDuck on Docs app itself"
@@ -663,6 +668,7 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.set_touch2_src if mode == "export"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"
+  runner.add_comments('comments-touch-2') if mode == "debug" || mode == "live"
   runner.run
 
   runner.copy_touch2_build if mode != "export"
