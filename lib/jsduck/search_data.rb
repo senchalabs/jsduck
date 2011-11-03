@@ -30,7 +30,7 @@ module JsDuck
         :cls => cls.full_name,
         :member => cls.short_name,
         :type => :class,
-        :xtypes => cls[:xtypes]
+        :aliases => cls[:aliases]
       }
     end
 

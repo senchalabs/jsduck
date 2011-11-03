@@ -167,13 +167,13 @@ Ext.define('Docs.controller.Search', {
             // Otherwise search from just the member name (e.g. "focus" or "Component")
             var name = hasDot ? r.cls + (r.type === "class" ? "" : "." + r.member) : r.member;
 
-            if (r.xtypes && this.matchXType(r.xtypes, reFull)) {
+            if (r.aliases && this.matchAlias(r.aliases, reFull)) {
                 results[xFull].push(r);
             }
             else if (reFull.test(name)) {
                 results[r.type === "class" ? clsFull : mFull].push(r);
             }
-            else if (r.xtypes && this.matchXType(r.xtypes, reBeg)) {
+            else if (r.aliases && this.matchAlias(r.aliases, reBeg)) {
                 results[xBeg].push(r);
             }
             else if (reBeg.test(name)) {
@@ -187,11 +187,11 @@ Ext.define('Docs.controller.Search', {
         return Ext.Array.flatten(results);
     },
 
-    // true if xtype, ptype, ftype, etc matches regex
-    matchXType: function(xtypes, regex) {
-        for (var key in xtypes) {
-            if (xtypes.hasOwnProperty(key)) {
-                if (Ext.Array.some(xtypes[key], function(x) {return regex.test(x);})) {
+    // true if alias matches regex
+    matchAlias: function(aliases, regex) {
+        for (var key in aliases) {
+            if (aliases.hasOwnProperty(key)) {
+                if (Ext.Array.some(aliases[key], function(x) {return regex.test(x);})) {
                     return true;
                 }
             }

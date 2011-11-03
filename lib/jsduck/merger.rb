@@ -123,7 +123,7 @@ module JsDuck
         :extends => detect_extends(doc_map, code),
         :mixins => detect_list(:mixins, doc_map, code),
         :alternateClassNames => detect_list(:alternateClassNames, doc_map, code),
-        :xtypes => detect_xtypes(doc_map, code),
+        :aliases => detect_aliases(doc_map, code),
         :singleton => detect_singleton(doc_map, code),
         :requires => detect_list(:requires, doc_map, code),
         :uses => detect_list(:uses, doc_map, code),
@@ -330,28 +330,28 @@ module JsDuck
       end
     end
 
-    def detect_xtypes(doc_map, code)
+    def detect_aliases(doc_map, code)
       if doc_map[:xtype]
         {"widget" => doc_map[:xtype].map {|tag| tag[:name] } }
       elsif code[:xtype] || code[:alias]
-        xtypes = {}
+        aliases = {}
         (code[:xtype] || []).each do |a|
-          if xtypes["widget"]
-            xtypes["widget"] << a
+          if aliases["widget"]
+            aliases["widget"] << a
           else
-            xtypes["widget"] = [a]
+            aliases["widget"] = [a]
           end
         end
         (code[:alias] || []).each do |a|
           if a =~ /^([\w.]+)\.(\w+)$/
-            if xtypes[$1]
-              xtypes[$1] << $2
+            if aliases[$1]
+              aliases[$1] << $2
             else
-              xtypes[$1] = [$2]
+              aliases[$1] = [$2]
             end
           end
         end
-        xtypes
+        aliases
       else
         {}
       end

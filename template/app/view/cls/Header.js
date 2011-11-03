@@ -19,7 +19,7 @@ Ext.define('Docs.view.cls.Header', {
                 '<a href="#" class="class-source-link">{name}',
                   '<span class="class-source-tip">View source...</span>',
                 '</a>',
-                '{[this.renderXTypes(values.xtypes)]}',
+                '{[this.renderAliases(values.aliases)]}',
             '</h1>',
             Docs.showPrintButton ? '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>' : '',
             {
@@ -34,14 +34,14 @@ Ext.define('Docs.view.cls.Header', {
                         return "class";
                     }
                 },
-                renderXTypes: function(xtypes) {
+                renderAliases: function(aliases) {
                     var titles = {
                         widget: "xtype",
                         plugin: "ptype",
                         feature: "ftype"
                     };
                     var r = [];
-                    xtypes && Ext.Object.each(xtypes, function(ns, types) {
+                    aliases && Ext.Object.each(aliases, function(ns, types) {
                         r.push((titles[ns] || ns) + ": " + types.join(", "));
                     });
 

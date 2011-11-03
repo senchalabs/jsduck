@@ -93,7 +93,7 @@ module JsDuck
         old[tag] = old[tag] + new[tag]
       end
       # Merge hashes of arrays
-      [:xtypes, :meta].each do |tag|
+      [:aliases, :meta].each do |tag|
         new[tag].each_pair do |key, contents|
           old[tag][key] = (old[tag][key] || []) + contents
         end
