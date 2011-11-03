@@ -103,7 +103,7 @@ module JsDuck
           end
         end
 
-        if tag[:tagname] == :xtype
+        if tag[:tagname] == :alias
           groups[:class] << tag
         elsif group_name == :cfg
           groups[:cfg].last << tag
@@ -331,30 +331,34 @@ module JsDuck
     end
 
     def detect_aliases(doc_map, code)
-      if doc_map[:xtype]
-        {"widget" => doc_map[:xtype].map {|tag| tag[:name] } }
+      if doc_map[:alias]
+        build_aliases_hash(doc_map[:alias].map {|tag| tag[:name] })
       elsif code[:xtype] || code[:alias]
-        aliases = {}
-        (code[:xtype] || []).each do |a|
-          if aliases["widget"]
-            aliases["widget"] << a
-          else
-            aliases["widget"] = [a]
-          end
-        end
-        (code[:alias] || []).each do |a|
-          if a =~ /^([\w.]+)\.(\w+)$/
-            if aliases[$1]
-              aliases[$1] << $2
-            else
-              aliases[$1] = [$2]
-            end
-          end
-        end
-        aliases
+        hash = {}
+        build_aliases_hash(code[:xtype].map {|xtype| "widget."+xtype }, hash) if code[:xtype]
+        build_aliases_hash(code[:alias], hash) if code[:alias]
+        hash
       else
         {}
       end
+    end
+
+    # Given array of full alias names like "foo.bar", "foo.baz"
+    # build hash like {"foo" => ["bar", "baz"]}
+    #
+    # When hash given as second argument, then merges the aliases into
+    # it instead of creating a new hash.
+    def build_aliases_hash(aliases, hash={})
+      aliases.each do |a|
+        if a =~ /^([\w.]+)\.(\w+)$/
+          if hash[$1]
+            hash[$1] << $2
+          else
+            hash[$1] = [$2]
+          end
+        end
+      end
+      hash
     end
 
     def detect_meta(doc_map)

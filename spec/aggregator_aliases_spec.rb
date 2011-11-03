@@ -21,6 +21,31 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "class with @alias" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @alias widget.foo
+         */
+      EOS
+    end
+    it_should_behave_like "single alias"
+  end
+
+  describe "class with multiple @alias tags" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @alias widget.foo
+         * @alias widget.bar
+         */
+      EOS
+    end
+    it_should_behave_like "multiple aliases"
+  end
+
   describe "class with @xtype" do
     before do
       @doc = parse(<<-EOS)[0]
@@ -68,6 +93,20 @@ describe JsDuck::Aggregator do
         /** */
         Ext.define('MyClass', {
           alias: 'widget.foo'
+        });
+      EOS
+    end
+    it_should_behave_like "single alias"
+  end
+
+  describe "Ext.define() with @alias overriding alias" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @alias widget.foo
+         */
+        Ext.define('MyClass', {
+          alias: 'widget.xxx'
         });
       EOS
     end

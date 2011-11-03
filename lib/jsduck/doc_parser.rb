@@ -120,8 +120,14 @@ module JsDuck
           at_ftype
         elsif look(/@member\b/)
           at_member
-        elsif look(/@(inherit[dD]oc|alias)\b/)
+        elsif look(/@inherit[dD]oc\b/)
           at_inheritdoc
+        elsif look(/@alias\s+[\w.]+#\w+/)
+          # For backwards compatibility.
+          # @alias tag was used as @inheritdoc before
+          at_inheritdoc
+        elsif look(/@alias/)
+          at_alias
         elsif look(/@deprecated\b/)
           at_deprecated
         elsif look(/@var\b/)
@@ -302,27 +308,38 @@ module JsDuck
       skip_white
     end
 
+    # matches @member name ...
+    def at_member
+      match(/@member/)
+      add_tag(:member)
+      maybe_ident_chain(:member)
+      skip_white
+    end
+
     # matches @xtype name
     def at_xtype
       match(/@xtype/)
-      add_tag(:xtype)
-      maybe_ident_chain(:name)
+      add_tag(:alias)
+      skip_horiz_white
+      @current_tag[:name] = "widget." + ident_chain
       skip_white
     end
 
     # matches @ftype name
     def at_ftype
       match(/@ftype/)
-      add_tag(:ftype)
-      maybe_ident_chain(:name)
+      add_tag(:alias)
+      skip_horiz_white
+      @current_tag[:name] = "feature." + ident_chain
       skip_white
     end
 
-    # matches @member name ...
-    def at_member
-      match(/@member/)
-      add_tag(:member)
-      maybe_ident_chain(:member)
+    # matches @alias <ident-chain>
+    def at_alias
+      match(/@alias/)
+      add_tag(:alias)
+      skip_horiz_white
+      @current_tag[:name] = ident_chain
       skip_white
     end
 
