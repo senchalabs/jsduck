@@ -38,6 +38,7 @@ Ext.define('Docs.view.examples.Inline', {
                 iconCls: 'preview',
                 text: 'Live Preview'
             },
+            "->",
             {
                 padding: 0,
                 margin: 0,
