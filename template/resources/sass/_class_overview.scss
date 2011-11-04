@@ -127,7 +127,7 @@
       @include transition(color, 0.2s, linear);
       font-size: 0.9em;
       &:hover {
-        -webkit-transition: color 0.2s linear;
+        @include transition(color, 0.2s, linear);
         -webkit-transition-delay: 0.5s;
         color: $docs-link-hover-color; } }
     &:hover {
