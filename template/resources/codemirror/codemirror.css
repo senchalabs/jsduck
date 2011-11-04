@@ -2,6 +2,7 @@
   line-height: 1em;
   font-family: monospace;
   font-family: "Menlo", "Courier New", Courier, monospace;
+  cursor: text;
 }
 
 .CodeMirror-scroll {

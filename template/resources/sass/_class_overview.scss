@@ -127,11 +127,14 @@
       @include transition(color, 0.2s, linear);
       font-size: 0.9em;
       &:hover {
+        -webkit-transition: color 0.2s linear;
+        -webkit-transition-delay: 0.5s;
         color: $docs-link-hover-color; } }
     &:hover {
       a.view-source {
         color: rgba(128, 128, 128, 1);
-        @include transition(color, 0.2s, linear); } }
+        @include transition(color, 0.2s, linear);
+        -webkit-transition-delay: 0.5s; } }
     &.open {
       a.side.expandable {
         @include horizontal-gradient(#ebf3fe, #d9e8fc);

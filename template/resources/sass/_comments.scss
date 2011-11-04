@@ -181,6 +181,7 @@
       .deleteComment,
       .vote {
         @include transition(opacity, 0.2s, linear);
+        -webkit-transition-delay: 1s;
         opacity: 1; } } }
   .target {
     color: #666;
