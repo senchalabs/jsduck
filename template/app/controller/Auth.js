@@ -36,8 +36,8 @@ Ext.define('Docs.controller.Auth', {
             "available"
         );
 
-        if (Ext.isIE) {
-            Docs.enableComments = Ext.ieVersion >= 8;
+        if (!Docs.enableComments) {
+            return;
         }
 
         this.control({
@@ -67,10 +67,6 @@ Ext.define('Docs.controller.Auth', {
      * Checks if a user is logged in server side and sets up a local session if they are.
      */
     getSession: function() {
-        if (!Docs.enableComments) {
-            return;
-        }
-
         Ext.Ajax.request({
             url: Docs.baseUrl + '/session',
             params: { sid: this.sid },

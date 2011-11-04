@@ -188,11 +188,13 @@ class JsDuckRunner
     EOHTML
   end
 
+  # Enables comments when CORS is supported by browser.
+  # This excludes Opera and IE < 8
   def add_comments(db_name)
     comments_base_url = "http://projects.sencha.com/auth"
     @options += ["--head-html", <<-EOHTML]
       <script type="text/javascript">
-        Docs.enableComments = true;
+        Docs.enableComments = ("withCredentials" in new XMLHttpRequest()) || (typeof XDomainRequest !== "undefined");
         Docs.baseUrl = "#{comments_base_url}";
         Docs.commentsDb = "#{db_name}";
       </script>

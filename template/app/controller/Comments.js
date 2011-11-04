@@ -9,7 +9,7 @@ Ext.define('Docs.controller.Comments', {
     mixins: {
         authMixin: 'Docs.controller.AuthHelpers'
     },
-    
+
     requires: [
         "Docs.Syntax"
     ],
@@ -45,6 +45,10 @@ Ext.define('Docs.controller.Comments', {
              */
             'remove'
         );
+
+        if (!Docs.enableComments) {
+            return;
+        }
 
         this.getController('Auth').on({
             available: function() {

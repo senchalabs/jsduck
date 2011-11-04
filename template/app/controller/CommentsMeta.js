@@ -35,6 +35,10 @@ Ext.define('Docs.controller.CommentsMeta', {
             'afterLoad'
         );
 
+        if (!Docs.enableComments) {
+            return;
+        }
+
         this.getController('Auth').on({
             available: function() {
                 this.fetchCommentMeta();
