@@ -18,14 +18,14 @@
     font-family: $docs-font;
     font-size: 13px;
     position: relative;
-    -webkit-transition: background-color 0.15s linear;
+    @include transition(background-color, 0.15s, linear);
     @include icons; }
   // Use gray for private classes
   .private .x-grid-cell-inner a {
     color: #666; }
   .x-grid-row-over {
     .x-grid-cell-inner {
-      -webkit-transition: background-color 0.15s linear; } }
+      @include transition(background-color, 0.15s, linear); } }
   .x-panel-body {
     border-color: #d4d4d4;
     background: $docs-bg-color; } }

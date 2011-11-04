@@ -180,7 +180,7 @@
       .editComment,
       .deleteComment,
       .vote {
-        -webkit-transition: opacity 0.2s linear;
+        @include transition(opacity, 0.2s, linear);
         opacity: 1; } } }
   .target {
     color: #666;
@@ -215,13 +215,13 @@
       right: 110px;
       color: #999;
       opacity: 0;
-      -webkit-transition: opacity 0.2s linear;
+      @include transition(opacity, 0.2s, linear);
       position: absolute; }
     .editComment {
       right: 160px;
       color: #999;
       opacity: 0;
-      -webkit-transition: opacity 0.2s linear;
+      @include transition(opacity, 0.2s, linear);
       position: absolute; }
     .vote {
       position: absolute;

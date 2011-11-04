@@ -124,14 +124,14 @@
         color: $docs-link-hover-color; } }
     a.view-source {
       color: rgba(0, 0, 0, 0);
-      -webkit-transition: color 0.2s linear;
+      @include transition(color, 0.2s, linear);
       font-size: 0.9em;
       &:hover {
         color: $docs-link-hover-color; } }
     &:hover {
       a.view-source {
         color: rgba(128, 128, 128, 1);
-        -webkit-transition: color 0.2s linear; } }
+        @include transition(color, 0.2s, linear); } }
     &.open {
       a.side.expandable {
         @include horizontal-gradient(#ebf3fe, #d9e8fc);

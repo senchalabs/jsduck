@@ -76,10 +76,10 @@ Ext.define('Docs.view.cls.Header', {
 
         // show "View source..." tip below class name on hover
         this.classLinkEvent("mouseover", function() {
-            this.el.down(".class-source-tip").show();
+            this.el.down(".class-source-tip").addCls("hover");
         }, this);
         this.classLinkEvent("mouseout", function() {
-            this.el.down(".class-source-tip").hide();
+            this.el.down(".class-source-tip").removeCls("hover");
         }, this);
     },
 

@@ -4,6 +4,7 @@
 // Notably h1 and print button.
 //
 @import "variables";
+@import "mixins";
 
 #center-container {
   h1 {
@@ -40,7 +41,10 @@
       position: absolute;
       top: 35px;
       left: 100px;
-      display: none; }
+      color: #fff;
+      @include transition(color, 0.2s, linear);
+      &.hover {
+        color: #929292; } }
 
     // Yellow text PRIVATE on private classes
     span.private {

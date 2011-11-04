@@ -42,6 +42,11 @@
   opacity: $opacity;
   filter: alpha(opacity=$opacity*100); }
 
+@mixin transition($property, $duration, $timingFunction) {
+  -webkit-transition: $property $duration $timingFunction;
+  -moz-transition: $property $duration $timingFunction;
+  -o-transition: $property $duration $timingFunction; }
+
 @mixin icons {
   .icon-pkg {
     background: url(../images/icons.png) no-repeat 0 -0px; }
