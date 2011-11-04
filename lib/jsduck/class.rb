@@ -89,7 +89,8 @@ module JsDuck
     #
     # See members_hash for details.
     def members(type, context=:members)
-      ms = members_hash(type, context).values.sort {|a,b| a[:name] <=> b[:name] }
+      ms = members_hash(type, context).values.find_all {|m| !m[:private] }
+      ms.sort! {|a,b| a[:name] <=> b[:name] }
       type == :method ? constructor_first(ms) : ms
     end
 
@@ -104,7 +105,7 @@ module JsDuck
       ms
     end
 
-    # Returns hash of public members of class (and of parent classes
+    # Returns hash of all members in class (and of parent classes
     # and mixin classes).  Members are methods, properties, cfgs,
     # events (member type is specified through 'type' parameter).
     #
@@ -148,7 +149,7 @@ module JsDuck
     def local_members_hash(type, context)
       local_members = {}
       (@doc[context][type] || []).each do |m|
-        local_members[m[:name]] = m if !m[:private]
+        local_members[m[:name]] = m
       end
       local_members
     end

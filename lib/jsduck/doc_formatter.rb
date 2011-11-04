@@ -135,6 +135,9 @@ module JsDuck
         elsif member && !get_member(cls, member, type)
           Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
           text
+        elsif member && !public_member?(cls, member, type)
+          Logger.instance.warn(:link, "#{input} links to private member", file, line)
+          text
         else
           link(cls, member, text, type)
         end
@@ -153,7 +156,7 @@ module JsDuck
         member = $4
         after = $5
 
-        if @relations[cls] && (member ? get_member(cls, member) : cls =~ /\./)
+        if @relations[cls] && (member ? public_member?(cls, member) : cls =~ /\./)
           label = member ? cls+"."+member : cls
           before + link(cls, member, label) + after
         else
@@ -202,8 +205,13 @@ module JsDuck
       end
     end
 
+    def public_member?(cls, member, type=nil)
+      m = get_member(cls, member, type)
+      return m && !m[:private]
+    end
+
     def get_member(cls, member, type=nil)
-      @relations[cls] && @relations[cls].get_member(member, type)
+      return @relations[cls] && @relations[cls].get_member(member, type)
     end
 
     # Formats doc-comment for placement into HTML.
