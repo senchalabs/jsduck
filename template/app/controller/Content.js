@@ -53,7 +53,7 @@ Ext.define('Docs.controller.Content', {
      * @return {String} URL
      */
     getBaseUrl: function() {
-        return document.location.href.replace(/#.*/, "").replace(/index.html/, "");
+        return document.location.href.replace(/\/?(index.html)?#.*/, "");
     },
 
     /**
