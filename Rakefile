@@ -177,6 +177,7 @@ class JsDuckRunner
       "#{@sdk_dir}/extjs/src",
       "#{@sdk_dir}/platform/src",
       "#{@sdk_dir}/platform/core/src",
+      "#{@sdk_dir}/extjs/examples/ux",
     ]
   end
 
