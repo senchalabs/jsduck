@@ -18,7 +18,7 @@
     background: url(../images/comment-bubble.png) no-repeat 1px -26px; }
 
 .comments-section {
-  .comments {
+  .comments-div {
     @include member-expander; } }
 #commentindex {
   padding: 5px; }
@@ -47,7 +47,7 @@
   &:hover span {
     background-position: -59px -25px; } }
 
-.comments {
+.comments-div {
   border-width: 1px 0;
   border-style: solid;
   border-color: #e0e0e0;

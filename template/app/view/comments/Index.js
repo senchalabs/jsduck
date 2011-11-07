@@ -12,5 +12,13 @@ Ext.define('Docs.view.comments.Index', {
     items: [
         { xtype: 'container', html: '<h1>Recent Comments</h1>' },
         { xtype: 'container', id: 'recentcomments' }
-    ]
+    ],
+
+    /**
+     * Returns tab config for comments page.
+     * @return {Object}
+     */
+    getTab: function() {
+        return Docs.enableComments ? {cls: 'comments', href: '#!/comment', tooltip: 'Comments'} : false;
+    }
 });

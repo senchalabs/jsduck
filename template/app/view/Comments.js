@@ -20,7 +20,7 @@ Ext.define('Docs.view.Comments', {
         );
 
         var commentsMeta = [
-            '<div class="comments first-child" id="comments-{id}">',
+            '<div class="comments-div first-child" id="comments-{id}">',
                 '<a href="#" class="side toggleComments"><span></span></a>',
                 '<a href="#" class="name toggleComments">', numComments.join(''), '</a>',
             '</div>'
@@ -358,7 +358,7 @@ Ext.define('Docs.view.Comments', {
             var memberEl = Ext.get(memberDom),
                 memberId = memberEl.getAttribute('id'),
                 memberCls = memberEl.down('.meta .defined-in').getAttribute('rel'),
-                commentsWrap = memberEl.down('.comments a.name'),
+                commentsWrap = memberEl.down('.comments-div a.name'),
                 memberTitle = memberEl.down('.title'),
                 numComments = Docs.commentMeta['class'][memberCls] && Docs.commentMeta['class'][memberCls][memberId],
                 memberTitleComments = memberTitle.down('.toggleMemberComments');

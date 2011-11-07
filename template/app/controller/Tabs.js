@@ -30,6 +30,10 @@ Ext.define('Docs.controller.Tabs', {
             selector: '#exampleindex'
         },
         {
+            ref: 'commentIndex',
+            selector: '#commentindex'
+        },
+        {
             ref: 'classTree',
             selector: '#classtree'
         },
@@ -118,6 +122,10 @@ Ext.define('Docs.controller.Tabs', {
             this.getExampleIndex().getTab()
         ], function(x){return x;}));
 
+        // just initialize the comments tab.
+        // show/hide of it is performed separately.
+        this.commentsTab = this.getCommentIndex().getTab();
+
         var tabs = Docs.Settings.get('tabs');
         if (tabs) {
             Ext.Array.forEach(tabs, function(url) {
@@ -125,6 +133,22 @@ Ext.define('Docs.controller.Tabs', {
             }, this);
         }
         Docs.History.notifyTabsLoaded();
+    },
+
+    /**
+     * Makes comments tab visible.
+     */
+    showCommentsTab: function() {
+        var tabs = this.getDoctabs().getStaticTabs();
+        this.getDoctabs().setStaticTabs(tabs.concat(this.commentsTab));
+    },
+
+    /**
+     * Hides comments tab.
+     */
+    hideCommentsTab: function() {
+        var tabs = this.getDoctabs().getStaticTabs();
+        this.getDoctabs().setStaticTabs(Ext.Array.remove(tabs, this.commentsTab));
     },
 
     /**

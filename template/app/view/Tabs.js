@@ -71,6 +71,14 @@ Ext.define('Docs.view.Tabs', {
     },
 
     /**
+     * Returns array of static tab configs.
+     * @return {Object[]} See {@link #setStaticTabs} for details.
+     */
+    getStaticTabs: function(tab) {
+        return this.staticTabs;
+    },
+
+    /**
      * Adds a new tab
      *
      * @param {Object} tab
@@ -483,6 +491,9 @@ Ext.define('Docs.view.Tabs', {
         }
         else if (/#!?\/example/.test(url)) {
             return 'Examples';
+        }
+        else if (/#!?\/comment/.test(url)) {
+            return 'Comments';
         }
         else {
             return 'Index';

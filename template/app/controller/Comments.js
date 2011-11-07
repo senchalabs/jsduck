@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.controller.Comments', {
     extend: 'Docs.controller.Content',
-    baseUrl: '#!/comments',
+    baseUrl: '#!/comment',
     title: 'Comments',
 
     mixins: {
@@ -56,9 +56,11 @@ Ext.define('Docs.controller.Comments', {
             },
             loggedIn:  function() {
                 Docs.view.Comments.renderNewCommentForms();
+                this.isMod() && this.getController("Tabs").showCommentsTab();
             },
             loggedOut: function() {
                 Docs.view.Comments.renderNewCommentForms();
+                this.getController("Tabs").hideCommentsTab();
             },
             scope: this
         });
@@ -119,7 +121,7 @@ Ext.define('Docs.controller.Comments', {
             'classoverview toolbar': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function() {
-                        var commentsDiv = Ext.get(Ext.query('#m-comment .comments')[0]);
+                        var commentsDiv = Ext.get(Ext.query('#m-comment .comments-div')[0]);
                         this.getOverview().scrollToEl('#m-comment', -20);
                         this.openComments(commentsDiv);
                     }, this, {
@@ -128,6 +130,10 @@ Ext.define('Docs.controller.Comments', {
                 }
             }
         });
+    },
+
+    isMod: function() {
+        return this.getController('Auth').currentUser.mod;
     },
 
     enableComments: function() {
@@ -174,7 +180,7 @@ Ext.define('Docs.controller.Comments', {
         }
 
         var postButton = Ext.get(el),
-            comments = postButton.up('.comments'),
+            comments = postButton.up('.comments-div'),
             id = comments.getAttribute('id'),
             target = Ext.JSON.encode(this.commentId(id)),
             textarea = comments.down('textarea').dom,
@@ -311,7 +317,7 @@ Ext.define('Docs.controller.Comments', {
      */
     deleteComment: function(cmp, el) {
         var id = Ext.get(el).up('.comment').getAttribute('id'),
-            commentsEl = Ext.get(el).up('.comments'),
+            commentsEl = Ext.get(el).up('.comments-div'),
             cls = commentsEl && commentsEl.getAttribute('id');
 
         Ext.Ajax.request({
@@ -459,7 +465,7 @@ Ext.define('Docs.controller.Comments', {
     },
 
     toggleComments: function(cmp, el) {
-        var commentsDiv = Ext.get(el).up('.comments');
+        var commentsDiv = Ext.get(el).up('.comments-div');
 
         if (commentsDiv.hasCls('open')) {
             this.closeComments(commentsDiv);
@@ -500,7 +506,7 @@ Ext.define('Docs.controller.Comments', {
 
     showMemberComments: function(cml, el) {
         var member = Ext.get(el).up('.member'),
-            commentsDiv = member.down('.comments');
+            commentsDiv = member.down('.comments-div');
 
         member.addCls('open');
         this.openComments(commentsDiv);
