@@ -245,7 +245,7 @@ Ext.define('Docs.controller.Comments', {
      */
     fetchRecentComments: function(id, startkey) {
         var url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_date',
-            limit = 25;
+            limit = 100;
 
         var params = {
             descending: true,
