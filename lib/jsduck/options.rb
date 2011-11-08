@@ -23,6 +23,7 @@ module JsDuck
     attr_accessor :guides
     attr_accessor :videos
     attr_accessor :examples
+    attr_accessor :stats
     attr_accessor :categories_path
     attr_accessor :pretty_json
     attr_accessor :images
@@ -84,6 +85,7 @@ module JsDuck
       @guides = nil
       @videos = nil
       @examples = nil
+      @stats = false
       @categories_path = nil
       @pretty_json = false
       @images = []
@@ -207,6 +209,10 @@ module JsDuck
         opts.on('--examples=PATH',
           "Path JSON file describing the examples.", " ") do |path|
           @examples = canonical(path)
+        end
+
+        opts.on('--stats', "Creates page with all kinds of statistics.", " ") do
+          @stats = true
         end
 
         opts.on('--categories=PATH',

@@ -7,6 +7,7 @@ require 'jsduck/class_formatter'
 require 'jsduck/class'
 require 'jsduck/icons'
 require 'jsduck/search_data'
+require 'jsduck/stats'
 require 'jsduck/relations'
 require 'jsduck/inherit_doc'
 require 'jsduck/exporter'
@@ -179,6 +180,7 @@ module JsDuck
         :videos => @videos.to_array,
         :examples => @examples.to_array,
         :search => SearchData.new.create(@relations.classes),
+        :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
       }) + ";\n"
       File.open(@opts.output_dir+"/data.js", 'w') {|f| f.write(js) }
     end

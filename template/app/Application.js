@@ -29,6 +29,7 @@ Ext.define('Docs.Application', {
         'Examples',
         'Guides',
         'Videos',
+        'Stats',
         'Tabs'
     ],
 
