@@ -44,8 +44,13 @@ Ext.define('Docs.view.stats.Index', {
                 },
                 {
                     text: 'Fan-out',
-                    flex: 1,
+                    width: 70,
                     dataIndex: 'fanOut'
+                },
+                {
+                    text: 'Words in docs',
+                    flex: 1,
+                    dataIndex: 'wordCount'
                 }
             ]
         }];

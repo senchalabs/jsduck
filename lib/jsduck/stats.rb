@@ -14,6 +14,7 @@ module JsDuck
           :localMembers => cls.all_local_members.length,
           :fanIn => fan_in(cls),
           :fanOut => fan_out(cls),
+          :wordCount => class_wc(cls),
         }
       end
     end
@@ -49,6 +50,29 @@ module JsDuck
         end
       end
       @fi_table
+    end
+
+    # Counts nr of words in class documentation
+    def class_wc(cls)
+      cnt = wc(cls[:doc])
+      cls.all_local_members.each do |m|
+        cnt += wc(m[:doc])
+        (m[:params] || []).each {|p| cnt += property_wc(p) }
+        (m[:properties] || []).each {|p| cnt += property_wc(p) }
+        cnt += wc(m[:return][:doc]) if m[:return]
+      end
+      cnt
+    end
+
+    def property_wc(property)
+      cnt = wc(property[:doc] || "")
+      (property[:properties] || []).each {|p| cnt += property_wc(p) }
+      cnt
+    end
+
+    # Strips HTML and counts words in text
+    def wc(str)
+      str.gsub(/<\/?[^>]*>/, "").scan(/\w+/).length
     end
 
   end

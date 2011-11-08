@@ -8,6 +8,7 @@ Ext.define('Docs.model.Stats', {
         'members',
         'localMembers',
         'fanIn',
-        'fanOut'
+        'fanOut',
+        'wordCount'
     ]
 });
