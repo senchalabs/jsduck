@@ -96,6 +96,7 @@ describe JsDuck::Categories do
     end
 
     it "expands to empty array if no classes match the pattern" do
+      JsDuck::Logger.instance.set_warning(:cat_no_match, false)
       @categories.expand("Bazz*").should == []
     end
   end
