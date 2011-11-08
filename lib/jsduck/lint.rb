@@ -22,7 +22,7 @@ module JsDuck
     def warn_globals
       global = @relations["global"]
       return unless global
-      global.each_member do |member|
+      global.all_local_members.each do |member|
         warn(:global, "Global #{member[:tagname]}: #{member[:name]}", member)
       end
     end
@@ -71,7 +71,7 @@ module JsDuck
 
     # Loops through all members of all classes
     def each_member(&block)
-      @relations.each {|cls| cls.each_member(&block) }
+      @relations.each {|cls| cls.all_local_members.each(&block) }
     end
 
     # Prints warning + filename and linenumber from doc-context

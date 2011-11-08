@@ -11,7 +11,7 @@ module JsDuck
     # Performs all inheriting
     def resolve_all
       @relations.each do |cls|
-        cls.each_member do |member|
+        cls.all_local_members.each do |member|
           if member[:inheritdoc]
             resolve(member)
           end

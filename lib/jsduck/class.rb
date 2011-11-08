@@ -175,13 +175,26 @@ module JsDuck
       @members_map[type_name ? "#{type_name}-#{name}" : name]
     end
 
-    # Loops through each member of the class, invoking block with each of them
-    def each_member(&block)
+    # Returns all public members of class, including the inherited and mixed in ones
+    def all_members
+      all = []
       [:members, :statics].each do |group|
-        @doc[group].each_value do |members|
-          members.each(&block)
+        @doc[group].each_key do |type|
+          all += members(type, group)
         end
       end
+      all
+    end
+
+    # Returns all local public members of class
+    def all_local_members
+      all = []
+      [:members, :statics].each do |group|
+        @doc[group].each_value do |ms|
+          all += ms.find_all {|m| !m[:private] }
+        end
+      end
+      all
     end
 
     # A way to access full class name with similar syntax to
