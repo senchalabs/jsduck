@@ -8,15 +8,34 @@ module JsDuck
       @classes = classes
 
       classes.map do |cls|
+        local_members = cls.all_local_members
+        total_members = cls.all_members
+
         {
           :name => cls[:name],
-          :members => cls.all_members.length,
-          :localMembers => cls.all_local_members.length,
+
+          :local_cfgs => member_count(local_members, :cfg),
+          :local_properties => member_count(local_members, :property),
+          :local_methods => member_count(local_members, :method),
+          :local_events => member_count(local_members, :event),
+          :local_members => local_members.length,
+
+          :total_cfgs => member_count(total_members, :cfg),
+          :total_properties => member_count(total_members, :property),
+          :total_methods => member_count(total_members, :method),
+          :total_events => member_count(total_members, :event),
+          :total_members => total_members.length,
+
           :fanIn => fan_in(cls),
           :fanOut => fan_out(cls),
+
           :wordCount => class_wc(cls),
         }
       end
+    end
+
+    def member_count(members, type)
+      members.find_all {|m| m[:tagname] == type }.length
     end
 
     # How many classes depend on this class

@@ -16,7 +16,7 @@ Ext.define('Docs.view.stats.Index', {
             data: Docs.data.stats,
             sorters: "name"
         });
-        Ext.QuickTips.init();
+
         this.items = [{
             xtype: 'grid',
             store: store,
@@ -27,29 +27,91 @@ Ext.define('Docs.view.stats.Index', {
                     width: 200,
                     dataIndex: 'name'
                 },
+
+                {
+                    text: 'Configs',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'local_cfgs'
+                },
+                {
+                    text: 'Props',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'local_properties'
+                },
+                {
+                    text: 'Methods',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'local_methods'
+                },
+                {
+                    text: 'Events',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'local_events'
+                },
                 {
                     text: 'Members',
-                    width: 70,
-                    dataIndex: 'members'
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'local_members',
+                    renderer: function(v) {
+                        return "<b>"+v+"</b>";
+                    }
+                },
+
+                {
+                    text: 'All Configs',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'total_cfgs'
                 },
                 {
-                    text: 'Local members',
-                    width: 100,
-                    dataIndex: 'localMembers'
+                    text: 'All Props',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'total_properties'
                 },
+                {
+                    text: 'All Methods',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'total_methods'
+                },
+                {
+                    text: 'All Events',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'total_events'
+                },
+                {
+                    text: 'All Members',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'total_members',
+                    renderer: function(v) {
+                        return "<b>"+v+"</b>";
+                    }
+                },
+
                 {
                     text: 'Fan-in',
-                    width: 70,
+                    width: 50,
+                    align: 'right',
                     dataIndex: 'fanIn'
                 },
                 {
                     text: 'Fan-out',
-                    width: 70,
+                    width: 50,
+                    align: 'right',
                     dataIndex: 'fanOut'
                 },
                 {
-                    text: 'Words in docs',
-                    flex: 1,
+                    text: 'Word count',
+                    width: 70,
+                    align: 'right',
                     dataIndex: 'wordCount'
                 }
             ]
