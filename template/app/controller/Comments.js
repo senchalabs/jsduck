@@ -121,8 +121,8 @@ Ext.define('Docs.controller.Comments', {
             'classoverview toolbar': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function() {
-                        var commentsDiv = Ext.get(Ext.query('#m-comment .comments-div')[0]);
-                        this.getOverview().scrollToEl('#m-comment', -20);
+                        var commentsDiv = Ext.get(Ext.query('.comments-section .comments-div')[0]);
+                        this.getOverview().scrollToEl('.comments-section', -20);
                         this.openComments(commentsDiv);
                     }, this, {
                         delegate: '.comment-btn'
