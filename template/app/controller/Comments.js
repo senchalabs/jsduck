@@ -505,12 +505,16 @@ Ext.define('Docs.controller.Comments', {
     },
 
     showMemberComments: function(cml, el) {
-        var member = Ext.get(el).up('.member'),
-            commentsDiv = member.down('.comments-div');
-
-        member.addCls('open');
-        this.openComments(commentsDiv);
-        this.getOverview().scrollToEl(commentsDiv, -20);
+        var member = Ext.get(el).up('.member');
+        // Ensure we're inside a member.
+        // We could also be on classes index page
+        // in which case we do nothing.
+        if (member) {
+            var commentsDiv = member.down('.comments-div');
+            member.addCls('open');
+            this.openComments(commentsDiv);
+            this.getOverview().scrollToEl(commentsDiv, -20);
+        }
     },
 
     renderClassCommentContainers: function() {
