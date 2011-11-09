@@ -51,6 +51,7 @@ Ext.define('Docs.view.examples.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.data.examples.length > 0 ? {cls: 'examples', href: '#!/example', tooltip: 'Examples'} : false;
+        var enabled = (Docs.data.examples || []).length > 0;
+        return enabled ? {cls: 'examples', href: '#!/example', tooltip: 'Examples'} : false;
     }
 });

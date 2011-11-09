@@ -34,6 +34,7 @@ Ext.define('Docs.view.videos.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.data.videos.length > 0 ? {cls: 'videos', href: '#!/video', tooltip: 'Videos'} : false;
+        var enabled = (Docs.data.videos || []).length > 0;
+        return enabled ? {cls: 'videos', href: '#!/video', tooltip: 'Videos'} : false;
     }
 });

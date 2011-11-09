@@ -32,6 +32,7 @@ Ext.define('Docs.view.cls.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.data.classes.length > 0 ? {cls: 'classes', href: '#!/api', tooltip: 'API Documentation'} : false;
+        var enabled = (Docs.data.classes || []).length > 0;
+        return enabled ? {cls: 'classes', href: '#!/api', tooltip: 'API Documentation'} : false;
     }
 });

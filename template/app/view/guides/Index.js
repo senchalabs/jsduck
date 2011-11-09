@@ -33,6 +33,7 @@ Ext.define('Docs.view.guides.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.data.guides.length > 0 ? {cls: 'guides', href: '#!/guide', tooltip: 'Guides'} : false;
+        var enabled = (Docs.data.guides|| []).length > 0;
+        return enabled ? {cls: 'guides', href: '#!/guide', tooltip: 'Guides'} : false;
     }
 });

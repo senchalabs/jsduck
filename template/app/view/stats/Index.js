@@ -63,6 +63,7 @@ Ext.define('Docs.view.stats.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.data.stats.length > 0 ? {cls: 'stats', href: '#!/stats', tooltip: 'Statistics'} : false;
+        var enabled = (Docs.data.stats || []).length > 0;
+        return enabled ? {cls: 'stats', href: '#!/stats', tooltip: 'Statistics'} : false;
     }
 });
