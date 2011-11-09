@@ -18,8 +18,26 @@
     <link rel="stylesheet" href="resources/css/welcome_ie6.css" type="text/css" />
   <![endif]-->
 
-  <script type="text/javascript" src="http://use.typekit.com/uxj6dew.js"></script>
-  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+  <!-- Async script to not block while loading TypeKit fonts -->
+  <script type="text/javascript">
+  (function() {
+    var TypekitConfig = {
+      kitId: 'uxj6dew'
+    };
+    var tk = document.createElement('script');
+    tk.src = '//use.typekit.com/' + TypekitConfig.kitId + '.js';
+    tk.type = 'text/javascript';
+    tk.async = 'true';
+    tk.onload = tk.onreadystatechange = function() {
+      var rs = this.readyState;
+      if (rs && rs != 'complete' && rs != 'loaded') return;
+      try { Typekit.load(TypekitConfig); } catch (e) {}
+    };
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(tk, s);
+  })();
+  </script>
+
   <script type="text/javascript">
     Docs = {
         localStorageDb: "{local_storage_db}",
