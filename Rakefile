@@ -174,6 +174,7 @@ class JsDuckRunner
       "--builtin-classes",
       "--images", "#{@sdk_dir}/extjs/docs/resources",
       "--images", "#{@sdk_dir}/platform/docs/resources",
+      "--stats",
       "#{@sdk_dir}/extjs/src",
       "#{@sdk_dir}/platform/src",
       "#{@sdk_dir}/platform/core/src",
@@ -296,6 +297,7 @@ class JsDuckRunner
       "--img", "<p class='screenshot'><img src='%u' alt='%a'><span>%a</span></p>",
       "--eg-iframe", "opt/touch-iframe.html",
       "--warnings=-image",
+      "--stats",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 
