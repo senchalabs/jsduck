@@ -295,6 +295,7 @@ class JsDuckRunner
       "--builtin-classes",
       "--img", "<p class='screenshot'><img src='%u' alt='%a'><span>%a</span></p>",
       "--eg-iframe", "opt/touch-iframe.html",
+      "--warnings=-image",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 
