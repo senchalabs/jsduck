@@ -297,7 +297,7 @@ class JsDuckRunner
       "--img", "<p class='screenshot'><img src='%u' alt='%a'><span>%a</span></p>",
       "--eg-iframe", "opt/touch-iframe.html",
       "--warnings=-image",
-      "--stats",
+      # "--stats",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
 
@@ -324,9 +324,10 @@ class JsDuckRunner
 
   def set_touch2_src
     relative_touch_path = "../"
-    touch_iframe = "template-min/touchIframe.html";
+    system("cp", "-r", "opt/touch-welcome.html", "template-min/touch-welcome.html")
+    system("cp", "-r", "opt/touch-iframe.html", "template-min/touch-iframe.html")
 
-    ["template-min/touchIframe.html", "template-min/touch-welcome.html"].each do |file|
+    ["template-min/touch-iframe.html", "template-min/touch-welcome.html"].each do |file|
       html = IO.read(file);
 
       touch_src_re = /((src|href)="touch)/m
@@ -344,14 +345,12 @@ class JsDuckRunner
         Docs.exampleBaseUrl = "#{relative_touch_path}examples/";
         if (Ext.is.Phone) { window.location = "#{relative_touch_path}examples/"; }
       </script>
-      <div id="notice-text" style="display: none">
-        Use <a href="http://docs.sencha.com/touch/2-0">http://docs.sencha.com/touch/2-0</a> for up to date documentation and features
-      </div>
     EOHTML
 
     @options += [
+      "--body-html", head_html,
       "--welcome", "template-min/touch-welcome.html",
-      "--body-html", head_html
+      "--eg-iframe", "template-min/touch-iframe.html"
     ]
   end
 
