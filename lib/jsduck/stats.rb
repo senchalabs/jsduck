@@ -10,6 +10,8 @@ module JsDuck
       classes.map do |cls|
         local_members = cls.all_local_members
         total_members = cls.all_members
+        class_wc = wc(cls[:doc])
+        members_wc = members_wc(cls)
 
         {
           :name => cls[:name],
@@ -29,7 +31,9 @@ module JsDuck
           :fanIn => fan_in(cls),
           :fanOut => fan_out(cls),
 
-          :wordCount => class_wc(cls),
+          :class_wc => class_wc,
+          :members_wc => members_wc,
+          :wc_per_member => local_members.length > 0 ? (members_wc / local_members.length) : 0,
         }
       end
     end
@@ -71,9 +75,9 @@ module JsDuck
       @fi_table
     end
 
-    # Counts nr of words in class documentation
-    def class_wc(cls)
-      cnt = wc(cls[:doc])
+    # Counts nr of words in documentation of all members of class
+    def members_wc(cls)
+      cnt = 0
       cls.all_local_members.each do |m|
         cnt += wc(m[:doc])
         (m[:params] || []).each {|p| cnt += property_wc(p) }

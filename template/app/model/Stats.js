@@ -20,6 +20,8 @@ Ext.define('Docs.model.Stats', {
 
         'fanIn',
         'fanOut',
-        'wordCount'
+        'class_wc',
+        'members_wc',
+        'wc_per_member'
     ]
 });

@@ -108,11 +108,24 @@ Ext.define('Docs.view.stats.Index', {
                     align: 'right',
                     dataIndex: 'fanOut'
                 },
+
                 {
-                    text: 'Word count',
-                    width: 70,
+                    text: 'Class word-count',
+                    width: 50,
                     align: 'right',
-                    dataIndex: 'wordCount'
+                    dataIndex: 'class_wc'
+                },
+                {
+                    text: 'Members word-count',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'members_wc'
+                },
+                {
+                    text: 'wc / member',
+                    width: 50,
+                    align: 'right',
+                    dataIndex: 'wc_per_member'
                 }
             ]
         }];
