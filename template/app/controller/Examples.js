@@ -128,6 +128,6 @@ Ext.define('Docs.controller.Examples', {
 
     openInNewWindow: function() {
         var example = this.getExample(this.activeUrl);
-        window.open("touch/examples/" + example.url);
+        window.open((Docs.exampleBaseUrl || "touch/examples/") + example.url);
     }
 });
