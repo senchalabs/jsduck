@@ -54,6 +54,15 @@
     font-size: 1.1em; }
   h4 {
     font-weight: bold; }
+  table {
+    margin-bottom: 10px;
+    tr:first-child {
+      td {
+        color: #000;
+        font-weight: bold; } }
+    td {
+      color: #484848;
+      padding: 2px 20px 2px 0; } }
   pre {
     background-color: #f7f7f7;
     border: solid 1px #e8e8e8;
