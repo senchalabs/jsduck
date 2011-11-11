@@ -77,6 +77,7 @@ module JsDuck
 
       clear_output_dir unless @opts.export == :stdout
       if @opts.export == :stdout
+        format_classes
         puts JsonDuck.generate(@relations.classes)
       elsif @opts.export == :json
         FileUtils.mkdir(@opts.output_dir)
