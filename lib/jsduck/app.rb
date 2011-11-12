@@ -47,33 +47,11 @@ module JsDuck
       Lint.new(@relations).run
 
       @images = Images.new(@opts.images)
-
-      @welcome = Welcome.new
-      if @opts.welcome
-        @welcome.parse(@opts.welcome)
-      end
-
-      @guides = Guides.new(get_doc_formatter)
-      if @opts.guides
-        @guides.parse(@opts.guides)
-      end
-
-      @videos = Videos.new
-      if @opts.videos
-        @videos.parse(@opts.videos)
-      end
-
-      @examples = Examples.new
-      if @opts.examples
-        @examples.parse(@opts.examples)
-      end
-
-      @categories = Categories.new(get_doc_formatter, @relations)
-      if @opts.categories_path
-        @categories.parse(@opts.categories_path)
-      else
-        @categories.auto_generate
-      end
+      @welcome = Welcome.create(@opts.welcome)
+      @guides = Guides.create(@opts.guides, get_doc_formatter)
+      @videos = Videos.create(@opts.videos)
+      @examples = Examples.create(@opts.examples)
+      @categories = Categories.create(@opts.categories_path, get_doc_formatter, @relations)
 
       clear_output_dir unless @opts.export == :stdout
       if @opts.export == :stdout

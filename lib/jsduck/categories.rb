@@ -1,78 +1,29 @@
 require 'jsduck/logger'
 require 'jsduck/json_duck'
+require 'jsduck/file_categories'
 require 'jsduck/auto_categories'
 
 module JsDuck
 
   # Reads in categories and outputs them as HTML div
   class Categories
-    def initialize(doc_formatter, relations={})
+    def self.create(filename, doc_formatter, relations)
+      if filename
+        categories = FileCategories.new(filename, relations)
+      else
+        categories = AutoCategories.new(relations)
+      end
+      Categories.new(categories.generate, doc_formatter, relations)
+    end
+
+    def initialize(categories, doc_formatter, relations={})
+      @categories = categories
       @doc_formatter = doc_formatter
       @relations = relations
-      @categories = []
-    end
-
-    # Automatically divides all available classes into categories
-    def auto_generate
-      @categories = AutoCategories.new(@relations).generate
-    end
-
-    # Parses categories in JSON file
-    def parse(path)
-      @categories = JsonDuck.read(path)
-
-      # Don't crash if old syntax is used.
-      if @categories.is_a?(Hash) && @categories["categories"]
-        Logger.instance.warn(:old_cat_format, 'Update categories file to contain just the array inside {"categories": [...]}')
-        @categories = @categories["categories"]
-      end
-
-      # Perform expansion on all class names containing * wildcard
-      @categories.each do |cat|
-        cat["groups"].each do |group|
-          group["classes"] = group["classes"].map do |name|
-            expand(name) # name =~ /\*/ ? expand(name) : name
-          end.flatten
-        end
-      end
-
-      validate
-    end
-
-    # Expands class name like 'Foo.*' into multiple class names.
-    def expand(name)
-      re = Regexp.new("^" + name.split(/\*/, -1).map {|part| Regexp.escape(part) }.join('.*') + "$")
-      classes = @relations.to_a.find_all {|cls| re =~ cls[:name] && !cls[:private] }.map {|cls| cls[:name] }.sort
-      if classes.length == 0
-        Logger.instance.warn(:cat_no_match, "No class found matching a pattern '#{name}' in categories file.")
-      end
-      classes
-    end
-
-    # Prints warnings for missing classes in categories file
-    def validate
-      # Build a map of all classes listed in categories
-      listed_classes = {}
-      @categories.each do |cat|
-        cat["groups"].each do |group|
-          group["classes"].each do |cls_name|
-            listed_classes[cls_name] = true
-          end
-        end
-      end
-
-      # Check that each existing non-private class is listed
-      @relations.each do |cls|
-        unless listed_classes[cls[:name]] || cls[:private]
-          Logger.instance.warn(:cat_class_missing, "Class '#{cls[:name]}' not found in categories file")
-        end
-      end
     end
 
     # Returns HTML listing of classes divided into categories
     def to_html
-      return "" if @categories.length == 0
-
       html = @categories.map do |category|
         [
           "<div class='section'>",

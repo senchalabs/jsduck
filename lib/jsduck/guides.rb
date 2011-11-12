@@ -1,26 +1,30 @@
 require 'jsduck/logger'
 require 'jsduck/json_duck'
+require 'jsduck/null_object'
 require 'fileutils'
 
 module JsDuck
 
   # Reads in guides and converts them to JsonP files
   class Guides
-    def initialize(formatter)
-      @formatter = formatter
-      @guides = []
+    # Creates Guides object from filename and formatter
+    def self.create(filename, formatter)
+      if filename
+        Guides.new(filename, formatter)
+      else
+        NullObject.new(:to_array => [], :to_html => "")
+      end
     end
 
     # Parses guides config file
-    def parse(filename)
+    def initialize(filename, formatter)
       @path = File.dirname(filename)
       @guides = JsonDuck.read(filename)
+      @formatter = formatter
     end
 
     # Writes all guides to given dir in JsonP format
     def write(dir)
-      return if @guides.length == 0
-
       FileUtils.mkdir(dir) unless File.exists?(dir)
       @guides.each {|group| group["items"].each {|g| write_guide(g, dir) } }
       # Write the JSON to output dir, so it's available in released
@@ -63,8 +67,6 @@ module JsDuck
 
     # Returns HTML listing of guides
     def to_html
-      return "" if @guides.length == 0
-
       html = @guides.map do |group|
         [
           "<h3>#{group['title']}</h3>",
