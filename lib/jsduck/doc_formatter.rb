@@ -55,14 +55,14 @@ module JsDuck
     # name actually exists.
     attr_accessor :relations
 
-    def initialize
+    def initialize(relations={}, opts={})
       @class_context = ""
       @doc_context = {}
       @max_length = 120
-      @relations = {}
+      @relations = relations
       @images = []
-      @link_tpl = '<a href="%c%#%m">%a</a>'
-      @img_tpl = '<img src="%u" alt="%a"/>'
+      @link_tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
+      @img_tpl = opts[:img_tpl] || '<img src="%u" alt="%a"/>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
       @example_annotation_re = /<pre><code>\s*@example( +[^\n]*)?\s+/m
