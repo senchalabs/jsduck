@@ -16,9 +16,10 @@ require 'jsduck/categories'
 require 'jsduck/images'
 require 'jsduck/json_duck'
 require 'jsduck/lint'
-require 'jsduck/stdout_exporter'
-require 'jsduck/json_exporter'
-require 'jsduck/html_exporter'
+require 'jsduck/template_dir'
+require 'jsduck/class_writer'
+require 'jsduck/source_writer'
+require 'fileutils'
 
 module JsDuck
 
@@ -42,23 +43,45 @@ module JsDuck
       InheritDoc.new(@relations).resolve_all
       Lint.new(@relations).run
 
-      @resources = {
-        :parsed_files => parsed_files,
-        :images => Images.new(@opts.images),
-        :welcome => Welcome.create(@opts.welcome),
-        :guides => Guides.create(@opts.guides, DocFormatter.new(@relations, @opts)),
-        :videos => Videos.create(@opts.videos),
-        :examples => Examples.create(@opts.examples),
-        :categories => Categories.create(@opts.categories_path, DocFormatter.new(@relations, @opts), @relations),
-      }
-
+      @images = Images.new(@opts.images)
+      @welcome = Welcome.create(@opts.welcome)
+      @guides = Guides.create(@opts.guides, DocFormatter.new(@relations, @opts))
+      @videos = Videos.create(@opts.videos)
+      @examples = Examples.create(@opts.examples)
+      @categories = Categories.create(@opts.categories_path, DocFormatter.new(@relations, @opts), @relations)
 
       if @opts.export == :stdout
-        StdoutExporter.new(@relations, @opts).run { format_classes }
+        format_classes
+        puts JsonDuck.generate(@relations.classes)
       elsif @opts.export == :json
-        JsonExporter.new(@relations, @opts).run { format_classes }
+        format_classes
+        FileUtils.rm_rf(@opts.output_dir)
+        cw = ClassWriter.new(@relations, @opts)
+        cw.write(@opts.output_dir, ".json")
       else
-        HtmlExporter.new(@relations, @resources, @opts).run { format_classes }
+        FileUtils.rm_rf(@opts.output_dir)
+
+        template = TemplateDir.new(@relations, @opts)
+        template.welcome = @welcome
+        template.categories = @categories
+        template.guides = @guides
+        template.videos = @videos
+        template.examples = @examples
+        template.write
+
+        # class-formatting is done in parallel which breaks the links
+        # between source files and classes. Therefore it MUST to be done
+        # after writing sources which needs the links to work.
+        SourceWriter.write_all(parsed_files, @opts.output_dir + "/source")
+        format_classes
+
+        cw = ClassWriter.new(@relations, @opts)
+        cw.write(@opts.output_dir+"/output", ".js")
+
+        @guides.write(@opts.output_dir+"/guides")
+        @videos.write(@opts.output_dir+"/videos")
+        @examples.write(@opts.output_dir+"/examples")
+        @images.copy(@opts.output_dir+"/images")
       end
     end
 
@@ -120,7 +143,7 @@ module JsDuck
       # Then merge the data back to classes sequentially
       formatted_classes.each do |cls|
         @relations[cls[:doc][:name]].internal_doc = cls[:doc]
-        cls[:images].each {|img| @resources[:images].add(img) }
+        cls[:images].each {|img| @images.add(img) }
       end
     end
 

@@ -1,16 +1,29 @@
+require 'jsduck/logger'
+require 'fileutils'
+
 module JsDuck
 
   # Writes HTML JavaScript/CSS source into HTML file.
   class SourceWriter
 
+    # Writes all source files as HTML files into destination dir.
+    #
+    # Can't be done in parallel, because file.html_filename= method
+    # updates all the doc-objects related to the file
+    def self.write_all(files, destination)
+      FileUtils.mkdir(destination)
+      src = SourceWriter.new(destination)
+      files.each do |file|
+        html_filename = src.write(file.to_html, file.filename)
+        Logger.instance.log("Writing source", html_filename)
+        file.html_filename = File.basename(html_filename)
+      end
+    end
+
     # Initializes SourceFormatter to the directory where
     # HTML-formatted source files will be placed.
-    #
-    # Wrapper can be either :page or nil; with the first one the whole
-    # HTML page is created, otherwise source is left as is.
-    def initialize(output_dir, wrapper = :page)
+    def initialize(output_dir)
       @output_dir = output_dir
-      @wrapper = wrapper
     end
 
     # Writes HTML into file in output directory.  It returns the name
@@ -18,7 +31,7 @@ module JsDuck
     def write(source, filename)
       fname = uniq_html_filename(filename)
       File.open(fname, 'w') do |f|
-        f.write(@wrapper ? wrap_page(source) : source)
+        f.write(wrap_page(source))
       end
       fname
     end

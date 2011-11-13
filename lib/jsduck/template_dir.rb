@@ -9,25 +9,25 @@ require 'fileutils'
 
 module JsDuck
 
-  # Performs the standard JSDuck HTML output
-  class HtmlExporter
-    def initialize(relations, resources, opts)
+  # Copies over the template directory and creates few files inside it.
+  class TemplateDir
+    attr_accessor :welcome
+    attr_accessor :categories
+    attr_accessor :guides
+    attr_accessor :videos
+    attr_accessor :examples
+
+    def initialize(relations, opts)
       @relations = relations
-      @resources = resources
       @opts = opts
     end
 
-    def run(&format_classes)
-      FileUtils.rm_rf(@opts.output_dir)
-
+    def write
       if @opts.template_links
         link_template
       else
         copy_template
       end
-
-      FileUtils.mkdir(@opts.output_dir + "/output")
-      FileUtils.mkdir(@opts.output_dir + "/source")
 
       create_template_html
       create_print_template_html
@@ -42,21 +42,7 @@ module JsDuck
         FileUtils.cp(@opts.eg_iframe, @opts.output_dir+"/eg-iframe.html")
       end
 
-      # class-formatting is done in parallel which breaks the links
-      # between source files and classes. Therefore it MUST to be done
-      # after write_src which needs the links to work.
-      write_src
-      format_classes.call
-
       write_app_data
-
-      cw = ClassWriter.new(@relations, @opts)
-      cw.write(@opts.output_dir+"/output", ".js")
-
-      @resources[:guides].write(@opts.output_dir+"/guides")
-      @resources[:videos].write(@opts.output_dir+"/videos")
-      @resources[:examples].write(@opts.output_dir+"/examples")
-      @resources[:images].copy(@opts.output_dir+"/images")
     end
 
     def copy_template
@@ -81,9 +67,9 @@ module JsDuck
         "{local_storage_db}" => @opts.local_storage_db,
         "{show_print_button}" => @opts.seo ? "true" : "false",
         "{touch_examples_ui}" => @opts.touch_examples_ui ? "true" : "false",
-        "{welcome}" => @resources[:welcome].to_html,
-        "{categories}" => @resources[:categories].to_html,
-        "{guides}" => @resources[:guides].to_html,
+        "{welcome}" => @welcome.to_html,
+        "{categories}" => @categories.to_html,
+        "{guides}" => @guides.to_html,
         "{head_html}" => @opts.head_html,
         "{body_html}" => @opts.body_html,
       })
@@ -109,25 +95,13 @@ module JsDuck
       File.open(out_file, 'w') {|f| f.write(html) }
     end
 
-    # Writes formatted HTML source code for each input file
-    def write_src
-      src = SourceWriter.new(@opts.output_dir + "/source", @opts.export ? nil : :page)
-      # Can't be done in parallel, because file.html_filename= method
-      # updates all the doc-objects related to the file
-      @resources[:parsed_files].each do |file|
-        html_filename = src.write(file.to_html, file.filename)
-        Logger.instance.log("Writing source", html_filename)
-        file.html_filename = File.basename(html_filename)
-      end
-    end
-
     # Writes classes, guides, videos, and search data to one big .js file
     def write_app_data
       js = "Docs.data = " + JsonDuck.generate({
         :classes => Icons.new.create(@relations.classes),
-        :guides => @resources[:guides].to_array,
-        :videos => @resources[:videos].to_array,
-        :examples => @resources[:examples].to_array,
+        :guides => @guides.to_array,
+        :videos => @videos.to_array,
+        :examples => @examples.to_array,
         :search => SearchData.new.create(@relations.classes),
         :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
       }) + ";\n"

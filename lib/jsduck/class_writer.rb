@@ -4,6 +4,7 @@ require 'jsduck/renderer'
 require 'jsduck/doc_formatter'
 require 'jsduck/logger'
 require 'jsduck/json_duck'
+require 'fileutils'
 
 module JsDuck
 
@@ -24,6 +25,7 @@ module JsDuck
       @opts.meta_tags.each {|tag| tag.formatter = doc_formatter }
       renderer.meta_tags = @opts.meta_tags
 
+      FileUtils.mkdir(dir)
       @parallel.each(@relations.classes) do |cls|
         filename = dir + "/" + cls[:name] + extension
         Logger.instance.log("Writing docs", filename)
