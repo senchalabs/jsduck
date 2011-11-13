@@ -1,10 +1,5 @@
-require 'jsduck/class_writer'
 require 'jsduck/logger'
-require 'jsduck/source_writer'
 require 'jsduck/json_duck'
-require 'jsduck/icons'
-require 'jsduck/search_data'
-require 'jsduck/stats'
 require 'fileutils'
 
 module JsDuck
@@ -14,8 +9,6 @@ module JsDuck
     attr_accessor :welcome
     attr_accessor :categories
     attr_accessor :guides
-    attr_accessor :videos
-    attr_accessor :examples
 
     def initialize(relations, opts)
       @relations = relations
@@ -41,8 +34,6 @@ module JsDuck
         FileUtils.rm(@opts.output_dir+"/eg-iframe.html")
         FileUtils.cp(@opts.eg_iframe, @opts.output_dir+"/eg-iframe.html")
       end
-
-      write_app_data
     end
 
     def copy_template
@@ -93,19 +84,6 @@ module JsDuck
       end
       FileUtils.rm(out_file)
       File.open(out_file, 'w') {|f| f.write(html) }
-    end
-
-    # Writes classes, guides, videos, and search data to one big .js file
-    def write_app_data
-      js = "Docs.data = " + JsonDuck.generate({
-        :classes => Icons.new.create(@relations.classes),
-        :guides => @guides.to_array,
-        :videos => @videos.to_array,
-        :examples => @examples.to_array,
-        :search => SearchData.new.create(@relations.classes),
-        :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
-      }) + ";\n"
-      File.open(@opts.output_dir+"/data.js", 'w') {|f| f.write(js) }
     end
 
   end

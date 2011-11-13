@@ -19,6 +19,7 @@ require 'jsduck/lint'
 require 'jsduck/template_dir'
 require 'jsduck/class_writer'
 require 'jsduck/source_writer'
+require 'jsduck/app_data'
 require 'fileutils'
 
 module JsDuck
@@ -65,9 +66,13 @@ module JsDuck
         template.welcome = @welcome
         template.categories = @categories
         template.guides = @guides
-        template.videos = @videos
-        template.examples = @examples
         template.write
+
+        app_data = AppData.new(@relations, @opts)
+        app_data.guides = @guides
+        app_data.videos = @videos
+        app_data.examples = @examples
+        app_data.write(@opts.output_dir+"/data.js")
 
         # class-formatting is done in parallel which breaks the links
         # between source files and classes. Therefore it MUST to be done
