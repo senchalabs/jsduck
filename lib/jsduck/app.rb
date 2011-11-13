@@ -20,6 +20,7 @@ require 'jsduck/template_dir'
 require 'jsduck/class_writer'
 require 'jsduck/source_writer'
 require 'jsduck/app_data'
+require 'jsduck/index_html'
 require 'fileutils'
 
 module JsDuck
@@ -61,12 +62,13 @@ module JsDuck
         cw.write(@opts.output_dir, ".json")
       else
         FileUtils.rm_rf(@opts.output_dir)
+        TemplateDir.new(@opts).write
 
-        template = TemplateDir.new(@relations, @opts)
-        template.welcome = @welcome
-        template.categories = @categories
-        template.guides = @guides
-        template.write
+        index = IndexHtml.new(@opts)
+        index.welcome = @welcome
+        index.categories = @categories
+        index.guides = @guides
+        index.write
 
         app_data = AppData.new(@relations, @opts)
         app_data.guides = @guides
