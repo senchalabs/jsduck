@@ -129,8 +129,9 @@ module JsDuck
 
         opts.on('-o', '--output=PATH',
           "Directory to output all this amazing documentation.",
-          "This option MUST be specified (unless --stdout).", " ") do |path|
-          @output_dir = canonical(path)
+          "This option MUST be specified (unless --stdout).",
+          "Use dash '-' to write docs to STDOUT (only export).", " ") do |path|
+          @output_dir = path == "-" ? :stdout : canonical(path)
         end
 
         opts.on('--ignore-global', "Turns off the creation of global class.", " ") do
@@ -253,12 +254,10 @@ module JsDuck
           @img_tpl = tpl
         end
 
-        opts.on('--json', "Produces JSON export instead of HTML documentation.", " ") do
-          @export = :json
-        end
-
-        opts.on('--stdout', "Writes JSON export to STDOUT instead of writing to the filesystem", " ") do
-          @export = :stdout
+        opts.on('--export=FORMAT',
+          "Instead of HTML docs, exports docs in FORMAT:",
+          "* json - JSON export of all docs.", " ") do |format|
+          @export = format.to_sym
         end
 
         opts.on('--seo', "Creates index.php that handles search engine traffic.", " ") do
@@ -406,7 +405,13 @@ module JsDuck
       if @input_files.length == 0 && !@welcome && !@guides && !@videos && !@examples
         puts "You should specify some input files, otherwise there's nothing I can do :("
         exit(1)
-      elsif @export != :stdout
+      elsif @output_dir == :stdout && !@export
+        puts "Output to STDOUT only works when using --export option."
+        exit(1)
+      elsif ![nil, :json].include?(@export)
+        puts "Unknown export format: #{@export}"
+        exit(1)
+      elsif @output_dir != :stdout
         if !@output_dir
           puts "You should also specify an output directory, where I could write all this amazing documentation."
           exit(1)

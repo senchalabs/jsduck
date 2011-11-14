@@ -52,14 +52,15 @@ module JsDuck
       @examples = Examples.create(@opts.examples)
       @categories = Categories.create(@opts.categories_path, DocFormatter.new(@relations, @opts), @relations)
 
-      if @opts.export == :stdout
+      if @opts.export == :json
         format_classes
-        puts JsonDuck.generate(@relations.classes)
-      elsif @opts.export == :json
-        format_classes
-        FileUtils.rm_rf(@opts.output_dir)
-        cw = ClassWriter.new(@relations, @opts)
-        cw.write(@opts.output_dir, ".json")
+        if @opts.output_dir == :stdout
+          puts JsonDuck.generate(@relations.classes)
+        else
+          FileUtils.rm_rf(@opts.output_dir)
+          cw = ClassWriter.new(@relations, @opts)
+          cw.write(@opts.output_dir, ".json")
+        end
       else
         FileUtils.rm_rf(@opts.output_dir)
         TemplateDir.new(@opts).write
