@@ -21,6 +21,8 @@ require 'jsduck/class_writer'
 require 'jsduck/source_writer'
 require 'jsduck/app_data'
 require 'jsduck/index_html'
+require 'jsduck/json_exporter'
+require 'jsduck/json_p_exporter'
 require 'fileutils'
 
 module JsDuck
@@ -58,8 +60,8 @@ module JsDuck
           puts JsonDuck.generate(@relations.classes)
         else
           FileUtils.rm_rf(@opts.output_dir)
-          cw = ClassWriter.new(@relations, @opts)
-          cw.write(@opts.output_dir, ".json")
+          cw = ClassWriter.new(JsonExporter, @relations, @opts)
+          cw.write(@opts.output_dir)
         end
       else
         FileUtils.rm_rf(@opts.output_dir)
@@ -83,8 +85,8 @@ module JsDuck
         SourceWriter.write_all(parsed_files, @opts.output_dir + "/source")
         format_classes
 
-        cw = ClassWriter.new(@relations, @opts)
-        cw.write(@opts.output_dir+"/output", ".js")
+        cw = ClassWriter.new(JsonPExporter, @relations, @opts)
+        cw.write(@opts.output_dir+"/output")
 
         @guides.write(@opts.output_dir+"/guides")
         @videos.write(@opts.output_dir+"/videos")
