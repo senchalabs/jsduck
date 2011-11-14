@@ -254,10 +254,10 @@ module JsDuck
           @img_tpl = tpl
         end
 
-        opts.on('--export=FORMAT',
-          "Instead of HTML docs, exports docs in FORMAT:",
-          "* json - JSON export of all docs.",
-          "* api  - JSON of only class- and member names.", " ") do |format|
+        opts.on('--export=TYPE',
+          "Exports docs in JSON.  TYPE is one of:",
+          "* full - full class docs.",
+          "* api  - only class- and member names.", " ") do |format|
           @export = format.to_sym
         end
 
@@ -409,7 +409,7 @@ module JsDuck
       elsif @output_dir == :stdout && !@export
         puts "Output to STDOUT only works when using --export option."
         exit(1)
-      elsif ![nil, :json, :api].include?(@export)
+      elsif ![nil, :full, :api].include?(@export)
         puts "Unknown export format: #{@export}"
         exit(1)
       elsif @output_dir != :stdout

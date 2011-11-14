@@ -2,8 +2,8 @@ require 'jsduck/class'
 
 module JsDuck
 
-  # Exporter for json format
-  class JsonExporter
+  # Exporter for all the class docs.
+  class FullExporter
     def initialize(relations, opts)
       @relations = relations
     end

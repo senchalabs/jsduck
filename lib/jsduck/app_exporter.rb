@@ -1,11 +1,11 @@
-require 'jsduck/json_exporter'
+require 'jsduck/full_exporter'
 require 'jsduck/renderer'
 require 'jsduck/doc_formatter'
 
 module JsDuck
 
   # Exports data for Docs app.
-  class AppExporter < JsonExporter
+  class AppExporter < FullExporter
     def initialize(relations, opts)
       super(relations, opts)
 

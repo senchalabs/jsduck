@@ -22,7 +22,7 @@ require 'jsduck/source_writer'
 require 'jsduck/app_data'
 require 'jsduck/index_html'
 require 'jsduck/api_exporter'
-require 'jsduck/json_exporter'
+require 'jsduck/full_exporter'
 require 'jsduck/app_exporter'
 require 'fileutils'
 
@@ -58,7 +58,7 @@ module JsDuck
       if @opts.export
         format_classes
         FileUtils.rm_rf(@opts.output_dir) unless @opts.output_dir == :stdout
-        exporters = {:json => JsonExporter, :api => ApiExporter}
+        exporters = {:full => FullExporter, :api => ApiExporter}
         cw = ClassWriter.new(exporters[@opts.export], @relations, @opts)
         cw.write(@opts.output_dir, ".json")
       else
