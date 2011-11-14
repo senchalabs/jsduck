@@ -21,6 +21,7 @@ require 'jsduck/class_writer'
 require 'jsduck/source_writer'
 require 'jsduck/app_data'
 require 'jsduck/index_html'
+require 'jsduck/api_exporter'
 require 'jsduck/json_exporter'
 require 'jsduck/json_p_exporter'
 require 'fileutils'
@@ -61,6 +62,16 @@ module JsDuck
         else
           FileUtils.rm_rf(@opts.output_dir)
           cw = ClassWriter.new(JsonExporter, @relations, @opts)
+          cw.write(@opts.output_dir)
+        end
+      elsif @opts.export == :api
+        format_classes
+        if @opts.output_dir == :stdout
+          exporter = ApiExporter.new({}, {})
+          puts JsonDuck.generate(@relations.classes.map {|cls| exporter.export(cls) })
+        else
+          FileUtils.rm_rf(@opts.output_dir)
+          cw = ClassWriter.new(ApiExporter, @relations, @opts)
           cw.write(@opts.output_dir)
         end
       else
