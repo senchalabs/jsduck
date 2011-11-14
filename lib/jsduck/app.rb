@@ -23,7 +23,7 @@ require 'jsduck/app_data'
 require 'jsduck/index_html'
 require 'jsduck/api_exporter'
 require 'jsduck/json_exporter'
-require 'jsduck/json_p_exporter'
+require 'jsduck/app_exporter'
 require 'fileutils'
 
 module JsDuck
@@ -83,7 +83,7 @@ module JsDuck
         SourceWriter.write_all(parsed_files, @opts.output_dir + "/source")
         format_classes
 
-        cw = ClassWriter.new(JsonPExporter, @relations, @opts)
+        cw = ClassWriter.new(AppExporter, @relations, @opts)
         cw.write(@opts.output_dir+"/output", ".js")
 
         @guides.write(@opts.output_dir+"/guides")

@@ -1,28 +1,30 @@
+require 'jsduck/json_exporter'
+require 'jsduck/renderer'
+require 'jsduck/doc_formatter'
+
 module JsDuck
 
-  # Export class data as hash with :cfg being replace with :cfgs and
-  # including all the inherited members too.  Same for :properties,
-  # :methods, and :events.
-  class Exporter
-    def initialize(relations)
-      @relations = relations
+  # Exports data for Docs app.
+  class AppExporter < JsonExporter
+    def initialize(relations, opts)
+      super(relations, opts)
+
+      @renderer = Renderer.new
+      # Inject formatter to all meta-tags.
+      doc_formatter = DocFormatter.new(relations, opts)
+      opts.meta_tags.each {|tag| tag.formatter = doc_formatter }
+      @renderer.meta_tags = opts.meta_tags
     end
 
-    # Returns all data in Class object as hash.
+    # Returns compacted class data hash which contains an additional
+    # :html field with full HTML to show on class overview page.
     def export(cls)
-      h = cls.to_hash
-      h[:members] = {}
-      Class.default_members_hash.each_key do |key|
-        h[:members][key] = cls.members(key)
-        h[:statics][key] = cls.members(key, :statics)
-      end
-      h[:component] = cls.inherits_from?("Ext.Component")
-      h[:superclasses] = cls.superclasses.collect {|c| c.full_name }
-      h[:subclasses] = @relations.subclasses(cls).collect {|c| c.full_name }
-      h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c.full_name }
-      h[:allMixins] = cls.all_mixins.collect {|c| c.full_name }
-      h
+      data = super(cls)
+      data[:html] = @renderer.render(data)
+      return compact(data)
     end
+
+    private
 
     # removes extra data from export
     def compact(cls)
