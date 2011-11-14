@@ -24,16 +24,7 @@ module JsDuck
       # other exporters.
     end
 
-    # Extension for filename
-    def extension
-      ".json"
-    end
-
-    # Writes full class data in JSON format to file
-    def write(filename, cls)
-      JsonDuck.write_json(filename, export(cls))
-    end
-
+    # Returns hash of class name and member names
     def export(cls)
       {
         :name => cls[:name],
@@ -41,6 +32,8 @@ module JsDuck
         :statics => export_members(cls, :statics),
       }
     end
+
+    private
 
     def export_members(cls, context)
       h = {}

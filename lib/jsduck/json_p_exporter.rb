@@ -1,5 +1,4 @@
 require 'jsduck/exporter'
-require 'jsduck/json_duck'
 require 'jsduck/renderer'
 require 'jsduck/doc_formatter'
 
@@ -17,17 +16,11 @@ module JsDuck
       renderer.meta_tags = @opts.meta_tags
     end
 
-    # Extension for filename
-    def extension
-      ".js"
-    end
-
-    # Writes compacted class data in JsonP format to file
-    def write(filename, cls)
+    # Returns compacted class data hash
+    def export(cls)
       data = @exporter.export(cls)
       data[:html] = @renderer.render(data)
-      data = @exporter.compact(data)
-      JsonDuck.write_jsonp(filename, cls[:name].gsub(/\./, "_"), data)
+      return @exporter.compact(data)
     end
 
   end

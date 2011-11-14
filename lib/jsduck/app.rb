@@ -55,25 +55,12 @@ module JsDuck
       @examples = Examples.create(@opts.examples)
       @categories = Categories.create(@opts.categories_path, DocFormatter.new(@relations, @opts), @relations)
 
-      if @opts.export == :json
+      if @opts.export
         format_classes
-        if @opts.output_dir == :stdout
-          puts JsonDuck.generate(@relations.classes)
-        else
-          FileUtils.rm_rf(@opts.output_dir)
-          cw = ClassWriter.new(JsonExporter, @relations, @opts)
-          cw.write(@opts.output_dir)
-        end
-      elsif @opts.export == :api
-        format_classes
-        if @opts.output_dir == :stdout
-          exporter = ApiExporter.new({}, {})
-          puts JsonDuck.generate(@relations.classes.map {|cls| exporter.export(cls) })
-        else
-          FileUtils.rm_rf(@opts.output_dir)
-          cw = ClassWriter.new(ApiExporter, @relations, @opts)
-          cw.write(@opts.output_dir)
-        end
+        FileUtils.rm_rf(@opts.output_dir) unless @opts.output_dir == :stdout
+        exporters = {:json => JsonExporter, :api => ApiExporter}
+        cw = ClassWriter.new(exporters[@opts.export], @relations, @opts)
+        cw.write(@opts.output_dir, ".json")
       else
         FileUtils.rm_rf(@opts.output_dir)
         TemplateDir.new(@opts).write
@@ -97,7 +84,7 @@ module JsDuck
         format_classes
 
         cw = ClassWriter.new(JsonPExporter, @relations, @opts)
-        cw.write(@opts.output_dir+"/output")
+        cw.write(@opts.output_dir+"/output", ".js")
 
         @guides.write(@opts.output_dir+"/guides")
         @videos.write(@opts.output_dir+"/videos")
