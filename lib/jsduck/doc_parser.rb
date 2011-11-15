@@ -93,13 +93,13 @@ module JsDuck
         elsif look(/@extends?\b/)
           at_extends
         elsif look(/@mixins?\b/)
-          at_mixins
+          class_list_at_tag(/@mixins?/, :mixins)
         elsif look(/@alternateClassNames?\b/)
-          at_alternateClassName
+          class_list_at_tag(/@alternateClassNames?/, :alternateClassNames)
         elsif look(/@uses\b/)
-          at_uses
+          class_list_at_tag(/@uses/, :uses)
         elsif look(/@requires\b/)
-          at_requires
+          class_list_at_tag(/@requires/, :requires)
         elsif look(/@singleton\b/)
           boolean_at_tag(/@singleton/, :singleton)
         elsif look(/@event\b/)
@@ -206,39 +206,12 @@ module JsDuck
       skip_white
     end
 
-    # matches @mixins name1 name2 ...
-    def at_mixins
-      match(/@mixins?/)
-      add_tag(:mixins)
+    # matches @<tagname> classname1 classname2 ...
+    def class_list_at_tag(regex, tagname)
+      match(regex)
+      add_tag(tagname)
       skip_horiz_white
-      @current_tag[:mixins] = class_list
-      skip_white
-    end
-
-    # matches @alternateClassName name1 name2 ...
-    def at_alternateClassName
-      match(/@alternateClassNames?/)
-      add_tag(:alternateClassNames)
-      skip_horiz_white
-      @current_tag[:alternateClassNames] = class_list
-      skip_white
-    end
-
-    # matches @uses name1 name2 ...
-    def at_uses
-      match(/@uses/)
-      add_tag(:uses)
-      skip_horiz_white
-      @current_tag[:uses] = class_list
-      skip_white
-    end
-
-    # matches @requires name1 name2 ...
-    def at_requires
-      match(/@requires/)
-      add_tag(:requires)
-      skip_horiz_white
-      @current_tag[:requires] = class_list
+      @current_tag[tagname] = class_list
       skip_white
     end
 
