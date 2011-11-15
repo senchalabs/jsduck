@@ -12,7 +12,7 @@ API documentation generator for Sencha JavaScript frameworks.
 
 JsDuck aims to be a better documentation generator for [Ext JS][] than
 the old [ext-doc][] was. It is used by Sencha to document [Ext JS
-4][ext4-docs], [Sencha Touch][touch] and [several other][other-docs]
+4][ext4-docs], [Sencha Touch][touch2-docs] and [several other][other-docs]
 products.
 
 The highlights of JSDuck are [Markdown][] support and keeping you DRY
