@@ -172,7 +172,7 @@ module JsDuck
     # <literal> := ...see JsLiteralParser...
     def my_literal
       lit = literal
-      return unless lit
+      return unless lit && literal_expression_end?
 
       cls_map = {
         :string => "String",
@@ -193,6 +193,13 @@ module JsDuck
       value = JsLiteralBuilder.new.to_s(lit)
 
       {:type => :literal, :class => cls, :value => value}
+    end
+
+    # True when we're at the end of literal expression.
+    # ",", ";" and "}" are the normal closing symbols, but for
+    # our docs purposes doc-comment and file end work too.
+    def literal_expression_end?
+      look(",") || look(";") || look("}") || look(:doc_comment) || @lex.empty?
     end
 
     # <ext-extend> := "Ext" "." "extend" "(" <ident-chain> "," ...

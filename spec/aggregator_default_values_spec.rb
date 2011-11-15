@@ -331,6 +331,34 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg with implicit number value given as expression" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} foo
+         */
+        foo: 5 + 5
+      EOS
+    end
+    it "doesn't get the default value from code" do
+      @doc[:default].should == nil
+    end
+  end
+
+  describe "cfg with implicit array value with chained method" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Array} foo
+         */
+        foo: [1, 2, 3].compact()
+      EOS
+    end
+    it "doesn't get the default value from code" do
+      @doc[:default].should == nil
+    end
+  end
+
   describe "cfg with implicit name followed by code field with another name" do
     before do
       @doc = parse(<<-EOS)[0]
