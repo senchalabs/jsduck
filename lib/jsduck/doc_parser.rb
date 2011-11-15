@@ -96,6 +96,10 @@ module JsDuck
           at_mixins
         elsif look(/@alternateClassNames?\b/)
           at_alternateClassName
+        elsif look(/@uses\b/)
+          at_uses
+        elsif look(/@requires\b/)
+          at_requires
         elsif look(/@singleton\b/)
           boolean_at_tag(/@singleton/, :singleton)
         elsif look(/@event\b/)
@@ -217,6 +221,24 @@ module JsDuck
       add_tag(:alternateClassNames)
       skip_horiz_white
       @current_tag[:alternateClassNames] = class_list
+      skip_white
+    end
+
+    # matches @uses name1 name2 ...
+    def at_uses
+      match(/@uses/)
+      add_tag(:uses)
+      skip_horiz_white
+      @current_tag[:uses] = class_list
+      skip_white
+    end
+
+    # matches @requires name1 name2 ...
+    def at_requires
+      match(/@requires/)
+      add_tag(:requires)
+      skip_horiz_white
+      @current_tag[:requires] = class_list
       skip_white
     end
 

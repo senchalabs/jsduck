@@ -242,6 +242,33 @@ describe JsDuck::Aggregator do
     it_should_behave_like "Ext.define"
   end
 
+  describe "explicit @tags overriding Ext.define()" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @extends Your.Class
+         * @uses ClassC
+         * @requires ClassA
+         * @requires ClassB
+         * @alternateClassName JustClass
+         * @mixins Ext.util.Observable
+         * @mixins Foo.Bar
+         * @singleton
+         */
+        Ext.define('MyClassXXX', {
+          extend: 'Your.ClassXXX',
+          uses: ['CCC'],
+          singleton: false,
+          alternateClassName: ['JustClassXXX'],
+          requires: ['AAA'],
+          mixins: ['BBB']
+        });
+      EOS
+    end
+    it_should_behave_like "Ext.define"
+  end
+
   describe "Ext.define() without extend" do
     before do
       @doc = parse(<<-EOS)[0]
