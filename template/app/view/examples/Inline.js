@@ -24,7 +24,6 @@ Ext.define('Docs.view.examples.Inline', {
         xtype: 'toolbar',
         dock: 'top',
         height: 30,
-        style: 'background: none;',
         items: [
             {
                 iconCls: 'code',

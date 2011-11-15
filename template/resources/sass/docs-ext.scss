@@ -21,3 +21,17 @@ $grid-row-cell-selected-background-color: #D9E8FB;
 // The value can either be true, in which case the image path will be "../images/"
 // or a string, of where the path is
 $relative-image-path-for-uis: true; // defaults to "../images/" when true
+
+// For browsers not supporting gradients: Opera, IE.
+// Hide the toolbar/button background images of the default blue theme.
+// In theory we should generate the images using `sencha slice`,
+// but because we only need them for toolbar/button, it is simpler
+// to just downgrade the presentation for these browsers.
+.x-nlg {
+  .x-toolbar-default {
+    background-image: none !important; }
+
+  .x-btn-default-toolbar-small-focus,
+  .x-btn-default-toolbar-small-over,
+  .x-btn-default-toolbar-small-pressed {
+    background-image: none; } }

@@ -5,6 +5,11 @@
   margin-bottom: 10px;
   // add padding to make right scrollbar visible
   padding-right: 25px;
+  // Hide toolbar background completely.
+  // !important is needed to hide the background image
+  // that is created for browsers like IE and Opera.
+  .x-toolbar {
+    background: none !important; }
   // Inline example component buttons
   span.x-btn-inner {
     line-height: 12px;
