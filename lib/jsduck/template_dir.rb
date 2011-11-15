@@ -9,31 +9,40 @@ module JsDuck
   class TemplateDir
     def initialize(opts)
       @opts = opts
+      @files = [
+        "app",
+        "app.js",
+        "favicon.ico",
+        "extjs",
+        "resources",
+      ]
     end
 
     def write
-      if @opts.template_links
-        link_files
-      else
-        copy_files
-      end
-
-      if @opts.eg_iframe
-        FileUtils.rm(@opts.output_dir+"/eg-iframe.html")
-        FileUtils.cp(@opts.eg_iframe, @opts.output_dir+"/eg-iframe.html")
-      end
-    end
-
-    def copy_files
-      Logger.instance.log("Copying template files to", @opts.output_dir)
-      FileUtils.cp_r(@opts.template_dir, @opts.output_dir)
-    end
-
-    def link_files
-      Logger.instance.log("Linking template files to", @opts.output_dir)
       FileUtils.mkdir(@opts.output_dir)
-      Dir.glob(@opts.template_dir + "/*").each do |file|
-        File.symlink(File.expand_path(file), @opts.output_dir+"/"+File.basename(file))
+      if @opts.template_links
+        Logger.instance.log("Linking template files to", @opts.output_dir)
+        move_files(:symlink)
+      else
+        Logger.instance.log("Copying template files to", @opts.output_dir)
+        move_files(:cp_r)
+      end
+
+      # always copy the eg-iframe file.
+      eg_iframe = @opts.eg_iframe || @opts.template_dir+"/eg-iframe.html"
+      FileUtils.cp(eg_iframe, @opts.output_dir+"/eg-iframe.html")
+    end
+
+    private
+
+    # moves files from one dir to another using a method of FileUtils module.
+    def move_files(method)
+      @files.each do |file|
+        source = File.expand_path(@opts.template_dir+"/"+file)
+        target = File.expand_path(@opts.output_dir+"/"+file)
+        if File.exists?(source)
+          FileUtils.send(method, source, target)
+        end
       end
     end
 

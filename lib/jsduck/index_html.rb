@@ -13,18 +13,23 @@ module JsDuck
       @opts = opts
     end
 
+    # In normal mode creates index.html.
+    #
+    # When --seo enabled, creates index.php, template.html and print-template.html.
     def write
-      create_template_html
-      create_print_template_html
-
-      if !@opts.seo
-        FileUtils.rm(@opts.output_dir+"/index.php")
-        FileUtils.cp(@opts.output_dir+"/template.html", @opts.output_dir+"/index.html")
+      if @opts.seo
+        FileUtils.cp(@opts.template_dir+"/index.php", @opts.output_dir+"/index.php")
+        create_template_html(@opts.template_dir+"/template.html", @opts.output_dir+"/template.html")
+        create_print_template_html(@opts.template_dir+"/print-template.html", @opts.output_dir+"/print-template.html")
+      else
+        create_template_html(@opts.template_dir+"/template.html", @opts.output_dir+"/index.html")
       end
     end
 
-    def create_template_html
-      write_template("template.html", {
+    private
+
+    def create_template_html(in_file, out_file)
+      write_template(in_file, out_file, {
         "{title}" => @opts.title,
         "{header}" => @opts.header,
         "{footer}" => "<div id='footer-content' style='display: none'>#{@opts.footer}</div>",
@@ -40,23 +45,20 @@ module JsDuck
       })
     end
 
-    def create_print_template_html
-      write_template("print-template.html", {
+    def create_print_template_html(in_file, out_file)
+      write_template(in_file, out_file, {
         "{title}" => @opts.title,
         "{header}" => @opts.header,
       })
     end
 
-    # Opens file in template dir, replaces {keys} inside it, writes to output dir
-    def write_template(filename, replacements)
-      in_file = @opts.template_dir + '/' + filename
-      out_file = @opts.output_dir + '/' + filename
+    # Opens in_file, replaces {keys} inside it, writes to out_file
+    def write_template(in_file, out_file, replacements)
       Logger.instance.log("Writing", out_file)
       html = IO.read(in_file)
       html.gsub!(/\{\w+\}/) do |key|
         replacements[key] ? replacements[key] : key
       end
-      FileUtils.rm(out_file)
       File.open(out_file, 'w') {|f| f.write(html) }
     end
 
