@@ -19,6 +19,11 @@
  *         }
  *     });
  *
+ * **Note:** this is not a fully working example. When you run it
+ * through JSDuck you will get warnings about a lot of missing classes
+ * that this example class references, additionally it doesn't make
+ * sense for singleton class to have static methods.
+ *
  * [1]: http://docs.sencha.com/ext-js/4.0/
  */
 Ext.define('Ext.master.Switch', {
