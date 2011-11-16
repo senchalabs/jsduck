@@ -312,7 +312,7 @@ class JsDuckRunner
 
   def add_touch2_export
     @options += [
-      "--json",
+      "--export", "full",
       "--output", "#{@out_dir}/../export/touch2",
       "--external=google.maps.Map,google.maps.LatLng",
       "#{@sdk_dir}/touch/touch.jsb3",
