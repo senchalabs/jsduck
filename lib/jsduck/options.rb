@@ -152,7 +152,7 @@ module JsDuck
 
         opts.on('--meta-tags=PATH',
           "Path to Ruby file or directory with custom",
-          "meta-tag implementations. Experimantal!", " ") do |path|
+          "meta-tag implementations.", " ") do |path|
           @meta_tag_paths << canonical(path)
         end
 
@@ -212,7 +212,8 @@ module JsDuck
           @examples = canonical(path)
         end
 
-        opts.on('--stats', "Creates page with all kinds of statistics.", " ") do
+        opts.on('--stats',
+          "Creates page with all kinds of statistics. Experimental!", " ") do
           @stats = true
         end
 
