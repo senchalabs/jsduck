@@ -13,7 +13,7 @@ Ext.define("Docs.LocalStore", {
      * localStorage available.
      */
     init: function() {
-        this.localStorage = ('localStorage' in window && window['localStorage'] !== null);
+        this.localStorage = !!window['localStorage'];
         this.store = Ext.getStore(this.storeName);
 
         if (this.localStorage) {
