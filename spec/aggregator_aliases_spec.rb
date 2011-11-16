@@ -223,6 +223,20 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "Ext.define() with dash inside alias name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define('MyClass', {
+          alias: 'widget.foo-bar'
+        });
+      EOS
+    end
+    it "treats dash as a normal character" do
+      @doc[:aliases].should == {"widget" => ["foo-bar"]}
+    end
+  end
+
   describe "Ext.define() with xtype property" do
     before do
       @doc = parse(<<-EOS)[0]

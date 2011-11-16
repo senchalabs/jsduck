@@ -350,7 +350,7 @@ module JsDuck
     # it instead of creating a new hash.
     def build_aliases_hash(aliases, hash={})
       aliases.each do |a|
-        if a =~ /^([\w.]+)\.(\w+)$/
+        if a =~ /^(.+)\.([^.]+)$/
           if hash[$1]
             hash[$1] << $2
           else
