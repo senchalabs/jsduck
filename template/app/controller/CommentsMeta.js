@@ -215,62 +215,44 @@ Ext.define('Docs.controller.CommentsMeta', {
     },
 
     refreshHoverMenu: function(cmp) {
-        if (this.metaLoaded) {
+        this.afterMetaLoaded(function() {
             Docs.view.Comments.renderHoverMenuMeta(cmp.el);
-        } else {
-            this.addListener('afterLoad', function() {
-                Docs.view.Comments.renderHoverMenuMeta(cmp.el);
-            }, this, {
-                single: true
-            });
-        }
+        }, this);
     },
 
     updateClassIndex: function() {
         if (this.getController('Comments').commentsEnabled) {
-            if (this.metaLoaded) {
+            this.afterMetaLoaded(function() {
                 Docs.view.Comments.updateClassIndex();
-            } else {
-                this.addListener('afterLoad', function() {
-                    Docs.view.Comments.updateClassIndex();
-                }, this, {
-                    single: true
-                });
-            }
+            }, this);
         }
     },
 
     renderClassCommentMeta: function(cls) {
-        if (this.metaLoaded) {
+        this.afterMetaLoaded(function() {
             Docs.view.Comments.updateClassCommentMeta(cls);
-        } else {
-            this.addListener('afterLoad', function() {
-                Docs.view.Comments.updateClassCommentMeta(cls);
-            }, this, {
-                single: true
-            });
-        }
+        }, this);
     },
 
     renderGuideCommentMeta: function(cls) {
-        if (this.metaLoaded) {
+        this.afterMetaLoaded(function() {
             Docs.view.Comments.updateGuideCommentMeta(cls);
-        } else {
-            this.addListener('afterLoad', function() {
-                Docs.view.Comments.updateGuideCommentMeta(cls);
-            }, this, {
-                single: true
-            });
-        }
+        }, this);
     },
 
     renderVideoCommentMeta: function(cls) {
-        if (this.metaLoaded) {
+        this.afterMetaLoaded(function() {
             Docs.view.Comments.updateVideoCommentMeta(cls);
+        }, this);
+    },
+
+    // Ensures that comments metadata has been loaded, then executes
+    // the callback.
+    afterMetaLoaded: function(callback, scope) {
+        if (this.metaLoaded) {
+            callback.call(scope);
         } else {
-            this.addListener('afterLoad', function() {
-                Docs.view.Comments.updateVideoCommentMeta(cls);
-            }, this, {
+            this.addListener('afterLoad', callback, scope, {
                 single: true
             });
         }
