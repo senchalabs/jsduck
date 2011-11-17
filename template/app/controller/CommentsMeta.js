@@ -116,31 +116,6 @@ Ext.define('Docs.controller.CommentsMeta', {
         });
     },
 
-    // updateVoteMeta: function() {
-    //     var id = Docs.App.getController('Classes').currentCls.name,
-    //         startkey = Ext.JSON.encode(['class',id]),
-    //         endkey = Ext.JSON.encode(['class',id,{}]),
-    //         currentUser = this.getController('Auth').currentUser;
-    //
-    //     if (!id) return;
-    //
-    //     Ext.data.JsonP.request({
-    //         url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_target',
-    //         method: 'GET',
-    //         params: {
-    //             reduce: false,
-    //             startkey: startkey,
-    //             endkey: endkey,
-    //             user: currentUser && currentUser.userName,
-    //             votes: true
-    //         },
-    //         success: function(response) {
-    //             console.log(response.rows)
-    //         },
-    //         scope: this
-    //     });
-    // },
-
     fetchCommentLeaders: function() {
         Ext.data.JsonP.request({
             url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_author',
