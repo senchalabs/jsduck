@@ -264,22 +264,6 @@ describe JsDuck::Aggregator do
     it_should_behave_like "has return"
   end
 
-  describe "method with @template" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @method foo
-         * Some function
-         * @template
-         */
-      EOS
-    end
-    it_should_behave_like "method documentation"
-    it "is a template method" do
-      @doc[:template].should == true
-    end
-  end
-
   describe "method without doc-comment" do
     before do
       @docs = parse(<<-EOS)

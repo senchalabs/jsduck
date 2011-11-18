@@ -85,12 +85,16 @@ module JsDuck
     # Merges new class-doc into old one.
     def merge_classes(old, new)
       # Merge booleans
-      [:extends, :singleton, :private, :protected].each do |tag|
+      [:extends, :singleton, :private].each do |tag|
         old[tag] = old[tag] || new[tag]
       end
       # Merge arrays
       [:mixins, :alternateClassNames, :files].each do |tag|
         old[tag] = old[tag] + new[tag]
+      end
+      # Merge attribute hashes
+      new[:attributes].each_pair do |name, value|
+        old[:attributes][name] = old[:attributes][name] || value
       end
       # Merge hashes of arrays
       [:aliases, :meta].each do |tag|

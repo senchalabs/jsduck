@@ -221,7 +221,7 @@ module JsDuck
       end
 
       after = ""
-      if m[:protected]
+      if m[:attributes][:protected]
         after += "<strong class='protected signature'>protected</strong>"
       end
       if m[:static]
@@ -233,8 +233,14 @@ module JsDuck
       if m[:required]
         after += "<strong class='required signature'>required</strong>"
       end
-      if m[:template]
+      if m[:attributes][:template]
         after += "<strong class='template signature'>template</strong>"
+      end
+      if m[:attributes][:abstract]
+        after += "<strong class='abstract signature'>abstract</strong>"
+      end
+      if m[:attributes][:readonly]
+        after += "<strong class='readonly signature'>readonly</strong>"
       end
 
       uri = "#!/api/#{m[:owner]}-#{m[:id]}"

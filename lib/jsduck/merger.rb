@@ -153,7 +153,6 @@ module JsDuck
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :return => detect_return(doc_map, name == "constructor" ? "Object" : "undefined"),
-        :template => !!doc_map[:template],
       }, doc_map)
     end
 
@@ -222,11 +221,11 @@ module JsDuck
     def add_shared(hash, doc_map)
       hash.merge!({
         :private => !!doc_map[:private],
-        :protected => !!doc_map[:protected],
         :static => !!doc_map[:static],
         :inheritable => !!doc_map[:inheritable],
         :deprecated => detect_deprecated(doc_map),
         :inheritdoc => doc_map[:inheritdoc] ? doc_map[:inheritdoc].first : nil,
+        :attributes => detect_attributes(doc_map),
         :meta => detect_meta(doc_map),
       })
       hash[:id] = create_member_id(hash)
@@ -376,6 +375,14 @@ module JsDuck
 
     def detect_singleton(doc_map, code)
       !!(doc_map[:singleton] || code[:type] == :ext_define && code[:singleton])
+    end
+
+    def detect_attributes(doc_map)
+      attributes = {}
+      (doc_map[:attribute] || []).each do |tag|
+        attributes[tag[:name]] = true
+      end
+      attributes
     end
 
     def detect_params(docs, code)

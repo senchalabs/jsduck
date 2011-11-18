@@ -144,20 +144,21 @@ module JsDuck
           boolean_at_tag(/@inheritable/, :inheritable)
         elsif look(/@(private|ignore|hide)\b/)
           boolean_at_tag(/@(private|ignore|hide)/, :private)
-        elsif look(/@protected\b/)
-          boolean_at_tag(/@protected/, :protected)
         elsif look(/@accessor\b/)
           boolean_at_tag(/@accessor/, :accessor)
         elsif look(/@evented\b/)
           boolean_at_tag(/@evented/, :evented)
+        elsif look(/@protected\b/)
+          attribute_tag(/@protected/, :protected)
         elsif look(/@template\b/)
-          boolean_at_tag(/@template/, :template)
+          attribute_tag(/@template/, :template)
+        elsif look(/@abstract\b/)
+          attribute_tag(/@abstract\b/, :abstract)
+        elsif look(/@readonly\b/)
+          attribute_tag(/@readonly\b/, :readonly)
         elsif look(/@markdown\b/)
           # this is detected just to be ignored
           boolean_at_tag(/@markdown/, :markdown)
-        elsif look(/@abstract\b/)
-          # this is detected just to be ignored
-          boolean_at_tag(/@abstract/, :abstract)
         elsif look(/@/)
           @input.scan(/@/)
           tag = @meta_tags_map[look(/\w+/)]
@@ -366,6 +367,15 @@ module JsDuck
     def boolean_at_tag(regex, propname)
       match(regex)
       add_tag(propname)
+      skip_white
+    end
+
+    # Matches tag like @protected, @abstract, @readonly, @template
+    # Creates :attribute tag with that name
+    def attribute_tag(regex, attr_name)
+      match(regex)
+      add_tag(:attribute)
+      @current_tag[:name] = attr_name
       skip_white
     end
 

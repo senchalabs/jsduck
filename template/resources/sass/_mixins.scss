@@ -148,7 +148,7 @@
 @mixin signature-colors {
   &.deprecated {
     background-color: #aa0000; }
-  &.protected, &.template {
+  &.protected, &.template, &.readonly, &.abstract {
     background-color: #aaa; }
   &.static {
     background-color: $docs-text-color; }

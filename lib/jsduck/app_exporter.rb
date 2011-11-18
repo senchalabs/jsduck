@@ -45,7 +45,7 @@ module JsDuck
 
     def compact_member(m)
       m_copy = {}
-      [:name, :tagname, :owner, :protected, :static, :deprecated, :required, :template, :id].each do |key|
+      [:name, :tagname, :owner, :static, :deprecated, :required, :attributes, :id].each do |key|
         m_copy[key] = m[key]
       end
       m_copy

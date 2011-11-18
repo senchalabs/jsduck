@@ -49,7 +49,7 @@ Ext.define('Docs.view.HoverMenu', {
                 renderLink: function(values) {
                     var url = values.url || values.cls;
                     var label = values.label || values.cls;
-                    var tags = Ext.Array.map(['static', 'protected', 'deprecated', 'template', 'required'], function(tag) {
+                    var tags = Ext.Array.map(['static', 'protected', 'deprecated', 'template', 'required', 'abstract', 'readonly'], function(tag) {
                         return values[tag] ? '<span class="signature '+tag+'">'+tag+'</span>' : '';
                     }).join(' ');
                     return Ext.String.format('<a href="#!/api/{0}" rel="{0}" class="docClass">{1} {2}</a>', url, label, tags);

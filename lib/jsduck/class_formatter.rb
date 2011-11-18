@@ -52,7 +52,7 @@ module JsDuck
     end
 
     def expandable?(m)
-      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:deprecated] || m[:template]
+      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:deprecated] || m[:attributes][:template]
     end
 
     def format_item(it, is_css_tag)
