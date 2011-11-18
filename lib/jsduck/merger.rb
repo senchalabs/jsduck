@@ -175,7 +175,6 @@ module JsDuck
         :owner => detect_owner(doc_map) || owner,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
-        :required => detect_required(:cfg, doc_map),
         :default => detect_default(:cfg, doc_map, code),
         :properties => detect_subproperties(docs, :cfg),
         :accessor => !!doc_map[:accessor],
@@ -313,11 +312,6 @@ module JsDuck
       return explicit_name == "" || explicit_name == implicit_name
     end
 
-    def detect_required(tagname, doc_map)
-      main_tag = doc_map[tagname] ? doc_map[tagname].first : {}
-      return main_tag[:optional] == false
-    end
-
     # for detecting mixins and alternateClassNames
     def detect_list(type, doc_map, code)
       if doc_map[type]
@@ -382,7 +376,12 @@ module JsDuck
       (doc_map[:attribute] || []).each do |tag|
         attributes[tag[:name]] = true
       end
+      attributes[:required] = true if detect_required(doc_map)
       attributes
+    end
+
+    def detect_required(doc_map)
+      doc_map[:cfg] && doc_map[:cfg].first[:optional] == false
     end
 
     def detect_params(docs, code)

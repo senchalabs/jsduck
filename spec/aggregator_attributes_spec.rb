@@ -54,8 +54,50 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "a normal config option" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg foo Something
+         */
+      EOS
+    end
+    it "is not required by default" do
+      @doc[:attributes][:required].should_not == true
+    end
+  end
+
+  describe "a config option labeled as required" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg foo (required) Something
+         */
+      EOS
+    end
+    it "has required flag set to true" do
+      @doc[:attributes][:required].should == true
+    end
+  end
+
+  describe "a class with @cfg (required)" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @cfg foo (required)
+         */
+      EOS
+    end
+    it "doesn't become a required class" do
+      @doc[:attributes][:required].should_not == true
+    end
+    it "contains required config" do
+      @doc[:members][:cfg][0][:attributes][:required].should == true
+    end
+  end
+
   # @static
   # @deprecated
-  # (required)
 
 end

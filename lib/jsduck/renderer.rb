@@ -230,7 +230,7 @@ module JsDuck
       if m[:deprecated]
         after += "<strong class='deprecated signature'>deprecated</strong>"
       end
-      if m[:required]
+      if m[:attributes][:required]
         after += "<strong class='required signature'>required</strong>"
       end
       if m[:attributes][:template]

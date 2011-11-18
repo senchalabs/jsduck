@@ -186,7 +186,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             'abstract': member ? member.attributes['abstract'] : false,
             template: member ? member.attributes['template'] : false,
             readonly: member ? member.attributes['readonly'] : false,
-            required: member ? member['required'] : false
+            required: member ? member.attributes['required'] : false
         };
     },
 
