@@ -36,7 +36,8 @@ module JsDuck
     def format_member(m)
       @formatter.doc_context = m[:files][0]
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
-      m[:deprecated][:text] = @formatter.format(m[:deprecated][:text]) if m[:deprecated]
+      depr = m[:attributes][:deprecated]
+      depr[:text] = @formatter.format(depr[:text]) if depr
       if expandable?(m) || @formatter.too_long?(m[:doc])
         m[:shortDoc] = @formatter.shorten(m[:doc])
       end
@@ -52,7 +53,7 @@ module JsDuck
     end
 
     def expandable?(m)
-      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:deprecated] || m[:attributes][:template]
+      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:attributes][:deprecated] || m[:attributes][:template]
     end
 
     def format_item(it, is_css_tag)

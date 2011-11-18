@@ -107,6 +107,44 @@ describe JsDuck::Aggregator do
     end
   end
 
-  # @deprecated
+  describe "member with @deprecated" do
+    before do
+      @deprecated = parse(<<-EOS)[0][:attributes][:deprecated]
+        /**
+         * @deprecated 4.0 Use escapeRegex instead.
+         */
+      EOS
+    end
+
+    it "gets deprecated attribute" do
+      @deprecated.should_not == nil
+    end
+
+    it "detects deprecation description" do
+      @deprecated[:text].should == "Use escapeRegex instead."
+    end
+
+    it "detects version of deprecation" do
+      @deprecated[:version].should == "4.0"
+    end
+  end
+
+  describe "member with @deprecated without version number" do
+    before do
+      @deprecated = parse(<<-EOS)[0][:attributes][:deprecated]
+        /**
+         * @deprecated Use escapeRegex instead.
+         */
+      EOS
+    end
+
+    it "doesn't detect version number" do
+      @deprecated[:version].should == nil
+    end
+
+    it "still detects description" do
+      @deprecated[:text].should == "Use escapeRegex instead."
+    end
+  end
 
 end

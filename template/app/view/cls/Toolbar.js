@@ -181,7 +181,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             label: member ? ((member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name) : cls,
             inherited: member ? member.owner !== cls : false,
             'static': member ? member.attributes['static'] : false,
-            deprecated: member ? member['deprecated'] : false,
+            deprecated: member ? member.attributes['deprecated'] : false,
             'protected': member ? member.attributes['protected'] : false,
             'abstract': member ? member.attributes['abstract'] : false,
             template: member ? member.attributes['template'] : false,

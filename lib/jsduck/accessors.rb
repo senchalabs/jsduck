@@ -57,8 +57,7 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :id => "method-" + name,
-        :deprecated => cfg[:deprecated],
-        :attributes => {},
+        :attributes => clone_attributes(cfg),
         :meta => cfg[:meta],
       }
     end
@@ -81,8 +80,7 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :id => "method-" + name,
-        :deprecated => cfg[:deprecated],
-        :attributes => {},
+        :attributes => clone_attributes(cfg),
         :meta => cfg[:meta]
       }
     end
@@ -119,14 +117,24 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :id => "event-" + name,
-        :deprecated => cfg[:deprecated],
-        :attributes => {},
+        :attributes => clone_attributes(cfg),
         :meta => cfg[:meta]
       }
     end
 
     def upcase_first(str)
       str[0,1].upcase + str[1..-1]
+    end
+
+    # Create copy of all attributes of config, except the :required
+    # attribute which only applies to configs and must not be
+    # propagated to methods or events.
+    def clone_attributes(cfg)
+      h = {}
+      cfg[:attributes].each_pair do |key, value|
+        h[:key] = value unless key == :required
+      end
+      h
     end
   end
 

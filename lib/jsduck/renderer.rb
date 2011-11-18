@@ -227,7 +227,7 @@ module JsDuck
       if m[:attributes][:static]
         after += "<strong class='static signature'>static</strong>"
       end
-      if m[:deprecated]
+      if m[:attributes][:deprecated]
         after += "<strong class='deprecated signature'>deprecated</strong>"
       end
       if m[:attributes][:required]
@@ -265,17 +265,18 @@ module JsDuck
         doc << "<p>Defaults to: <code>" + CGI.escapeHTML(m[:default]) + "</code></p>"
       end
 
-      if m[:deprecated]
-        v = m[:deprecated][:version] ? "since " + m[:deprecated][:version] : ""
+      if m[:attributes][:deprecated]
+        depr = m[:attributes][:deprecated]
+        v = depr[:version] ? "since " + depr[:version] : ""
         doc << [
           "<div class='signature-box deprecated'>",
           "<p>This #{m[:tagname]} has been <strong>deprecated</strong> #{v}</p>",
-          m[:deprecated][:text],
+          depr[:text],
           "</div>",
         ]
       end
 
-      if m[:template]
+      if m[:attributes][:template]
         doc << [
           "<div class='signature-box template'>",
           "<p>This is a template method. A hook into the functionality of this class.",

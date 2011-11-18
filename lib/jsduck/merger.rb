@@ -221,7 +221,6 @@ module JsDuck
       hash.merge!({
         :private => !!doc_map[:private],
         :inheritable => !!doc_map[:inheritable],
-        :deprecated => detect_deprecated(doc_map),
         :inheritdoc => doc_map[:inheritdoc] ? doc_map[:inheritdoc].first : nil,
         :attributes => detect_attributes(doc_map),
         :meta => detect_meta(doc_map),
@@ -362,10 +361,6 @@ module JsDuck
       meta
     end
 
-    def detect_deprecated(doc_map)
-      doc_map[:deprecated] ? doc_map[:deprecated].first : nil
-    end
-
     def detect_singleton(doc_map, code)
       !!(doc_map[:singleton] || code[:type] == :ext_define && code[:singleton])
     end
@@ -375,6 +370,9 @@ module JsDuck
       (doc_map[:attribute] || []).each do |tag|
         attributes[tag[:name]] = true
       end
+      # @deprecated and (required) are detected in special ways from
+      # doc-comment but merged into :attributes hash.
+      attributes[:deprecated] = doc_map[:deprecated].first if doc_map[:deprecated]
       attributes[:required] = true if detect_required(doc_map)
       attributes
     end
