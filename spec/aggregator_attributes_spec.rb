@@ -29,6 +29,16 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "member with @static" do
+    before do
+      @doc = parse("/** @static */")[0]
+    end
+
+    it "gets static attribute" do
+      @doc[:attributes][:static].should == true
+    end
+  end
+
   describe "Property with @readonly" do
     before do
       @doc = parse("/** @readonly */")[0]
@@ -97,7 +107,6 @@ describe JsDuck::Aggregator do
     end
   end
 
-  # @static
   # @deprecated
 
 end

@@ -138,8 +138,6 @@ module JsDuck
           at_deprecated
         elsif look(/@var\b/)
           at_var
-        elsif look(/@static\b/)
-          boolean_at_tag(/@static/, :static)
         elsif look(/@inheritable\b/)
           boolean_at_tag(/@inheritable/, :inheritable)
         elsif look(/@(private|ignore|hide)\b/)
@@ -148,6 +146,8 @@ module JsDuck
           boolean_at_tag(/@accessor/, :accessor)
         elsif look(/@evented\b/)
           boolean_at_tag(/@evented/, :evented)
+        elsif look(/@static\b/)
+          attribute_tag(/@static/, :static)
         elsif look(/@protected\b/)
           attribute_tag(/@protected/, :protected)
         elsif look(/@template\b/)

@@ -224,7 +224,7 @@ module JsDuck
       if m[:attributes][:protected]
         after += "<strong class='protected signature'>protected</strong>"
       end
-      if m[:static]
+      if m[:attributes][:static]
         after += "<strong class='static signature'>static</strong>"
       end
       if m[:deprecated]

@@ -220,7 +220,6 @@ module JsDuck
     def add_shared(hash, doc_map)
       hash.merge!({
         :private => !!doc_map[:private],
-        :static => !!doc_map[:static],
         :inheritable => !!doc_map[:inheritable],
         :deprecated => detect_deprecated(doc_map),
         :inheritdoc => doc_map[:inheritdoc] ? doc_map[:inheritdoc].first : nil,
@@ -234,7 +233,7 @@ module JsDuck
     def create_member_id(m)
       # Sanitize $ in member names with something safer
       name = m[:name].gsub(/\$/, 'S-')
-      "#{m[:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
+      "#{m[:attributes][:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
     end
 
     def detect_name(tagname, doc_map, code, name_type = :last_name)

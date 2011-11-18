@@ -180,7 +180,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             url: member ? (cls + "-" + member.id) : cls,
             label: member ? ((member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name) : cls,
             inherited: member ? member.owner !== cls : false,
-            'static': member ? member['static'] : false,
+            'static': member ? member.attributes['static'] : false,
             deprecated: member ? member['deprecated'] : false,
             'protected': member ? member.attributes['protected'] : false,
             'abstract': member ? member.attributes['abstract'] : false,
