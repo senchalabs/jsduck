@@ -192,6 +192,7 @@ module JsDuck
         :owner => detect_owner(doc_map),
         :type => detect_type(:property, doc_map, code),
         :doc => detect_doc(docs),
+        :default => detect_default(:property, doc_map, code),
         :properties => detect_subproperties(docs, :property),
       }, doc_map)
     end

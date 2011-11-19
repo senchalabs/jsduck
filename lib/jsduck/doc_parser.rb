@@ -276,7 +276,7 @@ module JsDuck
       match(/@property/)
       add_tag(:property)
       maybe_type
-      maybe_ident_chain(:name)
+      maybe_name_with_default
       skip_white
     end
 

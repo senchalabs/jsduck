@@ -117,6 +117,19 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "property with default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @property {Number} [foo=3] Something
+         */
+      EOS
+    end
+    it "has default value" do
+      @doc[:default].should == "3"
+    end
+  end
+
   describe "cfg with explicit regex default value" do
     before do
       @doc = parse(<<-EOS)[0]
