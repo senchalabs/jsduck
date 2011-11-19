@@ -64,6 +64,8 @@ module JsDuck
         :method
       elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :function
         :method
+      elsif doc_map[:return] || doc_map[:param]
+        :method
       else
         :property
       end
