@@ -186,8 +186,10 @@ module JsDuck
         :alternateClassNames => [],
         :members => Class.default_members_hash,
         :statics => Class.default_members_hash,
+        :aliases => {},
+        :attributes => {},
         :meta => {},
-        :files => [{:filename => "", :linenr => 0}],
+        :files => [{:filename => "", :linenr => 0, :href => ""}],
       })
     end
 
