@@ -8,7 +8,7 @@ Ext.define('Docs.view.videos.Index', {
         'Docs.view.ThumbList'
     ],
 
-    cls: 'all-demos iScroll',
+    cls: 'iScroll',
     margin: '10 0 0 0',
     autoScroll: true,
 
@@ -17,7 +17,7 @@ Ext.define('Docs.view.videos.Index', {
             { xtype: 'container', html: '<h1 class="eg">Videos</h1>' },
             Ext.create('Docs.view.ThumbList', {
                 itemTpl: [
-                    '<dd ext:url="#!/video/{id}"><img src="{thumb}"/>',
+                    '<dd ext:url="#!/video/{id}"><div class="thumb"><img src="{thumb}"/></div>',
                         '<div><h4>{title}',
                         '</h4><p>{[values.description.substr(0,80)]}...</p></div>',
                     '</dd>'
@@ -34,6 +34,7 @@ Ext.define('Docs.view.videos.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.data.videos.length > 0 ? {cls: 'videos', href: '#!/video', tooltip: 'Videos'} : false;
+        var enabled = (Docs.data.videos || []).length > 0;
+        return enabled ? {cls: 'videos', href: '#!/video', tooltip: 'Videos'} : false;
     }
 });

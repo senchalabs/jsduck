@@ -3,9 +3,8 @@ require "jsduck/class"
 describe JsDuck::Class do
 
   # Avoid printed warnings in output
-  class JsDuck::Logger
-    def warn(msg)
-    end
+  before do
+    JsDuck::Logger.instance.set_warning(:all, false)
   end
 
   describe "#members" do
@@ -20,6 +19,7 @@ describe JsDuck::Class do
               {:name => "foo", :owner => "ParentClass"},
               {:name => "constructor", :owner => "ParentClass"},
               {:name => "frank", :owner => "ParentClass", :private => true},
+              {:name => "zappa", :owner => "ParentClass", :private => true},
             ]
           },
           :statics => {
@@ -96,9 +96,15 @@ describe JsDuck::Class do
       @members.first[:name].should == "constructor"
     end
 
+    def members_as_hash(cls, type, context=:members)
+      h = {}
+      cls.members(type, context).each {|m| h[m[:name]] = m }
+      h
+    end
+
     describe "(:method)" do
       before do
-        @members = @child.members_hash(:method)
+        @members = members_as_hash(@child, :method)
       end
 
       it "returns all public members in current class" do
@@ -141,7 +147,7 @@ describe JsDuck::Class do
 
       describe "singleton class" do
         before do
-          @members = @singletonChild.members_hash(:method)
+          @members = members_as_hash(@singletonChild, :method)
         end
 
         it "inherits all instance members from parent" do
@@ -165,7 +171,7 @@ describe JsDuck::Class do
 
     describe "(:method, :statics)" do
       before do
-        @members = @child.members_hash(:method, :statics)
+        @members = members_as_hash(@child, :method, :statics)
       end
 
       it "returns normal statics in current class" do
@@ -194,7 +200,7 @@ describe JsDuck::Class do
 
       describe "singleton class" do
         before do
-          @members = @singletonChild.members_hash(:method, :statics)
+          @members = members_as_hash(@singletonChild, :method, :statics)
         end
 
         it "doesn't inherit any static members from parent" do

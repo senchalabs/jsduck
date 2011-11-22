@@ -264,20 +264,30 @@ describe JsDuck::Aggregator do
     it_should_behave_like "has return"
   end
 
-  describe "method with @template" do
+  describe "Doc-comment not followed by function but containing @return" do
     before do
       @doc = parse(<<-EOS)[0]
         /**
-         * @method foo
          * Some function
-         * @template
+         * @returns {String} return value
          */
+        var foo = Ext.emptyFn;
       EOS
     end
     it_should_behave_like "method documentation"
-    it "is a template method" do
-      @doc[:template].should == true
+  end
+
+  describe "Doc-comment not followed by function but containing @param" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @param {String} x
+         */
+        var foo = Ext.emptyFn;
+      EOS
     end
+    it_should_behave_like "method documentation"
   end
 
   describe "method without doc-comment" do

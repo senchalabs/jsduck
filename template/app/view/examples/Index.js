@@ -8,16 +8,24 @@ Ext.define('Docs.view.examples.Index', {
         'Docs.view.ThumbList'
     ],
 
-    cls: 'all-demos iScroll',
+    cls: 'iScroll',
     margin: '10 0 0 0',
     autoScroll: true,
 
     initComponent: function() {
+
+        this.cls += Docs.touchExamplesUi ? " touch-examples-ui" : "";
+
+        var touchExampleRoot = Docs.exampleBaseUrl || "touch/examples",
+            extjsExampleRoot = Docs.exampleBaseUrl || "extjs/examples/",
+            baseUrl = Docs.touchExamplesUi ? touchExampleRoot : (extjsExampleRoot + "shared/screens");
+
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Examples</h1>' },
             Ext.create('Docs.view.ThumbList', {
                 itemTpl: [
-                    '<dd ext:url="#!/example/{url}"><img src="extjs/examples/shared/screens/{icon}"/>',
+                    '<dd ext:url="#!/example/{url}">',
+                        '<div class="thumb"><img src="'+baseUrl+'/{icon}"/></div>',
                         '<div><h4>{text}',
                             '<tpl if="status === \'new\'">',
                                 '<span class="new-sample"> (New)</span>',
@@ -43,6 +51,7 @@ Ext.define('Docs.view.examples.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.data.examples.length > 0 ? {cls: 'examples', href: '#!/example', tooltip: 'Examples'} : false;
+        var enabled = (Docs.data.examples || []).length > 0;
+        return enabled ? {cls: 'examples', href: '#!/example', tooltip: 'Examples'} : false;
     }
 });

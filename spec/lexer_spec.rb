@@ -25,6 +25,14 @@ describe JsDuck::Lexer do
     ]
   end
 
+  it "handles $ in identifiers" do
+    lex("$fo$o").should == [[:ident, "$fo$o"]]
+  end
+
+  it "handles numbers in identifiers" do
+    lex("x2").should == [[:ident, "x2"]]
+  end
+
   describe "differenciates regex from division" do
 
     it "when regex after operator" do
@@ -64,6 +72,10 @@ describe JsDuck::Lexer do
         [:number, "3"]
       ]
     end
+  end
+
+  it "allows [/] inside regex" do
+    lex("/ [/] /").should == [[:regex, "/ [/] /"]]
   end
 
   describe "identifies strings" do
@@ -142,6 +154,18 @@ describe JsDuck::Lexer do
 
     it "doc-comment" do
       lex("/** ").should == [[:doc_comment, "/** ", 1]]
+    end
+
+    it "regex" do
+      lex("/[a-z] ").should == [[:regex, "/[a-z] "]]
+    end
+
+    it "single-quoted string" do
+      lex("' ").should == [[:string, " "]]
+    end
+
+    it "double-quoted string" do
+      lex('" ').should == [[:string, " "]]
     end
   end
 

@@ -7,7 +7,7 @@ Ext.define('Docs.view.cls.Index', {
     requires: [
         'Docs.ContentGrabber'
     ],
-    cls: 'class-list iScroll',
+    cls: 'class-categories iScroll',
     margin: '15 10',
     autoScroll: true,
 
@@ -28,10 +28,11 @@ Ext.define('Docs.view.cls.Index', {
     },
 
     /**
-     * Returns tab config for classes page.
+     * Returns tab config for classes page if at least one class.
      * @return {Object}
      */
     getTab: function() {
-        return {cls: 'classes', href: '#!/api', tooltip: 'API Documentation'};
+        var enabled = (Docs.data.classes || []).length > 0;
+        return enabled ? {cls: 'classes', href: '#!/api', tooltip: 'API Documentation'} : false;
     }
 });

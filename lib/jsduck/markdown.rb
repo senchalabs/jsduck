@@ -42,7 +42,7 @@ module JsDuck
       # Build up search-replace list for each file.
       relations.each do |cls|
         Logger.instance.log("Converting #{cls[:name]} ...")
-        fname = cls[:filename]
+        fname = cls[:files][0][:filename]
         if fname && fname.length > 0
           replacements[fname] = [] unless replacements[fname]
           replacements[fname] << {
@@ -50,9 +50,9 @@ module JsDuck
             :new => @doc_writer.write(:class, cls),
           }
         end
-        cls.each_member do |m|
+        cls.all_local_members.each do |m|
           unless m[:tagname] == :method && m[:name] == "constructor" || m[:private]
-            fname = m[:filename]
+            fname = m[:files][0][:filename]
             replacements[fname] = [] unless replacements[fname]
             replacements[fname] << {
               :orig => m[:orig_comment],

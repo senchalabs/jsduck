@@ -1,0 +1,19 @@
+// Styles for footer
+
+#footer {
+  background: $docs-bg-color;
+  color: gray;
+  a { color: gray; }
+  text-align: right;
+  font-size: 10px;
+  padding-top: 3px;
+  padding-right: 40px;
+  border-color: #ebebeb;
+  border-width: 0 1px 0 0 !important;
+  border-style: solid;
+
+  // The footer-content div is initially hidden on page to prevent it
+  // being visible while loading-screen is shown.  Only after the div is
+  // brought inside footer component, make it visible.
+  #footer-content {
+    display: block !important; } }

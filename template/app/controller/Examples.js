@@ -45,6 +45,35 @@ Ext.define('Docs.controller.Examples', {
                 urlclick: function(url) {
                     this.loadExample(url);
                 }
+            },
+            'touchexamplecontainer': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('click', function(e, el) {
+                        this.changeDevice('tablet');
+                    }, this, {
+                        delegate: 'button.tablet'
+                    });
+                    cmp.el.addListener('click', function(e, el) {
+                        this.changeDevice('phone');
+                    }, this, {
+                        delegate: 'button.phone'
+                    });
+                    cmp.el.addListener('click', function(e, el) {
+                        this.changeOrientation('portrait');
+                    }, this, {
+                        delegate: 'button.portrait'
+                    });
+                    cmp.el.addListener('click', function(e, el) {
+                        this.changeOrientation('landscape');
+                    }, this, {
+                        delegate: 'button.landscape'
+                    });
+                    cmp.el.addListener('click', function(e, el) {
+                        this.openInNewWindow();
+                    }, this, {
+                        delegate: 'button.new-window'
+                    });
+                }
             }
         });
     },
@@ -87,5 +116,18 @@ Ext.define('Docs.controller.Examples', {
             }, this);
         }
         return this.map[url];
+    },
+
+    changeOrientation: function(orientation) {
+        this.getPage().setOrientation(orientation);
+    },
+
+    changeDevice: function(device) {
+        this.getPage().setDevice(device);
+    },
+
+    openInNewWindow: function() {
+        var example = this.getExample(this.activeUrl);
+        window.open((Docs.exampleBaseUrl || "touch/examples/") + example.url);
     }
 });

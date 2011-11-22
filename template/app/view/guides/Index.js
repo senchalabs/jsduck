@@ -8,7 +8,7 @@ Ext.define('Docs.view.guides.Index', {
         'Docs.view.ThumbList'
     ],
 
-    cls: 'all-demos iScroll',
+    cls: 'iScroll',
     margin: '10 0 0 0',
     autoScroll: true,
 
@@ -17,7 +17,7 @@ Ext.define('Docs.view.guides.Index', {
             { xtype: 'container', html: '<h1 class="eg">Guides</h1>' },
             Ext.create('Docs.view.ThumbList', {
                 itemTpl: [
-                    '<dd ext:url="#!/guide/{name}"><img src="guides/{name}/icon-lg.png"/>',
+                    '<dd ext:url="#!/guide/{name}"><div class="thumb"><img src="guides/{name}/icon-lg.png"/></div>',
                         '<div><h4>{title}</h4><p>{description}</p></div>',
                     '</dd>'
                 ],
@@ -33,6 +33,7 @@ Ext.define('Docs.view.guides.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.data.guides.length > 0 ? {cls: 'guides', href: '#!/guide', tooltip: 'Guides'} : false;
+        var enabled = (Docs.data.guides|| []).length > 0;
+        return enabled ? {cls: 'guides', href: '#!/guide', tooltip: 'Guides'} : false;
     }
 });

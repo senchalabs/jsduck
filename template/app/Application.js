@@ -19,13 +19,17 @@ Ext.define('Docs.Application', {
     ],
 
     controllers: [
+        'Auth',
         'Welcome',
         'Classes',
+        'Comments',
+        'CommentsMeta',
         'Search',
         'InlineExamples',
         'Examples',
         'Guides',
         'Videos',
+        'Stats',
         'Tabs'
     ],
 
@@ -42,9 +46,12 @@ Ext.define('Docs.Application', {
             Docs.initEventTracking();
         }
 
+        // Remove loading animated gif from background.
+        // Keeping it there will degrade performance.
+        Ext.get("loading").remove();
+
         // setInterval(function(){
-        //     Ext.DomQuery.select('link')[4].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
+        //     Ext.DomQuery.select('link')[2].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
         // }, 1000);
     }
-
 });

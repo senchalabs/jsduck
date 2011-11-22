@@ -5,7 +5,7 @@ Ext.define('Docs.view.ThumbList', {
     extend: 'Ext.view.View',
     alias: 'widget.thumblist',
 
-    cls: 'demos',
+    cls: 'thumb-list',
     itemSelector: 'dl',
 
     /**
@@ -50,7 +50,7 @@ Ext.define('Docs.view.ThumbList', {
 
         // Place itemTpl inside main template
         this.tpl = new Ext.XTemplate(Ext.Array.flatten([
-            '<div id="sample-ct">',
+            '<div>',
                 '<tpl for=".">',
                 '<div><a name="{id}"></a><h2><div>{title}</div></h2>',
                 '<dl>',

@@ -5,20 +5,19 @@ module JsDuck
   # Ruby-side implementation of class docs Renderer.
   # Uses PhantomJS to run Docs.Renderer JavaScript.
   class Renderer
-    def initialize(options={})
-      @options = options
-    end
+    # List of meta-tag implementations
+    attr_accessor :meta_tags
 
     def render(cls)
         @cls = cls
 
         return [
           "<div>",
-            render_hierarchy,
+            render_sidebar,
             "<div class='doc-contents'>",
               render_private_class_notice,
               @cls[:doc],
-              render_meta_data,
+              render_meta_data(@cls[:meta]),
             "</div>",
             "<div class='members'>",
               render_member_sections,
@@ -36,39 +35,33 @@ module JsDuck
       ]
     end
 
-    def render_meta_data
-      return if !@cls[:meta] || @cls[:meta].length == 0
+    def render_meta_data(meta_data)
+      return if meta_data.size == 0
 
-      html = ["<ul class='meta-data'>"]
-
-      @options[:meta_tags].each do |meta|
-        title = meta[:title]
-        items = @cls[:meta].find_all {|m| m[:name] == meta[:name]}.map {|m| m[:content] }
-        content = meta[:strip] ? items.map {|m| m.gsub(meta[:strip], "") } : items
-        if items.length > 0
-          html << "<li><strong>#{CGI.escapeHTML(title)}:</strong> #{CGI.escapeHTML(content.join(', '))}</li>"
+      @meta_tags.map do |tag|
+        contents = meta_data[tag.name]
+        if contents
+          tag.to_html(contents)
+        else
+          nil
         end
       end
-
-      html << "</ul>"
-
-      html
     end
 
-    def render_hierarchy
-      has_parents = @cls[:extends] && @cls[:extends] != "Object"
-      has_alt_names = @cls[:alternateClassNames].length > 0
-      has_mixins = @cls[:superclasses].length > 0
-
-      return if !has_parents && !has_alt_names && !has_mixins
-
-      return [
-        '<pre class="hierarchy">',
+    def render_sidebar
+      items = [
         render_alternate_class_names,
         render_tree,
-        render_mixins,
-        '</pre>'
+        render_dependencies(:allMixins, "Mixins"),
+        render_dependencies(:requires, "Requires"),
+        render_dependencies(:uses, "Uses"),
+        render_files,
       ]
+      if items.compact.length > 0
+        return ['<pre class="hierarchy">', items, '</pre>']
+      else
+        return nil
+      end
     end
 
     def render_alternate_class_names
@@ -79,11 +72,23 @@ module JsDuck
       ]
     end
 
-    def render_mixins
-      return if @cls[:allMixins].length == 0
+    def render_dependencies(type, title)
+      return if !@cls[type] || @cls[type].length == 0
       return [
-        "<h4>Mixins</h4>",
-        @cls[:allMixins].map {|name| "<div class='mixin'>#{render_link(name)}</div>" },
+        "<h4>#{title}</h4>",
+        @cls[type].map {|name| "<div class='dependency'>#{render_link(name)}</div>" },
+      ]
+    end
+
+    def render_files
+      return if @cls[:files].length == 0 || @cls[:files][0][:filename] == ""
+      return [
+        "<h4>Files</h4>",
+        @cls[:files].map do |file|
+          url = "source/" + file[:href]
+          title = File.basename(file[:filename])
+          "<div class='dependency'><a href='#{url}' target='_blank'>#{title}</a></div>"
+        end
       ]
     end
 
@@ -133,9 +138,9 @@ module JsDuck
         statics = @cls[:statics][sec[:type]]
         if members.length > 0 || statics.length > 0
           [
-            "<div id='m-#{sec[:type]}'>",
+            "<div class='members-section'>",
               statics.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
-              "<h3 class='members-title'>#{sec[:title]}</h3>",
+              "<h3 class='members-title icon-#{sec[:type]}'>#{sec[:title]}</h3>",
               render_subsection(members, statics.length > 0 ? "Instance #{sec[:title]}" : nil),
               render_subsection(statics, "Static #{sec[:title]}"),
             "</div>",
@@ -160,24 +165,24 @@ module JsDuck
     def render_member(m, is_first)
       # use classname "first-child" when it's first member in its category
       first_child = is_first ? "first-child" : ""
-      # use classname "expandable" when member has shortened description
-      expandable = m[:shortDoc] ? "expandable" : "not-expandable"
       # shorthand to owner class
       owner = m[:owner]
-      # use classname "inherited" when member is not defined in this class
-      inherited = owner == @cls[:name] ? "not-inherited" : "inherited"
+      # is this method inherited from parent?
+      inherited = (owner != @cls[:name])
 
       return [
-        "<div id='#{m[:id]}' class='member #{first_child} #{inherited}'>",
+        "<div id='#{m[:id]}' class='member #{first_child} #{inherited ? 'inherited' : 'not-inherited'}'>",
           # leftmost column: expand button
-          "<a href='#' class='side #{expandable}'>",
+          "<a href='#' class='side expandable'>",
             "<span>&nbsp;</span>",
           "</a>",
           # member name and type + link to owner class and source
           "<div class='title'>",
             "<div class='meta'>",
-              "<a href='#!/api/#{owner}' rel='#{owner}' class='definedIn docClass'>#{owner}</a><br/>",
-              "<a href='source/#{m[:href]}' target='_blank' class='viewSource'>view source</a>",
+              inherited ? "<a href='#!/api/#{owner}' rel='#{owner}' class='defined-in docClass'>#{owner}</a>" :
+                          "<span class='defined-in' rel='#{owner}'>#{owner}</span>",
+              "<br/>",
+              "<a href='source/#{m[:files][0][:href]}' target='_blank' class='view-source'>view source</a>",
             "</div>",
             # method params signature or property type signature
             render_signature(m),
@@ -201,7 +206,7 @@ module JsDuck
       name = m[:name]
       before = ""
       if m[:tagname] == :method && m[:name] == "constructor"
-        before = "<strong class='constructor-signature'>new</strong>"
+        before = "<strong class='new-keyword'>new</strong>"
         name = @cls[:name]
       end
 
@@ -216,20 +221,26 @@ module JsDuck
       end
 
       after = ""
-      if m[:protected]
-        after += "<strong class='protected-signature'>protected</strong>"
+      if m[:attributes][:protected]
+        after += "<strong class='protected signature'>protected</strong>"
       end
-      if m[:static]
-        after += "<strong class='static-signature'>static</strong>"
+      if m[:attributes][:static]
+        after += "<strong class='static signature'>static</strong>"
       end
-      if m[:deprecated]
-        after += "<strong class='deprecated-signature'>deprecated</strong>"
+      if m[:attributes][:deprecated]
+        after += "<strong class='deprecated signature'>deprecated</strong>"
       end
-      if m[:required]
-        after += "<strong class='required-signature'>required</strong>"
+      if m[:attributes][:required]
+        after += "<strong class='required signature'>required</strong>"
       end
-      if m[:template]
-        after += "<strong class='template-signature'>template</strong>"
+      if m[:attributes][:template]
+        after += "<strong class='template signature'>template</strong>"
+      end
+      if m[:attributes][:abstract]
+        after += "<strong class='abstract signature'>abstract</strong>"
+      end
+      if m[:attributes][:readonly]
+        after += "<strong class='readonly signature'>readonly</strong>"
       end
 
       uri = "#!/api/#{m[:owner]}-#{m[:id]}"
@@ -254,24 +265,27 @@ module JsDuck
         doc << "<p>Defaults to: <code>" + CGI.escapeHTML(m[:default]) + "</code></p>"
       end
 
-      if m[:deprecated]
-        v = m[:deprecated][:version] ? "since " + m[:deprecated][:version] : ""
+      if m[:attributes][:deprecated]
+        depr = m[:attributes][:deprecated]
+        v = depr[:version] ? "since " + depr[:version] : ""
         doc << [
-          "<div class='deprecated'>",
+          "<div class='signature-box deprecated'>",
           "<p>This #{m[:tagname]} has been <strong>deprecated</strong> #{v}</p>",
-          m[:deprecated][:text],
+          depr[:text],
           "</div>",
         ]
       end
 
-      if m[:template]
+      if m[:attributes][:template]
         doc << [
-          "<div class='template'>",
+          "<div class='signature-box template'>",
           "<p>This is a template method. A hook into the functionality of this class.",
           "Feel free to override it in child classes.</p>",
           "</div>",
         ]
       end
+
+      doc << render_meta_data(m[:meta])
 
       doc << render_params_and_return(m)
 

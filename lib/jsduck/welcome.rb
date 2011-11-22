@@ -1,19 +1,25 @@
+require 'jsduck/null_object'
+
 module JsDuck
 
-  # Reads in HTML file with content for welcome page
   class Welcome
-    # Parses welcome HTML file
-    def parse(filename)
+    # Creates Welcome object from filename.
+    def self.create(filename)
+      if filename
+        Welcome.new(filename)
+      else
+        NullObject.new(:to_html => "")
+      end
+    end
+
+    # Parses welcome HTML file with content for welcome page.
+    def initialize(filename)
       @html = IO.read(filename)
     end
 
     # Returns the HTML
     def to_html
-      if @html
-        "<div id='welcome-content' style='display:none'>#{@html}</div>"
-      else
-        ""
-      end
+      "<div id='welcome-content' style='display:none'>#{@html}</div>"
     end
 
   end

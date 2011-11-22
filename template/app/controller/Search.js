@@ -117,7 +117,7 @@ Ext.define('Docs.controller.Search', {
     // loads class/method corrseponding to the record
     loadRecord: function(record) {
         var name = record.get("cls");
-        if (record.get("type") !== 'cls') {
+        if (record.get("type") !== 'class') {
             name += '-' + record.get("id");
         }
         Docs.App.getController('Classes').loadClass("#!/api/"+name);
@@ -165,33 +165,33 @@ Ext.define('Docs.controller.Search', {
         Ext.Array.forEach(Docs.data.search, function(r) {
             // when search text has "." in it, search from the full name (e.g. "Ext.Component.focus")
             // Otherwise search from just the member name (e.g. "focus" or "Component")
-            var name = hasDot ? r.cls + (r.type === "cls" ? "" : "." + r.member) : r.member;
+            var name = hasDot ? r.cls + (r.type === "class" ? "" : "." + r.member) : r.member;
 
-            if (r.xtypes && this.matchXType(r.xtypes, reFull)) {
+            if (r.aliases && this.matchAlias(r.aliases, reFull)) {
                 results[xFull].push(r);
             }
             else if (reFull.test(name)) {
-                results[r.type === "cls" ? clsFull : mFull].push(r);
+                results[r.type === "class" ? clsFull : mFull].push(r);
             }
-            else if (r.xtypes && this.matchXType(r.xtypes, reBeg)) {
+            else if (r.aliases && this.matchAlias(r.aliases, reBeg)) {
                 results[xBeg].push(r);
             }
             else if (reBeg.test(name)) {
-                results[r.type === "cls" ? clsBeg : mBeg].push(r);
+                results[r.type === "class" ? clsBeg : mBeg].push(r);
             }
             else if (reMid.test(name)) {
-                results[r.type === "cls" ? clsMid : mMid].push(r);
+                results[r.type === "class" ? clsMid : mMid].push(r);
             }
         }, this);
 
         return Ext.Array.flatten(results);
     },
 
-    // true if xtype, ptype, ftype, etc matches regex
-    matchXType: function(xtypes, regex) {
-        for (var key in xtypes) {
-            if (xtypes.hasOwnProperty(key)) {
-                if (Ext.Array.some(xtypes[key], function(x) {return regex.test(x);})) {
+    // true if alias matches regex
+    matchAlias: function(aliases, regex) {
+        for (var key in aliases) {
+            if (aliases.hasOwnProperty(key)) {
+                if (Ext.Array.some(aliases[key], function(x) {return regex.test(x);})) {
                     return true;
                 }
             }

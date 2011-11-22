@@ -61,7 +61,8 @@ module JsDuck
       if @relations[classname]
         @relations[classname]
       elsif !@relations.ignore?(classname)
-        Logger.instance.warn("Class #{classname} not found in #{@doc[:filename]} line #{@doc[:linenr]}")
+        context = @doc[:files][0]
+        Logger.instance.warn(:extend, "Class #{classname} not found", context[:filename], context[:linenr])
         nil
       end
     end
@@ -88,7 +89,8 @@ module JsDuck
     #
     # See members_hash for details.
     def members(type, context=:members)
-      ms = members_hash(type, context).values.sort {|a,b| a[:name] <=> b[:name] }
+      ms = members_hash(type, context).values.find_all {|m| !m[:private] }
+      ms.sort! {|a,b| a[:name] <=> b[:name] }
       type == :method ? constructor_first(ms) : ms
     end
 
@@ -103,7 +105,7 @@ module JsDuck
       ms
     end
 
-    # Returns hash of public members of class (and of parent classes
+    # Returns hash of all members in class (and of parent classes
     # and mixin classes).  Members are methods, properties, cfgs,
     # events (member type is specified through 'type' parameter).
     #
@@ -114,7 +116,7 @@ module JsDuck
       if @doc[:singleton] && context == :statics
         # Warn if singleton has static members
         if @doc[context][type].length > 0
-          Logger.instance.warn("Singleton class #{@doc[:name]} can't have static members, remove the @static tag.")
+          Logger.instance.warn(:sing_static, "Singleton class #{@doc[:name]} can't have static members, remove the @static tag.")
         end
         return {}
       end
@@ -147,7 +149,7 @@ module JsDuck
     def local_members_hash(type, context)
       local_members = {}
       (@doc[context][type] || []).each do |m|
-        local_members[m[:name]] = m if !m[:private]
+        local_members[m[:name]] = m
       end
       local_members
     end
@@ -173,13 +175,26 @@ module JsDuck
       @members_map[type_name ? "#{type_name}-#{name}" : name]
     end
 
-    # Loops through each member of the class, invoking block with each of them
-    def each_member(&block)
+    # Returns all public members of class, including the inherited and mixed in ones
+    def all_members
+      all = []
       [:members, :statics].each do |group|
-        @doc[group].each_value do |members|
-          members.each(&block)
+        @doc[group].each_key do |type|
+          all += members(type, group)
         end
       end
+      all
+    end
+
+    # Returns all local public members of class
+    def all_local_members
+      all = []
+      [:members, :statics].each do |group|
+        @doc[group].each_value do |ms|
+          all += ms.find_all {|m| !m[:private] }
+        end
+      end
+      all
     end
 
     # A way to access full class name with similar syntax to

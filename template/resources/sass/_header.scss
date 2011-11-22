@@ -1,0 +1,115 @@
+// Styles for components in header.
+@import "mixins";
+@import "variables";
+
+// The header container itself
+#north-region {
+  @include vertical-gradient(#074e7c, #095f93);
+  .dropdown {
+    padding-right: 15px;
+    background: url(../images/down-arr.png) no-repeat bottom right; } }
+
+// Title
+#header-content {
+  background: url(../images/logo.png) 0 0 no-repeat;
+  color: #fff;
+  font-family: $docs-font;
+  line-height: 20px;
+  margin: 10px 0 0 8px;
+  padding-left: 21px;
+  font-size: 1.1em;
+  a {
+    color: #fff; }
+  strong {
+    font-weight: bold;
+    padding-right: 3px; } }
+
+// Login form
+#loginContainer {
+  text-align: right;
+  color: #fff;
+  .register {
+    font-weight: bold; }
+  a {
+    color: #fff; } }
+.loginForm {
+  .username,
+  .password {
+    width: 100px;
+    @include border-radius(3px);
+    border: 0;
+    padding: 2px 3px;
+    margin-right: 10px; }
+  .submit {
+    padding: 2px 7px 2px 7px;
+    @include green-button(); }
+  label { margin-right: 10px; } }
+
+// Search
+.search {
+  background: url(../images/search-box.png) no-repeat;
+  padding: 2px 0 0 25px;
+  .x-panel-body-default {
+    border: 0;
+    background: none;  } }
+
+.search .x-form-text {
+  border: 0; background: 0; }
+
+#search-field .reset {
+  background: url(../images/x.png) no-repeat;
+  width: 16px;
+  height: 16px;
+  border: 0;
+  margin: 2px 0 0 14px; }
+
+#search-dropdown {
+  border-style: solid;
+  border-color: $docs-border-color;
+  border-width: 1px 1px 0 1px;
+  background: white;
+  position: absolute;
+  width: 190px;
+  top: 18px;
+  left: 23px;
+  z-index: 5;
+
+  .item, .footer {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    overflow: hidden;
+    padding: 5px 5px 5px 30px;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+    border-color: $docs-border-color;
+    color: #605f5f;
+    .title {
+      font-weight: bold;
+      overflow: hidden;
+      text-overflow: ellipsis; }
+    .class {
+      font-size: 0.85em;
+      overflow: hidden;
+      text-overflow: ellipsis; } }
+
+  // 18x18 div to just hold the icon
+  .icon {
+    position: absolute;
+    float: left;
+    top: 6px;
+    left: 4px;
+    width: 18px;
+    height: 18px; }
+  @include icons;
+
+  .item.x-item-selected {
+    background-color: #ffffaa; }
+  .item.x-view-over {
+    background-color: #ffffaa; }
+  .footer {
+    cursor: auto;
+    text-align: right;
+    font-size: 0.85em;
+    a {
+      padding: 0 0.5em; } } }

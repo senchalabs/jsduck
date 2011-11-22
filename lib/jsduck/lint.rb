@@ -22,8 +22,8 @@ module JsDuck
     def warn_globals
       global = @relations["global"]
       return unless global
-      global.each_member do |member|
-        warn("Global #{member[:tagname]}: #{member[:name]}", member)
+      global.all_local_members.each do |member|
+        warn(:global, "Global #{member[:tagname]}: #{member[:name]}", member)
       end
     end
 
@@ -31,11 +31,11 @@ module JsDuck
     def warn_unnamed
       each_member do |member|
         if !member[:name] || member[:name] == ""
-          warn("Unnamed #{member[:tagname]}", member)
+          warn(:name_missing, "Unnamed #{member[:tagname]}", member)
         end
         (member[:params] || []).each do |p|
           if !p[:name] || p[:name] == ""
-            warn("Unnamed parameter", member)
+            warn(:name_missing, "Unnamed parameter", member)
           end
         end
       end
@@ -48,7 +48,7 @@ module JsDuck
           optional_found = false
           member[:params].each do |p|
             if optional_found && !p[:optional]
-              warn("Optional param can't be followed by regular param #{p[:name]}", member)
+              warn(:req_after_opt, "Optional param followed by regular param #{p[:name]}", member)
             end
             optional_found = optional_found || p[:optional]
           end
@@ -62,7 +62,7 @@ module JsDuck
         params = {}
         (member[:params] || []).each do |p|
           if params[p[:name]]
-            warn("Duplicate parameter name #{p[:name]}", member)
+            warn(:dup_param, "Duplicate parameter name #{p[:name]}", member)
           end
           params[p[:name]] = true
         end
@@ -71,12 +71,13 @@ module JsDuck
 
     # Loops through all members of all classes
     def each_member(&block)
-      @relations.each {|cls| cls.each_member(&block) }
+      @relations.each {|cls| cls.all_local_members.each(&block) }
     end
 
     # Prints warning + filename and linenumber from doc-context
-    def warn(msg, context)
-      Logger.instance.warn(msg + " in #{context[:filename]} line #{context[:linenr]}")
+    def warn(type, msg, member)
+      context = member[:files][0]
+      Logger.instance.warn(type, msg, context[:filename], context[:linenr])
     end
 
   end

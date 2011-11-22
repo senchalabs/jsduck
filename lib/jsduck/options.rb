@@ -1,4 +1,6 @@
 require 'optparse'
+require 'jsduck/meta_tag_loader'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -10,8 +12,6 @@ module JsDuck
     attr_accessor :ignore_global
     attr_accessor :external_classes
     attr_accessor :meta_tags
-    attr_accessor :warnings
-    attr_accessor :verbose
 
     # Customizing output
     attr_accessor :title
@@ -23,13 +23,15 @@ module JsDuck
     attr_accessor :guides
     attr_accessor :videos
     attr_accessor :examples
+    attr_accessor :stats
     attr_accessor :categories_path
-    attr_accessor :inline_examples_dir
     attr_accessor :pretty_json
+    attr_accessor :images
     attr_accessor :link_tpl
     attr_accessor :img_tpl
     attr_accessor :export
     attr_accessor :seo
+    attr_accessor :eg_iframe
 
     # Debugging
     attr_accessor :processes
@@ -37,6 +39,7 @@ module JsDuck
     attr_accessor :template_links
     attr_accessor :extjs_path
     attr_accessor :local_storage_db
+    attr_accessor :touch_examples_ui
     attr_accessor :ext_namespaces
 
     def initialize
@@ -64,15 +67,13 @@ module JsDuck
         "CSSStyleSheet",
         "CSSStyleRule",
         "Event",
+        # Special anything-goes type
+        "Mixed",
       ]
-      @meta_tags = [
-        {:name => "author", :title => "Author", :strip => / *<.*?> */},
-        {:name => "docauthor", :title => "Documentation author", :strip => / *<.*?> */},
-      ]
+      @meta_tags = []
+      @meta_tag_paths = []
 
-      @warnings = true
-      @verbose = false
-      @version = "3.0.pre2"
+      @version = "3.1.0"
 
       # Customizing output
       @title = "Sencha Docs - Ext JS"
@@ -84,23 +85,27 @@ module JsDuck
       @guides = nil
       @videos = nil
       @examples = nil
+      @stats = false
       @categories_path = nil
-      @inline_examples_dir = nil
       @pretty_json = false
+      @images = []
       @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
       # appears inline within text, but that just looks ugly in HTML
-      @img_tpl = '<p><img src="doc-resources/%u" alt="%a"></p>'
+      @img_tpl = '<p><img src="%u" alt="%a"></p>'
       @export = nil
       @seo = false
+      @eg_iframe = nil
 
       # Debugging
-      @processes = nil
+      # Turn multiprocessing off by default in Windows
+      @processes = OS::windows? ? 0 : nil
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
       @template_dir = @root_dir + "/template-min"
       @template_links = false
       @extjs_path = "extjs/ext-all.js"
       @local_storage_db = "docs"
+      @touch_examples_ui = false
       @ext_namespaces = ["Ext"]
     end
 
@@ -111,8 +116,11 @@ module JsDuck
     end
 
     def parse!(argv)
-      create_option_parser.parse!(argv).each {|fname| read_filenames(fname) }
+      create_option_parser.parse!(argv).each do |fname|
+        read_filenames(canonical(fname))
+      end
       validate
+      @meta_tags = MetaTagLoader.new.load(@meta_tag_paths)
     end
 
     def create_option_parser
@@ -121,8 +129,9 @@ module JsDuck
 
         opts.on('-o', '--output=PATH',
           "Directory to output all this amazing documentation.",
-          "This option MUST be specified (unless --stdout).", " ") do |path|
-          @output_dir = canonical(path)
+          "This option MUST be specified (unless --stdout).",
+          "Use dash '-' to write docs to STDOUT (only export).", " ") do |path|
+          @output_dir = path == "-" ? :stdout : canonical(path)
         end
 
         opts.on('--ignore-global', "Turns off the creation of global class.", " ") do
@@ -141,21 +150,19 @@ module JsDuck
           read_filenames(@root_dir + "/js-classes")
         end
 
-        opts.on('--meta-tags @name=Title,...', Array,
-          "Defines custom meta-data tags in addition to",
-          "@author and @docauthor.  Experimantal!", " ") do |tags|
-          tags.each do |t|
-            t = t.split(/=/)
-            @meta_tags << {:name => t[0].sub(/^@/, ""), :title => t[1]}
-          end
+        opts.on('--meta-tags=PATH',
+          "Path to Ruby file or directory with custom",
+          "meta-tag implementations.", " ") do |path|
+          @meta_tag_paths << canonical(path)
         end
 
-        opts.on('--no-warnings', "Turns off warnings.", " ") do
-          @warnings = false
+        opts.on('--no-warnings',
+          "Turns off all warnings. Same as --warnings=-all", " ") do
+          Logger.instance.set_warning(:all, false)
         end
 
         opts.on('-v', '--verbose', "This will fill up your console.", " ") do
-          @verbose = true
+          Logger.instance.verbose = true
         end
 
         opts.separator "Customizing output:"
@@ -175,11 +182,11 @@ module JsDuck
         end
 
         opts.on('--head-html=HTML', "HTML to append to the <head> section of index.html.", " ") do |html|
-          @head_html = html
+          @head_html += html
         end
 
         opts.on('--body-html=HTML', "HTML to append to the <body> section index.html.", " ") do |html|
-          @body_html = html
+          @body_html += html
         end
 
         opts.on('--welcome=PATH',
@@ -205,17 +212,25 @@ module JsDuck
           @examples = canonical(path)
         end
 
+        opts.on('--stats',
+          "Creates page with all kinds of statistics. Experimental!", " ") do
+          @stats = true
+        end
+
         opts.on('--categories=PATH',
           "Path to JSON file which defines categories for classes.", " ") do |path|
           @categories_path = canonical(path)
         end
 
-        opts.on('--inline-examples=PATH', "Path to inline examples directory.", " ") do |path|
-          @inline_examples_dir = canonical(path)
-        end
-
         opts.on('--pretty-json', "Turn on pretty-printing of JSON.", " ") do
           @pretty_json = true
+        end
+
+        opts.on('--images=PATH',
+          "Search path for including images referenced by",
+          "{@img} tag. Several paths can be specified by",
+          "using the option multiple times.", " ") do |path|
+          @images << canonical(path)
         end
 
         opts.on('--link=TPL',
@@ -240,25 +255,45 @@ module JsDuck
           @img_tpl = tpl
         end
 
-        opts.on('--json', "Produces JSON export instead of HTML documentation.", " ") do
-          @export = :json
-        end
-
-        opts.on('--stdout', "Writes JSON export to STDOUT instead of writing to the filesystem", " ") do
-          @export = :stdout
+        opts.on('--export=TYPE',
+          "Exports docs in JSON.  TYPE is one of:",
+          "* full - full class docs.",
+          "* api  - only class- and member names.", " ") do |format|
+          @export = format.to_sym
         end
 
         opts.on('--seo', "Creates index.php that handles search engine traffic.", " ") do
           @seo = true
         end
 
+        opts.on('--eg-iframe=PATH',
+          "An HTML file to use inside an iframe",
+          "to display inline examples.", " ") do |path|
+          @eg_iframe = canonical(path)
+        end
+
         opts.separator "Debugging:"
         opts.separator ""
+
+        opts.on('--warnings=+A,-B,+C', Array,
+          "Turns warnings selectively on/off.",
+          "+foo turns on a warning, -foo turns it off.",
+          "Possible warning types are:",
+          " ",
+          *Logger.instance.doc_warnings) do |warnings|
+          warnings.each do |op|
+            if op =~ /^([-+]?)(.*)$/
+              enable = !($1 == "-")
+              name = $2.to_sym
+              Logger.instance.set_warning(name, enable)
+            end
+          end
+        end
 
         # For debugging it's often useful to set --processes=0 to get deterministic results.
         opts.on('-p', '--processes=COUNT',
           "The number of parallel processes to use.",
-          "Defaults to the number of processors/cores.",
+          OS::windows? ? "Defaults to off in Windows." : "Defaults to the number of processors/cores.",
           "Set to 0 to disable parallel processing completely.", " ") do |count|
           @processes = count.to_i
         end
@@ -285,6 +320,11 @@ module JsDuck
           "Prefix for LocalStorage database names.",
           "Defaults to 'docs'.", " ") do |name|
           @local_storage_db = name
+        end
+
+        opts.on('--touch-examples-ui',
+          "Use phone/tablet UI for examples.", " ") do
+          @touch_examples_ui = true
         end
 
         opts.on('--ext-namespaces=Ext,Foo', Array,
@@ -349,7 +389,7 @@ module JsDuck
           @input_files << fname
         end
       else
-        $stderr.puts "Warning: File #{fname} not found"
+        Logger.instance.warn(nil, "File #{fname} not found")
       end
     end
 
@@ -364,10 +404,16 @@ module JsDuck
 
     # Runs checks on the options
     def validate
-      if @input_files.length == 0
+      if @input_files.length == 0 && !@welcome && !@guides && !@videos && !@examples
         puts "You should specify some input files, otherwise there's nothing I can do :("
         exit(1)
-      elsif @export != :stdout
+      elsif @output_dir == :stdout && !@export
+        puts "Output to STDOUT only works when using --export option."
+        exit(1)
+      elsif ![nil, :full, :api].include?(@export)
+        puts "Unknown export format: #{@export}"
+        exit(1)
+      elsif @output_dir != :stdout
         if !@output_dir
           puts "You should also specify an output directory, where I could write all this amazing documentation."
           exit(1)
@@ -377,13 +423,13 @@ module JsDuck
         elsif !File.exists?(File.dirname(@output_dir))
           puts "Oh noes!  The parent directory for #{@output_dir} doesn't exist."
           exit(1)
-        elsif !File.exists?(@template_dir + "/extjs")
+        elsif !@export && !File.exists?(@template_dir + "/extjs")
           puts "Oh noes!  The template directory does not contain extjs/ directory :("
           puts "Please copy ExtJS over to template/extjs or create symlink."
           puts "For example:"
           puts "    $ cp -r /path/to/ext-4.0.0 " + @template_dir + "/extjs"
           exit(1)
-        elsif !File.exists?(@template_dir + "/resources/css")
+        elsif !@export && !File.exists?(@template_dir + "/resources/css")
           puts "Oh noes!  CSS files for custom ExtJS theme missing :("
           puts "Please compile SASS files in template/resources/sass with compass."
           puts "For example:"

@@ -117,6 +117,19 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "property with default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @property {Number} [foo=3] Something
+         */
+      EOS
+    end
+    it "has default value" do
+      @doc[:default].should == "3"
+    end
+  end
+
   describe "cfg with explicit regex default value" do
     before do
       @doc = parse(<<-EOS)[0]
@@ -169,6 +182,19 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg with this as default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=this] Something
+         */
+      EOS
+    end
+    it "has this as default value" do
+      @doc[:default].should == 'this'
+    end
+  end
+
   describe "cfg with rubbish as default value" do
     before do
       @doc = parse(<<-EOS)[0]
@@ -177,8 +203,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has no default value" do
-      @doc[:default].should == nil
+    it "has the rubbish as default value" do
+      @doc[:default].should == '!haa'
     end
   end
 
@@ -190,8 +216,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has a correct default value" do
-      @doc[:default].should == '7'
+    it "has everything up to ] as default value" do
+      @doc[:default].should == '7 and me too'
     end
   end
 
@@ -203,8 +229,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has nil as default value" do
-      @doc[:default].should == nil
+    it "has everything up to ] as default value" do
+      @doc[:default].should == '[ho, ho'
     end
   end
 
@@ -216,8 +242,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has nil as default value" do
-      @doc[:default].should == nil
+    it "has the bogus object literla as default value" do
+      @doc[:default].should == '{ho:5, ho}'
     end
   end
 
@@ -229,8 +255,8 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has nil as default value" do
-      @doc[:default].should == nil
+    it "has the unfinish object literal as default value" do
+      @doc[:default].should == '{ho:5'
     end
   end
 
@@ -318,6 +344,34 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg with implicit number value given as expression" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} foo
+         */
+        foo: 5 + 5
+      EOS
+    end
+    it "doesn't get the default value from code" do
+      @doc[:default].should == nil
+    end
+  end
+
+  describe "cfg with implicit array value with chained method" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Array} foo
+         */
+        foo: [1, 2, 3].compact()
+      EOS
+    end
+    it "doesn't get the default value from code" do
+      @doc[:default].should == nil
+    end
+  end
+
   describe "cfg with implicit name followed by code field with another name" do
     before do
       @doc = parse(<<-EOS)[0]
@@ -349,32 +403,6 @@ describe JsDuck::Aggregator do
     end
     it "gets the type from code" do
       @doc[:type].should == "Boolean"
-    end
-  end
-
-  describe "a normal config option" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @cfg foo Something
-         */
-      EOS
-    end
-    it "is not required by default" do
-      @doc[:required].should == false
-    end
-  end
-
-  describe "a config option labeled as required" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @cfg foo (required) Something
-         */
-      EOS
-    end
-    it "has required flag set to true" do
-      @doc[:required].should == true
     end
   end
 

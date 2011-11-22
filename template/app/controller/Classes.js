@@ -55,11 +55,19 @@ Ext.define('Docs.controller.Classes', {
     init: function() {
         this.addEvents(
             /**
+             * @event showIndex  Fired after index is shown.
+             */
+            "showIndex",
+
+            /**
              * @event showClass
              * Fired after class shown. Used for analytics event tracking.
              * @param {String} cls  name of the class.
+             * @param {Object} options
+             * @param {Boolean} options.reRendered true if the class was re-rendered
              */
             "showClass",
+
             /**
              * @event showMember
              * Fired after class member scrolled to view. Used for analytics event tracking.
@@ -117,7 +125,7 @@ Ext.define('Docs.controller.Classes', {
                     // Expand member when clicked
                     cmp.el.addListener('click', function(cmp, el) {
                         var member = Ext.get(el).up('.member'),
-                            docClass = member.down('.meta .docClass'),
+                            docClass = member.down('.meta .defined-in'),
                             clsName = docClass.getAttribute('rel'),
                             memberName = member.getAttribute('id');
 
@@ -207,6 +215,7 @@ Ext.define('Docs.controller.Classes', {
     loadIndex: function(noHistory) {
         Ext.getCmp('treecontainer').showTree('classtree');
         this.callParent(arguments);
+        this.fireEvent('showIndex');
     },
 
     /**
@@ -251,6 +260,9 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
+
+        var reRendered = false;
+
         if (cls === "in-progress") {
             return;
         }
@@ -258,9 +270,11 @@ Ext.define('Docs.controller.Classes', {
 
         this.getViewport().setPageTitle(cls.name);
         if (this.currentCls !== cls) {
+            this.currentCls = cls;
             this.getHeader().load(cls);
             this.getOverview().load(cls);
             this.applyExpanded(cls);
+            reRendered = true;
         }
         this.currentCls = cls;
 
@@ -273,7 +287,7 @@ Ext.define('Docs.controller.Classes', {
         }
 
         this.getTree().selectUrl("#!/api/"+cls.name);
-        this.fireEvent('showClass', cls.name);
+        this.fireEvent('showClass', cls.name, {reRendered: reRendered});
     },
 
     scrollContent: function() {

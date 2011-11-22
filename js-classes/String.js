@@ -666,14 +666,16 @@
  *         return s.replace(test, convert);
  *     }
  *
- * @param {RegExp} regexp A RegExp object. The match is replaced by the return value of parameter #2.
- * @param {String} substr A String that is to be replaced by `newSubStr`.
- * @param {String} newSubStr The String that replaces the substring received from parameter #1. A
- * number of special replacement patterns are supported; see the "Specifying a string as a parameter"
- * section below.
- * @param {Function} function A function to be invoked to create the new substring (to put in place
- * of the substring received from parameter #1). The arguments supplied to this function are described
- * in the "Specifying a function as a parameter" section below.
+ * @param {String/RegExp} pattern Either a string or regular expression pattern to search for.
+ *
+ * @param {String/Function} replacement Either string or function:
+ *
+ * - The String to replace the `pattern` with. Number of special replacement patterns are supported;
+ *   see the "Specifying a string as a parameter" section above.
+ * - A function to be invoked to create the replacement.
+ *   The arguments supplied to this function are described in the "Specifying a function as a parameter"
+ *   section above.
+ *
  * @return {String} String of matched replaced items.
  */
 

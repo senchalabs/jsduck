@@ -30,7 +30,7 @@ module JsDuck
 
       @meta_tags_map = {}
       (meta_tags || []).each do |tag|
-        @meta_tags_map[tag[:name]] = true
+        @meta_tags_map[tag.name] = tag
       end
     end
 
@@ -93,9 +93,13 @@ module JsDuck
         elsif look(/@extends?\b/)
           at_extends
         elsif look(/@mixins?\b/)
-          at_mixins
+          class_list_at_tag(/@mixins?/, :mixins)
         elsif look(/@alternateClassNames?\b/)
-          at_alternateClassName
+          class_list_at_tag(/@alternateClassNames?/, :alternateClassNames)
+        elsif look(/@uses\b/)
+          class_list_at_tag(/@uses/, :uses)
+        elsif look(/@requires\b/)
+          class_list_at_tag(/@requires/, :requires)
         elsif look(/@singleton\b/)
           boolean_at_tag(/@singleton/, :singleton)
         elsif look(/@event\b/)
@@ -115,49 +119,75 @@ module JsDuck
         elsif look(/@type\b/)
           at_type
         elsif look(/@xtype\b/)
-          at_xtype
+          at_xtype(/@xtype/, "widget")
         elsif look(/@ftype\b/)
-          at_ftype
+          at_xtype(/@ftype/, "feature")
+        elsif look(/@ptype\b/)
+          at_xtype(/@ptype/, "plugin")
         elsif look(/@member\b/)
           at_member
-        elsif look(/@alias\b/)
+        elsif look(/@inherit[dD]oc\b/)
+          at_inheritdoc
+        elsif look(/@alias\s+[\w.]+#\w+/)
+          # For backwards compatibility.
+          # @alias tag was used as @inheritdoc before
+          at_inheritdoc
+        elsif look(/@alias/)
           at_alias
         elsif look(/@deprecated\b/)
           at_deprecated
         elsif look(/@var\b/)
           at_var
-        elsif look(/@static\b/)
-          boolean_at_tag(/@static/, :static)
         elsif look(/@inheritable\b/)
           boolean_at_tag(/@inheritable/, :inheritable)
         elsif look(/@(private|ignore|hide)\b/)
           boolean_at_tag(/@(private|ignore|hide)/, :private)
-        elsif look(/@protected\b/)
-          boolean_at_tag(/@protected/, :protected)
         elsif look(/@accessor\b/)
           boolean_at_tag(/@accessor/, :accessor)
+        elsif look(/@evented\b/)
+          boolean_at_tag(/@evented/, :evented)
+        elsif look(/@static\b/)
+          attribute_tag(/@static/, :static)
+        elsif look(/@protected\b/)
+          attribute_tag(/@protected/, :protected)
         elsif look(/@template\b/)
-          boolean_at_tag(/@template/, :template)
+          attribute_tag(/@template/, :template)
+        elsif look(/@abstract\b/)
+          attribute_tag(/@abstract\b/, :abstract)
+        elsif look(/@readonly\b/)
+          attribute_tag(/@readonly\b/, :readonly)
         elsif look(/@markdown\b/)
           # this is detected just to be ignored
           boolean_at_tag(/@markdown/, :markdown)
-        elsif look(/@abstract\b/)
-          # this is detected just to be ignored
-          boolean_at_tag(/@abstract/, :abstract)
         elsif look(/@/)
           @input.scan(/@/)
-          if @meta_tags_map[look(/\w+/)]
-            add_tag(:meta)
-            @current_tag[:name] = match(/\w+/)
-            skip_horiz_white
-            @current_tag[:content] = @input.scan(/.*$/)
-            skip_white
+          tag = @meta_tags_map[look(/\w+/)]
+          if tag
+            meta_at_tag(tag)
           else
             @current_tag[:doc] += "@"
           end
         elsif look(/[^@]/)
           @current_tag[:doc] += @input.scan(/[^@]+/)
         end
+      end
+    end
+
+    # Matches the given meta-tag
+    def meta_at_tag(tag)
+      prev_tag = @current_tag
+
+      add_tag(:meta)
+      @current_tag[:name] = match(/\w+/)
+      skip_horiz_white
+
+      # Fors singleline tags, scan to the end of line and finish the
+      # tag.  For multiline tags we leave the tag open for :doc
+      # addition just like with built-in multiline tags.
+      unless tag.multiline
+        @current_tag[:doc] = @input.scan(/.*$/).strip
+        skip_white
+        @current_tag = prev_tag
       end
     end
 
@@ -177,21 +207,12 @@ module JsDuck
       skip_white
     end
 
-    # matches @mixins name1 name2 ...
-    def at_mixins
-      match(/@mixins?/)
-      add_tag(:mixins)
+    # matches @<tagname> classname1 classname2 ...
+    def class_list_at_tag(regex, tagname)
+      match(regex)
+      add_tag(tagname)
       skip_horiz_white
-      @current_tag[:mixins] = class_list
-      skip_white
-    end
-
-    # matches @alternateClassName name1 name2 ...
-    def at_alternateClassName
-      match(/@alternateClassNames?/)
-      add_tag(:alternateClassNames)
-      skip_horiz_white
-      @current_tag[:alternateClassNames] = class_list
+      @current_tag[tagname] = class_list
       skip_white
     end
 
@@ -255,7 +276,7 @@ module JsDuck
       match(/@property/)
       add_tag(:property)
       maybe_type
-      maybe_ident_chain(:name)
+      maybe_name_with_default
       skip_white
     end
 
@@ -285,22 +306,6 @@ module JsDuck
       skip_white
     end
 
-    # matches @xtype name
-    def at_xtype
-      match(/@xtype/)
-      add_tag(:xtype)
-      maybe_ident_chain(:name)
-      skip_white
-    end
-
-    # matches @ftype name
-    def at_ftype
-      match(/@ftype/)
-      add_tag(:ftype)
-      maybe_ident_chain(:name)
-      skip_white
-    end
-
     # matches @member name ...
     def at_member
       match(/@member/)
@@ -309,10 +314,29 @@ module JsDuck
       skip_white
     end
 
-    # matches @alias class.name#type-member
+    # matches @xtype/ptype/ftype/... name
+    def at_xtype(tag, namespace)
+      match(tag)
+      add_tag(:alias)
+      skip_horiz_white
+      @current_tag[:name] = namespace + "." + (ident_chain || "")
+      skip_white
+    end
+
+    # matches @alias <ident-chain>
     def at_alias
       match(/@alias/)
       add_tag(:alias)
+      skip_horiz_white
+      @current_tag[:name] = ident_chain
+      skip_white
+    end
+
+    # matches @inheritdoc class.name#type-member
+    def at_inheritdoc
+      match(/@inherit[dD]oc|@alias/)
+
+      add_tag(:inheritdoc)
       skip_horiz_white
       if look(@ident_chain_pattern)
         @current_tag[:cls] = ident_chain
@@ -346,6 +370,15 @@ module JsDuck
       skip_white
     end
 
+    # Matches tag like @protected, @abstract, @readonly, @template
+    # Creates :attribute tag with that name
+    def attribute_tag(regex, attr_name)
+      match(regex)
+      add_tag(:attribute)
+      @current_tag[:name] = attr_name
+      skip_white
+    end
+
     # matches {type} if possible and sets it on @current_tag
     def maybe_type
       skip_horiz_white
@@ -354,7 +387,7 @@ module JsDuck
       end
     end
 
-    # matches: <ident-chain> | "[" <ident-chain> [ "=" <literal> ] "]"
+    # matches: <ident-chain> | "[" <ident-chain> [ "=" <default-value> ] "]"
     def maybe_name_with_default
       skip_horiz_white
       if look(/\[/)
@@ -364,7 +397,7 @@ module JsDuck
         if look(/=/)
           match(/=/)
           skip_horiz_white
-          @current_tag[:default] = literal
+          @current_tag[:default] = default_value
         end
         skip_horiz_white
         match(/\]/)
@@ -408,9 +441,20 @@ module JsDuck
       end
     end
 
-    def literal
+    # attempts to match javascript literal,
+    # when it fails grabs anything up to closing "]"
+    def default_value
+      start_pos = @input.pos
       lit = JsLiteralParser.new(@input).literal
-      lit ? JsLiteralBuilder.new.to_s(lit) : nil
+      if lit && look(/ *\]/)
+        # When lital matched and there's nothing after it up to the closing "]"
+        JsLiteralBuilder.new.to_s(lit)
+      else
+        # Otherwise reset parsing position to where we started
+        # and rescan up to "]" using simple regex.
+        @input.pos = start_pos
+        match(/[^\]]*/)
+      end
     end
 
     # matches {...} and returns text inside brackets

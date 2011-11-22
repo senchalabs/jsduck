@@ -118,8 +118,8 @@ module JsDuck
             :type => :operator,
             :value => @input.scan(/./)
           }
-        elsif @input.check(/[a-zA-Z_]/)
-          value = @input.scan(/\w+/)
+        elsif @input.check(/[a-zA-Z_$]/)
+          value = @input.scan(/[$\w]+/)
           return {
             :type => KEYWORDS[value] ? :keyword : :ident,
             :value => value
@@ -127,12 +127,12 @@ module JsDuck
         elsif @input.check(/'/)
           return {
             :type => :string,
-            :value => @input.scan(/'([^'\\]|\\.)*'/m).sub(/^'(.*)'$/m, "\\1")
+            :value => @input.scan(/'([^'\\]|\\.)*('|\Z)/m).gsub(/\A'|'\Z/m, "")
           }
         elsif @input.check(/"/)
           return {
             :type => :string,
-            :value => @input.scan(/"([^"\\]|\\.)*"/m).sub(/^"(.*)"$/m, "\\1")
+            :value => @input.scan(/"([^"\\]|\\.)*("|\Z)/m).gsub(/\A"|"\Z/m, "")
           }
         elsif @input.check(/\//)
           # Several things begin with dash:
@@ -153,7 +153,7 @@ module JsDuck
           elsif regex?
             return {
               :type => :regex,
-              :value => @input.scan(/\/([^\/\\]|\\.)*\/[gim]*/)
+              :value => @input.scan(META_REGEX)
             }
           else
             return {
@@ -166,12 +166,6 @@ module JsDuck
           return {
             :type => :number,
             :value => nr
-          }
-        elsif @input.check(/\$/)
-          value = @input.scan(/\$\w*/)
-          return {
-            :type => :ident,
-            :value => value
           }
         elsif  @input.check(/./)
           return {
@@ -207,6 +201,20 @@ module JsDuck
     def skip_white
       @input.scan(/\s+/)
     end
+
+    # A regex to match a regex
+    META_REGEX = %r{
+      /               (?# beginning    )
+      (
+        [^/\[\\]      (?# any character except \ / [    )
+        |
+        \\.           (?# an escaping \ followed by any character    )
+        |
+        \[ ([^\]\\]|\\.)* \]    (?# [...] containing any characters including /    )
+                                (?# except \ ] which have to be escaped    )
+      )*
+      (/[gim]*|\Z)   (?# ending + modifiers    )
+    }x
 
     KEYWORDS = {
       "break" => true,

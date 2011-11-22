@@ -4,6 +4,10 @@
 Ext.define('Docs.view.examples.Inline', {
     extend: 'Ext.Panel',
     alias: 'widget.inlineexample',
+    requires: [
+        'Docs.view.examples.InlineEditor',
+        'Docs.view.examples.InlinePreview'
+    ],
 
     componentCls: 'inline-example-cmp',
     layout: 'card',
@@ -14,55 +18,81 @@ Ext.define('Docs.view.examples.Inline', {
         constrainTo: false
     },
     // Make too long examples scrollable
-    maxHeight: 400,
-
-    statics: {
-        iframeId: 0
-    },
+    maxCodeHeight: 400,
 
     dockedItems: [{
         xtype: 'toolbar',
-        dock: 'left',
-        padding: '0 2',
-        style: 'background: none;',
+        dock: 'top',
+        height: 30,
         items: [
             {
                 iconCls: 'code',
                 padding: '0 2 0 0',
-                margin: 0,
-                tooltip: 'Code'
+                margin: '0 3 0 0',
+                text: 'Code Editor'
             },
             {
                 padding: 0,
-                margin: 0,
+                margin: '0 3 0 0',
                 iconCls: 'preview',
-                tooltip: 'Preview'
+                text: 'Live Preview'
             },
+            "->",
             {
                 padding: 0,
                 margin: 0,
                 iconCls: 'copy',
-                tooltip: 'Select'
+                text: 'Select Code'
             }
         ]
     }],
 
-    defaults: {
-        border: 0
-    },
+    /**
+     * @cfg {Object} options
+     * A set of options for configuring the preview:
+     *
+     * @cfg {String} options.device phone, miniphone or tablet
+     * @cfg {String} options.orientation ladscape or portrait
+     * @cfg {Boolean} options.raw True to turn off Ext.setup().
+     * @cfg {Boolean} options.preview True to start up in preview mode.
+     */
+    options: {},
 
     initComponent: function() {
+        this.options = Ext.apply({
+            device: "phone",
+            orientation: "landscape"
+        }, this.options);
+
         this.items = [
-            {
+            this.editor = Ext.create('Docs.view.examples.InlineEditor', {
                 cmpName: 'code',
-                style: 'border: 0',
-                bodyPadding: 2,
-                bodyStyle: 'background: #f7f7f7',
-                autoScroll: true
-            }
+                value: this.value,
+                listeners: {
+                    change: this.updateHeight,
+                    scope: this
+                }
+            }),
+            this.preview = Ext.create('Docs.view.examples.InlinePreview', {
+                cmpName: 'preview',
+                options: this.options
+            })
         ];
 
+        this.activeItem = this.options.preview ? 1 : 0;
+
+        this.on("afterrender", this.init, this);
+
         this.callParent(arguments);
+    },
+
+    // Updates code inside example component
+    init: function() {
+        var activeItem = this.layout.getActiveItem();
+        if (activeItem.cmpName === 'preview') {
+            this.showPreview();
+        }
+        this.updateHeight();
     },
 
     /**
@@ -70,57 +100,27 @@ Ext.define('Docs.view.examples.Inline', {
      */
     showCode: function() {
         this.layout.setActiveItem(0);
+        this.updateHeight();
     },
 
     /**
-     * Activates the code preview card.
-     * When called for the first time, creates the preview iframe.
-     * @param {Function} callback  Called when iframe is ready.
-     * @param {Object} scope
+     * Activates the preview card.
      */
-    showPreview: function(callback, scope) {
-        if (!this.previewInitialized) {
-            this.add({
-                bodyPadding: '0 10',
-                cmpName: 'preview',
-                html: '<iframe id="' + this.getIframeId() + '" style="width: 100%; height: 100%; border: 0"></iframe>'
-            });
-            var iframe = document.getElementById(this.getIframeId());
-            // Something is not quite ready when onload fires.
-            // I'm unsure what I should wait for. So I'm currently adding just this nasty delay.
-            // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
-            iframe.onload = function() {
-                Ext.Function.defer(callback, 100, scope);
-            };
-            iframe.src = "egIframe.html";
-            this.layout.setActiveItem(1);
-            this.previewInitialized = true;
-        }
-        else {
-            this.layout.setActiveItem(1);
-            callback.call(scope);
-        }
+    showPreview: function() {
+        this.preview.update(this.editor.getValue());
+        this.layout.setActiveItem(1);
+        this.updateHeight();
     },
 
-    /**
-     * Returns iframe ID for this inline example component.
-     * @return {String}
-     */
-    getIframeId: function() {
-        if (!this.iframeId) {
-            this.statics().iframeId += 1;
-            this.iframeId = "egIframe" + this.statics().iframeId;
-        }
-        return this.iframeId;
-    },
-
-    /**
-     * Syncs the height with number of lines in code example.
-     */
+    // Syncs the height with number of lines in code example.
     updateHeight: function() {
-        var el = this.el.down('.CodeMirror-lines');
-        if (el) {
-            this.setHeight(el.getHeight() + 5);
+        var previewHeight = this.preview.getHeight();
+        var editorHeight = this.editor.getHeight();
+        if (Docs.touchExamplesUi && previewHeight > 0) {
+            this.setHeight(previewHeight);
+        }
+        else if (editorHeight > 0) {
+            this.setHeight(Ext.Number.constrain(editorHeight+30, 0, this.maxCodeHeight));
         }
     }
 

@@ -23,11 +23,8 @@ Ext.define('Docs.view.DocTree', {
             "urlclick"
         );
 
-        // Expand the main tree
+        // Expand root
         this.root.expanded = true;
-        if (this.root.children[0]) {
-            this.root.children[0].expanded = true;
-        }
 
         this.on("itemclick", this.onItemClick, this);
         this.on("beforeitemcollapse", this.handleBeforeExpandCollapse, this);

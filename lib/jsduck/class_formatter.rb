@@ -14,6 +14,7 @@ module JsDuck
       @relations = relations
       @formatter = formatter
       @include_types = true
+      @meta_tags = []
     end
 
     # Runs the formatter on doc object of a class.
@@ -21,7 +22,7 @@ module JsDuck
     def format(cls)
       @cls = cls
       @formatter.class_context = cls[:name]
-      @formatter.doc_context = cls
+      @formatter.doc_context = cls[:files][0]
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
       cls[:members].each_pair do |type, members|
         cls[:members][type] = members.reject {|m| m[:private] }.map {|m| format_member(m) }
@@ -33,9 +34,10 @@ module JsDuck
     end
 
     def format_member(m)
-      @formatter.doc_context = m
+      @formatter.doc_context = m[:files][0]
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
-      m[:deprecated][:text] = @formatter.format(m[:deprecated][:text]) if m[:deprecated]
+      depr = m[:attributes][:deprecated]
+      depr[:text] = @formatter.format(depr[:text]) if depr
       if expandable?(m) || @formatter.too_long?(m[:doc])
         m[:shortDoc] = @formatter.shorten(m[:doc])
       end
@@ -51,7 +53,7 @@ module JsDuck
     end
 
     def expandable?(m)
-      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:deprecated] || m[:template]
+      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:attributes][:deprecated] || m[:attributes][:template]
     end
 
     def format_item(it, is_css_tag)
@@ -68,9 +70,9 @@ module JsDuck
       else
         context = @formatter.doc_context
         if tp.error == :syntax
-          Logger.instance.warn("Incorrect type syntax #{type} in #{context[:filename]} line #{context[:linenr]}")
+          Logger.instance.warn(:type_syntax, "Incorrect type syntax #{type}", context[:filename], context[:linenr])
         else
-          Logger.instance.warn("Unknown type #{type} in #{context[:filename]} line #{context[:linenr]}")
+          Logger.instance.warn(:type_name, "Unknown type #{type}", context[:filename], context[:linenr])
         end
         type
       end

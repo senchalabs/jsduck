@@ -1,7 +1,7 @@
 JsDuck
 ======
 
-API documentation generator for Ext JS 4.
+API documentation generator for Sencha JavaScript frameworks.
 
            ,~~.
           (  6 )-_,
@@ -11,8 +11,9 @@ API documentation generator for Ext JS 4.
     ~'`~'`~'`~'`~
 
 JsDuck aims to be a better documentation generator for [Ext JS][] than
-the old [ext-doc][] was. It is used by Sencha to generate the official
-[Ext JS 4 documentation][ext4-docs].
+the old [ext-doc][] was. It is used by Sencha to document [Ext JS
+4][ext4-docs], [Sencha Touch][touch2-docs] and [several other][other-docs]
+products.
 
 The highlights of JSDuck are [Markdown][] support and keeping you DRY
 by inferring a lot of information from code.  Read the [Guide][] for
@@ -22,17 +23,17 @@ full overview.
 [ext-doc]: http://ext-doc.org/
 [Markdown]: http://daringfireball.net/projects/markdown/
 [ext4-docs]: http://docs.sencha.com/ext-js/4-0/
+[touch2-docs]: http://docs.sencha.com/touch/2-0/
+[other-docs]: http://docs.sencha.com/ext-js/4-0/
 [Guide]: https://github.com/senchalabs/jsduck/wiki/Guide
 
 
 Getting it
 ----------
 
-Standard rubygems install should do (use the `--pre` switch to get the
-latest 3.0 version which this README documents, otherwise you will get
-the stable but quite old [0.6][v0.6] version):
+Standard rubygems install should do:
 
-    $ [sudo] gem install --pre jsduck
+    $ [sudo] gem install jsduck
 
 If you encounter errors during gem installation, you may need to
 install the header files for compiling extension modules for ruby 1.8.
@@ -43,7 +44,6 @@ For **Windows** users out there, you can download the binary version,
 which includes Ruby interpreter and all dependencies bundled in a
 single .exe file.  Grab it from the [download page][].
 
-[v0.6]: https://github.com/senchalabs/jsduck/tree/v0.6
 [download page]: https://github.com/senchalabs/jsduck/downloads
 
 Usage
@@ -59,44 +59,34 @@ You can also use `--verbose` option to see what's actually happening.
 
 To generate docs for Ext JS 4 add path to the corresponding src/ dir:
 
-    $ jsduck --builtin-classes --output your/docs  extjs-4.0.2a/src
+    $ jsduck ext-4.0.7/src \
+             --builtin-classes \
+             --images ext-4.0.7/docs/images \
+             --output your/docs
 
-Running JSDuck with the current ext-4.0.2a release is expected to
-generate a lot of warnings.  Because of the bugs in doc-comments a
-global class will also get created.  You can disable this by adding
-`--ignore-global` switch.  If you are bothered by the excessive amount
-of warnings, use the `--no-warnings` switch.  For full list of command
-line options type `jsduck --help=full`.
+The `--images` option specifies a path for images included with
+`{@img}` tags inside the source code.
 
-The latest ext-4.0.6 release will produce only few warnings, so use
-that if you can get it.
+To generate docs for your own project, simply name additional input
+directories:
 
-Finally, to get more similar result to the [official Ext JS 4
-documentation][official], copy over the doc-resources directory, which
-contains the images referenced by the documentation:
-
-    $ cp -r ext-4.0.2a/docs/doc-resources your/docs/doc-resources
+    $ jsduck ext-4.0.7/src project1/js project2/js ...
 
 Note that the resulting documentation will only contain the API
 documentation.  Guides, videos and examples will not be present.
-These can be added using more command line options, but for now those
-aren't well documented as the ext-4.0.2a release doesn't contain the
-source files for these.
+These can be added using more command line options as explained in the
+[Advanced Usage][adv] section of wiki.
 
-To generate docs for your own project, simply add as many other input
-directories as needed:
+Running JSDuck against older Ext JS than 4.0.7 is expected to generate
+a lot of warnings.  Similarly your own .js files will probably
+generate warnings too.  Sorry for that, JSDuck just wants to be
+helpful.  If you are overwhelmed by the warnings, you can disable them
+using `--no-warnings` switch.  Another thing that often happens is
+that JSDuck is unable to determine into which class a member belongs
+and will place all such items into a global class - you can disable
+this using the `--ignore-global` switch.  For full list of command
+line options type `jsduck --help=full`.
 
-    $ jsduck --builtin-classes ext-4.0.2a/src project1/js project2/js --output your/docs
-
-Of course you don't have to include the whole Ext JS into your
-documentation, but if your project is built on top of it, it makes
-sense to do so - otherwise you won't be able to see which methods your
-classes inherit from Ext JS classes.
-
-To create guides, videos and other sections, read about the
-[Advanced Usage][adv] in wiki.
-
-[official]: http://docs.sencha.com/ext-js/4-0/
 [adv]: https://github.com/senchalabs/jsduck/wiki/Advanced-Usage
 
 
@@ -110,7 +100,9 @@ Documenting your code
 ---------------------
 
 All the supported syntax is described in the [Guide][].
+For quick overview take a look at [example.js][example].
 
+[example]: https://github.com/senchalabs/jsduck/blob/master/opt/example.js
 
 Copying
 -------
@@ -125,7 +117,10 @@ Thanks to [Ondřej Jirman](https://github.com/megous),
 [Thomas Aylott](https://github.com/subtleGradient),
 [johnnywengluu](https://github.com/johnnywengluu),
 [gevik](https://github.com/gevik),
-[ligaard](https://github.com/ligaard), and many-many others who
+[ligaard](https://github.com/ligaard),
+[Bill Hubbard](http://www.sencha.com/forum/member.php?272458-BillHubbard),
+[Ed Spencer](https://github.com/edspencer),
+[atian25](https://github.com/atian25) and many-many others who
 reported bugs, submitted patches, and provided a lot of useful input.
 
 

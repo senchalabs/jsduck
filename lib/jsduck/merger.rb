@@ -1,3 +1,5 @@
+require 'jsduck/logger'
+
 module JsDuck
 
   # Takes data from doc-comment and code that follows it and combines
@@ -6,6 +8,15 @@ module JsDuck
   #
   # The main method merge() produces a hash as a result.
   class Merger
+    # Allow passing in filename and line for error reporting
+    attr_accessor :filename
+    attr_accessor :linenr
+
+    def initialize
+      @filename = ""
+      @linenr = 0
+    end
+
     def merge(docs, code)
       case detect_doc_type(docs, code)
       when :class
@@ -53,6 +64,8 @@ module JsDuck
         :method
       elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :function
         :method
+      elsif doc_map[:return] || doc_map[:param]
+        :method
       else
         :property
       end
@@ -92,7 +105,7 @@ module JsDuck
           end
         end
 
-        if tag[:tagname] == :xtype
+        if tag[:tagname] == :alias
           groups[:class] << tag
         elsif group_name == :cfg
           groups[:cfg].last << tag
@@ -112,8 +125,7 @@ module JsDuck
         :extends => detect_extends(doc_map, code),
         :mixins => detect_list(:mixins, doc_map, code),
         :alternateClassNames => detect_list(:alternateClassNames, doc_map, code),
-        :xtypes => detect_xtypes(doc_map, code),
-        :meta => detect_meta(doc_map),
+        :aliases => detect_aliases(doc_map, code),
         :singleton => detect_singleton(doc_map, code),
         :requires => detect_list(:requires, doc_map, code),
         :uses => detect_list(:uses, doc_map, code),
@@ -143,7 +155,6 @@ module JsDuck
         :doc => detect_doc(docs),
         :params => detect_params(docs, code),
         :return => detect_return(doc_map, name == "constructor" ? "Object" : "undefined"),
-        :template => !!doc_map[:template],
       }, doc_map)
     end
 
@@ -166,10 +177,10 @@ module JsDuck
         :owner => detect_owner(doc_map) || owner,
         :type => detect_type(:cfg, doc_map, code),
         :doc => detect_doc(docs),
-        :required => detect_required(:cfg, doc_map),
         :default => detect_default(:cfg, doc_map, code),
         :properties => detect_subproperties(docs, :cfg),
         :accessor => !!doc_map[:accessor],
+        :evented => !!doc_map[:evented],
       }, doc_map)
     end
 
@@ -181,6 +192,7 @@ module JsDuck
         :owner => detect_owner(doc_map),
         :type => detect_type(:property, doc_map, code),
         :doc => detect_doc(docs),
+        :default => detect_default(:property, doc_map, code),
         :properties => detect_subproperties(docs, :property),
       }, doc_map)
     end
@@ -211,19 +223,20 @@ module JsDuck
     def add_shared(hash, doc_map)
       hash.merge!({
         :private => !!doc_map[:private],
-        :protected => !!doc_map[:protected],
-        :static => !!doc_map[:static],
         :inheritable => !!doc_map[:inheritable],
-        :deprecated => detect_deprecated(doc_map),
         :markdown => !!doc_map[:markdown],
-        :alias => doc_map[:alias] ? doc_map[:alias].first : nil,
+        :inheritdoc => doc_map[:inheritdoc] ? doc_map[:inheritdoc].first : nil,
+        :attributes => detect_attributes(doc_map),
+        :meta => detect_meta(doc_map),
       })
       hash[:id] = create_member_id(hash)
       return hash
     end
 
     def create_member_id(m)
-      "#{m[:static] ? 'static-' : ''}#{m[:tagname]}-#{m[:name]}"
+      # Sanitize $ in member names with something safer
+      name = m[:name].gsub(/\$/, 'S-')
+      "#{m[:attributes][:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
     end
 
     def detect_name(tagname, doc_map, code, name_type = :last_name)
@@ -301,11 +314,6 @@ module JsDuck
       return explicit_name == "" || explicit_name == implicit_name
     end
 
-    def detect_required(tagname, doc_map)
-      main_tag = doc_map[tagname] ? doc_map[tagname].first : {}
-      return main_tag[:optional] == false
-    end
-
     # for detecting mixins and alternateClassNames
     def detect_list(type, doc_map, code)
       if doc_map[type]
@@ -317,36 +325,64 @@ module JsDuck
       end
     end
 
-    def detect_xtypes(doc_map, code)
-      if doc_map[:xtype]
-        {"widget" => doc_map[:xtype].map {|tag| tag[:name] } }
-      elsif code[:alias]
-        xtypes = {}
-        code[:alias].each do |a|
-          if a =~ /^(\w+)\.(\w+)$/
-            if xtypes[$1]
-              xtypes[$1] << $2
-            else
-              xtypes[$1] = [$2]
-            end
-          end
-        end
-        xtypes
+    def detect_aliases(doc_map, code)
+      if doc_map[:alias]
+        build_aliases_hash(doc_map[:alias].map {|tag| tag[:name] })
+      elsif code[:xtype] || code[:alias]
+        hash = {}
+        build_aliases_hash(code[:xtype].map {|xtype| "widget."+xtype }, hash) if code[:xtype]
+        build_aliases_hash(code[:alias], hash) if code[:alias]
+        hash
       else
         {}
       end
     end
 
-    def detect_meta(doc_map)
-      doc_map[:meta] ? doc_map[:meta].map {|tag| {:name => tag[:name], :content => tag[:content]} } : []
+    # Given array of full alias names like "foo.bar", "foo.baz"
+    # build hash like {"foo" => ["bar", "baz"]}
+    #
+    # When hash given as second argument, then merges the aliases into
+    # it instead of creating a new hash.
+    def build_aliases_hash(aliases, hash={})
+      aliases.each do |a|
+        if a =~ /^(.+)\.([^.]+)$/
+          if hash[$1]
+            hash[$1] << $2
+          else
+            hash[$1] = [$2]
+          end
+        end
+      end
+      hash
     end
 
-    def detect_deprecated(doc_map)
-      doc_map[:deprecated] ? doc_map[:deprecated].first : nil
+    def detect_meta(doc_map)
+      meta = {}
+      (doc_map[:meta] || []).map do |tag|
+        meta[tag[:name]] = [] unless meta[tag[:name]]
+        meta[tag[:name]] << tag[:doc]
+      end
+      meta
     end
 
     def detect_singleton(doc_map, code)
       !!(doc_map[:singleton] || code[:type] == :ext_define && code[:singleton])
+    end
+
+    def detect_attributes(doc_map)
+      attributes = {}
+      (doc_map[:attribute] || []).each do |tag|
+        attributes[tag[:name]] = true
+      end
+      # @deprecated and (required) are detected in special ways from
+      # doc-comment but merged into :attributes hash.
+      attributes[:deprecated] = doc_map[:deprecated].first if doc_map[:deprecated]
+      attributes[:required] = true if detect_required(doc_map)
+      attributes
+    end
+
+    def detect_required(doc_map)
+      doc_map[:cfg] && doc_map[:cfg].first[:optional] == false
     end
 
     def detect_params(docs, code)
@@ -408,8 +444,12 @@ module JsDuck
         if it[:name] =~ /^(.+)\.([^.]+)$/
           it[:name] = $2
           parent = index[$1]
-          parent[:properties] = [] unless parent[:properties]
-          parent[:properties] << it
+          if parent
+            parent[:properties] = [] unless parent[:properties]
+            parent[:properties] << it
+          else
+            Logger.instance.warn(:subproperty, "Ignoring subproperty #{$1}.#{$2}, no parent found with name '#{$1}'.", @filename, @linenr)
+          end
         else
           items << it
         end
@@ -430,7 +470,7 @@ module JsDuck
     # Combines :doc-s of most tags
     # Ignores tags that have doc comment themselves and subproperty tags
     def detect_doc(docs)
-      ignore_tags = [:param, :return]
+      ignore_tags = [:param, :return, :meta]
       doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) && !subproperty?(tag) }
       doc_tags.map { |tag| tag[:doc] }.compact.join(" ")
     end

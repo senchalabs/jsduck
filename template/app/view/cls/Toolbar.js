@@ -117,11 +117,11 @@ Ext.define('Docs.view.cls.Toolbar', {
             },
             {
                 xtype: 'button',
-                iconCls: 'expandAllMembers',
+                iconCls: 'expand-all-members',
                 tooltip: "Expand all",
                 enableToggle: true,
                 toggleHandler: function(btn, pressed) {
-                    btn.setIconCls(pressed ? 'collapseAllMembers' : 'expandAllMembers');
+                    btn.setIconCls(pressed ? 'collapse-all-members' : 'expand-all-members');
                     btn.setTooltip(pressed ? "Collapse all" : "Expand all");
                     this.fireEvent("toggleExpanded", pressed);
                 },
@@ -167,7 +167,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     // creates store tha holds link records
     createStore: function(records) {
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'cls', 'url', 'label', 'inherited', 'static', 'protected', 'deprecated', 'template', 'required']
+            fields: ['id', 'cls', 'url', 'label', 'inherited', 'static', 'deprecated', 'protected', 'abstract', 'template', 'readonly', 'required']
         });
         store.add(records);
         return store;
@@ -180,11 +180,13 @@ Ext.define('Docs.view.cls.Toolbar', {
             url: member ? (cls + "-" + member.id) : cls,
             label: member ? ((member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name) : cls,
             inherited: member ? member.owner !== cls : false,
-            'protected': member ? member['protected'] : false,
-            'static': member ? member['static'] : false,
-            deprecated: member ? member['deprecated'] : false,
-            template: member ? member['template'] : false,
-            required: member ? member['required'] : false
+            'static': member ? member.attributes['static'] : false,
+            deprecated: member ? member.attributes['deprecated'] : false,
+            'protected': member ? member.attributes['protected'] : false,
+            'abstract': member ? member.attributes['abstract'] : false,
+            template: member ? member.attributes['template'] : false,
+            readonly: member ? member.attributes['readonly'] : false,
+            required: member ? member.attributes['required'] : false
         };
     },
 

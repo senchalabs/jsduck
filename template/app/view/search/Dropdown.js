@@ -42,7 +42,8 @@ Ext.define('Docs.view.search.Dropdown', {
 
         this.tpl = new Ext.XTemplate(
             '<tpl for=".">',
-                '<div class="item {type}">',
+                '<div class="item">',
+                    '<div class="icon icon-{type}"></div>',
                     '<div class="title">{member}</div>',
                     '<div class="class">{cls}</div>',
                 '</div>',

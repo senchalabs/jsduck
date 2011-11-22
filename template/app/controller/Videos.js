@@ -26,7 +26,7 @@ Ext.define('Docs.controller.Videos', {
             /**
              * @event showVideo
              * Fired after a video is shown. Used for analytics event tracking.
-             * @param {String} video name of the video.
+             * @param {Number} video ID of the video.
              */
             "showVideo"
         );
@@ -51,6 +51,9 @@ Ext.define('Docs.controller.Videos', {
     },
 
     loadVideo: function(url, noHistory) {
+
+        var reRendered = false;
+
         Ext.getCmp('card-panel').layout.setActiveItem('video');
         Ext.getCmp('treecontainer').showTree('videotree');
         var videoId = url.match(/[0-9]+$/)[0];
@@ -59,9 +62,10 @@ Ext.define('Docs.controller.Videos', {
         this.getViewport().setPageTitle(video.title);
         if (this.activeUrl !== url) {
             Ext.getCmp('video').load(video);
+            reRendered = true;
         }
         noHistory || Docs.History.push(url);
-        this.fireEvent('showVideo', url);
+        this.fireEvent('showVideo', videoId, {reRendered: reRendered});
         this.getTree().selectUrl(url);
         this.activeUrl = url;
     },

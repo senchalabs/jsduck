@@ -32,12 +32,13 @@ Ext.define('Docs.view.cls.Overview', {
      * Scrolls the specified element into view
      *
      * @param {String} query  DomQuery selector string.
+     * @param {String} offset  Additional scroll offset.
      */
-    scrollToEl: function(query) {
-        var el = Ext.get(Ext.query(query)[0]);
+    scrollToEl: function(query, offset) {
+        var el = (typeof query == 'string') ? Ext.get(Ext.query(query)[0]) : query;
         if (el) {
             var isMember = el.hasCls("member");
-            var scrollOffset = el.getY() - (isMember ? 165 : 155);
+            var scrollOffset = el.getY() - (isMember ? 165 : 155) + (offset || 0);
             var docContent = this.getEl().down('.x-panel-body');
             var currentScroll = docContent.getScroll()['top'];
             docContent.scrollTo('top', currentScroll + scrollOffset);
@@ -125,16 +126,13 @@ Ext.define('Docs.view.cls.Overview', {
             Ext.get(m).removeCls('first-child');
         });
 
-        Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
-            var sectionId = '#m-' + type;
-
+        Ext.Array.forEach(Ext.query('.members-section'), function(section) {
             // Hide the section completely if all items in it are hidden
-            var visibleEls = this.getVisibleElements(sectionId + " .member");
-            var section = Ext.query(sectionId)[0];
-            section && Ext.get(section).setStyle({display: visibleEls.length > 0 ? 'block' : 'none'});
+            var visibleEls = this.getVisibleElements(".member", section);
+            Ext.get(section).setStyle({display: visibleEls.length > 0 ? 'block' : 'none'});
 
             // Hide subsections completely if all items in them are hidden
-            Ext.Array.forEach(Ext.query(sectionId+" .subsection"), function(subsection) {
+            Ext.Array.forEach(Ext.query(".subsection", section), function(subsection) {
                 var visibleEls = this.getVisibleElements(".member", subsection);
                 if (visibleEls.length > 0) {
                     // add first-child class to first member in subsection

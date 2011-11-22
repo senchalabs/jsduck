@@ -32,6 +32,7 @@ Ext.define('Docs.view.GroupTree', {
         Ext.Array.each(this.data, function(group) {
             this.root.children.push({
                 text: group.title,
+                expanded: true,
                 children: Ext.Array.map(group.items, this.convert),
                 iconCls: 'icon-pkg'
             });

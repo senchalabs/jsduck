@@ -16,8 +16,10 @@ Ext.define('Docs.view.cls.Header', {
                 '<tpl if="private">',
                     '<span class="private">Private</span>',
                 '</tpl>',
-                '<a href="source/{href}" target="_blank">{name}</a>',
-                '{[this.renderXTypes(values.xtypes)]}',
+                '<a href="#" class="class-source-link">{name}',
+                  '<span class="class-source-tip">View source...</span>',
+                '</a>',
+                '{[this.renderAliases(values.aliases)]}',
             '</h1>',
             Docs.showPrintButton ? '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>' : '',
             {
@@ -32,17 +34,15 @@ Ext.define('Docs.view.cls.Header', {
                         return "class";
                     }
                 },
-                renderXTypes: function(xtypes) {
-                    var map = {
+                renderAliases: function(aliases) {
+                    var titles = {
                         widget: "xtype",
                         plugin: "ptype",
                         feature: "ftype"
                     };
                     var r = [];
-                    xtypes && Ext.Object.each(map, function(ns, title) {
-                        if (xtypes[ns]) {
-                            r.push(title + ": " + xtypes[ns].join(", "));
-                        }
+                    aliases && Ext.Object.each(aliases, function(ns, types) {
+                        r.push((titles[ns] || ns) + ": " + types.join(", "));
                     });
 
                     if (r.length > 0) {
@@ -54,7 +54,54 @@ Ext.define('Docs.view.cls.Header', {
                 }
             }
         );
+
+        this.on("render", this.initSourceLink, this);
+
         this.callParent();
+    },
+
+    initSourceLink: function() {
+        // When class name clicked, open the source file directly or
+        // pop up a menu if there's more than one source file.
+        this.classLinkEvent("click", function() {
+            var files = this.loadedCls.files;
+            if (files.length === 1) {
+                window.open("source/" + files[0].href);
+            }
+            else {
+                var menu = this.createFileMenu(files);
+                menu.showBy(this, undefined, [58,-20]);
+            }
+        }, this);
+
+        // show "View source..." tip below class name on hover
+        this.classLinkEvent("mouseover", function() {
+            this.el.down(".class-source-tip").addCls("hover");
+        }, this);
+        this.classLinkEvent("mouseout", function() {
+            this.el.down(".class-source-tip").removeCls("hover");
+        }, this);
+    },
+
+    // Helper for binding handlers to class name link
+    classLinkEvent: function(eventName, fun, scope) {
+        this.el.on(eventName, fun, scope, {
+            preventDefault: true,
+            delegate: 'a.class-source-link'
+        });
+    },
+
+    createFileMenu: function(files) {
+        return new Ext.menu.Menu({
+            items: Ext.Array.map(files, function(f) {
+                return {
+                    text: f.filename,
+                    handler: function() {
+                        window.open("source/" + f.href);
+                    }
+                };
+            }, this)
+        });
     },
 
     /**
@@ -62,6 +109,7 @@ Ext.define('Docs.view.cls.Header', {
      * @param {Object} cls  class config.
      */
     load: function(cls) {
+        this.loadedCls = cls;
         this.update(this.tpl.apply(cls));
     }
 });

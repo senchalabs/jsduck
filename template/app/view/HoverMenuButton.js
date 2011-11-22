@@ -74,34 +74,7 @@ Ext.define('Docs.view.HoverMenuButton', {
             click: function() {
                 this.fireEvent("click");
             },
-            mouseover: function() {
-                // hide other menus
-                Ext.Array.forEach(Docs.view.HoverMenuButton.menus, function(menu) {
-                    if (menu !== this.menu) {
-                        menu.hide();
-                    }
-                });
-                // stop pending menuhide process
-                clearTimeout(this.hideTimeout);
-                this.menu.show();
-                // position menu right below button and show it
-                var p = this.getEl().getXY(),
-                    toolbar = Ext.ComponentQuery.query('classoverview toolbar')[0],
-                    leftOffset = p[0]-10,
-                    toolbarOffset = toolbar.getEl().getXY(),
-                    toolbarWidth = toolbar.getWidth(),
-                    menuWidth = this.menu.getEl().getWidth(),
-                    pageWidth = Ext.getCmp('doctabs').getWidth();
-
-                if (menuWidth > pageWidth) leftOffset = 0;
-                else if ((leftOffset + menuWidth) > pageWidth) leftOffset = pageWidth - menuWidth - 30;
-                if (leftOffset < toolbarOffset[0]) leftOffset = toolbarOffset[0];
-
-                this.menu.getEl().setStyle({
-                    left: leftOffset+"px",
-                    top: (p[1]+25)+"px"
-                });
-            },
+            mouseover: this.deferShowMenu,
             mouseout: this.deferHideMenu,
             scope: this
         });
@@ -142,8 +115,42 @@ Ext.define('Docs.view.HoverMenuButton', {
     },
 
     deferHideMenu: function() {
+        clearTimeout(Docs.view.HoverMenuButton.showTimeout);
         this.hideTimeout = Ext.Function.defer(function() {
             this.menu.hide();
+        }, 200, this);
+    },
+
+    deferShowMenu: function() {
+        clearTimeout(Docs.view.HoverMenuButton.showTimeout);
+        Docs.view.HoverMenuButton.showTimeout = Ext.Function.defer(function() {
+
+            // hide other menus
+            Ext.Array.forEach(Docs.view.HoverMenuButton.menus, function(menu) {
+                if (menu !== this.menu) {
+                    menu.hide();
+                }
+            });
+            // stop pending menuhide process
+            clearTimeout(this.hideTimeout);
+            this.menu.show();
+            // position menu right below button and show it
+            var p = this.getEl().getXY(),
+                toolbar = Ext.ComponentQuery.query('classoverview toolbar')[0],
+                leftOffset = p[0]-10,
+                toolbarOffset = toolbar.getEl().getXY(),
+                toolbarWidth = toolbar.getWidth(),
+                menuWidth = this.menu.getEl().getWidth(),
+                pageWidth = Ext.getCmp('doctabs').getWidth();
+
+            if (menuWidth > pageWidth) leftOffset = 0;
+            else if ((leftOffset + menuWidth) > pageWidth) leftOffset = pageWidth - menuWidth - 30;
+            if (leftOffset < toolbarOffset[0]) leftOffset = toolbarOffset[0];
+
+            this.menu.getEl().setStyle({
+                left: leftOffset+"px",
+                top: (p[1]+25)+"px"
+            });
         }, 200, this);
     },
 

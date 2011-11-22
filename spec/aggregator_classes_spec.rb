@@ -3,10 +3,13 @@ require "jsduck/source_file"
 
 describe JsDuck::Aggregator do
 
+  before do
+    JsDuck::Logger.instance.set_warning(:alt_name, false)
+  end
+
   def parse(string)
     agr = JsDuck::Aggregator.new
-    meta_tags = [{:name => "author"}, {:name => "docauthor"}]
-    agr.aggregate(JsDuck::SourceFile.new(string, "", {:meta_tags => meta_tags}))
+    agr.aggregate(JsDuck::SourceFile.new(string))
     agr.result
   end
 
@@ -29,7 +32,6 @@ describe JsDuck::Aggregator do
          * @alternateClassNames AltClass
          * Some documentation.
          * @singleton
-         * @xtype nicely
          */
       EOS
     end
@@ -49,9 +51,6 @@ describe JsDuck::Aggregator do
     end
     it "detects singleton" do
       @doc[:singleton].should == true
-    end
-    it "detects xtype" do
-      @doc[:xtypes].should == {"widget" => ["nicely"]}
     end
   end
 
@@ -113,24 +112,6 @@ describe JsDuck::Aggregator do
     it_should_behave_like "class"
     it "collects all alternateClassNames together" do
       @doc[:alternateClassNames].should == ["AltClass1", "AltClass2"]
-    end
-  end
-
-  describe "class with multiple @xtypes" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * @xtype foo
-         * @xtype bar
-         * Some documentation.
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "collects all xtypes together" do
-      @doc[:xtypes].should == {"widget" => ["foo", "bar"]}
     end
   end
 
@@ -196,9 +177,6 @@ describe JsDuck::Aggregator do
     it "detects implied alternateClassNames" do
       @doc[:alternateClassNames].should == ["JustClass"]
     end
-    it "detects implied xtype" do
-      @doc[:xtypes].should == {"widget" => ["foo"]}
-    end
     it "detects implied singleton" do
       @doc[:singleton].should == true
     end
@@ -220,7 +198,6 @@ describe JsDuck::Aggregator do
             obs: 'Ext.util.Observable',
             bar: 'Foo.Bar'
           },
-          alias: 'widget.foo',
           alternateClassName: 'JustClass',
           singleton: true,
           requires: ['ClassA', 'ClassB'],
@@ -251,15 +228,41 @@ describe JsDuck::Aggregator do
           extend: 'Your.Class',
           uses: ['ClassC'],
           conf: {foo: 10},
-          alias: ['widget.foo'],
           singleton: true,
           alternateClassName: ['JustClass'],
           stuff: ["foo", "bar"],
           requires: ['ClassA', 'ClassB'],
-          mixins: {
-            obs: 'Ext.util.Observable',
-            bar: 'Foo.Bar'
-          }
+          mixins: [
+            'Ext.util.Observable',
+            'Foo.Bar'
+          ]
+        });
+      EOS
+    end
+    it_should_behave_like "Ext.define"
+  end
+
+  describe "explicit @tags overriding Ext.define()" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @extends Your.Class
+         * @uses ClassC
+         * @requires ClassA
+         * @requires ClassB
+         * @alternateClassName JustClass
+         * @mixins Ext.util.Observable
+         * @mixins Foo.Bar
+         * @singleton
+         */
+        Ext.define('MyClassXXX', {
+          extend: 'Your.ClassXXX',
+          uses: ['CCC'],
+          singleton: false,
+          alternateClassName: ['JustClassXXX'],
+          requires: ['AAA'],
+          mixins: ['BBB']
         });
       EOS
     end
@@ -331,48 +334,6 @@ describe JsDuck::Aggregator do
     end
     it "has method with default return type Object" do
       @doc[:members][:method][0][:return][:type].should == "Object"
-    end
-  end
-
-  describe "@xtype after @constructor" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * Comment here.
-         * @constructor
-         * This constructs the class
-         * @xtype nicely
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "detects xtype" do
-      @doc[:xtypes].should == {"widget" => ["nicely"]}
-    end
-  end
-
-  describe "class with meta-tags" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * @author John Doe
-         * @author Steve Jobs
-         * @docauthor Kill Bill
-         * Comment here.
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "detects @author and @docauthor tags" do
-      @doc[:meta].should == [
-        {:name => "author", :content => "John Doe"},
-        {:name => "author", :content => "Steve Jobs"},
-        {:name => "docauthor", :content => "Kill Bill"},
-      ]
     end
   end
 
@@ -485,7 +446,6 @@ describe JsDuck::Aggregator do
          * @mixins Mix1
          * @alternateClassNames AltClassic
          * Second description.
-         * @xtype xfoo
          * @private
          * @cfg c2
          */
@@ -498,7 +458,6 @@ describe JsDuck::Aggregator do
          * @mixins Mix2
          * @singleton
          * Third description.
-         * @xtype xxxfoo
          * @cfg c3
          */
           /** @method fun3 */
@@ -527,10 +486,6 @@ describe JsDuck::Aggregator do
       @classes[0][:private].should == true
     end
 
-    it "combines all @xtypes" do
-      @classes[0][:xtypes]["widget"].length.should == 2
-    end
-
     it "combines all configs" do
       @classes[0][:members][:cfg].length.should == 3
     end
@@ -550,4 +505,54 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "class Foo following class with Foo as alternateClassName" do
+    before do
+      @classes = parse(<<-EOS)
+        /**
+         * @class Person
+         * @alternateClassName Foo
+         */
+        /**
+         * @class Foo
+         */
+      EOS
+    end
+
+    it "results in only one class" do
+      @classes.length.should == 1
+    end
+  end
+
+  describe "class Foo preceding class with Foo as alternateClassName" do
+    before do
+      @classes = parse(<<-EOS)
+        /**
+         * @class Foo
+         */
+        /**
+         * @class Person
+         * @alternateClassName Foo
+         */
+      EOS
+    end
+
+    it "results in only one class" do
+      @classes.length.should == 1
+    end
+  end
+
+  describe "Class with itself as alternateClassName" do
+    before do
+      @classes = parse(<<-EOS)
+        /**
+         * @class Foo
+         * @alternateClassName Foo
+         */
+      EOS
+    end
+
+    it "results still in one class" do
+      @classes.length.should == 1
+    end
+  end
 end

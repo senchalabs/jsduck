@@ -29,9 +29,12 @@ module JsDuck
     # Default value: '<img src="%u" alt="%a"/>'
     attr_accessor :img_tpl
 
-    # Assign to this a function that retrieves the example code when
-    # passed in a filename
-    attr_accessor :get_example
+    # This will hold list of all image paths gathered from {@img} tags.
+    attr_accessor :images
+
+    # Base path to prefix images from {@img} tags.
+    # Defaults to no prefix.
+    attr_accessor :img_path
 
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
@@ -52,18 +55,17 @@ module JsDuck
     # name actually exists.
     attr_accessor :relations
 
-    def initialize
+    def initialize(relations={}, opts={})
       @class_context = ""
       @doc_context = {}
       @max_length = 120
-      @relations = {}
-      @link_tpl = '<a href="%c%#%m">%a</a>'
-      @img_tpl = '<img src="%u" alt="%a"/>'
-      @example_tpl = '<pre class="inline-example"><code>%a</code></pre>'
+      @relations = relations
+      @images = []
+      @link_tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
+      @img_tpl = opts[:img_tpl] || '<img src="%u" alt="%a"/>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
-      @example_re = /\{@example\s+(\S*?)\s*\}/m
-      @example_annotation_re = /<pre><code>@example( +[^\n]*)?\s+/m
+      @example_annotation_re = /<pre><code>\s*@example( +[^\n]*)?\s+/m
     end
 
     # Replaces {@link} and {@img} tags, auto-generates links for
@@ -73,8 +75,6 @@ module JsDuck
     # HTML from @link_tpl.
     #
     # Replaces {@img path/to/image.jpg Alt text} with HTML from @img_tpl.
-    #
-    # Replaces {@example path/to/example.js} with source from that file.
     #
     # Adds 'inline-example' class to code examples beginning with @example.
     #
@@ -89,11 +89,12 @@ module JsDuck
           out += replace_link_tag(s.scan(@link_re))
         elsif s.check(@img_re)
           out += replace_img_tag(s.scan(@img_re))
-        elsif s.check(@example_re)
-          out += replace_example_tag(s.scan(@example_re))
         elsif s.check(@example_annotation_re)
-          s.scan(@example_annotation_re)
-          out += '<pre class="inline-example"><code>'
+          # Match possible classnames following @example and add them
+          # as CSS classes inside <pre> element.
+          s.scan(@example_annotation_re) =~ @example_annotation_re
+          css_classes = ($1 || "").strip
+          out += "<pre class='inline-example #{css_classes}'><code>"
         elsif s.check(/[{<]/)
           out += s.scan(/[{<]/)
         else
@@ -129,10 +130,13 @@ module JsDuck
         file = @doc_context[:filename]
         line = @doc_context[:linenr]
         if !@relations[cls]
-          Logger.instance.warn("#{file} line #{line} #{input} links to non-existing class.")
+          Logger.instance.warn(:link, "#{input} links to non-existing class", file, line)
           text
         elsif member && !get_member(cls, member, type)
-          Logger.instance.warn("#{file} line #{line} #{input} links to non-existing member.")
+          Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
+          text
+        elsif member && !public_member?(cls, member, type)
+          Logger.instance.warn(:link, "#{input} links to private member", file, line)
           text
         else
           link(cls, member, text, type)
@@ -144,10 +148,6 @@ module JsDuck
       input.sub(@img_re) { img($1, $2) }
     end
 
-    def replace_example_tag(input)
-      input.sub(@example_re) { example($1) }
-    end
-
     def replace_class_names(input)
       input.gsub(/(\A|\s)([A-Z][A-Za-z0-9.]*[A-Za-z0-9])(?:(#)([A-Za-z0-9]+))?([.,]?(?:\s|\Z))/m) do
         before = $1
@@ -156,7 +156,7 @@ module JsDuck
         member = $4
         after = $5
 
-        if @relations[cls] && (member ? get_member(cls, member) : cls =~ /\./)
+        if @relations[cls] && (member ? public_member?(cls, member) : cls =~ /\./)
           label = member ? cls+"."+member : cls
           before + link(cls, member, label) + after
         else
@@ -167,30 +167,13 @@ module JsDuck
 
     # applies the image template
     def img(url, alt_text)
+      @images << url
       @img_tpl.gsub(/(%\w)/) do
         case $1
         when '%u'
-          url
+          @img_path ? (@img_path + "/" + url) : url
         when '%a'
           CGI.escapeHTML(alt_text||"")
-        else
-          $1
-        end
-      end
-    end
-
-    # Replaces example template with example read from file
-    def example(path)
-      @example_tpl.gsub(/(%\w)/) do
-        case $1
-        when '%a'
-          if @get_example
-            CGI.escapeHTML(@get_example.call(path))
-          else
-            file = @doc_context[:filename]
-            line = @doc_context[:linenr]
-            Logger.instance.warn("--examples not specified, but {@example} found in #{file} line #{line}.")
-          end
         else
           $1
         end
@@ -222,8 +205,13 @@ module JsDuck
       end
     end
 
+    def public_member?(cls, member, type=nil)
+      m = get_member(cls, member, type)
+      return m && !m[:private]
+    end
+
     def get_member(cls, member, type=nil)
-      @relations[cls] && @relations[cls].get_member(member, type)
+      return @relations[cls] && @relations[cls].get_member(member, type)
     end
 
     # Formats doc-comment for placement into HTML.

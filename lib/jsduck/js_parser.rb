@@ -173,7 +173,7 @@ module JsDuck
     # <literal> := ...see JsLiteralParser...
     def my_literal
       lit = literal
-      return unless lit
+      return unless lit && literal_expression_end?
 
       cls_map = {
         :string => "String",
@@ -194,6 +194,13 @@ module JsDuck
       value = JsLiteralBuilder.new.to_s(lit)
 
       {:type => :literal, :class => cls, :value => value}
+    end
+
+    # True when we're at the end of literal expression.
+    # ",", ";" and "}" are the normal closing symbols, but for
+    # our docs purposes doc-comment and file end work too.
+    def literal_expression_end?
+      look(",") || look(";") || look("}") || look(:doc_comment) || @lex.empty?
     end
 
     # <ext-extend> := "Ext" "." "extend" "(" <ident-chain> "," ...
@@ -235,7 +242,7 @@ module JsDuck
     end
 
     # <ext-define-cfg> := "{" ( <extend> | <mixins> | <alternate-class-name> | <alias> |
-    #                           <requires> | <uses> | <singleton> | <?> )*
+    #                           <xtype> | <requires> | <uses> | <singleton> | <?> )*
     def ext_define_cfg
       match("{")
       cfg = {}
@@ -250,6 +257,8 @@ module JsDuck
           cfg[:alternateClassNames] = found
         elsif found = ext_define_alias
           cfg[:alias] = found
+        elsif found = ext_define_xtype
+          cfg[:xtype] = found
         elsif found = ext_define_requires
           cfg[:requires] = found
         elsif found = ext_define_uses
@@ -271,12 +280,18 @@ module JsDuck
       end
     end
 
-    # <mixins> := "mixins" ":" <object-literal>
+    # <mixins> := "mixins" ":" [ <object-literal> | <array-literal> ]
     def ext_define_mixins
-      if look("mixins", ":", "{")
+      if look("mixins", ":")
         match("mixins", ":")
         lit = literal
-        lit && lit[:value].map {|x| x[:value][:value] }
+        if lit && lit[:type] == :object
+          lit[:value].map {|x| x[:value][:value] }
+        elsif lit && lit[:type] == :array
+          lit[:value].map {|x| x[:value] }
+        else
+          nil
+        end
       end
     end
 
@@ -292,6 +307,14 @@ module JsDuck
     def ext_define_alias
       if look("alias", ":")
         match("alias", ":")
+        string_or_list
+      end
+    end
+
+    # <xtype> := "xtype" ":" <string-or-list>
+    def ext_define_xtype
+      if look("xtype", ":")
+        match("xtype", ":")
         string_or_list
       end
     end

@@ -23,7 +23,9 @@ module JsDuck
       @links = {}
 
       merger = Merger.new
+      merger.filename = @filename
       @docs = parse.map do |docset|
+        merger.linenr = docset[:linenr]
         doc = link(docset[:linenr], merger.merge(docset[:comment], docset[:code]))
         doc[:code] = docset[:code]
         doc[:orig_comment] = docset[:orig_comment]
@@ -41,9 +43,9 @@ module JsDuck
     def html_filename=(html_filename)
       @html_filename = html_filename
       @links.each_value do |line|
-        line.each do |doc|
-          doc[:html_filename] = @html_filename
-          doc[:href] = @html_filename + "#" + id(doc)
+        line.each do |link|
+          link[:file][:html_filename] = @html_filename
+          link[:file][:href] = @html_filename + "#" + id(link[:doc])
         end
       end
     end
@@ -58,8 +60,8 @@ module JsDuck
         line = CGI.escapeHTML(line)
         # wrap the line in as many spans as there are links to this line number.
         if @links[linenr]
-          @links[linenr].each do |doc|
-            line = "<span id='#{id(doc)}'>#{line}</span>"
+          @links[linenr].each do |link|
+            line = "<span id='#{id(link[:doc])}'>#{line}</span>"
           end
         end
         lines << line
@@ -93,9 +95,12 @@ module JsDuck
     # Returns the modified doc-object after done.
     def link(linenr, doc)
       @links[linenr] = [] unless @links[linenr]
-      @links[linenr] << doc
-      doc[:filename] = @filename
-      doc[:linenr] = linenr
+      file = {
+        :filename => @filename,
+        :linenr => linenr,
+      }
+      @links[linenr] << {:doc => doc, :file => file}
+      doc[:files] = [file]
       if doc[:tagname] == :class
         doc[:members][:cfg].each {|cfg| link(linenr, cfg) }
         doc[:members][:method].each {|method| link(linenr, method) }

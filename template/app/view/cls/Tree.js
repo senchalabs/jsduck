@@ -37,15 +37,26 @@ Ext.define('Docs.view.cls.Tree', {
             var selected = this.getSelectionModel().getLastSelected();
             // create new treestructure
             var root = tree.create();
+            this.expandLonelyNode(root);
             this.setRootNode(root);
             this.initNodeLinks();
-            // expand first child
-            this.getRootNode().getChildAt(0).expand();
+
             // re-establish the previous selection
             selected && this.selectUrl(selected.raw.url);
         }
         else {
             this.root = tree.create();
+            this.expandLonelyNode(this.root);
+        }
+    },
+
+    // When only one expandable node at root level, expand it
+    expandLonelyNode: function(root) {
+        var expandableNodes = Ext.Array.filter(root.children, function(node) {
+            return node.children.length > 0;
+        });
+        if (expandableNodes.length == 1) {
+            expandableNodes[0].expanded = true;
         }
     }
 });

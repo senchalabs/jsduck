@@ -1,26 +1,30 @@
 require 'jsduck/logger'
 require 'jsduck/json_duck'
+require 'jsduck/null_object'
 require 'fileutils'
 
 module JsDuck
 
   # Reads in guides and converts them to JsonP files
   class Guides
-    def initialize(formatter)
-      @formatter = formatter
-      @guides = []
+    # Creates Guides object from filename and formatter
+    def self.create(filename, formatter)
+      if filename
+        Guides.new(filename, formatter)
+      else
+        NullObject.new(:to_array => [], :to_html => "")
+      end
     end
 
     # Parses guides config file
-    def parse(filename)
+    def initialize(filename, formatter)
       @path = File.dirname(filename)
       @guides = JsonDuck.read(filename)
+      @formatter = formatter
     end
 
     # Writes all guides to given dir in JsonP format
     def write(dir)
-      return if @guides.length == 0
-
       FileUtils.mkdir(dir) unless File.exists?(dir)
       @guides.each {|group| group["items"].each {|g| write_guide(g, dir) } }
       # Write the JSON to output dir, so it's available in released
@@ -38,20 +42,20 @@ module JsDuck
       elsif File.exists?(tutorial_dir)
         in_dir = tutorial_dir
       else
-        return Logger.instance.warn("Guide #{guide_dir} / #{tutorial_dir} not found")
+        return Logger.instance.warn(:guide, "Guide #{guide_dir} / #{tutorial_dir} not found")
       end
 
       guide_file = in_dir + "/README.md"
-      return Logger.instance.warn("README.md not found in #{in_dir}") unless File.exists?(guide_file)
+      return Logger.instance.warn(:guide, "README.md not found in #{in_dir}") unless File.exists?(guide_file)
 
-      Logger.instance.log("Writing guide #{out_dir} ...")
+      Logger.instance.log("Writing guide", out_dir)
       # Copy the whole guide dir over
       FileUtils.cp_r(in_dir, out_dir)
 
       @formatter.doc_context = {:filename => guide_file, :linenr => 0}
-      html = @formatter.format(IO.read(guide_file))
       name = File.basename(in_dir)
-      html.gsub!(/<img src="/, "<img src=\"guides/#{name}/")
+      @formatter.img_path = "guides/#{name}"
+      html = @formatter.format(IO.read(guide_file))
 
       JsonDuck.write_jsonp(out_dir+"/README.js", name, {:guide => html, :title => guide["title"]})
     end
@@ -63,8 +67,6 @@ module JsDuck
 
     # Returns HTML listing of guides
     def to_html
-      return "" if @guides.length == 0
-
       html = @guides.map do |group|
         [
           "<h3>#{group['title']}</h3>",

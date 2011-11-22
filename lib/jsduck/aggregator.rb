@@ -1,5 +1,6 @@
 require 'jsduck/class'
 require 'jsduck/accessors'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -9,6 +10,7 @@ module JsDuck
     def initialize
       @documentation = []
       @classes = {}
+      @alt_names = {}
       @orphans = []
       @current_class = nil
     end
@@ -38,6 +40,11 @@ module JsDuck
     # Otherwise add as new class.
     def add_class(cls)
       old_cls = @classes[cls[:name]]
+      if !old_cls && @alt_names[cls[:name]]
+        old_cls = @alt_names[cls[:name]]
+        warn_alt_name(cls)
+      end
+
       if old_cls
         merge_classes(old_cls, cls)
         @current_class = old_cls
@@ -45,20 +52,55 @@ module JsDuck
         @current_class = cls
         @documentation << cls
         @classes[cls[:name]] = cls
+
+        # Register all alternate names of class for lookup too
+        cls[:alternateClassNames].each do |altname|
+          if cls[:name] == altname
+            # A buggy documentation, warn.
+            warn_alt_name(cls)
+          else
+            @alt_names[altname] = cls
+            # When an alternate name has been used as a class name before,
+            # then this is one crappy documentation, but attempt to handle
+            # it by merging the class with alt-name into this class.
+            if @classes[altname]
+              merge_classes(cls, @classes[altname])
+              @documentation.delete(@classes[altname])
+              @classes.delete(altname)
+              warn_alt_name(cls)
+            end
+          end
+        end
+
         insert_orphans(cls)
       end
     end
 
+    def warn_alt_name(cls)
+      file = cls[:files][0][:filename]
+      line = cls[:files][0][:linenr]
+      Logger.instance.warn(:alt_name, "Name #{cls[:name]} used as both classname and alternate classname", file, line)
+    end
+
     # Merges new class-doc into old one.
     def merge_classes(old, new)
-      [:extends, :singleton, :private, :protected].each do |tag|
+      # Merge booleans
+      [:extends, :singleton, :private].each do |tag|
         old[tag] = old[tag] || new[tag]
       end
-      [:mixins, :alternateClassNames].each do |tag|
+      # Merge arrays
+      [:mixins, :alternateClassNames, :files].each do |tag|
         old[tag] = old[tag] + new[tag]
       end
-      new[:xtypes].each_pair do |key, xtypes|
-        old[:xtypes][key] = (old[:xtypes][key] || []) + xtypes
+      # Merge attribute hashes
+      new[:attributes].each_pair do |name, value|
+        old[:attributes][name] = old[:attributes][name] || value
+      end
+      # Merge hashes of arrays
+      [:aliases, :meta].each do |tag|
+        new[tag].each_pair do |key, contents|
+          old[tag][key] = (old[tag][key] || []) + contents
+        end
       end
       old[:doc] = old[:doc].length > 0 ? old[:doc] : new[:doc]
       # Additionally the doc-comment can contain configs and constructor
@@ -91,7 +133,7 @@ module JsDuck
     end
 
     def add_to_class(cls, member)
-      cls[member[:static] ? :statics : :members][member[:tagname]] << member
+      cls[member[:attributes][:static] ? :statics : :members][member[:tagname]] << member
     end
 
     def add_orphan(node)
@@ -144,9 +186,10 @@ module JsDuck
         :alternateClassNames => [],
         :members => Class.default_members_hash,
         :statics => Class.default_members_hash,
-        :filename => "",
-        :html_filename => "",
-        :linenr => 0,
+        :aliases => {},
+        :attributes => {},
+        :meta => {},
+        :files => [{:filename => "", :linenr => 0, :href => ""}],
       })
     end
 
