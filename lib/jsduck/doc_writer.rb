@@ -130,7 +130,7 @@ module JsDuck
             :doc => [
               at_tag,
               type(p[:type]),
-              p[:name],
+              default(p),
             ].compact.join(" "),
             :markdown => p[:markdown],
           }),
@@ -155,6 +155,14 @@ module JsDuck
         inheritable(m[:inheritable]),
         aliass(m[:alias]),
       ]
+    end
+
+    def default(p)
+      if p[:default] && p[:default] != "undefined"
+        "["+p[:name]+"="+p[:default]+"]"
+      else
+        p[:name]
+      end
     end
 
     def param(p)
