@@ -136,8 +136,8 @@ module JsDuck
           }),
         maybe_html2text(p),
         privat(p[:private]),
-        protect(p[:protected]),
-        static(p[:static]),
+        protect(p[:attributes][:protected]),
+        static(p[:attributes][:static]),
         inheritable(p[:inheritable]),
         aliass(p[:alias]),
       ]
@@ -150,8 +150,8 @@ module JsDuck
         m[:params].map {|p| param(p) },
         retrn(m[:return]),
         privat(m[:private]),
-        protect(m[:protected]),
-        static(m[:static]),
+        protect(m[:attributes][:protected]),
+        static(m[:attributes][:static]),
         inheritable(m[:inheritable]),
         aliass(m[:alias]),
       ]
