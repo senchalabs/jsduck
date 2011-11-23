@@ -255,6 +255,63 @@ describe JsDuck::Aggregator do
     it_behaves_like "@inheritdoc"
   end
 
+  describe "@inheritdoc with staticality info" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @method bar
+           * @static
+           * Original comment.
+           */
+          /**
+           * @method bar
+           * Method comment.
+           */
+
+        /** @class Core */
+          /**
+           * @method foobar
+           * New comment.
+           * @inheritdoc Foo#static-bar
+           */
+      EOF
+      @orig = @docs["Foo"][:statics][:method][0]
+      @inheritdoc = @docs["Core"][:members][:method][0]
+    end
+
+    it_behaves_like "@inheritdoc"
+  end
+
+  describe "@inheritdoc without staticality info uses the statics of itself" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @method bar
+           * @static
+           * Original comment.
+           */
+          /**
+           * @method bar
+           * Method comment.
+           */
+
+        /** @class Core */
+          /**
+           * @method foobar
+           * @static
+           * New comment.
+           * @inheritdoc Foo#bar
+           */
+      EOF
+      @orig = @docs["Foo"][:statics][:method][0]
+      @inheritdoc = @docs["Core"][:statics][:method][0]
+    end
+
+    it_behaves_like "@inheritdoc"
+  end
+
   describe "recursive @inheritdocs" do
     before do
       @docs = parse(<<-EOF)

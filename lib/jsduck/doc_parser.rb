@@ -332,7 +332,7 @@ module JsDuck
       skip_white
     end
 
-    # matches @inheritdoc class.name#type-member
+    # matches @inheritdoc class.name#static-type-member
     def at_inheritdoc
       match(/@inherit[dD]oc|@alias/)
 
@@ -342,7 +342,11 @@ module JsDuck
         @current_tag[:cls] = ident_chain
         if look(/#\w/)
           @input.scan(/#/)
-          if look(/\w+-\w+/)
+          if look(/static-/)
+            @current_tag[:static] = true
+            @input.scan(/static-/)
+          end
+          if look(/(cfg|property|method|event|css_var|css_mixin)-/)
             @current_tag[:type] = ident.to_sym
             @input.scan(/-/)
           end
