@@ -17,6 +17,7 @@ module JsDuck
         [:inheritdoc, "@inheritdoc referring to unknown class or member"],
         [:extend, "@extend or @mixin referring to unknown class"],
         [:link, "{@link} to unknown class or member"],
+        [:link_private, "{@link} to private member"],
 
         [:alt_name, "Name used as both classname and alternate classname"],
         [:name_missing, "Member or parameter has no name"],

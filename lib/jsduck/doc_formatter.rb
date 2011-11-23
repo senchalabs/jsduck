@@ -136,7 +136,7 @@ module JsDuck
           Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
           text
         elsif member && !public_member?(cls, member, type)
-          Logger.instance.warn(:link, "#{input} links to private member", file, line)
+          Logger.instance.warn(:link_private, "#{input} links to private member", file, line)
           text
         else
           link(cls, member, text, type)
