@@ -2,6 +2,7 @@ require 'jsduck/json_duck'
 require 'jsduck/icons'
 require 'jsduck/search_data'
 require 'jsduck/stats'
+require 'jsduck/class'
 
 module JsDuck
 
@@ -25,6 +26,7 @@ module JsDuck
         :examples => @examples.to_array,
         :search => SearchData.new.create(@relations.classes),
         :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
+        :signatureAttributes => Class.signature_attributes,
       }) + ";\n"
       File.open(filename, 'w') {|f| f.write(js) }
     end

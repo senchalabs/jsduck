@@ -1,3 +1,4 @@
+require 'jsduck/class'
 require 'cgi'
 
 module JsDuck
@@ -221,26 +222,8 @@ module JsDuck
       end
 
       after = ""
-      if m[:attributes][:protected]
-        after += "<strong class='protected signature'>protected</strong>"
-      end
-      if m[:attributes][:static]
-        after += "<strong class='static signature'>static</strong>"
-      end
-      if m[:attributes][:deprecated]
-        after += "<strong class='deprecated signature'>deprecated</strong>"
-      end
-      if m[:attributes][:required]
-        after += "<strong class='required signature'>required</strong>"
-      end
-      if m[:attributes][:template]
-        after += "<strong class='template signature'>template</strong>"
-      end
-      if m[:attributes][:abstract]
-        after += "<strong class='abstract signature'>abstract</strong>"
-      end
-      if m[:attributes][:readonly]
-        after += "<strong class='readonly signature'>readonly</strong>"
+      Class.signature_attributes.each do |attr|
+        after += "<strong class='#{attr} signature'>#{attr}</strong>" if m[:attributes][attr]
       end
 
       uri = "#!/api/#{m[:owner]}-#{m[:id]}"

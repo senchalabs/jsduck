@@ -255,6 +255,20 @@ module JsDuck
         :css_mixin => [],
       }
     end
+
+    # Returns array of attributes to be shown in member signatures
+    # (and in order they should be shown in).
+    def self.signature_attributes
+      return [
+        :static,
+        :protected,
+        :deprecated,
+        :required,
+        :template,
+        :abstract,
+        :readonly,
+      ]
+    end
   end
 
 end
