@@ -21,7 +21,7 @@ Ext.define('Docs.view.cls.Header', {
                 '</a>',
                 '{[this.renderAliases(values.aliases)]}',
             '</h1>',
-            Docs.showPrintButton ? '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>' : '',
+            Docs.data.showPrintButton ? '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>' : '',
             {
                 getClass: function(cls) {
                     if (cls.component) {

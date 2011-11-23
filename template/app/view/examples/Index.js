@@ -14,11 +14,11 @@ Ext.define('Docs.view.examples.Index', {
 
     initComponent: function() {
 
-        this.cls += Docs.touchExamplesUi ? " touch-examples-ui" : "";
+        this.cls += Docs.data.touchExamplesUi ? " touch-examples-ui" : "";
 
         var touchExampleRoot = Docs.exampleBaseUrl || "touch/examples",
             extjsExampleRoot = Docs.exampleBaseUrl || "extjs/examples/",
-            baseUrl = Docs.touchExamplesUi ? touchExampleRoot : (extjsExampleRoot + "shared/screens");
+            baseUrl = Docs.data.touchExamplesUi ? touchExampleRoot : (extjsExampleRoot + "shared/screens");
 
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Examples</h1>' },

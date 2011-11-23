@@ -27,7 +27,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
     },
 
     getHtml: function() {
-        if (Docs.touchExamplesUi) {
+        if (Docs.data.touchExamplesUi) {
             return Ext.create('Docs.view.examples.Device', {
                 url: "eg-iframe.html",
                 id: this.getIframeId(),
