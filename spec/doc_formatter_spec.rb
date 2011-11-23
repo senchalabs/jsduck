@@ -232,6 +232,37 @@ describe JsDuck::DocFormatter do
           'Look at <a href="Foo#event-select">Foo.select</a>'
       end
     end
+
+    describe "with staticality information" do
+      before do
+        @formatter.relations = JsDuck::Relations.new([
+          JsDuck::Class.new({
+            :name => 'Foo',
+            :members => {
+              :method => [{:tagname => :method, :name => "select", :id => "method-select", :attributes => {}}],
+            },
+            :statics => {
+              :method => [{:tagname => :method, :name => "select", :id => "static-method-select", :attributes => {:static => true}}],
+            }
+          })
+        ])
+      end
+
+      it "replaces {@link Foo#select} with link to instance method" do
+        @formatter.replace("Look at {@link Foo#select}").should ==
+          'Look at <a href="Foo#method-select">Foo.select</a>'
+      end
+
+      it "replaces {@link Foo#static-select} with link to static method" do
+        @formatter.replace("Look at {@link Foo#static-select}").should ==
+          'Look at <a href="Foo#static-method-select">Foo.select</a>'
+      end
+
+      it "replaces {@link Foo#static-method-select} with link to static method" do
+        @formatter.replace("Look at {@link Foo#static-method-select}").should ==
+          'Look at <a href="Foo#static-method-select">Foo.select</a>'
+      end
+    end
   end
 
   describe "#format" do

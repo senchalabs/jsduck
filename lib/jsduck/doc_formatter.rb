@@ -108,12 +108,14 @@ module JsDuck
       input.sub(@link_re) do
         target = $1
         text = $2
-        if target =~ /^(.*)#(?:(cfg|property|method|event|css_var|css_mixin)-)?(.*)$/
+        if target =~ /^(.*)#(static-)?(?:(cfg|property|method|event|css_var|css_mixin)-)?(.*)$/
           cls = $1.empty? ? @class_context : $1
-          type = $2 ? $2.intern : nil
-          member = $3
+          static = !!$2
+          type = $3 ? $3.intern : nil
+          member = $4
         else
           cls = target
+          static = false
           type = false
           member = false
         end
@@ -133,7 +135,7 @@ module JsDuck
           Logger.instance.warn(:link, "#{input} links to non-existing class", file, line)
           return text
         elsif member
-          ms = get_members(cls, member, type)
+          ms = get_members(cls, member, type, static)
           if ms.length == 0
             Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
             return text
@@ -161,9 +163,9 @@ module JsDuck
             end
           end
 
-          return link(cls, member, text, type)
+          return link(cls, member, text, type, static)
         else
-          return link(cls, false, text, false)
+          return link(cls, false, text)
         end
       end
     end
@@ -205,11 +207,11 @@ module JsDuck
     end
 
     # applies the link template
-    def link(cls, member, anchor_text, type=nil)
+    def link(cls, member, anchor_text, type=nil, static=false)
       # Use the canonical class name for link (not some alternateClassName)
       cls = @relations[cls].full_name
       # prepend type name to member name
-      member = member && get_matching_member(cls, member, type)
+      member = member && get_matching_member(cls, member, type, static)
 
       @link_tpl.gsub(/(%[\w#-])/) do
         case $1
@@ -229,8 +231,8 @@ module JsDuck
       end
     end
 
-    def get_matching_member(cls, member, type=nil)
-      ms = get_members(cls, member, type).find_all {|m| !m[:private] }
+    def get_matching_member(cls, member, type=nil, static=false)
+      ms = get_members(cls, member, type, static).find_all {|m| !m[:private] }
       if ms.length > 1
         instance_ms = ms.find_all {|m| !m[:attributes][:static] }
         instance_ms.length > 0 ? instance_ms[0] : ms.find_all {|m| m[:attributes][:static] }[0]
@@ -239,8 +241,8 @@ module JsDuck
       end
     end
 
-    def get_members(cls, member, type=nil)
-      @relations[cls] ? @relations[cls].get_members(member, type) : []
+    def get_members(cls, member, type=nil, static=false)
+      @relations[cls] ? @relations[cls].get_members(member, type, static) : []
     end
 
     # Formats doc-comment for placement into HTML.
