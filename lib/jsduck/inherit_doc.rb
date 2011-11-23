@@ -41,7 +41,7 @@ module JsDuck
           warn("@inheritdoc #{inherit[:cls]}##{inherit[:member]} - class not found", context)
           return m
         end
-        parent = parent_cls.get_member(inherit[:member], inherit[:type] || m[:tagname])
+        parent = parent_cls.get_members(inherit[:member], inherit[:type] || m[:tagname])[0]
         unless parent
           warn("@inheritdoc #{inherit[:cls]}##{inherit[:member]} - member not found", context)
           return m
@@ -52,7 +52,7 @@ module JsDuck
           warn("@inheritdoc - parent class not found", context)
           return m
         end
-        parent = parent_cls.get_member(m[:name], m[:tagname])
+        parent = parent_cls.get_members(m[:name], m[:tagname])[0]
         unless parent
           warn("@inheritdoc - parent member not found", context)
           return m

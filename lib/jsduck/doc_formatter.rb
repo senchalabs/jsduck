@@ -131,15 +131,39 @@ module JsDuck
         line = @doc_context[:linenr]
         if !@relations[cls]
           Logger.instance.warn(:link, "#{input} links to non-existing class", file, line)
-          text
-        elsif member && !get_member(cls, member, type)
-          Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
-          text
-        elsif member && !public_member?(cls, member, type)
-          Logger.instance.warn(:link_private, "#{input} links to private member", file, line)
-          text
+          return text
+        elsif member
+          ms = get_members(cls, member, type)
+          if ms.length == 0
+            Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
+            return text
+          end
+
+          ms = ms.find_all {|m| !m[:private] }
+          if ms.length == 0
+            Logger.instance.warn(:link_private, "#{input} links to private member", file, line)
+            return text
+          end
+
+          if ms.length > 1
+            # When multiple public members, see if there remains just
+            # one when we ignore the static members. If there's more,
+            # report ambiguity. If there's only static members, also
+            # report ambiguity.
+            instance_ms = ms.find_all {|m| !m[:attributes][:static] }
+            if instance_ms.length > 1
+              alternatives = instance_ms.map {|m| m[:tagname].to_s }.join(", ")
+              Logger.instance.warn(:link_ambiguous, "#{input} is ambiguous: "+alternatives, file, line)
+            elsif instance_ms.length == 0
+              static_ms = ms.find_all {|m| m[:attributes][:static] }
+              alternatives = static_ms.map {|m| "static " + m[:tagname].to_s }.join(", ")
+              Logger.instance.warn(:link_ambiguous, "#{input} is ambiguous: "+alternatives, file, line)
+            end
+          end
+
+          return link(cls, member, text, type)
         else
-          link(cls, member, text, type)
+          return link(cls, false, text, false)
         end
       end
     end
@@ -156,7 +180,7 @@ module JsDuck
         member = $4
         after = $5
 
-        if @relations[cls] && (member ? public_member?(cls, member) : cls =~ /\./)
+        if @relations[cls] && (member ? get_matching_member(cls, member) : cls =~ /\./)
           label = member ? cls+"."+member : cls
           before + link(cls, member, label) + after
         else
@@ -185,7 +209,7 @@ module JsDuck
       # Use the canonical class name for link (not some alternateClassName)
       cls = @relations[cls].full_name
       # prepend type name to member name
-      member = member && get_member(cls, member, type)
+      member = member && get_matching_member(cls, member, type)
 
       @link_tpl.gsub(/(%[\w#-])/) do
         case $1
@@ -205,13 +229,18 @@ module JsDuck
       end
     end
 
-    def public_member?(cls, member, type=nil)
-      m = get_member(cls, member, type)
-      return m && !m[:private]
+    def get_matching_member(cls, member, type=nil)
+      ms = get_members(cls, member, type).find_all {|m| !m[:private] }
+      if ms.length > 1
+        instance_ms = ms.find_all {|m| !m[:attributes][:static] }
+        instance_ms.length > 0 ? instance_ms[0] : ms.find_all {|m| m[:attributes][:static] }[0]
+      else
+        ms[0]
+      end
     end
 
-    def get_member(cls, member, type=nil)
-      return @relations[cls] && @relations[cls].get_member(member, type)
+    def get_members(cls, member, type=nil)
+      @relations[cls] ? @relations[cls].get_members(member, type) : []
     end
 
     # Formats doc-comment for placement into HTML.
