@@ -343,7 +343,7 @@ module JsDuck
         if look(/#\w/)
           @input.scan(/#/)
           if look(/\w+-\w+/)
-            @current_tag[:type] = ident
+            @current_tag[:type] = ident.to_sym
             @input.scan(/-/)
           end
           @current_tag[:member] = ident

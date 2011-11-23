@@ -1,4 +1,5 @@
 require 'jsduck/logger'
+require 'pp'
 
 module JsDuck
 

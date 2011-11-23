@@ -108,7 +108,7 @@ module JsDuck
       input.sub(@link_re) do
         target = $1
         text = $2
-        if target =~ /^(.*)#(?:(.*)-)?(.*)$/
+        if target =~ /^(.*)#(?:(cfg|property|method|event|css_var|css_mixin)-)?(.*)$/
           cls = $1.empty? ? @class_context : $1
           type = $2 ? $2.intern : nil
           member = $3

@@ -166,21 +166,15 @@ module JsDuck
         [:members, :statics].each do |group|
           @doc[group].each_key do |type|
             members_hash(type, group).each_pair do |key, member|
-              members_map_add_key!("#{type}-#{key}", member)
-              members_map_add_key!(key, member)
+              @members_map[key] = (@members_map[key] || []) + [member]
             end
           end
         end
       end
 
-      @members_map[type_name ? "#{type_name}-#{name}" : name] || []
-    end
-
-    # Adds member to @members_map so that each key corresponse to one
-    # or more actual members.
-    def members_map_add_key!(key, value)
-      old = @members_map[key]
-      @members_map[key] = old ? old + [value] : [value]
+      ms = @members_map[name] || []
+      ms = ms.find_all {|m| m[:tagname] == type_name } if type_name
+      return ms
     end
 
     # Returns all public members of class, including the inherited and mixed in ones

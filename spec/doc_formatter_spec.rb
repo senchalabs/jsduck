@@ -10,10 +10,10 @@ describe JsDuck::DocFormatter do
       JsDuck::Class.new({
         :name => "Context",
         :members => {
-          :method => [{:name => "bar", :id => "method-bar"}]
+          :method => [{:tagname => :method, :name => "bar", :id => "method-bar"}]
         },
         :statics => {
-          :method => [{:name => "id", :id => "static-method-id"}],
+          :method => [{:tagname => :method, :name => "id", :id => "static-method-id"}],
         },
       }),
       JsDuck::Class.new({
@@ -22,10 +22,10 @@ describe JsDuck::DocFormatter do
       JsDuck::Class.new({
         :name => "Foo",
         :members => {
-          :cfg => [{:name => "bar", :id => "cfg-bar"}],
+          :cfg => [{:tagname => :cfg, :name => "bar", :id => "cfg-bar"}],
         },
         :statics => {
-          :method => [{:name => "id", :id => "static-method-id"}],
+          :method => [{:tagname => :method, :name => "id", :id => "static-method-id"}],
         },
         :alternateClassNames => ["FooBar"]
       }),
@@ -122,7 +122,7 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({
             :name => 'Ext.form.Field',
             :members => {
-              :method => [{:name => "getValues", :id => "method-getValues"}]
+              :method => [{:tagname => :method, :name => "getValues", :id => "method-getValues"}]
             }
           }),
           JsDuck::Class.new({
@@ -132,7 +132,7 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({
             :name => 'Ext',
             :members => {
-              :method => [{:name => "encode", :id => "method-encode"}]
+              :method => [{:tagname => :method, :name => "encode", :id => "method-encode"}]
             }
           }),
         ])
@@ -215,8 +215,8 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({
             :name => 'Foo',
             :members => {
-              :method => [{:name => "select", :id => "method-select"}],
-              :event => [{:name => "select", :id => "event-select"}],
+              :method => [{:tagname => :method, :name => "select", :id => "method-select"}],
+              :event => [{:tagname => :event, :name => "select", :id => "event-select"}],
             }
           })
         ])
