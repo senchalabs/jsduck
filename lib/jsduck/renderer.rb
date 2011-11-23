@@ -222,7 +222,8 @@ module JsDuck
       end
 
       after = ""
-      Class.signature_attributes.each do |attr|
+      Class.signature_attributes.each do |attribute|
+        attr = attribute[:name]
         after += "<strong class='#{attr} signature'>#{attr}</strong>" if m[:attributes][attr]
       end
 

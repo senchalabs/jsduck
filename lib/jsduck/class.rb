@@ -260,13 +260,13 @@ module JsDuck
     # (and in order they should be shown in).
     def self.signature_attributes
       return [
-        :static,
-        :protected,
-        :deprecated,
-        :required,
-        :template,
-        :abstract,
-        :readonly,
+        {:name => :static,     :short => "STA"},
+        {:name => :protected,  :short => "PRO"},
+        {:name => :deprecated, :short => "DEP"},
+        {:name => :required,   :short => "REQ"},
+        {:name => :template,   :short => "TMP"},
+        {:name => :abstract,   :short => "ABS"},
+        {:name => :readonly,   :short => "R O"},
       ]
     end
   end
