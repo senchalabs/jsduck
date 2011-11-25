@@ -420,8 +420,8 @@ class JsDuckRunner
 
     return json["builds"][0]["packages"].map do |package_id|
       package = json["packages"].find {|p| p["id"] == package_id }
-      package["files"].map do |file|
-        basedir + "/" + file["path"] + file["name"]
+      (package ? package["files"] : []).map do |file|
+        File.expand_path(basedir + "/" + file["path"] + file["name"])
       end
     end.flatten
   end
