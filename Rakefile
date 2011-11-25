@@ -569,12 +569,6 @@ task :sass do
   system "compass compile --quiet template/resources/sass"
 end
 
-desc "Updates JSB3 file for Docs app.\n"+
-     "Run this before every commit that changes JS dependencies."
-task :jsb do
-  system("sencha", "create", "jsb", "-a", "template/build-js.html", "-p", "template/app.jsb3")
-end
-
 desc "Run JSDuck on Ext JS SDK (for internal use at Sencha)\n" +
      "sdk         - creates debug/development version\n" +
      "sdk[export] - creates export version\n" +
