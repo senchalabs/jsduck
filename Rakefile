@@ -177,6 +177,7 @@ class JsDuckRunner
       "--stats",
       "--warnings=-link,-link_private,-link_ambiguous,-no_doc",
       "#{@sdk_dir}/extjs/extjs.jsb3",
+      # "#{@sdk_dir}/extjs/build/sdk.jsb3",
       "#{@sdk_dir}/extjs/examples/ux",
     ]
   end
