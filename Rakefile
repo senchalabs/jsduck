@@ -176,11 +176,10 @@ class JsDuckRunner
       "--images", "#{@sdk_dir}/platform/docs/resources",
       "--stats",
       "--warnings=-link,-link_private,-link_ambiguous,-no_doc",
-      "#{@sdk_dir}/extjs/src",
-      "#{@sdk_dir}/platform/src",
-      "#{@sdk_dir}/platform/core/src",
       "#{@sdk_dir}/extjs/examples/ux",
     ]
+
+    @options += extract_jsb_build_files("#{@sdk_dir}/extjs/extjs.jsb3")
   end
 
   def add_relative_examples_path
