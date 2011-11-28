@@ -385,12 +385,27 @@ module JsDuck
       if File.exists?(fname)
         if File.directory?(fname)
           Dir[fname+"/**/*.{js,css,scss}"].each {|f| @input_files << f }
+        elsif fname =~ /\.jsb3$/
+          @input_files += extract_jsb_files(fname)
         else
           @input_files << fname
         end
       else
         Logger.instance.warn(nil, "File #{fname} not found")
       end
+    end
+
+    # Extracts files of first build in jsb file
+    def extract_jsb_files(jsb_file)
+      json = JSON.parse(IO.read(jsb_file))
+      basedir = File.dirname(jsb_file)
+
+      return json["builds"][0]["packages"].map do |package_id|
+        package = json["packages"].find {|p| p["id"] == package_id }
+        (package ? package["files"] : []).map do |file|
+          File.expand_path(basedir + "/" + file["path"] + file["name"])
+        end
+      end.flatten
     end
 
     # Converts relative path to full path

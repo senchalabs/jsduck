@@ -176,10 +176,9 @@ class JsDuckRunner
       "--images", "#{@sdk_dir}/platform/docs/resources",
       "--stats",
       "--warnings=-link,-link_private,-link_ambiguous,-no_doc",
+      "#{@sdk_dir}/extjs/extjs.jsb3",
       "#{@sdk_dir}/extjs/examples/ux",
     ]
-
-    @options += extract_jsb_build_files("#{@sdk_dir}/extjs/extjs.jsb3")
   end
 
   def add_relative_examples_path
@@ -268,10 +267,9 @@ class JsDuckRunner
       "--output", "#{@out_dir}",
       "--external=google.maps.Map,google.maps.LatLng",
       "--images", "#{@sdk_dir}/touch/doc-resources",
+      "#{@sdk_dir}/touch/sencha-touch.jsb3",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
-
-    @options += extract_jsb_build_files("#{@sdk_dir}/touch/sencha-touch.jsb3")
   end
 
   def add_touch2
@@ -298,10 +296,9 @@ class JsDuckRunner
       "--eg-iframe", "opt/touch-iframe.html",
       "--warnings=-image,-link_ambiguous,-no_doc",
       # "--stats",
+      "#{@sdk_dir}/touch/touch.jsb3",
       "#{@sdk_dir}/touch/resources/themes/stylesheets/sencha-touch/default",
     ]
-
-    @options += extract_jsb_build_files("#{@sdk_dir}/touch/touch.jsb3")
   end
 
   def add_touch_export
@@ -309,8 +306,8 @@ class JsDuckRunner
       "--json",
       "--output", "#{@out_dir}/../export/touch1",
       "--external=google.maps.Map,google.maps.LatLng",
+      "#{@sdk_dir}/touch/sencha-touch.jsb3",
     ]
-    @options += extract_jsb_build_files("#{@sdk_dir}/touch/sencha-touch.jsb3")
   end
 
   def add_touch2_export
@@ -318,8 +315,8 @@ class JsDuckRunner
       "--json",
       "--output", "#{@out_dir}/../export/touch2",
       "--external=google.maps.Map,google.maps.LatLng",
+      "#{@sdk_dir}/touch/touch.jsb3",
     ]
-    @options += extract_jsb_build_files("#{@sdk_dir}/touch/touch.jsb3")
   end
 
   def set_touch2_src
@@ -368,10 +365,9 @@ class JsDuckRunner
       "--guides", "#{@sdk_dir}/charts/docs/guides.json",
       "--images", "#{@sdk_dir}/charts/docs/resources",
       "--local-storage-db", "touch-charts",
-      "--output", "#{@out_dir}"
+      "--output", "#{@out_dir}",
+      "#{@sdk_dir}/charts/touch-charts.jsb3",
     ]
-
-    @options += extract_jsb_build_files("#{@sdk_dir}/charts/touch-charts.jsb3")
   end
 
   def add_sencha_io
@@ -388,10 +384,9 @@ class JsDuckRunner
       "--images", "#{@sdk_dir}/../sync/docs/resources",
       "--local-storage-db", "sencha-io",
       "--ignore-global",
-      "--output", "#{@out_dir}"
+      "--output", "#{@out_dir}",
+      "#{@sdk_dir}/../sync/sencha-io.jsb3",
     ]
-
-    @options += extract_jsb_build_files("#{@sdk_dir}/../sync/sencha-io.jsb3")
   end
 
   def add_animator
@@ -410,19 +405,6 @@ class JsDuckRunner
       "--local-storage-db", "animator",
       "--output", "#{@out_dir}",
     ]
-  end
-
-  # Extracts files of first build in jsb file
-  def extract_jsb_build_files(jsb_file)
-    json = JSON.parse(IO.read(jsb_file))
-    basedir = File.dirname(jsb_file)
-
-    return json["builds"][0]["packages"].map do |package_id|
-      package = json["packages"].find {|p| p["id"] == package_id }
-      (package ? package["files"] : []).map do |file|
-        File.expand_path(basedir + "/" + file["path"] + file["name"])
-      end
-    end.flatten
   end
 
   # Returns shortened hash of naming current git revision
