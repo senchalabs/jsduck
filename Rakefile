@@ -163,7 +163,7 @@ class JsDuckRunner
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
       "--head-html", head_html,
-      "--footer", "Ext JS 4.0.7 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{revision}",
+      "--footer", "Ext JS 4.0.7 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> rev #{revision}. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--welcome", "opt/extjs-welcome.html",
       "--guides", "#{@sdk_dir}/extjs/docs/guides.json",
       "--videos", "#{@sdk_dir}/extjs/docs/videos.json",
@@ -174,10 +174,10 @@ class JsDuckRunner
       "--builtin-classes",
       "--images", "#{@sdk_dir}/extjs/docs/resources",
       "--images", "#{@sdk_dir}/platform/docs/resources",
-      "--stats",
+      # "--stats",
       "--warnings=-link,-link_private,-link_ambiguous,-no_doc",
-      "#{@sdk_dir}/extjs/extjs.jsb3",
-      # "#{@sdk_dir}/extjs/build/sdk.jsb3",
+      # "#{@sdk_dir}/extjs/extjs.jsb3",
+      "#{@sdk_dir}/extjs/build/sdk.jsb3",
       "#{@sdk_dir}/extjs/examples/ux",
     ]
   end
@@ -223,7 +223,7 @@ class JsDuckRunner
 
     @options += [
       "--title", "Sencha Docs - Ext JS 3.4",
-      "--footer", "Ext JS 3.4 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
+      "--footer", "Ext JS 3.4 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--categories", "#{@sdk_dir}/../ext-3.4.0/src/categories.json",
       "--ignore-global",
       "--local-storage-db", "ext-3",
@@ -242,7 +242,7 @@ class JsDuckRunner
   def add_ext4
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
-      "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
+      "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--ignore-global",
       "--no-warnings",
       "--images", "#{@ext_dir}/docs/doc-resources",
@@ -261,7 +261,7 @@ class JsDuckRunner
     @options += [
       "--title", "Sencha Docs - Touch 1.1",
       "--head-html", head_html,
-      "--footer", "Sencha Touch 1.1 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
+      "--footer", "Sencha Touch 1.1 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--categories", "#{@sdk_dir}/touch/doc-resources/categories.json",
       "--videos", "#{@sdk_dir}/touch/doc-resources/videos.json",
       "--local-storage-db", "touch-1",
@@ -282,7 +282,7 @@ class JsDuckRunner
     @options += [
       "--title", "Sencha Docs - Touch 2.0",
       "--head-html", head_html,
-      "--footer", "Sencha Touch 2.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
+      "--footer", "Sencha Touch 2.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--categories", "#{@sdk_dir}/touch/docs/categories.json",
       "--welcome", "opt/touch-welcome.html",
       "--videos", "#{@sdk_dir}/touch/docs/videos.json",
@@ -361,7 +361,7 @@ class JsDuckRunner
     @options += [
       "--title", "Sencha Docs - Touch Charts 1.0",
       "--head-html", head_html,
-      "--footer", "Sencha Touch Charts 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a>",
+      "--footer", "Sencha Touch Charts 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a>. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--categories", "#{@sdk_dir}/charts/docs/categories.json",
       "--guides", "#{@sdk_dir}/charts/docs/guides.json",
       "--images", "#{@sdk_dir}/charts/docs/resources",
@@ -380,7 +380,7 @@ class JsDuckRunner
     @options += [
       "--title", "Sencha Docs - IO 1.0",
       "--head-html", head_html,
-      "--footer", "Sencha.io 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a>",
+      "--footer", "Sencha.io 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a>. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--guides", "#{@sdk_dir}/../sync/docs/guides.json",
       "--images", "#{@sdk_dir}/../sync/docs/resources",
       "--local-storage-db", "sencha-io",
@@ -399,7 +399,7 @@ class JsDuckRunner
     @options += [
       "--title", "Sencha Docs - Animator 1.0",
       "--head-html", head_html,
-      "--footer", "Sencha Animator 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}",
+      "--footer", "Sencha Animator 1.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> revison #{revision}. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       # "--videos", "#{@animator_dir}/docs/videos.json",
       "--guides", "#{@animator_dir}/docs/guides.json",
       # "--examples", "#{@animator_dir}/docs/examples/examples.json",
