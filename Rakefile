@@ -160,6 +160,11 @@ class JsDuckRunner
       <meta name="description" content="Ext JS 4.0 API Documentation from Sencha. Class documentation, Guides and Videos on how to create Javascript applications with Ext JS 4" />
     EOHTML
 
+    # Automatically choose 4.0.7 or 4.1.0 JSB file location
+    ext_407 = "#{@sdk_dir}/extjs/build/sdk.jsb3"
+    ext_410 = "#{@sdk_dir}/extjs/extjs.jsb3"
+    jsb_file = File.exists?(ext_410) ? ext_410 : ext_407
+
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
       "--head-html", head_html,
@@ -176,8 +181,7 @@ class JsDuckRunner
       "--images", "#{@sdk_dir}/platform/docs/resources",
       # "--stats",
       "--warnings=-link,-link_private,-link_ambiguous,-no_doc",
-      # "#{@sdk_dir}/extjs/extjs.jsb3",
-      "#{@sdk_dir}/extjs/build/sdk.jsb3",
+      jsb_file,
       "#{@sdk_dir}/extjs/examples/ux",
     ]
   end
