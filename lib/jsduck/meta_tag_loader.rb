@@ -1,11 +1,20 @@
 require "jsduck/meta_tag"
 require 'jsduck/tag/author'
 require 'jsduck/tag/docauthor'
+require 'jsduck/tag/static'
+require 'jsduck/tag/protected'
+require 'jsduck/tag/deprecated'
+require 'jsduck/tag/required'
+require 'jsduck/tag/template'
+require 'jsduck/tag/abstract'
+require 'jsduck/tag/readonly'
 
 module JsDuck
 
   # Loads user-defined meta-tags
   class MetaTagLoader
+    attr_reader :meta_tags
+
     # instatiates builtin meta tags
     def initialize
       @classes = MetaTag.descendants

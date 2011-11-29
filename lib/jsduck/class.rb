@@ -174,7 +174,7 @@ module JsDuck
 
       ms = @members_map[name] || []
       ms = ms.find_all {|m| m[:tagname] == type_name } if type_name
-      ms = ms.find_all {|m| m[:attributes][:static] } if static
+      ms = ms.find_all {|m| m[:meta][:static] } if static
       return ms
     end
 

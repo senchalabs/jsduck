@@ -50,7 +50,7 @@ Ext.define('Docs.view.HoverMenu', {
                     var url = values.url || values.cls;
                     var label = values.label || values.cls;
                     var tags = Ext.Array.map(Docs.data.signatureAttributes, function(tag) {
-                        return values.attributes[tag.name] ? '<span class="signature '+tag.name+'">'+(tag["short"])+'</span>' : '';
+                        return values.meta[tag.name] ? '<span class="signature '+tag.name+'">'+(tag["short"])+'</span>' : '';
                     }).join(' ');
                     return Ext.String.format('<a href="#!/api/{0}" rel="{0}" class="docClass">{1} {2}</a>', url, label, tags);
                 }

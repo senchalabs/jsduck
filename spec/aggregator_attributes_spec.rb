@@ -2,10 +2,13 @@ require "jsduck/aggregator"
 require "jsduck/source_file"
 
 describe JsDuck::Aggregator do
+  before(:all) do
+    @opts = {:meta_tags => JsDuck::MetaTagLoader.new.meta_tags}
+  end
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::SourceFile.new(string, "", @opts))
     agr.result
   end
 
@@ -15,7 +18,7 @@ describe JsDuck::Aggregator do
     end
 
     it "gets protected attribute" do
-      @doc[:attributes][:protected].should == true
+      @doc[:meta][:protected].should == true
     end
   end
 
@@ -25,7 +28,7 @@ describe JsDuck::Aggregator do
     end
 
     it "gets abstract attribute" do
-      @doc[:attributes][:abstract].should == true
+      @doc[:meta][:abstract].should == true
     end
   end
 
@@ -35,7 +38,7 @@ describe JsDuck::Aggregator do
     end
 
     it "gets static attribute" do
-      @doc[:attributes][:static].should == true
+      @doc[:meta][:static].should == true
     end
   end
 
@@ -45,7 +48,7 @@ describe JsDuck::Aggregator do
     end
 
     it "gets readonly attribute" do
-      @doc[:attributes][:readonly].should == true
+      @doc[:meta][:readonly].should == true
     end
   end
 
@@ -60,7 +63,7 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "gets template attribute" do
-      @doc[:attributes][:template].should == true
+      @doc[:meta][:template].should == true
     end
   end
 
@@ -73,7 +76,7 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "is not required by default" do
-      @doc[:attributes][:required].should_not == true
+      @doc[:meta][:required].should_not == true
     end
   end
 
@@ -86,7 +89,7 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "has required flag set to true" do
-      @doc[:attributes][:required].should == true
+      @doc[:meta][:required].should == true
     end
   end
 
@@ -100,16 +103,16 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "doesn't become a required class" do
-      @doc[:attributes][:required].should_not == true
+      @doc[:meta][:required].should_not == true
     end
     it "contains required config" do
-      @doc[:members][:cfg][0][:attributes][:required].should == true
+      @doc[:members][:cfg][0][:meta][:required].should == true
     end
   end
 
   describe "member with @deprecated" do
     before do
-      @deprecated = parse(<<-EOS)[0][:attributes][:deprecated]
+      @deprecated = parse(<<-EOS)[0][:meta][:deprecated]
         /**
          * @deprecated 4.0 Use escapeRegex instead.
          */
@@ -131,7 +134,7 @@ describe JsDuck::Aggregator do
 
   describe "member with @deprecated without version number" do
     before do
-      @deprecated = parse(<<-EOS)[0][:attributes][:deprecated]
+      @deprecated = parse(<<-EOS)[0][:meta][:deprecated]
         /**
          * @deprecated Use escapeRegex instead.
          */

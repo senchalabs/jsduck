@@ -134,8 +134,6 @@ module JsDuck
           at_inheritdoc
         elsif look(/@alias/)
           at_alias
-        elsif look(/@deprecated\b/)
-          at_deprecated
         elsif look(/@var\b/)
           at_var
         elsif look(/@inheritable\b/)
@@ -146,16 +144,6 @@ module JsDuck
           boolean_at_tag(/@accessor/, :accessor)
         elsif look(/@evented\b/)
           boolean_at_tag(/@evented/, :evented)
-        elsif look(/@static\b/)
-          attribute_tag(/@static/, :static)
-        elsif look(/@protected\b/)
-          attribute_tag(/@protected/, :protected)
-        elsif look(/@template\b/)
-          attribute_tag(/@template/, :template)
-        elsif look(/@abstract\b/)
-          attribute_tag(/@abstract\b/, :abstract)
-        elsif look(/@readonly\b/)
-          attribute_tag(/@readonly\b/, :readonly)
         elsif look(/@markdown\b/)
           # this is detected just to be ignored
           boolean_at_tag(/@markdown/, :markdown)
@@ -178,13 +166,21 @@ module JsDuck
       prev_tag = @current_tag
 
       add_tag(:meta)
-      @current_tag[:name] = match(/\w+/)
+      @current_tag[:name] = tag.key || tag.name
+      match(/\w+/)
       skip_horiz_white
 
-      # Fors singleline tags, scan to the end of line and finish the
-      # tag.  For multiline tags we leave the tag open for :doc
-      # addition just like with built-in multiline tags.
-      unless tag.multiline
+      if tag.boolean
+        # For boolean tags, only scan the tag name and switch context
+        # back to previous tag.
+        skip_white
+        @current_tag = prev_tag
+      elsif tag.multiline
+        # For multiline tags we leave the tag open for :doc addition
+        # just like with built-in multiline tags.
+      else
+        # Fors singleline tags, scan to the end of line and finish the
+        # tag.
         @current_tag[:doc] = @input.scan(/.*$/).strip
         skip_white
         @current_tag = prev_tag
@@ -356,30 +352,10 @@ module JsDuck
       skip_white
     end
 
-    # matches @deprecated <version> some text ... newline
-    def at_deprecated
-      match(/@deprecated/)
-      add_tag(:deprecated)
-      skip_horiz_white
-      @current_tag[:version] = @input.scan(/[0-9.]+/)
-      skip_horiz_white
-      @current_tag[:text] = @input.scan(/.*$/)
-      skip_white
-    end
-
     # Used to match @private, @ignore, @hide, ...
     def boolean_at_tag(regex, propname)
       match(regex)
       add_tag(propname)
-      skip_white
-    end
-
-    # Matches tag like @protected, @abstract, @readonly, @template
-    # Creates :attribute tag with that name
-    def attribute_tag(regex, attr_name)
-      match(regex)
-      add_tag(:attribute)
-      @current_tag[:name] = attr_name
       skip_white
     end
 

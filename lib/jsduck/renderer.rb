@@ -40,7 +40,7 @@ module JsDuck
       return if meta_data.size == 0
 
       @meta_tags.map do |tag|
-        contents = meta_data[tag.name]
+        contents = meta_data[tag.key || tag.name]
         if contents
           tag.to_html(contents)
         else
@@ -224,7 +224,7 @@ module JsDuck
       after = ""
       Class.signature_attributes.each do |attribute|
         attr = attribute[:name]
-        after += "<strong class='#{attr} signature'>#{attr}</strong>" if m[:attributes][attr]
+        after += "<strong class='#{attr} signature'>#{attr}</strong>" if m[:meta][attr]
       end
 
       uri = "#!/api/#{m[:owner]}-#{m[:id]}"
@@ -247,26 +247,6 @@ module JsDuck
 
       if m[:default] && m[:default] != "undefined"
         doc << "<p>Defaults to: <code>" + CGI.escapeHTML(m[:default]) + "</code></p>"
-      end
-
-      if m[:attributes][:deprecated]
-        depr = m[:attributes][:deprecated]
-        v = depr[:version] ? "since " + depr[:version] : ""
-        doc << [
-          "<div class='signature-box deprecated'>",
-          "<p>This #{m[:tagname]} has been <strong>deprecated</strong> #{v}</p>",
-          depr[:text],
-          "</div>",
-        ]
-      end
-
-      if m[:attributes][:template]
-        doc << [
-          "<div class='signature-box template'>",
-          "<p>This is a template method. A hook into the functionality of this class.",
-          "Feel free to override it in child classes.</p>",
-          "</div>",
-        ]
       end
 
       doc << render_meta_data(m[:meta])

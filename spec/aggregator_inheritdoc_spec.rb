@@ -6,14 +6,14 @@ require "jsduck/inherit_doc"
 require "jsduck/logger"
 
 describe JsDuck::Aggregator do
-
-  before do
+  before(:all) do
+    @opts = {:meta_tags => JsDuck::MetaTagLoader.new.meta_tags}
     JsDuck::Logger.instance.set_warning(:inheritdoc, false)
   end
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::SourceFile.new(string, "", @opts))
     relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
     JsDuck::InheritDoc.new(relations).resolve_all
     relations

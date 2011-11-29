@@ -239,10 +239,10 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({
             :name => 'Foo',
             :members => {
-              :method => [{:tagname => :method, :name => "select", :id => "method-select", :attributes => {}}],
+              :method => [{:tagname => :method, :name => "select", :id => "method-select", :meta => {}}],
             },
             :statics => {
-              :method => [{:tagname => :method, :name => "select", :id => "static-method-select", :attributes => {:static => true}}],
+              :method => [{:tagname => :method, :name => "select", :id => "static-method-select", :meta => {:static => true}}],
             }
           })
         ])

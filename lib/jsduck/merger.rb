@@ -11,10 +11,12 @@ module JsDuck
     # Allow passing in filename and line for error reporting
     attr_accessor :filename
     attr_accessor :linenr
+    attr_accessor :meta_tags_map
 
     def initialize
       @filename = ""
       @linenr = 0
+      @meta_tags_map = {}
     end
 
     def merge(docs, code)
@@ -225,7 +227,6 @@ module JsDuck
         :private => !!doc_map[:private],
         :inheritable => !!doc_map[:inheritable],
         :inheritdoc => doc_map[:inheritdoc] ? doc_map[:inheritdoc].first : nil,
-        :attributes => detect_attributes(doc_map),
         :meta => detect_meta(doc_map),
       })
       hash[:id] = create_member_id(hash)
@@ -235,7 +236,7 @@ module JsDuck
     def create_member_id(m)
       # Sanitize $ in member names with something safer
       name = m[:name].gsub(/\$/, 'S-')
-      "#{m[:attributes][:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
+      "#{m[:meta][:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
     end
 
     def detect_name(tagname, doc_map, code, name_type = :last_name)
@@ -361,23 +362,18 @@ module JsDuck
         meta[tag[:name]] = [] unless meta[tag[:name]]
         meta[tag[:name]] << tag[:doc]
       end
+
+      meta.each_pair do |key, value|
+        tag = @meta_tags_map[key]
+        meta[key] = tag.to_value(tag.boolean ? true : value)
+      end
+
+      meta[:required] = true if detect_required(doc_map)
       meta
     end
 
     def detect_singleton(doc_map, code)
       !!(doc_map[:singleton] || code[:type] == :ext_define && code[:singleton])
-    end
-
-    def detect_attributes(doc_map)
-      attributes = {}
-      (doc_map[:attribute] || []).each do |tag|
-        attributes[tag[:name]] = true
-      end
-      # @deprecated and (required) are detected in special ways from
-      # doc-comment but merged into :attributes hash.
-      attributes[:deprecated] = doc_map[:deprecated].first if doc_map[:deprecated]
-      attributes[:required] = true if detect_required(doc_map)
-      attributes
     end
 
     def detect_required(doc_map)

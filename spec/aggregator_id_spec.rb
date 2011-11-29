@@ -2,10 +2,13 @@ require "jsduck/aggregator"
 require "jsduck/source_file"
 
 describe JsDuck::Aggregator do
+  before(:all) do
+    @opts = {:meta_tags => JsDuck::MetaTagLoader.new.meta_tags}
+  end
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::SourceFile.new(string, "", @opts))
     agr.result
   end
 
