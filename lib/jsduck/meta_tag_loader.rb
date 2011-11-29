@@ -1,6 +1,6 @@
 require "jsduck/meta_tag"
-require 'jsduck/author_tag'
-require 'jsduck/doc_author_tag'
+require 'jsduck/tag/author'
+require 'jsduck/tag/docauthor'
 
 module JsDuck
 

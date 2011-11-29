@@ -1,8 +1,8 @@
 require "jsduck/meta_tag"
 
-module JsDuck
+module JsDuck::Tag
   # Implementation of hidden @docauthor tag
-  class DocAuthorTag < MetaTag
+  class Docauthor < JsDuck::MetaTag
     def initialize
       @name = "docauthor"
     end
