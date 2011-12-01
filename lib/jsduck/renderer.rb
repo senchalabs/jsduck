@@ -37,7 +37,7 @@ module JsDuck
       return if meta_data.size == 0
 
       MetaTagRegistry.instance.tags.map do |tag|
-        contents = meta_data[tag.key || tag.name]
+        contents = meta_data[tag.key]
         if contents
           tag.to_html(contents)
         else

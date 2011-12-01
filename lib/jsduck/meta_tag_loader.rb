@@ -18,7 +18,7 @@ module JsDuck
     # instatiates builtin meta tags
     def initialize
       @classes = MetaTag.descendants
-      @meta_tags = @classes.map {|cls| cls.new }
+      @meta_tags = @classes.map {|cls| create_tag(cls) }
     end
 
     # Loads user-defined meta-tags from given paths.
@@ -46,11 +46,19 @@ module JsDuck
       MetaTag.descendants.each do |cls|
         if !@classes.include?(cls)
           @classes << cls
-          newtag = cls.new
+          newtag = create_tag(cls)
           @meta_tags = @meta_tags.find_all {|t| t.name != newtag.name }
           @meta_tags << newtag
         end
       end
+    end
+
+    # Instanciates tag class.
+    # When .key is missing, creates it from .name
+    def create_tag(cls)
+      tag = cls.new
+      tag.key = tag.name.to_sym unless tag.key
+      tag
     end
   end
 

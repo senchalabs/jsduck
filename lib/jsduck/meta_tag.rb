@@ -8,9 +8,9 @@ module JsDuck
     # Name of the tag (required)
     attr_reader :name
 
-    # The key under which to store this tag. Should be a symbol.
-    # By default the string :name is used as key.
-    attr_reader :key
+    # The key under which to store this tag. Must be a symbol.  When
+    # not provided then :name is converted to symbol and used as key.
+    attr_accessor :key
 
     # The text to display in member signature.  Must be a hash
     # defining the short and long versions of the signature text:

@@ -8,18 +8,21 @@ describe JsDuck::Aggregator do
   class AuthorTag < JsDuck::MetaTag
     def initialize
       @name = "author"
+      @key = :author
     end
   end
 
   class EmailTag < JsDuck::MetaTag
     def initialize
       @name = "email"
+      @key = :email
     end
   end
 
   class LongTag < JsDuck::MetaTag
     def initialize
       @name = "long"
+      @key = :long
       @multiline = true
     end
   end
@@ -46,8 +49,8 @@ describe JsDuck::Aggregator do
 
     it "detects content of the defined tags" do
       @doc[:meta].should == {
-        "author" => ["John Doe", "Steve Jobs"],
-        "email" => ["Kill Bill"],
+        :author => ["John Doe", "Steve Jobs"],
+        :email => ["Kill Bill"],
       }
     end
   end
@@ -68,8 +71,8 @@ describe JsDuck::Aggregator do
 
     it "detects tag content until next @tag" do
       @doc[:meta].should == {
-        "long" => ["Some text\non multiple\nlines."],
-        "author" => ["Steve Jobs"],
+        :long => ["Some text\non multiple\nlines."],
+        :author => ["Steve Jobs"],
       }
     end
   end
@@ -87,8 +90,8 @@ describe JsDuck::Aggregator do
 
     it "includes {@link} as part of tag content" do
       @doc[:meta].should == {
-        "long" => ["Me {@link foo bar}"],
-        "author" => ["Me {@link foo bar}"],
+        :long => ["Me {@link foo bar}"],
+        :author => ["Me {@link foo bar}"],
       }
     end
   end
@@ -106,7 +109,7 @@ describe JsDuck::Aggregator do
 
     it "detects the meta tag" do
       @doc[:meta].should == {
-        "author" => ["John Doe"],
+        :author => ["John Doe"],
       }
     end
 

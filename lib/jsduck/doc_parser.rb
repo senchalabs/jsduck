@@ -163,7 +163,7 @@ module JsDuck
       prev_tag = @current_tag
 
       add_tag(:meta)
-      @current_tag[:name] = tag.key || tag.name
+      @current_tag[:name] = tag.key
       match(/\w+/)
       skip_horiz_white
 
