@@ -1,6 +1,7 @@
 require 'strscan'
 require 'jsduck/js_literal_parser'
 require 'jsduck/js_literal_builder'
+require 'jsduck/meta_tag_registry'
 
 module JsDuck
 
@@ -24,14 +25,10 @@ module JsDuck
   #
   class DocParser
     # Pass in :css to be able to parse CSS doc-comments
-    def initialize(mode = :js, meta_tags = nil)
+    def initialize(mode = :js)
       @ident_pattern = (mode == :css) ? /\$?[\w-]+/ : /[$\w]\w*/
       @ident_chain_pattern = (mode == :css) ? /\$?[\w-]+(\.[\w-]+)*/ : /[$\w]\w*(\.\w+)*/
-
-      @meta_tags_map = {}
-      (meta_tags || []).each do |tag|
-        @meta_tags_map[tag.name] = tag
-      end
+      @meta_tags = MetaTagRegistry.instance
     end
 
     def parse(input)
@@ -149,7 +146,7 @@ module JsDuck
           boolean_at_tag(/@markdown/, :markdown)
         elsif look(/@/)
           @input.scan(/@/)
-          tag = @meta_tags_map[look(/\w+/)]
+          tag = @meta_tags[look(/\w+/)]
           if tag
             meta_at_tag(tag)
           else

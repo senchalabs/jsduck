@@ -4,16 +4,18 @@ require "jsduck/class"
 require "jsduck/relations"
 require "jsduck/inherit_doc"
 require "jsduck/logger"
+require "jsduck/meta_tag_loader"
+require "jsduck/meta_tag_registry"
 
 describe JsDuck::Aggregator do
   before(:all) do
-    @opts = {:meta_tags => JsDuck::MetaTagLoader.new.meta_tags}
+    JsDuck::MetaTagRegistry.instance.add(JsDuck::MetaTagLoader.new.meta_tags)
     JsDuck::Logger.instance.set_warning(:inheritdoc, false)
   end
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string, "", @opts))
+    agr.aggregate(JsDuck::SourceFile.new(string))
     relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
     JsDuck::InheritDoc.new(relations).resolve_all
     relations

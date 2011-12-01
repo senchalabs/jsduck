@@ -24,19 +24,10 @@ module JsDuck
 
       merger = Merger.new
       merger.filename = @filename
-      merger.meta_tags_map = meta_tags_map
       @docs = parse.map do |docset|
         merger.linenr = docset[:linenr]
         link(docset[:linenr], merger.merge(docset[:comment], docset[:code]))
       end
-    end
-
-    def meta_tags_map
-      map = {}
-      (@options[:meta_tags] || []).each do |tag|
-        map[tag.key || tag.name] = tag
-      end
-      map
     end
 
     # loops through each doc-object in file

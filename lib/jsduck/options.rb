@@ -11,7 +11,6 @@ module JsDuck
     attr_accessor :output_dir
     attr_accessor :ignore_global
     attr_accessor :external_classes
-    attr_accessor :meta_tags
 
     # Customizing output
     attr_accessor :title
@@ -70,7 +69,6 @@ module JsDuck
         # Special anything-goes type
         "Mixed",
       ]
-      @meta_tags = []
       @meta_tag_paths = []
 
       @version = "3.1.0"
@@ -120,7 +118,7 @@ module JsDuck
         read_filenames(canonical(fname))
       end
       validate
-      @meta_tags = MetaTagLoader.new.load(@meta_tag_paths)
+      MetaTagRegistry.instance.add(MetaTagLoader.new.load(@meta_tag_paths))
     end
 
     def create_option_parser

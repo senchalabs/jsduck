@@ -14,7 +14,6 @@ module JsDuck
       @relations = relations
       @formatter = formatter
       @include_types = true
-      @meta_tags = []
     end
 
     # Runs the formatter on doc object of a class.

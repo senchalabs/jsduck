@@ -1,4 +1,5 @@
 require 'jsduck/logger'
+require 'jsduck/meta_tag_registry'
 
 module JsDuck
 
@@ -11,12 +12,11 @@ module JsDuck
     # Allow passing in filename and line for error reporting
     attr_accessor :filename
     attr_accessor :linenr
-    attr_accessor :meta_tags_map
 
     def initialize
       @filename = ""
       @linenr = 0
-      @meta_tags_map = {}
+      @meta_tags = MetaTagRegistry.instance
     end
 
     def merge(docs, code)
@@ -364,7 +364,7 @@ module JsDuck
       end
 
       meta.each_pair do |key, value|
-        tag = @meta_tags_map[key]
+        tag = @meta_tags[key]
         meta[key] = tag.to_value(tag.boolean ? true : value)
       end
 

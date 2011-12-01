@@ -1,6 +1,7 @@
 require 'jsduck/full_exporter'
 require 'jsduck/renderer'
 require 'jsduck/doc_formatter'
+require 'jsduck/meta_tag_registry'
 
 module JsDuck
 
@@ -12,8 +13,7 @@ module JsDuck
       @renderer = Renderer.new
       # Inject formatter to all meta-tags.
       doc_formatter = DocFormatter.new(relations, opts)
-      opts.meta_tags.each {|tag| tag.formatter = doc_formatter }
-      @renderer.meta_tags = opts.meta_tags
+      MetaTagRegistry.instance.tags.each {|tag| tag.formatter = doc_formatter }
     end
 
     # Returns compacted class data hash which contains an additional
