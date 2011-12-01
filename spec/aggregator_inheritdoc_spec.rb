@@ -425,5 +425,32 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "@inheritdoc in method overriding mixin method" do
+    before do
+      @docs = parse(<<-EOF)
+        /**
+         * @class Mixin
+         */
+          /**
+           * @method foo
+           * Docs in mixin.
+           */
+        /**
+         * @class Child
+         * @mixins Mixin
+         */
+          /**
+           * @method foo
+           * @inheritdoc
+           */
+      EOF
+      @method = @docs["Child"][:members][:method][0]
+    end
+
+    it "inherits docs from mixin" do
+      @method[:doc].should == "Docs in mixin."
+    end
+  end
+
 end
 
