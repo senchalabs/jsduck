@@ -27,6 +27,17 @@ module JsDuck
       @map[name]
     end
 
+    # Returns the formatter assigned to tags
+    def formatter
+      @formatter
+    end
+
+    # Sets the doc-formatter for all tags
+    def formatter=(doc_formatter)
+      @formatter = doc_formatter
+      @tags.each {|tag| tag.formatter = doc_formatter }
+    end
+
     # Returns array of attributes to be shown in member signatures
     # (and in order they should be shown in).
     def signatures

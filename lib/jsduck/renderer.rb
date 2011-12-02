@@ -9,6 +9,10 @@ module JsDuck
     def render(cls)
         @cls = cls
 
+        # Set doc-formatter context to this class
+        MetaTagRegistry.instance.formatter.class_context = @cls[:name]
+        MetaTagRegistry.instance.formatter.doc_context = @cls[:files][0]
+
         return [
           "<div>",
             render_sidebar,
@@ -245,6 +249,7 @@ module JsDuck
         doc << "<p>Defaults to: <code>" + CGI.escapeHTML(m[:default]) + "</code></p>"
       end
 
+      MetaTagRegistry.instance.formatter.doc_context = m[:files][0]
       doc << render_meta_data(m[:meta])
 
       doc << render_params_and_return(m)

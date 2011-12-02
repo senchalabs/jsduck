@@ -13,7 +13,7 @@ module JsDuck
       @renderer = Renderer.new
       # Inject formatter to all meta-tags.
       doc_formatter = DocFormatter.new(relations, opts)
-      MetaTagRegistry.instance.tags.each {|tag| tag.formatter = doc_formatter }
+      MetaTagRegistry.instance.formatter = doc_formatter
     end
 
     # Returns compacted class data hash which contains an additional
