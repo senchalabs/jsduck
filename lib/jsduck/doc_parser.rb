@@ -24,10 +24,9 @@ module JsDuck
   # @see and {@link} are parsed separately in JsDuck::DocFormatter.
   #
   class DocParser
-    # Pass in :css to be able to parse CSS doc-comments
-    def initialize(mode = :js)
-      @ident_pattern = (mode == :css) ? /\$?[\w-]+/ : /[$\w]\w*/
-      @ident_chain_pattern = (mode == :css) ? /\$?[\w-]+(\.[\w-]+)*/ : /[$\w]\w*(\.\w+)*/
+    def initialize
+      @ident_pattern = /[$\w-]+/
+      @ident_chain_pattern = /[$\w-]+(\.[$\w-]+)*/
       @meta_tags = MetaTagRegistry.instance
     end
 

@@ -130,6 +130,20 @@ describe JsDuck::Aggregator do
     it_should_behave_like "cfg or property default type"
   end
 
+  describe "@cfg with dash in name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {String} foo-bar
+         * Some documentation.
+         */
+      EOS
+    end
+    it "detects the name" do
+      @doc[:name].should == "foo-bar"
+    end
+  end
+
   shared_examples_for "auto type" do
     it "should imply correct type" do
       @doc[:type].should == @type

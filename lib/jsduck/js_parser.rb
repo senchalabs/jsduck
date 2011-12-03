@@ -8,7 +8,7 @@ module JsDuck
   class JsParser < JsLiteralParser
     def initialize(input, options = {})
       super(input)
-      @doc_parser = DocParser.new(:js)
+      @doc_parser = DocParser.new
       @docs = []
       @ext_namespaces = options[:ext_namespaces] || ["Ext"]
     end
