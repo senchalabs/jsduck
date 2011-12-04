@@ -140,9 +140,6 @@ module JsDuck
           boolean_at_tag(/@accessor/, :accessor)
         elsif look(/@evented\b/)
           boolean_at_tag(/@evented/, :evented)
-        elsif look(/@markdown\b/)
-          # this is detected just to be ignored
-          boolean_at_tag(/@markdown/, :markdown)
         elsif look(/@/)
           @input.scan(/@/)
           tag = @meta_tags[look(/\w+/)]
