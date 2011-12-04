@@ -1,41 +1,38 @@
 require "jsduck/meta_tag"
-require 'jsduck/tag/author'
-require 'jsduck/tag/docauthor'
-require 'jsduck/tag/static'
-require 'jsduck/tag/protected'
-require 'jsduck/tag/deprecated'
-require 'jsduck/tag/required'
-require 'jsduck/tag/template'
-require 'jsduck/tag/abstract'
-require 'jsduck/tag/readonly'
 
 module JsDuck
 
-  # Loads user-defined meta-tags
+  # Loader for built-in and user-defined meta-tags.
   class MetaTagLoader
     attr_reader :meta_tags
 
-    # instatiates builtin meta tags
     def initialize
-      @classes = MetaTag.descendants
-      @meta_tags = @classes.map {|cls| create_tag(cls) }
+      @classes = []
+      @meta_tags = []
     end
 
-    # Loads user-defined meta-tags from given paths.
-    # Returns list of meta-tag instances.
-    def load(paths)
-      paths.each do |path|
-        if File.directory?(path)
-          Dir[path+"/**/*.rb"].each do |file|
-            require(file)
-            init_remaining
-          end
-        else
-          require(path)
-          init_remaining
-        end
+    # Loads user-defined meta-tags from given path.
+    #
+    # * If path is a directory, loads all *.rb files in it.
+    # * If path is the symbol :builtins, loads the builtin
+    #   tags from ./tag dir.
+    # * Otherwise loads tags from the single file.
+    def load(path)
+      if path == :builtins
+        load(File.dirname(__FILE__) + "/tag")
+      elsif File.directory?(path)
+        Dir[path+"/**/*.rb"].each {|file| load_file(file) }
+      else
+        load_file(path)
       end
-      @meta_tags
+    end
+
+    private
+
+    # Loads just one file.
+    def load_file(file)
+      require(file)
+      init_remaining
     end
 
     # Instantiates meta tag classes that haven't been instantiated

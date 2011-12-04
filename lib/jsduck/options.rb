@@ -1,5 +1,5 @@
 require 'optparse'
-require 'jsduck/meta_tag_loader'
+require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
 
 module JsDuck
@@ -118,7 +118,7 @@ module JsDuck
         read_filenames(canonical(fname))
       end
       validate
-      MetaTagRegistry.instance.add(MetaTagLoader.new.load(@meta_tag_paths))
+      MetaTagRegistry.instance.load([:builtins] + @meta_tag_paths)
     end
 
     def create_option_parser

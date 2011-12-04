@@ -4,12 +4,11 @@ require "jsduck/class"
 require "jsduck/relations"
 require "jsduck/inherit_doc"
 require "jsduck/logger"
-require "jsduck/meta_tag_loader"
 require "jsduck/meta_tag_registry"
 
 describe JsDuck::Aggregator do
   before(:all) do
-    JsDuck::MetaTagRegistry.instance.add(JsDuck::MetaTagLoader.new.meta_tags)
+    JsDuck::MetaTagRegistry.instance.load([:builtins])
     JsDuck::Logger.instance.set_warning(:inheritdoc, false)
   end
 

@@ -1,4 +1,5 @@
 require 'singleton'
+require "jsduck/meta_tag_loader"
 
 module JsDuck
 
@@ -11,13 +12,26 @@ module JsDuck
       @map = {}
     end
 
-    # Adds tags to registry
-    def add(tags)
-      @tags += tags
-      register_keys(tags)
+    # Loads meta-tags from the given paths.  See MetaTagLoader#load
+    # for details.
+    #
+    # This should only be called once. Calling it twice will override
+    # the previously loaded tags.
+    def load(paths)
+      loader = MetaTagLoader.new
+      paths.each {|p| loader.load(p) }
+      register(loader.meta_tags)
     end
 
-    # Returns list of all available tags
+    # Registers MetaTag instances.
+    #
+    # NB! This is for testing purposes only, elsewhere always use #load.
+    def register(tags)
+      @tags = tags
+      register_keys
+    end
+
+    # Returns array of all available tag instances
     def tags
       @tags
     end
@@ -61,8 +75,9 @@ module JsDuck
 
     private
 
-    def register_keys(tags)
-      tags.each do |tag|
+    def register_keys
+      @map = {}
+      @tags.each do |tag|
         @map[tag.key] = tag
         @map[tag.name] = tag
       end

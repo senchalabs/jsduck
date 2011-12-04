@@ -29,7 +29,7 @@ describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    JsDuck::MetaTagRegistry.instance.add([AuthorTag.new, EmailTag.new, LongTag.new])
+    JsDuck::MetaTagRegistry.instance.register([AuthorTag.new, EmailTag.new, LongTag.new])
     agr.aggregate(JsDuck::SourceFile.new(string))
     agr.result
   end
