@@ -1,5 +1,4 @@
 require "jsduck/meta_tag"
-require "pp"
 
 module JsDuck::Tag
   # Implementation of @deprecated tag
