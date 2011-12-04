@@ -21,7 +21,10 @@ module JsDuck
       if path == :builtins
         load(File.dirname(__FILE__) + "/tag")
       elsif File.directory?(path)
-        Dir[path+"/**/*.rb"].each {|file| load_file(file) }
+        # Sort paths, so they are always loaded in the same order.
+        # This is important for signatures to always be rendered in
+        # the same order.
+        Dir[path+"/**/*.rb"].sort.each {|file| load_file(file) }
       else
         load_file(path)
       end

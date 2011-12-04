@@ -56,17 +56,9 @@ module JsDuck
     # (and in order they should be shown in).
     def signatures
       if !@signatures
-        @signatures = [
-          :static,
-          :protected,
-          :deprecated,
-          :required,
-          :template,
-          :abstract,
-          :readonly,
-        ].map do |key|
-          s = @map[key].signature
-          s[:key] = key
+        @signatures = @tags.find_all(&:signature).map do |tag|
+          s = tag.signature
+          s[:key] = tag.key
           s
         end
       end
