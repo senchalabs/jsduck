@@ -146,10 +146,12 @@
 
 // Shared colors for member signatures in toolbar menu and class api body
 @mixin signature-colors {
+  // the default colors
+  color: white;
+  background-color: #aaa;
+  // specific colors
   &.deprecated {
     background-color: #aa0000; }
-  &.protected, &.template, &.readonly, &.abstract {
-    background-color: #aaa; }
   &.static {
     background-color: $docs-text-color; }
   &.required {
