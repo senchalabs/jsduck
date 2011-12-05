@@ -129,7 +129,7 @@ Ext.define('Docs.view.Tabs', {
             this.tabsInBar.push(this.tabs[this.tabsInBar.length]);
         }
 
-        if (this.activeTab === url) {
+        if (this.activeTab && this.activeTab === url) {
             if (this.tabs.length === 0) {
                 Docs.App.getController(this.getControllerName(url)).loadIndex();
             }
