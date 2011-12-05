@@ -78,9 +78,9 @@ module JsDuck
     #
     # Adds 'inline-example' class to code examples beginning with @example.
     #
-    # Additionally replaces strings recognized as ClassNames with
-    # links to these classes.  So one doesn even need to use the @link
-    # tag to create a link.
+    # Additionally replaces strings recognized as ClassNames or
+    # #members with links to these classes or members.  So one doesn't
+    # even need to use the @link tag to create a link.
     def replace(input)
       s = StringScanner.new(input)
       out = ""
@@ -119,7 +119,7 @@ module JsDuck
           # Replace class names in the following text up to next "<" or "{"
           # but only when we're not inside <a>...</a>
           text = s.scan(/[^{<]+/)
-          out += open_a_tags > 0 ? text : replace_class_names(text)
+          out += open_a_tags > 0 ? text : create_magic_links(text)
         end
       end
       out
@@ -195,7 +195,24 @@ module JsDuck
       input.sub(@img_re) { img($1, $2) }
     end
 
-    def replace_class_names(input)
+    # Looks input text for patterns like:
+    #
+    #  My.ClassName
+    #  MyClass#method
+    #  #someProperty
+    #
+    # and converts them to links, as if they were surrounded with
+    # {@link} tag. One notable exception is that Foo is not created to
+    # link, even when Foo class exists, but Foo.Bar is. This is to
+    # avoid turning normal words into links. For example:
+    #
+    #     Math involves a lot of numbers. Ext JS is a JavaScript framework.
+    #
+    # In these sentences we don't want to link "Math" and "Ext" to the
+    # corresponding JS classes.  And that's why we auto-link only
+    # class names containing a dot "."
+    #
+    def create_magic_links(input)
       cls_re = "([A-Z][A-Za-z0-9.]*[A-Za-z0-9])"
       member_re = "(?:#([A-Za-z0-9]+))"
 
