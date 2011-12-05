@@ -1,10 +1,11 @@
 require "jsduck/aggregator"
 require "jsduck/source_file"
+require "jsduck/tag/static"
 require "jsduck/meta_tag_registry"
 
 describe JsDuck::Aggregator do
   before(:all) do
-    JsDuck::MetaTagRegistry.instance.load([:builtins])
+    JsDuck::MetaTagRegistry.instance.register([JsDuck::Tag::Static.new])
   end
 
   def parse(string)
