@@ -19,6 +19,7 @@ module JsDuck
         [:link, "{@link} to unknown class or member"],
         [:link_private, "{@link} to private member"],
         [:link_ambiguous, "{@link} is ambiguous"],
+        [:link_auto, "Auto-detected link to unknown class or member"],
 
         [:alt_name, "Name used as both classname and alternate classname"],
         [:name_missing, "Member or parameter has no name"],

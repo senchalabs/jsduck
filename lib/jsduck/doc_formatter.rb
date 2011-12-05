@@ -217,18 +217,36 @@ module JsDuck
       member_re = "(?:#([A-Za-z0-9]+))"
 
       input.gsub(/\b#{cls_re}#{member_re}?\b|#{member_re}\b/m) do
-        cls = $1
-        member = $2 || $3
+        replace_magic_link($1, $2 || $3)
+      end
+    end
 
-        if cls && @relations[cls] && (member ? get_matching_member(cls, member) : cls =~ /\./)
-          label = member ? cls+"."+member : cls
-          link(cls, member, label)
-        elsif !cls && member && get_matching_member(@class_context, member)
-          link(@class_context, member, member)
+    def replace_magic_link(cls, member)
+      if cls && member
+        if @relations[cls] && get_matching_member(cls, member)
+          return link(cls, member, cls+"."+member)
         else
-          "#{cls}#{member ? '#' : ''}#{member}"
+          warn_magic_link("#{cls}##{member} links to non-existing " + (@relations[cls] ? "member" : "class"))
+        end
+      elsif cls && cls =~ /\./
+        if @relations[cls]
+          return link(cls, nil, cls)
+        else
+          warn_magic_link("#{cls} links to non-existing class")
+        end
+      elsif !cls && member
+        if get_matching_member(@class_context, member)
+          return link(@class_context, member, member)
+        else
+          warn_magic_link("##{member} links to non-existing member")
         end
       end
+
+      return "#{cls}#{member ? '#' : ''}#{member}"
+    end
+
+    def warn_magic_link(msg)
+      Logger.instance.warn(:link_auto, msg, @doc_context[:filename], @doc_context[:linenr])
     end
 
     # applies the image template
