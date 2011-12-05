@@ -84,21 +84,42 @@ module JsDuck
     def replace(input)
       s = StringScanner.new(input)
       out = ""
+
+      # Keep track of the nesting level of <a> tags. We're not
+      # auto-detecting class names when inside <a>. Normally links
+      # shouldn't be nested, but just to be extra safe.
+      open_a_tags = 0
+
       while !s.eos? do
         if s.check(@link_re)
           out += replace_link_tag(s.scan(@link_re))
         elsif s.check(@img_re)
           out += replace_img_tag(s.scan(@img_re))
+        elsif s.check(/[{]/)
+          # There might still be "{" that doesn't begin {@link} or {@img} - ignore it
+          out += s.scan(/[{]/)
         elsif s.check(@example_annotation_re)
           # Match possible classnames following @example and add them
           # as CSS classes inside <pre> element.
           s.scan(@example_annotation_re) =~ @example_annotation_re
           css_classes = ($1 || "").strip
           out += "<pre class='inline-example #{css_classes}'><code>"
-        elsif s.check(/[{<]/)
-          out += s.scan(/[{<]/)
+        elsif s.check(/<a\b/)
+          # Increment number of open <a> tags.
+          open_a_tags += 1
+          out += s.scan_until(/>|\Z/)
+        elsif s.check(/<\/a>/)
+          # <a> closed, auto-detection may continue when no more <a> tags open.
+          open_a_tags -= 1
+          out += s.scan(/<\/a>/)
+        elsif s.check(/<.*?>/)
+          # Ignore all other HTML tags
+          out += s.scan_until(/>|\Z/)
         else
-          out += replace_class_names(s.scan(/[^{<]+/))
+          # Replace class names in the following text up to next "<" or "{"
+          # but only when we're not inside <a>...</a>
+          text = s.scan(/[^{<]+/)
+          out += open_a_tags > 0 ? text : replace_class_names(text)
         end
       end
       out
@@ -175,18 +196,16 @@ module JsDuck
     end
 
     def replace_class_names(input)
-      input.gsub(/(\A|\s)([A-Z][A-Za-z0-9.]*[A-Za-z0-9])(?:(#)([A-Za-z0-9]+))?([.,]?(?:\s|\Z))/m) do
-        before = $1
-        cls = $2
-        hash = $3
-        member = $4
-        after = $5
+      input.gsub(/\b([A-Z][A-Za-z0-9.]*[A-Za-z0-9])(?:(#)([A-Za-z0-9]+))?\b/m) do
+        cls = $1
+        hash = $2
+        member = $3
 
         if @relations[cls] && (member ? get_matching_member(cls, member) : cls =~ /\./)
           label = member ? cls+"."+member : cls
-          before + link(cls, member, label) + after
+          link(cls, member, label)
         else
-          before + cls + (hash || "") + (member || "") + after
+          cls + (hash || "") + (member || "")
         end
       end
     end

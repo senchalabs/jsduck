@@ -188,6 +188,11 @@ describe JsDuck::DocFormatter do
           'Look at <a href="Foo.Bar">Foo.Bar</a>, it\'s great!'
       end
 
+      it "converts two ClassNames in one line to links" do
+        @formatter.replace("See: Foo.Bar, Ext.XTemplate").should ==
+          'See: <a href="Foo.Bar">Foo.Bar</a>, <a href="Ext.XTemplate">Ext.XTemplate</a>'
+      end
+
       it "converts Ext#encode to method link" do
         @formatter.replace("Look at Ext#encode").should ==
           'Look at <a href="Ext#method-encode">Ext.encode</a>'
@@ -198,6 +203,8 @@ describe JsDuck::DocFormatter do
           'Look at <a href="Ext.form.Field#method-getValues">Ext.form.Field.getValues</a>'
       end
 
+      # Ensure links aren't created inside <a>...</a> or {@link} and {@img} tags.
+
       it "doesn't create links inside {@link} tag" do
         @formatter.replace("{@link Foo.Bar a Foo.Bar link}").should ==
           '<a href="Foo.Bar">a Foo.Bar link</a>'
@@ -207,6 +214,42 @@ describe JsDuck::DocFormatter do
         @formatter.replace("{@img some/file.jpg a Foo.Bar image}").should ==
           '<img src="some/file.jpg" alt="a Foo.Bar image"/>'
       end
+
+      it "doesn't create links inside HTML tags" do
+        @formatter.replace('<img src="pics/Foo.Bar"/>').should ==
+          '<img src="pics/Foo.Bar"/>'
+      end
+
+      it "doesn't create links inside multiline HTML tags" do
+        @formatter.replace('<img\nsrc="pics/Foo.Bar"/>').should ==
+          '<img\nsrc="pics/Foo.Bar"/>'
+      end
+
+      it "doesn't create links inside <a>...</a>" do
+        @formatter.replace('See <a href="Foo.Bar">Foo.Bar</a>').should ==
+          'See <a href="Foo.Bar">Foo.Bar</a>'
+      end
+
+      it "creates links inside <b>...</b>" do
+        @formatter.replace('See <b>Foo.Bar</b>').should ==
+          'See <b><a href="Foo.Bar">Foo.Bar</a></b>'
+      end
+
+      it "doesn't create links inside <a><b>...</b></a>" do
+        @formatter.replace('See <a href="Foo.Bar"><b>Foo.Bar</b></a>').should ==
+          'See <a href="Foo.Bar"><b>Foo.Bar</b></a>'
+      end
+
+      it "creates links after <a>...</a>" do
+        @formatter.replace('See <a href="Foo.Bar">Foo.Bar</a> and Ext.XTemplate.').should ==
+          'See <a href="Foo.Bar">Foo.Bar</a> and <a href="Ext.XTemplate">Ext.XTemplate</a>.'
+      end
+
+      it "doesn't create links inside nested <a> tags" do
+        @formatter.replace('See <a href="Foo.Bar"><a>Foo.Bar</a> Ext.XTemplate</a>').should ==
+          'See <a href="Foo.Bar"><a>Foo.Bar</a> Ext.XTemplate</a>'
+      end
+
     end
 
     describe "with type information" do
