@@ -196,16 +196,20 @@ module JsDuck
     end
 
     def replace_class_names(input)
-      input.gsub(/\b([A-Z][A-Za-z0-9.]*[A-Za-z0-9])(?:(#)([A-Za-z0-9]+))?\b/m) do
-        cls = $1
-        hash = $2
-        member = $3
+      cls_re = "([A-Z][A-Za-z0-9.]*[A-Za-z0-9])"
+      member_re = "(?:#([A-Za-z0-9]+))"
 
-        if @relations[cls] && (member ? get_matching_member(cls, member) : cls =~ /\./)
+      input.gsub(/\b#{cls_re}#{member_re}?\b|#{member_re}\b/m) do
+        cls = $1
+        member = $2 || $3
+
+        if cls && @relations[cls] && (member ? get_matching_member(cls, member) : cls =~ /\./)
           label = member ? cls+"."+member : cls
           link(cls, member, label)
+        elsif !cls && member && get_matching_member(@class_context, member)
+          link(@class_context, member, member)
         else
-          cls + (hash || "") + (member || "")
+          "#{cls}#{member ? '#' : ''}#{member}"
         end
       end
     end

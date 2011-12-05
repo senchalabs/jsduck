@@ -116,6 +116,7 @@ describe JsDuck::DocFormatter do
     # auto-conversion of identifiable ClassNames to links
     describe "auto-detect" do
       before do
+        @formatter.class_context = "Context"
         @formatter.relations = JsDuck::Relations.new([
           JsDuck::Class.new({:name => 'Foo.Bar'}),
           JsDuck::Class.new({:name => 'Foo.Bar.Blah'}),
@@ -134,6 +135,12 @@ describe JsDuck::DocFormatter do
             :members => {
               :method => [{:tagname => :method, :name => "encode", :id => "method-encode"}]
             }
+          }),
+          JsDuck::Class.new({
+            :name => "Context",
+            :members => {
+              :method => [{:tagname => :method, :name => "bar", :id => "method-bar"}]
+            },
           }),
         ])
       end
@@ -193,6 +200,8 @@ describe JsDuck::DocFormatter do
           'See: <a href="Foo.Bar">Foo.Bar</a>, <a href="Ext.XTemplate">Ext.XTemplate</a>'
       end
 
+      # Links to #members
+
       it "converts Ext#encode to method link" do
         @formatter.replace("Look at Ext#encode").should ==
           'Look at <a href="Ext#method-encode">Ext.encode</a>'
@@ -201,6 +210,16 @@ describe JsDuck::DocFormatter do
       it "converts Ext.form.Field#getValues to method link" do
         @formatter.replace("Look at Ext.form.Field#getValues").should ==
           'Look at <a href="Ext.form.Field#method-getValues">Ext.form.Field.getValues</a>'
+      end
+
+      it "converts #bar to link to current class method" do
+        @formatter.replace("Look at #bar method").should ==
+          'Look at <a href="Context#method-bar">bar</a> method'
+      end
+
+      it "Doesn't convert #unknown to link" do
+        @formatter.replace("Ahh, an #unknown method").should ==
+          'Ahh, an #unknown method'
       end
 
       # Ensure links aren't created inside <a>...</a> or {@link} and {@img} tags.
