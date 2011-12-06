@@ -269,6 +269,11 @@ describe JsDuck::DocFormatter do
           'See <a href="Foo.Bar"><a>Foo.Bar</a> Ext.XTemplate</a>'
       end
 
+      it "handles unclosed HTML tags" do
+        @formatter.replace('Malformed <img').should ==
+          'Malformed <img'
+      end
+
     end
 
     describe "with type information" do

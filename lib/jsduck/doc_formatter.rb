@@ -112,7 +112,7 @@ module JsDuck
           # <a> closed, auto-detection may continue when no more <a> tags open.
           open_a_tags -= 1
           out += s.scan(/<\/a>/)
-        elsif s.check(/<.*?>/)
+        elsif s.check(/</)
           # Ignore all other HTML tags
           out += s.scan_until(/>|\Z/)
         else
