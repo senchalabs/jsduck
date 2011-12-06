@@ -3,10 +3,6 @@ require "jsduck/source_file"
 
 describe JsDuck::Aggregator do
 
-  before(:all) do
-    JsDuck::Logger.instance.set_warning(:alt_name, false)
-  end
-
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))

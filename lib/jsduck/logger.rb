@@ -38,12 +38,13 @@ module JsDuck
         [:cat_class_missing, "Class is missing from categories file"],
         [:guide, "Guide is missing from --guides dir"],
       ]
-      # Turn on all warnings except :link_auto
+      # Turn off all warnings by default.
+      # This is good for testing.
+      # When running JSDuck app, the Options class enables most warnings.
       @warnings = {}
       @warning_docs.each do |w|
-        @warnings[w[0]] = true
+        @warnings[w[0]] = false
       end
-      set_warning(:link_auto, false)
 
       @shown_warnings = {}
     end

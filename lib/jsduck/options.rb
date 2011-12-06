@@ -105,6 +105,10 @@ module JsDuck
       @local_storage_db = "docs"
       @touch_examples_ui = false
       @ext_namespaces = ["Ext"]
+
+      # enable all warnings except :link_auto
+      Logger.instance.set_warning(:all, true)
+      Logger.instance.set_warning(:link_auto, false)
     end
 
     # Make options object behave like hash.

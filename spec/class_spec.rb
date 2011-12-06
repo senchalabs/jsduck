@@ -2,11 +2,6 @@ require "jsduck/class"
 
 describe JsDuck::Class do
 
-  # Avoid printed warnings in output
-  before do
-    JsDuck::Logger.instance.set_warning(:all, false)
-  end
-
   describe "#members" do
 
     before do
