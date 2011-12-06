@@ -126,7 +126,7 @@ module JsDuck
     end
 
     def create_option_parser
-      return OptionParser.new do | opts |
+      optparser = OptionParser.new do | opts |
         opts.banner = "Usage: jsduck [options] files/dirs...\n\n"
 
         opts.on('-o', '--output=PATH',
@@ -336,6 +336,17 @@ module JsDuck
           @ext_namespaces = ns
         end
 
+        opts.on('--config=PATH',
+          "Loads config options from JSON file.", " ") do |path|
+          path = canonical(path)
+          config = read_json_config(path)
+          # treat paths inside JSON config relative to the location of
+          # config file.  When done, switch back to current working dir.
+          @working_dir = File.dirname(path)
+          optparser.parse!(config).each {|fname| read_filenames(canonical(fname)) }
+          @working_dir = nil
+        end
+
         opts.on('-h', '--help[=full]',
           "Short help or --help=full for all available options.", " ") do |v|
           if v == 'full'
@@ -382,6 +393,35 @@ module JsDuck
           exit
         end
       end
+
+      return optparser
+    end
+
+    # Reads JSON configuration from file and returns an array of
+    # config options that can be feeded into optparser.
+    def read_json_config(fname)
+      config = []
+      json = JsonDuck.read(fname)
+      json.each_pair do |key, value|
+        if key == "--"
+          # filenames
+          config += value.is_a?(Array) ? value : [value]
+        elsif value == true
+          # simple switch
+          config += [key]
+        elsif value.is_a?(String)
+          # option with parameter
+          config += [key, value]
+        elsif value.is_a?(Array)
+          # one option multiple times
+          value.each do |v|
+            config += [key, v]
+          end
+        else
+          # ignore anything else
+        end
+      end
+      config
     end
 
     # scans directory for .js files or simply adds file to input files list
@@ -418,7 +458,7 @@ module JsDuck
     # pathnames are converted to C:/foo/bar which ruby can work on
     # more easily.
     def canonical(path)
-      File.expand_path(path)
+      File.expand_path(path, @working_dir)
     end
 
     # Runs checks on the options
