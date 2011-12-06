@@ -275,8 +275,10 @@ module JsDuck
 
         opts.on('--warnings=+A,-B,+C', Array,
           "Turns warnings selectively on/off.",
-          "+foo turns on a warning, -foo turns it off.",
-          "Possible warning types are:",
+          " ",
+          " +all - to turn on all warnings",
+          " ",
+          "By default these warnings are turned +on/-off:",
           " ",
           *Logger.instance.doc_warnings) do |warnings|
           warnings.each do |op|

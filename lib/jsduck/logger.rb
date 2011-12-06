@@ -38,11 +38,12 @@ module JsDuck
         [:cat_class_missing, "Class is missing from categories file"],
         [:guide, "Guide is missing from --guides dir"],
       ]
-      # Turn on all warnings by default
+      # Turn on all warnings except :link_auto
       @warnings = {}
       @warning_docs.each do |w|
         @warnings[w[0]] = true
       end
+      set_warning(:link_auto, false)
 
       @shown_warnings = {}
     end
@@ -70,11 +71,7 @@ module JsDuck
 
     # get documentation for all warnings
     def doc_warnings
-      @warning_docs.map {|w| "+#{w[0]} - #{w[1]}" } + [
-        " ",
-        "+all - to turn on all warnings (default)",
-        " ",
-      ]
+      @warning_docs.map {|w| " #{@warnings[w[0]] ? '+' : '-'}#{w[0]} - #{w[1]}" } + [" "]
     end
 
     # Prints warning message.
