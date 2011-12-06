@@ -235,6 +235,8 @@ module JsDuck
           cls2, member2 = split_to_cls_and_member(cls)
           if @relations[cls2] && get_matching_member(cls2, member2)
             return link(cls2, member2, cls2+"."+member2)
+          elsif cls =~ /\.(js|css|html|php)\Z/
+            # Ignore common filenames
           else
             warn_magic_link("#{cls} links to non-existing class")
           end
@@ -242,6 +244,9 @@ module JsDuck
       elsif !cls && member
         if get_matching_member(@class_context, member)
           return link(@class_context, member, member)
+        elsif member =~ /\A([A-F0-9]{3}|[A-F0-9]{6})\Z/i || member =~ /\A[0-9]/
+          # Ignore HEX color codes and
+          # member names beginning with number
         else
           warn_magic_link("##{member} links to non-existing member")
         end
