@@ -212,6 +212,11 @@ describe JsDuck::DocFormatter do
           'Look at <a href="Ext.form.Field#method-getValues">Ext.form.Field.getValues</a>'
       end
 
+      it "converts Ext.encode to method link" do
+        @formatter.replace("Look at Ext.encode").should ==
+          'Look at <a href="Ext#method-encode">Ext.encode</a>'
+      end
+
       it "converts #bar to link to current class method" do
         @formatter.replace("Look at #bar method").should ==
           'Look at <a href="Context#method-bar">bar</a> method'

@@ -232,7 +232,12 @@ module JsDuck
         if @relations[cls]
           return link(cls, nil, cls)
         else
-          warn_magic_link("#{cls} links to non-existing class")
+          cls2, member2 = split_to_cls_and_member(cls)
+          if @relations[cls2] && get_matching_member(cls2, member2)
+            return link(cls2, member2, cls2+"."+member2)
+          else
+            warn_magic_link("#{cls} links to non-existing class")
+          end
         end
       elsif !cls && member
         if get_matching_member(@class_context, member)
@@ -243,6 +248,11 @@ module JsDuck
       end
 
       return "#{cls}#{member ? '#' : ''}#{member}"
+    end
+
+    def split_to_cls_and_member(str)
+      parts = str.split(/\./)
+      return [parts.slice(0, parts.length-1).join("."), parts.last]
     end
 
     def warn_magic_link(msg)
