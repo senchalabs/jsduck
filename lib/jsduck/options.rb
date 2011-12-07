@@ -179,8 +179,8 @@ module JsDuck
 
         opts.on('--footer=TEXT',
           "Custom footer text for the documentation.",
-          "Defaults to: 'Generated with JSDuck.'", " ") do |text|
-          @footer = text
+          "Defaults to: 'Generated with JSDuck {VERSION}.'", " ") do |text|
+          @footer = text.gsub(/\{VERSION\}/, @version)
         end
 
         opts.on('--head-html=HTML', "HTML to append to the <head> section of index.html.", " ") do |html|
