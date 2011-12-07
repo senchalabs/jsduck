@@ -77,15 +77,18 @@ documentation.  Guides, videos and examples will not be present.
 These can be added using more command line options as explained in the
 [Advanced Usage][adv] section of wiki.
 
-Running JSDuck against older Ext JS than 4.0.7 is expected to generate
-a lot of warnings.  Similarly your own .js files will probably
-generate warnings too.  Sorry for that, JSDuck just wants to be
-helpful.  If you are overwhelmed by the warnings, you can disable them
-using `--no-warnings` switch.  Another thing that often happens is
-that JSDuck is unable to determine into which class a member belongs
-and will place all such items into a global class - you can disable
-this using the `--ignore-global` switch.  For full list of command
-line options type `jsduck --help=full`.
+Running latest JSDuck is expected to generate lots of warnings.
+That's because some warning types were added after Ext JS 4.0.7
+release.  Sorry for that, JSDuck just wants to be helpful.  If you are
+overwhelmed by the warnings, you can disable them selectively using
+something like `--warnings=-link_ambiguous,-no_doc` or you could
+disable them all by `--warnings=-all`.
+
+Another thing that often happens is that JSDuck is unable to determine
+into which class a member belongs and will place all such items into a
+global class - you can disable this using the `--ignore-global`
+switch.  For full list of all command line options type
+`jsduck --help=full`.
 
 [adv]: https://github.com/senchalabs/jsduck/wiki/Advanced-Usage
 
