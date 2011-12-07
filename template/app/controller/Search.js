@@ -116,11 +116,7 @@ Ext.define('Docs.controller.Search', {
 
     // loads class/method corrseponding to the record
     loadRecord: function(record) {
-        var name = record.get("cls");
-        if (record.get("type") !== 'class') {
-            name += '-' + record.get("id");
-        }
-        Docs.App.getController('Classes').loadClass("#!/api/"+name);
+        Docs.App.getController('Classes').loadClass("#!/api/"+record.get("id"));
         this.getDropdown().hide();
     },
 
@@ -163,24 +159,25 @@ Ext.define('Docs.controller.Search', {
         var reMid = new RegExp(safeText, "i");
 
         Ext.Array.forEach(Docs.data.search, function(r) {
+            var is_class = r.type === "class";
             // when search text has "." in it, search from the full name (e.g. "Ext.Component.focus")
             // Otherwise search from just the member name (e.g. "focus" or "Component")
-            var name = hasDot ? r.cls + (r.type === "class" ? "" : "." + r.member) : r.member;
+            var name = hasDot ? r.cls + (is_class ? "" : "." + r.member) : r.member;
 
             if (r.aliases && this.matchAlias(r.aliases, reFull)) {
                 results[xFull].push(r);
             }
             else if (reFull.test(name)) {
-                results[r.type === "class" ? clsFull : mFull].push(r);
+                results[is_class ? clsFull : mFull].push(r);
             }
             else if (r.aliases && this.matchAlias(r.aliases, reBeg)) {
                 results[xBeg].push(r);
             }
             else if (reBeg.test(name)) {
-                results[r.type === "class" ? clsBeg : mBeg].push(r);
+                results[is_class ? clsBeg : mBeg].push(r);
             }
             else if (reMid.test(name)) {
-                results[r.type === "class" ? clsMid : mMid].push(r);
+                results[is_class ? clsMid : mMid].push(r);
             }
         }, this);
 

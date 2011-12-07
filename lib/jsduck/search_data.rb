@@ -10,6 +10,11 @@ module JsDuck
       list = []
       docs.each do |cls|
         list << class_node(cls)
+
+        cls[:alternateClassNames].each do |name|
+          list << alt_node(name, cls)
+        end
+
         [:members, :statics].each do |group|
           cls[group].each_key do |type|
             cls.members(type, group).each do |m|
@@ -30,7 +35,20 @@ module JsDuck
         :cls => cls.full_name,
         :member => cls.short_name,
         :type => :class,
-        :aliases => cls[:aliases]
+        :icon => :class,
+        :aliases => cls[:aliases],
+        :id => cls.full_name,
+      }
+    end
+
+    # Creates structure representing one alternate classname
+    def alt_node(name, cls)
+      return {
+        :cls => name,
+        :member => Class.short_name(name),
+        :type => :class,
+        :icon => :subclass,
+        :id => cls.full_name,
       }
     end
 
@@ -39,8 +57,9 @@ module JsDuck
       return {
         :cls => cls.full_name,
         :member => member[:name],
-        :type => member[:tagname],
-        :id => member[:id],
+        :type => :member,
+        :icon => member[:tagname],
+        :id => cls.full_name + "-" + member[:id],
       }
     end
 
