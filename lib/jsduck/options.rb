@@ -405,20 +405,16 @@ module JsDuck
       json.each_pair do |key, value|
         if key == "--"
           # filenames
-          config += value.is_a?(Array) ? value : [value]
+          config += Array(value).map(&:to_s)
         elsif value == true
           # simple switch
-          config += [key]
-        elsif value.is_a?(String)
-          # option with parameter
-          config += [key, value]
-        elsif value.is_a?(Array)
-          # one option multiple times
-          value.each do |v|
-            config += [key, v]
-          end
+          config += [key.to_s]
         else
-          # ignore anything else
+          # An option with value or with multiple values.
+          # In the latter case, add the option multiple times.
+          Array(value).each do |v|
+            config += [key.to_s, v.to_s]
+          end
         end
       end
       config
