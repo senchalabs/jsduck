@@ -159,7 +159,9 @@ module JsDuck
         end
 
         opts.on('--no-warnings',
-          "Turns off all warnings. Same as --warnings=-all", " ") do
+          "Turns off all warnings.",
+          "(Deprecated, use --warnings=-all instead.)", " ") do
+          Logger.instance.warn(nil, "--no-warnings is deprecated. Use --warnings=-all instead.")
           Logger.instance.set_warning(:all, false)
         end
 
