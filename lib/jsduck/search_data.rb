@@ -15,6 +15,12 @@ module JsDuck
           list << alt_node(name, cls)
         end
 
+        cls[:aliases].each_pair do |key, items|
+          items.each do |name|
+            list << alias_node(key, name, cls)
+          end
+        end
+
         [:members, :statics].each do |group|
           cls[group].each_key do |type|
             cls.members(type, group).each do |m|
@@ -29,6 +35,18 @@ module JsDuck
       list
     end
 
+    # Creates structure representing one alias
+    def alias_node(key, name, cls)
+      return {
+        :cls => alias_display_name(key)+": "+name,
+        :member => name,
+        :type => :class,
+        :icon => :subclass,
+        :id => cls.full_name,
+        :sort => 0,
+      }
+    end
+
     # Creates structure representing one class
     def class_node(cls)
       return {
@@ -36,8 +54,8 @@ module JsDuck
         :member => cls.short_name,
         :type => :class,
         :icon => :class,
-        :aliases => cls[:aliases],
         :id => cls.full_name,
+        :sort => 1,
       }
     end
 
@@ -49,6 +67,7 @@ module JsDuck
         :type => :class,
         :icon => :subclass,
         :id => cls.full_name,
+        :sort => 2,
       }
     end
 
@@ -60,7 +79,19 @@ module JsDuck
         :type => :member,
         :icon => member[:tagname],
         :id => cls.full_name + "-" + member[:id],
+        :sort => 3,
       }
+    end
+
+    # Some alias types are shown differently.
+    # e.g. instead of "widget:" we show "xtype:"
+    def alias_display_name(key)
+      titles = {
+        "widget" => "xtype",
+        "plugin" => "ptype",
+        "feature" => "ftype",
+      }
+      titles[key] || key
     end
 
   end
