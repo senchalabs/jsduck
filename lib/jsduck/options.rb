@@ -71,7 +71,7 @@ module JsDuck
       ]
       @meta_tag_paths = []
 
-      @version = "3.1.0"
+      @version = "3.2.0"
 
       # Customizing output
       @title = "Sencha Docs - Ext JS"
