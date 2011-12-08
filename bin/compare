@@ -32,9 +32,9 @@ end
 def compare_classes(cls1, cls2)
   diff = []
   cls1["members"].each_pair do |group_name, group_items|
-    group_items.find_all {|m1| !m1["private"] && !m1["protected"] && m1["owner"] == cls1["name"] }.each do |m1|
+    group_items.find_all {|m1| !m1["private"] && !m1["meta"]["protected"] && m1["owner"] == cls1["name"] }.each do |m1|
       match = cls2["members"][group_name].find do |m2|
-        m2["name"] == m1["name"] && !m2["protected"] && !m2["private"]
+        m2["name"] == m1["name"] && !m2["meta"]["protected"] && !m2["private"]
       end
       if !match && m1["name"] != "constructor" && m1["name"] != ""
         other = nil
@@ -47,9 +47,9 @@ def compare_classes(cls1, cls2)
           :name => m1["name"],
           :other => other ? {
             :type => other["tagname"],
-            :static => other["static"],
+            :static => other["meta"]["static"],
             :private => other["private"],
-            :protected => other["protected"],
+            :protected => other["meta"]["protected"],
           } : nil
         }
       end
