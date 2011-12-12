@@ -222,10 +222,10 @@ class JsDuckRunner
 
   def set_touch2_src
     relative_touch_path = "../"
-    system("cp", "-r", "opt/touch-welcome.html", "template-min/touch-welcome.html")
-    system("cp", "-r", "opt/touch-iframe.html", "template-min/touch-iframe.html")
+    system("cp", "-r", "#{@sdk_dir}/touch/docs/welcome.html", "template-min/welcome.html")
+    system("cp", "-r", "#{@sdk_dir}/touch/docs/eg-iframe.html", "template-min/eg-iframe.html")
 
-    ["template-min/touch-iframe.html", "template-min/touch-welcome.html"].each do |file|
+    ["template-min/eg-iframe.html", "template-min/welcome.html"].each do |file|
       html = IO.read(file);
 
       touch_src_re = /((src|href)="touch)/m
@@ -247,8 +247,8 @@ class JsDuckRunner
 
     @options += [
       "--body-html", head_html,
-      "--welcome", "template-min/touch-welcome.html",
-      "--eg-iframe", "template-min/touch-iframe.html"
+      "--welcome", "template-min/welcome.html",
+      "--eg-iframe", "template-min/eg-iframe.html"
     ]
   end
 
