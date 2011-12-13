@@ -1,5 +1,6 @@
 require 'jsduck/type_parser'
 require 'jsduck/logger'
+require 'jsduck/meta_tag_registry'
 
 module JsDuck
 
@@ -13,6 +14,8 @@ module JsDuck
     def initialize(relations, formatter)
       @relations = relations
       @formatter = formatter
+      # inject formatter to all meta-tags
+      MetaTagRegistry.instance.formatter = formatter
       @include_types = true
     end
 
@@ -31,6 +34,7 @@ module JsDuck
           cls[group][type] = members.map {|m| m[:private] ? m : format_member(m)  }
         end
       end
+      cls[:html_meta] = format_meta_data(cls[:meta])
       cls
     end
 
@@ -48,6 +52,7 @@ module JsDuck
       m[:params] = m[:params].map {|p| format_item(p, is_css_tag) } if m[:params]
       m[:return] = format_item(m[:return], is_css_tag) if m[:return]
       m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
+      m[:html_meta] = format_meta_data(m[:meta])
       m
     end
 
@@ -75,6 +80,14 @@ module JsDuck
         end
         type
       end
+    end
+
+    def format_meta_data(meta_data)
+      result = {}
+      meta_data.each_pair do |key, value|
+        result[key] = MetaTagRegistry.instance[key].to_html(value) if value
+      end
+      result
     end
 
   end

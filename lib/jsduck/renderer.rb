@@ -9,17 +9,13 @@ module JsDuck
     def render(cls)
         @cls = cls
 
-        # Set doc-formatter context to this class
-        MetaTagRegistry.instance.formatter.class_context = @cls[:name]
-        MetaTagRegistry.instance.formatter.doc_context = @cls[:files][0]
-
         return [
           "<div>",
             render_sidebar,
             "<div class='doc-contents'>",
               render_private_class_notice,
               @cls[:doc],
-              render_meta_data(@cls[:meta]),
+              render_meta_data(@cls[:html_meta]),
             "</div>",
             "<div class='members'>",
               render_member_sections,
@@ -40,14 +36,7 @@ module JsDuck
     def render_meta_data(meta_data)
       return if meta_data.size == 0
 
-      MetaTagRegistry.instance.tags.map do |tag|
-        contents = meta_data[tag.key]
-        if contents
-          tag.to_html(contents)
-        else
-          nil
-        end
-      end
+      MetaTagRegistry.instance.tags.map {|tag| meta_data[tag.key] }
     end
 
     def render_sidebar
@@ -249,8 +238,7 @@ module JsDuck
         doc << "<p>Defaults to: <code>" + CGI.escapeHTML(m[:default]) + "</code></p>"
       end
 
-      MetaTagRegistry.instance.formatter.doc_context = m[:files][0]
-      doc << render_meta_data(m[:meta])
+      doc << render_meta_data(m[:html_meta])
 
       doc << render_params_and_return(m)
 

@@ -1,19 +1,14 @@
 require 'jsduck/full_exporter'
 require 'jsduck/renderer'
 require 'jsduck/doc_formatter'
-require 'jsduck/meta_tag_registry'
 
 module JsDuck
 
   # Exports data for Docs app.
   class AppExporter < FullExporter
-    def initialize(relations, opts)
-      super(relations, opts)
-
+    def initialize(relations)
+      super(relations)
       @renderer = Renderer.new
-      # Inject formatter to all meta-tags.
-      doc_formatter = DocFormatter.new(relations, opts)
-      MetaTagRegistry.instance.formatter = doc_formatter
     end
 
     # Returns compacted class data hash which contains an additional

@@ -129,7 +129,7 @@ module JsDuck
     def clone_meta(cfg)
       h = {}
       cfg[:meta].each_pair do |key, value|
-        h[:key] = value unless key == :required
+        h[key] = value unless key == :required
       end
       h
     end
