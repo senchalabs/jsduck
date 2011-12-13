@@ -9,7 +9,7 @@ module JsDuck
     # not added.
     def create(cls)
       # Grab all configs tagged as @accessor
-      accessors = cls[:members][:cfg].find_all {|cfg| cfg[:accessor] && !cfg[:private] }
+      accessors = cls[:members][:cfg].find_all {|cfg| cfg[:accessor] }
 
       # Build lookup tables of method and event names
       methods = build_lookup_table(cls[:members][:method])
@@ -57,6 +57,7 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :id => "method-" + name,
+        :private => cfg[:private],
         :meta => clone_meta(cfg),
       }
     end
@@ -79,6 +80,7 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :id => "method-" + name,
+        :private => cfg[:private],
         :meta => clone_meta(cfg),
       }
     end
@@ -115,6 +117,7 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :id => "event-" + name,
+        :private => cfg[:private],
         :meta => clone_meta(cfg),
       }
     end
