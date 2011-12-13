@@ -45,7 +45,7 @@ module JsDuck
 
     def create_getter(cfg)
       name = "get" + upcase_first(cfg[:name])
-      return {
+      return add_shared({
         :tagname => :method,
         :name => name,
         :doc => "Returns the value of {@link #cfg-#{cfg[:name]}}.",
@@ -54,17 +54,13 @@ module JsDuck
           :type => cfg[:type],
           :doc => "",
         },
-        :owner => cfg[:owner],
-        :files => cfg[:files],
         :id => "method-" + name,
-        :private => cfg[:private],
-        :meta => clone_meta(cfg),
-      }
+      }, cfg)
     end
 
     def create_setter(cfg)
       name = "set" + upcase_first(cfg[:name]);
-      return {
+      return add_shared({
         :tagname => :method,
         :name => name,
         :doc => "Sets the value of {@link #cfg-#{cfg[:name]}}.",
@@ -77,18 +73,14 @@ module JsDuck
           :type => "undefined",
           :doc => "",
         },
-        :owner => cfg[:owner],
-        :files => cfg[:files],
         :id => "method-" + name,
-        :private => cfg[:private],
-        :meta => clone_meta(cfg),
-      }
+      }, cfg)
     end
 
     def create_event(cfg)
       name = cfg[:name].downcase + "change"
       setter_name = "set" + upcase_first(cfg[:name]);
-      return {
+      return add_shared({
         :tagname => :event,
         :name => name,
         :doc =>
@@ -114,12 +106,17 @@ module JsDuck
             :doc => "The existing value."
           },
         ],
+        :id => "event-" + name,
+      }, cfg)
+    end
+
+    def add_shared(hash, cfg)
+      hash.merge!({
         :owner => cfg[:owner],
         :files => cfg[:files],
-        :id => "event-" + name,
         :private => cfg[:private],
         :meta => clone_meta(cfg),
-      }
+      })
     end
 
     def upcase_first(str)
