@@ -23,11 +23,13 @@ module JsDuck
       @formatter.class_context = cls[:name]
       @formatter.doc_context = cls[:files][0]
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
-      cls[:members].each_pair do |type, members|
-        cls[:members][type] = members.reject {|m| m[:private] }.map {|m| format_member(m) }
-      end
-      cls[:statics].each_pair do |type, members|
-        cls[:statics][type] = members.reject {|m| m[:private] }.map {|m| format_member(m) }
+      [:members, :statics].each do |group|
+        cls[group].each_pair do |type, members|
+          # format all public members, but keep the private members
+          # too - some of them might override public members and we
+          # don't want to lose this information.
+          cls[group][type] = members.map {|m| m[:private] ? m : format_member(m)  }
+        end
       end
       cls
     end

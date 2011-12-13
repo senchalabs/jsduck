@@ -14,7 +14,7 @@ describe JsDuck::Class do
               {:name => "foo", :owner => "ParentClass"},
               {:name => "constructor", :owner => "ParentClass"},
               {:name => "frank", :owner => "ParentClass", :private => true},
-              {:name => "zappa", :owner => "ParentClass", :private => true},
+              {:name => "zappa", :owner => "ParentClass", :private => false},
             ]
           },
           :statics => {
