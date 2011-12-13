@@ -132,12 +132,12 @@ module JsDuck
               type(p[:type]),
               default(p),
             ].compact.join(" "),
-            :markdown => p[:markdown],
+            :markdown => p[:meta][:markdown],
           }),
         maybe_html2text(p),
         privat(p[:private]),
-        protect(p[:attributes][:protected]),
-        static(p[:attributes][:static]),
+        protect(p[:meta][:protected]),
+        static(p[:meta][:static]),
         inheritable(p[:inheritable]),
         aliass(p[:alias]),
       ]
@@ -150,8 +150,8 @@ module JsDuck
         m[:params].map {|p| param(p) },
         retrn(m[:return]),
         privat(m[:private]),
-        protect(m[:attributes][:protected]),
-        static(m[:attributes][:static]),
+        protect(m[:meta][:protected]),
+        static(m[:meta][:static]),
         inheritable(m[:inheritable]),
         aliass(m[:alias]),
       ]
@@ -214,7 +214,7 @@ module JsDuck
 
     # Convert :doc property to markdown only if no @markdown tag already
     def maybe_html2text(item)
-      item[:markdown] ? item[:doc] : html2text(item[:doc])
+      (item[:meta] && item[:meta][:markdown]) ? item[:doc] : html2text(item[:doc])
     end
 
     # Does HTML to Markdown magic using python script.

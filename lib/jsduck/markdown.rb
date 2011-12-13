@@ -6,6 +6,7 @@ require 'jsduck/doc_writer'
 require 'jsduck/logger'
 require 'jsduck/parallel_wrap'
 require 'jsduck/relations'
+require 'jsduck/meta_tag_registry'
 require 'json'
 require 'pp'
 
@@ -20,6 +21,7 @@ module JsDuck
       @input_files = []
       @doc_writer = DocWriter.new
       @parallel = ParallelWrap.new
+      MetaTagRegistry.instance.load([:builtins])
     end
 
     # Sets verbose mode on or off
@@ -41,7 +43,7 @@ module JsDuck
       # Regenerate the doc-comment for each class.
       # Build up search-replace list for each file.
       relations.each do |cls|
-        Logger.instance.log("Converting #{cls[:name]} ...")
+        Logger.instance.log("Converting #{cls[:name]}")
         fname = cls[:files][0][:filename]
         if fname && fname.length > 0
           replacements[fname] = [] unless replacements[fname]
@@ -64,7 +66,7 @@ module JsDuck
 
       # Simply replace original doc-comments with generated ones.
       replacements.each do |fname, comments|
-        Logger.instance.log("Writing #{fname} ...")
+        Logger.instance.log("Writing", fname)
         src = IO.read(fname)
         comments.each do |c|
           src = safe_replace(src, c[:orig], c[:new]) if c[:new]
@@ -88,7 +90,7 @@ module JsDuck
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
       @parallel.map(filenames) do |fname|
-        Logger.instance.log("Parsing #{fname} ...")
+        Logger.instance.log("Parsing", fname)
         SourceFile.new(IO.read(fname), fname)
       end
     end
@@ -97,7 +99,7 @@ module JsDuck
     def aggregate(parsed_files)
       agr = Aggregator.new
       parsed_files.each do |file|
-        Logger.instance.log("Aggregating #{file.filename} ...")
+        Logger.instance.log("Aggregating", file.filename)
         agr.aggregate(file)
       end
       agr.result
@@ -115,7 +117,7 @@ module JsDuck
           name = d[:name]
           file = d[:filename]
           line = d[:linenr]
-          Logger.instance.warn("Ignoring #{type}: #{name} in #{file} line #{line}")
+          Logger.instance.warn(nil, "Ignoring #{type}: #{name}", file, line)
         end
       end
       Relations.new(classes)
