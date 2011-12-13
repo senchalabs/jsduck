@@ -3,10 +3,6 @@ require "jsduck/source_file"
 
 describe JsDuck::Aggregator do
 
-  before do
-    JsDuck::Logger.instance.set_warning(:alt_name, false)
-  end
-
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))
@@ -334,23 +330,6 @@ describe JsDuck::Aggregator do
     end
     it "has method with default return type Object" do
       @doc[:members][:method][0][:return][:type].should == "Object"
-    end
-  end
-
-  describe "class with @markdown" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * @markdown
-         * Comment here.
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "does not show @markdown tag in docs" do
-      @doc[:doc].should == "Comment here."
     end
   end
 

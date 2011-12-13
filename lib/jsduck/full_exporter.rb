@@ -4,7 +4,7 @@ module JsDuck
 
   # Exporter for all the class docs.
   class FullExporter
-    def initialize(relations, opts)
+    def initialize(relations)
       @relations = relations
     end
 

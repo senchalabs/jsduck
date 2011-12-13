@@ -143,6 +143,7 @@ module JsDuck
       class_formatter.include_types = !@opts.export
       # Format all doc-objects in parallel
       formatted_classes = @parallel.map(@relations.classes) do |cls|
+        Logger.instance.log("Markdown formatting #{cls[:name]}")
         {
           :doc => class_formatter.format(cls.internal_doc),
           :images => doc_formatter.images

@@ -1,5 +1,5 @@
 require 'optparse'
-require 'jsduck/meta_tag_loader'
+require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
 
 module JsDuck
@@ -11,7 +11,6 @@ module JsDuck
     attr_accessor :output_dir
     attr_accessor :ignore_global
     attr_accessor :external_classes
-    attr_accessor :meta_tags
 
     # Customizing output
     attr_accessor :title
@@ -70,10 +69,9 @@ module JsDuck
         # Special anything-goes type
         "Mixed",
       ]
-      @meta_tags = []
       @meta_tag_paths = []
 
-      @version = "3.1.0"
+      @version = "3.2.1"
 
       # Customizing output
       @title = "Sencha Docs - Ext JS"
@@ -107,6 +105,10 @@ module JsDuck
       @local_storage_db = "docs"
       @touch_examples_ui = false
       @ext_namespaces = ["Ext"]
+
+      # enable all warnings except :link_auto
+      Logger.instance.set_warning(:all, true)
+      Logger.instance.set_warning(:link_auto, false)
     end
 
     # Make options object behave like hash.
@@ -120,11 +122,11 @@ module JsDuck
         read_filenames(canonical(fname))
       end
       validate
-      @meta_tags = MetaTagLoader.new.load(@meta_tag_paths)
+      MetaTagRegistry.instance.load([:builtins] + @meta_tag_paths)
     end
 
     def create_option_parser
-      return OptionParser.new do | opts |
+      optparser = OptionParser.new do | opts |
         opts.banner = "Usage: jsduck [options] files/dirs...\n\n"
 
         opts.on('-o', '--output=PATH',
@@ -157,7 +159,9 @@ module JsDuck
         end
 
         opts.on('--no-warnings',
-          "Turns off all warnings. Same as --warnings=-all", " ") do
+          "Turns off all warnings.",
+          "(Deprecated, use --warnings=-all instead.)", " ") do
+          Logger.instance.warn(nil, "--no-warnings is deprecated. Use --warnings=-all instead.")
           Logger.instance.set_warning(:all, false)
         end
 
@@ -177,8 +181,8 @@ module JsDuck
 
         opts.on('--footer=TEXT',
           "Custom footer text for the documentation.",
-          "Defaults to: 'Generated with JSDuck.'", " ") do |text|
-          @footer = text
+          "Defaults to: 'Generated with JSDuck {VERSION}.'", " ") do |text|
+          @footer = text.gsub(/\{VERSION\}/, @version)
         end
 
         opts.on('--head-html=HTML', "HTML to append to the <head> section of index.html.", " ") do |html|
@@ -277,8 +281,10 @@ module JsDuck
 
         opts.on('--warnings=+A,-B,+C', Array,
           "Turns warnings selectively on/off.",
-          "+foo turns on a warning, -foo turns it off.",
-          "Possible warning types are:",
+          " ",
+          " +all - to turn on all warnings",
+          " ",
+          "By default these warnings are turned +on/-off:",
           " ",
           *Logger.instance.doc_warnings) do |warnings|
           warnings.each do |op|
@@ -332,6 +338,17 @@ module JsDuck
           @ext_namespaces = ns
         end
 
+        opts.on('--config=PATH',
+          "Loads config options from JSON file.", " ") do |path|
+          path = canonical(path)
+          config = read_json_config(path)
+          # treat paths inside JSON config relative to the location of
+          # config file.  When done, switch back to current working dir.
+          @working_dir = File.dirname(path)
+          optparser.parse!(config).each {|fname| read_filenames(canonical(fname)) }
+          @working_dir = nil
+        end
+
         opts.on('-h', '--help[=full]',
           "Short help or --help=full for all available options.", " ") do |v|
           if v == 'full'
@@ -378,6 +395,31 @@ module JsDuck
           exit
         end
       end
+
+      return optparser
+    end
+
+    # Reads JSON configuration from file and returns an array of
+    # config options that can be feeded into optparser.
+    def read_json_config(fname)
+      config = []
+      json = JsonDuck.read(fname)
+      json.each_pair do |key, value|
+        if key == "--"
+          # filenames
+          config += Array(value).map(&:to_s)
+        elsif value == true
+          # simple switch
+          config += [key.to_s]
+        else
+          # An option with value or with multiple values.
+          # In the latter case, add the option multiple times.
+          Array(value).each do |v|
+            config += [key.to_s, v.to_s]
+          end
+        end
+      end
+      config
     end
 
     # scans directory for .js files or simply adds file to input files list
@@ -385,6 +427,8 @@ module JsDuck
       if File.exists?(fname)
         if File.directory?(fname)
           Dir[fname+"/**/*.{js,css,scss}"].each {|f| @input_files << f }
+        elsif fname =~ /\.jsb3$/
+          @input_files += extract_jsb_files(fname)
         else
           @input_files << fname
         end
@@ -393,13 +437,26 @@ module JsDuck
       end
     end
 
+    # Extracts files of first build in jsb file
+    def extract_jsb_files(jsb_file)
+      json = JSON.parse(IO.read(jsb_file))
+      basedir = File.dirname(jsb_file)
+
+      return json["builds"][0]["packages"].map do |package_id|
+        package = json["packages"].find {|p| p["id"] == package_id }
+        (package ? package["files"] : []).map do |file|
+          File.expand_path(basedir + "/" + file["path"] + file["name"])
+        end
+      end.flatten
+    end
+
     # Converts relative path to full path
     #
     # Especially important for running on Windows where C:\foo\bar
     # pathnames are converted to C:/foo/bar which ruby can work on
     # more easily.
     def canonical(path)
-      File.expand_path(path)
+      File.expand_path(path, @working_dir)
     end
 
     # Runs checks on the options

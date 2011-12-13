@@ -129,7 +129,7 @@ Ext.define('Docs.view.Tabs', {
             this.tabsInBar.push(this.tabs[this.tabsInBar.length]);
         }
 
-        if (this.activeTab === url) {
+        if (this.activeTab && this.activeTab === url) {
             if (this.tabs.length === 0) {
                 Docs.App.getController(this.getControllerName(url)).loadIndex();
             }
@@ -138,7 +138,7 @@ Ext.define('Docs.view.Tabs', {
                     idx -= 1;
                 }
                 this.activateTab(this.tabs[idx]);
-                Docs.History.push(this.tabs[idx], {navigate: true});
+                Docs.History.push(this.tabs[idx]);
             }
         }
 
@@ -199,7 +199,7 @@ Ext.define('Docs.view.Tabs', {
 
         this.el.dom.innerHTML = html;
 
-        if (this.activeTab !== this.tabs[len-1]) {
+        if (this.activeTab && this.activeTab !== this.tabs[len-1]) {
             this.activateTab(this.activeTab);
             Docs.History.push(this.activeTab);
         }

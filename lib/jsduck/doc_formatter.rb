@@ -78,27 +78,48 @@ module JsDuck
     #
     # Adds 'inline-example' class to code examples beginning with @example.
     #
-    # Additionally replaces strings recognized as ClassNames with
-    # links to these classes.  So one doesn even need to use the @link
-    # tag to create a link.
+    # Additionally replaces strings recognized as ClassNames or
+    # #members with links to these classes or members.  So one doesn't
+    # even need to use the @link tag to create a link.
     def replace(input)
       s = StringScanner.new(input)
       out = ""
+
+      # Keep track of the nesting level of <a> tags. We're not
+      # auto-detecting class names when inside <a>. Normally links
+      # shouldn't be nested, but just to be extra safe.
+      open_a_tags = 0
+
       while !s.eos? do
         if s.check(@link_re)
           out += replace_link_tag(s.scan(@link_re))
         elsif s.check(@img_re)
           out += replace_img_tag(s.scan(@img_re))
+        elsif s.check(/[{]/)
+          # There might still be "{" that doesn't begin {@link} or {@img} - ignore it
+          out += s.scan(/[{]/)
         elsif s.check(@example_annotation_re)
           # Match possible classnames following @example and add them
           # as CSS classes inside <pre> element.
           s.scan(@example_annotation_re) =~ @example_annotation_re
           css_classes = ($1 || "").strip
           out += "<pre class='inline-example #{css_classes}'><code>"
-        elsif s.check(/[{<]/)
-          out += s.scan(/[{<]/)
+        elsif s.check(/<a\b/)
+          # Increment number of open <a> tags.
+          open_a_tags += 1
+          out += s.scan_until(/>|\Z/)
+        elsif s.check(/<\/a>/)
+          # <a> closed, auto-detection may continue when no more <a> tags open.
+          open_a_tags -= 1
+          out += s.scan(/<\/a>/)
+        elsif s.check(/</)
+          # Ignore all other HTML tags
+          out += s.scan_until(/>|\Z/)
         else
-          out += replace_class_names(s.scan(/[^{<]+/))
+          # Replace class names in the following text up to next "<" or "{"
+          # but only when we're not inside <a>...</a>
+          text = s.scan(/[^{<]+/)
+          out += open_a_tags > 0 ? text : create_magic_links(text)
         end
       end
       out
@@ -108,12 +129,14 @@ module JsDuck
       input.sub(@link_re) do
         target = $1
         text = $2
-        if target =~ /^(.*)#(?:(.*)-)?(.*)$/
+        if target =~ /^(.*)#(static-)?(?:(cfg|property|method|event|css_var|css_mixin)-)?(.*)$/
           cls = $1.empty? ? @class_context : $1
-          type = $2 ? $2.intern : nil
-          member = $3
+          static = !!$2
+          type = $3 ? $3.intern : nil
+          member = $4
         else
           cls = target
+          static = false
           type = false
           member = false
         end
@@ -131,15 +154,39 @@ module JsDuck
         line = @doc_context[:linenr]
         if !@relations[cls]
           Logger.instance.warn(:link, "#{input} links to non-existing class", file, line)
-          text
-        elsif member && !get_member(cls, member, type)
-          Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
-          text
-        elsif member && !public_member?(cls, member, type)
-          Logger.instance.warn(:link, "#{input} links to private member", file, line)
-          text
+          return text
+        elsif member
+          ms = get_members(cls, member, type, static)
+          if ms.length == 0
+            Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
+            return text
+          end
+
+          ms = ms.find_all {|m| !m[:private] }
+          if ms.length == 0
+            Logger.instance.warn(:link_private, "#{input} links to private member", file, line)
+            return text
+          end
+
+          if ms.length > 1
+            # When multiple public members, see if there remains just
+            # one when we ignore the static members. If there's more,
+            # report ambiguity. If there's only static members, also
+            # report ambiguity.
+            instance_ms = ms.find_all {|m| !m[:meta][:static] }
+            if instance_ms.length > 1
+              alternatives = instance_ms.map {|m| m[:tagname].to_s }.join(", ")
+              Logger.instance.warn(:link_ambiguous, "#{input} is ambiguous: "+alternatives, file, line)
+            elsif instance_ms.length == 0
+              static_ms = ms.find_all {|m| m[:meta][:static] }
+              alternatives = static_ms.map {|m| "static " + m[:tagname].to_s }.join(", ")
+              Logger.instance.warn(:link_ambiguous, "#{input} is ambiguous: "+alternatives, file, line)
+            end
+          end
+
+          return link(cls, member, text, type, static)
         else
-          link(cls, member, text, type)
+          return link(cls, false, text)
         end
       end
     end
@@ -148,21 +195,73 @@ module JsDuck
       input.sub(@img_re) { img($1, $2) }
     end
 
-    def replace_class_names(input)
-      input.gsub(/(\A|\s)([A-Z][A-Za-z0-9.]*[A-Za-z0-9])(?:(#)([A-Za-z0-9]+))?([.,]?(?:\s|\Z))/m) do
-        before = $1
-        cls = $2
-        hash = $3
-        member = $4
-        after = $5
+    # Looks input text for patterns like:
+    #
+    #  My.ClassName
+    #  MyClass#method
+    #  #someProperty
+    #
+    # and converts them to links, as if they were surrounded with
+    # {@link} tag. One notable exception is that Foo is not created to
+    # link, even when Foo class exists, but Foo.Bar is. This is to
+    # avoid turning normal words into links. For example:
+    #
+    #     Math involves a lot of numbers. Ext JS is a JavaScript framework.
+    #
+    # In these sentences we don't want to link "Math" and "Ext" to the
+    # corresponding JS classes.  And that's why we auto-link only
+    # class names containing a dot "."
+    #
+    def create_magic_links(input)
+      cls_re = "([A-Z][A-Za-z0-9.]*[A-Za-z0-9])"
+      member_re = "(?:#([A-Za-z0-9]+))"
 
-        if @relations[cls] && (member ? public_member?(cls, member) : cls =~ /\./)
-          label = member ? cls+"."+member : cls
-          before + link(cls, member, label) + after
+      input.gsub(/\b#{cls_re}#{member_re}?\b|#{member_re}\b/m) do
+        replace_magic_link($1, $2 || $3)
+      end
+    end
+
+    def replace_magic_link(cls, member)
+      if cls && member
+        if @relations[cls] && get_matching_member(cls, member)
+          return link(cls, member, cls+"."+member)
         else
-          before + cls + (hash || "") + (member || "") + after
+          warn_magic_link("#{cls}##{member} links to non-existing " + (@relations[cls] ? "member" : "class"))
+        end
+      elsif cls && cls =~ /\./
+        if @relations[cls]
+          return link(cls, nil, cls)
+        else
+          cls2, member2 = split_to_cls_and_member(cls)
+          if @relations[cls2] && get_matching_member(cls2, member2)
+            return link(cls2, member2, cls2+"."+member2)
+          elsif cls =~ /\.(js|css|html|php)\Z/
+            # Ignore common filenames
+          else
+            warn_magic_link("#{cls} links to non-existing class")
+          end
+        end
+      elsif !cls && member
+        if get_matching_member(@class_context, member)
+          return link(@class_context, member, member)
+        elsif member =~ /\A([A-F0-9]{3}|[A-F0-9]{6})\Z/i || member =~ /\A[0-9]/
+          # Ignore HEX color codes and
+          # member names beginning with number
+        else
+          warn_magic_link("##{member} links to non-existing member")
         end
       end
+
+      return "#{cls}#{member ? '#' : ''}#{member}"
+    end
+
+    def split_to_cls_and_member(str)
+      parts = str.split(/\./)
+      return [parts.slice(0, parts.length-1).join("."), parts.last]
+    end
+
+    def warn_magic_link(msg)
+      Logger.instance.warn(:link_auto, msg, @doc_context[:filename], @doc_context[:linenr])
     end
 
     # applies the image template
@@ -181,11 +280,11 @@ module JsDuck
     end
 
     # applies the link template
-    def link(cls, member, anchor_text, type=nil)
+    def link(cls, member, anchor_text, type=nil, static=false)
       # Use the canonical class name for link (not some alternateClassName)
       cls = @relations[cls].full_name
       # prepend type name to member name
-      member = member && get_member(cls, member, type)
+      member = member && get_matching_member(cls, member, type, static)
 
       @link_tpl.gsub(/(%[\w#-])/) do
         case $1
@@ -205,13 +304,18 @@ module JsDuck
       end
     end
 
-    def public_member?(cls, member, type=nil)
-      m = get_member(cls, member, type)
-      return m && !m[:private]
+    def get_matching_member(cls, member, type=nil, static=false)
+      ms = get_members(cls, member, type, static).find_all {|m| !m[:private] }
+      if ms.length > 1
+        instance_ms = ms.find_all {|m| !m[:meta][:static] }
+        instance_ms.length > 0 ? instance_ms[0] : ms.find_all {|m| m[:meta][:static] }[0]
+      else
+        ms[0]
+      end
     end
 
-    def get_member(cls, member, type=nil)
-      return @relations[cls] && @relations[cls].get_member(member, type)
+    def get_members(cls, member, type=nil, static=false)
+      @relations[cls] ? @relations[cls].get_members(member, type, static) : []
     end
 
     # Formats doc-comment for placement into HTML.

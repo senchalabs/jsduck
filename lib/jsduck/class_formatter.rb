@@ -1,5 +1,6 @@
 require 'jsduck/type_parser'
 require 'jsduck/logger'
+require 'jsduck/meta_tag_registry'
 
 module JsDuck
 
@@ -13,8 +14,9 @@ module JsDuck
     def initialize(relations, formatter)
       @relations = relations
       @formatter = formatter
+      # inject formatter to all meta-tags
+      MetaTagRegistry.instance.formatter = formatter
       @include_types = true
-      @meta_tags = []
     end
 
     # Runs the formatter on doc object of a class.
@@ -24,20 +26,21 @@ module JsDuck
       @formatter.class_context = cls[:name]
       @formatter.doc_context = cls[:files][0]
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
-      cls[:members].each_pair do |type, members|
-        cls[:members][type] = members.reject {|m| m[:private] }.map {|m| format_member(m) }
+      [:members, :statics].each do |group|
+        cls[group].each_pair do |type, members|
+          # format all public members, but keep the private members
+          # too - some of them might override public members and we
+          # don't want to lose this information.
+          cls[group][type] = members.map {|m| m[:private] ? m : format_member(m)  }
+        end
       end
-      cls[:statics].each_pair do |type, members|
-        cls[:statics][type] = members.reject {|m| m[:private] }.map {|m| format_member(m) }
-      end
+      cls[:html_meta] = format_meta_data(cls[:meta])
       cls
     end
 
     def format_member(m)
       @formatter.doc_context = m[:files][0]
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
-      depr = m[:attributes][:deprecated]
-      depr[:text] = @formatter.format(depr[:text]) if depr
       if expandable?(m) || @formatter.too_long?(m[:doc])
         m[:shortDoc] = @formatter.shorten(m[:doc])
       end
@@ -49,11 +52,12 @@ module JsDuck
       m[:params] = m[:params].map {|p| format_item(p, is_css_tag) } if m[:params]
       m[:return] = format_item(m[:return], is_css_tag) if m[:return]
       m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
+      m[:html_meta] = format_meta_data(m[:meta])
       m
     end
 
     def expandable?(m)
-      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:attributes][:deprecated] || m[:attributes][:template]
+      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:meta][:deprecated] || m[:meta][:template]
     end
 
     def format_item(it, is_css_tag)
@@ -76,6 +80,14 @@ module JsDuck
         end
         type
       end
+    end
+
+    def format_meta_data(meta_data)
+      result = {}
+      meta_data.each_pair do |key, value|
+        result[key] = MetaTagRegistry.instance[key].to_html(value) if value
+      end
+      result
     end
 
   end

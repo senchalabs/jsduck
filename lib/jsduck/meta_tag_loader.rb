@@ -1,32 +1,41 @@
 require "jsduck/meta_tag"
-require 'jsduck/author_tag'
-require 'jsduck/doc_author_tag'
 
 module JsDuck
 
-  # Loads user-defined meta-tags
+  # Loader for built-in and user-defined meta-tags.
   class MetaTagLoader
-    # instatiates builtin meta tags
+    attr_reader :meta_tags
+
     def initialize
-      @classes = MetaTag.descendants
-      @meta_tags = @classes.map {|cls| cls.new }
+      @classes = []
+      @meta_tags = []
     end
 
-    # Loads user-defined meta-tags from given paths.
-    # Returns list of meta-tag instances.
-    def load(paths)
-      paths.each do |path|
-        if File.directory?(path)
-          Dir[path+"/**/*.rb"].each do |file|
-            require(file)
-            init_remaining
-          end
-        else
-          require(path)
-          init_remaining
-        end
+    # Loads user-defined meta-tags from given path.
+    #
+    # * If path is a directory, loads all *.rb files in it.
+    # * If path is the symbol :builtins, loads the builtin
+    #   tags from ./tag dir.
+    # * Otherwise loads tags from the single file.
+    def load(path)
+      if path == :builtins
+        load(File.dirname(__FILE__) + "/tag")
+      elsif File.directory?(path)
+        # Sort paths, so they are always loaded in the same order.
+        # This is important for signatures to always be rendered in
+        # the same order.
+        Dir[path+"/**/*.rb"].sort.each {|file| load_file(file) }
+      else
+        load_file(path)
       end
-      @meta_tags
+    end
+
+    private
+
+    # Loads just one file.
+    def load_file(file)
+      require(file)
+      init_remaining
     end
 
     # Instantiates meta tag classes that haven't been instantiated
@@ -37,11 +46,19 @@ module JsDuck
       MetaTag.descendants.each do |cls|
         if !@classes.include?(cls)
           @classes << cls
-          newtag = cls.new
+          newtag = create_tag(cls)
           @meta_tags = @meta_tags.find_all {|t| t.name != newtag.name }
           @meta_tags << newtag
         end
       end
+    end
+
+    # Instanciates tag class.
+    # When .key is missing, creates it from .name
+    def create_tag(cls)
+      tag = cls.new
+      tag.key = tag.name.to_sym unless tag.key
+      tag
     end
   end
 

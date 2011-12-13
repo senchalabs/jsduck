@@ -10,6 +10,17 @@ module JsDuck
       list = []
       docs.each do |cls|
         list << class_node(cls)
+
+        cls[:alternateClassNames].each do |name|
+          list << alt_node(name, cls)
+        end
+
+        cls[:aliases].each_pair do |key, items|
+          items.each do |name|
+            list << alias_node(key, name, cls)
+          end
+        end
+
         [:members, :statics].each do |group|
           cls[group].each_key do |type|
             cls.members(type, group).each do |m|
@@ -24,13 +35,39 @@ module JsDuck
       list
     end
 
+    # Creates structure representing one alias
+    def alias_node(key, name, cls)
+      return {
+        :cls => alias_display_name(key)+": "+name,
+        :member => name,
+        :type => :class,
+        :icon => :subclass,
+        :id => cls.full_name,
+        :sort => 0,
+      }
+    end
+
     # Creates structure representing one class
     def class_node(cls)
       return {
         :cls => cls.full_name,
         :member => cls.short_name,
         :type => :class,
-        :aliases => cls[:aliases]
+        :icon => :class,
+        :id => cls.full_name,
+        :sort => 1,
+      }
+    end
+
+    # Creates structure representing one alternate classname
+    def alt_node(name, cls)
+      return {
+        :cls => name,
+        :member => Class.short_name(name),
+        :type => :class,
+        :icon => :subclass,
+        :id => cls.full_name,
+        :sort => 2,
       }
     end
 
@@ -39,9 +76,22 @@ module JsDuck
       return {
         :cls => cls.full_name,
         :member => member[:name],
-        :type => member[:tagname],
-        :id => member[:id],
+        :type => :member,
+        :icon => member[:tagname],
+        :id => cls.full_name + "-" + member[:id],
+        :sort => 3,
       }
+    end
+
+    # Some alias types are shown differently.
+    # e.g. instead of "widget:" we show "xtype:"
+    def alias_display_name(key)
+      titles = {
+        "widget" => "xtype",
+        "plugin" => "ptype",
+        "feature" => "ftype",
+      }
+      titles[key] || key
     end
 
   end

@@ -141,7 +141,7 @@ Ext.define('Docs.view.Viewport', {
                                     id: 'exampleindex'
                                 },
                                 {
-                                    xtype: Docs.touchExamplesUi ? 'touchexamplecontainer' : 'examplecontainer',
+                                    xtype: Docs.data.touchExamplesUi ? 'touchexamplecontainer' : 'examplecontainer',
                                     id: 'example'
                                 },
                                 {

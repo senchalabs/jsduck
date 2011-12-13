@@ -2,6 +2,7 @@ require 'jsduck/json_duck'
 require 'jsduck/icons'
 require 'jsduck/search_data'
 require 'jsduck/stats'
+require 'jsduck/meta_tag_registry'
 
 module JsDuck
 
@@ -18,13 +19,19 @@ module JsDuck
 
     # Writes classes, guides, videos, and search data to one big .js file
     def write(filename)
-      js = "Docs.data = " + JsonDuck.generate({
-        :classes => Icons.new.create(@relations.classes),
-        :guides => @guides.to_array,
-        :videos => @videos.to_array,
-        :examples => @examples.to_array,
-        :search => SearchData.new.create(@relations.classes),
-        :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
+      js = "Docs = " + JsonDuck.generate({
+        :data => {
+          :classes => Icons.new.create(@relations.classes),
+          :guides => @guides.to_array,
+          :videos => @videos.to_array,
+          :examples => @examples.to_array,
+          :search => SearchData.new.create(@relations.classes),
+          :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
+          :signatures => MetaTagRegistry.instance.signatures,
+          :localStorageDb => @opts.local_storage_db,
+          :showPrintButton => @opts.seo,
+          :touchExamplesUi => @opts.touch_examples_ui,
+        }
       }) + ";\n"
       File.open(filename, 'w') {|f| f.write(js) }
     end

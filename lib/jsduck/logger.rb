@@ -17,9 +17,13 @@ module JsDuck
         [:inheritdoc, "@inheritdoc referring to unknown class or member"],
         [:extend, "@extend or @mixin referring to unknown class"],
         [:link, "{@link} to unknown class or member"],
+        [:link_private, "{@link} to private member"],
+        [:link_ambiguous, "{@link} is ambiguous"],
+        [:link_auto, "Auto-detected link to unknown class or member"],
 
         [:alt_name, "Name used as both classname and alternate classname"],
         [:name_missing, "Member or parameter has no name"],
+        [:no_doc, "Member or class without documentation"],
         [:dup_param, "Method has two parameters with same name"],
         [:req_after_opt, "Required parameter comes after optional"],
         [:subproperty, "@param foo.bar where foo param doesn't exist"],
@@ -34,10 +38,12 @@ module JsDuck
         [:cat_class_missing, "Class is missing from categories file"],
         [:guide, "Guide is missing from --guides dir"],
       ]
-      # Turn on all warnings by default
+      # Turn off all warnings by default.
+      # This is good for testing.
+      # When running JSDuck app, the Options class enables most warnings.
       @warnings = {}
       @warning_docs.each do |w|
-        @warnings[w[0]] = true
+        @warnings[w[0]] = false
       end
 
       @shown_warnings = {}
@@ -66,11 +72,7 @@ module JsDuck
 
     # get documentation for all warnings
     def doc_warnings
-      @warning_docs.map {|w| "+#{w[0]} - #{w[1]}" } + [
-        " ",
-        "+all - to turn on all warnings (default)",
-        " ",
-      ]
+      @warning_docs.map {|w| " #{@warnings[w[0]] ? '+' : '-'}#{w[0]} - #{w[1]}" } + [" "]
     end
 
     # Prints warning message.

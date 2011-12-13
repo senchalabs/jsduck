@@ -6,14 +6,9 @@ module JsDuck
 
   # Exports data for Docs app.
   class AppExporter < FullExporter
-    def initialize(relations, opts)
-      super(relations, opts)
-
+    def initialize(relations)
+      super(relations)
       @renderer = Renderer.new
-      # Inject formatter to all meta-tags.
-      doc_formatter = DocFormatter.new(relations, opts)
-      opts.meta_tags.each {|tag| tag.formatter = doc_formatter }
-      @renderer.meta_tags = opts.meta_tags
     end
 
     # Returns compacted class data hash which contains an additional
@@ -45,7 +40,7 @@ module JsDuck
 
     def compact_member(m)
       m_copy = {}
-      [:name, :tagname, :owner, :attributes, :id].each do |key|
+      [:name, :tagname, :owner, :meta, :id].each do |key|
         m_copy[key] = m[key]
       end
       m_copy

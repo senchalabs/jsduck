@@ -116,7 +116,7 @@ Ext.define('Docs.view.examples.Inline', {
     updateHeight: function() {
         var previewHeight = this.preview.getHeight();
         var editorHeight = this.editor.getHeight();
-        if (Docs.touchExamplesUi && previewHeight > 0) {
+        if (Docs.data.touchExamplesUi && previewHeight > 0) {
             this.setHeight(previewHeight);
         }
         else if (editorHeight > 0) {

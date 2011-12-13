@@ -9,7 +9,7 @@ module JsDuck
     # not added.
     def create(cls)
       # Grab all configs tagged as @accessor
-      accessors = cls[:members][:cfg].find_all {|cfg| cfg[:accessor] && !cfg[:private] }
+      accessors = cls[:members][:cfg].find_all {|cfg| cfg[:accessor] }
 
       # Build lookup tables of method and event names
       methods = build_lookup_table(cls[:members][:method])
@@ -45,7 +45,7 @@ module JsDuck
 
     def create_getter(cfg)
       name = "get" + upcase_first(cfg[:name])
-      return {
+      return add_shared({
         :tagname => :method,
         :name => name,
         :doc => "Returns the value of {@link #cfg-#{cfg[:name]}}.",
@@ -54,17 +54,13 @@ module JsDuck
           :type => cfg[:type],
           :doc => "",
         },
-        :owner => cfg[:owner],
-        :files => cfg[:files],
         :id => "method-" + name,
-        :attributes => clone_attributes(cfg),
-        :meta => cfg[:meta],
-      }
+      }, cfg)
     end
 
     def create_setter(cfg)
       name = "set" + upcase_first(cfg[:name]);
-      return {
+      return add_shared({
         :tagname => :method,
         :name => name,
         :doc => "Sets the value of {@link #cfg-#{cfg[:name]}}.",
@@ -77,18 +73,14 @@ module JsDuck
           :type => "undefined",
           :doc => "",
         },
-        :owner => cfg[:owner],
-        :files => cfg[:files],
         :id => "method-" + name,
-        :attributes => clone_attributes(cfg),
-        :meta => cfg[:meta]
-      }
+      }, cfg)
     end
 
     def create_event(cfg)
       name = cfg[:name].downcase + "change"
       setter_name = "set" + upcase_first(cfg[:name]);
-      return {
+      return add_shared({
         :tagname => :event,
         :name => name,
         :doc =>
@@ -114,25 +106,30 @@ module JsDuck
             :doc => "The existing value."
           },
         ],
+        :id => "event-" + name,
+      }, cfg)
+    end
+
+    def add_shared(hash, cfg)
+      hash.merge!({
         :owner => cfg[:owner],
         :files => cfg[:files],
-        :id => "event-" + name,
-        :attributes => clone_attributes(cfg),
-        :meta => cfg[:meta]
-      }
+        :private => cfg[:private],
+        :meta => clone_meta(cfg),
+      })
     end
 
     def upcase_first(str)
       str[0,1].upcase + str[1..-1]
     end
 
-    # Create copy of all attributes of config, except the :required
-    # attribute which only applies to configs and must not be
+    # Create copy of all meta attributes of config, except the
+    # :required which only applies to configs and must not be
     # propagated to methods or events.
-    def clone_attributes(cfg)
+    def clone_meta(cfg)
       h = {}
-      cfg[:attributes].each_pair do |key, value|
-        h[:key] = value unless key == :required
+      cfg[:meta].each_pair do |key, value|
+        h[key] = value unless key == :required
       end
       h
     end

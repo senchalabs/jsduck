@@ -2,11 +2,6 @@ require "jsduck/class"
 
 describe JsDuck::Class do
 
-  # Avoid printed warnings in output
-  before do
-    JsDuck::Logger.instance.set_warning(:all, false)
-  end
-
   describe "#members" do
 
     before do
@@ -19,7 +14,7 @@ describe JsDuck::Class do
               {:name => "foo", :owner => "ParentClass"},
               {:name => "constructor", :owner => "ParentClass"},
               {:name => "frank", :owner => "ParentClass", :private => true},
-              {:name => "zappa", :owner => "ParentClass", :private => true},
+              {:name => "zappa", :owner => "ParentClass", :private => false},
             ]
           },
           :statics => {

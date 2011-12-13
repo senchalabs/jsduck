@@ -1,3 +1,4 @@
+require 'jsduck/meta_tag_registry'
 require 'cgi'
 
 module JsDuck
@@ -5,9 +6,6 @@ module JsDuck
   # Ruby-side implementation of class docs Renderer.
   # Uses PhantomJS to run Docs.Renderer JavaScript.
   class Renderer
-    # List of meta-tag implementations
-    attr_accessor :meta_tags
-
     def render(cls)
         @cls = cls
 
@@ -17,7 +15,7 @@ module JsDuck
             "<div class='doc-contents'>",
               render_private_class_notice,
               @cls[:doc],
-              render_meta_data(@cls[:meta]),
+              render_meta_data(@cls[:html_meta]),
             "</div>",
             "<div class='members'>",
               render_member_sections,
@@ -38,14 +36,7 @@ module JsDuck
     def render_meta_data(meta_data)
       return if meta_data.size == 0
 
-      @meta_tags.map do |tag|
-        contents = meta_data[tag.name]
-        if contents
-          tag.to_html(contents)
-        else
-          nil
-        end
-      end
+      MetaTagRegistry.instance.tags.map {|tag| meta_data[tag.key] }
     end
 
     def render_sidebar
@@ -221,26 +212,8 @@ module JsDuck
       end
 
       after = ""
-      if m[:attributes][:protected]
-        after += "<strong class='protected signature'>protected</strong>"
-      end
-      if m[:attributes][:static]
-        after += "<strong class='static signature'>static</strong>"
-      end
-      if m[:attributes][:deprecated]
-        after += "<strong class='deprecated signature'>deprecated</strong>"
-      end
-      if m[:attributes][:required]
-        after += "<strong class='required signature'>required</strong>"
-      end
-      if m[:attributes][:template]
-        after += "<strong class='template signature'>template</strong>"
-      end
-      if m[:attributes][:abstract]
-        after += "<strong class='abstract signature'>abstract</strong>"
-      end
-      if m[:attributes][:readonly]
-        after += "<strong class='readonly signature'>readonly</strong>"
+      MetaTagRegistry.instance.signatures.each do |s|
+        after += "<strong class='#{s[:key]} signature'>#{s[:long]}</strong>" if m[:meta][s[:key]]
       end
 
       uri = "#!/api/#{m[:owner]}-#{m[:id]}"
@@ -265,27 +238,7 @@ module JsDuck
         doc << "<p>Defaults to: <code>" + CGI.escapeHTML(m[:default]) + "</code></p>"
       end
 
-      if m[:attributes][:deprecated]
-        depr = m[:attributes][:deprecated]
-        v = depr[:version] ? "since " + depr[:version] : ""
-        doc << [
-          "<div class='signature-box deprecated'>",
-          "<p>This #{m[:tagname]} has been <strong>deprecated</strong> #{v}</p>",
-          depr[:text],
-          "</div>",
-        ]
-      end
-
-      if m[:attributes][:template]
-        doc << [
-          "<div class='signature-box template'>",
-          "<p>This is a template method. A hook into the functionality of this class.",
-          "Feel free to override it in child classes.</p>",
-          "</div>",
-        ]
-      end
-
-      doc << render_meta_data(m[:meta])
+      doc << render_meta_data(m[:html_meta])
 
       doc << render_params_and_return(m)
 

@@ -19,7 +19,7 @@ module JsDuck
   # }
   #
   class ApiExporter
-    def initialize(relations, opts)
+    def initialize(relations)
       # All params ignored, they're present to be compatible with
       # other exporters.
     end

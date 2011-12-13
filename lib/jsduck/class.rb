@@ -154,25 +154,28 @@ module JsDuck
       local_members
     end
 
-    # Returns member by name.
+    # Returns members by name. An array of one or more members, or
+    # empty array when nothing matches.
     #
     # Optionally one can also specify type name to differenciate
     # between different types of members.
-    def get_member(name, type_name=nil)
+    def get_members(name, type_name=nil, static=false)
       # build hash of all members
       unless @members_map
         @members_map = {}
         [:members, :statics].each do |group|
           @doc[group].each_key do |type|
             members_hash(type, group).each_pair do |key, member|
-              @members_map["#{type}-#{key}"] = member
-              @members_map[key] = member
+              @members_map[key] = (@members_map[key] || []) + [member]
             end
           end
         end
       end
 
-      @members_map[type_name ? "#{type_name}-#{name}" : name]
+      ms = @members_map[name] || []
+      ms = ms.find_all {|m| m[:tagname] == type_name } if type_name
+      ms = ms.find_all {|m| m[:meta][:static] } if static
+      return ms
     end
 
     # Returns all public members of class, including the inherited and mixed in ones

@@ -10,10 +10,10 @@ describe JsDuck::DocFormatter do
       JsDuck::Class.new({
         :name => "Context",
         :members => {
-          :method => [{:name => "bar", :id => "method-bar"}]
+          :method => [{:tagname => :method, :name => "bar", :id => "method-bar"}]
         },
         :statics => {
-          :method => [{:name => "id", :id => "static-method-id"}],
+          :method => [{:tagname => :method, :name => "id", :id => "static-method-id"}],
         },
       }),
       JsDuck::Class.new({
@@ -22,10 +22,10 @@ describe JsDuck::DocFormatter do
       JsDuck::Class.new({
         :name => "Foo",
         :members => {
-          :cfg => [{:name => "bar", :id => "cfg-bar"}],
+          :cfg => [{:tagname => :cfg, :name => "bar", :id => "cfg-bar"}],
         },
         :statics => {
-          :method => [{:name => "id", :id => "static-method-id"}],
+          :method => [{:tagname => :method, :name => "id", :id => "static-method-id"}],
         },
         :alternateClassNames => ["FooBar"]
       }),
@@ -116,13 +116,14 @@ describe JsDuck::DocFormatter do
     # auto-conversion of identifiable ClassNames to links
     describe "auto-detect" do
       before do
+        @formatter.class_context = "Context"
         @formatter.relations = JsDuck::Relations.new([
           JsDuck::Class.new({:name => 'Foo.Bar'}),
           JsDuck::Class.new({:name => 'Foo.Bar.Blah'}),
           JsDuck::Class.new({
             :name => 'Ext.form.Field',
             :members => {
-              :method => [{:name => "getValues", :id => "method-getValues"}]
+              :method => [{:tagname => :method, :name => "getValues", :id => "method-getValues"}]
             }
           }),
           JsDuck::Class.new({
@@ -132,8 +133,14 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({
             :name => 'Ext',
             :members => {
-              :method => [{:name => "encode", :id => "method-encode"}]
+              :method => [{:tagname => :method, :name => "encode", :id => "method-encode"}]
             }
+          }),
+          JsDuck::Class.new({
+            :name => "Context",
+            :members => {
+              :method => [{:tagname => :method, :name => "bar", :id => "method-bar"}]
+            },
           }),
         ])
       end
@@ -188,6 +195,13 @@ describe JsDuck::DocFormatter do
           'Look at <a href="Foo.Bar">Foo.Bar</a>, it\'s great!'
       end
 
+      it "converts two ClassNames in one line to links" do
+        @formatter.replace("See: Foo.Bar, Ext.XTemplate").should ==
+          'See: <a href="Foo.Bar">Foo.Bar</a>, <a href="Ext.XTemplate">Ext.XTemplate</a>'
+      end
+
+      # Links to #members
+
       it "converts Ext#encode to method link" do
         @formatter.replace("Look at Ext#encode").should ==
           'Look at <a href="Ext#method-encode">Ext.encode</a>'
@@ -198,6 +212,23 @@ describe JsDuck::DocFormatter do
           'Look at <a href="Ext.form.Field#method-getValues">Ext.form.Field.getValues</a>'
       end
 
+      it "converts Ext.encode to method link" do
+        @formatter.replace("Look at Ext.encode").should ==
+          'Look at <a href="Ext#method-encode">Ext.encode</a>'
+      end
+
+      it "converts #bar to link to current class method" do
+        @formatter.replace("Look at #bar method").should ==
+          'Look at <a href="Context#method-bar">bar</a> method'
+      end
+
+      it "Doesn't convert #unknown to link" do
+        @formatter.replace("Ahh, an #unknown method").should ==
+          'Ahh, an #unknown method'
+      end
+
+      # Ensure links aren't created inside <a>...</a> or {@link} and {@img} tags.
+
       it "doesn't create links inside {@link} tag" do
         @formatter.replace("{@link Foo.Bar a Foo.Bar link}").should ==
           '<a href="Foo.Bar">a Foo.Bar link</a>'
@@ -207,6 +238,47 @@ describe JsDuck::DocFormatter do
         @formatter.replace("{@img some/file.jpg a Foo.Bar image}").should ==
           '<img src="some/file.jpg" alt="a Foo.Bar image"/>'
       end
+
+      it "doesn't create links inside HTML tags" do
+        @formatter.replace('<img src="pics/Foo.Bar"/>').should ==
+          '<img src="pics/Foo.Bar"/>'
+      end
+
+      it "doesn't create links inside multiline HTML tags" do
+        @formatter.replace('<img\nsrc="pics/Foo.Bar"/>').should ==
+          '<img\nsrc="pics/Foo.Bar"/>'
+      end
+
+      it "doesn't create links inside <a>...</a>" do
+        @formatter.replace('See <a href="Foo.Bar">Foo.Bar</a>').should ==
+          'See <a href="Foo.Bar">Foo.Bar</a>'
+      end
+
+      it "creates links inside <b>...</b>" do
+        @formatter.replace('See <b>Foo.Bar</b>').should ==
+          'See <b><a href="Foo.Bar">Foo.Bar</a></b>'
+      end
+
+      it "doesn't create links inside <a><b>...</b></a>" do
+        @formatter.replace('See <a href="Foo.Bar"><b>Foo.Bar</b></a>').should ==
+          'See <a href="Foo.Bar"><b>Foo.Bar</b></a>'
+      end
+
+      it "creates links after <a>...</a>" do
+        @formatter.replace('See <a href="Foo.Bar">Foo.Bar</a> and Ext.XTemplate.').should ==
+          'See <a href="Foo.Bar">Foo.Bar</a> and <a href="Ext.XTemplate">Ext.XTemplate</a>.'
+      end
+
+      it "doesn't create links inside nested <a> tags" do
+        @formatter.replace('See <a href="Foo.Bar"><a>Foo.Bar</a> Ext.XTemplate</a>').should ==
+          'See <a href="Foo.Bar"><a>Foo.Bar</a> Ext.XTemplate</a>'
+      end
+
+      it "handles unclosed HTML tags" do
+        @formatter.replace('Malformed <img').should ==
+          'Malformed <img'
+      end
+
     end
 
     describe "with type information" do
@@ -215,8 +287,8 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({
             :name => 'Foo',
             :members => {
-              :method => [{:name => "select", :id => "method-select"}],
-              :event => [{:name => "select", :id => "event-select"}],
+              :method => [{:tagname => :method, :name => "select", :id => "method-select"}],
+              :event => [{:tagname => :event, :name => "select", :id => "event-select"}],
             }
           })
         ])
@@ -230,6 +302,37 @@ describe JsDuck::DocFormatter do
       it "replaces {@link Foo#event-select} with link to event" do
         @formatter.replace("Look at {@link Foo#event-select}").should ==
           'Look at <a href="Foo#event-select">Foo.select</a>'
+      end
+    end
+
+    describe "with staticality information" do
+      before do
+        @formatter.relations = JsDuck::Relations.new([
+          JsDuck::Class.new({
+            :name => 'Foo',
+            :members => {
+              :method => [{:tagname => :method, :name => "select", :id => "method-select", :meta => {}}],
+            },
+            :statics => {
+              :method => [{:tagname => :method, :name => "select", :id => "static-method-select", :meta => {:static => true}}],
+            }
+          })
+        ])
+      end
+
+      it "replaces {@link Foo#select} with link to instance method" do
+        @formatter.replace("Look at {@link Foo#select}").should ==
+          'Look at <a href="Foo#method-select">Foo.select</a>'
+      end
+
+      it "replaces {@link Foo#static-select} with link to static method" do
+        @formatter.replace("Look at {@link Foo#static-select}").should ==
+          'Look at <a href="Foo#static-method-select">Foo.select</a>'
+      end
+
+      it "replaces {@link Foo#static-method-select} with link to static method" do
+        @formatter.replace("Look at {@link Foo#static-method-select}").should ==
+          'Look at <a href="Foo#static-method-select">Foo.select</a>'
       end
     end
   end

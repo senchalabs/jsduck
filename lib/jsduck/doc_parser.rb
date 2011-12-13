@@ -1,6 +1,7 @@
 require 'strscan'
 require 'jsduck/js_literal_parser'
 require 'jsduck/js_literal_builder'
+require 'jsduck/meta_tag_registry'
 
 module JsDuck
 
@@ -23,15 +24,10 @@ module JsDuck
   # @see and {@link} are parsed separately in JsDuck::DocFormatter.
   #
   class DocParser
-    # Pass in :css to be able to parse CSS doc-comments
-    def initialize(mode = :js, meta_tags = nil)
-      @ident_pattern = (mode == :css) ? /\$?[\w-]+/ : /[$\w]\w*/
-      @ident_chain_pattern = (mode == :css) ? /\$?[\w-]+(\.[\w-]+)*/ : /[$\w]\w*(\.\w+)*/
-
-      @meta_tags_map = {}
-      (meta_tags || []).each do |tag|
-        @meta_tags_map[tag.name] = tag
-      end
+    def initialize
+      @ident_pattern = /[$\w-]+/
+      @ident_chain_pattern = /[$\w-]+(\.[$\w-]+)*/
+      @meta_tags = MetaTagRegistry.instance
     end
 
     def parse(input)
@@ -134,8 +130,6 @@ module JsDuck
           at_inheritdoc
         elsif look(/@alias/)
           at_alias
-        elsif look(/@deprecated\b/)
-          at_deprecated
         elsif look(/@var\b/)
           at_var
         elsif look(/@inheritable\b/)
@@ -146,22 +140,9 @@ module JsDuck
           boolean_at_tag(/@accessor/, :accessor)
         elsif look(/@evented\b/)
           boolean_at_tag(/@evented/, :evented)
-        elsif look(/@static\b/)
-          attribute_tag(/@static/, :static)
-        elsif look(/@protected\b/)
-          attribute_tag(/@protected/, :protected)
-        elsif look(/@template\b/)
-          attribute_tag(/@template/, :template)
-        elsif look(/@abstract\b/)
-          attribute_tag(/@abstract\b/, :abstract)
-        elsif look(/@readonly\b/)
-          attribute_tag(/@readonly\b/, :readonly)
-        elsif look(/@markdown\b/)
-          # this is detected just to be ignored
-          boolean_at_tag(/@markdown/, :markdown)
         elsif look(/@/)
           @input.scan(/@/)
-          tag = @meta_tags_map[look(/\w+/)]
+          tag = @meta_tags[look(/\w+/)]
           if tag
             meta_at_tag(tag)
           else
@@ -178,13 +159,21 @@ module JsDuck
       prev_tag = @current_tag
 
       add_tag(:meta)
-      @current_tag[:name] = match(/\w+/)
+      @current_tag[:name] = tag.key
+      match(/\w+/)
       skip_horiz_white
 
-      # Fors singleline tags, scan to the end of line and finish the
-      # tag.  For multiline tags we leave the tag open for :doc
-      # addition just like with built-in multiline tags.
-      unless tag.multiline
+      if tag.boolean
+        # For boolean tags, only scan the tag name and switch context
+        # back to previous tag.
+        skip_white
+        @current_tag = prev_tag
+      elsif tag.multiline
+        # For multiline tags we leave the tag open for :doc addition
+        # just like with built-in multiline tags.
+      else
+        # Fors singleline tags, scan to the end of line and finish the
+        # tag.
         @current_tag[:doc] = @input.scan(/.*$/).strip
         skip_white
         @current_tag = prev_tag
@@ -332,7 +321,7 @@ module JsDuck
       skip_white
     end
 
-    # matches @inheritdoc class.name#type-member
+    # matches @inheritdoc class.name#static-type-member
     def at_inheritdoc
       match(/@inherit[dD]oc|@alias/)
 
@@ -342,8 +331,12 @@ module JsDuck
         @current_tag[:cls] = ident_chain
         if look(/#\w/)
           @input.scan(/#/)
-          if look(/\w+-\w+/)
-            @current_tag[:type] = ident
+          if look(/static-/)
+            @current_tag[:static] = true
+            @input.scan(/static-/)
+          end
+          if look(/(cfg|property|method|event|css_var|css_mixin)-/)
+            @current_tag[:type] = ident.to_sym
             @input.scan(/-/)
           end
           @current_tag[:member] = ident
@@ -352,30 +345,10 @@ module JsDuck
       skip_white
     end
 
-    # matches @deprecated <version> some text ... newline
-    def at_deprecated
-      match(/@deprecated/)
-      add_tag(:deprecated)
-      skip_horiz_white
-      @current_tag[:version] = @input.scan(/[0-9.]+/)
-      skip_horiz_white
-      @current_tag[:text] = @input.scan(/.*$/)
-      skip_white
-    end
-
     # Used to match @private, @ignore, @hide, ...
     def boolean_at_tag(regex, propname)
       match(regex)
       add_tag(propname)
-      skip_white
-    end
-
-    # Matches tag like @protected, @abstract, @readonly, @template
-    # Creates :attribute tag with that name
-    def attribute_tag(regex, attr_name)
-      match(regex)
-      add_tag(:attribute)
-      @current_tag[:name] = attr_name
       skip_white
     end
 

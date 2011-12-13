@@ -34,11 +34,6 @@ Ext.define("Docs.History", {
     // Parses current URL and navigates to the page
     navigate: function(token) {
 
-        if (this.noNavigate) {
-            this.noNavigate = false;
-            return;
-        }
-
         var url = this.parseToken(token);
         if (url.url == "#!/api") {
             Docs.App.getController('Classes').loadIndex(true);
@@ -96,11 +91,6 @@ Ext.define("Docs.History", {
         token = this.cleanUrl(token);
         if (!/^#!?/.test(token)) {
             token = "#!"+token;
-        }
-        if (opts && opts.navigate) {
-            this.noNavigate = false;
-        } else {
-            this.noNavigate = true;
         }
         Ext.util.History.add(token);
     },

@@ -1,4 +1,5 @@
 require 'jsduck/logger'
+require 'pp'
 
 module JsDuck
 
@@ -41,19 +42,34 @@ module JsDuck
           warn("@inheritdoc #{inherit[:cls]}##{inherit[:member]} - class not found", context)
           return m
         end
-        parent = parent_cls.get_member(inherit[:member], inherit[:type] || m[:tagname])
+        parent = parent_cls.get_members(inherit[:member], inherit[:type] || m[:tagname], inherit[:static] || m[:meta][:static])[0]
         unless parent
           warn("@inheritdoc #{inherit[:cls]}##{inherit[:member]} - member not found", context)
           return m
         end
       else
         parent_cls = @relations[m[:owner]].parent
-        unless parent_cls
+        mixins = @relations[m[:owner]].mixins
+        # Warn when no parent or mixins at all
+        if !parent_cls && mixins.length == 0
           warn("@inheritdoc - parent class not found", context)
           return m
         end
-        parent = parent_cls.get_member(m[:name], m[:tagname])
-        unless parent
+        # First check for the member in all mixins, because members
+        # from mixins override those from parent class.  Looking first
+        # from mixins is probably a bit slower, but it's the correct
+        # order to do things.
+        if mixins.length > 0
+          parent = mixins.map do |mix|
+            mix.get_members(m[:name], m[:tagname], m[:meta][:static])[0]
+          end.compact.first
+        end
+        # When not found, try looking from parent class
+        if !parent && parent_cls
+          parent = parent_cls.get_members(m[:name], m[:tagname], m[:meta][:static])[0]
+        end
+        # Only when both parent and mixins fail, throw warning
+        if !parent
           warn("@inheritdoc - parent member not found", context)
           return m
         end

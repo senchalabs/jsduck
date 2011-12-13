@@ -13,6 +13,7 @@ module JsDuck
     # Runs the linter
     def run
       warn_globals
+      warn_no_doc
       warn_unnamed
       warn_optional_params
       warn_duplicate_params
@@ -37,6 +38,20 @@ module JsDuck
           if !p[:name] || p[:name] == ""
             warn(:name_missing, "Unnamed parameter", member)
           end
+        end
+      end
+    end
+
+    # print warning for each member or parameter with no name
+    def warn_no_doc
+      @relations.each do |cls|
+        if cls[:doc] == ""
+          warn(:no_doc, "No documentation for #{cls[:name]}", cls)
+        end
+      end
+      each_member do |member|
+        if member[:doc] == ""
+          warn(:no_doc, "No documentation for #{member[:owner]}##{member[:name]}", member)
         end
       end
     end

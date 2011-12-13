@@ -55,8 +55,6 @@
       font-weight: bold;
       padding: 0 0.5em;
       @include border-radius(2px);
-      color: white;
-      background: #aaa;
       @include signature-colors; } } }
 
 .hover-menu a {

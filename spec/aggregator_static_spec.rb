@@ -1,7 +1,12 @@
 require "jsduck/aggregator"
 require "jsduck/source_file"
+require "jsduck/tag/static"
+require "jsduck/meta_tag_registry"
 
 describe JsDuck::Aggregator do
+  before(:all) do
+    JsDuck::MetaTagRegistry.instance.register([JsDuck::Tag::Static.new])
+  end
 
   def parse(string)
     agr = JsDuck::Aggregator.new
@@ -21,7 +26,7 @@ describe JsDuck::Aggregator do
     end
 
     it "labels that method as static" do
-      @doc[:attributes][:static].should == true
+      @doc[:meta][:static].should == true
     end
 
     it "doesn't detect inheritable property" do
@@ -42,7 +47,7 @@ describe JsDuck::Aggregator do
     end
 
     it "labels that method as static" do
-      @doc[:attributes][:static].should == true
+      @doc[:meta][:static].should == true
     end
 
     it "detects the @inheritable property" do

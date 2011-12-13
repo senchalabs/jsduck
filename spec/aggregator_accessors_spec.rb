@@ -127,12 +127,26 @@ describe JsDuck::Aggregator do
            * @cfg {String} foo
            * @private
            * @accessor
+           * @evented
            */
       EOF
+      @accessors = @docs[0][:members][:method]
     end
 
-    it "doesn't create any accessors" do
-      @docs[0][:members][:method].length.should == 0
+    it "creates accessors" do
+      @accessors.length.should == 2
+    end
+
+    it "creates private getter" do
+      @accessors[0][:private].should == true
+    end
+
+    it "creates private setter" do
+      @accessors[1][:private].should == true
+    end
+
+    it "creates private event" do
+      @docs[0][:members][:event][0][:private].should == true
     end
   end
 

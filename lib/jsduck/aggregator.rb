@@ -92,12 +92,12 @@ module JsDuck
       [:mixins, :alternateClassNames, :files].each do |tag|
         old[tag] = old[tag] + new[tag]
       end
-      # Merge attribute hashes
-      new[:attributes].each_pair do |name, value|
-        old[:attributes][name] = old[:attributes][name] || value
+      # Merge meta hashes
+      new[:meta].each_pair do |name, value|
+        old[:meta][name] = old[:meta][name] || value
       end
       # Merge hashes of arrays
-      [:aliases, :meta].each do |tag|
+      [:aliases].each do |tag|
         new[tag].each_pair do |key, contents|
           old[tag][key] = (old[tag][key] || []) + contents
         end
@@ -133,7 +133,7 @@ module JsDuck
     end
 
     def add_to_class(cls, member)
-      cls[member[:attributes][:static] ? :statics : :members][member[:tagname]] << member
+      cls[member[:meta][:static] ? :statics : :members][member[:tagname]] << member
     end
 
     def add_orphan(node)
@@ -187,7 +187,6 @@ module JsDuck
         :members => Class.default_members_hash,
         :statics => Class.default_members_hash,
         :aliases => {},
-        :attributes => {},
         :meta => {},
         :files => [{:filename => "", :linenr => 0, :href => ""}],
       })

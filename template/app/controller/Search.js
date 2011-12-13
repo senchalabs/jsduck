@@ -116,11 +116,7 @@ Ext.define('Docs.controller.Search', {
 
     // loads class/method corrseponding to the record
     loadRecord: function(record) {
-        var name = record.get("cls");
-        if (record.get("type") !== 'class') {
-            name += '-' + record.get("id");
-        }
-        Docs.App.getController('Classes').loadClass("#!/api/"+name);
+        Docs.App.getController('Classes').loadClass("#!/api/"+record.get("id"));
         this.getDropdown().hide();
     },
 
@@ -154,49 +150,36 @@ Ext.define('Docs.controller.Search', {
     },
 
     filterMembers: function(text) {
-        var results = [[], [], [], [], [], [], [], []];
-        var xFull=0, clsFull=1, mFull=2, xBeg=3, clsBeg=4, mBeg=5, clsMid=6, mMid=7;
-        var hasDot = /\./.test(text);
+        // Each record has its relative sorting order: 0..3
+        var results = [
+            [], [], [], [], // First we sort full matches: 0..3
+            [], [], [], [], // Then matches in beginning: 4..7
+            [], [], [], []  // Finally matches in middle: 8..11
+        ];
+        var searchFull = /[.:]/.test(text);
         var safeText = Ext.escapeRe(text);
         var reFull = new RegExp("^" + safeText + "$", "i");
         var reBeg = new RegExp("^" + safeText, "i");
         var reMid = new RegExp(safeText, "i");
 
         Ext.Array.forEach(Docs.data.search, function(r) {
-            // when search text has "." in it, search from the full name (e.g. "Ext.Component.focus")
+            // when search text has "." or ":" in it, search from the full name
+            // (e.g. "Ext.Component.focus" or "xtype: grid")
             // Otherwise search from just the member name (e.g. "focus" or "Component")
-            var name = hasDot ? r.cls + (r.type === "class" ? "" : "." + r.member) : r.member;
+            var name = searchFull ? r.cls + (r.type === "class" ? "" : "." + r.member) : r.member;
 
-            if (r.aliases && this.matchAlias(r.aliases, reFull)) {
-                results[xFull].push(r);
-            }
-            else if (reFull.test(name)) {
-                results[r.type === "class" ? clsFull : mFull].push(r);
-            }
-            else if (r.aliases && this.matchAlias(r.aliases, reBeg)) {
-                results[xBeg].push(r);
+            if (reFull.test(name)) {
+                results[r.sort].push(r);
             }
             else if (reBeg.test(name)) {
-                results[r.type === "class" ? clsBeg : mBeg].push(r);
+                results[r.sort+4].push(r);
             }
             else if (reMid.test(name)) {
-                results[r.type === "class" ? clsMid : mMid].push(r);
+                results[r.sort+8].push(r);
             }
         }, this);
 
         return Ext.Array.flatten(results);
-    },
-
-    // true if alias matches regex
-    matchAlias: function(aliases, regex) {
-        for (var key in aliases) {
-            if (aliases.hasOwnProperty(key)) {
-                if (Ext.Array.some(aliases[key], function(x) {return regex.test(x);})) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
 });
