@@ -100,7 +100,7 @@ module JsDuck
       match("function")
       return {
         :type => :function,
-        :name => look(:ident) ? match(:ident)[:value] : nil,
+        :name => look(:ident) ? match(:ident)[:value] : "",
         :params => function_parameters,
         :body => function_body,
       }
