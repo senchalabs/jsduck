@@ -227,7 +227,7 @@
  * @param {Number} min An integer between 0 and 59 representing the minutes.
  * @param {Number} sec An integer between 0 and 59 representing the seconds.
  * @param {Number} ms An integer between 0 and 999 representing the milliseconds.
- * @return {Date} Number of milliseconds since January 1, 1970, 00:00:00, universal time.
+ * @return {Number} Number of milliseconds since January 1, 1970, 00:00:00, universal time.
  */
 
 //Methods
