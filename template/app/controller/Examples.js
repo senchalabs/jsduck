@@ -85,6 +85,10 @@ Ext.define('Docs.controller.Examples', {
 
     loadExample: function(url, noHistory) {
         var example = this.getExample(url);
+        if (!example) {
+            this.getController('Failure').show404("Example <b>"+url+"</b> was not found.");
+            return;
+        }
         this.getViewport().setPageTitle(example.text);
         if (this.activeUrl !== url) {
             this.getPage().clear();

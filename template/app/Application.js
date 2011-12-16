@@ -21,6 +21,7 @@ Ext.define('Docs.Application', {
     controllers: [
         'Auth',
         'Welcome',
+        'Failure',
         'Classes',
         'Comments',
         'CommentsMeta',

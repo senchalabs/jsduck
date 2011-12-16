@@ -51,7 +51,6 @@ Ext.define('Docs.controller.Videos', {
     },
 
     loadVideo: function(url, noHistory) {
-
         var reRendered = false;
 
         Ext.getCmp('card-panel').layout.setActiveItem('video');
@@ -59,6 +58,10 @@ Ext.define('Docs.controller.Videos', {
         var videoId = url.match(/[0-9]+$/)[0];
 
         var video = this.getVideo(videoId);
+        if (!video) {
+            this.getController('Failure').show404("Video <b>"+videoId+"</b> was not found.");
+            return;
+        }
         this.getViewport().setPageTitle(video.title);
         if (this.activeUrl !== url) {
             Ext.getCmp('video').load(video);
