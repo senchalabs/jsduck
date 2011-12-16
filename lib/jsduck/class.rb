@@ -124,7 +124,7 @@ module JsDuck
       all_members = parent ? parent.members_hash(type, context) : {}
 
       mixins.each do |mix|
-        all_members.merge!(mix.members_hash(type, context))
+        all_members.merge!(mix.members_hash(type, context)) {|k,o,n| store_overrides(k,o,n)}
       end
 
       # For static members, exclude everything not explicitly marked as inheritable
@@ -132,17 +132,36 @@ module JsDuck
         all_members.delete_if {|key, member| !member[:inheritable] }
       end
 
-      all_members.merge!(local_members_hash(type, context))
+      all_members.merge!(local_members_hash(type, context)) {|k,o,n| store_overrides(k,o,n)}
 
       # If singleton has static members, include them as if they were
       # instance members.  Otherwise they will be completely excluded
       # from the docs, as the static members block is not created for
       # singletons.
       if @doc[:singleton] && @doc[:statics][type].length > 0
-        all_members.merge!(local_members_hash(type, :statics))
+        all_members.merge!(local_members_hash(type, :statics)) {|k,o,n| store_overrides(k,o,n)}
       end
 
       all_members
+    end
+
+    # Invoked when merge! finds two members with the same name.
+    # New member always overrides the old, but inside new we keep
+    # a list of members it overrides.  Normally one member will
+    # override one other member, but a member from mixin can override
+    # multiple members - although there's not a single such case in
+    # ExtJS, we have to handle it.
+    #
+    # Every overridden member is listed just once.
+    def store_overrides(key, old, new)
+      # Sometimes a class is included multiple times (like Ext.Base)
+      # resulting in its members overriding themselves.  Because of
+      # this, ignore overriding itself.
+      if new[:owner] != old[:owner]
+        new[:overrides] = [] unless new[:overrides]
+        new[:overrides] << old unless new[:overrides].any? {|m| m[:owner] == old[:owner] }
+      end
+      new
     end
 
     # Helper method to get the direct members of this class

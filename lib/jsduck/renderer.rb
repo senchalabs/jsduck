@@ -109,8 +109,10 @@ module JsDuck
       ]
     end
 
-    def render_link(cls_name)
-        return "<a href='#!/api/#{cls_name}' rel='#{cls_name}' class='docClass'>#{cls_name}</a>"
+    def render_link(cls_name, member=nil)
+      id = member ? cls_name + "-" + member[:id] : cls_name
+      label = member ? cls_name + "." + member[:name] : cls_name
+      return "<a href='#!/api/#{id}' rel='#{id}' class='docClass'>#{label}</a>"
     end
 
     def render_member_sections
@@ -241,6 +243,11 @@ module JsDuck
       doc << render_meta_data(m[:html_meta])
 
       doc << render_params_and_return(m)
+
+      if m[:overrides]
+        overrides = m[:overrides].map {|o| render_link(o[:owner], o) }.join(", ")
+        doc << "<p>Overrides: #{overrides}</p>"
+      end
 
       doc
     end
