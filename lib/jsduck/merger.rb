@@ -52,6 +52,9 @@ module JsDuck
         :property
       elsif doc_map[:css_var]
         :css_var
+      elsif doc_map[:cfg] && doc_map[:cfg].length == 1
+        # When just one @cfg, avoid treating it as @class
+        :cfg
       elsif code[:type] == :ext_define
         :class
       elsif code[:type] == :assignment && class_name?(*code[:left])

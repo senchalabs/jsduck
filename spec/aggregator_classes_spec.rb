@@ -305,6 +305,20 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "implicit class with more than one cfg" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Comment here.
+         * @cfg {String} foo
+         * @cfg {String} bar
+         */
+        MyClass = function() {}
+      EOS
+    end
+    it_should_behave_like "class"
+  end
+
   describe "class with constructor" do
     before do
       @doc = parse(<<-EOS)[0]

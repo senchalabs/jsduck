@@ -144,6 +144,31 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "@cfg with uppercase name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {String} Foo
+         */
+        Foo: 12
+      EOS
+    end
+    it_should_behave_like "cfg"
+  end
+
+  describe "@cfg with uppercase name after description" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Docs here
+         * @cfg {String} Foo
+         */
+        Foo: 12
+      EOS
+    end
+    it_should_behave_like "cfg"
+  end
+
   shared_examples_for "auto type" do
     it "should imply correct type" do
       @doc[:type].should == @type
