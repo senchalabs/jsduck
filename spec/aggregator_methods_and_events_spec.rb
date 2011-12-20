@@ -137,6 +137,13 @@ describe JsDuck::Aggregator do
     it_should_behave_like "method documentation"
   end
 
+  describe "Ext.emptyFn in object-literal" do
+    before do
+      @doc = parse("/** Some function */ foo: Ext.emptyFn")[0]
+    end
+    it_should_behave_like "method documentation"
+  end
+
   describe "anonymous function" do
     before do
       @doc = parse("/** Some function */ function() {}")[0]

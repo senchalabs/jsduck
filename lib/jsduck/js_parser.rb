@@ -106,6 +106,16 @@ module JsDuck
       }
     end
 
+    # <ext-emptyfn> := "Ext" "." "emptyFn"
+    def ext_emptyfn
+      match(:ident, ".", "emptyFn")
+      return {
+        :type => :function,
+        :name => "",
+        :params => [],
+      }
+    end
+
     # <function-parameters> := "(" [ <ident> [ "," <ident> ]* ] ")"
     def function_parameters
       match("(")
@@ -157,12 +167,14 @@ module JsDuck
       return chain
     end
 
-    # <expression> := <function> | <ext-extend> | <ext-base-css-prefix> | <literal>
+    # <expression> := <function> | <ext-extend> | <ext-emptyfn> | <ext-base-css-prefix> | <literal>
     def expression
       if look(:function)
         function
       elsif ext_look(:ns, ".", "extend")
         ext_extend
+      elsif ext_look(:ns, ".", "emptyFn")
+        ext_emptyfn
       elsif ext_look(:ns, ".", "baseCSSPrefix", "+", :string)
         ext_base_css_prefix
       else
