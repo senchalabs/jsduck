@@ -13,7 +13,8 @@ module JsDuck::Tag
     def to_html(contents)
       <<-EOHTML
       <div class='signature-box template'>
-      <p>This is a template method. A hook into the functionality of this class.
+      <p>This is a <a href="#!/guide/components">template method</a>.
+         a hook into the functionality of this class.
          Feel free to override it in child classes.</p>
       </div>
       EOHTML
