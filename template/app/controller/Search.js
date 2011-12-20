@@ -4,6 +4,10 @@
 Ext.define('Docs.controller.Search', {
     extend: 'Ext.app.Controller',
 
+    requires: [
+        'Docs.ClassRegistry'
+    ],
+
     views: [
         'search.Dropdown'
     ],
@@ -122,7 +126,7 @@ Ext.define('Docs.controller.Search', {
 
     search: function(term) {
         // perform search and load results to store
-        var results = this.filterMembers(term);
+        var results = Docs.ClassRegistry.search(term);
 
         // Don't allow paging before first or after the last page.
         if (this.pageIndex < 0) {
@@ -147,39 +151,6 @@ Ext.define('Docs.controller.Search', {
             // auto-select first result
             this.getDropdown().getSelectionModel().select(0);
         }
-    },
-
-    filterMembers: function(text) {
-        // Each record has its relative sorting order: 0..3
-        var results = [
-            [], [], [], [], // First we sort full matches: 0..3
-            [], [], [], [], // Then matches in beginning: 4..7
-            [], [], [], []  // Finally matches in middle: 8..11
-        ];
-        var searchFull = /[.:]/.test(text);
-        var safeText = Ext.escapeRe(text);
-        var reFull = new RegExp("^" + safeText + "$", "i");
-        var reBeg = new RegExp("^" + safeText, "i");
-        var reMid = new RegExp(safeText, "i");
-
-        Ext.Array.forEach(Docs.data.search, function(r) {
-            // when search text has "." or ":" in it, search from the full name
-            // (e.g. "Ext.Component.focus" or "xtype: grid")
-            // Otherwise search from just the member name (e.g. "focus" or "Component")
-            var name = searchFull ? r.cls + (r.type === "class" ? "" : "." + r.member) : r.member;
-
-            if (reFull.test(name)) {
-                results[r.sort].push(r);
-            }
-            else if (reBeg.test(name)) {
-                results[r.sort+4].push(r);
-            }
-            else if (reMid.test(name)) {
-                results[r.sort+8].push(r);
-            }
-        }, this);
-
-        return Ext.Array.flatten(results);
     }
 
 });
