@@ -8,7 +8,8 @@ Ext.define('Docs.controller.Classes', {
 
     requires: [
         'Docs.History',
-        'Docs.Syntax'
+        'Docs.Syntax',
+        'Docs.ClassRegistry'
     ],
 
     stores: [
@@ -232,7 +233,7 @@ Ext.define('Docs.controller.Classes', {
 
         // separate class and member name
         var matches = url.match(/^#!\/api\/(.*?)(?:-(.*))?$/);
-        var cls = matches[1];
+        var cls = Docs.ClassRegistry.canonicalName(matches[1]);
         var member = matches[2];
 
         if (this.getOverview()) {
@@ -262,7 +263,6 @@ Ext.define('Docs.controller.Classes', {
     },
 
     showClass: function(cls, anchor) {
-
         var reRendered = false;
 
         if (cls === "in-progress") {
