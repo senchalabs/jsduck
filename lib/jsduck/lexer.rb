@@ -9,11 +9,13 @@ module JsDuck
   #
   # - :number      -- 25
   # - :string      -- "Hello world"
-  # - :keyword     -- "typeof"
   # - :ident       -- "foo"
   # - :regex       -- "/abc/i"
   # - :operator    -- "+"
   # - :doc_comment -- "/** My comment */"
+  #
+  # Plus a separate types for all keywords: :if, :while, :function, ...
+  # For keywords the type and value are the same.
   #
   # Notice that doc-comments are recognized as tokens while normal
   # comments are ignored just as whitespace.
@@ -120,9 +122,10 @@ module JsDuck
           }
         elsif @input.check(/[a-zA-Z_$]/)
           value = @input.scan(/[$\w]+/)
+          kw = KEYWORDS[value]
           return {
-            :type => KEYWORDS[value] ? :keyword : :ident,
-            :value => value
+            :type => kw || :ident,
+            :value => kw || value
           }
         elsif @input.check(/'/)
           return {
@@ -189,7 +192,7 @@ module JsDuck
         value = @previous_token[:value]
         if type == :ident || type == :number
           return false
-        elsif type == :keyword && value == "this"
+        elsif type == :this
           return false
         elsif type == :operator && (value == ")" || value == "]")
           return false
@@ -217,31 +220,31 @@ module JsDuck
     }x
 
     KEYWORDS = {
-      "break" => true,
-      "case" => true,
-      "catch" => true,
-      "continue" => true,
-      "default" => true,
-      "delete" => true,
-      "do" => true,
-      "else" => true,
-      "finally" => true,
-      "for" => true,
-      "function" => true,
-      "if" => true,
-      "in" => true,
-      "instanceof" => true,
-      "new" => true,
-      "return" => true,
-      "switch" => true,
-      "this" => true,
-      "throw" => true,
-      "try" => true,
-      "typeof" => true,
-      "var" => true,
-      "void" => true,
-      "while" => true,
-      "with" => true,
+      "break" => :break,
+      "case" => :case,
+      "catch" => :catch,
+      "continue" => :continue,
+      "default" => :default,
+      "delete" => :delete,
+      "do" => :do,
+      "else" => :else,
+      "finally" => :finally,
+      "for" => :for,
+      "function" => :function,
+      "if" => :if,
+      "in" => :in,
+      "instanceof" => :instanceof,
+      "new" => :new,
+      "return" => :return,
+      "switch" => :switch,
+      "this" => :this,
+      "throw" => :throw,
+      "try" => :try,
+      "typeof" => :typeof,
+      "var" => :var,
+      "void" => :void,
+      "while" => :while,
+      "with" => :with,
     }
   end
 

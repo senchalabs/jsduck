@@ -151,6 +151,16 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "doc-comment followed by 'function'" do
+    before do
+      @doc = parse("/** Some function */ 'function';")[0]
+    end
+
+    it "isn't detected as method" do
+      @doc[:tagname].should_not == :method
+    end
+  end
+
   describe "explicit @method without @param-s" do
     before do
       @doc = parse(<<-EOS)[0]

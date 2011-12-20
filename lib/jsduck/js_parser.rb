@@ -73,9 +73,9 @@ module JsDuck
     # <code-block> := <function> | <var-declaration> | <ext-define> |
     #                 <assignment> | <property-literal>
     def code_block
-      if look("function")
+      if look(:function)
         function
-      elsif look("var")
+      elsif look(:var)
         var_declaration
       elsif ext_look(:ns, ".", "define", "(", :string)
         ext_define
@@ -86,7 +86,7 @@ module JsDuck
       elsif look(",", :ident, ":") || look(",", :string, ":")
         match(",")
         property_literal
-      elsif look(:ident) || look("this")
+      elsif look(:ident) || look(:this)
         maybe_assignment
       elsif look(:string)
         {:type => :assignment, :left => [match(:string)[:value]]}
@@ -97,7 +97,7 @@ module JsDuck
 
     # <function> := "function" [ <ident> ] <function-parameters> <function-body>
     def function
-      match("function")
+      match(:function)
       return {
         :type => :function,
         :name => look(:ident) ? match(:ident)[:value] : "",
@@ -124,7 +124,7 @@ module JsDuck
 
     # <var-declaration> := "var" <assignment>
     def var_declaration
-      match("var")
+      match(:var)
       maybe_assignment
     end
 
@@ -144,8 +144,9 @@ module JsDuck
 
     # <ident-chain> := [ "this" | <ident> ]  [ "." <ident> ]*
     def ident_chain
-      if look("this")
-        chain = [match("this")[:value]]
+      if look(:this)
+        match(:this)
+        chain = ["this"]
       else
         chain = [match(:ident)[:value]]
       end
@@ -158,7 +159,7 @@ module JsDuck
 
     # <expression> := <function> | <ext-extend> | <ext-base-css-prefix> | <literal>
     def expression
-      if look("function")
+      if look(:function)
         function
       elsif ext_look(:ns, ".", "extend")
         ext_extend

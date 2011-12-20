@@ -17,7 +17,7 @@ describe JsDuck::Lexer do
 
   it "tokenizes simple expression" do
     lex("var foo = 8;").should == [
-      [:keyword, "var"],
+      [:var, :var],
       [:ident, "foo"],
       [:operator, "="],
       [:number, "8"],
@@ -49,7 +49,7 @@ describe JsDuck::Lexer do
 
     it "when regex after return" do
       lex("return /foo/.test;").should == [
-        [:keyword, "return"],
+        [:return, :return],
         [:regex, "/foo/"],
         [:operator, "."],
         [:ident, "test"],
@@ -59,7 +59,7 @@ describe JsDuck::Lexer do
 
     it "when regex after typeof" do
       lex("typeof /foo/;").should == [
-        [:keyword, "typeof"],
+        [:typeof, :typeof],
         [:regex, "/foo/"],
         [:operator, ";"]
       ]
@@ -67,7 +67,7 @@ describe JsDuck::Lexer do
 
     it "when division after this" do
       lex("this / 3").should == [
-        [:keyword, "this"],
+        [:this, :this],
         [:operator, "/"],
         [:number, "3"]
       ]
