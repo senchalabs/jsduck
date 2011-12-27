@@ -156,10 +156,9 @@ module JsDuck
         if orph[:owner]
           class_name = orph[:owner]
           if !@classes[class_name]
+            # this will add the class and add all orphans to it
             add_empty_class(class_name)
           end
-          add_member(orph)
-          @orphans.delete(orph)
         end
       end
     end
