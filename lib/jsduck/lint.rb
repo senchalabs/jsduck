@@ -17,6 +17,7 @@ module JsDuck
       warn_unnamed
       warn_optional_params
       warn_duplicate_params
+      warn_duplicate_members
     end
 
     # print warning for each global member
@@ -80,6 +81,25 @@ module JsDuck
             warn(:dup_param, "Duplicate parameter name #{p[:name]}", member)
           end
           params[p[:name]] = true
+        end
+      end
+    end
+
+    # print warnings for duplicate member names
+    def warn_duplicate_members
+      @relations.each do |cls|
+        members = {:members => {}, :statics => {}}
+        cls.all_local_members.each do |m|
+          group = (m[:meta] && m[:meta][:static]) ? :statics : :members
+          type = m[:tagname]
+          name = m[:name]
+          hash = members[group][type] || {}
+          if hash[name]
+            warn(:dup_member, "Duplicate #{type} name #{name}", hash[name])
+            warn(:dup_member, "Duplicate #{type} name #{name}", m)
+          end
+          hash[name] = m
+          members[group][type] = hash
         end
       end
     end
