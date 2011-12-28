@@ -35,11 +35,12 @@ Ext.define('Docs.controller.Search', {
                     // increment page number and update search results display
                     this.pageIndex += delta;
                     this.search(this.getField().getValue());
+                    // footerClick doesn't fire in IE9,
+                    // so keep the dropdown visible explicitly.
+                    this.keepDropdown();
                 },
-                footerClick: function(dropdown, delta) {
-                    // don't hide dropdown
-                    clearTimeout(this.hideTimeout);
-                    this.getField().focus();
+                footerClick: function(dropdown) {
+                    this.keepDropdown();
                 }
             },
             '#search-field': {
@@ -116,6 +117,12 @@ Ext.define('Docs.controller.Search', {
 
     getDropdown: function() {
         return this.dropdown || (this.dropdown = Ext.getCmp('search-dropdown'));
+    },
+
+    // Cancels hiding of dropdown
+    keepDropdown: function() {
+        clearTimeout(this.hideTimeout);
+        this.getField().focus();
     },
 
     // loads class/method corrseponding to the record
