@@ -22,33 +22,22 @@ module JsDuck
       comment["type"] == "Block" && !!(comment["value"] =~ /^\*/)
     end
 
+    # Combines tokens and comments arrays into one array
+    # while keeping them in correct order.
     def merge_tokens(tokens, comments)
-      comments.each {|c| tokens.insert(index_of(c["range"], tokens), c) }
-      tokens
-    end
-
-    # returns the index where the token with given range should be inserted.
-    def index_of(range, tokens)
-      if tokens.length == 0 || tokens.last["range"][1] < range[0]
-        return tokens.length
-      end
-
-      left = 0
-      right = tokens.length - 1
-
-      while left < right
-        middle = (left + right) / 2
-
-        if right - left == 1 && tokens[left]["range"][1] < range[0] && range[1] < tokens[right]["range"][0]
-          break
-        elsif range[1] < tokens[middle]["range"][0]
-          right = middle
+      result = []
+      com = comments.shift
+      tok = tokens.shift
+      while com || tok
+        if !com || tok && (tok["range"][0] < com["range"][0])
+          result << tok
+          tok = tokens.shift
         else
-          left = middle + 1
+          result << com
+          com = comments.shift
         end
       end
-
-      right
+      result
     end
 
   end
