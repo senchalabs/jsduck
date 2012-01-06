@@ -10,7 +10,8 @@ module JsDuck
 
     def initialize
       @v8 = V8::Context.new
-      @v8.load(File.dirname(File.dirname(File.dirname(File.dirname(__FILE__))))+"/esprima/esprima.js")
+      fname = File.dirname(File.dirname(File.dirname(File.dirname(File.expand_path(__FILE__)))))+"/esprima/esprima.js";
+      @v8.load(fname)
     end
 
     # Input must be a String.
