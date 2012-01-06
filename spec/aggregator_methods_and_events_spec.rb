@@ -111,14 +111,14 @@ describe JsDuck::Aggregator do
 
   describe "function-literal in object-literal" do
     before do
-      @doc = parse("/** Some function */ foo: function() {}")[0]
+      @doc = parse("({ /** Some function */ foo: function() {} })")[0]
     end
     it_should_behave_like "method documentation"
   end
 
   describe "function-literal in object-literal-string" do
     before do
-      @doc = parse("/** Some function */ 'foo': function() {}")[0]
+      @doc = parse("({ /** Some function */ 'foo': function() {} })")[0]
     end
     it_should_behave_like "method documentation"
   end
@@ -132,21 +132,21 @@ describe JsDuck::Aggregator do
 
   describe "function-literal in comma-first style" do
     before do
-      @doc = parse("/** Some function */ , foo: function() {}")[0]
+      @doc = parse("({ blah: 7 /** Some function */ , foo: function() {} })")[0]
     end
     it_should_behave_like "method documentation"
   end
 
   describe "Ext.emptyFn in object-literal" do
     before do
-      @doc = parse("/** Some function */ foo: Ext.emptyFn")[0]
+      @doc = parse("({ /** Some function */ foo: Ext.emptyFn })")[0]
     end
     it_should_behave_like "method documentation"
   end
 
   describe "anonymous function" do
     before do
-      @doc = parse("/** Some function */ function() {}")[0]
+      @doc = parse("( /** Some function */ function() {} )")[0]
     end
 
     it "detects method" do
@@ -398,11 +398,11 @@ describe JsDuck::Aggregator do
   describe "implicit event name as object property" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @event
          * Fires when needed.
          */
-        mousedown: true,
+        mousedown: true })
       EOS
     end
     it_should_behave_like "event documentation"
