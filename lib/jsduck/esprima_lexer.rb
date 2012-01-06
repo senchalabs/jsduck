@@ -17,7 +17,9 @@ module JsDuck
       merge_tokens(program["tokens"], program["comments"].find_all {|c| doc_comment?(c) })
     end
 
-    # True if comments is a /** doc-comment */
+    private
+
+    # True if comment is a /** doc-comment */
     def doc_comment?(comment)
       comment["type"] == "Block" && !!(comment["value"] =~ /^\*/)
     end
