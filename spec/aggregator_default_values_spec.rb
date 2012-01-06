@@ -29,7 +29,7 @@ describe JsDuck::Aggregator do
         /**
          * @param {Number} foo (optional) Something
          */
-        function foo() {
+        function foo() {}
       EOS
     end
     it_should_behave_like "optional parameter"
@@ -41,7 +41,7 @@ describe JsDuck::Aggregator do
         /**
          * @param {Number} foo (Optional) Something
          */
-        function foo() {
+        function foo() {}
       EOS
     end
     it_should_behave_like "optional parameter"
@@ -53,7 +53,7 @@ describe JsDuck::Aggregator do
         /**
          * @param {Number} foo optional Something
          */
-        function foo() {
+        function foo() {}
       EOS
     end
     it "doesn't make parameter optional" do
@@ -67,7 +67,7 @@ describe JsDuck::Aggregator do
         /**
          * @param {Number} foo Something (optional)
          */
-        function foo() {
+        function foo() {}
       EOS
     end
     it "doesn't make parameter optional" do
@@ -81,7 +81,7 @@ describe JsDuck::Aggregator do
         /**
          * @param {Number} [foo] Something
          */
-        function foo() {
+        function foo() {}
       EOS
     end
     it_should_behave_like "optional parameter"
@@ -93,7 +93,7 @@ describe JsDuck::Aggregator do
         /**
          * @param {Number} [foo=42] Something
          */
-        function foo() {
+        function foo() {}
       EOS
     end
     it_should_behave_like "optional parameter"
@@ -108,7 +108,7 @@ describe JsDuck::Aggregator do
         /**
          * @param {Number} [foo="Hello, my [dear]!"] Something
          */
-        function foo() {
+        function foo() {}
       EOS
     end
     it_should_behave_like "optional parameter"
@@ -263,10 +263,10 @@ describe JsDuck::Aggregator do
   describe "cfg with implicit default value" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg foo Something
          */
-        foo: 18
+        foo: 18 })
       EOS
     end
     it "detects the default value" do
@@ -277,10 +277,10 @@ describe JsDuck::Aggregator do
   describe "cfg with implicit default string value" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg foo Something
          */
-        foo: "Hello"
+        foo: "Hello" })
       EOS
     end
     it "detects the default value" do
@@ -291,10 +291,10 @@ describe JsDuck::Aggregator do
   describe "cfg with implicit default regex value" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg foo Something
          */
-        foo: /[a-z]/
+        foo: /[a-z]/ })
       EOS
     end
     it "detects the default value" do
@@ -305,10 +305,10 @@ describe JsDuck::Aggregator do
   describe "cfg with implicit default array value" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg foo Something
          */
-        foo: [1, 2, 3]
+        foo: [1, 2, 3] })
       EOS
     end
     it "detects the default value" do
@@ -319,10 +319,10 @@ describe JsDuck::Aggregator do
   describe "cfg with implicit default object value" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg foo Something
          */
-        foo: {foo: 3, bar: "2"}
+        foo: {foo: 3, bar: "2"} })
       EOS
     end
     it "detects the default value" do
@@ -333,10 +333,10 @@ describe JsDuck::Aggregator do
   describe "cfg with implicit string value starting with Ext.baseCSSPrefix" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg foo Something
          */
-        foo: Ext.baseCSSPrefix + "foo"
+        foo: Ext.baseCSSPrefix + "foo" })
       EOS
     end
     it "replaces Ext.baseCSSPrefix with 'x-'" do
@@ -347,10 +347,10 @@ describe JsDuck::Aggregator do
   describe "cfg with implicit number value given as expression" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg {Number} foo
          */
-        foo: 5 + 5
+        foo: 5 + 5 })
       EOS
     end
     it "doesn't get the default value from code" do
@@ -361,10 +361,10 @@ describe JsDuck::Aggregator do
   describe "cfg with implicit array value with chained method" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg {Array} foo
          */
-        foo: [1, 2, 3].compact()
+        foo: [1, 2, 3].compact() })
       EOS
     end
     it "doesn't get the default value from code" do
@@ -375,10 +375,10 @@ describe JsDuck::Aggregator do
   describe "cfg with implicit name followed by code field with another name" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg foo
          */
-        bar: true
+        bar: true })
       EOS
     end
     it "doesn't get the default value from code" do
@@ -392,10 +392,10 @@ describe JsDuck::Aggregator do
   describe "cfg without implicit name followed by code" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg
          */
-        bar: true
+        bar: true })
       EOS
     end
     it "gets default value from code" do

@@ -74,11 +74,11 @@ describe JsDuck::Aggregator do
   describe "implicit @cfg" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg
          * Some documentation.
          */
-        foo: "asdf"
+        foo: "asdf" })
       EOS
     end
     it_should_behave_like "cfg"
@@ -89,10 +89,10 @@ describe JsDuck::Aggregator do
   describe "implicit @property" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * Some documentation.
          */
-        foo: "asdf"
+        foo: "asdf" })
       EOS
     end
     it_should_behave_like "property"
@@ -103,11 +103,11 @@ describe JsDuck::Aggregator do
   describe "typeless @cfg" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg
          * Some documentation.
          */
-        foo: func(),
+        foo: func() })
       EOS
     end
     it_should_behave_like "cfg"
@@ -118,11 +118,11 @@ describe JsDuck::Aggregator do
   describe "typeless @property" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @property
          * Some documentation.
          */
-        foo: func(),
+        foo: func() })
       EOS
     end
     it_should_behave_like "property"
@@ -147,10 +147,10 @@ describe JsDuck::Aggregator do
   describe "@cfg with uppercase name" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @cfg {String} Foo
          */
-        Foo: 12
+        Foo: 12 })
       EOS
     end
     it_should_behave_like "cfg"
@@ -159,11 +159,11 @@ describe JsDuck::Aggregator do
   describe "@cfg with uppercase name after description" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * Docs here
          * @cfg {String} Foo
          */
-        Foo: 12
+        Foo: 12 })
       EOS
     end
     it_should_behave_like "cfg"
@@ -177,7 +177,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with number in code" do
     before do
-      @doc = parse("/** @property */ foo: 123")[0]
+      @doc = parse("({ /** @property */ foo: 123 })")[0]
       @type = "Number"
     end
     it_should_behave_like "auto type"
@@ -185,7 +185,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with regex in code" do
     before do
-      @doc = parse("/** @property */ foo: /foo/i")[0]
+      @doc = parse("({ /** @property */ foo: /foo/i })")[0]
       @type = "RegExp"
     end
     it_should_behave_like "auto type"
@@ -193,7 +193,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with true in code" do
     before do
-      @doc = parse("/** @property */ foo: true")[0]
+      @doc = parse("({ /** @property */ foo: true })")[0]
       @type = "Boolean"
     end
     it_should_behave_like "auto type"
@@ -201,7 +201,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with false in code" do
     before do
-      @doc = parse("/** @property */ foo: false")[0]
+      @doc = parse("({ /** @property */ foo: false })")[0]
       @type = "Boolean"
     end
     it_should_behave_like "auto type"
@@ -241,11 +241,11 @@ describe JsDuck::Aggregator do
   describe "@type without @property" do
     before do
       @doc = parse(<<-EOS)[0]
-        /**
+      ({/**
          * @type String
          * Some documentation.
          */
-        MY_CONSTANT: true,
+        MY_CONSTANT: true })
       EOS
     end
     it_should_behave_like "property"
@@ -262,7 +262,7 @@ describe JsDuck::Aggregator do
          * @property
          * Some documentation.
          */
-        this.foo = "";
+        this.foo = ""
       EOS
     end
     it_should_behave_like "property"
@@ -273,10 +273,11 @@ describe JsDuck::Aggregator do
   describe "comma-first style" do
     before do
       @doc = parse(<<-EOS)[0]
+      ({ blah: 100
         /**
          * Some documentation.
          */
-        ,foo: ""
+        ,foo: "" })
       EOS
     end
     it_should_behave_like "property"
