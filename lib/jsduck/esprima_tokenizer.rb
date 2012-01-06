@@ -52,8 +52,8 @@ module JsDuck
       when "Numeric"
         {:type => :number, :value => tok["value"]}
       when "String"
-        {:type => :string, :value => tok["value"]}
-      when "Identifier"
+        {:type => :string, :value => tok["value"].gsub(/\A['"]|['"]\Z/m, "")}
+      when "Identifier", "Boolean", "Null"
         {:type => :ident, :value => tok["value"]}
       when "RegularExpression"
         {:type => :regex, :value => tok["value"]}

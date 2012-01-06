@@ -2,8 +2,12 @@ require "jsduck/esprima_tokenizer"
 
 describe JsDuck::EsprimaTokenizer do
 
+  def raw_tokenize(js)
+    JsDuck::EsprimaTokenizer.instance.tokenize(js)
+  end
+
   def tokenize(js)
-    JsDuck::EsprimaTokenizer.instance.tokenize(js).map {|t| t[:type] }
+    raw_tokenize(js).map {|t| t[:type] }
   end
 
   describe "tokenize" do
@@ -44,10 +48,18 @@ describe JsDuck::EsprimaTokenizer do
     end
 
     it "augments :doc_comment token with line number" do
-      tokens = JsDuck::EsprimaTokenizer.instance.tokenize("\n \n /**Com1*/ \n /**Com2\n*/ /**Com3*/")
+      tokens = raw_tokenize("\n \n /**Com1*/ \n /**Com2\n*/ /**Com3*/")
       tokens[0][:linenr].should == 3
       tokens[1][:linenr].should == 4
       tokens[2][:linenr].should == 5
+    end
+
+    it "converts boolean token to ident" do
+      raw_tokenize("true")[0].should == {:type => :ident, :value => "true"}
+    end
+
+    it "converts null token to ident" do
+      raw_tokenize("null")[0].should == {:type => :ident, :value => "null"}
     end
   end
 
