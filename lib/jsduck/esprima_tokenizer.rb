@@ -17,7 +17,10 @@ module JsDuck
     # Input must be a String.
     def tokenize(input)
       @v8['js'] = @input = input
-      program = JSON.parse(@v8.eval('JSON.stringify(esprima.parse(js, {tokens: true, comment: true}))'), :max_nesting => false)
+      program = JSON.parse(@v8.eval(<<-EOS), :max_nesting => false)
+        var out = esprima.parse(js, {tokens: true, comment: true});
+        JSON.stringify({tokens: out.tokens, comments: out.comments});
+      EOS
       doc_comments = program["comments"].find_all {|c| doc_comment?(c) }
       return merge_tokens(program["tokens"], doc_comments).map {|tok| to_jsduck_token(tok) }
     end
