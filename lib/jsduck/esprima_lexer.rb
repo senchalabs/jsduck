@@ -1,45 +1,37 @@
-require 'v8'
-require 'json'
+require 'jsduck/esprima_tokenizer'
 
 module JsDuck
 
   # New experimental lexer that uses Esprima.js through V8.
   class EsprimaLexer
-    def initialize
-      @v8 = V8::Context.new
-      @v8.load(File.dirname(File.dirname(File.dirname(File.dirname(__FILE__))))+"/esprima/esprima.js")
+    def initialize(input)
+      @tokens = EsprimaTokenizer.instance.tokenize(input)
+      @position = 0
     end
 
-    # Input must be a String.
-    def tokenize(input)
-      @v8['js'] = input
-      program = JSON.parse(@v8.eval('JSON.stringify(esprima.parse(js, {tokens: true, comment: true}))'), :max_nesting => false)
-      merge_tokens(program["tokens"], program["comments"].find_all {|c| doc_comment?(c) })
-    end
-
-    private
-
-    # True if comment is a /** doc-comment */
-    def doc_comment?(comment)
-      comment["type"] == "Block" && !!(comment["value"] =~ /^\*/)
-    end
-
-    # Combines tokens and comments arrays into one array
-    # while keeping them in correct order.
-    def merge_tokens(tokens, comments)
-      result = []
-      com = comments.shift
-      tok = tokens.shift
-      while com || tok
-        if !com || tok && (tok["range"][0] < com["range"][0])
-          result << tok
-          tok = tokens.shift
+    def look(*tokens)
+      i = @position
+      tokens.all? do |t|
+        tok = @tokens[i]
+        i += 1
+        if !tok
+          false
+        elsif t.instance_of?(Symbol)
+          tok[:type] == t
         else
-          result << com
-          com = comments.shift
+          tok[:value] == t
         end
       end
-      result
+    end
+
+    def next(full=false)
+      tok = @tokens[@position]
+      @position += 1
+      full ? tok : tok[:value]
+    end
+
+    def empty?
+      !@tokens[@position]
     end
 
   end
