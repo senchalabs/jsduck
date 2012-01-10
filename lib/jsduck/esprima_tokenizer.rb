@@ -30,9 +30,6 @@ module JsDuck
       out_type = out["type"].native
       out_value = out["value"].native
       out_linenr = out["linenr"].native
-      out_value_array = out["valueArray"].native
-
-      lock = V8::C::Locker.new
 
       type_array = [
         :number,
@@ -44,10 +41,9 @@ module JsDuck
         :doc_comment,
       ]
 
-      value_array = []
-      for i in (0..(out_value_array.Length()-1))
-        value_array << out_value_array.Get(i).AsciiValue();
-      end
+      value_array = JSON.parse(out["valueJson"])
+
+      lock = V8::C::Locker.new
 
       tokens = []
       for i in (0..(len-1))
