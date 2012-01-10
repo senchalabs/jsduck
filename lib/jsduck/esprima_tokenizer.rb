@@ -2,6 +2,10 @@ require 'v8'
 require 'json'
 require 'singleton'
 
+class V8::Object
+  attr_reader :native
+end
+
 module JsDuck
 
   # Uses Esprima.js engine through V8 to tokenize JavaScript string.
@@ -10,71 +14,57 @@ module JsDuck
 
     def initialize
       @v8 = V8::Context.new
-      fname = File.dirname(File.dirname(File.dirname(File.dirname(File.expand_path(__FILE__)))))+"/esprima/esprima.js";
-      @v8.load(fname)
+      esprima = File.dirname(File.dirname(File.dirname(File.dirname(File.expand_path(__FILE__)))))+"/esprima/esprima.js";
+      @v8.load(esprima)
+      wrapper = File.dirname((File.expand_path(__FILE__)))+"/esprima_wrapper.js";
+      @v8.load(wrapper)
     end
 
     # Input must be a String.
     def tokenize(input)
       @v8['js'] = @input = input
-      program = JSON.parse(@v8.eval(<<-EOS), :max_nesting => false)
-        var out = esprima.parse(js, {tokens: true, comment: true});
-        JSON.stringify({tokens: out.tokens, comments: out.comments});
-      EOS
-      doc_comments = program["comments"].find_all {|c| doc_comment?(c) }
-      return merge_tokens(program["tokens"], doc_comments).map {|tok| to_jsduck_token(tok) }
-    end
 
-    private
+      out = @v8.eval("EsprimaWrapper.parse(js)")
 
-    # True if comment is a /** doc-comment */
-    def doc_comment?(comment)
-      comment["type"] == "Block" && !!(comment["value"] =~ /^\*/)
-    end
+      len = out["type"].length
+      out_type = out["type"].native
+      out_value = out["value"].native
+      out_linenr = out["linenr"].native
+      out_value_array = out["valueArray"].native
 
-    # Combines tokens and comments arrays into one array
-    # while keeping them in correct order.
-    def merge_tokens(tokens, comments)
-      result = []
-      com = comments.shift
-      tok = tokens.shift
-      while com || tok
-        if !com || tok && (tok["range"][0] < com["range"][0])
-          result << tok
-          tok = tokens.shift
+      lock = V8::C::Locker.new
+
+      type_array = [
+        :number,
+        :string,
+        :ident,
+        :regex,
+        :operator,
+        :keyword,
+        :doc_comment,
+      ]
+
+      value_array = []
+      for i in (0..(out_value_array.Length()-1))
+        value_array << out_value_array.Get(i).AsciiValue();
+      end
+
+      tokens = []
+      for i in (0..(len-1))
+        t = type_array[out_type.Get(i)]
+        if t == :doc_comment
+          tokens << { :type => t, :value => out_value.Get(i).AsciiValue(), :linenr => out_linenr.Get(i) }
+        elsif t == :keyword
+          kw = value_array[out_value.Get(i)].to_sym
+          tokens << { :type => kw, :value => kw }
         else
-          result << com
-          com = comments.shift
+          tokens << { :type => t, :value => value_array[out_value.Get(i)] }
         end
       end
-      result
-    end
 
-    # Converts Esprima token to JSDuck token
-    def to_jsduck_token(tok)
-      case tok["type"]
-      when "Numeric"
-        {:type => :number, :value => tok["value"]}
-      when "String"
-        {:type => :string, :value => tok["value"].gsub(/\A['"]|['"]\Z/m, "")}
-      when "Identifier", "Boolean", "Null"
-        {:type => :ident, :value => tok["value"]}
-      when "RegularExpression"
-        {:type => :regex, :value => tok["value"]}
-      when "Punctuator"
-        {:type => :operator, :value => tok["value"]}
-      when "Keyword"
-        kw = tok["value"].to_sym
-        {:type => kw, :value => kw}
-      when "Block"
-        {
-          :type => :doc_comment,
-          :value => "/*#{tok['value']}*/",
-          :linenr => @input[0...tok["range"][0]].count("\n") + 1,
-        }
-      else
-        throw "Unknown Esprima token type #{tok['type']}"
-      end
+      lock.delete
+
+      tokens
     end
 
   end
