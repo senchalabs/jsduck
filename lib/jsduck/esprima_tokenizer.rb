@@ -2,10 +2,6 @@ require 'v8'
 require 'json'
 require 'singleton'
 
-class V8::Object
-  attr_reader :native
-end
-
 module JsDuck
 
   # Uses Esprima.js engine through V8 to tokenize JavaScript string.
@@ -24,12 +20,12 @@ module JsDuck
     def tokenize(input)
       @v8['js'] = @input = input
 
-      out = @v8.eval("EsprimaWrapper.parse(js)")
+      out = JSON.parse(@v8.eval("EsprimaWrapper.parse(js)"))
 
       len = out["type"].length
-      out_type = out["type"].native
-      out_value = out["value"].native
-      out_linenr = out["linenr"].native
+      out_type = out["type"]
+      out_value = out["value"]
+      out_linenr = out["linenr"]
 
       type_array = [
         :number,
@@ -41,24 +37,20 @@ module JsDuck
         :doc_comment,
       ]
 
-      value_array = JSON.parse(out["valueJson"])
-
-      lock = V8::C::Locker.new
+      value_array = out["valueArray"]
 
       tokens = []
       for i in (0..(len-1))
-        t = type_array[out_type.Get(i)]
+        t = type_array[out_type[i]]
         if t == :doc_comment
-          tokens << { :type => t, :value => out_value.Get(i).AsciiValue(), :linenr => out_linenr.Get(i) }
+          tokens << { :type => t, :value => out_value[i], :linenr => out_linenr[i] }
         elsif t == :keyword
-          kw = value_array[out_value.Get(i)].to_sym
+          kw = value_array[out_value[i]].to_sym
           tokens << { :type => kw, :value => kw }
         else
-          tokens << { :type => t, :value => value_array[out_value.Get(i)] }
+          tokens << { :type => t, :value => value_array[out_value[i]] }
         end
       end
-
-      lock.delete
 
       tokens
     end
