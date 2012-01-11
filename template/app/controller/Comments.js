@@ -156,7 +156,7 @@ Ext.define('Docs.controller.Comments', {
         var startkey = Ext.JSON.encode(this.commentId(id)),
             endkey = Ext.JSON.encode(this.commentId(id).concat([{}])),
             currentUser = this.getController('Auth').currentUser,
-            url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_list/with_vote/by_target';
+            url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_target';
 
         Ext.data.JsonP.request({
             url: url,
