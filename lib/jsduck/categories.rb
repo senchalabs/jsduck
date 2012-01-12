@@ -107,6 +107,10 @@ module JsDuck
       arr.reduce(0) {|sum, item| sum + item["classes"].length + header_size }
     end
 
+    def to_array
+      @categories
+    end
+
   end
 
 end
