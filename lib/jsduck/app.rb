@@ -14,6 +14,7 @@ require 'jsduck/videos'
 require 'jsduck/examples'
 require 'jsduck/categories'
 require 'jsduck/images'
+require 'jsduck/sitemap'
 require 'jsduck/json_duck'
 require 'jsduck/lint'
 require 'jsduck/template_dir'
@@ -90,6 +91,17 @@ module JsDuck
         @videos.write(@opts.output_dir+"/videos")
         @examples.write(@opts.output_dir+"/examples")
         @images.copy(@opts.output_dir+"/images")
+      end
+
+      if @opts.seo
+
+        @sitemap = Sitemap.new({
+          :base_url => "http://docs.sencha.com/touch/2-0",
+          :categories => @categories,
+          :guides => @guides
+        })
+
+        @sitemap.write(@opts.output_dir + "/sitemap.xml")
       end
     end
 
