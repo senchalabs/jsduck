@@ -9,9 +9,9 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
-  describe "@member" do
+  describe "@member defines the class of member" do
 
-    it "defines the class where item belongs" do
+    it "when inside a lonely doc-comment" do
       items = parse(<<-EOS)
         /**
          * @cfg foo
@@ -21,7 +21,7 @@ describe JsDuck::Aggregator do
       items[0][:owner].should == "Bar"
     end
 
-    it "forces item to be moved into that class" do
+    it "when used after the corresponding @class" do
       items = parse(<<-EOS)
         /**
          * @class Bar
@@ -38,7 +38,7 @@ describe JsDuck::Aggregator do
       items[1][:members][:cfg].length.should == 0
     end
 
-    it "even when @member comes before the class itself" do
+    it "when used before the corresponding @class" do
       items = parse(<<-EOS)
         /**
          * @cfg foo
