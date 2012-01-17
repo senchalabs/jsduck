@@ -3,57 +3,56 @@ require 'fileutils'
 
 module JsDuck
 
-  # Writes HTML JavaScript/CSS source into HTML file.
+  # Writes HTML JavaScript/CSS source into HTML files.
   class SourceWriter
+    def initialize(source_files, parallel)
+      @source_files = source_files
+      @parallel = parallel
+    end
 
     # Writes all source files as HTML files into destination dir.
-    #
-    # Can't be done in parallel, because file.html_filename= method
-    # updates all the doc-objects related to the file
-    def self.write_all(files, destination)
+    def write(destination)
+      generate_html_filenames
+
       FileUtils.mkdir(destination)
-      src = SourceWriter.new(destination)
-      files.each do |file|
-        html_filename = src.write(file.to_html, file.filename)
-        Logger.instance.log("Writing source", html_filename)
-        file.html_filename = File.basename(html_filename)
+      @parallel.each(@source_files) do |file|
+        Logger.instance.log("Writing source", file.html_filename)
+        write_single(destination + "/" + file.html_filename, file.to_html)
       end
     end
 
-    # Initializes SourceFormatter to the directory where
-    # HTML-formatted source files will be placed.
-    def initialize(output_dir)
-      @output_dir = output_dir
-    end
+    private
 
-    # Writes HTML into file in output directory.  It returns the name
-    # of the file that it wrote.
-    def write(source, filename)
-      fname = uniq_html_filename(filename)
-      File.open(fname, 'w') do |f|
-        f.write(wrap_page(source))
+    # Generates unique HTML filenames for each file.
+    #
+    # Can't be done in parallel for obvious reasons, but also
+    # because file.html_filename= method updates all the doc-objects
+    # related to the file.
+    def generate_html_filenames
+      filenames = {}
+      @source_files.each do |file|
+        i = 0
+        begin
+          name = html_filename(file.filename, i)
+          i += 1
+        end while filenames.has_key?(name)
+        filenames[name] = true
+        file.html_filename = name
       end
-      fname
     end
 
-    def uniq_html_filename(filename)
-      fname = html_filename(filename)
-      nr = 1
-      while file_exists?(fname)
-        nr += 1
-        fname = html_filename(filename, nr)
-      end
-      fname
-    end
-
+    # Returns HTML filename for n'th file with given name.
+    #
+    # html_filename("Foo.js", 0) => "Foo.html"
+    # html_filename("Foo.js", 1) => "Foo2.html"
+    # html_filename("Foo.js", 2) => "Foo3.html"
+    #
     def html_filename(filename, nr=0)
-      @output_dir + "/" + File.basename(filename, ".js") + (nr > 0 ? nr.to_s : "") + ".html"
+      File.basename(filename, ".js") + (nr > 0 ? (nr+1).to_s : "") + ".html"
     end
 
-    # Case-insensitive check for file existance to avoid conflicts
-    # when source files dir is moved to Windows machine.
-    def file_exists?(filename)
-      Dir.glob(filename, File::FNM_CASEFOLD).length > 0
+    def write_single(filename, source)
+      File.open(filename, 'w') {|f| f.write(wrap_page(source)) }
     end
 
     # Returns source wrapped inside HTML page
