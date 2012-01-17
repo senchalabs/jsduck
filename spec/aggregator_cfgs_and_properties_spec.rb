@@ -284,4 +284,46 @@ describe JsDuck::Aggregator do
     it_should_behave_like "cfg or property"
   end
 
+  describe "doc-comment before variable without assignment" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some documentation.
+         */
+        var foo;
+      EOS
+    end
+    it "should detect the variable name" do
+      @doc[:name].should == "foo"
+    end
+  end
+
+  describe "doc-comment before multiple variables" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some documentation.
+         */
+        var foo, bar, baz;
+      EOS
+    end
+    it "should detect the first variable name" do
+      @doc[:name].should == "foo"
+    end
+  end
+
+  describe "doc-comment before function call" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some documentation.
+         */
+        Ext.createAlias(class, "foo", "bar");
+      EOS
+    end
+    it "should fail detecting name of the property" do
+      @doc[:name].should == ""
+    end
+  end
+
 end
