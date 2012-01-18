@@ -16,7 +16,7 @@ Ext.define("Docs.Syntax", {
             code = Ext.get(code);
             var pre = code.parent();
             // Disable inline examples in IE (too slow)
-            if (Ext.isIE && pre.hasCls("inline-example")) {
+            if (!Docs.forceInlineExamples && Ext.isIE && pre.hasCls("inline-example")) {
                 pre.removeCls("inline-example");
             }
             // Don't prettify inline examples, these are highlighted anyway
