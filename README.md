@@ -3,13 +3,6 @@ JsDuck
 
 API documentation generator for Sencha JavaScript frameworks.
 
-           ,~~.
-          (  6 )-_,
-     (\___ )=='-'
-      \ .   ) )
-       \ `-' /    hjw
-    ~'`~'`~'`~'`~
-
 JsDuck aims to be a better documentation generator for [Ext JS][] than
 the old [ext-doc][] was. It is used by Sencha to document [Ext JS
 4][ext4-docs], [Sencha Touch][touch2-docs] and [several other][other-docs]
@@ -19,6 +12,10 @@ The highlights of JSDuck are [Markdown][] support and keeping you DRY
 by inferring a lot of information from code.  Read the [Guide][] for
 full overview.
 
+**New to JSDuck?** Watch [introductory talk by Nick Poulden][video]:
+
+[<img src="http://b.vimeocdn.com/ts/227/178/227178682_200.jpg" alt="SenchaCon 2011 JSDuck talk" />][video]
+
 [Ext JS]: http://www.sencha.com/products/js/
 [ext-doc]: http://ext-doc.org/
 [Markdown]: http://daringfireball.net/projects/markdown/
@@ -26,7 +23,7 @@ full overview.
 [touch2-docs]: http://docs.sencha.com/touch/2-0/
 [other-docs]: http://docs.sencha.com/ext-js/4-0/
 [Guide]: https://github.com/senchalabs/jsduck/wiki/Guide
-
+[video]: http://vimeo.com/33465319
 
 Getting it
 ----------
