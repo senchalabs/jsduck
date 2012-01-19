@@ -21,8 +21,9 @@
     @include transition(background-color, 0.15s, linear);
     @include icons; }
   // Use gray for private classes
-  .private .x-grid-cell-inner a {
-    color: #666; }
+  .private {
+    .x-grid-cell-inner, .x-grid-cell-inner a {
+      color: #666; } }
   .x-grid-row-over {
     .x-grid-cell-inner {
       @include transition(background-color, 0.15s, linear); } }
