@@ -8,8 +8,16 @@ module JsDuck
   class Class
     attr_accessor :relations
 
-    def initialize(doc)
+    # Creates JSDuck class.
+    #
+    # Pass true as second parameter to create a placeholder class.
+    def initialize(doc, class_exists=true)
       @doc = doc
+
+      # Wrap classname into custom string class that allows
+      # differenciating between existing and missing classes.
+      @doc[:name] = ClassNameString.new(@doc[:name], class_exists)
+
       @doc[:members] = Class.default_members_hash if !@doc[:members]
       @doc[:statics] = Class.default_members_hash if !@doc[:statics]
       @relations = nil
@@ -44,15 +52,25 @@ module JsDuck
       p ? p.superclasses + [p]  : []
     end
 
-    # Returns array of mixin class instances.
-    # Returns empty array if no mixins
+    # Returns all direct mixins of this class. Same as #deps(:mixins).
     def mixins
-      @doc[:mixins] ? @doc[:mixins].collect {|classname| lookup(classname) }.compact : []
+      deps(:mixins)
     end
 
-    # Returns all mixins this class and its parent classes
-    def all_mixins
-      mixins + (parent ? parent.all_mixins : [])
+    # Returns an array of class instances this class directly depends on.
+    # Possible types are:
+    #
+    # - :mixins
+    # - :requires
+    # - :uses
+    #
+    def deps(type)
+      @doc[type] ? @doc[type].collect {|classname| lookup(classname) } : []
+    end
+
+    # Same ase #deps, but pulls out the dependencies from all parent classes.
+    def parent_deps(type)
+      parent ? parent.deps(type) + parent.parent_deps(type) : []
     end
 
     # Looks up class object by name
@@ -60,10 +78,18 @@ module JsDuck
     def lookup(classname)
       if @relations[classname]
         @relations[classname]
-      elsif !@relations.ignore?(classname)
+      elsif @relations.ignore?(classname) || classname =~ /\*/
+        # Ignore explicitly ignored classes and classnames with
+        # wildcards in them.  We could expand the wildcard, but that
+        # can result in a very long list of classes, like when
+        # somebody requires 'Ext.form.*', so for now we do the
+        # simplest thing and ignore it.
+        Class.new({:name => classname}, false)
+      else
         context = @doc[:files][0]
         Logger.instance.warn(:extend, "Class #{classname} not found", context[:filename], context[:linenr])
-        nil
+        # Create placeholder class
+        Class.new({:name => classname}, false)
       end
     end
 
@@ -273,6 +299,23 @@ module JsDuck
         :css_var => [],
         :css_mixin => [],
       }
+    end
+  end
+
+  # String class for classnames that has extra method #exists? which
+  # returns false when class with such name doesn't exist.
+  #
+  # This ability is used by JsDuck::Renderer, which only receives
+  # names of various classes but needs to only render existing classes
+  # as links.
+  class ClassNameString < String
+    def initialize(str, exists=true)
+      super(str)
+      @exists = exists
+    end
+
+    def exists?
+      @exists
     end
   end
 

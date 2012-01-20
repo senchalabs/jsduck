@@ -15,7 +15,7 @@ module JsDuck
       @warning_docs = [
         [:global, "Member doesn't belong to any class"],
         [:inheritdoc, "@inheritdoc referring to unknown class or member"],
-        [:extend, "@extend or @mixin referring to unknown class"],
+        [:extend, "@extend/mixin/requires/uses referring to unknown class"],
         [:link, "{@link} to unknown class or member"],
         [:link_private, "{@link} to private member"],
         [:link_ambiguous, "{@link} is ambiguous"],
