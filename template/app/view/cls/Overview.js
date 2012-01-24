@@ -57,6 +57,7 @@ Ext.define('Docs.view.cls.Overview', {
      */
     load: function(docClass) {
         this.docClass = docClass;
+        this.accessors = this.buildAccessorsMap();
 
         if (this.toolbar) {
             // Workaround for bug in ExtJS.
@@ -68,15 +69,10 @@ Ext.define('Docs.view.cls.Overview', {
         }
         this.toolbar = Ext.create('Docs.view.cls.Toolbar', {
             docClass: this.docClass,
+            accessors: this.accessors,
             listeners: {
-                hideInherited: function(hideInherited) {
-                    this.filterMembers(this.toolbar.getFilterValue(), hideInherited, Docs.Settings.get("hideAccessors"));
-                },
-                hideAccessors: function(hideAccessors) {
-                    this.filterMembers(this.toolbar.getFilterValue(), Docs.Settings.get("hideInherited"), hideAccessors);
-                },
-                filter: function(search) {
-                    this.filterMembers(search, Docs.Settings.get("hideInherited"), Docs.Settings.get("hideAccessors"));
+                filter: function(search, hide) {
+                    this.filterMembers(search, hide);
                 },
                 scope: this
             }
@@ -87,8 +83,9 @@ Ext.define('Docs.view.cls.Overview', {
 
         Docs.Syntax.highlight(this.getEl());
 
-        if (Docs.Settings.get("hideInherited") || Docs.Settings.get("hideAccessors")) {
-            this.filterMembers("", Docs.Settings.get("hideInherited"), Docs.Settings.get("hideAccessors"));
+        var hide = Docs.Settings.get("hide");
+        if (hide.inherited || hide.accessors) {
+            this.filterMembers("", hide);
         }
 
         this.fireEvent('afterload');
@@ -97,13 +94,13 @@ Ext.define('Docs.view.cls.Overview', {
     /**
      * Filters members by search string and inheritance.
      * @param {String} search
-     * @param {Boolean} hideInherited
-     * @param {Boolean} hideAccessors
+     * @param {Object} hide
+     * @param {Boolean} hide.inherited
+     * @param {Boolean} hide.accessors
      * @private
      */
-    filterMembers: function(search, hideInherited, hideAccessors) {
-        Docs.Settings.set("hideInherited", hideInherited);
-        Docs.Settings.set("hideAccessors", hideAccessors);
+    filterMembers: function(search, hide) {
+        Docs.Settings.set("hide", hide);
         var isSearch = search.length > 0;
 
         // Hide the class documentation when filtering
@@ -115,25 +112,15 @@ Ext.define('Docs.view.cls.Overview', {
         // and hide inherited members if hideInherited=true
         // and hide accessor methods when hideAccessors=true
         var re = new RegExp(Ext.String.escapeRegex(search), "i");
-        if (hideAccessors) {
-            // build map of all possible accessor method names
-            var accessors = {};
-            Ext.Array.forEach(this.docClass.members.cfg, function(m) {
-                var capName = Ext.String.capitalize(m.name);
-                accessors["get"+capName] = true;
-                accessors["set"+capName] = true;
-            });
-        }
         this.eachMember(function(m) {
             var el = Ext.get(m.id);
-            var byInheritance = !hideInherited || (m.owner === this.docClass.name);
-            var byAccessor = !hideAccessors || m.tagname !== 'method' || !accessors.hasOwnProperty(m.name);
+            var byInheritance = !hide.inherited || (m.owner === this.docClass.name);
+            var byAccessor = !hide.accessors || m.tagname !== 'method' || !this.accessors.hasOwnProperty(m.name);
             var byFilter = !isSearch || re.test(m.name);
             if (byInheritance && byFilter && byAccessor) {
                 el.setStyle({display: 'block'});
             }
             else {
-                console.log(m.name);
                 el.setStyle({display: 'none'});
             }
         }, this);
@@ -164,7 +151,17 @@ Ext.define('Docs.view.cls.Overview', {
             }, this);
         }, this);
 
-        this.toolbar.hideInherited(hideInherited);
+        this.toolbar.hideMenuItems(hide);
+    },
+
+    buildAccessorsMap: function(name) {
+        var accessors = {};
+        Ext.Array.forEach(this.docClass.members.cfg, function(m) {
+            var capName = Ext.String.capitalize(m.name);
+            accessors["get"+capName] = true;
+            accessors["set"+capName] = true;
+        });
+        return accessors;
     },
 
     getVisibleElements: function(selector, root) {

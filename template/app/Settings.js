@@ -6,6 +6,11 @@ Ext.define("Docs.Settings", {
     storeName: 'Settings',
     singleton: true,
 
+    // Default values for settings for which undefined doesn't suite.
+    defaults: {
+        hide: {}
+    },
+
     /**
      * Saves a setting
      *
@@ -34,6 +39,6 @@ Ext.define("Docs.Settings", {
      */
     get: function(key) {
         var index = this.store.findExact("key", key);
-        return index > -1 ? this.store.getAt(index).get("value") : undefined;
+        return index > -1 ? this.store.getAt(index).get("value") : this.defaults[key];
     }
 });

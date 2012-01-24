@@ -20,24 +20,21 @@ Ext.define('Docs.view.cls.Toolbar', {
      */
     docClass: {},
 
+    /**
+     * @cfg {Object} accessors
+     * Accessors map from Overview component.
+     */
+    accessors: {},
+
     initComponent: function() {
         this.addEvents(
             /**
-             * @event hideInherited
-             * Fires when hideInherited checkbox toggled.
-             * @param {Boolean} hide  True when inherited items should get hidden.
-             */
-            "hideInherited",
-            /**
-             * @event hideAccessors
-             * Fires when hideAccessors checkbox toggled.
-             * @param {Boolean} hide  True when accessor methods should get hidden.
-             */
-            "hideAccessors",
-            /**
              * @event filter
-             * Fires when text typed to filter.
+             * Fires when text typed to filter, or one of the hide-checkboxes clicked.
              * @param {String} search  The search text.
+             * @param {Object} hide  Flags which members to hide:
+             * @param {Boolean} hide.inherited  True when inherited items should get hidden.
+             * @param {Boolean} hide.accessors  True when accessor methods should get hidden.
              */
             "filter",
             /**
@@ -90,13 +87,13 @@ Ext.define('Docs.view.cls.Toolbar', {
                 enableKeyEvents: true,
                 listeners: {
                     keyup: function(cmp) {
-                        this.fireEvent("filter", cmp.getValue());
+                        this.fireEvent("filter", cmp.getValue(), this.getHideFlags());
                         cmp.setHideTrigger(cmp.getValue().length === 0);
                     },
                     specialkey: function(cmp, event) {
                         if (event.keyCode === Ext.EventObject.ESC) {
                             cmp.reset();
-                            this.fireEvent("filter", "");
+                            this.fireEvent("filter", "", this.getHideFlags());
                         }
                     },
                     scope: this
@@ -104,35 +101,13 @@ Ext.define('Docs.view.cls.Toolbar', {
                 onTriggerClick: function() {
                     this.reset();
                     this.focus();
-                    self.fireEvent('filter', '');
+                    self.fireEvent('filter', '', this.getHideFlags());
                     this.setHideTrigger(true);
                 }
             }),
             { xtype: 'tbfill' },
-            {
-                boxLabel: 'Hide inherited',
-                boxLabelAlign: 'before',
-                xtype: 'checkbox',
-                margin: '0 5 0 0',
-                padding: '0 0 5 0',
-                checked: Docs.Settings.get("hideInherited"),
-                handler: function(el) {
-                    this.fireEvent("hideInherited", el.checked);
-                },
-                scope: this
-            },
-            {
-                boxLabel: 'Hide accessors',
-                boxLabelAlign: 'before',
-                xtype: 'checkbox',
-                margin: '0 5 0 0',
-                padding: '0 0 5 0',
-                checked: Docs.Settings.get("hideAccessors"),
-                handler: function(el) {
-                    this.fireEvent("hideAccessors", el.checked);
-                },
-                scope: this
-            },
+            this.hideInherited = this.createCheckbox("Hide inherited", "inherited"),
+            this.hideAccessors = this.createCheckbox("Hide accessors", "accessors"),
             {
                 xtype: 'button',
                 iconCls: 'expand-all-members',
@@ -148,6 +123,27 @@ Ext.define('Docs.view.cls.Toolbar', {
         ]);
 
         this.callParent(arguments);
+    },
+
+    getHideFlags: function() {
+        return {
+            inherited: this.hideInherited.getValue(),
+            accessors: this.hideAccessors.getValue()
+        };
+    },
+
+    createCheckbox: function(title, type) {
+        return Ext.widget('checkbox', {
+            boxLabel: title,
+            boxLabelAlign: 'before',
+            margin: '0 5 0 0',
+            padding: '0 0 5 0',
+            checked: Docs.Settings.get("hide")[type],
+            handler: function(el) {
+                this.fireEvent("filter", this.filterField.getValue(), this.getHideFlags());
+            },
+            scope: this
+        });
     },
 
     createMemberButton: function(cfg) {
@@ -185,7 +181,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     // creates store tha holds link records
     createStore: function(records) {
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'cls', 'url', 'label', 'inherited', 'meta']
+            fields: ['id', 'cls', 'url', 'label', 'inherited', 'accessor', 'meta']
         });
         store.add(records);
         return store;
@@ -198,20 +194,23 @@ Ext.define('Docs.view.cls.Toolbar', {
             url: member ? (cls + "-" + member.id) : cls,
             label: member ? ((member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name) : cls,
             inherited: member ? member.owner !== cls : false,
+            accessor: member ? member.tagname === "method" && this.accessors.hasOwnProperty(member.name) : false,
             meta: member ? member.meta : {}
         };
     },
 
     /**
      * Hides or unhides inherited members in dropdown menus.
-     * @param {Boolean} hide
+     * @param {Object} hide
      */
-    hideInherited: function(hide) {
+    hideMenuItems: function(hide) {
         Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();
-                if (hide) {
-                    store.filterBy(function(m) { return !m.get("inherited"); });
+                if (hide.inherited || hide.accessors) {
+                    store.filterBy(function(m) {
+                        return !(hide.inherited && m.get("inherited") || hide.accessors && m.get("accessor"));
+                    });
                 }
                 else {
                     store.clearFilter();
