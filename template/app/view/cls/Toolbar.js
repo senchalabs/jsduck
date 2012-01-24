@@ -106,8 +106,8 @@ Ext.define('Docs.view.cls.Toolbar', {
                 }
             }),
             { xtype: 'tbfill' },
-            this.hideInherited = this.createCheckbox("Hide inherited", "inherited"),
-            this.hideAccessors = this.createCheckbox("Hide accessors", "accessors"),
+            this.hideInherited = this.createButton("Inh", "Show inherited", "inherited"),
+            this.hideAccessors = this.createButton("Acc", "Show accessors (getters/setters)", "accessors"),
             {
                 xtype: 'button',
                 iconCls: 'expand-all-members',
@@ -115,7 +115,6 @@ Ext.define('Docs.view.cls.Toolbar', {
                 enableToggle: true,
                 toggleHandler: function(btn, pressed) {
                     btn.setIconCls(pressed ? 'collapse-all-members' : 'expand-all-members');
-                    btn.setTooltip(pressed ? "Collapse all" : "Expand all");
                     this.fireEvent("toggleExpanded", pressed);
                 },
                 scope: this
@@ -127,19 +126,18 @@ Ext.define('Docs.view.cls.Toolbar', {
 
     getHideFlags: function() {
         return {
-            inherited: this.hideInherited.getValue(),
-            accessors: this.hideAccessors.getValue()
+            inherited: !this.hideInherited.pressed,
+            accessors: !this.hideAccessors.pressed
         };
     },
 
-    createCheckbox: function(title, type) {
-        return Ext.widget('checkbox', {
-            boxLabel: title,
-            boxLabelAlign: 'before',
-            margin: '0 5 0 0',
-            padding: '0 0 5 0',
-            checked: Docs.Settings.get("hide")[type],
-            handler: function(el) {
+    createButton: function(text, title, type) {
+        return Ext.widget('button', {
+            text: text,
+            tooltip: title,
+            enableToggle: true,
+            pressed: !Docs.Settings.get("hide")[type],
+            toggleHandler: function(btn, pressed) {
                 this.fireEvent("filter", this.filterField.getValue(), this.getHideFlags());
             },
             scope: this
