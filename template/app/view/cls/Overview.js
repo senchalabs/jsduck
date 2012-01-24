@@ -70,10 +70,13 @@ Ext.define('Docs.view.cls.Overview', {
             docClass: this.docClass,
             listeners: {
                 hideInherited: function(hideInherited) {
-                    this.filterMembers(this.toolbar.getFilterValue(), hideInherited);
+                    this.filterMembers(this.toolbar.getFilterValue(), hideInherited, Docs.Settings.get("hideAccessors"));
+                },
+                hideAccessors: function(hideAccessors) {
+                    this.filterMembers(this.toolbar.getFilterValue(), Docs.Settings.get("hideInherited"), hideAccessors);
                 },
                 filter: function(search) {
-                    this.filterMembers(search, Docs.Settings.get("hideInherited"));
+                    this.filterMembers(search, Docs.Settings.get("hideInherited"), Docs.Settings.get("hideAccessors"));
                 },
                 scope: this
             }
@@ -84,8 +87,8 @@ Ext.define('Docs.view.cls.Overview', {
 
         Docs.Syntax.highlight(this.getEl());
 
-        if (Docs.Settings.get("hideInherited")) {
-            this.filterMembers("", true);
+        if (Docs.Settings.get("hideInherited") || Docs.Settings.get("hideAccessors")) {
+            this.filterMembers("", Docs.Settings.get("hideInherited"), Docs.Settings.get("hideAccessors"));
         }
 
         this.fireEvent('afterload');
@@ -95,10 +98,12 @@ Ext.define('Docs.view.cls.Overview', {
      * Filters members by search string and inheritance.
      * @param {String} search
      * @param {Boolean} hideInherited
+     * @param {Boolean} hideAccessors
      * @private
      */
-    filterMembers: function(search, hideInherited) {
+    filterMembers: function(search, hideInherited, hideAccessors) {
         Docs.Settings.set("hideInherited", hideInherited);
+        Docs.Settings.set("hideAccessors", hideAccessors);
         var isSearch = search.length > 0;
 
         // Hide the class documentation when filtering
@@ -108,15 +113,27 @@ Ext.define('Docs.view.cls.Overview', {
 
         // Hide members who's name doesn't match with the search string
         // and hide inherited members if hideInherited=true
+        // and hide accessor methods when hideAccessors=true
         var re = new RegExp(Ext.String.escapeRegex(search), "i");
+        if (hideAccessors) {
+            // build map of all possible accessor method names
+            var accessors = {};
+            Ext.Array.forEach(this.docClass.members.cfg, function(m) {
+                var capName = Ext.String.capitalize(m.name);
+                accessors["get"+capName] = true;
+                accessors["set"+capName] = true;
+            });
+        }
         this.eachMember(function(m) {
             var el = Ext.get(m.id);
             var byInheritance = !hideInherited || (m.owner === this.docClass.name);
+            var byAccessor = !hideAccessors || m.tagname !== 'method' || !accessors.hasOwnProperty(m.name);
             var byFilter = !isSearch || re.test(m.name);
-            if (byInheritance && byFilter) {
+            if (byInheritance && byFilter && byAccessor) {
                 el.setStyle({display: 'block'});
             }
             else {
+                console.log(m.name);
                 el.setStyle({display: 'none'});
             }
         }, this);

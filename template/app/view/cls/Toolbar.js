@@ -29,6 +29,12 @@ Ext.define('Docs.view.cls.Toolbar', {
              */
             "hideInherited",
             /**
+             * @event hideAccessors
+             * Fires when hideAccessors checkbox toggled.
+             * @param {Boolean} hide  True when accessor methods should get hidden.
+             */
+            "hideAccessors",
+            /**
              * @event filter
              * Fires when text typed to filter.
              * @param {String} search  The search text.
@@ -112,6 +118,18 @@ Ext.define('Docs.view.cls.Toolbar', {
                 checked: Docs.Settings.get("hideInherited"),
                 handler: function(el) {
                     this.fireEvent("hideInherited", el.checked);
+                },
+                scope: this
+            },
+            {
+                boxLabel: 'Hide accessors',
+                boxLabelAlign: 'before',
+                xtype: 'checkbox',
+                margin: '0 5 0 0',
+                padding: '0 0 5 0',
+                checked: Docs.Settings.get("hideAccessors"),
+                handler: function(el) {
+                    this.fireEvent("hideAccessors", el.checked);
                 },
                 scope: this
             },
