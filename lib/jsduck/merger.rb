@@ -158,7 +158,7 @@ module JsDuck
         :name => name,
         :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
-        :params => detect_params(docs, code),
+        :params => detect_params(:method, doc_map, code),
         :return => detect_return(doc_map, name == "constructor" ? "Object" : "undefined"),
       }, doc_map)
     end
@@ -170,7 +170,7 @@ module JsDuck
         :name => detect_name(:event, doc_map, code),
         :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
-        :params => detect_params(docs, code),
+        :params => detect_params(:event, doc_map, code),
       }, doc_map)
     end
 
@@ -220,7 +220,7 @@ module JsDuck
         :name => detect_name(:css_mixin, doc_map, code),
         :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
-        :params => detect_params(docs, code),
+        :params => detect_params(:css_mixin, doc_map, code),
       }, doc_map)
     end
 
@@ -383,9 +383,9 @@ module JsDuck
       doc_map[:cfg] && doc_map[:cfg].first[:optional] == false
     end
 
-    def detect_params(docs, code)
-      implicit = detect_implicit_params(code)
-      explicit = detect_explicit_params(docs)
+    def detect_params(tagname, doc_map, code)
+      implicit = code_matches_doc?(tagname, doc_map, code) ? detect_implicit_params(code) : []
+      explicit = detect_explicit_params(doc_map)
       # Override implicit parameters with explicit ones
       # But if explicit ones exist, don't append the implicit ones.
       params = []
@@ -415,8 +415,8 @@ module JsDuck
       end
     end
 
-    def detect_explicit_params(docs)
-      combine_properties(docs.find_all {|tag| tag[:tagname] == :param})
+    def detect_explicit_params(doc_map)
+      combine_properties(doc_map[:param] || [])
     end
 
     def detect_subproperties(docs, tagname)
