@@ -48,8 +48,6 @@ Ext.define('Docs.view.cls.Toolbar', {
         this.items = [];
         this.memberButtons = {};
 
-        var self = this;
-
         var memberTitles = {
             cfg: "Configs",
             property: "Properties",
@@ -77,6 +75,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             this.items.push(this.createClassListButton("Mixed Into", this.docClass.mixedInto));
         }
 
+        var self = this;
         this.items = this.items.concat([
             { xtype: 'tbspacer', width: 10 },
             this.filterField = Ext.widget("triggerfield", {
@@ -101,7 +100,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                 onTriggerClick: function() {
                     this.reset();
                     this.focus();
-                    self.fireEvent('filter', '', this.getHideFlags());
+                    self.fireEvent('filter', '', self.getHideFlags());
                     this.setHideTrigger(true);
                 }
             }),
