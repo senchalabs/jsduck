@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+# For running when gem not installed
+$:.unshift File.dirname(File.dirname(__FILE__)) + "/lib"
+
+require "rubygems"
+require "jsduck/json_duck"
+
+def with_each_class(dir)
+  Dir[dir+"/*.json"].each do |filename|
+    yield JsDuck::JsonDuck.read(filename)
+  end
+end
+
+def quote(a)
+  '"'+a+'"'
+end
+
+def arrow(a, b, opts="")
+  "  #{quote(a)}->#{quote(b)} #{opts};"
+end
+
+puts 'digraph G {'
+puts 'rankdir=LR;'
+with_each_class(ARGV[0]) do |cls|
+  if cls["extends"] && cls["extends"] != "Object"
+    puts arrow(cls["extends"], cls['name'], '[style=bold,weight=10]')
+  end
+  if cls["mixins"]
+    cls["mixins"].each {|mx| puts arrow(mx, cls['name'], '[weight=1,style=dashed]') }
+  end
+  # if cls["requires"]
+  #   cls["requires"].each {|mx| puts arrow(mx, cls['name'], '[style=dotted,weight=0]') }
+  # end
+  # if cls["uses"]
+  #   cls["uses"].each {|mx| puts arrow(mx, cls['name'], '[style=dotted,weight=0]') }
+  # end
+end
+puts '}'
+
