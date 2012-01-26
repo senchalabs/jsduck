@@ -83,10 +83,7 @@ Ext.define('Docs.view.cls.Overview', {
 
         Docs.Syntax.highlight(this.getEl());
 
-        var hide = Docs.Settings.get("hide");
-        if (hide.inherited || hide.accessors || hide.privates) {
-            this.filterMembers("", hide);
-        }
+        this.filterMembers("", Docs.Settings.get("hide"));
 
         this.fireEvent('afterload');
     },
@@ -114,11 +111,14 @@ Ext.define('Docs.view.cls.Overview', {
         var re = new RegExp(Ext.String.escapeRegex(search), "i");
         this.eachMember(function(m) {
             var el = Ext.get(m.id);
-            var byInheritance = !hide.inherited || (m.owner === this.docClass.name);
-            var byAccessor = !hide.accessors || m.tagname !== 'method' || !this.accessors.hasOwnProperty(m.name);
-            var byPrivate = !hide.privates || !m.meta['private'];
-            var byFilter = !isSearch || re.test(m.name);
-            if (byInheritance && byFilter && byAccessor && byPrivate) {
+            var visible = (!hide.publics || (m.meta['private'] || m.meta['protected']))
+                       && (!hide.protecteds || !m.meta['protected'])
+                       && (!hide.privates || !m.meta['private'])
+                       && (!hide.inherited || (m.owner === this.docClass.name))
+                       && (!hide.accessors || m.tagname !== 'method' || !this.accessors.hasOwnProperty(m.name))
+                       && (!isSearch || re.test(m.name));
+
+            if (visible) {
                 el.setStyle({display: 'block'});
             }
             else {

@@ -76,6 +76,14 @@ Ext.define('Docs.view.cls.Toolbar', {
             this.items.push(this.createClassListButton("Mixed Into", this.docClass.mixedInto));
         }
 
+        this.checkItems = {
+            publics: this.createCb("Public", "publics"),
+            protecteds: this.createCb("Protected", "protecteds"),
+            privates: this.createCb("Private", "privates"),
+            inherited: this.createCb("Inherited", "inherited"),
+            accessors: this.createCb("Accessors", "accessors")
+        };
+
         var self = this;
         this.items = this.items.concat([
             { xtype: 'tbspacer', width: 10 },
@@ -110,9 +118,12 @@ Ext.define('Docs.view.cls.Toolbar', {
                 xtype: 'button',
                 text: 'Show',
                 menu: [
-                    this.hideInherited = this.createCb("Inherited", "inherited"),
-                    this.hideAccessors = this.createCb("Accessors", "accessors"),
-                    this.hidePrivates  = this.createCb("Private", "privates")
+                    this.checkItems.publics,
+                    this.checkItems.protecteds,
+                    this.checkItems.privates,
+                    '-',
+                    this.checkItems.inherited,
+                    this.checkItems.accessors
                 ]
             },
             {
@@ -132,11 +143,11 @@ Ext.define('Docs.view.cls.Toolbar', {
     },
 
     getHideFlags: function() {
-        return {
-            inherited: !this.hideInherited.checked,
-            accessors: !this.hideAccessors.checked,
-            privates: !this.hidePrivates.checked
-        };
+        var flags = {};
+        for (var i in this.checkItems) {
+            flags[i] = !this.checkItems[i].checked;
+        }
+        return flags;
     },
 
     createCb: function(text, type) {
@@ -215,7 +226,13 @@ Ext.define('Docs.view.cls.Toolbar', {
                 var store = this.memberButtons[type].getStore();
                 if (hide.inherited || hide.accessors || hide.privates) {
                     store.filterBy(function(m) {
-                        return !(hide.inherited && m.get("inherited") || hide.accessors && m.get("accessor") || hide.privates && m.get("meta")["private"]);
+                        return !(
+                            hide.publics && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
+                            hide.protecteds && m.get("meta")["protected"] ||
+                            hide.privates && m.get("meta")["private"] ||
+                            hide.inherited && m.get("inherited") ||
+                            hide.accessors && m.get("accessor")
+                        );
                     });
                 }
                 else {
