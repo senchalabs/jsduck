@@ -28,15 +28,24 @@ def read_all_classes(dir, ignore_private=false)
   map
 end
 
+def read_ignored_members(filename)
+  map = {}
+  IO.read(filename).each_line do |line|
+    map[line.chomp] = true
+  end
+  map
+end
+
 # Gathers class members that are in cls1, but are missing in cls2
-def compare_classes(cls1, cls2)
+# Ignoring members listed in ignored_members hash.
+def compare_classes(cls1, cls2, ignored_members)
   diff = []
   cls1["members"].each_pair do |group_name, group_items|
     group_items.find_all {|m1| !m1["private"] && !m1["meta"]["protected"] && m1["owner"] == cls1["name"] }.each do |m1|
       match = cls2["members"][group_name].find do |m2|
         m2["name"] == m1["name"] && !m2["meta"]["protected"] && !m2["private"]
       end
-      if !match && m1["name"] != "constructor" && m1["name"] != ""
+      if !match && m1["name"] != "constructor" && m1["name"] != "" && !ignored_members[cls1["name"]+"#"+m1["name"]]
         other = nil
         ["cfg", "property", "method", "event"].each do |g|
           other = other || cls2["members"][g].find {|m2| m2["name"] == m1["name"] }
@@ -63,6 +72,7 @@ end
 old_classes = read_all_classes(ARGV[0], :ignore_private)
 new_classes = read_all_classes(ARGV[1])
 out_file = ARGV[2]
+ignored_members = ARGV[3] ? read_ignored_members(ARGV[3]) : {}
 
 diff_data = []
 old_classes.each_pair do |name, cls|
@@ -75,7 +85,7 @@ old_classes.each_pair do |name, cls|
       :name => cls["name"],
       :found => !!new_cls,
       :new_name => new_cls && new_cls["name"],
-      :diff => new_cls ? compare_classes(cls, new_cls) : [],
+      :diff => new_cls ? compare_classes(cls, new_cls, ignored_members) : [],
     }
   end
 end
