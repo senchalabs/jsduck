@@ -102,30 +102,21 @@ describe JsDuck::Class do
         @members = members_as_hash(@child, :method)
       end
 
-      it "returns all public members in current class" do
+      it "returns all members in current class" do
         @members.should have_key("foo")
         @members.should have_key("bar")
+        @members.should have_key("zappa")
       end
 
-      it "doesn't return private members of current class" do
-        @members.should_not have_key("zappa")
-      end
-
-      it "inherites public members of parent class" do
+      it "inherites members of parent class" do
         @members.should have_key("baz")
         @members.should have_key("foo")
+        @members.should have_key("frank")
       end
 
-      it "doesn't inherit private members of parent class" do
-        @members.should_not have_key("frank")
-      end
-
-      it "inherites public members of mixin classes" do
+      it "inherites members of mixin classes" do
         @members.should have_key("xxx")
-      end
-
-      it "doesn't inherit private members of mixin classes" do
-        @members.should_not have_key("pri")
+        @members.should have_key("pri")
       end
 
       it "keeps ownership of current class members" do
