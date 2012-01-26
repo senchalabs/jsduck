@@ -162,12 +162,6 @@ module JsDuck
             return text
           end
 
-          ms = ms.find_all {|m| !m[:private] }
-          if ms.length == 0
-            Logger.instance.warn(:link_private, "#{input} links to private member", file, line)
-            return text
-          end
-
           if ms.length > 1
             # When multiple public members, see if there remains just
             # one when we ignore the static members. If there's more,
