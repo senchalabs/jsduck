@@ -33,7 +33,7 @@ module JsDuck
       end
     end
 
-    # print warning for each member or parameter with no name
+    # print warning for each class or public member with no name
     def warn_no_doc
       @relations.each do |cls|
         if cls[:doc] == ""
@@ -41,7 +41,7 @@ module JsDuck
         end
       end
       each_member do |member|
-        if member[:doc] == ""
+        if member[:doc] == "" && !member[:private]
           warn(:no_doc, "No documentation for #{member[:owner]}##{member[:name]}", member)
         end
       end
