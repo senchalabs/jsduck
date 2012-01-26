@@ -303,7 +303,7 @@ Ext.define('Docs.view.Comments', {
      */
     renderClassCommentContainers: function(cls) {
         // Add comment button to class toolbar
-        Ext.ComponentQuery.query('classoverview toolbar')[0].insert(-3, {
+        Ext.ComponentQuery.query('classoverview toolbar')[0].insert(-4, {
             xtype: 'container',
             id: 'classCommentToolbarBtn',
             width: 24,

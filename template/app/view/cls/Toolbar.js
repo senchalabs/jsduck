@@ -35,6 +35,7 @@ Ext.define('Docs.view.cls.Toolbar', {
              * @param {Object} hide  Flags which members to hide:
              * @param {Boolean} hide.inherited  True when inherited items should get hidden.
              * @param {Boolean} hide.accessors  True when accessor methods should get hidden.
+             * @param {Boolean} hide.privates  True when private members should get hidden.
              */
             "filter",
             /**
@@ -107,6 +108,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             { xtype: 'tbfill' },
             this.hideInherited = this.createButton("Inh", "Show inherited", "inherited"),
             this.hideAccessors = this.createButton("Acc", "Show accessors (getters/setters)", "accessors"),
+            this.hidePrivates = this.createButton("Pri", "Show private", "privates"),
             {
                 xtype: 'button',
                 iconCls: 'expand-all-members',
@@ -126,7 +128,8 @@ Ext.define('Docs.view.cls.Toolbar', {
     getHideFlags: function() {
         return {
             inherited: !this.hideInherited.pressed,
-            accessors: !this.hideAccessors.pressed
+            accessors: !this.hideAccessors.pressed,
+            privates: !this.hidePrivates.pressed
         };
     },
 
@@ -204,9 +207,9 @@ Ext.define('Docs.view.cls.Toolbar', {
         Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();
-                if (hide.inherited || hide.accessors) {
+                if (hide.inherited || hide.accessors || hide.privates) {
                     store.filterBy(function(m) {
-                        return !(hide.inherited && m.get("inherited") || hide.accessors && m.get("accessor"));
+                        return !(hide.inherited && m.get("inherited") || hide.accessors && m.get("accessor") || hide.privates && m.get("meta")["private"]);
                     });
                 }
                 else {

@@ -5,8 +5,7 @@ require 'jsduck/meta_tag_registry'
 module JsDuck
 
   # Converts :doc properties of class from markdown to HTML, resolves
-  # @links, and converts type definitions to HTML.  Also removes
-  # private members.
+  # @links, and converts type definitions to HTML.
   class ClassFormatter
     # Set to false to disable HTML-formatting of type definitions.
     attr_accessor :include_types
@@ -28,10 +27,8 @@ module JsDuck
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
       [:members, :statics].each do |group|
         cls[group].each_pair do |type, members|
-          # format all public members, but keep the private members
-          # too - some of them might override public members and we
-          # don't want to lose this information.
-          cls[group][type] = members.map {|m| m[:private] ? m : format_member(m)  }
+          # format all members
+          cls[group][type] = members.map {|m| format_member(m) }
         end
       end
       cls[:html_meta] = format_meta_data(cls[:meta])

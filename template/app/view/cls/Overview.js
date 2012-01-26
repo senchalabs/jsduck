@@ -84,7 +84,7 @@ Ext.define('Docs.view.cls.Overview', {
         Docs.Syntax.highlight(this.getEl());
 
         var hide = Docs.Settings.get("hide");
-        if (hide.inherited || hide.accessors) {
+        if (hide.inherited || hide.accessors || hide.privates) {
             this.filterMembers("", hide);
         }
 
@@ -116,8 +116,9 @@ Ext.define('Docs.view.cls.Overview', {
             var el = Ext.get(m.id);
             var byInheritance = !hide.inherited || (m.owner === this.docClass.name);
             var byAccessor = !hide.accessors || m.tagname !== 'method' || !this.accessors.hasOwnProperty(m.name);
+            var byPrivate = !hide.privates || !m.meta['private'];
             var byFilter = !isSearch || re.test(m.name);
-            if (byInheritance && byFilter && byAccessor) {
+            if (byInheritance && byFilter && byAccessor && byPrivate) {
                 el.setStyle({display: 'block'});
             }
             else {

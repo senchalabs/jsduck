@@ -89,7 +89,7 @@ module JsDuck
     #
     # See members_hash for details.
     def members(type, context=:members)
-      ms = members_hash(type, context).values.find_all {|m| !m[:private] }
+      ms = members_hash(type, context).values #.find_all {|m| !m[:private] }
       ms.sort! {|a,b| a[:name] <=> b[:name] }
       type == :method ? constructor_first(ms) : ms
     end
