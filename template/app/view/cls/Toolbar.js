@@ -106,9 +106,15 @@ Ext.define('Docs.view.cls.Toolbar', {
                 }
             }),
             { xtype: 'tbfill' },
-            this.hideInherited = this.createButton("Inh", "Show inherited", "inherited"),
-            this.hideAccessors = this.createButton("Acc", "Show accessors (getters/setters)", "accessors"),
-            this.hidePrivates = this.createButton("Pri", "Show private", "privates"),
+            {
+                xtype: 'button',
+                text: 'Show',
+                menu: [
+                    this.hideInherited = this.createCb("Inherited", "inherited"),
+                    this.hideAccessors = this.createCb("Accessors", "accessors"),
+                    this.hidePrivates  = this.createCb("Private", "privates")
+                ]
+            },
             {
                 xtype: 'button',
                 iconCls: 'expand-all-members',
@@ -127,22 +133,22 @@ Ext.define('Docs.view.cls.Toolbar', {
 
     getHideFlags: function() {
         return {
-            inherited: !this.hideInherited.pressed,
-            accessors: !this.hideAccessors.pressed,
-            privates: !this.hidePrivates.pressed
+            inherited: !this.hideInherited.checked,
+            accessors: !this.hideAccessors.checked,
+            privates: !this.hidePrivates.checked
         };
     },
 
-    createButton: function(text, title, type) {
-        return Ext.widget('button', {
+    createCb: function(text, type) {
+        return Ext.widget('menucheckitem', {
             text: text,
-            tooltip: title,
-            enableToggle: true,
-            pressed: !Docs.Settings.get("hide")[type],
-            toggleHandler: function(btn, pressed) {
-                this.fireEvent("filter", this.filterField.getValue(), this.getHideFlags());
-            },
-            scope: this
+            checked: !Docs.Settings.get("hide")[type],
+            listeners: {
+                checkchange: function() {
+                    this.fireEvent("filter", this.filterField.getValue(), this.getHideFlags());
+                },
+                scope: this
+            }
         });
     },
 
