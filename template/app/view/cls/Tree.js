@@ -48,11 +48,36 @@ Ext.define('Docs.view.cls.Tree', {
             }
         ];
 
+        this.on("afterrender", this.setupButtonClickHandler, this);
+
         this.callParent();
+    },
+
+    setupButtonClickHandler: function() {
+        this.el.addListener('click', function(e, el) {
+            var clicked = Ext.get(el),
+            selected = Ext.get(Ext.query('.cls-grouping button.selected')[0]);
+
+            if (selected.dom === clicked.dom) {
+                return;
+            }
+
+            selected.removeCls('selected');
+            clicked.addCls('selected');
+
+            if (clicked.hasCls('by-package')) {
+                this.setLogic(Docs.view.cls.PackageLogic, this.showPrivate);
+            } else {
+                this.setLogic(Docs.view.cls.InheritanceLogic, this.showPrivate);
+            }
+        }, this, {
+            delegate: 'button'
+        });
     },
 
     setLogic: function(logic, showPrivate) {
         this.logic = logic;
+        this.showPrivate = showPrivate;
         var tree = new logic({classes: this.data, showPrivateClasses: showPrivate});
         if (this.root) {
             // remember the current selection
