@@ -33,10 +33,12 @@ Ext.define("Docs.ClassRegistry", {
      */
     search: function(text) {
         // Each record has its relative sorting order: 0..3
+        // which is doubled by it being public/private
         var results = [
-            [], [], [], [], // First we sort full matches: 0..3
-            [], [], [], [], // Then matches in beginning: 4..7
-            [], [], [], []  // Finally matches in middle: 8..11
+            //   public    |    private
+            [], [], [], [],  [], [], [], [], // First we sort full matches: 0..7
+            [], [], [], [],  [], [], [], [], // Then matches in beginning: 8..15
+            [], [], [], [],  [], [], [], []  // Finally matches in middle: 16..23
         ];
         var searchFull = /[.:]/.test(text);
         var safeText = Ext.escapeRe(text);
@@ -49,15 +51,17 @@ Ext.define("Docs.ClassRegistry", {
             // (e.g. "Ext.Component.focus" or "xtype: grid")
             // Otherwise search from just the member name (e.g. "focus" or "Component")
             var name = searchFull ? r.cls + (r.type === "class" ? "" : "." + r.member) : r.member;
+            // Shift private items to the end of each match category
+            var priv = r["private"] ? 4 : 0;
 
             if (reFull.test(name)) {
-                results[r.sort].push(r);
+                results[r.sort + priv].push(r);
             }
             else if (reBeg.test(name)) {
-                results[r.sort+4].push(r);
+                results[r.sort + priv + 8].push(r);
             }
             else if (reMid.test(name)) {
-                results[r.sort+8].push(r);
+                results[r.sort + priv + 16].push(r);
             }
         }, this);
 
