@@ -43,6 +43,8 @@ module JsDuck
       [:name, :tagname, :owner, :meta, :id].each do |key|
         m_copy[key] = m[key]
       end
+      # Inject :private to meta.
+      m_copy[:meta][:private] = true if m[:private]
       m_copy
     end
 

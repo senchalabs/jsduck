@@ -71,8 +71,8 @@ Ext.define('Docs.view.cls.Overview', {
             docClass: this.docClass,
             accessors: this.accessors,
             listeners: {
-                filter: function(search, hide) {
-                    this.filterMembers(search, hide);
+                filter: function(search, show) {
+                    this.filterMembers(search, show);
                 },
                 scope: this
             }
@@ -83,10 +83,7 @@ Ext.define('Docs.view.cls.Overview', {
 
         Docs.Syntax.highlight(this.getEl());
 
-        var hide = Docs.Settings.get("hide");
-        if (hide.inherited || hide.accessors) {
-            this.filterMembers("", hide);
-        }
+        this.filterMembers("", Docs.Settings.get("show"));
 
         this.fireEvent('afterload');
     },
@@ -94,13 +91,11 @@ Ext.define('Docs.view.cls.Overview', {
     /**
      * Filters members by search string and inheritance.
      * @param {String} search
-     * @param {Object} hide
-     * @param {Boolean} hide.inherited
-     * @param {Boolean} hide.accessors
+     * @param {Object} show
      * @private
      */
-    filterMembers: function(search, hide) {
-        Docs.Settings.set("hide", hide);
+    filterMembers: function(search, show) {
+        Docs.Settings.set("show", show);
         var isSearch = search.length > 0;
 
         // Hide the class documentation when filtering
@@ -108,16 +103,21 @@ Ext.define('Docs.view.cls.Overview', {
             Ext.get(el).setStyle({display: isSearch ? 'none' : 'block'});
         });
 
-        // Hide members who's name doesn't match with the search string
-        // and hide inherited members if hideInherited=true
-        // and hide accessor methods when hideAccessors=true
+        // Only show members who's name matches with the search string
+        // and its type is currently visible
         var re = new RegExp(Ext.String.escapeRegex(search), "i");
         this.eachMember(function(m) {
             var el = Ext.get(m.id);
-            var byInheritance = !hide.inherited || (m.owner === this.docClass.name);
-            var byAccessor = !hide.accessors || m.tagname !== 'method' || !this.accessors.hasOwnProperty(m.name);
-            var byFilter = !isSearch || re.test(m.name);
-            if (byInheritance && byFilter && byAccessor) {
+            var visible = !(
+                !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
+                !show['protected'] && m.meta['protected'] ||
+                !show['private']   && m.meta['private'] ||
+                !show['inherited'] && (m.owner !== this.docClass.name) ||
+                !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
+                isSearch           && !re.test(m.name)
+            );
+
+            if (visible) {
                 el.setStyle({display: 'block'});
             }
             else {
@@ -151,7 +151,7 @@ Ext.define('Docs.view.cls.Overview', {
             }, this);
         }, this);
 
-        this.toolbar.hideMenuItems(hide);
+        this.toolbar.showMenuItems(show, isSearch, re);
     },
 
     buildAccessorsMap: function(name) {

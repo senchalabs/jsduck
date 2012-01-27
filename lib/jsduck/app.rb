@@ -110,26 +110,33 @@ module JsDuck
         agr.aggregate(file)
       end
       agr.classify_orphans
-      agr.create_global_class unless @opts.ignore_global
+      agr.create_global_class
       agr.create_accessors
       agr.append_ext4_event_options
       agr.result
     end
 
-    # Filters out class-documentations, converting them to Class objects.
-    # For each other type, prints a warning message and discards it
+    # Turns all aggregated data into Class objects.
+    # Depending on --ignore-global either keeps or discards the global class.
+    # Warnings for global members are printed regardless of that setting,
+    # but of course can be turned off using --warnings=-global
     def filter_classes(docs)
       classes = []
       docs.each do |d|
-        if d[:tagname] == :class
-          classes << Class.new(d)
+        cls = Class.new(d)
+        if d[:name] != "global"
+          classes << cls
         else
-          type = d[:tagname].to_s
-          name = d[:name]
-          file = d[:files][0]
-          # This warning is shown when there are orphaned members,
-          # but the creation of global class has been turned off.
-          Logger.instance.warn(:global, "Ignoring #{type}: #{name}", file[:filename], file[:linenr])
+          # add global class only if --ignore-global not specified
+          classes << cls unless @opts.ignore_global
+
+          # Print warning for each global member
+          cls.all_local_members.each do |m|
+            type = m[:tagname].to_s
+            name = m[:name]
+            file = m[:files][0]
+            Logger.instance.warn(:global, "Global #{type}: #{name}", file[:filename], file[:linenr])
+          end
         end
       end
       Relations.new(classes, @opts.external_classes)

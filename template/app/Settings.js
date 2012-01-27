@@ -8,7 +8,13 @@ Ext.define("Docs.Settings", {
 
     // Default values for settings for which undefined doesn't suite.
     defaults: {
-        hide: {}
+        show: {
+            "public": true,
+            "protected": false,
+            "private": false,
+            "inherited": true,
+            "accessor": true
+        }
     },
 
     /**

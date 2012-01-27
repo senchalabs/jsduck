@@ -155,4 +155,8 @@
   &.static {
     background-color: $docs-text-color; }
   &.required {
-    background-color: $docs-text-color; } }
+    background-color: $docs-text-color; }
+  &.private {
+    background-color: #FD6B1B; }
+  &.protected {
+    background-color: #9B86FC; } }

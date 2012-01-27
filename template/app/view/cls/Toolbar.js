@@ -32,9 +32,12 @@ Ext.define('Docs.view.cls.Toolbar', {
              * @event filter
              * Fires when text typed to filter, or one of the hide-checkboxes clicked.
              * @param {String} search  The search text.
-             * @param {Object} hide  Flags which members to hide:
-             * @param {Boolean} hide.inherited  True when inherited items should get hidden.
-             * @param {Boolean} hide.accessors  True when accessor methods should get hidden.
+             * @param {Object} show  Flags which members to show:
+             * @param {Boolean} show.public
+             * @param {Boolean} show.protected
+             * @param {Boolean} show.private
+             * @param {Boolean} show.inherited
+             * @param {Boolean} show.accessor
              */
             "filter",
             /**
@@ -75,9 +78,17 @@ Ext.define('Docs.view.cls.Toolbar', {
             this.items.push(this.createClassListButton("Mixed Into", this.docClass.mixedInto));
         }
 
+        this.checkItems = {
+            "public": this.createCb("Public", "public"),
+            "protected": this.createCb("Protected", "protected"),
+            "private": this.createCb("Private", "private"),
+            "inherited": this.createCb("Inherited", "inherited"),
+            "accessor": this.createCb("Accessor", "accessor")
+        };
+
         var self = this;
         this.items = this.items.concat([
-            { xtype: 'tbspacer', width: 10 },
+            { xtype: 'tbfill' },
             this.filterField = Ext.widget("triggerfield", {
                 triggerCls: 'reset',
                 cls: 'member-filter',
@@ -86,13 +97,13 @@ Ext.define('Docs.view.cls.Toolbar', {
                 enableKeyEvents: true,
                 listeners: {
                     keyup: function(cmp) {
-                        this.fireEvent("filter", cmp.getValue(), this.getHideFlags());
+                        this.fireEvent("filter", cmp.getValue(), this.getShowFlags());
                         cmp.setHideTrigger(cmp.getValue().length === 0);
                     },
                     specialkey: function(cmp, event) {
                         if (event.keyCode === Ext.EventObject.ESC) {
                             cmp.reset();
-                            this.fireEvent("filter", "", this.getHideFlags());
+                            this.fireEvent("filter", "", this.getShowFlags());
                         }
                     },
                     scope: this
@@ -100,13 +111,23 @@ Ext.define('Docs.view.cls.Toolbar', {
                 onTriggerClick: function() {
                     this.reset();
                     this.focus();
-                    self.fireEvent('filter', '', self.getHideFlags());
+                    self.fireEvent('filter', '', self.getShowFlags());
                     this.setHideTrigger(true);
                 }
             }),
-            { xtype: 'tbfill' },
-            this.hideInherited = this.createButton("Inh", "Show inherited", "inherited"),
-            this.hideAccessors = this.createButton("Acc", "Show accessors (getters/setters)", "accessors"),
+            { xtype: 'tbspacer', width: 10 },
+            {
+                xtype: 'button',
+                text: 'Show',
+                menu: [
+                    this.checkItems['public'],
+                    this.checkItems['protected'],
+                    this.checkItems['private'],
+                    '-',
+                    this.checkItems['inherited'],
+                    this.checkItems['accessor']
+                ]
+            },
             {
                 xtype: 'button',
                 iconCls: 'expand-all-members',
@@ -123,23 +144,24 @@ Ext.define('Docs.view.cls.Toolbar', {
         this.callParent(arguments);
     },
 
-    getHideFlags: function() {
-        return {
-            inherited: !this.hideInherited.pressed,
-            accessors: !this.hideAccessors.pressed
-        };
+    getShowFlags: function() {
+        var flags = {};
+        for (var i in this.checkItems) {
+            flags[i] = this.checkItems[i].checked;
+        }
+        return flags;
     },
 
-    createButton: function(text, title, type) {
-        return Ext.widget('button', {
+    createCb: function(text, type) {
+        return Ext.widget('menucheckitem', {
             text: text,
-            tooltip: title,
-            enableToggle: true,
-            pressed: !Docs.Settings.get("hide")[type],
-            toggleHandler: function(btn, pressed) {
-                this.fireEvent("filter", this.filterField.getValue(), this.getHideFlags());
-            },
-            scope: this
+            checked: Docs.Settings.get("show")[type],
+            listeners: {
+                checkchange: function() {
+                    this.fireEvent("filter", this.filterField.getValue(), this.getShowFlags());
+                },
+                scope: this
+            }
         });
     },
 
@@ -197,21 +219,25 @@ Ext.define('Docs.view.cls.Toolbar', {
     },
 
     /**
-     * Hides or unhides inherited members in dropdown menus.
-     * @param {Object} hide
+     * Show or hides members in dropdown menus.
+     * @param {Object} show
+     * @param {Boolean} isSearch
+     * @param {RegExp} re
      */
-    hideMenuItems: function(hide) {
+    showMenuItems: function(show, isSearch, re) {
         Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();
-                if (hide.inherited || hide.accessors) {
-                    store.filterBy(function(m) {
-                        return !(hide.inherited && m.get("inherited") || hide.accessors && m.get("accessor"));
-                    });
-                }
-                else {
-                    store.clearFilter();
-                }
+                store.filterBy(function(m) {
+                    return !(
+                        !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
+                        !show['protected'] && m.get("meta")["protected"] ||
+                        !show['private']   && m.get("meta")["private"] ||
+                        !show['inherited'] && m.get("inherited") ||
+                        !show['accessor']  && m.get("accessor") ||
+                        isSearch           && !re.test(m.get("label"))
+                    );
+                });
             }
         }, this);
     },

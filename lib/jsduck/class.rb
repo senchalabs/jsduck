@@ -89,7 +89,7 @@ module JsDuck
     #
     # See members_hash for details.
     def members(type, context=:members)
-      ms = members_hash(type, context).values.find_all {|m| !m[:private] }
+      ms = members_hash(type, context).values #.find_all {|m| !m[:private] }
       ms.sort! {|a,b| a[:name] <=> b[:name] }
       type == :method ? constructor_first(ms) : ms
     end
@@ -121,28 +121,28 @@ module JsDuck
         return {}
       end
 
-      all_members = parent ? parent.members_hash(type, context) : {}
+      ms = parent ? parent.members_hash(type, context) : {}
 
       mixins.each do |mix|
-        all_members.merge!(mix.members_hash(type, context)) {|k,o,n| store_overrides(k,o,n)}
+        ms.merge!(mix.members_hash(type, context)) {|k,o,n| store_overrides(k,o,n)}
       end
 
       # For static members, exclude everything not explicitly marked as inheritable
       if context == :statics
-        all_members.delete_if {|key, member| !member[:inheritable] }
+        ms.delete_if {|key, member| !member[:inheritable] }
       end
 
-      all_members.merge!(local_members_hash(type, context)) {|k,o,n| store_overrides(k,o,n)}
+      ms.merge!(local_members_hash(type, context)) {|k,o,n| store_overrides(k,o,n)}
 
       # If singleton has static members, include them as if they were
       # instance members.  Otherwise they will be completely excluded
       # from the docs, as the static members block is not created for
       # singletons.
       if @doc[:singleton] && @doc[:statics][type].length > 0
-        all_members.merge!(local_members_hash(type, :statics)) {|k,o,n| store_overrides(k,o,n)}
+        ms.merge!(local_members_hash(type, :statics)) {|k,o,n| store_overrides(k,o,n)}
       end
 
-      all_members
+      ms
     end
 
     # Invoked when merge! finds two members with the same name.
@@ -197,7 +197,7 @@ module JsDuck
       return ms
     end
 
-    # Returns all public members of class, including the inherited and mixed in ones
+    # Returns all members of class, including the inherited and mixed in ones
     def all_members
       all = []
       [:members, :statics].each do |group|
@@ -208,12 +208,12 @@ module JsDuck
       all
     end
 
-    # Returns all local public members of class
+    # Returns all local members of class
     def all_local_members
       all = []
       [:members, :statics].each do |group|
         @doc[group].each_value do |ms|
-          all += ms.find_all {|m| !m[:private] }
+          all += ms
         end
       end
       all
