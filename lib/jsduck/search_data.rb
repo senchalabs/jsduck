@@ -43,6 +43,7 @@ module JsDuck
         :type => :class,
         :icon => :subclass,
         :id => cls.full_name,
+        :private => cls[:private],
         :sort => 0,
       }
     end
@@ -55,6 +56,7 @@ module JsDuck
         :type => :class,
         :icon => :class,
         :id => cls.full_name,
+        :private => cls[:private],
         :sort => 1,
       }
     end
@@ -67,6 +69,7 @@ module JsDuck
         :type => :class,
         :icon => :subclass,
         :id => cls.full_name,
+        :private => cls[:private],
         :sort => 2,
       }
     end
@@ -79,6 +82,7 @@ module JsDuck
         :type => :member,
         :icon => member[:tagname],
         :id => cls.full_name + "-" + member[:id],
+        :private => member[:private],
         :sort => 3,
       }
     end

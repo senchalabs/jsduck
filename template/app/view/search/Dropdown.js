@@ -44,7 +44,7 @@ Ext.define('Docs.view.search.Dropdown', {
             '<tpl for=".">',
                 '<div class="item">',
                     '<div class="icon icon-{icon}"></div>',
-                    '<div class="title">{member}</div>',
+                    '<div class="title {[values.private ? "private" : ""]}">{member}</div>',
                     '<div class="class">{cls}</div>',
                 '</div>',
             '</tpl>',

@@ -87,7 +87,9 @@
     .title {
       font-weight: bold;
       overflow: hidden;
-      text-overflow: ellipsis; }
+      text-overflow: ellipsis;
+      &.private {
+        color: gray; } }
     .class {
       font-size: 0.85em;
       overflow: hidden;
