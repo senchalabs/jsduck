@@ -6,7 +6,8 @@ Ext.define('Docs.view.cls.Tree', {
     alias: 'widget.classtree',
     requires: [
         'Docs.view.cls.PackageLogic',
-        'Docs.view.cls.InheritanceLogic'
+        'Docs.view.cls.InheritanceLogic',
+        'Docs.Settings'
     ],
 
     /**
@@ -15,7 +16,7 @@ Ext.define('Docs.view.cls.Tree', {
      */
 
     initComponent: function() {
-        this.setLogic(Docs.view.cls.PackageLogic, false);
+        this.setLogic(Docs.Settings.get("classTreeLogic"), Docs.Settings.get("showPrivateClasses"));
 
         this.dockedItems = [
             {
@@ -28,9 +29,10 @@ Ext.define('Docs.view.cls.Tree', {
                         xtype: 'checkbox',
                         boxLabel: 'Show private classes',
                         cls: 'cls-private-cb',
+                        checked: Docs.Settings.get("showPrivateClasses"),
                         listeners: {
                             change: function(cb, checked) {
-                                this.setLogic(this.logic, checked);
+                                this.setLogic(Docs.Settings.get("classTreeLogic"), checked);
                             },
                             scope: this
                         }
@@ -42,8 +44,8 @@ Ext.define('Docs.view.cls.Tree', {
                 dock: 'bottom',
                 cls: 'cls-grouping',
                 html: [
-                    '<button class="by-package selected">By Package</button>',
-                    '<button class="by-inheritance">By Inheritance</button>'
+                    this.makeButtonHtml("PackageLogic", "By Package"),
+                    this.makeButtonHtml("InheritanceLogic", "By Inheritance")
                 ].join('')
             }
         ];
@@ -51,6 +53,15 @@ Ext.define('Docs.view.cls.Tree', {
         this.on("afterrender", this.setupButtonClickHandler, this);
 
         this.callParent();
+    },
+
+    makeButtonHtml: function(logic, text) {
+        return Ext.String.format(
+            '<button class="{0} {1}">{2}</button>',
+            logic,
+            Docs.Settings.get("classTreeLogic") === logic ? "selected" : "",
+            text
+        );
     },
 
     setupButtonClickHandler: function() {
@@ -65,20 +76,21 @@ Ext.define('Docs.view.cls.Tree', {
             selected.removeCls('selected');
             clicked.addCls('selected');
 
-            if (clicked.hasCls('by-package')) {
-                this.setLogic(Docs.view.cls.PackageLogic, this.showPrivate);
+            if (clicked.hasCls('PackageLogic')) {
+                this.setLogic("PackageLogic", Docs.Settings.get("showPrivateClasses"));
             } else {
-                this.setLogic(Docs.view.cls.InheritanceLogic, this.showPrivate);
+                this.setLogic("InheritanceLogic", Docs.Settings.get("showPrivateClasses"));
             }
         }, this, {
             delegate: 'button'
         });
     },
 
-    setLogic: function(logic, showPrivate) {
-        this.logic = logic;
-        this.showPrivate = showPrivate;
-        var tree = new logic({classes: this.data, showPrivateClasses: showPrivate});
+    setLogic: function(logic, showPrivateClasses) {
+        Docs.Settings.set("classTreeLogic", logic);
+        Docs.Settings.set("showPrivateClasses", showPrivateClasses);
+
+        var tree = new Docs.view.cls[logic]({classes: this.data, showPrivateClasses: showPrivateClasses});
         if (this.root) {
             // remember the current selection
             var selected = this.getSelectionModel().getLastSelected();

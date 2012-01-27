@@ -14,7 +14,9 @@ Ext.define("Docs.Settings", {
             "private": false,
             "inherited": true,
             "accessor": true
-        }
+        },
+        showPrivateClasses: false,
+        classTreeLogic: "PackageLogic"
     },
 
     /**
