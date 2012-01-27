@@ -75,6 +75,16 @@
   border: solid #bbb;
   border-width: 0 1px 0 0; }
 
+
+// Shared font styles for both buttons and private classes checkbox
+.cls-grouping button, .cls-private-cb {
+  font-size: 11px;
+  color: #4d4d4d;
+  font-weight: bold;
+  // Somewhere inside checkbox CSS font-smoothing is turned on,
+  // so for consistency we use it for buttons too.
+  -webkit-font-smoothing: antialiased; }
+
 // Buttons for choosing class tree grouping:
 //   By Package <-> By Inheritance
 .cls-grouping {
@@ -82,9 +92,6 @@
   text-align: center;
   button {
     display: inline-block;
-    color: #4d4d4d;
-    font-size: 11px;
-    font-weight: bold;
     float: left;
     margin: 0 3px;
     padding: 1px 13px 2px 13px;
@@ -99,3 +106,4 @@
       box-shadow: inset #5b6167 0 0 1px;
       @include border-radius(10px);
       text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35); } } }
+

@@ -15,23 +15,45 @@ Ext.define('Docs.view.cls.Tree', {
      */
 
     initComponent: function() {
-        this.setLogic(Docs.view.cls.PackageLogic);
+        this.setLogic(Docs.view.cls.PackageLogic, false);
 
-        this.dockedItems = [{
-            xtype: 'container',
-            dock: 'bottom',
-            cls: 'cls-grouping',
-            html: [
-                '<button class="by-package selected">By Package</button>',
-                '<button class="by-inheritance">By Inheritance</button>'
-            ].join('')
-        }];
+        this.dockedItems = [
+            {
+                xtype: 'container',
+                dock: 'bottom',
+                layout: 'hbox',
+                items: [
+                    {width: 34},
+                    {
+                        xtype: 'checkbox',
+                        boxLabel: 'Show private classes',
+                        cls: 'cls-private-cb',
+                        listeners: {
+                            change: function(cb, checked) {
+                                this.setLogic(this.logic, checked);
+                            },
+                            scope: this
+                        }
+                    }
+                ]
+            },
+            {
+                xtype: 'container',
+                dock: 'bottom',
+                cls: 'cls-grouping',
+                html: [
+                    '<button class="by-package selected">By Package</button>',
+                    '<button class="by-inheritance">By Inheritance</button>'
+                ].join('')
+            }
+        ];
 
         this.callParent();
     },
 
-    setLogic: function(logic) {
-        var tree = new logic({classes: this.data, showPrivateClasses: true});
+    setLogic: function(logic, showPrivate) {
+        this.logic = logic;
+        var tree = new logic({classes: this.data, showPrivateClasses: showPrivate});
         if (this.root) {
             // remember the current selection
             var selected = this.getSelectionModel().getLastSelected();
