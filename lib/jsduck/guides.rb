@@ -55,9 +55,32 @@ module JsDuck
       @formatter.doc_context = {:filename => guide_file, :linenr => 0}
       name = File.basename(in_dir)
       @formatter.img_path = "guides/#{name}"
-      html = @formatter.format(IO.read(guide_file))
+      html = add_toc(guide, @formatter.format(IO.read(guide_file)))
 
       JsonDuck.write_jsonp(out_dir+"/README.js", name, {:guide => html, :title => guide["title"]})
+    end
+
+    # Creates table of contents at the top of guide by looking for <h2> elements in HTML.
+    def add_toc(guide, html)
+      toc = [
+        "<p><strong>Contents</strong></p>",
+        "<ul class='toc'>",
+      ]
+      new_html = []
+      i = 0
+      html.each_line do |line|
+        if line =~ /^<h2>(.*)<\/h2>$/
+          i += 1
+          toc << "<li><a href='#!/guide/#{guide['name']}-section-#{i}'>#{$1}</a></li>"
+          new_html << "<h2 id='#{guide['name']}-section-#{i}'>#{$1}</h2>"
+        else
+          new_html << line
+        end
+      end
+      toc << "</ul>"
+      # Inject TOC at below first heading
+      new_html.insert(1, toc)
+      new_html.flatten.join
     end
 
     # Returns all guides as array
