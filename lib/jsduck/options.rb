@@ -428,7 +428,7 @@ module JsDuck
         if File.directory?(fname)
           Dir[fname+"/**/*.{js,css,scss}"].each {|f| @input_files << f }
         elsif fname =~ /\.jsb3$/
-          @input_files += extract_jsb_files(fname)
+          extract_jsb_files(fname).each {|fn| read_filenames(fn) }
         else
           @input_files << fname
         end
