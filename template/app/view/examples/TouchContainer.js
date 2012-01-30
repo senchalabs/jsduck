@@ -52,9 +52,10 @@ Ext.define('Docs.view.examples.TouchContainer', {
      * @param {Object} example Example object
      */
     load: function(example) {
+        var url = example.externalUrl || (this.exampleBaseUrl + example.url);
         this.title = example.text + " Example";
         this.device = Ext.create('Docs.view.examples.Device', {
-            url: this.exampleBaseUrl + example.url,
+            url: url,
             device: example.device || "phone",
             orientation: example.orientation || "landscape"
         });
