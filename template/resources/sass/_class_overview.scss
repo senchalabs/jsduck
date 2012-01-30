@@ -144,20 +144,21 @@
     .name {
       font-weight: bold; }
     .title {
-      padding-bottom: 3px; }
-    .signature-box {
-      border: 1px solid #999;
-      @include border-radius(5px);
-      padding: 10px 50px;
-      text-align: center;
-      &.template {
-        background-color: #eee; }
-      &.deprecated {
-        color: #600;
-        background-color: #fee;
-        strong {
-          text-transform: uppercase;
-          color: white;
-          @include border-radius(2px);
-          padding: 0 3px;
-          background-color: #aa0000; } } } } }
+      padding-bottom: 3px; } } }
+
+.signature-box {
+  border: 1px solid #999;
+  @include border-radius(5px);
+  padding: 10px 50px;
+  text-align: center;
+  &.template {
+    background-color: #eee; }
+  &.deprecated {
+    color: #600;
+    background-color: #fee;
+    strong {
+      text-transform: uppercase;
+      color: white;
+      @include border-radius(2px);
+      padding: 0 3px;
+      background-color: #aa0000; } } }
