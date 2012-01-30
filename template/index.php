@@ -44,7 +44,7 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
     }
     elseif (preg_match('/^\/guide\/(.+?)(-section-[0-9]+)?$/', $fragment, $m)) {
       $json = decode_file("guides/".$m[1]."/README.js");
-      print_page($json["title"], '<div id="guide" style="padding: 1px">' . $json["guide"] . '</div>', $fragment);
+      print_page($json["title"], '<div class="guide-container" style="padding: 1px">' . $json["guide"] . '</div>', $fragment);
     }
     elseif (preg_match('/^\/guide\/?$/', $fragment, $m)) {
       print_index_page();
