@@ -26,6 +26,12 @@ module JsDuck
     # existance of the tag.
     attr_reader :boolean
 
+    # Here the appropriate class or member will be injected,
+    # so the to_value and to_html methods can for produce
+    # different output based on whether the tag is inside class,
+    # method, event, etc.
+    attr_accessor :context
+
     # It gets passed an array of contents gathered from all meta-tags
     # of given type. It should return the value to be stored for this
     # meta-tag at :key. The returned value is also passed to #to_html

@@ -31,7 +31,7 @@ module JsDuck
           cls[group][type] = members.map {|m| format_member(m) }
         end
       end
-      cls[:html_meta] = format_meta_data(cls[:meta])
+      cls[:html_meta] = format_meta_data(cls)
       cls
     end
 
@@ -49,7 +49,7 @@ module JsDuck
       m[:params] = m[:params].map {|p| format_item(p, is_css_tag) } if m[:params]
       m[:return] = format_item(m[:return], is_css_tag) if m[:return]
       m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
-      m[:html_meta] = format_meta_data(m[:meta])
+      m[:html_meta] = format_meta_data(m)
       m
     end
 
@@ -79,10 +79,14 @@ module JsDuck
       end
     end
 
-    def format_meta_data(meta_data)
+    def format_meta_data(context)
       result = {}
-      meta_data.each_pair do |key, value|
-        result[key] = MetaTagRegistry.instance[key].to_html(value) if value
+      context[:meta].each_pair do |key, value|
+        if value
+          tag = MetaTagRegistry.instance[key]
+          tag.context = context
+          result[key] = tag.to_html(value)
+        end
       end
       result
     end
