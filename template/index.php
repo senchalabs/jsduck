@@ -42,7 +42,7 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
     elseif (preg_match('/^\/api\/?$/', $fragment, $m)) {
       print_index_page();
     }
-    elseif (preg_match('/^\/guide\/(.+)/', $fragment, $m)) {
+    elseif (preg_match('/^\/guide\/(.+?)(-section-[0-9]+)?$/', $fragment, $m)) {
       $json = decode_file("guides/".$m[1]."/README.js");
       print_page($json["title"], '<div id="guide" style="padding: 1px">' . $json["guide"] . '</div>', $fragment);
     }
@@ -54,7 +54,7 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
     }
   }
   catch (Exception $e) {
-    print_page($e->getMessage(), $e->getMessage());
+    print_page($e->getMessage(), $e->getMessage(), $fragment);
   }
 }
 else {
