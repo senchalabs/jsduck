@@ -54,6 +54,19 @@
       color: #e7ba27;
       letter-spacing: 0px; } }
 
+  .guide-container {
+    table {
+      width: 900px;
+      font-size: 0.9em;
+      th {
+        background-color: #eee;
+        font-weight: bold;
+        text-align: center;
+        color: #333;
+        padding: 1px 2px; }
+      td {
+        padding: 3px; } } }
+
   // The print button
   .print {
     background: url(../images/print.png) no-repeat;
