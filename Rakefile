@@ -154,14 +154,6 @@ class JsDuckRunner
     @options += options
   end
 
-  def add_relative_examples_path
-    @options += ["--head-html", <<-EOHTML]
-      <script type="text/javascript">
-        Docs.exampleBaseUrl = "#{relative_sdk_path}examples/";
-      </script>
-    EOHTML
-  end
-
   # Enables comments when CORS is supported by browser.
   # This excludes Opera and IE < 8.
   # We check explicitly for IE version to make sure the code works the
