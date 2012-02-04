@@ -52,7 +52,7 @@ module JsDuck
       @welcome = Welcome.create(@opts.welcome)
       @guides = Guides.create(@opts.guides, DocFormatter.new(@relations, @opts))
       @videos = Videos.create(@opts.videos)
-      @examples = Examples.create(@opts.examples)
+      @examples = Examples.create(@opts.examples, @opts)
       @categories = Categories.create(@opts.categories_path, DocFormatter.new(@relations, @opts), @relations)
 
       if @opts.export

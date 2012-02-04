@@ -232,7 +232,6 @@ class JsDuckRunner
 
     head_html = <<-EOHTML
       <script type="text/javascript">
-        Docs.exampleBaseUrl = "#{relative_touch_path}examples/";
         if (Ext.is.Phone) { window.location = "#{relative_touch_path}examples/"; }
       </script>
     EOHTML
@@ -240,7 +239,8 @@ class JsDuckRunner
     @options += [
       "--body-html", head_html,
       "--welcome", "template-min/welcome.html",
-      "--eg-iframe", "template-min/eg-iframe.html"
+      "--eg-iframe", "template-min/eg-iframe.html",
+      "--examples-base-url", "#{relative_touch_path}examples/",
     ]
   end
 

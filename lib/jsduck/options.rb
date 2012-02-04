@@ -31,6 +31,7 @@ module JsDuck
     attr_accessor :export
     attr_accessor :seo
     attr_accessor :eg_iframe
+    attr_accessor :examples_base_url
 
     # Debugging
     attr_accessor :processes
@@ -94,6 +95,7 @@ module JsDuck
       @export = nil
       @seo = false
       @eg_iframe = nil
+      @examples_base_url = "extjs/examples/"
 
       # Debugging
       # Turn multiprocessing off by default in Windows
@@ -274,6 +276,11 @@ module JsDuck
           "An HTML file to use inside an iframe",
           "to display inline examples.", " ") do |path|
           @eg_iframe = canonical(path)
+        end
+
+        opts.on('--examples_base_url=URL',
+          "Base URL for examples with relative URL-s.", " ") do |path|
+          @examples_base_url = path
         end
 
         opts.separator "Debugging:"
