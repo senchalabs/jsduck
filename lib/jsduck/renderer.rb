@@ -45,6 +45,8 @@ module JsDuck
         render_tree,
         render_dependencies(:allMixins, "Mixins"),
         render_dependencies(:requires, "Requires"),
+        render_dependencies(:subclasses, "Subclasses"),
+        render_dependencies(:mixedInto, "Mixed into"),
         render_dependencies(:uses, "Uses"),
         render_files,
       ]
