@@ -127,6 +127,10 @@ describe JsDuck::Lexer do
     lex("a /* foo */ b").should == [[:ident, "a"], [:ident, "b"]]
   end
 
+  it "ignores empty multi-line comments" do
+    lex("a /**/ b").should == [[:ident, "a"], [:ident, "b"]]
+  end
+
   it "identifies doc-comments together with line numbers" do
     lex("/** foo */").should == [[:doc_comment, "/** foo */", 1]]
   end
