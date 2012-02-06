@@ -157,6 +157,20 @@ describe JsDuck::Aggregator do
     it_should_behave_like "multiple aliases"
   end
 
+  describe "Alias with more than one dot (.) in it" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @alias widget.foo.bar
+         */
+      EOS
+    end
+    it "will use the first part as namespace" do
+      @doc[:aliases].should == {"widget" => ["foo.bar"]}
+    end
+  end
+
   describe "Ext.define() with simple alias" do
     before do
       @doc = parse(<<-EOS)[0]
