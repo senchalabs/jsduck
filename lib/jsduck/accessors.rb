@@ -83,12 +83,7 @@ module JsDuck
       return add_shared({
         :tagname => :event,
         :name => name,
-        :doc =>
-          "Fires when the {@link ##{cfg[:id]}} configuration is changed by {@link #method-#{setter_name}}." +
-          "\n\n" +
-          "Note that this event is fired *before* the value of {@link ##{cfg[:id]}} has been updated, " +
-          "and that you can return false from any listener to the #{name} event " +
-          "to cancel the change.",
+        :doc => "Fires when the {@link ##{cfg[:id]}} configuration is changed by {@link #method-#{setter_name}}.",
         :params => [
           {
             :name => "this",
