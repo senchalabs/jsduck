@@ -55,7 +55,9 @@ Ext.define('Docs.view.cls.Toolbar', {
             cfg: "Configs",
             property: "Properties",
             method: "Methods",
-            event: "Events"
+            event: "Events",
+            css_var: "CSS Vars",
+            css_mixin: "CSS Mixins"
         };
         for (var type in memberTitles) {
             var members = this.docClass.members[type];
