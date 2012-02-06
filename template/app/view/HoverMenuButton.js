@@ -10,20 +10,13 @@ Ext.define('Docs.view.HoverMenuButton', {
     ],
 
     /**
-     * @cfg {Ext.data.Store} store
-     * Store with menu items (required).
+     * @cfg {Ext.data.Store} store (required)
+     * Store with menu items.
      */
-
-    /**
-     * @cfg {Object} menuCfg
-     * Additional config options for {@link Docs.view.HoverMenu}
-     */
-    menuCfg: {},
 
     /**
      * @cfg {Boolean} showCount
      * True to show small number in button indicating the number of items in menu.
-     * Defaults to false.
      */
     showCount: false,
 
@@ -39,14 +32,7 @@ Ext.define('Docs.view.HoverMenuButton', {
              * @event click
              * Fired when button clicked.
              */
-            "click",
-            /**
-             * @event closeclick
-             * Fired when close link in menu clicked.
-             * @param {String} name  Name of the class and or member that was closed.
-             * For example "Ext.Ajax" or "Ext.Ajax-method-request".
-             */
-            "closeclick"
+            "click"
         );
 
         // Append links count to button text, update it when store filtered
@@ -58,9 +44,9 @@ Ext.define('Docs.view.HoverMenuButton', {
             }, this);
         }
 
-        this.menu = Ext.create('Docs.view.HoverMenu', Ext.apply({
+        this.menu = Ext.create('Docs.view.HoverMenu', {
             store: this.store
-        }, this.menuCfg));
+        });
 
         this.callParent(arguments);
     },
@@ -103,11 +89,7 @@ Ext.define('Docs.view.HoverMenuButton', {
         this.menu.hide();
 
         this.menu.getEl().addListener('click', function(e) {
-            if (e.getTarget(".close")) {
-                this.fireEvent("closeclick", e.getTarget().rel);
-            } else {
-                this.menu.hide();
-            }
+            this.menu.hide();
             e.preventDefault();
         }, this);
 

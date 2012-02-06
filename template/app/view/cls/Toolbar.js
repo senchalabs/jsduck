@@ -180,21 +180,20 @@ Ext.define('Docs.view.cls.Toolbar', {
     // creates store tha holds link records
     createStore: function(records) {
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'cls', 'url', 'label', 'inherited', 'accessor', 'meta']
+            fields: ['id', 'url', 'label', 'inherited', 'accessor', 'meta']
         });
         store.add(records);
         return store;
     },
 
-    // Creates link object referencing a class (and optionally a class member)
+    // Creates link object referencing a class member
     createLinkRecord: function(cls, member) {
         return {
-            cls: cls,
-            url: member ? (cls + "-" + member.id) : cls,
-            label: member ? ((member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name) : cls,
-            inherited: member ? member.owner !== cls : false,
-            accessor: member ? member.tagname === "method" && this.accessors.hasOwnProperty(member.name) : false,
-            meta: member ? member.meta : {}
+            url: cls + "-" + member.id,
+            label: (member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name,
+            inherited: member.owner !== cls,
+            accessor: member.tagname === "method" && this.accessors.hasOwnProperty(member.name),
+            meta: member.meta
         };
     },
 
