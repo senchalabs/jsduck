@@ -61,7 +61,7 @@ module JsDuck
       return if @cls[:alternateClassNames].length == 0
       return [
         "<h4>Alternate names</h4>",
-        @cls[:alternateClassNames].map {|name| "<div class='alternate-class-name'>#{name}</div>" },
+        @cls[:alternateClassNames].sort.map {|name| "<div class='alternate-class-name'>#{name}</div>" },
       ]
     end
 
@@ -69,7 +69,7 @@ module JsDuck
       return if !@cls[type] || @cls[type].length == 0
       return [
         "<h4>#{title}</h4>",
-        @cls[type].map {|name| "<div class='dependency'>#{render_link(name)}</div>" },
+        @cls[type].sort.map {|name| "<div class='dependency'>#{render_link(name)}</div>" },
       ]
     end
 
