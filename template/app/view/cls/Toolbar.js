@@ -71,13 +71,6 @@ Ext.define('Docs.view.cls.Toolbar', {
             }
         }
 
-        if (this.docClass.subclasses.length) {
-            this.items.push(this.createClassListButton("Sub Classes", this.docClass.subclasses));
-        }
-        if (this.docClass.mixedInto.length) {
-            this.items.push(this.createClassListButton("Mixed Into", this.docClass.mixedInto));
-        }
-
         this.checkItems = {
             "public": this.createCb("Public", "public"),
             "protected": this.createCb("Protected", "protected"),
@@ -181,19 +174,6 @@ Ext.define('Docs.view.cls.Toolbar', {
                 },
                 scope: this
             }
-        });
-    },
-
-    createClassListButton: function(text, classes) {
-        var data = Ext.Array.map(classes, function(cls) {
-            return this.createLinkRecord(cls);
-        }, this);
-
-        return Ext.create('Docs.view.HoverMenuButton', {
-            text: text,
-            cls: 'icon-subclass',
-            showCount: true,
-            store: this.createStore(data)
         });
     },
 
