@@ -45,10 +45,17 @@ Ext.define('Docs.view.HoverMenuButton', {
         }
 
         this.menu = Ext.create('Docs.view.HoverMenu', {
-            store: this.store
+            store: this.store,
+            columnHeight: this.getColumnHeight()
         });
 
         this.callParent(arguments);
+    },
+
+    getColumnHeight: function() {
+        var compensation = 200;
+        var lineHeight = 18;
+        return Math.floor((Ext.Element.getViewportHeight() - compensation) / lineHeight);
     },
 
     onRender: function() {
