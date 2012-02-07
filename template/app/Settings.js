@@ -12,6 +12,7 @@ Ext.define("Docs.Settings", {
             "public": true,
             "protected": false,
             "private": false,
+            "deprecated": false,
             "inherited": true,
             "accessor": true
         },

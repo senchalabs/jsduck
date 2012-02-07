@@ -81,7 +81,8 @@ Ext.define('Docs.view.cls.Toolbar', {
             "protected": this.createCb("Protected", "protected"),
             "private": this.createCb("Private", "private"),
             "inherited": this.createCb("Inherited", "inherited"),
-            "accessor": this.createCb("Accessor", "accessor")
+            "accessor": this.createCb("Accessor", "accessor"),
+            "deprecated": this.createCb("Deprecated", "deprecated")
         };
 
         var self = this;
@@ -123,7 +124,8 @@ Ext.define('Docs.view.cls.Toolbar', {
                     this.checkItems['private'],
                     '-',
                     this.checkItems['inherited'],
-                    this.checkItems['accessor']
+                    this.checkItems['accessor'],
+                    this.checkItems['deprecated']
                 ]
             },
             {
@@ -219,6 +221,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                         !show['private']   && m.get("meta")["private"] ||
                         !show['inherited'] && m.get("inherited") ||
                         !show['accessor']  && m.get("accessor") ||
+                        !show['deprecated']   && m.get("meta")["deprecated"] ||
                         isSearch           && !re.test(m.get("label"))
                     );
                 });

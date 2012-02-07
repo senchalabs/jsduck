@@ -114,6 +114,7 @@ Ext.define('Docs.view.cls.Overview', {
                 !show['private']   && m.meta['private'] ||
                 !show['inherited'] && (m.owner !== this.docClass.name) ||
                 !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
+                !show['deprecated'] && m.meta['deprecated'] ||
                 isSearch           && !re.test(m.name)
             );
 
