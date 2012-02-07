@@ -60,13 +60,16 @@ Ext.define('Docs.view.cls.Toolbar', {
             css_mixin: "CSS Mixins"
         };
         for (var type in memberTitles) {
-            var members = this.docClass.members[type];
-            var statics = this.docClass.statics[type];
-            if (members.length || statics.length) {
+            // combine both static and instance members into one alphabetically sorted array
+            var members = this.docClass.members[type].concat(this.docClass.statics[type]);
+            members.sort(function(a, b) {
+                return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
+            });
+            if (members.length > 0) {
                 var btn = this.createMemberButton({
                     text: memberTitles[type],
                     type: type,
-                    members: members.concat(statics)
+                    members: members
                 });
                 this.memberButtons[type] = btn;
                 this.items.push(btn);
