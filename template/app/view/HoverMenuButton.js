@@ -106,16 +106,17 @@ Ext.define('Docs.view.HoverMenuButton', {
     deferShowMenu: function() {
         clearTimeout(Docs.view.HoverMenuButton.showTimeout);
         Docs.view.HoverMenuButton.showTimeout = Ext.Function.defer(function() {
-
             // hide other menus
             Ext.Array.forEach(Docs.view.HoverMenuButton.menus, function(menu) {
                 if (menu !== this.menu) {
                     menu.hide();
                 }
-            });
+            }, this);
+
             // stop pending menuhide process
             clearTimeout(this.hideTimeout);
             this.menu.show();
+
             // position menu right below button and show it
             var p = this.getEl().getXY(),
                 toolbar = Ext.ComponentQuery.query('classoverview toolbar')[0],
@@ -125,9 +126,16 @@ Ext.define('Docs.view.HoverMenuButton', {
                 menuWidth = this.menu.getEl().getWidth(),
                 pageWidth = Ext.getCmp('doctabs').getWidth();
 
-            if (menuWidth > pageWidth) leftOffset = 0;
-            else if ((leftOffset + menuWidth) > pageWidth) leftOffset = pageWidth - menuWidth - 30;
-            if (leftOffset < toolbarOffset[0]) leftOffset = toolbarOffset[0];
+            if (menuWidth > pageWidth) {
+                leftOffset = 0;
+            }
+            else if ((leftOffset + menuWidth) > pageWidth) {
+                leftOffset = pageWidth - menuWidth - 30;
+            }
+
+            if (leftOffset < toolbarOffset[0]) {
+                leftOffset = toolbarOffset[0];
+            }
 
             this.menu.getEl().setStyle({
                 left: leftOffset+"px",
