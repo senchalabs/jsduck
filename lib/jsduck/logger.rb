@@ -66,7 +66,7 @@ module JsDuck
       elsif @warnings.has_key?(type)
         @warnings[type] = enabled
       else
-        warn(nil, "Warning of type '#{type} doesn't exist")
+        warn(nil, "Warning of type '#{type}' doesn't exist")
       end
     end
 
