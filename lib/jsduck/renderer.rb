@@ -18,7 +18,7 @@ module JsDuck
               render_meta_data(@cls[:html_meta]),
             "</div>",
             "<div class='members'>",
-              render_member_sections,
+              render_all_sections,
             "</div>",
           "</div>",
         ].flatten.compact.join
@@ -117,9 +117,8 @@ module JsDuck
       return "<a href='#!/api/#{id}' rel='#{id}' class='docClass'>#{label}</a>"
     end
 
-    def render_member_sections
+    def render_all_sections
       sections = [
-        {:type => :cfg, :title => "Config options"},
         {:type => :property, :title => "Properties"},
         {:type => :method, :title => "Methods"},
         {:type => :event, :title => "Events"},
@@ -127,22 +126,43 @@ module JsDuck
         {:type => :css_mixin, :title => "CSS Mixins"},
       ]
 
+      render_configs_section + sections.map {|sec| render_section(sec) }
+    end
+
+    def render_configs_section
+      configs = @cls[:members][:cfg] + @cls[:statics][:cfg]
+
+      if configs.length > 0
+        required, optional = configs.partition {|c| c[:meta][:required] }
+        return [
+          "<div class='members-section'>",
+            required.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
+            "<h3 class='members-title icon-cfg'>Config options</h3>",
+            render_subsection(required, "Required Config options"),
+            render_subsection(optional, required.length > 0 ? "Optional Config options" : nil),
+          "</div>",
+        ]
+      else
+        return []
+      end
+    end
+
+    def render_section(sec)
+      members = @cls[:members][sec[:type]]
+      statics = @cls[:statics][sec[:type]]
+
       # Skip rendering empty sections
-      sections.map do |sec|
-        members = @cls[:members][sec[:type]]
-        statics = @cls[:statics][sec[:type]]
-        if members.length > 0 || statics.length > 0
-          [
-            "<div class='members-section'>",
-              statics.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
-              "<h3 class='members-title icon-#{sec[:type]}'>#{sec[:title]}</h3>",
-              render_subsection(members, statics.length > 0 ? "Instance #{sec[:title]}" : nil),
-              render_subsection(statics, "Static #{sec[:title]}"),
-            "</div>",
-          ]
-        else
-          nil
-        end
+      if members.length > 0 || statics.length > 0
+        return [
+          "<div class='members-section'>",
+            statics.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
+            "<h3 class='members-title icon-#{sec[:type]}'>#{sec[:title]}</h3>",
+            render_subsection(members, statics.length > 0 ? "Instance #{sec[:title]}" : nil),
+            render_subsection(statics, "Static #{sec[:title]}"),
+          "</div>",
+        ]
+      else
+        return []
       end
     end
 
