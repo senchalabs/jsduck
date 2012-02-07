@@ -87,6 +87,15 @@
 #center-container .guide-container {
   padding: 10px;
   font-size: 14px;
+  // Table of contents for guides
+  // Similar styles to class docs sidebar
+  .toc {
+    float: right;
+    background-color: #f7f7f7;
+    border: solid 1px #e8e8e8;
+    padding: 10px 20px;
+    margin: 0 14px;
+    @include border-radius(5px); }
   h1 {
     background: url(../images/doc-m.png) no-repeat -5px -5px;
     padding: 10px 0 10px 55px;

@@ -67,7 +67,7 @@ Ext.define('Docs.controller.Guides', {
                         this.handleUrlClick(el.href, event);
                     }, this, {
                         preventDefault: true,
-                        delegate: 'ul.toc > li > a'
+                        delegate: '.toc a'
                     });
                 }
             }
