@@ -548,4 +548,52 @@ describe JsDuck::Aggregator do
       @classes.length.should == 1
     end
   end
+
+
+  shared_examples_for "extending Object" do
+    it "has extends == nil" do
+      @doc[:extends].should == nil
+    end
+  end
+
+  describe "Class explicitly extending Object" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class Foo
+         * @extends Object
+         */
+      EOS
+    end
+    it_should_behave_like "extending Object"
+  end
+
+  describe "Ext.define extending Object" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Ext.define("Foo", {extend: "Object"});
+      EOS
+    end
+    it_should_behave_like "extending Object"
+  end
+
+  describe "Ext.extend extending Object" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** */
+        Foo = Ext.extend(Object, { });
+      EOS
+    end
+    it_should_behave_like "extending Object"
+  end
+
+  describe "Explicit class without @extends" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /** @class Foo */
+      EOS
+    end
+    it_should_behave_like "extending Object"
+  end
 end

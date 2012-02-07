@@ -290,14 +290,16 @@ module JsDuck
     def detect_extends(doc_map, code)
       if doc_map[:extends]
         cls = doc_map[:extends].first[:extends]
-        # Ignore extending of the Object class
-        cls == "Object" ? nil : cls
       elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :ext_extend
-        code[:right][:extend].join(".")
+        cls = code[:right][:extend].join(".")
       elsif code[:type] == :ext_define
         # Classes defined with Ext.define will automatically inherit from Ext.Base
-        code[:extend] || "Ext.Base"
+        cls = code[:extend] || "Ext.Base"
+      else
+        cls = nil
       end
+      # Ignore extending of the Object class
+      cls == "Object" ? nil : cls
     end
 
     def detect_default(tagname, doc_map, code)
