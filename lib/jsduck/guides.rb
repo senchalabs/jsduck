@@ -80,9 +80,13 @@ module JsDuck
       end
       toc << "</ol>\n"
       toc << "</div>\n"
-      # Inject TOC at below first heading
-      new_html.insert(1, toc)
-      new_html.flatten.join
+      # Inject TOC at below first heading if at least 2 items in TOC
+      if i >= 2
+        new_html.insert(1, toc)
+        new_html.flatten.join
+      else
+        html
+      end
     end
 
     # Returns all guides as array
