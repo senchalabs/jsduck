@@ -78,22 +78,38 @@ Ext.define('Docs.view.DocTree', {
      * @param {String} url
      */
     selectUrl: function(url) {
-        var r = this.findRecordByUrl(url);
-        if (r) {
-            r.bubble(function(n) {
+        var node = this.findNodeByUrl(url);
+        if (node) {
+            node.bubble(function(n) {
                 n.expand();
             });
-            this.getSelectionModel().select(r);
+            this.getSelectionModel().select(node);
         }
         else {
             this.getSelectionModel().deselectAll();
         }
     },
 
-    findRecordByUrl: function(url) {
+    /**
+     * Given URL, returns corresponding treenode.
+     * @param {String} url
+     * @return {Ext.data.Model}
+     */
+    findNodeByUrl: function(url) {
         return this.getRootNode().findChildBy(function(n) {
             return url === n.raw.url;
         }, this, true);
+    },
+
+    /**
+     * Like #findNodeByUrl, but instead of the node itself, returns
+     * the raw data within the node.
+     * @param {String} url
+     * @return {Object}
+     */
+    findRecordByUrl: function(url) {
+        var n = this.findNodeByUrl(url);
+        return n ? n.raw : undefined;
     },
 
     handleBeforeExpandCollapse: function(node) {

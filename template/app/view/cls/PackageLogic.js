@@ -6,7 +6,9 @@ Ext.define('Docs.view.cls.PackageLogic', {
 
     /**
      * Creates the tree.
-     * @return {Object} the tree.
+     * @return {Object} Object with two fields:
+     * @return {Object} return.root Root node
+     * @return {Object[]} return.privates Array of hidden nodes
      */
     create: function() {
         this.root = {
@@ -14,9 +16,13 @@ Ext.define('Docs.view.cls.PackageLogic', {
             text: 'Root'
         };
         this.packages = {"": this.root};
+        this.privates = [];
         Ext.Array.forEach(this.classes, this.addClass, this);
         this.sortTree(this.root);
-        return this.root;
+        return {
+            root: this.root,
+            privates: this.privates
+        };
     },
 
     // Sorts all child nodes, and recursively all child packages.
@@ -41,6 +47,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
     // package; otherwise create the package first.
     addClass: function(cls) {
         if (cls["private"] && !this.showPrivateClasses) {
+            this.privates.push(this.classNode(cls));
             return;
         }
         if (this.packages[cls.name]) {

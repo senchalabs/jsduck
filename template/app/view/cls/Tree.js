@@ -95,18 +95,21 @@ Ext.define('Docs.view.cls.Tree', {
             // remember the current selection
             var selected = this.getSelectionModel().getLastSelected();
             // create new treestructure
-            var root = tree.create();
-            this.expandLonelyNode(root);
-            this.setRootNode(root);
+            var nodes = tree.create();
+            this.expandLonelyNode(nodes.root);
+            this.setRootNode(nodes.root);
             this.initNodeLinks();
 
             // re-establish the previous selection
             selected && this.selectUrl(selected.raw.url);
         }
         else {
-            this.root = tree.create();
+            var nodes = tree.create();
+            this.root = nodes.root;
             this.expandLonelyNode(this.root);
         }
+        // remember hidden nodes
+        this.privates = nodes.privates;
     },
 
     // When only one expandable node at root level, expand it
@@ -117,5 +120,24 @@ Ext.define('Docs.view.cls.Tree', {
         if (expandableNodes.length == 1) {
             expandableNodes[0].expanded = true;
         }
+    },
+
+    /**
+     * Returns node data, looking also from private nodes.
+     * @param {String} url
+     * @return {Object}
+     */
+    findRecordByUrl: function(url) {
+        return this.callParent([url]) || this.findPrivateRecordByUrl(url);
+    },
+
+    findPrivateRecordByUrl: function(url) {
+        var ps = this.privates;
+        for (var i=0; i<ps.length; i++) {
+            if (ps[i].url === url) {
+                return ps[i];
+            }
+        }
+        return undefined;
     }
 });

@@ -13,6 +13,7 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
             children: [],
             text: 'Root'
         };
+        this.privates = [];
 
         this.subclasses = this.buildLookupTable(this.classes);
         Ext.Array.forEach(this.classes, this.addClass, this);
@@ -20,7 +21,10 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
             this.stripPrivateClasses(this.root);
         }
         this.sortTree(this.root);
-        return this.root;
+        return {
+            root: this.root,
+            privates: this.privates
+        };
     },
 
     sortTree: function(node) {
@@ -85,8 +89,15 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
     stripPrivateClasses: function(node) {
         node.children = Ext.Array.filter(node.children, function(child) {
             this.stripPrivateClasses(child);
-            // Remove private class unless it has non-private subclasses
-            return !(child.cls === "private" && child.children.length === 0);
+            // Remove private class unless it has non-private subclasses.
+            // As a side-effect add private class to this.privates list.
+            if (child.cls === "private" && child.children.length === 0) {
+                this.privates.push(child);
+                return false;
+            }
+            else {
+                return true;
+            }
         }, this);
     }
 

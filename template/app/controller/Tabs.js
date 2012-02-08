@@ -163,20 +163,25 @@ Ext.define('Docs.controller.Tabs', {
      * @private
      */
     addTabFromTree: function(url, opts) {
-        opts = opts || { animate: true, activate: true };
         var tree = this.getTree(url);
         var treeRecord = tree.findRecordByUrl(url);
-        if (treeRecord && treeRecord.raw) {
-            // Init scrollstate when tab opened.
-            if (!this.scrollState[url]) {
-                this.scrollState[url] = 0;
-            }
-            this.getDoctabs().addTab({
-                href: treeRecord.raw.url,
-                text: treeRecord.raw.text,
-                iconCls: treeRecord.raw.iconCls
-            }, opts);
+        if (treeRecord) {
+            this.addTab(treeRecord, opts);
         }
+    },
+
+    // Adds new tab, no questions asked
+    addTab: function(tab, opts) {
+        opts = opts || { animate: true, activate: true };
+        // Init scrollstate when tab opened.
+        if (!this.scrollState[tab.url]) {
+            this.scrollState[tab.url] = 0;
+        }
+        this.getDoctabs().addTab({
+            href: tab.url,
+            text: tab.text,
+            iconCls: tab.iconCls
+        }, opts);
     },
 
     // Determines tree from an URL
