@@ -29,6 +29,12 @@ Ext.define('Docs.view.cls.Toolbar', {
     initComponent: function() {
         this.addEvents(
             /**
+             * @event buttonclick
+             * Fired when one of the toolbar HoverMenuButtons is clicked.
+             * @param {String} type Type of button that was clicked "cfg", "method", "event", etc
+             */
+            "menubuttonclick",
+            /**
              * @event filter
              * Fires when text typed to filter, or one of the hide-checkboxes clicked.
              * @param {String} search  The search text.
@@ -177,7 +183,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             showCount: true,
             listeners: {
                 click: function() {
-                    this.up('classoverview').scrollToEl("#m-" + cfg.type);
+                    this.fireEvent('menubuttonclick', cfg.type);
                 },
                 scope: this
             }

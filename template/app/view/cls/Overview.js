@@ -79,6 +79,9 @@ Ext.define('Docs.view.cls.Overview', {
                 filter: function(search, show) {
                     this.filterMembers(search, show);
                 },
+                menubuttonclick: function(type) {
+                    this.scrollToEl("h3.members-title.icon-"+type, -20);
+                },
                 scope: this
             }
         });
