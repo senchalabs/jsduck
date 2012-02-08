@@ -83,7 +83,7 @@ old_classes.each_pair do |name, cls|
 
     diff_data << {
       :name => cls["name"],
-      :found => !!new_cls,
+      :found => !!new_cls || ignored_members[name],
       :new_name => new_cls && new_cls["name"],
       :diff => new_cls ? compare_classes(cls, new_cls, ignored_members) : [],
     }
