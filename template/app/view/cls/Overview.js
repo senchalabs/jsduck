@@ -38,14 +38,19 @@ Ext.define('Docs.view.cls.Overview', {
         var el = (typeof query == 'string') ? Ext.get(Ext.query(query)[0]) : query;
         if (el) {
             var isMember = el.hasCls("member");
+
+            // first make the element visible and expanded.
+            // For example a private member might be hidden initially so we can't scroll to it.
+            el.show();
+            if (isMember && el.down(".expandable")) {
+                el.addCls('open');
+            }
+
             var scrollOffset = el.getY() - (isMember ? 165 : 155) + (offset || 0);
             var docContent = this.getEl().down('.x-panel-body');
             var currentScroll = docContent.getScroll()['top'];
             docContent.scrollTo('top', currentScroll + scrollOffset);
 
-            if (isMember && el.down(".expandable")) {
-                el.addCls('open');
-            }
             el.highlight();
         }
     },
