@@ -278,7 +278,7 @@ module JsDuck
           @eg_iframe = canonical(path)
         end
 
-        opts.on('--examples_base_url=URL',
+        opts.on('--examples-base-url=URL',
           "Base URL for examples with relative URL-s.", " ") do |path|
           @examples_base_url = path
         end

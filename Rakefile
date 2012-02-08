@@ -467,7 +467,11 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/touch/docs/config.json"]
   runner.add_debug if mode == "debug"
   runner.add_export_notice("touch/2-0") if mode == "export"
-  runner.set_touch2_src if mode == "export"
+  if mode == "export"
+    runner.set_touch2_src
+  else
+    runner.add_options ["--examples-base-url", "touch/examples/"]
+  end
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"
   runner.add_comments('comments-touch-2') if mode == "debug" || mode == "live"
