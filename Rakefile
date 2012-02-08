@@ -214,7 +214,7 @@ class JsDuckRunner
 
   def set_touch2_src
     relative_touch_path = "../"
-    system("cp", "-r", "#{@sdk_dir}/touch/docs/welcome.html", "template-min/welcome.html")
+    system("cp", "-r", "#{@sdk_dir}/touch/docs/build-welcome.html", "template-min/welcome.html")
     system("cp", "-r", "#{@sdk_dir}/touch/docs/eg-iframe.html", "template-min/eg-iframe.html")
 
     ["template-min/eg-iframe.html", "template-min/welcome.html"].each do |file|
@@ -233,6 +233,7 @@ class JsDuckRunner
     head_html = <<-EOHTML
       <script type="text/javascript">
         if (Ext.is.Phone) { window.location = "#{relative_touch_path}examples/"; }
+          Docs.exampleBaseUrl = '../examples/';
       </script>
     EOHTML
 
@@ -240,7 +241,7 @@ class JsDuckRunner
       "--body-html", head_html,
       "--welcome", "template-min/welcome.html",
       "--eg-iframe", "template-min/eg-iframe.html",
-      "--examples-base-url", "#{relative_touch_path}examples/",
+      "--examples_base_url", "#{relative_touch_path}examples/",
     ]
   end
 
