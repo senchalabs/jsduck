@@ -77,12 +77,25 @@ new_classes = read_all_classes(ARGV[1])
 out_file = ARGV[2]
 ignored_members = ARGV[3] ? read_ignored_members(ARGV[3]) : {}
 
+# Explicit remapping of classes
+remap = {
+  "Array" => "Ext.Array",
+  "Date" => "Ext.Date",
+  "Function" => "Ext.Function",
+  "Number" => "Ext.Number",
+  "String" => "Ext.String",
+  "Ext.supports" => "Ext.feature.has",
+}
+
 diff_data = []
 old_classes.each_pair do |name, cls|
+  # only go through classes, not alternate names
   if name == cls["name"]
-    new_cls = new_classes[cls["name"]]
-    # Remap classes like Array to Ext.Array
-    new_cls = new_classes["Ext."+cls["name"]] unless new_cls
+    if remap[name]
+      new_cls = new_classes[remap[name]]
+    else
+      new_cls = new_classes[name]
+    end
 
     diff_data << {
       :name => cls["name"],
