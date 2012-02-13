@@ -152,6 +152,11 @@
   // specific colors
   &.deprecated {
     background-color: #aa0000; }
+  &.removed {
+    color: #aa0000;
+    background-color: transparent;
+    border: 1px solid #aa0000;
+    text-decoration: line-through; }
   &.static {
     background-color: $docs-text-color; }
   &.required {

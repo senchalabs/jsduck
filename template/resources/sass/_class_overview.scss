@@ -153,12 +153,18 @@
   text-align: center;
   &.template {
     background-color: #eee; }
-  &.deprecated {
+  &.deprecated, &.removed {
     color: #600;
     background-color: #fee;
     strong {
       text-transform: uppercase;
-      color: white;
       @include border-radius(2px);
-      padding: 0 3px;
-      background-color: #aa0000; } } }
+      padding: 0 3px; } }
+  &.deprecated strong {
+    color: white;
+    background-color: #aa0000; }
+  &.removed strong {
+    color: #aa0000;
+    border: 1px solid #aa0000;
+    background-color: transparent;
+    text-decoration: line-through; } }
