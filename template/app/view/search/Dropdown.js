@@ -44,7 +44,7 @@ Ext.define('Docs.view.search.Dropdown', {
             '<tpl for=".">',
                 '<div class="item">',
                     '<div class="icon icon-{icon}"></div>',
-                    '<div class="title {[values.private ? "private" : ""]}">{member}</div>',
+                    '<div class="title {[this.getCls(values)]}">{member}</div>',
                     '<div class="class">{cls}</div>',
                 '</div>',
             '</tpl>',
@@ -54,6 +54,9 @@ Ext.define('Docs.view.search.Dropdown', {
                 '<a href="#" class="next">&gt;</a>',
             '</div>',
             {
+                getCls: function(values) {
+                    return values["private"] ? "private" : (values.removed ? "removed" : "");
+                },
                 getTotal: Ext.bind(this.getTotal, this),
                 getStart: Ext.bind(this.getStart, this),
                 getEnd: Ext.bind(this.getEnd, this)

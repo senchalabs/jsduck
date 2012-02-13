@@ -32,14 +32,14 @@ Ext.define("Docs.ClassRegistry", {
      * ordered by best matches first.
      */
     search: function(text) {
-        // Each record has its relative sorting order: 0..3
-        // which is doubled by it being public/private
-        var results = [
-            //   public    |    private
-            [], [], [], [],  [], [], [], [], // First we sort full matches: 0..7
-            [], [], [], [],  [], [], [], [], // Then matches in beginning: 8..15
-            [], [], [], [],  [], [], [], []  // Finally matches in middle: 16..23
-        ];
+        // Each record has 1 of 4 possible sorting orders,
+        // which is *3 by it being public/private/removed,
+        // and *3 by full/beginning/middle matches.
+        var results = new Array(4 * 3 * 3);
+        for (var i=0; i<results.length; i++) {
+            results[i] = [];
+        }
+
         var searchFull = /[.:]/.test(text);
         var safeText = Ext.escapeRe(text);
         var reFull = new RegExp("^" + safeText + "$", "i");
@@ -51,17 +51,18 @@ Ext.define("Docs.ClassRegistry", {
             // (e.g. "Ext.Component.focus" or "xtype: grid")
             // Otherwise search from just the member name (e.g. "focus" or "Component")
             var name = searchFull ? r.cls + (r.type === "class" ? "" : "." + r.member) : r.member;
-            // Shift private items to the end of each match category
-            var priv = r["private"] ? 4 : 0;
+            // Shift private items further back
+            // Shift removed items to the very end of each match category
+            var shift = r["private"] ? 4 : (r["removed"] ? 8 : 0);
 
             if (reFull.test(name)) {
-                results[r.sort + priv].push(r);
+                results[r.sort + shift].push(r);
             }
             else if (reBeg.test(name)) {
-                results[r.sort + priv + 8].push(r);
+                results[r.sort + shift + 12].push(r);
             }
             else if (reMid.test(name)) {
-                results[r.sort + priv + 16].push(r);
+                results[r.sort + shift + 24].push(r);
             }
         }, this);
 

@@ -89,7 +89,10 @@
       overflow: hidden;
       text-overflow: ellipsis;
       &.private {
-        color: gray; } }
+        color: gray; }
+      &.removed {
+        color: gray;
+        text-decoration: line-through; } }
     .class {
       font-size: 0.85em;
       overflow: hidden;
