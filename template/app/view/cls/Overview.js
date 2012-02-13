@@ -123,6 +123,7 @@ Ext.define('Docs.view.cls.Overview', {
                 !show['inherited'] && (m.owner !== this.docClass.name) ||
                 !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
                 !show['deprecated'] && m.meta['deprecated'] ||
+                !show['removed']   && m.meta['removed'] ||
                 isSearch           && !re.test(m.name)
             );
 

@@ -88,7 +88,8 @@ Ext.define('Docs.view.cls.Toolbar', {
             "private": this.createCb("Private", "private"),
             "inherited": this.createCb("Inherited", "inherited"),
             "accessor": this.createCb("Accessor", "accessor"),
-            "deprecated": this.createCb("Deprecated", "deprecated")
+            "deprecated": this.createCb("Deprecated", "deprecated"),
+            "removed": this.createCb("Removed", "removed")
         };
 
         var self = this;
@@ -131,7 +132,8 @@ Ext.define('Docs.view.cls.Toolbar', {
                     '-',
                     this.checkItems['inherited'],
                     this.checkItems['accessor'],
-                    this.checkItems['deprecated']
+                    this.checkItems['deprecated'],
+                    this.checkItems['removed']
                 ]
             },
             {
@@ -228,6 +230,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                         !show['inherited'] && m.get("inherited") ||
                         !show['accessor']  && m.get("accessor") ||
                         !show['deprecated']   && m.get("meta")["deprecated"] ||
+                        !show['removed']   && m.get("meta")["removed"] ||
                         isSearch           && !re.test(m.get("label"))
                     );
                 });
