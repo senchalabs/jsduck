@@ -46,7 +46,10 @@ Ext.define("Docs.ClassRegistry", {
         var reBeg = new RegExp("^" + safeText, "i");
         var reMid = new RegExp(safeText, "i");
 
-        Ext.Array.forEach(Docs.data.search, function(r) {
+        var searchData = Docs.data.search;
+        for (var i=0, len=searchData.length; i<len; i++) {
+            var r = searchData[i];
+
             // when search text has "." or ":" in it, search from the full name
             // (e.g. "Ext.Component.focus" or "xtype: grid")
             // Otherwise search from just the member name (e.g. "focus" or "Component")
@@ -64,7 +67,7 @@ Ext.define("Docs.ClassRegistry", {
             else if (reMid.test(name)) {
                 results[r.sort + shift + 24].push(r);
             }
-        }, this);
+        }
 
         return Ext.Array.flatten(results);
     }
