@@ -43,7 +43,8 @@ module JsDuck
       items = [
         render_alternate_class_names,
         render_tree,
-        render_dependencies(:allMixins, "Mixins"),
+        render_dependencies(:mixins, "Mixins"),
+        render_dependencies(:parentMixins, "Inherited mixins"),
         render_dependencies(:requires, "Requires"),
         render_dependencies(:subclasses, "Subclasses"),
         render_dependencies(:mixedInto, "Mixed into"),
@@ -69,7 +70,7 @@ module JsDuck
       return if !@cls[type] || @cls[type].length == 0
       return [
         "<h4>#{title}</h4>",
-        @cls[type].sort.map {|name| "<div class='dependency'>#{render_link(name)}</div>" },
+        @cls[type].sort.map {|name| "<div class='dependency'>#{name.exists? ? render_link(name) : name}</div>" },
       ]
     end
 
@@ -90,23 +91,21 @@ module JsDuck
     # We still create the tree, but without links in it.
     def render_tree
       return if !@cls[:extends] || @cls[:extends] == "Object"
-      tree = ["<h4>Hierarchy</h4>"]
 
-      if @cls[:superclasses].length > 0
-        tree + render_class_tree(@cls[:superclasses].concat([@cls[:name]]), {:first => true, :links => true})
-      else
-        tree + render_class_tree([@cls[:extends], @cls[:name]], {:first => true})
-      end
+      return [
+        "<h4>Hierarchy</h4>",
+        render_class_tree(@cls[:superclasses] + [@cls[:name]])
+      ]
     end
 
-    def render_class_tree(superclasses, o)
-      return "" if superclasses.length == 0
+    def render_class_tree(classes, i=0)
+      return "" if classes.length <= i
 
-      name = superclasses[0]
+      name = classes[i]
       return [
-        "<div class='subclass #{o[:first] ? 'first-child' : ''}'>",
-          superclasses.length > 1 ? (o[:links] ? render_link(name) : name) : "<strong>#{name}</strong>",
-          render_class_tree(superclasses.slice(1, superclasses.length-1), {:links => o[:links]}),
+        "<div class='subclass #{i == 0 ? 'first-child' : ''}'>",
+          classes.length-1 == i ? "<strong>#{name}</strong>" : (name.exists? ? render_link(name) : name),
+          render_class_tree(classes, i+1),
         "</div>",
       ]
     end

@@ -20,7 +20,12 @@ module JsDuck
       h[:superclasses] = cls.superclasses.collect {|c| c.full_name }
       h[:subclasses] = @relations.subclasses(cls).collect {|c| c.full_name }
       h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c.full_name }
-      h[:allMixins] = cls.all_mixins.collect {|c| c.full_name }
+
+      h[:mixins] = cls.deps(:mixins).collect {|c| c.full_name }
+      h[:parentMixins] = cls.parent_deps(:mixins).collect {|c| c.full_name }
+      h[:requires] = cls.deps(:requires).collect {|c| c.full_name }
+      h[:uses] = cls.deps(:uses).collect {|c| c.full_name }
+
       h
     end
 
