@@ -36,12 +36,16 @@ def read_ignored_members(filename)
   map
 end
 
+def normal_public_member?(m)
+  !m["private"] && !m["meta"]["protected"] && !m["meta"]["deprecated"] && !m["meta"]["removed"]
+end
+
 # Gathers class members that are in cls1, but are missing in cls2
 # Ignoring members listed in ignored_members hash.
 def compare_classes(cls1, cls2, ignored_members)
   diff = []
   cls1["members"].each_pair do |group_name, group_items|
-    group_items.find_all {|m1| !m1["private"] && !m1["meta"]["protected"] && m1["owner"] == cls1["name"] }.each do |m1|
+    group_items.find_all {|m1| normal_public_member?(m1) && m1["owner"] == cls1["name"] }.each do |m1|
       match = cls2["members"][group_name].find do |m2|
         m2["name"] == m1["name"] && !m2["meta"]["protected"] && !m2["private"]
       end
@@ -66,7 +70,6 @@ def compare_classes(cls1, cls2, ignored_members)
   end
   diff
 end
-
 
 
 old_classes = read_all_classes(ARGV[0], :ignore_private)
