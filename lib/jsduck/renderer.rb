@@ -13,9 +13,10 @@ module JsDuck
           "<div>",
             render_sidebar,
             "<div class='doc-contents'>",
+              render_meta_data(@cls[:html_meta], :top),
               render_private_class_notice,
               @cls[:doc],
-              render_meta_data(@cls[:html_meta]),
+              render_meta_data(@cls[:html_meta], :bottom),
             "</div>",
             "<div class='members'>",
               render_all_sections,
@@ -33,10 +34,10 @@ module JsDuck
       ]
     end
 
-    def render_meta_data(meta_data)
+    def render_meta_data(meta_data, position)
       return if meta_data.size == 0
 
-      MetaTagRegistry.instance.tags.map {|tag| meta_data[tag.key] }
+      MetaTagRegistry.instance.tags(position).map {|tag| meta_data[tag.key] }
     end
 
     def render_sidebar
@@ -257,13 +258,17 @@ module JsDuck
     end
 
     def render_long_doc(m)
-      doc = [m[:doc]]
+      doc = []
+
+      doc << render_meta_data(m[:html_meta], :top)
+
+      doc << m[:doc]
 
       if m[:default] && m[:default] != "undefined"
         doc << "<p>Defaults to: <code>" + CGI.escapeHTML(m[:default]) + "</code></p>"
       end
 
-      doc << render_meta_data(m[:html_meta])
+      doc << render_meta_data(m[:html_meta], :bottom)
 
       doc << render_params_and_return(m)
 

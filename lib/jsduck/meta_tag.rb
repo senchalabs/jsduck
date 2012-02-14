@@ -26,6 +26,10 @@ module JsDuck
     # existance of the tag.
     attr_reader :boolean
 
+    # Whether to render the tag before other content (:top) or after
+    # it (:bottom).  Defaults to :bottom.
+    attr_accessor :position
+
     # Here the appropriate class or member will be injected,
     # so the to_value and to_html methods can for produce
     # different output based on whether the tag is inside class,

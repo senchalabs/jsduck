@@ -55,9 +55,11 @@ module JsDuck
 
     # Instanciates tag class.
     # When .key is missing, creates it from .name
+    # When .position is missing, defaults to :bottom
     def create_tag(cls)
       tag = cls.new
       tag.key = tag.name.to_sym unless tag.key
+      tag.position = :bottom unless tag.position
       tag
     end
   end

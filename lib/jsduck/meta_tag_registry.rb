@@ -31,9 +31,10 @@ module JsDuck
       register_keys
     end
 
-    # Returns array of all available tag instances
-    def tags
-      @tags
+    # Returns array of all available tag instances.
+    # When position provided, returns only tags in that position
+    def tags(position=nil)
+      position ? @tags.find_all {|t| t.position == position} : @tags
     end
 
     # Accesses tag by key or name
