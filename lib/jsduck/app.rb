@@ -8,12 +8,7 @@ require 'jsduck/relations'
 require 'jsduck/inherit_doc'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
-require 'jsduck/welcome'
-require 'jsduck/guides'
-require 'jsduck/videos'
-require 'jsduck/examples'
-require 'jsduck/categories'
-require 'jsduck/images'
+require 'jsduck/assets'
 require 'jsduck/json_duck'
 require 'jsduck/lint'
 require 'jsduck/template_dir'
@@ -48,12 +43,8 @@ module JsDuck
       InheritDoc.new(@relations).resolve_all
       Lint.new(@relations).run
 
-      @images = Images.new(@opts.images)
-      @welcome = Welcome.create(@opts.welcome)
-      @guides = Guides.create(@opts.guides, DocFormatter.new(@relations, @opts))
-      @videos = Videos.create(@opts.videos)
-      @examples = Examples.create(@opts.examples, @opts)
-      @categories = Categories.create(@opts.categories_path, DocFormatter.new(@relations, @opts), @relations)
+      # Initialize guides, videos, examples, ...
+      @assets = Assets.new(@relations, @opts)
 
       if @opts.export
         format_classes
@@ -65,17 +56,9 @@ module JsDuck
         FileUtils.rm_rf(@opts.output_dir)
         TemplateDir.new(@opts).write
 
-        index = IndexHtml.new(@opts)
-        index.welcome = @welcome
-        index.categories = @categories
-        index.guides = @guides
-        index.write
+        IndexHtml.new(@assets, @opts).write
 
-        app_data = AppData.new(@relations, @opts)
-        app_data.guides = @guides
-        app_data.videos = @videos
-        app_data.examples = @examples
-        app_data.write(@opts.output_dir+"/data.js")
+        AppData.new(@relations, @assets, @opts).write(@opts.output_dir+"/data.js")
 
         # class-formatting is done in parallel which breaks the links
         # between source files and classes. Therefore it MUST to be done
@@ -87,10 +70,7 @@ module JsDuck
         cw = ClassWriter.new(AppExporter, @relations, @opts)
         cw.write(@opts.output_dir+"/output", ".js")
 
-        @guides.write(@opts.output_dir+"/guides")
-        @videos.write(@opts.output_dir+"/videos")
-        @examples.write(@opts.output_dir+"/examples")
-        @images.copy(@opts.output_dir+"/images")
+        @assets.write
       end
     end
 
@@ -160,7 +140,7 @@ module JsDuck
       # Then merge the data back to classes sequentially
       formatted_classes.each do |cls|
         @relations[cls[:doc][:name]].internal_doc = cls[:doc]
-        cls[:images].each {|img| @images.add(img) }
+        cls[:images].each {|img| @assets.images.add(img) }
       end
     end
 
