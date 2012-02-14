@@ -24,12 +24,26 @@ module JsDuck
     end
 
     # Prefix all relative URL-s in examples list with path given in --examples-base-url
-    # Create names for each example when not present
+    #
+    # For backwards compatibility:
+    #
+    # - Create names for each example when not present
+    # - Create title from text
+    # - Create description from desc
+    #
     def fix_examples_data
       each_item do |ex|
         unless ex["url"] =~ /^https?:\/\//
           ex["url"] = @opts.examples_base_url + ex["url"]
           ex["name"] = ex["url"] unless ex["name"]
+          unless ex["title"]
+            ex["title"] = ex["text"]
+            ex.delete("text")
+          end
+          unless ex["description"]
+            ex["description"] = ex["desc"]
+            ex.delete("desc")
+          end
         end
       end
     end

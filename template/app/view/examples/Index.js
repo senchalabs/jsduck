@@ -26,7 +26,7 @@ Ext.define('Docs.view.examples.Index', {
                 itemTpl: [
                     '<dd ext:url="#!/example/{name}">',
                         '<div class="thumb"><img src="'+baseUrl+'/{icon}"/></div>',
-                        '<div><h4>{text}',
+                        '<div><h4>{title}',
                             '<tpl if="status === \'new\'">',
                                 '<span class="new-sample"> (New)</span>',
                             '</tpl>',
@@ -36,7 +36,7 @@ Ext.define('Docs.view.examples.Index', {
                             '<tpl if="status === \'experimental\'">',
                                 '<span class="new-sample"> (Experimental)</span>',
                             '</tpl>',
-                        '</h4><p>{desc}</p></div>',
+                        '</h4><p>{description}</p></div>',
                     '</dd>'
                 ],
                 data: Docs.data.examples

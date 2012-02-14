@@ -37,7 +37,7 @@ Ext.define('Docs.view.TreeContainer', {
                 convert: function(example) {
                     return {
                         leaf: true,
-                        text: example.text,
+                        text: example.title,
                         url: '#!/example/' + example.name,
                         iconCls: 'icon-example'
                     };
