@@ -1,4 +1,5 @@
 require "jsduck/meta_tag"
+require "jsduck/logger"
 
 module JsDuck::Tag
   # Implementation of @aside tag.
@@ -9,20 +10,22 @@ module JsDuck::Tag
     def initialize
       @name = "aside"
       @key = :aside
-      @types = {
-        "guide" => true,
-        "video" => true,
-        "example" => true,
+      @allowed_types = {
+        :guide => true,
+        :video => true,
+        :example => true,
       }
     end
 
     def to_value(asides)
       asides.map do |line|
         if line =~ /\A(\w+) +([^ ].*)\Z/
-          if @types[$1]
-            {:type => $1, :name => $2.strip}
+          type = $1.to_sym
+          name = $2.strip
+          if @allowed_types[type]
+            {:type => type, :name => name}
           else
-            warn("Unknown @aside type: #{$1}")
+            warn("Unknown @aside type: #{type}")
           end
         else
           warn("Bad syntax: @aside #{line}")
@@ -31,15 +34,28 @@ module JsDuck::Tag
     end
 
     def warn(msg)
-      Logger.instance.warn(nil, msg)
+      JsDuck::Logger.instance.warn(nil, msg)
       nil
     end
 
     def to_html(asides)
       asides.map do |aside|
-        url = "#!/#{aside[:type]}/#{aside[:name]}"
-        title = aside[:name]
-        "<div>#{aside[:type]}: <a href='#{url}'>#{title}</a></div>"
+        asset = get_asset(aside[:type], aside[:name])
+        if asset
+          url = "#!/#{aside[:type]}/#{aside[:name]}"
+          "<div class='aside'>#{aside[:type]}: <a href='#{url}'>#{asset["title"]}</a></div>"
+        else
+          warn("Unknown @aside name: #{aside[:type]} #{aside[:name]}")
+        end
+      end.compact
+    end
+
+    def get_asset(type, name)
+      case type
+        when :guide then @assets.guides[name]
+        when :video then @assets.videos[name]
+        when :example then @assets.examples[name]
+        else nil
       end
     end
   end
