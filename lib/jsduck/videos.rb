@@ -1,5 +1,6 @@
 require 'jsduck/json_duck'
 require 'jsduck/null_object'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -16,6 +17,24 @@ module JsDuck
 
     def initialize(filename)
       @videos = JsonDuck.read(filename)
+      add_names_if_missing
+    end
+
+    # Each video should have a name, which is used in URL to reference the video.
+    # For backwards compatibility, when name is missing, we turn the "id" (that must exist)
+    # into a name.  Additionally check that no two videos have the same name.
+    def add_names_if_missing
+      uniq_names = {}
+      @videos.each do |group|
+        group["items"].each do |video|
+          video["name"] = video["id"] unless video["name"]
+
+          if uniq_names[video["name"]]
+            Logger.instance.warn(nil, "Two videos have the same name '#{video['name']}'")
+          end
+          uniq_names[video["name"]] = true
+        end
+      end
     end
 
     # Writes videos JSON file to a dir

@@ -64,7 +64,7 @@ Ext.define('Docs.view.TreeContainer', {
                     return {
                         leaf: true,
                         text: video.title,
-                        url: '#!/video/' + video.id,
+                        url: '#!/video/' + video.name,
                         iconCls: 'icon-video'
                     };
                 }
