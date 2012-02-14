@@ -34,11 +34,6 @@ module JsDuck::Tag
       end.compact
     end
 
-    def warn(msg)
-      JsDuck::Logger.instance.warn(nil, msg)
-      nil
-    end
-
     def to_html(asides)
       asides.map do |aside|
         asset = get_asset(aside[:type], aside[:name])
@@ -61,6 +56,13 @@ module JsDuck::Tag
         else nil
       end
     end
+
+    def warn(msg)
+      ctx = @context ? @context[:files][0] : {}
+      JsDuck::Logger.instance.warn(:aside, msg, ctx[:filename], ctx[:linenr])
+      nil
+    end
+
   end
 end
 
