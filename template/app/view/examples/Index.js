@@ -24,7 +24,7 @@ Ext.define('Docs.view.examples.Index', {
             { xtype: 'container', html: '<h1 class="eg">Examples</h1>' },
             Ext.create('Docs.view.ThumbList', {
                 itemTpl: [
-                    '<dd ext:url="#!/example/{url}">',
+                    '<dd ext:url="#!/example/{name}">',
                         '<div class="thumb"><img src="'+baseUrl+'/{icon}"/></div>',
                         '<div><h4>{text}',
                             '<tpl if="status === \'new\'">',
