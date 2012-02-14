@@ -3,14 +3,16 @@
 @import "mixins";
 
 .class-overview {
-  .hierarchy {
+  .hierarchy, .aside {
     @include border-radius(5px);
     background-color: #f7f7f7;
     border: 1px solid #ebebeb;
     padding: 0 15px 15px 10px;
     float: right;
-    margin: 0 0 40px 60px;
-    font-size: 12px;
+    clear: right;
+    margin: 0 0 10px 60px;
+    font-size: 12px; }
+  .hierarchy {
     @include gray-h4;
     .dependency, .alternate-class-name {
       padding: 0 0 0 12px;
@@ -23,7 +25,21 @@
       padding: 0 0 0 12px;
       &.first-child {
         background: none;
-        padding-left: 15px; } } } }
+        padding-left: 15px; } } }
+  .aside {
+    width: 150px;
+    h4 {
+      margin: 4px 0;
+      font-size: larger;
+      color: #526c83;
+      padding-left: 22px; }
+    &.guide h4 {
+      background: url(../images/tabs.png) no-repeat -5px -55px; }
+    &.video h4 {
+      background: url(../images/tabs.png) no-repeat -6px -38px; }
+    &.example h4 {
+      background: url(../images/tabs.png) no-repeat -7px -93px; } } }
+
 
 // Nice styles for headings inside documentation
 #center-container .doc-contents {

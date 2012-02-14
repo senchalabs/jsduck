@@ -10,6 +10,7 @@ module JsDuck::Tag
     def initialize
       @name = "aside"
       @key = :aside
+      @position = :top
       @allowed_types = {
         :guide => true,
         :video => true,
@@ -43,7 +44,9 @@ module JsDuck::Tag
         asset = get_asset(aside[:type], aside[:name])
         if asset
           url = "#!/#{aside[:type]}/#{aside[:name]}"
-          "<div class='aside'>#{aside[:type]}: <a href='#{url}'>#{asset["title"]}</a></div>"
+          heading = aside[:type].to_s.capitalize
+          title = asset["title"]
+          "<div class='aside #{aside[:type]}'><h4>#{heading}</h4><p><a href='#{url}'>#{title}</a></p></div>"
         else
           warn("Unknown @aside name: #{aside[:type]} #{aside[:name]}")
         end
