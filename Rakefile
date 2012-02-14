@@ -241,7 +241,7 @@ class JsDuckRunner
       "--body-html", head_html,
       "--welcome", "template-min/welcome.html",
       "--eg-iframe", "template-min/eg-iframe.html",
-      "--examples_base_url", "#{relative_touch_path}examples/",
+      "--examples-base-url", "#{relative_touch_path}examples/",
     ]
   end
 

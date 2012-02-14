@@ -47,7 +47,7 @@ Ext.define('Docs.view.examples.TouchContainer', {
      * @param {Object} example Example object
      */
     load: function(example) {
-        this.title = example.text + " Example";
+        this.title = example.title + " Example";
         this.device = Ext.create('Docs.view.examples.Device', {
             url: example.url,
             device: example.device || "phone",
