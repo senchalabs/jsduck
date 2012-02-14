@@ -56,6 +56,11 @@ module JsDuck
       JsonDuck.write_json(dir+"/examples.json", @groups)
     end
 
+    # Extracts example icon URL from example hash
+    def icon_url(example)
+      @opts.examples_base_url + example["icon"]
+    end
+
   end
 
 end

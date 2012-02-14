@@ -109,6 +109,12 @@ module JsDuck
         </div>
       EOHTML
     end
+
+    # Extracts guide icon URL from guide hash
+    def icon_url(guide)
+      "guides/" + guide["name"] + "/icon-lg.png"
+    end
+
   end
 
 end

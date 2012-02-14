@@ -27,12 +27,16 @@
         background: none;
         padding-left: 15px; } } }
   .aside {
-    width: 150px;
+    width: 180px;
     h4 {
       margin: 4px 0;
       font-size: larger;
       color: #526c83;
       padding-left: 22px; }
+    img {
+      width: 50px;
+      float: left;
+      margin-right: 10px; }
     &.guide h4 {
       background: url(../images/tabs.png) no-repeat -5px -55px; }
     &.video h4 {

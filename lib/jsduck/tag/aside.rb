@@ -36,24 +36,33 @@ module JsDuck::Tag
 
     def to_html(asides)
       asides.map do |aside|
-        asset = get_asset(aside[:type], aside[:name])
+        type = aside[:type]
+        name = aside[:name]
+        assets_group = get_assets_group(type)
+        asset = assets_group[name]
         if asset
-          url = "#!/#{aside[:type]}/#{aside[:name]}"
-          heading = aside[:type].to_s.capitalize
+          url = "#!/#{type}/#{name}"
+          heading = type.to_s.capitalize
           title = asset["title"]
-          "<div class='aside #{aside[:type]}'><h4>#{heading}</h4><p><a href='#{url}'>#{title}</a></p></div>"
+          icon_url = assets_group.icon_url(asset)
+          <<-EOHTML
+            <div class='aside #{type}'>
+              <h4>#{heading}</h4>
+              <p><a href='#{url}'><img src='#{icon_url}' alt=''> #{title}</a></p>
+            </div>
+          EOHTML
         else
-          warn("Unknown @aside name: #{aside[:type]} #{aside[:name]}")
+          warn("Unknown @aside name: #{type} #{name}")
         end
       end.compact
     end
 
-    def get_asset(type, name)
+    def get_assets_group(type)
       case type
-        when :guide then @assets.guides[name]
-        when :video then @assets.videos[name]
-        when :example then @assets.examples[name]
-        else nil
+      when :guide then @assets.guides
+      when :video then @assets.videos
+      when :example then @assets.examples
+      else {}
       end
     end
 

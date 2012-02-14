@@ -38,6 +38,11 @@ module JsDuck
       JsonDuck.write_json(dir+"/videos.json", @groups)
     end
 
+    # Extracts video icon URL from video hash
+    def icon_url(video)
+      video["thumb"]
+    end
+
   end
 
 end
