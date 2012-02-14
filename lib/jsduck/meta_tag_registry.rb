@@ -52,6 +52,11 @@ module JsDuck
       @tags.each {|tag| tag.formatter = doc_formatter }
     end
 
+    # Gives access to assets for all tags
+    def assets=(assets)
+      @tags.each {|tag| tag.assets = assets }
+    end
+
     # Returns array of attributes to be shown in member signatures
     # (and in order they should be shown in).
     def signatures

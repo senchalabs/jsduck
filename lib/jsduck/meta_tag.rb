@@ -32,6 +32,10 @@ module JsDuck
     # method, event, etc.
     attr_accessor :context
 
+    # Here the Assets object will be injected, so the Tag implementation
+    # can access guides, videos, etc when he needs to.
+    attr_accessor :assets
+
     # It gets passed an array of contents gathered from all meta-tags
     # of given type. It should return the value to be stored for this
     # meta-tag at :key. The returned value is also passed to #to_html

@@ -46,6 +46,9 @@ module JsDuck
       # Initialize guides, videos, examples, ...
       @assets = Assets.new(@relations, @opts)
 
+      # Give access to assets from all meta-tags
+      MetaTagRegistry.instance.assets = @assets
+
       if @opts.export
         format_classes
         FileUtils.rm_rf(@opts.output_dir) unless @opts.output_dir == :stdout
