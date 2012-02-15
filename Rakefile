@@ -233,7 +233,6 @@ class JsDuckRunner
     head_html = <<-EOHTML
       <script type="text/javascript">
         if (Ext.is.Phone) { window.location = "#{relative_touch_path}examples/"; }
-          Docs.exampleBaseUrl = '../examples/';
       </script>
     EOHTML
 
