@@ -279,7 +279,7 @@ module JsDuck
         elsif code[:type] == :assignment && code[:right]
           if code[:right][:type] == :function
             return "Function"
-          elsif code[:right][:type] == :literal
+          elsif code[:right][:type] == :literal && code[:right][:class] != nil
             return code[:right][:class]
           end
         end

@@ -115,6 +115,21 @@ describe JsDuck::Aggregator do
     it_should_behave_like "cfg or property default type"
   end
 
+  describe "null @cfg" do
+    before do
+      @doc = parse(<<-EOS)[0]
+      ({/**
+         * @cfg
+         * Some documentation.
+         */
+        foo: null })
+      EOS
+    end
+    it_should_behave_like "cfg"
+    it_should_behave_like "cfg or property"
+    it_should_behave_like "cfg or property default type"
+  end
+
   describe "typeless @property" do
     before do
       @doc = parse(<<-EOS)[0]
