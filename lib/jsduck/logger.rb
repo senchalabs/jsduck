@@ -37,7 +37,9 @@ module JsDuck
         [:cat_no_match, "Class pattern in categories file matches nothing"],
         [:cat_class_missing, "Class is missing from categories file"],
         [:guide, "Guide is missing from --guides dir"],
+
         [:aside, "Problem with @aside tag"],
+        [:hide, "Problem with @hide tag"],
       ]
       # Turn off all warnings by default.
       # This is good for testing.

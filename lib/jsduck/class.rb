@@ -150,7 +150,7 @@ module JsDuck
       ms = parent ? parent.members_hash(type, context) : {}
 
       mixins.each do |mix|
-        ms.merge!(mix.members_hash(type, context)) {|k,o,n| store_overrides(k,o,n)}
+        merge!(ms, mix.members_hash(type, context))
       end
 
       # For static members, exclude everything not explicitly marked as inheritable
@@ -158,20 +158,36 @@ module JsDuck
         ms.delete_if {|key, member| !member[:inheritable] }
       end
 
-      ms.merge!(local_members_hash(type, context)) {|k,o,n| store_overrides(k,o,n)}
+      merge!(ms, local_members_hash(type, context))
 
       # If singleton has static members, include them as if they were
       # instance members.  Otherwise they will be completely excluded
       # from the docs, as the static members block is not created for
       # singletons.
       if @doc[:singleton] && @doc[:statics][type].length > 0
-        ms.merge!(local_members_hash(type, :statics)) {|k,o,n| store_overrides(k,o,n)}
+        merge!(ms, local_members_hash(type, :statics))
       end
 
-      # Remove explicitly hidden members (tagged with @hide)
-      ms.reject! {|k, v| v[:meta] && v[:meta][:hide] }
-
       ms
+    end
+
+    # merges second members hash into first one
+    def merge!(hash1, hash2)
+      hash2.each_pair do |name, m|
+        if m[:meta] && m[:meta][:hide]
+          if hash1[name]
+            hash1.delete(name)
+          else
+            ctx = m[:files][0]
+            Logger.instance.warn(:hide, "@hide used but #{m[:tagname]} #{m[:name]} not found in parent class", ctx[:filename], ctx[:linenr])
+          end
+        else
+          if hash1[name]
+            store_overrides(hash1[name], m)
+          end
+          hash1[name] = m
+        end
+      end
     end
 
     # Invoked when merge! finds two members with the same name.
@@ -182,7 +198,7 @@ module JsDuck
     # ExtJS, we have to handle it.
     #
     # Every overridden member is listed just once.
-    def store_overrides(key, old, new)
+    def store_overrides(old, new)
       # Sometimes a class is included multiple times (like Ext.Base)
       # resulting in its members overriding themselves.  Because of
       # this, ignore overriding itself.
@@ -190,7 +206,6 @@ module JsDuck
         new[:overrides] = [] unless new[:overrides]
         new[:overrides] << old unless new[:overrides].any? {|m| m[:owner] == old[:owner] }
       end
-      new
     end
 
     # Helper method to get the direct members of this class
