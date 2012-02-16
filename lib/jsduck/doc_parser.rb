@@ -134,8 +134,8 @@ module JsDuck
           at_var
         elsif look(/@inheritable\b/)
           boolean_at_tag(/@inheritable/, :inheritable)
-        elsif look(/@(private|ignore|hide)\b/)
-          boolean_at_tag(/@(private|ignore|hide)/, :private)
+        elsif look(/@(private|ignore)\b/)
+          boolean_at_tag(/@(private|ignore)/, :private)
         elsif look(/@accessor\b/)
           boolean_at_tag(/@accessor/, :accessor)
         elsif look(/@evented\b/)

@@ -27,8 +27,8 @@ module JsDuck
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
       [:members, :statics].each do |group|
         cls[group].each_pair do |type, members|
-          # format all members
-          cls[group][type] = members.map {|m| format_member(m) }
+          # format all members (except hidden ones)
+          cls[group][type] = members.map {|m| m[:meta][:hide] ? m : format_member(m)  }
         end
       end
       cls[:html_meta] = format_meta_data(cls)
