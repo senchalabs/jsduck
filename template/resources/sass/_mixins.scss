@@ -169,3 +169,13 @@
     background-color: #FD6B1B; }
   &.protected {
     background-color: #9B86FC; } }
+
+// shared styles for signature labels in hover-menus and search dropdown.
+@mixin mini-signature {
+ .signature {
+   font-size: 0.6em;
+   text-transform: uppercase;
+   font-weight: bold;
+   padding: 0 0.5em;
+   @include border-radius(2px);
+   @include signature-colors; } }

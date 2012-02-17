@@ -44,7 +44,8 @@ Ext.define('Docs.view.search.Dropdown', {
             '<tpl for=".">',
                 '<div class="item">',
                     '<div class="icon icon-{icon}"></div>',
-                    '<div class="title {[this.getCls(values)]}">{member}</div>',
+                    '<div class="meta">{[this.getMetaTags(values.meta)]}</div>',
+                    '<div class="title {[this.getCls(values.meta)]}">{member}</div>',
                     '<div class="class">{cls}</div>',
                 '</div>',
             '</tpl>',
@@ -54,8 +55,13 @@ Ext.define('Docs.view.search.Dropdown', {
                 '<a href="#" class="next">&gt;</a>',
             '</div>',
             {
-                getCls: function(values) {
-                    return values["private"] ? "private" : (values.removed ? "removed" : "");
+                getCls: function(meta) {
+                    return meta["private"] ? "private" : (meta.removed ? "removed" : "");
+                },
+                getMetaTags: function(meta) {
+                    return Ext.Array.map(Docs.data.signatures, function(s) {
+                        return meta[s.key] ? '<span class="signature '+s.key+'">'+(s["short"])+'</span>' : '';
+                    }).join(' ');
                 },
                 getTotal: Ext.bind(this.getTotal, this),
                 getStart: Ext.bind(this.getStart, this),

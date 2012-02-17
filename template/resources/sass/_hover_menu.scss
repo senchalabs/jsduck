@@ -36,13 +36,7 @@
     &:hover {
       color: $docs-link-color;
       text-decoration: underline; }
-    span.signature {
-      font-size: 0.6em;
-      text-transform: uppercase;
-      font-weight: bold;
-      padding: 0 0.5em;
-      @include border-radius(2px);
-      @include signature-colors; } } }
+    @include mini-signature; } }
 
 .hover-menu a {
   font-family: Helvetica, Arial, clean, sans-serif;

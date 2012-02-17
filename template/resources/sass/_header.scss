@@ -108,6 +108,12 @@
     height: 18px; }
   @include icons;
 
+  .meta {
+    position: absolute;
+    top: 6px;
+    right: 4px;
+    @include mini-signature; }
+
   .item.x-item-selected {
     background-color: #ffffaa; }
   .item.x-view-over {
