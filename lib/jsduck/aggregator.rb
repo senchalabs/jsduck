@@ -118,6 +118,9 @@ module JsDuck
     # Items without @member belong by default to the preceding class.
     # When no class precedes them - they too are orphaned.
     def add_member(node)
+      # Completely ignore member if @ignore used
+      return if node[:meta][:ignore]
+
       if node[:owner]
         if @classes[node[:owner]]
           add_to_class(@classes[node[:owner]], node)
@@ -189,6 +192,16 @@ module JsDuck
         :meta => {},
         :files => [{:filename => "", :linenr => 0, :href => ""}],
       })
+    end
+
+    # Gets rid of classes marked with @ignore
+    def remove_ignored_classes
+      @documentation.delete_if do |cls|
+        if cls[:meta][:ignore]
+          @classes.delete(cls["name"])
+          true
+        end
+      end
     end
 
     # Appends Ext4 options parameter to each event parameter list.

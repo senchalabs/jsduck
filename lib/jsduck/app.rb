@@ -94,6 +94,7 @@ module JsDuck
       end
       agr.classify_orphans
       agr.create_global_class
+      agr.remove_ignored_classes
       agr.create_accessors
       agr.append_ext4_event_options
       agr.result

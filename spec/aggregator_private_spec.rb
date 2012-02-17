@@ -6,12 +6,13 @@ describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.remove_ignored_classes
     agr.result
   end
 
-  shared_examples_for "private" do
+  describe "@private" do
     before do
-      @doc = parse("/**\n * #{@tagname}\n */")[0]
+      @doc = parse("/** @private */")[0]
     end
 
     it "marks item as private" do
@@ -23,14 +24,62 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "@private" do
-    before { @tagname = "@private" }
-    it_should_behave_like "private"
+  describe "@ignore in member" do
+    before do
+      @docs = parse("/** @ignore */")
+    end
+
+    it "ignores the member completely" do
+      @docs.length.should == 0
+    end
   end
 
-  describe "@ignore" do
-    before { @tagname = "@ignore" }
-    it_should_behave_like "private"
+  describe "@ignore in class" do
+    before do
+      @docs = parse(<<-EOSTR)
+      /**
+       * @class Foo
+       * @ignore
+       */
+          /**
+           * @method bar
+           */
+          /**
+           * @method baz
+           */
+      EOSTR
+    end
+
+    it "ignores the class and all it's members" do
+      @docs.length.should == 0
+    end
+  end
+
+  describe "@ignore in duplicate member" do
+    before do
+      @doc = parse(<<-EOSTR)[0]
+      /**
+       * @class Foo
+       */
+          /**
+           * @method bar
+           * First method docs
+           */
+          /**
+           * @method bar
+           * Second method docs
+           * @ignore
+           */
+      EOSTR
+    end
+
+    it "ignores one member" do
+      @doc[:members][:method].length.should == 1
+    end
+
+    it "lets the other member stay" do
+      @doc[:members][:method][0][:doc].should == "First method docs"
+    end
   end
 
   describe "@hide" do

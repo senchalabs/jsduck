@@ -5,7 +5,7 @@ module JsDuck::Tag
   class Ignore < JsDuck::MetaTag
     def initialize
       @name = "ignore"
-      @key = :private
+      @key = :ignore
       @boolean = true
     end
   end
