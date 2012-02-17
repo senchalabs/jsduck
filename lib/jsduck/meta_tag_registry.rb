@@ -1,11 +1,27 @@
-require 'singleton'
 require "jsduck/meta_tag_loader"
 
 module JsDuck
 
   # Access to meta-tags
   class MetaTagRegistry
-    include Singleton
+
+    @@instance = nil
+
+    # Returns singleton instance of MetaTagRegistry.
+    # By default this will be auto-loaded with builtin tags.
+    def self.instance
+      if !@@instance
+        @@instance = MetaTagRegistry.new
+        @@instance.load([:builtins])
+      end
+      @@instance
+    end
+
+    # Allows injecting another MetaTagRegistry to be used as a global instance.
+    def self.instance=(instance)
+      @@instance = instance
+    end
+
 
     def initialize
       @tags = []

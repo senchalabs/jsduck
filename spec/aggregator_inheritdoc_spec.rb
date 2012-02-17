@@ -3,14 +3,8 @@ require "jsduck/source_file"
 require "jsduck/class"
 require "jsduck/relations"
 require "jsduck/inherit_doc"
-require "jsduck/tag/static"
-require "jsduck/meta_tag_registry"
 
 describe JsDuck::Aggregator do
-  before(:all) do
-    JsDuck::MetaTagRegistry.instance.register([JsDuck::Tag::Static.new])
-  end
-
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))

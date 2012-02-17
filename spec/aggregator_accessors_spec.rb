@@ -2,10 +2,6 @@ require "jsduck/aggregator"
 require "jsduck/source_file"
 
 describe JsDuck::Aggregator do
-  before(:all) do
-    JsDuck::MetaTagRegistry.instance.load([:builtins])
-  end
-
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))

@@ -27,9 +27,22 @@ describe JsDuck::Aggregator do
     end
   end
 
+  # Replace the global MetaTagRegistry instance with a custom one for
+  # these tests. Afterwards set it back as it was before.
+  before(:all) do
+    @old_mtr = JsDuck::MetaTagRegistry.instance
+    reg = JsDuck::MetaTagRegistry.new
+    reg.register([AuthorTag.new, EmailTag.new, LongTag.new])
+    JsDuck::MetaTagRegistry.instance = reg
+  end
+
+  after(:all) do
+    JsDuck::MetaTagRegistry.instance = @old_mtr
+  end
+
+
   def parse(string)
     agr = JsDuck::Aggregator.new
-    JsDuck::MetaTagRegistry.instance.register([AuthorTag.new, EmailTag.new, LongTag.new])
     agr.aggregate(JsDuck::SourceFile.new(string))
     agr.result
   end

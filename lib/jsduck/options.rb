@@ -124,7 +124,10 @@ module JsDuck
         read_filenames(canonical(fname))
       end
       validate
-      MetaTagRegistry.instance.load([:builtins] + @meta_tag_paths)
+
+      reg = MetaTagRegistry.new
+      reg.load([:builtins] + @meta_tag_paths)
+      MetaTagRegistry.instance = reg
     end
 
     def create_option_parser
