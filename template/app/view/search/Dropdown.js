@@ -43,7 +43,7 @@ Ext.define('Docs.view.search.Dropdown', {
         this.tpl = new Ext.XTemplate(
             '<tpl for=".">',
                 '<div class="item">',
-                    '<div class="icon icon-{icon}"></div>',
+                    '<div class="icon {icon}"></div>',
                     '<div class="meta">{[this.getMetaTags(values.meta)]}</div>',
                     '<div class="title {[this.getCls(values.meta)]}">{member}</div>',
                     '<div class="class">{cls}</div>',
