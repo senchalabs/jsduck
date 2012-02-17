@@ -10,13 +10,20 @@ module JsDuck
   class GroupedAsset
     # Should be called from constructor after @groups have been read in,
     # and after it's been ensured that all items in groupes have names.
+    #
+    # Prints warning when there is a duplicate item within a group.
+    # The warning message should say something like "duplicate <asset type>"
     def build_map_by_name(warning_msg)
       @map_by_name = {}
-      each_item do |item|
-        if @map_by_name[item["name"]]
-          Logger.instance.warn(nil, "#{warning_msg} '#{item['name']}'")
+      @groups.each do |group|
+        group_map = {}
+        group["items"].each do |item|
+          if group_map[item["name"]]
+            Logger.instance.warn(:dup_asset, "#{warning_msg} '#{item['name']}'")
+          end
+          @map_by_name[item["name"]] = item
+          group_map[item["name"]] = item
         end
-        @map_by_name[item["name"]] = item
       end
     end
 

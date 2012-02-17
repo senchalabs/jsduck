@@ -25,6 +25,7 @@ module JsDuck
         [:no_doc, "Member or class without documentation"],
         [:dup_param, "Method has two parameters with the same name"],
         [:dup_member, "Class has two members with the same name"],
+        [:dup_asset, "Duplicate guide/video/example"],
         [:req_after_opt, "Required parameter comes after optional"],
         [:subproperty, "@param foo.bar where foo param doesn't exist"],
         [:sing_static, "Singleton class member marked as @static"],
