@@ -24,20 +24,13 @@ module JsDuck
           :examples => @assets.examples.to_array,
           :search => SearchData.new.create(@relations.classes),
           :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
-          :signatures => signatures,
+          :signatures => MetaTagRegistry.instance.signatures,
           :localStorageDb => @opts.local_storage_db,
           :showPrintButton => @opts.seo,
           :touchExamplesUi => @opts.touch_examples_ui,
         }
       }) + ";\n"
       File.open(filename, 'w') {|f| f.write(js) }
-    end
-
-    def signatures
-      sigs = MetaTagRegistry.instance.signatures
-      # Inject private to meta tag signatures list
-      sigs << {:key => 'private', :long => 'private', :short => 'PRI'}
-      sigs
     end
 
   end

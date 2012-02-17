@@ -227,12 +227,15 @@ module JsDuck
     # Detects properties common for each doc-object and adds them
     def add_shared(hash, doc_map)
       hash.merge!({
-        :private => !!doc_map[:private],
         :inheritable => !!doc_map[:inheritable],
         :inheritdoc => doc_map[:inheritdoc] ? doc_map[:inheritdoc].first : nil,
         :meta => detect_meta(doc_map),
       })
+      # copy :private also to main hash
+      hash[:private] = true if hash[:meta][:private]
+
       hash[:id] = create_member_id(hash)
+
       return hash
     end
 
