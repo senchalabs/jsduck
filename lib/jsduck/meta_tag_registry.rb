@@ -34,7 +34,17 @@ module JsDuck
     # Returns array of all available tag instances.
     # When position provided, returns only tags in that position
     def tags(position=nil)
-      position ? @tags.find_all {|t| t.position == position} : @tags
+      return @tags unless position
+
+      unless @position_map
+        @position_map = {}
+        @tags.each do |t|
+          @position_map[t.position] = [] unless @position_map[t.position]
+          @position_map[t.position] << t
+        end
+      end
+
+      @position_map[position] || []
     end
 
     # Accesses tag by key or name
