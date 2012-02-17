@@ -41,7 +41,7 @@ module JsDuck
         :cls => alias_display_name(key)+": "+name,
         :member => name,
         :type => :class,
-        :icon => :subclass,
+        :icon => icon(cls),
         :id => cls.full_name,
         :meta => cls[:meta],
         :sort => 0,
@@ -54,7 +54,7 @@ module JsDuck
         :cls => cls.full_name,
         :member => cls.short_name,
         :type => :class,
-        :icon => :class,
+        :icon => icon(cls),
         :id => cls.full_name,
         :meta => cls[:meta],
         :sort => 1,
@@ -67,7 +67,7 @@ module JsDuck
         :cls => name,
         :member => Class.short_name(name),
         :type => :class,
-        :icon => :subclass,
+        :icon => icon(cls),
         :id => cls.full_name,
         :meta => cls[:meta],
         :sort => 2,
@@ -85,6 +85,16 @@ module JsDuck
         :meta => member[:meta],
         :sort => 3,
       }
+    end
+
+    def icon(cls)
+      if cls[:singleton]
+        "singleton"
+      elsif cls.inherits_from?("Ext.Component")
+        "component"
+      else
+        "class"
+      end
     end
 
     # Some alias types are shown differently.
