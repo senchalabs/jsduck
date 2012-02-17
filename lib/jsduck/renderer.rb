@@ -239,8 +239,6 @@ module JsDuck
       MetaTagRegistry.instance.signatures.each do |s|
         after += "<strong class='#{s[:key]} signature'>#{s[:long]}</strong>" if m[:meta][s[:key]]
       end
-      # Special case for :private which isn't inside :meta.
-      after += "<strong class='private signature'>private</strong>" if m[:private]
 
       uri = "#!/api/#{m[:owner]}-#{m[:id]}"
 
