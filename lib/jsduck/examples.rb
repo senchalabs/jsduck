@@ -48,14 +48,6 @@ module JsDuck
       end
     end
 
-    # Writes examples JSON file to dir
-    def write(dir)
-      FileUtils.mkdir(dir) unless File.exists?(dir)
-      # Write the JSON to output dir, so it's available in released
-      # version of docs and people can use it with JSDuck by themselves.
-      JsonDuck.write_json(dir+"/examples.json", @groups)
-    end
-
     # Extracts example icon URL from example hash
     def icon_url(example)
       @opts.examples_base_url + example["icon"]

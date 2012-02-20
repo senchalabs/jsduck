@@ -35,13 +35,11 @@ module JsDuck
     end
 
     # Writes out the assets that can be written out separately:
-    # guides, videos, examples, images.
+    # guides, images.
     #
     # Welcome page and categories are written in JsDuck::IndexHtml
     def write
       @guides.write(@opts.output_dir+"/guides")
-      @videos.write(@opts.output_dir+"/videos")
-      @examples.write(@opts.output_dir+"/examples")
       @images.copy(@opts.output_dir+"/images")
     end
 

@@ -31,9 +31,6 @@ module JsDuck
     def write(dir)
       FileUtils.mkdir(dir) unless File.exists?(dir)
       each_item {|guide| write_guide(guide, dir) }
-      # Write the JSON to output dir, so it's available in released
-      # version of docs and people can use it with JSDuck by themselves.
-      JsonDuck.write_json(dir+"/guides.json", @groups)
     end
 
     def write_guide(guide, dir)

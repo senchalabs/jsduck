@@ -30,14 +30,6 @@ module JsDuck
       end
     end
 
-    # Writes videos JSON file to a dir
-    def write(dir)
-      FileUtils.mkdir(dir) unless File.exists?(dir)
-      # Write the JSON to output dir, so it's available in released
-      # version of docs and people can use it with JSDuck by themselves.
-      JsonDuck.write_json(dir+"/videos.json", @groups)
-    end
-
     # Extracts video icon URL from video hash
     def icon_url(video)
       video["thumb"]
