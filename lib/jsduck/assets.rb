@@ -28,7 +28,7 @@ module JsDuck
 
       @images = Images.new(@opts.images)
       @welcome = Welcome.create(@opts.welcome)
-      @guides = Guides.create(@opts.guides, DocFormatter.new(@relations, @opts))
+      @guides = Guides.create(@opts.guides, DocFormatter.new(@relations, @opts), @opts)
       @videos = Videos.create(@opts.videos)
       @examples = Examples.create(@opts.examples, @opts)
       @categories = Categories.create(@opts.categories_path, DocFormatter.new(@relations, @opts), @relations)

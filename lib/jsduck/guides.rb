@@ -10,20 +10,21 @@ module JsDuck
   # Reads in guides and converts them to JsonP files
   class Guides < GroupedAsset
     # Creates Guides object from filename and formatter
-    def self.create(filename, formatter)
+    def self.create(filename, formatter, opts)
       if filename
-        Guides.new(filename, formatter)
+        Guides.new(filename, formatter, opts)
       else
         NullObject.new(:to_array => [], :to_html => "", :[] => nil)
       end
     end
 
     # Parses guides config file
-    def initialize(filename, formatter)
+    def initialize(filename, formatter, opts)
       @path = File.dirname(filename)
       @groups = JsonDuck.read(filename)
       build_map_by_name("Two guides have the same name")
       @formatter = formatter
+      @opts = opts
     end
 
     # Writes all guides to given dir in JsonP format
@@ -47,12 +48,28 @@ module JsDuck
       # Copy the whole guide dir over
       FileUtils.cp_r(in_dir, out_dir)
 
+      # Ensure the guide has an icon
+      fix_icon(out_dir)
+
       @formatter.doc_context = {:filename => guide_file, :linenr => 0}
       name = File.basename(in_dir)
       @formatter.img_path = "guides/#{name}"
       html = add_toc(guide, @formatter.format(IO.read(guide_file)))
 
       JsonDuck.write_jsonp(out_dir+"/README.js", name, {:guide => html, :title => guide["title"]})
+    end
+
+    # Ensures the guide dir contains icon.png.
+    # When there isn't looks for icon-lg.png and renames it to icon.png.
+    # When neither exists, copies over default icon.
+    def fix_icon(dir)
+      if File.exists?(dir+"/icon.png")
+        # All ok
+      elsif File.exists?(dir+"/icon-lg.png")
+        FileUtils.mv(dir+"/icon-lg.png", dir+"/icon.png")
+      else
+        FileUtils.cp(@opts.template_dir+"/resources/images/default-guide.png", dir+"/icon.png")
+      end
     end
 
     # Creates table of contents at the top of guide by looking for <h2> elements in HTML.
