@@ -118,7 +118,7 @@ module JsDuck
 
     # Extracts guide icon URL from guide hash
     def icon_url(guide)
-      "guides/" + guide["name"] + "/icon-lg.png"
+      "guides/" + guide["name"] + "/icon.png"
     end
 
   end
