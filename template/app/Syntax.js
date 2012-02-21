@@ -15,12 +15,8 @@ Ext.define("Docs.Syntax", {
         Ext.Array.forEach(Ext.query("pre > code", root.dom || root), function(code) {
             code = Ext.get(code);
             var pre = code.parent();
-            // Disable inline examples in IE (too slow)
-            if (!Docs.forceInlineExamples && Ext.isIE && pre.hasCls("inline-example")) {
-                pre.removeCls("inline-example");
-            }
-            // Don't prettify inline examples, these are highlighted anyway
-            if (!pre.hasCls("inline-example")) {
+            // Don't prettify inline examples that have preview enabled.
+            if (!(pre.hasCls("inline-example") && pre.hasCls("preview"))) {
                 code.addCls("prettyprint");
             }
         });

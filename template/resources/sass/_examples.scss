@@ -1,22 +1,21 @@
 // Styles for examples
 @import "mixins";
 
-.inline-example-cmp {
-  margin-bottom: 10px;
-  // add padding to make right scrollbar visible
-  padding-right: 25px;
+pre.inline-example {
+  margin-top: 0; }
+
+.inline-example-tb {
   // Hide toolbar background completely.
   // !important is needed to hide the background image
   // that is created for browsers like IE and Opera.
-  .x-toolbar {
-    background: none !important; }
+  background: none !important;
+  border: none;
+
   // Inline example component buttons
   span.x-btn-inner {
-    line-height: 12px;
-  }
+    line-height: 12px; }
   .active span.x-btn-inner {
-    color: #57a7dc;
-  }
+    color: #57a7dc; }
   span.x-btn-icon {
     background: url(../images/example-icons.png) no-repeat;
     opacity: 0.6;
@@ -35,6 +34,20 @@
       background-position: -31px -65px; }
     &.copy {
       background-position: -30px -88px; } } }
+
+.inline-example-editor {
+  border: none;
+  .x-panel-body {
+    border: solid 1px #e8e8e8;
+    @include border-radius(5px);
+    // Create exactly the same amount of padding as normal code <pre> has
+    padding: 5px 15px !important;
+    background: #f7f7f7; } }
+
+.inline-example-cmp {
+  margin-bottom: 10px;
+  // add padding to make right scrollbar visible
+  padding-right: 25px; }
 
 .touchExample .wrong-browser {
   margin-top: 120px;
