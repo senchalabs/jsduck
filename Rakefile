@@ -430,13 +430,12 @@ task :touch2, [:mode] => :sass do |t, args|
   if mode == "export"
     runner.add_export_notice("touch/2-0")
     runner.add_phone_redirect
+    # override settings in config.json
     runner.add_options [
       "--welcome", "#{SDK_DIR}/touch/docs/build-welcome.html",
       "--eg-iframe", "#{SDK_DIR}/touch/docs/build-eg-iframe.html",
       "--examples-base-url", "../examples/",
     ]
-  else
-    runner.add_options ["--examples-base-url", "touch/examples/"]
   end
 
   runner.add_debug if mode == "debug"
