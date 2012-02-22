@@ -41,7 +41,7 @@ module JsDuck
         end
       end
       each_member do |member|
-        if member[:doc] == "" && !member[:private]
+        if member[:doc] == "" && !member[:private] && !member[:meta][:hide]
           warn(:no_doc, "No documentation for #{member[:owner]}##{member[:name]}", member)
         end
       end
