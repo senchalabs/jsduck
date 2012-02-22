@@ -212,36 +212,12 @@ class JsDuckRunner
     ]
   end
 
-  def set_touch2_src
-    relative_touch_path = "../"
-    system("cp", "-r", "#{@sdk_dir}/touch/docs/build-welcome.html", "template-min/welcome.html")
-    system("cp", "-r", "#{@sdk_dir}/touch/docs/eg-iframe.html", "template-min/eg-iframe.html")
-
-    ["template-min/eg-iframe.html", "template-min/welcome.html"].each do |file|
-      html = IO.read(file);
-
-      touch_src_re = /((src|href)="touch)/m
-      out = []
-
-      html.each_line do |line|
-        out << line.sub(/((src|href)="touch\/)/, '\2="' + relative_touch_path)
-      end
-
-      File.open(file, 'w') {|f| f.write(out) }
-    end
-
-    head_html = <<-EOHTML
+  def add_phone_redirect
+    @options += ["--body-html", <<-EOHTML]
       <script type="text/javascript">
-        if (Ext.is.Phone) { window.location = "#{relative_touch_path}examples/"; }
+        if (Ext.is.Phone) { window.location = "../examples/"; }
       </script>
     EOHTML
-
-    @options += [
-      "--body-html", head_html,
-      "--welcome", "template-min/welcome.html",
-      "--eg-iframe", "template-min/eg-iframe.html",
-      "--examples-base-url", "#{relative_touch_path}examples/",
-    ]
   end
 
   def add_debug
@@ -464,14 +440,24 @@ task :touch2, [:mode] => :sass do |t, args|
   compress if mode == "live" || mode == "export"
 
   runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/touch/docs/config.json"]
-  runner.add_debug if mode == "debug"
-  runner.add_export_notice("touch/2-0") if mode == "export"
+  runner.add_options [
+    "--output", OUT_DIR,
+    "--config", "#{SDK_DIR}/touch/docs/config.json"
+  ]
+
   if mode == "export"
-    runner.set_touch2_src
+    runner.add_export_notice("touch/2-0")
+    runner.add_phone_redirect
+    runner.add_options [
+      "--welcome", "#{SDK_DIR}/touch/docs/build-welcome.html",
+      "--eg-iframe", "#{SDK_DIR}/touch/docs/build-eg-iframe.html",
+      "--examples-base-url", "../examples/",
+    ]
   else
     runner.add_options ["--examples-base-url", "touch/examples/"]
   end
+
+  runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"
   runner.add_comments('comments-touch-2') if mode == "debug" || mode == "live"
