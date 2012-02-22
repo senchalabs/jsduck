@@ -194,24 +194,6 @@ class JsDuckRunner
     ]
   end
 
-  def add_touch_export
-    @options += [
-      "--json",
-      "--output", "#{@out_dir}/../export/touch1",
-      "--external=google.maps.Map,google.maps.LatLng",
-      "#{@sdk_dir}/touch/sencha-touch.jsb3",
-    ]
-  end
-
-  def add_touch2_export
-    @options += [
-      "--export", "full",
-      "--output", "#{@out_dir}/../export/touch2",
-      "--external=google.maps.Map,google.maps.LatLng",
-      "#{@sdk_dir}/touch/touch.jsb3",
-    ]
-  end
-
   def add_phone_redirect
     @options += ["--body-html", <<-EOHTML]
       <script type="text/javascript">
@@ -514,19 +496,6 @@ task :animator, [:mode] => :sass do |t, args|
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"
-  runner.run
-end
-
-desc "Run JSDuck JSON Export (for internal use at Sencha)\n" +
-     "export[touch]  - creates export for Touch 1\n" +
-     "export[touch2] - creates export for Touch 2"
-task :export, [:mode] do |t, args|
-  mode = args[:mode]
-  throw "Unknown mode #{mode}" unless ["touch", "touch2"].include?(mode)
-
-  runner = JsDuckRunner.new
-  runner.add_touch_export if mode == "touch"
-  runner.add_touch2_export if mode == "touch2"
   runner.run
 end
 
