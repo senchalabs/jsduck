@@ -124,7 +124,7 @@ module JsDuck
           at_member
         elsif look(/@inherit[dD]oc\b/)
           at_inheritdoc
-        elsif look(/@alias\s+[\w.]+#\w+/)
+        elsif look(/@alias\s+([\w.]+)?#\w+/)
           # For backwards compatibility.
           # @alias tag was used as @inheritdoc before
           at_inheritdoc

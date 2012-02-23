@@ -344,7 +344,7 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "@inheritdoc with member name parameter" do
+  shared_examples_for "with member name parameter" do
     before do
       @docs = parse(<<-EOF)
         /**
@@ -356,7 +356,7 @@ describe JsDuck::Aggregator do
            */
           /**
            * @method foobar
-           * @inheritdoc #bar
+           * #{@tagname} #bar
            * New comment.
            */
       EOF
@@ -366,6 +366,20 @@ describe JsDuck::Aggregator do
     it "merges comment from referenced member" do
       @inheritdoc[:doc].should == "New comment.\n\nOriginal comment."
     end
+  end
+
+  describe "@inheritdoc" do
+    before do
+      @tagname = "@inheritdoc"
+    end
+    it_behaves_like "with member name parameter"
+  end
+
+  describe "@alias" do
+    before do
+      @tagname = "@alias"
+    end
+    it_behaves_like "with member name parameter"
   end
 
   describe "@inheritdoc without parameter" do
