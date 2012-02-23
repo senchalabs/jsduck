@@ -444,5 +444,48 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "@inheritdoc with class name in class" do
+    before do
+      @docs = parse(<<-EOF)
+        /**
+         * @class Parent
+         * Original comment.
+         */
+        /**
+         * @class Child
+         * New comment.
+         * @inheritdoc Parent
+         */
+      EOF
+      @cls = @docs["Child"]
+    end
+
+    it "combines docs from referenced class and current class" do
+      @cls[:doc].should == "New comment.\n\nOriginal comment."
+    end
+  end
+
+  describe "plain @inheritdoc in class" do
+    before do
+      @docs = parse(<<-EOF)
+        /**
+         * @class Parent
+         * Original comment.
+         */
+        /**
+         * @class Child
+         * @extends Parent
+         * New comment.
+         * @inheritdoc
+         */
+      EOF
+      @cls = @docs["Child"]
+    end
+
+    it "combines docs from parent and child" do
+      @cls[:doc].should == "New comment.\n\nOriginal comment."
+    end
+  end
+
 end
 

@@ -12,6 +12,7 @@ module JsDuck
     # Performs all inheriting
     def resolve_all
       @relations.each do |cls|
+        resolve_class(cls) if cls[:inheritdoc]
         cls.all_local_members.each do |member|
           if member[:inheritdoc]
             resolve(member)
@@ -77,6 +78,37 @@ module JsDuck
 
       if parent[:inheritdoc]
         find_parent(parent)
+      else
+        parent
+      end
+    end
+
+    # Copy over doc from parent class.
+    def resolve_class(cls)
+      parent = find_class_parent(cls)
+      cls[:doc] = (cls[:doc] + "\n\n" + parent[:doc]).strip
+    end
+
+    def find_class_parent(cls)
+      context = cls[:files][0]
+      inherit = cls[:inheritdoc]
+
+      if inherit[:cls]
+        parent = @relations[inherit[:cls]]
+        unless parent
+          warn("@inheritdoc #{inherit[:cls]} - class not found", context)
+          return cls
+        end
+      else
+        parent = cls.parent
+        if !parent
+          warn("@inheritdoc - parent class not found", context)
+          return cls
+        end
+      end
+
+      if parent[:inheritdoc]
+        find_class_parent(parent)
       else
         parent
       end

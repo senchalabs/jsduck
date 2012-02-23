@@ -33,8 +33,14 @@ module JsDuck
       @doc = doc
     end
 
+    # Accessor to internal hash
     def [](key)
       @doc[key]
+    end
+
+    # Assignment to internal hash keys
+    def []=(key, value)
+      @doc[key] = value
     end
 
     # Returns instance of parent class, or nil if there is none
