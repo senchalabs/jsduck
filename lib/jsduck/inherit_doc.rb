@@ -48,6 +48,13 @@ module JsDuck
           warn("@inheritdoc #{inherit[:cls]}##{inherit[:member]} - member not found", context)
           return m
         end
+      elsif inherit[:member]
+        cls = @relations[m[:owner]]
+        parent = cls.get_members(inherit[:member], inherit[:type] || m[:tagname], inherit[:static] || m[:meta][:static])[0]
+        unless parent
+          warn("@inheritdoc ##{inherit[:member]} - member not found", context)
+          return m
+        end
       else
         parent_cls = @relations[m[:owner]].parent
         mixins = @relations[m[:owner]].mixins

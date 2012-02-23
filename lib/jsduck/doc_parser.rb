@@ -325,21 +325,24 @@ module JsDuck
 
       add_tag(:inheritdoc)
       skip_horiz_white
+
       if look(@ident_chain_pattern)
         @current_tag[:cls] = ident_chain
-        if look(/#\w/)
-          @input.scan(/#/)
-          if look(/static-/)
-            @current_tag[:static] = true
-            @input.scan(/static-/)
-          end
-          if look(/(cfg|property|method|event|css_var|css_mixin)-/)
-            @current_tag[:type] = ident.to_sym
-            @input.scan(/-/)
-          end
-          @current_tag[:member] = ident
-        end
       end
+
+      if look(/#\w/)
+        @input.scan(/#/)
+        if look(/static-/)
+          @current_tag[:static] = true
+          @input.scan(/static-/)
+        end
+        if look(/(cfg|property|method|event|css_var|css_mixin)-/)
+          @current_tag[:type] = ident.to_sym
+          @input.scan(/-/)
+        end
+        @current_tag[:member] = ident
+      end
+
       skip_white
     end
 
