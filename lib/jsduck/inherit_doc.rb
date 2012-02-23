@@ -34,37 +34,27 @@ module JsDuck
     #
     # If the parent also has @inheritdoc, continues recursively.
     def find_parent(m)
-      context = m[:files][0]
-      inherit = m[:inheritdoc]
-
-      if inherit[:cls]
+      if m[:inheritdoc][:cls]
         # @inheritdoc MyClass#member
-        parent_cls = @relations[inherit[:cls]]
-        unless parent_cls
-          warn("@inheritdoc #{inherit[:cls]}##{inherit[:member]} - class not found", context)
-          return m
-        end
+        parent_cls = @relations[m[:inheritdoc][:cls]]
+        return warn("class not found", m) unless parent_cls
+
         parent = lookup_member(parent_cls, m)
-        unless parent
-          warn("@inheritdoc #{inherit[:cls]}##{inherit[:member]} - member not found", context)
-          return m
-        end
-      elsif inherit[:member]
+        return warn("member not found", m) unless parent
+
+      elsif m[:inheritdoc][:member]
         # @inheritdoc #member
         parent = lookup_member(@relations[m[:owner]], m)
-        unless parent
-          warn("@inheritdoc ##{inherit[:member]} - member not found", context)
-          return m
-        end
+        return warn("member not found", m) unless parent
+
       else
         # @inheritdoc
         parent_cls = @relations[m[:owner]].parent
         mixins = @relations[m[:owner]].mixins
+
         # Warn when no parent or mixins at all
-        if !parent_cls && mixins.length == 0
-          warn("@inheritdoc - parent class not found", context)
-          return m
-        end
+        return warn("parent class not found", m) unless parent_cls || mixins.length > 0
+
         # First check for the member in all mixins, because members
         # from mixins override those from parent class.  Looking first
         # from mixins is probably a bit slower, but it's the correct
@@ -72,22 +62,17 @@ module JsDuck
         if mixins.length > 0
           parent = mixins.map {|mix| lookup_member(mix, m) }.compact.first
         end
+
         # When not found, try looking from parent class
         if !parent && parent_cls
           parent = lookup_member(parent_cls, m)
         end
+
         # Only when both parent and mixins fail, throw warning
-        if !parent
-          warn("@inheritdoc - parent member not found", context)
-          return m
-        end
+        return warn("parent member not found", m) unless parent
       end
 
-      if parent[:inheritdoc]
-        find_parent(parent)
-      else
-        parent
-      end
+      return parent[:inheritdoc] ? find_parent(parent) : parent
     end
 
     def lookup_member(cls, m)
@@ -102,34 +87,27 @@ module JsDuck
     end
 
     def find_class_parent(cls)
-      context = cls[:files][0]
-      inherit = cls[:inheritdoc]
-
-      if inherit[:cls]
+      if cls[:inheritdoc][:cls]
         # @inheritdoc MyClass
-        parent = @relations[inherit[:cls]]
-        unless parent
-          warn("@inheritdoc #{inherit[:cls]} - class not found", context)
-          return cls
-        end
+        parent = @relations[cls[:inheritdoc][:cls]]
+        return warn("class not found", cls) unless parent
       else
         # @inheritdoc
         parent = cls.parent
-        if !parent
-          warn("@inheritdoc - parent class not found", context)
-          return cls
-        end
+        return warn("parent class not found", cls) unless parent
       end
 
-      if parent[:inheritdoc]
-        find_class_parent(parent)
-      else
-        parent
-      end
+      return parent[:inheritdoc] ? find_class_parent(parent) : parent
     end
 
-    def warn(msg, context)
+    def warn(msg, item)
+      context = item[:files][0]
+      i_member = item[:inheritdoc][:member]
+
+      msg = "@inheritdoc #{item[:inheritdoc][:cls]}"+ (i_member ? "#" + i_member : "") + " - " + msg
       Logger.instance.warn(:inheritdoc, msg, context[:filename], context[:linenr])
+
+      return item
     end
 
   end
