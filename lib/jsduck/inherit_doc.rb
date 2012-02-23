@@ -38,24 +38,26 @@ module JsDuck
       inherit = m[:inheritdoc]
 
       if inherit[:cls]
+        # @inheritdoc MyClass#member
         parent_cls = @relations[inherit[:cls]]
         unless parent_cls
           warn("@inheritdoc #{inherit[:cls]}##{inherit[:member]} - class not found", context)
           return m
         end
-        parent = parent_cls.get_members(inherit[:member], inherit[:type] || m[:tagname], inherit[:static] || m[:meta][:static])[0]
+        parent = lookup_member(parent_cls, m)
         unless parent
           warn("@inheritdoc #{inherit[:cls]}##{inherit[:member]} - member not found", context)
           return m
         end
       elsif inherit[:member]
-        cls = @relations[m[:owner]]
-        parent = cls.get_members(inherit[:member], inherit[:type] || m[:tagname], inherit[:static] || m[:meta][:static])[0]
+        # @inheritdoc #member
+        parent = lookup_member(@relations[m[:owner]], m)
         unless parent
           warn("@inheritdoc ##{inherit[:member]} - member not found", context)
           return m
         end
       else
+        # @inheritdoc
         parent_cls = @relations[m[:owner]].parent
         mixins = @relations[m[:owner]].mixins
         # Warn when no parent or mixins at all
@@ -68,13 +70,11 @@ module JsDuck
         # from mixins is probably a bit slower, but it's the correct
         # order to do things.
         if mixins.length > 0
-          parent = mixins.map do |mix|
-            mix.get_members(m[:name], m[:tagname], m[:meta][:static])[0]
-          end.compact.first
+          parent = mixins.map {|mix| lookup_member(mix, m) }.compact.first
         end
         # When not found, try looking from parent class
         if !parent && parent_cls
-          parent = parent_cls.get_members(m[:name], m[:tagname], m[:meta][:static])[0]
+          parent = lookup_member(parent_cls, m)
         end
         # Only when both parent and mixins fail, throw warning
         if !parent
@@ -90,6 +90,11 @@ module JsDuck
       end
     end
 
+    def lookup_member(cls, m)
+      inherit = m[:inheritdoc]
+      cls.get_members(inherit[:member] || m[:name], inherit[:type] || m[:tagname], inherit[:static] || m[:meta][:static])[0]
+    end
+
     # Copy over doc from parent class.
     def resolve_class(cls)
       parent = find_class_parent(cls)
@@ -101,12 +106,14 @@ module JsDuck
       inherit = cls[:inheritdoc]
 
       if inherit[:cls]
+        # @inheritdoc MyClass
         parent = @relations[inherit[:cls]]
         unless parent
           warn("@inheritdoc #{inherit[:cls]} - class not found", context)
           return cls
         end
       else
+        # @inheritdoc
         parent = cls.parent
         if !parent
           warn("@inheritdoc - parent class not found", context)
