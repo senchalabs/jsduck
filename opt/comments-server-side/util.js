@@ -121,9 +121,7 @@ exports.findComment = function(req, res, next) {
 
 exports.sendEmailUpdates = function(comment) {
 
-    var mailTransport = nodemailer.createTransport("SMTP",{
-        service: "sendmail"
-    });
+    var mailTransport = nodemailer.createTransport("Sendmail", "/usr/bin/sendmail");
 
     var sendSubscriptionEmail = function(emails) {
 
