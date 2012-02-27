@@ -3,10 +3,9 @@
  */
 Ext.define('Docs.view.examples.InlineEditor', {
     extend: 'Ext.Panel',
-    style: 'border: 0',
     bodyPadding: 2,
-    bodyStyle: 'background: #f7f7f7',
     autoScroll: true,
+    componentCls: 'inline-example-editor',
 
     initComponent: function() {
         this.addEvents(

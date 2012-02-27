@@ -20,33 +20,6 @@ Ext.define('Docs.view.examples.Inline', {
     // Make too long examples scrollable
     maxCodeHeight: 400,
 
-    dockedItems: [{
-        xtype: 'toolbar',
-        dock: 'top',
-        height: 30,
-        items: [
-            {
-                iconCls: 'code',
-                padding: '0 2 0 0',
-                margin: '0 3 0 0',
-                text: 'Code Editor'
-            },
-            {
-                padding: 0,
-                margin: '0 3 0 0',
-                iconCls: 'preview',
-                text: 'Live Preview'
-            },
-            "->",
-            {
-                padding: 0,
-                margin: 0,
-                iconCls: 'copy',
-                text: 'Select Code'
-            }
-        ]
-    }],
-
     /**
      * @cfg {Object} options
      * A set of options for configuring the preview:
@@ -57,6 +30,11 @@ Ext.define('Docs.view.examples.Inline', {
      * @cfg {Boolean} options.preview True to start up in preview mode.
      */
     options: {},
+
+    /**
+     * @cfg {Docs.view.examples.InlineToolbar} toolbar
+     * The toolbar with buttons that controls this component.
+     */
 
     initComponent: function() {
         this.options = Ext.apply({
@@ -79,7 +57,14 @@ Ext.define('Docs.view.examples.Inline', {
             })
         ];
 
-        this.activeItem = this.options.preview ? 1 : 0;
+        if (this.options.preview) {
+            this.activeItem = 1;
+            this.toolbar.activateButton("preview");
+        }
+        else {
+            this.activeItem = 0;
+            this.toolbar.activateButton("code");
+        }
 
         this.on("afterrender", this.init, this);
 
@@ -93,6 +78,22 @@ Ext.define('Docs.view.examples.Inline', {
             this.showPreview();
         }
         this.updateHeight();
+        this.initToolbarEvents();
+    },
+
+    initToolbarEvents: function() {
+        this.toolbar.on("buttonclick", function(name) {
+            if (name === "code") {
+                this.showCode();
+            }
+            else if (name === "preview") {
+                this.showPreview();
+            }
+            else if (name === "copy") {
+                this.showCode();
+                this.editor.selectAll();
+            }
+        }, this);
     },
 
     /**
@@ -101,6 +102,10 @@ Ext.define('Docs.view.examples.Inline', {
     showCode: function() {
         this.layout.setActiveItem(0);
         this.updateHeight();
+        this.toolbar.activateButton("code");
+        // Weird bug on CodeMirror requires 2 refreshes...
+        this.editor.refresh();
+        this.editor.refresh();
     },
 
     /**
@@ -110,6 +115,7 @@ Ext.define('Docs.view.examples.Inline', {
         this.preview.update(this.editor.getValue());
         this.layout.setActiveItem(1);
         this.updateHeight();
+        this.toolbar.activateButton("preview");
     },
 
     // Syncs the height with number of lines in code example.
