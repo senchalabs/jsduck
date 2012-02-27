@@ -22,7 +22,7 @@
 config = require('./config');
 mongoose = require('mongoose');
 require('./database');
-require('express-namespace')
+require('express-namespace');
 
 var mysql = require('mysql'),
     client = mysql.createClient({
@@ -165,7 +165,7 @@ app.namespace('/auth/:sdk/:version', function(){
             } else {
                 return;
             }
-        }
+        };
 
         var reduce = function(key, values) {
             var i = 0, total = 0;
@@ -175,7 +175,7 @@ app.namespace('/auth/:sdk/:version', function(){
             }
 
             return total;
-        }
+        };
 
         mongoose.connection.db.executeDbCommand({
             mapreduce: 'comments',
@@ -190,7 +190,7 @@ app.namespace('/auth/:sdk/:version', function(){
         }, function(err, dbres) {
             mongoose.connection.db.collection('commentCounts', function(err, collection) {
                 collection.find({}).toArray(function(err, comments) {
-                    res.send(comments)
+                    res.send(comments);
                 });
             });
         });
@@ -227,7 +227,7 @@ app.namespace('/auth/:sdk/:version', function(){
             emaiHash: crypto.createHash('md5').update(req.session.user.email).digest("hex"),
             sdk: req.params.sdk,
             version: req.params.version
-        })
+        });
 
         comment.save(function(err, response) {
             res.json({ success: true, id: response._id, action: req.body.action });

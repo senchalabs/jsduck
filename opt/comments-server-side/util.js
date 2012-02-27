@@ -23,14 +23,14 @@ exports.sanitize = function(content, opts) {
             } else {
                 return '';
             }
-        }
+        };
     }
 
     sanitized_output = sanitizer.sanitize(markdowned, urlFunc);
     sanitized_output = sanitized_output.replace(/&apos;/g, '&#39;');
 
     return sanitized_output;
-}
+};
 
 exports.formatComments = function(comments, req) {
 
@@ -47,8 +47,8 @@ exports.formatComments = function(comments, req) {
         }
 
         return comment;
-    })
-}
+    });
+};
 
 exports.vote = function(req, res, comment) {
 
@@ -93,7 +93,7 @@ exports.vote = function(req, res, comment) {
             total: (comment.upVotes.length - comment.downVotes.length)
         });
     });
-}
+};
 
 
 exports.requireLoggedInUser = function(req, res, next) {
@@ -103,7 +103,7 @@ exports.requireLoggedInUser = function(req, res, next) {
     } else {
         next();
     }
-}
+};
 
 exports.findComment = function(req, res, next) {
 
@@ -116,7 +116,7 @@ exports.findComment = function(req, res, next) {
         res.json({success: false, reason: 'No such comment'});
     }
 
-}
+};
 
 
 

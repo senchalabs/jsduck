@@ -34,7 +34,7 @@ ForumUser.prototype = {
                     return;
                 }
 
-                var user = self.getUserFromResult(results[0])
+                var user = self.getUserFromResult(results[0]);
 
                 callback(null, user);
             }
@@ -50,7 +50,7 @@ ForumUser.prototype = {
             userName: user.username,
             userId: user.userid,
             mod: _.include(user.membergroupids, 7)
-        }
+        };
     },
 
     checkPassword: function(password, salt, saltedPassword) {
