@@ -43,7 +43,15 @@ Ext.define('Docs.controller.Comments', {
              * Fired after a comment is removed
              * @param {String} key  Key of the comment
              */
-            'remove'
+            'remove',
+
+            /**
+             * @event changeSubscription
+             * Fired after a comment email subscription has changed
+             * @param {Boolean} subscribed  Whether the subscription is active
+             * @param {String} key  Key of the comment
+             */
+            'changeSubscription'
         );
 
         if (!Docs.enableComments) {
@@ -115,6 +123,10 @@ Ext.define('Docs.controller.Comments', {
                             delegate: delegate[0]
                         });
                     }, this);
+
+                    cmp.el.addListener('click', this.updateSubscription, this, {
+                        delegate: '.subscriptionCheckbox'
+                    });
                 }
             },
 
@@ -157,7 +169,7 @@ Ext.define('Docs.controller.Comments', {
             endkey = Ext.JSON.encode(this.commentId(id).concat([{}])),
             currentUser = this.getController('Auth').currentUser,
             // url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_target';
-            url = Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments';
+            url = Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments';
 
         Ext.data.JsonP.request({
             url: url,
@@ -183,7 +195,8 @@ Ext.define('Docs.controller.Comments', {
         var postButton = Ext.get(el),
             comments = postButton.up('.comments-div'),
             id = comments.getAttribute('id'),
-            target = Ext.JSON.encode(this.commentId(id)),
+            target = this.commentId(id),
+            encodedTarget = Ext.JSON.encode(target),
             textarea = comments.down('textarea').dom,
             comment = textarea.editor.getValue(),
             action = comments.down('.commentAction').getValue(),
@@ -212,15 +225,32 @@ Ext.define('Docs.controller.Comments', {
         }
         postButton.addCls('disabled');
 
+        var url = target[1],
+            title = target[1],
+            urlPrefix = '#!/api/';
+
+        if (target[0] == 'video') {
+            title = 'Video ' + title;
+            urlPrefix = '#!/video/';
+        } else if (target[0] == 'guide') {
+            title = 'Guide ' + title;
+            urlPrefix = '#!/guide/';
+        } else if (target[2] != '') {
+            url += '-' + target[2];
+            title += ' ' + target[2];
+        }
+
         Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments'),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments'),
             method: 'POST',
             cors: true,
             params: {
-                target: target,
+                target: encodedTarget,
                 comment: comment,
                 rating: feedbackRating,
-                action: action
+                action: action,
+                title: title,
+                url: urlPrefix + url
             },
             callback: function(options, success, response) {
                 if (response && response.responseText) {
@@ -245,7 +275,7 @@ Ext.define('Docs.controller.Comments', {
      * Fetches the most recent comments
      */
     fetchRecentComments: function(id, startkey) {
-        var url = this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments_recent'),
+        var url = this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments_recent'),
             limit = 100;
 
         var params = {
@@ -316,7 +346,7 @@ Ext.define('Docs.controller.Comments', {
             cls = commentsEl && commentsEl.getAttribute('id');
 
         Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments/' + id + '/delete'),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + id + '/delete'),
             cors: true,
             method: 'POST',
             callback: function(options, success, response) {
@@ -342,7 +372,7 @@ Ext.define('Docs.controller.Comments', {
             currentUser = this.getController('Auth').currentUser;
 
         Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments/' + commentId),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + commentId),
             method: 'GET',
             cors: true,
             callback: function(options, success, response) {
@@ -382,7 +412,7 @@ Ext.define('Docs.controller.Comments', {
         postButton.addCls('disabled');
 
         Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments/' + id),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + id),
             method: 'POST',
             cors: true,
             params: {
@@ -417,6 +447,23 @@ Ext.define('Docs.controller.Comments', {
         this.vote('down', el);
     },
 
+    updateSubscription: function(cmp, el) {
+
+        var commentEl = Ext.get(el).up('.comments-div'),
+            commentId = commentEl.getAttribute('id');
+
+        Ext.Ajax.request({
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/subscribe'),
+            method: 'POST',
+            cors: true,
+            params: {
+                target: Ext.JSON.encode(this.commentId(commentId)),
+                subscribed: el.checked
+            },
+            scope: this
+        });
+    },
+
     /**
      * @private
      */
@@ -435,7 +482,7 @@ Ext.define('Docs.controller.Comments', {
             scoreEl = meta.down('.score');
 
         Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments/' + id),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + id),
             cors: true,
             method: 'POST',
             params: { vote: direction },
@@ -472,11 +519,12 @@ Ext.define('Docs.controller.Comments', {
     openComments: function(commentsDiv) {
         if (commentsDiv.hasCls('open')) return;
 
-        var commentNum =  commentsDiv.down('.name'),
-            commentsList =  commentsDiv.down('.comment-list');
+        var commentNum = commentsDiv.down('.name'),
+            commentsList = commentsDiv.down('.comment-list');
 
         commentsDiv.addCls('open');
         commentNum.setStyle('display', 'none');
+
         if (commentsList) {
             commentsList.setStyle('display', 'block');
         } else {
@@ -574,7 +622,12 @@ Ext.define('Docs.controller.Comments', {
         } else if (!comments.hasCls('hideCommentForm')) {
             var commentWrap = comments.down('.new-comment-wrap');
             if (this.loggedIn()) {
-                var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, this.getController('Auth').currentUser, true);
+
+                var formData = Ext.apply(this.getController('Auth').currentUser, {
+                    userSubscribed: Docs.commentSubscriptions[id]
+                });
+
+                var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, formData, true);
 
                 if (wrap) {
                     var textareaEl = wrap.down('textarea');

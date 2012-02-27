@@ -158,13 +158,14 @@ class JsDuckRunner
   # This excludes Opera and IE < 8.
   # We check explicitly for IE version to make sure the code works the
   # same way in both real IE7 and IE7-mode of IE8/9.
-  def add_comments(db_name)
+  def add_comments(db_name, version)
     comments_base_url = "http://projects.sencha.com/auth"
     @options += ["--head-html", <<-EOHTML]
       <script type="text/javascript">
         Docs.enableComments = ("withCredentials" in new XMLHttpRequest()) || (Ext.ieVersion >= 8);
         Docs.baseUrl = "#{comments_base_url}";
         Docs.commentsDb = "#{db_name}";
+        Docs.commentsVersion = "#{version}";
       </script>
     EOHTML
   end
@@ -344,7 +345,7 @@ task :sdk, [:mode] => :sass do |t, args|
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_export_notice("ext-js/4-0") if mode == "export"
   runner.add_google_analytics if mode == "live"
-  runner.add_comments('comments-ext-js-4') if mode == "debug" || mode == "live"
+  runner.add_comments('ext-js', '4') if mode == "debug" || mode == "live"
   runner.run
 
   runner.copy_sdk_examples if mode == "export" || mode == "live"
@@ -441,7 +442,7 @@ task :touch2, [:mode] => :sass do |t, args|
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"
-  runner.add_comments('comments-touch-2') if mode == "debug" || mode == "live"
+  runner.add_comments('touch', '2') if mode == "debug" || mode == "live"
   runner.run
 
   runner.copy_touch2_build if mode != "export"

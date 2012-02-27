@@ -7,6 +7,7 @@ Comment = mongoose.model('Comment', new mongoose.Schema({
 
     action:      String,
     author:      String,
+    userId:      Number,
     content:     String,
     contentHtml: String,
     createdAt:   Date,
@@ -16,7 +17,20 @@ Comment = mongoose.model('Comment', new mongoose.Schema({
     target:      Array,
     upVotes:     Array,
     deleted:     Boolean,
-    updates:     Array
+    updates:     Array,
+    mod:         Boolean,
+    title:       String,
+    url:         String
+}));
+
+Subscription = mongoose.model('Subscription', new mongoose.Schema({
+    sdk:         String,
+    version:     String,
+
+    createdAt:   Date,
+    userId:      Number,
+    email:       String,
+    target:      Array
 }));
 
 mongoose.connect(config.mongoDb);

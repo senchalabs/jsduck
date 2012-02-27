@@ -96,6 +96,15 @@
       display: block;
       font-weight: bold;
       padding-bottom: 7px; }
+    .subscribe {
+      margin-right: 5px;
+      color: #444;
+      .sep {
+        color: #aaa; }
+      input {
+        color: #000;
+        margin-right: 5px;
+        margin-left: 5px; } }
     .com-meta {
       position: relative;
       margin-top: 8px;
@@ -199,6 +208,8 @@
       font-weight: bold;
       top: 2px;
       font-size: 14px;
+      &.moderator {
+        color: #3D7E00; }
       .problem {
         color: #fff;
         @include border-radius(2px);

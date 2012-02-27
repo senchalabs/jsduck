@@ -118,6 +118,31 @@ app.namespace('/auth', function(){
         req.session.user = null;
         res.json({ success: true });
     });
+
+    /**
+     * Handles comment unsubscription requests.
+     */
+    app.get('/unsubscribe/:subscriptionId', function(req, res) {
+
+        Subscription.findOne({ _id: req.params.subscriptionId }, function(err, subscription) {
+            if (err) throw(err);
+
+            if (subscription) {
+                if (req.query.all == 'true') {
+                    Subscription.remove({ userId: subscription.userId }, function(err) {
+                        res.send("You have been unsubscribed from all threads.");
+                    });
+                } else {
+                    Subscription.remove({ _id: req.params.subscriptionId }, function(err) {
+                        res.send("You have been unsubscribed from that thread.");
+                    });
+                }
+            } else {
+                res.send("You are already unsubscribed.")
+            }
+        });
+    });
+
 });
 
 
@@ -157,43 +182,8 @@ app.namespace('/auth/:sdk/:version', function(){
     /**
      * Returns number of comments for each class / method
      */
-    app.get('/comments_meta', function(req, res) {
-
-        var map = function() {
-            if (this.target) {
-                emit(this.target.slice(0,3).join('__'), 1);
-            } else {
-                return;
-            }
-        };
-
-        var reduce = function(key, values) {
-            var i = 0, total = 0;
-
-            for (; i< values.length; i++) {
-                total += values[i];
-            }
-
-            return total;
-        };
-
-        mongoose.connection.db.executeDbCommand({
-            mapreduce: 'comments',
-            map: map.toString(),
-            reduce: reduce.toString(),
-            out: 'commentCounts',
-            query: {
-                deleted: { '$ne': true },
-                sdk: req.params.sdk,
-                version: req.params.version
-            }
-        }, function(err, dbres) {
-            mongoose.connection.db.collection('commentCounts', function(err, collection) {
-                collection.find({}).toArray(function(err, comments) {
-                    res.send(comments);
-                });
-            });
-        });
+    app.get('/comments_meta', util.getCommentsMeta, util.getCommentSubscriptions, function(req, res) {
+        res.send({ comments: req.commentsMeta, subscriptions: req.commentSubscriptions || [] });
     });
 
     /**
@@ -216,6 +206,7 @@ app.namespace('/auth/:sdk/:version', function(){
 
         var comment = new Comment({
             author: req.session.user.username,
+            userId: req.session.user.userid,
             content: req.body.comment,
             action: req.body.action,
             rating: Number(req.body.rating),
@@ -226,11 +217,16 @@ app.namespace('/auth/:sdk/:version', function(){
             target: target,
             emaiHash: crypto.createHash('md5').update(req.session.user.email).digest("hex"),
             sdk: req.params.sdk,
-            version: req.params.version
+            version: req.params.version,
+            moderator: req.session.user.moderator,
+            title: req.body.title,
+            url: req.body.url
         });
 
         comment.save(function(err, response) {
             res.json({ success: true, id: response._id, action: req.body.action });
+
+            util.sendEmailUpdates(comment);
         });
     });
 
@@ -275,7 +271,7 @@ app.namespace('/auth/:sdk/:version', function(){
         var canDelete = false,
             comment = req.comment;
 
-        canDelete = _.include(req.session.user.membergroupids, 7) || req.session.user.username == doc.body.author;
+        canDelete = _.include(req.session.user.membergroupids, 7) || req.session.user.username == req.comment.author;
 
         if (!canDelete) {
             res.json({ success: false, reason: 'Forbidden' }, 403);
@@ -289,7 +285,47 @@ app.namespace('/auth/:sdk/:version', function(){
         });
     });
 
+    /**
+     * Get email subscriptions
+     */
+    app.get('/subscriptions', util.getCommentSubscriptions, function(req, res) {
+        res.json({ subscriptions: req.commentSubscriptions });
+    });
+
+    /**
+     * Subscibe / unsubscribe to a comment thread
+     */
+    app.post('/subscribe', util.requireLoggedInUser, function(req, res) {
+
+        var subscriptionBody = {
+            sdk: req.params.sdk,
+            version: req.params.version,
+            target: JSON.parse(req.body.target),
+            userId: req.session.user.userid
+        };
+
+        Subscription.findOne(subscriptionBody, function(err, subscription) {
+
+            if (subscription && req.body.subscribed == 'false') {
+
+                subscription.remove(function(err, ok) {
+                    res.send({ success: true });
+                });
+
+            } else if (!subscription && req.body.subscribed == 'true') {
+
+                subscription = new Subscription(subscriptionBody);
+                subscription.email = req.session.user.email;
+
+                subscription.save(function(err, ok) {
+                    res.send({ success: true });
+                });
+            }
+        });
+    });
+
 });
+
 
 app.listen(3000);
 console.log("Server started...");

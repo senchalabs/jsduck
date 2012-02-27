@@ -13,7 +13,8 @@
     "mysql": "",
     "sanitizer": "",
     "step": "",
-    "underscore": ""
+    "underscore": "",
+    "nodemailer": ""
   }
 }
 

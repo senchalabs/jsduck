@@ -63,13 +63,17 @@ ForumUser.prototype = {
 
     getUserFromResult: function(result) {
 
+        var ids, id;
+
         if (result.membergroupids) {
-            var ids = result.membergroupids.split(',');
+            ids = result.membergroupids.split(',');
             result.membergroupids = [];
-            for(var id in ids) {
+            for (id in ids) {
                 result.membergroupids.push(Number(ids[id]));
             }
         }
+
+        result.moderator = _.include(result.membergroupids, 7);
 
         return result;
     }

@@ -5,6 +5,10 @@
 Ext.define('Docs.controller.CommentsMeta', {
     extend: 'Ext.app.Controller',
 
+    mixins: {
+        authMixin: 'Docs.controller.AuthHelpers'
+    },
+
     refs: [
         {
             ref: 'toolbar',
@@ -27,6 +31,7 @@ Ext.define('Docs.controller.CommentsMeta', {
             guide: {},
             video: {}
         };
+        Docs.commentSubscriptions = {};
 
         this.addEvents(
             /**
@@ -42,6 +47,9 @@ Ext.define('Docs.controller.CommentsMeta', {
         this.getController('Auth').on({
             available: function() {
                 this.fetchCommentMeta();
+            },
+            loggedIn: function() {
+                this.fetchSubscriptionMeta();
             },
             scope: this
         });
@@ -97,16 +105,38 @@ Ext.define('Docs.controller.CommentsMeta', {
      */
     fetchCommentMeta: function() {
         Ext.data.JsonP.request({
-            url: Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments_meta',
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments_meta'),
             method: 'GET',
             success: function(response) {
-                Ext.Array.each(response, function(r) {
+                Ext.Array.each(response.comments, function(r) {
                     this.updateMeta(r._id.split('__'), r.value);
+                }, this);
+
+                Ext.Array.each(response.subscriptions, function(r) {
+                    var commentId = 'comments-' + r.join('-').replace(/\./g, '-').replace(/-$/, '');
+                    Docs.commentSubscriptions[commentId] = true;
                 }, this);
 
                 this.metaLoaded = true;
                 this.fireEvent('afterLoad');
                 this.updateClassIndex();
+            },
+            scope: this
+        });
+    },
+
+    /**
+     * Fetch all comment meta data and populate a local store
+     */
+    fetchSubscriptionMeta: function() {
+        Ext.data.JsonP.request({
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/subscriptions'),
+            method: 'GET',
+            success: function(response) {
+                Ext.Array.each(response.subscriptions, function(r) {
+                    var commentId = 'comments-' + r.join('-').replace(/\./g, '-').replace(/-$/, '');
+                    Docs.commentSubscriptions[commentId] = true;
+                }, this);
             },
             scope: this
         });

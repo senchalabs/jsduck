@@ -47,7 +47,7 @@ Ext.define('Docs.view.Comments', {
                 '<div class="com-meta">',
                     '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
                           '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                    '<div class="author">',
+                    '<div class="author<tpl if="moderator"> moderator" title="Sencha Engineer</tpl>">',
                         '{author}',
                         '<tpl if="showCls">',
                             '<span class="target"> on {[this.target(values.target)]}</span>',
@@ -77,16 +77,19 @@ Ext.define('Docs.view.Comments', {
                         str;
 
                     if (diff < 60) {
-                        return String(diff) + ' seconds ago';
+                        return 'just now';
                     } else if (diff < 3600) {
                         str = String(Math.ceil(diff / (60)));
                         return str + (str == "1" ? ' minute' : ' minutes') + ' ago';
                     } else if (diff < 86400) {
                         str = String(Math.ceil(diff / (3600)));
                         return str + (str == "1" ? ' hour' : ' hours') + ' ago';
-                    } else if (diff < 60*60*24*365) {
+                    } else if (diff < 60*60*24*31) {
                         str = String(Math.ceil(diff / (60 * 60 * 24)));
                         return str + (str == "1" ? ' day' : ' days') + ' ago';
+                    } else if (diff < 60*60*24*365) {
+                        str = String(Math.ceil(diff / (60 * 60 * 24 * 31)));
+                        return str + (str == "1" ? ' month' : ' months') + ' ago';
                     } else {
                         return Ext.Date.format(new Date(date), 'jS M \'y');
                     }
@@ -168,6 +171,9 @@ Ext.define('Docs.view.Comments', {
                 '<img class="avatar" width="25" height="25"',
                     ' src="http://www.gravatar.com/avatar/{emailHash}?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
                 '<div class="author">Logged in as {userName}</div>',
+                '<label class="subscribe">',
+                    'Email updates? <input type="checkbox" class="subscriptionCheckbox" <tpl if="userSubscribed">checked="checked"</tpl> /><span class="sep"> | </span>',
+                '</label>',
                 '<a href="#" class="toggleCommentGuide">Help</a>',
                 '<input type="submit" class="sub {[values.updateComment ? "update" : "post"]}Comment" value="{[values.updateComment ? "Update" : "Post"]} comment" />',
                 '<tpl if="updateComment">',
@@ -238,7 +244,6 @@ Ext.define('Docs.view.Comments', {
                             '<option value="comment">Post a comment</option>',
                             '<option value="question">Ask a question</option>',
                             '<option value="problem">Report a problem</option>',
-                            // '<option value="feedback">Submit feedback</option>',
                         '</select>',
                     '</span>',
                     '<div class="note question" style="display: none;">',
