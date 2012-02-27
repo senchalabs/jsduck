@@ -156,7 +156,8 @@ Ext.define('Docs.controller.Comments', {
         var startkey = Ext.JSON.encode(this.commentId(id)),
             endkey = Ext.JSON.encode(this.commentId(id).concat([{}])),
             currentUser = this.getController('Auth').currentUser,
-            url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_target';
+            // url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_target';
+            url = Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments';
 
         Ext.data.JsonP.request({
             url: url,
@@ -168,7 +169,7 @@ Ext.define('Docs.controller.Comments', {
                 user: currentUser && currentUser.userName
             },
             success: function(response) {
-                callback.call(this, response.rows, id, opts);
+                callback.call(this, response, id, opts);
             },
             scope: this
         });
@@ -212,7 +213,7 @@ Ext.define('Docs.controller.Comments', {
         postButton.addCls('disabled');
 
         Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments'),
             method: 'POST',
             cors: true,
             params: {
@@ -244,18 +245,12 @@ Ext.define('Docs.controller.Comments', {
      * Fetches the most recent comments
      */
     fetchRecentComments: function(id, startkey) {
-        var url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_date',
+        var url = this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments_recent'),
             limit = 100;
 
         var params = {
-            descending: true,
             limit: limit
         };
-
-        if (startkey) {
-            params.startkey = startkey;
-            params.skip = 1;
-        }
 
         Ext.data.JsonP.request({
             url: url,
@@ -274,7 +269,7 @@ Ext.define('Docs.controller.Comments', {
                     opts.append = true;
                 }
 
-                this.renderComments(response.rows, id, opts);
+                this.renderComments(response, id, opts);
             },
             scope: this
         });
@@ -321,7 +316,7 @@ Ext.define('Docs.controller.Comments', {
             cls = commentsEl && commentsEl.getAttribute('id');
 
         Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + id + '/delete'),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments/' + id + '/delete'),
             cors: true,
             method: 'POST',
             callback: function(options, success, response) {
@@ -347,7 +342,7 @@ Ext.define('Docs.controller.Comments', {
             currentUser = this.getController('Auth').currentUser;
 
         Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + commentId),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments/' + commentId),
             method: 'GET',
             cors: true,
             callback: function(options, success, response) {
@@ -387,7 +382,7 @@ Ext.define('Docs.controller.Comments', {
         postButton.addCls('disabled');
 
         Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + id),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments/' + id),
             method: 'POST',
             cors: true,
             params: {
@@ -440,7 +435,7 @@ Ext.define('Docs.controller.Comments', {
             scoreEl = meta.down('.score');
 
         Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + id),
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments/' + id),
             cors: true,
             method: 'POST',
             params: { vote: direction },
@@ -543,10 +538,10 @@ Ext.define('Docs.controller.Comments', {
             loadingEl = comments.down('.loading');
 
         var data = Ext.Array.map(rows, function(r) {
-            r.value.id = r.id;
-            r.value.key = r.key;
-            r.value = Ext.merge(r.value, opts);
-            return r.value;
+            r.id = r._id;
+            r.key = r.target;
+            r = Ext.merge(r, opts);
+            return r;
         });
 
         if (loadingEl) {
@@ -612,14 +607,14 @@ Ext.define('Docs.controller.Comments', {
 
         if (opts.id) {
             Ext.Array.each(rows, function(row) {
-                if (row.id == opts.id) {
-                    data = row.value;
+                if (row._id == opts.id) {
+                    data = row;
                     data.id = opts.id;
                 }
             });
         } else {
-            data = rows[rows.length - 1].value;
-            data.id = rows[rows.length - 1].id;
+            data = rows[rows.length - 1];
+            data.id = rows[rows.length - 1]._id;
         }
 
         Docs.view.Comments.commentTpl.insertBefore(newCommentWrap, data);

@@ -97,15 +97,11 @@ Ext.define('Docs.controller.CommentsMeta', {
      */
     fetchCommentMeta: function() {
         Ext.data.JsonP.request({
-            url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_target',
+            url: Docs.baseUrl + '/' + Docs.commentsDb.split('-').slice(1,3).join('/') + '/comments_meta',
             method: 'GET',
-            params: {
-                reduce: true,
-                group_level: 3
-            },
             success: function(response) {
-                Ext.Array.each(response.rows, function(r) {
-                    this.updateMeta(r.key, r.value.num);
+                Ext.Array.each(response, function(r) {
+                    this.updateMeta(r._id.split('__'), r.value);
                 }, this);
 
                 this.metaLoaded = true;
