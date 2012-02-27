@@ -36,7 +36,7 @@ exports.formatComments = function(comments, req) {
 
     return _.map(comments, function(comment) {
 
-        var comment = _.extend(comment._doc, {
+        comment = _.extend(comment._doc, {
             score: comment.upVotes.length - comment.downVotes.length,
             createdAt: String(comment.createdAt)
         });
