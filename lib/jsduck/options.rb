@@ -95,7 +95,7 @@ module JsDuck
       @export = nil
       @seo = false
       @eg_iframe = nil
-      @examples_base_url = "extjs/examples/"
+      @examples_base_url = "extjs-build/examples/"
 
       # Debugging
       # Turn multiprocessing off by default in Windows

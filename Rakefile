@@ -127,14 +127,10 @@ def compress
   system "rm -rf #{dir}/resources/codemirror"
   system "rm -rf #{dir}/resources/.sass-cache"
 
-  # Empty the extjs dir, leave only the main JS files, CSS and images
+  # Empty the extjs dir, leave only the main JS file and images
   system "rm -rf #{dir}/extjs"
   system "mkdir #{dir}/extjs"
-  system "cp #{EXT_DIR}/ext-all.js #{dir}/extjs"
-  system "cp #{EXT_DIR}/ext-all-debug.js #{dir}/extjs"
-  system "cp #{EXT_DIR}/bootstrap.js #{dir}/extjs"
-  system "mkdir -p #{dir}/extjs/resources/css"
-  system "cp #{EXT_DIR}/resources/css/ext-all.css #{dir}/extjs/resources/css"
+  system "cp template/extjs/ext-all.js #{dir}/extjs"
   system "mkdir -p #{dir}/extjs/resources/themes/images"
   system "cp -r #{EXT_DIR}/resources/themes/images/default #{dir}/extjs/resources/themes/images"
 end
@@ -171,15 +167,15 @@ class JsDuckRunner
   end
 
   # For export of ExtJS, reference extjs from the parent dir
-  def make_paths_relative
-    relative_sdk_path = "../"
-    ["#{@out_dir}/eg-iframe.html", "#{@out_dir}/index.html"].each do |file|
+  def make_extjs_path_relative
+    ["#{@out_dir}/index.html"].each do |file|
       out = []
       IO.read(file).each_line do |line|
-        out << line.sub(/((src|href)="extjs\/)/, '\2="' + relative_sdk_path)
+        out << line.sub(/(src|href)="extjs\//, '\1="../')
       end
       File.open(file, 'w') {|f| f.write(out) }
     end
+    system "rm -rf #{@out_dir}/extjs"
   end
 
   def add_ext4
@@ -305,13 +301,8 @@ class JsDuckRunner
 
   end
 
-  # Copy over SDK examples
-  def copy_sdk_examples
-    system "mkdir #{@out_dir}/extjs/builds"
-    system "cp #{@ext_dir}/builds/ext-core.js #{@out_dir}/extjs/builds/ext-core.js"
-    system "cp #{@ext_dir}/release-notes.html #{@out_dir}/extjs"
-    system "cp -r #{@ext_dir}/examples #{@out_dir}/extjs"
-    system "cp -r #{@ext_dir}/welcome #{@out_dir}/extjs"
+  def copy_extjs_build
+    system "cp -r #{@ext_dir} #{@out_dir}/extjs-build"
   end
 
   # Copy over Sencha Touch
@@ -346,10 +337,19 @@ task :sdk, [:mode] => :sass do |t, args|
   runner.add_export_notice("ext-js/4-0") if mode == "export"
   runner.add_google_analytics if mode == "live"
   runner.add_comments('ext-js', '4') if mode == "debug" || mode == "live"
+  if mode == "export"
+    runner.add_options ["--eg-iframe", "#{SDK_DIR}/extjs/docs/eg-iframe-build.html"]
+    runner.add_options ["--examples-base-url", "../examples/"]
+  else
+    runner.add_options ["--examples-base-url", "extjs-build/examples/"]
+  end
   runner.run
 
-  runner.copy_sdk_examples if mode == "export" || mode == "live"
-  runner.make_paths_relative if mode == "export"
+  if mode == "export"
+    runner.make_extjs_path_relative
+  else
+    runner.copy_extjs_build
+  end
 end
 
 desc "Run JSDuck on Docs app itself"
