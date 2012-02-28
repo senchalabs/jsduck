@@ -162,12 +162,12 @@ exports.sendEmailUpdates = function(comment) {
                 to: subscription.email,
                 subject: "Comment on '" + comment.title + "'",
                 text: [
-                    "A comment on '" + comment.title + "' was posted on the Sencha Documentation:\n",
+                    "A comment by " + comment.author + " on '" + comment.title + "' was posted on the Sencha Documentation:\n",
                     comment.content + "\n",
                     "--",
                     "Original thread: " + comment.url,
-                    "Unsubscribe from this thread: http://docs.sencha.com/auth/unsubscribe/" + subscription._id,
-                    "Unsubscribe from all threads: http://docs.sencha.com/auth/unsubscribe/" + subscription._id + '?all=true'
+                    "Unsubscribe from this thread: http://projects.sencha.com/auth/unsubscribe/" + subscription._id,
+                    "Unsubscribe from all threads: http://projects.sencha.com/auth/unsubscribe/" + subscription._id + '?all=true'
                 ].join("\n")
             }
 
