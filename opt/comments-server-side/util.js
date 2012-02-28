@@ -121,7 +121,10 @@ exports.findComment = function(req, res, next) {
 
 exports.sendEmailUpdates = function(comment) {
 
-    var mailTransport = nodemailer.createTransport("Sendmail", "/usr/bin/sendmail");
+    var mailTransport = nodemailer.createTransport("SMTP",{
+        host: 'localhost',
+        port: 25
+    });
 
     var sendSubscriptionEmail = function(emails) {
 
@@ -155,14 +158,14 @@ exports.sendEmailUpdates = function(comment) {
         _.each(subscriptions, function(subscription) {
             var mailOptions = {
                 transport: mailTransport,
-                from: "Sencha Documentation <test@domine.co.uk>",
+                from: "Sencha Documentation <no-reply@sencha.com>",
                 to: subscription.email,
                 subject: "Comment on '" + comment.title + "'",
                 text: [
                     "A comment on '" + comment.title + "' was posted on the Sencha Documentation:\n",
                     comment.content + "\n",
                     "--",
-                    "Original thread: http://docs.sencha.com/" + comment.sdk + "/" + comment.version.replace(/\./, '-') + "/" + comment.url,
+                    "Original thread: " + comment.url,
                     "Unsubscribe from this thread: http://docs.sencha.com/auth/unsubscribe/" + subscription._id,
                     "Unsubscribe from all threads: http://docs.sencha.com/auth/unsubscribe/" + subscription._id + '?all=true'
                 ].join("\n")

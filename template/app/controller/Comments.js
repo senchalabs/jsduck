@@ -225,7 +225,7 @@ Ext.define('Docs.controller.Comments', {
         }
         postButton.addCls('disabled');
 
-        var url = target[1],
+        var url = "http://" + window.location.host + '/' + window.location.pathname + target[1],
             title = target[1],
             urlPrefix = '#!/api/';
 
