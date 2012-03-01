@@ -75,7 +75,13 @@
   .icon-css_var {
     background: url(../images/icons.png) no-repeat 0 -480px; }
   .icon-css_mixin {
-    background: url(../images/icons.png) no-repeat 0 -520px; } }
+    background: url(../images/icons.png) no-repeat 0 -520px; }
+  .icon-class-redirect {
+    background: url(../images/icons.png) no-repeat 0 -560px; }
+  .icon-singleton-redirect {
+    background: url(../images/icons.png) no-repeat 0 -600px; }
+  .icon-component-redirect {
+    background: url(../images/icons.png) no-repeat 0 -640px; } }
 
 @mixin gray-h4 {
   h4 {
