@@ -13,7 +13,9 @@ Ext.define("Docs.History", {
             this.initialNavigate();
         }, this);
 
-        Ext.util.History.on("change", this.navigate, this);
+        Ext.util.History.on("change", function(url) {
+            this.navigate(url, true);
+        }, this);
     },
 
     /**
@@ -27,37 +29,41 @@ Ext.define("Docs.History", {
     // Invoke initial navigation only after both tabs and history are loaded
     initialNavigate: function() {
         if (this.tabsLoaded && this.historyLoaded) {
-            this.navigate(Ext.util.History.getToken());
+            this.navigate(Ext.util.History.getToken(), true);
         }
     },
 
-    // Parses current URL and navigates to the page
-    navigate: function(token) {
-
+    /**
+     * Parses given URL and navigates to the page.
+     *
+     * @param {String} token An URL where to navigate.
+     * @param {Boolean} [noHistory=false] True to skip adding new history entry.
+     */
+    navigate: function(token, noHistory) {
         var url = this.parseToken(token);
         if (url.url == "#!/api") {
-            Docs.App.getController('Classes').loadIndex(true);
+            Docs.App.getController('Classes').loadIndex(noHistory);
         }
         else if (url.type === "api") {
-            Docs.App.getController('Classes').loadClass(url.url, true);
+            Docs.App.getController('Classes').loadClass(url.url, noHistory);
         }
         else if (url.url === "#!/guide") {
-            Docs.App.getController('Guides').loadIndex(true);
+            Docs.App.getController('Guides').loadIndex(noHistory);
         }
         else if (url.type === "guide") {
-            Docs.App.getController('Guides').loadGuide(url.url, true);
+            Docs.App.getController('Guides').loadGuide(url.url, noHistory);
         }
         else if (url.url === "#!/video") {
-            Docs.App.getController('Videos').loadIndex(true);
+            Docs.App.getController('Videos').loadIndex(noHistory);
         }
         else if (url.type === "video") {
-            Docs.App.getController('Videos').loadVideo(url.url, true);
+            Docs.App.getController('Videos').loadVideo(url.url, noHistory);
         }
         else if (url.url === "#!/example") {
             Docs.App.getController('Examples').loadIndex();
         }
         else if (url.type === "example") {
-            Docs.App.getController('Examples').loadExample(url.url, true);
+            Docs.App.getController('Examples').loadExample(url.url, noHistory);
         }
         else if (url.url === "#!/stats") {
             Docs.App.getController('Stats').loadIndex();
@@ -67,11 +73,11 @@ Ext.define("Docs.History", {
         }
         else {
             if (Docs.App.getController('Welcome').isActive()) {
-                Docs.App.getController('Welcome').loadIndex(true);
+                Docs.App.getController('Welcome').loadIndex(noHistory);
             }
             else if (!this.noRepeatNav) {
                 this.noRepeatNav = true; // Prevent infinite nav loop
-                this.navigate(Ext.getCmp('doctabs').staticTabs[0].href);
+                this.navigate(Ext.getCmp('doctabs').staticTabs[0].href, noHistory);
             }
         }
     },

@@ -5,7 +5,8 @@ Ext.define('Docs.controller.Search', {
     extend: 'Ext.app.Controller',
 
     requires: [
-        'Docs.ClassRegistry'
+        'Docs.ClassRegistry',
+        'Docs.History'
     ],
 
     views: [
@@ -127,7 +128,7 @@ Ext.define('Docs.controller.Search', {
 
     // loads class/method corrseponding to the record
     loadRecord: function(record) {
-        Docs.App.getController('Classes').loadClass("#!/api/"+record.get("id"));
+        Docs.History.navigate(record.get("url"));
         this.getDropdown().hide();
     },
 

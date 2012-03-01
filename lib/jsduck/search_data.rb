@@ -42,7 +42,7 @@ module JsDuck
         :member => name,
         :type => :class,
         :icon => cls.icon + "-redirect",
-        :id => cls.full_name,
+        :url => "#!/api/" + cls.full_name,
         :meta => cls[:meta],
         :sort => 0,
       }
@@ -55,7 +55,7 @@ module JsDuck
         :member => cls.short_name,
         :type => :class,
         :icon => cls.icon,
-        :id => cls.full_name,
+        :url => "#!/api/" + cls.full_name,
         :meta => cls[:meta],
         :sort => 1,
       }
@@ -68,7 +68,7 @@ module JsDuck
         :member => Class.short_name(name),
         :type => :class,
         :icon => cls.icon + "-redirect",
-        :id => cls.full_name,
+        :url => "#!/api/" + cls.full_name,
         :meta => cls[:meta],
         :sort => 2,
       }
@@ -81,7 +81,7 @@ module JsDuck
         :member => member[:name],
         :type => :member,
         :icon => "icon-" + member[:tagname].to_s,
-        :id => cls.full_name + "-" + member[:id],
+        :url => "#!/api/" + cls.full_name + "-" + member[:id],
         :meta => member[:meta],
         :sort => 3,
       }
