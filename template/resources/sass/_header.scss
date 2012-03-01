@@ -86,7 +86,10 @@
     color: #605f5f;
     // Avoid wrapping titles of guides, videos, etc.
     .title, .class {
-      white-space: pre; }
+      white-space: pre;
+      strong {
+        background: rgba(0, 0, 0, 0.1);
+        color: black; } }
     .title {
       font-weight: bold;
       overflow: hidden;

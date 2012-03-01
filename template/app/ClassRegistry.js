@@ -59,16 +59,23 @@ Ext.define("Docs.ClassRegistry", {
             var shift = r["private"] ? 4 : (r["removed"] ? 8 : 0);
 
             if (reFull.test(name)) {
-                results[r.sort + shift].push(r);
+                results[r.sort + shift].push(this.highlightMatch(r, reFull));
             }
             else if (reBeg.test(name)) {
-                results[r.sort + shift + 12].push(r);
+                results[r.sort + shift + 12].push(this.highlightMatch(r, reBeg));
             }
             else if (reMid.test(name)) {
-                results[r.sort + shift + 24].push(r);
+                results[r.sort + shift + 24].push(this.highlightMatch(r, reMid));
             }
         }
 
         return Ext.Array.flatten(results);
+    },
+
+    highlightMatch: function(r, regex) {
+        r = Ext.apply({}, r);
+        r.name = r.name.replace(regex, '<strong>$&</strong>');
+        r.fullName = r.fullName.replace(regex, '<strong>$&</strong>');
+        return r;
     }
 });
