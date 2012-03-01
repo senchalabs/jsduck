@@ -448,9 +448,9 @@ Ext.define('Docs.controller.Comments', {
     },
 
     updateSubscription: function(cmp, el) {
-
         var commentEl = Ext.get(el).up('.comments-div'),
-            commentId = commentEl.getAttribute('id');
+            commentId = commentEl.getAttribute('id'),
+            subscribed = el.checked;
 
         Ext.Ajax.request({
             url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/subscribe'),
@@ -458,10 +458,44 @@ Ext.define('Docs.controller.Comments', {
             cors: true,
             params: {
                 target: Ext.JSON.encode(this.commentId(commentId)),
-                subscribed: el.checked
+                subscribed: subscribed
+            },
+            success: function() {
+                if (subscribed) {
+                    this.notify(el, "Updates to this thread will be e-mailed to you.");
+                }
+                else {
+                    this.notify(el, "You have unsubscribed from this thread.");
+                }
+            },
+            failure: function() {
+                this.notify(el, "Subscription change failed.");
+                el.checked = !el.checked;
             },
             scope: this
         });
+    },
+
+    // Displays a tooltip above the checkbox element for limited amount of time
+    notify: function(el, msg) {
+        var tip = Ext.create('Ext.tip.ToolTip', {
+            html: msg,
+            style: {opacity: 0}
+        });
+
+        // Fade in
+        el = Ext.get(el);
+        tip.showAt([el.getLeft()-100, el.getTop()-30]);
+        tip.getEl().fadeIn();
+
+        // Fade out
+        Ext.Function.defer(function() {
+            tip.getEl().fadeOut({
+                callback: function() {
+                    tip.destroy();
+                }
+            });
+        }, 3000);
     },
 
     /**
