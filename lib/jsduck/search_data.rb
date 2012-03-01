@@ -4,11 +4,12 @@ module JsDuck
   # Creates list of all members in all classes that is used by the
   # searching feature in UI.
   class SearchData
-    # Given list of class documentation objects returns an array of
-    # hashes describing all the members.
-    def create(docs)
+    # Given list of classes and other assets, returns an array of
+    # hashes describing the search data.
+    def create(classes, assets)
       list = []
-      docs.each do |cls|
+
+      classes.each do |cls|
         list << class_node(cls)
 
         cls[:alternateClassNames].each do |name|
@@ -32,6 +33,13 @@ module JsDuck
           end
         end
       end
+
+      assets.guides.each_item {|g| list << guide_node(g) }
+
+      assets.videos.each_item {|v| list << video_node(v) }
+
+      assets.examples.each_item {|e| list << example_node(e) }
+
       list
     end
 
@@ -81,6 +89,42 @@ module JsDuck
         :url => "#!/api/" + cls.full_name + "-" + member[:id],
         :meta => member[:meta],
         :sort => 3,
+      }
+    end
+
+    # Creates structure representing one guide
+    def guide_node(guide)
+      return {
+        :name => guide["title"],
+        :fullName => "guide: " + guide["title"],
+        :icon => "icon-guide",
+        :url => "#!/guide/" + guide["name"],
+        :meta => {},
+        :sort => 4,
+      }
+    end
+
+    # Creates structure representing one video
+    def video_node(video)
+      return {
+        :name => video["title"],
+        :fullName => "video: " + video["title"],
+        :icon => "icon-video",
+        :url => "#!/video/" + video["name"],
+        :meta => {},
+        :sort => 4,
+      }
+    end
+
+    # Creates structure representing one example
+    def example_node(example)
+      return {
+        :name => example["title"],
+        :fullName => "example: " + example["title"],
+        :icon => "icon-example",
+        :url => "#!/example/" + example["name"],
+        :meta => {},
+        :sort => 4,
       }
     end
 

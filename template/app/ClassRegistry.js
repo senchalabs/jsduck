@@ -32,10 +32,10 @@ Ext.define("Docs.ClassRegistry", {
      * ordered by best matches first.
      */
     search: function(text) {
-        // Each record has 1 of 4 possible sorting orders,
+        // Each record has 1 of 5 possible sorting orders,
         // which is *3 by it being public/private/removed,
         // and *3 by full/beginning/middle matches.
-        var results = new Array(4 * 3 * 3);
+        var results = new Array(5 * 3 * 3);
         for (var i=0; i<results.length; i++) {
             results[i] = [];
         }

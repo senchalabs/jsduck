@@ -84,6 +84,9 @@
     border-style: solid;
     border-color: $docs-border-color;
     color: #605f5f;
+    // Avoid wrapping titles of guides, videos, etc.
+    .title, .class {
+      white-space: pre; }
     .title {
       font-weight: bold;
       overflow: hidden;

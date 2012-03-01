@@ -22,7 +22,7 @@ module JsDuck
           :guides => @assets.guides.to_array,
           :videos => @assets.videos.to_array,
           :examples => @assets.examples.to_array,
-          :search => SearchData.new.create(@relations.classes),
+          :search => SearchData.new.create(@relations.classes, @assets),
           :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
           :signatures => MetaTagRegistry.instance.signatures,
           :localStorageDb => @opts.local_storage_db,
