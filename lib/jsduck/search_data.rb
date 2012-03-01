@@ -43,7 +43,8 @@ module JsDuck
       list
     end
 
-    # Creates structure representing one alias
+    private
+
     def alias_node(key, name, cls)
       return {
         :name => name,
@@ -55,7 +56,6 @@ module JsDuck
       }
     end
 
-    # Creates structure representing one class
     def class_node(cls)
       return {
         :name => cls.short_name,
@@ -67,7 +67,6 @@ module JsDuck
       }
     end
 
-    # Creates structure representing one alternate classname
     def alt_node(name, cls)
       return {
         :name => Class.short_name(name),
@@ -80,7 +79,6 @@ module JsDuck
       }
     end
 
-    # Creates structure representing one member
     def member_node(member, cls)
       return {
         :name => member[:name],
@@ -92,7 +90,6 @@ module JsDuck
       }
     end
 
-    # Creates structure representing one guide
     def guide_node(guide)
       return {
         :name => guide["title"],
@@ -104,7 +101,6 @@ module JsDuck
       }
     end
 
-    # Creates structure representing one video
     def video_node(video)
       return {
         :name => video["title"],
@@ -116,7 +112,6 @@ module JsDuck
       }
     end
 
-    # Creates structure representing one example
     def example_node(example)
       return {
         :name => example["title"],
