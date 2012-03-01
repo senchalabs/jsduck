@@ -38,9 +38,8 @@ module JsDuck
     # Creates structure representing one alias
     def alias_node(key, name, cls)
       return {
-        :cls => alias_display_name(key)+": "+name,
-        :member => name,
-        :type => :class,
+        :name => name,
+        :fullName => alias_display_name(key)+": "+name,
         :icon => cls.icon + "-redirect",
         :url => "#!/api/" + cls.full_name,
         :meta => cls[:meta],
@@ -51,9 +50,8 @@ module JsDuck
     # Creates structure representing one class
     def class_node(cls)
       return {
-        :cls => cls.full_name,
-        :member => cls.short_name,
-        :type => :class,
+        :name => cls.short_name,
+        :fullName => cls.full_name,
         :icon => cls.icon,
         :url => "#!/api/" + cls.full_name,
         :meta => cls[:meta],
@@ -64,8 +62,8 @@ module JsDuck
     # Creates structure representing one alternate classname
     def alt_node(name, cls)
       return {
-        :cls => name,
-        :member => Class.short_name(name),
+        :name => Class.short_name(name),
+        :fullName => name,
         :type => :class,
         :icon => cls.icon + "-redirect",
         :url => "#!/api/" + cls.full_name,
@@ -77,9 +75,8 @@ module JsDuck
     # Creates structure representing one member
     def member_node(member, cls)
       return {
-        :cls => cls.full_name,
-        :member => member[:name],
-        :type => :member,
+        :name => member[:name],
+        :fullName => cls.full_name + "." + member[:name],
         :icon => "icon-" + member[:tagname].to_s,
         :url => "#!/api/" + cls.full_name + "-" + member[:id],
         :meta => member[:meta],

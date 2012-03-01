@@ -52,8 +52,8 @@ Ext.define("Docs.ClassRegistry", {
 
             // when search text has "." or ":" in it, search from the full name
             // (e.g. "Ext.Component.focus" or "xtype: grid")
-            // Otherwise search from just the member name (e.g. "focus" or "Component")
-            var name = searchFull ? r.cls + (r.type === "class" ? "" : "." + r.member) : r.member;
+            // Otherwise search from just the short name (e.g. "focus" or "Component")
+            var name = searchFull ? r.fullName : r.name;
             // Shift private items further back
             // Shift removed items to the very end of each match category
             var shift = r["private"] ? 4 : (r["removed"] ? 8 : 0);
