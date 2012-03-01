@@ -120,7 +120,9 @@ Thanks to [Ondřej Jirman](https://github.com/megous),
 [ligaard](https://github.com/ligaard),
 [Bill Hubbard](http://www.sencha.com/forum/member.php?272458-BillHubbard),
 [Ed Spencer](https://github.com/edspencer),
-[atian25](https://github.com/atian25) and many-many others who
+[atian25](https://github.com/atian25),
+Katherine Chu,
+[Rob Dougan](https://github.com/rdougan) and many-many others who
 reported bugs, submitted patches, and provided a lot of useful input.
 
 
