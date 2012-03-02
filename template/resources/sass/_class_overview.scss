@@ -80,6 +80,10 @@
   color: #444444;
   padding-top: 10px;
   clear: both;
+  h1, h2 {
+    @include guides-h2-heading;
+    font-size: 14px;
+    margin: 15px 0 5px; }
   first-child: {
     padding-top: 0; };
   .pre {
