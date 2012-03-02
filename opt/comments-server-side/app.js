@@ -156,6 +156,11 @@ app.namespace('/auth/:sdk/:version', function(){
      */
     app.get('/comments', function(req, res) {
 
+        if (!req.query.startkey) {
+            res.json({error: 'Invalid request'});
+            return;
+        }
+
         Comment.find({
             target: JSON.parse(req.query.startkey),
             deleted: { '$ne': true },
