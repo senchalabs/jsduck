@@ -29,6 +29,15 @@ module JsDuck
     # Default value: '<img src="%u" alt="%a"/>'
     attr_accessor :img_tpl
 
+    # Template HTML that replaces {@video URL alt text}
+    # Can contain placeholders:
+    #
+    # %u - URL from @video tag (e.g. "some/path.mpeg")
+    # %a - alt text for video
+    #
+    # Default value: '<video src="%u">%a</video>'
+    attr_accessor :video_tpl
+
     # This will hold list of all image paths gathered from {@img} tags.
     attr_accessor :images
 
@@ -61,10 +70,15 @@ module JsDuck
       @max_length = 120
       @relations = relations
       @images = []
+
       @link_tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
       @img_tpl = opts[:img_tpl] || '<img src="%u" alt="%a"/>'
+      @video_tpl = opts[:video_tpl] || '<video src="%u">%a</video>'
+
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
+      @video_re = /\{@video\s+(\S*?)(?:\s+(.+?))?\}/m
+
       @example_annotation_re = /<pre><code>\s*@example( +[^\n]*)?\s+/m
     end
 
@@ -95,6 +109,8 @@ module JsDuck
           out += replace_link_tag(s.scan(@link_re))
         elsif s.check(@img_re)
           out += replace_img_tag(s.scan(@img_re))
+        elsif s.check(@video_re)
+          out += replace_video_tag(s.scan(@video_re))
         elsif s.check(/[{]/)
           # There might still be "{" that doesn't begin {@link} or {@img} - ignore it
           out += s.scan(/[{]/)
@@ -189,6 +205,10 @@ module JsDuck
       input.sub(@img_re) { img($1, $2) }
     end
 
+    def replace_video_tag(input)
+      input.sub(@video_re) { video($1, $2) }
+    end
+
     # Looks input text for patterns like:
     #
     #  My.ClassName
@@ -265,6 +285,20 @@ module JsDuck
         case $1
         when '%u'
           @img_path ? (@img_path + "/" + url) : url
+        when '%a'
+          CGI.escapeHTML(alt_text||"")
+        else
+          $1
+        end
+      end
+    end
+
+    # applies the video template
+    def video(url, alt_text)
+      @video_tpl.gsub(/(%\w)/) do
+        case $1
+        when '%u'
+          url
         when '%a'
           CGI.escapeHTML(alt_text||"")
         else

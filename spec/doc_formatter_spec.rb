@@ -113,6 +113,13 @@ describe JsDuck::DocFormatter do
         '<img src="some/image.png" alt="foo&quot;bar"/>'
     end
 
+    # {@video ...}
+
+    it "replaces {@video some/url.mpeg Alt text} with video markup" do
+      @formatter.replace("{@video some/url.mpeg Alt text}").should ==
+        '<video src="some/url.mpeg">Alt text</video>'
+    end
+
     # auto-conversion of identifiable ClassNames to links
     describe "auto-detect" do
       before do
