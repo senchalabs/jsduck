@@ -469,6 +469,16 @@ describe JsDuck::DocFormatter do
       @formatter.shorten("12345678901").should == "1234567..."
     end
 
+    it "counts multi-byte characters correctly when measuring text length" do
+      # Text ending with a-umlaut character
+      @formatter.shorten("123456789\303\244").should == "123456789\303\244 ..."
+    end
+
+    it "shortens text with multi-byte characters correctly" do
+      # Text containing a-umlaut character
+      @formatter.shorten("123456\303\2448901").should == "123456\303\244..."
+    end
+
     it "strips HTML tags when shortening" do
       @formatter.shorten("<a href='some-long-link'>12345678901</a>").should == "1234567..."
     end
@@ -500,6 +510,10 @@ describe JsDuck::DocFormatter do
       @formatter.too_long?("<a href='some-long-link'>Foo</a>").should == false
     end
 
+    it "counts multi-byte characters correctly" do
+      # Text ending with a-umlaut character
+      @formatter.too_long?("123456789\303\244").should == false
+    end
   end
 
 

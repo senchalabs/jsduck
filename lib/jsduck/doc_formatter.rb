@@ -345,8 +345,10 @@ module JsDuck
     #
     def shorten(input)
       sent = first_sentence(strip_tags(input))
-      if sent.length > @max_length
-        sent[0..(@max_length-4)] + "..."
+      # Use u-modifier to correctly count multi-byte characters
+      chars = sent.scan(/./mu)
+      if chars.length > @max_length
+        chars[0..(@max_length-4)].join + "..."
       else
         sent + " ..."
       end
@@ -359,7 +361,9 @@ module JsDuck
     # Returns true when input should get shortened.
     def too_long?(input)
       stripped = strip_tags(input)
-      first_sentence(stripped).length < stripped.length || stripped.length > @max_length
+      # for sentence v/s full - compare byte length
+      # for full v/s max - compare char length
+      first_sentence(stripped).length < stripped.length || stripped.scan(/./mu).length > @max_length
     end
 
     def strip_tags(str)
