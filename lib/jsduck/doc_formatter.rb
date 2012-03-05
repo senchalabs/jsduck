@@ -29,15 +29,6 @@ module JsDuck
     # Default value: '<img src="%u" alt="%a"/>'
     attr_accessor :img_tpl
 
-    # Template HTML that replaces {@video URL alt text}
-    # Can contain placeholders:
-    #
-    # %u - URL from @video tag (e.g. "some/path.mpeg")
-    # %a - alt text for video
-    #
-    # Default value: '<video src="%u">%a</video>'
-    attr_accessor :video_tpl
-
     # This will hold list of all image paths gathered from {@img} tags.
     attr_accessor :images
 
@@ -73,11 +64,23 @@ module JsDuck
 
       @link_tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
       @img_tpl = opts[:img_tpl] || '<img src="%u" alt="%a"/>'
-      @video_tpl = opts[:video_tpl] || '<video src="%u">%a</video>'
+      @video_templates = {
+        "html5" => '<video src="%u">%a</video>',
+        "vimeo" => [
+          '<p><object width="640" height="360">',
+            '<param name="allowfullscreen" value="true" />',
+            '<param name="allowscriptaccess" value="always" />',
+            '<param name="flashvars" value="api=1" />',
+            '<param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=%u&amp;server=vimeo.com&amp;color=4CC208&amp;fullscreen=1" />',
+            '<embed src="http://vimeo.com/moogaloop.swf?clip_id=%u&amp;server=vimeo.com&amp;color=4CC208&amp;fullscreen=1" ',
+              'type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="640" height="360"></embed>',
+          '</object></p>',
+        ].join
+      }
 
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
       @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
-      @video_re = /\{@video\s+(\S*?)(?:\s+(.+?))?\}/m
+      @video_re = /\{@video\s+(\w+)\s+(\S*?)(?:\s+(.+?))?\}/m
 
       @example_annotation_re = /<pre><code>\s*@example( +[^\n]*)?\s+/m
     end
@@ -206,7 +209,7 @@ module JsDuck
     end
 
     def replace_video_tag(input)
-      input.sub(@video_re) { video($1, $2) }
+      input.sub(@video_re) { video($1, $2, $3) }
     end
 
     # Looks input text for patterns like:
@@ -293,9 +296,13 @@ module JsDuck
       end
     end
 
-    # applies the video template
-    def video(url, alt_text)
-      @video_tpl.gsub(/(%\w)/) do
+    # applies the video template of the specified type
+    def video(type, url, alt_text)
+      unless @video_templates.has_key?(type)
+        Logger.instance.warn(nil, "Unknown video type #{type}")
+      end
+
+      @video_templates[type].gsub(/(%\w)/) do
         case $1
         when '%u'
           url

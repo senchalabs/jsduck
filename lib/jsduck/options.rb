@@ -28,7 +28,6 @@ module JsDuck
     attr_accessor :images
     attr_accessor :link_tpl
     attr_accessor :img_tpl
-    attr_accessor :video_tpl
     attr_accessor :export
     attr_accessor :seo
     attr_accessor :eg_iframe
@@ -93,18 +92,6 @@ module JsDuck
       # Note that we wrap image template inside <p> because {@img} often
       # appears inline within text, but that just looks ugly in HTML
       @img_tpl = '<p><img src="%u" alt="%a"></p>'
-      # Template for embedding Vimeo videos.
-      # For now there's no command line option to change this template.
-      @video_tpl = [
-        '<p><object width="640" height="360" id="video_player">',
-          '<param name="allowfullscreen" value="true" />',
-          '<param name="allowscriptaccess" value="always" />',
-          '<param name="flashvars" value="api=1" />',
-          '<param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=%u&amp;server=vimeo.com&amp;color=4CC208&amp;fullscreen=1" />',
-          '<embed src="http://vimeo.com/moogaloop.swf?clip_id=%u&amp;server=vimeo.com&amp;color=4CC208&amp;fullscreen=1" ',
-            'type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="640" height="360"></embed>',
-        '</object></p>',
-      ].join
       @export = nil
       @seo = false
       @eg_iframe = nil

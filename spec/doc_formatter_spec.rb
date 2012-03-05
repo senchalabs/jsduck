@@ -115,9 +115,14 @@ describe JsDuck::DocFormatter do
 
     # {@video ...}
 
-    it "replaces {@video some/url.mpeg Alt text} with video markup" do
-      @formatter.replace("{@video some/url.mpeg Alt text}").should ==
+    it "replaces {@video html5 some/url.mpeg Alt text} with HTML5 video element" do
+      @formatter.replace("{@video html5 some/url.mpeg Alt text}").should ==
         '<video src="some/url.mpeg">Alt text</video>'
+    end
+
+    it "replaces {@video vimeo 123456 Alt text} with Vimeo video markup" do
+      @formatter.replace("{@video vimeo 123456 Alt text}").should =~
+        /<object.*123456.*object>/
     end
 
     # auto-conversion of identifiable ClassNames to links
