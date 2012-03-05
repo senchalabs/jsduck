@@ -273,7 +273,7 @@ module JsDuck
           "Possible placeholders:",
           "%u - URL from @img tag (e.g. 'some/path.png')",
           "%a - alt text for image",
-          "Default is: '<p><img src=\"doc-resources/%u\" alt=\"%a\"></p>'", " ") do |tpl|
+          "Default is: '<p><img src=\"%u\" alt=\"%a\"></p>'", " ") do |tpl|
           @img_tpl = tpl
         end
 
