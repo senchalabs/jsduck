@@ -536,6 +536,9 @@ describe JsDuck::DocFormatter do
     it "ignores first empty sentence" do
       @formatter.first_sentence(". Hi John. This is me.").should == ". Hi John."
     end
+    it "understands chinese/japanese full-stop character as end of sentence" do
+      @formatter.first_sentence("Some Chinese Text\343\200\202 And some more\343\200\202").should == "Some Chinese Text\343\200\202"
+    end
   end
 
 end
