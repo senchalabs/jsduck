@@ -3,6 +3,8 @@ require 'rdiscount'
 require 'strscan'
 require 'cgi'
 require 'jsduck/logger'
+require 'jsduck/inline_img'
+require 'jsduck/inline_video'
 
 module JsDuck
 
@@ -19,22 +21,6 @@ module JsDuck
     #
     # Default value: '<a href="%c%M">%a</a>'
     attr_accessor :link_tpl
-
-    # Template HTML that replaces {@img URL alt text}
-    # Can contain placeholders:
-    #
-    # %u - URL from @img tag (e.g. "some/path.png")
-    # %a - alt text for image
-    #
-    # Default value: '<img src="%u" alt="%a"/>'
-    attr_accessor :img_tpl
-
-    # This will hold list of all image paths gathered from {@img} tags.
-    attr_accessor :images
-
-    # Base path to prefix images from {@img} tags.
-    # Defaults to no prefix.
-    attr_accessor :img_path
 
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
@@ -62,27 +48,23 @@ module JsDuck
       @relations = relations
       @images = []
 
-      @link_tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
-      @img_tpl = opts[:img_tpl] || '<img src="%u" alt="%a"/>'
-      @video_templates = {
-        "html5" => '<video src="%u">%a</video>',
-        "vimeo" => [
-          '<p><object width="640" height="360">',
-            '<param name="allowfullscreen" value="true" />',
-            '<param name="allowscriptaccess" value="always" />',
-            '<param name="flashvars" value="api=1" />',
-            '<param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=%u&amp;server=vimeo.com&amp;color=4CC208&amp;fullscreen=1" />',
-            '<embed src="http://vimeo.com/moogaloop.swf?clip_id=%u&amp;server=vimeo.com&amp;color=4CC208&amp;fullscreen=1" ',
-              'type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="640" height="360"></embed>',
-          '</object></p>',
-        ].join
-      }
+      @inline_img = InlineImg.new(opts)
+      @inline_video = InlineVideo.new(opts)
 
+      @link_tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
-      @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
-      @video_re = /\{@video\s+(\w+)\s+(\S*?)(?:\s+(.+?))?\}/m
 
       @example_annotation_re = /<pre><code>\s*@example( +[^\n]*)?\s+/m
+    end
+
+    # Sets base path to prefix images from {@img} tags.
+    def img_path=(path)
+      @inline_img.base_path = path
+    end
+
+    # Returns list of all image paths gathered from {@img} tags.
+    def images
+      @inline_img.images
     end
 
     # Replaces {@link} and {@img} tags, auto-generates links for
@@ -110,10 +92,10 @@ module JsDuck
       while !s.eos? do
         if s.check(@link_re)
           out += replace_link_tag(s.scan(@link_re))
-        elsif s.check(@img_re)
-          out += replace_img_tag(s.scan(@img_re))
-        elsif s.check(@video_re)
-          out += replace_video_tag(s.scan(@video_re))
+        elsif substitute = @inline_img.replace(s)
+          out += substitute
+        elsif substitute = @inline_video.replace(s)
+          out += substitute
         elsif s.check(/[{]/)
           # There might still be "{" that doesn't begin {@link} or {@img} - ignore it
           out += s.scan(/[{]/)
@@ -204,14 +186,6 @@ module JsDuck
       end
     end
 
-    def replace_img_tag(input)
-      input.sub(@img_re) { img($1, $2) }
-    end
-
-    def replace_video_tag(input)
-      input.sub(@video_re) { video($1, $2, $3) }
-    end
-
     # Looks input text for patterns like:
     #
     #  My.ClassName
@@ -279,39 +253,6 @@ module JsDuck
 
     def warn_magic_link(msg)
       Logger.instance.warn(:link_auto, msg, @doc_context[:filename], @doc_context[:linenr])
-    end
-
-    # applies the image template
-    def img(url, alt_text)
-      @images << url
-      @img_tpl.gsub(/(%\w)/) do
-        case $1
-        when '%u'
-          @img_path ? (@img_path + "/" + url) : url
-        when '%a'
-          CGI.escapeHTML(alt_text||"")
-        else
-          $1
-        end
-      end
-    end
-
-    # applies the video template of the specified type
-    def video(type, url, alt_text)
-      unless @video_templates.has_key?(type)
-        Logger.instance.warn(nil, "Unknown video type #{type}")
-      end
-
-      @video_templates[type].gsub(/(%\w)/) do
-        case $1
-        when '%u'
-          url
-        when '%a'
-          CGI.escapeHTML(alt_text||"")
-        else
-          $1
-        end
-      end
     end
 
     # applies the link template
