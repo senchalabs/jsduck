@@ -69,6 +69,9 @@ Ext.define('Docs.view.cls.Toolbar', {
             // combine both static and instance members into one alphabetically sorted array
             var members = this.docClass.members[type].concat(this.docClass.statics[type]);
             members.sort(function(a, b) {
+                if (a.name === "constructor" && a.tagname === "method") {
+                    return -1;
+                }
                 return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
             });
             if (members.length > 0) {
