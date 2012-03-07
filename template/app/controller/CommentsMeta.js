@@ -203,15 +203,18 @@ Ext.define('Docs.controller.CommentsMeta', {
     createCommentIdMap: function(cls) {
         Docs.commentMeta.idMap[('comments-class-' + cls.name).replace(/\./g, '-')] = ['class', cls.name, ''];
 
-        if (cls.members) {
-            for (var member in cls.members) {
-                Ext.Array.each(cls.members[member], function(memberItem) {
-                    var origKey = ['class', cls.name, memberItem.id];
-                    var key = ['class', memberItem.owner, memberItem.id];
-                    var commentId = 'comments-' + origKey.join('-').replace(/\./g, '-');
-                    Docs.commentMeta.idMap[commentId] = key;
-                }, this);
-            }
+        cls.members && this.createMembersCommentIdMap(cls, cls.members);
+        cls.statics && this.createMembersCommentIdMap(cls, cls.statics);
+    },
+
+    createMembersCommentIdMap: function(cls, members) {
+        for (var type in members) {
+            Ext.Array.each(members[type], function(m) {
+                var origKey = ['class', cls.name, m.id];
+                var key = ['class', m.owner, m.id];
+                var commentId = 'comments-' + origKey.join('-').replace(/\./g, '-');
+                Docs.commentMeta.idMap[commentId] = key;
+            }, this);
         }
     },
 
