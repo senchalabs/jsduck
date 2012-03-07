@@ -167,7 +167,7 @@ app.namespace('/auth/:sdk/:version', function(){
             sdk: req.params.sdk,
             version: req.params.version
         }).sort('createdAt', 1).run(function(err, comments){
-            res.json(util.formatComments(comments, req));
+            res.json(util.scoreComments(comments, req));
         });
     });
 
@@ -180,15 +180,16 @@ app.namespace('/auth/:sdk/:version', function(){
             sdk: req.params.sdk,
             version: req.params.version
         }).sort('createdAt', -1).limit(100).run(function(err, comments){
-            res.json(util.formatComments(comments, req));
+            res.json(util.scoreComments(comments, req));
         });
     });
 
     /**
-     * Returns number of comments for each class / method
+     * Returns number of comments for each class/member,
+     * and a list of classes/members into which the user has subscribed.
      */
-    app.get('/comments_meta', util.getCommentsMeta, util.getCommentSubscriptions, function(req, res) {
-        res.send({ comments: req.commentsMeta, subscriptions: req.commentSubscriptions || [] });
+    app.get('/comments_meta', util.getCommentCounts, util.getCommentSubscriptions, function(req, res) {
+        res.send({ comments: req.commentCounts, subscriptions: req.commentSubscriptions || [] });
     });
 
     /**
@@ -215,7 +216,7 @@ app.namespace('/auth/:sdk/:version', function(){
             content: req.body.comment,
             action: req.body.action,
             rating: Number(req.body.rating),
-            contentHtml: util.sanitize(req.body.comment),
+            contentHtml: util.markdown(req.body.comment),
             downVotes: [],
             upVotes: [],
             createdAt: new Date,
@@ -254,7 +255,7 @@ app.namespace('/auth/:sdk/:version', function(){
             }
 
             comment.content = req.body.content;
-            comment.contentHtml = util.sanitize(req.body.content);
+            comment.contentHtml = util.markdown(req.body.content);
 
             comment.updates = comment.updates || [];
             comment.updates.push({

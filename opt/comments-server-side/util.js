@@ -4,7 +4,13 @@ var marked = require('marked'),
     sanitizer = require('sanitizer'),
     nodemailer = require("nodemailer");
 
-exports.sanitize = function(content) {
+/**
+ * Converts Markdown-formatted comment text into HTML.
+ *
+ * @param {String} content Markdown-formatted text
+ * @return {String} HTML
+ */
+exports.markdown = function(content) {
     var markdowned;
     try {
         markdowned = marked(content);
@@ -21,10 +27,18 @@ exports.sanitize = function(content) {
     return sanitized_output.replace(/&apos;/g, '&#39;');
 };
 
-exports.formatComments = function(comments, req) {
-
+/**
+ * Calculates up/down scores for each comment.
+ *
+ * Marks if the current user has already voted on the comment.
+ * Ensures createdAt timestamp is a string.
+ *
+ * @param {Object[]} comments
+ * @param {Object} req Containing username data
+ * @return {Object[]}
+ */
+exports.scoreComments = function(comments, req) {
     return _.map(comments, function(comment) {
-
         comment = _.extend(comment._doc, {
             score: comment.upVotes.length - comment.downVotes.length,
             createdAt: String(comment.createdAt)
@@ -39,39 +53,46 @@ exports.formatComments = function(comments, req) {
     });
 };
 
+/**
+ * Performs voting on comment.
+ *
+ * @param {Object} req The request object.
+ * @param {Object} res The response object where voting result is written.
+ * @param {Comment} comment The comment to vote on.
+ */
 exports.vote = function(req, res, comment) {
-
     var voteDirection;
+    var username = req.session.user.username;
 
-    if (req.session.user.username == comment.author) {
+    if (username == comment.author) {
 
         // Ignore votes from the author
         res.json({success: false, reason: 'You cannot vote on your own content'});
         return;
 
-    } else if (req.body.vote == 'up' && !_.include(comment.upVotes, req.session.user.username)) {
+    } else if (req.body.vote == 'up' && !_.include(comment.upVotes, username)) {
 
-        var voted = _.include(comment.downVotes, req.session.user.username);
+        var voted = _.include(comment.downVotes, username);
 
         comment.downVotes = _.reject(comment.downVotes, function(v) {
-            return v == req.session.user.username;
+            return v == username;
         });
 
         if (!voted) {
             voteDirection = 'up';
-            comment.upVotes.push(req.session.user.username);
+            comment.upVotes.push(username);
         }
-    } else if (req.body.vote == 'down' && !_.include(comment.downVotes, req.session.user.username)) {
+    } else if (req.body.vote == 'down' && !_.include(comment.downVotes, username)) {
 
-        var voted = _.include(comment.upVotes, req.session.user.username);
+        var voted = _.include(comment.upVotes, username);
 
         comment.upVotes = _.reject(comment.upVotes, function(v) {
-            return v == req.session.user.username;
+            return v == username;
         });
 
         if (!voted) {
             voteDirection = 'down';
-            comment.downVotes.push(req.session.user.username);
+            comment.downVotes.push(username);
         }
     }
 
@@ -84,9 +105,14 @@ exports.vote = function(req, res, comment) {
     });
 };
 
-
+/**
+ * Ensures that user is logged in.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
 exports.requireLoggedInUser = function(req, res, next) {
-
     if (!req.session || !req.session.user) {
         res.json({success: false, reason: 'Forbidden'}, 403);
     } else {
@@ -94,8 +120,16 @@ exports.requireLoggedInUser = function(req, res, next) {
     }
 };
 
+/**
+ * Looks up comment by ID.
+ *
+ * Stores it into `req.comment`.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
 exports.findComment = function(req, res, next) {
-
     if (req.params.commentId) {
         Comment.findById(req.params.commentId, function(err, comment) {
             req.comment = comment;
@@ -104,18 +138,21 @@ exports.findComment = function(req, res, next) {
     } else {
         res.json({success: false, reason: 'No such comment'});
     }
-
 };
 
+/**
+ * Sends e-mail updates when comment is posted to a thread that has
+ * subscribers.
+ *
+ * @param {Comment} comment
+ */
 exports.sendEmailUpdates = function(comment) {
-
     var mailTransport = nodemailer.createTransport("SMTP",{
         host: 'localhost',
         port: 25
     });
 
     var sendSubscriptionEmail = function(emails) {
-
         var email = emails.shift();
 
         if (email) {
@@ -142,7 +179,6 @@ exports.sendEmailUpdates = function(comment) {
     var emails = [];
 
     Subscription.find(subscriptionBody, function(err, subscriptions) {
-
         _.each(subscriptions, function(subscription) {
             var mailOptions = {
                 transport: mailTransport,
@@ -172,9 +208,23 @@ exports.sendEmailUpdates = function(comment) {
     });
 };
 
-
-exports.getCommentsMeta = function(req, res, next) {
-
+/**
+ * Retrieves comment counts for each target.
+ *
+ * Stores into `req.commentCounts` field an array like this:
+ *
+ *     [
+ *         {"_id": "class__Ext__", "value": 3},
+ *         {"_id": "class__Ext__method-define", "value": 1},
+ *         {"_id": "class__Ext.Panel__cfg-title", "value": 8}
+ *     ]
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
+exports.getCommentCounts = function(req, res, next) {
+    // Map each comment into: ("type__Class__member", 1)
     var map = function() {
         if (this.target) {
             emit(this.target.slice(0,3).join('__'), 1);
@@ -183,10 +233,11 @@ exports.getCommentsMeta = function(req, res, next) {
         }
     };
 
+    // Sum comment counts for each target
     var reduce = function(key, values) {
-        var i = 0, total = 0;
+        var total = 0;
 
-        for (; i< values.length; i++) {
+        for (var i = 0; i < values.length; i++) {
             total += values[i];
         }
 
@@ -206,13 +257,29 @@ exports.getCommentsMeta = function(req, res, next) {
     }, function(err, dbres) {
         mongoose.connection.db.collection('commentCounts', function(err, collection) {
             collection.find({}).toArray(function(err, comments) {
-                req.commentsMeta = comments;
+                req.commentCounts = comments;
                 next();
             });
         });
     });
 };
 
+/**
+ * Retrieves list of commenting targets into which the current user
+ * has subscribed for e-mail updates.
+ *
+ * Stores them into `req.commentSubscriptions` field as array:
+ *
+ *     [
+ *         ["class", "Ext", ""],
+ *         ["class", "Ext", "method-define"],
+ *         ["class", "Ext.Panel", "cfg-title"]
+ *     ]
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
 exports.getCommentSubscriptions = function(req, res, next) {
     if (req.session.user) {
         Subscription.find({
