@@ -178,7 +178,7 @@ module JsDuck
     end
 
     # merges second members hash into first one
-    def merge!(hash1, hash2)
+    def merge!(hash1, hash2, skip_overrides=false)
       hash2.each_pair do |name, m|
         if m[:meta] && m[:meta][:hide]
           if hash1[name]
@@ -210,7 +210,18 @@ module JsDuck
       # this, ignore overriding itself.
       if new[:owner] != old[:owner]
         new[:overrides] = [] unless new[:overrides]
-        new[:overrides] << old unless new[:overrides].any? {|m| m[:owner] == old[:owner] }
+        unless new[:overrides].any? {|m| m[:owner] == old[:owner] }
+          # Make a copy of the important properties for us.  We can't
+          # just push the actual `old` member itself, because there
+          # can be circular overrides (notably with Ext.Base), which
+          # will result in infinite loop when we try to convert our
+          # class into JSON.
+          new[:overrides] << {
+            :name => old[:name],
+            :owner => old[:owner],
+            :id => old[:id],
+          }
+        end
       end
     end
 
