@@ -331,7 +331,7 @@ app.namespace('/auth/:sdk/:version', function(){
 
 });
 
-
-app.listen(3000);
-console.log("Server started...");
+var port = 3000;
+app.listen(port);
+console.log("Server started at port "+port+"...");
 
