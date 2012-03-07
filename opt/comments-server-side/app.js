@@ -138,7 +138,7 @@ app.namespace('/auth', function(){
                     });
                 }
             } else {
-                res.send("You are already unsubscribed.")
+                res.send("You are already unsubscribed.");
             }
         });
     });

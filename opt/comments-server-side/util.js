@@ -131,7 +131,7 @@ exports.sendEmailUpdates = function(comment) {
              console.log("Finished sending emails");
              mailTransport.close();
         }
-    }
+    };
 
     var subscriptionBody = {
         sdk: comment.sdk,
@@ -157,7 +157,7 @@ exports.sendEmailUpdates = function(comment) {
                     "Unsubscribe from this thread: http://projects.sencha.com/auth/unsubscribe/" + subscription._id,
                     "Unsubscribe from all threads: http://projects.sencha.com/auth/unsubscribe/" + subscription._id + '?all=true'
                 ].join("\n")
-            }
+            };
 
             if (Number(comment.userId) != Number(subscription.userId)) {
                 emails.push(mailOptions);
@@ -170,7 +170,7 @@ exports.sendEmailUpdates = function(comment) {
             console.log("No emails to send");
         }
     });
-}
+};
 
 
 exports.getCommentsMeta = function(req, res, next) {
@@ -181,7 +181,7 @@ exports.getCommentsMeta = function(req, res, next) {
         } else {
             return;
         }
-    }
+    };
 
     var reduce = function(key, values) {
         var i = 0, total = 0;
@@ -191,7 +191,7 @@ exports.getCommentsMeta = function(req, res, next) {
         }
 
         return total;
-    }
+    };
 
     mongoose.connection.db.executeDbCommand({
         mapreduce: 'comments',
@@ -207,11 +207,11 @@ exports.getCommentsMeta = function(req, res, next) {
         mongoose.connection.db.collection('commentCounts', function(err, collection) {
             collection.find({}).toArray(function(err, comments) {
                 req.commentsMeta = comments;
-                next()
+                next();
             });
         });
     });
-}
+};
 
 exports.getCommentSubscriptions = function(req, res, next) {
     if (req.session.user) {
@@ -224,10 +224,10 @@ exports.getCommentSubscriptions = function(req, res, next) {
                 return subscription.target;
             });
             next();
-        })
+        });
     } else {
         next();
     }
-}
+};
 
 
