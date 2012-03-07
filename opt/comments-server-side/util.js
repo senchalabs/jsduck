@@ -4,33 +4,21 @@ var marked = require('marked'),
     sanitizer = require('sanitizer'),
     nodemailer = require("nodemailer");
 
-exports.sanitize = function(content, opts) {
-
-    var markdowned, sanitized_output, urlFunc;
-
+exports.sanitize = function(content) {
+    var markdowned;
     try {
         markdowned = marked(content);
     } catch(e) {
         markdowned = content;
     }
 
-    var exp = /(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/igm;
-    markdowned = markdowned.replace(exp, "<a href='$1'>$1</a>");
+    // Strip dangerous markup, but allow links to all URL-s
+    var sanitized_output = sanitizer.sanitize(markdowned, function(str) {
+        return str;
+    });
 
-    if (opts && opts.stripUrls) {
-        urlFunc = function(str) {
-            if (str.match(/^(http:\/\/(www\.)?sencha.com|#))/)) {
-                return str;
-            } else {
-                return '';
-            }
-        };
-    }
-
-    sanitized_output = sanitizer.sanitize(markdowned, urlFunc);
-    sanitized_output = sanitized_output.replace(/&apos;/g, '&#39;');
-
-    return sanitized_output;
+    // IE does not support &apos;
+    return sanitized_output.replace(/&apos;/g, '&#39;');
 };
 
 exports.formatComments = function(comments, req) {
