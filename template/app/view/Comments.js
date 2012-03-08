@@ -143,7 +143,7 @@ Ext.define('Docs.view.Comments', {
                         '</a>'
                     ].join('');
                 } else {
-                    return '';
+                    return '<span class="fetchMoreComments"><span></span>That\'s all. Total '+total+' comments.</span>';
                 }
             }
         };

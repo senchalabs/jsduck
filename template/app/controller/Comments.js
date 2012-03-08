@@ -627,7 +627,10 @@ Ext.define('Docs.controller.Comments', {
             var loaded = last.offset + last.limit;
             var next_load = Math.min(last.limit, total - loaded);
             if (loaded >= total) {
-                more.remove();
+                var span = document.createElement("span");
+                span.className = "fetchMoreComments";
+                span.innerHTML = '<span></span>That\'s all. Total '+total+' comments.';
+                Ext.get(span).replace(more);
             } else {
                 more.update(
                     '<span></span>Showing comments 1-' + loaded + ' of ' + total + '. ' +

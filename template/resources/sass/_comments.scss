@@ -46,6 +46,8 @@
     background: url(../images/comment.png) no-repeat 0 -25px; }
   &:hover span {
     background-position: -59px -25px; } }
+span.fetchMoreComments {
+  color: gray; }
 
 .comments-div {
   border-width: 1px 0;
