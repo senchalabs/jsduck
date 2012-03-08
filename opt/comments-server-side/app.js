@@ -172,15 +172,31 @@ app.namespace('/auth/:sdk/:version', function(){
     });
 
     /**
-     * Returns 100 most recent comments.
+     * Returns n most recent comments.
+     * Takes two parameters: offset and limit.
+     *
+     * The last comment object returned will contain `total_rows`,
+     * `offset` and `limit` fields. I'd say it's a hack, but at least
+     * it works for now.
      */
     app.get('/comments_recent', function(req, res) {
-        Comment.find({
+        var offset = parseInt(req.query.offset, 10) || 0;
+        var limit = parseInt(req.query.limit, 10) || 100;
+        var filter = {
             deleted: { '$ne': true },
             sdk: req.params.sdk,
             version: req.params.version
-        }).sort('createdAt', -1).limit(100).run(function(err, comments){
-            res.json(util.scoreComments(comments, req));
+        };
+        Comment.find(filter).sort('createdAt', -1).skip(offset).limit(limit).run(function(err, comments) {
+            comments = util.scoreComments(comments, req);
+            // Count all comments, store count to last comment
+            Comment.count(filter).run(function(err, count) {
+                var last = comments[comments.length-1];
+                last.total_rows = count;
+                last.offset = offset;
+                last.limit = limit;
+                res.json(comments);
+            });
         });
     });
 

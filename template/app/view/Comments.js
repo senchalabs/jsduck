@@ -129,12 +129,17 @@ Ext.define('Docs.view.Comments', {
                 return '<a href="' + urlPrefix + url + '">' + title + '</a>';
             },
             moreComments: function(values) {
-                var values = values[values.length - 1];
-                if (values && values.total_rows > (values.offset + values.limit)) {
+                var last = values[values.length - 1] || {};
+
+                var total = last.total_rows;
+                var loaded = last.offset + last.limit;
+                var next_load = Math.min(last.limit, total - loaded);
+
+                if (total > loaded) {
                     return [
-                        '<a href="#" class="fetchMoreComments recent" rel="' + values.key.join(',') + '">',
-                            '<span></span>Showing comments 1-' + (values.offset + values.limit) + ' of ' + values.total_rows + '. ',
-                            'Click to load ' + values.limit + ' more...',
+                        '<a href="#" class="fetchMoreComments recent" rel="' + loaded + '">',
+                            '<span></span>Showing comments 1-' + loaded + ' of ' + total + '. ',
+                            'Click to load ' + next_load + ' more...',
                         '</a>'
                     ].join('');
                 } else {

@@ -274,32 +274,19 @@ Ext.define('Docs.controller.Comments', {
     /**
      * Fetches the most recent comments
      */
-    fetchRecentComments: function(id, startkey) {
-        var url = this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments_recent'),
-            limit = 100;
-
-        var params = {
-            limit: limit
-        };
-
+    fetchRecentComments: function(id, offset) {
         Ext.data.JsonP.request({
-            url: url,
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments_recent'),
             method: 'GET',
-            params: params,
+            params: {
+                offset: offset || 0,
+                limit: 100
+            },
             success: function(response) {
-                var opts = {
-                    showCls: true,
+                this.renderComments(response, id, {
                     hideCommentForm: true,
-                    limit: limit,
-                    offset: response.offset,
-                    total_rows: response.total_rows
-                };
-
-                if (startkey) {
-                    opts.append = true;
-                }
-
-                this.renderComments(response, id, opts);
+                    append: !!offset
+                });
             },
             scope: this
         });
@@ -310,7 +297,7 @@ Ext.define('Docs.controller.Comments', {
         var moreLink = Ext.get(el);
 
         if (moreLink.hasCls('recent')) {
-            this.fetchRecentComments('recentcomments', '[' + moreLink.getAttribute('rel') + ']');
+            this.fetchRecentComments('recentcomments', moreLink.getAttribute('rel'));
         }
     },
 
@@ -622,7 +609,6 @@ Ext.define('Docs.controller.Comments', {
         var data = Ext.Array.map(rows, function(r) {
             r.id = r._id;
             r.key = r.target;
-            r = Ext.merge(r, opts);
             return r;
         });
 
@@ -633,18 +619,21 @@ Ext.define('Docs.controller.Comments', {
         if (opts.append) {
             var list = comments.down('.comment-list'),
                 more = comments.down('.fetchMoreComments'),
-                last = data[data.length - 1];
+                last = data[data.length - 1] || {};
 
             Docs.view.Comments.appendCommentsTpl.append(list, data);
 
-            if ((last.offset + last.limit) > last.total_rows) {
+            var total = last.total_rows;
+            var loaded = last.offset + last.limit;
+            var next_load = Math.min(last.limit, total - loaded);
+            if (loaded >= total) {
                 more.remove();
             } else {
                 more.update(
-                    '<span></span>Showing comments 1-' + (last.offset + last.limit) + ' of ' + last.total_rows + '. ',
-                    'Click to load ' + last.limit + ' more...'
+                    '<span></span>Showing comments 1-' + loaded + ' of ' + total + '. ' +
+                    'Click to load ' + next_load + ' more...'
                 );
-                more.dom.setAttribute('rel', last.key.join(','));
+                more.dom.setAttribute('rel', loaded);
             }
         } else {
             Docs.view.Comments.commentsTpl.append(comments, data);
