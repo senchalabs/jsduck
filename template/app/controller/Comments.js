@@ -293,12 +293,7 @@ Ext.define('Docs.controller.Comments', {
     },
 
     fetchMoreComments: function(cmp, el) {
-
-        var moreLink = Ext.get(el);
-
-        if (moreLink.hasCls('recent')) {
-            this.fetchRecentComments('recentcomments', moreLink.getAttribute('rel'));
-        }
+        this.fetchRecentComments('recentcomments', Ext.get(el).getAttribute('rel'));
     },
 
     /**
@@ -617,27 +612,13 @@ Ext.define('Docs.controller.Comments', {
         }
 
         if (opts.append) {
-            var list = comments.down('.comment-list'),
-                more = comments.down('.fetchMoreComments'),
-                last = data[data.length - 1] || {};
-
+            var list = comments.down('.comment-list');
             Docs.view.Comments.appendCommentsTpl.append(list, data);
 
-            var total = last.total_rows;
-            var loaded = last.offset + last.limit;
-            var next_load = Math.min(last.limit, total - loaded);
-            if (loaded >= total) {
-                var span = document.createElement("span");
-                span.className = "fetchMoreComments";
-                span.innerHTML = '<span></span>That\'s all. Total '+total+' comments.';
-                Ext.get(span).replace(more);
-            } else {
-                more.update(
-                    '<span></span>Showing comments 1-' + loaded + ' of ' + total + '. ' +
-                    'Click to load ' + next_load + ' more...'
-                );
-                more.dom.setAttribute('rel', loaded);
-            }
+            var last = data[data.length - 1] || {};
+            comments.down('.recent-comments-pager').update(
+                Docs.view.Comments.getPagerHtml(last)
+            );
         } else {
             Docs.view.Comments.commentsTpl.append(comments, data);
             Docs.Syntax.highlight(comments);

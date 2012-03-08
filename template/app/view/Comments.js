@@ -128,24 +128,13 @@ Ext.define('Docs.view.Comments', {
 
                 return '<a href="' + urlPrefix + url + '">' + title + '</a>';
             },
-            moreComments: function(values) {
-                var last = values[values.length - 1] || {};
-
-                var total = last.total_rows;
-                var loaded = last.offset + last.limit;
-                var next_load = Math.min(last.limit, total - loaded);
-
-                if (total > loaded) {
-                    return [
-                        '<a href="#" class="fetchMoreComments recent" rel="' + loaded + '">',
-                            '<span></span>Showing comments 1-' + loaded + ' of ' + total + '. ',
-                            'Click to load ' + next_load + ' more...',
-                        '</a>'
-                    ].join('');
-                } else {
-                    return '<span class="fetchMoreComments"><span></span>That\'s all. Total '+total+' comments.</span>';
-                }
-            }
+            recentCommentsPager: Ext.Function.bind(function(values) {
+                return [
+                    '<div class="recent-comments-pager">',
+                        this.getPagerHtml(values[values.length - 1] || {}),
+                    '</div>'
+                ].join('');
+            }, this)
         };
 
         this.commentsTpl = Ext.create('Ext.XTemplate',
@@ -155,7 +144,7 @@ Ext.define('Docs.view.Comments', {
                 '</tpl>',
                 '<div class="new-comment-wrap"></div>',
             '</div>',
-            '{[this.moreComments(values)]}',
+            '{[this.recentCommentsPager(values)]}',
             commentTplMethods
         );
 
@@ -305,6 +294,32 @@ Ext.define('Docs.view.Comments', {
                     Docs.view.auth.Login.prototype.loginTplHtml.join(''),
                 '</div>'
             );
+        }
+    },
+
+    /**
+     * Returns HTML for recent comments pager.
+     *
+     * @param {Object} opts Object with fields:
+     * @param {Number} opts.offset
+     * @param {Number} opts.limit
+     * @param {Number} opts.total_rows
+     */
+    getPagerHtml: function(opts) {
+        var total = opts.total_rows;
+        var loaded = opts.offset + opts.limit;
+        var next_load = Math.min(opts.limit, total - loaded);
+
+        if (total > loaded) {
+            return [
+                '<span></span>',
+                '<a href="#" class="fetchMoreComments" rel="' + loaded + '">',
+                    'Showing comments 1-' + loaded + ' of ' + total + '. ',
+                    'Click to load ' + next_load + ' more...',
+                '</a>'
+            ].join('');
+        } else {
+            return '<span></span>That\'s all. Total '+total+' comments.';
         }
     },
 

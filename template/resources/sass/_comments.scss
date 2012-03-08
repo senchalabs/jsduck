@@ -32,10 +32,11 @@
   font-weight: normal;
   font-size: 11px; }
 
-.fetchMoreComments {
+.recent-comments-pager {
   display: block;
   padding: 10px 0 5px 35px;
   position: relative;
+  color: gray;
   span {
     display: block;
     position: absolute;
@@ -46,8 +47,6 @@
     background: url(../images/comment.png) no-repeat 0 -25px; }
   &:hover span {
     background-position: -59px -25px; } }
-span.fetchMoreComments {
-  color: gray; }
 
 .comments-div {
   border-width: 1px 0;
