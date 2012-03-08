@@ -112,7 +112,8 @@ Ext.define('Docs.controller.Comments', {
                         [ '.postComment',          'click', this.postComment],
                         [ '.updateComment',        'click', this.updateComment],
                         [ '.cancelUpdateComment',  'click', this.cancelUpdateComment],
-                        [ '.deleteComment',        'click', this.promptDeleteComment],
+                        [ '.deleteComment',        'click', this.deleteComment],
+                        [ '.undoDeleteComment',    'click', this.undoDeleteComment],
                         [ '.editComment',          'click', this.editComment],
                         [ '.fetchMoreComments',    'click', this.fetchMoreComments],
                         [ '.voteCommentUp',        'click', this.voteUp],
@@ -297,35 +298,16 @@ Ext.define('Docs.controller.Comments', {
     },
 
     /**
-     * Promts the user for confirmation of comment deletion. Deleted the comment
-     * if the user confirms.
-     */
-    promptDeleteComment: function(cmp, el) {
-        if (!this.loggedIn()) {
-            return false;
-        }
-
-        Ext.Msg.show({
-             title:'Are you sure?',
-             msg: 'Are you sure you wish to delete this comment?',
-             buttons: Ext.Msg.YESNO,
-             icon: Ext.Msg.QUESTION,
-             fn: function(buttonId) {
-                 if (buttonId == 'yes') {
-                     this.deleteComment(cmp, el);
-                 }
-             },
-             scope: this
-        });
-    },
-
-    /**
      * Sends a delete comment request to the server.
      */
     deleteComment: function(cmp, el) {
+        if (!this.loggedIn()) {
+            return;
+        }
+
         var id = Ext.get(el).up('.comment').getAttribute('id'),
             commentsEl = Ext.get(el).up('.comments-div'),
-            cls = commentsEl && commentsEl.getAttribute('id');
+            target = commentsEl && commentsEl.getAttribute('id');
 
         Ext.Ajax.request({
             url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + id + '/delete'),
@@ -335,10 +317,46 @@ Ext.define('Docs.controller.Comments', {
                 var data = Ext.JSON.decode(response.responseText);
 
                 if (data.success) {
-                    if (cls) {
-                        this.fireEvent('remove', cls);
+                    if (target) {
+                        this.fireEvent('remove', target);
                     }
-                    Ext.get(id).remove();
+                    // Ext.get(id).remove();
+                    Ext.get(id).update('<div class="deleted-comment">Comment was deleted. <a href="#" class="undoDeleteComment">Undo</a>.</div>');
+                } else {
+                    Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
+                }
+            },
+            scope: this
+        });
+    },
+
+    /**
+     * Sends an undo request to the server.
+     */
+    undoDeleteComment: function(cmp, el) {
+        if (!this.loggedIn()) {
+            return;
+        }
+
+        var commentEl = Ext.get(el).up('.comment');
+        var id = commentEl.getAttribute('id');
+        var commentsEl = commentEl.up('.comments-div');
+        var target = commentsEl && commentsEl.getAttribute('id');
+
+        Ext.Ajax.request({
+            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + id + '/undo_delete'),
+            cors: true,
+            method: 'POST',
+            callback: function(options, success, response) {
+                var data = Ext.JSON.decode(response.responseText);
+
+                if (data.success) {
+                    if (target) {
+                        this.fireEvent('add', target);
+                    }
+                    data.comment.id = data.comment._id;
+                    Docs.view.Comments.commentTpl.insertBefore(commentEl, data.comment);
+                    commentEl.remove();
                 } else {
                     Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
                 }

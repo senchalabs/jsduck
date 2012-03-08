@@ -275,4 +275,10 @@
   .content {
     min-height: 65px;
     padding: 0 0 15px 40px;
-    border-bottom: 1px solid #eee; } }
+    border-bottom: 1px solid #eee; }
+  .deleted-comment {
+    text-align: center;
+    background: #ffd76e;
+    border: 1px solid #e1ba53;
+    @include border-radius(4px);
+    font-weight: bold; } }

@@ -308,6 +308,28 @@ app.namespace('/auth/:sdk/:version', function(){
     });
 
     /**
+     * Restores deleted comment
+     */
+    app.post('/comments/:commentId/undo_delete', util.requireLoggedInUser, util.findComment, function(req, res) {
+
+        var canUndoDelete = false,
+            comment = req.comment;
+
+        canUndoDelete = _.include(req.session.user.membergroupids, 7) || req.session.user.username == req.comment.author;
+
+        if (!canUndoDelete) {
+            res.json({ success: false, reason: 'Forbidden' }, 403);
+            return;
+        }
+
+        comment.deleted = false;
+
+        comment.save(function(err, response) {
+            res.send({ success: true, comment: util.scoreComments([comment], req)[0] });
+        });
+    });
+
+    /**
      * Get email subscriptions
      */
     app.get('/subscriptions', util.getCommentSubscriptions, function(req, res) {
