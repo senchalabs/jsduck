@@ -141,6 +141,26 @@ exports.findComment = function(req, res, next) {
 };
 
 /**
+ * Ensures that user is allowed to modify/delete the comment,
+ * that is, he is the owner of the comment or a moderator.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
+exports.requireOwner = function(req, res, next) {
+    var isModerator = _.include(req.session.user.membergroupids, 7);
+    var isAuthor = req.session.user.username == req.comment.author;
+
+    if (isModerator || isAuthor) {
+        next();
+    }
+    else {
+        res.json({ success: false, reason: 'Forbidden' }, 403);
+    }
+};
+
+/**
  * Sends e-mail updates when comment is posted to a thread that has
  * subscribers.
  *

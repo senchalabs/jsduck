@@ -263,24 +263,19 @@ app.namespace('/auth/:sdk/:version', function(){
         if (req.body.vote) {
             util.vote(req, res, comment);
         } else {
-            var canUpdate = _.include(req.session.user.membergroupids, 7) || req.session.user.username == comment.author;
+            util.requireOwner(req, res, function() {
+                comment.content = req.body.content;
+                comment.contentHtml = util.markdown(req.body.content);
 
-            if (!canUpdate) {
-                res.json({success: false, reason: 'Forbidden'}, 403);
-                return;
-            }
+                comment.updates = comment.updates || [];
+                comment.updates.push({
+                    updatedAt: String(new Date()),
+                    author: req.session.user.username
+                });
 
-            comment.content = req.body.content;
-            comment.contentHtml = util.markdown(req.body.content);
-
-            comment.updates = comment.updates || [];
-            comment.updates.push({
-                updatedAt: String(new Date()),
-                author: req.session.user.username
-            });
-
-            comment.save(function(err, response) {
-                res.json({ success: true, content: comment.contentHtml });
+                comment.save(function(err, response) {
+                    res.json({ success: true, content: comment.contentHtml });
+                });
             });
         }
     });
@@ -288,21 +283,9 @@ app.namespace('/auth/:sdk/:version', function(){
     /**
      * Deletes a comment
      */
-    app.post('/comments/:commentId/delete', util.requireLoggedInUser, util.findComment, function(req, res) {
-
-        var canDelete = false,
-            comment = req.comment;
-
-        canDelete = _.include(req.session.user.membergroupids, 7) || req.session.user.username == req.comment.author;
-
-        if (!canDelete) {
-            res.json({ success: false, reason: 'Forbidden' }, 403);
-            return;
-        }
-
-        comment.deleted = true;
-
-        comment.save(function(err, response) {
+    app.post('/comments/:commentId/delete', util.requireLoggedInUser, util.findComment, util.requireOwner, function(req, res) {
+        req.comment.deleted = true;
+        req.comment.save(function(err, response) {
             res.send({ success: true });
         });
     });
@@ -310,22 +293,10 @@ app.namespace('/auth/:sdk/:version', function(){
     /**
      * Restores deleted comment
      */
-    app.post('/comments/:commentId/undo_delete', util.requireLoggedInUser, util.findComment, function(req, res) {
-
-        var canUndoDelete = false,
-            comment = req.comment;
-
-        canUndoDelete = _.include(req.session.user.membergroupids, 7) || req.session.user.username == req.comment.author;
-
-        if (!canUndoDelete) {
-            res.json({ success: false, reason: 'Forbidden' }, 403);
-            return;
-        }
-
-        comment.deleted = false;
-
-        comment.save(function(err, response) {
-            res.send({ success: true, comment: util.scoreComments([comment], req)[0] });
+    app.post('/comments/:commentId/undo_delete', util.requireLoggedInUser, util.findComment, util.requireOwner, function(req, res) {
+        req.comment.deleted = false;
+        req.comment.save(function(err, response) {
+            res.send({ success: true, comment: util.scoreComments([req.comment], req)[0] });
         });
     });
 
