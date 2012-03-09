@@ -229,9 +229,6 @@ Ext.define('Docs.view.Comments', {
                     '</ul>',
                     'End a line with two spaces<br/>to create a line break<br/><br/>',
                 '</div>',
-                '<ul>',
-                    '<li>Links will only work if they start with <code>#!/</code> or http://www.sencha.com',
-                '</ul>',
             '</div>'
         ];
 
