@@ -129,11 +129,17 @@ Ext.define('Docs.view.Comments', {
                 return '<a href="' + urlPrefix + url + '">' + title + '</a>';
             },
             recentCommentsPager: Ext.Function.bind(function(values) {
-                return [
-                    '<div class="recent-comments-pager">',
-                        this.getPagerHtml(values[values.length - 1] || {}),
-                    '</div>'
-                ].join('');
+                var last = values[values.length - 1];
+                if (last && last.total_rows) {
+                    return [
+                        '<div class="recent-comments-pager">',
+                        this.getPagerHtml(last),
+                        '</div>'
+                    ].join('');
+                }
+                else {
+                    return '';
+                }
             }, this)
         };
 
