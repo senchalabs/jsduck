@@ -243,7 +243,6 @@ Ext.define('Docs.controller.Comments', {
         this.request("ajax", {
             url: '/comments',
             method: 'POST',
-            cors: true,
             params: {
                 target: encodedTarget,
                 comment: comment,
@@ -310,7 +309,6 @@ Ext.define('Docs.controller.Comments', {
 
         this.request("ajax", {
             url: '/comments/' + id + '/delete',
-            cors: true,
             method: 'POST',
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
@@ -344,7 +342,6 @@ Ext.define('Docs.controller.Comments', {
 
         this.request("ajax", {
             url: '/comments/' + id + '/undo_delete',
-            cors: true,
             method: 'POST',
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
@@ -373,7 +370,6 @@ Ext.define('Docs.controller.Comments', {
         this.request("ajax", {
             url: '/comments/' + commentId,
             method: 'GET',
-            cors: true,
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
                 if (data.success) {
@@ -413,7 +409,6 @@ Ext.define('Docs.controller.Comments', {
         this.request("ajax", {
             url: '/comments/' + id,
             method: 'POST',
-            cors: true,
             params: {
                 content: content
             },
@@ -455,7 +450,6 @@ Ext.define('Docs.controller.Comments', {
         this.request("ajax", {
             url: '/subscribe',
             method: 'POST',
-            cors: true,
             params: {
                 target: Ext.JSON.encode(this.commentId(commentId)),
                 subscribed: subscribed
@@ -495,7 +489,6 @@ Ext.define('Docs.controller.Comments', {
 
         this.request("ajax", {
             url: '/comments/' + id,
-            cors: true,
             method: 'POST',
             params: { vote: direction },
             callback: function(options, success, response) {

@@ -20,6 +20,8 @@ Ext.define('Docs.controller.AuthHelpers', {
             Ext.data.JsonP.request(config);
         }
         else {
+            // Allow doing Cross Origin request.
+            config.cors = true;
             Ext.Ajax.request(config);
         }
     },
