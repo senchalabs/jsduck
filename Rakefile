@@ -13,7 +13,7 @@ end
 
 def load_sdk_vars
   if File.exists?("sdk-vars.rb")
-    require "sdk-vars.rb"
+    require "./sdk-vars.rb"
   else
     puts "Error: sdk-vars.rb not found."
     puts

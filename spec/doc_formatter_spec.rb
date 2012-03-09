@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require "jsduck/doc_formatter"
 require "jsduck/relations"
 
@@ -483,12 +484,12 @@ describe JsDuck::DocFormatter do
 
     it "counts multi-byte characters correctly when measuring text length" do
       # Text ending with a-umlaut character
-      @formatter.shorten("123456789\303\244").should == "123456789\303\244 ..."
+      @formatter.shorten("123456789ä").should == "123456789ä ..."
     end
 
     it "shortens text with multi-byte characters correctly" do
       # Text containing a-umlaut character
-      @formatter.shorten("123456\303\2448901").should == "123456\303\244..."
+      @formatter.shorten("123456ä8901").should == "123456ä..."
     end
 
     it "strips HTML tags when shortening" do
@@ -524,7 +525,7 @@ describe JsDuck::DocFormatter do
 
     it "counts multi-byte characters correctly" do
       # Text ending with a-umlaut character
-      @formatter.too_long?("123456789\303\244").should == false
+      @formatter.too_long?("123456789ä").should == false
     end
   end
 
@@ -549,7 +550,7 @@ describe JsDuck::DocFormatter do
       @formatter.first_sentence(". Hi John. This is me.").should == ". Hi John."
     end
     it "understands chinese/japanese full-stop character as end of sentence" do
-      @formatter.first_sentence("Some Chinese Text\343\200\202 And some more\343\200\202").should == "Some Chinese Text\343\200\202"
+      @formatter.first_sentence("Some Chinese Text。 And some more。").should == "Some Chinese Text。"
     end
   end
 

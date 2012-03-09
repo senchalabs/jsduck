@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'rubygems'
 require 'rdiscount'
 require 'strscan'
@@ -337,7 +338,7 @@ module JsDuck
     end
 
     def first_sentence(str)
-      str.sub(/\A(.+?(\.|\343\200\202))\s.*\Z/m, "\\1")
+      str.sub(/\A(.+?(\.|。))\s.*\Z/mu, "\\1")
     end
 
     # Returns true when input should get shortened.
