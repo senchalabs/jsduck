@@ -96,11 +96,10 @@ Ext.define('Docs.controller.Auth', {
      * Authenticates a user
      * @param {String} username
      * @param {String} password
-     * @param {Boolean} remember
-     * @param {Ext.Element} submitEl
-     * @private
+     * @param {Boolean} remember True if "Remember Me" was checked.
+     * @param {Ext.Element} tipTarget Target where to anchor login failure messages.
      */
-    login: function(username, password, remember, submitEl) {
+    login: function(username, password, remember, tipTarget) {
         Ext.Ajax.request({
             url: Docs.baseUrl + '/login',
             method: 'POST',
@@ -116,7 +115,7 @@ Ext.define('Docs.controller.Auth', {
                     this.setSid(data.sessionID, { remember: remember });
                     this.setLoggedIn();
                 } else {
-                    Docs.Tip.show(data.reason, submitEl, 'bottom');
+                    Docs.Tip.show(data.reason, tipTarget, 'bottom');
                 }
             },
             scope: this
@@ -189,20 +188,6 @@ Ext.define('Docs.controller.Auth', {
         } else {
             Ext.util.Cookies.clear('sid');
         }
-    },
-
-    submitLogin: function(el) {
-        var form = Ext.get(el),
-            username = form.down('input[name=username]').getValue(),
-            password = form.down('input[name=password]').getValue(),
-            rememberEl = form.down('input[name=remember]'),
-            submitEl = form.down('input[type=submit]');
-
-        var remember = rememberEl ? Boolean(rememberEl.getAttribute('checked')) : false;
-
-        this.login(username, password, remember, submitEl);
-
-        return false;
     }
 
 });

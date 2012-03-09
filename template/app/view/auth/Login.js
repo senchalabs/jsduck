@@ -6,7 +6,7 @@ Ext.define('Docs.view.auth.Login', {
     alias: 'widget.authentication',
 
     loginTplHtml: [
-        '<form class="loginForm" onsubmit="return Docs.App.getController(\'Auth\').submitLogin(this);">',
+        '<form class="loginForm">',
             '<input class="username" type="text" name="username" placeholder="Username" />',
             '<input class="password" type="password" name="password" placeholder="Password" />',
             '<label><input type="checkbox" name="remember" /> Remember Me</label>',
@@ -26,6 +26,19 @@ Ext.define('Docs.view.auth.Login', {
      */
     showLoginForm: function() {
         this.update(this.loginTpl.apply());
+        this.getEl().down("form").on("submit", this.submitLogin, this, {preventDefault: true});
+    },
+
+    submitLogin: function(event, el) {
+        var form = Ext.get(el),
+            username = form.down('input[name=username]').getValue(),
+            password = form.down('input[name=password]').getValue(),
+            rememberEl = form.down('input[name=remember]'),
+            submitEl = form.down('input[type=submit]');
+
+        var remember = rememberEl ? Boolean(rememberEl.getAttribute('checked')) : false;
+
+        Docs.App.getController('Auth').login(username, password, remember, submitEl);
     },
 
     /**
