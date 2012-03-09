@@ -259,18 +259,6 @@ Ext.define('Docs.view.Comments', {
                         '<p>For <b>SDK bugs</b>, please use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a>.<br />',
                         '   For Docs App bugs, please use the <a href="https://github.com/senchalabs/jsduck/issues" target="_blank">GitHub Issue tracker</a>.</p>',
                     '</div>',
-                    '<div class="note feedback" style="display: none;">',
-                        '<p>Your feedback will <b>not appear</b> online and you are unlikely to receive a personal response. ',
-                            'However feedback is monitored closely by the Sencha Documentation team.</p>',
-                        '<div style="padding-bottom: 5px;">Quality of documentation:</div>',
-                        '<p>',
-                            '<label><input name="feedback" type="radio" value="4" /> Excellent</label>',
-                            '<label><input name="feedback" type="radio" value="3" /> Good</label>',
-                            '<label><input name="feedback" type="radio" value="2" /> Fair</label>',
-                            '<label><input name="feedback" type="radio" value="1" /> Poor</label>',
-                        '</p>',
-                        '<p>Comments or suggestions:</p>',
-                    '</div>',
                     '<div class="postCommentWrap">',
                         '<textarea></textarea>',
                         commentMetaAndGuide.join(''),
@@ -503,16 +491,16 @@ Ext.define('Docs.view.Comments', {
             action.on('change', function(evt, el) {
                 var val = Ext.get(el).getValue();
                 form.select('.note').setStyle({display: 'none'});
-                if (val == "question") {
-                    form.down('.note.question').setStyle({display: 'block'});
+                if (val === "question") {
                     form.down('.postCommentWrap').setStyle({display: 'none'});
-                } else {
+                    form.down('.note.question').setStyle({display: 'block'});
+                }
+                else if (val === "problem") {
                     form.down('.postCommentWrap').setStyle({display: 'block'});
-                    if (val == "problem") {
-                        form.down('.note.problem').setStyle({display: 'block'});
-                    } else if (val == "feedback") {
-                        form.down('.note.feedback').setStyle({display: 'block'});
-                    }
+                    form.down('.note.problem').setStyle({display: 'block'});
+                }
+                else {
+                    form.down('.postCommentWrap').setStyle({display: 'block'});
                 }
             });
         }
