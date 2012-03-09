@@ -44,7 +44,7 @@ Ext.define('Docs.controller.Auth', {
             'authentication': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(e, el) {
-                        cmp.showLogin();
+                        cmp.showLoginForm();
                     }, this, {
                         preventDefault: true,
                         delegate: '.login'
@@ -57,16 +57,18 @@ Ext.define('Docs.controller.Auth', {
                         delegate: '.logout'
                     });
 
-                    this.getSession();
+                    this.retrieveSession();
                 }
             }
         });
     },
 
     /**
-     * Checks if a user is logged in server side and sets up a local session if they are.
+     * Checks if a user is logged in server side and sets up a local
+     * session if they are.
+     * @private
      */
-    getSession: function() {
+    retrieveSession: function() {
         Ext.Ajax.request({
             url: Docs.baseUrl + '/session',
             params: { sid: this.sid },
@@ -77,9 +79,9 @@ Ext.define('Docs.controller.Auth', {
                     this.currentUser = JSON.parse(response.responseText);
                     this.fireEvent('available');
                     if (this.currentUser) {
-                        this.loggedIn();
+                        this.setLoggedIn();
                     } else {
-                        this.loggedOut();
+                        this.setLoggedOut();
                     }
                 }
             },
@@ -93,6 +95,7 @@ Ext.define('Docs.controller.Auth', {
      * @param {String} password
      * @param {Boolean} remember
      * @param {Ext.Element} submitEl
+     * @private
      */
     login: function(username, password, remember, submitEl) {
         Ext.Ajax.request({
@@ -108,7 +111,7 @@ Ext.define('Docs.controller.Auth', {
                 if (data.success) {
                     this.currentUser = data;
                     this.setSid(data.sessionID, { remember: remember });
-                    this.loggedIn();
+                    this.setLoggedIn();
                 } else {
                     if (this.errorTip) {
                         this.errorTip.update(data.reason);
@@ -130,6 +133,7 @@ Ext.define('Docs.controller.Auth', {
 
     /**
      * Logs out a user
+     * @private
      */
     logout: function() {
         Ext.Ajax.request({
@@ -137,7 +141,7 @@ Ext.define('Docs.controller.Auth', {
             method: 'POST',
             cors: true,
             callback: function(){
-                this.loggedOut();
+                this.setLoggedOut();
             },
             scope: this
         });
@@ -145,8 +149,9 @@ Ext.define('Docs.controller.Auth', {
 
     /**
      * Marks the user as logged in.
+     * @private
      */
-    loggedIn: function() {
+    setLoggedIn: function() {
         if (this.currentUser) {
             this.getAuth().showLoggedIn(this.currentUser.userName);
             this.fireEvent('loggedIn');
@@ -155,8 +160,9 @@ Ext.define('Docs.controller.Auth', {
 
     /**
      * Marks a user as logged out.
+     * @private
      */
-    loggedOut: function(user) {
+    setLoggedOut: function(user) {
         this.currentUser = {};
         this.setSid(null);
         this.getAuth().showLoggedOut();

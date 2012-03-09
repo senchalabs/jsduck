@@ -21,15 +21,25 @@ Ext.define('Docs.view.auth.Login', {
         this.callParent(arguments);
     },
 
-    showLogin: function() {
+    /**
+     * Shows login form.
+     */
+    showLoginForm: function() {
         this.update(this.loginTpl.apply());
     },
 
+    /**
+     * Shows message about who's logged in.
+     * @param {String} username
+     */
     showLoggedIn: function(username) {
         this.update('Welcome, ' + username + ' | <a href="#" class="logout">Logout</a>');
     },
 
-    showLoggedOut: function(username) {
+    /**
+     * Shows message about being currently logged out.
+     */
+    showLoggedOut: function() {
         this.update('<a href="#" class="login">Sign in / Register</a>');
     }
 

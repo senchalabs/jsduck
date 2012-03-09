@@ -29,7 +29,10 @@ Ext.define('Docs.controller.AuthHelpers', {
         return url + (url.match(/\?/) ? '&' : '?') + 'sid=' + sid;
     },
 
-    loggedIn: function() {
+    /**
+     * Returns true if user is logged in.
+     */
+    isLoggedIn: function() {
         return this.getController('Auth').isLoggedIn();
     }
 

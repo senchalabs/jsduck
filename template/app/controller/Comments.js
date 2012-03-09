@@ -187,7 +187,7 @@ Ext.define('Docs.controller.Comments', {
     },
 
     postComment: function(cmp, el) {
-        if (!this.loggedIn()) {
+        if (!this.isLoggedIn()) {
             return false;
         }
 
@@ -299,7 +299,7 @@ Ext.define('Docs.controller.Comments', {
      * Sends a delete comment request to the server.
      */
     deleteComment: function(cmp, el) {
-        if (!this.loggedIn()) {
+        if (!this.isLoggedIn()) {
             return;
         }
 
@@ -332,7 +332,7 @@ Ext.define('Docs.controller.Comments', {
      * Sends an undo request to the server.
      */
     undoDeleteComment: function(cmp, el) {
-        if (!this.loggedIn()) {
+        if (!this.isLoggedIn()) {
             return;
         }
 
@@ -394,7 +394,7 @@ Ext.define('Docs.controller.Comments', {
     },
 
     updateComment: function(cmp, el) {
-        if (!this.loggedIn()) {
+        if (!this.isLoggedIn()) {
             return false;
         }
 
@@ -479,7 +479,7 @@ Ext.define('Docs.controller.Comments', {
      * @private
      */
     vote: function(direction, el) {
-        if (!this.loggedIn()) {
+        if (!this.isLoggedIn()) {
             this.notify('Please login to vote on this comment', el);
             return false;
         }
@@ -623,7 +623,7 @@ Ext.define('Docs.controller.Comments', {
             comments.addCls('hideCommentForm');
         } else if (!comments.hasCls('hideCommentForm')) {
             var commentWrap = comments.down('.new-comment-wrap');
-            if (this.loggedIn()) {
+            if (this.isLoggedIn()) {
 
                 var formData = Ext.apply(this.getController('Auth').currentUser, {
                     userSubscribed: Docs.commentSubscriptions[id]
@@ -644,7 +644,7 @@ Ext.define('Docs.controller.Comments', {
     },
 
     toggleNewComment: function(cmp, el) {
-        if (!this.loggedIn()) {
+        if (!this.isLoggedIn()) {
             return;
         }
 
