@@ -104,8 +104,8 @@ Ext.define('Docs.controller.CommentsMeta', {
      * Fetch all comment meta data and populate a local store
      */
     fetchCommentMeta: function() {
-        Ext.data.JsonP.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments_meta'),
+        this.request("jsonp", {
+            url: '/comments_meta',
             method: 'GET',
             success: function(response) {
                 Ext.Array.each(response.comments, function(r) {
@@ -129,8 +129,8 @@ Ext.define('Docs.controller.CommentsMeta', {
      * Fetch all comment meta data and populate a local store
      */
     fetchSubscriptionMeta: function() {
-        Ext.data.JsonP.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/subscriptions'),
+        this.request("jsonp", {
+            url: '/subscriptions',
             method: 'GET',
             success: function(response) {
                 Ext.Array.each(response.subscriptions, function(r) {

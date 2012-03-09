@@ -168,12 +168,10 @@ Ext.define('Docs.controller.Comments', {
     fetchComments: function(id, callback, opts) {
         var startkey = Ext.JSON.encode(this.commentId(id)),
             endkey = Ext.JSON.encode(this.commentId(id).concat([{}])),
-            currentUser = this.getController('Auth').currentUser,
-            // url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_target';
-            url = Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments';
+            currentUser = this.getController('Auth').currentUser;
 
-        Ext.data.JsonP.request({
-            url: url,
+        this.request("jsonp", {
+            url: '/comments',
             method: 'GET',
             params: {
                 reduce: false,
@@ -241,8 +239,8 @@ Ext.define('Docs.controller.Comments', {
             title += ' ' + target[2];
         }
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments'),
+        this.request("ajax", {
+            url: '/comments',
             method: 'POST',
             cors: true,
             params: {
@@ -276,8 +274,8 @@ Ext.define('Docs.controller.Comments', {
      * Fetches the most recent comments
      */
     fetchRecentComments: function(id, offset) {
-        Ext.data.JsonP.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments_recent'),
+        this.request("jsonp", {
+            url: '/comments_recent',
             method: 'GET',
             params: {
                 offset: offset || 0,
@@ -309,8 +307,8 @@ Ext.define('Docs.controller.Comments', {
             commentsEl = Ext.get(el).up('.comments-div'),
             target = commentsEl && commentsEl.getAttribute('id');
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + id + '/delete'),
+        this.request("ajax", {
+            url: '/comments/' + id + '/delete',
             cors: true,
             method: 'POST',
             callback: function(options, success, response) {
@@ -343,8 +341,8 @@ Ext.define('Docs.controller.Comments', {
         var commentsEl = commentEl.up('.comments-div');
         var target = commentsEl && commentsEl.getAttribute('id');
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + id + '/undo_delete'),
+        this.request("ajax", {
+            url: '/comments/' + id + '/undo_delete',
             cors: true,
             method: 'POST',
             callback: function(options, success, response) {
@@ -371,8 +369,8 @@ Ext.define('Docs.controller.Comments', {
             contentEl = commentEl.down('.content'),
             currentUser = this.getController('Auth').currentUser;
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + commentId),
+        this.request("ajax", {
+            url: '/comments/' + commentId,
             method: 'GET',
             cors: true,
             callback: function(options, success, response) {
@@ -411,8 +409,8 @@ Ext.define('Docs.controller.Comments', {
         }
         postButton.addCls('disabled');
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + id),
+        this.request("ajax", {
+            url: '/comments/' + id,
             method: 'POST',
             cors: true,
             params: {
@@ -453,8 +451,8 @@ Ext.define('Docs.controller.Comments', {
             commentId = commentEl.getAttribute('id'),
             subscribed = el.checked;
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/subscribe'),
+        this.request("ajax", {
+            url: '/subscribe',
             method: 'POST',
             cors: true,
             params: {
@@ -494,8 +492,8 @@ Ext.define('Docs.controller.Comments', {
             meta = Ext.get(el).up('.com-meta'),
             scoreEl = meta.down('.score');
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + '/comments/' + id),
+        this.request("ajax", {
+            url: '/comments/' + id,
             cors: true,
             method: 'POST',
             params: { vote: direction },
