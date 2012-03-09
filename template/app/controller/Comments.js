@@ -11,7 +11,8 @@ Ext.define('Docs.controller.Comments', {
     },
 
     requires: [
-        "Docs.Syntax"
+        "Docs.Syntax",
+        "Docs.Tip"
     ],
 
     refs: [
@@ -461,14 +462,14 @@ Ext.define('Docs.controller.Comments', {
             },
             success: function() {
                 if (subscribed) {
-                    this.notify("Updates to this thread will be e-mailed to you.", labelEl, "bottom");
+                    Docs.Tip.show("Updates to this thread will be e-mailed to you.", labelEl, "bottom");
                 }
                 else {
-                    this.notify("You have unsubscribed from this thread.", labelEl, "bottom");
+                    Docs.Tip.show("You have unsubscribed from this thread.", labelEl, "bottom");
                 }
             },
             failure: function() {
-                this.notify("Subscription change failed.", labelEl, "bottom");
+                Docs.Tip.show("Subscription change failed.", labelEl, "bottom");
                 el.checked = !el.checked;
             },
             scope: this
@@ -480,11 +481,11 @@ Ext.define('Docs.controller.Comments', {
      */
     vote: function(direction, el) {
         if (!this.isLoggedIn()) {
-            this.notify('Please login to vote on this comment', el);
+            Docs.Tip.show('Please login to vote on this comment', el);
             return false;
         }
         else if (Ext.get(el).hasCls('selected')) {
-            this.notify('You have already voted on this comment', el);
+            Docs.Tip.show('You have already voted on this comment', el);
             return false;
         }
 
@@ -509,7 +510,7 @@ Ext.define('Docs.controller.Comments', {
                     }
                     scoreEl.update(String(data.total));
                 } else {
-                    this.notify(data.reason, el);
+                    Docs.Tip.show(data.reason, el);
                     return false;
                 }
             },
@@ -693,35 +694,6 @@ Ext.define('Docs.controller.Comments', {
         if (but.editor) {
             but.editor.toTextArea();
         }
-    },
-
-    /**
-     * Displays a notification tip anchored at specified element.
-     *
-     * @param {String} msg The message to display.
-     * @param {HTMLElement/Ext.Element} el The element where to anchor our message.
-     * @param {String} [anchor='right'] On which side to anchor the tip.
-     * @private
-     */
-    notify: function(msg, el, anchor) {
-        anchor = anchor || 'right';
-        // We keep tip instance for each anchor position as there is
-        // no way to change the anchoring after the tip has been
-        // created.
-        this.notifyTips = this.notifyTips || {};
-        if (this.notifyTips[anchor]) {
-            var tip = this.notifyTips[anchor];
-            tip.update(msg);
-            tip.setTarget(el);
-            tip.show();
-        }
-        else {
-            var tip = this.notifyTips[anchor] = Ext.create('Ext.tip.ToolTip', {
-                anchor: anchor,
-                target: el,
-                html: msg
-            });
-            tip.show();
-        }
     }
+
 });

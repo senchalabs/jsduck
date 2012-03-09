@@ -4,7 +4,10 @@
 Ext.define('Docs.controller.Auth', {
     extend: 'Ext.app.Controller',
 
-    requires: ['Ext.util.Cookies'],
+    requires: [
+        'Ext.util.Cookies',
+        'Docs.Tip'
+    ],
 
     refs: [
         {
@@ -113,18 +116,7 @@ Ext.define('Docs.controller.Auth', {
                     this.setSid(data.sessionID, { remember: remember });
                     this.setLoggedIn();
                 } else {
-                    if (this.errorTip) {
-                        this.errorTip.update(data.reason);
-                        this.errorTip.setTarget(submitEl);
-                        this.errorTip.show();
-                    } else {
-                        this.errorTip = Ext.create('Ext.tip.ToolTip', {
-                            anchor: 'bottom',
-                            target: submitEl,
-                            html: data.reason
-                        });
-                        this.errorTip.show();
-                    }
+                    Docs.Tip.show(data.reason, submitEl, 'bottom');
                 }
             },
             scope: this
