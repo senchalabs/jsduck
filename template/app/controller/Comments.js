@@ -449,6 +449,7 @@ Ext.define('Docs.controller.Comments', {
 
     updateSubscription: function(cmp, el) {
         var commentEl = Ext.get(el).up('.comments-div'),
+            labelEl = Ext.get(el).up('label'),
             commentId = commentEl.getAttribute('id'),
             subscribed = el.checked;
 
@@ -462,40 +463,18 @@ Ext.define('Docs.controller.Comments', {
             },
             success: function() {
                 if (subscribed) {
-                    this.notify(el, "Updates to this thread will be e-mailed to you.");
+                    this.notify("Updates to this thread will be e-mailed to you.", labelEl, "bottom");
                 }
                 else {
-                    this.notify(el, "You have unsubscribed from this thread.");
+                    this.notify("You have unsubscribed from this thread.", labelEl, "bottom");
                 }
             },
             failure: function() {
-                this.notify(el, "Subscription change failed.");
+                this.notify("Subscription change failed.", labelEl, "bottom");
                 el.checked = !el.checked;
             },
             scope: this
         });
-    },
-
-    // Displays a tooltip above the checkbox element for limited amount of time
-    notify: function(el, msg) {
-        var tip = Ext.create('Ext.tip.ToolTip', {
-            html: msg,
-            style: {opacity: 0}
-        });
-
-        // Fade in
-        el = Ext.get(el);
-        tip.showAt([el.getLeft()-100, el.getTop()-30]);
-        tip.getEl().fadeIn();
-
-        // Fade out
-        Ext.Function.defer(function() {
-            tip.getEl().fadeOut({
-                callback: function() {
-                    tip.destroy();
-                }
-            });
-        }, 3000);
     },
 
     /**
@@ -503,11 +482,11 @@ Ext.define('Docs.controller.Comments', {
      */
     vote: function(direction, el) {
         if (!this.loggedIn()) {
-            this.showError('Please login to vote on this comment', el);
+            this.notify('Please login to vote on this comment', el);
             return false;
         }
         else if (Ext.get(el).hasCls('selected')) {
-            this.showError('You have already voted on this comment', el);
+            this.notify('You have already voted on this comment', el);
             return false;
         }
 
@@ -532,7 +511,7 @@ Ext.define('Docs.controller.Comments', {
                     }
                     scoreEl.update(String(data.total));
                 } else {
-                    this.showError(data.reason, el);
+                    this.notify(data.reason, el);
                     return false;
                 }
             },
@@ -718,18 +697,33 @@ Ext.define('Docs.controller.Comments', {
         }
     },
 
-    showError: function(msg, el) {
-        if (this.errorTip) {
-            this.errorTip.update(msg);
-            this.errorTip.setTarget(el);
-            this.errorTip.show();
-        } else {
-            this.errorTip = Ext.create('Ext.tip.ToolTip', {
-                anchor: 'right',
+    /**
+     * Displays a notification tip anchored at specified element.
+     *
+     * @param {String} msg The message to display.
+     * @param {HTMLElement/Ext.Element} el The element where to anchor our message.
+     * @param {String} [anchor='right'] On which side to anchor the tip.
+     * @private
+     */
+    notify: function(msg, el, anchor) {
+        anchor = anchor || 'right';
+        // We keep tip instance for each anchor position as there is
+        // no way to change the anchoring after the tip has been
+        // created.
+        this.notifyTips = this.notifyTips || {};
+        if (this.notifyTips[anchor]) {
+            var tip = this.notifyTips[anchor];
+            tip.update(msg);
+            tip.setTarget(el);
+            tip.show();
+        }
+        else {
+            var tip = this.notifyTips[anchor] = Ext.create('Ext.tip.ToolTip', {
+                anchor: anchor,
                 target: el,
                 html: msg
             });
-            this.errorTip.show();
+            tip.show();
         }
     }
 });
