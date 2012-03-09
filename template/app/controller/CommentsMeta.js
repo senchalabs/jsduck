@@ -142,32 +142,6 @@ Ext.define('Docs.controller.CommentsMeta', {
         });
     },
 
-    fetchCommentLeaders: function() {
-        Ext.data.JsonP.request({
-            url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_author',
-            method: 'GET',
-            params: {
-                reduce: true,
-                group_level: 1,
-                descending: true,
-                limit: 10
-            },
-            success: function(response) {
-                var tpl = Ext.create('Ext.XTemplate',
-                    '<h1>Comment reputation</h1>',
-                    '<table>',
-                    '<tpl for=".">',
-                        '<tr><td>{value}</td><td>{key}</td></tr>',
-                    '</tpl>',
-                    '</table>'
-                );
-
-                tpl.append(Ext.get(Ext.query('#welcomeindex .news .l')[0]), response.rows);
-            },
-            scope: this
-        });
-    },
-
     /**
      * Called when a comment is added or removed. Updates the meta table, then refreshes the view
      */
