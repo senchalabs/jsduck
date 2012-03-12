@@ -10,6 +10,7 @@ require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
 require 'jsduck/assets'
 require 'jsduck/json_duck'
+require 'jsduck/io'
 require 'jsduck/lint'
 require 'jsduck/template_dir'
 require 'jsduck/class_writer'
@@ -81,7 +82,7 @@ module JsDuck
     def parallel_parse(filenames)
       @parallel.map(filenames) do |fname|
         Logger.instance.log("Parsing", fname)
-        SourceFile.new(IO.read(fname), fname, @opts)
+        SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
       end
     end
 

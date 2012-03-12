@@ -1,3 +1,4 @@
+require 'jsduck/io'
 require 'json'
 
 module JsDuck
@@ -33,7 +34,7 @@ module JsDuck
 
     # Reads and parses JSON from file
     def self.read(filename)
-      self.parse(IO.read(filename))
+      self.parse(JsDuck::IO.read(filename))
     end
 
     # Parses JSON string

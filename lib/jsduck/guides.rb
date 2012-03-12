@@ -1,5 +1,6 @@
 require 'jsduck/logger'
 require 'jsduck/json_duck'
+require 'jsduck/io'
 require 'jsduck/null_object'
 require 'jsduck/logger'
 require 'jsduck/grouped_asset'
@@ -51,7 +52,7 @@ module JsDuck
       @formatter.doc_context = {:filename => guide_file, :linenr => 0}
       name = File.basename(in_dir)
       @formatter.img_path = "guides/#{name}"
-      html = add_toc(guide, @formatter.format(IO.read(guide_file)))
+      html = add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
 
       JsonDuck.write_jsonp(out_dir+"/README.js", name, {:guide => html, :title => guide["title"]})
     end
