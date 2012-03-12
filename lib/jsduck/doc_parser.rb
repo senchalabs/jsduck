@@ -286,7 +286,9 @@ module JsDuck
       add_tag(:type)
       skip_horiz_white
       if look(/\{/)
-        @current_tag[:type] = typedef
+        tdf = typedef
+        @current_tag[:type] = tdf[:type]
+        @current_tag[:optional] = tdf[:optional]
       elsif look(/\S/)
         @current_tag[:type] = @input.scan(/\S+/)
       end
@@ -354,10 +356,13 @@ module JsDuck
     end
 
     # matches {type} if possible and sets it on @current_tag
+    # Also checks for {optionality=} in type definition.
     def maybe_type
       skip_horiz_white
       if look(/\{/)
-        @current_tag[:type] = typedef
+        tdf = typedef
+        @current_tag[:type] = tdf[:type]
+        @current_tag[:optional] = tdf[:optional]
       end
     end
 
@@ -431,12 +436,18 @@ module JsDuck
       end
     end
 
-    # matches {...} and returns text inside brackets
+    # matches {...=} and returns text inside brackets
     def typedef
       match(/\{/)
       name = @input.scan(/[^}]+/)
+      if name =~ /=$/
+        name = name.chop
+        optional = true
+      else
+        optional = false
+      end
       match(/\}/)
-      return name
+      return {:type => name, :optional => optional}
     end
 
     # matches <ident_chain> <ident_chain> ... until line end

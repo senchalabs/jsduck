@@ -162,6 +162,14 @@ describe JsDuck::TypeParser do
       parse("(String|(Number|RegExp))").should == true
     end
 
+    # This is handled inside DocParser, when it's detected over there
+    # the "=" is removed from the end of type definition, so it should
+    # never reach TypeParser if there is just one "=" at the end of
+    # type definition.
+    it "doesn't accept optional parameter notation" do
+      parse("String=").should == false
+    end
+
   end
 
 end
