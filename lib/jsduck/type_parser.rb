@@ -59,7 +59,9 @@ module JsDuck
 
     # The basic type
     #
-    #     <varargs-type> ::= [ "..." ] <array-type> | <array-type> [ "..." ]
+    #     <varargs-type> ::= [ "..." ] <null-type> | <null-type> [ "..." ]
+    #
+    #     <null-type> ::= [ "?" | "!" ] <array-type>
     #
     #     <array-type> ::= <type-name> [ "[]" ]
     #
@@ -74,6 +76,10 @@ module JsDuck
       if @input.scan(/\.\.\./)
         varargs = true
         @out << "..."
+      end
+
+      if nullability = @input.scan(/[?!]/)
+        @out << nullability
       end
 
       type = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*|\*/)

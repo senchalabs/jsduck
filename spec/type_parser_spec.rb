@@ -129,6 +129,19 @@ describe JsDuck::TypeParser do
       parse("...*...").should == false
     end
 
+    it "matches the nullable notation" do
+      parse("?String").should == true
+    end
+
+    it "matches the non-nullable notation" do
+      parse("!String").should == true
+    end
+
+    it "doesn't matches both nullable and non-nullable at the same time" do
+      parse("?!String").should == false
+      parse("!?String").should == false
+    end
+
   end
 
 end
