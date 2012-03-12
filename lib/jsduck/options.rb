@@ -171,6 +171,10 @@ module JsDuck
           Logger.instance.set_warning(:all, false)
         end
 
+        opts.on('--encoding=NAME', "Input encoding (defaults to UTF-8).", " ") do |encoding|
+          JsDuck::IO.encoding = encoding
+        end
+
         opts.on('-v', '--verbose', "This will fill up your console.", " ") do
           Logger.instance.verbose = true
         end
@@ -382,6 +386,7 @@ module JsDuck
               /--output/,
               /--builtin-classes/,
               /--no-warnings/,
+              /--encoding/,
               /--verbose/,
               /--help/,
               /--version/,
