@@ -72,15 +72,12 @@ module JsDuck
     #
     #     <null-type> ::= [ "?" | "!" ] <array-type>
     #
-    #     <array-type> ::= <type-name> [ "[]" ]*
+    #     <array-type> ::= <atomic-type> [ "[]" ]*
     #
-    #     <type-name> ::= <ident-chain> | "*"
+    #     <atomic-type> ::= <type-name> | <union-type>
     #
-    #     <ident-chain> ::= <ident> [ "." <ident> ]*
+    #     <union-type> ::= "(" <alteration-type> ")"
     #
-    #     <ident> ::= [a-zA-Z0-9_]+
-    #
-    # dot-separated identifiers followed by optional "[]"
     def varargs_type
       if @input.scan(/\.\.\./)
         varargs = true
@@ -91,17 +88,15 @@ module JsDuck
         @out << nullability
       end
 
-      type = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*|\*/)
+      if @input.scan(/\(/)
+        @out << "("
 
-      if !type
-        return false
-      elsif @relations[type]
-        @out << @formatter.link(type, nil, type)
-      elsif @relations.ignore?(type) || type == "undefined" || type == "*"
-        @out << type
+        return false unless alteration_type
+
+        return false unless @input.scan(/\)/)
+        @out << ")"
       else
-        @error = :name
-        return false
+        return false unless type_name
       end
 
       while @input.scan(/\[\]/)
@@ -110,6 +105,30 @@ module JsDuck
 
       if !varargs
         @out << "..." if @input.scan(/\.\.\./)
+      end
+
+      true
+    end
+
+    #
+    #     <type-name> ::= <ident-chain> | "*"
+    #
+    #     <ident-chain> ::= <ident> [ "." <ident> ]*
+    #
+    #     <ident> ::= [a-zA-Z0-9_]+
+    #
+    def type_name
+      name = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*|\*/)
+
+      if !name
+        return false
+      elsif @relations[name]
+        @out << @formatter.link(name, nil, name)
+      elsif @relations.ignore?(name) || name == "undefined" || name == "*"
+        @out << name
+      else
+        @error = :name
+        return false
       end
 
       true

@@ -146,6 +146,22 @@ describe JsDuck::TypeParser do
       parse("String|Number|RegExp").should == true
     end
 
+    it "matches union of one simple type" do
+      parse("(String)").should == true
+    end
+
+    it "matches union of two simple types" do
+      parse("(String|Number)").should == true
+    end
+
+    it "matches union type in varargs context" do
+      parse("...(String|Number)").should == true
+    end
+
+    it "matches nested union type" do
+      parse("(String|(Number|RegExp))").should == true
+    end
+
   end
 
 end
