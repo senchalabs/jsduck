@@ -117,6 +117,18 @@ describe JsDuck::TypeParser do
       parse("*").should == true
     end
 
+    it "matches the varargs notation at the beginning" do
+      parse("...String").should == true
+    end
+
+    it "doesn't accept varargs notation without a type name" do
+      parse("...").should == false
+    end
+
+    it "doesn't accept both varargs notations at the same time" do
+      parse("...*...").should == false
+    end
+
   end
 
 end

@@ -31,19 +31,23 @@ module JsDuck
       @formatter = formatter
     end
 
+    # Parses the type definition
+    #
+    #     <type> ::= <varargs-type> [ "/" <type> ]*
+    #
     def parse(str)
       @input = StringScanner.new(str)
       @error = :syntax
       @out = []
 
-      # Return immediately if base type doesn't match
-      return false unless base_type
+      # Return immediately if varargs-type doesn't match
+      return false unless varargs_type
 
       # Go through enumeration of types, separated with "/"
       while @input.check(/\//)
         @out << @input.scan(/\//)
-        # Fail if there's no base type after "/"
-        return false unless base_type
+        # Fail if there's no varargs-type after "/"
+        return false unless varargs_type
       end
 
       # Concatenate all output
@@ -55,7 +59,9 @@ module JsDuck
 
     # The basic type
     #
-    #     <basic-type> ::= <type-name> [ "[]" ]* [ "..." ]
+    #     <varargs-type> ::= [ "..." ] <array-type> | <array-type> [ "..." ]
+    #
+    #     <array-type> ::= <type-name> [ "[]" ]
     #
     #     <type-name> ::= <ident-chain> | "*"
     #
@@ -64,7 +70,12 @@ module JsDuck
     #     <ident> ::= [a-zA-Z0-9_]+
     #
     # dot-separated identifiers followed by optional "[]"
-    def base_type
+    def varargs_type
+      if @input.scan(/\.\.\./)
+        varargs = true
+        @out << "..."
+      end
+
       type = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*|\*/)
 
       if !type
@@ -82,7 +93,9 @@ module JsDuck
         @out << "[]"
       end
 
-      @out << "..." if @input.scan(/\.\.\./)
+      if !varargs
+        @out << "..." if @input.scan(/\.\.\./)
+      end
 
       true
     end
