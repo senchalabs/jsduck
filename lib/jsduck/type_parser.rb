@@ -33,13 +33,27 @@ module JsDuck
 
     # Parses the type definition
     #
-    #     <type> ::= <varargs-type> [ ("/" | "|") <type> ]*
+    #     <type> ::= <alteration-type>
     #
     def parse(str)
       @input = StringScanner.new(str)
       @error = :syntax
       @out = []
 
+      # Return immediately if the base type doesn't match
+      return false unless alteration_type
+
+      # Concatenate all output
+      @out = @out.join
+
+      # Success if we have reached the end of input
+      return @input.eos?
+    end
+
+    #
+    #     <alteration-type> ::= <varargs-type> [ ("/" | "|") <varargs-type> ]*
+    #
+    def alteration_type
       # Return immediately if varargs-type doesn't match
       return false unless varargs_type
 
@@ -50,20 +64,15 @@ module JsDuck
         return false unless varargs_type
       end
 
-      # Concatenate all output
-      @out = @out.join
-
-      # Success if we have reached the end of input
-      return @input.eos?
+      true
     end
 
-    # The basic type
     #
     #     <varargs-type> ::= [ "..." ] <null-type> | <null-type> [ "..." ]
     #
     #     <null-type> ::= [ "?" | "!" ] <array-type>
     #
-    #     <array-type> ::= <type-name> [ "[]" ]
+    #     <array-type> ::= <type-name> [ "[]" ]*
     #
     #     <type-name> ::= <ident-chain> | "*"
     #
