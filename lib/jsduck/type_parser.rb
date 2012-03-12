@@ -55,17 +55,23 @@ module JsDuck
 
     # The basic type
     #
-    #     <ident> [ "." <ident> ]* [ "[]" ]* [ "..." ]
+    #     <basic-type> ::= <type-name> [ "[]" ]* [ "..." ]
+    #
+    #     <type-name> ::= <ident-chain> | "*"
+    #
+    #     <ident-chain> ::= <ident> [ "." <ident> ]*
+    #
+    #     <ident> ::= [a-zA-Z0-9_]+
     #
     # dot-separated identifiers followed by optional "[]"
     def base_type
-      type = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*/)
+      type = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*|\*/)
 
       if !type
         return false
       elsif @relations[type]
         @out << @formatter.link(type, nil, type)
-      elsif @relations.ignore?(type) || type == "undefined"
+      elsif @relations.ignore?(type) || type == "undefined" || type == "*"
         @out << type
       else
         @error = :name

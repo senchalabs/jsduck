@@ -109,5 +109,15 @@ describe JsDuck::TypeParser do
     end
   end
 
+  # Type expressions supported by closure compiler:
+  # https://developers.google.com/closure/compiler/docs/js-for-compiler#types
+  describe "supporting closure compiler" do
+
+    it "matches the ALL type" do
+      parse("*").should == true
+    end
+
+  end
+
 end
 
