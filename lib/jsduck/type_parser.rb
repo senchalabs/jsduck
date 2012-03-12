@@ -33,7 +33,7 @@ module JsDuck
 
     # Parses the type definition
     #
-    #     <type> ::= <varargs-type> [ "/" <type> ]*
+    #     <type> ::= <varargs-type> [ ("/" | "|") <type> ]*
     #
     def parse(str)
       @input = StringScanner.new(str)
@@ -43,10 +43,10 @@ module JsDuck
       # Return immediately if varargs-type doesn't match
       return false unless varargs_type
 
-      # Go through enumeration of types, separated with "/"
-      while @input.check(/\//)
-        @out << @input.scan(/\//)
-        # Fail if there's no varargs-type after "/"
+      # Go through enumeration of types, separated with "/" or "|"
+      while @input.check(/[\/|]/)
+        @out << @input.scan(/[\/|]/)
+        # Fail if there's no varargs-type after / or |
         return false unless varargs_type
       end
 

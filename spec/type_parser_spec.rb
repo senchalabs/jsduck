@@ -142,6 +142,10 @@ describe JsDuck::TypeParser do
       parse("!?String").should == false
     end
 
+    it "matches alteration with pipe" do
+      parse("String|Number|RegExp").should == true
+    end
+
   end
 
 end
