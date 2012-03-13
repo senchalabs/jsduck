@@ -205,6 +205,22 @@ describe JsDuck::TypeParser do
       parse("Array.<>").should == false
     end
 
+    it "matches empty function type" do
+      parse("function()").should == true
+    end
+
+    it "matches function type with arguments" do
+      parse("function(String,Number)").should == true
+    end
+
+    it "matches function type with return type" do
+      parse("function():Number").should == true
+    end
+
+    it "matches function type with extra whitespace" do
+      parse("function(  ) : Array").should == true
+    end
+
     it "always matches primitive types" do
       parse("boolean").should == true
       parse("number").should == true

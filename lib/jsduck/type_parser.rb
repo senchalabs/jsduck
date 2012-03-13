@@ -84,31 +84,37 @@ module JsDuck
     #
     #     <varargs-type> ::= [ "..." ] <null-type> | <null-type> [ "..." ]
     #
-    #     <null-type> ::= [ "?" | "!" ] <array-type>
-    #
-    #     <array-type> ::= <atomic-type> [ "[]" ]*
-    #
-    #     <atomic-type> ::= <type-name> | <union-type>
-    #
-    #     <union-type> ::= "(" <alteration-type> ")"
-    #
     def varargs_type
       if @input.scan(/\.\.\./)
         varargs = true
         @out << "..."
       end
 
+      return false unless null_type
+
+      if !varargs
+        @out << "..." if @input.scan(/\.\.\./)
+      end
+
+      true
+    end
+
+    #
+    #     <null-type> ::= [ "?" | "!" ] <array-type>
+    #
+    #     <array-type> ::= <atomic-type> [ "[]" ]*
+    #
+    #     <atomic-type> ::= <type-name> | <union-type> | <function-type>
+    #
+    def null_type
       if nullability = @input.scan(/[?!]/)
         @out << nullability
       end
 
-      if @input.scan(/\(/)
-        @out << "("
-
-        return false unless alteration_type
-
-        return false unless @input.scan(/\)/)
-        @out << ")"
+      if @input.check(/\(/)
+        return false unless union_type
+      elsif @input.check(/function\(/)
+        return false unless function_type
       else
         return false unless type_name
       end
@@ -117,8 +123,42 @@ module JsDuck
         @out << "[]"
       end
 
-      if !varargs
-        @out << "..." if @input.scan(/\.\.\./)
+      true
+    end
+
+    #
+    #     <union-type> ::= "(" <alteration-type> ")"
+    #
+    def union_type
+      @out << @input.scan(/\(/)
+
+      return false unless alteration_type
+
+      return false unless @input.scan(/\)/)
+      @out << ")"
+
+      true
+    end
+
+    #
+    #     <function-type> ::= "function(" <type-arguments> ")" [ ":" <null-type> ]
+    #
+    def function_type
+      @out << @input.scan(/function\(/)
+
+      skip_whitespace
+      if !@input.check(/\)/)
+        return false unless type_arguments
+      end
+
+      return false unless @input.scan(/\)/)
+      @out << ")"
+
+      skip_whitespace
+      if @input.scan(/:/)
+        @out << ":"
+        skip_whitespace
+        return false unless null_type
       end
 
       true
