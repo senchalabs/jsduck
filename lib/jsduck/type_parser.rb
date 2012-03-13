@@ -2,17 +2,43 @@ require 'strscan'
 
 module JsDuck
 
-  # Validates the syntax of type definitions
+  # Validates the syntax of type definitions.
   #
-  # Quick summary of supported types:
+  # The parser supports a combination of two syntaxes:
   #
-  # - SomeType
-  # - Name.spaced.Type
-  # - Number[]
-  # - String/RegExp
-  # - Type...
+  # 1. Traditional type expressions found in ExtJS code:
   #
-  # Details are covered in spec.
+  #     SomeType
+  #     Name.spaced.Type
+  #     Number[]
+  #     String/RegExp
+  #     Type...
+  #
+  # 2. Google Closure Compiler Type Expressions:
+  #
+  #     boolean
+  #     Window
+  #     goog.ui.Menu
+  #
+  #     Array.<string>
+  #     Object.<string, number>
+  #
+  #     (number|boolean)
+  #     ?number
+  #     !Object
+  #     ...number
+  #     *
+  #
+  #     function(string, boolean): number
+  #     function(new:goog.ui.Menu, string)
+  #     function(this:goog.ui.Menu, string)
+  #     function(?string=, number=)
+  #
+  # Currently not supported:
+  #
+  #     function(string, ...[number])
+  #
+  #     {myNum: number, myObject}
   #
   class TypeParser
     # Allows to check the type of error that was encountered.
@@ -57,6 +83,8 @@ module JsDuck
       # Success if we have reached the end of input
       return @input.eos?
     end
+
+    private
 
     #
     #     <alteration-type> ::= <varargs-type> [ ("/" | "|") <varargs-type> ]*

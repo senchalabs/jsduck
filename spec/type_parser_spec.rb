@@ -145,32 +145,36 @@ describe JsDuck::TypeParser do
       parse("!?String").should == false
     end
 
-    it "matches alteration with pipe" do
-      parse("String|Number|RegExp").should == true
+    describe "alteration" do
+      it "matches pipes" do
+        parse("String|Number|RegExp").should == true
+      end
+
+      it "matches with extra spacing" do
+        parse(" String | Number ").should == true
+      end
     end
 
-    it "matches alteration with extra spacing" do
-      parse(" String | Number ").should == true
-    end
+    describe "union" do
+      it "matches one simple type" do
+        parse("(String)").should == true
+      end
 
-    it "matches union of one simple type" do
-      parse("(String)").should == true
-    end
+      it "matches two simple types" do
+        parse("(String|Number)").should == true
+      end
 
-    it "matches union of two simple types" do
-      parse("(String|Number)").should == true
-    end
+      it "matches in varargs context" do
+        parse("...(String|Number)").should == true
+      end
 
-    it "matches union type in varargs context" do
-      parse("...(String|Number)").should == true
-    end
+      it "natches with nested union" do
+        parse("(String|(Number|RegExp))").should == true
+      end
 
-    it "matches nested union type" do
-      parse("(String|(Number|RegExp))").should == true
-    end
-
-    it "matches union with extra spacing" do
-      parse("( String | Number )").should == true
+      it "matches with extra spacing" do
+        parse("( String | Number )").should == true
+      end
     end
 
     # This is handled inside DocParser, when it's detected over there
@@ -184,72 +188,76 @@ describe JsDuck::TypeParser do
       parse("String=").should == false
     end
 
-    it "matches single type argument" do
-      parse("Array.<Number>").should == true
+    describe "type arguments" do
+      it "matches single" do
+        parse("Array.<Number>").should == true
+      end
+
+      it "matches multiple" do
+        parse("Ext.Element.<String,Number>").should == true
+      end
+
+      it "matches with extra spacing" do
+        parse("Ext.Element.< String , Number >").should == true
+      end
+
+      it "matches with nested type arguments" do
+        parse("Array.<Array.<String>|Array.<Number>>").should == true
+      end
+
+      it "doesn't accept on type union" do
+        parse("(Array|RegExp).<String>").should == false
+      end
+
+      it "doesn't accept empty" do
+        parse("Array.<>").should == false
+      end
     end
 
-    it "matches multiple type arguments" do
-      parse("Ext.Element.<String,Number>").should == true
-    end
+    describe "function type" do
+      it "matches empty" do
+        parse("function()").should == true
+      end
 
-    it "matches type arguments with extra spacing" do
-      parse("Ext.Element.< String , Number >").should == true
-    end
+      it "matches arguments" do
+        parse("function(String,Number)").should == true
+      end
 
-    it "matches nested type arguments" do
-      parse("Array.<Array.<String>|Array.<Number>>").should == true
-    end
+      it "matches return type" do
+        parse("function():Number").should == true
+      end
 
-    it "doesn't accept type arguments on type union" do
-      parse("(Array,RegExp).<String>").should == false
-    end
+      it "matches with varargs" do
+        parse("function(...Number)").should == true
+      end
 
-    it "doesn't accept empty type arguments block" do
-      parse("Array.<>").should == false
-    end
+      it "matches nullable/non-nullable arguments" do
+        parse("function(!String, ?Number)").should == true
+      end
 
-    it "matches empty function type" do
-      parse("function()").should == true
-    end
+      it "matches optional argument" do
+        parse("function(Number=)").should == true
+      end
 
-    it "matches function type with arguments" do
-      parse("function(String,Number)").should == true
-    end
+      it "matches this: argument" do
+        parse("function(this:Array, Number)").should == true
+      end
 
-    it "matches function type with return type" do
-      parse("function():Number").should == true
-    end
+      it "matches new: argument" do
+        parse("function(new:Array)").should == true
+      end
 
-    it "matches function type with varargs" do
-      parse("function(...Number)").should == true
-    end
+      it "matches this: argument + ws" do
+        parse("function(this : Array, Number)").should == true
+      end
 
-    it "matches function type with nullable/non-nullable arguments" do
-      parse("function(!String, ?Number)").should == true
-    end
+      it "matches new: argument + ws" do
+        parse("function(new : Array)").should == true
+      end
 
-    it "matches function type with optional argument" do
-      parse("function(Number=)").should == true
-    end
-
-    it "matches function type with this: argument" do
-      parse("function(this:Array, Number)").should == true
-    end
-
-    it "matches function type with new: argument" do
-      parse("function(new:Array)").should == true
-    end
-
-    it "matches function type with this: argument + ws" do
-      parse("function(this : Array, Number)").should == true
-    end
-
-    it "matches function type with new: argument + ws" do
-      parse("function(new : Array)").should == true
-    end
-
-    it "matches function type with extra whitespace" do
-      parse("function(  ) : Array").should == true
+      it "matches with extra whitespace" do
+        parse("function(  ) : Array").should == true
+      end
     end
 
     it "always matches primitive types" do
