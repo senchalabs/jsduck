@@ -211,6 +211,7 @@ describe JsDuck::TypeParser do
       parse("string").should == true
       parse("null").should == true
       parse("undefined").should == true
+      parse("void").should == true
     end
 
     it "links primitive types to classes" do

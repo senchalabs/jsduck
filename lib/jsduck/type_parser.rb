@@ -35,6 +35,7 @@ module JsDuck
         "string" => "String",
         "null" => "null",
         "undefined" => "undefined",
+        "void" => "void",
       }
     end
 
