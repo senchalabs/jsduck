@@ -137,7 +137,7 @@ describe JsDuck::TypeParser do
       parse("!String").should == true
     end
 
-    it "doesn't matches both nullable and non-nullable at the same time" do
+    it "doesn't accept both nullable and non-nullable at the same time" do
       parse("?!String").should == false
       parse("!?String").should == false
     end
