@@ -238,6 +238,13 @@ describe JsDuck::TypeParser do
       p.out.should == '<a href="String">string</a>'
     end
 
+    it "preserves whitespace in output" do
+      relations = JsDuck::Relations.new([])
+      p = JsDuck::TypeParser.new(relations)
+      p.parse("( string | number )")
+      p.out.should == '( string | number )'
+    end
+
   end
 
 end

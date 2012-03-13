@@ -228,7 +228,8 @@ module JsDuck
     end
 
     def skip_whitespace
-      @input.scan(/\s*/)
+      ws = @input.scan(/\s*/)
+      @out << ws if ws
     end
 
   end
