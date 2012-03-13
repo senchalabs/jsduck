@@ -54,14 +54,20 @@ module JsDuck
     #     <alteration-type> ::= <varargs-type> [ ("/" | "|") <varargs-type> ]*
     #
     def alteration_type
+      skip_whitespace
+
       # Return immediately if varargs-type doesn't match
       return false unless varargs_type
+
+      skip_whitespace
 
       # Go through enumeration of types, separated with "/" or "|"
       while @input.check(/[\/|]/)
         @out << @input.scan(/[\/|]/)
-        # Fail if there's no varargs-type after / or |
+
+        skip_whitespace
         return false unless varargs_type
+        skip_whitespace
       end
 
       true
@@ -148,17 +154,27 @@ module JsDuck
     #     <type-arguments> ::= <alteration-type> [ "," <alteration-type> ]*
     #
     def type_arguments
+      skip_whitespace
+
       # First argument is required
       return false unless alteration_type
+
+      skip_whitespace
 
       # Go through additional arguments, separated with ","
       while @input.check(/,/)
         @out << @input.scan(/,/)
-        # Fail if there's no alteration-type after ","
+
+        skip_whitespace
         return false unless alteration_type
+        skip_whitespace
       end
 
       true
+    end
+
+    def skip_whitespace
+      @input.scan(/\s*/)
     end
 
   end

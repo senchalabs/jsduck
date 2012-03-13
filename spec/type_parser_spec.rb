@@ -147,6 +147,10 @@ describe JsDuck::TypeParser do
       parse("String|Number|RegExp").should == true
     end
 
+    it "matches alteration with extra spacing" do
+      parse(" String | Number ").should == true
+    end
+
     it "matches union of one simple type" do
       parse("(String)").should == true
     end
@@ -163,6 +167,10 @@ describe JsDuck::TypeParser do
       parse("(String|(Number|RegExp))").should == true
     end
 
+    it "matches union with extra spacing" do
+      parse("( String | Number )").should == true
+    end
+
     # This is handled inside DocParser, when it's detected over there
     # the "=" is removed from the end of type definition, so it should
     # never reach TypeParser if there is just one "=" at the end of
@@ -177,6 +185,10 @@ describe JsDuck::TypeParser do
 
     it "matches multiple type arguments" do
       parse("Ext.Element.<String,Number>").should == true
+    end
+
+    it "matches type arguments with extra spacing" do
+      parse("Ext.Element.< String , Number >").should == true
     end
 
     it "matches nested type arguments" do
