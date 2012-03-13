@@ -59,7 +59,7 @@ module JsDuck
     end
 
     #
-    #     <alteration-type> ::= <varargs-type> [ ("/" | "|") <varargs-type> ]*  [ "=" ]
+    #     <alteration-type> ::= <varargs-type> [ ("/" | "|") <varargs-type> ]*
     #
     def alteration_type
       skip_whitespace
@@ -77,9 +77,6 @@ module JsDuck
         return false unless varargs_type
         skip_whitespace
       end
-
-      @out << "=" if @input.scan(/=/)
-      skip_whitespace
 
       true
     end
@@ -144,14 +141,14 @@ module JsDuck
     end
 
     #
-    #     <function-type> ::= "function(" <type-arguments> ")" [ ":" <null-type> ]
+    #     <function-type> ::= "function(" <function-type-arguments> ")" [ ":" <null-type> ]
     #
     def function_type
       @out << @input.scan(/function\(/)
 
       skip_whitespace
       if !@input.check(/\)/)
-        return false unless type_arguments
+        return false unless function_type_arguments
       end
 
       return false unless @input.scan(/\)/)
@@ -163,6 +160,51 @@ module JsDuck
         skip_whitespace
         return false unless null_type
       end
+
+      true
+    end
+
+    #
+    #     <function-type-arguments> ::= <ftype-first-arg> [ "," <ftype-arg> ]*
+    #
+    #     <ftype-first-arg> ::= "new" ":" <type-name>
+    #                         | "this" ":" <type-name>
+    #                         | <ftype-arg>
+    #
+    def function_type_arguments
+      skip_whitespace
+
+      # First argument is special
+      if s = @input.scan(/new\s*:\s*/)
+        @out << s
+        return false unless type_name
+      elsif s = @input.scan(/this\s*:\s*/)
+        @out << s
+        return false unless type_name
+      else
+        return false unless ftype_arg
+      end
+
+      skip_whitespace
+
+      # Go through additional arguments, separated with ","
+      while @input.check(/,/)
+        @out << @input.scan(/,/)
+        return false unless ftype_arg
+      end
+
+      true
+    end
+
+    #
+    #     <ftype-arg> ::= <alteration-type> [ "=" ]
+    #
+    def ftype_arg
+      return false unless alteration_type
+
+      # Each argument can be optional (ending with "=")
+      @out << "=" if @input.scan(/[=]/)
+      skip_whitespace
 
       true
     end

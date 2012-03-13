@@ -173,12 +173,15 @@ describe JsDuck::TypeParser do
       parse("( String | Number )").should == true
     end
 
-    # This is handled mainly inside DocParser, when it's detected over
-    # there the "=" is removed from the end of type definition, so it
-    # should never reach TypeParser.  But additionally it can be used
-    # inside function type parameter list, so we need to support it.
-    it "matches optional parameter notation" do
-      parse("String=").should == true
+    # This is handled inside DocParser, when it's detected over there
+    # the "=" is removed from the end of type definition, so it should
+    # never reach TypeParser if there is just one "=" at the end of
+    # type definition.
+    #
+    # We do support the optional notation inside function type
+    # parameter lists (see below).
+    it "doesn't accept optional parameter notation" do
+      parse("String=").should == false
     end
 
     it "matches single type argument" do
@@ -227,6 +230,22 @@ describe JsDuck::TypeParser do
 
     it "matches function type with optional argument" do
       parse("function(Number=)").should == true
+    end
+
+    it "matches function type with this: argument" do
+      parse("function(this:Array, Number)").should == true
+    end
+
+    it "matches function type with new: argument" do
+      parse("function(new:Array)").should == true
+    end
+
+    it "matches function type with this: argument + ws" do
+      parse("function(this : Array, Number)").should == true
+    end
+
+    it "matches function type with new: argument + ws" do
+      parse("function(new : Array)").should == true
     end
 
     it "matches function type with extra whitespace" do
