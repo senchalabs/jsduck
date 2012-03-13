@@ -59,7 +59,7 @@ module JsDuck
     end
 
     #
-    #     <alteration-type> ::= <varargs-type> [ ("/" | "|") <varargs-type> ]*
+    #     <alteration-type> ::= <varargs-type> [ ("/" | "|") <varargs-type> ]*  [ "=" ]
     #
     def alteration_type
       skip_whitespace
@@ -77,6 +77,9 @@ module JsDuck
         return false unless varargs_type
         skip_whitespace
       end
+
+      @out << "=" if @input.scan(/=/)
+      skip_whitespace
 
       true
     end
