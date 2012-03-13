@@ -29,6 +29,13 @@ module JsDuck
     def initialize(relations={}, formatter={})
       @relations = relations
       @formatter = formatter
+      @primitives = {
+        "boolean" => "Boolean",
+        "number" => "Number",
+        "string" => "String",
+        "null" => "null",
+        "undefined" => "undefined",
+      }
     end
 
     # Parses the type definition
@@ -134,7 +141,13 @@ module JsDuck
         return false
       elsif @relations[name]
         @out << @formatter.link(name, nil, name)
-      elsif @relations.ignore?(name) || name == "undefined" || name == "*"
+      elsif @primitives[name]
+        if @relations[@primitives[name]]
+          @out << @formatter.link(@primitives[name], nil, name)
+        else
+          @out << name
+        end
+      elsif @relations.ignore?(name) || name == "*"
         @out << name
       else
         @error = :name

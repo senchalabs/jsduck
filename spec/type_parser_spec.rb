@@ -1,5 +1,7 @@
 require "jsduck/relations"
 require "jsduck/type_parser"
+require "jsduck/doc_formatter"
+require "jsduck/class"
 
 describe JsDuck::TypeParser do
 
@@ -201,6 +203,22 @@ describe JsDuck::TypeParser do
 
     it "doesn't accept empty type arguments block" do
       parse("Array.<>").should == false
+    end
+
+    it "always matches primitive types" do
+      parse("boolean").should == true
+      parse("number").should == true
+      parse("string").should == true
+      parse("null").should == true
+      parse("undefined").should == true
+    end
+
+    it "links primitive types to classes" do
+      relations = JsDuck::Relations.new([JsDuck::Class.new({:name => "String"})])
+      doc_formatter = JsDuck::DocFormatter.new(relations)
+      p = JsDuck::TypeParser.new(relations, doc_formatter)
+      p.parse("string")
+      p.out.should == '<a href="String">string</a>'
     end
 
   end
