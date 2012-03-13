@@ -8,6 +8,7 @@ describe JsDuck::TypeParser do
       "String",
       "Number",
       "RegExp",
+      "Array",
       "Ext.form.Panel",
       "Ext.Element",
       "Ext.fx2.Anim",
@@ -168,6 +169,26 @@ describe JsDuck::TypeParser do
     # type definition.
     it "doesn't accept optional parameter notation" do
       parse("String=").should == false
+    end
+
+    it "matches single type argument" do
+      parse("Array.<Number>").should == true
+    end
+
+    it "matches multiple type arguments" do
+      parse("Ext.Element.<String,Number>").should == true
+    end
+
+    it "matches nested type arguments" do
+      parse("Array.<Array.<String>|Array.<Number>>").should == true
+    end
+
+    it "doesn't accept type arguments on type union" do
+      parse("(Array,RegExp).<String>").should == false
+    end
+
+    it "doesn't accept empty type arguments block" do
+      parse("Array.<>").should == false
     end
 
   end

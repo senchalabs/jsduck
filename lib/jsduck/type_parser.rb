@@ -111,7 +111,11 @@ module JsDuck
     end
 
     #
-    #     <type-name> ::= <ident-chain> | "*"
+    #     <type-name> ::= <type-application> | "*"
+    #
+    #     <type-application> ::= <ident-chain> [ "." "<" <type-arguments> ">" ]
+    #
+    #     <type-arguments> ::= <alteration-type> [ "," <alteration-type> ]*
     #
     #     <ident-chain> ::= <ident> [ "." <ident> ]*
     #
@@ -129,6 +133,29 @@ module JsDuck
       else
         @error = :name
         return false
+      end
+
+      # All type names besides * can be followed by .<arguments>
+      if name != "*" && @input.scan(/\.</)
+        return false unless type_arguments
+        return false unless @input.scan(/>/)
+      end
+
+      true
+    end
+
+    #
+    #     <type-arguments> ::= <alteration-type> [ "," <alteration-type> ]*
+    #
+    def type_arguments
+      # First argument is required
+      return false unless alteration_type
+
+      # Go through additional arguments, separated with ","
+      while @input.check(/,/)
+        @out << @input.scan(/,/)
+        # Fail if there's no alteration-type after ","
+        return false unless alteration_type
       end
 
       true
