@@ -439,14 +439,24 @@ module JsDuck
     # matches {...=} and returns text inside brackets
     def typedef
       match(/\{/)
-      name = @input.scan(/[^}]+/)
+      name = @input.scan(/[^{}]*/)
+
+      # Type definition can contain nested braces: {{foo:Number}}
+      # In such case we parse the definition so that the braces are balanced.
+      while @input.check(/[{]/)
+        name += "{" + typedef[:type] +"}"
+        name += @input.scan(/[^{}]*/)
+      end
+
       if name =~ /=$/
         name = name.chop
         optional = true
       else
         optional = false
       end
+
       match(/\}/)
+
       return {:type => name, :optional => optional}
     end
 

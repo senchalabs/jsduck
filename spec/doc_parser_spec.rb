@@ -117,5 +117,18 @@ describe JsDuck::DocParser do
     end
   end
 
+  describe "type definition with nested {braces}" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+        /**
+         * @param {{foo:{bar:Number}}} x
+         */
+      EOS
+    end
+    it "is parsed ensuring balanced braces" do
+      @tag[:type].should == "{foo:{bar:Number}}"
+    end
+  end
+
 end
 

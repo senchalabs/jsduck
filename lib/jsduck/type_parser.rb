@@ -23,6 +23,8 @@ module JsDuck
   #     Array.<string>
   #     Object.<string, number>
   #
+  #     {myNum: number, myObject}
+  #
   #     (number|boolean)
   #     ?number
   #     !Object
@@ -34,10 +36,6 @@ module JsDuck
   #     function(this:goog.ui.Menu, string)
   #     function(?string=, number=)
   #     function(string, ...[number])
-  #
-  # Currently not supported:
-  #
-  #     {myNum: number, myObject}
   #
   class TypeParser
     # Allows to check the type of error that was encountered.
@@ -143,7 +141,7 @@ module JsDuck
     #
     #     <array-type> ::= <atomic-type> [ "[]" ]*
     #
-    #     <atomic-type> ::= <type-name> | <union-type> | <function-type>
+    #     <atomic-type> ::= <union-type> | <record-type> | <function-type> | <type-name>
     #
     def null_type
       if nullability = @input.scan(/[?!]/)
@@ -152,6 +150,8 @@ module JsDuck
 
       if @input.check(/\(/)
         return false unless union_type
+      elsif @input.check(/\{/)
+        return false unless record_type
       elsif @input.check(/function\(/)
         return false unless function_type
       else
@@ -175,6 +175,46 @@ module JsDuck
 
       return false unless @input.scan(/\)/)
       @out << ")"
+
+      true
+    end
+
+    #
+    #     <record-type> ::= "{" <rtype-item> [ "," <rtype-item> ]* "}"
+    #
+    def record_type
+      @out << @input.scan(/\{/)
+
+      return false unless rtype_item
+
+      while @input.scan(/,/)
+        @out << ","
+        return false unless rtype_item
+      end
+
+      return false unless @input.scan(/\}/)
+      @out << "}"
+
+      true
+    end
+
+    #
+    #     <rtype-item> ::= <ident> ":" <null-type>
+    #                    | <ident>
+    #
+    def rtype_item
+      skip_whitespace
+
+      key = @input.scan(/[a-zA-Z0-9_]+/)
+      return false unless key
+
+      skip_whitespace
+      if @input.scan(/:/)
+        @out << ":"
+        skip_whitespace
+        return false unless null_type
+        skip_whitespace
+      end
 
       true
     end

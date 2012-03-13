@@ -268,6 +268,24 @@ describe JsDuck::TypeParser do
       end
     end
 
+    describe "record type" do
+      it "matches list of properties" do
+        parse("{foo, bar, baz}").should == true
+      end
+
+      it "matches properties with types" do
+        parse("{foo: String, bar: Number}").should == true
+      end
+
+      it "matches property with complex type" do
+        parse("{foo: (String|Array.<String>)}").should == true
+      end
+
+      it "matches nested record type" do
+        parse("{foo: {bar}}").should == true
+      end
+    end
+
     it "always matches primitive types" do
       parse("boolean").should == true
       parse("number").should == true
