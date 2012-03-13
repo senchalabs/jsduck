@@ -33,10 +33,9 @@ module JsDuck
   #     function(new:goog.ui.Menu, string)
   #     function(this:goog.ui.Menu, string)
   #     function(?string=, number=)
+  #     function(string, ...[number])
   #
   # Currently not supported:
-  #
-  #     function(string, ...[number])
   #
   #     {myNum: number, myObject}
   #
@@ -110,18 +109,30 @@ module JsDuck
     end
 
     #
-    #     <varargs-type> ::= [ "..." ] <null-type> | <null-type> [ "..." ]
+    #     <varargs-type> ::= "..." <null-type>
+    #                      | "..." "[" <null-type> "]"
+    #                      | <null-type> "..."
+    #                      | <null-type>
     #
     def varargs_type
       if @input.scan(/\.\.\./)
         varargs = true
         @out << "..."
+        if @input.scan(/\[/)
+          varargs_bracketed = true
+          @out << "["
+        end
       end
 
       return false unless null_type
 
       if !varargs
         @out << "..." if @input.scan(/\.\.\./)
+      end
+
+      if varargs_bracketed
+        return false unless @input.scan(/]/)
+        @out << "]"
       end
 
       true

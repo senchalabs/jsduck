@@ -120,16 +120,18 @@ describe JsDuck::TypeParser do
       parse("*").should == true
     end
 
-    it "matches the varargs notation at the beginning" do
-      parse("...String").should == true
-    end
+    describe "varargs" do
+      it "matches the notation at the beginning" do
+        parse("...String").should == true
+      end
 
-    it "doesn't accept varargs notation without a type name" do
-      parse("...").should == false
-    end
+      it "doesn't accept notation without a type name" do
+        parse("...").should == false
+      end
 
-    it "doesn't accept both varargs notations at the same time" do
-      parse("...*...").should == false
+      it "doesn't accept both notations at the same time" do
+        parse("...*...").should == false
+      end
     end
 
     it "matches the nullable notation" do
@@ -229,6 +231,12 @@ describe JsDuck::TypeParser do
 
       it "matches with varargs" do
         parse("function(...Number)").should == true
+      end
+
+      # For some reason Google Closure Compiler requires varargs type
+      # in function argument context to be wrapped inside [] brackets.
+      it "matches ...[] varargs syntax" do
+        parse("function(...[String])").should == true
       end
 
       it "matches nullable/non-nullable arguments" do
