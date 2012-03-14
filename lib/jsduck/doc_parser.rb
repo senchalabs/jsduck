@@ -288,7 +288,7 @@ module JsDuck
       if look(/\{/)
         tdf = typedef
         @current_tag[:type] = tdf[:type]
-        @current_tag[:optional] = tdf[:optional]
+        @current_tag[:optional] = true if tdf[:optional]
       elsif look(/\S/)
         @current_tag[:type] = @input.scan(/\S+/)
       end
@@ -362,7 +362,7 @@ module JsDuck
       if look(/\{/)
         tdf = typedef
         @current_tag[:type] = tdf[:type]
-        @current_tag[:optional] = tdf[:optional]
+        @current_tag[:optional] = true if tdf[:optional]
       end
     end
 
@@ -452,7 +452,7 @@ module JsDuck
         name = name.chop
         optional = true
       else
-        optional = false
+        optional = nil
       end
 
       match(/\}/)

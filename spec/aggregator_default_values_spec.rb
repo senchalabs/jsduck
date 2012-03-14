@@ -104,6 +104,20 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg without optionality type annotation {Foo=}" do
+    before do
+      @cfg = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} foo Something
+         */
+      EOS
+    end
+
+    it "doesn't default to required" do
+      @cfg[:meta][:required].should_not == true
+    end
+  end
+
   describe "parameter with explicit default value" do
     before do
       @param = parse(<<-EOS)[0][:params][0]
