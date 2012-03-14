@@ -102,9 +102,6 @@ Ext.define('Docs.controller.Tabs', {
                         }
                     });
                 },
-                resize: function() {
-                    Ext.getCmp('doctabs').refresh();
-                },
                 scope: this
             }
         });

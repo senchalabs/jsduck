@@ -51,6 +51,8 @@ Ext.define('Docs.view.Tabs', {
             '</div>'
         );
 
+        this.on("resize", this.refresh, this);
+
         this.callParent();
     },
 
