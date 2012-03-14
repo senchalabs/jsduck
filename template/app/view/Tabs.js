@@ -325,11 +325,11 @@ Ext.define('Docs.view.Tabs', {
 
         if (this.tabs.length > this.tabsInBar.length && idx === this.maxTabsInBar()) {
             // Add 'overflow' class to last visible tab in overflow dropdown
-            this.tabOverflowMenu.addTabCls(tab, 'overflow');
+            this.overflowButton.menu.addTabCls(tab, 'overflow');
         }
 
         var inTabBar = this.inTabBar(tab.href);
-        this.tabOverflowMenu.addTab(tab, inTabBar ? '' : 'overflow');
+        this.overflowButton.menu.addTab(tab, inTabBar ? '' : 'overflow');
     },
 
     /**
@@ -429,7 +429,7 @@ Ext.define('Docs.view.Tabs', {
         this.overflowButton = Ext.create('Ext.button.Button', {
             baseCls: "",
             renderTo: this.getEl().down('.tab-overflow'),
-            menu: this.tabOverflowMenu = new Docs.view.TabMenu({
+            menu: new Docs.view.TabMenu({
                 listeners: {
                     closeAllTabs: this.closeAllTabs,
                     scope: this
