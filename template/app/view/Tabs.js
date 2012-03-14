@@ -28,7 +28,7 @@ Ext.define('Docs.view.Tabs', {
                 '</div>',
             '</tpl>',
             '<div style="float: left; width: 8px">&nbsp;</div>',
-            '<div id="tabOverflow"></div>'
+            '<div class="tab-overflow"></div>'
         );
 
         this.html = this.tpl.applyTemplate(this.staticTabs);
@@ -438,7 +438,7 @@ Ext.define('Docs.view.Tabs', {
 
         this.overflowButton = Ext.create('Ext.button.Button', {
             baseCls: "",
-            renderTo: 'tabOverflow',
+            renderTo: this.getEl().down('.tab-overflow'),
             menu: {
                 id: 'tabOverflowMenu',
                 plain: true,
