@@ -113,7 +113,10 @@ Ext.define('Docs.view.Tabs', {
 
         // On right-click open the overflow menu as context-menu
         this.el.on('contextmenu', function(event, el) {
-            this.createMenu().showBy(el);
+            // don't show the menu on static tabs
+            if (!Ext.get(el).hasCls('overview')) {
+                this.createMenu().showBy(el);
+            }
         }, this, {
             delegate: '.doctab',
             preventDefault: true
