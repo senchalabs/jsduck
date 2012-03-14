@@ -101,7 +101,7 @@ Ext.define('Docs.view.Tabs', {
             if (this.roomForNewTab()) {
                 this.addTabToBar(tab, opts);
             }
-            this.addTabToOverflow(tab, opts);
+            this.addTabToOverflow(tab);
         }
         if (opts.activate) {
             this.activateTab(tab.href);
@@ -321,7 +321,7 @@ Ext.define('Docs.view.Tabs', {
      * @private
      * Adds a tab to the overflow list
      */
-    addTabToOverflow: function(tab, opts) {
+    addTabToOverflow: function(tab) {
         var idx = Ext.Array.indexOf(this.tabs, tab.href);
 
         if (this.tabs.length > this.tabsInBar.length && idx === this.maxTabsInBar()) {
