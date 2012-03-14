@@ -8,6 +8,7 @@ Ext.define('Docs.view.Tabs', {
     id: 'doctabs',
     componentCls: 'doctabs',
     requires: [
+        'Docs.History',
         'Docs.view.TabMenu'
     ],
 
@@ -432,6 +433,9 @@ Ext.define('Docs.view.Tabs', {
             menu: new Docs.view.TabMenu({
                 listeners: {
                     closeAllTabs: this.closeAllTabs,
+                    tabItemClick: function(item) {
+                        Docs.History.push(item.href, { navigate: true });
+                    },
                     scope: this
                 }
             })

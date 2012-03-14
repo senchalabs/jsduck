@@ -10,6 +10,12 @@ Ext.define('Docs.view.TabMenu', {
         this.addEvents(
             /**
              * @event
+             * Fired when one of the tab-related menu items is clicked.
+             * @param {Ext.menu.Item} item
+             */
+            "tabItemClick",
+            /**
+             * @event
              * Fired when "close all tabs" item is clicked.
              */
             "closeAllTabs"
@@ -41,8 +47,14 @@ Ext.define('Docs.view.TabMenu', {
             iconCls: tab.iconCls,
             origIcon: tab.iconCls,
             href: tab.href,
-            cls: cls
+            cls: cls,
+            handler: this.onTabItemClick,
+            scope: this
         });
+    },
+
+    onTabItemClick: function(item) {
+        this.fireEvent("tabItemClick", item);
     },
 
     /**

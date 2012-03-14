@@ -106,12 +106,6 @@ Ext.define('Docs.controller.Tabs', {
                     Ext.getCmp('doctabs').refresh();
                 },
                 scope: this
-            },
-            '[componentCls=tab-menu] menuitem': {
-                click: function(cmp) {
-                    Docs.History.push(cmp.href, { navigate: true });
-                },
-                scope: this
             }
         });
     },
