@@ -129,7 +129,7 @@ module JsDuck
       end
 
       if varargs_bracketed
-        return false unless @input.scan(/]/)
+        return false unless @input.scan(/\]/)
         @out << "]"
       end
 
