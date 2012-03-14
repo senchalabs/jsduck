@@ -111,6 +111,14 @@ Ext.define('Docs.view.Tabs', {
             delegate: '.doctab'
         });
 
+        // On right-click open the overflow menu as context-menu
+        this.el.on('contextmenu', function(event, el) {
+            this.createMenu().showBy(el);
+        }, this, {
+            delegate: '.doctab',
+            preventDefault: true
+        });
+
         // Don't follow the URL when the <a> element inside tab clicked
         this.el.on('click', Ext.emptyFn, this, {
             delegate: '.tabUrl',
@@ -124,7 +132,7 @@ Ext.define('Docs.view.Tabs', {
             }
         }, this);
 
-        this.createOverflow();
+        this.createOverflowButton();
     },
 
     /**
@@ -168,7 +176,7 @@ Ext.define('Docs.view.Tabs', {
             if (this.roomForNewTab()) {
                 this.addTabToBar(tab, opts);
             }
-            this.addTabToOverflow(tab);
+            this.addTabToMenu(this.overflowButton.menu, tab);
         }
         if (opts.activate) {
             this.activateTab(tab.href);
@@ -275,7 +283,7 @@ Ext.define('Docs.view.Tabs', {
         }
 
         this.highlightOverviewTab(this.activeTab);
-        this.createOverflow();
+        this.createOverflowButton();
         this.addToolTips();
     },
 
@@ -364,7 +372,7 @@ Ext.define('Docs.view.Tabs', {
         docTab.dom.removed = true;
         if (Ext.isIE) {
             docTab.remove();
-            this.createOverflow();
+            this.createOverflowButton();
         } else {
             docTab.animate({
                 to: { top: 30 },
@@ -376,28 +384,12 @@ Ext.define('Docs.view.Tabs', {
                     afteranimate: function() {
                         docTab.remove();
                         this.shouldResize = true;
-                        this.createOverflow();
+                        this.createOverflowButton();
                     },
                     scope: this
                 }
             });
         }
-    },
-
-    /**
-     * @private
-     * Adds a tab to the overflow list
-     */
-    addTabToOverflow: function(tab) {
-        var idx = Ext.Array.indexOf(this.tabs, tab.href);
-
-        if (this.tabs.length > this.tabsInBar.length && idx === this.maxTabsInBar()) {
-            // Add 'overflow' class to last visible tab in overflow dropdown
-            this.overflowButton.menu.addTabCls(tab, 'overflow');
-        }
-
-        var inTabBar = this.inTabBar(tab.href);
-        this.overflowButton.menu.addTab(tab, inTabBar ? '' : 'overflow');
     },
 
     /**
@@ -485,11 +477,8 @@ Ext.define('Docs.view.Tabs', {
         }
     },
 
-    /**
-     * @private
-     * Creates the overflow button and add items
-     */
-    createOverflow: function() {
+    // Creates new overflow button, replacing the existing one
+    createOverflowButton: function() {
         if (this.overflowButton) {
             this.overflowButton.destroy();
         }
@@ -497,20 +486,40 @@ Ext.define('Docs.view.Tabs', {
         this.overflowButton = Ext.create('Ext.button.Button', {
             baseCls: "",
             renderTo: this.getEl().down('.tab-overflow'),
-            menu: new Docs.view.TabMenu({
-                listeners: {
-                    closeAllTabs: this.closeAllTabs,
-                    tabItemClick: function(item) {
-                        this.fireEvent("tabActivate", item.href, { navigate: true });
-                    },
-                    scope: this
-                }
-            })
+            menu: this.createMenu()
+        });
+    },
+
+    // creates menu listing all tabs
+    createMenu: function() {
+        var menu = new Docs.view.TabMenu({
+            listeners: {
+                closeAllTabs: this.closeAllTabs,
+                tabItemClick: function(item) {
+                    this.fireEvent("tabActivate", item.href, { navigate: true });
+                },
+                scope: this
+            }
         });
 
         Ext.Array.each(this.tabs, function(tab) {
-            this.addTabToOverflow(this.tabCache[tab]);
+            this.addTabToMenu(menu, this.tabCache[tab]);
         }, this);
+
+        return menu;
+    },
+
+    // Adds a tab to the menu
+    addTabToMenu: function(menu, tab) {
+        var idx = Ext.Array.indexOf(this.tabs, tab.href);
+
+        if (this.tabs.length > this.tabsInBar.length && idx === this.maxTabsInBar()) {
+            // Add 'overflow' class to last visible tab in overflow dropdown
+            menu.addTabCls(tab, 'overflow');
+        }
+
+        var inTabBar = this.inTabBar(tab.href);
+        menu.addTab(tab, inTabBar ? '' : 'overflow');
     },
 
     addToolTips: function() {
