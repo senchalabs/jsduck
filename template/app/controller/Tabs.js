@@ -92,15 +92,11 @@ Ext.define('Docs.controller.Tabs', {
 
         this.control({
             '[componentCls=doctabs]': {
-                afterrender: function(cmp) {
-                    this.addTabIconListeners(cmp);
-                    this.addTabListeners(cmp);
-
-                    cmp.el.on('mouseleave', function() {
-                        if (cmp.shouldResize) {
-                            cmp.resizeTabs({animate: true});
-                        }
-                    });
+                tabClose: function(url) {
+                    delete this.scrollState[url];
+                },
+                tabActivate: function(url, opts) {
+                    Docs.History.push(url, opts);
                 },
                 scope: this
             }
@@ -193,57 +189,6 @@ Ext.define('Docs.controller.Tabs', {
             // default to classtree, just in case
             return this.getClassTree();
         }
-    },
-
-    /**
-     * Adds mouse interaction listeners to the tab icon
-     * @private
-     */
-    addTabIconListeners: function(cmp) {
-        cmp.el.addListener('mouseover', function(event, el) {
-            Ext.get(el).addCls('ovr');
-        }, this, {
-            delegate: '.close'
-        });
-
-        cmp.el.addListener('mouseout', function(event, el) {
-            Ext.get(el).removeCls('ovr');
-        }, this, {
-            delegate: '.close'
-        });
-
-        cmp.el.addListener('click', function(event, el) {
-            cmp.justClosed = true;
-            var url = Ext.get(el).up('.doctab').down('.tabUrl').getAttribute('href');
-            url = Docs.History.cleanUrl(url);
-            delete this.scrollState[url];
-            Ext.getCmp('doctabs').removeTab(url);
-        }, this, {
-            delegate: '.close',
-            preventDefault: true
-        });
-    },
-
-    /**
-     * Adds mouse interaction listeners to the tab
-     * @private
-     */
-    addTabListeners: function(cmp) {
-        cmp.el.addListener('click', function(event, el) {
-            if (cmp.justClosed) {
-                cmp.justClosed = false;
-                return;
-            }
-            var url = Ext.get(el).down('.tabUrl').getAttribute('href');
-            Docs.History.push(url, { navigate: true });
-        }, this, {
-            delegate: '.doctab'
-        });
-
-        cmp.el.addListener('click', Ext.emptyFn, this, {
-            delegate: '.tabUrl',
-            preventDefault: true
-        });
     },
 
     /**

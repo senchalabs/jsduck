@@ -22,6 +22,22 @@ Ext.define('Docs.view.Tabs', {
     staticTabs: [],
 
     initComponent: function() {
+        this.addEvents(
+            /**
+             * @event
+             * Fired when one of the tabs gets activated.
+             * @param {String} url The URL of the page associated with the tab.
+             * @param {Object} opts Might contain `{navigate: true}`.
+             */
+            "tabActivate",
+            /**
+             * @event
+             * Fired when one of the tabs gets closed from close button.
+             * @param {String} url The URL of the page associated with the tab.
+             */
+            "tabClose"
+        );
+
         this.tpl = Ext.create('Ext.XTemplate',
             '<tpl for=".">',
                 '<div class="doctab overview {cls}{active}">',
@@ -51,15 +67,64 @@ Ext.define('Docs.view.Tabs', {
             '</div>'
         );
 
+        this.on("afterrender", this.initListeners, this);
+
         this.on("resize", this.refresh, this);
 
         this.callParent();
     },
 
-    listeners: {
-        afterrender: function() {
-            this.createOverflow();
-        }
+    initListeners: function() {
+        // Hover effect for tab close button
+        this.el.on('mouseover', function(event, el) {
+            Ext.get(el).addCls('ovr');
+        }, this, {
+            delegate: '.close'
+        });
+        this.el.on('mouseout', function(event, el) {
+            Ext.get(el).removeCls('ovr');
+        }, this, {
+            delegate: '.close'
+        });
+
+        // Close tab when clicked on close button
+        this.el.on('click', function(event, el) {
+            this.justClosed = true;
+            var url = Ext.get(el).up('.doctab').down('.tabUrl').getAttribute('href');
+            url = Docs.History.cleanUrl(url);
+            this.removeTab(url);
+            this.fireEvent("tabClose", url);
+        }, this, {
+            delegate: '.close',
+            preventDefault: true
+        });
+
+        // Navigate to page when tab clicked
+        this.el.on('click', function(event, el) {
+            if (this.justClosed) {
+                this.justClosed = false;
+                return;
+            }
+            var url = Ext.get(el).down('.tabUrl').getAttribute('href');
+            this.fireEvent("tabActivate", url, {navigate: true});
+        }, this, {
+            delegate: '.doctab'
+        });
+
+        // Don't follow the URL when the <a> element inside tab clicked
+        this.el.on('click', Ext.emptyFn, this, {
+            delegate: '.tabUrl',
+            preventDefault: true
+        });
+
+        // when tabs are to be resized, do it after mouse has left tab-bar
+        this.el.on('mouseleave', function() {
+            if (this.shouldResize) {
+                this.resizeTabs({animate: true});
+            }
+        }, this);
+
+        this.createOverflow();
     },
 
     /**
@@ -143,7 +208,7 @@ Ext.define('Docs.view.Tabs', {
                     idx -= 1;
                 }
                 this.activateTab(this.tabs[idx]);
-                Docs.History.push(this.tabs[idx]);
+                this.fireEvent("tabActivate", this.tabs[idx]);
             }
         }
 
@@ -206,7 +271,7 @@ Ext.define('Docs.view.Tabs', {
 
         if (this.activeTab && this.activeTab !== this.tabs[len-1]) {
             this.activateTab(this.activeTab);
-            Docs.History.push(this.activeTab);
+            this.fireEvent("tabActivate", this.activeTab);
         }
 
         this.highlightOverviewTab(this.activeTab);
@@ -436,7 +501,7 @@ Ext.define('Docs.view.Tabs', {
                 listeners: {
                     closeAllTabs: this.closeAllTabs,
                     tabItemClick: function(item) {
-                        Docs.History.push(item.href, { navigate: true });
+                        this.fireEvent("tabActivate", item.href, { navigate: true });
                     },
                     scope: this
                 }
