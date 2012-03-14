@@ -4,7 +4,7 @@
 Ext.define('Docs.view.TabMenu', {
     extend: 'Ext.menu.Menu',
     plain: true,
-    id: 'tabOverflowMenu',
+    componentCls: 'tab-menu',
 
     initComponent: function() {
         this.addEvents(

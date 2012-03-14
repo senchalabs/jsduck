@@ -91,7 +91,7 @@ Ext.define('Docs.controller.Tabs', {
         });
 
         this.control({
-            'container [componentCls=doctabs]': {
+            '[componentCls=doctabs]': {
                 afterrender: function(cmp) {
                     this.addTabIconListeners(cmp);
                     this.addTabListeners(cmp);
@@ -107,7 +107,7 @@ Ext.define('Docs.controller.Tabs', {
                 },
                 scope: this
             },
-            '#tabOverflowMenu menuitem': {
+            '[componentCls=tab-menu] menuitem': {
                 click: function(cmp) {
                     Docs.History.push(cmp.href, { navigate: true });
                 },
