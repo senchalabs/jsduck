@@ -6,8 +6,10 @@ Ext.define('Docs.view.Tabs', {
     extend: 'Ext.container.Container',
     alias: 'widget.doctabs',
     id: 'doctabs',
-
     componentCls: 'doctabs',
+    requires: [
+        'Docs.view.TabMenu'
+    ],
 
     minTabWidth: 80,
     maxTabWidth: 160,
@@ -319,27 +321,15 @@ Ext.define('Docs.view.Tabs', {
      * Adds a tab to the overflow list
      */
     addTabToOverflow: function(tab, opts) {
-        var inTabBar = this.inTabBar(tab.href);
         var idx = Ext.Array.indexOf(this.tabs, tab.href);
 
         if (this.tabs.length > this.tabsInBar.length && idx === this.maxTabsInBar()) {
             // Add 'overflow' class to last visible tab in overflow dropdown
-            var prevMenuItem = Ext.ComponentQuery.query('#tabOverflowMenu menuitem[href=' + this.tabs[idx-1] + ']');
-            Ext.Array.each(prevMenuItem, function(item) {
-                item.addCls('overflow');
-            });
+            this.tabOverflowMenu.addTabCls(tab, 'overflow');
         }
 
-        // Insert before 'close all tabs' button
-        var insertIdx = Ext.getCmp('tabOverflowMenu').items.length - 1;
-
-        Ext.getCmp('tabOverflowMenu').insert(insertIdx, {
-            text: tab.text,
-            iconCls: tab.iconCls,
-            origIcon: tab.iconCls,
-            href: tab.href,
-            cls: (inTabBar ? '' : ' overflow')
-        });
+        var inTabBar = this.inTabBar(tab.href);
+        this.tabOverflowMenu.addTab(tab, inTabBar ? '' : 'overflow');
     },
 
     /**
@@ -439,19 +429,12 @@ Ext.define('Docs.view.Tabs', {
         this.overflowButton = Ext.create('Ext.button.Button', {
             baseCls: "",
             renderTo: this.getEl().down('.tab-overflow'),
-            menu: {
-                id: 'tabOverflowMenu',
-                plain: true,
-                items: [{
-                    text: 'Close all tabs',
-                    iconCls: 'close',
-                    cls: 'overflow close-all',
-                    handler: function() {
-                        this.closeAllTabs();
-                    },
+            menu: this.tabOverflowMenu = new Docs.view.TabMenu({
+                listeners: {
+                    closeAllTabs: this.closeAllTabs,
                     scope: this
-                }]
-            }
+                }
+            })
         });
 
         Ext.Array.each(this.tabs, function(tab) {

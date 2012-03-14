@@ -135,7 +135,10 @@
 #tabOverflowMenu {
   .x-menu-item-link {
     padding-top: 5px; }
+  .overflow {
+    background: #e3e3e3; }
   .close-all {
+    background: #e3e3e3;
     border-top: 1px dotted #aaa;
     font-weight: bold;
     a .x-menu-item-text {
@@ -143,5 +146,3 @@
   .x-menu-item-icon.close {
     background: url(../images/x12.png) no-repeat 4px 4px; } }
 
-.overflow {
-  background: #e3e3e3; }
