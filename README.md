@@ -102,7 +102,10 @@ Documenting your code
 All the supported syntax is described in the [Guide][].
 For quick overview take a look at [example.js][example].
 
+Looking for specific @tag? Take a look at the [whole list of supported tags][tags].
+
 [example]: https://github.com/senchalabs/jsduck/blob/master/opt/example.js
+[tags]: https://github.com/senchalabs/jsduck/wiki/Tags
 
 Copying
 -------
