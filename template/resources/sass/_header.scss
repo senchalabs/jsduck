@@ -18,6 +18,8 @@
   margin: 10px 0 0 8px;
   padding-left: 21px;
   font-size: 1.1em;
+  // Make it all appear in one line in IE7
+  white-space: nowrap;
   a {
     color: #fff; }
   strong {
