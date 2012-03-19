@@ -496,6 +496,7 @@ task :animator, [:mode] => :sass do |t, args|
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"
+  runner.add_comments('animator', '1') if mode == "debug" || mode == "live"
   runner.run
 end
 
