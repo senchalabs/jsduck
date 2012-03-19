@@ -284,7 +284,8 @@ Ext.define('Docs.controller.Comments', {
             success: function(response) {
                 this.renderComments(response, id, {
                     hideCommentForm: true,
-                    append: !!offset
+                    append: !!offset,
+                    showCls: true
                 });
             },
             scope: this
@@ -593,6 +594,9 @@ Ext.define('Docs.controller.Comments', {
         var data = Ext.Array.map(rows, function(r) {
             r.id = r._id;
             r.key = r.target;
+            if (opts.showCls) {
+                r.showCls = true;
+            }
             return r;
         });
 
