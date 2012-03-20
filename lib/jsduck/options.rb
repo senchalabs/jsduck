@@ -33,6 +33,7 @@ module JsDuck
     attr_accessor :seo
     attr_accessor :eg_iframe
     attr_accessor :examples_base_url
+    attr_accessor :doctests
 
     # Debugging
     attr_accessor :processes
@@ -97,6 +98,7 @@ module JsDuck
       @seo = false
       @eg_iframe = nil
       @examples_base_url = "extjs-build/examples/"
+      @doctests = false
 
       # Debugging
       # Turn multiprocessing off by default in Windows
@@ -282,6 +284,10 @@ module JsDuck
         opts.on('--examples-base-url=URL',
           "Base URL for examples with relative URL-s.", " ") do |path|
           @examples_base_url = path
+        end
+        
+        opts.on('--doctests', "Creates infrastructure for running tests. Experimental!", " ") do
+          @doctests = true
         end
 
         opts.separator "Debugging:"

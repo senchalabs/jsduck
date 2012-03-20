@@ -24,6 +24,7 @@ module JsDuck
           :examples => @assets.examples.to_array,
           :search => SearchData.new.create(@relations.classes, @assets),
           :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
+          :doctests => @relations.classes.collect {|cls| cls[:name]},
           :signatures => MetaTagRegistry.instance.signatures,
           :localStorageDb => @opts.local_storage_db,
           :showPrintButton => @opts.seo,
