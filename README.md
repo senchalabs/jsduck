@@ -90,22 +90,23 @@ switch.  For full list of all command line options type
 [adv]: https://github.com/senchalabs/jsduck/wiki/Advanced-Usage
 
 
-Hacking it
-----------
-
-See [Hacking guide](https://github.com/senchalabs/jsduck/wiki/Hacking) in wiki.
-
-
 Documenting your code
 ---------------------
 
-All the supported syntax is described in the [Guide][].
-For quick overview take a look at [example.js][example].
+For quick overview read the [Guide][] and take a look at [example.js][example].
+Follow links in the guide to digg into the details.
 
 Looking for specific @tag? Take a look at the [whole list of supported tags][tags].
 
 [example]: https://github.com/senchalabs/jsduck/blob/master/opt/example.js
 [tags]: https://github.com/senchalabs/jsduck/wiki/Tags
+
+
+Hacking it
+----------
+
+See [Hacking guide](https://github.com/senchalabs/jsduck/wiki/Hacking) in wiki.
+
 
 Copying
 -------
