@@ -116,6 +116,7 @@ Ext.define('Docs.controller.Comments', {
                         [ '.deleteComment',        'click', this.deleteComment],
                         [ '.undoDeleteComment',    'click', this.undoDeleteComment],
                         [ '.editComment',          'click', this.editComment],
+                        [ '.readComment',          'click', this.readComment],
                         [ '.fetchMoreComments',    'click', this.fetchMoreComments],
                         [ '.voteCommentUp',        'click', this.voteUp],
                         [ '.voteCommentDown',      'click', this.voteDown]
@@ -274,13 +275,20 @@ Ext.define('Docs.controller.Comments', {
      * Fetches the most recent comments
      */
     fetchRecentComments: function(id, offset) {
+
+        var params = {
+            offset: offset || 0,
+            limit: 100
+        }
+        var hideRead = Ext.get('hideRead');
+        if (true || hideRead.checked) {
+            params.hideRead = 1;
+        }
+
         this.request("jsonp", {
             url: '/comments_recent',
             method: 'GET',
-            params: {
-                offset: offset || 0,
-                limit: 100
-            },
+            params: params,
             success: function(response) {
                 this.renderComments(response, id, {
                     hideCommentForm: true,
@@ -320,6 +328,34 @@ Ext.define('Docs.controller.Comments', {
                     }
                     // Ext.get(id).remove();
                     Ext.get(id).update('<div class="deleted-comment">Comment was deleted. <a href="#" class="undoDeleteComment">Undo</a>.</div>');
+                } else {
+                    Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
+                }
+            },
+            scope: this
+        });
+    },
+
+    /**
+     * Sends a read comment request to the server.
+     */
+    readComment: function(cmp, el) {
+        if (!this.isLoggedIn()) {
+            return;
+        }
+
+        var id = Ext.get(el).up('.comment').getAttribute('id'),
+            commentsEl = Ext.get(el).up('.comments-div'),
+            target = commentsEl && commentsEl.getAttribute('id');
+
+        this.request("ajax", {
+            url: '/comments/' + id + '/read',
+            method: 'POST',
+            callback: function(options, success, response) {
+                var data = Ext.JSON.decode(response.responseText);
+
+                if (data.success) {
+                    Ext.get(el).addCls('read');
                 } else {
                     Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
                 }

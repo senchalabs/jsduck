@@ -56,6 +56,7 @@ Ext.define('Docs.view.Comments', {
                             '<span class="problem">problem</span>',
                         '</tpl>',
                     '</div>',
+                    '<tpl if="showCls"><a href="#" class="readComment">Read</a></tpl>',
                     '<tpl if="this.isMod() || this.isAuthor(values.author)"><a href="#" class="editComment">Edit</a><a href="#" class="deleteComment">Delete</a></tpl>',
                     '<div class="time" title="{[this.date(values.createdAt)]}">{[this.dateStr(values.createdAt)]}</div>',
                     '<div class="vote">',

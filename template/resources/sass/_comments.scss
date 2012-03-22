@@ -187,6 +187,7 @@
   padding-left: 2px;
   &:hover {
     .com-meta {
+      .readComment,
       .editComment,
       .deleteComment,
       .vote {
@@ -235,6 +236,14 @@
       @include opacity(0);
       @include transition(opacity, 0.2s, linear);
       position: absolute; }
+    .readComment {
+      right: 200px;
+      color: #999;
+      opacity: 0;
+      @include transition(opacity, 0.2s, linear);
+      position: absolute; }
+    .read {
+      font-weight: bold; }
     .vote {
       position: absolute;
       left: 2px;

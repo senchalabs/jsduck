@@ -141,6 +141,32 @@ exports.findComment = function(req, res, next) {
 };
 
 /**
+ * Looks up comment meta by comment ID.
+ *
+ * Stores it into `req.commentMeta`.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
+exports.findCommentMeta = function(req, res, next) {
+    if (req.params.commentId) {
+
+        var userCommentMeta = {
+            userId: req.session.user.userid,
+            commentId: req.params.commentId
+        };
+
+        Meta.findOne(userCommentMeta, function(err, commentMeta) {
+            req.commentMeta = commentMeta || new Meta(userCommentMeta);
+            next();
+        });
+    } else {
+        res.json({success: false, reason: 'No such comment'});
+    }
+};
+
+/**
  * Ensures that user is allowed to modify/delete the comment,
  * that is, he is the owner of the comment or a moderator.
  *
@@ -288,7 +314,7 @@ exports.getCommentCounts = function(req, res, next) {
  * Retrieves list of commenting targets into which the current user
  * has subscribed for e-mail updates.
  *
- * Stores them into `req.commentSubscriptions` field as array:
+ * Stores them into `req.commentMeta.subscriptions` field as array:
  *
  *     [
  *         ["class", "Ext", ""],
@@ -301,14 +327,50 @@ exports.getCommentCounts = function(req, res, next) {
  * @param {Function} next
  */
 exports.getCommentSubscriptions = function(req, res, next) {
+
+    req.commentMeta = req.commentMeta || {};
+
     if (req.session.user) {
         Subscription.find({
             sdk: req.params.sdk,
             version: req.params.version,
             userId: req.session.user.userid
         }, function(err, subscriptions) {
-            req.commentSubscriptions = _.map(subscriptions, function(subscription) {
+            req.commentMeta.subscriptions = _.map(subscriptions, function(subscription) {
                 return subscription.target;
+            });
+            next();
+        });
+    } else {
+        next();
+    }
+};
+
+/**
+ * Retrieves list of comments marked 'read' by the current user.
+ *
+ * Stores them into `req.commentMeta.reads` field as array:
+ *
+ *     [
+ *         'abc123',
+ *         'abc456',
+ *         'abc789'
+ *     ]
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
+exports.getCommentReads = function(req, res, next) {
+
+    req.commentMeta = req.commentMeta || {};
+
+    if (req.session.user) {
+        Meta.find({
+            userId: req.session.user.userid
+        }, function(err, commentMeta) {
+            req.commentMeta.reads = _.map(commentMeta, function(commentMeta) {
+                return commentMeta.commentId;
             });
             next();
         });

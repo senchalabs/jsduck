@@ -179,7 +179,7 @@ app.namespace('/auth/:sdk/:version', function(){
      * `offset` and `limit` fields. I'd say it's a hack, but at least
      * it works for now.
      */
-    app.get('/comments_recent', function(req, res) {
+    app.get('/comments_recent', util.getCommentReads, function(req, res) {
         var offset = parseInt(req.query.offset, 10) || 0;
         var limit = parseInt(req.query.limit, 10) || 100;
         var filter = {
@@ -187,6 +187,11 @@ app.namespace('/auth/:sdk/:version', function(){
             sdk: req.params.sdk,
             version: req.params.version
         };
+
+        if (req.query.hideRead && req.commentMeta.reads.length > 0) {
+            filter._id = { $nin: req.commentMeta.reads };
+        }
+
         Comment.find(filter).sort('createdAt', -1).skip(offset).limit(limit).run(function(err, comments) {
             comments = util.scoreComments(comments, req);
             // Count all comments, store count to last comment
@@ -301,10 +306,20 @@ app.namespace('/auth/:sdk/:version', function(){
     });
 
     /**
+     * Marks a comment 'read'
+     */
+    app.post('/comments/:commentId/read', util.requireLoggedInUser, util.findCommentMeta, function(req, res) {
+        req.commentMeta.metaType = 'read';
+        req.commentMeta.save(function(err, response) {
+            res.send({ success: true });
+        });
+    });
+
+    /**
      * Get email subscriptions
      */
     app.get('/subscriptions', util.getCommentSubscriptions, function(req, res) {
-        res.json({ subscriptions: req.commentSubscriptions });
+        res.json({ subscriptions: req.commentMeta.subscriptions });
     });
 
     /**

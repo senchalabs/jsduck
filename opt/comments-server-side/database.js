@@ -33,4 +33,14 @@ Subscription = mongoose.model('Subscription', new mongoose.Schema({
     target:      Array
 }));
 
+Meta = mongoose.model('Meta', new mongoose.Schema({
+    sdk:         String,
+    version:     String,
+
+    createdAt:   Date,
+    userId:      Number,
+    commentId:   String,
+    metaType:    String
+}));
+
 mongoose.connect(config.mongoDb);
