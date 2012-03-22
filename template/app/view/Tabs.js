@@ -89,7 +89,6 @@ Ext.define('Docs.view.Tabs', {
 
         // Close tab when clicked on close button
         this.el.on('click', function(event, el) {
-            this.justClosed = true;
             var url = Ext.get(el).up('.doctab').down('.tabUrl').getAttribute('href');
             url = Docs.History.cleanUrl(url);
             this.removeTab(url);
@@ -101,8 +100,8 @@ Ext.define('Docs.view.Tabs', {
 
         // Navigate to page when tab clicked
         this.el.on('click', function(event, el) {
-            if (this.justClosed) {
-                this.justClosed = false;
+            // Do nothing when close button within the tab was clicked.
+            if (Ext.fly(event.getTarget()).hasCls("close")) {
                 return;
             }
             var url = Ext.get(el).down('.tabUrl').getAttribute('href');
