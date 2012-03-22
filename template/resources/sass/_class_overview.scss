@@ -13,7 +13,12 @@
     margin: 0 0 10px 60px;
     font-size: 12px; }
   .hierarchy {
-    @include gray-h4;
+    h4 {
+      font-family: $docs-font;
+      font-size: 90%;
+      padding: 11px 0 5px 0;
+      text-transform: uppercase;
+      color: #999999; }
     .dependency, .alternate-class-name {
       padding: 0 0 0 12px;
       margin-top: 3px; }

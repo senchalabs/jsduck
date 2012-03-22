@@ -52,14 +52,6 @@
   .icon-component-redirect {
     background: url(../images/icons.png) no-repeat 0 -640px; } }
 
-@mixin gray-h4 {
-  h4 {
-    font-family: $docs-font;
-    font-size: 90%;
-    padding: 11px 0 5px 0;
-    text-transform: uppercase;
-    color: #999999; } }
-
 @mixin green-button {
   @include box-shadow(#b3f33d 0 1px 0 0 inset);
   color: #fff;
