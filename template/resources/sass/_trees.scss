@@ -103,7 +103,7 @@
       border: 1px solid #727a81;
       background-color: #646b72;
       @include vertical-gradient(#646b72, #8d949b);
-      box-shadow: inset #5b6167 0 0 1px;
+      @include box-shadow(#5b6167 0 0 1px 0 inset);
       @include border-radius(10px);
       text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35); } } }
 

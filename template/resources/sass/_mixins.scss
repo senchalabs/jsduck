@@ -1,10 +1,6 @@
 @import "variables";
 @import "compass/css3";
 
-@mixin box-shadow($x, $y, $radius, $color) {
-  -webkit-box-shadow: $x $y $radius $color;
-  -moz-box-shadow: $x $y $radius $color; }
-
 @mixin vertical-gradient($fromCol, $toCol) {
   background: $fromCol;
   background: -webkit-gradient(linear, left top, left bottom, from($fromCol), to($toCol));
@@ -65,7 +61,7 @@
     color: #999999; } }
 
 @mixin green-button {
-  box-shadow: inset #b3f33d 0 1px 0;
+  @include box-shadow(#b3f33d 0 1px 0 0 inset);
   color: #fff;
   text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
   @include border-radius(3px);
@@ -78,7 +74,7 @@
     border-color: #707070;
     cursor: auto;
     @include vertical-gradient(#bbb, #9c9c9c);
-    box-shadow: inset #d7d7d7 0 1px 0; } }
+    @include box-shadow(#d7d7d7 0 1px 0 0 inset); } }
 
 @mixin member-expander {
 
