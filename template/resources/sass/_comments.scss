@@ -191,7 +191,7 @@
       .deleteComment,
       .vote {
         @include transition(opacity, 0.2s, linear);
-        opacity: 1; } } }
+        @include opacity(1); } } }
   .target {
     color: #666;
     font-size: 90%;
@@ -226,13 +226,13 @@
     .deleteComment {
       right: 110px;
       color: #999;
-      opacity: 0;
+      @include opacity(0);
       @include transition(opacity, 0.2s, linear);
       position: absolute; }
     .editComment {
       right: 160px;
       color: #999;
-      opacity: 0;
+      @include opacity(0);
       @include transition(opacity, 0.2s, linear);
       position: absolute; }
     .vote {
@@ -246,10 +246,10 @@
         height: 18px;
         background: url(../images/vote-arrows.png) no-repeat;
         &.selected {
-          opacity: 0.4;
+          @include opacity(0.4);
           background-position: -22px 0; }
-        &:hover {
-          opacity: 1 !important;
+        &:hover, &.selected:hover {
+          @include opacity(1);
           background-position: -22px 0; } }
       .voteCommentDown {
         position: absolute;
@@ -260,9 +260,9 @@
         background: url(../images/vote-arrows.png) no-repeat 0 -35px;
         &.selected {
           background-position: -22px -35px;
-          opacity: 0.4; }
-        &:hover {
-          opacity: 1 !important;
+          @include opacity(0.4); }
+        &:hover, &.selected:hover {
+          @include opacity(1);
           background-position: -22px -35px; } }
       .score {
         position: absolute;

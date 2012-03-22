@@ -18,7 +18,7 @@ pre.inline-example {
     color: #57a7dc; }
   span.x-btn-icon {
     background: url(../images/example-icons.png) no-repeat;
-    opacity: 0.6;
+    @include opacity(0.6);
     &.code {
       background-position: -2px -19px; }
     &.preview {
@@ -27,7 +27,7 @@ pre.inline-example {
       background-position: -2px -88px; } }
   .active span.x-btn-icon {
     background: url(../images/example-icons.png) no-repeat;
-    opacity: 1;
+    @include opacity(1);
     &.code {
       background-position: -30px -19px; }
     &.preview {
