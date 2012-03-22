@@ -1,32 +1,9 @@
 @import "variables";
+@import "compass/css3";
 
 @mixin box-shadow($x, $y, $radius, $color) {
   -webkit-box-shadow: $x $y $radius $color;
   -moz-box-shadow: $x $y $radius $color; }
-
-@mixin border-radius($size) {
-  border-radius: $size;
-  -moz-border-radius: $size; }
-
-@mixin border-radius-bottom($size) {
-  border-bottom-left-radius: $size;
-  border-bottom-right-radius: $size; }
-
-@mixin border-top-left-radius($size) {
-  border-top-left-radius: $size;
-  -moz-border-radius-topleft: $size; }
-
-@mixin border-top-right-radius($size) {
-  border-top-right-radius: $size;
-  -moz-border-radius-topright: $size; }
-
-@mixin border-bottom-left-radius($size) {
-  -webkit-border-bottom-left-radius: $size;
-  -moz-border-radius-bottomleft: $size; }
-
-@mixin border-bottom-right-radius($size) {
-  border-bottom-right-radius: $size;
-  -moz-border-radius-bottomright: $size; }
 
 @mixin vertical-gradient($fromCol, $toCol) {
   background: $fromCol;
@@ -37,10 +14,6 @@
   background: $fromCol;
   background: -webkit-gradient(linear, left top, right top, from($fromCol), to($toCol));
   background: -moz-linear-gradient(left, $fromCol, $toCol); }
-
-@mixin opacity($opacity) {
-  opacity: $opacity;
-  filter: alpha(opacity=$opacity*100); }
 
 @mixin transition($property, $duration, $timingFunction) {
   -webkit-transition: $property $duration $timingFunction;
