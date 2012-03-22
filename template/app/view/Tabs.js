@@ -198,31 +198,39 @@ Ext.define('Docs.view.Tabs', {
             return;
         }
 
-        var idx = Ext.Array.indexOf(this.tabs, url);
-        if (idx !== false) {
-            Ext.Array.erase(this.tabs, idx, 1);
-        }
-        var idx = Ext.Array.indexOf(this.tabsInBar, url);
-        if (idx !== false) {
-            Ext.Array.erase(this.tabsInBar, idx, 1);
-        }
-        if (this.tabs[this.tabsInBar.length]) {
-            this.tabsInBar.push(this.tabs[this.tabsInBar.length]);
+        // Remove the tab both from tab-bar and all-tabs array
+        this.removeFromArray(this.tabs, url);
+        var removedIndex = this.removeFromArray(this.tabsInBar, url);
+        
+        // An empty space in tab-bar has now become available
+        // If the all-tabs array has an item to fill this spot,
+        // add the item from all-tabs array to tab-bar.
+        var firstHiddenTab = this.tabs[this.tabsInBar.length];
+        if (firstHiddenTab) {
+            this.tabsInBar.push(firstHiddenTab);
         }
 
-        if (this.activeTab && this.activeTab === url) {
+        // Was the active tab closed?
+        if (this.activeTab === url) {
             if (this.tabs.length === 0) {
+                // When all tabs were closed
+                // open index page corresponding to the last closed tab type
                 Docs.App.getController(this.getControllerName(url)).loadIndex();
             }
             else {
-                if (idx === this.tabs.length) {
-                    idx -= 1;
+                // When more tabs remaining
+                // activate the tab at the position of last closed tab.
+                // Except when the last tab was closed - then choose one before it.
+                if (removedIndex === this.tabs.length) {
+                    removedIndex -= 1;
                 }
-                this.activateTab(this.tabs[idx]);
-                this.fireEvent("tabActivate", this.tabs[idx]);
+                this.activateTab(this.tabs[removedIndex]);
+                this.fireEvent("tabActivate", this.tabs[removedIndex]);
             }
         }
 
+        // When removed tab got replaced with hidden tab do a full refresh of tabs.
+        // Otherwise just remove the single tab.
         if (this.tabs.length >= this.maxTabsInBar()) {
             this.refresh();
         } else {
@@ -230,6 +238,16 @@ Ext.define('Docs.view.Tabs', {
         }
 
         this.saveTabs();
+    },
+
+    // Removes item from array
+    // Returns the index from which the item was removed.
+    removeFromArray: function(array, item) {
+        var idx = Ext.Array.indexOf(array, item);
+        if (idx !== -1) {
+            Ext.Array.erase(array, idx, 1);
+        }
+        return idx;
     },
 
     /**
