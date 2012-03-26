@@ -119,7 +119,8 @@ Ext.define('Docs.controller.Comments', {
                         [ '.readComment',          'click', this.readComment],
                         [ '.fetchMoreComments',    'click', this.fetchMoreComments],
                         [ '.voteCommentUp',        'click', this.voteUp],
-                        [ '.voteCommentDown',      'click', this.voteDown]
+                        [ '.voteCommentDown',      'click', this.voteDown],
+                        [ '#hideRead',            'change', function() { this.fetchRecentComments(); }]
                     ], function(delegate) {
                         cmp.el.addListener(delegate[1], delegate[2], this, {
                             preventDefault: true,
@@ -161,7 +162,7 @@ Ext.define('Docs.controller.Comments', {
         this.fireEvent('loadIndex');
         Ext.getCmp('treecontainer').hide();
         if (!this.recentComments) {
-            this.fetchRecentComments('recentcomments');
+            this.fetchRecentComments();
             this.recentComments = true;
         }
         this.callParent([true]);
@@ -274,14 +275,13 @@ Ext.define('Docs.controller.Comments', {
     /**
      * Fetches the most recent comments
      */
-    fetchRecentComments: function(id, offset) {
-
+    fetchRecentComments: function(offset) {
         var params = {
             offset: offset || 0,
             limit: 100
-        }
-        var hideRead = Ext.get('hideRead');
-        if (true || hideRead.checked) {
+        };
+
+        if (this.isHideReadChecked()) {
             params.hideRead = 1;
         }
 
@@ -290,7 +290,7 @@ Ext.define('Docs.controller.Comments', {
             method: 'GET',
             params: params,
             success: function(response) {
-                this.renderComments(response, id, {
+                this.renderComments(response, 'recentcomments', {
                     hideCommentForm: true,
                     append: !!offset,
                     showCls: true
@@ -300,8 +300,13 @@ Ext.define('Docs.controller.Comments', {
         });
     },
 
+    isHideReadChecked: function() {
+        var cb = Ext.get('hideRead');
+        return cb && cb.dom.checked;
+    },
+
     fetchMoreComments: function(cmp, el) {
-        this.fetchRecentComments('recentcomments', Ext.get(el).getAttribute('rel'));
+        this.fetchRecentComments(Ext.get(el).getAttribute('rel'));
     },
 
     /**
@@ -644,12 +649,17 @@ Ext.define('Docs.controller.Comments', {
             var list = comments.down('.comment-list');
             Docs.view.Comments.appendCommentsTpl.append(list, data);
 
-            var last = data[data.length - 1] || {};
-            comments.down('.recent-comments-pager').update(
-                Docs.view.Comments.getPagerHtml(last)
-            );
+            this.updateCommentsPager(comments, data);
         } else {
-            Docs.view.Comments.commentsTpl.append(comments, data);
+            var list = comments.down('.comment-list');
+            if (list) {
+                Docs.view.Comments.appendCommentsTpl.overwrite(list, data);
+
+                this.updateCommentsPager(comments, data);
+            }
+            else {
+                Docs.view.Comments.commentsTpl.append(comments, data);
+            }
             Docs.Syntax.highlight(comments);
         }
 
@@ -675,6 +685,13 @@ Ext.define('Docs.controller.Comments', {
                 Docs.view.Comments.loggedOutCommentTpl.overwrite(commentWrap, {});
             }
         }
+    },
+
+    updateCommentsPager: function(comments, data) {
+        var last = data[data.length - 1] || {};
+        comments.down('.recent-comments-pager').update(
+            Docs.view.Comments.getPagerHtml(last)
+        );
     },
 
     toggleNewComment: function(cmp, el) {
