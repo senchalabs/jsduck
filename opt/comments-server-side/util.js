@@ -340,6 +340,7 @@ exports.getCommentCounts = function(req, res, next) {
 exports.getCommentSubscriptions = function(req, res, next) {
 
     req.commentMeta = req.commentMeta || {};
+    req.commentMeta.subscriptions = req.commentMeta.subscriptions || [];
 
     if (req.session.user) {
         Subscription.find({
@@ -375,6 +376,7 @@ exports.getCommentSubscriptions = function(req, res, next) {
 exports.getCommentReads = function(req, res, next) {
 
     req.commentMeta = req.commentMeta || {};
+    req.commentMeta.reads = req.commentMeta.reads || [];
 
     if (req.session.user && isModerator(req.session.user)) {
         Meta.find({
