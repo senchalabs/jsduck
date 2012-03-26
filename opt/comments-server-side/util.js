@@ -44,6 +44,10 @@ exports.scoreComments = function(comments, req) {
             createdAt: String(comment.createdAt)
         });
 
+        if (req.commentMeta.reads.length > 0) {
+            comment.read = _.include(req.commentMeta.reads, ""+comment._id);
+        }
+
         if (req.session.user) {
             comment.upVote = _.contains(comment.upVotes, req.session.user.username);
             comment.downVote = _.contains(comment.downVotes, req.session.user.username);
@@ -166,6 +170,16 @@ exports.findCommentMeta = function(req, res, next) {
     }
 };
 
+// True if the user is moderator
+function isModerator(user) {
+    return _.include(user.membergroupids, 7);
+}
+
+// True if the user is author of the comment
+function isAuthor(user, comment) {
+    return user.username === comment.author;
+}
+
 /**
  * Ensures that user is allowed to modify/delete the comment,
  * that is, he is the owner of the comment or a moderator.
@@ -175,10 +189,7 @@ exports.findCommentMeta = function(req, res, next) {
  * @param {Function} next
  */
 exports.requireOwner = function(req, res, next) {
-    var isModerator = _.include(req.session.user.membergroupids, 7);
-    var isAuthor = req.session.user.username == req.comment.author;
-
-    if (isModerator || isAuthor) {
+    if (isModerator(req.session.user) || isAuthor(req.session.user, req.comment)) {
         next();
     }
     else {
@@ -365,7 +376,7 @@ exports.getCommentReads = function(req, res, next) {
 
     req.commentMeta = req.commentMeta || {};
 
-    if (req.session.user) {
+    if (req.session.user && isModerator(req.session.user)) {
         Meta.find({
             userId: req.session.user.userid
         }, function(err, commentMeta) {

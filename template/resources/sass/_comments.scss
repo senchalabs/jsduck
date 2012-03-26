@@ -188,6 +188,7 @@
   &:hover {
     .com-meta {
       .readComment,
+      .readComment.read,
       .editComment,
       .deleteComment,
       .vote {
@@ -239,11 +240,16 @@
     .readComment {
       right: 200px;
       color: #999;
-      opacity: 0;
+      @include opacity(0);
       @include transition(opacity, 0.2s, linear);
-      position: absolute; }
-    .read {
-      font-weight: bold; }
+      position: absolute;
+      &.read {
+        color: white;
+        @include border-radius(2px);
+        background: #3D7E00;
+        font-weight: bold;
+        padding: 0 1em;
+        @include opacity(0.5); } }
     .vote {
       position: absolute;
       left: 2px;

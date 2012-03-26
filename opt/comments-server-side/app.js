@@ -154,7 +154,7 @@ app.namespace('/auth/:sdk/:version', function(){
     /**
      * Returns a list of comments for a particular target (eg class, guide, video)
      */
-    app.get('/comments', function(req, res) {
+    app.get('/comments', util.getCommentReads, function(req, res) {
 
         if (!req.query.startkey) {
             res.json({error: 'Invalid request'});
@@ -298,7 +298,7 @@ app.namespace('/auth/:sdk/:version', function(){
     /**
      * Restores deleted comment
      */
-    app.post('/comments/:commentId/undo_delete', util.requireLoggedInUser, util.findComment, util.requireOwner, function(req, res) {
+    app.post('/comments/:commentId/undo_delete', util.requireLoggedInUser, util.findComment, util.requireOwner, util.getCommentReads, function(req, res) {
         req.comment.deleted = false;
         req.comment.save(function(err, response) {
             res.send({ success: true, comment: util.scoreComments([req.comment], req)[0] });
