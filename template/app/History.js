@@ -95,8 +95,8 @@ Ext.define("Docs.History", {
      */
     push: function(token, opts) {
         token = this.cleanUrl(token);
-        if (!/^!/.test(token)) {
-            token = "!"+token;
+        if (!/^#!?/.test(token)) {
+            token = "#!"+token;
         }
         // Firefox sometimes has %21 instead of !.
         // This happens with URL-s inside normal links on page.
@@ -110,15 +110,16 @@ Ext.define("Docs.History", {
         //
         // To prevent this, check that previous equivalent entry isn't
         // equivalent to new one.
-        if (Ext.util.History.getToken().replace(/^%21/, "!") !== token) {
+        var prevToken = Ext.util.History.getToken() || "";
+        if ("#"+prevToken.replace(/^%21/, "!") !== token) {
             Ext.util.History.add(token);
         }
     },
 
     /**
-     * Given a URL, removes anything up to # (including #)
+     * Given a URL, removes anything before #
      */
     cleanUrl: function(url) {
-        return url.replace(/^[^#]*#/, '');
+        return url.replace(/^[^#]*#/, '#');
     }
 });
