@@ -95,16 +95,30 @@ Ext.define("Docs.History", {
      */
     push: function(token, opts) {
         token = this.cleanUrl(token);
-        if (!/^#!?/.test(token)) {
-            token = "#!"+token;
+        if (!/^!/.test(token)) {
+            token = "!"+token;
         }
-        Ext.util.History.add(token);
+        // Firefox sometimes has %21 instead of !.
+        // This happens with URL-s inside normal links on page.
+        //
+        // So at first round history entry beginning with %21 is added
+        // which triggers navigate() to load the right page, but this
+        // comes around in circle to here and pushes a new entry
+        // beginning with "!" and so a double-entry would be added
+        // because the new entry differs from previous although they
+        // are really the same.
+        //
+        // To prevent this, check that previous equivalent entry isn't
+        // equivalent to new one.
+        if (Ext.util.History.getToken().replace(/^%21/, "!") !== token) {
+            Ext.util.History.add(token);
+        }
     },
 
     /**
-     * Given a URL, removes anything before a #
+     * Given a URL, removes anything up to # (including #)
      */
     cleanUrl: function(url) {
-        return url.replace(/^[^#]+#/, '#');
+        return url.replace(/^[^#]*#/, '');
     }
 });
