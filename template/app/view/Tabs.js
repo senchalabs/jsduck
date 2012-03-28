@@ -133,8 +133,6 @@ Ext.define('Docs.view.Tabs', {
                 this.resizeTabs({animate: true});
             }
         }, this);
-
-        this.createOverflowButton();
     },
 
     /**
@@ -200,7 +198,7 @@ Ext.define('Docs.view.Tabs', {
         // Remove the tab both from tab-bar and all-tabs array
         this.removeFromArray(this.tabs, url);
         var removedIndex = this.removeFromArray(this.tabsInBar, url);
-        
+
         // An empty space in tab-bar has now become available
         // If the all-tabs array has an item to fill this spot,
         // add the item from all-tabs array to tab-bar.
