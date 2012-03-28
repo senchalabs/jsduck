@@ -9,10 +9,6 @@ Ext.define('Docs.controller.Search', {
         'Docs.History'
     ],
 
-    views: [
-        'search.Dropdown'
-    ],
-
     stores: ['Search'],
 
     refs: [
