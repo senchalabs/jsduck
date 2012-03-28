@@ -3,8 +3,9 @@
  */
 Ext.define("Docs.Settings", {
     extend: 'Docs.LocalStore',
-    storeName: 'Settings',
     singleton: true,
+    requires: 'Docs.store.Settings',
+    storeName: 'Docs.store.Settings',
 
     // Default values for settings for which undefined doesn't suite.
     defaults: {

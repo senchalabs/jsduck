@@ -12,14 +12,6 @@ Ext.define('Docs.controller.Classes', {
         'Docs.ClassRegistry'
     ],
 
-    stores: [
-        'Settings'
-    ],
-
-    models: [
-        'Setting'
-    ],
-
     refs: [
         {
             ref: 'viewport',
