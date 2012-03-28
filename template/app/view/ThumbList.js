@@ -61,8 +61,9 @@ Ext.define('Docs.view.ThumbList', {
                 '</tpl>',
             '</div>'
         ]));
-        // Hide itemTpl config from parent class
+        // Hide itemTpl and data configs from parent class
         this.itemTpl = undefined;
+        this.data = undefined;
 
         this.on({
             'afterrender': function(cmp) {
