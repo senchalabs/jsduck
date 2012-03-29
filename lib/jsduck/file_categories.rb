@@ -13,7 +13,7 @@ module JsDuck
 
       # Don't crash if old syntax is used.
       if @categories.is_a?(Hash) && @categories["categories"]
-        Logger.instance.warn(:old_cat_format, 'Update categories file to contain just the array inside {"categories": [...]}')
+        Logger.instance.warn(nil, 'Update categories file to contain just the array inside {"categories": [...]}')
         @categories = @categories["categories"]
       end
 
