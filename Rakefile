@@ -17,12 +17,12 @@ def load_sdk_vars
   else
     puts "Error: sdk-vars.rb not found."
     puts
-    puts "Please create file sdk-vars.rb and define constants SDK_DIR and OUT_DIR in it."
-    puts
-    puts "For example:"
+    puts "Please create file sdk-vars.rb and define in it:"
     puts
     puts "    # path to Ext JS 4 build"
-    puts "    EXT_DIR='/path/to/ext-4.0.7'"
+    puts "    EXT_BUILD='/path/to/ext-4.0.7'"
+    puts "    # path to Touch 2 build"
+    puts "    TOUCH_BUILD='/path/to/touch-2.0.0'"
     puts "    # where to output the docs"
     puts "    OUT_DIR='/path/to/ouput/dir'"
     puts "    # path to SDK (for developers at Sencha)"
@@ -132,7 +132,7 @@ def compress
   system "mkdir #{dir}/extjs"
   system "cp template/extjs/ext-all.js #{dir}/extjs"
   system "mkdir -p #{dir}/extjs/resources/themes/images"
-  system "cp -r #{EXT_DIR}/resources/themes/images/default #{dir}/extjs/resources/themes/images"
+  system "cp -r #{EXT_BUILD}/resources/themes/images/default #{dir}/extjs/resources/themes/images"
 end
 
 
@@ -140,10 +140,6 @@ class JsDuckRunner
   def initialize
     @options = []
     load_sdk_vars
-    @sdk_dir = SDK_DIR
-    @out_dir = OUT_DIR
-    @ext_dir = EXT_DIR
-    @animator_dir = ANIMATOR_DIR
   end
 
   def add_options(options)
@@ -168,14 +164,14 @@ class JsDuckRunner
 
   # For export of ExtJS, reference extjs from the parent dir
   def make_extjs_path_relative
-    ["#{@out_dir}/index.html"].each do |file|
+    ["#{OUT_DIR}/index.html"].each do |file|
       out = []
       IO.read(file).each_line do |line|
         out << line.sub(/(src|href)="extjs\//, '\1="../')
       end
       File.open(file, 'w') {|f| f.write(out) }
     end
-    system "rm -rf #{@out_dir}/extjs"
+    system "rm -rf #{OUT_DIR}/extjs"
   end
 
   def add_ext4
@@ -184,10 +180,10 @@ class JsDuckRunner
       "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> VERSION. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--ignore-global",
       "--no-warnings",
-      "--images", "#{@ext_dir}/docs/doc-resources",
+      "--images", "#{EXT_BUILD}/docs/doc-resources",
       "--local-storage-db", "ext-4",
-      "--output", "#{@out_dir}",
-      "#{@ext_dir}/src",
+      "--output", "#{OUT_DIR}",
+      "#{EXT_BUILD}/src",
     ]
   end
 
@@ -302,12 +298,12 @@ class JsDuckRunner
   end
 
   def copy_extjs_build
-    system "cp -r #{@ext_dir} #{@out_dir}/extjs-build"
+    system "cp -r #{EXT_BUILD} #{OUT_DIR}/extjs-build"
   end
 
   # Copy over Sencha Touch
   def copy_touch2_build
-    system "cp -r #{@sdk_dir}/touch/build #{@out_dir}/touch"
+    system "cp -r #{TOUCH_BUILD} #{OUT_DIR}/touch"
   end
 
   def run
