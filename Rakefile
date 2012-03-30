@@ -271,6 +271,10 @@ class JsDuckRunner
               href: 'http://docs.sencha.com/ext-js/3-4'
           },
           {
+              text: 'Ext JS 2',
+              href: 'http://docs.sencha.com/ext-js/2-3'
+          },
+          {
               text: 'Sencha Touch 2',
               href: 'http://docs.sencha.com/touch/2-0'
           },
@@ -387,6 +391,23 @@ task :ext3, [:mode] => :sass do |t, args|
 
   runner = JsDuckRunner.new
   runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/../ext-3.4.0/src/doc-config.json"]
+  runner.add_debug if mode == "debug"
+  runner.add_seo if mode == "live"
+  runner.add_google_analytics if mode == "live"
+  runner.run
+end
+
+desc "Run JSDuck on official Ext JS 2.3 build\n" +
+     "ext2             - creates debug/development version\n" +
+     "ext2[export]     - creates export/deployable version\n"
+     "ext2[live]       - creates live version for deployment\n"
+task :ext2, [:mode] => :sass do |t, args|
+  mode = args[:mode] || "debug"
+  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
+  compress if mode == "export"
+
+  runner = JsDuckRunner.new
+  runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/../ext-2-source/doc-config.json"]
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "live"
   runner.add_google_analytics if mode == "live"
