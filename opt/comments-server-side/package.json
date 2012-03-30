@@ -4,10 +4,10 @@
   "description": "Commenting backend for JSDuck Documentation",
   "author": "Nick Poudlen <nick@sencha.com>",
   "dependencies": {
+    "express": "git://github.com/visionmedia/express.git",
+    "express-namespace": "",
     "connect": "",
     "connect-mongo": "",
-    "express": "",
-    "express-namespace": "",
     "marked": "",
     "mongoose": "",
     "mysql": "",
@@ -17,4 +17,3 @@
     "nodemailer": ""
   }
 }
-

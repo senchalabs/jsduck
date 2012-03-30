@@ -2,7 +2,8 @@
 var marked = require('marked'),
     _ = require('underscore'),
     sanitizer = require('sanitizer'),
-    nodemailer = require("nodemailer");
+    nodemailer = require("nodemailer"),
+    mongoose = require('mongoose');
 
 /**
  * Converts Markdown-formatted comment text into HTML.

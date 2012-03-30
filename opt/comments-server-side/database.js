@@ -1,6 +1,11 @@
+
 /**
  * Defines comment schema and connects to database
  */
+
+var mongoose = require('mongoose'),
+    config = require('./config');
+
 Comment = mongoose.model('Comment', new mongoose.Schema({
     sdk:         String,
     version:     String,
@@ -43,4 +48,6 @@ Meta = mongoose.model('Meta', new mongoose.Schema({
     metaType:    String
 }));
 
-mongoose.connect(config.mongoDb);
+mongoose.connect(config.mongoDb, function(err, ok) {
+    console.log("Connected to DB")
+});
