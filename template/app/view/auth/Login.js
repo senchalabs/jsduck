@@ -6,7 +6,7 @@ Ext.define('Docs.view.auth.Login', {
     alias: 'widget.authentication',
 
     loginTplHtml: [
-        '<form class="loginForm">',
+        '<form class="loginForm" method="POST">',
             '<input class="username" type="text" name="username" placeholder="Username" />',
             '<input class="password" type="password" name="password" placeholder="Password" />',
             '<label><input type="checkbox" name="remember" /> Remember Me</label>',
