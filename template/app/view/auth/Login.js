@@ -1,44 +1,16 @@
 /**
- * View for login form.
+ * View for login form in header.
  */
 Ext.define('Docs.view.auth.Login', {
     extend: 'Ext.container.Container',
     alias: 'widget.authentication',
-
-    loginTplHtml: [
-        '<form class="loginForm" method="POST">',
-            '<input class="username" type="text" name="username" placeholder="Username" />',
-            '<input class="password" type="password" name="password" placeholder="Password" />',
-            '<label><input type="checkbox" name="remember" /> Remember Me</label>',
-            '<input class="submit" type="submit" value="Sign in" />',
-            ' or ',
-            '<a class="register" href="http://www.sencha.com/forum/register.php" target="_blank">Register</a>',
-        '</form>'
-    ],
-
-    initComponent: function() {
-        this.loginTpl = Ext.create('Ext.Template', this.loginTplHtml.join(''));
-        this.callParent(arguments);
-    },
+    requires: 'Docs.view.auth.LoginHelper',
 
     /**
      * Shows login form.
      */
     showLoginForm: function() {
-        this.update(this.loginTpl.apply());
-        this.getEl().down("form").on("submit", this.submitLogin, this, {preventDefault: true});
-    },
-
-    submitLogin: function(event, el) {
-        var form = Ext.get(el),
-            username = form.down('input[name=username]').getValue(),
-            password = form.down('input[name=password]').getValue(),
-            rememberEl = form.down('input[name=remember]'),
-            submitEl = form.down('input[type=submit]');
-
-        var remember = rememberEl ? Boolean(rememberEl.getAttribute('checked')) : false;
-
-        Docs.App.getController('Auth').login(username, password, remember, submitEl);
+        Docs.view.auth.LoginHelper.renderToHeader(this.getEl());
     },
 
     /**

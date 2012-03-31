@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.view.Comments', {
     singleton: true,
-    requires: ['Docs.view.auth.Login'],
+    requires: ['Docs.view.auth.LoginHelper'],
 
     constructor: function() {
         var numComments = [
@@ -274,21 +274,6 @@ Ext.define('Docs.view.Comments', {
                 commentMetaAndGuide.join(''),
             '</form>'
         );
-
-        if (Ext.isIE && Ext.ieVersion <= 7) {
-            this.loggedOutCommentTpl = Ext.create('Ext.XTemplate',
-                '<div class="new-comment">',
-                    '<span class="toggleNewComment"><span></span>Sorry, adding comments is not supported in IE 7 or earlier</span>',
-                '</div>'
-            );
-        } else {
-            this.loggedOutCommentTpl = Ext.create('Ext.XTemplate',
-                '<div class="new-comment">',
-                    '<span class="toggleNewComment"><span></span>Sign in to post a comment:</span>',
-                    Docs.view.auth.Login.prototype.loginTplHtml.join(''),
-                '</div>'
-            );
-        }
     },
 
     /**
@@ -474,7 +459,7 @@ Ext.define('Docs.view.Comments', {
 
                 this.makeCodeMirror(textarea, wrap);
             } else {
-                this.loggedOutCommentTpl.overwrite(newComment, {});
+                Docs.view.auth.LoginHelper.renderToComments(newComment);
             }
         }, this);
     },

@@ -11,6 +11,7 @@ Ext.define('Docs.controller.Comments', {
     },
 
     requires: [
+        "Docs.view.auth.LoginHelper",
         "Docs.Syntax",
         "Docs.Tip"
     ],
@@ -682,7 +683,7 @@ Ext.define('Docs.controller.Comments', {
                     }
                 }
             } else {
-                Docs.view.Comments.loggedOutCommentTpl.overwrite(commentWrap, {});
+                Docs.view.auth.LoginHelper.renderToComments(commentWrap);
             }
         }
     },
