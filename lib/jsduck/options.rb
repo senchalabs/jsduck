@@ -1,7 +1,7 @@
 require 'optparse'
 require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
-require 'jsduck/io'
+require 'jsduck/json_duck'
 
 module JsDuck
 
@@ -452,7 +452,7 @@ module JsDuck
 
     # Extracts files of first build in jsb file
     def extract_jsb_files(jsb_file)
-      json = JSON.parse(JsDuck::IO.read(jsb_file))
+      json = JsonDuck::read(jsb_file)
       basedir = File.dirname(jsb_file)
 
       return json["builds"][0]["packages"].map do |package_id|
