@@ -349,7 +349,12 @@ module JsDuck
         opts.on('--config=PATH',
           "Loads config options from JSON file.", " ") do |path|
           path = canonical(path)
-          config = read_json_config(path)
+          if File.exists?(path)
+            config = read_json_config(path)
+          else
+            puts "Oh noes!  The config file #{path} doesn't exist."
+            exit(1)
+          end
           # treat paths inside JSON config relative to the location of
           # config file.  When done, switch back to current working dir.
           @working_dir = File.dirname(path)
