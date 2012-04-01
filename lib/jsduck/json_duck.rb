@@ -34,7 +34,12 @@ module JsDuck
 
     # Reads and parses JSON from file
     def self.read(filename)
-      self.parse(JsDuck::IO.read(filename))
+      begin
+        self.parse(JsDuck::IO.read(filename))
+      rescue
+        puts "Oh noes!  #{filename} is not a valid JSON file."
+        exit(1)
+      end
     end
 
     # Parses JSON string
