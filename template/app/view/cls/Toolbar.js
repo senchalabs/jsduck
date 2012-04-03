@@ -237,6 +237,16 @@ Ext.define('Docs.view.cls.Toolbar', {
                         isSearch           && !re.test(m.get("label"))
                     );
                 });
+                // HACK!!!
+                // In Ext JS 4.1 filtering the stores causes the menus
+                // to become visible. But the visibility behaves badly
+                // - one has to call #show first or #hide won't have
+                // an effect.
+                var menu = this.memberButtons[type].menu;
+                if (menu && Ext.getVersion().version >= "4.1.0") {
+                    menu.show();
+                    menu.hide();
+                }
             }
         }, this);
     },
