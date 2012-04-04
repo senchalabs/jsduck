@@ -17,6 +17,9 @@ Ext.define('Docs.view.TreeContainer', {
     hideCollapseTool: true,
     animCollapse: true,
 
+    // For some strange reason the container gets a heading in Ext JS 4.1
+    header: false,
+
     initComponent: function() {
         this.items = [
             {
