@@ -104,6 +104,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                 hideTrigger: true,
                 emptyText: 'Filter class members',
                 enableKeyEvents: true,
+                width: 150,
                 listeners: {
                     keyup: function(cmp) {
                         this.fireEvent("filter", cmp.getValue(), this.getShowFlags());
