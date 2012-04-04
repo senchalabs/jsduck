@@ -44,11 +44,6 @@ Ext.define('Docs.view.HoverMenuButton', {
             }, this);
         }
 
-        this.menu = Ext.create('Docs.view.HoverMenu', {
-            store: this.store,
-            columnHeight: this.getColumnHeight()
-        });
-
         this.callParent(arguments);
     },
 
@@ -61,8 +56,6 @@ Ext.define('Docs.view.HoverMenuButton', {
     onRender: function() {
         this.callParent(arguments);
 
-        this.renderMenu();
-
         this.getEl().on({
             click: function() {
                 this.fireEvent("click");
@@ -71,8 +64,30 @@ Ext.define('Docs.view.HoverMenuButton', {
             mouseout: this.deferHideMenu,
             scope: this
         });
+    },
+
+    onDestroy: function() {
+        if (this.menu) {
+            // clean up DOM
+            this.menu.destroy();
+            // remove from global menu list
+            Ext.Array.remove(Docs.view.HoverMenuButton.menus, this.menu);
+        }
+
+        this.callParent(arguments);
+    },
+
+    renderMenu: function() {
+        this.menu = Ext.create('Docs.view.HoverMenu', {
+            store: this.store,
+            columnHeight: this.getColumnHeight()
+        });
 
         this.menu.getEl().on({
+            click: function(e) {
+                this.menu.hide();
+                e.preventDefault();
+            },
             mouseover: function() {
                 clearTimeout(this.hideTimeout);
             },
@@ -80,30 +95,15 @@ Ext.define('Docs.view.HoverMenuButton', {
             scope: this
         });
 
-    },
-
-    onDestroy: function() {
-        // clean up DOM
-        this.menu.destroy();
-        // remove from global menu list
-        Ext.Array.remove(Docs.view.HoverMenuButton.menus, this.menu);
-
-        this.callParent(arguments);
-    },
-
-    renderMenu: function() {
-        this.menu.getEl().setVisibilityMode(Ext.core.Element.DISPLAY);
-        this.menu.hide();
-
-        this.menu.getEl().addListener('click', function(e) {
-            this.menu.hide();
-            e.preventDefault();
-        }, this);
-
         Docs.view.HoverMenuButton.menus.push(this.menu);
     },
 
     deferHideMenu: function() {
+        // skip if nothing to hide
+        if (!this.menu) {
+            return;
+        }
+
         clearTimeout(Docs.view.HoverMenuButton.showTimeout);
         this.hideTimeout = Ext.Function.defer(function() {
             this.menu.hide();
@@ -113,6 +113,11 @@ Ext.define('Docs.view.HoverMenuButton', {
     deferShowMenu: function() {
         clearTimeout(Docs.view.HoverMenuButton.showTimeout);
         Docs.view.HoverMenuButton.showTimeout = Ext.Function.defer(function() {
+            // Create menu if needed
+            if (!this.menu) {
+                this.renderMenu();
+            }
+
             // hide other menus
             Ext.Array.forEach(Docs.view.HoverMenuButton.menus, function(menu) {
                 if (menu !== this.menu) {
