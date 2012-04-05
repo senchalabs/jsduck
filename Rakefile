@@ -492,7 +492,7 @@ task :senchaio, [:mode] => :sass do |t, args|
   compress if mode == "live"
 
   runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/../sync/docs/config.json"]
+  runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/../client-framework/docs/config.json"]
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"
