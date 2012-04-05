@@ -3,7 +3,16 @@
  */
 Ext.define('Docs.view.Comments', {
     singleton: true,
-    requires: ['Docs.view.auth.LoginHelper'],
+    requires: [
+        'Docs.view.auth.LoginHelper',
+        // WTF!
+        // When I don't add this line then "sencha create jsb" command
+        // will fail.  But this class shouldn't require that class,
+        // and indeed, when running in browser, the app will work just
+        // fine, but when doing e.g. "rake gem" something goes wrong
+        // and the "sencha create jsb" command just hangs.
+        'Docs.view.auth.Login'
+    ],
 
     constructor: function() {
         var numComments = [
