@@ -80,10 +80,18 @@ module JsDuck
 
     # Parses the file depending on filename as JS or CSS
     def parse
-      if @filename =~ /\.s?css$/
-        CssParser.new(@contents, @options).parse
-      else
-        JsParser.new(@contents, @options).parse
+      begin
+        if @filename =~ /\.s?css$/
+          CssParser.new(@contents, @options).parse
+        else
+          JsParser.new(@contents, @options).parse
+        end
+      rescue
+        puts "Error while parsing #{@filename}: #{$!}"
+        puts
+        puts "Here's a full backtrace:"
+        puts $!.backtrace
+        exit(1)
       end
     end
 
