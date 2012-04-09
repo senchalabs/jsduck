@@ -65,13 +65,13 @@
       td {
         color: #484848;
         padding: 2px 20px 2px 0; } }
-    pre {
+    pre.notpretty, pre.prettyprint {
       background-color: #f7f7f7;
       border: solid 1px #e8e8e8;
       @include border-radius(5px);
       color: #314e64;
       font-family: $docs-monospace-font;
-      padding: 10px 20px;
+      padding: 10px 12px;
       line-height: 1.3em;
       margin: 10px 0 14px 0;
       max-width: 900px;
@@ -80,9 +80,7 @@
       code {
         font-family: $docs-monospace-font; }
       i, em {
-        font-style: normal; } }
-    pre.prettyprint {
-      padding: 10px 12px; } } }
+        font-style: normal; } } } }
 
 @import "class_overview";
 
