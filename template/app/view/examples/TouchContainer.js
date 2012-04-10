@@ -30,11 +30,11 @@ Ext.define('Docs.view.examples.TouchContainer', {
                     '<div class="orientations">',
                         '<button class="landscape selected">Landscape</button>',
                         '<button class="portrait">Portrait</button>',
-                    '<div>',
+                    '</div>',
                     '<span class="separator">&nbsp;</span>',
                     '<div>',
                         '<button class="new-window">Open in new window</button>',
-                    '<div>',
+                    '</div>',
                 '</div>'
             ].join('')
         }];
