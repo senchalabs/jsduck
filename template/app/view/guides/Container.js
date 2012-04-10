@@ -4,7 +4,7 @@
  * Renders the guide and print button.
  */
 Ext.define('Docs.view.guides.Container', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.guidecontainer',
     componentCls: 'guide-container',
 
