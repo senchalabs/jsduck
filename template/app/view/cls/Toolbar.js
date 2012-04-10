@@ -33,6 +33,11 @@ Ext.define('Docs.view.cls.Toolbar', {
              */
             "menubuttonclick",
             /**
+             * @event commentcountclick
+             * Fired when the comment count button clicked.
+             */
+            "commentcountclick",
+            /**
              * @event filter
              * Fires when text typed to filter, or one of the hide-checkboxes clicked.
              * @param {String} search  The search text.
@@ -124,6 +129,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                 }
             }),
             { xtype: 'tbspacer', width: 10 },
+            this.commentCount = this.createCommentCount(),
             {
                 xtype: 'button',
                 text: 'Show',
@@ -256,5 +262,39 @@ Ext.define('Docs.view.cls.Toolbar', {
      */
     getFilterValue: function() {
         return this.filterField.getValue();
+    },
+
+    createCommentCount: function() {
+        return Ext.create('Ext.container.Container', {
+            width: 24,
+            margin: '0 4 0 0',
+            cls: 'comment-btn',
+            html: '0',
+            hidden: true,
+            listeners: {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('click', function() {
+                        this.fireEvent("commentcountclick");
+                    }, this);
+                },
+                scope: this
+            }
+        });
+    },
+
+    /**
+     * Makes the comment-count button visible.
+     */
+    showCommentCount: function() {
+        this.commentCount.show();
+    },
+
+    /**
+     * Updates the number shown on comment count button.
+     *
+     * @param {Number} n
+     */
+    setCommentCount: function(n) {
+        this.commentCount.update(""+n);
     }
 });

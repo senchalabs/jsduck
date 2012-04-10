@@ -136,14 +136,10 @@ Ext.define('Docs.controller.Comments', {
             },
 
             'classoverview toolbar': {
-                afterrender: function(cmp) {
-                    cmp.el.addListener('click', function() {
-                        var commentsDiv = Ext.get(Ext.query('.comments-section .comments-div')[0]);
-                        this.getOverview().scrollToEl('.comments-section', -20);
-                        this.openComments(commentsDiv);
-                    }, this, {
-                        delegate: '.comment-btn'
-                    });
+                commentcountclick: function(cmp) {
+                    var commentsDiv = Ext.get(Ext.query('.comments-section .comments-div')[0]);
+                    this.getOverview().scrollToEl('.comments-section', -20);
+                    this.openComments(commentsDiv);
                 }
             }
         });
