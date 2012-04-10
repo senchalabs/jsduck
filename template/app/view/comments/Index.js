@@ -2,7 +2,7 @@
  * Container for recent comments listing.
  */
 Ext.define('Docs.view.comments.Index', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.commentindex',
 
     cls: 'comment-index iScroll',
