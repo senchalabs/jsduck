@@ -42,7 +42,10 @@ pre.inline-example {
     @include border-radius(5px);
     // Create exactly the same amount of padding as normal code <pre> has
     padding: 5px 15px !important;
-    background: #f7f7f7; } }
+    background: #f7f7f7; }
+  // same line height as for non-live code examples
+  .CodeMirror pre {
+    line-height: 1.3em; } }
 
 .inline-example-cmp {
   margin-bottom: 10px;
