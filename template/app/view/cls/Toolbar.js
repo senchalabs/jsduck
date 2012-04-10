@@ -11,8 +11,6 @@ Ext.define('Docs.view.cls.Toolbar', {
 
     dock: 'top',
     cls: 'member-links',
-    padding: '3 5',
-    style: 'border-width: 1px 1px 1px 1px !important;',
 
     /**
      * @cfg {Object} docClass
