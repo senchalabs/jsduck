@@ -1,4 +1,4 @@
-require 'jsduck/esprima_lexer'
+require 'jsduck/lexer'
 require 'jsduck/doc_parser'
 require 'jsduck/js_literal_parser'
 require 'jsduck/js_literal_builder'
@@ -7,7 +7,7 @@ module JsDuck
 
   class JsParser < JsLiteralParser
     def initialize(input, options = {})
-      @lex = EsprimaLexer.new(input)
+      @lex = Lexer.new(input)
       @doc_parser = DocParser.new
       @docs = []
       @ext_namespaces = options[:ext_namespaces] || ["Ext"]
