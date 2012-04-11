@@ -89,5 +89,27 @@ describe JsDuck::EsprimaParser do
     end
   end
 
+  describe "parsing a heavily nested comment" do
+    before do
+      @docs = parse(<<-EOS)
+        (function () {
+            if (true) {
+                var i;
+                for (i=0; i<10; i++) {
+                    // Function A
+                    function a() {
+                    }
+                }
+             }
+        })();
+      EOS
+    end
+
+    it "detects comment as belonging to the inner function" do
+      @docs[0][:code]["type"].should == "FunctionDeclaration"
+      @docs[0][:code]["id"]["name"].should == "a"
+    end
+  end
+
 end
 

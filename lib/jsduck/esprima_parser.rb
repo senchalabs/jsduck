@@ -82,10 +82,14 @@ module JsDuck
       case node["type"]
       when "Program", "BlockStatement"
         node["body"]
-      when "FunctionDeclaration"
-        # Always contains just a single BlockStatement,
-        # so we just directly to the body of that.
-        node["body"]["body"]
+      when "FunctionDeclaration", "FunctionExpression", "ForStatement"
+        [node["body"]]
+      when "ExpressionStatement"
+        [node["expression"]]
+      when "CallExpression"
+        [node["callee"]]
+      when "IfStatement"
+        [node["consequent"]]
       else
         puts "Unknown node type: "+node["type"]
       end
