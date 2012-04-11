@@ -48,7 +48,7 @@ module JsDuck
     # Returns the code found.  But if the comment is instead
     # followed by another comment, returns nil.
     def stuff_after(comment)
-      code = code_after(comment["range"])
+      code = code_after(comment["range"], @ast)
       if code && comment["next"]
         return code["range"][0] < comment["next"]["range"][0] ? code : nil
       else
@@ -56,15 +56,54 @@ module JsDuck
       end
     end
 
-    # Looks for code following the given range
-    def code_after(range)
-      @ast["body"].each do |item|
-        if range[1] < item["range"][0]
-          return item
+    # Looks for code following the given range.
+    #
+    # The second argument is the parent node within which we perform
+    # our search.
+    def code_after(range, parent)
+      # Look through all child nodes of parent...
+      child_nodes(parent).each do |node|
+        if less(range, node["range"])
+          # If node is after our range, then that's it.  There could
+          # be comments in our way, but that's taken care of in
+          # #stuff_after method.
+          return node
+        elsif within(range, node["range"])
+          # Our range is within the node --> recurse
+          return code_after(range, node)
         end
       end
+
       return nil
     end
 
+    # Returns array of child nodes of given node
+    def child_nodes(node)
+      case node["type"]
+      when "Program", "BlockStatement"
+        node["body"]
+      when "FunctionDeclaration"
+        # Always contains just a single BlockStatement,
+        # so we just directly to the body of that.
+        node["body"]["body"]
+      else
+        puts "Unknown node type: "+node["type"]
+      end
+    end
+
+    # True if range A is less than range B
+    def less(a, b)
+      return a[1] < b[0]
+    end
+
+    # True if range A is greater than range B
+    def greater(a, b)
+      return a[0] > b[1]
+    end
+
+    # True if range A is within range B
+    def within(a, b)
+      return b[0] < a[0] && a[1] < b[1]
+    end
   end
 end

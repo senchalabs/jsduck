@@ -72,6 +72,22 @@ describe JsDuck::EsprimaParser do
     end
   end
 
+  describe "parsing a comment before inner function" do
+    before do
+      @docs = parse(<<-EOS)
+        function x() {
+            // Function A
+            function a() {
+            }
+        }
+      EOS
+    end
+
+    it "detects comment as belonging to the inner function" do
+      @docs[0][:code]["type"].should == "FunctionDeclaration"
+      @docs[0][:code]["id"]["name"].should == "a"
+    end
+  end
 
 end
 
