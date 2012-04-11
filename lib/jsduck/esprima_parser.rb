@@ -21,7 +21,51 @@ module JsDuck
       @v8['js'] = input
 
       json = @v8.eval("JSON.stringify(esprima.parse(js, {comment: true, range: true}))")
-      JSON.parse(json, :max_nesting => false)
+      @ast = JSON.parse(json, :max_nesting => false)
+
+      locate_comments
+    end
+
+    def locate_comments
+      @ast["comments"].map do |comment|
+        {
+          :comment => comment["value"],
+          :code => stuff_after(comment["range"])
+        }
+      end
+    end
+
+    # Sees if there is some code following the comment at specified
+    # range.  Returns the code found.  But if the comment is instead
+    # followed by another comment, returns nil.
+    def stuff_after(range)
+      code = code_after(range)
+      comment = comment_after(range)
+      if code && comment
+        return code["range"][0] < comment["range"][0] ? code : nil
+      else
+        code
+      end
+    end
+
+    # Looks for code following the given range
+    def code_after(range)
+      @ast["body"].each do |item|
+        if range[1] < item["range"][0]
+          return item
+        end
+      end
+      return nil
+    end
+
+    # Looks for comment following the given range
+    def comment_after(range)
+      @ast["comments"].each do |item|
+        if range[1] < item["range"][0]
+          return item
+        end
+      end
+      return nil
     end
 
   end
