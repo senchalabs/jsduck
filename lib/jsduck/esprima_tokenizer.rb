@@ -10,7 +10,7 @@ module JsDuck
 
     def initialize
       @v8 = V8::Context.new
-      esprima = File.dirname(File.dirname(File.dirname(File.dirname(File.expand_path(__FILE__)))))+"/esprima/esprima.js";
+      esprima = File.dirname(File.dirname(File.dirname(File.expand_path(__FILE__))))+"/esprima/esprima.js";
       @v8.load(esprima)
       wrapper = File.dirname((File.expand_path(__FILE__)))+"/esprima_wrapper.js";
       @v8.load(wrapper)

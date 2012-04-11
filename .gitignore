@@ -3,4 +3,5 @@ template/extjs
 template/resources/css
 template/resources/sass/.sass-cache
 template-min/
+esprima/
 sdk-vars.rb
