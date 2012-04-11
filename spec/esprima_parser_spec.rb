@@ -112,5 +112,22 @@ describe JsDuck::EsprimaParser do
     end
   end
 
+  describe "parsing comment before object property" do
+    before do
+      @docs = parse(<<-EOS)
+          var x = {
+              foo: 5,
+              // Some docs
+              bar: 5
+          }
+      EOS
+    end
+
+    it "detects comment as belonging to the second property" do
+      @docs[0][:code]["type"].should == "Property"
+      @docs[0][:code]["key"]["name"].should == "bar"
+    end
+  end
+
 end
 
