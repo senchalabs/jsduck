@@ -12,21 +12,11 @@ module JsDuck
 
     # Runs the linter
     def run
-      warn_globals
       warn_no_doc
       warn_unnamed
       warn_optional_params
       warn_duplicate_params
       warn_duplicate_members
-    end
-
-    # print warning for each global member
-    def warn_globals
-      global = @relations["global"]
-      return unless global
-      global.all_local_members.each do |member|
-        warn(:global, "Global #{member[:tagname]}: #{member[:name]}", member)
-      end
     end
 
     # print warning for each member or parameter with no name
@@ -43,7 +33,7 @@ module JsDuck
       end
     end
 
-    # print warning for each member or parameter with no name
+    # print warning for each class or public member with no name
     def warn_no_doc
       @relations.each do |cls|
         if cls[:doc] == ""
@@ -51,7 +41,7 @@ module JsDuck
         end
       end
       each_member do |member|
-        if member[:doc] == ""
+        if member[:doc] == "" && !member[:private] && !member[:meta][:hide]
           warn(:no_doc, "No documentation for #{member[:owner]}##{member[:name]}", member)
         end
       end

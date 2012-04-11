@@ -2,7 +2,6 @@ require "jsduck/aggregator"
 require "jsduck/source_file"
 
 describe JsDuck::Aggregator do
-
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))
@@ -170,10 +169,7 @@ describe JsDuck::Aggregator do
 
     it "creates documentation for foochange event" do
       @events[0][:doc].should ==
-        "Fires when the {@link #cfg-foo} configuration is changed by {@link #method-setFoo}.\n\n" +
-        "Note that this event is fired *before* the value of {@link #cfg-foo} has been updated, " +
-        "and that you can return false from any listener to the foochange event " +
-        "to cancel the change."
+        "Fires when the {@link #cfg-foo} configuration is changed by {@link #method-setFoo}."
     end
 
     it "has 3 params" do

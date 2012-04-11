@@ -12,16 +12,20 @@ Ext.define("Docs.Syntax", {
      * which to perform the highlighting.
      */
     highlight: function(root) {
-        Ext.Array.forEach(Ext.query("pre > code", root.dom || root), function(code) {
-            code = Ext.get(code);
-            var pre = code.parent();
-            // Disable inline examples in IE (too slow)
-            if (Ext.isIE && pre.hasCls("inline-example")) {
-                pre.removeCls("inline-example");
+        Ext.Array.forEach(Ext.query("pre", root.dom || root), function(pre) {
+            pre = Ext.get(pre);
+
+            if (pre.child("code")) {
+                // Don't prettify inline examples that have preview enabled.
+                if (!(pre.hasCls("inline-example") && pre.hasCls("preview"))) {
+                    pre.addCls("prettyprint");
+                }
             }
-            // Don't prettify inline examples, these are highlighted anyway
-            if (!pre.hasCls("inline-example")) {
-                code.addCls("prettyprint");
+            else if (!pre.parent(".CodeMirror")) {
+                // For normal pre-s add "notpretty" class so they can be
+                // distinguished in CSS from any other <pre> element
+                // that might appear on page.
+                pre.addCls("notpretty");
             }
         });
         prettyPrint();

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require "jsduck/doc_formatter"
 require "jsduck/relations"
 
@@ -111,6 +112,18 @@ describe JsDuck::DocFormatter do
     it "escapes image alt text" do
       @formatter.replace('{@img some/image.png foo"bar}').should ==
         '<img src="some/image.png" alt="foo&quot;bar"/>'
+    end
+
+    # {@video ...}
+
+    it "replaces {@video html5 some/url.mpeg Alt text} with HTML5 video element" do
+      @formatter.replace("{@video html5 some/url.mpeg Alt text}").should ==
+        '<video src="some/url.mpeg">Alt text</video>'
+    end
+
+    it "replaces {@video vimeo 123456 Alt text} with Vimeo video markup" do
+      @formatter.replace("{@video vimeo 123456 Alt text}").should =~
+        /<object.*123456.*object>/
     end
 
     # auto-conversion of identifiable ClassNames to links
@@ -469,6 +482,16 @@ describe JsDuck::DocFormatter do
       @formatter.shorten("12345678901").should == "1234567..."
     end
 
+    it "counts multi-byte characters correctly when measuring text length" do
+      # Text ending with a-umlaut character
+      @formatter.shorten("123456789ä").should == "123456789ä ..."
+    end
+
+    it "shortens text with multi-byte characters correctly" do
+      # Text containing a-umlaut character
+      @formatter.shorten("123456ä8901").should == "123456ä..."
+    end
+
     it "strips HTML tags when shortening" do
       @formatter.shorten("<a href='some-long-link'>12345678901</a>").should == "1234567..."
     end
@@ -500,6 +523,10 @@ describe JsDuck::DocFormatter do
       @formatter.too_long?("<a href='some-long-link'>Foo</a>").should == false
     end
 
+    it "counts multi-byte characters correctly" do
+      # Text ending with a-umlaut character
+      @formatter.too_long?("123456789ä").should == false
+    end
   end
 
 
@@ -521,6 +548,9 @@ describe JsDuck::DocFormatter do
     end
     it "ignores first empty sentence" do
       @formatter.first_sentence(". Hi John. This is me.").should == ". Hi John."
+    end
+    it "understands chinese/japanese full-stop character as end of sentence" do
+      @formatter.first_sentence("Some Chinese Text。 And some more。").should == "Some Chinese Text。"
     end
   end
 

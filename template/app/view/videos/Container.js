@@ -4,7 +4,7 @@
  * Renders the video itself and its title + description.
  */
 Ext.define('Docs.view.videos.Container', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.videocontainer',
     componentCls: 'video-container',
 

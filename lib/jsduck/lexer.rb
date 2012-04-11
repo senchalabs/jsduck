@@ -140,7 +140,7 @@ module JsDuck
         elsif @input.check(/\//)
           # Several things begin with dash:
           # - comments, regexes, division-operators
-          if @input.check(/\/\*\*/)
+          if @input.check(/\/\*\*[^\/]/)
             return {
               :type => :doc_comment,
               # Calculate current line number, starting with 1

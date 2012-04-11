@@ -13,11 +13,18 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
             children: [],
             text: 'Root'
         };
+        this.privates = [];
 
         this.subclasses = this.buildLookupTable(this.classes);
         Ext.Array.forEach(this.classes, this.addClass, this);
+        if (!this.showPrivateClasses) {
+            this.stripPrivateClasses(this.root);
+        }
         this.sortTree(this.root);
-        return this.root;
+        return {
+            root: this.root,
+            privates: this.privates
+        };
     },
 
     sortTree: function(node) {
@@ -36,9 +43,6 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
     buildLookupTable: function(classes) {
         var map = {};
         Ext.Array.forEach(classes, function(cls) {
-            if (cls["private"] && !this.showPrivateClasses) {
-                return;
-            }
             var parent = cls["extends"];
             if (parent && parent !== "Object") {
                 if (!map[parent]) {
@@ -61,9 +65,6 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
     },
 
     addClass: function(cls) {
-        if (cls["private"] && !this.showPrivateClasses) {
-            return;
-        }
         var parent = cls["extends"];
         if (!parent || parent === "Object") {
             var node = this.classNode(cls);
@@ -82,6 +83,21 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
             node.children = this.getSubclasses(cls.name);
             node.leaf = node.children.length === 0;
             return node;
+        }, this);
+    },
+
+    stripPrivateClasses: function(node) {
+        node.children = Ext.Array.filter(node.children, function(child) {
+            this.stripPrivateClasses(child);
+            // Remove private class unless it has non-private subclasses.
+            // As a side-effect add private class to this.privates list.
+            if (child.cls === "private" && child.children.length === 0) {
+                this.privates.push(child);
+                return false;
+            }
+            else {
+                return true;
+            }
         }, this);
     }
 

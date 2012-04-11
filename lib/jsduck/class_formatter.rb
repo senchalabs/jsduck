@@ -5,8 +5,7 @@ require 'jsduck/meta_tag_registry'
 module JsDuck
 
   # Converts :doc properties of class from markdown to HTML, resolves
-  # @links, and converts type definitions to HTML.  Also removes
-  # private members.
+  # @links, and converts type definitions to HTML.
   class ClassFormatter
     # Set to false to disable HTML-formatting of type definitions.
     attr_accessor :include_types
@@ -28,13 +27,11 @@ module JsDuck
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
       [:members, :statics].each do |group|
         cls[group].each_pair do |type, members|
-          # format all public members, but keep the private members
-          # too - some of them might override public members and we
-          # don't want to lose this information.
-          cls[group][type] = members.map {|m| m[:private] ? m : format_member(m)  }
+          # format all members (except hidden ones)
+          cls[group][type] = members.map {|m| m[:meta][:hide] ? m : format_member(m)  }
         end
       end
-      cls[:html_meta] = format_meta_data(cls[:meta])
+      cls[:html_meta] = format_meta_data(cls)
       cls
     end
 
@@ -52,7 +49,7 @@ module JsDuck
       m[:params] = m[:params].map {|p| format_item(p, is_css_tag) } if m[:params]
       m[:return] = format_item(m[:return], is_css_tag) if m[:return]
       m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
-      m[:html_meta] = format_meta_data(m[:meta])
+      m[:html_meta] = format_meta_data(m)
       m
     end
 
@@ -82,10 +79,14 @@ module JsDuck
       end
     end
 
-    def format_meta_data(meta_data)
+    def format_meta_data(context)
       result = {}
-      meta_data.each_pair do |key, value|
-        result[key] = MetaTagRegistry.instance[key].to_html(value) if value
+      context[:meta].each_pair do |key, value|
+        if value
+          tag = MetaTagRegistry.instance[key]
+          tag.context = context
+          result[key] = tag.to_html(value)
+        end
       end
       result
     end

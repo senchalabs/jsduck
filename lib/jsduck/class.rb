@@ -8,8 +8,16 @@ module JsDuck
   class Class
     attr_accessor :relations
 
-    def initialize(doc)
+    # Creates JSDuck class.
+    #
+    # Pass true as second parameter to create a placeholder class.
+    def initialize(doc, class_exists=true)
       @doc = doc
+
+      # Wrap classname into custom string class that allows
+      # differenciating between existing and missing classes.
+      @doc[:name] = ClassNameString.new(@doc[:name], class_exists)
+
       @doc[:members] = Class.default_members_hash if !@doc[:members]
       @doc[:statics] = Class.default_members_hash if !@doc[:statics]
       @relations = nil
@@ -25,8 +33,14 @@ module JsDuck
       @doc = doc
     end
 
+    # Accessor to internal hash
     def [](key)
       @doc[key]
+    end
+
+    # Assignment to internal hash keys
+    def []=(key, value)
+      @doc[key] = value
     end
 
     # Returns instance of parent class, or nil if there is none
@@ -44,15 +58,25 @@ module JsDuck
       p ? p.superclasses + [p]  : []
     end
 
-    # Returns array of mixin class instances.
-    # Returns empty array if no mixins
+    # Returns all direct mixins of this class. Same as #deps(:mixins).
     def mixins
-      @doc[:mixins] ? @doc[:mixins].collect {|classname| lookup(classname) }.compact : []
+      deps(:mixins)
     end
 
-    # Returns all mixins this class and its parent classes
-    def all_mixins
-      mixins + (parent ? parent.all_mixins : [])
+    # Returns an array of class instances this class directly depends on.
+    # Possible types are:
+    #
+    # - :mixins
+    # - :requires
+    # - :uses
+    #
+    def deps(type)
+      @doc[type] ? @doc[type].collect {|classname| lookup(classname) } : []
+    end
+
+    # Same ase #deps, but pulls out the dependencies from all parent classes.
+    def parent_deps(type)
+      parent ? parent.deps(type) + parent.parent_deps(type) : []
     end
 
     # Looks up class object by name
@@ -60,10 +84,18 @@ module JsDuck
     def lookup(classname)
       if @relations[classname]
         @relations[classname]
-      elsif !@relations.ignore?(classname)
+      elsif @relations.ignore?(classname) || classname =~ /\*/
+        # Ignore explicitly ignored classes and classnames with
+        # wildcards in them.  We could expand the wildcard, but that
+        # can result in a very long list of classes, like when
+        # somebody requires 'Ext.form.*', so for now we do the
+        # simplest thing and ignore it.
+        Class.new({:name => classname}, false)
+      else
         context = @doc[:files][0]
         Logger.instance.warn(:extend, "Class #{classname} not found", context[:filename], context[:linenr])
-        nil
+        # Create placeholder class
+        Class.new({:name => classname}, false)
       end
     end
 
@@ -89,7 +121,7 @@ module JsDuck
     #
     # See members_hash for details.
     def members(type, context=:members)
-      ms = members_hash(type, context).values.find_all {|m| !m[:private] }
+      ms = members_hash(type, context).values #.find_all {|m| !m[:private] }
       ms.sort! {|a,b| a[:name] <=> b[:name] }
       type == :method ? constructor_first(ms) : ms
     end
@@ -121,28 +153,47 @@ module JsDuck
         return {}
       end
 
-      all_members = parent ? parent.members_hash(type, context) : {}
+      ms = parent ? parent.members_hash(type, context) : {}
 
       mixins.each do |mix|
-        all_members.merge!(mix.members_hash(type, context)) {|k,o,n| store_overrides(k,o,n)}
+        merge!(ms, mix.members_hash(type, context))
       end
 
       # For static members, exclude everything not explicitly marked as inheritable
       if context == :statics
-        all_members.delete_if {|key, member| !member[:inheritable] }
+        ms.delete_if {|key, member| !member[:inheritable] }
       end
 
-      all_members.merge!(local_members_hash(type, context)) {|k,o,n| store_overrides(k,o,n)}
+      merge!(ms, local_members_hash(type, context))
 
       # If singleton has static members, include them as if they were
       # instance members.  Otherwise they will be completely excluded
       # from the docs, as the static members block is not created for
       # singletons.
       if @doc[:singleton] && @doc[:statics][type].length > 0
-        all_members.merge!(local_members_hash(type, :statics)) {|k,o,n| store_overrides(k,o,n)}
+        merge!(ms, local_members_hash(type, :statics))
       end
 
-      all_members
+      ms
+    end
+
+    # merges second members hash into first one
+    def merge!(hash1, hash2, skip_overrides=false)
+      hash2.each_pair do |name, m|
+        if m[:meta] && m[:meta][:hide]
+          if hash1[name]
+            hash1.delete(name)
+          else
+            ctx = m[:files][0]
+            Logger.instance.warn(:hide, "@hide used but #{m[:tagname]} #{m[:name]} not found in parent class", ctx[:filename], ctx[:linenr])
+          end
+        else
+          if hash1[name]
+            store_overrides(hash1[name], m)
+          end
+          hash1[name] = m
+        end
+      end
     end
 
     # Invoked when merge! finds two members with the same name.
@@ -153,15 +204,25 @@ module JsDuck
     # ExtJS, we have to handle it.
     #
     # Every overridden member is listed just once.
-    def store_overrides(key, old, new)
+    def store_overrides(old, new)
       # Sometimes a class is included multiple times (like Ext.Base)
       # resulting in its members overriding themselves.  Because of
       # this, ignore overriding itself.
       if new[:owner] != old[:owner]
         new[:overrides] = [] unless new[:overrides]
-        new[:overrides] << old unless new[:overrides].any? {|m| m[:owner] == old[:owner] }
+        unless new[:overrides].any? {|m| m[:owner] == old[:owner] }
+          # Make a copy of the important properties for us.  We can't
+          # just push the actual `old` member itself, because there
+          # can be circular overrides (notably with Ext.Base), which
+          # will result in infinite loop when we try to convert our
+          # class into JSON.
+          new[:overrides] << {
+            :name => old[:name],
+            :owner => old[:owner],
+            :id => old[:id],
+          }
+        end
       end
-      new
     end
 
     # Helper method to get the direct members of this class
@@ -197,7 +258,7 @@ module JsDuck
       return ms
     end
 
-    # Returns all public members of class, including the inherited and mixed in ones
+    # Returns all members of class, including the inherited and mixed in ones
     def all_members
       all = []
       [:members, :statics].each do |group|
@@ -208,12 +269,12 @@ module JsDuck
       all
     end
 
-    # Returns all local public members of class
+    # Returns all local members of class
     def all_local_members
       all = []
       [:members, :statics].each do |group|
         @doc[group].each_value do |ms|
-          all += ms.find_all {|m| !m[:private] }
+          all += ms
         end
       end
       all
@@ -239,6 +300,17 @@ module JsDuck
     # For example for "My.package.Class" it is "Class"
     def short_name
       Class.short_name(@doc[:name])
+    end
+
+    # Returns CSS icons class for the class
+    def icon
+      if @doc[:singleton]
+        "icon-singleton"
+      elsif inherits_from?("Ext.Component")
+        "icon-component"
+      else
+        "icon-class"
+      end
     end
 
     # Static methods
@@ -273,6 +345,23 @@ module JsDuck
         :css_var => [],
         :css_mixin => [],
       }
+    end
+  end
+
+  # String class for classnames that has extra method #exists? which
+  # returns false when class with such name doesn't exist.
+  #
+  # This ability is used by JsDuck::Renderer, which only receives
+  # names of various classes but needs to only render existing classes
+  # as links.
+  class ClassNameString < String
+    def initialize(str, exists=true)
+      super(str)
+      @exists = exists
+    end
+
+    def exists?
+      @exists
     end
   end
 

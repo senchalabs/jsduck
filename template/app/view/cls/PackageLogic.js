@@ -6,7 +6,9 @@ Ext.define('Docs.view.cls.PackageLogic', {
 
     /**
      * Creates the tree.
-     * @return {Object} the tree.
+     * @return {Object} Object with two fields:
+     * @return {Object} return.root Root node
+     * @return {Object[]} return.privates Array of hidden nodes
      */
     create: function() {
         this.root = {
@@ -14,9 +16,13 @@ Ext.define('Docs.view.cls.PackageLogic', {
             text: 'Root'
         };
         this.packages = {"": this.root};
+        this.privates = [];
         Ext.Array.forEach(this.classes, this.addClass, this);
         this.sortTree(this.root);
-        return this.root;
+        return {
+            root: this.root,
+            privates: this.privates
+        };
     },
 
     // Sorts all child nodes, and recursively all child packages.
@@ -41,6 +47,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
     // package; otherwise create the package first.
     addClass: function(cls) {
         if (cls["private"] && !this.showPrivateClasses) {
+            this.privates.push(this.classNode(cls));
             return;
         }
         if (this.packages[cls.name]) {
@@ -55,11 +62,8 @@ Ext.define('Docs.view.cls.PackageLogic', {
         else {
             var parentName = this.packageName(cls.name);
             var parent = this.packages[parentName] || this.addPackage(parentName);
-            if (parent.leaf) {
-                parent.leaf = false;
-            }
             var node = this.classNode(cls);
-            parent.children.push(node);
+            this.addChild(parent, node);
             this.packages[cls.name] = node;
         }
     },
@@ -71,12 +75,20 @@ Ext.define('Docs.view.cls.PackageLogic', {
     // Note that the root package always exists, so we can safely
     // recurse knowing we will eventually stop.
     addPackage: function(name) {
-      var parentName = this.packageName(name);
-      var parent = this.packages[parentName] || this.addPackage(parentName);
-      var pkg = this.packageNode(name);
-      parent.children.push(pkg);
-      this.packages[name] = pkg;
-      return pkg;
+        var parentName = this.packageName(name);
+        var parent = this.packages[parentName] || this.addPackage(parentName);
+        var pkg = this.packageNode(name);
+        this.addChild(parent, pkg);
+        this.packages[name] = pkg;
+        return pkg;
+    },
+
+    // Add child node and ensure parent is no more marked as a leaf
+    addChild: function(parent, child) {
+        parent.children.push(child);
+        if (parent.leaf) {
+            parent.leaf = false;
+        }
     },
 
     // Given full doc object for class creates class node

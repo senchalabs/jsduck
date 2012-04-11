@@ -26,67 +26,76 @@
     font-weight: normal; } }
 
 .class-overview, .guide-container, .comment-index {
-  min-height: 100px;
-  .clr {
-    clear: both; }
-  p, ul {
-    color: #484848;
-    max-width: 900px; }
-  p {
-    padding: 0;
-    margin: 0 0 1em; }
-  p:last-child {
-    margin: 0; }
-  ul {
-    margin: 0 0 1em 2em;
-    li {
-      list-style: disc outside; } }
-  ol {
-    margin: 0 0 1em 2em;
-    li {
-      list-style: decimal outside; } }
-  em {
-    font-style: italic; }
-  strong {
-    font-weight: bold; }
-  h3 {
-    font-weight: bold;
-    font-size: 1.1em; }
-  h4 {
-    font-weight: bold; }
-  table {
-    margin-bottom: 10px;
-    tr:first-child {
-      td {
-        color: #000;
-        font-weight: bold; } }
-    td {
+  // Style only the body area, or the toolbar will get styled too
+  .x-panel-body {
+    min-height: 100px;
+    .clr {
+      clear: both; }
+    p, ul, ol {
       color: #484848;
-      padding: 2px 20px 2px 0; } }
-  pre {
-    background-color: #f7f7f7;
-    border: solid 1px #e8e8e8;
-    @include border-radius(5px);
-    color: #314e64;
-    font-family: $docs-monospace-font;
-    padding: 10px 20px;
-    line-height: 1.3em;
-    margin: 10px 0 14px 0;
-    max-width: 900px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    code {
-      font-family: $docs-monospace-font; }
-    i,em {
-      font-style: normal; } }
-  pre.prettyprint {
-    padding: 10px 12px; } }
+      max-width: 900px; }
+    p {
+      padding: 0;
+      margin: 0 0 1em; }
+    p:last-child {
+      margin: 0; }
+    ul {
+      margin: 0 0 1em 2em;
+      li {
+        list-style: disc outside; } }
+    ol {
+      margin: 0 0 1em 2em;
+      li {
+        list-style: decimal outside; } }
+    em {
+      font-style: italic; }
+    strong {
+      font-weight: bold; }
+    h3 {
+      font-weight: bold;
+      font-size: 1.1em; }
+    h4 {
+      font-weight: bold; }
+    table {
+      margin-bottom: 10px;
+      tr:first-child {
+        td {
+          color: #000;
+          font-weight: bold; } }
+      td {
+        color: #484848;
+        padding: 2px 20px 2px 0; } }
+    pre.notpretty, pre.prettyprint {
+      background-color: #f7f7f7;
+      border: solid 1px #e8e8e8;
+      @include border-radius(5px);
+      color: #314e64;
+      font-family: $docs-monospace-font;
+      padding: 10px 12px;
+      line-height: 1.3em;
+      margin: 10px 0 14px 0;
+      max-width: 900px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      code {
+        font-family: $docs-monospace-font; }
+      i, em {
+        font-style: normal; } } } }
 
 @import "class_overview";
 
 #center-container .guide-container {
   padding: 10px;
   font-size: 14px;
+  // Table of contents for guides
+  // Similar styles to class docs sidebar
+  .toc {
+    float: right;
+    background-color: #f7f7f7;
+    border: solid 1px #e8e8e8;
+    padding: 10px 20px;
+    margin: 0 14px;
+    @include border-radius(5px); }
   h1 {
     background: url(../images/doc-m.png) no-repeat -5px -5px;
     padding: 10px 0 10px 55px;

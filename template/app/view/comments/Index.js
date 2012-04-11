@@ -2,7 +2,7 @@
  * Container for recent comments listing.
  */
 Ext.define('Docs.view.comments.Index', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.commentindex',
 
     cls: 'comment-index iScroll',
@@ -10,7 +10,7 @@ Ext.define('Docs.view.comments.Index', {
     autoScroll: true,
 
     items: [
-        { xtype: 'container', html: '<h1>Recent Comments</h1>' },
+        { xtype: 'container', html: '<h1>Recent Comments</h1> Hide read: <input type="checkbox" name="hideRead" id="hideRead" />' },
         { xtype: 'container', id: 'recentcomments' }
     ],
 

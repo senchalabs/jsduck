@@ -6,8 +6,11 @@ Ext.define('Docs.view.Tabs', {
     extend: 'Ext.container.Container',
     alias: 'widget.doctabs',
     id: 'doctabs',
-
     componentCls: 'doctabs',
+    requires: [
+        'Docs.History',
+        'Docs.view.TabMenu'
+    ],
 
     minTabWidth: 80,
     maxTabWidth: 160,
@@ -19,6 +22,22 @@ Ext.define('Docs.view.Tabs', {
     staticTabs: [],
 
     initComponent: function() {
+        this.addEvents(
+            /**
+             * @event
+             * Fired when one of the tabs gets activated.
+             * @param {String} url The URL of the page associated with the tab.
+             * @param {Object} opts Might contain `{navigate: true}`.
+             */
+            "tabActivate",
+            /**
+             * @event
+             * Fired when one of the tabs gets closed from close button.
+             * @param {String} url The URL of the page associated with the tab.
+             */
+            "tabClose"
+        );
+
         this.tpl = Ext.create('Ext.XTemplate',
             '<tpl for=".">',
                 '<div class="doctab overview {cls}{active}">',
@@ -28,7 +47,7 @@ Ext.define('Docs.view.Tabs', {
                 '</div>',
             '</tpl>',
             '<div style="float: left; width: 8px">&nbsp;</div>',
-            '<div id="tabOverflow"></div>'
+            '<div class="tab-overflow"></div>'
         );
 
         this.html = this.tpl.applyTemplate(this.staticTabs);
@@ -48,13 +67,72 @@ Ext.define('Docs.view.Tabs', {
             '</div>'
         );
 
+        this.on("afterrender", this.initListeners, this);
+
+        this.on("resize", this.refresh, this);
+
         this.callParent();
     },
 
-    listeners: {
-        afterrender: function() {
-            this.createOverflow();
-        }
+    initListeners: function() {
+        // Hover effect for tab close button
+        this.el.on('mouseover', function(event, el) {
+            Ext.get(el).addCls('ovr');
+        }, this, {
+            delegate: '.close'
+        });
+        this.el.on('mouseout', function(event, el) {
+            Ext.get(el).removeCls('ovr');
+        }, this, {
+            delegate: '.close'
+        });
+
+        // Close tab when clicked on close button
+        this.el.on('click', function(event, el) {
+            var url = Ext.get(el).up('.doctab').down('.tabUrl').getAttribute('href');
+            url = Docs.History.cleanUrl(url);
+            this.removeTab(url);
+            this.fireEvent("tabClose", url);
+        }, this, {
+            delegate: '.close',
+            preventDefault: true
+        });
+
+        // Navigate to page when tab clicked
+        this.el.on('click', function(event, el) {
+            // Do nothing when close button within the tab was clicked.
+            if (Ext.fly(event.getTarget()).hasCls("close")) {
+                return;
+            }
+            var url = Ext.get(el).down('.tabUrl').getAttribute('href');
+            this.fireEvent("tabActivate", url, {navigate: true});
+        }, this, {
+            delegate: '.doctab'
+        });
+
+        // On right-click open the overflow menu as context-menu
+        this.el.on('contextmenu', function(event, el) {
+            // don't show the menu on static tabs
+            if (!Ext.get(el).hasCls('overview')) {
+                this.createMenu().showBy(el);
+            }
+        }, this, {
+            delegate: '.doctab',
+            preventDefault: true
+        });
+
+        // Don't follow the URL when the <a> element inside tab clicked
+        this.el.on('click', Ext.emptyFn, this, {
+            delegate: '.tabUrl',
+            preventDefault: true
+        });
+
+        // when tabs are to be resized, do it after mouse has left tab-bar
+        this.el.on('mouseleave', function() {
+            if (this.shouldResize) {
+                this.resizeTabs({animate: true});
+            }
+        }, this);
     },
 
     /**
@@ -98,7 +176,7 @@ Ext.define('Docs.view.Tabs', {
             if (this.roomForNewTab()) {
                 this.addTabToBar(tab, opts);
             }
-            this.addTabToOverflow(tab, opts);
+            this.addTabToMenu(this.overflowButton.menu, tab);
         }
         if (opts.activate) {
             this.activateTab(tab.href);
@@ -117,31 +195,39 @@ Ext.define('Docs.view.Tabs', {
             return;
         }
 
-        var idx = Ext.Array.indexOf(this.tabs, url);
-        if (idx !== false) {
-            Ext.Array.erase(this.tabs, idx, 1);
-        }
-        var idx = Ext.Array.indexOf(this.tabsInBar, url);
-        if (idx !== false) {
-            Ext.Array.erase(this.tabsInBar, idx, 1);
-        }
-        if (this.tabs[this.tabsInBar.length]) {
-            this.tabsInBar.push(this.tabs[this.tabsInBar.length]);
+        // Remove the tab both from tab-bar and all-tabs array
+        this.removeFromArray(this.tabs, url);
+        var removedIndex = this.removeFromArray(this.tabsInBar, url);
+
+        // An empty space in tab-bar has now become available
+        // If the all-tabs array has an item to fill this spot,
+        // add the item from all-tabs array to tab-bar.
+        var firstHiddenTab = this.tabs[this.tabsInBar.length];
+        if (firstHiddenTab) {
+            this.tabsInBar.push(firstHiddenTab);
         }
 
-        if (this.activeTab && this.activeTab === url) {
+        // Was the active tab closed?
+        if (this.activeTab === url) {
             if (this.tabs.length === 0) {
+                // When all tabs were closed
+                // open index page corresponding to the last closed tab type
                 Docs.App.getController(this.getControllerName(url)).loadIndex();
             }
             else {
-                if (idx === this.tabs.length) {
-                    idx -= 1;
+                // When more tabs remaining
+                // activate the tab at the position of last closed tab.
+                // Except when the last tab was closed - then choose one before it.
+                if (removedIndex === this.tabs.length) {
+                    removedIndex -= 1;
                 }
-                this.activateTab(this.tabs[idx]);
-                Docs.History.push(this.tabs[idx]);
+                this.activateTab(this.tabs[removedIndex]);
+                this.fireEvent("tabActivate", this.tabs[removedIndex]);
             }
         }
 
+        // When removed tab got replaced with hidden tab do a full refresh of tabs.
+        // Otherwise just remove the single tab.
         if (this.tabs.length >= this.maxTabsInBar()) {
             this.refresh();
         } else {
@@ -149,6 +235,16 @@ Ext.define('Docs.view.Tabs', {
         }
 
         this.saveTabs();
+    },
+
+    // Removes item from array
+    // Returns the index from which the item was removed.
+    removeFromArray: function(array, item) {
+        var idx = Ext.Array.indexOf(array, item);
+        if (idx !== -1) {
+            Ext.Array.erase(array, idx, 1);
+        }
+        return idx;
     },
 
     /**
@@ -201,11 +297,11 @@ Ext.define('Docs.view.Tabs', {
 
         if (this.activeTab && this.activeTab !== this.tabs[len-1]) {
             this.activateTab(this.activeTab);
-            Docs.History.push(this.activeTab);
+            this.fireEvent("tabActivate", this.activeTab);
         }
 
         this.highlightOverviewTab(this.activeTab);
-        this.createOverflow();
+        this.createOverflowButton();
         this.addToolTips();
     },
 
@@ -294,7 +390,7 @@ Ext.define('Docs.view.Tabs', {
         docTab.dom.removed = true;
         if (Ext.isIE) {
             docTab.remove();
-            this.createOverflow();
+            this.createOverflowButton();
         } else {
             docTab.animate({
                 to: { top: 30 },
@@ -306,40 +402,12 @@ Ext.define('Docs.view.Tabs', {
                     afteranimate: function() {
                         docTab.remove();
                         this.shouldResize = true;
-                        this.createOverflow();
+                        this.createOverflowButton();
                     },
                     scope: this
                 }
             });
         }
-    },
-
-    /**
-     * @private
-     * Adds a tab to the overflow list
-     */
-    addTabToOverflow: function(tab, opts) {
-        var inTabBar = this.inTabBar(tab.href);
-        var idx = Ext.Array.indexOf(this.tabs, tab.href);
-
-        if (this.tabs.length > this.tabsInBar.length && idx === this.maxTabsInBar()) {
-            // Add 'overflow' class to last visible tab in overflow dropdown
-            var prevMenuItem = Ext.ComponentQuery.query('#tabOverflowMenu menuitem[href=' + this.tabs[idx-1] + ']');
-            Ext.Array.each(prevMenuItem, function(item) {
-                item.addCls('overflow');
-            });
-        }
-
-        // Insert before 'close all tabs' button
-        var insertIdx = Ext.getCmp('tabOverflowMenu').items.length - 1;
-
-        Ext.getCmp('tabOverflowMenu').insert(insertIdx, {
-            text: tab.text,
-            iconCls: tab.iconCls,
-            origIcon: tab.iconCls,
-            href: tab.href,
-            cls: (inTabBar ? '' : ' overflow')
-        });
     },
 
     /**
@@ -427,36 +495,49 @@ Ext.define('Docs.view.Tabs', {
         }
     },
 
-    /**
-     * @private
-     * Creates the overflow button and add items
-     */
-    createOverflow: function() {
+    // Creates new overflow button, replacing the existing one
+    createOverflowButton: function() {
         if (this.overflowButton) {
             this.overflowButton.destroy();
         }
 
         this.overflowButton = Ext.create('Ext.button.Button', {
             baseCls: "",
-            renderTo: 'tabOverflow',
-            menu: {
-                id: 'tabOverflowMenu',
-                plain: true,
-                items: [{
-                    text: 'Close all tabs',
-                    iconCls: 'close',
-                    cls: 'overflow close-all',
-                    handler: function() {
-                        this.closeAllTabs();
-                    },
-                    scope: this
-                }]
+            renderTo: this.getEl().down('.tab-overflow'),
+            menu: this.createMenu()
+        });
+    },
+
+    // creates menu listing all tabs
+    createMenu: function() {
+        var menu = new Docs.view.TabMenu({
+            listeners: {
+                closeAllTabs: this.closeAllTabs,
+                tabItemClick: function(item) {
+                    this.fireEvent("tabActivate", item.href, { navigate: true });
+                },
+                scope: this
             }
         });
 
         Ext.Array.each(this.tabs, function(tab) {
-            this.addTabToOverflow(this.tabCache[tab]);
+            this.addTabToMenu(menu, this.tabCache[tab]);
         }, this);
+
+        return menu;
+    },
+
+    // Adds a tab to the menu
+    addTabToMenu: function(menu, tab) {
+        var idx = Ext.Array.indexOf(this.tabs, tab.href);
+
+        if (this.tabs.length > this.tabsInBar.length && idx === this.maxTabsInBar()) {
+            // Add 'overflow' class to last visible tab in overflow dropdown
+            menu.addTabCls(tab, 'overflow');
+        }
+
+        var inTabBar = this.inTabBar(tab.href);
+        menu.addTab(tab, inTabBar ? '' : 'overflow');
     },
 
     addToolTips: function() {

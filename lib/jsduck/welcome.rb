@@ -1,4 +1,5 @@
 require 'jsduck/null_object'
+require 'jsduck/io'
 
 module JsDuck
 
@@ -14,7 +15,7 @@ module JsDuck
 
     # Parses welcome HTML file with content for welcome page.
     def initialize(filename)
-      @html = IO.read(filename)
+      @html = JsDuck::IO.read(filename)
     end
 
     # Returns the HTML

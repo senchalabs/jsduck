@@ -1,5 +1,9 @@
 Ext.ns("Docs");
 
+// Ext 4.0.7 has a bug that when creating cors request
+// the Ext.isIe property is mistakenly checked instead of Ext.isIE.
+Ext.isIe = Ext.isIE;
+
 Ext.Loader.setConfig({
     enabled: true,
     paths: {

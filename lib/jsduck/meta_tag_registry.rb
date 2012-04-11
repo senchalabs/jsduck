@@ -1,11 +1,27 @@
-require 'singleton'
 require "jsduck/meta_tag_loader"
 
 module JsDuck
 
   # Access to meta-tags
   class MetaTagRegistry
-    include Singleton
+
+    @@instance = nil
+
+    # Returns singleton instance of MetaTagRegistry.
+    # By default this will be auto-loaded with builtin tags.
+    def self.instance
+      if !@@instance
+        @@instance = MetaTagRegistry.new
+        @@instance.load([:builtins])
+      end
+      @@instance
+    end
+
+    # Allows injecting another MetaTagRegistry to be used as a global instance.
+    def self.instance=(instance)
+      @@instance = instance
+    end
+
 
     def initialize
       @tags = []
@@ -31,9 +47,20 @@ module JsDuck
       register_keys
     end
 
-    # Returns array of all available tag instances
-    def tags
-      @tags
+    # Returns array of all available tag instances.
+    # When position provided, returns only tags in that position
+    def tags(position=nil)
+      return @tags unless position
+
+      unless @position_map
+        @position_map = {}
+        @tags.each do |t|
+          @position_map[t.position] = [] unless @position_map[t.position]
+          @position_map[t.position] << t
+        end
+      end
+
+      @position_map[position] || []
     end
 
     # Accesses tag by key or name
@@ -50,6 +77,11 @@ module JsDuck
     def formatter=(doc_formatter)
       @formatter = doc_formatter
       @tags.each {|tag| tag.formatter = doc_formatter }
+    end
+
+    # Gives access to assets for all tags
+    def assets=(assets)
+      @tags.each {|tag| tag.assets = assets }
     end
 
     # Returns array of attributes to be shown in member signatures

@@ -138,13 +138,22 @@ module JsDuck
       maybe_assignment
     end
 
-    # <maybe-assignment> := <ident-chain> [ "=" <expression> ]
+    # <maybe-assignment> := <ident-chain> ( "=" <expression> | ";" | "," )
     def maybe_assignment
       left = ident_chain
       if look("=")
         match("=")
         right = expression
+      elsif look(";")
+        match(";")
+        right = nil
+      elsif look(",")
+        match(",")
+        right = nil
+      else
+        return {:type => :nop}
       end
+
       return {
         :type => :assignment,
         :left => left,

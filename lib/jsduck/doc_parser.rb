@@ -124,7 +124,7 @@ module JsDuck
           at_member
         elsif look(/@inherit[dD]oc\b/)
           at_inheritdoc
-        elsif look(/@alias\s+[\w.]+#\w+/)
+        elsif look(/@alias\s+([\w.]+)?#\w+/)
           # For backwards compatibility.
           # @alias tag was used as @inheritdoc before
           at_inheritdoc
@@ -134,8 +134,6 @@ module JsDuck
           at_var
         elsif look(/@inheritable\b/)
           boolean_at_tag(/@inheritable/, :inheritable)
-        elsif look(/@(private|ignore|hide)\b/)
-          boolean_at_tag(/@(private|ignore|hide)/, :private)
         elsif look(/@accessor\b/)
           boolean_at_tag(/@accessor/, :accessor)
         elsif look(/@evented\b/)
@@ -288,7 +286,9 @@ module JsDuck
       add_tag(:type)
       skip_horiz_white
       if look(/\{/)
-        @current_tag[:type] = typedef
+        tdf = typedef
+        @current_tag[:type] = tdf[:type]
+        @current_tag[:optional] = true if tdf[:optional]
       elsif look(/\S/)
         @current_tag[:type] = @input.scan(/\S+/)
       end
@@ -327,21 +327,24 @@ module JsDuck
 
       add_tag(:inheritdoc)
       skip_horiz_white
+
       if look(@ident_chain_pattern)
         @current_tag[:cls] = ident_chain
-        if look(/#\w/)
-          @input.scan(/#/)
-          if look(/static-/)
-            @current_tag[:static] = true
-            @input.scan(/static-/)
-          end
-          if look(/(cfg|property|method|event|css_var|css_mixin)-/)
-            @current_tag[:type] = ident.to_sym
-            @input.scan(/-/)
-          end
-          @current_tag[:member] = ident
-        end
       end
+
+      if look(/#\w/)
+        @input.scan(/#/)
+        if look(/static-/)
+          @current_tag[:static] = true
+          @input.scan(/static-/)
+        end
+        if look(/(cfg|property|method|event|css_var|css_mixin)-/)
+          @current_tag[:type] = ident.to_sym
+          @input.scan(/-/)
+        end
+        @current_tag[:member] = ident
+      end
+
       skip_white
     end
 
@@ -353,10 +356,13 @@ module JsDuck
     end
 
     # matches {type} if possible and sets it on @current_tag
+    # Also checks for {optionality=} in type definition.
     def maybe_type
       skip_horiz_white
       if look(/\{/)
-        @current_tag[:type] = typedef
+        tdf = typedef
+        @current_tag[:type] = tdf[:type]
+        @current_tag[:optional] = true if tdf[:optional]
       end
     end
 
@@ -430,12 +436,28 @@ module JsDuck
       end
     end
 
-    # matches {...} and returns text inside brackets
+    # matches {...=} and returns text inside brackets
     def typedef
       match(/\{/)
-      name = @input.scan(/[^}]+/)
+      name = @input.scan(/[^{}]*/)
+
+      # Type definition can contain nested braces: {{foo:Number}}
+      # In such case we parse the definition so that the braces are balanced.
+      while @input.check(/[{]/)
+        name += "{" + typedef[:type] +"}"
+        name += @input.scan(/[^{}]*/)
+      end
+
+      if name =~ /=$/
+        name = name.chop
+        optional = true
+      else
+        optional = nil
+      end
+
       match(/\}/)
-      return name
+
+      return {:type => name, :optional => optional}
     end
 
     # matches <ident_chain> <ident_chain> ... until line end

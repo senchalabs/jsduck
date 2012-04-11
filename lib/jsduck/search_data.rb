@@ -4,11 +4,12 @@ module JsDuck
   # Creates list of all members in all classes that is used by the
   # searching feature in UI.
   class SearchData
-    # Given list of class documentation objects returns an array of
-    # hashes describing all the members.
-    def create(docs)
+    # Given list of classes and other assets, returns an array of
+    # hashes describing the search data.
+    def create(classes, assets)
       list = []
-      docs.each do |cls|
+
+      classes.each do |cls|
         list << class_node(cls)
 
         cls[:alternateClassNames].each do |name|
@@ -32,54 +33,93 @@ module JsDuck
           end
         end
       end
+
+      assets.guides.each_item {|g| list << guide_node(g) }
+
+      assets.videos.each_item {|v| list << video_node(v) }
+
+      assets.examples.each_item {|e| list << example_node(e) }
+
       list
     end
 
-    # Creates structure representing one alias
+    private
+
     def alias_node(key, name, cls)
       return {
-        :cls => alias_display_name(key)+": "+name,
-        :member => name,
-        :type => :class,
-        :icon => :subclass,
-        :id => cls.full_name,
+        :name => name,
+        :fullName => alias_display_name(key)+": "+name,
+        :icon => cls.icon + "-redirect",
+        :url => "#!/api/" + cls.full_name,
+        :meta => cls[:meta],
         :sort => 0,
       }
     end
 
-    # Creates structure representing one class
     def class_node(cls)
       return {
-        :cls => cls.full_name,
-        :member => cls.short_name,
-        :type => :class,
-        :icon => :class,
-        :id => cls.full_name,
+        :name => cls.short_name,
+        :fullName => cls.full_name,
+        :icon => cls.icon,
+        :url => "#!/api/" + cls.full_name,
+        :meta => cls[:meta],
         :sort => 1,
       }
     end
 
-    # Creates structure representing one alternate classname
     def alt_node(name, cls)
       return {
-        :cls => name,
-        :member => Class.short_name(name),
+        :name => Class.short_name(name),
+        :fullName => name,
         :type => :class,
-        :icon => :subclass,
-        :id => cls.full_name,
+        :icon => cls.icon + "-redirect",
+        :url => "#!/api/" + cls.full_name,
+        :meta => cls[:meta],
         :sort => 2,
       }
     end
 
-    # Creates structure representing one member
     def member_node(member, cls)
       return {
-        :cls => cls.full_name,
-        :member => member[:name],
-        :type => :member,
-        :icon => member[:tagname],
-        :id => cls.full_name + "-" + member[:id],
+        :name => member[:name],
+        :fullName => cls.full_name + "." + member[:name],
+        :icon => "icon-" + member[:tagname].to_s,
+        :url => "#!/api/" + cls.full_name + "-" + member[:id],
+        :meta => member[:meta],
         :sort => 3,
+      }
+    end
+
+    def guide_node(guide)
+      return {
+        :name => guide["title"],
+        :fullName => "guide: " + guide["title"],
+        :icon => "icon-guide",
+        :url => "#!/guide/" + guide["name"],
+        :meta => {},
+        :sort => 4,
+      }
+    end
+
+    def video_node(video)
+      return {
+        :name => video["title"],
+        :fullName => "video: " + video["title"],
+        :icon => "icon-video",
+        :url => "#!/video/" + video["name"],
+        :meta => {},
+        :sort => 4,
+      }
+    end
+
+    def example_node(example)
+      return {
+        :name => example["title"],
+        :fullName => "example: " + example["title"],
+        :icon => "icon-example",
+        :url => "#!/example/" + example["name"],
+        :meta => {},
+        :sort => 4,
       }
     end
 

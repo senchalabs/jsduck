@@ -9,18 +9,8 @@ module JsDuck
           :name => cls[:name],
           :extends => cls[:extends],
           :private => cls[:private],
-          :icon => icon(cls),
+          :icon => cls.icon,
         }
-      end
-    end
-
-    def icon(cls)
-      if cls[:singleton]
-        "icon-singleton"
-      elsif cls.inherits_from?("Ext.Component")
-        "icon-component"
-      else
-        "icon-class"
       end
     end
   end

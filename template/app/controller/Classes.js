@@ -12,14 +12,6 @@ Ext.define('Docs.controller.Classes', {
         'Docs.ClassRegistry'
     ],
 
-    stores: [
-        'Settings'
-    ],
-
-    models: [
-        'Setting'
-    ],
-
     refs: [
         {
             ref: 'viewport',
@@ -89,27 +81,6 @@ Ext.define('Docs.controller.Classes', {
             'classtree': {
                 urlclick: function(url, event) {
                     this.handleUrlClick(url, event, this.getTree());
-                },
-                afterrender: function(cmp) {
-                    cmp.el.addListener('click', function(e, el) {
-                        var clicked = Ext.get(el),
-                            selected = Ext.get(Ext.query('.cls-grouping button.selected')[0]);
-
-                        if (selected.dom === clicked.dom) {
-                            return;
-                        }
-
-                        selected.removeCls('selected');
-                        clicked.addCls('selected');
-
-                        if (clicked.hasCls('by-package')) {
-                            this.getTree().setLogic(Docs.view.cls.PackageLogic);
-                        } else {
-                            this.getTree().setLogic(Docs.view.cls.InheritanceLogic);
-                        }
-                    }, this, {
-                        delegate: 'button'
-                    });
                 }
             },
 

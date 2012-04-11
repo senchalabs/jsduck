@@ -1,34 +1,38 @@
 require 'jsduck/json_duck'
 require 'jsduck/null_object'
+require 'jsduck/grouped_asset'
 
 module JsDuck
 
   # Reads in videos JSON file
-  class Videos
+  class Videos < GroupedAsset
     # Parses videos config file
     def self.create(filename)
       if filename
         Videos.new(filename)
       else
-        NullObject.new(:to_array => [])
+        NullObject.new(:to_array => [], :[] => nil)
       end
     end
 
     def initialize(filename)
-      @videos = JsonDuck.read(filename)
+      @groups = JsonDuck.read(filename)
+      add_names_if_missing
+      build_map_by_name("Two videos have the same name")
     end
 
-    # Writes videos JSON file to a dir
-    def write(dir)
-      FileUtils.mkdir(dir) unless File.exists?(dir)
-      # Write the JSON to output dir, so it's available in released
-      # version of docs and people can use it with JSDuck by themselves.
-      JsonDuck.write_json(dir+"/videos.json", @videos)
+    # Each video should have a name, which is used in URL to reference the video.
+    # For backwards compatibility, when name is missing, we turn the "id" (that must exist)
+    # into a name.
+    def add_names_if_missing
+      each_item do |video|
+        video["name"] = video["id"] unless video["name"]
+      end
     end
 
-    # Returns all videos as array
-    def to_array
-      @videos
+    # Extracts video icon URL from video hash
+    def icon_url(video)
+      video["thumb"]
     end
 
   end

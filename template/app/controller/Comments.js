@@ -11,7 +11,9 @@ Ext.define('Docs.controller.Comments', {
     },
 
     requires: [
-        "Docs.Syntax"
+        "Docs.view.auth.LoginHelper",
+        "Docs.Syntax",
+        "Docs.Tip"
     ],
 
     refs: [
@@ -43,7 +45,15 @@ Ext.define('Docs.controller.Comments', {
              * Fired after a comment is removed
              * @param {String} key  Key of the comment
              */
-            'remove'
+            'remove',
+
+            /**
+             * @event changeSubscription
+             * Fired after a comment email subscription has changed
+             * @param {Boolean} subscribed  Whether the subscription is active
+             * @param {String} key  Key of the comment
+             */
+            'changeSubscription'
         );
 
         if (!Docs.enableComments) {
@@ -104,17 +114,24 @@ Ext.define('Docs.controller.Comments', {
                         [ '.postComment',          'click', this.postComment],
                         [ '.updateComment',        'click', this.updateComment],
                         [ '.cancelUpdateComment',  'click', this.cancelUpdateComment],
-                        [ '.deleteComment',        'click', this.promptDeleteComment],
+                        [ '.deleteComment',        'click', this.deleteComment],
+                        [ '.undoDeleteComment',    'click', this.undoDeleteComment],
                         [ '.editComment',          'click', this.editComment],
+                        [ '.readComment',          'click', this.readComment],
                         [ '.fetchMoreComments',    'click', this.fetchMoreComments],
                         [ '.voteCommentUp',        'click', this.voteUp],
-                        [ '.voteCommentDown',      'click', this.voteDown]
+                        [ '.voteCommentDown',      'click', this.voteDown],
+                        [ '#hideRead',            'change', function() { this.fetchRecentComments(); }]
                     ], function(delegate) {
                         cmp.el.addListener(delegate[1], delegate[2], this, {
                             preventDefault: true,
                             delegate: delegate[0]
                         });
                     }, this);
+
+                    cmp.el.addListener('click', this.updateSubscription, this, {
+                        delegate: '.subscriptionCheckbox'
+                    });
                 }
             },
 
@@ -146,7 +163,7 @@ Ext.define('Docs.controller.Comments', {
         this.fireEvent('loadIndex');
         Ext.getCmp('treecontainer').hide();
         if (!this.recentComments) {
-            this.fetchRecentComments('recentcomments');
+            this.fetchRecentComments();
             this.recentComments = true;
         }
         this.callParent([true]);
@@ -155,11 +172,10 @@ Ext.define('Docs.controller.Comments', {
     fetchComments: function(id, callback, opts) {
         var startkey = Ext.JSON.encode(this.commentId(id)),
             endkey = Ext.JSON.encode(this.commentId(id).concat([{}])),
-            currentUser = this.getController('Auth').currentUser,
-            url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_target';
+            currentUser = this.getController('Auth').currentUser;
 
-        Ext.data.JsonP.request({
-            url: url,
+        this.request("jsonp", {
+            url: '/comments',
             method: 'GET',
             params: {
                 reduce: false,
@@ -168,21 +184,22 @@ Ext.define('Docs.controller.Comments', {
                 user: currentUser && currentUser.userName
             },
             success: function(response) {
-                callback.call(this, response.rows, id, opts);
+                callback.call(this, response, id, opts);
             },
             scope: this
         });
     },
 
     postComment: function(cmp, el) {
-        if (!this.loggedIn()) {
+        if (!this.isLoggedIn()) {
             return false;
         }
 
         var postButton = Ext.get(el),
             comments = postButton.up('.comments-div'),
             id = comments.getAttribute('id'),
-            target = Ext.JSON.encode(this.commentId(id)),
+            target = this.commentId(id),
+            encodedTarget = Ext.JSON.encode(target),
             textarea = comments.down('textarea').dom,
             comment = textarea.editor.getValue(),
             action = comments.down('.commentAction').getValue(),
@@ -211,15 +228,31 @@ Ext.define('Docs.controller.Comments', {
         }
         postButton.addCls('disabled');
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb),
+        var url = target[1],
+            title = target[1],
+            urlPrefix = '#!/api/';
+
+        if (target[0] == 'video') {
+            title = 'Video ' + title;
+            urlPrefix = '#!/video/';
+        } else if (target[0] == 'guide') {
+            title = 'Guide ' + title;
+            urlPrefix = '#!/guide/';
+        } else if (target[2] != '') {
+            url += '-' + target[2];
+            title += ' ' + target[2];
+        }
+
+        this.request("ajax", {
+            url: '/comments',
             method: 'POST',
-            cors: true,
             params: {
-                target: target,
+                target: encodedTarget,
                 comment: comment,
                 rating: feedbackRating,
-                action: action
+                action: action,
+                title: title,
+                url: "http://" + window.location.host + window.location.pathname + urlPrefix + url
             },
             callback: function(options, success, response) {
                 if (response && response.responseText) {
@@ -243,95 +276,126 @@ Ext.define('Docs.controller.Comments', {
     /**
      * Fetches the most recent comments
      */
-    fetchRecentComments: function(id, startkey) {
-        var url = Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_date',
-            limit = 100;
-
+    fetchRecentComments: function(offset) {
         var params = {
-            descending: true,
-            limit: limit
+            offset: offset || 0,
+            limit: 100
         };
 
-        if (startkey) {
-            params.startkey = startkey;
-            params.skip = 1;
+        if (this.isHideReadChecked()) {
+            params.hideRead = 1;
         }
 
-        Ext.data.JsonP.request({
-            url: url,
+        this.request("jsonp", {
+            url: '/comments_recent',
             method: 'GET',
             params: params,
             success: function(response) {
-                var opts = {
-                    showCls: true,
+                this.renderComments(response, 'recentcomments', {
                     hideCommentForm: true,
-                    limit: limit,
-                    offset: response.offset,
-                    total_rows: response.total_rows
-                };
-
-                if (startkey) {
-                    opts.append = true;
-                }
-
-                this.renderComments(response.rows, id, opts);
+                    append: !!offset,
+                    showCls: true
+                });
             },
             scope: this
         });
     },
 
-    fetchMoreComments: function(cmp, el) {
-
-        var moreLink = Ext.get(el);
-
-        if (moreLink.hasCls('recent')) {
-            this.fetchRecentComments('recentcomments', '[' + moreLink.getAttribute('rel') + ']');
-        }
+    isHideReadChecked: function() {
+        var cb = Ext.get('hideRead');
+        return cb && cb.dom.checked;
     },
 
-    /**
-     * Promts the user for confirmation of comment deletion. Deleted the comment
-     * if the user confirms.
-     */
-    promptDeleteComment: function(cmp, el) {
-        if (!this.loggedIn()) {
-            return false;
-        }
-
-        Ext.Msg.show({
-             title:'Are you sure?',
-             msg: 'Are you sure you wish to delete this comment?',
-             buttons: Ext.Msg.YESNO,
-             icon: Ext.Msg.QUESTION,
-             fn: function(buttonId) {
-                 if (buttonId == 'yes') {
-                     this.deleteComment(cmp, el);
-                 }
-             },
-             scope: this
-        });
+    fetchMoreComments: function(cmp, el) {
+        this.fetchRecentComments(Ext.get(el).getAttribute('rel'));
     },
 
     /**
      * Sends a delete comment request to the server.
      */
     deleteComment: function(cmp, el) {
+        if (!this.isLoggedIn()) {
+            return;
+        }
+
         var id = Ext.get(el).up('.comment').getAttribute('id'),
             commentsEl = Ext.get(el).up('.comments-div'),
-            cls = commentsEl && commentsEl.getAttribute('id');
+            target = commentsEl && commentsEl.getAttribute('id');
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + id + '/delete'),
-            cors: true,
+        this.request("ajax", {
+            url: '/comments/' + id + '/delete',
             method: 'POST',
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
 
                 if (data.success) {
-                    if (cls) {
-                        this.fireEvent('remove', cls);
+                    if (target) {
+                        this.fireEvent('remove', target);
                     }
-                    Ext.get(id).remove();
+                    // Ext.get(id).remove();
+                    Ext.get(id).update('<div class="deleted-comment">Comment was deleted. <a href="#" class="undoDeleteComment">Undo</a>.</div>');
+                } else {
+                    Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
+                }
+            },
+            scope: this
+        });
+    },
+
+    /**
+     * Sends a read comment request to the server.
+     */
+    readComment: function(cmp, el) {
+        if (!this.isLoggedIn()) {
+            return;
+        }
+
+        var id = Ext.get(el).up('.comment').getAttribute('id'),
+            commentsEl = Ext.get(el).up('.comments-div'),
+            target = commentsEl && commentsEl.getAttribute('id');
+
+        this.request("ajax", {
+            url: '/comments/' + id + '/read',
+            method: 'POST',
+            callback: function(options, success, response) {
+                var data = Ext.JSON.decode(response.responseText);
+
+                if (data.success) {
+                    Ext.get(el).addCls('read');
+                } else {
+                    Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
+                }
+            },
+            scope: this
+        });
+    },
+
+    /**
+     * Sends an undo request to the server.
+     */
+    undoDeleteComment: function(cmp, el) {
+        if (!this.isLoggedIn()) {
+            return;
+        }
+
+        var commentEl = Ext.get(el).up('.comment');
+        var id = commentEl.getAttribute('id');
+        var commentsEl = commentEl.up('.comments-div');
+        var target = commentsEl && commentsEl.getAttribute('id');
+
+        this.request("ajax", {
+            url: '/comments/' + id + '/undo_delete',
+            method: 'POST',
+            callback: function(options, success, response) {
+                var data = Ext.JSON.decode(response.responseText);
+
+                if (data.success) {
+                    if (target) {
+                        this.fireEvent('add', target);
+                    }
+                    data.comment.id = data.comment._id;
+                    Docs.view.Comments.commentTpl.insertBefore(commentEl, data.comment);
+                    commentEl.remove();
                 } else {
                     Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
                 }
@@ -346,10 +410,9 @@ Ext.define('Docs.controller.Comments', {
             contentEl = commentEl.down('.content'),
             currentUser = this.getController('Auth').currentUser;
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + commentId),
+        this.request("ajax", {
+            url: '/comments/' + commentId,
             method: 'GET',
-            cors: true,
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
                 if (data.success) {
@@ -371,7 +434,7 @@ Ext.define('Docs.controller.Comments', {
     },
 
     updateComment: function(cmp, el) {
-        if (!this.loggedIn()) {
+        if (!this.isLoggedIn()) {
             return false;
         }
 
@@ -386,10 +449,9 @@ Ext.define('Docs.controller.Comments', {
         }
         postButton.addCls('disabled');
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + id),
+        this.request("ajax", {
+            url: '/comments/' + id,
             method: 'POST',
-            cors: true,
             params: {
                 content: content
             },
@@ -422,16 +484,45 @@ Ext.define('Docs.controller.Comments', {
         this.vote('down', el);
     },
 
+    updateSubscription: function(cmp, el) {
+        var commentEl = Ext.get(el).up('.comments-div'),
+            labelEl = Ext.get(el).up('label'),
+            commentId = commentEl.getAttribute('id'),
+            subscribed = el.checked;
+
+        this.request("ajax", {
+            url: '/subscribe',
+            method: 'POST',
+            params: {
+                target: Ext.JSON.encode(this.commentId(commentId)),
+                subscribed: subscribed
+            },
+            success: function() {
+                if (subscribed) {
+                    Docs.Tip.show("Updates to this thread will be e-mailed to you.", labelEl, "bottom");
+                }
+                else {
+                    Docs.Tip.show("You have unsubscribed from this thread.", labelEl, "bottom");
+                }
+            },
+            failure: function() {
+                Docs.Tip.show("Subscription change failed.", labelEl, "bottom");
+                el.checked = !el.checked;
+            },
+            scope: this
+        });
+    },
+
     /**
      * @private
      */
     vote: function(direction, el) {
-        if (!this.loggedIn()) {
-            this.showError('Please login to vote on this comment', el);
+        if (!this.isLoggedIn()) {
+            Docs.Tip.show('Please login to vote on this comment', el);
             return false;
         }
         else if (Ext.get(el).hasCls('selected')) {
-            this.showError('You have already voted on this comment', el);
+            Docs.Tip.show('You have already voted on this comment', el);
             return false;
         }
 
@@ -439,9 +530,8 @@ Ext.define('Docs.controller.Comments', {
             meta = Ext.get(el).up('.com-meta'),
             scoreEl = meta.down('.score');
 
-        Ext.Ajax.request({
-            url: this.addSid(Docs.baseUrl + '/' + Docs.commentsDb + '/' + id),
-            cors: true,
+        this.request("ajax", {
+            url: '/comments/' + id,
             method: 'POST',
             params: { vote: direction },
             callback: function(options, success, response) {
@@ -456,7 +546,7 @@ Ext.define('Docs.controller.Comments', {
                     }
                     scoreEl.update(String(data.total));
                 } else {
-                    this.showError(data.reason, el);
+                    Docs.Tip.show(data.reason, el);
                     return false;
                 }
             },
@@ -477,11 +567,12 @@ Ext.define('Docs.controller.Comments', {
     openComments: function(commentsDiv) {
         if (commentsDiv.hasCls('open')) return;
 
-        var commentNum =  commentsDiv.down('.name'),
-            commentsList =  commentsDiv.down('.comment-list');
+        var commentNum = commentsDiv.down('.name'),
+            commentsList = commentsDiv.down('.comment-list');
 
         commentsDiv.addCls('open');
         commentNum.setStyle('display', 'none');
+
         if (commentsList) {
             commentsList.setStyle('display', 'block');
         } else {
@@ -543,10 +634,12 @@ Ext.define('Docs.controller.Comments', {
             loadingEl = comments.down('.loading');
 
         var data = Ext.Array.map(rows, function(r) {
-            r.value.id = r.id;
-            r.value.key = r.key;
-            r.value = Ext.merge(r.value, opts);
-            return r.value;
+            r.id = r._id;
+            r.key = r.target;
+            if (opts.showCls) {
+                r.showCls = true;
+            }
+            return r;
         });
 
         if (loadingEl) {
@@ -554,23 +647,20 @@ Ext.define('Docs.controller.Comments', {
         }
 
         if (opts.append) {
-            var list = comments.down('.comment-list'),
-                more = comments.down('.fetchMoreComments'),
-                last = data[data.length - 1];
-
+            var list = comments.down('.comment-list');
             Docs.view.Comments.appendCommentsTpl.append(list, data);
 
-            if ((last.offset + last.limit) > last.total_rows) {
-                more.remove();
-            } else {
-                more.update(
-                    '<span></span>Showing comments 1-' + (last.offset + last.limit) + ' of ' + last.total_rows + '. ',
-                    'Click to load ' + last.limit + ' more...'
-                );
-                more.dom.setAttribute('rel', last.key.join(','));
-            }
+            this.updateCommentsPager(comments, data);
         } else {
-            Docs.view.Comments.commentsTpl.append(comments, data);
+            var list = comments.down('.comment-list');
+            if (list) {
+                Docs.view.Comments.appendCommentsTpl.overwrite(list, data);
+
+                this.updateCommentsPager(comments, data);
+            }
+            else {
+                Docs.view.Comments.commentsTpl.append(comments, data);
+            }
             Docs.Syntax.highlight(comments);
         }
 
@@ -578,8 +668,13 @@ Ext.define('Docs.controller.Comments', {
             comments.addCls('hideCommentForm');
         } else if (!comments.hasCls('hideCommentForm')) {
             var commentWrap = comments.down('.new-comment-wrap');
-            if (this.loggedIn()) {
-                var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, this.getController('Auth').currentUser, true);
+            if (this.isLoggedIn()) {
+
+                var formData = Ext.apply(this.getController('Auth').currentUser, {
+                    userSubscribed: Docs.commentSubscriptions[id]
+                });
+
+                var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, formData, true);
 
                 if (wrap) {
                     var textareaEl = wrap.down('textarea');
@@ -588,13 +683,20 @@ Ext.define('Docs.controller.Comments', {
                     }
                 }
             } else {
-                Docs.view.Comments.loggedOutCommentTpl.overwrite(commentWrap, {});
+                Docs.view.auth.LoginHelper.renderToComments(commentWrap);
             }
         }
     },
 
+    updateCommentsPager: function(comments, data) {
+        var last = data[data.length - 1] || {};
+        comments.down('.recent-comments-pager').update(
+            Docs.view.Comments.getPagerHtml(last)
+        );
+    },
+
     toggleNewComment: function(cmp, el) {
-        if (!this.loggedIn()) {
+        if (!this.isLoggedIn()) {
             return;
         }
 
@@ -612,14 +714,14 @@ Ext.define('Docs.controller.Comments', {
 
         if (opts.id) {
             Ext.Array.each(rows, function(row) {
-                if (row.id == opts.id) {
-                    data = row.value;
+                if (row._id == opts.id) {
+                    data = row;
                     data.id = opts.id;
                 }
             });
         } else {
-            data = rows[rows.length - 1].value;
-            data.id = rows[rows.length - 1].id;
+            data = rows[rows.length - 1];
+            data.id = rows[rows.length - 1]._id;
         }
 
         Docs.view.Comments.commentTpl.insertBefore(newCommentWrap, data);
@@ -643,20 +745,6 @@ Ext.define('Docs.controller.Comments', {
         if (but.editor) {
             but.editor.toTextArea();
         }
-    },
-
-    showError: function(msg, el) {
-        if (this.errorTip) {
-            this.errorTip.update(msg);
-            this.errorTip.setTarget(el);
-            this.errorTip.show();
-        } else {
-            this.errorTip = Ext.create('Ext.tip.ToolTip', {
-                anchor: 'right',
-                target: el,
-                html: msg
-            });
-            this.errorTip.show();
-        }
     }
+
 });

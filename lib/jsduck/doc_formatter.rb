@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 require 'rubygems'
 require 'rdiscount'
 require 'strscan'
 require 'cgi'
 require 'jsduck/logger'
+require 'jsduck/inline_img'
+require 'jsduck/inline_video'
 
 module JsDuck
 
@@ -19,22 +22,6 @@ module JsDuck
     #
     # Default value: '<a href="%c%M">%a</a>'
     attr_accessor :link_tpl
-
-    # Template HTML that replaces {@img URL alt text}
-    # Can contain placeholders:
-    #
-    # %u - URL from @img tag (e.g. "some/path.png")
-    # %a - alt text for image
-    #
-    # Default value: '<img src="%u" alt="%a"/>'
-    attr_accessor :img_tpl
-
-    # This will hold list of all image paths gathered from {@img} tags.
-    attr_accessor :images
-
-    # Base path to prefix images from {@img} tags.
-    # Defaults to no prefix.
-    attr_accessor :img_path
 
     # Sets up instance to work in context of particular class, so
     # that when {@link #blah} is encountered it knows that
@@ -61,11 +48,24 @@ module JsDuck
       @max_length = 120
       @relations = relations
       @images = []
+
+      @inline_img = InlineImg.new(opts)
+      @inline_video = InlineVideo.new(opts)
+
       @link_tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
-      @img_tpl = opts[:img_tpl] || '<img src="%u" alt="%a"/>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
-      @img_re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
+
       @example_annotation_re = /<pre><code>\s*@example( +[^\n]*)?\s+/m
+    end
+
+    # Sets base path to prefix images from {@img} tags.
+    def img_path=(path)
+      @inline_img.base_path = path
+    end
+
+    # Returns list of all image paths gathered from {@img} tags.
+    def images
+      @inline_img.images
     end
 
     # Replaces {@link} and {@img} tags, auto-generates links for
@@ -93,8 +93,10 @@ module JsDuck
       while !s.eos? do
         if s.check(@link_re)
           out += replace_link_tag(s.scan(@link_re))
-        elsif s.check(@img_re)
-          out += replace_img_tag(s.scan(@img_re))
+        elsif substitute = @inline_img.replace(s)
+          out += substitute
+        elsif substitute = @inline_video.replace(s)
+          out += substitute
         elsif s.check(/[{]/)
           # There might still be "{" that doesn't begin {@link} or {@img} - ignore it
           out += s.scan(/[{]/)
@@ -162,12 +164,6 @@ module JsDuck
             return text
           end
 
-          ms = ms.find_all {|m| !m[:private] }
-          if ms.length == 0
-            Logger.instance.warn(:link_private, "#{input} links to private member", file, line)
-            return text
-          end
-
           if ms.length > 1
             # When multiple public members, see if there remains just
             # one when we ignore the static members. If there's more,
@@ -189,10 +185,6 @@ module JsDuck
           return link(cls, false, text)
         end
       end
-    end
-
-    def replace_img_tag(input)
-      input.sub(@img_re) { img($1, $2) }
     end
 
     # Looks input text for patterns like:
@@ -262,21 +254,6 @@ module JsDuck
 
     def warn_magic_link(msg)
       Logger.instance.warn(:link_auto, msg, @doc_context[:filename], @doc_context[:linenr])
-    end
-
-    # applies the image template
-    def img(url, alt_text)
-      @images << url
-      @img_tpl.gsub(/(%\w)/) do
-        case $1
-        when '%u'
-          @img_path ? (@img_path + "/" + url) : url
-        when '%a'
-          CGI.escapeHTML(alt_text||"")
-        else
-          $1
-        end
-      end
     end
 
     # applies the link template
@@ -351,21 +328,25 @@ module JsDuck
     #
     def shorten(input)
       sent = first_sentence(strip_tags(input))
-      if sent.length > @max_length
-        sent[0..(@max_length-4)] + "..."
+      # Use u-modifier to correctly count multi-byte characters
+      chars = sent.scan(/./mu)
+      if chars.length > @max_length
+        chars[0..(@max_length-4)].join + "..."
       else
         sent + " ..."
       end
     end
 
     def first_sentence(str)
-      str.sub(/\A(.+?\.)\s.*\Z/m, "\\1")
+      str.sub(/\A(.+?(\.|。))\s.*\Z/mu, "\\1")
     end
 
     # Returns true when input should get shortened.
     def too_long?(input)
       stripped = strip_tags(input)
-      first_sentence(stripped).length < stripped.length || stripped.length > @max_length
+      # for sentence v/s full - compare byte length
+      # for full v/s max - compare char length
+      first_sentence(stripped).length < stripped.length || stripped.scan(/./mu).length > @max_length
     end
 
     def strip_tags(str)

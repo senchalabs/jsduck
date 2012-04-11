@@ -1,25 +1,24 @@
 // Styles for examples
 @import "mixins";
 
-.inline-example-cmp {
-  margin-bottom: 10px;
-  // add padding to make right scrollbar visible
-  padding-right: 25px;
+pre.inline-example {
+  margin-top: 0; }
+
+.inline-example-tb {
   // Hide toolbar background completely.
   // !important is needed to hide the background image
   // that is created for browsers like IE and Opera.
-  .x-toolbar {
-    background: none !important; }
+  background: none !important;
+  border: none;
+
   // Inline example component buttons
   span.x-btn-inner {
-    line-height: 12px;
-  }
+    line-height: 12px; }
   .active span.x-btn-inner {
-    color: #57a7dc;
-  }
+    color: #57a7dc; }
   span.x-btn-icon {
     background: url(../images/example-icons.png) no-repeat;
-    opacity: 0.6;
+    @include opacity(0.6);
     &.code {
       background-position: -2px -19px; }
     &.preview {
@@ -28,13 +27,30 @@
       background-position: -2px -88px; } }
   .active span.x-btn-icon {
     background: url(../images/example-icons.png) no-repeat;
-    opacity: 1;
+    @include opacity(1);
     &.code {
       background-position: -30px -19px; }
     &.preview {
       background-position: -31px -65px; }
     &.copy {
       background-position: -30px -88px; } } }
+
+.inline-example-editor {
+  border: none;
+  .x-panel-body {
+    border: solid 1px #e8e8e8;
+    @include border-radius(5px);
+    // Create exactly the same amount of padding as normal code <pre> has
+    padding: 5px 15px !important;
+    background: #f7f7f7; }
+  // same line height as for non-live code examples
+  .CodeMirror pre {
+    line-height: 1.3em; } }
+
+.inline-example-cmp {
+  margin-bottom: 10px;
+  // add padding to make right scrollbar visible
+  padding-right: 25px; }
 
 .touchExample .wrong-browser {
   margin-top: 120px;
@@ -44,36 +60,36 @@
   color: #666; }
 
 .tablet.landscape {
-  padding: 79px 83px;
-  background: url(../images/ipad-l.jpg) no-repeat; }
+  padding: 83px 87px;
+  background: url(../images/tablet-l.jpg) no-repeat; }
 
 .tablet.portrait {
-  padding: 83px 83px;
-  background: url(../images/ipad-p.jpg) no-repeat; }
+  padding: 87px 80px;
+  background: url(../images/tablet-p.jpg) no-repeat; }
 
 .phone.landscape {
-  padding: 22px 127px;
-  width: 724px;
-  height: 368px;
-  background: url(../images/iphone-l.jpg) no-repeat; }
+  padding: 22px 79px;
+  width: 637px;
+  height: 367px;
+  background: url(../images/phone-l.jpg) no-repeat; }
 
 .phone.portrait {
-  padding: 127px 26px;
+  padding: 78px 25px;
   width: 368px;
-  height: 724px;
-  background: url(../images/iphone-p.jpg) no-repeat; }
+  height: 637px;
+  background: url(../images/phone-p.jpg) no-repeat; }
 
 .miniphone.landscape {
-  padding: 127px 22px 6px 26px;
+  padding: 79px 22px 6px 25px;
   width: 368px;
-  height: 350px;
-  background: url(../images/iphone-small-p.jpg) no-repeat; }
+  height: 303px;
+  background: url(../images/phone-small-p.jpg) no-repeat; }
 
 .miniphone.portrait {
-  padding: 22px 6px 26px 127px;
-  width: 350px;
+  padding: 22px 6px 25px 79px;
+  width: 303px;
   height: 368px;
-  background: url(../images/iphone-small-l.jpg) no-repeat; }
+  background: url(../images/phone-small-l.jpg) no-repeat; }
 
 .example-container {
   h1 {
@@ -88,7 +104,7 @@
   border-width: 1px !important;
   border-style: solid;
   @include vertical-gradient(#f1f1f1, #e9e9e9);
-  box-shadow: inset rgba(255,255,255,0.5) 0 1px 0;
+  @include box-shadow(rgba(255,255,255,0.5) 0 1px 0 0 inset);
   .separator {
     border-left: 1px solid #ccc;
     margin: 0 10px;

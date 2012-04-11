@@ -4,7 +4,7 @@
 Ext.define('Docs.store.Search', {
     extend: 'Ext.data.Store',
 
-    fields: ['cls', 'member', 'type', 'icon', 'id', 'sort'],
+    fields: ['name', 'fullName', 'icon', 'url', 'meta', 'sort'],
     proxy: {
         type: 'memory',
         reader: {

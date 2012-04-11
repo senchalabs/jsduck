@@ -227,13 +227,26 @@ describe JsDuck::Aggregator do
          * @param {Number} y Second parameter
          * @method foo
          */
-        function bar(q, z) {}
+        function foo(q, z) {}
       EOS
     end
     it_should_behave_like "method documentation"
     it_should_behave_like "two parameters"
     it_should_behave_like "parameter types"
     it_should_behave_like "parameter docs"
+  end
+
+  describe "explicit @method followed by function with another name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @method foo
+         */
+        function bar(x, y) {}
+      EOS
+    end
+    it_should_behave_like "no parameters"
   end
 
   describe "@param-s partially overriding implicit params" do

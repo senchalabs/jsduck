@@ -8,13 +8,9 @@ require 'jsduck/relations'
 require 'jsduck/inherit_doc'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
-require 'jsduck/welcome'
-require 'jsduck/guides'
-require 'jsduck/videos'
-require 'jsduck/examples'
-require 'jsduck/categories'
-require 'jsduck/images'
+require 'jsduck/assets'
 require 'jsduck/json_duck'
+require 'jsduck/io'
 require 'jsduck/lint'
 require 'jsduck/template_dir'
 require 'jsduck/class_writer'
@@ -48,12 +44,11 @@ module JsDuck
       InheritDoc.new(@relations).resolve_all
       Lint.new(@relations).run
 
-      @images = Images.new(@opts.images)
-      @welcome = Welcome.create(@opts.welcome)
-      @guides = Guides.create(@opts.guides, DocFormatter.new(@relations, @opts))
-      @videos = Videos.create(@opts.videos)
-      @examples = Examples.create(@opts.examples)
-      @categories = Categories.create(@opts.categories_path, DocFormatter.new(@relations, @opts), @relations)
+      # Initialize guides, videos, examples, ...
+      @assets = Assets.new(@relations, @opts)
+
+      # Give access to assets from all meta-tags
+      MetaTagRegistry.instance.assets = @assets
 
       if @opts.export
         format_classes
@@ -65,17 +60,9 @@ module JsDuck
         FileUtils.rm_rf(@opts.output_dir)
         TemplateDir.new(@opts).write
 
-        index = IndexHtml.new(@opts)
-        index.welcome = @welcome
-        index.categories = @categories
-        index.guides = @guides
-        index.write
+        IndexHtml.new(@assets, @opts).write
 
-        app_data = AppData.new(@relations, @opts)
-        app_data.guides = @guides
-        app_data.videos = @videos
-        app_data.examples = @examples
-        app_data.write(@opts.output_dir+"/data.js")
+        AppData.new(@relations, @assets, @opts).write(@opts.output_dir+"/data.js")
 
         # class-formatting is done in parallel which breaks the links
         # between source files and classes. Therefore it MUST to be done
@@ -87,10 +74,7 @@ module JsDuck
         cw = ClassWriter.new(AppExporter, @relations, @opts)
         cw.write(@opts.output_dir+"/output", ".js")
 
-        @guides.write(@opts.output_dir+"/guides")
-        @videos.write(@opts.output_dir+"/videos")
-        @examples.write(@opts.output_dir+"/examples")
-        @images.copy(@opts.output_dir+"/images")
+        @assets.write
       end
     end
 
@@ -98,7 +82,7 @@ module JsDuck
     def parallel_parse(filenames)
       @parallel.map(filenames) do |fname|
         Logger.instance.log("Parsing", fname)
-        SourceFile.new(IO.read(fname), fname, @opts)
+        SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
       end
     end
 
@@ -110,26 +94,34 @@ module JsDuck
         agr.aggregate(file)
       end
       agr.classify_orphans
-      agr.create_global_class unless @opts.ignore_global
+      agr.create_global_class
+      agr.remove_ignored_classes
       agr.create_accessors
       agr.append_ext4_event_options
       agr.result
     end
 
-    # Filters out class-documentations, converting them to Class objects.
-    # For each other type, prints a warning message and discards it
+    # Turns all aggregated data into Class objects.
+    # Depending on --ignore-global either keeps or discards the global class.
+    # Warnings for global members are printed regardless of that setting,
+    # but of course can be turned off using --warnings=-global
     def filter_classes(docs)
       classes = []
       docs.each do |d|
-        if d[:tagname] == :class
-          classes << Class.new(d)
+        cls = Class.new(d)
+        if d[:name] != "global"
+          classes << cls
         else
-          type = d[:tagname].to_s
-          name = d[:name]
-          file = d[:files][0]
-          # This warning is shown when there are orphaned members,
-          # but the creation of global class has been turned off.
-          Logger.instance.warn(:global, "Ignoring #{type}: #{name}", file[:filename], file[:linenr])
+          # add global class only if --ignore-global not specified
+          classes << cls unless @opts.ignore_global
+
+          # Print warning for each global member
+          cls.all_local_members.each do |m|
+            type = m[:tagname].to_s
+            name = m[:name]
+            file = m[:files][0]
+            Logger.instance.warn(:global, "Global #{type}: #{name}", file[:filename], file[:linenr])
+          end
         end
       end
       Relations.new(classes, @opts.external_classes)
@@ -153,7 +145,7 @@ module JsDuck
       # Then merge the data back to classes sequentially
       formatted_classes.each do |cls|
         @relations[cls[:doc][:name]].internal_doc = cls[:doc]
-        cls[:images].each {|img| @images.add(img) }
+        cls[:images].each {|img| @assets.images.add(img) }
       end
     end
 

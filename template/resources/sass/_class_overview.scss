@@ -3,15 +3,22 @@
 @import "mixins";
 
 .class-overview {
-  .hierarchy {
+  .hierarchy, .aside {
     @include border-radius(5px);
     background-color: #f7f7f7;
     border: 1px solid #ebebeb;
     padding: 0 15px 15px 10px;
     float: right;
-    margin: 0 0 40px 60px;
-    font-size: 12px;
-    @include gray-h4;
+    clear: right;
+    margin: 0 0 10px 60px;
+    font-size: 12px; }
+  .hierarchy {
+    h4 {
+      font-family: $docs-font;
+      font-size: 90%;
+      padding: 11px 0 5px 0;
+      text-transform: uppercase;
+      color: #999999; }
     .dependency, .alternate-class-name {
       padding: 0 0 0 12px;
       margin-top: 3px; }
@@ -23,7 +30,25 @@
       padding: 0 0 0 12px;
       &.first-child {
         background: none;
-        padding-left: 15px; } } } }
+        padding-left: 15px; } } }
+  .aside {
+    width: 180px;
+    h4 {
+      margin: 4px 0;
+      font-size: larger;
+      color: #526c83;
+      padding-left: 22px; }
+    img {
+      width: 50px;
+      float: left;
+      margin-right: 10px; }
+    &.guide h4 {
+      background: url(../images/tabs.png) no-repeat -5px -55px; }
+    &.video h4 {
+      background: url(../images/tabs.png) no-repeat -6px -38px; }
+    &.example h4 {
+      background: url(../images/tabs.png) no-repeat -7px -93px; } } }
+
 
 // Nice styles for headings inside documentation
 #center-container .doc-contents {
@@ -34,7 +59,7 @@
     @include guides-h3-heading; } }
 
 .class-overview {
-  .private {
+  p.private {
     border: 1px solid #999;
     @include border-radius(5px);
     color: #600;
@@ -60,6 +85,10 @@
   color: #444444;
   padding-top: 10px;
   clear: both;
+  h1, h2 {
+    @include guides-h2-heading;
+    font-size: 14px;
+    margin: 15px 0 5px; }
   first-child: {
     padding-top: 0; };
   .pre {
@@ -144,20 +173,27 @@
     .name {
       font-weight: bold; }
     .title {
-      padding-bottom: 3px; }
-    .signature-box {
-      border: 1px solid #999;
-      @include border-radius(5px);
-      padding: 10px 50px;
-      text-align: center;
-      &.template {
-        background-color: #eee; }
-      &.deprecated {
-        color: #600;
-        background-color: #fee;
-        strong {
-          text-transform: uppercase;
-          color: white;
-          @include border-radius(2px);
-          padding: 0 3px;
-          background-color: #aa0000; } } } } }
+      padding-bottom: 3px; } } }
+
+.signature-box {
+  border: 1px solid #999;
+  @include border-radius(5px);
+  padding: 10px 50px;
+  text-align: center;
+  &.template {
+    background-color: #eee; }
+  &.deprecated, &.removed {
+    color: #600;
+    background-color: #fee;
+    strong {
+      text-transform: uppercase;
+      @include border-radius(2px);
+      padding: 0 3px; } }
+  &.deprecated strong {
+    color: white;
+    background-color: #aa0000; }
+  &.removed strong {
+    color: #aa0000;
+    border: 1px solid #aa0000;
+    background-color: transparent;
+    text-decoration: line-through; } }

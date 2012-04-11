@@ -13,12 +13,13 @@ module JsDuck
           "<div>",
             render_sidebar,
             "<div class='doc-contents'>",
+              render_meta_data(@cls[:html_meta], :top),
               render_private_class_notice,
               @cls[:doc],
-              render_meta_data(@cls[:html_meta]),
+              render_meta_data(@cls[:html_meta], :bottom),
             "</div>",
             "<div class='members'>",
-              render_member_sections,
+              render_all_sections,
             "</div>",
           "</div>",
         ].flatten.compact.join
@@ -33,18 +34,21 @@ module JsDuck
       ]
     end
 
-    def render_meta_data(meta_data)
+    def render_meta_data(meta_data, position)
       return if meta_data.size == 0
 
-      MetaTagRegistry.instance.tags.map {|tag| meta_data[tag.key] }
+      MetaTagRegistry.instance.tags(position).map {|tag| meta_data[tag.key] }
     end
 
     def render_sidebar
       items = [
         render_alternate_class_names,
         render_tree,
-        render_dependencies(:allMixins, "Mixins"),
+        render_dependencies(:mixins, "Mixins"),
+        render_dependencies(:parentMixins, "Inherited mixins"),
         render_dependencies(:requires, "Requires"),
+        render_dependencies(:subclasses, "Subclasses"),
+        render_dependencies(:mixedInto, "Mixed into"),
         render_dependencies(:uses, "Uses"),
         render_files,
       ]
@@ -59,7 +63,7 @@ module JsDuck
       return if @cls[:alternateClassNames].length == 0
       return [
         "<h4>Alternate names</h4>",
-        @cls[:alternateClassNames].map {|name| "<div class='alternate-class-name'>#{name}</div>" },
+        @cls[:alternateClassNames].sort.map {|name| "<div class='alternate-class-name'>#{name}</div>" },
       ]
     end
 
@@ -67,7 +71,7 @@ module JsDuck
       return if !@cls[type] || @cls[type].length == 0
       return [
         "<h4>#{title}</h4>",
-        @cls[type].map {|name| "<div class='dependency'>#{render_link(name)}</div>" },
+        @cls[type].sort.map {|name| "<div class='dependency'>#{name.exists? ? render_link(name) : name}</div>" },
       ]
     end
 
@@ -88,23 +92,21 @@ module JsDuck
     # We still create the tree, but without links in it.
     def render_tree
       return if !@cls[:extends] || @cls[:extends] == "Object"
-      tree = ["<h4>Hierarchy</h4>"]
 
-      if @cls[:superclasses].length > 0
-        tree + render_class_tree(@cls[:superclasses].concat([@cls[:name]]), {:first => true, :links => true})
-      else
-        tree + render_class_tree([@cls[:extends], @cls[:name]], {:first => true})
-      end
+      return [
+        "<h4>Hierarchy</h4>",
+        render_class_tree(@cls[:superclasses] + [@cls[:name]])
+      ]
     end
 
-    def render_class_tree(superclasses, o)
-      return "" if superclasses.length == 0
+    def render_class_tree(classes, i=0)
+      return "" if classes.length <= i
 
-      name = superclasses[0]
+      name = classes[i]
       return [
-        "<div class='subclass #{o[:first] ? 'first-child' : ''}'>",
-          superclasses.length > 1 ? (o[:links] ? render_link(name) : name) : "<strong>#{name}</strong>",
-          render_class_tree(superclasses.slice(1, superclasses.length-1), {:links => o[:links]}),
+        "<div class='subclass #{i == 0 ? 'first-child' : ''}'>",
+          classes.length-1 == i ? "<strong>#{name}</strong>" : (name.exists? ? render_link(name) : name),
+          render_class_tree(classes, i+1),
         "</div>",
       ]
     end
@@ -115,9 +117,8 @@ module JsDuck
       return "<a href='#!/api/#{id}' rel='#{id}' class='docClass'>#{label}</a>"
     end
 
-    def render_member_sections
+    def render_all_sections
       sections = [
-        {:type => :cfg, :title => "Config options"},
         {:type => :property, :title => "Properties"},
         {:type => :method, :title => "Methods"},
         {:type => :event, :title => "Events"},
@@ -125,22 +126,43 @@ module JsDuck
         {:type => :css_mixin, :title => "CSS Mixins"},
       ]
 
+      render_configs_section + sections.map {|sec| render_section(sec) }
+    end
+
+    def render_configs_section
+      configs = @cls[:members][:cfg] + @cls[:statics][:cfg]
+
+      if configs.length > 0
+        required, optional = configs.partition {|c| c[:meta][:required] }
+        return [
+          "<div class='members-section'>",
+            required.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
+            "<h3 class='members-title icon-cfg'>Config options</h3>",
+            render_subsection(required, "Required Config options"),
+            render_subsection(optional, required.length > 0 ? "Optional Config options" : nil),
+          "</div>",
+        ]
+      else
+        return []
+      end
+    end
+
+    def render_section(sec)
+      members = @cls[:members][sec[:type]]
+      statics = @cls[:statics][sec[:type]]
+
       # Skip rendering empty sections
-      sections.map do |sec|
-        members = @cls[:members][sec[:type]]
-        statics = @cls[:statics][sec[:type]]
-        if members.length > 0 || statics.length > 0
-          [
-            "<div class='members-section'>",
-              statics.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
-              "<h3 class='members-title icon-#{sec[:type]}'>#{sec[:title]}</h3>",
-              render_subsection(members, statics.length > 0 ? "Instance #{sec[:title]}" : nil),
-              render_subsection(statics, "Static #{sec[:title]}"),
-            "</div>",
-          ]
-        else
-          nil
-        end
+      if members.length > 0 || statics.length > 0
+        return [
+          "<div class='members-section'>",
+            statics.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
+            "<h3 class='members-title icon-#{sec[:type]}'>#{sec[:title]}</h3>",
+            render_subsection(members, statics.length > 0 ? "Instance #{sec[:title]}" : nil),
+            render_subsection(statics, "Static #{sec[:title]}"),
+          "</div>",
+        ]
+      else
+        return []
       end
     end
 
@@ -234,13 +256,17 @@ module JsDuck
     end
 
     def render_long_doc(m)
-      doc = [m[:doc]]
+      doc = []
+
+      doc << render_meta_data(m[:html_meta], :top)
+
+      doc << m[:doc]
 
       if m[:default] && m[:default] != "undefined"
         doc << "<p>Defaults to: <code>" + CGI.escapeHTML(m[:default]) + "</code></p>"
       end
 
-      doc << render_meta_data(m[:html_meta])
+      doc << render_meta_data(m[:html_meta], :bottom)
 
       doc << render_params_and_return(m)
 

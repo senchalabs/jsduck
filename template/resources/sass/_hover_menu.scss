@@ -17,11 +17,10 @@
   background: #eaeaea;
   z-index: 8;
   top: 21px;
-  line-height: 1.3em;
   border: 1px solid #e4e4e4;
   border-top: 1px solid #eaeaea;
   left: -16px;
-  @include border-radius-bottom(5px);
+  @include border-bottom-radius(5px);
   table {
     width: 100%; }
   td {
@@ -37,25 +36,7 @@
     &:hover {
       color: $docs-link-color;
       text-decoration: underline; }
-    &.close {
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      @include opacity(0.5);
-      background: url(../images/x12.png) no-repeat;
-      text-indent: -9999px;
-      padding: 3px 0 0 0;
-      right: 0;
-      top: 3px;
-      &:hover {
-        @include opacity(1); } }
-    span.signature {
-      font-size: 0.6em;
-      text-transform: uppercase;
-      font-weight: bold;
-      padding: 0 0.5em;
-      @include border-radius(2px);
-      @include signature-colors; } } }
+    @include mini-signature; } }
 
 .hover-menu a {
   font-family: Helvetica, Arial, clean, sans-serif;

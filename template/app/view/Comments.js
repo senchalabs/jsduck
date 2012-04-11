@@ -3,7 +3,16 @@
  */
 Ext.define('Docs.view.Comments', {
     singleton: true,
-    requires: ['Docs.view.auth.Login'],
+    requires: [
+        'Docs.view.auth.LoginHelper',
+        // WTF!
+        // When I don't add this line then "sencha create jsb" command
+        // will fail.  But this class shouldn't require that class,
+        // and indeed, when running in browser, the app will work just
+        // fine, but when doing e.g. "rake gem" something goes wrong
+        // and the "sencha create jsb" command just hangs.
+        'Docs.view.auth.Login'
+    ],
 
     constructor: function() {
         var numComments = [
@@ -47,7 +56,7 @@ Ext.define('Docs.view.Comments', {
                 '<div class="com-meta">',
                     '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
                           '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                    '<div class="author">',
+                    '<div class="author<tpl if="moderator"> moderator" title="Sencha Engineer</tpl>">',
                         '{author}',
                         '<tpl if="showCls">',
                             '<span class="target"> on {[this.target(values.target)]}</span>',
@@ -56,6 +65,9 @@ Ext.define('Docs.view.Comments', {
                             '<span class="problem">problem</span>',
                         '</tpl>',
                     '</div>',
+                    '<tpl if="this.isMod()">',
+                        '<a href="#" class="readComment <tpl if="read">read</tpl>">Read</a>',
+                    '</tpl>',
                     '<tpl if="this.isMod() || this.isAuthor(values.author)"><a href="#" class="editComment">Edit</a><a href="#" class="deleteComment">Delete</a></tpl>',
                     '<div class="time" title="{[this.date(values.createdAt)]}">{[this.dateStr(values.createdAt)]}</div>',
                     '<div class="vote">',
@@ -77,16 +89,19 @@ Ext.define('Docs.view.Comments', {
                         str;
 
                     if (diff < 60) {
-                        return String(diff) + ' seconds ago';
+                        return 'just now';
                     } else if (diff < 3600) {
                         str = String(Math.ceil(diff / (60)));
                         return str + (str == "1" ? ' minute' : ' minutes') + ' ago';
                     } else if (diff < 86400) {
                         str = String(Math.ceil(diff / (3600)));
                         return str + (str == "1" ? ' hour' : ' hours') + ' ago';
-                    } else if (diff < 60*60*24*365) {
+                    } else if (diff < 60*60*24*31) {
                         str = String(Math.ceil(diff / (60 * 60 * 24)));
                         return str + (str == "1" ? ' day' : ' days') + ' ago';
+                    } else if (diff < 60*60*24*365) {
+                        str = String(Math.ceil(diff / (60 * 60 * 24 * 31)));
+                        return str + (str == "1" ? ' month' : ' months') + ' ago';
                     } else {
                         return Ext.Date.format(new Date(date), 'jS M \'y');
                     }
@@ -125,19 +140,19 @@ Ext.define('Docs.view.Comments', {
 
                 return '<a href="' + urlPrefix + url + '">' + title + '</a>';
             },
-            moreComments: function(values) {
-                var values = values[values.length - 1];
-                if (values && values.total_rows > (values.offset + values.limit)) {
+            recentCommentsPager: Ext.Function.bind(function(values) {
+                var last = values[values.length - 1];
+                if (last && last.total_rows) {
                     return [
-                        '<a href="#" class="fetchMoreComments recent" rel="' + values.key.join(',') + '">',
-                            '<span></span>Showing comments 1-' + (values.offset + values.limit) + ' of ' + values.total_rows + '. ',
-                            'Click to load ' + values.limit + ' more...',
-                        '</a>'
+                        '<div class="recent-comments-pager">',
+                        this.getPagerHtml(last),
+                        '</div>'
                     ].join('');
-                } else {
+                }
+                else {
                     return '';
                 }
-            }
+            }, this)
         };
 
         this.commentsTpl = Ext.create('Ext.XTemplate',
@@ -147,7 +162,7 @@ Ext.define('Docs.view.Comments', {
                 '</tpl>',
                 '<div class="new-comment-wrap"></div>',
             '</div>',
-            '{[this.moreComments(values)]}',
+            '{[this.recentCommentsPager(values)]}',
             commentTplMethods
         );
 
@@ -168,6 +183,9 @@ Ext.define('Docs.view.Comments', {
                 '<img class="avatar" width="25" height="25"',
                     ' src="http://www.gravatar.com/avatar/{emailHash}?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
                 '<div class="author">Logged in as {userName}</div>',
+                '<label class="subscribe">',
+                    'Email updates? <input type="checkbox" class="subscriptionCheckbox" <tpl if="userSubscribed">checked="checked"</tpl> /><span class="sep"> | </span>',
+                '</label>',
                 '<a href="#" class="toggleCommentGuide">Help</a>',
                 '<input type="submit" class="sub {[values.updateComment ? "update" : "post"]}Comment" value="{[values.updateComment ? "Update" : "Post"]} comment" />',
                 '<tpl if="updateComment">',
@@ -223,9 +241,6 @@ Ext.define('Docs.view.Comments', {
                     '</ul>',
                     'End a line with two spaces<br/>to create a line break<br/><br/>',
                 '</div>',
-                '<ul>',
-                    '<li>Links will only work if they start with <code>#!/</code> or http://www.sencha.com',
-                '</ul>',
             '</div>'
         ];
 
@@ -238,7 +253,6 @@ Ext.define('Docs.view.Comments', {
                             '<option value="comment">Post a comment</option>',
                             '<option value="question">Ask a question</option>',
                             '<option value="problem">Report a problem</option>',
-                            // '<option value="feedback">Submit feedback</option>',
                         '</select>',
                     '</span>',
                     '<div class="note question" style="display: none;">',
@@ -253,18 +267,6 @@ Ext.define('Docs.view.Comments', {
                         '</ul>',
                         '<p>For <b>SDK bugs</b>, please use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a>.<br />',
                         '   For Docs App bugs, please use the <a href="https://github.com/senchalabs/jsduck/issues" target="_blank">GitHub Issue tracker</a>.</p>',
-                    '</div>',
-                    '<div class="note feedback" style="display: none;">',
-                        '<p>Your feedback will <b>not appear</b> online and you are unlikely to receive a personal response. ',
-                            'However feedback is monitored closely by the Sencha Documentation team.</p>',
-                        '<div style="padding-bottom: 5px;">Quality of documentation:</div>',
-                        '<p>',
-                            '<label><input name="feedback" type="radio" value="4" /> Excellent</label>',
-                            '<label><input name="feedback" type="radio" value="3" /> Good</label>',
-                            '<label><input name="feedback" type="radio" value="2" /> Fair</label>',
-                            '<label><input name="feedback" type="radio" value="1" /> Poor</label>',
-                        '</p>',
-                        '<p>Comments or suggestions:</p>',
                     '</div>',
                     '<div class="postCommentWrap">',
                         '<textarea></textarea>',
@@ -281,20 +283,31 @@ Ext.define('Docs.view.Comments', {
                 commentMetaAndGuide.join(''),
             '</form>'
         );
+    },
 
-        if (Ext.isIE && Ext.ieVersion <= 7) {
-            this.loggedOutCommentTpl = Ext.create('Ext.XTemplate',
-                '<div class="new-comment">',
-                    '<span class="toggleNewComment"><span></span>Sorry, adding comments is not supported in IE 7 or earlier</span>',
-                '</div>'
-            );
+    /**
+     * Returns HTML for recent comments pager.
+     *
+     * @param {Object} opts Object with fields:
+     * @param {Number} opts.offset
+     * @param {Number} opts.limit
+     * @param {Number} opts.total_rows
+     */
+    getPagerHtml: function(opts) {
+        var total = opts.total_rows;
+        var loaded = opts.offset + opts.limit;
+        var next_load = Math.min(opts.limit, total - loaded);
+
+        if (total > loaded) {
+            return [
+                '<span></span>',
+                '<a href="#" class="fetchMoreComments" rel="' + loaded + '">',
+                    'Showing comments 1-' + loaded + ' of ' + total + '. ',
+                    'Click to load ' + next_load + ' more...',
+                '</a>'
+            ].join('');
         } else {
-            this.loggedOutCommentTpl = Ext.create('Ext.XTemplate',
-                '<div class="new-comment">',
-                    '<span class="toggleNewComment"><span></span>Sign in to post a comment:</span>',
-                    Docs.view.auth.Login.prototype.loginTplHtml.join(''),
-                '</div>'
-            );
+            return '<span></span>That\'s all. Total '+total+' comments.';
         }
     },
 
@@ -455,7 +468,7 @@ Ext.define('Docs.view.Comments', {
 
                 this.makeCodeMirror(textarea, wrap);
             } else {
-                this.loggedOutCommentTpl.overwrite(newComment, {});
+                Docs.view.auth.LoginHelper.renderToComments(newComment);
             }
         }, this);
     },
@@ -472,16 +485,16 @@ Ext.define('Docs.view.Comments', {
             action.on('change', function(evt, el) {
                 var val = Ext.get(el).getValue();
                 form.select('.note').setStyle({display: 'none'});
-                if (val == "question") {
-                    form.down('.note.question').setStyle({display: 'block'});
+                if (val === "question") {
                     form.down('.postCommentWrap').setStyle({display: 'none'});
-                } else {
+                    form.down('.note.question').setStyle({display: 'block'});
+                }
+                else if (val === "problem") {
                     form.down('.postCommentWrap').setStyle({display: 'block'});
-                    if (val == "problem") {
-                        form.down('.note.problem').setStyle({display: 'block'});
-                    } else if (val == "feedback") {
-                        form.down('.note.feedback').setStyle({display: 'block'});
-                    }
+                    form.down('.note.problem').setStyle({display: 'block'});
+                }
+                else {
+                    form.down('.postCommentWrap').setStyle({display: 'block'});
                 }
             });
         }

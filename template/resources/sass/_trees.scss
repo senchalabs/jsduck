@@ -21,8 +21,9 @@
     @include transition(background-color, 0.15s, linear);
     @include icons; }
   // Use gray for private classes
-  .private .x-grid-cell-inner a {
-    color: #666; }
+  .private {
+    .x-grid-cell-inner, .x-grid-cell-inner a {
+      color: #666; } }
   .x-grid-row-over {
     .x-grid-cell-inner {
       @include transition(background-color, 0.15s, linear); } }
@@ -74,6 +75,16 @@
   border: solid #bbb;
   border-width: 0 1px 0 0; }
 
+
+// Shared font styles for both buttons and private classes checkbox
+.cls-grouping button, .cls-private-cb {
+  font-size: 11px;
+  color: #4d4d4d;
+  font-weight: bold;
+  // Somewhere inside checkbox CSS font-smoothing is turned on,
+  // so for consistency we use it for buttons too.
+  -webkit-font-smoothing: antialiased; }
+
 // Buttons for choosing class tree grouping:
 //   By Package <-> By Inheritance
 .cls-grouping {
@@ -81,9 +92,6 @@
   text-align: center;
   button {
     display: inline-block;
-    color: #4d4d4d;
-    font-size: 11px;
-    font-weight: bold;
     float: left;
     margin: 0 3px;
     padding: 1px 13px 2px 13px;
@@ -95,6 +103,7 @@
       border: 1px solid #727a81;
       background-color: #646b72;
       @include vertical-gradient(#646b72, #8d949b);
-      box-shadow: inset #5b6167 0 0 1px;
+      @include box-shadow(#5b6167 0 0 1px 0 inset);
       @include border-radius(10px);
       text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35); } } }
+

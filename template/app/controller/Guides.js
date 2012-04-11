@@ -18,6 +18,10 @@ Ext.define('Docs.controller.Guides', {
         {
             ref: 'tree',
             selector: '#guidetree'
+        },
+        {
+            ref: 'guide',
+            selector: '#guide'
         }
     ],
 
@@ -56,9 +60,15 @@ Ext.define('Docs.controller.Guides', {
             },
             '#guide': {
                 afterrender: function(cmp) {
-                    cmp.el.addListener('scroll', function(cmp, el) {
+                    cmp.el.addListener('click', function(event, el) {
                         this.setScrollState(this.activeUrl, el.scrollTop);
                     }, this);
+                    cmp.el.addListener('click', function(event, el) {
+                        this.handleUrlClick(el.href, event);
+                    }, this, {
+                        preventDefault: true,
+                        delegate: '.toc a'
+                    });
                 }
             }
         });
@@ -96,12 +106,15 @@ Ext.define('Docs.controller.Guides', {
     loadGuide: function(url, noHistory) {
         Ext.getCmp('card-panel').layout.setActiveItem('guide');
         Ext.getCmp('treecontainer').showTree('guidetree');
-        var name = url.match(/^#!\/guide\/(.*)$/)[1];
+        var m = url.match(/^#!\/guide\/(.*?)(-section-[0-9]+)?$/);
+        var name = m[1];
+        var section = m[2];
+        url = "#!/guide/"+name; // ignore section in URL
 
         noHistory || Docs.History.push(url);
 
         if (this.cache[name]) {
-            this.showGuide(this.cache[name], url, name);
+            this.showGuide(this.cache[name], url, name, section);
         }
         else {
             this.cache[name] = "in-progress";
@@ -110,7 +123,7 @@ Ext.define('Docs.controller.Guides', {
                 callbackName: name,
                 success: function(json) {
                     this.cache[name] = json;
-                    this.showGuide(json, url, name);
+                    this.showGuide(json, url, name, section);
                 },
                 failure: function(response, opts) {
                     this.cache[name] = false;
@@ -126,9 +139,10 @@ Ext.define('Docs.controller.Guides', {
      *
      * @param {Object} json Guide json
      * @param {String} url URL of the guide
-     * @param {Boolean} name Name of the guide
+     * @param {String} name Name of the guide
+     * @param {String} [section] Section name
      */
-    showGuide: function(json, url, name) {
+    showGuide: function(json, url, name, section) {
         var reRendered = false;
 
         if (json === "in-progress") {
@@ -143,13 +157,9 @@ Ext.define('Docs.controller.Guides', {
             reRendered = true;
         }
         this.activeUrl = url;
-        this.scrollContent();
+        section ? this.getGuide().scrollToEl(name+section) : this.getGuide().scrollToTop();
         this.fireEvent('showGuide', name, { reRendered: reRendered });
         this.getTree().selectUrl(url);
-    },
-
-    scrollContent: function() {
-        Ext.get('guide').scrollTo('top', this.getScrollState(this.activeUrl));
     }
 
 });

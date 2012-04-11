@@ -26,6 +26,20 @@ module JsDuck
     # existance of the tag.
     attr_reader :boolean
 
+    # Whether to render the tag before other content (:top) or after
+    # it (:bottom).  Defaults to :bottom.
+    attr_accessor :position
+
+    # Here the appropriate class or member will be injected,
+    # so the to_value and to_html methods can for produce
+    # different output based on whether the tag is inside class,
+    # method, event, etc.
+    attr_accessor :context
+
+    # Here the Assets object will be injected, so the Tag implementation
+    # can access guides, videos, etc when he needs to.
+    attr_accessor :assets
+
     # It gets passed an array of contents gathered from all meta-tags
     # of given type. It should return the value to be stored for this
     # meta-tag at :key. The returned value is also passed to #to_html

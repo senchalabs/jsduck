@@ -1,0 +1,19 @@
+{
+  "name": "jsduck_comments",
+  "version": "0.5.0",
+  "description": "Commenting backend for JSDuck Documentation",
+  "author": "Nick Poudlen <nick@sencha.com>",
+  "dependencies": {
+    "express": "git://github.com/visionmedia/express.git",
+    "express-namespace": "",
+    "connect": "",
+    "connect-mongo": "",
+    "marked": "",
+    "mongoose": "",
+    "mysql": "",
+    "sanitizer": "",
+    "step": "",
+    "underscore": "",
+    "nodemailer": ""
+  }
+}

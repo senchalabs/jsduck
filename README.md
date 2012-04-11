@@ -3,13 +3,6 @@ JsDuck
 
 API documentation generator for Sencha JavaScript frameworks.
 
-           ,~~.
-          (  6 )-_,
-     (\___ )=='-'
-      \ .   ) )
-       \ `-' /    hjw
-    ~'`~'`~'`~'`~
-
 JsDuck aims to be a better documentation generator for [Ext JS][] than
 the old [ext-doc][] was. It is used by Sencha to document [Ext JS
 4][ext4-docs], [Sencha Touch][touch2-docs] and [several other][other-docs]
@@ -19,6 +12,10 @@ The highlights of JSDuck are [Markdown][] support and keeping you DRY
 by inferring a lot of information from code.  Read the [Guide][] for
 full overview.
 
+**New to JSDuck?** Watch [introductory talk by Nick Poulden][video]:
+
+[<img src="http://b.vimeocdn.com/ts/227/178/227178682_200.jpg" alt="SenchaCon 2011 JSDuck talk" />][video]
+
 [Ext JS]: http://www.sencha.com/products/js/
 [ext-doc]: http://ext-doc.org/
 [Markdown]: http://daringfireball.net/projects/markdown/
@@ -26,7 +23,7 @@ full overview.
 [touch2-docs]: http://docs.sencha.com/touch/2-0/
 [other-docs]: http://docs.sencha.com/ext-js/4-0/
 [Guide]: https://github.com/senchalabs/jsduck/wiki/Guide
-
+[video]: http://vimeo.com/33465319
 
 Getting it
 ----------
@@ -93,19 +90,23 @@ switch.  For full list of all command line options type
 [adv]: https://github.com/senchalabs/jsduck/wiki/Advanced-Usage
 
 
+Documenting your code
+---------------------
+
+For quick overview read the [Guide][] and take a look at [example.js][example].
+Follow links in the guide to digg into the details.
+
+Looking for specific @tag? Take a look at the [whole list of supported tags][tags].
+
+[example]: https://github.com/senchalabs/jsduck/blob/master/opt/example.js
+[tags]: https://github.com/senchalabs/jsduck/wiki/Tags
+
+
 Hacking it
 ----------
 
 See [Hacking guide](https://github.com/senchalabs/jsduck/wiki/Hacking) in wiki.
 
-
-Documenting your code
----------------------
-
-All the supported syntax is described in the [Guide][].
-For quick overview take a look at [example.js][example].
-
-[example]: https://github.com/senchalabs/jsduck/blob/master/opt/example.js
 
 Copying
 -------
@@ -123,7 +124,9 @@ Thanks to [Ondřej Jirman](https://github.com/megous),
 [ligaard](https://github.com/ligaard),
 [Bill Hubbard](http://www.sencha.com/forum/member.php?272458-BillHubbard),
 [Ed Spencer](https://github.com/edspencer),
-[atian25](https://github.com/atian25) and many-many others who
+[atian25](https://github.com/atian25),
+Katherine Chu,
+[Rob Dougan](https://github.com/rdougan) and many-many others who
 reported bugs, submitted patches, and provided a lot of useful input.
 
 

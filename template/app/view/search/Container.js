@@ -4,6 +4,7 @@
 Ext.define('Docs.view.search.Container', {
     extend: 'Ext.container.Container',
     alias: 'widget.searchcontainer',
+    requires: 'Docs.view.search.Dropdown',
 
     initComponent: function() {
 

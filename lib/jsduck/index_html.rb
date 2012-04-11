@@ -1,15 +1,13 @@
 require 'jsduck/logger'
+require 'jsduck/io'
 require 'fileutils'
 
 module JsDuck
 
   # Deals with creation of main HTML or PHP files.
   class IndexHtml
-    attr_accessor :welcome
-    attr_accessor :categories
-    attr_accessor :guides
-
-    def initialize(opts)
+    def initialize(assets, opts)
+      @assets = assets
       @opts = opts
     end
 
@@ -34,9 +32,9 @@ module JsDuck
         "{header}" => @opts.header,
         "{footer}" => "<div id='footer-content' style='display: none'>#{@opts.footer}</div>",
         "{extjs_path}" => @opts.extjs_path,
-        "{welcome}" => @welcome.to_html,
-        "{categories}" => @categories.to_html,
-        "{guides}" => @guides.to_html,
+        "{welcome}" => @assets.welcome.to_html,
+        "{categories}" => @assets.categories.to_html,
+        "{guides}" => @assets.guides.to_html,
         "{head_html}" => @opts.head_html,
         "{body_html}" => @opts.body_html,
       })
@@ -52,7 +50,7 @@ module JsDuck
     # Opens in_file, replaces {keys} inside it, writes to out_file
     def write_template(in_file, out_file, replacements)
       Logger.instance.log("Writing", out_file)
-      html = IO.read(in_file)
+      html = JsDuck::IO.read(in_file)
       html.gsub!(/\{\w+\}/) do |key|
         replacements[key] ? replacements[key] : key
       end

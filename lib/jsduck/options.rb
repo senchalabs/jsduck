@@ -1,6 +1,7 @@
 require 'optparse'
 require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
+require 'jsduck/json_duck'
 
 module JsDuck
 
@@ -31,6 +32,7 @@ module JsDuck
     attr_accessor :export
     attr_accessor :seo
     attr_accessor :eg_iframe
+    attr_accessor :examples_base_url
 
     # Debugging
     attr_accessor :processes
@@ -71,7 +73,7 @@ module JsDuck
       ]
       @meta_tag_paths = []
 
-      @version = "3.3.0"
+      @version = "3.8.4"
 
       # Customizing output
       @title = "Sencha Docs - Ext JS"
@@ -94,6 +96,7 @@ module JsDuck
       @export = nil
       @seo = false
       @eg_iframe = nil
+      @examples_base_url = "extjs-build/examples/"
 
       # Debugging
       # Turn multiprocessing off by default in Windows
@@ -122,7 +125,10 @@ module JsDuck
         read_filenames(canonical(fname))
       end
       validate
-      MetaTagRegistry.instance.load([:builtins] + @meta_tag_paths)
+
+      reg = MetaTagRegistry.new
+      reg.load([:builtins] + @meta_tag_paths)
+      MetaTagRegistry.instance = reg
     end
 
     def create_option_parser
@@ -158,11 +164,8 @@ module JsDuck
           @meta_tag_paths << canonical(path)
         end
 
-        opts.on('--no-warnings',
-          "Turns off all warnings.",
-          "(Deprecated, use --warnings=-all instead.)", " ") do
-          Logger.instance.warn(nil, "--no-warnings is deprecated. Use --warnings=-all instead.")
-          Logger.instance.set_warning(:all, false)
+        opts.on('--encoding=NAME', "Input encoding (defaults to UTF-8).", " ") do |encoding|
+          JsDuck::IO.encoding = encoding
         end
 
         opts.on('-v', '--verbose', "This will fill up your console.", " ") do
@@ -255,7 +258,7 @@ module JsDuck
           "Possible placeholders:",
           "%u - URL from @img tag (e.g. 'some/path.png')",
           "%a - alt text for image",
-          "Default is: '<p><img src=\"doc-resources/%u\" alt=\"%a\"></p>'", " ") do |tpl|
+          "Default is: '<p><img src=\"%u\" alt=\"%a\"></p>'", " ") do |tpl|
           @img_tpl = tpl
         end
 
@@ -274,6 +277,11 @@ module JsDuck
           "An HTML file to use inside an iframe",
           "to display inline examples.", " ") do |path|
           @eg_iframe = canonical(path)
+        end
+
+        opts.on('--examples-base-url=URL',
+          "Base URL for examples with relative URL-s.", " ") do |path|
+          @examples_base_url = path
         end
 
         opts.separator "Debugging:"
@@ -341,7 +349,12 @@ module JsDuck
         opts.on('--config=PATH',
           "Loads config options from JSON file.", " ") do |path|
           path = canonical(path)
-          config = read_json_config(path)
+          if File.exists?(path)
+            config = read_json_config(path)
+          else
+            puts "Oh noes!  The config file #{path} doesn't exist."
+            exit(1)
+          end
           # treat paths inside JSON config relative to the location of
           # config file.  When done, switch back to current working dir.
           @working_dir = File.dirname(path)
@@ -370,7 +383,7 @@ module JsDuck
             main_opts = [
               /--output/,
               /--builtin-classes/,
-              /--no-warnings/,
+              /--encoding/,
               /--verbose/,
               /--help/,
               /--version/,
@@ -428,7 +441,7 @@ module JsDuck
         if File.directory?(fname)
           Dir[fname+"/**/*.{js,css,scss}"].each {|f| @input_files << f }
         elsif fname =~ /\.jsb3$/
-          @input_files += extract_jsb_files(fname)
+          extract_jsb_files(fname).each {|fn| read_filenames(fn) }
         else
           @input_files << fname
         end
@@ -439,7 +452,7 @@ module JsDuck
 
     # Extracts files of first build in jsb file
     def extract_jsb_files(jsb_file)
-      json = JSON.parse(IO.read(jsb_file))
+      json = JsonDuck::read(jsb_file)
       basedir = File.dirname(jsb_file)
 
       return json["builds"][0]["packages"].map do |package_id|

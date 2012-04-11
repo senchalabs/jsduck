@@ -8,12 +8,9 @@ module JsDuck
 
   # Creates big JS file with data for Docs app.
   class AppData
-    attr_accessor :guides
-    attr_accessor :videos
-    attr_accessor :examples
-
-    def initialize(relations, opts)
+    def initialize(relations, assets, opts)
       @relations = relations
+      @assets = assets
       @opts = opts
     end
 
@@ -22,10 +19,10 @@ module JsDuck
       js = "Docs = " + JsonDuck.generate({
         :data => {
           :classes => Icons.new.create(@relations.classes),
-          :guides => @guides.to_array,
-          :videos => @videos.to_array,
-          :examples => @examples.to_array,
-          :search => SearchData.new.create(@relations.classes),
+          :guides => @assets.guides.to_array,
+          :videos => @assets.videos.to_array,
+          :examples => @assets.examples.to_array,
+          :search => SearchData.new.create(@relations.classes, @assets),
           :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
           :signatures => MetaTagRegistry.instance.signatures,
           :localStorageDb => @opts.local_storage_db,

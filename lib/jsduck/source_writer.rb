@@ -34,9 +34,10 @@ module JsDuck
         i = 0
         begin
           name = html_filename(file.filename, i)
+          ci_name = name.downcase # case insensitive name
           i += 1
-        end while filenames.has_key?(name)
-        filenames[name] = true
+        end while filenames.has_key?(ci_name)
+        filenames[ci_name] = true
         file.html_filename = name
       end
     end

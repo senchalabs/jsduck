@@ -4,6 +4,10 @@
  * Base class for Settings.
  */
 Ext.define("Docs.LocalStore", {
+    /**
+     * @cfg
+     * Full name of the store class to instantiate.
+     */
     storeName: '',
 
     /**
@@ -14,7 +18,7 @@ Ext.define("Docs.LocalStore", {
      */
     init: function() {
         this.localStorage = !!window['localStorage'];
-        this.store = Ext.getStore(this.storeName);
+        this.store = Ext.create(this.storeName);
 
         if (this.localStorage) {
             this.cleanup();

@@ -23,7 +23,7 @@ module JsDuck::Tag
       v = depr[:version] ? "since " + depr[:version] : ""
       <<-EOHTML
         <div class='signature-box deprecated'>
-        <p>This member has been <strong>deprecated</strong> #{v}</p>
+        <p>This #{@context[:tagname]} has been <strong>deprecated</strong> #{v}</p>
         #{format(depr[:text])}
         </div>
       EOHTML

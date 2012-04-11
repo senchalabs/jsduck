@@ -38,14 +38,19 @@ Ext.define('Docs.view.cls.Overview', {
         var el = (typeof query == 'string') ? Ext.get(Ext.query(query)[0]) : query;
         if (el) {
             var isMember = el.hasCls("member");
+
+            // first make the element visible and expanded.
+            // For example a private member might be hidden initially so we can't scroll to it.
+            el.show();
+            if (isMember && el.down(".expandable")) {
+                el.addCls('open');
+            }
+
             var scrollOffset = el.getY() - (isMember ? 165 : 155) + (offset || 0);
             var docContent = this.getEl().down('.x-panel-body');
             var currentScroll = docContent.getScroll()['top'];
             docContent.scrollTo('top', currentScroll + scrollOffset);
 
-            if (isMember && el.down(".expandable")) {
-                el.addCls('open');
-            }
             el.highlight();
         }
     },
@@ -57,6 +62,7 @@ Ext.define('Docs.view.cls.Overview', {
      */
     load: function(docClass) {
         this.docClass = docClass;
+        this.accessors = this.buildAccessorsMap();
 
         if (this.toolbar) {
             // Workaround for bug in ExtJS.
@@ -68,12 +74,13 @@ Ext.define('Docs.view.cls.Overview', {
         }
         this.toolbar = Ext.create('Docs.view.cls.Toolbar', {
             docClass: this.docClass,
+            accessors: this.accessors,
             listeners: {
-                hideInherited: function(hideInherited) {
-                    this.filterMembers(this.toolbar.getFilterValue(), hideInherited);
+                filter: function(search, show) {
+                    this.filterMembers(search, show);
                 },
-                filter: function(search) {
-                    this.filterMembers(search, Docs.Settings.get("hideInherited"));
+                menubuttonclick: function(type) {
+                    this.scrollToEl("h3.members-title.icon-"+type, -20);
                 },
                 scope: this
             }
@@ -84,9 +91,7 @@ Ext.define('Docs.view.cls.Overview', {
 
         Docs.Syntax.highlight(this.getEl());
 
-        if (Docs.Settings.get("hideInherited")) {
-            this.filterMembers("", true);
-        }
+        this.filterMembers("", Docs.Settings.get("show"));
 
         this.fireEvent('afterload');
     },
@@ -94,11 +99,11 @@ Ext.define('Docs.view.cls.Overview', {
     /**
      * Filters members by search string and inheritance.
      * @param {String} search
-     * @param {Boolean} hideInherited
+     * @param {Object} show
      * @private
      */
-    filterMembers: function(search, hideInherited) {
-        Docs.Settings.set("hideInherited", hideInherited);
+    filterMembers: function(search, show) {
+        Docs.Settings.set("show", show);
         var isSearch = search.length > 0;
 
         // Hide the class documentation when filtering
@@ -106,14 +111,23 @@ Ext.define('Docs.view.cls.Overview', {
             Ext.get(el).setStyle({display: isSearch ? 'none' : 'block'});
         });
 
-        // Hide members who's name doesn't match with the search string
-        // and hide inherited members if hideInherited=true
+        // Only show members who's name matches with the search string
+        // and its type is currently visible
         var re = new RegExp(Ext.String.escapeRegex(search), "i");
         this.eachMember(function(m) {
             var el = Ext.get(m.id);
-            var byInheritance = !hideInherited || (m.owner === this.docClass.name);
-            var byFilter = !isSearch || re.test(m.name);
-            if (byInheritance && byFilter) {
+            var visible = !(
+                !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
+                !show['protected'] && m.meta['protected'] ||
+                !show['private']   && m.meta['private'] ||
+                !show['inherited'] && (m.owner !== this.docClass.name) ||
+                !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
+                !show['deprecated'] && m.meta['deprecated'] ||
+                !show['removed']   && m.meta['removed'] ||
+                isSearch           && !re.test(m.name)
+            );
+
+            if (visible) {
                 el.setStyle({display: 'block'});
             }
             else {
@@ -147,7 +161,17 @@ Ext.define('Docs.view.cls.Overview', {
             }, this);
         }, this);
 
-        this.toolbar.hideInherited(hideInherited);
+        this.toolbar.showMenuItems(show, isSearch, re);
+    },
+
+    buildAccessorsMap: function(name) {
+        var accessors = {};
+        Ext.Array.forEach(this.docClass.members.cfg, function(m) {
+            var capName = Ext.String.capitalize(m.name);
+            accessors["get"+capName] = true;
+            accessors["set"+capName] = true;
+        });
+        return accessors;
     },
 
     getVisibleElements: function(selector, root) {

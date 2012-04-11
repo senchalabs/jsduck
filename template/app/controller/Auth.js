@@ -4,7 +4,10 @@
 Ext.define('Docs.controller.Auth', {
     extend: 'Ext.app.Controller',
 
-    requires: ['Ext.util.Cookies'],
+    requires: [
+        'Ext.util.Cookies',
+        'Docs.Tip'
+    ],
 
     refs: [
         {
@@ -44,7 +47,7 @@ Ext.define('Docs.controller.Auth', {
             'authentication': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(e, el) {
-                        cmp.showLogin();
+                        cmp.showLoginForm();
                     }, this, {
                         preventDefault: true,
                         delegate: '.login'
@@ -57,16 +60,18 @@ Ext.define('Docs.controller.Auth', {
                         delegate: '.logout'
                     });
 
-                    this.getSession();
+                    this.retrieveSession();
                 }
             }
         });
     },
 
     /**
-     * Checks if a user is logged in server side and sets up a local session if they are.
+     * Checks if a user is logged in server side and sets up a local
+     * session if they are.
+     * @private
      */
-    getSession: function() {
+    retrieveSession: function() {
         Ext.Ajax.request({
             url: Docs.baseUrl + '/session',
             params: { sid: this.sid },
@@ -77,9 +82,9 @@ Ext.define('Docs.controller.Auth', {
                     this.currentUser = JSON.parse(response.responseText);
                     this.fireEvent('available');
                     if (this.currentUser) {
-                        this.loggedIn();
+                        this.setLoggedIn();
                     } else {
-                        this.loggedOut();
+                        this.setLoggedOut();
                     }
                 }
             },
@@ -91,10 +96,10 @@ Ext.define('Docs.controller.Auth', {
      * Authenticates a user
      * @param {String} username
      * @param {String} password
-     * @param {Boolean} remember
-     * @param {Ext.Element} submitEl
+     * @param {Boolean} remember True if "Remember Me" was checked.
+     * @param {Ext.Element} tipTarget Target where to anchor login failure messages.
      */
-    login: function(username, password, remember, submitEl) {
+    login: function(username, password, remember, tipTarget) {
         Ext.Ajax.request({
             url: Docs.baseUrl + '/login',
             method: 'POST',
@@ -108,20 +113,9 @@ Ext.define('Docs.controller.Auth', {
                 if (data.success) {
                     this.currentUser = data;
                     this.setSid(data.sessionID, { remember: remember });
-                    this.loggedIn();
+                    this.setLoggedIn();
                 } else {
-                    if (this.errorTip) {
-                        this.errorTip.update(data.reason);
-                        this.errorTip.setTarget(submitEl);
-                        this.errorTip.show();
-                    } else {
-                        this.errorTip = Ext.create('Ext.tip.ToolTip', {
-                            anchor: 'bottom',
-                            target: submitEl,
-                            html: data.reason
-                        });
-                        this.errorTip.show();
-                    }
+                    Docs.Tip.show(data.reason, tipTarget, 'bottom');
                 }
             },
             scope: this
@@ -130,6 +124,7 @@ Ext.define('Docs.controller.Auth', {
 
     /**
      * Logs out a user
+     * @private
      */
     logout: function() {
         Ext.Ajax.request({
@@ -137,7 +132,7 @@ Ext.define('Docs.controller.Auth', {
             method: 'POST',
             cors: true,
             callback: function(){
-                this.loggedOut();
+                this.setLoggedOut();
             },
             scope: this
         });
@@ -145,8 +140,9 @@ Ext.define('Docs.controller.Auth', {
 
     /**
      * Marks the user as logged in.
+     * @private
      */
-    loggedIn: function() {
+    setLoggedIn: function() {
         if (this.currentUser) {
             this.getAuth().showLoggedIn(this.currentUser.userName);
             this.fireEvent('loggedIn');
@@ -155,8 +151,9 @@ Ext.define('Docs.controller.Auth', {
 
     /**
      * Marks a user as logged out.
+     * @private
      */
-    loggedOut: function(user) {
+    setLoggedOut: function(user) {
         this.currentUser = {};
         this.setSid(null);
         this.getAuth().showLoggedOut();
@@ -191,20 +188,6 @@ Ext.define('Docs.controller.Auth', {
         } else {
             Ext.util.Cookies.clear('sid');
         }
-    },
-
-    submitLogin: function(el) {
-        var form = Ext.get(el),
-            username = form.down('input[name=username]').getValue(),
-            password = form.down('input[name=password]').getValue(),
-            rememberEl = form.down('input[name=remember]'),
-            submitEl = form.down('input[type=submit]');
-
-        var remember = rememberEl ? Boolean(rememberEl.getAttribute('checked')) : false;
-
-        this.login(username, password, remember, submitEl);
-
-        return false;
     }
 
 });

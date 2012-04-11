@@ -26,7 +26,7 @@ Ext.define('Docs.controller.Videos', {
             /**
              * @event showVideo
              * Fired after a video is shown. Used for analytics event tracking.
-             * @param {Number} video ID of the video.
+             * @param {String} name Name of the video.
              */
             "showVideo"
         );
@@ -55,11 +55,11 @@ Ext.define('Docs.controller.Videos', {
 
         Ext.getCmp('card-panel').layout.setActiveItem('video');
         Ext.getCmp('treecontainer').showTree('videotree');
-        var videoId = url.match(/[0-9]+$/)[0];
+        var name = url.match(/^#!\/video\/(.*)$/)[1];
 
-        var video = this.getVideo(videoId);
+        var video = this.getVideo(name);
         if (!video) {
-            this.getController('Failure').show404("Video <b>"+videoId+"</b> was not found.");
+            this.getController('Failure').show404("Video <b>"+name+"</b> was not found.");
             return;
         }
         this.getViewport().setPageTitle(video.title);
@@ -68,21 +68,21 @@ Ext.define('Docs.controller.Videos', {
             reRendered = true;
         }
         noHistory || Docs.History.push(url);
-        this.fireEvent('showVideo', videoId, {reRendered: reRendered});
+        this.fireEvent('showVideo', name, {reRendered: reRendered});
         this.getTree().selectUrl(url);
         this.activeUrl = url;
     },
 
-    // Given an ID returns corresponding video description object
-    getVideo: function(id) {
+    // Given a name returns corresponding video description object
+    getVideo: function(name) {
         if (!this.map) {
             this.map = {};
             Ext.Array.forEach(Docs.data.videos, function(group) {
                 Ext.Array.forEach(group.items, function(v) {
-                    this.map[v.id] = v;
+                    this.map[v.name] = v;
                 }, this);
             }, this);
         }
-        return this.map[id];
+        return this.map[name];
     }
 });

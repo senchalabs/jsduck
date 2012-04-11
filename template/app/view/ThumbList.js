@@ -44,9 +44,16 @@ Ext.define('Docs.view.ThumbList', {
         });
 
         this.store = Ext.create('Ext.data.JsonStore', {
-            fields: ['id', 'title', 'items'],
-            data: this.data
+            fields: ['id', 'title', 'items']
         });
+
+        // Can't just pass the #data config to store as in Ext 4.1 the
+        // value of data config gets modified - each array element
+        // gets replaced with a Model record.
+        //
+        // But we don't want to modify the items in the global
+        // Docs.data...
+        this.store.loadData(this.data);
 
         // Place itemTpl inside main template
         this.tpl = new Ext.XTemplate(Ext.Array.flatten([
@@ -61,8 +68,9 @@ Ext.define('Docs.view.ThumbList', {
                 '</tpl>',
             '</div>'
         ]));
-        // Hide itemTpl config from parent class
+        // Hide itemTpl and data configs from parent class
         this.itemTpl = undefined;
+        this.data = undefined;
 
         this.on({
             'afterrender': function(cmp) {

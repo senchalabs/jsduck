@@ -17,6 +17,9 @@ Ext.define('Docs.view.TreeContainer', {
     hideCollapseTool: true,
     animCollapse: true,
 
+    // For some strange reason the container gets a heading in Ext JS 4.1
+    header: false,
+
     initComponent: function() {
         this.items = [
             {
@@ -37,8 +40,8 @@ Ext.define('Docs.view.TreeContainer', {
                 convert: function(example) {
                     return {
                         leaf: true,
-                        text: example.text,
-                        url: '#!/example/' + example.url,
+                        text: example.title,
+                        url: '#!/example/' + example.name,
                         iconCls: 'icon-example'
                     };
                 }
@@ -64,7 +67,7 @@ Ext.define('Docs.view.TreeContainer', {
                     return {
                         leaf: true,
                         text: video.title,
-                        url: '#!/video/' + video.id,
+                        url: '#!/video/' + video.name,
                         iconCls: 'icon-video'
                     };
                 }

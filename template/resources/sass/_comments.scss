@@ -32,10 +32,11 @@
   font-weight: normal;
   font-size: 11px; }
 
-.fetchMoreComments {
+.recent-comments-pager {
   display: block;
   padding: 10px 0 5px 35px;
   position: relative;
+  color: gray;
   span {
     display: block;
     position: absolute;
@@ -96,6 +97,15 @@
       display: block;
       font-weight: bold;
       padding-bottom: 7px; }
+    .subscribe {
+      margin-right: 5px;
+      color: #444;
+      .sep {
+        color: #aaa; }
+      input {
+        color: #000;
+        margin-right: 5px;
+        margin-left: 5px; } }
     .com-meta {
       position: relative;
       margin-top: 8px;
@@ -177,11 +187,13 @@
   padding-left: 2px;
   &:hover {
     .com-meta {
+      .readComment,
+      .readComment.read,
       .editComment,
       .deleteComment,
       .vote {
         @include transition(opacity, 0.2s, linear);
-        opacity: 1; } } }
+        @include opacity(1); } } }
   .target {
     color: #666;
     font-size: 90%;
@@ -199,6 +211,8 @@
       font-weight: bold;
       top: 2px;
       font-size: 14px;
+      &.moderator {
+        color: #3D7E00; }
       .problem {
         color: #fff;
         @include border-radius(2px);
@@ -214,15 +228,28 @@
     .deleteComment {
       right: 110px;
       color: #999;
-      opacity: 0;
+      @include opacity(0);
       @include transition(opacity, 0.2s, linear);
       position: absolute; }
     .editComment {
       right: 160px;
       color: #999;
-      opacity: 0;
+      @include opacity(0);
       @include transition(opacity, 0.2s, linear);
       position: absolute; }
+    .readComment {
+      right: 200px;
+      color: #999;
+      @include opacity(0);
+      @include transition(opacity, 0.2s, linear);
+      position: absolute;
+      &.read {
+        color: white;
+        @include border-radius(2px);
+        background: #3D7E00;
+        font-weight: bold;
+        padding: 0 1em;
+        @include opacity(0.5); } }
     .vote {
       position: absolute;
       left: 2px;
@@ -234,10 +261,10 @@
         height: 18px;
         background: url(../images/vote-arrows.png) no-repeat;
         &.selected {
-          opacity: 0.4;
+          @include opacity(0.4);
           background-position: -22px 0; }
-        &:hover {
-          opacity: 1 !important;
+        &:hover, &.selected:hover {
+          @include opacity(1);
           background-position: -22px 0; } }
       .voteCommentDown {
         position: absolute;
@@ -248,9 +275,9 @@
         background: url(../images/vote-arrows.png) no-repeat 0 -35px;
         &.selected {
           background-position: -22px -35px;
-          opacity: 0.4; }
-        &:hover {
-          opacity: 1 !important;
+          @include opacity(0.4); }
+        &:hover, &.selected:hover {
+          @include opacity(1);
           background-position: -22px -35px; } }
       .score {
         position: absolute;
@@ -263,4 +290,10 @@
   .content {
     min-height: 65px;
     padding: 0 0 15px 40px;
-    border-bottom: 1px solid #eee; } }
+    border-bottom: 1px solid #eee; }
+  .deleted-comment {
+    text-align: center;
+    background: #ffd76e;
+    border: 1px solid #e1ba53;
+    @include border-radius(4px);
+    font-weight: bold; } }

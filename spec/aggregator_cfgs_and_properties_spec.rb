@@ -115,6 +115,21 @@ describe JsDuck::Aggregator do
     it_should_behave_like "cfg or property default type"
   end
 
+  describe "null @cfg" do
+    before do
+      @doc = parse(<<-EOS)[0]
+      ({/**
+         * @cfg
+         * Some documentation.
+         */
+        foo: null })
+      EOS
+    end
+    it_should_behave_like "cfg"
+    it_should_behave_like "cfg or property"
+    it_should_behave_like "cfg or property default type"
+  end
+
   describe "typeless @property" do
     before do
       @doc = parse(<<-EOS)[0]
@@ -282,6 +297,48 @@ describe JsDuck::Aggregator do
     end
     it_should_behave_like "property"
     it_should_behave_like "cfg or property"
+  end
+
+  describe "doc-comment before variable without assignment" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some documentation.
+         */
+        var foo;
+      EOS
+    end
+    it "should detect the variable name" do
+      @doc[:name].should == "foo"
+    end
+  end
+
+  describe "doc-comment before multiple variables" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some documentation.
+         */
+        var foo, bar, baz;
+      EOS
+    end
+    it "should detect the first variable name" do
+      @doc[:name].should == "foo"
+    end
+  end
+
+  describe "doc-comment before function call" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some documentation.
+         */
+        Ext.createAlias(class, "foo", "bar");
+      EOS
+    end
+    it "should fail detecting name of the property" do
+      @doc[:name].should == ""
+    end
   end
 
 end

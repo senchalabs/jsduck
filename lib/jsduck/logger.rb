@@ -15,9 +15,8 @@ module JsDuck
       @warning_docs = [
         [:global, "Member doesn't belong to any class"],
         [:inheritdoc, "@inheritdoc referring to unknown class or member"],
-        [:extend, "@extend or @mixin referring to unknown class"],
+        [:extend, "@extend/mixin/requires/uses referring to unknown class"],
         [:link, "{@link} to unknown class or member"],
-        [:link_private, "{@link} to private member"],
         [:link_ambiguous, "{@link} is ambiguous"],
         [:link_auto, "Auto-detected link to unknown class or member"],
 
@@ -26,6 +25,7 @@ module JsDuck
         [:no_doc, "Member or class without documentation"],
         [:dup_param, "Method has two parameters with the same name"],
         [:dup_member, "Class has two members with the same name"],
+        [:dup_asset, "Duplicate guide/video/example"],
         [:req_after_opt, "Required parameter comes after optional"],
         [:subproperty, "@param foo.bar where foo param doesn't exist"],
         [:sing_static, "Singleton class member marked as @static"],
@@ -38,6 +38,9 @@ module JsDuck
         [:cat_no_match, "Class pattern in categories file matches nothing"],
         [:cat_class_missing, "Class is missing from categories file"],
         [:guide, "Guide is missing from --guides dir"],
+
+        [:aside, "Problem with @aside tag"],
+        [:hide, "Problem with @hide tag"],
       ]
       # Turn off all warnings by default.
       # This is good for testing.
@@ -67,7 +70,7 @@ module JsDuck
       elsif @warnings.has_key?(type)
         @warnings[type] = enabled
       else
-        warn(nil, "Warning of type '#{type} doesn't exist")
+        warn(nil, "Warning of type '#{type}' doesn't exist")
       end
     end
 

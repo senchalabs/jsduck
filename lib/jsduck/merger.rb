@@ -158,7 +158,7 @@ module JsDuck
         :name => name,
         :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
-        :params => detect_params(docs, code),
+        :params => detect_params(:method, doc_map, code),
         :return => detect_return(doc_map, name == "constructor" ? "Object" : "undefined"),
       }, doc_map)
     end
@@ -170,7 +170,7 @@ module JsDuck
         :name => detect_name(:event, doc_map, code),
         :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
-        :params => detect_params(docs, code),
+        :params => detect_params(:event, doc_map, code),
       }, doc_map)
     end
 
@@ -220,19 +220,22 @@ module JsDuck
         :name => detect_name(:css_mixin, doc_map, code),
         :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
-        :params => detect_params(docs, code),
+        :params => detect_params(:css_mixin, doc_map, code),
       }, doc_map)
     end
 
     # Detects properties common for each doc-object and adds them
     def add_shared(hash, doc_map)
       hash.merge!({
-        :private => !!doc_map[:private],
         :inheritable => !!doc_map[:inheritable],
         :inheritdoc => doc_map[:inheritdoc] ? doc_map[:inheritdoc].first : nil,
         :meta => detect_meta(doc_map),
       })
+      # copy :private also to main hash
+      hash[:private] = true if hash[:meta][:private]
+
       hash[:id] = create_member_id(hash)
+
       return hash
     end
 
@@ -279,7 +282,7 @@ module JsDuck
         elsif code[:type] == :assignment && code[:right]
           if code[:right][:type] == :function
             return "Function"
-          elsif code[:right][:type] == :literal
+          elsif code[:right][:type] == :literal && code[:right][:class] != nil
             return code[:right][:class]
           end
         end
@@ -290,14 +293,16 @@ module JsDuck
     def detect_extends(doc_map, code)
       if doc_map[:extends]
         cls = doc_map[:extends].first[:extends]
-        # Ignore extending of the Object class
-        cls == "Object" ? nil : cls
       elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :ext_extend
-        code[:right][:extend].join(".")
+        cls = code[:right][:extend].join(".")
       elsif code[:type] == :ext_define
         # Classes defined with Ext.define will automatically inherit from Ext.Base
-        code[:extend] || "Ext.Base"
+        cls = code[:extend] || "Ext.Base"
+      else
+        cls = nil
       end
+      # Ignore extending of the Object class
+      cls == "Object" ? nil : cls
     end
 
     def detect_default(tagname, doc_map, code)
@@ -348,7 +353,7 @@ module JsDuck
     # it instead of creating a new hash.
     def build_aliases_hash(aliases, hash={})
       aliases.each do |a|
-        if a =~ /^(.+)\.([^.]+)$/
+        if a =~ /^([^.]+)\.(.+)$/
           if hash[$1]
             hash[$1] << $2
           else
@@ -383,9 +388,9 @@ module JsDuck
       doc_map[:cfg] && doc_map[:cfg].first[:optional] == false
     end
 
-    def detect_params(docs, code)
-      implicit = detect_implicit_params(code)
-      explicit = detect_explicit_params(docs)
+    def detect_params(tagname, doc_map, code)
+      implicit = code_matches_doc?(tagname, doc_map, code) ? detect_implicit_params(code) : []
+      explicit = detect_explicit_params(doc_map)
       # Override implicit parameters with explicit ones
       # But if explicit ones exist, don't append the implicit ones.
       params = []
@@ -415,8 +420,8 @@ module JsDuck
       end
     end
 
-    def detect_explicit_params(docs)
-      combine_properties(docs.find_all {|tag| tag[:tagname] == :param})
+    def detect_explicit_params(doc_map)
+      combine_properties(doc_map[:param] || [])
     end
 
     def detect_subproperties(docs, tagname)

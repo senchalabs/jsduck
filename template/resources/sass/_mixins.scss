@@ -1,32 +1,5 @@
 @import "variables";
-
-@mixin box-shadow($x, $y, $radius, $color) {
-  -webkit-box-shadow: $x $y $radius $color;
-  -moz-box-shadow: $x $y $radius $color; }
-
-@mixin border-radius($size) {
-  border-radius: $size;
-  -moz-border-radius: $size; }
-
-@mixin border-radius-bottom($size) {
-  border-bottom-left-radius: $size;
-  border-bottom-right-radius: $size; }
-
-@mixin border-top-left-radius($size) {
-  border-top-left-radius: $size;
-  -moz-border-radius-topleft: $size; }
-
-@mixin border-top-right-radius($size) {
-  border-top-right-radius: $size;
-  -moz-border-radius-topright: $size; }
-
-@mixin border-bottom-left-radius($size) {
-  -webkit-border-bottom-left-radius: $size;
-  -moz-border-radius-bottomleft: $size; }
-
-@mixin border-bottom-right-radius($size) {
-  border-bottom-right-radius: $size;
-  -moz-border-radius-bottomright: $size; }
+@import "compass/css3";
 
 @mixin vertical-gradient($fromCol, $toCol) {
   background: $fromCol;
@@ -37,10 +10,6 @@
   background: $fromCol;
   background: -webkit-gradient(linear, left top, right top, from($fromCol), to($toCol));
   background: -moz-linear-gradient(left, $fromCol, $toCol); }
-
-@mixin opacity($opacity) {
-  opacity: $opacity;
-  filter: alpha(opacity=$opacity*100); }
 
 @mixin transition($property, $duration, $timingFunction) {
   -webkit-transition: $property $duration $timingFunction;
@@ -71,18 +40,20 @@
   .icon-video {
     background: url(../images/icons.png) no-repeat 0 -400px; }
   .icon-example {
-    background: url(../images/icons.png) no-repeat 0 -440px; } }
-
-@mixin gray-h4 {
-  h4 {
-    font-family: $docs-font;
-    font-size: 90%;
-    padding: 11px 0 5px 0;
-    text-transform: uppercase;
-    color: #999999; } }
+    background: url(../images/icons.png) no-repeat 0 -440px; }
+  .icon-css_var {
+    background: url(../images/icons.png) no-repeat 0 -480px; }
+  .icon-css_mixin {
+    background: url(../images/icons.png) no-repeat 0 -520px; }
+  .icon-class-redirect {
+    background: url(../images/icons.png) no-repeat 0 -560px; }
+  .icon-singleton-redirect {
+    background: url(../images/icons.png) no-repeat 0 -600px; }
+  .icon-component-redirect {
+    background: url(../images/icons.png) no-repeat 0 -640px; } }
 
 @mixin green-button {
-  box-shadow: inset #b3f33d 0 1px 0;
+  @include box-shadow(#b3f33d 0 1px 0 0 inset);
   color: #fff;
   text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
   @include border-radius(3px);
@@ -95,7 +66,7 @@
     border-color: #707070;
     cursor: auto;
     @include vertical-gradient(#bbb, #9c9c9c);
-    box-shadow: inset #d7d7d7 0 1px 0; } }
+    @include box-shadow(#d7d7d7 0 1px 0 0 inset); } }
 
 @mixin member-expander {
 
@@ -152,7 +123,26 @@
   // specific colors
   &.deprecated {
     background-color: #aa0000; }
+  &.removed {
+    color: #aa0000;
+    background-color: transparent;
+    border: 1px solid #aa0000;
+    text-decoration: line-through; }
   &.static {
     background-color: $docs-text-color; }
   &.required {
-    background-color: $docs-text-color; } }
+    background-color: $docs-text-color; }
+  &.private {
+    background-color: #FD6B1B; }
+  &.protected {
+    background-color: #9B86FC; } }
+
+// shared styles for signature labels in hover-menus and search dropdown.
+@mixin mini-signature {
+ .signature {
+   font-size: 0.6em;
+   text-transform: uppercase;
+   font-weight: bold;
+   padding: 0 0.5em;
+   @include border-radius(2px);
+   @include signature-colors; } }

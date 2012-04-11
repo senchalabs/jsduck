@@ -115,7 +115,7 @@ Ext.define('Docs.controller.Examples', {
             this.map = {};
             Ext.Array.forEach(Docs.data.examples, function(group) {
                 Ext.Array.forEach(group.items, function(e) {
-                    this.map["#!/example/"+e.url] = e;
+                    this.map["#!/example/"+e.name] = e;
                 }, this);
             }, this);
         }
@@ -131,7 +131,6 @@ Ext.define('Docs.controller.Examples', {
     },
 
     openInNewWindow: function() {
-        var example = this.getExample(this.activeUrl);
-        window.open((Docs.exampleBaseUrl || "touch/examples/") + example.url);
+        window.open(this.getExample(this.activeUrl).url);
     }
 });

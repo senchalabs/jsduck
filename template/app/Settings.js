@@ -3,8 +3,24 @@
  */
 Ext.define("Docs.Settings", {
     extend: 'Docs.LocalStore',
-    storeName: 'Settings',
     singleton: true,
+    requires: 'Docs.store.Settings',
+    storeName: 'Docs.store.Settings',
+
+    // Default values for settings for which undefined doesn't suite.
+    defaults: {
+        show: {
+            "public": true,
+            "protected": false,
+            "private": false,
+            "deprecated": false,
+            "removed": false,
+            "inherited": true,
+            "accessor": true
+        },
+        showPrivateClasses: false,
+        classTreeLogic: "PackageLogic"
+    },
 
     /**
      * Saves a setting
@@ -34,6 +50,6 @@ Ext.define("Docs.Settings", {
      */
     get: function(key) {
         var index = this.store.findExact("key", key);
-        return index > -1 ? this.store.getAt(index).get("value") : undefined;
+        return index > -1 ? this.store.getAt(index).get("value") : this.defaults[key];
     }
 });

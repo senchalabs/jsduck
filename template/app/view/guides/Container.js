@@ -4,7 +4,7 @@
  * Renders the guide and print button.
  */
 Ext.define('Docs.view.guides.Container', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.guidecontainer',
     componentCls: 'guide-container',
 
@@ -17,6 +17,28 @@ Ext.define('Docs.view.guides.Container', {
             'afterload'
         );
         this.callParent(arguments);
+    },
+
+    /**
+     * Scrolls the specified element into view
+     *
+     * @param {String} id  ID of elemnt to scroll to.
+     */
+    scrollToEl: function(id) {
+        var el = Ext.get(id);
+        if (el) {
+            var scrollOffset = el.getY() - 100;
+            var currentScroll = this.getEl().getScroll()['top'];
+            this.getEl().scrollTo('top', currentScroll + scrollOffset);
+            el.highlight();
+        }
+    },
+
+    /**
+     * Scrolls guide to the top
+     */
+    scrollToTop: function() {
+        this.getEl().scrollTo('top');
     },
 
     /**

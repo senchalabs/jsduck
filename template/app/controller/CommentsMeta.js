@@ -5,6 +5,10 @@
 Ext.define('Docs.controller.CommentsMeta', {
     extend: 'Ext.app.Controller',
 
+    mixins: {
+        authMixin: 'Docs.controller.AuthHelpers'
+    },
+
     refs: [
         {
             ref: 'toolbar',
@@ -27,6 +31,7 @@ Ext.define('Docs.controller.CommentsMeta', {
             guide: {},
             video: {}
         };
+        Docs.commentSubscriptions = {};
 
         this.addEvents(
             /**
@@ -42,6 +47,9 @@ Ext.define('Docs.controller.CommentsMeta', {
         this.getController('Auth').on({
             available: function() {
                 this.fetchCommentMeta();
+            },
+            loggedIn: function() {
+                this.fetchSubscriptionMeta();
             },
             scope: this
         });
@@ -96,16 +104,17 @@ Ext.define('Docs.controller.CommentsMeta', {
      * Fetch all comment meta data and populate a local store
      */
     fetchCommentMeta: function() {
-        Ext.data.JsonP.request({
-            url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_target',
+        this.request("jsonp", {
+            url: '/comments_meta',
             method: 'GET',
-            params: {
-                reduce: true,
-                group_level: 3
-            },
             success: function(response) {
-                Ext.Array.each(response.rows, function(r) {
-                    this.updateMeta(r.key, r.value.num);
+                Ext.Array.each(response.comments, function(r) {
+                    this.updateMeta(r._id.split('__'), r.value);
+                }, this);
+
+                Ext.Array.each(response.subscriptions, function(r) {
+                    var commentId = 'comments-' + r.join('-').replace(/\./g, '-').replace(/-$/, '');
+                    Docs.commentSubscriptions[commentId] = true;
                 }, this);
 
                 this.metaLoaded = true;
@@ -116,27 +125,18 @@ Ext.define('Docs.controller.CommentsMeta', {
         });
     },
 
-    fetchCommentLeaders: function() {
-        Ext.data.JsonP.request({
-            url: Docs.baseUrl + '/' + Docs.commentsDb + '/_design/Comments/_view/by_author',
+    /**
+     * Fetch all comment meta data and populate a local store
+     */
+    fetchSubscriptionMeta: function() {
+        this.request("jsonp", {
+            url: '/subscriptions',
             method: 'GET',
-            params: {
-                reduce: true,
-                group_level: 1,
-                descending: true,
-                limit: 10
-            },
             success: function(response) {
-                var tpl = Ext.create('Ext.XTemplate',
-                    '<h1>Comment reputation</h1>',
-                    '<table>',
-                    '<tpl for=".">',
-                        '<tr><td>{value}</td><td>{key}</td></tr>',
-                    '</tpl>',
-                    '</table>'
-                );
-
-                tpl.append(Ext.get(Ext.query('#welcomeindex .news .l')[0]), response.rows);
+                Ext.Array.each(response.subscriptions, function(r) {
+                    var commentId = 'comments-' + r.join('-').replace(/\./g, '-').replace(/-$/, '');
+                    Docs.commentSubscriptions[commentId] = true;
+                }, this);
             },
             scope: this
         });
@@ -177,15 +177,18 @@ Ext.define('Docs.controller.CommentsMeta', {
     createCommentIdMap: function(cls) {
         Docs.commentMeta.idMap[('comments-class-' + cls.name).replace(/\./g, '-')] = ['class', cls.name, ''];
 
-        if (cls.members) {
-            for (var member in cls.members) {
-                Ext.Array.each(cls.members[member], function(memberItem) {
-                    var origKey = ['class', cls.name, memberItem.id];
-                    var key = ['class', memberItem.owner, memberItem.id];
-                    var commentId = 'comments-' + origKey.join('-').replace(/\./g, '-');
-                    Docs.commentMeta.idMap[commentId] = key;
-                }, this);
-            }
+        cls.members && this.createMembersCommentIdMap(cls, cls.members);
+        cls.statics && this.createMembersCommentIdMap(cls, cls.statics);
+    },
+
+    createMembersCommentIdMap: function(cls, members) {
+        for (var type in members) {
+            Ext.Array.each(members[type], function(m) {
+                var origKey = ['class', cls.name, m.id];
+                var key = ['class', m.owner, m.id];
+                var commentId = 'comments-' + origKey.join('-').replace(/\./g, '-');
+                Docs.commentMeta.idMap[commentId] = key;
+            }, this);
         }
     },
 

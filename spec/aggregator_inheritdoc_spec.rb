@@ -3,14 +3,8 @@ require "jsduck/source_file"
 require "jsduck/class"
 require "jsduck/relations"
 require "jsduck/inherit_doc"
-require "jsduck/tag/static"
-require "jsduck/meta_tag_registry"
 
 describe JsDuck::Aggregator do
-  before(:all) do
-    JsDuck::MetaTagRegistry.instance.register([JsDuck::Tag::Static.new])
-  end
-
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))
@@ -350,6 +344,44 @@ describe JsDuck::Aggregator do
     end
   end
 
+  shared_examples_for "with member name parameter" do
+    before do
+      @docs = parse(<<-EOF)
+        /**
+         * @class Child
+         */
+          /**
+           * @method bar
+           * Original comment.
+           */
+          /**
+           * @method foobar
+           * #{@tagname} #bar
+           * New comment.
+           */
+      EOF
+      @inheritdoc = @docs["Child"][:members][:method][1]
+    end
+
+    it "merges comment from referenced member" do
+      @inheritdoc[:doc].should == "New comment.\n\nOriginal comment."
+    end
+  end
+
+  describe "@inheritdoc" do
+    before do
+      @tagname = "@inheritdoc"
+    end
+    it_behaves_like "with member name parameter"
+  end
+
+  describe "@alias" do
+    before do
+      @tagname = "@alias"
+    end
+    it_behaves_like "with member name parameter"
+  end
+
   describe "@inheritdoc without parameter" do
     before do
       @docs = parse(<<-EOF)
@@ -447,6 +479,49 @@ describe JsDuck::Aggregator do
 
     it "inherits docs from mixin" do
       @method[:doc].should == "Docs in mixin."
+    end
+  end
+
+  describe "@inheritdoc with class name in class" do
+    before do
+      @docs = parse(<<-EOF)
+        /**
+         * @class Parent
+         * Original comment.
+         */
+        /**
+         * @class Child
+         * New comment.
+         * @inheritdoc Parent
+         */
+      EOF
+      @cls = @docs["Child"]
+    end
+
+    it "combines docs from referenced class and current class" do
+      @cls[:doc].should == "New comment.\n\nOriginal comment."
+    end
+  end
+
+  describe "plain @inheritdoc in class" do
+    before do
+      @docs = parse(<<-EOF)
+        /**
+         * @class Parent
+         * Original comment.
+         */
+        /**
+         * @class Child
+         * @extends Parent
+         * New comment.
+         * @inheritdoc
+         */
+      EOF
+      @cls = @docs["Child"]
+    end
+
+    it "combines docs from parent and child" do
+      @cls[:doc].should == "New comment.\n\nOriginal comment."
     end
   end
 

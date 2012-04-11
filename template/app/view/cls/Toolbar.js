@@ -20,18 +20,30 @@ Ext.define('Docs.view.cls.Toolbar', {
      */
     docClass: {},
 
+    /**
+     * @cfg {Object} accessors
+     * Accessors map from Overview component.
+     */
+    accessors: {},
+
     initComponent: function() {
         this.addEvents(
             /**
-             * @event hideInherited
-             * Fires when hideInherited checkbox toggled.
-             * @param {Boolean} hide  True when inherited items should get hidden.
+             * @event buttonclick
+             * Fired when one of the toolbar HoverMenuButtons is clicked.
+             * @param {String} type Type of button that was clicked "cfg", "method", "event", etc
              */
-            "hideInherited",
+            "menubuttonclick",
             /**
              * @event filter
-             * Fires when text typed to filter.
+             * Fires when text typed to filter, or one of the hide-checkboxes clicked.
              * @param {String} search  The search text.
+             * @param {Object} show  Flags which members to show:
+             * @param {Boolean} show.public
+             * @param {Boolean} show.protected
+             * @param {Boolean} show.private
+             * @param {Boolean} show.inherited
+             * @param {Boolean} show.accessor
              */
             "filter",
             /**
@@ -45,52 +57,63 @@ Ext.define('Docs.view.cls.Toolbar', {
         this.items = [];
         this.memberButtons = {};
 
-        var self = this;
-
         var memberTitles = {
             cfg: "Configs",
             property: "Properties",
             method: "Methods",
-            event: "Events"
+            event: "Events",
+            css_var: "CSS Vars",
+            css_mixin: "CSS Mixins"
         };
         for (var type in memberTitles) {
-            var members = this.docClass.members[type];
-            var statics = this.docClass.statics[type];
-            if (members.length || statics.length) {
+            // combine both static and instance members into one alphabetically sorted array
+            var members = this.docClass.members[type].concat(this.docClass.statics[type]);
+            members.sort(function(a, b) {
+                if (a.name === "constructor" && a.tagname === "method") {
+                    return -1;
+                }
+                return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
+            });
+            if (members.length > 0) {
                 var btn = this.createMemberButton({
                     text: memberTitles[type],
                     type: type,
-                    members: members.concat(statics)
+                    members: members
                 });
                 this.memberButtons[type] = btn;
                 this.items.push(btn);
             }
         }
 
-        if (this.docClass.subclasses.length) {
-            this.items.push(this.createClassListButton("Sub Classes", this.docClass.subclasses));
-        }
-        if (this.docClass.mixedInto.length) {
-            this.items.push(this.createClassListButton("Mixed Into", this.docClass.mixedInto));
-        }
+        this.checkItems = {
+            "public": this.createCb("Public", "public"),
+            "protected": this.createCb("Protected", "protected"),
+            "private": this.createCb("Private", "private"),
+            "inherited": this.createCb("Inherited", "inherited"),
+            "accessor": this.createCb("Accessor", "accessor"),
+            "deprecated": this.createCb("Deprecated", "deprecated"),
+            "removed": this.createCb("Removed", "removed")
+        };
 
+        var self = this;
         this.items = this.items.concat([
-            { xtype: 'tbspacer', width: 10 },
+            { xtype: 'tbfill' },
             this.filterField = Ext.widget("triggerfield", {
                 triggerCls: 'reset',
                 cls: 'member-filter',
                 hideTrigger: true,
                 emptyText: 'Filter class members',
                 enableKeyEvents: true,
+                width: 150,
                 listeners: {
                     keyup: function(cmp) {
-                        this.fireEvent("filter", cmp.getValue());
+                        this.fireEvent("filter", cmp.getValue(), this.getShowFlags());
                         cmp.setHideTrigger(cmp.getValue().length === 0);
                     },
                     specialkey: function(cmp, event) {
                         if (event.keyCode === Ext.EventObject.ESC) {
                             cmp.reset();
-                            this.fireEvent("filter", "");
+                            this.fireEvent("filter", "", this.getShowFlags());
                         }
                     },
                     scope: this
@@ -98,22 +121,24 @@ Ext.define('Docs.view.cls.Toolbar', {
                 onTriggerClick: function() {
                     this.reset();
                     this.focus();
-                    self.fireEvent('filter', '');
+                    self.fireEvent('filter', '', self.getShowFlags());
                     this.setHideTrigger(true);
                 }
             }),
-            { xtype: 'tbfill' },
+            { xtype: 'tbspacer', width: 10 },
             {
-                boxLabel: 'Hide inherited',
-                boxLabelAlign: 'before',
-                xtype: 'checkbox',
-                margin: '0 5 0 0',
-                padding: '0 0 5 0',
-                checked: Docs.Settings.get("hideInherited"),
-                handler: function(el) {
-                    this.fireEvent("hideInherited", el.checked);
-                },
-                scope: this
+                xtype: 'button',
+                text: 'Show',
+                menu: [
+                    this.checkItems['public'],
+                    this.checkItems['protected'],
+                    this.checkItems['private'],
+                    '-',
+                    this.checkItems['inherited'],
+                    this.checkItems['accessor'],
+                    this.checkItems['deprecated'],
+                    this.checkItems['removed']
+                ]
             },
             {
                 xtype: 'button',
@@ -122,7 +147,6 @@ Ext.define('Docs.view.cls.Toolbar', {
                 enableToggle: true,
                 toggleHandler: function(btn, pressed) {
                     btn.setIconCls(pressed ? 'collapse-all-members' : 'expand-all-members');
-                    btn.setTooltip(pressed ? "Collapse all" : "Expand all");
                     this.fireEvent("toggleExpanded", pressed);
                 },
                 scope: this
@@ -130,6 +154,27 @@ Ext.define('Docs.view.cls.Toolbar', {
         ]);
 
         this.callParent(arguments);
+    },
+
+    getShowFlags: function() {
+        var flags = {};
+        for (var i in this.checkItems) {
+            flags[i] = this.checkItems[i].checked;
+        }
+        return flags;
+    },
+
+    createCb: function(text, type) {
+        return Ext.widget('menucheckitem', {
+            text: text,
+            checked: Docs.Settings.get("show")[type],
+            listeners: {
+                checkchange: function() {
+                    this.fireEvent("filter", this.filterField.getValue(), this.getShowFlags());
+                },
+                scope: this
+            }
+        });
     },
 
     createMemberButton: function(cfg) {
@@ -144,59 +189,64 @@ Ext.define('Docs.view.cls.Toolbar', {
             showCount: true,
             listeners: {
                 click: function() {
-                    this.up('classoverview').scrollToEl("#m-" + cfg.type);
+                    this.fireEvent('menubuttonclick', cfg.type);
                 },
                 scope: this
             }
         });
     },
 
-    createClassListButton: function(text, classes) {
-        var data = Ext.Array.map(classes, function(cls) {
-            return this.createLinkRecord(cls);
-        }, this);
-
-        return Ext.create('Docs.view.HoverMenuButton', {
-            text: text,
-            cls: 'icon-subclass',
-            showCount: true,
-            store: this.createStore(data)
-        });
-    },
-
     // creates store tha holds link records
     createStore: function(records) {
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'cls', 'url', 'label', 'inherited', 'meta']
+            fields: ['id', 'url', 'label', 'inherited', 'accessor', 'meta']
         });
         store.add(records);
         return store;
     },
 
-    // Creates link object referencing a class (and optionally a class member)
+    // Creates link object referencing a class member
     createLinkRecord: function(cls, member) {
         return {
-            cls: cls,
-            url: member ? (cls + "-" + member.id) : cls,
-            label: member ? ((member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name) : cls,
-            inherited: member ? member.owner !== cls : false,
-            meta: member ? member.meta : {}
+            url: cls + "-" + member.id,
+            label: (member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name,
+            inherited: member.owner !== cls,
+            accessor: member.tagname === "method" && this.accessors.hasOwnProperty(member.name),
+            meta: member.meta
         };
     },
 
     /**
-     * Hides or unhides inherited members in dropdown menus.
-     * @param {Boolean} hide
+     * Show or hides members in dropdown menus.
+     * @param {Object} show
+     * @param {Boolean} isSearch
+     * @param {RegExp} re
      */
-    hideInherited: function(hide) {
+    showMenuItems: function(show, isSearch, re) {
         Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();
-                if (hide) {
-                    store.filterBy(function(m) { return !m.get("inherited"); });
-                }
-                else {
-                    store.clearFilter();
+                store.filterBy(function(m) {
+                    return !(
+                        !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
+                        !show['protected'] && m.get("meta")["protected"] ||
+                        !show['private']   && m.get("meta")["private"] ||
+                        !show['inherited'] && m.get("inherited") ||
+                        !show['accessor']  && m.get("accessor") ||
+                        !show['deprecated']   && m.get("meta")["deprecated"] ||
+                        !show['removed']   && m.get("meta")["removed"] ||
+                        isSearch           && !re.test(m.get("label"))
+                    );
+                });
+                // HACK!!!
+                // In Ext JS 4.1 filtering the stores causes the menus
+                // to become visible. But the visibility behaves badly
+                // - one has to call #show first or #hide won't have
+                // an effect.
+                var menu = this.memberButtons[type].menu;
+                if (menu && Ext.getVersion().version >= "4.1.0") {
+                    menu.show();
+                    menu.hide();
                 }
             }
         }, this);

@@ -18,6 +18,8 @@
   margin: 10px 0 0 8px;
   padding-left: 21px;
   font-size: 1.1em;
+  // Make it all appear in one line in IE7
+  white-space: nowrap;
   a {
     color: #fff; }
   strong {
@@ -84,10 +86,21 @@
     border-style: solid;
     border-color: $docs-border-color;
     color: #605f5f;
+    // Avoid wrapping titles of guides, videos, etc.
+    .title, .class {
+      white-space: pre;
+      strong {
+        background: rgba(0, 0, 0, 0.1);
+        color: black; } }
     .title {
       font-weight: bold;
       overflow: hidden;
-      text-overflow: ellipsis; }
+      text-overflow: ellipsis;
+      &.private {
+        color: gray; }
+      &.removed {
+        color: gray;
+        text-decoration: line-through; } }
     .class {
       font-size: 0.85em;
       overflow: hidden;
@@ -102,6 +115,12 @@
     width: 18px;
     height: 18px; }
   @include icons;
+
+  .meta {
+    position: absolute;
+    top: 6px;
+    right: 4px;
+    @include mini-signature; }
 
   .item.x-item-selected {
     background-color: #ffffaa; }
