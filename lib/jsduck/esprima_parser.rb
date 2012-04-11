@@ -77,23 +77,6 @@ module JsDuck
       return nil
     end
 
-    # Returns array of child nodes of given node
-    def child_nodes(node)
-      case node["type"]
-      when "Program", "BlockStatement"
-        node["body"]
-      when "FunctionDeclaration", "FunctionExpression", "ForStatement"
-        [node["body"]]
-      when "ExpressionStatement"
-        [node["expression"]]
-      when "CallExpression"
-        [node["callee"]]
-      when "IfStatement"
-        [node["consequent"]]
-      else
-        puts "Unknown node type: "+node["type"]
-      end
-    end
 
     # True if range A is less than range B
     def less(a, b)
@@ -109,5 +92,72 @@ module JsDuck
     def within(a, b)
       return b[0] < a[0] && a[1] < b[1]
     end
+
+
+    # Returns array of child nodes of given node
+    def child_nodes(node)
+      properties = NODE_TYPES[node["type"]]
+
+      unless properties
+        puts "Unknown node type: "+node["type"]
+        exit(1)
+      end
+
+      properties.map {|p| node[p] }.compact.flatten
+    end
+
+    # All possible node types in Esprima-created abstract syntax tree
+    #
+    # Each node type maps to list of properties of that node into
+    # which we can recurse for further parsing.
+    NODE_TYPES = {
+      "Program" => ["body"],
+
+      "BlockStatement" => ["body"],
+      "BreakStatement" => [],
+      "ContinueStatement" => [],
+      "DoWhileStatement" => ["body", "test"],
+      "DebuggerStatement" => [],
+      "EmptyStatement" => [],
+      "ExpressionStatement" => ["expression"],
+      "ForStatement" => ["init", "test", "update", "body"],
+      "ForInStatement" => ["left", "right", "body"],
+      "IfStatement" => ["test", "consequent", "alternate"],
+      "LabeledStatement" => ["body"],
+      "ReturnStatement" => ["argument"],
+      "SwitchStatement" => ["discriminant", "cases"],
+      "SwitchCase" => ["test", "consequent"],
+      "ThrowStatement" => ["argument"],
+      "TryStatement" => ["block", "handlers", "finalizer"],
+      "CatchClause" => ["param", "body"],
+      "WhileStatement" => ["test", "body"],
+      "WithStatement" => ["object", "body"],
+
+      "FunctionDeclaration" => ["id", "params", "body"],
+      "VariableDeclaration" => ["declarations"],
+      "VariableDeclarator" => ["id", "init"],
+
+      "AssignmentExpression" => ["left", "right"],
+      "ArrayExpression" => ["elements"],
+      "BinaryExpression" => ["left", "right"],
+      "CallExpression" => ["callee", "arguments"],
+      "ConditionalExpression" => ["test", "consequent", "alternate"],
+      "FunctionExpression" => ["body"],
+
+      "LogicalExpression" => ["left", "right"],
+      "MemberExpression" => ["object", "property"],
+      "NewExpression" => ["callee", "arguments"],
+      "ObjectExpression" => ["properties"],
+      "Property" => ["key", "value"],
+
+      "SequenceExpression" => ["expressions"],
+      "ThisExpression" => [],
+      "UnaryExpression" => ["argument"],
+      "UpdateExpression" => ["argument"],
+
+      "Identifier" => [],
+      "Literal" => [],
+    }
+
   end
 end

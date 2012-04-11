@@ -89,11 +89,12 @@ describe JsDuck::EsprimaParser do
     end
   end
 
-  describe "parsing a heavily nested comment" do
+  describe "parsing heavily nested comment" do
     before do
       @docs = parse(<<-EOS)
         (function () {
             if (true) {
+            } else {
                 var i;
                 for (i=0; i<10; i++) {
                     // Function A
