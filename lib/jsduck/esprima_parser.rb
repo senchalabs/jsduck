@@ -20,7 +20,7 @@ module JsDuck
     def parse(input)
       @v8['js'] = input
 
-      json = @v8.eval("JSON.stringify(esprima.parse(js, {comment: true, loc: true}))")
+      json = @v8.eval("JSON.stringify(esprima.parse(js, {comment: true, range: true}))")
       JSON.parse(json, :max_nesting => false)
     end
 
