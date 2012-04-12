@@ -49,7 +49,7 @@ describe JsDuck::EsprimaParser do
     end
   end
 
-  describe "parsing two comments before one function" do
+  describe "parsing two block comments before one function" do
     before do
       @docs = parse(<<-EOS)
         /* Function A */
@@ -69,6 +69,78 @@ describe JsDuck::EsprimaParser do
 
     it "detects second comment as belonging to the function" do
       @docs[1][:code]["type"].should == "FunctionDeclaration"
+    end
+  end
+
+  shared_examples_for "three comments merged" do
+    it "finds one comment" do
+      @docs.length.should == 1
+    end
+
+    it "merges all the line-comments together" do
+      @docs[0][:comment].should == " Very\n Long\n Comment"
+    end
+
+    it "detects the whole comment as belonging to the function" do
+      @docs[0][:code]["type"].should == "FunctionDeclaration"
+    end
+  end
+
+  describe "parsing three line comments before one function" do
+    before do
+      @docs = parse(<<-EOS)
+        // Very
+        // Long
+        // Comment
+        function b() {
+        }
+      EOS
+    end
+
+    it_should_behave_like "three comments merged"
+  end
+
+  describe "parsing two separated line comments before one function" do
+    before do
+      @docs = parse(<<-EOS)
+        // Very
+
+        // Long
+
+
+        // Comment
+        function b() {
+        }
+      EOS
+    end
+
+    it_should_behave_like "three comments merged"
+  end
+
+  describe "parsing 2 x two line comments before one function" do
+    before do
+      @docs = parse(<<-EOS)
+        // First
+        // Comment for A
+        function a() {
+        }
+        // Second
+        // Comment for B
+        function b() {
+        }
+      EOS
+    end
+
+    it "finds two comments" do
+      @docs.length.should == 2
+    end
+
+    it "merges first two line-comments together" do
+      @docs[0][:comment].should == " First\n Comment for A"
+    end
+
+    it "merges second two line-comments together" do
+      @docs[1][:comment].should == " Second\n Comment for B"
     end
   end
 

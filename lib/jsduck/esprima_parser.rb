@@ -18,20 +18,50 @@ module JsDuck
 
     # Input must be a String.
     def parse(input)
-      @v8['js'] = input
+      @v8['js'] = @input = input
 
       json = @v8.eval("JSON.stringify(esprima.parse(js, {comment: true, range: true}))")
       @ast = JSON.parse(json, :max_nesting => false)
 
-      link_comments
+      @ast["comments"] = merge_comments(@ast["comments"])
       locate_comments
     end
 
-    # Establishes links between comments, so we can easily use
-    # comment["next"] to get to the next comment.
-    def link_comments
-      @ast["comments"].each_with_index do |comment, i|
-        comment["next"] = @ast["comments"][i+1]
+    # Merges consecutive line-comments and Establishes links between
+    # comments, so we can easily use comment["next"] to get to the
+    # next comment.
+    def merge_comments(original_comments)
+      result = []
+
+      comment = original_comments[0]
+      i = 0
+
+      while comment
+        i += 1
+        next_comment = original_comments[i]
+
+        if next_comment && mergeable?(comment, next_comment)
+          # Merge next comment to current one
+          comment["value"] += "\n" + next_comment["value"]
+          comment["range"][1] = next_comment["range"][1]
+        else
+          # Create a link and continue with next comment
+          comment["next"] = next_comment
+          result << comment
+          comment = next_comment
+        end
+      end
+
+      result
+    end
+
+    # Two comments can be merged if they are both line-comments and
+    # they are separated only by whitespace
+    def mergeable?(c1, c2)
+      if c1["type"] == "Line" && c2["type"] == "Line"
+        /\A\s*\Z/ =~ @input.slice((c1["range"][1]+1)..(c2["range"][0]-1))
+      else
+        false
       end
     end
 
