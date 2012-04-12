@@ -41,7 +41,8 @@ module JsDuck
     #           {:name => "bar"}
     #         ]
     #       }
-    #     }
+    #     },
+    #     :type => :doc_comment,
     #   }
     # ]
     #
@@ -52,7 +53,8 @@ module JsDuck
           @docs << {
             :comment => comment[:value],
             :linenr => comment[:linenr],
-            :code => code_block
+            :code => code_block,
+            :type => :doc_comment,
           }
         else
           @lex.next
