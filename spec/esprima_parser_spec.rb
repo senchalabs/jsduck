@@ -6,6 +6,25 @@ describe JsDuck::EsprimaParser do
     JsDuck::EsprimaParser.instance.parse(input)
   end
 
+  describe "parsing two comments" do
+    before do
+      @docs = parse(<<-EOS)
+        /* Hello world
+        */
+
+        // Another
+      EOS
+    end
+
+    it "detects 1-based line number of comment on first line" do
+      @docs[0][:linenr].should == 1
+    end
+
+    it "detects line number of second comment on 4th line" do
+      @docs[1][:linenr].should == 4
+    end
+  end
+
   describe "parsing comment after function" do
     before do
       @docs = parse(<<-EOS)

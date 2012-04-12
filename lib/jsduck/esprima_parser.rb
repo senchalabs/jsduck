@@ -16,7 +16,14 @@ module JsDuck
       @v8.load(esprima)
     end
 
-    # Input must be a String.
+    # Parses JavaScript source code and returns array of hashes like this:
+    #
+    #     {
+    #         :comment => "The contents of the comment",
+    #         :code => {...AST data structure for code following the comment...},
+    #         :linenr => 12,  // Beginning with 1
+    #     }
+    #
     def parse(input)
       @v8['js'] = @input = input
 
@@ -71,9 +78,15 @@ module JsDuck
       @ast["comments"].map do |comment|
         {
           :comment => comment["value"],
-          :code => stuff_after(comment)
+          :code => stuff_after(comment),
+          :linenr => line_number(comment["range"][0]),
         }
       end
+    end
+
+    # Given index inside input string, returns the corresponding line number
+    def line_number(index)
+      @input[0...index].count("\n") + 1
     end
 
     # Sees if there is some code following the comment.
