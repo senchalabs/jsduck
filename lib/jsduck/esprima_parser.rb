@@ -27,6 +27,8 @@ module JsDuck
       locate_comments
     end
 
+    private
+
     # Merges consecutive line-comments and Establishes links between
     # comments, so we can easily use comment["next"] to get to the
     # next comment.
