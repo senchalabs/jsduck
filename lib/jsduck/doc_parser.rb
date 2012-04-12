@@ -50,9 +50,7 @@ module JsDuck
     # Extracts content inside /** ... */
     def purify(input)
       result = []
-      # Remove the beginning /** and end */
-      input = input.sub(/\A\/\*\* ?/, "").sub(/ ?\*\/\Z/, "")
-      # Now we are left with only two types of lines:
+      # We can have two types of lines:
       # - those beginning with *
       # - and those without it
       indent = nil

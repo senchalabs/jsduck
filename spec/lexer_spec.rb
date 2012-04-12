@@ -132,7 +132,7 @@ describe JsDuck::Lexer do
   end
 
   it "identifies doc-comments together with line numbers" do
-    lex("/** foo */").should == [[:doc_comment, "/** foo */", 1]]
+    lex("/** foo */").should == [[:doc_comment, " foo ", 1]]
   end
 
   it "counts line numbers correctly" do
@@ -157,7 +157,7 @@ describe JsDuck::Lexer do
     end
 
     it "doc-comment" do
-      lex("/** ").should == [[:doc_comment, "/** ", 1]]
+      lex("/** ").should == [[:doc_comment, " ", 1]]
     end
 
     it "regex" do
