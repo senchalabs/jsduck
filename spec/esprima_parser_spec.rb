@@ -3,7 +3,7 @@ require "jsduck/esprima_parser"
 describe JsDuck::EsprimaParser do
 
   def parse(input)
-    JsDuck::EsprimaParser.instance.parse(input)
+    JsDuck::EsprimaParser.new(input).parse
   end
 
   describe "parsing two comments" do

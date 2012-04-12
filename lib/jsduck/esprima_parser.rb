@@ -1,19 +1,17 @@
-require 'v8'
-require 'json'
-require 'singleton'
+require 'jsduck/esprima_core'
 
 module JsDuck
 
-  # New parser prototype that uses Esprima.js through V8.
+  # JavaScript parser that internally uses Esprima.js
   class EsprimaParser
-    # Initialize as singleton to avoid loading the esprima.js more
-    # than once - otherwise performace will severely suffer.
-    include Singleton
 
-    def initialize
-      @v8 = V8::Context.new
-      esprima = File.dirname(File.dirname(File.dirname(File.expand_path(__FILE__))))+"/esprima/esprima.js";
-      @v8.load(esprima)
+    # Initializes the parser with JavaScript source code to be parsed.
+    def initialize(input)
+      @input = input
+
+      # Initialize line number counting
+      @start_index = 0
+      @start_linenr = 1
     end
 
     # Parses JavaScript source code and returns array of hashes like this:
@@ -25,11 +23,8 @@ module JsDuck
     #         :type => :doc_comment, // or :plain_comment
     #     }
     #
-    def parse(input)
-      @v8['js'] = @input = input
-
-      json = @v8.eval("JSON.stringify(esprima.parse(js, {comment: true, range: true}))")
-      @ast = JSON.parse(json, :max_nesting => false)
+    def parse
+      @ast = EsprimaCore.instance.parse(@input)
 
       @ast["comments"] = merge_comments(@ast["comments"])
       locate_comments
@@ -76,10 +71,6 @@ module JsDuck
     end
 
     def locate_comments
-      # Initialize line number counting
-      @start_index = 0
-      @start_linenr = 1
-
       @ast["comments"].map do |comment|
         # Detect comment type and strip * at the beginning of doc-comment
         value = comment["value"]
