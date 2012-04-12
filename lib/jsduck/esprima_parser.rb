@@ -75,6 +75,10 @@ module JsDuck
     end
 
     def locate_comments
+      # Initialize line number counting
+      @start_index = 0
+      @start_linenr = 1
+
       @ast["comments"].map do |comment|
         {
           :comment => comment["value"],
@@ -86,7 +90,12 @@ module JsDuck
 
     # Given index inside input string, returns the corresponding line number
     def line_number(index)
-      @input[0...index].count("\n") + 1
+      # To speed things up, remember the index until which we counted,
+      # then next time just begin counting from there.  This way we
+      # only count each line once.
+      @start_linenr = @input[@start_index...index].count("\n") + @start_linenr
+      @start_index = index
+      return @start_linenr
     end
 
     # Sees if there is some code following the comment.
