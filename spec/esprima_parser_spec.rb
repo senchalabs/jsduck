@@ -25,6 +25,44 @@ describe JsDuck::EsprimaParser do
     end
   end
 
+  describe "parsing line comment" do
+    before do
+      @docs = parse("// Hello world")
+    end
+
+    it "results in plain comment" do
+      @docs[0][:type].should == :plain_comment
+    end
+  end
+
+  describe "parsing block comment" do
+    before do
+      @docs = parse("/* Hello world */")
+    end
+
+    it "results in plain comment" do
+      @docs[0][:type].should == :plain_comment
+    end
+
+    it "doesn't strip anything from the beginning of comment" do
+      @docs[0][:comment].should == " Hello world "
+    end
+  end
+
+  describe "parsing block comment beginning with /**" do
+    before do
+      @docs = parse("/** Hello world */")
+    end
+
+    it "results in doc comment" do
+      @docs[0][:type].should == :doc_comment
+    end
+
+    it "strips * at the beginning of comment" do
+      @docs[0][:comment].should == " Hello world "
+    end
+  end
+
   describe "parsing comment after function" do
     before do
       @docs = parse(<<-EOS)

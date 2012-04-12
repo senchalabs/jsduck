@@ -22,6 +22,7 @@ module JsDuck
     #         :comment => "The contents of the comment",
     #         :code => {...AST data structure for code following the comment...},
     #         :linenr => 12,  // Beginning with 1
+    #         :type => :doc_comment, // or :plain_comment
     #     }
     #
     def parse(input)
@@ -80,10 +81,20 @@ module JsDuck
       @start_linenr = 1
 
       @ast["comments"].map do |comment|
+        # Detect comment type and strip * at the beginning of doc-comment
+        value = comment["value"]
+        if comment["type"] == "Block" && value =~ /\A\*/
+          type = :doc_comment
+          value = value.slice(1, value.length-1)
+        else
+          type = :plain_comment
+        end
+
         {
-          :comment => comment["value"],
+          :comment => value,
           :code => stuff_after(comment),
           :linenr => line_number(comment["range"][0]),
+          :type => type,
         }
       end
     end
