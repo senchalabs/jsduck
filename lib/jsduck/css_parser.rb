@@ -1,12 +1,10 @@
 require 'jsduck/lexer'
-require 'jsduck/doc_parser'
 
 module JsDuck
 
   class CssParser
     def initialize(input, options = {})
       @lex = Lexer.new(input)
-      @doc_parser = DocParser.new
       @docs = []
     end
 
@@ -17,7 +15,7 @@ module JsDuck
         if look(:doc_comment)
           comment = @lex.next(true)
           @docs << {
-            :comment => @doc_parser.parse(comment[:value]),
+            :comment => comment[:value],
             :linenr => comment[:linenr],
             :code => code_block
           }

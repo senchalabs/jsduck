@@ -1,5 +1,6 @@
 require 'jsduck/js_parser'
 require 'jsduck/css_parser'
+require 'jsduck/doc_parser'
 require 'jsduck/merger'
 require "cgi"
 
@@ -22,10 +23,14 @@ module JsDuck
       @html_filename = ""
       @links = {}
 
+      doc_parser = DocParser.new
+
       merger = Merger.new
       merger.filename = @filename
+
       @docs = parse.map do |docset|
         merger.linenr = docset[:linenr]
+        docset[:comment] = doc_parser.parse(docset[:comment])
         link(docset[:linenr], merger.merge(docset[:comment], docset[:code]))
       end
     end
