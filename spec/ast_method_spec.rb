@@ -1,7 +1,7 @@
 require "jsduck/ast"
 require "jsduck/esprima_parser"
 
-describe "JsDuck::Ast detects method" do
+describe "JsDuck::Ast detects method with" do
   def detect(string)
     node = JsDuck::EsprimaParser.new(string).parse[0]
     return JsDuck::Ast.new.detect(node[:code])
@@ -57,6 +57,37 @@ describe "JsDuck::Ast detects method" do
             "foo": function(){}
         };
       EOS
+    end
+  end
+
+  describe "no params in" do
+    it "function declaration without params" do
+      detect("/** */ function foo() {}")[:params].length.should == 0
+    end
+
+    it "Ext.emptyFn assignment" do
+      detect("/** */ foo = Ext.emptyFn")[:params].length.should == 0
+    end
+  end
+
+  describe "one param in" do
+    it "function declaration with one param" do
+      detect("/** */ function foo(x) {}")[:params].length.should == 1
+    end
+  end
+
+  describe "two params in" do
+    it "function assignment with two params" do
+      detect("/** */ foo = function(a,b){}")[:params].length.should == 2
+    end
+  end
+
+  describe "param names" do
+    it "function assignment with three params" do
+      params = detect("/** */ foo = function(a, b, c){}")[:params]
+      params[0].should == "a"
+      params[1].should == "b"
+      params[2].should == "c"
     end
   end
 

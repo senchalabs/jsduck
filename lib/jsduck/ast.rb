@@ -22,13 +22,13 @@ module JsDuck
       elsif function?(ast) && class_name?(ast["id"])
         {:type => :class}
       elsif function?(ast)
-        {:type => :method, :name => to_s(ast["id"])}
+        make_method(ast["id"], ast)
       elsif exp && assignment?(exp) && function?(exp["right"])
-        {:type => :method, :name => to_s(exp["left"])}
+        make_method(exp["left"], exp["right"])
       elsif var && function?(var["init"])
-        {:type => :method, :name => to_s(var["id"])}
+        make_method(var["id"], var["init"])
       elsif property?(ast) && function?(ast["value"])
-        {:type => :method, :name => to_s(ast["key"])}
+        make_method(ast["key"], ast["value"])
       else
         {:type => :property}
       end
@@ -71,6 +71,14 @@ module JsDuck
     # Class name begins with upcase char
     def class_name?(ast)
       return to_s(ast).split(/\./).last =~ /\A[A-Z]/
+    end
+
+    def make_method(name_ast, ast=nil)
+      return {
+        :type => :method,
+        :name => to_s(name_ast),
+        :params => (ast && !empty_fn?(ast)) ? ast["params"].map {|p| to_s(p) } : []
+      }
     end
 
     def to_s(ast)
