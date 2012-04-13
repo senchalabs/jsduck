@@ -48,6 +48,8 @@ module JsDuck
           :method
         elsif var && function?(var["init"])
           :method
+        elsif property?(ast) && function?(ast["value"])
+          :method
         elsif doc_map[:return] || doc_map[:param]
           :method
         else
@@ -75,11 +77,19 @@ module JsDuck
     end
 
     def function?(ast)
-      ast["type"] == "FunctionDeclaration" || ast["type"] == "FunctionExpression"
+      ast["type"] == "FunctionDeclaration" || ast["type"] == "FunctionExpression" || empty_fn?(ast)
+    end
+
+    def empty_fn?(ast)
+      ast["type"] == "MemberExpression" && to_s(ast) == "Ext.emptyFn"
     end
 
     def var?(ast)
       ast["type"] == "VariableDeclaration"
+    end
+
+    def property?(ast)
+      ast["type"] == "Property"
     end
 
     # Class name begins with upcase char

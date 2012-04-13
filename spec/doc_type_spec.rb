@@ -79,8 +79,44 @@ describe JsDuck::DocType do
       detect("/** */ foo = function() {}").should == :method
     end
 
+    it "assignment of Ext.emptyFn" do
+      detect("/** */ foo = Ext.emptyFn").should == :method
+    end
+
     it "var initialized with function" do
       detect("/** */ var foo = function() {}").should == :method
+    end
+
+    it "vari initialized with Ext.emptyFn" do
+      detect("/** */ var foo = Ext.emptyFn").should == :method
+    end
+
+    it "object property initialized with function" do
+      detect(<<-EOS).should == :method
+        Foo = {
+            /** */
+            bar: function(){}
+        };
+      EOS
+    end
+
+    it "object property in comma-first notation initialized with function" do
+      detect(<<-EOS).should == :method
+        Foo = {
+            foo: 5
+            /** */
+            , bar: function(){}
+        };
+      EOS
+    end
+
+    it "object property initialized with Ext.emptyFn" do
+      detect(<<-EOS).should == :method
+        Foo = {
+            /** */
+            bar: Ext.emptyFn
+        };
+      EOS
     end
   end
 
