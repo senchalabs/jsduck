@@ -1,3 +1,4 @@
+require "jsduck/ast"
 require "jsduck/doc_type"
 require "jsduck/esprima_parser"
 require "jsduck/css_parser"
@@ -9,6 +10,7 @@ describe JsDuck::DocType do
       node = JsDuck::CssParser.new(string).parse[0]
     else
       node = JsDuck::EsprimaParser.new(string).parse[0]
+      node[:code] = { :type => JsDuck::Ast.new.detect(node[:code]) }
     end
 
     doc_parser = JsDuck::DocParser.new
@@ -21,42 +23,14 @@ describe JsDuck::DocType do
       detect("/** @class */").should == :class
     end
 
-    it "function beginning with uppercase letter" do
+    it "class-like function" do
       detect("/** */ function MyClass() {}").should == :class
-    end
-
-    it "function assignment to uppercase name" do
-      detect("/** */ MyClass = function() {}").should == :class
-    end
-
-    it "function assignment to uppercase property" do
-      detect("/** */ foo.MyClass = function() {}").should == :class
-    end
-
-    it "uppercase var initialization with function" do
-      detect("/** */ var MyClass = function() {}").should == :class
-    end
-
-    it "Ext.extend()" do
-      detect("/** */ MyClass = Ext.extend(Your.Class, {  });").should == :class
-    end
-
-    it "var initialized with Ext.extend()" do
-      detect("/** */ var MyClass = Ext.extend(Your.Class, {  });").should == :class
     end
 
     it "Ext.define()" do
       detect(<<-EOS).should == :class
         /** */
         Ext.define('MyClass', {
-        });
-      EOS
-    end
-
-    it "Ext.ClassManager.create()" do
-      detect(<<-EOS).should == :class
-        /** */
-        Ext.ClassManager.create('MyClass', {
         });
       EOS
     end
@@ -67,56 +41,8 @@ describe JsDuck::DocType do
       detect("/** @method */").should == :method
     end
 
-    it "function beginning with underscore" do
-      detect("/** */ function _Foo() {}").should == :method
-    end
-
-    it "lowercase function name" do
+    it "function declaration" do
       detect("/** */ function foo() {}").should == :method
-    end
-
-    it "assignment of function" do
-      detect("/** */ foo = function() {}").should == :method
-    end
-
-    it "assignment of Ext.emptyFn" do
-      detect("/** */ foo = Ext.emptyFn").should == :method
-    end
-
-    it "var initialized with function" do
-      detect("/** */ var foo = function() {}").should == :method
-    end
-
-    it "vari initialized with Ext.emptyFn" do
-      detect("/** */ var foo = Ext.emptyFn").should == :method
-    end
-
-    it "object property initialized with function" do
-      detect(<<-EOS).should == :method
-        Foo = {
-            /** */
-            bar: function(){}
-        };
-      EOS
-    end
-
-    it "object property in comma-first notation initialized with function" do
-      detect(<<-EOS).should == :method
-        Foo = {
-            foo: 5
-            /** */
-            , bar: function(){}
-        };
-      EOS
-    end
-
-    it "object property initialized with Ext.emptyFn" do
-      detect(<<-EOS).should == :method
-        Foo = {
-            /** */
-            bar: Ext.emptyFn
-        };
-      EOS
     end
   end
 
