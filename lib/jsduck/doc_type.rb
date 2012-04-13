@@ -28,10 +28,13 @@ module JsDuck
         :cfg
       else
         exp = expression?(ast) ? ast["expression"] : nil
+        var = var?(ast) ? ast["declarations"][0] : nil
 
         if exp && call?(exp) && ext_define?(exp["callee"])
           :class
         elsif exp && assignment?(exp) && class_name?(exp["left"])
+          :class
+        elsif var && class_name?(var["id"])
           :class
         elsif function?(ast) && class_name?(ast["id"])
           :class
@@ -42,6 +45,8 @@ module JsDuck
         elsif function?(ast)
           :method
         elsif exp && assignment?(exp) && function?(exp["right"])
+          :method
+        elsif var && function?(var["init"])
           :method
         elsif doc_map[:return] || doc_map[:param]
           :method
@@ -71,6 +76,10 @@ module JsDuck
 
     def function?(ast)
       ast["type"] == "FunctionDeclaration" || ast["type"] == "FunctionExpression"
+    end
+
+    def var?(ast)
+      ast["type"] == "VariableDeclaration"
     end
 
     # Class name begins with upcase char

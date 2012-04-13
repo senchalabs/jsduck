@@ -29,8 +29,20 @@ describe JsDuck::DocType do
       detect("/** */ MyClass = function() {}").should == :class
     end
 
+    it "function assignment to uppercase property" do
+      detect("/** */ foo.MyClass = function() {}").should == :class
+    end
+
+    it "uppercase var initialization with function" do
+      detect("/** */ var MyClass = function() {}").should == :class
+    end
+
     it "Ext.extend()" do
       detect("/** */ MyClass = Ext.extend(Your.Class, {  });").should == :class
+    end
+
+    it "var initialized with Ext.extend()" do
+      detect("/** */ var MyClass = Ext.extend(Your.Class, {  });").should == :class
     end
 
     it "Ext.define()" do
@@ -65,6 +77,10 @@ describe JsDuck::DocType do
 
     it "assignment of function" do
       detect("/** */ foo = function() {}").should == :method
+    end
+
+    it "var initialized with function" do
+      detect("/** */ var foo = function() {}").should == :method
     end
   end
 
