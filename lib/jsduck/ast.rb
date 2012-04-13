@@ -22,13 +22,13 @@ module JsDuck
       elsif function?(ast) && class_name?(ast["id"])
         {:type => :class}
       elsif function?(ast)
-        {:type => :method}
+        {:type => :method, :name => to_s(ast["id"])}
       elsif exp && assignment?(exp) && function?(exp["right"])
-        {:type => :method}
+        {:type => :method, :name => to_s(exp["left"])}
       elsif var && function?(var["init"])
-        {:type => :method}
+        {:type => :method, :name => to_s(var["id"])}
       elsif property?(ast) && function?(ast["value"])
-        {:type => :method}
+        {:type => :method, :name => to_s(ast["key"])}
       else
         {:type => :property}
       end
