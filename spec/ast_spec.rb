@@ -32,6 +32,14 @@ describe JsDuck::Ast do
       detect("/** */ var MyClass = Ext.extend(Your.Class, {  });").should == :class
     end
 
+    it "Ext.extend() assigned to lowercase name" do
+      detect("/** */ myclass = Ext.extend(Your.Class, {  });").should == :class
+    end
+
+    it "lowercase var initialized with Ext.extend()" do
+      detect("/** */ var myclass = Ext.extend(Your.Class, {  });").should == :class
+    end
+
     it "Ext.define()" do
       detect(<<-EOS).should == :class
         /** */

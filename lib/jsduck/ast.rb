@@ -13,13 +13,13 @@ module JsDuck
       exp = expression?(ast) ? ast["expression"] : nil
       var = var?(ast) ? ast["declarations"][0] : nil
 
-      if exp && call?(exp) && ext_define?(exp["callee"])
+      if exp && call?(exp) && ext_define?(exp)
         {:type => :class}
 
-      elsif exp && assignment?(exp) && class_name?(exp["left"])
+      elsif exp && assignment?(exp) && (ext_extend?(exp["right"]) || class_name?(exp["left"]))
         {:type => :class}
 
-      elsif var && class_name?(var["id"])
+      elsif var && (ext_extend?(var["init"]) || class_name?(var["id"]))
         {:type => :class}
 
       elsif function?(ast) && class_name?(ast["id"])
@@ -56,8 +56,12 @@ module JsDuck
       ast["type"] == "AssignmentExpression"
     end
 
-    def ext_define?(callee)
-      ["Ext.define", "Ext.ClassManager.create"].include?(to_s(callee))
+    def ext_define?(ast)
+      call?(ast) && ["Ext.define", "Ext.ClassManager.create"].include?(to_s(ast["callee"]))
+    end
+
+    def ext_extend?(ast)
+      call?(ast) && to_s(ast["callee"]) == "Ext.extend"
     end
 
     def function?(ast)
