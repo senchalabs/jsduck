@@ -6,7 +6,7 @@ module JsDuck
   class EsprimaParser
 
     # Initializes the parser with JavaScript source code to be parsed.
-    def initialize(input)
+    def initialize(input, options = {})
       @input = input
 
       # Initialize line number counting
