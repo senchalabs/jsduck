@@ -41,4 +41,53 @@ describe "JsDuck::Ast detects class with" do
     end
   end
 
+  describe "extends in" do
+    it "Ext.extend() assignment" do
+      detect("/** */ MyClass = Ext.extend(Your.Class, {  });")[:extends].should == "Your.Class"
+    end
+
+    it "var initialized with Ext.extend()" do
+      detect("/** */ var MyClass = Ext.extend(Your.Class, {  });")[:extends].should == "Your.Class"
+    end
+
+    it "Ext.define() with extend:" do
+      detect(<<-EOS)[:extends].should == "Your.Class"
+        /** */
+        Ext.define('MyClass', {
+            extend: "Your.Class"
+        });
+      EOS
+    end
+
+    it "Ext.define() with extend: as second object property" do
+      detect(<<-EOS)[:extends].should == "Your.Class"
+        /** */
+        Ext.define('MyClass', {
+            foo: 5,
+            extend: "Your.Class"
+        });
+      EOS
+    end
+  end
+
+  describe "no extends in" do
+    it "Ext.define() with function argument" do
+      detect(<<-EOS)[:extends].should == nil
+        /** */
+        Ext.define('MyClass', function() {
+        });
+      EOS
+    end
+
+    it "Ext.define() with no extend: in config object" do
+      detect(<<-EOS)[:extends].should == nil
+        /** */
+        Ext.define('MyClass', {
+            foo: 5,
+            bar: "hah"
+        });
+      EOS
+    end
+  end
+
 end

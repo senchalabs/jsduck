@@ -13,27 +13,43 @@ module JsDuck
       exp = expression?(ast) ? ast["expression"] : nil
       var = var?(ast) ? ast["declarations"][0] : nil
 
+      # Ext.define("Class", {})
       if exp && ext_define?(exp)
-        make_class(exp["arguments"][0])
+        make_class(exp["arguments"][0], exp)
 
-      elsif exp && assignment?(exp) && (ext_extend?(exp["right"]) || class_name?(exp["left"]))
+      # foo = Ext.extend("Parent", {})
+      elsif exp && assignment?(exp) && ext_extend?(exp["right"])
+        make_class(exp["left"], exp["right"])
+
+      # Foo = ...
+      elsif exp && assignment?(exp) && class_name?(exp["left"])
         make_class(exp["left"])
 
-      elsif var && (ext_extend?(var["init"]) || class_name?(var["id"]))
+      # var foo = Ext.extend("Parent", {})
+      elsif var && ext_extend?(var["init"])
+        make_class(var["id"], var["init"])
+
+      # var Foo = ...
+      elsif var && class_name?(var["id"])
         make_class(var["id"])
 
+      # function Foo() {}
       elsif function?(ast) && class_name?(ast["id"])
         make_class(ast["id"])
 
+      # function foo() {}
       elsif function?(ast)
         make_method(ast["id"], ast)
 
+      # foo = function() {}
       elsif exp && assignment?(exp) && function?(exp["right"])
         make_method(exp["left"], exp["right"])
 
+      # var foo = function() {}
       elsif var && function?(var["init"])
         make_method(var["id"], var["init"])
 
+      # foo: function() {}
       elsif property?(ast) && function?(ast["value"])
         make_method(ast["key"], ast["value"])
 
@@ -86,10 +102,30 @@ module JsDuck
     end
 
     def make_class(name_ast, ast=nil)
-      return {
+      cls = {
         :type => :class,
-        :name => to_s(name_ast)
+        :name => to_s(name_ast),
       }
+
+      # apply information from Ext.extend or Ext.define
+      if ast
+        if ext_extend?(ast)
+          cls[:extends] = to_s(ast["arguments"][0])
+        elsif ext_define?(ast)
+          cfg = ast["arguments"][1]
+          if cfg && cfg["type"] == "ObjectExpression"
+            v = get_key_value(cfg, "extend")
+            cls[:extends] = v ? to_s(v) : nil
+          end
+        end
+      end
+
+      return cls
+    end
+
+    def get_key_value(obj, key)
+      p = obj["properties"].find {|p| to_s(p["key"]) == key }
+      p ? p["value"] : nil
     end
 
     def make_method(name_ast, ast=nil)
