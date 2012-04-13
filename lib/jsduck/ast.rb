@@ -13,17 +13,17 @@ module JsDuck
       exp = expression?(ast) ? ast["expression"] : nil
       var = var?(ast) ? ast["declarations"][0] : nil
 
-      if exp && call?(exp) && ext_define?(exp)
-        {:type => :class}
+      if exp && ext_define?(exp)
+        make_class(exp["arguments"][0])
 
       elsif exp && assignment?(exp) && (ext_extend?(exp["right"]) || class_name?(exp["left"]))
-        {:type => :class}
+        make_class(exp["left"])
 
       elsif var && (ext_extend?(var["init"]) || class_name?(var["id"]))
-        {:type => :class}
+        make_class(var["id"])
 
       elsif function?(ast) && class_name?(ast["id"])
-        {:type => :class}
+        make_class(ast["id"])
 
       elsif function?(ast)
         make_method(ast["id"], ast)
@@ -83,6 +83,13 @@ module JsDuck
     # Class name begins with upcase char
     def class_name?(ast)
       return to_s(ast).split(/\./).last =~ /\A[A-Z]/
+    end
+
+    def make_class(name_ast, ast=nil)
+      return {
+        :type => :class,
+        :name => to_s(name_ast)
+      }
     end
 
     def make_method(name_ast, ast=nil)
