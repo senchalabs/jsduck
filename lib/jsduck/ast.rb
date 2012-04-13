@@ -15,20 +15,28 @@ module JsDuck
 
       if exp && call?(exp) && ext_define?(exp["callee"])
         {:type => :class}
+
       elsif exp && assignment?(exp) && class_name?(exp["left"])
         {:type => :class}
+
       elsif var && class_name?(var["id"])
         {:type => :class}
+
       elsif function?(ast) && class_name?(ast["id"])
         {:type => :class}
+
       elsif function?(ast)
         make_method(ast["id"], ast)
+
       elsif exp && assignment?(exp) && function?(exp["right"])
         make_method(exp["left"], exp["right"])
+
       elsif var && function?(var["init"])
         make_method(var["id"], var["init"])
+
       elsif property?(ast) && function?(ast["value"])
         make_method(ast["key"], ast["value"])
+
       else
         {:type => :property}
       end
