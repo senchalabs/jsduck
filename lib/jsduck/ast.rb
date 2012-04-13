@@ -5,7 +5,7 @@ module JsDuck
     # Given parsed code, returns the tagname for documentation item.
     #
     # @param ast :code from Result of EsprimaParser
-    # @returns One of: :class, :method, :event, :cfg, :property, :css_var
+    # @returns One of: :class, :method, :property
     #
     def detect(ast)
       ast = ast || {}
