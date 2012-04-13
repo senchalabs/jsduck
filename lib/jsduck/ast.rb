@@ -14,23 +14,23 @@ module JsDuck
       var = var?(ast) ? ast["declarations"][0] : nil
 
       if exp && call?(exp) && ext_define?(exp["callee"])
-        :class
+        {:type => :class}
       elsif exp && assignment?(exp) && class_name?(exp["left"])
-        :class
+        {:type => :class}
       elsif var && class_name?(var["id"])
-        :class
+        {:type => :class}
       elsif function?(ast) && class_name?(ast["id"])
-        :class
+        {:type => :class}
       elsif function?(ast)
-        :method
+        {:type => :method}
       elsif exp && assignment?(exp) && function?(exp["right"])
-        :method
+        {:type => :method}
       elsif var && function?(var["init"])
-        :method
+        {:type => :method}
       elsif property?(ast) && function?(ast["value"])
-        :method
+        {:type => :method}
       else
-        :property
+        {:type => :property}
       end
     end
 

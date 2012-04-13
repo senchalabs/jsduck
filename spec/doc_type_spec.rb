@@ -10,7 +10,7 @@ describe JsDuck::DocType do
       node = JsDuck::CssParser.new(string).parse[0]
     else
       node = JsDuck::EsprimaParser.new(string).parse[0]
-      node[:code] = { :type => JsDuck::Ast.new.detect(node[:code]) }
+      node[:code] = JsDuck::Ast.new.detect(node[:code])
     end
 
     doc_parser = JsDuck::DocParser.new
