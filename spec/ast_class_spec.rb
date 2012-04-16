@@ -90,4 +90,15 @@ describe "JsDuck::Ast detects class with" do
     end
   end
 
+  describe "requries in" do
+    it "Ext.define() with requires as string" do
+      detect(<<-EOS)[:requires].should == "Other.Class"
+        /** */
+        Ext.define('MyClass', {
+            requires: "Other.Class"
+        });
+      EOS
+    end
+  end
+
 end

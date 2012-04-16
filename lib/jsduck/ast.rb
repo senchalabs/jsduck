@@ -122,6 +122,7 @@ module JsDuck
           cfg = object_expression_to_hash(ast["arguments"][1])
 
           cls[:extends] = cfg["extend"] ? to_s_value(cfg["extend"]) : nil
+          cls[:requires] = cfg["requires"] ? to_s_value(cfg["requires"]) : nil
         end
       end
 
