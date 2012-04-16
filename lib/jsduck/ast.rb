@@ -156,7 +156,7 @@ module JsDuck
       when "Identifier"
         ast["name"]
       when "Literal"
-        ast["value"].is_a?(Hash) ? ast["value"]["regex"].to_s : ast["value"].to_s
+        ast["value"].to_s
       else
         @serializer.to_s(ast)
       end
