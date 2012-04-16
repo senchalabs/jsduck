@@ -36,6 +36,10 @@ describe JsDuck::Serializer do
       test('null;')
     end
 
+    it "regex" do
+      test('/abc/g;')
+    end
+
     it "function declaration" do
       test("function foo(a, b, c) {return 0;}")
     end

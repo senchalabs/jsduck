@@ -159,6 +159,8 @@ module JsDuck
           "null"
         elsif ast["value"].is_a? String
           '"' + ast["value"] + '"'
+        elsif ast["value"].is_a? Hash
+          ast["value"]["regex"]
         else
           ast["value"].to_s
         end
