@@ -1,7 +1,13 @@
+require "jsduck/serializer"
+
 module JsDuck
 
   # Analyzes the AST produced by EsprimaParser.
   class Ast
+    def initialize
+      @serializer = JsDuck::Serializer.new
+    end
+
     # Given parsed code, returns the tagname for documentation item.
     #
     # @param ast :code from Result of EsprimaParser
@@ -137,18 +143,7 @@ module JsDuck
     end
 
     def to_s(ast)
-      case ast["type"]
-      when "MemberExpression"
-        if ast["computed"]
-          to_s(ast["object"]) + "[" + to_s(ast["property"]) + "]"
-        else
-          to_s(ast["object"]) + "." + to_s(ast["property"])
-        end
-      when "Identifier"
-        ast["name"]
-      when "Literal"
-        ast["value"]
-      end
+      @serializer.to_s(ast)
     end
   end
 
