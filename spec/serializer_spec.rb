@@ -16,6 +16,26 @@ describe JsDuck::Serializer do
       test("")
     end
 
+    it "number" do
+      test('15.6;')
+    end
+
+    it "string" do
+      test('"haa";')
+    end
+
+    it "boolean true" do
+      test('true;')
+    end
+
+    it "boolean false" do
+      test('true;')
+    end
+
+    it "null" do
+      test('null;')
+    end
+
     it "function declaration" do
       test("function foo(a, b, c) {return 0;}")
     end

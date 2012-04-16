@@ -21,43 +21,43 @@ module JsDuck
 
       # Ext.define("Class", {})
       if exp && ext_define?(exp)
-        make_class(exp["arguments"][0], exp)
+        make_class(to_s_value(exp["arguments"][0]), exp)
 
       # foo = Ext.extend("Parent", {})
       elsif exp && assignment?(exp) && ext_extend?(exp["right"])
-        make_class(exp["left"], exp["right"])
+        make_class(to_s(exp["left"]), exp["right"])
 
       # Foo = ...
-      elsif exp && assignment?(exp) && class_name?(exp["left"])
-        make_class(exp["left"])
+      elsif exp && assignment?(exp) && class_name?(to_s(exp["left"]))
+        make_class(to_s(exp["left"]))
 
       # var foo = Ext.extend("Parent", {})
       elsif var && ext_extend?(var["init"])
-        make_class(var["id"], var["init"])
+        make_class(to_s(var["id"]), var["init"])
 
       # var Foo = ...
-      elsif var && class_name?(var["id"])
-        make_class(var["id"])
+      elsif var && class_name?(to_s(var["id"]))
+        make_class(to_s(var["id"]))
 
       # function Foo() {}
-      elsif function?(ast) && class_name?(ast["id"])
-        make_class(ast["id"])
+      elsif function?(ast) && class_name?(to_s(ast["id"]))
+        make_class(to_s(ast["id"]))
 
       # function foo() {}
       elsif function?(ast)
-        make_method(ast["id"], ast)
+        make_method(to_s(ast["id"]), ast)
 
       # foo = function() {}
       elsif exp && assignment?(exp) && function?(exp["right"])
-        make_method(exp["left"], exp["right"])
+        make_method(to_s(exp["left"]), exp["right"])
 
       # var foo = function() {}
       elsif var && function?(var["init"])
-        make_method(var["id"], var["init"])
+        make_method(to_s(var["id"]), var["init"])
 
       # foo: function() {}
       elsif property?(ast) && function?(ast["value"])
-        make_method(ast["key"], ast["value"])
+        make_method(to_s_value(ast["key"]), ast["value"])
 
       else
         {:type => :property}
@@ -103,14 +103,14 @@ module JsDuck
     end
 
     # Class name begins with upcase char
-    def class_name?(ast)
-      return to_s(ast).split(/\./).last =~ /\A[A-Z]/
+    def class_name?(name)
+      return name.split(/\./).last =~ /\A[A-Z]/
     end
 
-    def make_class(name_ast, ast=nil)
+    def make_class(name, ast=nil)
       cls = {
         :type => :class,
-        :name => to_s(name_ast),
+        :name => name,
       }
 
       # apply information from Ext.extend or Ext.define
@@ -121,7 +121,7 @@ module JsDuck
           cfg = ast["arguments"][1]
           if cfg && cfg["type"] == "ObjectExpression"
             v = get_key_value(cfg, "extend")
-            cls[:extends] = v ? to_s(v) : nil
+            cls[:extends] = v ? to_s_value(v) : nil
           end
         end
       end
@@ -130,20 +130,36 @@ module JsDuck
     end
 
     def get_key_value(obj, key)
-      p = obj["properties"].find {|p| to_s(p["key"]) == key }
+      p = obj["properties"].find {|p| to_s_value(p["key"]) == key }
       p ? p["value"] : nil
     end
 
-    def make_method(name_ast, ast=nil)
+    def make_method(name, ast=nil)
       return {
         :type => :method,
-        :name => to_s(name_ast),
+        :name => name,
         :params => (ast && !empty_fn?(ast)) ? ast["params"].map {|p| to_s(p) } : []
       }
     end
 
+    # Fully serializes the node
     def to_s(ast)
       @serializer.to_s(ast)
+    end
+
+    # Does simple serialization where strings serialize into their
+    # values (without quotes). Should be called only with Identifier
+    # and Literal nodes, but if something else is passed in, we fall
+    # back to the real serializer (just in case).
+    def to_s_value(ast)
+      case ast["type"]
+      when "Identifier"
+        ast["name"]
+      when "Literal"
+        ast["value"].to_s
+      else
+        @serializer.to_s(ast)
+      end
     end
   end
 

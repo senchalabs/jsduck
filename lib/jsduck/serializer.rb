@@ -155,7 +155,13 @@ module JsDuck
         ast["name"]
 
       when "Literal"
-        ast["value"].to_s
+        if ast["value"] == nil
+          "null"
+        elsif ast["value"].is_a? String
+          '"' + ast["value"] + '"'
+        else
+          ast["value"].to_s
+        end
 
       else
         throw "Unknown node type: "+ast["type"]
