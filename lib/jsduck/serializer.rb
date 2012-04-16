@@ -97,31 +97,31 @@ module JsDuck
       # Expressions
 
       when "AssignmentExpression"
-        to_s(ast["left"]) + " " + ast["operator"] + " " + to_s(ast["right"])
+        parens(ast, ast["left"]) + " " + ast["operator"] + " " + to_s(ast["right"])
 
       when "ArrayExpression"
         "[" + list(ast["elements"]) + "]"
 
       when "BinaryExpression"
-        to_s(ast["left"]) + " " + ast["operator"] + " " + to_s(ast["right"])
+        binary(ast)
 
       when "CallExpression"
         call(ast)
 
       when "ConditionalExpression"
-        to_s(ast["test"]) + " ? " + to_s(ast["consequent"]) + " : " + to_s(ast["alternate"])
+        parens(ast, ast["test"]) + " ? " + to_s(ast["consequent"]) + " : " + to_s(ast["alternate"])
 
       when "FunctionExpression"
         function(ast)
 
       when "LogicalExpression"
-        to_s(ast["left"]) + " " + ast["operator"] + " " + to_s(ast["right"])
+        binary(ast)
 
       when "MemberExpression"
         if ast["computed"]
-          to_s(ast["object"]) + "[" + to_s(ast["property"]) + "]"
+          parens(ast, ast["object"]) + "[" + to_s(ast["property"]) + "]"
         else
-          to_s(ast["object"]) + "." + to_s(ast["property"])
+          parens(ast, ast["object"]) + "." + to_s(ast["property"])
         end
 
       when "NewExpression"
@@ -140,13 +140,13 @@ module JsDuck
         "this"
 
       when "UnaryExpression"
-        ast["operator"] + to_s(ast["argument"])
+        ast["operator"] + parens(ast, ast["argument"])
 
       when "UpdateExpression"
         if ast["prefix"]
-          ast["operator"] + to_s(ast["argument"])
+          ast["operator"] + parens(ast, ast["argument"])
         else
-          to_s(ast["argument"]) + ast["operator"]
+          parens(ast, ast["argument"]) + ast["operator"]
         end
 
       # Basics
@@ -162,6 +162,8 @@ module JsDuck
       end
     end
 
+    private
+
     # serializes function declaration or expression
     def function(ast)
       params = list(ast["params"])
@@ -176,8 +178,82 @@ module JsDuck
 
     # serializes call- and new-expression
     def call(ast)
-      to_s(ast["callee"]) + "(" + list(ast["arguments"]) + ")"
+      parens(ast, ast["callee"]) + "(" + list(ast["arguments"]) + ")"
     end
+
+    # Handles both binary- and logical-expression
+    def binary(ast)
+      parens(ast, ast["left"]) + " " + ast["operator"] + " " + parens(ast, ast["right"])
+    end
+
+    # serializes child node and wraps it inside parenthesis if the
+    # precedence rules compared to parent node would require so.
+    def parens(parent, child)
+      if precedence(parent) >= precedence(child)
+        to_s(child)
+      else
+        "(" + to_s(child) + ")"
+      end
+    end
+
+    # Returns the precedence of operator represented by given AST node
+    def precedence(ast)
+      p = PRECEDENCE[ast["type"]]
+      if p.is_a? Fixnum
+        p
+      elsif p.is_a? Hash
+        p[ast["operator"]]
+      else
+        0
+      end
+    end
+
+    # Precedence rules of JavaScript operators.
+    #
+    # Taken from: https://developer.mozilla.org/en/JavaScript/Reference/Operators/Operator_Precedence
+    #
+    PRECEDENCE = {
+      "SequenceExpression" => 17,
+      "AssignmentExpression" => 16,
+      "ConditionalExpression" => 15,
+      "LogicalExpression" => {
+        "||" => 14,
+        "&&" => 13,
+      },
+      "BinaryExpression" => {
+        "|" => 12,
+        "^" => 11,
+        "&" => 10,
+
+        "==" => 9,
+        "!=" => 9,
+        "===" => 9,
+        "!==" => 9,
+
+        "<" => 8,
+        "<=" => 8,
+        ">" => 8,
+        ">=" => 8,
+        "in" => 8,
+        "instanceof" => 8,
+
+        "<<" => 7,
+        ">>" => 7,
+        ">>>" => 7,
+
+        "+" => 6,
+        "-" => 6,
+
+        "*" => 5,
+        "/" => 5,
+        "%" => 5,
+      },
+      "UnaryExpression" => 4,
+      "UpdateExpression" => 3,
+      "CallExpression" => 2,
+      "MemberExpression" => 1,
+      "NewExpression" => 1,
+    }
 
   end
 
