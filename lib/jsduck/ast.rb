@@ -117,21 +117,25 @@ module JsDuck
       if ast
         if ext_extend?(ast)
           cls[:extends] = to_s(ast["arguments"][0])
+
         elsif ext_define?(ast)
-          cfg = ast["arguments"][1]
-          if cfg && cfg["type"] == "ObjectExpression"
-            v = get_key_value(cfg, "extend")
-            cls[:extends] = v ? to_s_value(v) : nil
-          end
+          cfg = object_expression_to_hash(ast["arguments"][1])
+
+          cls[:extends] = cfg["extend"] ? to_s_value(cfg["extend"]) : nil
         end
       end
 
       return cls
     end
 
-    def get_key_value(obj, key)
-      p = obj["properties"].find {|p| to_s_value(p["key"]) == key }
-      p ? p["value"] : nil
+    def object_expression_to_hash(ast)
+      h = {}
+      if ast && ast["type"] == "ObjectExpression"
+        ast["properties"].each do |p|
+          h[to_s_value(p["key"])] = p["value"]
+        end
+      end
+      return h
     end
 
     def make_method(name, ast=nil)
