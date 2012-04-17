@@ -34,7 +34,7 @@ module JsDuck
         make_class(to_s(exp["left"]))
 
       # var foo = Ext.extend("Parent", {})
-      elsif var && ext_extend?(var["init"])
+      elsif var && var["init"] && ext_extend?(var["init"])
         make_class(to_s(var["id"]), var["init"])
 
       # var Foo = ...
@@ -54,15 +54,35 @@ module JsDuck
         make_method(to_s(exp["left"]), exp["right"])
 
       # var foo = function() {}
-      elsif var && function?(var["init"])
+      elsif var && var["init"] && function?(var["init"])
         make_method(to_s(var["id"]), var["init"])
 
       # foo: function() {}
       elsif property?(ast) && function?(ast["value"])
         make_method(key_value(ast["key"]), ast["value"])
 
+      # foo = ...
+      elsif exp && assignment?(exp)
+        make_property(to_s(exp["left"]), exp["right"])
+
+      # var foo = ...
+      elsif var
+        make_property(to_s(var["id"]), var["init"])
+
+      # foo: ...
+      elsif property?(ast)
+        make_property(key_value(ast["key"]), ast["value"])
+
+      # foo;
+      elsif exp && ident?(exp)
+        make_property(to_s(exp))
+
+      # "foo";
+      elsif exp && string?(exp)
+        make_property(to_value(exp))
+
       else
-        {:type => :property}
+        make_property()
       end
     end
 
@@ -102,6 +122,14 @@ module JsDuck
 
     def property?(ast)
       ast["type"] == "Property"
+    end
+
+    def ident?(ast)
+      ast["type"] == "Identifier"
+    end
+
+    def string?(ast)
+      ast["type"] == "Literal" && ast["value"].is_a?(String)
     end
 
     # Class name begins with upcase char
@@ -163,6 +191,13 @@ module JsDuck
         :type => :method,
         :name => name,
         :params => (ast && !empty_fn?(ast)) ? ast["params"].map {|p| to_s(p) } : []
+      }
+    end
+
+    def make_property(name=nil, ast=nil)
+      return {
+        :type => :property,
+        :name => name,
       }
     end
 
