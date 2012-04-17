@@ -132,7 +132,7 @@ def compress
   system "mkdir #{dir}/extjs"
   system "cp template/extjs/ext-all.js #{dir}/extjs"
   system "mkdir -p #{dir}/extjs/resources/themes/images"
-  system "cp -r #{EXT_BUILD}/resources/themes/images/default #{dir}/extjs/resources/themes/images"
+  system "cp -r template/extjs/resources/themes/images/default #{dir}/extjs/resources/themes/images"
 end
 
 
