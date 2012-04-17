@@ -78,8 +78,12 @@ describe JsDuck::Ast do
       detect("/** */ var foo = function() {}").should == :method
     end
 
-    it "vari initialized with Ext.emptyFn" do
+    it "var initialized with Ext.emptyFn" do
       detect("/** */ var foo = Ext.emptyFn").should == :method
+    end
+
+    it "anonymous function" do
+      detect("/** */ (function(){})").should == :method
     end
 
     it "object property initialized with function" do

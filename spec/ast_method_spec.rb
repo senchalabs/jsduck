@@ -32,6 +32,10 @@ describe "JsDuck::Ast detects method with" do
       detect("/** */ var foo = Ext.emptyFn")[:name].should == "foo"
     end
 
+    it "function expression with name" do
+      detect("/** */ (function foo(){})")[:name].should == "foo"
+    end
+
     it "object property initialized with function" do
       detect(<<-EOS)[:name].should == "foo"
         Foo = {

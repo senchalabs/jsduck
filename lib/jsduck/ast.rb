@@ -57,6 +57,10 @@ module JsDuck
       elsif var && var["init"] && function?(var["init"])
         make_method(to_s(var["id"]), var["init"])
 
+      # (function() {})
+      elsif exp && function?(exp)
+        make_method(exp["id"] ? to_s(exp["id"]) : "", exp)
+
       # foo: function() {}
       elsif property?(ast) && function?(ast["value"])
         make_method(key_value(ast["key"]), ast["value"])
