@@ -333,7 +333,7 @@ describe JsDuck::Aggregator do
         /**
          * Some documentation.
          */
-        Ext.createAlias(class, "foo", "bar");
+        Ext.createAlias(MyClass, "foo", "bar");
       EOS
     end
     it "should fail detecting name of the property" do
