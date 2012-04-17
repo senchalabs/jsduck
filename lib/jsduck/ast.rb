@@ -210,7 +210,29 @@ module JsDuck
       return {
         :type => :property,
         :name => name,
+        :value_type => make_value_type(ast)
       }
+    end
+
+    def make_value_type(ast)
+      if ast
+        v = to_value(ast)
+        if v.is_a?(String)
+          "String"
+        elsif v.is_a?(Numeric)
+          "Number"
+        elsif v.is_a?(TrueClass) || v.is_a?(FalseClass)
+          "Boolean"
+        elsif v.is_a?(Array)
+          "Array"
+        elsif v.is_a?(Hash)
+          "Object"
+        else
+          nil
+        end
+      else
+        nil
+      end
     end
 
     # -- various helper methods --
