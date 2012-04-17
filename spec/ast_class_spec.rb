@@ -147,4 +147,15 @@ describe "JsDuck::Ast detects class with" do
     end
   end
 
+  describe "uses in" do
+    # Just a smoke-test here, as it's sharing the implementation of :requires
+    it "Ext.define() with uses as string" do
+      detect(<<-EOS)[:uses].should == ["Other.Class"]
+        /** */
+        Ext.define('MyClass', {
+            uses: ["Other.Class"]
+        });
+      EOS
+    end
+  end
 end
