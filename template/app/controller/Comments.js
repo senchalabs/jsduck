@@ -610,14 +610,14 @@ Ext.define('Docs.controller.Comments', {
     },
 
     renderGuideCommentContainers: function(guide) {
-        Docs.view.Comments.classCommentsTpl.append(Ext.get('guide'), {
+        Docs.view.Comments.classCommentsTpl.append(Ext.get('guide').down(".x-panel-body"), {
             num: 0,
             id: 'guide-' + guide
         });
     },
 
     renderVideoCommentContainers: function(video) {
-        Docs.view.Comments.classCommentsTpl.append(Ext.get('video'), {
+        Docs.view.Comments.classCommentsTpl.append(Ext.get('video').down(".x-panel-body"), {
             num: 0,
             id: 'video-' + video
         });
