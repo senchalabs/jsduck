@@ -208,5 +208,14 @@ describe "JsDuck::Ast detects class with" do
         });
       EOS
     end
+
+    it "Ext.define() with mixins as identifier" do
+      detect(<<-EOS)[:mixins].should == []
+        /** */
+        Ext.define('MyClass', {
+            mixins: someVar
+        });
+      EOS
+    end
   end
 end

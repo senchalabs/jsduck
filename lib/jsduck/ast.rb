@@ -59,7 +59,7 @@ module JsDuck
 
       # foo: function() {}
       elsif property?(ast) && function?(ast["value"])
-        make_method(to_value(ast["key"]), ast["value"])
+        make_method(key_to_s(ast["key"]), ast["value"])
 
       else
         {:type => :property}
@@ -158,22 +158,32 @@ module JsDuck
       return classes.all? {|c| c.is_a? String } ? classes : []
     end
 
-    def object_expression_to_hash(ast)
-      h = {}
-      if ast && ast["type"] == "ObjectExpression"
-        ast["properties"].each do |p|
-          h[to_value(p["key"])] = p["value"]
-        end
-      end
-      return h
-    end
-
     def make_method(name, ast=nil)
       return {
         :type => :method,
         :name => name,
         :params => (ast && !empty_fn?(ast)) ? ast["params"].map {|p| to_s(p) } : []
       }
+    end
+
+    # -- various helper methods --
+
+    # Turns ObjectExpression into Ruby Hash for easy lookup.  The keys
+    # are turned into strings, but values are left as is for further
+    # processing.
+    def object_expression_to_hash(ast)
+      h = {}
+      if ast && ast["type"] == "ObjectExpression"
+        ast["properties"].each do |p|
+          h[key_to_s(p["key"])] = p["value"]
+        end
+      end
+      return h
+    end
+
+    # Converts object expression property key to string value
+    def key_to_s(key)
+      key["type"] == "Identifier" ? key["name"] : key["value"]
     end
 
     # Fully serializes the node

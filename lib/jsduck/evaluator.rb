@@ -25,8 +25,6 @@ module JsDuck
           h[key] = value
         end
         h
-      when "Identifier"
-        ast["name"]
       when "Literal"
         ast["value"]
       else
