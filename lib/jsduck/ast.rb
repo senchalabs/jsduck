@@ -59,7 +59,7 @@ module JsDuck
 
       # foo: function() {}
       elsif property?(ast) && function?(ast["value"])
-        make_method(key_to_s(ast["key"]), ast["value"])
+        make_method(key_value(ast["key"]), ast["value"])
 
       else
         {:type => :property}
@@ -175,15 +175,15 @@ module JsDuck
       h = {}
       if ast && ast["type"] == "ObjectExpression"
         ast["properties"].each do |p|
-          h[key_to_s(p["key"])] = p["value"]
+          h[key_value(p["key"])] = p["value"]
         end
       end
       return h
     end
 
     # Converts object expression property key to string value
-    def key_to_s(key)
-      key["type"] == "Identifier" ? key["name"] : key["value"]
+    def key_value(key)
+      @evaluator.key_value(key)
     end
 
     # Fully serializes the node

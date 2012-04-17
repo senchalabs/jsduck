@@ -20,7 +20,7 @@ module JsDuck
       when "ObjectExpression"
         h = {}
         ast["properties"].each do |p|
-          key = p["key"]["type"] == "Identifier" ? p["key"]["name"] : to_value(p["key"])
+          key = key_value(p["key"])
           value = to_value(p["value"])
           h[key] = value
         end
@@ -30,6 +30,11 @@ module JsDuck
       else
         throw "Unknown node type: " + ast["type"]
       end
+    end
+
+    # Turns object property key into string value
+    def key_value(key)
+      key["type"] == "Identifier" ? key["name"] : key["value"]
     end
 
   end
