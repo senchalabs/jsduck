@@ -194,8 +194,16 @@ module JsDuck
       return {
         :type => :method,
         :name => name,
-        :params => (ast && !empty_fn?(ast)) ? ast["params"].map {|p| to_s(p) } : []
+        :params => make_params(ast)
       }
+    end
+
+    def make_params(ast)
+      if ast && !empty_fn?(ast)
+        ast["params"].map {|p| {:name => to_s(p)} }
+      else
+        []
+      end
     end
 
     def make_property(name=nil, ast=nil)

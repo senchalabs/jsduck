@@ -89,9 +89,9 @@ describe "JsDuck::Ast detects method with" do
   describe "param names" do
     it "function assignment with three params" do
       params = detect("/** */ foo = function(a, b, c){}")[:params]
-      params[0].should == "a"
-      params[1].should == "b"
-      params[2].should == "c"
+      params[0].should == {:name => "a"}
+      params[1].should == {:name => "b"}
+      params[2].should == {:name => "c"}
     end
   end
 
