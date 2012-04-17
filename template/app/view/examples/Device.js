@@ -28,7 +28,7 @@ Ext.define('Docs.view.examples.Device', {
     },
 
     constructor: function(cfg) {
-        Ext.apply(this, cfg);
+        this.initConfig(cfg);
         Ext.apply(this, this.getIframeSize());
         this.id = this.id || Ext.id();
 
