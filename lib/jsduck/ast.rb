@@ -1,4 +1,5 @@
 require "jsduck/serializer"
+require "jsduck/evaluator"
 
 module JsDuck
 
@@ -6,6 +7,7 @@ module JsDuck
   class Ast
     def initialize
       @serializer = JsDuck::Serializer.new
+      @evaluator = JsDuck::Evaluator.new
     end
 
     # Given parsed code, returns the tagname for documentation item.
@@ -21,7 +23,7 @@ module JsDuck
 
       # Ext.define("Class", {})
       if exp && ext_define?(exp)
-        make_class(to_s_value(exp["arguments"][0]), exp)
+        make_class(to_value(exp["arguments"][0]), exp)
 
       # foo = Ext.extend("Parent", {})
       elsif exp && assignment?(exp) && ext_extend?(exp["right"])
@@ -57,7 +59,7 @@ module JsDuck
 
       # foo: function() {}
       elsif property?(ast) && function?(ast["value"])
-        make_method(to_s_value(ast["key"]), ast["value"])
+        make_method(to_value(ast["key"]), ast["value"])
 
       else
         {:type => :property}
@@ -121,19 +123,35 @@ module JsDuck
         elsif ext_define?(ast)
           cfg = object_expression_to_hash(ast["arguments"][1])
 
-          cls[:extends] = cfg["extend"] ? to_s_value(cfg["extend"]) : nil
-          cls[:requires] = cfg["requires"] ? to_s_value(cfg["requires"]) : nil
+          cls[:extends] = make_extends(cfg["extend"])
+          cls[:requires] = make_requires(cfg["requires"])
         end
       end
 
       return cls
     end
 
+    def make_extends(cfg_value)
+      return nil unless cfg_value
+
+      parent = to_value(cfg_value)
+
+      return parent.is_a?(String) ? parent : nil
+    end
+
+    def make_requires(cfg_value)
+      return [] unless cfg_value
+
+      classes = Array(to_value(cfg_value))
+
+      return classes.all? {|c| c.is_a? String } ? classes : []
+    end
+
     def object_expression_to_hash(ast)
       h = {}
       if ast && ast["type"] == "ObjectExpression"
         ast["properties"].each do |p|
-          h[to_s_value(p["key"])] = p["value"]
+          h[to_value(p["key"])] = p["value"]
         end
       end
       return h
@@ -152,18 +170,12 @@ module JsDuck
       @serializer.to_s(ast)
     end
 
-    # Does simple serialization where strings serialize into their
-    # values (without quotes). Should be called only with Identifier
-    # and Literal nodes, but if something else is passed in, we fall
-    # back to the real serializer (just in case).
-    def to_s_value(ast)
-      case ast["type"]
-      when "Identifier"
-        ast["name"]
-      when "Literal"
-        ast["value"].to_s
-      else
-        @serializer.to_s(ast)
+    # Converts AST node into a value.
+    def to_value(ast)
+      begin
+        @evaluator.to_value(ast)
+      rescue
+        nil
       end
     end
   end

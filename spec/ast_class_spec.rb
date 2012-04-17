@@ -88,14 +88,60 @@ describe "JsDuck::Ast detects class with" do
         });
       EOS
     end
+
+    it "Ext.define() with extend as number" do
+      detect(<<-EOS)[:extends].should == nil
+        /** */
+        Ext.define('MyClass', {
+            extend: 5
+        });
+      EOS
+    end
   end
 
   describe "requries in" do
     it "Ext.define() with requires as string" do
-      detect(<<-EOS)[:requires].should == "Other.Class"
+      detect(<<-EOS)[:requires].should == ["Other.Class"]
         /** */
         Ext.define('MyClass', {
             requires: "Other.Class"
+        });
+      EOS
+    end
+
+    it "Ext.define() with requires as array of strings" do
+      detect(<<-EOS)[:requires].should == ["Some.Class", "Other.Class"]
+        /** */
+        Ext.define('MyClass', {
+            requires: ["Some.Class", "Other.Class"]
+        });
+      EOS
+    end
+  end
+
+  describe "no requries in" do
+    it "Ext.define() without requires" do
+      detect(<<-EOS)[:requires].should == []
+        /** */
+        Ext.define('MyClass', {
+        });
+      EOS
+    end
+
+    it "Ext.define() with requires as array of functions and strings" do
+      detect(<<-EOS)[:requires].should == []
+        /** */
+        Ext.define('MyClass', {
+            requires: [function(){}, "Foo"]
+        });
+      EOS
+    end
+
+    it "Ext.define() with requires as nested array" do
+      detect(<<-EOS)[:requires].should == []
+        /** */
+        Ext.define('MyClass', {
+            requires: ["Foo", ["Bar"]]
         });
       EOS
     end
