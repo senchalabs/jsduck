@@ -17,6 +17,14 @@ module JsDuck
       case ast["type"]
       when "ArrayExpression"
         ast["elements"].map {|e| to_value(e) }
+      when "ObjectExpression"
+        h = {}
+        ast["properties"].each do |p|
+          key = p["key"]["type"] == "Identifier" ? p["key"]["name"] : to_value(p["key"])
+          value = to_value(p["value"])
+          h[key] = value
+        end
+        h
       when "Identifier"
         ast["name"]
       when "Literal"

@@ -126,6 +126,7 @@ module JsDuck
           cls[:extends] = make_extends(cfg["extend"])
           cls[:requires] = make_requires(cfg["requires"])
           cls[:uses] = make_requires(cfg["uses"])
+          cls[:mixins] = make_mixins(cfg["mixins"])
         end
       end
 
@@ -144,6 +145,15 @@ module JsDuck
       return [] unless cfg_value
 
       classes = Array(to_value(cfg_value))
+
+      return classes.all? {|c| c.is_a? String } ? classes : []
+    end
+
+    def make_mixins(cfg_value)
+      return [] unless cfg_value
+
+      v = to_value(cfg_value)
+      classes = v.is_a?(Hash) ? v.values : Array(v)
 
       return classes.all? {|c| c.is_a? String } ? classes : []
     end

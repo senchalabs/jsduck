@@ -158,4 +158,55 @@ describe "JsDuck::Ast detects class with" do
       EOS
     end
   end
+
+  describe "mixins in" do
+    it "Ext.define() with mixins as string" do
+      detect(<<-EOS)[:mixins].should == ["Some.Class", "Other.Class"]
+        /** */
+        Ext.define('MyClass', {
+            mixins: ["Some.Class", "Other.Class"]
+        });
+      EOS
+    end
+
+    it "Ext.define() with mixins as array of strings" do
+      detect(<<-EOS)[:mixins].should == ["Other.Class"]
+        /** */
+        Ext.define('MyClass', {
+            mixins: "Other.Class"
+        });
+      EOS
+    end
+
+    it "Ext.define() with mixins as object" do
+      detect(<<-EOS)[:mixins].should == ["Some.Class", "Other.Class"]
+        /** */
+        Ext.define('MyClass', {
+            mixins: {
+                some: "Some.Class",
+                other: "Other.Class"
+            }
+        });
+      EOS
+    end
+  end
+
+  describe "no mixins in" do
+    it "Ext.define() without mixins" do
+      detect(<<-EOS)[:mixins].should == []
+        /** */
+        Ext.define('MyClass', {
+        });
+      EOS
+    end
+
+    it "Ext.define() with mixins as nested object" do
+      detect(<<-EOS)[:mixins].should == []
+        /** */
+        Ext.define('MyClass', {
+            mixins: {foo: {bar: "foo"}}
+        });
+      EOS
+    end
+  end
 end
