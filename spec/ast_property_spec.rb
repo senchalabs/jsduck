@@ -72,6 +72,10 @@ describe "JsDuck::Ast detects property with" do
       detect("/** */ var foo = false;")[:type].should == "Boolean"
     end
 
+    it "regex" do
+      detect("/** */ var foo = /abc/g;")[:type].should == "RegExp"
+    end
+
     it "array" do
       detect("/** */ var foo = [];")[:type].should == "Array"
     end

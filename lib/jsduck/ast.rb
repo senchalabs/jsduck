@@ -233,6 +233,8 @@ module JsDuck
           "Array"
         elsif v.is_a?(Hash)
           "Object"
+        elsif v == nil && ast["type"] == "Literal" && ast["raw"] =~ /\A\//
+          "RegExp"
         else
           nil
         end
