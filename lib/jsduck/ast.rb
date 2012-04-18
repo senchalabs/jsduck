@@ -158,6 +158,7 @@ module JsDuck
           cls[:extends] = make_extends(cfg["extend"])
           cls[:requires] = make_requires(cfg["requires"])
           cls[:uses] = make_requires(cfg["uses"])
+          cls[:alternateClassNames] = make_requires(cfg["alternateClassName"])
           cls[:mixins] = make_mixins(cfg["mixins"])
         end
       end
