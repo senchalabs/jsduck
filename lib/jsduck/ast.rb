@@ -156,11 +156,13 @@ module JsDuck
           cfg = object_expression_to_hash(ast["arguments"][1])
 
           cls[:extends] = make_extends(cfg["extend"]) || "Ext.Base"
-          cls[:requires] = make_requires(cfg["requires"])
-          cls[:uses] = make_requires(cfg["uses"])
-          cls[:alternateClassNames] = make_requires(cfg["alternateClassName"])
+          cls[:requires] = make_string_list(cfg["requires"])
+          cls[:uses] = make_string_list(cfg["uses"])
+          cls[:alternateClassNames] = make_string_list(cfg["alternateClassName"])
           cls[:mixins] = make_mixins(cfg["mixins"])
           cls[:singleton] = make_singleton(cfg["singleton"])
+          cls[:aliases] = make_string_list(cfg["alias"])
+          cls[:aliases] += make_string_list(cfg["xtype"]).map {|xtype| "widget."+xtype }
         end
       end
 
@@ -175,7 +177,7 @@ module JsDuck
       return parent.is_a?(String) ? parent : nil
     end
 
-    def make_requires(cfg_value)
+    def make_string_list(cfg_value)
       return [] unless cfg_value
 
       classes = Array(to_value(cfg_value))

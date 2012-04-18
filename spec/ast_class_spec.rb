@@ -260,4 +260,44 @@ describe "JsDuck::Ast detects class with" do
       EOS
     end
   end
+
+  describe "aliases in" do
+    it "Ext.define() single string alias" do
+      detect(<<-EOS)[:aliases].should == ["widget.foo"]
+        /** */
+        Ext.define('MyClass', {
+            alias: "widget.foo"
+        });
+      EOS
+    end
+
+    it "Ext.define() with alias as array" do
+      detect(<<-EOS)[:aliases].should == ["widget.foo", "widget.fooeditor"]
+        /** */
+        Ext.define('MyClass', {
+            alias: ["widget.foo", "widget.fooeditor"]
+        });
+      EOS
+    end
+
+    it "Ext.define() with xtype" do
+      detect(<<-EOS)[:aliases].should == ["widget.foo"]
+        /** */
+        Ext.define('MyClass', {
+            xtype: "foo"
+        });
+      EOS
+    end
+
+    it "Ext.define() with alias and xtype" do
+      detect(<<-EOS)[:aliases].should == ["widget.foo", "widget.fooeditor"]
+        /** */
+        Ext.define('MyClass', {
+            alias: "widget.foo",
+            xtype: "fooeditor"
+        });
+      EOS
+    end
+  end
+
 end
