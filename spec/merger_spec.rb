@@ -11,8 +11,8 @@ describe JsDuck::Merger do
       @doc = merge(
         [{:tagname => :cfg, :type => "String", :doc => "My Config"}],
         {
-          :type => :assignment,
-          :left => ["option"]
+          :tagname => :property,
+          :name => "option",
         })
     end
 
@@ -35,9 +35,9 @@ describe JsDuck::Merger do
       @doc = merge(
         [{:tagname => :default, :doc => "Hello world"}],
         {
-          :type => :assignment,
-          :left => ["some", "prop"],
-          :right => {:type => :literal, :class => "Boolean"}
+          :tagname => :property,
+          :name => "some.prop",
+          :type => "Boolean",
         })
     end
 

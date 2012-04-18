@@ -1,5 +1,6 @@
 require 'jsduck/logger'
 require 'jsduck/meta_tag_registry'
+require 'jsduck/doc_type'
 
 module JsDuck
 
@@ -17,10 +18,11 @@ module JsDuck
       @filename = ""
       @linenr = 0
       @meta_tags = MetaTagRegistry.instance
+      @doc_type = DocType.new
     end
 
     def merge(docs, code)
-      case detect_doc_type(docs, code)
+      case @doc_type.detect(docs, code)
       when :class
         create_class(docs, code)
       when :event
@@ -36,49 +38,6 @@ module JsDuck
       when :css_mixin
         create_css_mixin(docs, code)
       end
-    end
-
-    # Detects whether the doc-comment is for class, cfg, event, method or property.
-    def detect_doc_type(docs, code)
-      doc_map = build_doc_map(docs)
-
-      if doc_map[:class]
-        :class
-      elsif doc_map[:event]
-        :event
-      elsif doc_map[:method]
-        :method
-      elsif doc_map[:property] || doc_map[:type]
-        :property
-      elsif doc_map[:css_var]
-        :css_var
-      elsif doc_map[:cfg] && doc_map[:cfg].length == 1
-        # When just one @cfg, avoid treating it as @class
-        :cfg
-      elsif code[:type] == :ext_define
-        :class
-      elsif code[:type] == :assignment && class_name?(*code[:left])
-        :class
-      elsif code[:type] == :function && class_name?(code[:name])
-        :class
-      elsif code[:type] == :css_mixin
-        :css_mixin
-      elsif doc_map[:cfg]
-        :cfg
-      elsif code[:type] == :function
-        :method
-      elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :function
-        :method
-      elsif doc_map[:return] || doc_map[:param]
-        :method
-      else
-        :property
-      end
-    end
-
-    # Class name begins with upcase char
-    def class_name?(*name_chain)
-      return name_chain.last =~ /\A[A-Z]/
     end
 
     def create_class(docs, code)
@@ -135,7 +94,7 @@ module JsDuck
         :requires => detect_list(:requires, doc_map, code),
         :uses => detect_list(:uses, doc_map, code),
         # Used by Aggregator to determine if we're dealing with Ext4 code
-        :code_type => code[:type],
+        :code_type => code[:tagname],
       }, doc_map)
     end
 
@@ -251,15 +210,15 @@ module JsDuck
         main_tag[:name]
       elsif doc_map[:constructor]
         "constructor"
-      elsif code[:type] == :function || code[:type] == :css_mixin
-        code[:name]
-      elsif code[:type] == :assignment
-        name_type == :full_name ? code[:left].join(".") : code[:left].last
-      elsif code[:type] == :ext_define
-        name_type == :full_name ? code[:name] : code[:name].split(/\./).last
+      elsif code[:name]
+        extract_name(code[:name], name_type)
       else
         ""
       end
+    end
+
+    def extract_name(name, type)
+      type == :last_name ? name.split(/\./).last : name
     end
 
     def detect_owner(doc_map)
@@ -277,14 +236,10 @@ module JsDuck
       elsif doc_map[:type]
         return doc_map[:type].first[:type]
       elsif code_matches_doc?(tagname, doc_map, code)
-        if code[:type] == :function
+        if code[:tagname] == :method
           return "Function"
-        elsif code[:type] == :assignment && code[:right]
-          if code[:right][:type] == :function
-            return "Function"
-          elsif code[:right][:type] == :literal && code[:right][:class] != nil
-            return code[:right][:class]
-          end
+        elsif code[:tagname] == :property && code[:type]
+          return code[:type]
         end
       end
       return "Object"
@@ -293,11 +248,8 @@ module JsDuck
     def detect_extends(doc_map, code)
       if doc_map[:extends]
         cls = doc_map[:extends].first[:extends]
-      elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :ext_extend
-        cls = code[:right][:extend].join(".")
-      elsif code[:type] == :ext_define
-        # Classes defined with Ext.define will automatically inherit from Ext.Base
-        cls = code[:extend] || "Ext.Base"
+      elsif code[:tagname] == :class && code[:extends]
+        cls = code[:extends]
       else
         cls = nil
       end
@@ -309,8 +261,8 @@ module JsDuck
       main_tag = doc_map[tagname] ? doc_map[tagname].first : {}
       if main_tag[:default]
         main_tag[:default]
-      elsif code_matches_doc?(tagname, doc_map, code) && code[:type] == :assignment && code[:right]
-        code[:right][:value]
+      elsif code_matches_doc?(tagname, doc_map, code) && code[:tagname] == :property && code[:default]
+        code[:default]
       end
     end
 
@@ -326,7 +278,7 @@ module JsDuck
     def detect_list(type, doc_map, code)
       if doc_map[type]
         doc_map[type].map {|d| d[type] }.flatten
-      elsif code[:type] == :ext_define && code[type]
+      elsif code[:tagname] == :class && code[type]
         code[type]
       else
         []
@@ -336,11 +288,8 @@ module JsDuck
     def detect_aliases(doc_map, code)
       if doc_map[:alias]
         build_aliases_hash(doc_map[:alias].map {|tag| tag[:name] })
-      elsif code[:xtype] || code[:alias]
-        hash = {}
-        build_aliases_hash(code[:xtype].map {|xtype| "widget."+xtype }, hash) if code[:xtype]
-        build_aliases_hash(code[:alias], hash) if code[:alias]
-        hash
+      elsif code[:aliases]
+        build_aliases_hash(code[:aliases])
       else
         {}
       end
@@ -348,10 +297,8 @@ module JsDuck
 
     # Given array of full alias names like "foo.bar", "foo.baz"
     # build hash like {"foo" => ["bar", "baz"]}
-    #
-    # When hash given as second argument, then merges the aliases into
-    # it instead of creating a new hash.
-    def build_aliases_hash(aliases, hash={})
+    def build_aliases_hash(aliases)
+      hash={}
       aliases.each do |a|
         if a =~ /^([^.]+)\.(.+)$/
           if hash[$1]
@@ -381,7 +328,7 @@ module JsDuck
     end
 
     def detect_singleton(doc_map, code)
-      !!(doc_map[:singleton] || code[:type] == :ext_define && code[:singleton])
+      !!(doc_map[:singleton] || code[:tagname] == :class && code[:singleton])
     end
 
     def detect_required(doc_map)
@@ -411,10 +358,8 @@ module JsDuck
     end
 
     def detect_implicit_params(code)
-      if code[:type] == :function
+      if code[:tagname] == :method
         code[:params]
-      elsif code[:type] == :assignment && code[:right] && code[:right][:type] == :function
-        code[:right][:params]
       else
         []
       end
