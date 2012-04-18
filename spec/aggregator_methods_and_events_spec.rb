@@ -144,20 +144,6 @@ describe JsDuck::Aggregator do
     it_should_behave_like "method documentation"
   end
 
-  describe "anonymous function" do
-    before do
-      @doc = parse("( /** Some function */ function() {} )")[0]
-    end
-
-    it "detects method" do
-      @doc[:tagname].should == :method
-    end
-
-    it "detects empty method name" do
-      @doc[:name].should == ""
-    end
-  end
-
   describe "doc-comment followed by 'function'" do
     before do
       @doc = parse("/** Some function */ 'function';")[0]
