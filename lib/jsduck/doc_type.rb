@@ -27,7 +27,7 @@ module JsDuck
         :cfg
       elsif code[:tagname] == :class
         :class
-      elsif code[:type] == :css_mixin
+      elsif code[:tagname] == :css_mixin
         :css_mixin
       elsif doc_map[:cfg]
         :cfg

@@ -32,7 +32,7 @@ module JsDuck
       if look("@", "mixin")
         mixin
       else
-        {:type => :nop}
+        {:tagname => :nop}
       end
     end
 
@@ -40,7 +40,7 @@ module JsDuck
     def mixin
       match("@", "mixin")
       return {
-        :type => :css_mixin,
+        :tagname => :css_mixin,
         :name => look(:ident) ? css_ident : nil,
       }
     end
