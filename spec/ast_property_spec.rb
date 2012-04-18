@@ -85,9 +85,27 @@ describe "JsDuck::Ast detects property with" do
     end
   end
 
-  describe "no value type in" do
+  describe "no type in" do
     it "uninitialized var declaration" do
       detect("/** */ var foo;")[:type].should == nil
+    end
+  end
+
+  describe "default value in" do
+    it "var initialization with string" do
+      detect("/** */ var foo = 'bar';")[:default].should == "'bar'"
+    end
+
+    it "assignment with number" do
+      detect("/** */ foo = 15;")[:default].should == "15"
+    end
+
+    it "assignment with object" do
+      detect("/** */ foo = {bar: 5};")[:default].should == "{bar: 5}"
+    end
+
+    it "object property with array" do
+      detect("X = { /** */ foo: [1, 2, 3] };")[:default].should == "[1, 2, 3]"
     end
   end
 

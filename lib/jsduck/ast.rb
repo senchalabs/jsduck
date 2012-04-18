@@ -218,7 +218,8 @@ module JsDuck
       return {
         :tagname => :property,
         :name => name,
-        :type => make_value_type(ast)
+        :type => make_value_type(ast),
+        :default => ast ? to_s(ast) : nil,
       }
     end
 
