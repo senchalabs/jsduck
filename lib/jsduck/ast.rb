@@ -155,7 +155,7 @@ module JsDuck
         elsif ext_define?(ast)
           cfg = object_expression_to_hash(ast["arguments"][1])
 
-          cls[:extends] = make_extends(cfg["extend"])
+          cls[:extends] = make_extends(cfg["extend"]) || "Ext.Base"
           cls[:requires] = make_requires(cfg["requires"])
           cls[:uses] = make_requires(cfg["uses"])
           cls[:alternateClassNames] = make_requires(cfg["alternateClassName"])

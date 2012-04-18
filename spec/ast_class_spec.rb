@@ -68,11 +68,9 @@ describe "JsDuck::Ast detects class with" do
         });
       EOS
     end
-  end
 
-  describe "no extends in" do
     it "Ext.define() with function argument" do
-      detect(<<-EOS)[:extends].should == nil
+      detect(<<-EOS)[:extends].should == "Ext.Base"
         /** */
         Ext.define('MyClass', function() {
         });
@@ -80,7 +78,7 @@ describe "JsDuck::Ast detects class with" do
     end
 
     it "Ext.define() with no extend: in config object" do
-      detect(<<-EOS)[:extends].should == nil
+      detect(<<-EOS)[:extends].should == "Ext.Base"
         /** */
         Ext.define('MyClass', {
             foo: 5,
@@ -88,13 +86,15 @@ describe "JsDuck::Ast detects class with" do
         });
       EOS
     end
+  end
 
-    it "Ext.define() with extend as number" do
+  describe "no extends in" do
+    it "plain variable assignment" do
       detect(<<-EOS)[:extends].should == nil
         /** */
-        Ext.define('MyClass', {
+        MyClass = {
             extend: 5
-        });
+        };
       EOS
     end
   end
