@@ -160,6 +160,7 @@ module JsDuck
           cls[:uses] = make_requires(cfg["uses"])
           cls[:alternateClassNames] = make_requires(cfg["alternateClassName"])
           cls[:mixins] = make_mixins(cfg["mixins"])
+          cls[:singleton] = make_singleton(cfg["singleton"])
         end
       end
 
@@ -189,6 +190,10 @@ module JsDuck
       classes = v.is_a?(Hash) ? v.values : Array(v)
 
       return classes.all? {|c| c.is_a? String } ? classes : []
+    end
+
+    def make_singleton(cfg_value)
+      cfg_value && to_value(cfg_value) == true
     end
 
     def make_method(name, ast=nil)

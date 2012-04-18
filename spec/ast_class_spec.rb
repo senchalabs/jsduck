@@ -230,4 +230,34 @@ describe "JsDuck::Ast detects class with" do
       EOS
     end
   end
+
+  describe "singleton in" do
+    it "Ext.define() with singleton:true" do
+      detect(<<-EOS)[:singleton].should == true
+        /** */
+        Ext.define('MyClass', {
+            singleton: true
+        });
+      EOS
+    end
+  end
+
+  describe "no singleton in" do
+    it "Ext.define() with singleton:false" do
+      detect(<<-EOS)[:singleton].should_not == true
+        /** */
+        Ext.define('MyClass', {
+            singleton: false
+        });
+      EOS
+    end
+
+    it "Ext.define() without singleton" do
+      detect(<<-EOS)[:singleton].should_not == true
+        /** */
+        Ext.define('MyClass', {
+        });
+      EOS
+    end
+  end
 end
