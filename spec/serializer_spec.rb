@@ -112,6 +112,10 @@ describe JsDuck::Serializer do
       test("switch (foo) {case 1: case 2: alert(1);break;default: alert(2);}")
     end
 
+    it "empty return statement" do
+      test("function foo() {return ;}")
+    end
+
     it "for statement" do
       test("for (var i = 0; i < 10; i++) {}")
     end

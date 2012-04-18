@@ -51,7 +51,8 @@ module JsDuck
         to_s(ast["label"]) + ": " + to_s(ast["body"])
 
       when "ReturnStatement"
-        "return " + to_s(ast["argument"]) + ";"
+        arg = ast["argument"] ? to_s(ast["argument"]) : ""
+        "return " + arg + ";"
 
       when "SwitchStatement"
         "switch (" + to_s(ast["discriminant"]) + ") {" + ast["cases"].map {|c| to_s(c) }.join + "}"
