@@ -49,6 +49,15 @@ describe "JsDuck::Ast detects property with" do
     it "lonely string" do
       detect("/** */ 'foo';")[:name].should == "foo"
     end
+
+    it "string as function argument" do
+      detect(<<-EOS)[:name].should == "foo"
+        this.addEvents(
+            /** */
+            "foo"
+        );
+      EOS
+    end
   end
 
   describe "type in var initialized with" do

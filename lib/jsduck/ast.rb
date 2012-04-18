@@ -81,7 +81,11 @@ module JsDuck
       elsif exp && ident?(exp)
         make_property(to_s(exp))
 
-      # "foo";
+      # "foo"  (inside some expression)
+      elsif string?(ast)
+        make_property(to_value(ast))
+
+      # "foo";  (as a statement of it's own)
       elsif exp && string?(exp)
         make_property(to_value(exp))
 
