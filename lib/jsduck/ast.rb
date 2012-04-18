@@ -219,8 +219,12 @@ module JsDuck
         :tagname => :property,
         :name => name,
         :type => make_value_type(ast),
-        :default => ast ? to_s(ast) : nil,
+        :default => make_default(ast),
       }
+    end
+
+    def make_default(ast)
+      ast && to_value(ast) ? to_s(ast) : nil
     end
 
     def make_value_type(ast)
@@ -236,7 +240,7 @@ module JsDuck
           "Array"
         elsif v.is_a?(Hash)
           "Object"
-        elsif v == nil && ast["type"] == "Literal" && ast["raw"] =~ /\A\//
+        elsif v == :regexp
           "RegExp"
         else
           nil

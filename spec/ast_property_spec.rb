@@ -100,12 +100,30 @@ describe "JsDuck::Ast detects property with" do
       detect("/** */ foo = 15;")[:default].should == "15"
     end
 
+    it "assignment with regex" do
+      detect("/** */ foo = /abc/;")[:default].should == "/abc/"
+    end
+
     it "assignment with object" do
       detect("/** */ foo = {bar: 5};")[:default].should == "{bar: 5}"
     end
 
     it "object property with array" do
       detect("X = { /** */ foo: [1, 2, 3] };")[:default].should == "[1, 2, 3]"
+    end
+  end
+
+  describe "no default value in" do
+    it "var without initialization" do
+      detect("/** */ var foo;")[:default].should == nil
+    end
+
+    it "assignment of function call" do
+      detect("/** */ foo = bar();")[:default].should == nil
+    end
+
+    it "object property with array containing function" do
+      detect("X = { /** */ foo: [1, 2, function(){}] };")[:default].should == nil
     end
   end
 

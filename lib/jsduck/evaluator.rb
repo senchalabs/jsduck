@@ -6,7 +6,8 @@ module JsDuck
     # Converts AST node into a value.
     #
     # - String literals become Ruby strings
-    # - Number literals become Ruby number
+    # - Number literals become Ruby numbers
+    # - Regex literals become :regexp symbols
     # - Array expressions become Ruby arrays
     # - etc
     #
@@ -26,7 +27,11 @@ module JsDuck
         end
         h
       when "Literal"
-        ast["value"]
+        if ast["value"] == nil && ast["raw"] =~ /\A\//
+          :regexp
+        else
+          ast["value"]
+        end
       else
         throw "Unknown node type: " + ast["type"]
       end
