@@ -25,13 +25,13 @@ module JsDuck
       elsif doc_map[:cfg] && doc_map[:cfg].length == 1
         # When just one @cfg, avoid treating it as @class
         :cfg
-      elsif code[:type] == :class
+      elsif code[:tagname] == :class
         :class
       elsif code[:type] == :css_mixin
         :css_mixin
       elsif doc_map[:cfg]
         :cfg
-      elsif code[:type] == :method
+      elsif code[:tagname] == :method
         :method
       else
         :property

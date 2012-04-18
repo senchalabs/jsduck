@@ -51,39 +51,39 @@ describe "JsDuck::Ast detects property with" do
     end
   end
 
-  describe "value type in var initialized with" do
+  describe "type in var initialized with" do
     it "int" do
-      detect("/** */ var foo = 5;")[:value_type].should == "Number"
+      detect("/** */ var foo = 5;")[:type].should == "Number"
     end
 
     it "float" do
-      detect("/** */ var foo = 0.5;")[:value_type].should == "Number"
+      detect("/** */ var foo = 0.5;")[:type].should == "Number"
     end
 
     it "string" do
-      detect("/** */ var foo = 'haa';")[:value_type].should == "String"
+      detect("/** */ var foo = 'haa';")[:type].should == "String"
     end
 
     it "true" do
-      detect("/** */ var foo = true;")[:value_type].should == "Boolean"
+      detect("/** */ var foo = true;")[:type].should == "Boolean"
     end
 
     it "false" do
-      detect("/** */ var foo = false;")[:value_type].should == "Boolean"
+      detect("/** */ var foo = false;")[:type].should == "Boolean"
     end
 
     it "array" do
-      detect("/** */ var foo = [];")[:value_type].should == "Array"
+      detect("/** */ var foo = [];")[:type].should == "Array"
     end
 
     it "object" do
-      detect("/** */ var foo = {};")[:value_type].should == "Object"
+      detect("/** */ var foo = {};")[:type].should == "Object"
     end
   end
 
   describe "no value type in" do
     it "uninitialized var declaration" do
-      detect("/** */ var foo;")[:value_type].should == nil
+      detect("/** */ var foo;")[:type].should == nil
     end
   end
 

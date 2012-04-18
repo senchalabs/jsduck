@@ -4,7 +4,7 @@ require "jsduck/esprima_parser"
 describe JsDuck::Ast do
   def detect(string)
     node = JsDuck::EsprimaParser.new(string).parse[0]
-    return JsDuck::Ast.new.detect(node[:code])[:type]
+    return JsDuck::Ast.new.detect(node[:code])[:tagname]
   end
 
   describe "detects as class" do

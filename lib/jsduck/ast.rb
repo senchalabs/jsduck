@@ -143,7 +143,7 @@ module JsDuck
 
     def make_class(name, ast=nil)
       cls = {
-        :type => :class,
+        :tagname => :class,
         :name => name,
       }
 
@@ -192,7 +192,7 @@ module JsDuck
 
     def make_method(name, ast=nil)
       return {
-        :type => :method,
+        :tagname => :method,
         :name => name,
         :params => make_params(ast)
       }
@@ -208,9 +208,9 @@ module JsDuck
 
     def make_property(name=nil, ast=nil)
       return {
-        :type => :property,
+        :tagname => :property,
         :name => name,
-        :value_type => make_value_type(ast)
+        :type => make_value_type(ast)
       }
     end
 
