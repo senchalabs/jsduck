@@ -63,6 +63,10 @@ describe JsDuck::Aggregator do
     it "detects the config with docs" do
       docs[0][:members][:cfg][0][:doc].should == "Docs for bar"
     end
+
+    it "detects owner of the config" do
+      docs[0][:members][:cfg][0][:owner].should == "MyClass"
+    end
   end
 
 end
