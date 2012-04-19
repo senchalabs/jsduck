@@ -150,7 +150,7 @@ module JsDuck
         :properties => detect_subproperties(docs, :cfg),
         :accessor => !!doc_map[:accessor],
         :evented => !!doc_map[:evented],
-      }, doc_map)
+      }, doc_map, code)
     end
 
     def create_property(docs, code)
@@ -189,10 +189,10 @@ module JsDuck
     end
 
     # Detects properties common for each doc-object and adds them
-    def add_shared(hash, doc_map)
+    def add_shared(hash, doc_map, code={})
       hash.merge!({
         :inheritable => !!doc_map[:inheritable],
-        :inheritdoc => doc_map[:inheritdoc] ? doc_map[:inheritdoc].first : nil,
+        :inheritdoc => doc_map[:inheritdoc] ? doc_map[:inheritdoc].first : code[:inheritdoc],
         :meta => detect_meta(doc_map),
       })
       # copy :private also to main hash

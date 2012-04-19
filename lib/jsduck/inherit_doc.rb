@@ -53,7 +53,10 @@ module JsDuck
         mixins = @relations[m[:owner]].mixins
 
         # Warn when no parent or mixins at all
-        return warn("parent class not found", m) unless parent_cls || mixins.length > 0
+        if !parent_cls && mixins.length == 0
+          warn("parent class not found", m) unless m[:no_warnings]
+          return m
+        end
 
         # First check for the member in all mixins, because members
         # from mixins override those from parent class.  Looking first
@@ -69,7 +72,10 @@ module JsDuck
         end
 
         # Only when both parent and mixins fail, throw warning
-        return warn("parent member not found", m) unless parent
+        if !parent
+          warn("parent member not found", m) unless m[:no_warnings]
+          return m
+        end
       end
 
       return parent[:inheritdoc] ? find_parent(parent) : parent

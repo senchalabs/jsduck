@@ -525,5 +525,33 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "autoinherit with config:{}" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            config: {
+                /**
+                 * My config.
+                 */
+                foo: 5
+            }
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            config: {
+                foo: 10
+            }
+        });
+      EOF
+      @cls = @docs["Child"]
+    end
+
+    it "inherits docs from parent" do
+      @cls[:members][:cfg][0][:doc].should == "My config."
+    end
+  end
+
 end
 

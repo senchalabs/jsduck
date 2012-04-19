@@ -196,7 +196,7 @@ module JsDuck
           cls[:aliases] = make_string_list(cfg["alias"])
           cls[:aliases] += make_string_list(cfg["xtype"]).map {|xtype| "widget."+xtype }
           cls[:members] = {}
-          cls[:members][:cfg] = make_config(cfg["config"])
+          cls[:members][:cfg] = make_configs(cfg["config"])
         end
       end
 
@@ -232,7 +232,7 @@ module JsDuck
       cfg_value && to_value(cfg_value) == true
     end
 
-    def make_config(ast)
+    def make_configs(ast)
       return nil unless ast && ast["type"] == "ObjectExpression"
 
       configs = []
@@ -245,6 +245,7 @@ module JsDuck
         if docset
           docset[:code] = cfg
         else
+          cfg[:inheritdoc] = {:no_warnings => true}
           configs << cfg
         end
       end

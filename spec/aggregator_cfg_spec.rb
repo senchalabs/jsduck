@@ -31,6 +31,10 @@ describe JsDuck::Aggregator do
     it "finds two configs" do
       cfg.length.should == 2
     end
+
+    it "sets :inheritdoc flag on config" do
+      cfg[0][:inheritdoc].should == {:no_warnings => true}
+    end
   end
 
   describe "detecting Ext.define() with commented config" do
