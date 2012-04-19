@@ -5,15 +5,43 @@ module JsDuck
 
   # Analyzes the AST produced by EsprimaParser.
   class Ast
-    def initialize
+    # Should be initialized with EsprimaParser#parse result.
+    def initialize(docs = [])
       @serializer = JsDuck::Serializer.new
       @evaluator = JsDuck::Evaluator.new
+      @docs = docs
     end
 
-    # Given parsed code, returns the tagname for documentation item.
+    # Performs the detection of code in all docsets.
+    #
+    # @returns the processes array of docsets. (But it does it
+    # destructively by modifying the passed-in docsets.)
+    #
+    def detect_all!
+      # For now only deal with doc-comments
+      @docs = @docs.find_all {|d| d[:type] == :doc_comment }
+
+      # Detect code in each docset.  Sometimes a docset has already
+      # been as part of detecting some previous docset (like Class
+      # detecting all of its configs) - in such case, skip.
+      @docs.each do |docset|
+        code = docset[:code]
+        docset[:code] = detect(code) unless code && code[:tagname]
+      end
+
+      @docs
+    end
+
+    # Given Esprima-produced syntax tree, detects documentation data.
+    #
+    # This method is exposed for testing purposes only, JSDuck itself
+    # only calls the above #detect_all method.
     #
     # @param ast :code from Result of EsprimaParser
-    # @returns One of: :class, :method, :property
+    # @returns Hash consisting of the detected :tagname, :name, and
+    # other properties relative to the tag.  Like so:
+    #
+    #     { :tagname => :method, :name => "foo", ... }
     #
     def detect(ast)
       ast = ast || {}
@@ -208,10 +236,28 @@ module JsDuck
       return nil unless ast && ast["type"] == "ObjectExpression"
 
       configs = []
-      object_expression_to_hash(ast).each_pair do |key, value|
-        configs << make_property(key, value, :cfg)
+
+      ast["properties"].each do |p|
+        cfg = make_property(key_value(p["key"]), p["value"], :cfg)
+        # When config has a comment, update the related docset,
+        # otherwise add it as new config to current class.
+        docset = find_docset(p)
+        if docset
+          docset[:code] = cfg
+        else
+          configs << cfg
+        end
       end
+
       configs
+    end
+
+    # Looks up docset associated with given AST node.
+    # A dead-stupid and -slow implementation, but works.
+    def find_docset(ast)
+      @docs.find do |docset|
+        docset[:code] == ast
+      end
     end
 
     def make_method(name, ast=nil)

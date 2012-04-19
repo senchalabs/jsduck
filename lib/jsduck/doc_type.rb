@@ -31,10 +31,8 @@ module JsDuck
         :css_mixin
       elsif doc_map[:cfg]
         :cfg
-      elsif code[:tagname] == :method
-        :method
       else
-        :property
+        code[:tagname]
       end
     end
 

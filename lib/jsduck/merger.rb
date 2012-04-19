@@ -45,6 +45,11 @@ module JsDuck
       result = create_bare_class(groups[:class], code)
       result[:members] = create_class_members(groups, result[:name])
       result[:statics] = Class.default_members_hash
+      if code[:members] && code[:members][:cfg]
+        code[:members][:cfg].each do |cfg|
+          result[:members][:cfg] << create_cfg({}, cfg, result[:name])
+        end
+      end
       result
     end
 

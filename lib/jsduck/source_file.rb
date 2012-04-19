@@ -23,7 +23,6 @@ module JsDuck
       @options = options
       @html_filename = ""
       @links = {}
-      @ast = Ast.new
 
       doc_parser = DocParser.new
 
@@ -92,11 +91,7 @@ module JsDuck
           CssParser.new(@contents, @options).parse
         else
           docs = EsprimaParser.new(@contents, @options).parse
-          docs = docs.find_all {|d| d[:type] == :doc_comment }
-          docs.each do |docset|
-            docset[:code] = @ast.detect(docset[:code])
-          end
-          docs
+          Ast.new(docs).detect_all!
         end
       rescue
         puts "Error while parsing #{@filename}: #{$!}"
