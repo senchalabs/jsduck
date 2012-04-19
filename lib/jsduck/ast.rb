@@ -167,6 +167,8 @@ module JsDuck
           cls[:singleton] = make_singleton(cfg["singleton"])
           cls[:aliases] = make_string_list(cfg["alias"])
           cls[:aliases] += make_string_list(cfg["xtype"]).map {|xtype| "widget."+xtype }
+          cls[:members] = {}
+          cls[:members][:cfg] = make_config(cfg["config"])
         end
       end
 
@@ -202,6 +204,16 @@ module JsDuck
       cfg_value && to_value(cfg_value) == true
     end
 
+    def make_config(ast)
+      return nil unless ast && ast["type"] == "ObjectExpression"
+
+      configs = []
+      object_expression_to_hash(ast).each_pair do |key, value|
+        configs << make_property(key, value, :cfg)
+      end
+      configs
+    end
+
     def make_method(name, ast=nil)
       return {
         :tagname => :method,
@@ -218,9 +230,9 @@ module JsDuck
       end
     end
 
-    def make_property(name=nil, ast=nil)
+    def make_property(name=nil, ast=nil, tagname=:property)
       return {
-        :tagname => :property,
+        :tagname => tagname,
         :name => name,
         :type => make_value_type(ast),
         :default => make_default(ast),
