@@ -99,12 +99,13 @@ Ext.define('Docs.view.HoverMenuButton', {
     },
 
     deferHideMenu: function() {
+        // when showing in progress, stop it
+        clearTimeout(Docs.view.HoverMenuButton.showTimeout);
         // skip if nothing to hide
         if (!this.menu) {
             return;
         }
 
-        clearTimeout(Docs.view.HoverMenuButton.showTimeout);
         this.hideTimeout = Ext.Function.defer(function() {
             this.menu.hide();
         }, 200, this);

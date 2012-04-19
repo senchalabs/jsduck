@@ -11,29 +11,32 @@ pre.inline-example {
   background: none !important;
   border: none;
 
+  .x-btn button {
+    display: inline-block; }
+
   // Inline example component buttons
   span.x-btn-inner {
-    line-height: 12px; }
+    line-height: 16px; }
   .active span.x-btn-inner {
     color: #57a7dc; }
   span.x-btn-icon {
     background: url(../images/example-icons.png) no-repeat;
     @include opacity(0.6);
     &.code {
-      background-position: -2px -19px; }
+      background-position: -2px -17px; }
     &.preview {
-      background-position: -3px -65px; }
+      background-position: -3px -63px; }
     &.copy {
-      background-position: -2px -88px; } }
+      background-position: -2px -86px; } }
   .active span.x-btn-icon {
     background: url(../images/example-icons.png) no-repeat;
     @include opacity(1);
     &.code {
-      background-position: -30px -19px; }
+      background-position: -30px -17px; }
     &.preview {
-      background-position: -31px -65px; }
+      background-position: -31px -63px; }
     &.copy {
-      background-position: -30px -88px; } } }
+      background-position: -30px -86px; } } }
 
 .inline-example-editor {
   border: none;

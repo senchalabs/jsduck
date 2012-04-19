@@ -316,14 +316,7 @@ Ext.define('Docs.view.Comments', {
      */
     renderClassCommentContainers: function(cls) {
         // Add comment button to class toolbar
-        Ext.ComponentQuery.query('classoverview toolbar')[0].insert(-2, {
-            xtype: 'container',
-            id: 'classCommentToolbarBtn',
-            width: 24,
-            margin: '0 4 0 0',
-            cls: 'comment-btn',
-            html: '0'
-        });
+        this.getClassToolbar().showCommentCount();
 
         // Insert class level comment container under class intro docs
         this.classCommentsTpl.insertFirst(Ext.query('.members')[0], {
@@ -350,7 +343,7 @@ Ext.define('Docs.view.Comments', {
         if (clsMeta && clsMeta['']) {
 
             // Update toolbar icon
-            Ext.getCmp('classCommentToolbarBtn').update(clsMeta['']);
+            this.getClassToolbar().setCommentCount(clsMeta['']);
 
             // Update class level comments meta
             this.numCommentsTpl.overwrite(Ext.get(Ext.query('.comments-section a.name')[0]), {
@@ -358,7 +351,7 @@ Ext.define('Docs.view.Comments', {
             });
         } else {
             // Update toolbar icon
-            Ext.getCmp('classCommentToolbarBtn').update('0');
+            this.getClassToolbar().setCommentCount(0);
 
             // Update class level comments meta
             this.numCommentsTpl.overwrite(Ext.get(Ext.query('.comments-section a.name')[0]), {
@@ -396,6 +389,10 @@ Ext.define('Docs.view.Comments', {
         Ext.Array.each(Ext.ComponentQuery.query('hovermenu'), function(m) {
             m.fireEvent('refresh', this);
         });
+    },
+
+    getClassToolbar: function() {
+        return Ext.ComponentQuery.query('classoverview toolbar')[0];
     },
 
     updateGuideCommentMeta: function(guide) {

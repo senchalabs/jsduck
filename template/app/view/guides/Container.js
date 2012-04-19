@@ -38,7 +38,7 @@ Ext.define('Docs.view.guides.Container', {
      * Scrolls guide to the top
      */
     scrollToTop: function() {
-        this.getEl().scrollTo('top');
+        this.body.scrollTo('top');
     },
 
     /**

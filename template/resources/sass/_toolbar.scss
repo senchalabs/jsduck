@@ -2,9 +2,13 @@
 @import "mixins";
 
 // softer rounded corners on the toolbar
-.class-overview .x-toolbar-default {
+.class-overview .x-toolbar.member-links {
   border-radius: 2px;
   border-color: #e4e4e4;
+  padding: 5px;
+  // ExtJS styles hide the border using !important.
+  // So to override it we need to use !important too.
+  border-width: 1px !important;
   @include icons; }
 
 
