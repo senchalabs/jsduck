@@ -406,6 +406,8 @@ task :doctests, [:mode] => :sass do |t, args|
   runner.add_debug if mode == "debug"
   runner.add_seo
   runner.run
+
+  runner.copy_extjs_build
 end
 
 desc "Run JSDuck on official Ext JS 3.4 build\n" +
