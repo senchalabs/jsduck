@@ -110,8 +110,7 @@ Ext.define('Docs.view.doctests.Index', {
      * @return {Object}
      */
     getTab: function() {
-        var enabled = !Ext.isEmpty(Docs.data.doctests);
-        return enabled ? {cls: 'doctests', href: '#!/doctests', tooltip: 'DocTests'} : false;
+        return Docs.data.doctests ? {cls: 'doctests', href: '#!/doctests', tooltip: 'DocTests'} : false;
     },
 
     /**

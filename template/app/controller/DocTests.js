@@ -60,12 +60,12 @@ Ext.define('Docs.controller.DocTests', {
      * @param {Ext.data.Store}
      */
     locateExamples: function(store) {
-        this.classesLeft = Docs.data.doctests.length;
+        this.classesLeft = Docs.data.classes.length;
         this.getTestContainer().setDisabled(true);
         store.removeAll();
-        Ext.each(Docs.data.doctests, function(cls) {
+        Ext.each(Docs.data.classes, function(cls) {
             var task = new Ext.util.DelayedTask(function() {
-                this.locateClsExamples(store, cls);
+                this.locateClsExamples(store, cls.name);
             }, this);
             task.delay(0);
         }, this);
