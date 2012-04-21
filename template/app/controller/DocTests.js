@@ -60,7 +60,7 @@ Ext.define('Docs.controller.DocTests', {
      * @param {Ext.data.Store}
      */
     locateExamples: function(store) {
-        this.clssLeft = Docs.data.doctests.length;
+        this.classesLeft = Docs.data.doctests.length;
         this.getTestContainer().setDisabled(true);
         store.removeAll();
         Ext.each(Docs.data.doctests, function(cls) {
@@ -105,8 +105,8 @@ Ext.define('Docs.controller.DocTests', {
                     });
                 }, this);
 
-                this.clssLeft--;
-                if (this.clssLeft === 0) {
+                this.classesLeft--;
+                if (this.classesLeft === 0) {
                     this.getTestContainer().setDisabled(false);
                 }
             },
