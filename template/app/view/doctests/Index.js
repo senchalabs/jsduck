@@ -192,6 +192,7 @@ Ext.define('Docs.view.doctests.Index', {
     onPreviewSuccess: function(preview, obj, record, tests) {
         this.clearTestRunner();
         record.set('status', '<span class="doc-test-success">pass</span>');
+        record.commit();
         tests.pass++;
         this.showResult(tests);
 
@@ -210,6 +211,7 @@ Ext.define('Docs.view.doctests.Index', {
         }
 
         record.set('message', '(exception logged to console): ' + e.toString());
+        record.commit();
         tests.fail++;
         this.showResult(tests);
 
