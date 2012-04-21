@@ -3,7 +3,6 @@
  */
 Ext.define('Docs.controller.DocTests', {
     extend: 'Docs.controller.Content',
-    requires: ['Ext.data.Store', 'Docs.model.DocTest'],
     baseUrl: "#!/doctests",
 
     preRegex: /<pre[\s\S]*?>[\s\S]*?<\/pre[\s\S]*?>/gi,

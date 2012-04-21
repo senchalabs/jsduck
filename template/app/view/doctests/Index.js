@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.view.doctests.Index', {
     extend: 'Ext.container.Container',
-    requires: ['Ext.String.format', 'Ext.data.Store', 'Docs.model.DocTest'],
+    requires: ['Docs.model.DocTest'],
     alias: 'widget.doctestsindex',
 
     layout: {
