@@ -62,7 +62,6 @@ Ext.define('Docs.controller.DocTests', {
     locateExamples: function(store) {
         this.clssLeft = Docs.data.doctests.length;
         this.getTestContainer().setDisabled(true);
-        store.suspendEvents();
         store.removeAll();
         Ext.each(Docs.data.doctests, function(cls) {
             var task = new Ext.util.DelayedTask(function() {
@@ -108,8 +107,6 @@ Ext.define('Docs.controller.DocTests', {
 
                 this.clssLeft--;
                 if (this.clssLeft === 0) {
-                    store.resumeEvents();
-                    store.fireEvent('datachanged', store, {});
                     this.getTestContainer().setDisabled(false);
                 }
             },
