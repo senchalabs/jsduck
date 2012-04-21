@@ -28,13 +28,13 @@ Ext.define('Docs.controller.DocTests', {
             selector: '#testcontainer'
         }
     ],
-    
+
     init: function() {
         this.addEvents('loadIndex');
 
         this.control({
             '#doctestgrid': {
-                afterrender: this.onGridAfterRender,
+                afterrender: this.onGridAfterRender
             }
         });
     },
@@ -52,10 +52,10 @@ Ext.define('Docs.controller.DocTests', {
     isActive: function() {
         return !!this.getIndex().getTab();
     },
-    
+
     /**
      * Locates all examples.
-     * 
+     *
      * @private
      * @param {Ext.data.Store}
      */
@@ -68,13 +68,13 @@ Ext.define('Docs.controller.DocTests', {
             var task = new Ext.util.DelayedTask(function() {
                 this.locateClsExamples(store, cls);
             }, this);
-            task.delay(0)
+            task.delay(0);
         }, this);
     },
 
     /**
      * Locates all inline examples attached to a class file.
-     * 
+     *
      * @private
      * @param {Ext.data.Store}
      * @param {Object}
@@ -96,7 +96,7 @@ Ext.define('Docs.controller.DocTests', {
                         name += ' example #' + (exampleIdx + 1).toString();
                         id += '-' + exampleIdx.toString();
                     }
-                    
+
                     store.add({
                         id: id,
                         name: name,
@@ -105,7 +105,7 @@ Ext.define('Docs.controller.DocTests', {
                         status: '<span class="doc-test-ready">ready</span>'
                     });
                 }, this);
-                
+
                 this.clssLeft--;
                 if (this.clssLeft === 0) {
                     store.resumeEvents();
@@ -122,14 +122,14 @@ Ext.define('Docs.controller.DocTests', {
 
     /**
      * Extract example code from html.
-     * 
+     *
      * @private
      * @param {String}
      */
     extractExampleCode: function(html) {
         var exampleCodes = [],
             preMatches = html.match(this.preRegex);
-        
+
         Ext.each(preMatches, function(preMatch) {
             if (preMatch.match(this.preClsRegex)) {
                 var codeMatches = preMatch.match(this.codeRegex);
@@ -140,7 +140,7 @@ Ext.define('Docs.controller.DocTests', {
         }, this);
         return exampleCodes;
     },
-    
+
     onGridAfterRender: function(grid) {
         var store = grid.getStore();
         this.locateExamples(store);

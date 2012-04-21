@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.Assert', {
     singleton: true,
-    
+
     assert: function(value, message) {
         if (!value) {
             if (Ext.isEmpty(message)) {

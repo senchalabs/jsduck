@@ -35,10 +35,10 @@ Ext.define('Docs.view.examples.Inline', {
      * @cfg {Docs.view.examples.InlineToolbar} toolbar
      * The toolbar with buttons that controls this component.
      */
-    
+
     constructor: function() {
         this.callParent(arguments);
-        
+
         this.addEvents([
             /**
              * @event previewsuccess
@@ -55,7 +55,7 @@ Ext.define('Docs.view.examples.Inline', {
             'previewfailure',
         ]);
     },
-    
+
     initComponent: function() {
         this.options = Ext.apply({
             device: "phone",

@@ -92,12 +92,12 @@ Ext.define('Docs.view.doctests.Index', {
             model: 'Docs.model.DocTest',
             data: []
         });
-        
+
         this.callParent(arguments);
-        
+
         var runAllButton = Ext.ComponentQuery.query('#runallbutton', this)[0];
         runAllButton.on('click', this.onRunAllButtonClick, this);
-        
+
         var testGrid = Ext.ComponentQuery.query('#doctestgrid', this)[0];
         testGrid.on('itemclick', this.onRunLinkClick, this, {
             delegate: '.doc-test-run',
@@ -121,19 +121,19 @@ Ext.define('Docs.view.doctests.Index', {
         if (!tests.examples || tests.examples.length < 1) {
             return;
         }
-        
+
         if ((!tests.fail) && (!tests.pass)) {
             Ext.ComponentQuery.query('#testcontainer', this)[0].setDisabled(true);
         }
-        
+
         this.clearTestRunner();
         var testRunner = this.getComponent('testrunner');
         var record = tests.examples.pop();
-        
+
         var example = testRunner.add(
             Ext.create('Docs.view.examples.Inline', {
                 cls: 'doc-test-preview',
-                value: Ext.String.htmlDecode(Ext.util.Format.stripTags(record.get('code'))),
+                value: Ext.String.htmlDecode(Ext.util.Format.stripTags(record.get('code')))
             })
         );
 
@@ -173,10 +173,10 @@ Ext.define('Docs.view.doctests.Index', {
         this.runExample({
             pass: 0,
             fail: 0,
-            examples: [record],
+            examples: [record]
         });
     },
-    
+
     onRunAllButtonClick: function() {
         var examples = [];
         this.store.each(function(record) {
@@ -194,7 +194,7 @@ Ext.define('Docs.view.doctests.Index', {
         record.set('status', '<span class="doc-test-success">pass</span>');
         tests.pass++;
         this.showResult(tests);
-        
+
         if (Ext.isDefined(console)) {
             console.log('Test passed: ', record.get('name'));
         }
