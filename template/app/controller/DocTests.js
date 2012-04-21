@@ -46,7 +46,7 @@ Ext.define('Docs.controller.DocTests', {
     },
 
     /**
-     * True if welcome page is available.
+     * True if DocTests page is available.
      * @return {Boolean}
      */
     isActive: function() {
