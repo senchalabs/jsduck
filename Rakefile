@@ -187,7 +187,7 @@ class JsDuckRunner
     ]
   end
 
-  def add_doctest
+  def add_doctests
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
       "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> VERSION. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
@@ -394,15 +394,15 @@ task :ext4, [:mode] => :sass do |t, args|
 end
 
 desc "Run JSDuck with example test hacks\n" +
-     "doctest             - creates debug/development version\n" +
-     "doctest[export]     - creates export/deployable version\n"
-task :doctest, [:mode] => :sass do |t, args|
+     "doctests             - creates debug/development version\n" +
+     "doctests[export]     - creates export/deployable version\n"
+task :doctests, [:mode] => :sass do |t, args|
   mode = args[:mode] || "debug"
   throw "Unknown mode #{mode}" unless ["debug", "export"].include?(mode)
   compress if mode == "export"
 
   runner = JsDuckRunner.new
-  runner.add_doctest
+  runner.add_doctests
   runner.add_debug if mode == "debug"
   runner.add_seo
   runner.run

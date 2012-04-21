@@ -20,10 +20,6 @@ Ext.define('Docs.controller.DocTests', {
             selector: '#doctestsindex'
         },
         {
-            ref: 'docTestGrid',
-            selector: '#doctestgrid'
-        },
-        {
             ref: 'testContainer',
             selector: '#testcontainer'
         }
@@ -33,7 +29,7 @@ Ext.define('Docs.controller.DocTests', {
         this.addEvents('loadIndex');
 
         this.control({
-            '#doctestgrid': {
+            '#doctestsgrid': {
                 afterrender: this.onGridAfterRender
             }
         });

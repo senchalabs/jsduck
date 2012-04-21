@@ -51,7 +51,7 @@ Ext.define('Docs.view.doctests.Index', {
                 },
                 {
                     xtype: 'grid',
-                    itemId: 'doctestgrid',
+                    itemId: 'doctestsgrid',
                     title: 'Doc Tests',
                     padding: '5 0 5 0',
                     autoScroll: true,
@@ -98,7 +98,7 @@ Ext.define('Docs.view.doctests.Index', {
         var runAllButton = Ext.ComponentQuery.query('#runallbutton', this)[0];
         runAllButton.on('click', this.onRunAllButtonClick, this);
 
-        var testGrid = Ext.ComponentQuery.query('#doctestgrid', this)[0];
+        var testGrid = Ext.ComponentQuery.query('#doctestsgrid', this)[0];
         testGrid.on('itemclick', this.onRunLinkClick, this, {
             delegate: '.doc-test-run',
             stopEvent: true
