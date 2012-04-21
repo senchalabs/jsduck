@@ -393,17 +393,11 @@ task :ext4, [:mode] => :sass do |t, args|
   runner.run
 end
 
-desc "Run JSDuck with example test hacks\n" +
-     "doctests             - creates debug/development version\n" +
-     "doctests[export]     - creates export/deployable version\n"
-task :doctests, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "export"].include?(mode)
-  compress if mode == "export"
-
+desc "Run JSDuck with example test hacks"
+task :doctests => :sass do |t, args|
   runner = JsDuckRunner.new
   runner.add_doctests
-  runner.add_debug if mode == "debug"
+  runner.add_debug
   runner.add_seo
   runner.run
 
