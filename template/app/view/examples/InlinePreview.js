@@ -94,8 +94,8 @@ Ext.define('Docs.view.examples.InlinePreview', {
      * @param {String} code  The code to run inside iframe.
      */
     update: function(code) {
-        var options = this.options,
-            iframeId = this.iframeId,
+        var iframeId = this.iframeId,
+            options = Ext.apply({iframeId: iframeId}, this.options),
             iframe = document.getElementById(iframeId);
 
         if (iframe) {
@@ -104,7 +104,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
             // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
             iframe.onload = function() {
                 Ext.Function.defer(function() {
-                    iframe.contentWindow.loadInlineExample(iframeId, code, options);
+                    iframe.contentWindow.loadInlineExample(code, options);
                 }, 100);
             };
             iframe.src = "eg-iframe.html";

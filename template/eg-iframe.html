@@ -9,14 +9,14 @@
     <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css">
 
     <script type="text/javascript">
-        function loadInlineExample(exampleId, code, options) {
+        function loadInlineExample(code, options) {
             try {
                 document.body.innerHTML = '';
                 eval(code);
-                window.top.Docs.view.examples.InlinePreview.previewSuccess(exampleId);
+                window.top.Docs.view.examples.InlinePreview.previewSuccess(options.iframeId);
             } catch (e) {
                 document.body.innerHTML = e;
-                window.top.Docs.view.examples.InlinePreview.previewFailure(exampleId, e);
+                window.top.Docs.view.examples.InlinePreview.previewFailure(options.iframeId, e);
             }
         }
     </script>
