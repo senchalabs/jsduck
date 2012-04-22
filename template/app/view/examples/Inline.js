@@ -43,14 +43,14 @@ Ext.define('Docs.view.examples.Inline', {
             /**
              * @event previewsuccess
              * Fired when preview was successfully created.
-             * @param {Ext.Component} this
+             * @param {Ext.Component} preview
              */
             'previewsuccess',
             /**
              * @event previewfailure
              * Fired when preview contains an error.
-             * @param {Ext.Component} this
-             * @param {Error} exception
+             * @param {Ext.Component} preview
+             * @param {Error} e
              */
             'previewfailure',
         ]);

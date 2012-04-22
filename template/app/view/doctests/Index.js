@@ -107,6 +107,7 @@ Ext.define('Docs.view.doctests.Index', {
 
     /**
      * Returns tab config for the doctests page.
+     * 
      * @return {Object}
      */
     getTab: function() {
@@ -115,20 +116,23 @@ Ext.define('Docs.view.doctests.Index', {
     },
 
     /**
-     * Executes an example
+     * Executes an example.
+     *
+     * @param {Object} config The test configuration.
+     * @private
      */
-    runExample: function(tests) {
-        if (!tests.examples || tests.examples.length < 1) {
+    runExample: function(config) {
+        if (!config.examples || config.examples.length < 1) {
             return;
         }
         
-        if ((!tests.fail) && (!tests.pass)) {
+        if ((!config.fail) && (!config.pass)) {
             Ext.ComponentQuery.query('#testcontainer', this)[0].setDisabled(true);
         }
         
         this.clearTestRunner();
         var testRunner = this.getComponent('testrunner');
-        var record = tests.examples.pop();
+        var record = config.examples.pop();
         
         var example = testRunner.add(
             Ext.create('Docs.view.examples.Inline', {
@@ -137,38 +141,56 @@ Ext.define('Docs.view.doctests.Index', {
             })
         );
 
-        example.on('previewsuccess', Ext.bind(this.onPreviewSuccess, this, [record, tests], true), this);
-        example.on('previewfailure', Ext.bind(this.onPreviewFailure, this, [record, tests], true), this);
+        example.on('previewsuccess', Ext.bind(this.onPreviewSuccess, this, [record, config], true), this);
+        example.on('previewfailure', Ext.bind(this.onPreviewFailure, this, [record, config], true), this);
         example.showPreview();
     },
 
+    /**
+     * Removes child elements from testrunner component.
+     *
+     * @private
+     */
     clearTestRunner: function() {
         var testRunner = this.getComponent('testrunner');
         testRunner.removeAll();
     },
 
-    showResult: function(tests) {
+    /**
+     * Renders test result to dom.
+     *
+     * @param {Object} config The test configuration.
+     * @private
+     */
+    showResult: function(config) {
         var cls = 'doc-test-success',
-            total = tests.pass + tests.fail,
+            total = config.pass + config.fail,
             testControls = this.getComponent('testcontainer').getComponent('testcontrols');
 
-        if (tests.fail) {
+        if (config.fail) {
             cls = 'doc-test-failure';
         }
 
         testControls.remove('testResult');
         testControls.insert(0, {
             itemId: 'testResult',
-            html: '<span class="' + cls + '">' + tests.fail.toString() + '/' + total.toString() + ' tests failed</span>'
+            html: '<span class="' + cls + '">' + config.fail.toString() + '/' + total.toString() + ' tests failed</span>'
         });
 
-        if (tests.examples.length < 1) {
+        if (config.examples.length < 1) {
             Ext.ComponentQuery.query('#testcontainer', this)[0].setDisabled(false);
         } else {
-            this.runExample(tests);
+            this.runExample(config);
         }
     },
 
+    /**
+     * Run link click handler.
+     *
+     * @param {Ext.grid.Panel} grid The grid that was clicked.
+     * @param {Docs.model.DocTest} record The record that was clicked.
+     * @private
+     */
     onRunLinkClick: function(grid, record) {
         this.runExample({
             pass: 0,
@@ -176,7 +198,12 @@ Ext.define('Docs.view.doctests.Index', {
             examples: [record],
         });
     },
-    
+   
+    /**
+     * RunAll button click handler.
+     *
+     * @private
+     */
     onRunAllButtonClick: function() {
         var examples = [];
         this.store.each(function(record) {
@@ -189,18 +216,37 @@ Ext.define('Docs.view.doctests.Index', {
         });
     },
 
-    onPreviewSuccess: function(preview, obj, record, tests) {
+    /**
+     * previewsuccess event handler
+     *
+     * @param {Ext.Component} preview The preview component.
+     * @param {Object} options The event options.
+     * @param {Docs.model.DocTest} record The successful record.
+     * @param {Object} config The test configuration.
+     * @private
+     */
+    onPreviewSuccess: function(preview, options, record, config) {
         this.clearTestRunner();
         record.set('status', '<span class="doc-test-success">pass</span>');
-        tests.pass++;
-        this.showResult(tests);
+        config.pass++;
+        this.showResult(config);
         
         if (Ext.isDefined(console)) {
             console.log('Test passed: ', record.get('name'));
         }
     },
 
-    onPreviewFailure: function(preview, e, obj, record, tests) {
+    /**
+     * previewfailure event handler
+     *
+     * @param {Ext.Component} preview The preview component.
+     * @param {Error} error The Error thrown during the example.
+     * @param {Object} options The event options.
+     * @param {Docs.model.DocTest} record The successful record.
+     * @param {Object} config The test configuration.
+     * @private
+     */
+    onPreviewFailure: function(preview, e, obj, record, config) {
         this.clearTestRunner();
 
         if (e.docAssertFailed) {
@@ -210,8 +256,8 @@ Ext.define('Docs.view.doctests.Index', {
         }
 
         record.set('message', '(exception logged to console): ' + e.toString());
-        tests.fail++;
-        this.showResult(tests);
+        config.fail++;
+        this.showResult(config);
 
         if (Ext.isDefined(console)) {
             var stack = 'no stack available';

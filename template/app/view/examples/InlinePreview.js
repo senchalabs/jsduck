@@ -10,21 +10,49 @@ Ext.define('Docs.view.examples.InlinePreview', {
     bodyPadding: '0 10',
     
     statics: {
+        /**
+         * @private
+         */
         iframeId: 0,
-        
+
+        /**
+         * Returns the next available iframeId.
+         *
+         * @return {String} iframeId
+         * @private
+         */
         getNextIframeId: function() {
-            return this.iframeId++;
+            this.iframeId++;
+            return this.iframeId.toString();
         },
-        
+       
+        /**
+         * Returns the preview component with the matching iframeId.
+         *
+         * @param {String} iframeId
+         * @return {Ext.Component}
+         * @private
+         */
         getPreviewByIframeId: function(iframeId) {
-            return Ext.ComponentManager.get('inline-preview-' + iframeId);
+            return Ext.ComponentManager.get('inline-preview-' + iframeId.toString());
         },
-        
+       
+        /**
+         * Called when an preview has been successfully executed.
+         *
+         * @param {String} iframeId 
+         */
         previewSuccess: function(iframeId) {
             var preview = this.getPreviewByIframeId(iframeId);
             preview.fireEvent('previewsuccess', preview);
         },
-        
+       
+        /**
+         * Called when an error occured during preview execution.
+         *
+         * @param {String} iframeId 
+         * @param {Error} e
+         */
         previewFailure: function(iframeId, e) {
             var preview = this.getPreviewByIframeId(iframeId);
             preview.fireEvent('previewfailure', preview, e);
@@ -48,14 +76,14 @@ Ext.define('Docs.view.examples.InlinePreview', {
             /**
              * @event previewsuccess
              * Fired when preview was successfully created.
-             * @param {Ext.Component} this
+             * @param {Ext.Component} preview
              */
             'previewsuccess',
             /**
              * @event previewfailure
              * Fired when preview contains an error.
-             * @param {Ext.Component} this
-             * @param {Error} exception
+             * @param {Ext.Component} preview
+             * @param {Error} e
              */
             'previewfailure'
         ]);

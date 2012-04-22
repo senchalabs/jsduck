@@ -4,10 +4,27 @@
 Ext.define('Docs.controller.DocTests', {
     extend: 'Docs.controller.Content',
     requires: ['Ext.data.Store', 'Docs.model.DocTest'],
-    baseUrl: "#!/doctests",
 
+    /**
+     * @cfg
+     * Regex used to locate all <pre> nodes.
+     * @private
+     */
     preRegex: /<pre[\s\S]*?>[\s\S]*?<\/pre[\s\S]*?>/gi,
+    
+
+    /**
+     * @cfg
+     * Regex used to determine if a node is an inline example.
+     * @private
+     */
     preClsRegex: /class=[\s\S]*?inline-example/i,
+
+    /**
+     * @cfg
+     * Regex used to locate <code> node.
+     * @private
+     */
     codeRegex: /<code[\s\S]*?>[\s\S]+?<\/code[\s\S]*?>/gi,
 
     refs: [
@@ -56,8 +73,8 @@ Ext.define('Docs.controller.DocTests', {
     /**
      * Locates all examples.
      * 
+     * @param {Ext.data.Store} store The data store used to populate the grid.
      * @private
-     * @param {Ext.data.Store}
      */
     locateExamples: function(store) {
         this.clssLeft = Docs.data.doctests.length;
@@ -75,9 +92,9 @@ Ext.define('Docs.controller.DocTests', {
     /**
      * Locates all inline examples attached to a class file.
      * 
+     * @param {Ext.data.Store} store The data store used to populate the grid.
+     * @param {String} cls The Ext class name being interrogated.
      * @private
-     * @param {Ext.data.Store}
-     * @param {Object}
      */
     locateClsExamples: function(store, cls) {
         var baseUrl = this.getBaseUrl() + '/output/',
@@ -123,8 +140,8 @@ Ext.define('Docs.controller.DocTests', {
     /**
      * Extract example code from html.
      * 
+     * @param {String} html The html being parsed.
      * @private
-     * @param {String}
      */
     extractExampleCode: function(html) {
         var exampleCodes = [],
@@ -140,7 +157,13 @@ Ext.define('Docs.controller.DocTests', {
         }, this);
         return exampleCodes;
     },
-    
+   
+    /**
+     * Called after view's grid is rendered.
+     *
+     * @param {Ext.grid.Panel} grid The grid panel that was rendered.
+     * @private
+     */ 
     onGridAfterRender: function(grid) {
         var store = grid.getStore();
         this.locateExamples(store);
