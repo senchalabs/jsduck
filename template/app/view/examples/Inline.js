@@ -36,6 +36,26 @@ Ext.define('Docs.view.examples.Inline', {
      * The toolbar with buttons that controls this component.
      */
 
+    constructor: function() {
+        this.callParent(arguments);
+
+        this.addEvents([
+            /**
+             * @event previewsuccess
+             * Fired when preview was successfully created.
+             * @param {Ext.Component} preview
+             */
+            'previewsuccess',
+            /**
+             * @event previewfailure
+             * Fired when preview contains an error.
+             * @param {Ext.Component} preview
+             * @param {Error} e
+             */
+            'previewfailure',
+        ]);
+    },
+
     initComponent: function() {
         this.options = Ext.apply({
             device: "phone",
@@ -56,14 +76,19 @@ Ext.define('Docs.view.examples.Inline', {
                 options: this.options
             })
         ];
+        this.relayEvents(this.preview, ['previewsuccess', 'previewfailure']);
 
         if (this.options.preview) {
             this.activeItem = 1;
-            this.toolbar.activateButton("preview");
+            if (this.toolbar) {
+                this.toolbar.activateButton("preview");
+            }
         }
         else {
             this.activeItem = 0;
-            this.toolbar.activateButton("code");
+            if (this.toolbar) {
+                this.toolbar.activateButton("code");
+            }
         }
 
         this.on("afterrender", this.init, this);
@@ -78,7 +103,9 @@ Ext.define('Docs.view.examples.Inline', {
             this.showPreview();
         }
         this.updateHeight();
-        this.initToolbarEvents();
+        if (this.toolbar) {
+            this.initToolbarEvents();
+        }
     },
 
     initToolbarEvents: function() {
@@ -102,7 +129,9 @@ Ext.define('Docs.view.examples.Inline', {
     showCode: function() {
         this.layout.setActiveItem(0);
         this.updateHeight();
-        this.toolbar.activateButton("code");
+        if (this.toolbar) {
+            this.toolbar.activateButton("code");
+        }
         // Weird bug on CodeMirror requires 2 refreshes...
         this.editor.refresh();
         this.editor.refresh();
@@ -115,7 +144,9 @@ Ext.define('Docs.view.examples.Inline', {
         this.preview.update(this.editor.getValue());
         this.layout.setActiveItem(1);
         this.updateHeight();
-        this.toolbar.activateButton("preview");
+        if (this.toolbar) {
+            this.toolbar.activateButton("preview");
+        }
     },
 
     // Syncs the height with number of lines in code example.

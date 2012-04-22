@@ -5,16 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Sencha Examples</title>
 
-    <script type="text/javascript" src="extjs-build/ext-all.js"></script>
-    <link rel="stylesheet" type="text/css" href="extjs-build/resources/css/ext-all.css">
+    <script type="text/javascript" src="extjs/ext-all.js"></script>
+    <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css">
 
     <script type="text/javascript">
         function loadInlineExample(code, options) {
             try {
                 document.body.innerHTML = '';
                 eval(code);
+                window.top.Docs.view.examples.InlinePreview.previewSuccess(options.iframeId);
             } catch (e) {
                 document.body.innerHTML = e;
+                window.top.Docs.view.examples.InlinePreview.previewFailure(options.iframeId, e);
             }
         }
     </script>

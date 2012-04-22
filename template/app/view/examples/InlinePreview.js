@@ -10,7 +10,53 @@ Ext.define('Docs.view.examples.InlinePreview', {
     bodyPadding: '0 10',
 
     statics: {
-        iframeId: 0
+        /**
+         * @private
+         */
+        iframeId: 0,
+
+        /**
+         * Returns the next available iframeId.
+         *
+         * @return {String} iframeId
+         * @private
+         */
+        getNextIframeId: function() {
+            this.iframeId++;
+            return this.iframeId.toString();
+        },
+       
+        /**
+         * Returns the preview component with the matching iframeId.
+         *
+         * @param {String} iframeId
+         * @return {Ext.Component}
+         * @private
+         */
+        getPreviewByIframeId: function(iframeId) {
+            return Ext.ComponentManager.get('inline-preview-' + iframeId.toString());
+        },
+       
+        /**
+         * Called when an preview has been successfully executed.
+         *
+         * @param {String} iframeId 
+         */
+        previewSuccess: function(iframeId) {
+            var preview = this.getPreviewByIframeId(iframeId);
+            preview.fireEvent('previewsuccess', preview);
+        },
+       
+        /**
+         * Called when an error occured during preview execution.
+         *
+         * @param {String} iframeId 
+         * @param {Error} e
+         */
+        previewFailure: function(iframeId, e) {
+            var preview = this.getPreviewByIframeId(iframeId);
+            preview.fireEvent('previewfailure', preview, e);
+        }
     },
 
     /**
@@ -20,10 +66,36 @@ Ext.define('Docs.view.examples.InlinePreview', {
      */
     options: {},
 
+    constructor: function(config) {
+        config = config || {};
+        config.iframeId = this.self.getNextIframeId();
+        config.id = 'inline-preview-' + config.iframeId;
+        this.callParent([config]);
+
+        this.addEvents([
+            /**
+             * @event previewsuccess
+             * Fired when preview was successfully created.
+             * @param {Ext.Component} preview
+             */
+            'previewsuccess',
+            /**
+             * @event previewfailure
+             * Fired when preview contains an error.
+             * @param {Ext.Component} preview
+             * @param {Error} e
+             */
+            'previewfailure'
+        ]);
+    },
+
     initComponent: function() {
         this.html = this.getHtml();
 
         this.callParent(arguments);
+
+        this.on('success', this.onSuccess, this);
+        this.on('failure', this.onFailure, this);
     },
 
     getHtml: function() {
@@ -40,7 +112,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
                 '<iframe id="{id}" style="width: 100%; height: 100%; border: 0"></iframe>'
             );
             return tpl.apply({
-                id: this.getIframeId()
+                id: this.iframeId
             });
         }
     },
@@ -50,8 +122,9 @@ Ext.define('Docs.view.examples.InlinePreview', {
      * @param {String} code  The code to run inside iframe.
      */
     update: function(code) {
-        var options = this.options;
-        var iframe = document.getElementById(this.getIframeId());
+        var iframeId = this.iframeId,
+            options = Ext.apply({iframeId: iframeId}, this.options),
+            iframe = document.getElementById(iframeId);
 
         if (iframe) {
             // Something is not quite ready when onload fires.
@@ -66,21 +139,11 @@ Ext.define('Docs.view.examples.InlinePreview', {
         }
     },
 
-    // Returns iframe ID for this inline example component.
-    getIframeId: function() {
-        if (!this.iframeId) {
-            this.statics().iframeId += 1;
-            this.iframeId = "eg-iframe" + this.statics().iframeId;
-        }
-        return this.iframeId;
-    },
-
     /**
      * Returns the current height of the preview.
      * @return {Number}
      */
     getHeight: function() {
-        return document.getElementById(this.getIframeId()).parentNode.clientHeight;
+        return document.getElementById(this.iframeId).parentNode.clientHeight;
     }
-
 });
