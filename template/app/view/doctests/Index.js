@@ -20,7 +20,7 @@ Ext.define('Docs.view.doctests.Index', {
         },
         {
             itemId: 'testrunner',
-            margin: 5
+            height: 0,
         },
         {
             itemId: 'testcontainer',
@@ -136,6 +136,7 @@ Ext.define('Docs.view.doctests.Index', {
         var example = testRunner.add(
             Ext.create('Docs.view.examples.Inline', {
                 cls: 'doc-test-preview',
+                height: 0,
                 value: Ext.String.htmlDecode(Ext.util.Format.stripTags(record.get('code')))
             })
         );
