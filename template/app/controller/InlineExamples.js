@@ -8,14 +8,6 @@ Ext.define('Docs.controller.InlineExamples', {
     ],
 
     init: function() {
-        this.addEvents(
-            /**
-             * @event
-             * Fired after example divs have been replaced with InlineWrap components.
-             */
-            'afterreplaceexamples'
-        );
-
         this.control({
             'classoverview': {
                 resize: this.createResizer('.class-overview'),
@@ -41,11 +33,9 @@ Ext.define('Docs.controller.InlineExamples', {
     },
 
     replaceExampleDivs: function() {
-        var inlineWraps = [];
         Ext.Array.each(Ext.query('.inline-example'), function(pre) {
-            inlineWraps.push(Ext.create("Docs.view.examples.InlineWrap", pre));
+            Ext.create("Docs.view.examples.InlineWrap", pre);
         }, this);
-        this.fireEvent('afterreplaceexamples', inlineWraps);
     }
 
 });
