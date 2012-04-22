@@ -177,26 +177,13 @@ class JsDuckRunner
   def add_ext4
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
-      "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> VERSION. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
+      "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> {VERSION}. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--ignore-global",
-      "--no-warnings",
+      "--warnings", "-all",
       "--images", "#{EXT_BUILD}/docs/doc-resources",
       "--local-storage-db", "ext-4",
       "--output", "#{OUT_DIR}",
       "#{EXT_BUILD}/src",
-    ]
-  end
-
-  def add_doctest
-    @options += [
-      "--title", "Sencha Docs - Ext JS 4.0",
-      "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> VERSION. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
-      "--ignore-global",
-      "--images", "#{OUT_DIR}/docs/doc-resources",
-      "--local-storage-db", "ext-4",
-      "--output", "#{OUT_DIR}",
-      "#{EXT_BUILD}/src",
-      "--doctests"
     ]
   end
 
@@ -393,19 +380,16 @@ task :ext4, [:mode] => :sass do |t, args|
   runner.run
 end
 
-desc "Run JSDuck with example test hacks\n" +
-     "doctest             - creates debug/development version\n" +
-     "doctest[export]     - creates export/deployable version\n"
-task :doctest, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "export"].include?(mode)
-  compress if mode == "export"
-
+desc "Run JSDuck with example test hacks"
+task :doctests => :sass do |t, args|
   runner = JsDuckRunner.new
-  runner.add_doctest
-  runner.add_debug if mode == "debug"
+  runner.add_ext4
+  runner.add_options(["--doctests"])
+  runner.add_debug
   runner.add_seo
   runner.run
+
+  runner.copy_extjs_build
 end
 
 desc "Run JSDuck on official Ext JS 3.4 build\n" +

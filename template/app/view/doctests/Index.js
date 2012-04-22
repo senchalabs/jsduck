@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.view.doctests.Index', {
     extend: 'Ext.container.Container',
-    requires: ['Ext.String.format', 'Ext.data.Store', 'Docs.model.DocTest'],
+    requires: ['Docs.model.DocTest'],
     alias: 'widget.doctestsindex',
 
     layout: {
@@ -51,7 +51,7 @@ Ext.define('Docs.view.doctests.Index', {
                 },
                 {
                     xtype: 'grid',
-                    itemId: 'doctestgrid',
+                    itemId: 'doctestsgrid',
                     title: 'Doc Tests',
                     padding: '5 0 5 0',
                     autoScroll: true,
@@ -92,13 +92,13 @@ Ext.define('Docs.view.doctests.Index', {
             model: 'Docs.model.DocTest',
             data: []
         });
-        
+
         this.callParent(arguments);
-        
+
         var runAllButton = Ext.ComponentQuery.query('#runallbutton', this)[0];
         runAllButton.on('click', this.onRunAllButtonClick, this);
-        
-        var testGrid = Ext.ComponentQuery.query('#doctestgrid', this)[0];
+
+        var testGrid = Ext.ComponentQuery.query('#doctestsgrid', this)[0];
         testGrid.on('itemclick', this.onRunLinkClick, this, {
             delegate: '.doc-test-run',
             stopEvent: true
@@ -111,8 +111,7 @@ Ext.define('Docs.view.doctests.Index', {
      * @return {Object}
      */
     getTab: function() {
-        var enabled = !Ext.isEmpty(Docs.data.doctests);
-        return enabled ? {cls: 'doctests', href: '#!/doctests', tooltip: 'DocTests'} : false;
+        return Docs.data.doctests ? {cls: 'doctests', href: '#!/doctests', tooltip: 'DocTests'} : false;
     },
 
     /**
@@ -129,15 +128,15 @@ Ext.define('Docs.view.doctests.Index', {
         if ((!config.fail) && (!config.pass)) {
             Ext.ComponentQuery.query('#testcontainer', this)[0].setDisabled(true);
         }
-        
+
         this.clearTestRunner();
         var testRunner = this.getComponent('testrunner');
         var record = config.examples.pop();
-        
+
         var example = testRunner.add(
             Ext.create('Docs.view.examples.Inline', {
                 cls: 'doc-test-preview',
-                value: Ext.String.htmlDecode(Ext.util.Format.stripTags(record.get('code'))),
+                value: Ext.String.htmlDecode(Ext.util.Format.stripTags(record.get('code')))
             })
         );
 
@@ -195,7 +194,7 @@ Ext.define('Docs.view.doctests.Index', {
         this.runExample({
             pass: 0,
             fail: 0,
-            examples: [record],
+            examples: [record]
         });
     },
    
@@ -228,6 +227,7 @@ Ext.define('Docs.view.doctests.Index', {
     onPreviewSuccess: function(preview, options, record, config) {
         this.clearTestRunner();
         record.set('status', '<span class="doc-test-success">pass</span>');
+        record.commit();
         config.pass++;
         this.showResult(config);
         
@@ -256,6 +256,7 @@ Ext.define('Docs.view.doctests.Index', {
         }
 
         record.set('message', '(exception logged to console): ' + e.toString());
+        record.commit();
         config.fail++;
         this.showResult(config);
 

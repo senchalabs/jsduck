@@ -6,9 +6,9 @@ Ext.define('Docs.view.examples.InlinePreview', {
     requires: [
         'Docs.view.examples.Device'
     ],
-    
+
     bodyPadding: '0 10',
-    
+
     statics: {
         /**
          * @private
@@ -65,13 +65,13 @@ Ext.define('Docs.view.examples.InlinePreview', {
      * See docs of parent component.
      */
     options: {},
-    
+
     constructor: function(config) {
         config = config || {};
         config.iframeId = this.self.getNextIframeId();
         config.id = 'inline-preview-' + config.iframeId;
         this.callParent([config]);
-        
+
         this.addEvents([
             /**
              * @event previewsuccess
@@ -88,12 +88,12 @@ Ext.define('Docs.view.examples.InlinePreview', {
             'previewfailure'
         ]);
     },
-    
+
     initComponent: function() {
         this.html = this.getHtml();
-        
+
         this.callParent(arguments);
-        
+
         this.on('success', this.onSuccess, this);
         this.on('failure', this.onFailure, this);
     },
@@ -138,7 +138,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
             iframe.src = "eg-iframe.html";
         }
     },
-    
+
     /**
      * Returns the current height of the preview.
      * @return {Number}

@@ -3,7 +3,6 @@
  */
 Ext.define('Docs.controller.DocTests', {
     extend: 'Docs.controller.Content',
-    requires: ['Ext.data.Store', 'Docs.model.DocTest'],
 
     /**
      * @cfg
@@ -37,21 +36,17 @@ Ext.define('Docs.controller.DocTests', {
             selector: '#doctestsindex'
         },
         {
-            ref: 'docTestGrid',
-            selector: '#doctestgrid'
-        },
-        {
             ref: 'testContainer',
             selector: '#testcontainer'
         }
     ],
-    
+
     init: function() {
         this.addEvents('loadIndex');
 
         this.control({
-            '#doctestgrid': {
-                afterrender: this.onGridAfterRender,
+            '#doctestsgrid': {
+                afterrender: this.onGridAfterRender
             }
         });
     },
@@ -69,7 +64,7 @@ Ext.define('Docs.controller.DocTests', {
     isActive: function() {
         return !!this.getIndex().getTab();
     },
-    
+
     /**
      * Locates all examples.
      * 
@@ -77,15 +72,14 @@ Ext.define('Docs.controller.DocTests', {
      * @private
      */
     locateExamples: function(store) {
-        this.clssLeft = Docs.data.doctests.length;
+        this.classesLeft = Docs.data.classes.length;
         this.getTestContainer().setDisabled(true);
-        store.suspendEvents();
         store.removeAll();
-        Ext.each(Docs.data.doctests, function(cls) {
+        Ext.each(Docs.data.classes, function(cls) {
             var task = new Ext.util.DelayedTask(function() {
-                this.locateClsExamples(store, cls);
+                this.locateClsExamples(store, cls.name);
             }, this);
-            task.delay(0)
+            task.delay(0);
         }, this);
     },
 
@@ -113,7 +107,7 @@ Ext.define('Docs.controller.DocTests', {
                         name += ' example #' + (exampleIdx + 1).toString();
                         id += '-' + exampleIdx.toString();
                     }
-                    
+
                     store.add({
                         id: id,
                         name: name,
@@ -122,11 +116,9 @@ Ext.define('Docs.controller.DocTests', {
                         status: '<span class="doc-test-ready">ready</span>'
                     });
                 }, this);
-                
-                this.clssLeft--;
-                if (this.clssLeft === 0) {
-                    store.resumeEvents();
-                    store.fireEvent('datachanged', store, {});
+
+                this.classesLeft--;
+                if (this.classesLeft === 0) {
                     this.getTestContainer().setDisabled(false);
                 }
             },
@@ -146,7 +138,7 @@ Ext.define('Docs.controller.DocTests', {
     extractExampleCode: function(html) {
         var exampleCodes = [],
             preMatches = html.match(this.preRegex);
-        
+
         Ext.each(preMatches, function(preMatch) {
             if (preMatch.match(this.preClsRegex)) {
                 var codeMatches = preMatch.match(this.codeRegex);

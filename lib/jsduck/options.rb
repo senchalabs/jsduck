@@ -285,7 +285,7 @@ module JsDuck
           "Base URL for examples with relative URL-s.", " ") do |path|
           @examples_base_url = path
         end
-        
+
         opts.on('--doctests', "Creates infrastructure for running tests. Experimental!", " ") do
           @doctests = true
         end
