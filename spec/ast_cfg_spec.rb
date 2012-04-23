@@ -20,27 +20,21 @@ describe "JsDuck::Ast detecting" do
       EOS
     end
 
-    it "adds :members as hash" do
-      members.should be_kind_of(Hash)
+    it "adds :members as array" do
+      members.should be_kind_of(Array)
     end
 
-    let(:cfg) { members[:cfg] }
-
-    it "finds :cfg as array" do
-      cfg.should be_kind_of(Array)
-    end
-
-    it "finds two cfgs with :cfg tagname" do
-      cfg[0][:tagname].should == :cfg
-      cfg[1][:tagname].should == :cfg
+    it "finds two cfgs" do
+      members[0][:tagname].should == :cfg
+      members[1][:tagname].should == :cfg
     end
 
     it "finds cfg foo" do
-      cfg[0][:name].should == "foo"
+      members[0][:name].should == "foo"
     end
 
     it "finds cfg bar" do
-      cfg[1][:name].should == "bar"
+      members[1][:name].should == "bar"
     end
   end
 

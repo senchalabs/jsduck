@@ -77,16 +77,14 @@ module JsDuck
 
       # Turn all auto-detected members into separate docsets
       if docset[:code] && docset[:code][:members]
-        docset[:code][:members].each_pair do |type, members|
-          members.each do |m|
-            results << {
-              :tagname => m[:tagname],
-              :type => :no_comment,
-              :comment => [],
-              :code => m,
-              :linenr => docset[:linenr],
-            }
-          end
+        docset[:code][:members].each do |m|
+          results << {
+            :tagname => m[:tagname],
+            :type => :no_comment,
+            :comment => [],
+            :code => m,
+            :linenr => docset[:linenr],
+          }
         end
       end
 

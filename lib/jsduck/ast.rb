@@ -195,8 +195,7 @@ module JsDuck
           cls[:singleton] = make_singleton(cfg["singleton"])
           cls[:aliases] = make_string_list(cfg["alias"])
           cls[:aliases] += make_string_list(cfg["xtype"]).map {|xtype| "widget."+xtype }
-          cls[:members] = {}
-          cls[:members][:cfg] = make_configs(cfg["config"])
+          cls[:members] = make_configs(cfg["config"])
         end
       end
 
@@ -233,7 +232,7 @@ module JsDuck
     end
 
     def make_configs(ast)
-      return [] unless ast && ast["type"] == "ObjectExpression"
+      return nil unless ast && ast["type"] == "ObjectExpression"
 
       configs = []
 
