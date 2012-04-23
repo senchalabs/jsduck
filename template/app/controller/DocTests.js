@@ -31,14 +31,6 @@ Ext.define('Docs.controller.DocTests', {
         {
             ref: 'index',
             selector: '#doctestsindex'
-        },
-        {
-            ref: 'testContainer',
-            selector: '#testcontainer'
-        },
-        {
-            ref: 'docTests',
-            selector: 'doctestsindex'
         }
     ],
 
@@ -74,7 +66,7 @@ Ext.define('Docs.controller.DocTests', {
      */
     locateExamples: function(store) {
         this.classesLeft = Docs.data.classes.length;
-        this.getTestContainer().setDisabled(true);
+        this.getIndex().disable();
         store.removeAll();
         Ext.each(Docs.data.classes, function(cls) {
             this.locateClsExamples(store, cls.name);
@@ -113,12 +105,12 @@ Ext.define('Docs.controller.DocTests', {
                         code: exampleCode,
                         status: '<span class="doc-test-ready">ready</span>'
                     });
-                    this.getDocTests().setStatus(true, store.getCount() + " examples loaded.");
+                    this.getIndex().setStatus(true, store.getCount() + " examples loaded.");
                 }, this);
 
                 this.classesLeft--;
                 if (this.classesLeft === 0) {
-                    this.getTestContainer().setDisabled(false);
+                    this.getIndex().enable();
                 }
             },
             failure: function(response, opts) {

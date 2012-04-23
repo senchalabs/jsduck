@@ -126,7 +126,7 @@ Ext.define('Docs.view.doctests.Index', {
         }
 
         if (config.fail + config.pass === 0) {
-            Ext.ComponentQuery.query('#testcontainer', this)[0].setDisabled(true);
+            this.disable();
         }
 
         this.clearTestRunner();
@@ -167,7 +167,7 @@ Ext.define('Docs.view.doctests.Index', {
         this.setStatus(config.fail === 0, totalTested + '/' + config.total + ' examples tested, ' + config.fail + ' failures');
 
         if (config.examples.length < 1) {
-            Ext.ComponentQuery.query('#testcontainer', this)[0].setDisabled(false);
+            this.enable();
         } else {
             this.runExample(config);
         }
