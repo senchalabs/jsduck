@@ -10,7 +10,6 @@ Ext.define('Docs.controller.DocTests', {
      * @private
      */
     preRegex: /<pre[\s\S]*?>[\s\S]*?<\/pre[\s\S]*?>/gi,
-    
 
     /**
      * @cfg
@@ -67,7 +66,7 @@ Ext.define('Docs.controller.DocTests', {
 
     /**
      * Locates all examples.
-     * 
+     *
      * @param {Ext.data.Store} store The data store used to populate the grid.
      * @private
      */
@@ -85,7 +84,7 @@ Ext.define('Docs.controller.DocTests', {
 
     /**
      * Locates all inline examples attached to a class file.
-     * 
+     *
      * @param {Ext.data.Store} store The data store used to populate the grid.
      * @param {String} cls The Ext class name being interrogated.
      * @private
@@ -131,7 +130,7 @@ Ext.define('Docs.controller.DocTests', {
 
     /**
      * Extract example code from html.
-     * 
+     *
      * @param {String} html The html being parsed.
      * @private
      */
@@ -149,13 +148,13 @@ Ext.define('Docs.controller.DocTests', {
         }, this);
         return exampleCodes;
     },
-   
+
     /**
      * Called after view's grid is rendered.
      *
      * @param {Ext.grid.Panel} grid The grid panel that was rendered.
      * @private
-     */ 
+     */
     onGridAfterRender: function(grid) {
         var store = grid.getStore();
         this.locateExamples(store);

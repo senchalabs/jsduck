@@ -25,7 +25,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
             this.iframeId++;
             return this.iframeId.toString();
         },
-       
+
         /**
          * Returns the preview component with the matching iframeId.
          *
@@ -36,21 +36,21 @@ Ext.define('Docs.view.examples.InlinePreview', {
         getPreviewByIframeId: function(iframeId) {
             return Ext.ComponentManager.get('inline-preview-' + iframeId.toString());
         },
-       
+
         /**
          * Called when an preview has been successfully executed.
          *
-         * @param {String} iframeId 
+         * @param {String} iframeId
          */
         previewSuccess: function(iframeId) {
             var preview = this.getPreviewByIframeId(iframeId);
             preview.fireEvent('previewsuccess', preview);
         },
-       
+
         /**
          * Called when an error occured during preview execution.
          *
-         * @param {String} iframeId 
+         * @param {String} iframeId
          * @param {Error} e
          */
         previewFailure: function(iframeId, e) {

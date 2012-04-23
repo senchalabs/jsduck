@@ -20,7 +20,7 @@ Ext.define('Docs.view.doctests.Index', {
         },
         {
             itemId: 'testrunner',
-            height: 0,
+            height: 0
         },
         {
             itemId: 'testcontainer',
@@ -107,7 +107,7 @@ Ext.define('Docs.view.doctests.Index', {
 
     /**
      * Returns tab config for the doctests page.
-     * 
+     *
      * @return {Object}
      */
     getTab: function() {
@@ -124,7 +124,7 @@ Ext.define('Docs.view.doctests.Index', {
         if (!config.examples || config.examples.length < 1) {
             return;
         }
-        
+
         if ((!config.fail) && (!config.pass)) {
             Ext.ComponentQuery.query('#testcontainer', this)[0].setDisabled(true);
         }
@@ -198,7 +198,7 @@ Ext.define('Docs.view.doctests.Index', {
             examples: [record]
         });
     },
-   
+
     /**
      * RunAll button click handler.
      *
@@ -231,7 +231,7 @@ Ext.define('Docs.view.doctests.Index', {
         record.commit();
         config.pass++;
         this.showResult(config);
-        
+
         if (Ext.isDefined(console)) {
             console.log('Test passed: ', record.get('name'));
         }
