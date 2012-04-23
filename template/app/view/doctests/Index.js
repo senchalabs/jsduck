@@ -243,7 +243,7 @@ Ext.define('Docs.view.doctests.Index', {
      */
     onPreviewSuccess: function(preview, options, record, config) {
         this.clearTestRunner();
-        record.set('status', '<span class="doc-test-success">pass</span>');
+        record.set('status', '<span class="doc-test-success">success</span>');
         record.commit();
         config.pass++;
         this.showResult(config);
@@ -265,14 +265,8 @@ Ext.define('Docs.view.doctests.Index', {
      */
     onPreviewFailure: function(preview, e, obj, record, config) {
         this.clearTestRunner();
-
-        if (e.docAssertFailed) {
-            record.set('status', '<span class="doc-test-failure">fail</span>');
-        } else {
-            record.set('status', '<span class="doc-test-error">error</span>');
-        }
-
-        record.set('message', '(exception logged to console): ' + e.toString());
+        record.set('status', '<span class="doc-test-failure">failure</span>');
+        record.set('message', e.toString());
         record.commit();
         config.fail++;
         this.showResult(config);
