@@ -98,9 +98,6 @@ Ext.define('Docs.view.examples.InlinePreview', {
         this.html = this.getHtml();
 
         this.callParent(arguments);
-
-        this.on('success', this.onSuccess, this);
-        this.on('failure', this.onFailure, this);
     },
 
     getHtml: function() {
