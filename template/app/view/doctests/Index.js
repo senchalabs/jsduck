@@ -115,6 +115,15 @@ Ext.define('Docs.view.doctests.Index', {
     },
 
     /**
+     * Adds new example to full list of examples.
+     * @param {Docs.model.DocTest} example The DocTest model instance or config for it.
+     */
+    addExample: function(example) {
+        this.store.add(example);
+        this.setStatus(true, this.store.getCount() + " examples loaded.");
+    },
+
+    /**
      * Executes an example.
      *
      * @param {Object} config The test configuration.
@@ -177,6 +186,7 @@ Ext.define('Docs.view.doctests.Index', {
      * Sets the status text displayed on doctests panel.
      * @param {Boolean} ok True to show positive status.
      * @param {String} message The text to display.
+     * @private
      */
     setStatus: function(ok, message) {
         var cls = ok ? 'doc-test-success' : 'doc-test-failure';

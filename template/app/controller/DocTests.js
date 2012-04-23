@@ -39,7 +39,7 @@ Ext.define('Docs.controller.DocTests', {
 
         this.control({
             '#doctestsgrid': {
-                afterrender: this.onGridAfterRender
+                afterrender: this.locateExamples
             }
         });
     },
@@ -60,27 +60,23 @@ Ext.define('Docs.controller.DocTests', {
 
     /**
      * Locates all examples.
-     *
-     * @param {Ext.data.Store} store The data store used to populate the grid.
      * @private
      */
-    locateExamples: function(store) {
+    locateExamples: function() {
         this.classesLeft = Docs.data.classes.length;
         this.getIndex().disable();
-        store.removeAll();
         Ext.each(Docs.data.classes, function(cls) {
-            this.locateClsExamples(store, cls.name);
+            this.locateClsExamples(cls.name);
         }, this);
     },
 
     /**
      * Locates all inline examples attached to a class file.
      *
-     * @param {Ext.data.Store} store The data store used to populate the grid.
      * @param {String} cls The Ext class name being interrogated.
      * @private
      */
-    locateClsExamples: function(store, cls) {
+    locateClsExamples: function(cls) {
         var baseUrl = this.getBaseUrl() + '/output/',
             url = baseUrl + cls + '.js';
 
@@ -98,14 +94,13 @@ Ext.define('Docs.controller.DocTests', {
                         id += '-' + exampleIdx.toString();
                     }
 
-                    store.add({
+                    this.getIndex().addExample({
                         id: id,
                         name: name,
                         href: document.location.href.replace(/#.*/, '#!/api/' + json.name),
                         code: exampleCode,
                         status: '<span class="doc-test-ready">ready</span>'
                     });
-                    this.getIndex().setStatus(true, store.getCount() + " examples loaded.");
                 }, this);
 
                 this.classesLeft--;
@@ -139,16 +134,5 @@ Ext.define('Docs.controller.DocTests', {
             }
         }, this);
         return exampleCodes;
-    },
-
-    /**
-     * Called after view's grid is rendered.
-     *
-     * @param {Ext.grid.Panel} grid The grid panel that was rendered.
-     * @private
-     */
-    onGridAfterRender: function(grid) {
-        var store = grid.getStore();
-        this.locateExamples(store);
     }
 });
