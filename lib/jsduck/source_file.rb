@@ -1,10 +1,4 @@
-require 'jsduck/esprima_parser'
-require 'jsduck/css_parser'
-require 'jsduck/doc_parser'
-require 'jsduck/merger'
-require 'jsduck/ast'
-require 'jsduck/doc_type'
-require 'jsduck/class_doc_expander'
+require 'jsduck/source_file_parser'
 require "cgi"
 
 module JsDuck
@@ -22,19 +16,13 @@ module JsDuck
     def initialize(contents, filename="", options={})
       @contents = contents
       @filename = filename
-      @options = options
       @html_filename = ""
       @links = {}
-      @doc_type = DocType.new
-      @doc_parser = DocParser.new
-      @doc_expander = ClassDocExpander.new
 
-      merger = Merger.new
-      merger.filename = @filename
+      @docs = SourceFileParser.instance.parse(@contents, @filename, options)
 
-      @docs = parse.map do |docset|
-        merger.linenr = docset[:linenr]
-        link(docset[:linenr], merger.merge(docset))
+      @docs.map do |docset|
+        link(docset[:linenr], docset)
       end
     end
 
@@ -85,36 +73,6 @@ module JsDuck
     end
 
     private
-
-    # Parses the file depending on filename as JS or CSS
-    def parse
-      begin
-        if @filename =~ /\.s?css$/
-          docs = CssParser.new(@contents, @options).parse
-        else
-          docs = EsprimaParser.new(@contents, @options).parse
-          docs = Ast.new(docs).detect_all!
-        end
-
-        docs.map do |docset|
-          docset[:comment] = @doc_parser.parse(docset[:comment])
-          docset[:tagname] = @doc_type.detect(docset[:comment], docset[:code])
-
-          if docset[:tagname] == :class
-            @doc_expander.expand(docset)
-          else
-            docset
-          end
-        end.flatten
-
-      rescue
-        puts "Error while parsing #{@filename}: #{$!}"
-        puts
-        puts "Here's a full backtrace:"
-        puts $!.backtrace
-        exit(1)
-      end
-    end
 
     # Creates two-way link between sourcefile and doc-object.
     # If doc-object is class, links also the contained cfgs and constructor.

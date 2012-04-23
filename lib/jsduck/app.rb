@@ -82,7 +82,15 @@ module JsDuck
     def parallel_parse(filenames)
       @parallel.map(filenames) do |fname|
         Logger.instance.log("Parsing", fname)
-        SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
+        begin
+          SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
+        rescue
+          puts "Error while parsing #{fname}: #{$!}"
+          puts
+          puts "Here's a full backtrace:"
+          puts $!.backtrace
+          exit(1)
+        end
       end
     end
 
