@@ -34,7 +34,8 @@ module JsDuck
     #
     # If the parent also has @inheritdoc, continues recursively.
     def find_parent(m)
-      if m[:inheritdoc][:cls]
+      inherit = m[:inheritdoc]
+      if inherit[:cls]
         # @inheritdoc MyClass#member
         parent_cls = @relations[m[:inheritdoc][:cls]]
         return warn("class not found", m) unless parent_cls
@@ -42,7 +43,7 @@ module JsDuck
         parent = lookup_member(parent_cls, m)
         return warn("member not found", m) unless parent
 
-      elsif m[:inheritdoc][:member]
+      elsif inherit[:member]
         # @inheritdoc #member
         parent = lookup_member(@relations[m[:owner]], m)
         return warn("member not found", m) unless parent
@@ -54,7 +55,7 @@ module JsDuck
 
         # Warn when no parent or mixins at all
         if !parent_cls && mixins.length == 0
-          warn("parent class not found", m) unless m[:no_warnings]
+          warn("parent class not found", m) unless inherit[:no_warnings]
           return m
         end
 
@@ -73,7 +74,7 @@ module JsDuck
 
         # Only when both parent and mixins fail, throw warning
         if !parent
-          warn("parent member not found", m) unless m[:no_warnings]
+          warn("parent member not found", m) unless inherit[:no_warnings]
           return m
         end
       end
