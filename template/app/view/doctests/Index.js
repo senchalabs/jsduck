@@ -125,13 +125,13 @@ Ext.define('Docs.view.doctests.Index', {
             return;
         }
 
-        if ((!config.fail) && (!config.pass)) {
+        if (config.fail + config.pass === 0) {
             Ext.ComponentQuery.query('#testcontainer', this)[0].setDisabled(true);
         }
 
         this.clearTestRunner();
         var testRunner = this.getComponent('testrunner');
-        var record = config.examples.pop();
+        var record = config.examples.shift();
 
         var example = testRunner.add(
             Ext.create('Docs.view.examples.Inline', {
@@ -164,7 +164,7 @@ Ext.define('Docs.view.doctests.Index', {
      */
     showResult: function(config) {
         var cls = 'doc-test-success',
-            total = config.pass + config.fail,
+            totalTested = config.pass+config.fail,
             testControls = this.getComponent('testcontainer').getComponent('testcontrols');
 
         if (config.fail) {
@@ -174,7 +174,7 @@ Ext.define('Docs.view.doctests.Index', {
         testControls.remove('testResult');
         testControls.insert(0, {
             itemId: 'testResult',
-            html: '<span class="' + cls + '">' + config.fail.toString() + '/' + total.toString() + ' tests failed</span>'
+            html: '<span class="' + cls + '">' + totalTested + '/' + config.total + ' examples tested, ' + config.fail + ' failures</span>'
         });
 
         if (config.examples.length < 1) {
@@ -195,6 +195,7 @@ Ext.define('Docs.view.doctests.Index', {
         this.runExample({
             pass: 0,
             fail: 0,
+            total: 1,
             examples: [record]
         });
     },
@@ -212,6 +213,7 @@ Ext.define('Docs.view.doctests.Index', {
         this.runExample({
             pass: 0,
             fail: 0,
+            total: examples.length,
             examples: examples
         });
     },
