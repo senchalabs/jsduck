@@ -3,6 +3,7 @@
  */
 Ext.define('Docs.controller.DocTests', {
     extend: 'Docs.controller.Content',
+    baseUrl: "#!/doctests",
 
     /**
      * @cfg
