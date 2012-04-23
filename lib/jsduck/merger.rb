@@ -1,6 +1,5 @@
 require 'jsduck/logger'
 require 'jsduck/meta_tag_registry'
-require 'jsduck/class_doc_grouper'
 
 module JsDuck
 

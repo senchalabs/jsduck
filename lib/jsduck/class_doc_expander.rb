@@ -1,11 +1,25 @@
 module JsDuck
 
-  # Handles old syntax where configs and constructor are part of class
-  # doc-comment.
-  class ClassDocGrouper
+  # Expands class docset into one or more docsets.
+  #
+  # The resulting list can contain the following:
+  #
+  # - the base class docset itself (always present)
+  # - configs detected from comment
+  # - constructor detected from comment
+  # - members detected from code
+  #
+  class ClassDocExpander
 
-    # Takes one docset as input, produces array of one or more docsets
-    # as output.
+    # Expands class-docset into multiple docsets.
+    def expand(docset)
+      expand_comment(docset) + expand_code(docset)
+    end
+
+    private
+
+    # Handles old syntax where configs and constructor are part of class
+    # doc-comment.
     #
     # Gathers all tags until first @cfg or @constructor into the first
     # bare :class group.  We have a special case for @xtype which in
@@ -17,7 +31,7 @@ module JsDuck
     # configs to be marked with @private or whatever else.
     #
     # Finally gathers tags after @constructor into its group.
-    def self.group(docset)
+    def expand_comment(docset)
       groups = {
         :class => [],
         :cfg => [],
@@ -47,7 +61,11 @@ module JsDuck
         end
       end
 
-      # Turn groups hash into list of docsets
+      groups_to_docsets(groups, docset)
+    end
+
+    # Turns groups hash into list of docsets
+    def groups_to_docsets(groups, docset)
       results = []
       results << {
         :tagname => :class,
@@ -74,8 +92,13 @@ module JsDuck
           :linenr => docset[:linenr],
         }
       end
+      results
+    end
 
-      # Turn all auto-detected members into separate docsets
+    # Turns auto-detected class members into docsets in their own
+    # right.
+    def expand_code(docset)
+      results = []
       if docset[:code] && docset[:code][:members]
         docset[:code][:members].each do |m|
           results << {
@@ -87,7 +110,6 @@ module JsDuck
           }
         end
       end
-
       results
     end
 

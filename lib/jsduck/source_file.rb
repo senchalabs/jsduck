@@ -4,6 +4,7 @@ require 'jsduck/doc_parser'
 require 'jsduck/merger'
 require 'jsduck/ast'
 require 'jsduck/doc_type'
+require 'jsduck/class_doc_expander'
 require "cgi"
 
 module JsDuck
@@ -26,6 +27,7 @@ module JsDuck
       @links = {}
       @doc_type = DocType.new
       @doc_parser = DocParser.new
+      @doc_expander = ClassDocExpander.new
 
       merger = Merger.new
       merger.filename = @filename
@@ -99,7 +101,7 @@ module JsDuck
           docset[:tagname] = @doc_type.detect(docset[:comment], docset[:code])
 
           if docset[:tagname] == :class
-            ClassDocGrouper.group(docset)
+            @doc_expander.expand(docset)
           else
             docset
           end
