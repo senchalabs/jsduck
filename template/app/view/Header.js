@@ -1,3 +1,9 @@
+/**
+ * Renders the title of the docs app (extracted from "header-content" div).
+ *
+ * When `Docs.otherProducts` is defined, also renders the menu with
+ * links to these other products.
+ */
 Ext.define('Docs.view.Header', {
     extend: 'Ext.container.Container',
     alias: 'widget.docheader',
@@ -5,7 +11,6 @@ Ext.define('Docs.view.Header', {
     contentEl: 'header-content',
 
     initComponent: function() {
-
         if (Docs.otherProducts) {
             this.style = 'cursor: pointer;',
             this.cls = 'dropdown';

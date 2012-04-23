@@ -6,22 +6,19 @@ Ext.define('Docs.controller.DocTests', {
     baseUrl: "#!/doctests",
 
     /**
-     * @cfg
-     * Regex used to locate all <pre> nodes.
+     * Regex used to locate all `pre` nodes.
      * @private
      */
     preRegex: /<pre[\s\S]*?>[\s\S]*?<\/pre[\s\S]*?>/gi,
 
     /**
-     * @cfg
      * Regex used to determine if a node is an inline example.
      * @private
      */
     preClsRegex: /class=[\s\S]*?inline-example/i,
 
     /**
-     * @cfg
-     * Regex used to locate <code> node.
+     * Regex used to locate `code` node.
      * @private
      */
     codeRegex: /<code[\s\S]*?>[\s\S]+?<\/code[\s\S]*?>/gi,

@@ -12,6 +12,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
     statics: {
         /**
          * @private
+         * @static
          */
         iframeId: 0,
 
@@ -20,6 +21,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
          *
          * @return {String} iframeId
          * @private
+         * @static
          */
         getNextIframeId: function() {
             this.iframeId++;
@@ -32,6 +34,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
          * @param {String} iframeId
          * @return {Ext.Component}
          * @private
+         * @static
          */
         getPreviewByIframeId: function(iframeId) {
             return Ext.ComponentManager.get('inline-preview-' + iframeId.toString());
@@ -41,6 +44,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
          * Called when an preview has been successfully executed.
          *
          * @param {String} iframeId
+         * @static
          */
         previewSuccess: function(iframeId) {
             var preview = this.getPreviewByIframeId(iframeId);
@@ -52,6 +56,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
          *
          * @param {String} iframeId
          * @param {Error} e
+         * @static
          */
         previewFailure: function(iframeId, e) {
             var preview = this.getPreviewByIframeId(iframeId);
