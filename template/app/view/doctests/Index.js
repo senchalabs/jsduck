@@ -163,25 +163,29 @@ Ext.define('Docs.view.doctests.Index', {
      * @private
      */
     showResult: function(config) {
-        var cls = 'doc-test-success',
-            totalTested = config.pass+config.fail,
-            testControls = this.getComponent('testcontainer').getComponent('testcontrols');
-
-        if (config.fail) {
-            cls = 'doc-test-failure';
-        }
-
-        testControls.remove('testResult');
-        testControls.insert(0, {
-            itemId: 'testResult',
-            html: '<span class="' + cls + '">' + totalTested + '/' + config.total + ' examples tested, ' + config.fail + ' failures</span>'
-        });
+        var totalTested = config.pass+config.fail;
+        this.setStatus(config.fail === 0, totalTested + '/' + config.total + ' examples tested, ' + config.fail + ' failures');
 
         if (config.examples.length < 1) {
             Ext.ComponentQuery.query('#testcontainer', this)[0].setDisabled(false);
         } else {
             this.runExample(config);
         }
+    },
+
+    /**
+     * Sets the status text displayed on doctests panel.
+     * @param {Boolean} ok True to show positive status.
+     * @param {String} message The text to display.
+     */
+    setStatus: function(ok, message) {
+        var cls = ok ? 'doc-test-success' : 'doc-test-failure';
+        var testControls = this.getComponent('testcontainer').getComponent('testcontrols');
+        testControls.remove('testResult');
+        testControls.insert(0, {
+            itemId: 'testResult',
+            html: '<span class="' + cls + '">' + message + '</span>'
+        });
     },
 
     /**

@@ -35,6 +35,10 @@ Ext.define('Docs.controller.DocTests', {
         {
             ref: 'testContainer',
             selector: '#testcontainer'
+        },
+        {
+            ref: 'docTests',
+            selector: 'doctestsindex'
         }
     ],
 
@@ -109,6 +113,7 @@ Ext.define('Docs.controller.DocTests', {
                         code: exampleCode,
                         status: '<span class="doc-test-ready">ready</span>'
                     });
+                    this.getDocTests().setStatus(true, store.getCount() + " examples loaded.");
                 }, this);
 
                 this.classesLeft--;
