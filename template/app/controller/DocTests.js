@@ -99,7 +99,7 @@ Ext.define('Docs.controller.DocTests', {
                         name: name,
                         href: document.location.href.replace(/#.*/, '#!/api/' + json.name),
                         code: exampleCode,
-                        status: '<span class="doc-test-ready">ready</span>'
+                        status: 'ready'
                     });
                 }, this);
 

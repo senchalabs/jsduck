@@ -70,9 +70,10 @@ Ext.define('Docs.view.doctests.Index', {
                             tpl:'<a href="#" id="run-{id}" class="doc-test-run" onclick="return false;">run example</a>'
                         },
                         {
+                            xtype:'templatecolumn',
                             text: 'Status',
                             width: 80,
-                            dataIndex: 'status'
+                            tpl: '<span class="doc-test-{status}">{status}</span>'
                         },
                         {
                             text: 'Message',
@@ -243,7 +244,7 @@ Ext.define('Docs.view.doctests.Index', {
      */
     onPreviewSuccess: function(preview, options, record, config) {
         this.clearTestRunner();
-        record.set('status', '<span class="doc-test-success">success</span>');
+        record.set('status', 'success');
         record.commit();
         config.pass++;
         this.showResult(config);
@@ -265,7 +266,7 @@ Ext.define('Docs.view.doctests.Index', {
      */
     onPreviewFailure: function(preview, e, obj, record, config) {
         this.clearTestRunner();
-        record.set('status', '<span class="doc-test-failure">failure</span>');
+        record.set('status', 'failure');
         record.set('message', e.toString());
         record.commit();
         config.fail++;
