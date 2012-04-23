@@ -2,18 +2,20 @@ require "jsduck/merger"
 
 describe JsDuck::Merger do
 
-  def merge(doc, code)
-    return JsDuck::Merger.new.merge(doc, code)
+  def merge(docset)
+    return JsDuck::Merger.new.merge(docset)
   end
 
   describe "only name in code" do
     before do
-      @doc = merge(
-        [{:tagname => :cfg, :type => "String", :doc => "My Config"}],
-        {
+      @doc = merge({
+        :tagname => :cfg,
+        :comment => [{:tagname => :cfg, :type => "String", :doc => "My Config"}],
+        :code => {
           :tagname => :property,
           :name => "option",
-        })
+        }
+      })
     end
 
     it "gets tagname from doc" do
@@ -32,13 +34,15 @@ describe JsDuck::Merger do
 
   describe "most stuff in code" do
     before do
-      @doc = merge(
-        [{:tagname => :default, :doc => "Hello world"}],
-        {
+      @doc = merge({
+        :tagname => :property,
+        :comment => [{:tagname => :default, :doc => "Hello world"}],
+        :code => {
           :tagname => :property,
           :name => "some.prop",
           :type => "Boolean",
-        })
+        }
+      })
     end
 
     it "gets tagname from code" do

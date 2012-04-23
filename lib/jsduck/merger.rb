@@ -1,6 +1,5 @@
 require 'jsduck/logger'
 require 'jsduck/meta_tag_registry'
-require 'jsduck/doc_type'
 require 'jsduck/class_doc_grouper'
 
 module JsDuck
@@ -19,11 +18,13 @@ module JsDuck
       @filename = ""
       @linenr = 0
       @meta_tags = MetaTagRegistry.instance
-      @doc_type = DocType.new
     end
 
-    def merge(docs, code)
-      case @doc_type.detect(docs, code)
+    def merge(docset)
+      docs = docset[:comment]
+      code = docset[:code]
+
+      case docset[:tagname]
       when :class
         create_class(docs, code)
       when :event
@@ -42,19 +43,6 @@ module JsDuck
     end
 
     def create_class(docs, code)
-      groups = ClassDocGrouper.group(docs)
-      result = create_bare_class(groups[:class], code)
-      result[:members] = create_class_members(groups, result[:name])
-      result[:statics] = Class.default_members_hash
-      if code[:members] && code[:members][:cfg]
-        code[:members][:cfg].each do |cfg|
-          result[:members][:cfg] << create_cfg({}, cfg, result[:name])
-        end
-      end
-      result
-    end
-
-    def create_bare_class(docs, code)
       doc_map = build_doc_map(docs)
       return add_shared({
         :tagname => :class,
@@ -69,18 +57,9 @@ module JsDuck
         :uses => detect_list(:uses, doc_map, code),
         # Used by Aggregator to determine if we're dealing with Ext4 code
         :code_type => code[:tagname],
+        :members => Class.default_members_hash,
+        :statics => Class.default_members_hash,
       }, doc_map)
-    end
-
-    def create_class_members(groups, owner)
-      members = Class.default_members_hash
-      members[:cfg] = groups[:cfg].map { |tags| create_cfg(tags, {}, owner) }
-      if groups[:constructor].length > 0
-        constr = create_method(groups[:constructor], {})
-        constr[:owner] = owner
-        members[:method] << constr
-      end
-      members
     end
 
     def create_method(docs, code)

@@ -233,7 +233,7 @@ module JsDuck
     end
 
     def make_configs(ast)
-      return nil unless ast && ast["type"] == "ObjectExpression"
+      return [] unless ast && ast["type"] == "ObjectExpression"
 
       configs = []
 

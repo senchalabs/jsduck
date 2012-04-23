@@ -3,6 +3,7 @@ require 'jsduck/css_parser'
 require 'jsduck/doc_parser'
 require 'jsduck/merger'
 require 'jsduck/ast'
+require 'jsduck/doc_type'
 require "cgi"
 
 module JsDuck
@@ -23,16 +24,15 @@ module JsDuck
       @options = options
       @html_filename = ""
       @links = {}
-
-      doc_parser = DocParser.new
+      @doc_type = DocType.new
+      @doc_parser = DocParser.new
 
       merger = Merger.new
       merger.filename = @filename
 
       @docs = parse.map do |docset|
         merger.linenr = docset[:linenr]
-        docset[:comment] = doc_parser.parse(docset[:comment])
-        link(docset[:linenr], merger.merge(docset[:comment], docset[:code]))
+        link(docset[:linenr], merger.merge(docset))
       end
     end
 
@@ -88,11 +88,23 @@ module JsDuck
     def parse
       begin
         if @filename =~ /\.s?css$/
-          CssParser.new(@contents, @options).parse
+          docs = CssParser.new(@contents, @options).parse
         else
           docs = EsprimaParser.new(@contents, @options).parse
-          Ast.new(docs).detect_all!
+          docs = Ast.new(docs).detect_all!
         end
+
+        docs.map do |docset|
+          docset[:comment] = @doc_parser.parse(docset[:comment])
+          docset[:tagname] = @doc_type.detect(docset[:comment], docset[:code])
+
+          if docset[:tagname] == :class
+            ClassDocGrouper.group(docset)
+          else
+            docset
+          end
+        end.flatten
+
       rescue
         puts "Error while parsing #{@filename}: #{$!}"
         puts

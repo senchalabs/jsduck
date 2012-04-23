@@ -4,6 +4,9 @@ module JsDuck
   # doc-comment.
   class ClassDocGrouper
 
+    # Takes one docset as input, produces array of one or more docsets
+    # as output.
+    #
     # Gathers all tags until first @cfg or @constructor into the first
     # bare :class group.  We have a special case for @xtype which in
     # ExtJS comments often appears after @constructor - so we
@@ -14,7 +17,7 @@ module JsDuck
     # configs to be marked with @private or whatever else.
     #
     # Finally gathers tags after @constructor into its group.
-    def self.group(docs)
+    def self.group(docset)
       groups = {
         :class => [],
         :cfg => [],
@@ -24,7 +27,7 @@ module JsDuck
       # By default everything goes to :class group
       group_name = :class
 
-      docs.each do |tag|
+      docset[:comment].each do |tag|
         tagname = tag[:tagname]
 
         if tagname == :cfg || tagname == :constructor
@@ -44,7 +47,50 @@ module JsDuck
         end
       end
 
-      groups
+      # Turn groups hash into list of docsets
+      results = []
+      results << {
+        :tagname => :class,
+        :type => docset[:type],
+        :comment => groups[:class],
+        :code => docset[:code],
+        :linenr => docset[:linenr],
+      }
+      groups[:cfg].each do |cfg|
+        results << {
+          :tagname => :cfg,
+          :type => docset[:type],
+          :comment => cfg,
+          :code => {},
+          :linenr => docset[:linenr],
+        }
+      end
+      if groups[:constructor].length > 0
+        results << {
+          :tagname => :method,
+          :type => docset[:type],
+          :comment => groups[:constructor],
+          :code => {},
+          :linenr => docset[:linenr],
+        }
+      end
+
+      # Turn all auto-detected members into separate docsets
+      if docset[:code] && docset[:code][:members]
+        docset[:code][:members].each_pair do |type, members|
+          members.each do |m|
+            results << {
+              :tagname => m[:tagname],
+              :type => :no_comment,
+              :comment => [],
+              :code => m,
+              :linenr => docset[:linenr],
+            }
+          end
+        end
+      end
+
+      results
     end
 
   end
