@@ -73,10 +73,7 @@ Ext.define('Docs.controller.DocTests', {
         this.getTestContainer().setDisabled(true);
         store.removeAll();
         Ext.each(Docs.data.classes, function(cls) {
-            var task = new Ext.util.DelayedTask(function() {
-                this.locateClsExamples(store, cls.name);
-            }, this);
-            task.delay(0);
+            this.locateClsExamples(store, cls.name);
         }, this);
     },
 
