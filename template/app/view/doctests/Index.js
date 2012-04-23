@@ -248,10 +248,6 @@ Ext.define('Docs.view.doctests.Index', {
         record.commit();
         config.pass++;
         this.showResult(config);
-
-        if (Ext.isDefined(console)) {
-            console.log('Test passed: ', record.get('name'));
-        }
     },
 
     /**
@@ -271,13 +267,5 @@ Ext.define('Docs.view.doctests.Index', {
         record.commit();
         config.fail++;
         this.showResult(config);
-
-        if (Ext.isDefined(console)) {
-            var stack = 'no stack available';
-            if (e.stack) {
-                stack = e.stack;
-            }
-            console.log('Test failure for ' + record.get('name'), e, stack);
-        }
     }
 });

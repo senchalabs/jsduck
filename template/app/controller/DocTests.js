@@ -103,16 +103,31 @@ Ext.define('Docs.controller.DocTests', {
                     });
                 }, this);
 
-                this.classesLeft--;
-                if (this.classesLeft === 0) {
-                    this.getIndex().enable();
-                }
+                this.countClassLoaded();
             },
             failure: function(response, opts) {
-                console.log('Class load failed', cls, url, response, opts);
+                this.getIndex().addExample({
+                    id: cls,
+                    name: cls,
+                    href: document.location.href.replace(/#.*/, '#!/api/' + cls),
+                    code: 'ClassLoadingFailed();',
+                    status: 'failure',
+                    message: 'Class loading failed'
+                });
+
+                this.countClassLoaded();
             },
             scope: this
         });
+    },
+
+    // Counts that yet another class has been loaded.
+    // When all loaded, enable the page again.
+    countClassLoaded: function() {
+        this.classesLeft--;
+        if (this.classesLeft === 0) {
+            this.getIndex().enable();
+        }
     },
 
     /**
