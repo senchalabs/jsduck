@@ -135,8 +135,9 @@ module JsDuck
         :inheritdoc => extract(doc_map, :inheritdoc),
         :meta => detect_meta(doc_map),
       })
+
       # copy :private also to main hash
-      hash[:private] = true if hash[:meta][:private]
+      hash[:private] = hash[:meta][:private] ? true : nil
 
       return hash
     end

@@ -35,6 +35,14 @@ describe JsDuck::Aggregator do
     it "sets :inheritdoc flag on config" do
       cfg[0][:inheritdoc].should == {:no_warnings => true}
     end
+
+    it "sets :private flag on config" do
+      cfg[0][:private].should == true
+    end
+
+    it "sets meta :private flag on config" do
+      cfg[0][:meta][:private].should == true
+    end
   end
 
   describe "detecting Ext.define() with commented config" do
@@ -70,6 +78,10 @@ describe JsDuck::Aggregator do
 
     it "detects owner of the config" do
       docs[0][:members][:cfg][0][:owner].should == "MyClass"
+    end
+
+    it "detects the config as public" do
+      docs[0][:members][:cfg][0][:private].should_not == true
     end
   end
 

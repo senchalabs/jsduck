@@ -77,6 +77,9 @@ module JsDuck
       h[:name] = merge_name(docs, code)
       h[:id] = create_member_id(h)
 
+      # Copy private to meta
+      h[:meta][:private] = h[:private] if h[:private]
+
       h
     end
 
