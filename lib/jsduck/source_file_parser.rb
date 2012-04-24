@@ -5,6 +5,7 @@ require 'jsduck/doc_parser'
 require 'jsduck/merger'
 require 'jsduck/ast'
 require 'jsduck/doc_type'
+require 'jsduck/doc_ast'
 require 'jsduck/class_doc_expander'
 
 module JsDuck
@@ -20,12 +21,13 @@ module JsDuck
       @doc_type = DocType.new
       @doc_parser = DocParser.new
       @class_doc_expander = ClassDocExpander.new
+      @doc_ast = DocAst.new
       @merger = Merger.new
     end
 
     # Parses file into final docset that can be fed into Aggregator
     def parse(contents, filename="", options={})
-      @merger.filename = filename
+      @doc_ast.filename = filename
 
       parse_js_or_css(contents, filename, options)
         .map {|docset| expand(docset) }
@@ -57,9 +59,11 @@ module JsDuck
       end
     end
 
-    # Merges comment and code parst of docset
+    # Merges comment and code parts of docset
     def merge(docset)
-      @merger.linenr = docset[:linenr]
+      @doc_ast.linenr = docset[:linenr]
+      docset[:comment] = @doc_ast.detect(docset[:tagname], docset[:comment])
+
       @merger.merge(docset)
     end
   end

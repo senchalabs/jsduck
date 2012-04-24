@@ -10,7 +10,13 @@ describe JsDuck::Merger do
     before do
       @doc = merge({
         :tagname => :cfg,
-        :comment => [{:tagname => :cfg, :type => "String", :doc => "My Config"}],
+        :comment => {
+          :tagname => :cfg,
+          :name => nil,
+          :meta => {},
+          :type => "String",
+          :doc => "My Config"
+        },
         :code => {
           :tagname => :property,
           :name => "option",
@@ -36,7 +42,13 @@ describe JsDuck::Merger do
     before do
       @doc = merge({
         :tagname => :property,
-        :comment => [{:tagname => :default, :doc => "Hello world"}],
+        :comment => {
+          :tagname => :property,
+          :name => nil,
+          :meta => {},
+          :type => nil,
+          :doc => "Hello world"
+        },
         :code => {
           :tagname => :property,
           :name => "some.prop",
