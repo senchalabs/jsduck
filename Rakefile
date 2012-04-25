@@ -40,7 +40,7 @@ end
 # Compress JS/CSS file in-place
 # Using a hackish way to access yui-compressor
 def yui_compress(fname)
-  system "java -jar $(dirname $(which sencha))/../jsbuilder/ycompressor/ycompressor.jar -o #{fname} #{fname}"
+  system "java -jar $(dirname $(which sencha))/bin/yuicompressor.jar -o #{fname} #{fname}"
 end
 
 # Reads in all CSS files referenced between BEGIN CSS and END CSS markers.
@@ -103,6 +103,7 @@ def compress
   system("sencha", "create", "jsb", "-a", "#{dir}/build-js.html", "-p", "#{dir}/app.jsb3")
   # Concatenate files listed in JSB3 file
   system("sencha", "build", "-p", "#{dir}/app.jsb3", "-d", dir)
+
   # Remove intermediate build files
   system("rm", "#{dir}/app.jsb3")
   system("rm", "#{dir}/all-classes.js")
