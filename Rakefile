@@ -27,8 +27,12 @@ def load_sdk_vars
     puts "    OUT_DIR='/path/to/ouput/dir'"
     puts "    # path to SDK (for developers at Sencha)"
     puts "    SDK_DIR='/path/to/SDK'"
-    puts "    # path to Animator (for developers at Sencha)"
+    puts "    # paths to other projects (for developers at Sencha)"
     puts "    ANIMATOR_DIR='/path/to/Animator'"
+    puts "    ARCHITECT_DIR='/path/to/Architect'"
+    puts "    SENCHAIO_DIR='/path/to/IO'"
+    puts "    EXT3_DIR='/path/to/ext3'"
+    puts "    EXT2_DIR='/path/to/ext2'"
     exit 1
   end
 end
@@ -398,7 +402,7 @@ task :ext3, [:mode] => :sass do |t, args|
   compress if mode == "export"
 
   runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/../ext-3.4.0/src/doc-config.json"]
+  runner.add_options ["--output", OUT_DIR, "--config", "#{EXT3_DIR}/src/doc-config.json"]
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "live"
   runner.add_google_analytics if mode == "live"
@@ -415,7 +419,7 @@ task :ext2, [:mode] => :sass do |t, args|
   compress if mode == "export"
 
   runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/../ext-2-source/doc-config.json"]
+  runner.add_options ["--output", OUT_DIR, "--config", "#{EXT2_DIR}/doc-config.json"]
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "live"
   runner.add_google_analytics if mode == "live"
@@ -502,7 +506,7 @@ task :senchaio, [:mode] => :sass do |t, args|
   compress if mode == "live"
 
   runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/../client-framework/docs/config.json"]
+  runner.add_options ["--output", OUT_DIR, "--config", "#{SENCHAIO_DIR}/docs/config.json"]
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"
