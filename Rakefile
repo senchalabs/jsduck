@@ -527,21 +527,21 @@ task :animator, [:mode] => :sass do |t, args|
   runner.run
 end
 
-desc "Run JSDuck on Sencha Designer (for internal use at Sencha)\n" +
-     "designer         - creates debug/development version\n" +
-     "designer[export] - create live version for deployment\n"
-     "designer[live]   - create live version for deployment\n"
-task :designer, [:mode] => :sass do |t, args|
+desc "Run JSDuck on Sencha Architect (for internal use at Sencha)\n" +
+     "architect         - creates debug/development version\n" +
+     "architect[export] - create live version for deployment\n"
+     "architect[live]   - create live version for deployment\n"
+task :architect, [:mode] => :sass do |t, args|
   mode = args[:mode] || "debug"
   throw "Unknown mode #{mode}" unless ["debug", "live", "export"].include?(mode)
   compress if mode == "live"
 
   runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{DESIGNER_DIR}/docs/config.json"]
+  runner.add_options ["--output", OUT_DIR, "--config", "#{ARCHITECT_DIR}/docs/config.json"]
   runner.add_debug if mode == "debug"
   runner.add_seo if mode == "debug" || mode == "live"
   runner.add_google_analytics if mode == "live"
-  runner.add_comments('designer', '2') if mode == "debug" || mode == "live"
+  runner.add_comments('architect', '2') if mode == "debug" || mode == "live"
   runner.run
 end
 
