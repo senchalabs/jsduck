@@ -182,7 +182,8 @@ class JsDuckRunner
   def add_ext4
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
-      "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> VERSION. <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
+      "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> {VERSION}." +
+                  " <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--ignore-global",
       "--no-warnings",
       "--images", "#{EXT_BUILD}/docs/doc-resources",
