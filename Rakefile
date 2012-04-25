@@ -263,7 +263,11 @@ class JsDuckRunner
 
         Docs.otherProducts = [
           {
-              text: 'Ext JS 4',
+              text: 'Ext JS 4.1',
+              href: 'http://docs.sencha.com/ext-js/4-1'
+          },
+          {
+              text: 'Ext JS 4.0',
               href: 'http://docs.sencha.com/ext-js/4-0'
           },
           {
@@ -289,6 +293,10 @@ class JsDuckRunner
           {
               text: 'Sencha Animator',
               href: 'http://docs.sencha.com/animator/1-0'
+          },
+          {
+              text: 'Sencha Architect',
+              href: 'http://docs.sencha.com/arhitect/2-0'
           },
           {
               text: 'Sencha.io',
