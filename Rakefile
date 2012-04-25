@@ -454,6 +454,8 @@ task :touch2, [:mode] => :sass do |t, args|
       "--eg-iframe", "#{SDK_DIR}/touch/docs/build-eg-iframe.html",
       "--examples-base-url", "../examples/",
     ]
+  else
+    runner.add_options ["--examples-base-url", "touch/examples/production/"]
   end
 
   runner.add_debug if mode == "debug"
