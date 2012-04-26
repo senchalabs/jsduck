@@ -8,6 +8,9 @@ Ext.define("Docs.History", {
      * Initializes history management.
      */
     init: function() {
+        // allow Docs to work inside iframe
+        Ext.util.History.useTopWindow = false;
+
         Ext.util.History.init(function() {
             this.historyLoaded = true;
             this.initialNavigate();
