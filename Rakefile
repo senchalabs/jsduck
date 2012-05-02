@@ -19,20 +19,14 @@ def load_sdk_vars
     puts
     puts "Please create file sdk-vars.rb and define in it:"
     puts
-    puts "    # path to Ext JS 4 build"
-    puts "    EXT_BUILD='/path/to/ext-4.0.7'"
-    puts "    # path to Touch 2 build"
-    puts "    TOUCH_BUILD='/path/to/touch-2.0.0'"
     puts "    # where to output the docs"
     puts "    OUT_DIR='/path/to/ouput/dir'"
+    puts "    # path to Ext JS 4 build"
+    puts "    EXT_BUILD='/path/to/ext-4'"
+    puts "    # path to Touch 2 build"
+    puts "    TOUCH_BUILD='/path/to/touch-2'"
     puts "    # path to SDK (for developers at Sencha)"
     puts "    SDK_DIR='/path/to/SDK'"
-    puts "    # paths to other projects (for developers at Sencha)"
-    puts "    ANIMATOR_DIR='/path/to/Animator'"
-    puts "    ARCHITECT_DIR='/path/to/Architect'"
-    puts "    SENCHAIO_DIR='/path/to/IO'"
-    puts "    EXT3_DIR='/path/to/ext3'"
-    puts "    EXT2_DIR='/path/to/ext2'"
     exit 1
   end
 end
@@ -147,7 +141,7 @@ class JsDuckRunner
     load_sdk_vars
   end
 
-  def add_options(options)
+  def add_options(*options)
     @options += options
   end
 
@@ -167,18 +161,6 @@ class JsDuckRunner
     EOHTML
   end
 
-  # For export of ExtJS, reference extjs from the parent dir
-  def make_extjs_path_relative
-    ["#{OUT_DIR}/index.html"].each do |file|
-      out = []
-      IO.read(file).each_line do |line|
-        out << line.sub(/(src|href)="extjs\//, '\1="../')
-      end
-      File.open(file, 'w') {|f| f.write(out) }
-    end
-    system "rm -rf #{OUT_DIR}/extjs"
-  end
-
   def add_ext4
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
@@ -193,135 +175,12 @@ class JsDuckRunner
     ]
   end
 
-  def add_phone_redirect
-    @options += ["--body-html", <<-EOHTML]
-      <script type="text/javascript">
-        if (Ext.is.Phone) { window.location = "../examples/"; }
-      </script>
-    EOHTML
-  end
-
   def add_debug
     @options += [
       "--extjs-path", "extjs/ext-all-debug.js",
       "--template-links",
       "--template", "template",
     ]
-  end
-
-  def add_seo
-    @options += [
-      "--seo",
-    ]
-  end
-
-  def add_export_notice path
-    @options += [
-      "--body-html", <<-EOHTML
-      <div id="notice-text" style="display: none">
-        Use <a href="http://docs.sencha.com/#{path}">http://docs.sencha.com/#{path}</a> for up to date documentation and features
-      </div>
-      EOHTML
-    ]
-  end
-
-  def add_google_analytics
-    @options += [
-      "--body-html", <<-EOHTML
-      <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-1396058-10']);
-        _gaq.push(['_trackPageview']);
-        (function() {
-          var ga = document.createElement('script');
-          ga.type = 'text/javascript';
-          ga.async = true;
-          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-          var s = document.getElementsByTagName('script')[0];
-          s.parentNode.insertBefore(ga, s);
-        })();
-
-        Docs.initEventTracking = function() {
-            Docs.App.getController('Classes').addListener({
-                showClass: function(cls) {
-                    _gaq.push(['_trackEvent', 'Classes', 'Show', cls]);
-                },
-                showMember: function(cls, anchor) {
-                    _gaq.push(['_trackEvent', 'Classes', 'Member', cls + ' - ' + anchor]);
-                }
-            });
-            Docs.App.getController('Guides').addListener({
-                showGuide: function(guide) {
-                    _gaq.push(['_trackEvent', 'Guides', 'Show', guide]);
-                }
-            });
-            Docs.App.getController('Videos').addListener({
-                showVideo: function(video) {
-                    _gaq.push(['_trackEvent', 'Video', 'Show', video]);
-                }
-            });
-            Docs.App.getController('Examples').addListener({
-                showExample: function(example) {
-                    _gaq.push(['_trackEvent', 'Example', 'Show', example]);
-                }
-            });
-        }
-
-        Docs.otherProducts = [
-          {
-              text: 'Ext JS 4.1',
-              href: 'http://docs.sencha.com/ext-js/4-1'
-          },
-          {
-              text: 'Ext JS 4.0',
-              href: 'http://docs.sencha.com/ext-js/4-0'
-          },
-          {
-              text: 'Ext JS 3',
-              href: 'http://docs.sencha.com/ext-js/3-4'
-          },
-          {
-              text: 'Ext JS 2',
-              href: 'http://docs.sencha.com/ext-js/2-3'
-          },
-          {
-              text: 'Sencha Touch 2',
-              href: 'http://docs.sencha.com/touch/2-0'
-          },
-          {
-              text: 'Sencha Touch 1',
-              href: 'http://docs.sencha.com/touch/1-1'
-          },
-          {
-              text: 'Touch Charts',
-              href: 'http://docs.sencha.com/touch-charts/1-0'
-          },
-          {
-              text: 'Sencha Animator',
-              href: 'http://docs.sencha.com/animator/1-0'
-          },
-          {
-              text: 'Sencha Architect',
-              href: 'http://docs.sencha.com/arhitect/2-0'
-          },
-          {
-              text: 'Sencha.io',
-              href: 'http://docs.sencha.com/io/1-0'
-          }
-        ];
-      </script>
-    EOHTML
-    ]
-
-  end
-
-  def copy_extjs_build
-    system "cp -r #{EXT_BUILD} #{OUT_DIR}/extjs-build"
-  end
-
-  # Copy over Sencha Touch
-  def copy_touch2_build
-    system "cp -r #{TOUCH_BUILD} #{OUT_DIR}/touch"
   end
 
   def run
@@ -335,226 +194,61 @@ task :sass do
   system "compass compile --quiet template/resources/sass"
 end
 
-desc "Run JSDuck on Ext JS SDK (for internal use at Sencha)\n" +
-     "sdk         - creates debug/development version\n" +
-     "sdk[export] - creates export version\n" +
-     "sdk[live]   - create live version for deployment\n"
-task :sdk, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
-  compress if mode == "export" || mode == "live"
-
-  runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/extjs/docs/config.json"]
-  runner.add_debug if mode == "debug"
-  runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_export_notice("ext-js/4-0") if mode == "export"
-  runner.add_google_analytics if mode == "live"
-  runner.add_comments('ext-js', '4') if mode == "debug" || mode == "live"
-  if mode == "export"
-    runner.add_options ["--eg-iframe", "#{SDK_DIR}/extjs/docs/eg-iframe-build.html"]
-    runner.add_options ["--examples-base-url", "../examples/"]
-  else
-    runner.add_options ["--examples-base-url", "extjs-build/examples/"]
-  end
-  runner.run
-
-  if mode == "export"
-    runner.make_extjs_path_relative
-  else
-    runner.copy_extjs_build
-  end
+desc "Build JSDuck gem"
+task :gem => :sass do
+  compress
+  system "gem build jsduck.gemspec"
 end
 
 desc "Run JSDuck on Docs app itself"
 task :docs do
   runner = JsDuckRunner.new
   runner.add_ext4
-  runner.add_options([
+  runner.add_options(
     "--builtin-classes",
     "template/app"
-  ])
+  )
   runner.add_debug
-  runner.add_seo
   runner.run
 end
 
-desc "Run JSDuck on official Ext JS 4.0.2a build\n" +
-     "ext4             - creates debug/development version\n" +
-     "ext4[export]     - creates export/deployable version\n"
-task :ext4, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "export"].include?(mode)
-  compress if mode == "export"
-
+desc "Run JSDuck on official Ext JS 4 build"
+task :ext4 => :sass do
   runner = JsDuckRunner.new
   runner.add_ext4
-  runner.add_debug if mode == "debug"
-  runner.add_seo
+  runner.add_debug
   runner.run
 end
 
-desc "Run JSDuck on official Ext JS 3.4 build\n" +
-     "ext3             - creates debug/development version\n" +
-     "ext3[export]     - creates export/deployable version\n"
-     "ext3[live]       - creates live version for deployment\n"
-task :ext3, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
-  compress if mode == "export"
-
+desc "Run JSDuck on Ext JS from SDK repo (for internal use at Sencha)"
+task :sdk => :sass do
   runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{EXT3_DIR}/src/doc-config.json"]
-  runner.add_debug if mode == "debug"
-  runner.add_seo if mode == "live"
-  runner.add_google_analytics if mode == "live"
-  runner.run
-end
-
-desc "Run JSDuck on official Ext JS 2.3 build\n" +
-     "ext2             - creates debug/development version\n" +
-     "ext2[export]     - creates export/deployable version\n"
-     "ext2[live]       - creates live version for deployment\n"
-task :ext2, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
-  compress if mode == "export"
-
-  runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{EXT2_DIR}/doc-config.json"]
-  runner.add_debug if mode == "debug"
-  runner.add_seo if mode == "live"
-  runner.add_google_analytics if mode == "live"
-  runner.run
-end
-
-desc "Run JSDuck on Sencha Touch (for internal use at Sencha)\n" +
-     "touch       - creates debug/development version\n" +
-     "touch[live] - create live version for deployment\n"
-task :touch, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "live"].include?(mode)
-  compress if mode == "live"
-
-  runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/touch/doc-resources/config.json"]
-  runner.add_debug if mode == "debug"
-  runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_google_analytics if mode == "live"
-  runner.run
-end
-
-desc "Run JSDuck on Sencha Touch 2 (for internal use at Sencha)\n" +
-     "touch2         - creates debug/development version\n" +
-     "touch2[export] - creates export version\n" +
-     "touch2[live]   - create live version for deployment\n"
-task :touch2, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
-  compress if mode == "live" || mode == "export"
-
-  runner = JsDuckRunner.new
-  runner.add_options [
+  runner.add_options(
     "--output", OUT_DIR,
-    "--config", "#{SDK_DIR}/touch/docs/config.json"
-  ]
-
-  if mode == "export"
-    runner.add_export_notice("touch/2-0")
-    runner.add_phone_redirect
-    # override settings in config.json
-    runner.add_options [
-      "--welcome", "#{SDK_DIR}/touch/docs/build-welcome.html",
-      "--eg-iframe", "#{SDK_DIR}/touch/docs/build-eg-iframe.html",
-      "--examples-base-url", "../examples/",
-    ]
-  else
-    runner.add_options ["--examples-base-url", "touch/examples/production/"]
-  end
-
-  runner.add_debug if mode == "debug"
-  runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_google_analytics if mode == "live"
-  runner.add_comments('touch', '2') if mode == "debug" || mode == "live"
+    "--config", "#{SDK_DIR}/extjs/docs/config.json",
+    "--examples-base-url", "extjs-build/examples/"
+  )
+  runner.add_debug
+  runner.add_comments('ext-js', '4')
   runner.run
 
-  runner.copy_touch2_build if mode != "export"
+  system("cp -r #{EXT_BUILD} #{OUT_DIR}/extjs-build")
 end
 
-desc "Run JSDuck on Sencha Touch Charts (for internal use at Sencha)\n" +
-     "charts         - creates debug/development version\n" +
-     "charts[export] - create live version for deployment\n"
-     "charts[live]   - create live version for deployment\n"
-task :charts, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
-  compress if mode == "live"
-
+desc "Run JSDuck on Sencha Touch 2 repo (for internal use at Sencha)"
+task :touch2 => :sass do
   runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{SDK_DIR}/charts/docs/config.json"]
-  runner.add_debug if mode == "debug"
-  runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_google_analytics if mode == "live"
+  runner.add_options(
+    "--output", OUT_DIR,
+    "--config", "#{SDK_DIR}/touch/docs/config.json",
+    "--examples-base-url", "touch/examples/production/"
+  )
+
+  runner.add_debug
+  runner.add_comments('touch', '2')
   runner.run
-end
 
-desc "Run JSDuck on Sencha.IO Sync (for internal use at Sencha)\n" +
-     "senchaio         - creates debug/development version\n" +
-     "senchaio[export] - create live version for deployment\n"
-     "senchaio[live]   - create live version for deployment\n"
-task :senchaio, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "export", "live"].include?(mode)
-  compress if mode == "live"
-
-  runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{SENCHAIO_DIR}/docs/config.json"]
-  runner.add_debug if mode == "debug"
-  runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_google_analytics if mode == "live"
-  runner.run
-end
-
-desc "Run JSDuck on Sencha Animator (for internal use at Sencha)\n" +
-     "animator         - creates debug/development version\n" +
-     "animator[export] - create live version for deployment\n"
-     "animator[live]   - create live version for deployment\n"
-task :animator, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "live", "export"].include?(mode)
-  compress if mode == "live"
-
-  runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{ANIMATOR_DIR}/docs/config.json"]
-  runner.add_debug if mode == "debug"
-  runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_google_analytics if mode == "live"
-  runner.add_comments('animator', '1') if mode == "debug" || mode == "live"
-  runner.run
-end
-
-desc "Run JSDuck on Sencha Architect (for internal use at Sencha)\n" +
-     "architect         - creates debug/development version\n" +
-     "architect[export] - create live version for deployment\n"
-     "architect[live]   - create live version for deployment\n"
-task :architect, [:mode] => :sass do |t, args|
-  mode = args[:mode] || "debug"
-  throw "Unknown mode #{mode}" unless ["debug", "live", "export"].include?(mode)
-  compress if mode == "live"
-
-  runner = JsDuckRunner.new
-  runner.add_options ["--output", OUT_DIR, "--config", "#{ARCHITECT_DIR}/docs/config.json"]
-  runner.add_debug if mode == "debug"
-  runner.add_seo if mode == "debug" || mode == "live"
-  runner.add_google_analytics if mode == "live"
-  runner.add_comments('architect', '2') if mode == "debug" || mode == "live"
-  runner.run
-end
-
-desc "Build JSDuck gem"
-task :gem => :sass do
-  compress
-  system "gem build jsduck.gemspec"
+  system("cp -r #{TOUCH_BUILD} #{OUT_DIR}/touch")
 end
 
 task :default => :spec
