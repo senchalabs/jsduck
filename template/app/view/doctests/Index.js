@@ -16,7 +16,8 @@ Ext.define('Docs.view.doctests.Index', {
 
     items: [
         {
-            html: '<h1>Doc Tests</h1>'
+            html: '<h1>Inline examples test page</h1>',
+            height: 30
         },
         {
             itemId: 'testrunner',
@@ -35,24 +36,27 @@ Ext.define('Docs.view.doctests.Index', {
             items: [
                 {
                     itemId: 'testcontrols',
-                    margin: 5,
+                    layout: 'hbox',
                     items: [
                         {
-                            itemId: 'testResults',
-                            margin: 5
+                            html: '<b>Double-click</b> to run an example, or',
+                            margin: "5 5 5 0"
                         },
                         {
                             xtype: 'button',
                             itemId: 'runallbutton',
                             text: 'Run All Examples',
                             margin: 5
+                        },
+                        {
+                            itemId: 'testStatus',
+                            margin: "5 5 5 15"
                         }
                     ]
                 },
                 {
                     xtype: 'grid',
                     itemId: 'doctestsgrid',
-                    title: 'Doc Tests',
                     padding: '5 0 5 0',
                     autoScroll: true,
                     flex: 1,
@@ -62,12 +66,6 @@ Ext.define('Docs.view.doctests.Index', {
                             text: 'Name',
                             width: 300,
                             tpl:'<a href="{href}">{name}</a>'
-                        },
-                        {
-                            xtype:'templatecolumn',
-                            text: 'Run',
-                            width: 80,
-                            tpl:'<a href="#" id="run-{id}" class="doc-test-run" onclick="return false;">run example</a>'
                         },
                         {
                             xtype:'templatecolumn',
@@ -100,7 +98,7 @@ Ext.define('Docs.view.doctests.Index', {
         runAllButton.on('click', this.onRunAllButtonClick, this);
 
         var testGrid = Ext.ComponentQuery.query('#doctestsgrid', this)[0];
-        testGrid.on('itemclick', this.onRunLinkClick, this, {
+        testGrid.on('itemdblclick', this.onRunLinkClick, this, {
             delegate: '.doc-test-run',
             stopEvent: true
         });
@@ -191,12 +189,7 @@ Ext.define('Docs.view.doctests.Index', {
      */
     setStatus: function(ok, message) {
         var cls = ok ? 'doc-test-success' : 'doc-test-failure';
-        var testControls = this.getComponent('testcontainer').getComponent('testcontrols');
-        testControls.remove('testResult');
-        testControls.insert(0, {
-            itemId: 'testResult',
-            html: '<span class="' + cls + '">' + message + '</span>'
-        });
+        this.down("#testStatus").update('<span class="' + cls + '">' + message + '</span>');
     },
 
     /**
