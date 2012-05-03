@@ -20,6 +20,7 @@ require 'jsduck/index_html'
 require 'jsduck/api_exporter'
 require 'jsduck/full_exporter'
 require 'jsduck/app_exporter'
+require 'jsduck/inline_examples'
 require 'fileutils'
 
 module JsDuck
@@ -72,6 +73,10 @@ module JsDuck
           source_writer.write(@opts.output_dir + "/source")
         end
         format_classes
+
+        if @opts.doctests
+          InlineExamples.new(@relations).write(@opts.output_dir+"/inline-examples.js")
+        end
 
         cw = ClassWriter.new(AppExporter, @relations, @opts)
         cw.write(@opts.output_dir+"/output", ".js")

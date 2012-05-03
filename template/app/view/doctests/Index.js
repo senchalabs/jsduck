@@ -117,10 +117,10 @@ Ext.define('Docs.view.doctests.Index', {
 
     /**
      * Adds new example to full list of examples.
-     * @param {Docs.model.DocTest} example The DocTest model instance or config for it.
+     * @param {Docs.model.DocTest} examples The DocTest model instance or config for it.
      */
-    addExample: function(example) {
-        this.store.add(example);
+    addExamples: function(examples) {
+        this.store.add(examples);
         this.setStatus(true, this.store.getCount() + " examples loaded.");
     },
 
@@ -147,7 +147,7 @@ Ext.define('Docs.view.doctests.Index', {
             Ext.create('Docs.view.examples.Inline', {
                 cls: 'doc-test-preview',
                 height: 0,
-                value: Ext.String.htmlDecode(Ext.util.Format.stripTags(record.get('code')))
+                value: record.get('code')
             })
         );
 

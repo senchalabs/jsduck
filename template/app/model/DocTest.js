@@ -8,8 +8,7 @@ Ext.define('Docs.model.DocTest', {
         'name',
         'href',
         'code',
-        'status',
-        'message',
-        'trace'
+        {name: 'status', defaultValue: 'ready'},
+        'message'
     ]
 });

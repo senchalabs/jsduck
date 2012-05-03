@@ -5,24 +5,6 @@ Ext.define('Docs.controller.DocTests', {
     extend: 'Docs.controller.Content',
     baseUrl: "#!/doctests",
 
-    /**
-     * Regex used to locate all `pre` nodes.
-     * @private
-     */
-    preRegex: /<pre[\s\S]*?>[\s\S]*?<\/pre[\s\S]*?>/gi,
-
-    /**
-     * Regex used to determine if a node is an inline example.
-     * @private
-     */
-    preClsRegex: /class=[\s\S]*?inline-example/i,
-
-    /**
-     * Regex used to locate `code` node.
-     * @private
-     */
-    codeRegex: /<code[\s\S]*?>[\s\S]+?<\/code[\s\S]*?>/gi,
-
     refs: [
         {
             ref: 'viewport',
@@ -39,7 +21,7 @@ Ext.define('Docs.controller.DocTests', {
 
         this.control({
             '#doctestsgrid': {
-                afterrender: this.locateExamples
+                afterrender: this.loadExamples
             }
         });
     },
@@ -59,95 +41,21 @@ Ext.define('Docs.controller.DocTests', {
     },
 
     /**
-     * Locates all examples.
+     * Loads all examples from .js file.
      * @private
      */
-    locateExamples: function() {
-        this.classesLeft = Docs.data.classes.length;
+    loadExamples: function() {
         this.getIndex().disable();
-        Ext.each(Docs.data.classes, function(cls) {
-            this.locateClsExamples(cls.name);
-        }, this);
-    },
-
-    /**
-     * Locates all inline examples attached to a class file.
-     *
-     * @param {String} cls The Ext class name being interrogated.
-     * @private
-     */
-    locateClsExamples: function(cls) {
-        var baseUrl = this.getBaseUrl() + '/output/',
-            url = baseUrl + cls + '.js';
 
         Ext.data.JsonP.request({
-            url: url,
-            callbackName: cls.replace(/\./g, '_'),
-            success: function(json, opts) {
-                var exampleCodes = this.extractExampleCode(json.html),
-                    exampleCodeLength = exampleCodes.length;
-                Ext.each(exampleCodes, function(exampleCode, exampleIdx) {
-                    var name = json.name,
-                        id = name;
-                    if (exampleCodeLength > 1) {
-                        name += ' example #' + (exampleIdx + 1).toString();
-                        id += '-' + exampleIdx.toString();
-                    }
-
-                    this.getIndex().addExample({
-                        id: id,
-                        name: name,
-                        href: document.location.href.replace(/#.*/, '#!/api/' + json.name),
-                        code: exampleCode,
-                        status: 'ready'
-                    });
-                }, this);
-
-                this.countClassLoaded();
-            },
-            failure: function(response, opts) {
-                this.getIndex().addExample({
-                    id: cls,
-                    name: cls,
-                    href: document.location.href.replace(/#.*/, '#!/api/' + cls),
-                    code: 'ClassLoadingFailed();',
-                    status: 'failure',
-                    message: 'Class loading failed'
-                });
-
-                this.countClassLoaded();
+            url: this.getBaseUrl() + "/inline-examples.js",
+            callbackName: "__inline_examples__",
+            success: function(examples) {
+                this.getIndex().addExamples(examples);
+                this.getIndex().enable();
             },
             scope: this
         });
-    },
-
-    // Counts that yet another class has been loaded.
-    // When all loaded, enable the page again.
-    countClassLoaded: function() {
-        this.classesLeft--;
-        if (this.classesLeft === 0) {
-            this.getIndex().enable();
-        }
-    },
-
-    /**
-     * Extract example code from html.
-     *
-     * @param {String} html The html being parsed.
-     * @private
-     */
-    extractExampleCode: function(html) {
-        var exampleCodes = [],
-            preMatches = html.match(this.preRegex);
-
-        Ext.each(preMatches, function(preMatch) {
-            if (preMatch.match(this.preClsRegex)) {
-                var codeMatches = preMatch.match(this.codeRegex);
-                if (codeMatches) {
-                    exampleCodes.push(codeMatches[0]);
-                }
-            }
-        }, this);
-        return exampleCodes;
     }
+
 });
