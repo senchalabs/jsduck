@@ -9,14 +9,14 @@
     <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css">
 
     <script type="text/javascript">
-        function loadInlineExample(code, options) {
+        function loadInlineExample(code, options, callback) {
             try {
                 document.body.innerHTML = '';
                 eval(code);
-                window.top.Docs.view.examples.InlinePreview.previewSuccess(options.iframeId);
+                callback && callback(true);
             } catch (e) {
                 document.body.innerHTML = e;
-                window.top.Docs.view.examples.InlinePreview.previewFailure(options.iframeId, e);
+                callback && callback(false, e);
             }
         }
     </script>

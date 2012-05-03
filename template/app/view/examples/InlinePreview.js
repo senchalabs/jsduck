@@ -14,7 +14,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
          * @private
          * @static
          */
-        iframeId: 0,
+        iframeCounter: 0,
 
         /**
          * Returns the next available iframeId.
@@ -24,43 +24,8 @@ Ext.define('Docs.view.examples.InlinePreview', {
          * @static
          */
         getNextIframeId: function() {
-            this.iframeId++;
-            return this.iframeId.toString();
-        },
-
-        /**
-         * Returns the preview component with the matching iframeId.
-         *
-         * @param {String} iframeId
-         * @return {Ext.Component}
-         * @private
-         * @static
-         */
-        getPreviewByIframeId: function(iframeId) {
-            return Ext.ComponentManager.get('inline-preview-' + iframeId.toString());
-        },
-
-        /**
-         * Called when an preview has been successfully executed.
-         *
-         * @param {String} iframeId
-         * @static
-         */
-        previewSuccess: function(iframeId) {
-            var preview = this.getPreviewByIframeId(iframeId);
-            preview.fireEvent('previewsuccess', preview);
-        },
-
-        /**
-         * Called when an error occured during preview execution.
-         *
-         * @param {String} iframeId
-         * @param {Error} e
-         * @static
-         */
-        previewFailure: function(iframeId, e) {
-            var preview = this.getPreviewByIframeId(iframeId);
-            preview.fireEvent('previewfailure', preview, e);
+            this.iframeCounter++;
+            return this.iframeCounter.toString();
         }
     },
 
@@ -124,9 +89,9 @@ Ext.define('Docs.view.examples.InlinePreview', {
      * @param {String} code  The code to run inside iframe.
      */
     update: function(code) {
-        var iframeId = this.iframeId,
-            options = Ext.apply({iframeId: iframeId}, this.options),
-            iframe = document.getElementById(iframeId);
+        var options = this.options;
+        var iframe = document.getElementById(this.iframeId);
+        var callback = Ext.Function.bind(this.iframeCallback, this);
 
         if (iframe) {
             // Something is not quite ready when onload fires.
@@ -134,10 +99,26 @@ Ext.define('Docs.view.examples.InlinePreview', {
             // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
             iframe.onload = function() {
                 Ext.Function.defer(function() {
-                    iframe.contentWindow.loadInlineExample(code, options);
+                    iframe.contentWindow.loadInlineExample(code, options, callback);
                 }, 100);
             };
             iframe.src = "eg-iframe.html";
+        }
+    },
+
+    /**
+     * Called from within iframe.
+     *
+     * @param {Boolean} success True when iframe code ran fine.
+     * @param {Error} [e] The exception object in case of failure.
+     * @private
+     */
+    iframeCallback: function(success, e) {
+        if (success) {
+            this.fireEvent("previewsuccess", this);
+        }
+        else {
+            this.fireEvent("previewfailure", this, e);
         }
     },
 
