@@ -39,7 +39,7 @@ Ext.define('Docs.view.examples.Inline', {
     constructor: function() {
         this.callParent(arguments);
 
-        this.addEvents([
+        this.addEvents(
             /**
              * @event previewsuccess
              * Fired when preview was successfully created.
@@ -52,8 +52,8 @@ Ext.define('Docs.view.examples.Inline', {
              * @param {Ext.Component} preview
              * @param {Error} e
              */
-            'previewfailure',
-        ]);
+            'previewfailure'
+        );
     },
 
     initComponent: function() {
