@@ -226,7 +226,8 @@ task :sdk => :sass do
   runner.add_options(
     "--output", OUT_DIR,
     "--config", "#{SDK_DIR}/extjs/docs/config.json",
-    "--examples-base-url", "extjs-build/examples/"
+    "--examples-base-url", "extjs-build/examples/",
+    "--seo"
   )
   runner.add_debug
   runner.add_comments('ext-js', '4')
@@ -241,7 +242,8 @@ task :touch2 => :sass do
   runner.add_options(
     "--output", OUT_DIR,
     "--config", "#{SDK_DIR}/touch/docs/config.json",
-    "--examples-base-url", "touch/examples/production/"
+    "--examples-base-url", "touch/examples/production/",
+    "--seo"
   )
 
   runner.add_debug
