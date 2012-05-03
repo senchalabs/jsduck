@@ -24,10 +24,15 @@ module JsDuck
 
     # Returns hash of class name and inline examples
     def export(cls)
-      {
-        :name => cls[:name],
-        :examples => @inline_examples.extract(cls[:doc]),
-      }
+      examples = @inline_examples.extract(cls[:doc])
+      if examples.length > 0
+        {
+          :name => cls[:name],
+          :examples => @inline_examples.extract(cls[:doc]),
+        }
+      else
+        nil
+      end
     end
 
   end

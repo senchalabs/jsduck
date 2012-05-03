@@ -24,7 +24,7 @@ module JsDuck
     private
 
     def write_stdout
-      json = @parallel.map(@relations.classes) {|cls| @exporter.export(cls) }
+      json = @parallel.map(@relations.classes) {|cls| @exporter.export(cls) }.compact
       puts JsonDuck.generate(json)
     end
 
@@ -34,12 +34,15 @@ module JsDuck
         filename = dir + "/" + cls[:name] + extension
         Logger.instance.log("Writing docs", filename)
         json = @exporter.export(cls)
-        if extension == ".json"
-          JsonDuck.write_json(filename, json)
-        elsif extension == ".js"
-          JsonDuck.write_jsonp(filename, cls[:name].gsub(/\./, "_"), json)
-        else
-          throw "Unexpected file extension: #{extension}"
+        # skip file if exporter returned nil
+        if json
+          if extension == ".json"
+            JsonDuck.write_json(filename, json)
+          elsif extension == ".js"
+            JsonDuck.write_jsonp(filename, cls[:name].gsub(/\./, "_"), json)
+          else
+            throw "Unexpected file extension: #{extension}"
+          end
         end
       end
     end
