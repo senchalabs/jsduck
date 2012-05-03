@@ -5,11 +5,14 @@ module JsDuck
 
   # Extracts inline examples from formatted docs and writes to file
   class InlineExamples
-    def initialize(relations)
+    def initialize
       @begin_example_re = /<pre class='inline-example ([^']*)'><code>/
       @end_example_re = /<\/code><\/pre>/
-
       @examples = []
+    end
+
+    # Extracts inline examples from classes
+    def add_classes(relations)
       relations.each do |cls|
         extract(cls[:doc]).each_with_index do |ex, i|
           @examples << {
@@ -21,8 +24,11 @@ module JsDuck
           }
         end
       end
+
+      self
     end
 
+    # Writes all found examples to .js file
     def write(filename)
       JsonDuck.write_jsonp(filename, "__inline_examples__", @examples)
     end

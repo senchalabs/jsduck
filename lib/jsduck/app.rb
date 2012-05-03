@@ -20,6 +20,7 @@ require 'jsduck/index_html'
 require 'jsduck/api_exporter'
 require 'jsduck/full_exporter'
 require 'jsduck/app_exporter'
+require 'jsduck/examples_exporter'
 require 'jsduck/inline_examples'
 require 'fileutils'
 
@@ -54,7 +55,11 @@ module JsDuck
       if @opts.export
         format_classes
         FileUtils.rm_rf(@opts.output_dir) unless @opts.output_dir == :stdout
-        exporters = {:full => FullExporter, :api => ApiExporter}
+        exporters = {
+          :full => FullExporter,
+          :api => ApiExporter,
+          :examples => ExamplesExporter,
+        }
         cw = ClassWriter.new(exporters[@opts.export], @relations, @opts)
         cw.write(@opts.output_dir, ".json")
       else
@@ -75,7 +80,7 @@ module JsDuck
         format_classes
 
         if @opts.doctests
-          InlineExamples.new(@relations).write(@opts.output_dir+"/inline-examples.js")
+          InlineExamples.new.add_classes(@relations).write(@opts.output_dir+"/inline-examples.js")
         end
 
         cw = ClassWriter.new(AppExporter, @relations, @opts)

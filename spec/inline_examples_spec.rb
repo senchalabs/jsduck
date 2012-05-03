@@ -5,7 +5,7 @@ describe JsDuck::InlineExamples do
 
   def extract(doc, opts=nil)
     html = (opts == :html) ? doc : JsDuck::DocFormatter.new.format(doc)
-    result = JsDuck::InlineExamples.new([]).extract(html)
+    result = JsDuck::InlineExamples.new.extract(html)
     (opts == :raw) ? result : result.map {|ex| ex[:code] }
   end
 
