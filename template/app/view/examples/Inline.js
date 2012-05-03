@@ -21,6 +21,11 @@ Ext.define('Docs.view.examples.Inline', {
     maxCodeHeight: 400,
 
     /**
+     * @cfg {String} value
+     * The JavaScript code of the example.
+     */
+
+    /**
      * @cfg {Object} options
      * A set of options for configuring the preview:
      *

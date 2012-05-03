@@ -140,12 +140,15 @@ Ext.define('Docs.view.doctests.Index', {
         this.clearTestRunner();
         var testRunner = this.getComponent('testrunner');
         var record = config.examples.shift();
+        var options = record.get('options');
+        options.preview = false; // always disable the preview option
 
         var example = testRunner.add(
             Ext.create('Docs.view.examples.Inline', {
                 cls: 'doc-test-preview',
                 height: 0,
-                value: record.get('code')
+                value: record.get('code'),
+                options: options
             })
         );
 

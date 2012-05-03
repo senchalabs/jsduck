@@ -3,9 +3,10 @@ require "jsduck/doc_formatter"
 
 describe JsDuck::InlineExamples do
 
-  def extract(doc)
-    html = JsDuck::DocFormatter.new.format(doc)
-    JsDuck::InlineExamples.new([]).extract(html)
+  def extract(doc, opts=nil)
+    html = (opts == :html) ? doc : JsDuck::DocFormatter.new.format(doc)
+    result = JsDuck::InlineExamples.new([]).extract(html)
+    (opts == :raw) ? result : result.map {|ex| ex[:code] }
   end
 
   it "finds no examples from empty string" do
@@ -55,6 +56,8 @@ And another...
     EOS
   end
 
+  # Escaping
+
   it "preserves HTML inside example" do
     extract(<<-EOS).should == ["document.write('<b>Hello</b>');\n"]
     @example
@@ -63,10 +66,26 @@ And another...
   end
 
   it "ignores links inside examples" do
-    JsDuck::InlineExamples.new([]).extract(<<-EOS).should == ["Ext.define();\n"]
+    extract(<<-EOS, :html).should == ["Ext.define();\n"]
 <pre class='inline-example '><code><a href="#!/api/Ext">Ext</a>.define();
 </code></pre>
 EOS
+  end
+
+  # Options
+
+  it "detects options after @example tag" do
+    extract(<<-EOS, :raw).should == [{:code => "foo();\n", :options => {"raw" => true, "blah" => true}}]
+    @example raw blah
+    foo();
+    EOS
+  end
+
+  it "detects no options when none of them after @example tag" do
+    extract(<<-EOS, :raw).should == [{:code => "foo();\n", :options => {}}]
+    @example
+    foo();
+    EOS
   end
 
 end

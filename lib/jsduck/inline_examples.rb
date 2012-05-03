@@ -16,7 +16,8 @@ module JsDuck
             :id => cls.full_name + "-" + i.to_s,
             :name => cls.full_name + " example #" + (i+1).to_s,
             :href => '#!/api/' + cls.full_name,
-            :code => ex,
+            :code => ex[:code],
+            :options => ex[:options],
           }
         end
       end
@@ -34,9 +35,16 @@ module JsDuck
       while !s.eos? do
         if s.check(/</)
           if s.check(@begin_example_re)
-            s.scan(@begin_example_re)
+
+            s.scan(@begin_example_re) =~ @begin_example_re
+            options = build_options_hash($1)
+
             ex = s.scan_until(@end_example_re).sub(@end_example_re, '')
-            examples << CGI.unescapeHTML(strip_tags(ex))
+
+            examples << {
+              :code => CGI.unescapeHTML(strip_tags(ex)),
+              :options => options,
+            }
           else
             s.skip(/</)
           end
@@ -46,6 +54,16 @@ module JsDuck
       end
 
       examples
+    end
+
+    private
+
+    def build_options_hash(css_classes)
+      hash = {}
+      css_classes.split(/ +/).each do |k|
+        hash[k] = true
+      end
+      hash
     end
 
     def strip_tags(str)

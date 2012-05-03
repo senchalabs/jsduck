@@ -8,6 +8,7 @@ Ext.define('Docs.model.DocTest', {
         'name',
         'href',
         'code',
+        'options',
         {name: 'status', defaultValue: 'ready'},
         'message'
     ]
