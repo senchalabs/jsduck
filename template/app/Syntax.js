@@ -21,7 +21,7 @@ Ext.define("Docs.Syntax", {
                     pre.addCls("prettyprint");
                 }
             }
-            else if (!pre.parent(".CodeMirror")) {
+            else if (!pre.parent(".CodeMirror") && !pre.hasCls("hierarchy")) {
                 // For normal pre-s add "notpretty" class so they can be
                 // distinguished in CSS from any other <pre> element
                 // that might appear on page.

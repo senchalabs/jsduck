@@ -25,6 +25,7 @@ module JsDuck
     attr_accessor :examples
     attr_accessor :stats
     attr_accessor :categories_path
+    attr_accessor :source
     attr_accessor :pretty_json
     attr_accessor :images
     attr_accessor :link_tpl
@@ -74,7 +75,7 @@ module JsDuck
       ]
       @meta_tag_paths = []
 
-      @version = "3.9.0"
+      @version = "3.9.1"
 
       # Customizing output
       @title = "Sencha Docs - Ext JS"
@@ -88,6 +89,7 @@ module JsDuck
       @examples = nil
       @stats = false
       @categories_path = nil
+      @source = true
       @pretty_json = false
       @images = []
       @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
@@ -229,6 +231,11 @@ module JsDuck
         opts.on('--categories=PATH',
           "Path to JSON file which defines categories for classes.", " ") do |path|
           @categories_path = canonical(path)
+        end
+
+        opts.on('--no-source',
+          "Turns off the output of source files.", " ") do
+          @source = false
         end
 
         opts.on('--pretty-json', "Turn on pretty-printing of JSON.", " ") do

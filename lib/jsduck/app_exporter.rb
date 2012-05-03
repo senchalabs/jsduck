@@ -6,9 +6,9 @@ module JsDuck
 
   # Exports data for Docs app.
   class AppExporter < FullExporter
-    def initialize(relations)
-      super(relations)
-      @renderer = Renderer.new
+    def initialize(relations, opts)
+      super(relations, opts)
+      @renderer = Renderer.new(opts)
     end
 
     # Returns compacted class data hash which contains an additional

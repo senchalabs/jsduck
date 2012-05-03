@@ -8,6 +8,9 @@ Ext.define("Docs.History", {
      * Initializes history management.
      */
     init: function() {
+        // allow Docs to work inside iframe
+        Ext.util.History.useTopWindow = false;
+
         Ext.util.History.init(function() {
             this.historyLoaded = true;
             this.initialNavigate();
@@ -80,7 +83,10 @@ Ext.define("Docs.History", {
             }
             else if (!this.noRepeatNav) {
                 this.noRepeatNav = true; // Prevent infinite nav loop
-                this.navigate(Ext.getCmp('doctabs').staticTabs[0].href, noHistory);
+                var firstTab = Ext.getCmp('doctabs').staticTabs[0];
+                if (firstTab) {
+                    this.navigate(firstTab.href, noHistory);
+                }
             }
         }
     },
