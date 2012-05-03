@@ -9,7 +9,7 @@ module JsDuck
   class ClassWriter
     def initialize(exporter_class, relations, opts)
       @relations = relations
-      @exporter = exporter_class.new(relations)
+      @exporter = exporter_class.new(relations, opts)
       @parallel = ParallelWrap.new(:in_processes => opts.processes)
     end
 

@@ -4,8 +4,9 @@ module JsDuck
 
   # Exporter for all the class docs.
   class FullExporter
-    def initialize(relations)
+    def initialize(relations, opts)
       @relations = relations
+      # opts parameter is here just for compatibility with other exporters
     end
 
     # Returns all data in Class object as hash.

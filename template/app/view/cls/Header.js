@@ -16,15 +16,21 @@ Ext.define('Docs.view.cls.Header', {
                 '<tpl if="private">',
                     '<span class="private">Private</span>',
                 '</tpl>',
-                '<a href="#" class="class-source-link">{name}',
-                  '<span class="class-source-tip">View source...</span>',
-                '</a>',
+                '<tpl if="Docs.data.source">',
+                    '<a href="#" class="class-source-link">{name}',
+                        '<span class="class-source-tip">View source...</span>',
+                    '</a>',
+                '<tpl else>',
+                    '<strong class="class-source-link">{name}</strong>',
+                '</tpl>',
                 '<tpl if="singleton">',
                     '<span>singleton</span>',
                 '</tpl>',
                 '{[this.renderAliases(values.aliases)]}',
             '</h1>',
-            Docs.data.showPrintButton ? '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>' : '',
+            '<tpl if="Docs.data.showPrintButton">',
+                '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>',
+            '</tpl>',
             {
                 getClass: function(cls) {
                     if (cls.component) {
@@ -58,7 +64,9 @@ Ext.define('Docs.view.cls.Header', {
             }
         );
 
-        this.on("render", this.initSourceLink, this);
+        if (Docs.data.source) {
+            this.on("render", this.initSourceLink, this);
+        }
 
         this.callParent();
     },

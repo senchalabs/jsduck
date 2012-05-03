@@ -6,6 +6,10 @@ module JsDuck
   # Ruby-side implementation of class docs Renderer.
   # Uses PhantomJS to run Docs.Renderer JavaScript.
   class Renderer
+    def initialize(opts)
+      @opts = opts
+    end
+
     def render(cls)
         @cls = cls
 
@@ -50,7 +54,7 @@ module JsDuck
         render_dependencies(:subclasses, "Subclasses"),
         render_dependencies(:mixedInto, "Mixed into"),
         render_dependencies(:uses, "Uses"),
-        render_files,
+        @opts.source ? render_files : nil,
       ]
       if items.compact.length > 0
         return ['<pre class="hierarchy">', items, '</pre>']
@@ -197,7 +201,7 @@ module JsDuck
               inherited ? "<a href='#!/api/#{owner}' rel='#{owner}' class='defined-in docClass'>#{owner}</a>" :
                           "<span class='defined-in' rel='#{owner}'>#{owner}</span>",
               "<br/>",
-              "<a href='source/#{m[:files][0][:href]}' target='_blank' class='view-source'>view source</a>",
+              @opts.source ? "<a href='source/#{m[:files][0][:href]}' target='_blank' class='view-source'>view source</a>" : "",
             "</div>",
             # method params signature or property type signature
             render_signature(m),

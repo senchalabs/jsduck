@@ -67,8 +67,10 @@ module JsDuck
         # class-formatting is done in parallel which breaks the links
         # between source files and classes. Therefore it MUST to be done
         # after writing sources which needs the links to work.
-        source_writer = SourceWriter.new(parsed_files, @parallel)
-        source_writer.write(@opts.output_dir + "/source")
+        if @opts.source
+          source_writer = SourceWriter.new(parsed_files, @parallel)
+          source_writer.write(@opts.output_dir + "/source")
+        end
         format_classes
 
         cw = ClassWriter.new(AppExporter, @relations, @opts)
