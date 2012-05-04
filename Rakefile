@@ -221,10 +221,10 @@ task :ext4 => :sass do
 end
 
 desc "Run JSDuck with example test hacks"
-task :doctests => :sass do |t, args|
+task :tests => :sass do |t, args|
   runner = JsDuckRunner.new
   runner.add_ext4
-  runner.add_options("--doctests")
+  runner.add_options("--tests")
   runner.add_debug
   runner.run
 

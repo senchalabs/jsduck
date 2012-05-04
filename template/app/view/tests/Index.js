@@ -1,10 +1,10 @@
 /**
- * The doctests page.
+ * The page for testing inline examples.
  */
-Ext.define('Docs.view.doctests.Index', {
+Ext.define('Docs.view.tests.Index', {
     extend: 'Ext.container.Container',
-    requires: ['Docs.model.DocTest'],
-    alias: 'widget.doctestsindex',
+    requires: ['Docs.model.Test'],
+    alias: 'widget.testsindex',
 
     layout: {
         type: 'vbox',
@@ -16,12 +16,12 @@ Ext.define('Docs.view.doctests.Index', {
 
     initComponent: function() {
         this.store = Ext.create('Ext.data.Store', {
-            model: 'Docs.model.DocTest',
+            model: 'Docs.model.Test',
             data: []
         });
 
         this.grid = Ext.create('Ext.grid.Panel', {
-            itemId: 'doctestsgrid',
+            itemId: 'testsgrid',
             padding: '5 0 5 0',
             autoScroll: true,
             flex: 1,
@@ -113,17 +113,17 @@ Ext.define('Docs.view.doctests.Index', {
     },
 
     /**
-     * Returns tab config for the doctests page.
+     * Returns tab config for the tests page.
      *
      * @return {Object}
      */
     getTab: function() {
-        return Docs.data.doctests ? {cls: 'doctests', href: '#!/doctests', tooltip: 'DocTests'} : false;
+        return Docs.data.tests ? {cls: 'tests', href: '#!/tests', tooltip: 'Tests'} : false;
     },
 
     /**
      * Adds new example to full list of examples.
-     * @param {Docs.model.DocTest} examples The DocTest model instance or config for it.
+     * @param {Docs.model.Test} examples The DocTest model instance or config for it.
      */
     addExamples: function(examples) {
         this.store.add(examples);
@@ -197,7 +197,7 @@ Ext.define('Docs.view.doctests.Index', {
     },
 
     /**
-     * Sets the status text displayed on doctests panel.
+     * Sets the status text displayed on tests panel.
      * @param {Boolean} ok True to show positive status.
      * @param {String} message The text to display.
      * @private
@@ -211,7 +211,7 @@ Ext.define('Docs.view.doctests.Index', {
      * Run link click handler.
      *
      * @param {Ext.grid.Panel} grid The grid that was clicked.
-     * @param {Docs.model.DocTest} record The record that was clicked.
+     * @param {Docs.model.Test} record The record that was clicked.
      * @private
      */
     runSingle: function(grid, record) {
@@ -261,7 +261,7 @@ Ext.define('Docs.view.doctests.Index', {
      *
      * @param {Ext.Component} preview The preview component.
      * @param {Object} options The event options.
-     * @param {Docs.model.DocTest} record The successful record.
+     * @param {Docs.model.Test} record The successful record.
      * @param {Object} config The test configuration.
      * @private
      */
@@ -279,7 +279,7 @@ Ext.define('Docs.view.doctests.Index', {
      * @param {Ext.Component} preview The preview component.
      * @param {Error} error The Error thrown during the example.
      * @param {Object} options The event options.
-     * @param {Docs.model.DocTest} record The successful record.
+     * @param {Docs.model.Test} record The successful record.
      * @param {Object} config The test configuration.
      * @private
      */

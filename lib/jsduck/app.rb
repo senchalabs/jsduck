@@ -86,7 +86,7 @@ module JsDuck
         end
         format_classes
 
-        if @opts.doctests
+        if @opts.tests
           examples = InlineExamples.new
           examples.add_classes(@relations)
           examples.add_guides(@assets.guides)

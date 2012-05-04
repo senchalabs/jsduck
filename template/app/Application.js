@@ -32,7 +32,7 @@ Ext.define('Docs.Application', {
         'Videos',
         'Stats',
         'Tabs',
-        'DocTests'
+        'Tests'
     ],
 
     launch: function() {

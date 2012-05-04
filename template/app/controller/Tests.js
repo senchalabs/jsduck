@@ -1,9 +1,9 @@
 /**
- * Controller for DocTest page.
+ * Controller for Inline Examples test page.
  */
-Ext.define('Docs.controller.DocTests', {
+Ext.define('Docs.controller.Tests', {
     extend: 'Docs.controller.Content',
-    baseUrl: "#!/doctests",
+    baseUrl: "#!/tests",
 
     refs: [
         {
@@ -12,7 +12,7 @@ Ext.define('Docs.controller.DocTests', {
         },
         {
             ref: 'index',
-            selector: '#doctestsindex'
+            selector: '#testsindex'
         }
     ],
 
@@ -20,7 +20,7 @@ Ext.define('Docs.controller.DocTests', {
         this.addEvents('loadIndex');
 
         this.control({
-            '#doctestsgrid': {
+            '#testsgrid': {
                 afterrender: this.loadExamples
             }
         });
@@ -33,7 +33,7 @@ Ext.define('Docs.controller.DocTests', {
     },
 
     /**
-     * True if DocTests page is available.
+     * True if Tests page is available.
      * @return {Boolean}
      */
     isActive: function() {

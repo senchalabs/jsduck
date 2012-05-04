@@ -1,7 +1,7 @@
 /**
- * Model for DocTest items
+ * Model for Test items
  */
-Ext.define('Docs.model.DocTest', {
+Ext.define('Docs.model.Test', {
     extend: 'Ext.data.Model',
     fields: [
         'id',
