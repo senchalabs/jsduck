@@ -167,7 +167,7 @@ class JsDuckRunner
       "--footer", "Ext JS 4.0 Docs - Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> {VERSION}." +
                   " <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--ignore-global",
-      "--no-warnings",
+      "--warnings", "-all",
       "--images", "#{EXT_BUILD}/docs/doc-resources",
       "--local-storage-db", "ext-4",
       "--output", "#{OUT_DIR}",
@@ -218,6 +218,17 @@ task :ext4 => :sass do
   runner.add_ext4
   runner.add_debug
   runner.run
+end
+
+desc "Run JSDuck with example test hacks"
+task :tests => :sass do |t, args|
+  runner = JsDuckRunner.new
+  runner.add_ext4
+  runner.add_options("--tests")
+  runner.add_debug
+  runner.run
+
+  system("cp -r #{EXT_BUILD} #{OUT_DIR}/extjs-build")
 end
 
 desc "Run JSDuck on Ext JS from SDK repo (for internal use at Sencha)"

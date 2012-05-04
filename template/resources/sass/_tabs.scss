@@ -46,8 +46,7 @@
       font-family: $docs-font;
       font-weight: bold;
       font-size: 11px;
-      span,
-      a {
+      span, a {
         padding-bottom: 5px;
         line-height: 16px;
         display: block;
@@ -55,10 +54,15 @@
         white-space: nowrap;
         overflow: hidden;
         float: left; }
-      a.tabUrl {
-        padding: 0 14px 0 17px;
-        width: 140px;
+      a.ov-tab {
+        overflow: hidden;
+        padding: 0 14px 0 17px; }
+      a.ov-tab-text {
         overflow: hidden; }
+      a.main-tab {
+        overflow: hidden;
+        padding: 0 14px 0 17px;
+        width: 140px; }
       span.icn {
         display: block;
         position: absolute;
@@ -99,8 +103,6 @@
       z-index: 5; } }
   .doctab.overview .m {
     z-index: 6; }
-  .doctab.overview .m a.tabUrl{
-    width: auto !important; }
   .doctab.index .m a {
     background: url(../images/tabs.png) no-repeat 1px 1px;
     padding-left: 16px; padding-right: 12px; padding-bottom: 20px; }

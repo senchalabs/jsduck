@@ -21,7 +21,8 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.examples.Index',
         'Docs.view.examples.Container',
         'Docs.view.examples.TouchContainer',
-        'Docs.view.stats.Index'
+        'Docs.view.stats.Index',
+        'Docs.view.tests.Index'
     ],
 
     id: 'viewport',
@@ -147,6 +148,10 @@ Ext.define('Docs.view.Viewport', {
                                 {
                                     xtype: 'statsindex',
                                     id: 'statsindex'
+                                },
+                                {
+                                    xtype: 'testsindex',
+                                    id: 'testsindex'
                                 },
                                 {
                                     xtype: 'commentindex',

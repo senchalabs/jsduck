@@ -10,7 +10,23 @@ Ext.define('Docs.view.examples.InlinePreview', {
     bodyPadding: '0 10',
 
     statics: {
-        iframeId: 0
+        /**
+         * @private
+         * @static
+         */
+        iframeCounter: 0,
+
+        /**
+         * Returns the next available iframeId.
+         *
+         * @return {String} iframeId
+         * @private
+         * @static
+         */
+        getNextIframeId: function() {
+            this.iframeCounter++;
+            return this.iframeCounter.toString();
+        }
     },
 
     /**
@@ -19,6 +35,29 @@ Ext.define('Docs.view.examples.InlinePreview', {
      * See docs of parent component.
      */
     options: {},
+
+    constructor: function(config) {
+        config = config || {};
+        config.iframeId = this.self.getNextIframeId();
+        config.id = 'inline-preview-' + config.iframeId;
+        this.callParent([config]);
+
+        this.addEvents([
+            /**
+             * @event previewsuccess
+             * Fired when preview was successfully created.
+             * @param {Ext.Component} preview
+             */
+            'previewsuccess',
+            /**
+             * @event previewfailure
+             * Fired when preview contains an error.
+             * @param {Ext.Component} preview
+             * @param {Error} e
+             */
+            'previewfailure'
+        ]);
+    },
 
     initComponent: function() {
         this.html = this.getHtml();
@@ -30,7 +69,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
         if (Docs.data.touchExamplesUi) {
             return Ext.create('Docs.view.examples.Device', {
                 url: "eg-iframe.html",
-                id: this.getIframeId(),
+                id: this.iframeId,
                 device: this.options.device,
                 orientation: this.options.orientation
             }).toHtml();
@@ -40,7 +79,7 @@ Ext.define('Docs.view.examples.InlinePreview', {
                 '<iframe id="{id}" style="width: 100%; height: 100%; border: 0"></iframe>'
             );
             return tpl.apply({
-                id: this.getIframeId()
+                id: this.iframeId
             });
         }
     },
@@ -51,7 +90,8 @@ Ext.define('Docs.view.examples.InlinePreview', {
      */
     update: function(code) {
         var options = this.options;
-        var iframe = document.getElementById(this.getIframeId());
+        var iframe = document.getElementById(this.iframeId);
+        var callback = Ext.Function.bind(this.iframeCallback, this);
 
         if (iframe) {
             // Something is not quite ready when onload fires.
@@ -59,20 +99,29 @@ Ext.define('Docs.view.examples.InlinePreview', {
             // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
             iframe.onload = function() {
                 Ext.Function.defer(function() {
-                    iframe.contentWindow.loadInlineExample(code, options);
+                    // Append newline to code, otherwise we might result in syntax error as
+                    // eval() doesn't like when code ends with line-comment.
+                    iframe.contentWindow.loadInlineExample(code+"\n", options, callback);
                 }, 100);
             };
             iframe.src = "eg-iframe.html";
         }
     },
 
-    // Returns iframe ID for this inline example component.
-    getIframeId: function() {
-        if (!this.iframeId) {
-            this.statics().iframeId += 1;
-            this.iframeId = "eg-iframe" + this.statics().iframeId;
+    /**
+     * Called from within iframe.
+     *
+     * @param {Boolean} success True when iframe code ran fine.
+     * @param {Error} [e] The exception object in case of failure.
+     * @private
+     */
+    iframeCallback: function(success, e) {
+        if (success) {
+            this.fireEvent("previewsuccess", this);
         }
-        return this.iframeId;
+        else {
+            this.fireEvent("previewfailure", this, e);
+        }
     },
 
     /**
@@ -80,7 +129,6 @@ Ext.define('Docs.view.examples.InlinePreview', {
      * @return {Number}
      */
     getHeight: function() {
-        return document.getElementById(this.getIframeId()).parentNode.clientHeight;
+        return document.getElementById(this.iframeId).parentNode.clientHeight;
     }
-
 });

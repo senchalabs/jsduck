@@ -34,6 +34,10 @@ Ext.define('Docs.controller.Tabs', {
             selector: '#statsindex'
         },
         {
+            ref: 'testsIndex',
+            selector: '#testsindex'
+        },
+        {
             ref: 'commentIndex',
             selector: '#commentindex'
         },
@@ -111,7 +115,8 @@ Ext.define('Docs.controller.Tabs', {
             this.getGuideIndex().getTab(),
             this.getVideoIndex().getTab(),
             this.getExampleIndex().getTab(),
-            this.getStatsIndex().getTab()
+            this.getStatsIndex().getTab(),
+            this.getTestsIndex().getTab()
         ], function(x){return x;}));
 
         // just initialize the comments tab.

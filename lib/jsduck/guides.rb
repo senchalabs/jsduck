@@ -34,13 +34,47 @@ module JsDuck
       each_item {|guide| write_guide(guide, dir) }
     end
 
-    def write_guide(guide, dir)
+    # Modified each_item that also loads HTML for each guide
+    def each_item(&block)
+      unless @loaded
+        super do |guide|
+          guide[:html] = load_guide(guide)
+        end
+        @loaded = true
+      end
+
+      super(&block)
+    end
+
+    # Modified to_array that excludes the :html from guide nodes
+    def to_array
+      @groups.map do |group|
+        {
+          "title" => group["title"],
+          "items" => group["items"].map {|g| g.select {|k, v| k != :html } }
+        }
+      end
+    end
+
+    def load_guide(guide)
       in_dir = @path + "/guides/" + guide["name"]
-      out_dir = dir + "/" + guide["name"]
       return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
 
       guide_file = in_dir + "/README.md"
       return Logger.instance.warn(:guide, "README.md not found in #{in_dir}") unless File.exists?(guide_file)
+
+      @formatter.doc_context = {:filename => guide_file, :linenr => 0}
+      name = File.basename(in_dir)
+      @formatter.img_path = "guides/#{name}"
+
+      return add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
+    end
+
+    def write_guide(guide, dir)
+      return unless guide[:html]
+
+      in_dir = @path + "/guides/" + guide["name"]
+      out_dir = dir + "/" + guide["name"]
 
       Logger.instance.log("Writing guide", out_dir)
       # Copy the whole guide dir over
@@ -49,12 +83,7 @@ module JsDuck
       # Ensure the guide has an icon
       fix_icon(out_dir)
 
-      @formatter.doc_context = {:filename => guide_file, :linenr => 0}
-      name = File.basename(in_dir)
-      @formatter.img_path = "guides/#{name}"
-      html = add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
-
-      JsonDuck.write_jsonp(out_dir+"/README.js", name, {:guide => html, :title => guide["title"]})
+      JsonDuck.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => guide[:html], :title => guide["title"]})
     end
 
     # Ensures the guide dir contains icon.png.
