@@ -14,94 +14,102 @@ Ext.define('Docs.view.doctests.Index', {
 
     padding: 10,
 
-    items: [
-        {
-            html: '<h1>Inline examples test page</h1>',
-            height: 30
-        },
-        {
-            itemId: 'testrunner',
-            height: 0
-        },
-        {
-            itemId: 'testcontainer',
-
-            layout: {
-                type: 'vbox',
-                align: 'stretch',
-                shrinkToFit: true
-            },
-
-            flex: 1,
-            items: [
-                {
-                    itemId: 'testcontrols',
-                    layout: 'hbox',
-                    items: [
-                        {
-                            html: '<b>Double-click</b> to run an example, or',
-                            margin: "5 5 5 0"
-                        },
-                        {
-                            xtype: 'button',
-                            itemId: 'runallbutton',
-                            text: 'Run All Examples',
-                            margin: 5
-                        },
-                        {
-                            itemId: 'testStatus',
-                            margin: "5 5 5 15"
-                        }
-                    ]
-                },
-                {
-                    xtype: 'grid',
-                    itemId: 'doctestsgrid',
-                    padding: '5 0 5 0',
-                    autoScroll: true,
-                    flex: 1,
-                    columns: [
-                        {
-                            xtype:'templatecolumn',
-                            text: 'Name',
-                            width: 300,
-                            tpl:'<a href="{href}">{name}</a>'
-                        },
-                        {
-                            xtype:'templatecolumn',
-                            text: 'Status',
-                            width: 80,
-                            tpl: '<span class="doc-test-{status}">{status}</span>'
-                        },
-                        {
-                            text: 'Message',
-                            flex: 1,
-                            dataIndex: 'message'
-                        }
-                    ]
-                }
-            ]
-        }
-    ],
-
     initComponent: function() {
-        var testConfig = this.items[this.items.length - 1];
-        var gridConfig = testConfig.items[testConfig.items.length - 1];
-        gridConfig.store = this.store = Ext.create('Ext.data.Store', {
+        this.store = Ext.create('Ext.data.Store', {
             model: 'Docs.model.DocTest',
             data: []
         });
 
+        this.grid = Ext.create('Ext.grid.Panel', {
+            itemId: 'doctestsgrid',
+            padding: '5 0 5 0',
+            autoScroll: true,
+            flex: 1,
+            store: this.store,
+            selModel: {
+                mode: "MULTI"
+            },
+            columns: [
+                {
+                    xtype:'templatecolumn',
+                    text: 'Name',
+                    width: 300,
+                    tpl:'<a href="{href}">{name}</a>'
+                },
+                {
+                    xtype:'templatecolumn',
+                    text: 'Status',
+                    width: 80,
+                    tpl: '<span class="doc-test-{status}">{status}</span>'
+                },
+                {
+                    text: 'Message',
+                    flex: 1,
+                    dataIndex: 'message'
+                }
+            ]
+        });
+
+        this.items = [
+            {
+                html: '<h1>Inline examples test page</h1>',
+                height: 30
+            },
+            {
+                itemId: 'testrunner',
+                height: 0
+            },
+            {
+                itemId: 'testcontainer',
+
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch',
+                    shrinkToFit: true
+                },
+
+                flex: 1,
+                items: [
+                    {
+                        itemId: 'testcontrols',
+                        layout: 'hbox',
+                        items: [
+                            {
+                                html: '<b>Double-click</b> to run an example, or',
+                                margin: "5 5 5 0"
+                            },
+                            {
+                                xtype: 'button',
+                                itemId: 'run-selected-button',
+                                text: 'Run Selected',
+                                margin: 5
+                            },
+                            {
+                                html: 'or',
+                                margin: 5
+                            },
+                            {
+                                xtype: 'button',
+                                itemId: 'run-all-button',
+                                text: 'Run All Examples',
+                                margin: 5
+                            },
+                            {
+                                itemId: 'testStatus',
+                                margin: "5 5 5 15"
+                            }
+                        ]
+                    },
+                    this.grid
+                ]
+            }
+        ];
+
         this.callParent(arguments);
 
-        var runAllButton = Ext.ComponentQuery.query('#runallbutton', this)[0];
-        runAllButton.on('click', this.onRunAllButtonClick, this);
-
-        var testGrid = Ext.ComponentQuery.query('#doctestsgrid', this)[0];
-        testGrid.on('itemdblclick', this.onRunLinkClick, this, {
-            delegate: '.doc-test-run',
-            stopEvent: true
-        });
+        this.down("#run-all-button").on('click', this.runAll, this);
+        this.down("#run-selected-button").on('click', this.runSelected, this);
+        this.grid.on('itemdblclick', this.runSingle, this);
     },
 
     /**
@@ -202,7 +210,7 @@ Ext.define('Docs.view.doctests.Index', {
      * @param {Docs.model.DocTest} record The record that was clicked.
      * @private
      */
-    onRunLinkClick: function(grid, record) {
+    runSingle: function(grid, record) {
         this.runExample({
             pass: 0,
             fail: 0,
@@ -216,11 +224,26 @@ Ext.define('Docs.view.doctests.Index', {
      *
      * @private
      */
-    onRunAllButtonClick: function() {
+    runAll: function() {
         var examples = [];
         this.store.each(function(record) {
             examples.push(record);
         });
+        this.runExample({
+            pass: 0,
+            fail: 0,
+            total: examples.length,
+            examples: examples
+        });
+    },
+
+    /**
+     * RunSelected button click handler.
+     *
+     * @private
+     */
+    runSelected: function() {
+        var examples = this.grid.getSelectionModel().getSelection();
         this.runExample({
             pass: 0,
             fail: 0,
