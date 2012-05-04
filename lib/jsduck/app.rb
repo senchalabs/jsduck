@@ -80,7 +80,10 @@ module JsDuck
         format_classes
 
         if @opts.doctests
-          InlineExamples.new.add_classes(@relations).write(@opts.output_dir+"/inline-examples.js")
+          examples = InlineExamples.new
+          examples.add_classes(@relations)
+          examples.add_guides(@assets.guides)
+          examples.write(@opts.output_dir+"/inline-examples.js")
         end
 
         cw = ClassWriter.new(AppExporter, @relations, @opts)

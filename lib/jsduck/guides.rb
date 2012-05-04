@@ -26,21 +26,34 @@ module JsDuck
       build_map_by_name("Two guides have the same name")
       @formatter = formatter
       @opts = opts
+      @loaded_guides = {}
     end
 
     # Writes all guides to given dir in JsonP format
     def write(dir)
       FileUtils.mkdir(dir) unless File.exists?(dir)
-      each_item {|guide| write_guide(guide, dir) }
+      each_guide_with_html {|guide, html| write_guide(guide, dir, html) }
     end
 
-    def write_guide(guide, dir)
+    def load_guide(guide)
+      return @loaded_guides[guide["name"]] if @loaded_guides[guide["name"]]
+
       in_dir = @path + "/guides/" + guide["name"]
-      out_dir = dir + "/" + guide["name"]
       return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
 
       guide_file = in_dir + "/README.md"
       return Logger.instance.warn(:guide, "README.md not found in #{in_dir}") unless File.exists?(guide_file)
+
+      @formatter.doc_context = {:filename => guide_file, :linenr => 0}
+      name = File.basename(in_dir)
+      @formatter.img_path = "guides/#{name}"
+
+      return @loaded_guides[guide["name"]] = add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
+    end
+
+    def write_guide(guide, dir, html)
+      in_dir = @path + "/guides/" + guide["name"]
+      out_dir = dir + "/" + guide["name"]
 
       Logger.instance.log("Writing guide", out_dir)
       # Copy the whole guide dir over
@@ -49,12 +62,16 @@ module JsDuck
       # Ensure the guide has an icon
       fix_icon(out_dir)
 
-      @formatter.doc_context = {:filename => guide_file, :linenr => 0}
-      name = File.basename(in_dir)
-      @formatter.img_path = "guides/#{name}"
-      html = add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
+      JsonDuck.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => html, :title => guide["title"]})
+    end
 
-      JsonDuck.write_jsonp(out_dir+"/README.js", name, {:guide => html, :title => guide["title"]})
+    # Loops over all guides calling the block with guide and its
+    # processed HTML contents
+    def each_guide_with_html
+      each_item do |guide|
+        html = load_guide(guide)
+        yield guide, html if html
+      end
     end
 
     # Ensures the guide dir contains icon.png.

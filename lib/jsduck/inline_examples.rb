@@ -28,6 +28,23 @@ module JsDuck
       self
     end
 
+    # Extracts inline examples from guides
+    def add_guides(guides)
+      guides.each_guide_with_html do |guide, html|
+        extract(html).each_with_index do |ex, i|
+          @examples << {
+            :id => guide["name"] + "-" + i.to_s,
+            :name => guide["title"] + " example #" + (i+1).to_s,
+            :href => '#!/guide/' + guide["name"],
+            :code => ex[:code],
+            :options => ex[:options],
+          }
+        end
+      end
+
+      self
+    end
+
     # Writes all found examples to .js file
     def write(filename)
       JsonDuck.write_jsonp(filename, "__inline_examples__", @examples)
