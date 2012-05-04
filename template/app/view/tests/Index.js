@@ -3,7 +3,10 @@
  */
 Ext.define('Docs.view.tests.Index', {
     extend: 'Ext.container.Container',
-    requires: ['Docs.model.Test'],
+    requires: [
+        'Docs.model.Test',
+        'Docs.view.tests.BatchRunner'
+    ],
     alias: 'widget.testsindex',
 
     layout: {
@@ -47,17 +50,29 @@ Ext.define('Docs.view.tests.Index', {
                     flex: 1,
                     dataIndex: 'message'
                 }
-            ]
+            ],
+            listeners: {
+                itemdblclick: function(grid, record) {
+                    this.batchRunner.run([record]);
+                },
+                scope: this
+            }
+        });
+
+        this.batchRunner = Ext.create('Docs.view.tests.BatchRunner', {
+            height: 0,
+            listeners: {
+                start: this.disable,
+                finish: this.enable,
+                statuschange: this.updateTestStatus,
+                scope: this
+            }
         });
 
         this.items = [
             {
                 html: '<h1>Inline examples test page</h1>',
                 height: 30
-            },
-            {
-                itemId: 'testrunner',
-                height: 0
             },
             {
                 itemId: 'testcontainer',
@@ -82,7 +97,11 @@ Ext.define('Docs.view.tests.Index', {
                                 xtype: 'button',
                                 itemId: 'run-selected-button',
                                 text: 'Run Selected',
-                                margin: 5
+                                margin: 5,
+                                handler: function() {
+                                    this.batchRunner.run(this.grid.getSelectionModel().getSelection());
+                                },
+                                scope: this
                             },
                             {
                                 html: 'or',
@@ -92,7 +111,11 @@ Ext.define('Docs.view.tests.Index', {
                                 xtype: 'button',
                                 itemId: 'run-all-button',
                                 text: 'Run All Examples',
-                                margin: 5
+                                margin: 5,
+                                handler: function() {
+                                    this.batchRunner.run(this.store.getRange());
+                                },
+                                scope: this
                             },
                             {
                                 itemId: 'testStatus',
@@ -102,14 +125,11 @@ Ext.define('Docs.view.tests.Index', {
                     },
                     this.grid
                 ]
-            }
+            },
+            this.batchRunner
         ];
 
         this.callParent(arguments);
-
-        this.down("#run-all-button").on('click', this.runAll, this);
-        this.down("#run-selected-button").on('click', this.runSelected, this);
-        this.grid.on('itemdblclick', this.runSingle, this);
     },
 
     /**
@@ -130,70 +150,10 @@ Ext.define('Docs.view.tests.Index', {
         this.setStatus(true, this.store.getCount() + " examples loaded.");
     },
 
-    /**
-     * Executes an example.
-     *
-     * @param {Object} config The test configuration.
-     * @private
-     */
-    runExample: function(config) {
-        if (!config.examples || config.examples.length < 1) {
-            return;
-        }
-
-        if (config.fail + config.pass === 0) {
-            this.disable();
-        }
-
-        this.clearTestRunner();
-        var testRunner = this.getComponent('testrunner');
-        var record = config.examples.shift();
-        var options = record.get('options');
-        options.preview = false; // always disable the preview option
-
-        // Override alert() with empty function, so we don't get
-        // disturbing popups during test runs.
-        var safeAlert = "var alert = function(){};\n";
-
-        var example = testRunner.add(
-            Ext.create('Docs.view.examples.Inline', {
-                cls: 'doc-test-preview',
-                height: 0,
-                value: safeAlert + record.get('code'),
-                options: options
-            })
-        );
-
-        example.on('previewsuccess', Ext.bind(this.onPreviewSuccess, this, [record, config], true), this);
-        example.on('previewfailure', Ext.bind(this.onPreviewFailure, this, [record, config], true), this);
-        example.showPreview();
-    },
-
-    /**
-     * Removes child elements from testrunner component.
-     *
-     * @private
-     */
-    clearTestRunner: function() {
-        var testRunner = this.getComponent('testrunner');
-        testRunner.removeAll();
-    },
-
-    /**
-     * Renders test result to dom.
-     *
-     * @param {Object} config The test configuration.
-     * @private
-     */
-    showResult: function(config) {
-        var totalTested = config.pass+config.fail;
-        this.setStatus(config.fail === 0, totalTested + '/' + config.total + ' examples tested, ' + config.fail + ' failures');
-
-        if (config.examples.length < 1) {
-            this.enable();
-        } else {
-            this.runExample(config);
-        }
+    // updates current running status of tests
+    updateTestStatus: function(status) {
+        var totalTested = status.pass + status.fail;
+        this.setStatus(status.fail === 0, totalTested + '/' + status.total + ' examples tested, ' + status.fail + ' failures');
     },
 
     /**
@@ -205,90 +165,6 @@ Ext.define('Docs.view.tests.Index', {
     setStatus: function(ok, message) {
         var cls = ok ? 'doc-test-success' : 'doc-test-failure';
         this.down("#testStatus").update('<span class="' + cls + '">' + message + '</span>');
-    },
-
-    /**
-     * Run link click handler.
-     *
-     * @param {Ext.grid.Panel} grid The grid that was clicked.
-     * @param {Docs.model.Test} record The record that was clicked.
-     * @private
-     */
-    runSingle: function(grid, record) {
-        this.runExample({
-            pass: 0,
-            fail: 0,
-            total: 1,
-            examples: [record]
-        });
-    },
-
-    /**
-     * RunAll button click handler.
-     *
-     * @private
-     */
-    runAll: function() {
-        var examples = [];
-        this.store.each(function(record) {
-            examples.push(record);
-        });
-        this.runExample({
-            pass: 0,
-            fail: 0,
-            total: examples.length,
-            examples: examples
-        });
-    },
-
-    /**
-     * RunSelected button click handler.
-     *
-     * @private
-     */
-    runSelected: function() {
-        var examples = this.grid.getSelectionModel().getSelection();
-        this.runExample({
-            pass: 0,
-            fail: 0,
-            total: examples.length,
-            examples: examples
-        });
-    },
-
-    /**
-     * previewsuccess event handler
-     *
-     * @param {Ext.Component} preview The preview component.
-     * @param {Object} options The event options.
-     * @param {Docs.model.Test} record The successful record.
-     * @param {Object} config The test configuration.
-     * @private
-     */
-    onPreviewSuccess: function(preview, options, record, config) {
-        this.clearTestRunner();
-        record.set('status', 'success');
-        record.commit();
-        config.pass++;
-        this.showResult(config);
-    },
-
-    /**
-     * previewfailure event handler
-     *
-     * @param {Ext.Component} preview The preview component.
-     * @param {Error} error The Error thrown during the example.
-     * @param {Object} options The event options.
-     * @param {Docs.model.Test} record The successful record.
-     * @param {Object} config The test configuration.
-     * @private
-     */
-    onPreviewFailure: function(preview, e, obj, record, config) {
-        this.clearTestRunner();
-        record.set('status', 'failure');
-        record.set('message', e.toString());
-        record.commit();
-        config.fail++;
-        this.showResult(config);
     }
+
 });
