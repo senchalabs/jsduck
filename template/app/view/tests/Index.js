@@ -138,7 +138,7 @@ Ext.define('Docs.view.tests.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.data.tests ? {cls: 'tests', href: '#!/tests', tooltip: 'Tests'} : false;
+        return Docs.data.tests ? {cls: 'tests', href: '#!/tests', tooltip: 'Tests', text: "Tests"} : false;
     },
 
     /**
