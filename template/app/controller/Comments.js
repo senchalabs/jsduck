@@ -390,7 +390,8 @@ Ext.define('Docs.controller.Comments', {
                         this.fireEvent('add', target);
                     }
                     data.comment.id = data.comment._id;
-                    Docs.view.Comments.commentTpl.insertBefore(commentEl, data.comment);
+                    var com = Docs.view.Comments.commentTpl.insertBefore(commentEl, data.comment);
+                    Docs.Syntax.highlight(com);
                     commentEl.remove();
                 } else {
                     Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
@@ -456,6 +457,7 @@ Ext.define('Docs.controller.Comments', {
                 if (data.success) {
                     var contentEl = comment.down('.content');
                     contentEl.update(data.content);
+                    Docs.Syntax.highlight(contentEl);
                 }
             },
             scope: this
@@ -643,8 +645,11 @@ Ext.define('Docs.controller.Comments', {
         }
 
         if (opts.append) {
-            var list = comments.down('.comment-list');
-            Docs.view.Comments.appendCommentsTpl.append(list, data);
+            // append comments as new div so we can highlight it separately
+            var div = document.createElement("div");
+            Docs.view.Comments.appendCommentsTpl.append(div, data);
+            comments.down('.comment-list').appendChild(div);
+            Docs.Syntax.highlight(div);
 
             this.updateCommentsPager(comments, data);
         } else {
