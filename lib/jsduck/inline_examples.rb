@@ -30,8 +30,8 @@ module JsDuck
 
     # Extracts inline examples from guides
     def add_guides(guides)
-      guides.each_guide_with_html do |guide, html|
-        extract(html).each_with_index do |ex, i|
+      guides.each_item do |guide|
+        extract(guide[:html]).each_with_index do |ex, i|
           @examples << {
             :id => guide["name"] + "-" + i.to_s,
             :name => guide["title"] + " example #" + (i+1).to_s,

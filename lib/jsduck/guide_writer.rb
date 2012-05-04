@@ -24,23 +24,22 @@ module JsDuck
     private
 
     def write_stdout
-      json = @parallel.map(all_guides) {|g| @exporter.export_guide(g[0], g[1]) }.compact
+      json = @parallel.map(all_guides) {|guide| @exporter.export_guide(guide) }.compact
       puts JsonDuck.generate(json)
     end
 
     def write_dir(dir, extension)
       FileUtils.mkdir(dir) unless File.exists?(dir)
-      @parallel.each(all_guides) do |g|
-        name = g[0]["name"]
-        filename = dir + "/" + name + extension
+      @parallel.each(all_guides) do |guide|
+        filename = dir + "/" + guide["name"] + extension
         Logger.instance.log("Writing guide", filename)
-        json = @exporter.export_guide(g[0], g[1])
+        json = @exporter.export_guide(guide)
         # skip file if exporter returned nil
         if json
           if extension == ".json"
             JsonDuck.write_json(filename, json)
           elsif extension == ".js"
-            JsonDuck.write_jsonp(filename, name, json)
+            JsonDuck.write_jsonp(filename, guide["name"], json)
           else
             throw "Unexpected file extension: #{extension}"
           end
@@ -49,11 +48,9 @@ module JsDuck
     end
 
     def all_guides
-      guides = []
-      @guides.each_guide_with_html do |guide, html|
-        guides << [guide, html]
-      end
-      guides
+      arr = []
+      @guides.each_item {|g| arr << g }
+      arr
     end
 
   end

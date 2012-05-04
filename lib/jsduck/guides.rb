@@ -26,18 +26,37 @@ module JsDuck
       build_map_by_name("Two guides have the same name")
       @formatter = formatter
       @opts = opts
-      @loaded_guides = {}
     end
 
     # Writes all guides to given dir in JsonP format
     def write(dir)
       FileUtils.mkdir(dir) unless File.exists?(dir)
-      each_guide_with_html {|guide, html| write_guide(guide, dir, html) }
+      each_item {|guide| write_guide(guide, dir) }
+    end
+
+    # Modified each_item that also loads HTML for each guide
+    def each_item(&block)
+      unless @loaded
+        super do |guide|
+          guide[:html] = load_guide(guide)
+        end
+        @loaded = true
+      end
+
+      super(&block)
+    end
+
+    # Modified to_array that excludes the :html from guide nodes
+    def to_array
+      @groups.map do |group|
+        {
+          "title" => group["title"],
+          "items" => group["items"].map {|g| g.select {|k, v| k != :html } }
+        }
+      end
     end
 
     def load_guide(guide)
-      return @loaded_guides[guide["name"]] if @loaded_guides[guide["name"]]
-
       in_dir = @path + "/guides/" + guide["name"]
       return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
 
@@ -48,10 +67,12 @@ module JsDuck
       name = File.basename(in_dir)
       @formatter.img_path = "guides/#{name}"
 
-      return @loaded_guides[guide["name"]] = add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
+      return add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
     end
 
-    def write_guide(guide, dir, html)
+    def write_guide(guide, dir)
+      return unless guide[:html]
+
       in_dir = @path + "/guides/" + guide["name"]
       out_dir = dir + "/" + guide["name"]
 
@@ -62,16 +83,7 @@ module JsDuck
       # Ensure the guide has an icon
       fix_icon(out_dir)
 
-      JsonDuck.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => html, :title => guide["title"]})
-    end
-
-    # Loops over all guides calling the block with guide and its
-    # processed HTML contents
-    def each_guide_with_html
-      each_item do |guide|
-        html = load_guide(guide)
-        yield guide, html if html
-      end
+      JsonDuck.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => guide[:html], :title => guide["title"]})
     end
 
     # Ensures the guide dir contains icon.png.

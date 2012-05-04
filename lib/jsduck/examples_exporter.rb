@@ -36,8 +36,8 @@ module JsDuck
     end
 
     # Returns hash of guide name and inline examples
-    def export_guide(guide, html)
-      examples = @inline_examples.extract(html)
+    def export_guide(guide)
+      examples = @inline_examples.extract(guide[:html] || "")
       if examples.length > 0
         {
           :name => guide["name"],
