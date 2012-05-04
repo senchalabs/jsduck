@@ -28,7 +28,20 @@ module JsDuck
       if examples.length > 0
         {
           :name => cls[:name],
-          :examples => @inline_examples.extract(cls[:doc]),
+          :examples => examples,
+        }
+      else
+        nil
+      end
+    end
+
+    # Returns hash of guide name and inline examples
+    def export_guide(guide, html)
+      examples = @inline_examples.extract(html)
+      if examples.length > 0
+        {
+          :name => guide["name"],
+          :examples => examples,
         }
       else
         nil

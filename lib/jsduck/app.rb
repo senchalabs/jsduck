@@ -22,6 +22,7 @@ require 'jsduck/full_exporter'
 require 'jsduck/app_exporter'
 require 'jsduck/examples_exporter'
 require 'jsduck/inline_examples'
+require 'jsduck/guide_writer'
 require 'fileutils'
 
 module JsDuck
@@ -62,6 +63,10 @@ module JsDuck
         }
         cw = ClassWriter.new(exporters[@opts.export], @relations, @opts)
         cw.write(@opts.output_dir, ".json")
+        if @opts.export == :examples
+          gw = GuideWriter.new(exporters[@opts.export], @assets.guides, @opts)
+          gw.write(@opts.output_dir, ".json")
+        end
       else
         FileUtils.rm_rf(@opts.output_dir)
         TemplateDir.new(@opts).write
