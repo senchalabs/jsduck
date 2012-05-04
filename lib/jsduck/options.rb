@@ -223,11 +223,6 @@ module JsDuck
           @examples = canonical(path)
         end
 
-        opts.on('--stats',
-          "Creates page with all kinds of statistics. Experimental!", " ") do
-          @stats = true
-        end
-
         opts.on('--categories=PATH',
           "Path to JSON file which defines categories for classes.", " ") do |path|
           @categories_path = canonical(path)
@@ -294,8 +289,13 @@ module JsDuck
           @examples_base_url = path
         end
 
-        opts.on('--tests', "Creates infrastructure for running tests. Experimental!", " ") do
+        opts.on('--tests', "Creates page for testing inline examples.", " ") do
           @tests = true
+        end
+
+        opts.on('--stats',
+          "Creates page with all kinds of statistics. Experimental!", " ") do
+          @stats = true
         end
 
         opts.separator "Debugging:"
