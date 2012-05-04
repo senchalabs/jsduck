@@ -7,6 +7,7 @@ module JsDuck
   # It produces the following structure:
   #
   # {
+  #   :type => :class,  # can also be :guide
   #   :name => "Panel",
   #   :examples => [
   #     {:code => "bla bla", :options => {}},
@@ -27,6 +28,7 @@ module JsDuck
       examples = @inline_examples.extract(cls[:doc])
       if examples.length > 0
         {
+          :type => :class,
           :name => cls[:name],
           :examples => examples,
         }
@@ -40,6 +42,7 @@ module JsDuck
       examples = @inline_examples.extract(guide[:html] || "")
       if examples.length > 0
         {
+          :type => :guide,
           :name => guide["name"],
           :examples => examples,
         }
