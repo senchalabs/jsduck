@@ -23,6 +23,7 @@ require 'jsduck/app_exporter'
 require 'jsduck/examples_exporter'
 require 'jsduck/inline_examples'
 require 'jsduck/guide_writer'
+require 'jsduck/stdout'
 require 'fileutils'
 
 module JsDuck
@@ -67,6 +68,7 @@ module JsDuck
           gw = GuideWriter.new(exporters[@opts.export], @assets.guides, @opts)
           gw.write(@opts.output_dir, ".json")
         end
+        Stdout.instance.flush
       else
         FileUtils.rm_rf(@opts.output_dir)
         TemplateDir.new(@opts).write

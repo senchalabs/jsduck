@@ -1,6 +1,6 @@
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
-require 'jsduck/json_duck'
+require 'jsduck/stdout'
 require 'fileutils'
 
 module JsDuck
@@ -25,7 +25,7 @@ module JsDuck
 
     def write_stdout
       json = @parallel.map(all_guides) {|guide| @exporter.export_guide(guide) }.compact
-      puts JsonDuck.generate(json)
+      Stdout.instance.add(json)
     end
 
     def write_dir(dir, extension)
