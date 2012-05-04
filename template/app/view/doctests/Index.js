@@ -151,11 +151,15 @@ Ext.define('Docs.view.doctests.Index', {
         var options = record.get('options');
         options.preview = false; // always disable the preview option
 
+        // Override alert() with empty function, so we don't get
+        // disturbing popups during test runs.
+        var safeAlert = "var alert = function(){};\n";
+
         var example = testRunner.add(
             Ext.create('Docs.view.examples.Inline', {
                 cls: 'doc-test-preview',
                 height: 0,
-                value: record.get('code'),
+                value: safeAlert + record.get('code'),
                 options: options
             })
         );
