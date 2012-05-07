@@ -80,6 +80,9 @@ module JsDuck
       # Copy private to meta
       h[:meta][:private] = h[:private] if h[:private]
 
+      # Remember auto-detection info
+      h[:autodetected] = code[:autodetected] if code[:autodetected]
+
       h
     end
 

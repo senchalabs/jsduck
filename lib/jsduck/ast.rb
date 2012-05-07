@@ -244,8 +244,8 @@ module JsDuck
         if docset
           docset[:code] = cfg
         else
-          cfg[:inheritdoc] = {:no_warnings => true}
-          cfg[:private] = :inherit
+          cfg[:inheritdoc] = {}
+          cfg[:autodetected] = true
           configs << cfg
         end
       end

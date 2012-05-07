@@ -39,10 +39,8 @@ module JsDuck
     # For auto-detected members/classes (which have @private == :inherit)
     # Use the visibility from parent class (defaulting to private when no parent).
     def resolve_visibility(m, parent)
-      if m[:private] == :inherit
-        if parent
-          m[:meta][:private] = m[:private] = parent[:private]
-        else
+      if m[:autodetected]
+        if !parent || parent[:private]
           m[:meta][:private] = m[:private] = true
         end
       end
@@ -74,7 +72,7 @@ module JsDuck
 
         # Warn when no parent or mixins at all
         if !parent_cls && mixins.length == 0
-          warn("parent class not found", m) unless inherit[:no_warnings]
+          warn("parent class not found", m) unless m[:autodetected]
           return nil
         end
 
@@ -93,7 +91,7 @@ module JsDuck
 
         # Only when both parent and mixins fail, throw warning
         if !parent
-          warn("parent member not found", m) unless inherit[:no_warnings]
+          warn("parent member not found", m) unless m[:autodetected]
           return nil
         end
       end
