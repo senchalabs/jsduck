@@ -36,12 +36,14 @@ describe JsDuck::Aggregator do
       cfg[0][:inheritdoc].should == {:no_warnings => true}
     end
 
-    it "sets :private flag on config" do
-      cfg[0][:private].should == true
+    # The inheriting of :private will be solved by InheritDoc class.
+
+    it "sets :private flag on config is :inherit" do
+      cfg[0][:private].should == :inherit
     end
 
-    it "sets meta :private flag on config" do
-      cfg[0][:meta][:private].should == true
+    it "sets :private flag on config is :inherit (meta)" do
+      cfg[0][:meta][:private].should == :inherit
     end
   end
 

@@ -21,12 +21,31 @@ module JsDuck
       end
     end
 
+    private
+
     # Copy over doc/params/return from parent member.
     def resolve(m)
       parent = find_parent(m)
-      m[:doc] = (m[:doc] + "\n\n" + parent[:doc]).strip
-      m[:params] = parent[:params] if parent[:params]
-      m[:return] = parent[:return] if parent[:return]
+
+      if parent
+        m[:doc] = (m[:doc] + "\n\n" + parent[:doc]).strip
+        m[:params] = parent[:params] if parent[:params]
+        m[:return] = parent[:return] if parent[:return]
+      end
+
+      resolve_visibility(m, parent)
+    end
+
+    # For auto-detected members/classes (which have @private == :inherit)
+    # Use the visibility from parent class (defaulting to private when no parent).
+    def resolve_visibility(m, parent)
+      if m[:private] == :inherit
+        if parent
+          m[:meta][:private] = m[:private] = parent[:private]
+        else
+          m[:meta][:private] = m[:private] = true
+        end
+      end
     end
 
     # Finds parent member of the given member.  When @inheritdoc names
@@ -56,7 +75,7 @@ module JsDuck
         # Warn when no parent or mixins at all
         if !parent_cls && mixins.length == 0
           warn("parent class not found", m) unless inherit[:no_warnings]
-          return m
+          return nil
         end
 
         # First check for the member in all mixins, because members
@@ -75,7 +94,7 @@ module JsDuck
         # Only when both parent and mixins fail, throw warning
         if !parent
           warn("parent member not found", m) unless inherit[:no_warnings]
-          return m
+          return nil
         end
       end
 
@@ -90,7 +109,10 @@ module JsDuck
     # Copy over doc from parent class.
     def resolve_class(cls)
       parent = find_class_parent(cls)
-      cls[:doc] = (cls[:doc] + "\n\n" + parent[:doc]).strip
+
+      if parent
+        cls[:doc] = (cls[:doc] + "\n\n" + parent[:doc]).strip
+      end
     end
 
     def find_class_parent(cls)
@@ -114,7 +136,7 @@ module JsDuck
       msg = "@inheritdoc #{item[:inheritdoc][:cls]}"+ (i_member ? "#" + i_member : "") + " - " + msg
       Logger.instance.warn(:inheritdoc, msg, context[:filename], context[:linenr])
 
-      return item
+      return nil
     end
 
   end

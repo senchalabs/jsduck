@@ -546,10 +546,86 @@ describe JsDuck::Aggregator do
         });
       EOF
       @cls = @docs["Child"]
+      @cfg = @cls[:members][:cfg][0]
     end
 
     it "inherits docs from parent" do
-      @cls[:members][:cfg][0][:doc].should == "My config."
+      @cfg[:doc].should == "My config."
+    end
+
+    it "inherits being public from parent" do
+      @cfg[:private].should == nil
+    end
+
+    it "inherits being public from parent (meta)" do
+      @cfg[:meta][:private].should == nil
+    end
+  end
+
+  describe "autoinherit with config:{} through two parents" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            config: {
+                /**
+                 * My config.
+                 */
+                foo: 5
+            }
+        });
+        /** */
+        Ext.define("Middle", {
+            extend: "Parent",
+            config: {
+                foo: 7
+            }
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Middle",
+            config: {
+                foo: 10
+            }
+        });
+      EOF
+      @cls = @docs["Child"]
+      @cfg = @cls[:members][:cfg][0]
+    end
+
+    it "inherits docs from parent" do
+      @cfg[:doc].should == "My config."
+    end
+
+    it "inherits being public from parent" do
+      @cfg[:private].should == nil
+    end
+
+    it "inherits being public from parent (meta)" do
+      @cfg[:meta][:private].should == nil
+    end
+  end
+
+  describe "autoinherit with config:{} and no parent" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Child", {
+            config: {
+                foo: 10
+            }
+        });
+      EOF
+      @cls = @docs["Child"]
+      @cfg = @cls[:members][:cfg][0]
+    end
+
+    it "becomes private" do
+      @cfg[:private].should == true
+    end
+
+    it "becomes private (meta)" do
+      @cfg[:meta][:private].should == true
     end
   end
 
