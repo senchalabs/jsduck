@@ -130,6 +130,7 @@
       border: auto; }
     .CodeMirror .CodeMirror-scroll,
     textarea {
+      height: auto;
       min-height: 8em; }
     input.sub {
       @include green-button();
