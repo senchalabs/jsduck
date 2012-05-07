@@ -45,6 +45,49 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "detecting Ext.define() with cachedConfig in code" do
+    let(:cfg) do
+      parse(<<-EOS)[0][:members][:cfg]
+        /**
+         * Some documentation.
+         */
+        Ext.define("MyClass", {
+            cachedConfig: {
+                foo: 42,
+                bar: "hello"
+            }
+        });
+      EOS
+    end
+
+    it "finds also two configs exactly like with config:" do
+      cfg.length.should == 2
+    end
+  end
+
+  describe "detecting Ext.define() with both config and cachedConfig" do
+    let(:cfg) do
+      parse(<<-EOS)[0][:members][:cfg]
+        /**
+         * Some documentation.
+         */
+        Ext.define("MyClass", {
+            cachedConfig: {
+                foo: 42,
+                bar: "hello"
+            },
+            config: {
+                baz: /fafa/
+            }
+        });
+      EOS
+    end
+
+    it "merges all configs together" do
+      cfg.length.should == 3
+    end
+  end
+
   describe "detecting Ext.define() with commented config" do
     let(:docs) do
       parse(<<-EOS)
