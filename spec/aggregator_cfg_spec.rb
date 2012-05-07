@@ -9,22 +9,22 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
-  shared_examples_for "config" do
-    let(:cfg) do
-      parse(<<-EOS)[0][:members][:cfg]
-        /**
-         * Some documentation.
-         */
-        Ext.define("MyClass", {
-            #{propertyName}: {
-                foo: 42,
-                /** Docs for bar */
-                bar: "hello"
-            }
-        });
-      EOS
-    end
+  def parse_config_code(propertyName)
+    parse(<<-EOS)[0][:members][:cfg]
+      /**
+       * Some documentation.
+       */
+      Ext.define("MyClass", {
+          #{propertyName}: {
+              foo: 42,
+              /** Docs for bar */
+              bar: "hello"
+          }
+      });
+    EOS
+  end
 
+  shared_examples_for "config" do
     # Generic tests
 
     it "finds configs" do
@@ -35,63 +35,80 @@ describe JsDuck::Aggregator do
       cfg.length.should == 2
     end
 
-    # auto-detected config
+    describe "auto-detected config" do
+      it "with :inheritdoc flag" do
+        cfg[0][:inheritdoc].should == {}
+      end
 
-    it "sets :inheritdoc flag on config" do
-      cfg[0][:inheritdoc].should == {}
+      it "with :accessor flag" do
+        cfg[0][:accessor].should == true
+      end
+
+      it "with :autodetected flag" do
+        cfg[0][:autodetected].should == true
+      end
     end
 
-    it "sets :accessor flag on config" do
-      cfg[0][:accessor].should == true
-    end
+    describe "documented config" do
+      it "with docs" do
+        cfg[1][:doc].should == "Docs for bar"
+      end
 
-    it "sets :autodetected flag on config" do
-      cfg[0][:autodetected].should == true
-    end
+      it "with owner" do
+        cfg[1][:owner].should == "MyClass"
+      end
 
-    # config with plain doc-comment
+      it "as public" do
+        cfg[1][:private].should_not == true
+      end
 
-    it "detects the config with docs" do
-      cfg[1][:doc].should == "Docs for bar"
-    end
-
-    it "detects owner of the config" do
-      cfg[1][:owner].should == "MyClass"
-    end
-
-    it "detects the config as public" do
-      cfg[1][:private].should_not == true
-    end
-
-    it "detects the config accessor" do
-      cfg[1][:accessor].should == true
+      it "with :accessor flag" do
+        cfg[1][:accessor].should == true
+      end
     end
   end
 
   describe "detecting Ext.define() with config:" do
-    let(:propertyName) { "config" }
+    let(:cfg) { parse_config_code("config") }
 
     it_should_behave_like "config"
   end
 
   describe "detecting Ext.define() with cachedConfig:" do
-    let(:propertyName) { "cachedConfig" }
+    let(:cfg) { parse_config_code("cachedConfig") }
 
     it_should_behave_like "config"
   end
 
-  describe "detecting Ext.define() with both config and cachedConfig" do
+  describe "detecting Ext.define() with eventedConfig:" do
+    let(:cfg) { parse_config_code("eventedConfig") }
+
+    it_should_behave_like "config"
+
+    it "auto-detected config with :evented flag" do
+      cfg[0][:evented].should == true
+    end
+
+    it "documented config with :evented flag" do
+      cfg[1][:evented].should == true
+    end
+  end
+
+  describe "detecting Ext.define() with all kind of configs" do
     let(:cfg) do
       parse(<<-EOS)[0][:members][:cfg]
         /**
          * Some documentation.
          */
         Ext.define("MyClass", {
+            config: {
+                blah: 7
+            },
             cachedConfig: {
                 foo: 42,
                 bar: "hello"
             },
-            config: {
+            eventedConfig: {
                 baz: /fafa/
             }
         });
@@ -99,7 +116,7 @@ describe JsDuck::Aggregator do
     end
 
     it "merges all configs together" do
-      cfg.length.should == 3
+      cfg.length.should == 4
     end
   end
 

@@ -197,8 +197,9 @@ module JsDuck
           cls[:aliases] += make_string_list(cfg["xtype"]).map {|xtype| "widget."+xtype }
 
           members = []
-          members += make_configs(cfg["config"])
-          members += make_configs(cfg["cachedConfig"])
+          members += make_configs(cfg["config"], {:accessor => true})
+          members += make_configs(cfg["cachedConfig"], {:accessor => true})
+          members += make_configs(cfg["eventedConfig"], {:accessor => true, :evented => true})
           cls[:members] = members.length > 0 ? members : nil
         end
       end
@@ -235,14 +236,14 @@ module JsDuck
       cfg_value && to_value(cfg_value) == true
     end
 
-    def make_configs(ast)
+    def make_configs(ast, defaults={})
       return [] unless ast && ast["type"] == "ObjectExpression"
 
       configs = []
 
       ast["properties"].each do |p|
         cfg = make_property(key_value(p["key"]), p["value"], :cfg)
-        cfg[:accessor] = true
+        cfg.merge!(defaults)
         # When config has a comment, update the related docset,
         # otherwise add it as new config to current class.
         docset = find_docset(p)
