@@ -126,6 +126,10 @@ describe JsDuck::Aggregator do
     it "detects the config as public" do
       docs[0][:members][:cfg][0][:private].should_not == true
     end
+
+    it "detects the config accessor" do
+      docs[0][:members][:cfg][0][:accessor].should == true
+    end
   end
 
 end

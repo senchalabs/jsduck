@@ -242,6 +242,7 @@ module JsDuck
 
       ast["properties"].each do |p|
         cfg = make_property(key_value(p["key"]), p["value"], :cfg)
+        cfg[:accessor] = true
         # When config has a comment, update the related docset,
         # otherwise add it as new config to current class.
         docset = find_docset(p)
@@ -249,7 +250,6 @@ module JsDuck
           docset[:code] = cfg
         else
           cfg[:inheritdoc] = {}
-          cfg[:accessor] = true
           cfg[:autodetected] = true
           configs << cfg
         end
