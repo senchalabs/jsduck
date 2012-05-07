@@ -8,6 +8,9 @@ Ext.define("Docs.History", {
      * Initializes history management.
      */
     init: function() {
+        // allow Docs to work inside iframe
+        Ext.util.History.useTopWindow = false;
+
         Ext.util.History.init(function() {
             this.historyLoaded = true;
             this.initialNavigate();
@@ -71,20 +74,26 @@ Ext.define("Docs.History", {
         else if (url.url === "#!/comment") {
             Docs.App.getController('Comments').loadIndex();
         }
+        else if (url.url === "#!/tests") {
+            Docs.App.getController('Tests').loadIndex();
+        }
         else {
             if (Docs.App.getController('Welcome').isActive()) {
                 Docs.App.getController('Welcome').loadIndex(noHistory);
             }
             else if (!this.noRepeatNav) {
                 this.noRepeatNav = true; // Prevent infinite nav loop
-                this.navigate(Ext.getCmp('doctabs').staticTabs[0].href, noHistory);
+                var firstTab = Ext.getCmp('doctabs').staticTabs[0];
+                if (firstTab) {
+                    this.navigate(firstTab.href, noHistory);
+                }
             }
         }
     },
 
     // Parses current browser location
     parseToken: function(token) {
-        var matches = token && token.match(/!?(\/(api|guide|example|video|stats|comment)(\/(.*))?)/);
+        var matches = token && token.match(/!?(\/(api|guide|example|video|stats|comment|tests)(\/(.*))?)/);
         return matches ? {type: matches[2], url: "#!"+matches[1]} : {};
     },
 

@@ -65,6 +65,9 @@
       td {
         color: #484848;
         padding: 2px 20px 2px 0; } }
+    blockquote {
+      padding-left: 1em;
+      border-left: solid 1em #e8e8e8; }
     pre.notpretty, pre.prettyprint {
       background-color: #f7f7f7;
       border: solid 1px #e8e8e8;
@@ -100,9 +103,8 @@
     background: url(../images/doc-m.png) no-repeat -5px -5px;
     padding: 10px 0 10px 55px;
     font-family: $docs-heading-font;
-    letter-spacing: -1px;
     margin-bottom: 16px;
-    font-size: 2.3em;
+    font-size: 2em;
     color: #66ab16; }
   h2 {
     @include guides-h2-heading; }
@@ -146,4 +148,6 @@ p.screenshot {
 
 // Welcome Pages
 @import "extjs_welcome";
-@import "touch_welcome";
+
+// Doc Tests
+@import "doc_tests";

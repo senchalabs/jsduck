@@ -42,7 +42,13 @@ Ext.define('Docs.view.Tabs', {
             '<tpl for=".">',
                 '<div class="doctab overview {cls}{active}">',
                     '<div class="l"></div>',
-                    '<div class="m"><a class="tabUrl" href="{href}">&nbsp;</a></div>',
+                    '<div class="m">',
+                        '<tpl if="text">',
+                            '<a class="tabUrl ov-tab-text" href="{href}">{text}</a>',
+                        '<tpl else>',
+                            '<a class="tabUrl ov-tab" href="{href}">&nbsp;</a>',
+                        '</tpl>',
+                    '</div>',
                     '<div class="r"></div>',
                 '</div>',
             '</tpl>',
@@ -61,7 +67,7 @@ Ext.define('Docs.view.Tabs', {
                 '<div class="l"></div>',
                 '<div class="m">',
                     '<span class="icn {iconCls}">&nbsp;</span>',
-                    '<a class="tabUrl" href="{href}">{text}</a>',
+                    '<a class="tabUrl main-tab" href="{href}">{text}</a>',
                 '</div>',
             '<div class="r"><a class="close" href="#">&nbsp;</a></div>',
             '</div>'
@@ -259,7 +265,7 @@ Ext.define('Docs.view.Tabs', {
             this.swapLastTabWith(url);
         }
 
-        Ext.Array.each(Ext.query('.doctab a[class=tabUrl]'), function(d) {
+        Ext.Array.each(Ext.query('.doctab a.tabUrl'), function(d) {
             Ext.get(d).up('.doctab').removeCls(['active', 'highlight']);
         });
 
@@ -575,6 +581,9 @@ Ext.define('Docs.view.Tabs', {
         }
         else if (/#!?\/stats/.test(url)) {
             return 'Stats';
+        }
+        else if (/#!?\/tests/.test(url)) {
+            return 'Tests';
         }
         else if (/#!?\/comment/.test(url)) {
             return 'Comments';

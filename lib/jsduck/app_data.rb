@@ -24,10 +24,12 @@ module JsDuck
           :examples => @assets.examples.to_array,
           :search => SearchData.new.create(@relations.classes, @assets),
           :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
+          :tests => @opts.tests,
           :signatures => MetaTagRegistry.instance.signatures,
           :localStorageDb => @opts.local_storage_db,
           :showPrintButton => @opts.seo,
           :touchExamplesUi => @opts.touch_examples_ui,
+          :source => @opts.source,
         }
       }) + ";\n"
       File.open(filename, 'w') {|f| f.write(js) }

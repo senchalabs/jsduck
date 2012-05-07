@@ -25,6 +25,7 @@ module JsDuck
     attr_accessor :examples
     attr_accessor :stats
     attr_accessor :categories_path
+    attr_accessor :source
     attr_accessor :pretty_json
     attr_accessor :images
     attr_accessor :link_tpl
@@ -33,6 +34,7 @@ module JsDuck
     attr_accessor :seo
     attr_accessor :eg_iframe
     attr_accessor :examples_base_url
+    attr_accessor :tests
 
     # Debugging
     attr_accessor :processes
@@ -73,7 +75,7 @@ module JsDuck
       ]
       @meta_tag_paths = []
 
-      @version = "3.9.0"
+      @version = "3.10.0"
 
       # Customizing output
       @title = "Sencha Docs - Ext JS"
@@ -87,6 +89,7 @@ module JsDuck
       @examples = nil
       @stats = false
       @categories_path = nil
+      @source = true
       @pretty_json = false
       @images = []
       @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
@@ -97,6 +100,7 @@ module JsDuck
       @seo = false
       @eg_iframe = nil
       @examples_base_url = "extjs-build/examples/"
+      @tests = false
 
       # Debugging
       # Turn multiprocessing off by default in Windows
@@ -219,14 +223,14 @@ module JsDuck
           @examples = canonical(path)
         end
 
-        opts.on('--stats',
-          "Creates page with all kinds of statistics. Experimental!", " ") do
-          @stats = true
-        end
-
         opts.on('--categories=PATH',
           "Path to JSON file which defines categories for classes.", " ") do |path|
           @categories_path = canonical(path)
+        end
+
+        opts.on('--no-source',
+          "Turns off the output of source files.", " ") do
+          @source = false
         end
 
         opts.on('--pretty-json', "Turn on pretty-printing of JSON.", " ") do
@@ -264,8 +268,9 @@ module JsDuck
 
         opts.on('--export=TYPE',
           "Exports docs in JSON.  TYPE is one of:",
-          "* full - full class docs.",
-          "* api  - only class- and member names.", " ") do |format|
+          "* full     - full class docs.",
+          "* api      - only class- and member names.",
+          "* examples - extracts inline examples from classes.", " ") do |format|
           @export = format.to_sym
         end
 
@@ -282,6 +287,15 @@ module JsDuck
         opts.on('--examples-base-url=URL',
           "Base URL for examples with relative URL-s.", " ") do |path|
           @examples_base_url = path
+        end
+
+        opts.on('--tests', "Creates page for testing inline examples.", " ") do
+          @tests = true
+        end
+
+        opts.on('--stats',
+          "Creates page with all kinds of statistics. Experimental!", " ") do
+          @stats = true
         end
 
         opts.separator "Debugging:"
@@ -480,7 +494,7 @@ module JsDuck
       elsif @output_dir == :stdout && !@export
         puts "Output to STDOUT only works when using --export option."
         exit(1)
-      elsif ![nil, :full, :api].include?(@export)
+      elsif ![nil, :full, :api, :examples].include?(@export)
         puts "Unknown export format: #{@export}"
         exit(1)
       elsif @output_dir != :stdout

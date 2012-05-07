@@ -139,6 +139,6 @@ Ext.define('Docs.view.stats.Index', {
      */
     getTab: function() {
         var enabled = (Docs.data.stats || []).length > 0;
-        return enabled ? {cls: 'stats', href: '#!/stats', tooltip: 'Statistics'} : false;
+        return enabled ? {cls: 'stats', href: '#!/stats', tooltip: 'Statistics', text: 'Stats'} : false;
     }
 });

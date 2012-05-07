@@ -39,9 +39,18 @@ Ext.define('Docs.view.cls.Overview', {
         if (el) {
             var isMember = el.hasCls("member");
 
-            // first make the element visible and expanded.
-            // For example a private member might be hidden initially so we can't scroll to it.
+            // First make the element visible.
+            // For example a private member might be hidden initially
+            // so we can't scroll to it. But the element might be
+            // inside a section that's fully hidden, in such case we
+            // also make the section visible.
             el.show();
+            if (!el.isVisible(true)) {
+                el.up(".subsection").show();
+                el.up(".members-section").show();
+            }
+
+            // expand the element
             if (isMember && el.down(".expandable")) {
                 el.addCls('open');
             }

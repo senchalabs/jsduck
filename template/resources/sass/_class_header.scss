@@ -9,23 +9,22 @@
 #center-container {
   h1 {
     font-family: $docs-heading-font;
-    letter-spacing: -1px;
     padding-bottom: 5px;
     padding-top: 2px;
     border-bottom: 1px #f1f1f1;
-    font-size: 2.3em;
+    font-size: 2em;
     color: #66ab16;
 
     // Icons for different class types
-    a {
+    .class-source-link {
       color: #66ab16; // Same color as h1 itself
       margin-left: -3px;
-      padding: 0.1em 0 0.4em 2em; }
-    &.class a {
+      padding: 0.1em 0 0.4em 2.3em; }
+    &.class .class-source-link {
       background: url(../images/class-m.png) no-repeat 0 -5px; }
-    &.component a {
+    &.component .class-source-link {
       background: url(../images/component-m.png) no-repeat 0 -5px; }
-    &.singleton a {
+    &.singleton .class-source-link {
       background: url(../images/singleton-m.png) no-repeat 0 -5px; }
 
     // gray style for xtypes listing
@@ -33,7 +32,7 @@
       color: #929292;
       letter-spacing: 0;
       margin-left: 10px;
-      font-size: 0.6em; }
+      font-size: 0.5em; }
 
     // View source... tooltip when hovering class name
     span.class-source-tip {
