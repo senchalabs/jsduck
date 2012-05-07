@@ -245,6 +245,7 @@ module JsDuck
           docset[:code] = cfg
         else
           cfg[:inheritdoc] = {}
+          cfg[:accessor] = true
           cfg[:autodetected] = true
           configs << cfg
         end

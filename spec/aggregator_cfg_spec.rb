@@ -36,6 +36,10 @@ describe JsDuck::Aggregator do
       cfg[0][:inheritdoc].should == {}
     end
 
+    it "sets :accessor flag on config" do
+      cfg[0][:accessor].should == true
+    end
+
     it "sets :autodetected flag on config" do
       cfg[0][:autodetected].should == true
     end

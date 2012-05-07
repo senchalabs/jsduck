@@ -14,7 +14,7 @@ module JsDuck
       @relations.each do |cls|
         resolve_class(cls) if cls[:inheritdoc]
         cls.all_local_members.each do |member|
-          if member[:inheritdoc]
+          if member[:inheritdoc] || member[:autodetected]
             resolve(member)
           end
         end
@@ -27,7 +27,7 @@ module JsDuck
     def resolve(m)
       parent = find_parent(m)
 
-      if parent
+      if m[:inheritdoc] && parent
         m[:doc] = (m[:doc] + "\n\n" + parent[:doc]).strip
         m[:params] = parent[:params] if parent[:params]
         m[:return] = parent[:return] if parent[:return]
@@ -51,7 +51,7 @@ module JsDuck
     #
     # If the parent also has @inheritdoc, continues recursively.
     def find_parent(m)
-      inherit = m[:inheritdoc]
+      inherit = m[:inheritdoc] || {}
       if inherit[:cls]
         # @inheritdoc MyClass#member
         parent_cls = @relations[m[:inheritdoc][:cls]]
@@ -100,7 +100,7 @@ module JsDuck
     end
 
     def lookup_member(cls, m)
-      inherit = m[:inheritdoc]
+      inherit = m[:inheritdoc] || {}
       cls.get_members(inherit[:member] || m[:name], inherit[:type] || m[:tagname], inherit[:static] || m[:meta][:static])[0]
     end
 
