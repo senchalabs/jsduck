@@ -474,6 +474,7 @@ Ext.define('Docs.view.Comments', {
         textarea.editor = CodeMirror.fromTextArea(textarea, {
             enterMode: "keep",
             mode: 'markdown',
+            lineWrapping: true,
             indentUnit: 4
         });
 
