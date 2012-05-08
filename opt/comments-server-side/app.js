@@ -300,7 +300,7 @@ app.post('/auth/:sdk/:version/comments/:commentId', util.requireLoggedInUser, ut
                 author: req.session.user.username
             });
 
-            comment.save(function(err, response) {
+            comment.save(function(err) {
                 res.json({ success: true, content: comment.contentHtml });
             });
         });
@@ -312,7 +312,7 @@ app.post('/auth/:sdk/:version/comments/:commentId', util.requireLoggedInUser, ut
  */
 app.post('/auth/:sdk/:version/comments/:commentId/delete', util.requireLoggedInUser, util.findComment, util.requireOwner, function(req, res) {
     req.comment.deleted = true;
-    req.comment.save(function(err, response) {
+    req.comment.save(function(err) {
         res.send({ success: true });
     });
 });
@@ -322,7 +322,7 @@ app.post('/auth/:sdk/:version/comments/:commentId/delete', util.requireLoggedInU
  */
 app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', util.requireLoggedInUser, util.findComment, util.requireOwner, util.getCommentReads, function(req, res) {
     req.comment.deleted = false;
-    req.comment.save(function(err, response) {
+    req.comment.save(function(err) {
         res.send({ success: true, comment: util.scoreComments([req.comment], req)[0] });
     });
 });
@@ -332,7 +332,7 @@ app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', util.requireLogg
  */
 app.post('/auth/:sdk/:version/comments/:commentId/read', util.requireLoggedInUser, util.findCommentMeta, function(req, res) {
     req.commentMeta.metaType = 'read';
-    req.commentMeta.save(function(err, response) {
+    req.commentMeta.save(function(err) {
         res.send({ success: true });
     });
 });
@@ -369,7 +369,7 @@ app.post('/auth/:sdk/:version/subscribe', util.requireLoggedInUser, function(req
             subscription = new Subscription(subscriptionBody);
             subscription.email = req.session.user.email;
 
-            subscription.save(function(err, ok) {
+            subscription.save(function(err) {
                 res.send({ success: true });
             });
         }

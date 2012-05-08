@@ -101,7 +101,7 @@ exports.vote = function(req, res, comment) {
         }
     }
 
-    comment.save(function(err, response) {
+    comment.save(function(err) {
         res.json({
             success: true,
             direction: voteDirection,
