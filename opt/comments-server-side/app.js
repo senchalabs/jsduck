@@ -256,11 +256,27 @@ app.post('/auth/:sdk/:version/comments', util.requireLoggedInUser, function(req,
         url: req.body.url
     });
 
-    comment.save(function(err, response) {
-        res.json({ success: true, id: response._id, action: req.body.action });
+    var afterSave = function() {
+        res.json({ success: true, id: comment._id, action: req.body.action });
 
         util.sendEmailUpdates(comment);
+    };
+
+    comment.save(function(err) {
+        if (util.isModerator(req.session.user)) {
+            // When moderator posts comment, mark it automatically as read.
+            var meta = new Meta({
+                userId: req.session.user.userid,
+                commentId: comment._id,
+                metaType: 'read'
+            });
+            meta.save(afterSave);
+        }
+        else {
+            afterSave();
+        }
     });
+
 });
 
 /**

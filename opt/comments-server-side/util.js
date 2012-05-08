@@ -171,15 +171,21 @@ exports.findCommentMeta = function(req, res, next) {
     }
 };
 
-// True if the user is moderator
+/**
+ * True if the user is moderator
+ */
 function isModerator(user) {
     return _.include(user.membergroupids, 7);
 }
+exports.isModerator = isModerator;
 
-// True if the user is author of the comment
+/**
+ * True if the user is author of the comment
+ */
 function isAuthor(user, comment) {
     return user.username === comment.author;
 }
+exports.isAuthor = isAuthor;
 
 /**
  * Ensures that user is allowed to modify/delete the comment,
