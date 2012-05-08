@@ -246,7 +246,7 @@ task :touch2 => :sass do
   runner.add_options(
     "--output", OUT_DIR,
     "--config", "#{SDK_DIR}/touch/docs/config.json",
-    "--examples-base-url", "touch/examples/production/",
+    "--examples-base-url", "touch-build/examples/production/",
     "--seo",
     "--tests"
   )
@@ -255,7 +255,7 @@ task :touch2 => :sass do
   runner.add_comments('touch', '2')
   runner.run
 
-  system("cp -r #{TOUCH_BUILD} #{OUT_DIR}/touch")
+  system("cp -r #{TOUCH_BUILD} #{OUT_DIR}/touch-build")
 end
 
 task :default => :spec
