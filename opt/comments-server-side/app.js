@@ -256,25 +256,10 @@ app.post('/auth/:sdk/:version/comments', util.requireLoggedInUser, function(req,
         url: req.body.url
     });
 
-    var afterSave = function() {
+    comment.saveNew(req.session.user, function(err) {
         res.json({ success: true, id: comment._id, action: req.body.action });
 
         util.sendEmailUpdates(comment);
-    };
-
-    comment.save(function(err) {
-        if (util.isModerator(req.session.user)) {
-            // When moderator posts comment, mark it automatically as read.
-            var meta = new Meta({
-                userId: req.session.user.userid,
-                commentId: comment._id,
-                metaType: 'read'
-            });
-            meta.save(afterSave);
-        }
-        else {
-            afterSave();
-        }
     });
 
 });
