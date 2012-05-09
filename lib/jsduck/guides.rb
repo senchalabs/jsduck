@@ -51,7 +51,7 @@ module JsDuck
       @groups.map do |group|
         {
           "title" => group["title"],
-          "items" => group["items"].map {|g| g.select {|k, v| k != :html } }
+          "items" => group["items"].map {|g| Hash[g.select {|k, v| k != :html }] }
         }
       end
     end
