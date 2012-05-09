@@ -26,8 +26,6 @@ Ext.define('Docs.view.guides.Index', {
             })
         ];
 
-        this.initScrolling();
-
         this.callParent(arguments);
     },
 

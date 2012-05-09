@@ -39,8 +39,6 @@ Ext.define('Docs.view.examples.Index', {
             })
         ];
 
-        this.initScrolling();
-
         this.callParent(arguments);
     },
 

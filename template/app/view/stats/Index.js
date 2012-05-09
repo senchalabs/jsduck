@@ -131,8 +131,6 @@ Ext.define('Docs.view.stats.Index', {
             ]
         }];
 
-        this.initScrolling();
-
         this.callParent(arguments);
     },
 

@@ -27,8 +27,6 @@ Ext.define('Docs.view.videos.Index', {
             })
         ];
 
-        this.initScrolling();
-
         this.callParent(arguments);
     },
 

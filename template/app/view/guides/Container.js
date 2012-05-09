@@ -18,8 +18,6 @@ Ext.define('Docs.view.guides.Container', {
             'afterload'
         );
 
-        this.initScrolling();
-
         this.callParent(arguments);
     },
 

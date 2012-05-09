@@ -15,11 +15,6 @@ Ext.define('Docs.view.comments.Index', {
         { xtype: 'container', id: 'recentcomments' }
     ],
 
-    initComponent: function() {
-        this.initScrolling();
-        this.callParent();
-    },
-
     /**
      * Returns tab config for comments page.
      * @return {Object}

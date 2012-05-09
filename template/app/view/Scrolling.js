@@ -5,13 +5,13 @@
  * context, allowing the scroll amount to be restored afterwards.
  */
 Ext.define('Docs.view.Scrolling', {
-    /**
-     * Initializes scroll state saving.
-     *
-     * Should be called from initComponent of the class that mixes this in.
-     *
-     * @protected
-     */
+    // Inject call fo #initScrolling into initComponent into class
+    // that uses this mixin
+    onClassMixedIn: function(owner) {
+        Ext.Function.interceptBefore(owner.prototype, "initComponent", this.prototype.initScrolling);
+    },
+
+    // Initializes scroll state saving.
     initScrolling: function() {
         this.scrollContext = 'index';
         this.scrollState = {};

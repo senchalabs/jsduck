@@ -27,8 +27,6 @@ Ext.define('Docs.view.cls.Overview', {
             'afterload'
         );
 
-        this.initScrolling();
-
         this.callParent(arguments);
     },
 

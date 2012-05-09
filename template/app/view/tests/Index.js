@@ -130,8 +130,6 @@ Ext.define('Docs.view.tests.Index', {
             this.batchRunner
         ];
 
-        this.initScrolling();
-
         this.callParent(arguments);
     },
 

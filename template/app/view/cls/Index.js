@@ -25,8 +25,6 @@ Ext.define('Docs.view.cls.Index', {
             categories: Docs.ContentGrabber.get("categories-content")
         };
 
-        this.initScrolling();
-
         this.callParent(arguments);
     },
 
