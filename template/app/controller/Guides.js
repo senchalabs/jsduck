@@ -57,19 +57,6 @@ Ext.define('Docs.controller.Guides', {
                         delegate: '.guide'
                     });
                 }
-            },
-            '#guide': {
-                afterrender: function(cmp) {
-                    cmp.el.addListener('click', function(event, el) {
-                        this.setScrollState(this.activeUrl, el.scrollTop);
-                    }, this);
-                    cmp.el.addListener('click', function(event, el) {
-                        this.handleUrlClick(el.href, event);
-                    }, this, {
-                        preventDefault: true,
-                        delegate: '.toc a'
-                    });
-                }
             }
         });
     },

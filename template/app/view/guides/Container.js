@@ -27,11 +27,25 @@ Ext.define('Docs.view.guides.Container', {
     scrollToEl: function(id) {
         var el = Ext.get(id);
         if (el) {
-            var scrollOffset = el.getY() - 100;
-            var currentScroll = this.getEl().getScroll()['top'];
-            this.getEl().scrollTo('top', currentScroll + scrollOffset);
+            this.setScrollTop(this.getScrollTop() + el.getY() - 100);
             el.highlight();
         }
+    },
+
+    /**
+     * Returns the amount of vertical scroll
+     * @return {Number}
+     */
+    getScrollTop: function() {
+        return this.body.getScroll()['top'];
+    },
+
+    /**
+     * Scrolls vertically to given offset
+     * @param {Number} offset
+     */
+    setScrollTop: function(offset) {
+        return this.body.scrollTo('top', offset);
     },
 
     /**
