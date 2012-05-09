@@ -7,6 +7,7 @@ Ext.define('Docs.view.guides.Container', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.guidecontainer',
     componentCls: 'guide-container',
+    mixins: ['Docs.view.PanelScrolling'],
 
     initComponent: function() {
         this.addEvents(
@@ -22,37 +23,13 @@ Ext.define('Docs.view.guides.Container', {
     /**
      * Scrolls the specified element into view
      *
-     * @param {String} id  ID of elemnt to scroll to.
+     * @param {String} el  The element to scroll to.
      */
-    scrollToEl: function(id) {
-        var el = Ext.get(id);
-        if (el) {
-            this.setScrollTop(this.getScrollTop() + el.getY() - 100);
-            el.highlight();
-        }
-    },
-
-    /**
-     * Returns the amount of vertical scroll
-     * @return {Number}
-     */
-    getScrollTop: function() {
-        return this.body.getScroll()['top'];
-    },
-
-    /**
-     * Scrolls vertically to given offset
-     * @param {Number} offset
-     */
-    setScrollTop: function(offset) {
-        return this.body.scrollTo('top', offset);
-    },
-
-    /**
-     * Scrolls guide to the top
-     */
-    scrollToTop: function() {
-        this.body.scrollTo('top');
+    scrollToEl: function(el) {
+        this.scrollToView(el, {
+            highlight: true,
+            offset: -100
+        });
     },
 
     /**
