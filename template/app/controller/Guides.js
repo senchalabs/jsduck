@@ -57,6 +57,11 @@ Ext.define('Docs.controller.Guides', {
                         delegate: '.guide'
                     });
                 }
+            },
+            'doctabs': {
+                tabClose: function(url) {
+                    this.getGuide().eraseScrollContext(url);
+                }
             }
         });
     },

@@ -94,9 +94,6 @@ Ext.define('Docs.controller.Tabs', {
 
         this.control({
             '[componentCls=doctabs]': {
-                tabClose: function(url) {
-                    // delete this.scrollState[url];
-                },
                 tabActivate: function(url, opts) {
                     Docs.History.push(url, opts);
                 },

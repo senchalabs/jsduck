@@ -135,6 +135,12 @@ Ext.define('Docs.controller.Classes', {
                         delegate: '.x-resizable-handle'
                     });
                 }
+            },
+
+            'doctabs': {
+                tabClose: function(url) {
+                    this.getOverview().eraseScrollContext(url);
+                }
             }
         });
     },

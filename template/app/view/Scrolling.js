@@ -31,6 +31,15 @@ Ext.define('Docs.view.Scrolling', {
     },
 
     /**
+     * Erases data about the given scrolling context.
+     *
+     * @param {String} ctx A name for the context.
+     */
+    eraseScrollContext: function(ctx) {
+        delete this.scrollState[ctx];
+    },
+
+    /**
      * Saves the scroll state in current context.
      *
      * This is automatically called every time the container is scrolled.
