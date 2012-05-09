@@ -4,6 +4,7 @@ require 'jsduck/io'
 require 'jsduck/null_object'
 require 'jsduck/logger'
 require 'jsduck/grouped_asset'
+require 'jsduck/html'
 require 'fileutils'
 
 module JsDuck
@@ -111,7 +112,7 @@ module JsDuck
       html.each_line do |line|
         if line =~ /^<h2>(.*)<\/h2>$/
           i += 1
-          text = strip_tags($1)
+          text = HTML.strip_tags($1)
           toc << "<li><a href='#!/guide/#{guide['name']}-section-#{i}'>#{text}</a></li>\n"
           new_html << "<h2 id='#{guide['name']}-section-#{i}'>#{text}</h2>\n"
         else
@@ -152,9 +153,6 @@ module JsDuck
       "guides/" + guide["name"] + "/icon.png"
     end
 
-    def strip_tags(str)
-      str.gsub(/<.*?>/, "")
-    end
   end
 
 end

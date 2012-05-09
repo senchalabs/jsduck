@@ -1,5 +1,5 @@
 require 'jsduck/json_duck'
-require 'cgi'
+require 'jsduck/html'
 
 module JsDuck
 
@@ -65,7 +65,7 @@ module JsDuck
             ex = s.scan_until(@end_example_re).sub(@end_example_re, '')
 
             examples << {
-              :code => CGI.unescapeHTML(strip_tags(ex)),
+              :code => HTML.unescape(HTML.strip_tags(ex)),
               :options => options,
             }
           else
@@ -89,9 +89,6 @@ module JsDuck
       hash
     end
 
-    def strip_tags(str)
-      str.gsub(/<.*?>/, "")
-    end
   end
 
 end

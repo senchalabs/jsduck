@@ -1,7 +1,7 @@
 require 'jsduck/js_parser'
 require 'jsduck/css_parser'
 require 'jsduck/merger'
-require "cgi"
+require 'jsduck/html'
 
 module JsDuck
 
@@ -54,7 +54,7 @@ module JsDuck
       # Use #each_line instead of #lines to support Ruby 1.6
       @contents.each_line do |line|
         linenr += 1;
-        line = CGI.escapeHTML(line)
+        line = HTML.escape(line)
         # wrap the line in as many spans as there are links to this line number.
         if @links[linenr]
           @links[linenr].each do |link|

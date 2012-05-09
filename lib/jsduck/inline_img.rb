@@ -1,4 +1,4 @@
-require 'cgi'
+require 'jsduck/html'
 require 'jsduck/logger'
 
 module JsDuck
@@ -42,7 +42,7 @@ module JsDuck
         when '%u'
           @base_path ? (@base_path + "/" + url) : url
         when '%a'
-          CGI.escapeHTML(alt_text||"")
+          HTML.escape(alt_text||"")
         else
           $1
         end
