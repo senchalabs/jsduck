@@ -57,13 +57,6 @@ Ext.define('Docs.controller.Guides', {
                         delegate: '.guide'
                     });
                 }
-            },
-            '#guide': {
-                afterrender: function(cmp) {
-                    cmp.body.addListener('scroll', function(cmp, el) {
-                        this.setScrollState(this.activeUrl, el.scrollTop);
-                    }, this);
-                }
             }
         });
     },
@@ -151,12 +144,13 @@ Ext.define('Docs.controller.Guides', {
             reRendered = true;
         }
         this.activeUrl = url;
+        this.getGuide().setScrollContext(this.activeUrl);
 
         if (section) {
             this.getGuide().scrollToEl(name+section);
         }
         else {
-            this.getGuide().setScrollTop(this.getScrollState(this.activeUrl));
+            this.getGuide().restoreScrollState();
         }
 
         this.fireEvent('showGuide', name, { reRendered: reRendered });

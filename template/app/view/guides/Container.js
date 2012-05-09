@@ -7,7 +7,7 @@ Ext.define('Docs.view.guides.Container', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.guidecontainer',
     componentCls: 'guide-container',
-    mixins: ['Docs.view.PanelScrolling'],
+    mixins: ['Docs.view.Scrolling'],
 
     initComponent: function() {
         this.addEvents(
@@ -17,6 +17,9 @@ Ext.define('Docs.view.guides.Container', {
              */
             'afterload'
         );
+
+        this.initScrolling();
+
         this.callParent(arguments);
     },
 

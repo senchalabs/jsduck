@@ -7,6 +7,7 @@ Ext.define('Docs.view.videos.Index', {
     requires: [
         'Docs.view.ThumbList'
     ],
+    mixins: ['Docs.view.Scrolling'],
 
     cls: 'iScroll',
     margin: '10 0 0 0',
@@ -25,6 +26,8 @@ Ext.define('Docs.view.videos.Index', {
                 data: Docs.data.videos
             })
         ];
+
+        this.initScrolling();
 
         this.callParent(arguments);
     },

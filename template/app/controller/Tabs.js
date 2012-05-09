@@ -63,8 +63,6 @@ Ext.define('Docs.controller.Tabs', {
         }
     ],
 
-    scrollState: {},
-
     init: function() {
         this.getController('Classes').addListener({
             showClass: function(cls) {
@@ -97,7 +95,7 @@ Ext.define('Docs.controller.Tabs', {
         this.control({
             '[componentCls=doctabs]': {
                 tabClose: function(url) {
-                    delete this.scrollState[url];
+                    // delete this.scrollState[url];
                 },
                 tabActivate: function(url, opts) {
                     Docs.History.push(url, opts);
@@ -165,10 +163,6 @@ Ext.define('Docs.controller.Tabs', {
     // Adds new tab, no questions asked
     addTab: function(tab, opts) {
         opts = opts || { animate: true, activate: true };
-        // Init scrollstate when tab opened.
-        if (!this.scrollState[tab.url]) {
-            this.scrollState[tab.url] = 0;
-        }
         this.getDoctabs().addTab({
             href: tab.url,
             text: tab.text,
@@ -194,26 +188,6 @@ Ext.define('Docs.controller.Tabs', {
             // default to classtree, just in case
             return this.getClassTree();
         }
-    },
-
-    /**
-     * Saves scrollstate of a tab.
-     *
-     * @param {String} url  URL of the tab.
-     * @param {Number} scroll  the scroll amount.
-     */
-    setScrollState: function(url, scroll) {
-        this.scrollState[url] = scroll;
-    },
-
-    /**
-     * Returns scrollstate of a tab.
-     *
-     * @param {String} url  URL of the tab.
-     * @return {Number} the scroll amount.
-     */
-    getScrollState: function(url) {
-        return this.scrollState[url] || 0;
     }
 
 });

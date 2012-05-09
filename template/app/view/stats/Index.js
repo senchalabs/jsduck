@@ -8,6 +8,7 @@ Ext.define('Docs.view.stats.Index', {
         'Ext.grid.Panel',
         'Docs.model.Stats'
     ],
+    mixins: ['Docs.view.Scrolling'],
     layout: "fit",
 
     initComponent: function() {
@@ -129,6 +130,8 @@ Ext.define('Docs.view.stats.Index', {
                 }
             ]
         }];
+
+        this.initScrolling();
 
         this.callParent(arguments);
     },

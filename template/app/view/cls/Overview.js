@@ -11,7 +11,7 @@ Ext.define('Docs.view.cls.Overview', {
         'Docs.Syntax',
         'Docs.Settings'
     ],
-    mixins: ['Docs.view.PanelScrolling'],
+    mixins: ['Docs.view.Scrolling'],
 
     cls: 'class-overview iScroll',
     autoScroll: true,
@@ -26,6 +26,9 @@ Ext.define('Docs.view.cls.Overview', {
              */
             'afterload'
         );
+
+        this.initScrolling();
+
         this.callParent(arguments);
     },
 

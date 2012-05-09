@@ -18,28 +18,12 @@ Ext.define('Docs.controller.Content', {
      */
     title: "",
 
-    onLaunch: function() {
-        var cmp = this.getIndex();
-        if (cmp.rendered) {
-            this.initScrollListener();
-        }
-        else {
-            cmp.on('afterrender', this.initScrollListener, this);
-        }
-    },
-
-    initScrollListener: function() {
-        this.getIndex().getEl().addListener('scroll', function(cmp, el) {
-            this.setScrollState(this.baseUrl, el.scrollTop);
-        }, this);
-    },
-
     loadIndex: function(noHistory) {
         noHistory || Docs.History.push(this.baseUrl);
         this.getViewport().setPageTitle(this.title);
         Ext.getCmp('doctabs').activateTab(this.baseUrl);
         Ext.getCmp('card-panel').layout.setActiveItem(this.getIndex());
-        this.getIndex().getEl().scrollTo('top', this.getScrollState(this.baseUrl));
+        this.getIndex().restoreScrollState();
     },
 
     // True when middle mouse button pressed or shift/ctrl key pressed
@@ -54,19 +38,5 @@ Ext.define('Docs.controller.Content', {
      */
     getBaseUrl: function() {
         return document.location.href.replace(/\/?(index.html|template.html)?#.*/, "");
-    },
-
-    /**
-     * Mediates Tabs controller getScrollState()
-     */
-    getScrollState: function(url) {
-        return Docs.App.getController('Tabs').getScrollState(url);
-    },
-
-    /**
-     * Mediates Tabs controller setScrollState()
-     */
-    setScrollState: function(url, scroll) {
-        Docs.App.getController('Tabs').setScrollState(url, scroll);
     }
 });
