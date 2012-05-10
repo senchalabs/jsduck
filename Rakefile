@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rake'
-require 'json'
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
