@@ -3,10 +3,14 @@ require 'rake'
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
+def os_is_windows?
+  RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+end
+
 require 'rspec'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.rspec_opts = ["--color"] unless RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+  spec.rspec_opts = ["--color"] unless os_is_windows?
   spec.pattern = "spec/**/*_spec.rb"
 end
 
@@ -175,11 +179,11 @@ class JsDuckRunner
   end
 
   def add_debug
-    @options += [
+    add_options(
       "--extjs-path", "extjs/ext-all-debug.js",
-      "--template-links",
       "--template", "template",
-    ]
+    )
+    add_options("--template-links") unless os_is_windows?
   end
 
   def run
