@@ -23,5 +23,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'json'
   s.add_dependency 'parallel'
 
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'compass'
+
   s.require_path = 'lib'
 end
