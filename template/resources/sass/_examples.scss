@@ -46,6 +46,9 @@ pre.inline-example {
     // Create exactly the same amount of padding as normal code <pre> has
     padding: 5px 15px !important;
     background: #f7f7f7; }
+  // override CodeMirror height which defaults to 300px
+  .CodeMirror-scroll {
+    height: auto; }
   // same line height as for non-live code examples
   .CodeMirror pre {
     line-height: 1.3em; } }
