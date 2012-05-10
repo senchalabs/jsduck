@@ -11,6 +11,11 @@ Ext.define('Docs.view.examples.InlineEditor', {
         this.addEvents(
             /**
              * @event
+             * Fired after CodeMirror initialized.
+             */
+            "init",
+            /**
+             * @event
              * Fired when CodeMirror onChange is called.
              */
             "change"
@@ -29,6 +34,7 @@ Ext.define('Docs.view.examples.InlineEditor', {
                     this.fireEvent("change");
                 }, this)
             });
+            this.fireEvent("init");
         }
     },
 

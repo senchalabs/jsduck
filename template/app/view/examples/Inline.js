@@ -72,6 +72,7 @@ Ext.define('Docs.view.examples.Inline', {
                 cmpName: 'code',
                 value: this.value,
                 listeners: {
+                    init: this.updateHeight,
                     change: this.updateHeight,
                     scope: this
                 }
