@@ -7,7 +7,7 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 require 'rspec'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.rspec_opts = ["--color"]
+  spec.rspec_opts = ["--color"] unless RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
   spec.pattern = "spec/**/*_spec.rb"
 end
 
