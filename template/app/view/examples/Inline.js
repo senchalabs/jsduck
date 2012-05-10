@@ -137,9 +137,6 @@ Ext.define('Docs.view.examples.Inline', {
         if (this.toolbar) {
             this.toolbar.activateButton("code");
         }
-        // Weird bug on CodeMirror requires 2 refreshes...
-        this.editor.refresh();
-        this.editor.refresh();
     },
 
     /**
