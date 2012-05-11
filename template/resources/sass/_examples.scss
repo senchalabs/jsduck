@@ -11,8 +11,17 @@ pre.inline-example {
   background: none !important;
   border: none;
 
-  .x-btn button {
-    display: inline-block; }
+  .x-btn {
+    // Cancel out generic table styles for content.
+    // The table element is used for buttons in IE8 and below.
+    table {
+      margin: 0;
+      td {
+        padding: 0; }}
+    // Buttons default display type has changed in Ext 4.1,
+    // messing up the layout of toolbar buttons.
+    button {
+      display: inline-block; } }
 
   // Inline example component buttons
   span.x-btn-inner {
