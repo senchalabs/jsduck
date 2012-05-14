@@ -4,6 +4,7 @@
 Ext.define('Docs.view.welcome.Index', {
     extend: 'Ext.container.Container',
     alias: 'widget.welcomeindex',
+    mixins: ['Docs.view.Scrolling'],
     requires: [
         'Docs.ContentGrabber'
     ],
