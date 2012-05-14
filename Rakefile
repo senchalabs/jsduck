@@ -181,7 +181,7 @@ class JsDuckRunner
   def add_debug
     add_options(
       "--extjs-path", "extjs/ext-all-debug.js",
-      "--template", "template",
+      "--template", "template"
     )
     add_options("--template-links") unless os_is_windows?
   end
