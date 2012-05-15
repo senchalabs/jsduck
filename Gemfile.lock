@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jsduck (3.10.1)
+    jsduck (3.10.3)
       json
       parallel
       rdiscount
@@ -32,6 +32,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86-mingw32
 
 DEPENDENCIES
   compass
