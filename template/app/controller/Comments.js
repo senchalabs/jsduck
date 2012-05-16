@@ -121,8 +121,9 @@ Ext.define('Docs.controller.Comments', {
                         [ '.fetchMoreComments',    'click', this.fetchMoreComments],
                         [ '.voteCommentUp',        'click', this.voteUp],
                         [ '.voteCommentDown',      'click', this.voteDown],
-                        [ '#hideRead',            'change', function() { this.fetchRecentComments(); }],
-                        [ '#sortByScore',         'change', function() { this.fetchRecentComments(); }]
+                        [ '#hideRead',            'change', this.hideRead],
+                        [ '#hideCurrentUser',     'change', this.hideCurrentUser],
+                        [ '#sortByScore',         'change', this.sortByScore]
                     ], function(delegate) {
                         cmp.el.addListener(delegate[1], delegate[2], this, {
                             preventDefault: true,
@@ -279,18 +280,27 @@ Ext.define('Docs.controller.Comments', {
             limit: 100
         };
 
-        if (this.isChecked('hideRead')) {
+        if (Ext.util.Cookies.get('hideRead')) {
             params.hideRead = 1;
         }
-        if (this.isChecked('sortByScore')) {
+
+        if (Ext.util.Cookies.get('hideCurrentUser')) {
+            params.hideCurrentUser = 1;
+        }
+
+        if (Ext.util.Cookies.get('sortByScore')) {
             params.sortByScore = 1;
         }
+
+        this.maskComments();
 
         this.request("jsonp", {
             url: '/comments_recent',
             method: 'GET',
             params: params,
             success: function(response) {
+                this.unmaskComments();
+
                 this.renderComments(response, 'recentcomments', {
                     hideCommentForm: true,
                     append: !!offset,
@@ -301,9 +311,32 @@ Ext.define('Docs.controller.Comments', {
         });
     },
 
+    maskComments: function() {
+        var container = Ext.get('recentcomments-container');
+        if (container) {
+            container.mask();
+        }
+    },
+
+    unmaskComments: function() {
+        var container = Ext.get('recentcomments-container');
+        if (container) {
+            container.unmask();
+        }
+    },
+
     isChecked: function(id) {
         var cb = Ext.get(id);
         return cb && cb.dom.checked;
+    },
+
+    setCookie: function(name) {
+        var checked = this.isChecked(name);
+        if (checked) {
+            Ext.util.Cookies.set(name, true);
+        } else {
+            Ext.util.Cookies.clear(name);
+        }
     },
 
     fetchMoreComments: function(cmp, el) {
@@ -484,6 +517,21 @@ Ext.define('Docs.controller.Comments', {
 
     voteDown: function(cmp, el) {
         this.vote('down', el);
+    },
+
+    hideRead: function() {
+        this.setCookie('hideRead');
+        this.fetchRecentComments();
+    },
+
+    hideCurrentUser: function() {
+        this.setCookie('hideCurrentUser');
+        this.fetchRecentComments();
+    },
+
+    sortByScore: function() {
+        this.setCookie('sortByScore');
+        this.fetchRecentComments();
     },
 
     updateSubscription: function(cmp, el) {
