@@ -203,9 +203,11 @@ app.get('/auth/:sdk/:version/comments_recent', util.getCommentReads, function(re
         // Count all comments, store count to last comment
         Comment.count(filter).run(function(err, count) {
             var last = comments[comments.length-1];
-            last.total_rows = count;
-            last.offset = offset;
-            last.limit = limit;
+            if (last) {
+                last.total_rows = count;
+                last.offset = offset;
+                last.limit = limit;
+            }
             res.json(comments);
         });
     });
