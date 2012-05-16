@@ -298,3 +298,9 @@
     border: 1px solid #e1ba53;
     @include border-radius(4px);
     font-weight: bold; } }
+
+#comment-index-controls {
+  position: absolute;
+  padding-top: 1em;
+  li {
+    list-style-type: none; } }

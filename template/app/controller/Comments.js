@@ -121,7 +121,8 @@ Ext.define('Docs.controller.Comments', {
                         [ '.fetchMoreComments',    'click', this.fetchMoreComments],
                         [ '.voteCommentUp',        'click', this.voteUp],
                         [ '.voteCommentDown',      'click', this.voteDown],
-                        [ '#hideRead',            'change', function() { this.fetchRecentComments(); }]
+                        [ '#hideRead',            'change', function() { this.fetchRecentComments(); }],
+                        [ '#sortByScore',         'change', function() { this.fetchRecentComments(); }]
                     ], function(delegate) {
                         cmp.el.addListener(delegate[1], delegate[2], this, {
                             preventDefault: true,
@@ -278,8 +279,11 @@ Ext.define('Docs.controller.Comments', {
             limit: 100
         };
 
-        if (this.isHideReadChecked()) {
+        if (this.isChecked('hideRead')) {
             params.hideRead = 1;
+        }
+        if (this.isChecked('sortByScore')) {
+            params.sortByScore = 1;
         }
 
         this.request("jsonp", {
@@ -297,8 +301,8 @@ Ext.define('Docs.controller.Comments', {
         });
     },
 
-    isHideReadChecked: function() {
-        var cb = Ext.get('hideRead');
+    isChecked: function(id) {
+        var cb = Ext.get(id);
         return cb && cb.dom.checked;
     },
 

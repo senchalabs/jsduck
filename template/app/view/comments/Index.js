@@ -11,8 +11,20 @@ Ext.define('Docs.view.comments.Index', {
     autoScroll: true,
 
     items: [
-        { xtype: 'container', html: '<h1>Recent Comments</h1> Hide read: <input type="checkbox" name="hideRead" id="hideRead" />' },
-        { xtype: 'container', id: 'recentcomments' }
+        {
+            xtype: 'container',
+            html: [
+                '<h1>Recent Comments</h1>',
+                '<ul id="comment-index-controls">',
+                    '<li><label><input type="checkbox" name="hideRead" id="hideRead" /> Hide read</label></li>',
+                    '<li><label><input type="checkbox" name="sortByScore" id="sortByScore" /> Sort by score</label></li>',
+                '</ul>'
+            ].join(" ")
+        },
+        {
+            xtype: 'container',
+            id: 'recentcomments'
+        }
     ],
 
     /**

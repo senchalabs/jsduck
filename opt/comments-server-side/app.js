@@ -198,18 +198,27 @@ app.get('/auth/:sdk/:version/comments_recent', util.getCommentReads, function(re
         filter._id = { $nin: req.commentMeta.reads };
     }
 
-    Comment.find(filter).sort('createdAt', -1).skip(offset).limit(limit).run(function(err, comments) {
+    Comment.find(filter).sort("createdAt", -1).run(function(err, comments) {
+        var total_rows = comments.length;
+
         comments = util.scoreComments(comments, req);
-        // Count all comments, store count to last comment
-        Comment.count(filter).run(function(err, count) {
-            var last = comments[comments.length-1];
-            if (last) {
-                last.total_rows = count;
-                last.offset = offset;
-                last.limit = limit;
-            }
-            res.json(comments);
-        });
+
+        // For now this is the simplest solution to enable sorting by score.
+        // A bit inefficient to select all records, but it's only for
+        // moderators, so it shouldn't pose much of a performance problem.
+        if (req.query.sortByScore) {
+            util.sortByField(comments, "score", "DESC");
+        }
+        comments = comments.slice(offset, offset+limit);
+
+        // store total count to last comment
+        var last = comments[comments.length-1];
+        if (last) {
+            last.total_rows = total_rows;
+            last.offset = offset;
+            last.limit = limit;
+        }
+        res.json(comments);
     });
 });
 

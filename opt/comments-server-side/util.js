@@ -59,6 +59,30 @@ exports.scoreComments = function(comments, req) {
 };
 
 /**
+ * Sorts array of objects by the value of given field.
+ *
+ * @param {Array} arr
+ * @param {String} field
+ * @param {String} [direction="ASC"] either "ASC" or "DESC".
+ */
+exports.sortByField = function(arr, field, direction) {
+    if (direction === "DESC") {
+        var more = -1;
+        var less = 1;
+    }
+    else {
+        var more = 1;
+        var less = -1;
+    }
+
+    arr.sort(function(aObj, bObj) {
+        var a = aObj[field];
+        var b = bObj[field];
+        return a > b ? more : a < b ? less : 0;
+    });
+};
+
+/**
  * Performs voting on comment.
  *
  * @param {Object} req The request object.
