@@ -10,18 +10,17 @@ Ext.define('Docs.view.cls.Container', {
         'Docs.view.cls.Overview'
     ],
 
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
+    layout: 'border',
 
     padding: '5 10 0 10',
 
     initComponent: function() {
         this.items = [
-            Ext.create('Docs.view.cls.Header'),
+            Ext.create('Docs.view.cls.Header', {
+                region: 'north'
+            }),
             Ext.create('Docs.view.cls.Overview', {
-                flex: 1
+                region: 'center'
             })
         ];
         this.callParent(arguments);

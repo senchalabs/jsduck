@@ -72,6 +72,7 @@ Ext.define('Docs.view.examples.Inline', {
                 cmpName: 'code',
                 value: this.value,
                 listeners: {
+                    init: this.updateHeight,
                     change: this.updateHeight,
                     scope: this
                 }
@@ -137,9 +138,6 @@ Ext.define('Docs.view.examples.Inline', {
         if (this.toolbar) {
             this.toolbar.activateButton("code");
         }
-        // Weird bug on CodeMirror requires 2 refreshes...
-        this.editor.refresh();
-        this.editor.refresh();
     },
 
     /**

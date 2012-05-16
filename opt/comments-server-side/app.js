@@ -198,16 +198,27 @@ app.get('/auth/:sdk/:version/comments_recent', util.getCommentReads, function(re
         filter._id = { $nin: req.commentMeta.reads };
     }
 
-    Comment.find(filter).sort('createdAt', -1).skip(offset).limit(limit).run(function(err, comments) {
+    Comment.find(filter).sort("createdAt", -1).run(function(err, comments) {
+        var total_rows = comments.length;
+
         comments = util.scoreComments(comments, req);
-        // Count all comments, store count to last comment
-        Comment.count(filter).run(function(err, count) {
-            var last = comments[comments.length-1];
-            last.total_rows = count;
+
+        // For now this is the simplest solution to enable sorting by score.
+        // A bit inefficient to select all records, but it's only for
+        // moderators, so it shouldn't pose much of a performance problem.
+        if (req.query.sortByScore) {
+            util.sortByField(comments, "score", "DESC");
+        }
+        comments = comments.slice(offset, offset+limit);
+
+        // store total count to last comment
+        var last = comments[comments.length-1];
+        if (last) {
+            last.total_rows = total_rows;
             last.offset = offset;
             last.limit = limit;
-            res.json(comments);
-        });
+        }
+        res.json(comments);
     });
 });
 
@@ -256,11 +267,12 @@ app.post('/auth/:sdk/:version/comments', util.requireLoggedInUser, function(req,
         url: req.body.url
     });
 
-    comment.save(function(err, response) {
-        res.json({ success: true, id: response._id, action: req.body.action });
+    comment.saveNew(req.session.user, function(err) {
+        res.json({ success: true, id: comment._id, action: req.body.action });
 
         util.sendEmailUpdates(comment);
     });
+
 });
 
 /**
@@ -284,7 +296,7 @@ app.post('/auth/:sdk/:version/comments/:commentId', util.requireLoggedInUser, ut
                 author: req.session.user.username
             });
 
-            comment.save(function(err, response) {
+            comment.save(function(err) {
                 res.json({ success: true, content: comment.contentHtml });
             });
         });
@@ -296,7 +308,7 @@ app.post('/auth/:sdk/:version/comments/:commentId', util.requireLoggedInUser, ut
  */
 app.post('/auth/:sdk/:version/comments/:commentId/delete', util.requireLoggedInUser, util.findComment, util.requireOwner, function(req, res) {
     req.comment.deleted = true;
-    req.comment.save(function(err, response) {
+    req.comment.save(function(err) {
         res.send({ success: true });
     });
 });
@@ -306,7 +318,7 @@ app.post('/auth/:sdk/:version/comments/:commentId/delete', util.requireLoggedInU
  */
 app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', util.requireLoggedInUser, util.findComment, util.requireOwner, util.getCommentReads, function(req, res) {
     req.comment.deleted = false;
-    req.comment.save(function(err, response) {
+    req.comment.save(function(err) {
         res.send({ success: true, comment: util.scoreComments([req.comment], req)[0] });
     });
 });
@@ -316,7 +328,7 @@ app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', util.requireLogg
  */
 app.post('/auth/:sdk/:version/comments/:commentId/read', util.requireLoggedInUser, util.findCommentMeta, function(req, res) {
     req.commentMeta.metaType = 'read';
-    req.commentMeta.save(function(err, response) {
+    req.commentMeta.save(function(err) {
         res.send({ success: true });
     });
 });
@@ -353,7 +365,7 @@ app.post('/auth/:sdk/:version/subscribe', util.requireLoggedInUser, function(req
             subscription = new Subscription(subscriptionBody);
             subscription.email = req.session.user.email;
 
-            subscription.save(function(err, ok) {
+            subscription.save(function(err) {
                 res.send({ success: true });
             });
         }

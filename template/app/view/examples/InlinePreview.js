@@ -75,8 +75,9 @@ Ext.define('Docs.view.examples.InlinePreview', {
             }).toHtml();
         }
         else {
+            // frameBorder=0 is needed to hide the border in IE8
             var tpl = new Ext.XTemplate(
-                '<iframe id="{id}" style="width: 100%; height: 100%; border: 0"></iframe>'
+                '<iframe id="{id}" style="width: 100%; height: 100%; border: 0" frameBorder="0"></iframe>'
             );
             return tpl.apply({
                 id: this.iframeId
@@ -90,21 +91,21 @@ Ext.define('Docs.view.examples.InlinePreview', {
      */
     update: function(code) {
         var options = this.options;
-        var iframe = document.getElementById(this.iframeId);
+        var iframe = Ext.get(this.iframeId);
         var callback = Ext.Function.bind(this.iframeCallback, this);
 
         if (iframe) {
             // Something is not quite ready when onload fires.
             // I'm unsure what I should wait for. So I'm currently adding just this nasty delay.
             // 1 ms works in Chrome, Firefox wants something bigger. Works in IE too.
-            iframe.onload = function() {
+            iframe.on('load', function() {
                 Ext.Function.defer(function() {
                     // Append newline to code, otherwise we might result in syntax error as
                     // eval() doesn't like when code ends with line-comment.
-                    iframe.contentWindow.loadInlineExample(code+"\n", options, callback);
+                    iframe.dom.contentWindow.loadInlineExample(code+"\n", options, callback);
                 }, 100);
-            };
-            iframe.src = "eg-iframe.html";
+            }, this, {single: true});
+            iframe.dom.src = "eg-iframe.html";
         }
     },
 

@@ -7,6 +7,7 @@ Ext.define('Docs.view.examples.Index', {
     requires: [
         'Docs.view.ThumbList'
     ],
+    mixins: ['Docs.view.Scrolling'],
 
     cls: 'iScroll',
     margin: '10 0 0 0',

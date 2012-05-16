@@ -119,10 +119,6 @@ Ext.define('Docs.controller.Classes', {
                         preventDefault: true,
                         delegate: '.not-expandable'
                     });
-
-                    cmp.body.addListener('scroll', function(cmp, el) {
-                        this.setScrollState('#!/api/' + this.currentCls.name, el.scrollTop);
-                    }, this);
                 }
             },
 
@@ -138,6 +134,12 @@ Ext.define('Docs.controller.Classes', {
                     }, this, {
                         delegate: '.x-resizable-handle'
                     });
+                }
+            },
+
+            'doctabs': {
+                tabClose: function(url) {
+                    this.getOverview().eraseScrollContext(url);
                 }
             }
         });
@@ -250,24 +252,18 @@ Ext.define('Docs.controller.Classes', {
             reRendered = true;
         }
         this.currentCls = cls;
+        this.getOverview().setScrollContext("#!/api/"+cls.name);
 
         if (anchor) {
             this.getOverview().scrollToEl("#" + anchor);
             this.fireEvent('showMember', cls.name, anchor);
         }
         else {
-            this.scrollContent();
+            this.getOverview().restoreScrollState();
         }
 
         this.getTree().selectUrl("#!/api/"+cls.name);
         this.fireEvent('showClass', cls.name, {reRendered: reRendered});
-    },
-
-    scrollContent: function() {
-        if (this.currentCls) {
-            var baseUrl = '#!/api/' + this.currentCls.name;
-            this.getOverview().getEl().down('.x-panel-body').scrollTo('top', this.getScrollState(baseUrl));
-        }
     }
 
 });

@@ -7,6 +7,7 @@ Ext.define('Docs.view.tests.Index', {
         'Docs.model.Test',
         'Docs.view.tests.BatchRunner'
     ],
+    mixins: ['Docs.view.Scrolling'],
     alias: 'widget.testsindex',
 
     layout: {

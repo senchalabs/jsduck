@@ -58,17 +58,9 @@ Ext.define('Docs.controller.Guides', {
                     });
                 }
             },
-            '#guide': {
-                afterrender: function(cmp) {
-                    cmp.el.addListener('click', function(event, el) {
-                        this.setScrollState(this.activeUrl, el.scrollTop);
-                    }, this);
-                    cmp.el.addListener('click', function(event, el) {
-                        this.handleUrlClick(el.href, event);
-                    }, this, {
-                        preventDefault: true,
-                        delegate: '.toc a'
-                    });
+            'doctabs': {
+                tabClose: function(url) {
+                    this.getGuide().eraseScrollContext(url);
                 }
             }
         });
@@ -157,9 +149,16 @@ Ext.define('Docs.controller.Guides', {
             reRendered = true;
         }
         this.activeUrl = url;
-        section ? this.getGuide().scrollToEl(name+section) : this.getGuide().scrollToTop();
+        this.getGuide().setScrollContext(this.activeUrl);
+
+        if (section) {
+            this.getGuide().scrollToEl(name+section);
+        }
+        else {
+            this.getGuide().restoreScrollState();
+        }
+
         this.fireEvent('showGuide', name, { reRendered: reRendered });
         this.getTree().selectUrl(url);
     }
-
 });

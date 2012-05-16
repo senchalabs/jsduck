@@ -28,8 +28,10 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
     },
 
     sortTree: function(node) {
-      node.children.sort(this.compare, this);
-      Ext.Array.forEach(node.children, this.sortTree, this);
+        // IE8 doesn't support the scope parameter to .sort method
+        node.children.sort(Ext.bind(this.compare, this));
+
+        Ext.Array.forEach(node.children, this.sortTree, this);
     },
 
     // Comparson method that sorts names case-insensitively

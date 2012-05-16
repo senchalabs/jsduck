@@ -59,6 +59,30 @@ exports.scoreComments = function(comments, req) {
 };
 
 /**
+ * Sorts array of objects by the value of given field.
+ *
+ * @param {Array} arr
+ * @param {String} field
+ * @param {String} [direction="ASC"] either "ASC" or "DESC".
+ */
+exports.sortByField = function(arr, field, direction) {
+    if (direction === "DESC") {
+        var more = -1;
+        var less = 1;
+    }
+    else {
+        var more = 1;
+        var less = -1;
+    }
+
+    arr.sort(function(aObj, bObj) {
+        var a = aObj[field];
+        var b = bObj[field];
+        return a > b ? more : a < b ? less : 0;
+    });
+};
+
+/**
  * Performs voting on comment.
  *
  * @param {Object} req The request object.
@@ -101,7 +125,7 @@ exports.vote = function(req, res, comment) {
         }
     }
 
-    comment.save(function(err, response) {
+    comment.save(function(err) {
         res.json({
             success: true,
             direction: voteDirection,
@@ -171,15 +195,21 @@ exports.findCommentMeta = function(req, res, next) {
     }
 };
 
-// True if the user is moderator
+/**
+ * True if the user is moderator
+ */
 function isModerator(user) {
     return _.include(user.membergroupids, 7);
 }
+exports.isModerator = isModerator;
 
-// True if the user is author of the comment
+/**
+ * True if the user is author of the comment
+ */
 function isAuthor(user, comment) {
     return user.username === comment.author;
 }
+exports.isAuthor = isAuthor;
 
 /**
  * Ensures that user is allowed to modify/delete the comment,

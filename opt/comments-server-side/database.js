@@ -4,9 +4,10 @@
  */
 
 var mongoose = require('mongoose'),
+    util = require('./util'),
     config = require('./config');
 
-Comment = mongoose.model('Comment', new mongoose.Schema({
+CommentSchema = new mongoose.Schema({
     sdk:         String,
     version:     String,
 
@@ -26,7 +27,28 @@ Comment = mongoose.model('Comment', new mongoose.Schema({
     mod:         Boolean,
     title:       String,
     url:         String
-}));
+});
+
+// Helper method for adding new comments.
+// When moderator posts comment, mark it automatically as read.
+CommentSchema.methods.saveNew = function(user, next) {
+    var comment = this;
+    if (util.isModerator(user)) {
+        comment.save(function(err) {
+            var meta = new Meta({
+                userId: user.userid,
+                commentId: comment._id,
+                metaType: 'read'
+            });
+            meta.save(next);
+        });
+    }
+    else {
+        comment.save(next);
+    }
+};
+
+Comment = mongoose.model('Comment', CommentSchema);
 
 Subscription = mongoose.model('Subscription', new mongoose.Schema({
     sdk:         String,

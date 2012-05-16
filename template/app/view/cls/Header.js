@@ -33,11 +33,11 @@ Ext.define('Docs.view.cls.Header', {
             '</tpl>',
             {
                 getClass: function(cls) {
-                    if (cls.component) {
-                        return "component";
-                    }
-                    else if (cls.singleton) {
+                    if (cls.singleton) {
                         return "singleton";
+                    }
+                    else if (cls.component) {
+                        return "component";
                     }
                     else {
                         return "class";

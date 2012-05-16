@@ -26,7 +26,6 @@ Ext.define('Docs.controller.InlineExamples', {
             Ext.Array.each(Ext.ComponentQuery.query(container + ' .inlineexample'), function(c) {
                 if (c.editor && c.isVisible()) {
                     c.doLayout();
-                    c.editor.refresh();
                 }
             });
         };

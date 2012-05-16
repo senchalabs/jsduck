@@ -11,6 +11,7 @@ Ext.define('Docs.view.cls.Overview', {
         'Docs.Syntax',
         'Docs.Settings'
     ],
+    mixins: ['Docs.view.Scrolling'],
 
     cls: 'class-overview iScroll',
     autoScroll: true,
@@ -25,6 +26,7 @@ Ext.define('Docs.view.cls.Overview', {
              */
             'afterload'
         );
+
         this.callParent(arguments);
     },
 
@@ -55,12 +57,10 @@ Ext.define('Docs.view.cls.Overview', {
                 el.addCls('open');
             }
 
-            var scrollOffset = el.getY() - (isMember ? 165 : 155) + (offset || 0);
-            var docContent = this.getEl().down('.x-panel-body');
-            var currentScroll = docContent.getScroll()['top'];
-            docContent.scrollTo('top', currentScroll + scrollOffset);
-
-            el.highlight();
+            this.scrollToView(el, {
+                highlight: true,
+                offset: (offset || 0) - (isMember ? 165 : 155)
+            });
         }
     },
 

@@ -1,13 +1,16 @@
 require 'rubygems'
 require 'rake'
-require 'json'
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
+
+def os_is_windows?
+  RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+end
 
 require 'rspec'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.rspec_opts = ["--color"]
+  spec.rspec_opts = ["--color"] unless os_is_windows?
   spec.pattern = "spec/**/*_spec.rb"
 end
 
@@ -176,11 +179,11 @@ class JsDuckRunner
   end
 
   def add_debug
-    @options += [
+    add_options(
       "--extjs-path", "extjs/ext-all-debug.js",
-      "--template-links",
-      "--template", "template",
-    ]
+      "--template", "template"
+    )
+    add_options("--template-links") unless os_is_windows?
   end
 
   def run
@@ -246,7 +249,7 @@ task :touch2 => :sass do
   runner.add_options(
     "--output", OUT_DIR,
     "--config", "#{SDK_DIR}/touch/docs/config.json",
-    "--examples-base-url", "touch/examples/production/",
+    "--examples-base-url", "touch-build/examples/production/",
     "--seo",
     "--tests"
   )
@@ -255,7 +258,7 @@ task :touch2 => :sass do
   runner.add_comments('touch', '2')
   runner.run
 
-  system("cp -r #{TOUCH_BUILD} #{OUT_DIR}/touch")
+  system("cp -r #{TOUCH_BUILD} #{OUT_DIR}/touch-build")
 end
 
 task :default => :spec
