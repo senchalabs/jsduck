@@ -691,9 +691,10 @@ Ext.define('Docs.controller.Comments', {
 
     updateCommentsPager: function(comments, data) {
         var last = data[data.length - 1] || {};
-        comments.down('.recent-comments-pager').update(
-            Docs.view.Comments.getPagerHtml(last)
-        );
+        var pager = comments.down('.recent-comments-pager');
+        if (pager) {
+            pager.update(Docs.view.Comments.getPagerHtml(last));
+        }
     },
 
     toggleNewComment: function(cmp, el) {

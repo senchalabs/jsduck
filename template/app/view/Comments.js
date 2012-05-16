@@ -294,7 +294,7 @@ Ext.define('Docs.view.Comments', {
      * @param {Number} opts.total_rows
      */
     getPagerHtml: function(opts) {
-        var total = opts.total_rows;
+        var total = opts.total_rows || 0;
         var loaded = opts.offset + opts.limit;
         var next_load = Math.min(opts.limit, total - loaded);
 
