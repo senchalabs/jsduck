@@ -102,10 +102,6 @@ Ext.define('Docs.view.Comments', {
                         var str = String(Math.round(diff / (60 * 60 * 24)));
                         return str + (str == "1" ? ' day' : ' days') + ' ago';
                     }
-                    else if (diff < 60*60*24*365) {
-                        var str = String(Math.round(diff / (60 * 60 * 24 * 31)));
-                        return str + (str == "1" ? ' month' : ' months') + ' ago';
-                    }
                     else {
                         return Ext.Date.format(new Date(date), 'jS M \'y');
                     }
