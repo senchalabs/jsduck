@@ -12,6 +12,7 @@ Ext.define('Docs.controller.Comments', {
 
     requires: [
         "Docs.view.auth.LoginHelper",
+        "Docs.Settings",
         "Docs.Syntax",
         "Docs.Tip"
     ],
@@ -271,26 +272,39 @@ Ext.define('Docs.controller.Comments', {
         });
     },
 
+    hideRead: function() {
+        this.updateCommentSetting('hideRead');
+        this.fetchRecentComments();
+    },
+
+    hideCurrentUser: function() {
+        this.updateCommentSetting('hideCurrentUser');
+        this.fetchRecentComments();
+    },
+
+    sortByScore: function() {
+        this.updateCommentSetting('sortByScore');
+        this.fetchRecentComments();
+    },
+
+    updateCommentSetting: function(name) {
+        var settings = Docs.Settings.get('comments');
+        settings[name] = this.isChecked(name);
+        Docs.Settings.set('comments', settings);
+    },
+
     /**
      * Fetches the most recent comments
      */
     fetchRecentComments: function(offset) {
+        var settings = Docs.Settings.get('comments');
         var params = {
             offset: offset || 0,
-            limit: 100
+            limit: 100,
+            hideRead: settings.hideRead ? 1 : undefined,
+            hideCurrentUser: settings.hideCurrentUser ? 1 : undefined,
+            sortByScore: settings.sortByScore ? 1 : undefined
         };
-
-        if (Ext.util.Cookies.get('hideRead')) {
-            params.hideRead = 1;
-        }
-
-        if (Ext.util.Cookies.get('hideCurrentUser')) {
-            params.hideCurrentUser = 1;
-        }
-
-        if (Ext.util.Cookies.get('sortByScore')) {
-            params.sortByScore = 1;
-        }
 
         this.getIndex().setMasked(true);
 
@@ -314,15 +328,6 @@ Ext.define('Docs.controller.Comments', {
     isChecked: function(id) {
         var cb = Ext.get(id);
         return cb && cb.dom.checked;
-    },
-
-    setCookie: function(name) {
-        var checked = this.isChecked(name);
-        if (checked) {
-            Ext.util.Cookies.set(name, true);
-        } else {
-            Ext.util.Cookies.clear(name);
-        }
     },
 
     fetchMoreComments: function(cmp, el) {
@@ -503,21 +508,6 @@ Ext.define('Docs.controller.Comments', {
 
     voteDown: function(cmp, el) {
         this.vote('down', el);
-    },
-
-    hideRead: function() {
-        this.setCookie('hideRead');
-        this.fetchRecentComments();
-    },
-
-    hideCurrentUser: function() {
-        this.setCookie('hideCurrentUser');
-        this.fetchRecentComments();
-    },
-
-    sortByScore: function() {
-        this.setCookie('sortByScore');
-        this.fetchRecentComments();
     },
 
     updateSubscription: function(cmp, el) {

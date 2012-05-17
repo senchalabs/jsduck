@@ -5,6 +5,7 @@ Ext.define('Docs.view.comments.Index', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.commentindex',
     mixins: ['Docs.view.Scrolling'],
+    requires: ['Docs.Settings'],
 
     cls: 'comment-index',
     margin: '10 0 0 0',
@@ -48,7 +49,7 @@ Ext.define('Docs.view.comments.Index', {
 
     afterRender: function() {
         this.callParent(arguments);
-        this.initCookies();
+        this.initCheckboxes();
 
         this.setMasked(true);
     },
@@ -64,21 +65,15 @@ Ext.define('Docs.view.comments.Index', {
         }
     },
 
-    /**
-     * Loops through each of the filter values (manually set for now) and checked for a previous set cookie value.
-     */
-    initCookies: function() {
-        var checkboxes = ['hideRead', 'hideCurrentUser', 'sortByScore'],
-            ln = checkboxes.length,
-            i, el;
-
-        for (i = 0; i < ln; i++) {
-            name = checkboxes[i];
-            el = Ext.get(name);
-            if (el) {
-                el.dom.checked = Boolean(Ext.util.Cookies.get(name));
+    // Initializes all checkboxes from settings.
+    initCheckboxes: function() {
+        var settings = Docs.Settings.get("comments");
+        Ext.Array.forEach(['hideRead', 'hideCurrentUser', 'sortByScore'], function(id) {
+            var cb = Ext.get(id);
+            if (cb) {
+                cb.dom.checked = settings[id];
             }
-        }
+        });
     },
 
     /**
