@@ -66,14 +66,31 @@ Ext.define('Docs.view.comments.Index', {
     },
 
     // Initializes all checkboxes from settings.
+    // Bind event handlers to fire changeSetting event when checked/unchecked.
     initCheckboxes: function() {
         var settings = Docs.Settings.get("comments");
         Ext.Array.forEach(['hideRead', 'hideCurrentUser', 'sortByScore'], function(id) {
             var cb = Ext.get(id);
             if (cb) {
                 cb.dom.checked = settings[id];
+                cb.on("change", function() {
+                    this.saveSetting(id, cb.dom.checked);
+                    /**
+                     * @event settingChange
+                     * Fired when one of the comments settings checkboxes is checked/unchecked.
+                     * @param {String} name The name of the setting
+                     * @param {Boolean} enabled True if setting is turned on, false when off.
+                     */
+                    this.fireEvent("settingChange", id, cb.dom.checked);
+                }, this);
             }
-        });
+        }, this);
+    },
+
+    saveSetting: function(name, enabled) {
+        var settings = Docs.Settings.get('comments');
+        settings[name] = enabled;
+        Docs.Settings.set('comments', settings);
     },
 
     /**

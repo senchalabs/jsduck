@@ -121,10 +121,7 @@ Ext.define('Docs.controller.Comments', {
                         [ '.readComment',          'click', this.readComment],
                         [ '.fetchMoreComments',    'click', this.fetchMoreComments],
                         [ '.voteCommentUp',        'click', this.voteUp],
-                        [ '.voteCommentDown',      'click', this.voteDown],
-                        [ '#hideRead',            'change', this.hideRead],
-                        [ '#hideCurrentUser',     'change', this.hideCurrentUser],
-                        [ '#sortByScore',         'change', this.sortByScore]
+                        [ '.voteCommentDown',      'click', this.voteDown]
                     ], function(delegate) {
                         cmp.el.addListener(delegate[1], delegate[2], this, {
                             preventDefault: true,
@@ -135,6 +132,12 @@ Ext.define('Docs.controller.Comments', {
                     cmp.el.addListener('click', this.updateSubscription, this, {
                         delegate: '.subscriptionCheckbox'
                     });
+                }
+            },
+
+            'commentindex': {
+                settingChange: function() {
+                    this.fetchRecentComments();
                 }
             },
 
@@ -270,27 +273,6 @@ Ext.define('Docs.controller.Comments', {
             },
             scope: this
         });
-    },
-
-    hideRead: function() {
-        this.updateCommentSetting('hideRead');
-        this.fetchRecentComments();
-    },
-
-    hideCurrentUser: function() {
-        this.updateCommentSetting('hideCurrentUser');
-        this.fetchRecentComments();
-    },
-
-    sortByScore: function() {
-        this.updateCommentSetting('sortByScore');
-        this.fetchRecentComments();
-    },
-
-    updateCommentSetting: function(name) {
-        var settings = Docs.Settings.get('comments');
-        settings[name] = this.isChecked(name);
-        Docs.Settings.set('comments', settings);
     },
 
     /**
