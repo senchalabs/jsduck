@@ -198,6 +198,10 @@ app.get('/auth/:sdk/:version/comments_recent', util.getCommentReads, function(re
         filter._id = { $nin: req.commentMeta.reads };
     }
 
+    if (req.query.hideCurrentUser) {
+        filter.userId = { $ne: req.session.user.userid };
+    }
+
     Comment.find(filter).sort("createdAt", -1).run(function(err, comments) {
         var total_rows = comments.length;
 

@@ -12,6 +12,7 @@ Ext.define('Docs.controller.Comments', {
 
     requires: [
         "Docs.view.auth.LoginHelper",
+        "Docs.Settings",
         "Docs.Syntax",
         "Docs.Tip"
     ],
@@ -120,9 +121,7 @@ Ext.define('Docs.controller.Comments', {
                         [ '.readComment',          'click', this.readComment],
                         [ '.fetchMoreComments',    'click', this.fetchMoreComments],
                         [ '.voteCommentUp',        'click', this.voteUp],
-                        [ '.voteCommentDown',      'click', this.voteDown],
-                        [ '#hideRead',            'change', function() { this.fetchRecentComments(); }],
-                        [ '#sortByScore',         'change', function() { this.fetchRecentComments(); }]
+                        [ '.voteCommentDown',      'click', this.voteDown]
                     ], function(delegate) {
                         cmp.el.addListener(delegate[1], delegate[2], this, {
                             preventDefault: true,
@@ -133,6 +132,12 @@ Ext.define('Docs.controller.Comments', {
                     cmp.el.addListener('click', this.updateSubscription, this, {
                         delegate: '.subscriptionCheckbox'
                     });
+                }
+            },
+
+            'commentindex': {
+                settingChange: function() {
+                    this.fetchRecentComments();
                 }
             },
 
@@ -274,23 +279,24 @@ Ext.define('Docs.controller.Comments', {
      * Fetches the most recent comments
      */
     fetchRecentComments: function(offset) {
+        var settings = Docs.Settings.get('comments');
         var params = {
             offset: offset || 0,
-            limit: 100
+            limit: 100,
+            hideRead: settings.hideRead ? 1 : undefined,
+            hideCurrentUser: settings.hideCurrentUser ? 1 : undefined,
+            sortByScore: settings.sortByScore ? 1 : undefined
         };
 
-        if (this.isChecked('hideRead')) {
-            params.hideRead = 1;
-        }
-        if (this.isChecked('sortByScore')) {
-            params.sortByScore = 1;
-        }
+        this.getIndex().setMasked(true);
 
         this.request("jsonp", {
             url: '/comments_recent',
             method: 'GET',
             params: params,
             success: function(response) {
+                this.getIndex().setMasked(false);
+
                 this.renderComments(response, 'recentcomments', {
                     hideCommentForm: true,
                     append: !!offset,
