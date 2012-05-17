@@ -207,6 +207,7 @@ module JsDuck
 
       key = @input.scan(/[a-zA-Z0-9_]+/)
       return false unless key
+      @out << key
 
       skip_whitespace
       if @input.scan(/:/)
@@ -321,8 +322,10 @@ module JsDuck
 
       # All type names besides * can be followed by .<arguments>
       if name != "*" && @input.scan(/\.</)
+        @out << ".&lt;"
         return false unless type_arguments
         return false unless @input.scan(/>/)
+        @out << "&gt;"
       end
 
       true

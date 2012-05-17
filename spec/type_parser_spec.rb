@@ -303,11 +303,29 @@ describe JsDuck::TypeParser do
       p.out.should == '<a href="String">string</a>'
     end
 
-    it "preserves whitespace in output" do
+    def parse_to_output(input)
       relations = JsDuck::Relations.new([])
       p = JsDuck::TypeParser.new(relations)
-      p.parse("( string | number )")
-      p.out.should == '( string | number )'
+      p.parse(input)
+      return p.out
+    end
+
+    it "preserves whitespace in output" do
+      parse_to_output("( string | number )").should == "( string | number )"
+    end
+
+    it "converts < and > to HTML entities in output" do
+      parse_to_output("number.<string, *>").should == "number.&lt;string, *&gt;"
+    end
+
+    it "preserves function notation in output" do
+      input = 'function(this:string, ?number=, !number, ...[number]): boolean'
+      parse_to_output(input).should == input
+    end
+
+    it "preserves object literal notation in output" do
+      input = '{myNum: number, myObject}'
+      parse_to_output(input).should == input
     end
 
   end
