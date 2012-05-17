@@ -50,7 +50,18 @@ Ext.define('Docs.view.comments.Index', {
         this.callParent(arguments);
         this.initCookies();
 
-        Ext.get('comment-index-container').mask();
+        this.setMasked(true);
+    },
+
+    /**
+     * Masks or unmasks the container
+     * @param {Boolean} masked True to show mask.
+     */
+    setMasked: function(masked) {
+        var container = Ext.get('comment-index-container');
+        if (container) {
+            container[masked ? "mask" : "unmask"]();
+        }
     },
 
     /**

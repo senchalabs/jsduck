@@ -292,14 +292,14 @@ Ext.define('Docs.controller.Comments', {
             params.sortByScore = 1;
         }
 
-        this.maskComments();
+        this.getIndex().setMasked(true);
 
         this.request("jsonp", {
             url: '/comments_recent',
             method: 'GET',
             params: params,
             success: function(response) {
-                this.unmaskComments();
+                this.getIndex().setMasked(false);
 
                 this.renderComments(response, 'recentcomments', {
                     hideCommentForm: true,
@@ -309,20 +309,6 @@ Ext.define('Docs.controller.Comments', {
             },
             scope: this
         });
-    },
-
-    maskComments: function() {
-        var container = Ext.get('comment-index-container');
-        if (container) {
-            container.mask();
-        }
-    },
-
-    unmaskComments: function() {
-        var container = Ext.get('comment-index-container');
-        if (container) {
-            container.unmask();
-        }
     },
 
     isChecked: function(id) {
