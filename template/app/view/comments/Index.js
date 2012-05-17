@@ -35,7 +35,7 @@ Ext.define('Docs.view.comments.Index', {
     items: [
         {
             cls: 'iScroll',
-            id: 'recentcomments-container',
+            id: 'comment-index-container',
             autoScroll: true,
             items: [
                 {
@@ -50,7 +50,7 @@ Ext.define('Docs.view.comments.Index', {
         this.callParent(arguments);
         this.initCookies();
 
-        Ext.get('recentcomments-container').mask();
+        Ext.get('comment-index-container').mask();
     },
 
     /**

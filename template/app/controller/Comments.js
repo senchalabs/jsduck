@@ -312,14 +312,14 @@ Ext.define('Docs.controller.Comments', {
     },
 
     maskComments: function() {
-        var container = Ext.get('recentcomments-container');
+        var container = Ext.get('comment-index-container');
         if (container) {
             container.mask();
         }
     },
 
     unmaskComments: function() {
-        var container = Ext.get('recentcomments-container');
+        var container = Ext.get('comment-index-container');
         if (container) {
             container.unmask();
         }
