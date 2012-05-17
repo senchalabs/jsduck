@@ -11,7 +11,6 @@ CommentSchema = new mongoose.Schema({
     sdk:         String,
     version:     String,
 
-    action:      String,
     author:      String,
     userId:      Number,
     content:     String,

@@ -204,7 +204,6 @@ Ext.define('Docs.controller.Comments', {
             encodedTarget = Ext.JSON.encode(target),
             textarea = comments.down('textarea').dom,
             comment = textarea.editor.getValue(),
-            action = comments.down('.commentAction').getValue(),
             feedbacks = comments.select('[name=feedback]');
 
         var feedbackRating = null;
@@ -252,7 +251,6 @@ Ext.define('Docs.controller.Comments', {
                 target: encodedTarget,
                 comment: comment,
                 rating: feedbackRating,
-                action: action,
                 title: title,
                 url: "http://" + window.location.host + window.location.pathname + urlPrefix + url
             },
