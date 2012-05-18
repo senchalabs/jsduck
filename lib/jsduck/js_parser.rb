@@ -1,9 +1,9 @@
-require 'jsduck/esprima_core'
+require 'jsduck/esprima'
 
 module JsDuck
 
   # JavaScript parser that internally uses Esprima.js
-  class EsprimaParser
+  class JsParser
 
     # Initializes the parser with JavaScript source code to be parsed.
     def initialize(input, options = {})
@@ -24,7 +24,7 @@ module JsDuck
     #     }
     #
     def parse
-      @ast = EsprimaCore.instance.parse(@input)
+      @ast = Esprima.instance.parse(@input)
 
       @ast["comments"] = merge_comments(@ast["comments"])
       locate_comments

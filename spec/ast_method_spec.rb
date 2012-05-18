@@ -1,9 +1,9 @@
 require "jsduck/ast"
-require "jsduck/esprima_parser"
+require "jsduck/js_parser"
 
 describe "JsDuck::Ast detects method with" do
   def detect(string)
-    node = JsDuck::EsprimaParser.new(string).parse[0]
+    node = JsDuck::JsParser.new(string).parse[0]
     return JsDuck::Ast.new.detect(node[:code])
   end
 

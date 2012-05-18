@@ -1,5 +1,5 @@
 require 'singleton'
-require 'jsduck/esprima_parser'
+require 'jsduck/js_parser'
 require 'jsduck/css_parser'
 require 'jsduck/doc_parser'
 require 'jsduck/merger'
@@ -42,7 +42,7 @@ module JsDuck
       if filename =~ /\.s?css$/
         docs = CssParser.new(contents, options).parse
       else
-        docs = EsprimaParser.new(contents, options).parse
+        docs = JsParser.new(contents, options).parse
         docs = Ast.new(docs).detect_all!
       end
     end

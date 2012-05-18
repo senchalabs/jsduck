@@ -4,11 +4,11 @@ require 'singleton'
 
 module JsDuck
 
-  # Generates AST from JavaScript code by running Esprima.js through V8.
+  # Runs Esprima.js through V8.
   #
   # Initialized as singleton to avoid loading the esprima.js more
   # than once - otherwise performace will severely suffer.
-  class EsprimaCore
+  class Esprima
     include Singleton
 
     def initialize
