@@ -374,19 +374,19 @@ describe JsDuck::Aggregator do
     end
   end
 
-  # describe "cfg with implicit string value starting with Ext.baseCSSPrefix" do
-  #   before do
-  #     @doc = parse(<<-EOS)[0]
-  #     ({/**
-  #        * @cfg foo Something
-  #        */
-  #       foo: Ext.baseCSSPrefix + "foo" })
-  #     EOS
-  #   end
-  #   it "replaces Ext.baseCSSPrefix with 'x-'" do
-  #     @doc[:default].should == '"x-foo"'
-  #   end
-  # end
+  describe "cfg with implicit string value starting with Ext.baseCSSPrefix" do
+    before do
+      @doc = parse(<<-EOS)[0]
+      ({/**
+         * @cfg foo Something
+         */
+        foo: Ext.baseCSSPrefix + "foo" })
+      EOS
+    end
+    it "replaces Ext.baseCSSPrefix with 'x-'" do
+      @doc[:default].should == 'Ext.baseCSSPrefix + "foo"'
+    end
+  end
 
   describe "cfg with implicit number value given as expression" do
     before do
@@ -397,8 +397,8 @@ describe JsDuck::Aggregator do
         foo: 5 + 5 })
       EOS
     end
-    it "doesn't get the default value from code" do
-      @doc[:default].should == nil
+    it "detects the literal expression from code" do
+      @doc[:default].should == "5 + 5"
     end
   end
 

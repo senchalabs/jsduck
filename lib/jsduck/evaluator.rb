@@ -26,6 +26,18 @@ module JsDuck
           h[key] = value
         end
         h
+      when "BinaryExpression"
+        if ast["operator"] == "+"
+          to_value(ast["left"]) + to_value(ast["right"])
+        else
+          throw "Unable to handle operator: " + ast["operator"]
+        end
+      when "MemberExpression"
+        if base_css_prefix?(ast)
+          "x-"
+        else
+          throw "Unable to handle this MemberExpression"
+        end
       when "Literal"
         if ast["value"] == nil && ast["raw"] =~ /\A\//
           :regexp
@@ -40,6 +52,15 @@ module JsDuck
     # Turns object property key into string value
     def key_value(key)
       key["type"] == "Identifier" ? key["name"] : key["value"]
+    end
+
+    # True when MemberExpression == Ext.baseCSSPrefix
+    def base_css_prefix?(ast)
+      ast["computed"] == false &&
+        ast["object"]["type"] == "Identifier" &&
+        ast["object"]["name"] == "Ext" &&
+        ast["property"]["type"] == "Identifier" &&
+        ast["property"]["name"] == "baseCSSPrefix"
     end
 
   end
