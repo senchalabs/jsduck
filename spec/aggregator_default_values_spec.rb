@@ -252,7 +252,7 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "cfg with bogus array literal as default value" do
+  describe "cfg with array literal of idents as default value" do
     before do
       @doc = parse(<<-EOS)[0]
         /**
@@ -260,8 +260,21 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has everything up to ] as default value" do
-      @doc[:default].should == '[ho, ho'
+    it "has the full literal as default value" do
+      @doc[:default].should == '[ho, ho]'
+    end
+  end
+
+  describe "cfg with unfinished array literal as default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=[...] Something
+         */
+      EOS
+    end
+    it "has default value up to first ]" do
+      @doc[:default].should == '[...'
     end
   end
 

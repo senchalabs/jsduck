@@ -1,6 +1,4 @@
 require 'strscan'
-require 'jsduck/js_literal_parser'
-require 'jsduck/js_literal_builder'
 require 'jsduck/meta_tag_registry'
 
 module JsDuck
@@ -418,20 +416,30 @@ module JsDuck
       end
     end
 
-    # attempts to match javascript literal,
-    # when it fails grabs anything up to closing "]"
+    # Attempts to allow balanced braces in default value.
+    # When the nested parsing doesn't finish at closing "]",
+    # roll back to beginning and simply grab anything up to closing "]".
     def default_value
       start_pos = @input.pos
-      lit = JsLiteralParser.new(@input).literal
-      if lit && look(/ *\]/)
-        # When lital matched and there's nothing after it up to the closing "]"
-        JsLiteralBuilder.new.to_s(lit)
+      value = nested_default_value
+      if look(/\]/)
+        value
       else
-        # Otherwise reset parsing position to where we started
-        # and rescan up to "]" using simple regex.
         @input.pos = start_pos
         match(/[^\]]*/)
       end
+    end
+
+    # Parses default value, attempting to balance "[]" braces
+    def nested_default_value
+      value = match(/[^\[\]]*/)
+      while look(/\[/)
+        value += match(/\[/)
+        value += nested_default_value
+        value += match(/\]/)
+        value += match(/[^\[\]]*/)
+      end
+      value
     end
 
     # matches {...=} and returns text inside brackets
