@@ -61,9 +61,6 @@ Ext.define('Docs.view.Comments', {
                         '<tpl if="showCls">',
                             '<span class="target"> on {[this.target(values.target)]}</span>',
                         '</tpl>',
-                        '<tpl if="action == \'problem\'">',
-                            '<span class="problem">problem</span>',
-                        '</tpl>',
                     '</div>',
                     '<tpl if="this.isMod()">',
                         '<a href="#" class="readComment <tpl if="read">read</tpl>">Read</a>',
@@ -83,26 +80,26 @@ Ext.define('Docs.view.Comments', {
         var commentTplMethods = {
             dateStr: function(date) {
                 try {
-                    var now = Math.ceil(Number(new Date()) / 1000),
-                        comment = Math.ceil(Number(new Date(date)) / 1000),
-                        diff = now - comment,
-                        str;
+                    var now = Math.ceil(Number(new Date()) / 1000);
+                    var comment = Math.ceil(Number(new Date(date)) / 1000);
+                    var diff = now - comment;
 
                     if (diff < 60) {
                         return 'just now';
-                    } else if (diff < 3600) {
-                        str = String(Math.ceil(diff / (60)));
+                    }
+                    else if (diff < 60*60) {
+                        var str = String(Math.round(diff / (60)));
                         return str + (str == "1" ? ' minute' : ' minutes') + ' ago';
-                    } else if (diff < 86400) {
-                        str = String(Math.ceil(diff / (3600)));
+                    }
+                    else if (diff < 60*60*24) {
+                        var str = String(Math.round(diff / (60*60)));
                         return str + (str == "1" ? ' hour' : ' hours') + ' ago';
-                    } else if (diff < 60*60*24*31) {
-                        str = String(Math.ceil(diff / (60 * 60 * 24)));
+                    }
+                    else if (diff < 60*60*24*31) {
+                        var str = String(Math.round(diff / (60 * 60 * 24)));
                         return str + (str == "1" ? ' day' : ' days') + ' ago';
-                    } else if (diff < 60*60*24*365) {
-                        str = String(Math.ceil(diff / (60 * 60 * 24 * 31)));
-                        return str + (str == "1" ? ' month' : ' months') + ' ago';
-                    } else {
+                    }
+                    else {
                         return Ext.Date.format(new Date(date), 'jS M \'y');
                     }
                 } catch(e) {
@@ -194,8 +191,20 @@ Ext.define('Docs.view.Comments', {
             '</div>',
             '<div class="commentGuideTxt" style="display: none">',
                 '<ul>',
-                    '<li>Comments should be an <strong>extension</strong> of the documentation.</li>',
-                    '<li>For any <em>questions</em> about code or usage, please use the <a href="http://www.sencha.com/forum" target="_blank">Forum</a>.</li>',
+                    '<li>Comments should be an <strong>extension</strong> of the documentation.<br>',
+                    ' Inform us about bugs in documentation.',
+                    ' Give useful tips to other developers.',
+                    ' Warn about bugs and problems that might bite.',
+                    '</li>',
+                    "<li>Don't post comments for:",
+                    '<ul>',
+                        '<li><strong>Questions about code or usage</strong>',
+                        ' - use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a>.</li>',
+                        '<li><strong>SDK bugs</strong>',
+                        ' - use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a>.</li>',
+                        '<li><strong>Docs App bugs</strong>',
+                        ' - use the <a href="https://github.com/senchalabs/jsduck/issues" target="_blank">GitHub Issue tracker</a>.</li>',
+                    '</ul></li>',
                     '<li>Comments may be edited or deleted at any time by a moderator.</li>',
                     '<li>Avatars can be managed at <a href="http://www.gravatar.com" target="_blank">Gravatar</a> (use your forum email address).</li>',
                     '<li>Comments will be formatted using the Markdown syntax, eg:</li>',
@@ -217,7 +226,7 @@ Ext.define('Docs.view.Comments', {
                         "- Here is an unordered list\n",
                         "- Second unordered list item\n",
                         "\n",
-                        "End a line with two spaces\n",
+                        "End a line with two spaces&nbsp;&nbsp;\n",
                         "to create a line break\n",
                     '</pre>',
                 '</div>',
@@ -247,27 +256,6 @@ Ext.define('Docs.view.Comments', {
         this.loggedInCommentTpl = Ext.create('Ext.XTemplate',
             '<div class="new-comment{[values.hide ? "" : " open"]}">',
                 '<form class="newCommentForm">',
-                    '<span class="action">',
-                        'Action: ',
-                        '<select class="commentAction">',
-                            '<option value="comment">Post a comment</option>',
-                            '<option value="question">Ask a question</option>',
-                            '<option value="problem">Report a problem</option>',
-                        '</select>',
-                    '</span>',
-                    '<div class="note question" style="display: none;">',
-                        'Please use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a> ',
-                        'to post questions. Questions posted on the Documentation may be deleted.</div>',
-                    '<div class="note problem" style="display: none;">',
-                        '<p>Please inform us of documentation problems:</p>',
-                        '<ul>',
-                            '<li>Typos</li>',
-                            '<li>Incorrect information</li>',
-                            '<li>Errors with examples</li>',
-                        '</ul>',
-                        '<p>For <b>SDK bugs</b>, please use the <a href="http://www.sencha.com/forum" target="_blank">Sencha Forum</a>.<br />',
-                        '   For Docs App bugs, please use the <a href="https://github.com/senchalabs/jsduck/issues" target="_blank">GitHub Issue tracker</a>.</p>',
-                    '</div>',
                     '<div class="postCommentWrap">',
                         '<textarea></textarea>',
                         commentMetaAndGuide.join(''),
@@ -476,25 +464,6 @@ Ext.define('Docs.view.Comments', {
             lineWrapping: true,
             indentUnit: 4
         });
-
-        var action = (form && form.down('.commentAction'));
-        if (action) {
-            action.on('change', function(evt, el) {
-                var val = Ext.get(el).getValue();
-                form.select('.note').setStyle({display: 'none'});
-                if (val === "question") {
-                    form.down('.postCommentWrap').setStyle({display: 'none'});
-                    form.down('.note.question').setStyle({display: 'block'});
-                }
-                else if (val === "problem") {
-                    form.down('.postCommentWrap').setStyle({display: 'block'});
-                    form.down('.note.problem').setStyle({display: 'block'});
-                }
-                else {
-                    form.down('.postCommentWrap').setStyle({display: 'block'});
-                }
-            });
-        }
     },
 
     showMember: function(cls, member) {

@@ -198,6 +198,10 @@ app.get('/auth/:sdk/:version/comments_recent', util.getCommentReads, function(re
         filter._id = { $nin: req.commentMeta.reads };
     }
 
+    if (req.query.hideCurrentUser) {
+        filter.userId = { $ne: req.session.user.userid };
+    }
+
     Comment.find(filter).sort("createdAt", -1).run(function(err, comments) {
         var total_rows = comments.length;
 
@@ -252,7 +256,6 @@ app.post('/auth/:sdk/:version/comments', util.requireLoggedInUser, function(req,
         author: req.session.user.username,
         userId: req.session.user.userid,
         content: req.body.comment,
-        action: req.body.action,
         rating: Number(req.body.rating),
         contentHtml: util.markdown(req.body.comment),
         downVotes: [],
@@ -268,7 +271,7 @@ app.post('/auth/:sdk/:version/comments', util.requireLoggedInUser, function(req,
     });
 
     comment.saveNew(req.session.user, function(err) {
-        res.json({ success: true, id: comment._id, action: req.body.action });
+        res.json({ success: true, id: comment._id });
 
         util.sendEmailUpdates(comment);
     });
