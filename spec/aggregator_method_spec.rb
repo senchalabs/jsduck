@@ -1,0 +1,168 @@
+require "jsduck/aggregator"
+require "jsduck/source_file"
+
+describe JsDuck::Aggregator do
+
+  def parse(string)
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.result
+  end
+
+  shared_examples_for "method" do
+    it "creates method" do
+      @doc[:tagname].should == :method
+    end
+
+    it "takes documentation from doc-comment" do
+      @doc[:doc].should == "Some function"
+    end
+
+    it "detects method name" do
+      @doc[:name].should == "foo"
+    end
+  end
+
+  describe "explicit method" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @method foo
+         * Some function
+         */
+      EOS
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "explicit @method after @params-s" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @param {String} x First parameter
+         * @param {Number} y Second parameter
+         * @method foo
+         */
+      EOS
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "explicit @method followed by function with another name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @method foo
+         */
+        function bar(x, y) {}
+      EOS
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "function declaration" do
+    before do
+      @doc = parse("/** Some function */ function foo() {}")[0]
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "function-literal with var" do
+    before do
+      @doc = parse("/** Some function */ var foo = function() {}")[0]
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "function-literal without var" do
+    before do
+      @doc = parse("/** Some function */ foo = function() {}")[0]
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "function-literal in object-literal" do
+    before do
+      @doc = parse("({ /** Some function */ foo: function() {} })")[0]
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "function-literal in object-literal-string" do
+    before do
+      @doc = parse("({ /** Some function */ 'foo': function() {} })")[0]
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "function-literal in prototype-chain" do
+    before do
+      @doc = parse("/** Some function */ Some.long.prototype.foo = function() {}")[0]
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "function-literal in comma-first style" do
+    before do
+      @doc = parse("({ blah: 7 /** Some function */ , foo: function() {} })")[0]
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "Ext.emptyFn in object-literal" do
+    before do
+      @doc = parse("({ /** Some function */ foo: Ext.emptyFn })")[0]
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "doc-comment followed by 'function'" do
+    before do
+      @doc = parse("/** Some function */ 'function';")[0]
+    end
+
+    it "isn't detected as method" do
+      @doc[:tagname].should_not == :method
+    end
+  end
+
+  describe "Doc-comment not followed by function but containing @return" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @returns {String} return value
+         */
+        var foo = Ext.emptyFn;
+      EOS
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "Doc-comment not followed by function but containing @param" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @param {String} x
+         */
+        var foo = Ext.emptyFn;
+      EOS
+    end
+    it_should_behave_like "method"
+  end
+
+  describe "method without doc-comment" do
+    before do
+      @docs = parse(<<-EOS)
+        // My comment
+        function foo(x, y) {}
+      EOS
+    end
+    it "remains undocumented" do
+      @docs.length.should == 0
+    end
+  end
+end
