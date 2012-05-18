@@ -252,7 +252,10 @@ module JsDuck
         else
           cfg[:inheritdoc] = {}
           cfg[:autodetected] = true
-          cfg[:linenr] = p["loc"]["start"]["line"]
+          # Get line number from third place at range array.
+          # This third item exists in forked EsprimaJS at
+          # https://github.com/nene/esprima/tree/linenr-in-range
+          cfg[:linenr] = p["range"][2]
           configs << cfg
         end
       end
