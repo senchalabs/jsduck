@@ -106,7 +106,7 @@ module JsDuck
             :type => :no_comment,
             :comment => [],
             :code => m,
-            :linenr => docset[:linenr],
+            :linenr => m[:linenr],
           }
         end
       end

@@ -168,6 +168,10 @@ describe JsDuck::Aggregator do
       it "with :autodetected flag" do
         cfg[0][:autodetected].should == true
       end
+
+      it "with :linenr field" do
+        cfg[0][:linenr].should == 6
+      end
     end
 
     describe "documented config" do

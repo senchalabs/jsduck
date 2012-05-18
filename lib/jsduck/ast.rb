@@ -252,6 +252,7 @@ module JsDuck
         else
           cfg[:inheritdoc] = {}
           cfg[:autodetected] = true
+          cfg[:linenr] = p["loc"]["start"]["line"]
           configs << cfg
         end
       end
