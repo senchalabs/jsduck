@@ -421,7 +421,7 @@ module JsDuck
     # roll back to beginning and simply grab anything up to closing "]".
     def default_value
       start_pos = @input.pos
-      value = nested_default_value
+      value = parse_balanced(/\[/, /\]/, /[^\[\]]*/)
       if look(/\]/)
         value
       else
@@ -430,29 +430,11 @@ module JsDuck
       end
     end
 
-    # Parses default value, attempting to balance "[]" braces
-    def nested_default_value
-      value = match(/[^\[\]]*/)
-      while look(/\[/)
-        value += match(/\[/)
-        value += nested_default_value
-        value += match(/\]/)
-        value += match(/[^\[\]]*/)
-      end
-      value
-    end
-
     # matches {...=} and returns text inside brackets
     def typedef
       match(/\{/)
-      name = match(/[^{}]*/)
 
-      # Type definition can contain nested braces: {{foo:Number}}
-      # In such case we parse the definition so that the braces are balanced.
-      while look(/[{]/)
-        name += "{" + typedef[:type] +"}"
-        name += match(/[^{}]*/)
-      end
+      name = parse_balanced(/\{/, /\}/, /[^{}]*/)
 
       if name =~ /=$/
         name = name.chop
@@ -464,6 +446,23 @@ module JsDuck
       match(/\}/)
 
       return {:type => name, :optional => optional}
+    end
+
+    # Helper method to parse a string up to a closing brace,
+    # balancing opening-closing braces in between.
+    #
+    # @param re_open  The beginning brace regex
+    # @param re_close The closing brace regex
+    # @param re_rest  Regex to match text without any braces
+    def parse_balanced(re_open, re_close, re_rest)
+      result = match(re_rest)
+      while look(re_open)
+        result += match(re_open)
+        result += parse_balanced(re_open, re_close, re_rest)
+        result += match(re_close)
+        result += match(re_rest)
+      end
+      result
     end
 
     # matches <ident_chain> <ident_chain> ... until line end
