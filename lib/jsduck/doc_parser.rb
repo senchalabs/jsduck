@@ -135,7 +135,7 @@ module JsDuck
         elsif look(/@evented\b/)
           boolean_at_tag(/@evented/, :evented)
         elsif look(/@/)
-          @input.scan(/@/)
+          match(/@/)
           tag = @meta_tags[look(/\w+/)]
           if tag
             meta_at_tag(tag)
@@ -143,7 +143,7 @@ module JsDuck
             @current_tag[:doc] += "@"
           end
         elsif look(/[^@]/)
-          @current_tag[:doc] += @input.scan(/[^@]+/)
+          @current_tag[:doc] += match(/[^@]+/)
         end
       end
     end
@@ -168,7 +168,7 @@ module JsDuck
       else
         # Fors singleline tags, scan to the end of line and finish the
         # tag.
-        @current_tag[:doc] = @input.scan(/.*$/).strip
+        @current_tag[:doc] = match(/.*$/).strip
         skip_white
         @current_tag = prev_tag
       end
@@ -286,7 +286,7 @@ module JsDuck
         @current_tag[:type] = tdf[:type]
         @current_tag[:optional] = true if tdf[:optional]
       elsif look(/\S/)
-        @current_tag[:type] = @input.scan(/\S+/)
+        @current_tag[:type] = match(/\S+/)
       end
       skip_white
     end
@@ -329,14 +329,14 @@ module JsDuck
       end
 
       if look(/#\w/)
-        @input.scan(/#/)
+        match(/#/)
         if look(/static-/)
           @current_tag[:static] = true
-          @input.scan(/static-/)
+          match(/static-/)
         end
         if look(/(cfg|property|method|event|css_var|css_mixin)-/)
           @current_tag[:type] = ident.to_sym
-          @input.scan(/-/)
+          match(/-/)
         end
         @current_tag[:member] = ident
       end
@@ -404,7 +404,7 @@ module JsDuck
     def maybe_name
       skip_horiz_white
       if look(@ident_pattern)
-        @current_tag[:name] = @input.scan(@ident_pattern)
+        @current_tag[:name] = match(@ident_pattern)
       end
     end
 
@@ -445,13 +445,13 @@ module JsDuck
     # matches {...=} and returns text inside brackets
     def typedef
       match(/\{/)
-      name = @input.scan(/[^{}]*/)
+      name = match(/[^{}]*/)
 
       # Type definition can contain nested braces: {{foo:Number}}
       # In such case we parse the definition so that the braces are balanced.
-      while @input.check(/[{]/)
+      while look(/[{]/)
         name += "{" + typedef[:type] +"}"
-        name += @input.scan(/[^{}]*/)
+        name += match(/[^{}]*/)
       end
 
       if name =~ /=$/
