@@ -9,6 +9,127 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
+  shared_examples_for "example cfg" do
+    it "creates cfg" do
+      @doc[:tagname].should == :cfg
+    end
+
+    it "detects name" do
+      @doc[:name].should == "foo"
+    end
+
+    it "detects type" do
+      @doc[:type].should == "String"
+    end
+
+    it "takes documentation from doc-comment" do
+      @doc[:doc].should == "Some documentation."
+    end
+  end
+
+  describe "explicit @cfg" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {String} foo
+         * Some documentation.
+         */
+      EOS
+    end
+    it_should_behave_like "example cfg"
+  end
+
+  describe "implicit @cfg" do
+    before do
+      @doc = parse(<<-EOS)[0]
+      ({/**
+         * @cfg
+         * Some documentation.
+         */
+        foo: "asdf" })
+      EOS
+    end
+    it_should_behave_like "example cfg"
+  end
+
+  describe "typeless @cfg" do
+    before do
+      @doc = parse(<<-EOS)[0]
+      ({/**
+         * @cfg
+         * Some documentation.
+         */
+        foo: func() })
+      EOS
+    end
+
+    it "default type is Object" do
+      @doc[:type].should == "Object"
+    end
+  end
+
+  describe "null @cfg" do
+    before do
+      @doc = parse(<<-EOS)[0]
+      ({/**
+         * @cfg
+         * Some documentation.
+         */
+        foo: null })
+      EOS
+    end
+
+    it "default type is Object" do
+      @doc[:type].should == "Object"
+    end
+  end
+
+  describe "@cfg with dash in name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {String} foo-bar
+         * Some documentation.
+         */
+      EOS
+    end
+
+    it "detects the name" do
+      @doc[:name].should == "foo-bar"
+    end
+  end
+
+  describe "@cfg with uppercase name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+      ({/**
+         * @cfg {String} Foo
+         */
+        Foo: 12 })
+      EOS
+    end
+
+    it "is detected as config" do
+      @doc[:tagname].should == :cfg
+    end
+  end
+
+  describe "@cfg with uppercase name after description" do
+    before do
+      @doc = parse(<<-EOS)[0]
+      ({/**
+         * Docs here
+         * @cfg {String} Foo
+         */
+        Foo: 12 })
+      EOS
+    end
+
+    it "is detected as config" do
+      @doc[:tagname].should == :cfg
+    end
+  end
+
   def parse_config_code(propertyName)
     parse(<<-EOS)[0][:members][:cfg]
       /**
