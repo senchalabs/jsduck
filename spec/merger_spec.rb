@@ -20,7 +20,8 @@ describe JsDuck::Merger do
         :code => {
           :tagname => :property,
           :name => "option",
-        }
+        },
+        :linenr => 15,
       })
     end
 
@@ -35,6 +36,9 @@ describe JsDuck::Merger do
     end
     it "gets name from code" do
       @doc[:name].should == "option"
+    end
+    it "keeps line number data" do
+      @doc[:linenr].should == 15
     end
   end
 

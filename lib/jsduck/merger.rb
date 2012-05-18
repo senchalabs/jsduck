@@ -17,12 +17,16 @@ module JsDuck
 
       case docset[:tagname]
       when :class
-        merge_class(docs, code)
+        result = merge_class(docs, code)
       when :method, :event, :css_mixin
-        merge_like_method(docs, code)
+        result = merge_like_method(docs, code)
       when :cfg, :property, :css_var
-        merge_like_property(docs, code)
+        result = merge_like_property(docs, code)
       end
+
+      result[:linenr] = docset[:linenr]
+
+      result
     end
 
     private
