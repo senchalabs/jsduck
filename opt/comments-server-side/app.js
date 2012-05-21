@@ -293,11 +293,7 @@ app.post('/auth/:sdk/:version/comments/:commentId', util.requireLoggedInUser, ut
             comment.content = req.body.content;
             comment.contentHtml = util.markdown(req.body.content);
 
-            comment.updates = comment.updates || [];
-            comment.updates.push({
-                updatedAt: String(new Date()),
-                author: req.session.user.username
-            });
+            util.logUpdate(comment, req.session.user.username);
 
             comment.save(function(err) {
                 res.json({ success: true, content: comment.contentHtml });
@@ -311,6 +307,7 @@ app.post('/auth/:sdk/:version/comments/:commentId', util.requireLoggedInUser, ut
  */
 app.post('/auth/:sdk/:version/comments/:commentId/delete', util.requireLoggedInUser, util.findComment, util.requireOwner, function(req, res) {
     req.comment.deleted = true;
+    util.logUpdate(req.comment, req.session.user.username, "delete");
     req.comment.save(function(err) {
         res.send({ success: true });
     });
@@ -321,6 +318,7 @@ app.post('/auth/:sdk/:version/comments/:commentId/delete', util.requireLoggedInU
  */
 app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', util.requireLoggedInUser, util.findComment, util.requireOwner, util.getCommentReads, function(req, res) {
     req.comment.deleted = false;
+    util.logUpdate(req.comment, req.session.user.username, "undo_delete");
     req.comment.save(function(err) {
         res.send({ success: true, comment: util.scoreComments([req.comment], req)[0] });
     });

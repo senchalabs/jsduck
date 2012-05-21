@@ -135,6 +135,27 @@ exports.vote = function(req, res, comment) {
 };
 
 /**
+ * Appends update record to comment updates log.
+ *
+ * @param {Object} comment The comment we're updating
+ * @param {String} author Author of the update
+ * @param {String} [action] The user action we're recording.
+ * Leaving this empty, means normal update. Other currently used
+ * actions are "delete" and "undo_delete".
+ */
+exports.logUpdate = function(comment, author, action) {
+    var up = {
+        updatedAt: String(new Date()),
+        author: author
+    };
+    if (action) {
+        up.action = action;
+    }
+    comment.updates = comment.updates || [];
+    comment.updates.push(up);
+};
+
+/**
  * Ensures that user is logged in.
  *
  * @param {Object} req
