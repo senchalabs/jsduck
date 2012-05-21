@@ -157,21 +157,23 @@ describe JsDuck::JsParser do
     it_should_behave_like "three comments merged"
   end
 
-  describe "parsing two separated line comments before one function" do
+  describe "parsing three separated line comments before one function" do
     before do
       @docs = parse(<<-EOS)
-        // Very
+        // Three
 
-        // Long
+        // Separate
 
 
-        // Comment
+        // Comments
         function b() {
         }
       EOS
     end
 
-    it_should_behave_like "three comments merged"
+    it "gets treated as three separate comments" do
+      @docs.length.should == 3
+    end
   end
 
   describe "parsing 2 x two line comments before one function" do
