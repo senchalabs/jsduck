@@ -145,7 +145,7 @@ exports.vote = function(req, res, comment) {
  */
 exports.logUpdate = function(comment, author, action) {
     var up = {
-        updatedAt: String(new Date()),
+        updatedAt: new Date(),
         author: author
     };
     if (action) {
