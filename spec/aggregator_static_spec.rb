@@ -164,4 +164,39 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "Ext.define() with undocumented method in inheritableStatics:" do
+    let(:statics) do
+      parse(<<-EOS)[0][:statics]
+        /**
+         * Some documentation.
+         */
+        Ext.define("MyClass", {
+            inheritableStatics: {
+                bar: function() {}
+            }
+        });
+      EOS
+    end
+
+    it "auto-detects one static method" do
+      statics[:method].length.should == 1
+    end
+
+    describe "detects static method" do
+      let(:method) { statics[:method][0] }
+
+      it "with :static flag" do
+        method[:meta][:static].should == true
+      end
+
+      it "with :inheritable flag" do
+        method[:inheritable].should == true
+      end
+
+      it "with :inheritdoc flag" do
+        method[:inheritdoc].should == {}
+      end
+    end
+  end
+
 end

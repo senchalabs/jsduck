@@ -204,6 +204,7 @@ module JsDuck
 
           statics = []
           statics += make_statics(cfg["statics"])
+          statics += make_statics(cfg["inheritableStatics"], {:inheritable => true})
           cls[:statics] = statics.length > 0 ? statics : nil
         end
       end
@@ -282,12 +283,18 @@ module JsDuck
         end
 
         s[:meta] = {:static => true}
+        s.merge!(defaults)
 
         docset = find_docset(p)
         if docset
           docset[:code] = s
         else
-          s[:private] = true
+          if defaults[:inheritable]
+            s[:inheritdoc] = {}
+          else
+            s[:private] = true
+          end
+
           s[:autodetected] = true
           s[:linenr] = p["range"][2]
           statics << s

@@ -84,10 +84,9 @@ module JsDuck
       # Copy private to meta
       h[:meta][:private] = h[:private] if h[:private]
 
-      # Copy :static flag from code if present
-      if code[:meta] && code[:meta][:static]
-        h[:meta][:static] = true
-      end
+      # Copy :static and :inheritable flags from code if present
+      h[:meta][:static] = true if code[:meta] && code[:meta][:static]
+      h[:inheritable] = true if code[:inheritable]
 
       # Remember auto-detection info
       h[:autodetected] = code[:autodetected] if code[:autodetected]
