@@ -99,18 +99,29 @@ module JsDuck
     # right.
     def expand_code(docset)
       results = []
-      if docset[:code] && docset[:code][:members]
-        docset[:code][:members].each do |m|
-          results << {
-            :tagname => m[:tagname],
-            :type => :no_comment,
-            :comment => [],
-            :code => m,
-            :linenr => m[:linenr],
-          }
+
+      if docset[:code]
+
+        (docset[:code][:members] || []).each do |m|
+          results << code_to_docset(m)
+        end
+
+        (docset[:code][:statics] || []).each do |m|
+          results << code_to_docset(m)
         end
       end
+
       results
+    end
+
+    def code_to_docset(m)
+      return {
+        :tagname => m[:tagname],
+        :type => :no_comment,
+        :comment => [],
+        :code => m,
+        :linenr => m[:linenr],
+      }
     end
 
   end

@@ -201,6 +201,10 @@ module JsDuck
           members += make_configs(cfg["cachedConfig"], {:accessor => true})
           members += make_configs(cfg["eventedConfig"], {:accessor => true, :evented => true})
           cls[:members] = members.length > 0 ? members : nil
+
+          statics = []
+          statics += make_statics(cfg["statics"])
+          cls[:statics] = statics.length > 0 ? statics : nil
         end
       end
 
@@ -261,6 +265,36 @@ module JsDuck
       end
 
       configs
+    end
+
+    def make_statics(ast, defaults={})
+      return [] unless ast && ast["type"] == "ObjectExpression"
+
+      statics = []
+
+      ast["properties"].each do |p|
+        name = key_value(p["key"])
+
+        if p["value"]["type"] == "FunctionExpression"
+          s = make_method(name, p["value"])
+        else
+          s = make_property(name, p["value"])
+        end
+
+        s[:meta] = {:static => true}
+
+        docset = find_docset(p)
+        if docset
+          docset[:code] = s
+        else
+          s[:private] = true
+          s[:autodetected] = true
+          s[:linenr] = p["range"][2]
+          statics << s
+        end
+      end
+
+      statics
     end
 
     # Looks up docset associated with given AST node.
