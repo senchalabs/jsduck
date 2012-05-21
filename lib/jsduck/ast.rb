@@ -14,22 +14,24 @@ module JsDuck
 
     # Performs the detection of code in all docsets.
     #
-    # @returns the processes array of docsets. (But it does it
+    # @returns the processed array of docsets. (But it does it
     # destructively by modifying the passed-in docsets.)
     #
     def detect_all!
-      # For now only deal with doc-comments
-      @docs = @docs.find_all {|d| d[:type] == :doc_comment }
+      # First deal only with doc-comments
+      doc_comments = @docs.find_all {|d| d[:type] == :doc_comment }
 
       # Detect code in each docset.  Sometimes a docset has already
-      # been as part of detecting some previous docset (like Class
-      # detecting all of its configs) - in such case, skip.
-      @docs.each do |docset|
+      # been detected as part of detecting some previous docset (like
+      # Class detecting all of its configs) - in such case, skip.
+      doc_comments.each do |docset|
         code = docset[:code]
         docset[:code] = detect(code) unless code && code[:tagname]
       end
 
-      @docs
+      # Return all doc-comments + other comments for which related
+      # code was detected.
+      @docs.find_all {|d| d[:type] == :doc_comment || d[:code] && d[:code][:tagname] }
     end
 
     # Given Esprima-produced syntax tree, detects documentation data.
@@ -252,15 +254,20 @@ module JsDuck
         # When config has a comment, update the related docset,
         # otherwise add it as new config to current class.
         docset = find_docset(p)
+
+        if !docset || docset[:type] != :doc_comment
+          cfg[:inheritdoc] = {}
+          cfg[:autodetected] = true
+        end
+
         if docset
           docset[:code] = cfg
         else
-          cfg[:inheritdoc] = {}
-          cfg[:autodetected] = true
           # Get line number from third place at range array.
           # This third item exists in forked EsprimaJS at
           # https://github.com/nene/esprima/tree/linenr-in-range
           cfg[:linenr] = p["range"][2]
+
           configs << cfg
         end
       end

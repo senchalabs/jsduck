@@ -245,4 +245,36 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "Ext.define() with line-comment before config:" do
+    let(:cfg) do
+      parse(<<-EOS)[0][:members][:cfg]
+        /**
+         * Some documentation.
+         */
+        Ext.define("MyClass", {
+            config: {
+                // My config
+                blah: 7
+            }
+        });
+      EOS
+    end
+
+    it "detects one config" do
+      cfg.length.should == 1
+    end
+
+    it "detects documentation" do
+      cfg[0][:doc].should == "My config"
+    end
+
+    it "detects the config with :inheritdoc flag" do
+      cfg[0][:inheritdoc].should == {}
+    end
+
+    it "detects the config with :autodetected flag" do
+      cfg[0][:autodetected].should == true
+    end
+  end
+
 end
