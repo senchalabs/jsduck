@@ -27,18 +27,71 @@ Ext.define("Docs.ClassRegistry", {
     /**
      * Searches class and member names including given search string.
      *
+     * Sorting the results works by dividing the results into sections
+     * by match amount, visibility and type.  This means we create a
+     * 60-element array and place matches at the following positions:
+     *
+     *      i  match  visibility type
+     *
+     *      0  full   public    alias
+     *      1  full   public    class
+     *      2  full   public    alt-class
+     *      3  full   public    member
+     *      4  full   public    guide
+     *
+     *      5  full   deprec.   alias
+     *      6  full   deprec.   class
+     *      7  full   deprec.   alt-class
+     *      8  full   deprec.   member
+     *      9  full   deprec.   guide
+     *
+     *     10  full   private   alias
+     *     11  full   private   class
+     *     12  full   private   alt-class
+     *     13  full   private   member
+     *     14  full   private   guide
+     *
+     *     15  full   removed   alias
+     *     16  full   removed   class
+     *     17  full   removed   alt-class
+     *     18  full   removed   member
+     *     19  full   removed   guide
+     *
+     *     20  begin  public    alias
+     *         ...
+     *     39  begin  removed   guide
+     *
+     *     40  middle public    alias
+     *         ...
+     *     59  middle removed   guide
+     *
      * @param {String} text  The query string to search for
      * @return {Object[]} array of the matching items from Docs.search.data
      * ordered by best matches first.
      */
     search: function(text) {
         // Each record has 1 of 5 possible sorting orders,
-        // which is *3 by it being public/private/removed,
+        var nSort = 5;
+        // which is *4 by it being public/deprecated/private/removed,
+        var nVisib = 4;
         // and *3 by full/beginning/middle matches.
-        var results = new Array(5 * 3 * 3);
+        var nMatch = 3;
+
+        var results = new Array(nSort * nVisib * nMatch);
         for (var i=0; i<results.length; i++) {
             results[i] = [];
         }
+
+        // Adjusting at largest steps by full/begin/middle match
+        var adjFul = nSort * nVisib * 0;
+        var adjBeg = nSort * nVisib * 1;
+        var adjMid = nSort * nVisib * 2;
+
+        // Adjusting at medium steps by visibility
+        var adjPub = nSort * 0;
+        var adjDep = nSort * 1;
+        var adjPri = nSort * 2;
+        var adjRem = nSort * 3;
 
         var searchFull = /[.:]/.test(text);
         var safeText = Ext.escapeRe(text);
@@ -54,18 +107,18 @@ Ext.define("Docs.ClassRegistry", {
             // (e.g. "Ext.Component.focus" or "xtype: grid")
             // Otherwise search from just the short name (e.g. "focus" or "Component")
             var name = searchFull ? r.fullName : r.name;
-            // Shift private items further back
-            // Shift removed items to the very end of each match category
-            var shift = r["private"] ? 4 : (r["removed"] ? 8 : 0);
+
+            // Order items by visibility: public, deprecated, private, removed
+            var visibility = r.meta["removed"] ? adjRem : (r.meta["private"] ? adjPri : (r.meta["deprecated"] ? adjDep : adjPub));
 
             if (reFull.test(name)) {
-                results[r.sort + shift].push(this.highlightMatch(r, reFull));
+                results[r.sort + visibility + adjFul].push(this.highlightMatch(r, reFull));
             }
             else if (reBeg.test(name)) {
-                results[r.sort + shift + 12].push(this.highlightMatch(r, reBeg));
+                results[r.sort + visibility + adjBeg].push(this.highlightMatch(r, reBeg));
             }
             else if (reMid.test(name)) {
-                results[r.sort + shift + 24].push(this.highlightMatch(r, reMid));
+                results[r.sort + visibility + adjMid].push(this.highlightMatch(r, reMid));
             }
         }
 
