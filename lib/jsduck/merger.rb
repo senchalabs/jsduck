@@ -3,7 +3,7 @@ require 'jsduck/class'
 module JsDuck
 
   # Takes data from comment and code that follows it and combines
-  # these to pieces of information into one.  The code comes from
+  # these two pieces of information into one.  The code comes from
   # JsDuck::Ast and comment from JsDuck::DocAst.
   #
   # The main method merge() produces a hash as a result.
