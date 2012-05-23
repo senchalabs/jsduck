@@ -293,16 +293,19 @@ module JsDuck
         s.merge!(defaults)
 
         docset = find_docset(p)
-        if docset
-          docset[:code] = s
-        else
+
+        if !docset || docset[:type] != :doc_comment
           if defaults[:inheritable]
             s[:inheritdoc] = {}
           else
             s[:private] = true
           end
-
           s[:autodetected] = true
+        end
+
+        if docset
+          docset[:code] = s
+        else
           s[:linenr] = p["range"][2]
           statics << s
         end
