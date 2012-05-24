@@ -29,10 +29,11 @@ module JsDuck
     def parse(contents, filename="", options={})
       @doc_ast.filename = filename
 
-      parse_js_or_css(contents, filename, options)
-        .map {|docset| expand(docset) }
-        .flatten
-        .map {|docset| merge(docset) }
+      parse_js_or_css(contents, filename, options).map do |docset|
+        expand(docset)
+      end.flatten.map do |docset|
+        merge(docset)
+      end
     end
 
     private
