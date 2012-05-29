@@ -318,34 +318,6 @@ describe JsDuck::Aggregator do
     it_should_behave_like "class"
   end
 
-  describe "class with constructor" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * Comment here.
-         * @constructor
-         * This constructs the class
-         * @param {Number} nr
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "has one method" do
-      @doc[:members][:method].length.should == 1
-    end
-    it "has method with name 'constructor'" do
-      @doc[:members][:method][0][:name].should == "constructor"
-    end
-    it "has method with needed parameters" do
-      @doc[:members][:method][0][:params].length.should == 1
-    end
-    it "has method with default return type Object" do
-      @doc[:members][:method][0][:return][:type].should == "Object"
-    end
-  end
-
   describe "member docs after class doc" do
     before do
       @classes = parse(<<-EOS)
