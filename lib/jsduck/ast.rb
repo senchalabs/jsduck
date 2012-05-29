@@ -185,33 +185,57 @@ module JsDuck
       if ast
         if ext_extend?(ast)
           cls[:extends] = to_s(ast["arguments"][0])
-
         elsif ext_define?(ast)
-          cfg = object_expression_to_hash(ast["arguments"][1])
-
-          cls[:extends] = make_extends(cfg["extend"]) || "Ext.Base"
-          cls[:requires] = make_string_list(cfg["requires"])
-          cls[:uses] = make_string_list(cfg["uses"])
-          cls[:alternateClassNames] = make_string_list(cfg["alternateClassName"])
-          cls[:mixins] = make_mixins(cfg["mixins"])
-          cls[:singleton] = make_singleton(cfg["singleton"])
-          cls[:aliases] = make_string_list(cfg["alias"])
-          cls[:aliases] += make_string_list(cfg["xtype"]).map {|xtype| "widget."+xtype }
-
-          members = []
-          members += make_configs(cfg["config"], {:accessor => true})
-          members += make_configs(cfg["cachedConfig"], {:accessor => true})
-          members += make_configs(cfg["eventedConfig"], {:accessor => true, :evented => true})
-          cls[:members] = members.length > 0 ? members : nil
-
-          statics = []
-          statics += make_statics(cfg["statics"])
-          statics += make_statics(cfg["inheritableStatics"], {:inheritable => true})
-          cls[:statics] = statics.length > 0 ? statics : nil
+          detect_ext_define(cls, ast)
         end
       end
 
       return cls
+    end
+
+    # Inspects Ext.define() and copies detected properties over to the
+    # given cls Hash
+    def detect_ext_define(cls, ast)
+      # defaults
+      cls[:extends] = "Ext.Base"
+      cls[:requires] = []
+      cls[:uses] = []
+      cls[:alternateClassNames] = []
+      cls[:mixins] = []
+      cls[:aliases] = []
+      cls[:members] = []
+      cls[:statics] = []
+
+      each_pair_in_object_expression(ast["arguments"][1]) do |key, value|
+        case key
+        when "extend"
+          cls[:extends] = make_extends(value)
+        when "requires"
+          cls[:requires] = make_string_list(value)
+        when "uses"
+          cls[:uses] = make_string_list(value)
+        when "alternateClassName"
+          cls[:alternateClassNames] = make_string_list(value)
+        when "mixins"
+          cls[:mixins] = make_mixins(value)
+        when "singleton"
+          cls[:singleton] = make_singleton(value)
+        when "alias"
+          cls[:aliases] += make_string_list(value)
+        when "xtype"
+          cls[:aliases] += make_string_list(value).map {|xtype| "widget."+xtype }
+        when "config"
+          cls[:members] += make_configs(value, {:accessor => true})
+        when "cachedConfig"
+          cls[:members] += make_configs(value, {:accessor => true})
+        when "eventedConfig"
+          cls[:members] += make_configs(value, {:accessor => true, :evented => true})
+        when "statics"
+          cls[:statics] += make_statics(value)
+        when "inheritableStatics"
+          cls[:statics] += make_statics(value, {:inheritable => true})
+        end
+      end
     end
 
     def make_extends(cfg_value)
@@ -376,17 +400,15 @@ module JsDuck
 
     # -- various helper methods --
 
-    # Turns ObjectExpression into Ruby Hash for easy lookup.  The keys
+    # Iterates over keys and values in ObjectExpression.  The keys
     # are turned into strings, but values are left as is for further
     # processing.
-    def object_expression_to_hash(ast)
-      h = {}
-      if ast && ast["type"] == "ObjectExpression"
-        ast["properties"].each do |p|
-          h[key_value(p["key"])] = p["value"]
-        end
+    def each_pair_in_object_expression(ast)
+      return unless ast && ast["type"] == "ObjectExpression"
+
+      ast["properties"].each do |p|
+        yield(key_value(p["key"]), p["value"])
       end
-      return h
     end
 
     # Converts object expression property key to string value
