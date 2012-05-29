@@ -206,7 +206,7 @@ module JsDuck
       cls[:members] = []
       cls[:statics] = []
 
-      each_pair_in_object_expression(ast["arguments"][1]) do |key, value|
+      each_pair_in_object_expression(ast["arguments"][1]) do |key, value, pair|
         case key
         when "extend"
           cls[:extends] = make_extends(value)
@@ -234,6 +234,10 @@ module JsDuck
           cls[:statics] += make_statics(value)
         when "inheritableStatics"
           cls[:statics] += make_statics(value, {:inheritable => true})
+        else
+          if value["type"] == "FunctionExpression"
+            cls[:members] += make_auto_method(key, value, pair)
+          end
         end
       end
     end
@@ -330,6 +334,25 @@ module JsDuck
       end
 
       statics
+    end
+
+    def make_auto_method(name, ast, pair)
+      m = make_method(name, ast)
+
+      docset = find_docset(pair)
+
+      if !docset || docset[:type] != :doc_comment
+        m[:inheritdoc] = {}
+        m[:autodetected] = true
+      end
+
+      if docset
+        docset[:code] = m
+        return []
+      else
+        m[:linenr] = pair["range"][2]
+        return [m]
+      end
     end
 
     # Looks up docset associated with given AST node.

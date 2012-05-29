@@ -165,4 +165,58 @@ describe JsDuck::Aggregator do
       @docs.length.should == 0
     end
   end
+
+  shared_examples_for "auto detected method" do
+    it "detects a method" do
+      method[:tagname].should == :method
+    end
+
+    it "detects method name" do
+      method[:name].should == 'foo'
+    end
+
+    it "flags method with :inheritdoc" do
+      method[:inheritdoc].should == {}
+    end
+
+    it "flags method as :autodetected" do
+      method[:autodetected].should == true
+    end
+  end
+
+  describe "method without comment inside Ext.define" do
+    let(:method) do
+      parse(<<-EOS)[0][:members][:method][0]
+        /**
+         * Some documentation.
+         */
+        Ext.define("MyClass", {
+            foo: function() {}
+        });
+      EOS
+    end
+
+    it_should_behave_like "auto detected method"
+  end
+
+  describe "method with line comment inside Ext.define" do
+    let(:method) do
+      parse(<<-EOS)[0][:members][:method][0]
+        /**
+         * Some documentation.
+         */
+        Ext.define("MyClass", {
+            // My docs
+            foo: function() {}
+        });
+      EOS
+    end
+
+    it_should_behave_like "auto detected method"
+
+    it "detects method documentation" do
+      method[:doc].should == 'My docs'
+    end
+  end
+
 end
