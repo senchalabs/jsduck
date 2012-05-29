@@ -236,9 +236,11 @@ module JsDuck
           cls[:statics] += make_statics(value, {:inheritable => true})
         else
           if value["type"] == "FunctionExpression"
-            cls[:members] += make_auto_method(key, value, pair)
+            m = make_method(key, value)
+            cls[:members] << m if apply_autodetected(m, pair)
           else
-            cls[:members] += make_auto_property(key, value, pair)
+            p = make_property(key, value)
+            cls[:members] << p if apply_autodetected(p, pair)
           end
         end
       end
@@ -279,25 +281,7 @@ module JsDuck
       each_pair_in_object_expression(ast) do |name, value, pair|
         cfg = make_property(name, value, :cfg)
         cfg.merge!(defaults)
-        # When config has a comment, update the related docset,
-        # otherwise add it as new config to current class.
-        docset = find_docset(pair)
-
-        if !docset || docset[:type] != :doc_comment
-          cfg[:inheritdoc] = {}
-          cfg[:autodetected] = true
-        end
-
-        if docset
-          docset[:code] = cfg
-        else
-          # Get line number from third place at range array.
-          # This third item exists in forked EsprimaJS at
-          # https://github.com/nene/esprima/tree/linenr-in-range
-          cfg[:linenr] = pair["range"][2]
-
-          configs << cfg
-        end
+        configs << cfg if apply_autodetected(cfg, pair)
       end
 
       configs
@@ -316,63 +300,40 @@ module JsDuck
         s[:meta] = {:static => true}
         s.merge!(defaults)
 
-        docset = find_docset(pair)
-
-        if !docset || docset[:type] != :doc_comment
-          if defaults[:inheritable]
-            s[:inheritdoc] = {}
-          else
-            s[:private] = true
-          end
-          s[:autodetected] = true
-        end
-
-        if docset
-          docset[:code] = s
-        else
-          s[:linenr] = pair["range"][2]
-          statics << s
-        end
+        statics << s if apply_autodetected(s, pair, defaults[:inheritable])
       end
 
       statics
     end
 
-    def make_auto_method(name, ast, pair)
-      m = make_method(name, ast)
-
+    # Sets auto-detection related properties :autodetected and
+    # :inheritdoc on the given member Hash.
+    #
+    # When member has a comment, adds code to the related docset and
+    # returns false.
+    #
+    # Otherwise detects the line number of member and returns true.
+    def apply_autodetected(m, pair, inheritable=true)
       docset = find_docset(pair)
 
       if !docset || docset[:type] != :doc_comment
-        m[:inheritdoc] = {}
+        if inheritable
+          m[:inheritdoc] = {}
+        else
+          m[:private] = true
+        end
         m[:autodetected] = true
       end
 
       if docset
         docset[:code] = m
-        return []
+        return false
       else
+        # Get line number from third place at range array.
+        # This third item exists in forked EsprimaJS at
+        # https://github.com/nene/esprima/tree/linenr-in-range
         m[:linenr] = pair["range"][2]
-        return [m]
-      end
-    end
-
-    def make_auto_property(name, ast, pair)
-      m = make_property(name, ast)
-
-      docset = find_docset(pair)
-
-      if !docset || docset[:type] != :doc_comment
-        m[:inheritdoc] = {}
-        m[:autodetected] = true
-      end
-
-      if docset
-        docset[:code] = m
-        return []
-      else
-        m[:linenr] = pair["range"][2]
-        return [m]
+        return true
       end
     end
 
