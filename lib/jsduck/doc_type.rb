@@ -31,6 +31,8 @@ module JsDuck
         :css_mixin
       elsif doc_map[:cfg]
         :cfg
+      elsif doc_map[:constructor]
+        :method
       else
         code[:tagname]
       end

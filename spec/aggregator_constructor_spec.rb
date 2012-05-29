@@ -61,4 +61,23 @@ describe JsDuck::Aggregator do
     it_should_behave_like "constructor"
   end
 
+  describe "class with member containing @constructor" do
+    let(:methods) do
+      parse(<<-EOS)[0][:members][:method]
+        /**
+         * Comment here.
+         */
+        MyClass = {
+            /**
+             * @constructor
+             * This constructs the class
+             * @param {Number} nr
+             */
+        };
+      EOS
+    end
+
+    it_should_behave_like "constructor"
+  end
+
 end

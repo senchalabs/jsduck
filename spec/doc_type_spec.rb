@@ -41,6 +41,10 @@ describe JsDuck::DocType do
       detect("/** @method */").should == :method
     end
 
+    it "@constructor tag" do
+      detect("/** @constructor */").should == :method
+    end
+
     it "function declaration" do
       detect("/** */ function foo() {}").should == :method
     end
