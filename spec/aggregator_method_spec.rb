@@ -219,4 +219,21 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "property with value Ext.emptyFn inside Ext.define" do
+    let(:method) do
+      parse(<<-EOS)[0][:members][:method][0]
+        /**
+         * Some documentation.
+         */
+        Ext.define("MyClass", {
+            foo: Ext.emptyFn
+        });
+      EOS
+    end
+
+    it "detects a method" do
+      method[:tagname].should == :method
+    end
+  end
+
 end

@@ -227,4 +227,23 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "Ext.define() with property having value Ext.emptyFn in statics:" do
+    let(:methods) do
+      parse(<<-EOS)[0][:statics][:method]
+        /**
+         * Some documentation.
+         */
+        Ext.define("MyClass", {
+            statics: {
+                bar: Ext.emptyFn
+            }
+        });
+      EOS
+    end
+
+    it "detects one static method" do
+      methods.length.should == 1
+    end
+  end
+
 end

@@ -235,7 +235,7 @@ module JsDuck
         when "inheritableStatics"
           cls[:statics] += make_statics(value, {:inheritable => true})
         else
-          if value["type"] == "FunctionExpression"
+          if function?(value)
             m = make_method(key, value)
             cls[:members] << m if apply_autodetected(m, pair)
           else
@@ -291,7 +291,7 @@ module JsDuck
       statics = []
 
       each_pair_in_object_expression(ast) do |name, value, pair|
-        if value["type"] == "FunctionExpression"
+        if function?(value)
           s = make_method(name, value)
         else
           s = make_property(name, value)
