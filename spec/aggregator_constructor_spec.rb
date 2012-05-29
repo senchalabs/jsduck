@@ -80,4 +80,25 @@ describe JsDuck::Aggregator do
     it_should_behave_like "constructor"
   end
 
+  describe "class with both @constructor tag and constructor property inside Ext.define()" do
+    let(:methods) do
+      parse(<<-EOS)[0][:members][:method]
+        /**
+         * Comment here.
+         * @constructor
+         * This constructs the class
+         * @param {Number} nr
+         */
+        Ext.define("MyClass", {
+            constructor: function() {
+            }
+        });
+      EOS
+    end
+
+    it "detects just one constructor" do
+      methods.length.should == 1
+    end
+  end
+
 end

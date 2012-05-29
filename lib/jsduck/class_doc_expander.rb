@@ -13,6 +13,8 @@ module JsDuck
 
     # Expands class-docset into multiple docsets.
     def expand(docset)
+      @constructor_found = false
+
       expand_comment(docset) + expand_code(docset)
     end
 
@@ -84,6 +86,10 @@ module JsDuck
         }
       end
       if groups[:constructor].length > 0
+        # Remember that a constructor is already found and ignore if a
+        # constructor is detected from code.
+        @constructor_found = true
+
         results << {
           :tagname => :method,
           :type => docset[:type],
@@ -103,7 +109,7 @@ module JsDuck
       if docset[:code]
 
         (docset[:code][:members] || []).each do |m|
-          results << code_to_docset(m)
+          results << code_to_docset(m) unless @constructor_found && m[:name] == "constructor"
         end
 
         (docset[:code][:statics] || []).each do |m|
