@@ -237,6 +237,8 @@ module JsDuck
         else
           if value["type"] == "FunctionExpression"
             cls[:members] += make_auto_method(key, value, pair)
+          else
+            cls[:members] += make_auto_property(key, value, pair)
           end
         end
       end
@@ -338,6 +340,25 @@ module JsDuck
 
     def make_auto_method(name, ast, pair)
       m = make_method(name, ast)
+
+      docset = find_docset(pair)
+
+      if !docset || docset[:type] != :doc_comment
+        m[:inheritdoc] = {}
+        m[:autodetected] = true
+      end
+
+      if docset
+        docset[:code] = m
+        return []
+      else
+        m[:linenr] = pair["range"][2]
+        return [m]
+      end
+    end
+
+    def make_auto_property(name, ast, pair)
+      m = make_property(name, ast)
 
       docset = find_docset(pair)
 

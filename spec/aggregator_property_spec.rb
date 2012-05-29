@@ -208,4 +208,57 @@ describe JsDuck::Aggregator do
     it_should_behave_like "auto type"
   end
 
+  shared_examples_for "auto detected property" do
+    it "detects a property" do
+      property[:tagname].should == :property
+    end
+
+    it "detects property name" do
+      property[:name].should == 'foo'
+    end
+
+    it "flags property with :inheritdoc" do
+      property[:inheritdoc].should == {}
+    end
+
+    it "flags property as :autodetected" do
+      property[:autodetected].should == true
+    end
+  end
+
+  describe "property without comment inside Ext.define" do
+    let(:property) do
+      parse(<<-EOS)[0][:members][:property][0]
+        /**
+         * Some documentation.
+         */
+        Ext.define("MyClass", {
+            foo: 15
+        });
+      EOS
+    end
+
+    it_should_behave_like "auto detected property"
+  end
+
+  describe "property with line comment inside Ext.define" do
+    let(:property) do
+      parse(<<-EOS)[0][:members][:property][0]
+        /**
+         * Some documentation.
+         */
+        Ext.define("MyClass", {
+            // My docs
+            foo: "bar"
+        });
+      EOS
+    end
+
+    it_should_behave_like "auto detected property"
+
+    it "detects property documentation" do
+      property[:doc].should == 'My docs'
+    end
+  end
+
 end
