@@ -268,16 +268,14 @@ module JsDuck
     end
 
     def make_configs(ast, defaults={})
-      return [] unless ast && ast["type"] == "ObjectExpression"
-
       configs = []
 
-      ast["properties"].each do |p|
-        cfg = make_property(key_value(p["key"]), p["value"], :cfg)
+      each_pair_in_object_expression(ast) do |name, value, pair|
+        cfg = make_property(name, value, :cfg)
         cfg.merge!(defaults)
         # When config has a comment, update the related docset,
         # otherwise add it as new config to current class.
-        docset = find_docset(p)
+        docset = find_docset(pair)
 
         if !docset || docset[:type] != :doc_comment
           cfg[:inheritdoc] = {}
@@ -290,7 +288,7 @@ module JsDuck
           # Get line number from third place at range array.
           # This third item exists in forked EsprimaJS at
           # https://github.com/nene/esprima/tree/linenr-in-range
-          cfg[:linenr] = p["range"][2]
+          cfg[:linenr] = pair["range"][2]
 
           configs << cfg
         end
@@ -300,23 +298,19 @@ module JsDuck
     end
 
     def make_statics(ast, defaults={})
-      return [] unless ast && ast["type"] == "ObjectExpression"
-
       statics = []
 
-      ast["properties"].each do |p|
-        name = key_value(p["key"])
-
-        if p["value"]["type"] == "FunctionExpression"
-          s = make_method(name, p["value"])
+      each_pair_in_object_expression(ast) do |name, value, pair|
+        if value["type"] == "FunctionExpression"
+          s = make_method(name, value)
         else
-          s = make_property(name, p["value"])
+          s = make_property(name, value)
         end
 
         s[:meta] = {:static => true}
         s.merge!(defaults)
 
-        docset = find_docset(p)
+        docset = find_docset(pair)
 
         if !docset || docset[:type] != :doc_comment
           if defaults[:inheritable]
@@ -330,7 +324,7 @@ module JsDuck
         if docset
           docset[:code] = s
         else
-          s[:linenr] = p["range"][2]
+          s[:linenr] = pair["range"][2]
           statics << s
         end
       end
@@ -407,7 +401,7 @@ module JsDuck
       return unless ast && ast["type"] == "ObjectExpression"
 
       ast["properties"].each do |p|
-        yield(key_value(p["key"]), p["value"])
+        yield(key_value(p["key"]), p["value"], p)
       end
     end
 
