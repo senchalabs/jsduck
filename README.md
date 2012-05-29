@@ -1,9 +1,9 @@
-JsDuck
+JSDuck
 ======
 
 API documentation generator for Sencha JavaScript frameworks.
 
-JsDuck aims to be a better documentation generator for [Ext JS][] than
+JSDuck aims to be a better documentation generator for [Ext JS][] than
 the old [ext-doc][] was. It is used by Sencha to document [Ext JS
 4][ext4-docs], [Sencha Touch][touch2-docs] and [several other][other-docs]
 products.
@@ -108,13 +108,26 @@ Hacking it
 See [Hacking guide](https://github.com/senchalabs/jsduck/wiki/Hacking) in wiki.
 
 
+Who's using JSDuck?
+-------------------
+
+- Appcelerator [Titanium SDK](http://docs.appcelerator.com/titanium/2.0/index.html)
+- AT&T [API Platform SDK for HTML5](https://code-api-att.com/SenchaSdk20Drop23Docs/)
+- Bryntum [Siesta unit testing framework](http://www.bryntum.com/products/siesta/docs/)
+- [GeoExt 2](https://github.com/geoext/geoext2)
+- Rally Software [Rally App SDK](https://rally1.rallydev.com/apps/2.0p/doc/)
+- [Sencha](http://docs.sencha.com) - obviously :)
+
+These are some that we know of. Want your project listed here? Drop us a line.
+
+
 Copying
 -------
 
-JsDuck is distributed under the terms of the GNU General Public
+JSDuck is distributed under the terms of the GNU General Public
 License version 3.
 
-JsDuck was developed by [Rene Saarsoo](http://triin.net),
+JSDuck was developed by [Rene Saarsoo](http://triin.net),
 with many contributions from [Nick Poulden](https://github.com/nick).
 
 Thanks to [Ondřej Jirman](https://github.com/megous),

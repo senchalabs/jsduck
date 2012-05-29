@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jsduck (3.10.3)
+    jsduck (3.10.5)
       json
       parallel
       rdiscount
