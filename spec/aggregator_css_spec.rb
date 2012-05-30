@@ -52,6 +52,20 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "CSS @var with explicit default value" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /**
+         * @var {measurement} [$button-height=25px]
+         */
+      EOCSS
+    end
+
+    it "detects default value" do
+      @doc[:default].should == "25px"
+    end
+  end
+
   describe "CSS doc-comment followed with $var-name:" do
     before do
       @doc = parse(<<-EOCSS)[0]
@@ -71,6 +85,9 @@ describe JsDuck::Aggregator do
     it "detects variable type" do
       @doc[:type].should == "measurement"
     end
+    it "detects variable default value" do
+      @doc[:default].should == "25px"
+    end
   end
 
   describe "$var-name: value followed by !default" do
@@ -86,6 +103,9 @@ describe JsDuck::Aggregator do
     end
     it "detects variable type" do
       @doc[:type].should == "measurement"
+    end
+    it "detects variable default value" do
+      @doc[:default].should == "25px"
     end
   end
 

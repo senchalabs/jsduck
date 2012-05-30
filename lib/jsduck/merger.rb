@@ -211,6 +211,7 @@ module JsDuck
         :name => detect_name(:css_var, doc_map, code),
         :owner => detect_owner(doc_map),
         :type => detect_type(:css_var, doc_map, code),
+        :default => detect_default(:css_var, doc_map, code),
         :doc => detect_doc(docs),
       }, doc_map)
     end
@@ -315,6 +316,8 @@ module JsDuck
         main_tag[:default]
       elsif code_matches_doc?(tagname, doc_map, code) && code[:type] == :assignment && code[:right]
         code[:right][:value]
+      elsif code_matches_doc?(tagname, doc_map, code) && code[:type] == :css_var && code[:value][:default]
+        code[:value][:default]
       end
     end
 
