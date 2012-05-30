@@ -287,6 +287,8 @@ module JsDuck
           elsif code[:right][:type] == :literal && code[:right][:class] != nil
             return code[:right][:class]
           end
+        elsif code[:type] == :css_var && code[:value][:type] != nil
+          return code[:value][:type]
         end
       end
       return "Object"

@@ -28,29 +28,56 @@ module JsDuck
       @docs
     end
 
-    # <code-block> := <mixin> | <nop>
+    # <code-block> := <mixin-declaration> | <var-declaration> | <nop>
     def code_block
       if look("@", "mixin")
-        mixin
+        return mixin_declaration
       elsif look(:ident)
-        name = css_ident
-        if name =~ /\A\$/ && look(":")
-          {:type => :css_var, :name => name}
-        else
-          {:type => :nop}
-        end
-      else
-        {:type => :nop}
+        var = var_declaration
+        return var if var
       end
+
+      return {:type => :nop}
     end
 
-    # <mixin> := "@mixin" <css-ident>
-    def mixin
+    # <mixin-declaration> := "@mixin" <css-ident>
+    def mixin_declaration
       match("@", "mixin")
       return {
         :type => :css_mixin,
         :name => look(:ident) ? css_ident : nil,
       }
+    end
+
+    # <var> := <css-ident> ":" <css-value>
+    def var_declaration
+      name = css_ident
+      return nil unless name =~ /\A\$/ && look(":")
+
+      match(":")
+      val = css_value
+      return {
+        :type => :css_var,
+        :name => name,
+        :value => {
+          :default => val,
+          :type => value_type(val),
+        }
+      }
+    end
+
+    # <css-value> := ...anything up to... [ ";" | "}" ]
+    def css_value
+      val = []
+      while !look(";") && !look("}") && !look("!", :default)
+        tok = @lex.next(true)
+        if tok[:type] == :string
+          val << '"' + tok[:value] + '"'
+        else
+          val << tok[:value]
+        end
+      end
+      val.join("");
     end
 
     # <css-ident> := <ident>  [ "-" <ident> ]*
@@ -60,6 +87,34 @@ module JsDuck
         chain << match("-", :ident)
       end
       return chain.join("-")
+    end
+
+    # Determines type of CSS value
+    def value_type(val)
+      case val
+      when /\A([0-9]+(\.[0-9]*)?|\.[0-9]+)\Z/
+        "number"
+      when /\A([0-9]+(\.[0-9]*)?|\.[0-9]+)[a-z]+\Z/
+        "measurement"
+      when /\A([0-9]+(\.[0-9]*)?|\.[0-9]+)?%\Z/
+        "percentage"
+      when /\A(true|false)\Z/
+        "boolean"
+      when /\A".*"\Z/
+        "string"
+      when /\A#[0-9a-fA-F]{3}\Z/
+        "color"
+      when /\A#[0-9a-fA-F]{6}\Z/
+        "color"
+      when /\A(rgb|hsl)a?\(.*\)\Z/
+        "color"
+      when /\A(black|silver|gray|white|maroon|red|purple|fuchsia|green|lime|olive|yellow|navy|blue|teal|aqua|orange)\Z/
+        "color"
+      when /\Atransparent\Z/
+        "color"
+      else
+        nil
+      end
     end
 
     # Matches all arguments, returns the value of last match
