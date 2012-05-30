@@ -1,11 +1,11 @@
-require 'jsduck/lexer'
+require 'jsduck/css_lexer'
 require 'jsduck/doc_parser'
 
 module JsDuck
 
   class CssParser
     def initialize(input, options = {})
-      @lex = Lexer.new(input)
+      @lex = CssLexer.new(input)
       @doc_parser = DocParser.new
       @docs = []
     end
@@ -30,90 +30,74 @@ module JsDuck
 
     # <code-block> := <mixin-declaration> | <var-declaration> | <nop>
     def code_block
-      if look("@", "mixin")
-        return mixin_declaration
-      elsif look(:ident)
-        var = var_declaration
-        return var if var
+      if look("@mixin")
+        mixin_declaration
+      elsif look(:var, ":")
+        var_declaration
+      else
+        {:type => :nop}
       end
-
-      return {:type => :nop}
     end
 
-    # <mixin-declaration> := "@mixin" <css-ident>
+    # <mixin-declaration> := "@mixin" <ident>
     def mixin_declaration
-      match("@", "mixin")
+      match("@mixin")
       return {
         :type => :css_mixin,
-        :name => look(:ident) ? css_ident : nil,
+        :name => look(:ident) ? match(:ident) : nil,
       }
     end
 
-    # <var> := <css-ident> ":" <css-value>
+    # <var-declaration> := <var> ":" <css-value>
     def var_declaration
-      name = css_ident
-      return nil unless name =~ /\A\$/ && look(":")
-
+      name = match(:var)
       match(":")
-      val = css_value
+      value_list = css_value
       return {
         :type => :css_var,
         :name => name,
         :value => {
-          :default => val,
-          :type => value_type(val),
+          :default => value_list.map {|v| v[:value] }.join(""),
+          :type => value_type(value_list),
         }
       }
     end
 
-    # <css-value> := ...anything up to... [ ";" | "}" ]
+    # <css-value> := ...anything up to... [ ";" | "}" | "!default" ]
     def css_value
       val = []
-      while !look(";") && !look("}") && !look("!", :default)
-        tok = @lex.next(true)
-        if tok[:type] == :string
-          val << '"' + tok[:value] + '"'
-        else
-          val << tok[:value]
-        end
+      while !look(";") && !look("}") && !look("!", "default")
+        val << @lex.next(true)
       end
-      val.join("");
-    end
-
-    # <css-ident> := <ident>  [ "-" <ident> ]*
-    def css_ident
-      chain = [match(:ident)]
-      while look("-", :ident) do
-        chain << match("-", :ident)
-      end
-      return chain.join("-")
+      val
     end
 
     # Determines type of CSS value
     def value_type(val)
-      case val
-      when /\A([0-9]+(\.[0-9]*)?|\.[0-9]+)\Z/
+      case val[0][:type]
+      when :number
         "number"
-      when /\A([0-9]+(\.[0-9]*)?|\.[0-9]+)[a-z]+\Z/
+      when :dimension
         "measurement"
-      when /\A([0-9]+(\.[0-9]*)?|\.[0-9]+)?%\Z/
+      when :percentage
         "percentage"
-      when /\A(true|false)\Z/
-        "boolean"
-      when /\A".*"\Z/
+      when :string
         "string"
-      when /\A#[0-9a-fA-F]{3}\Z/
+      when :hash
         "color"
-      when /\A#[0-9a-fA-F]{6}\Z/
-        "color"
-      when /\A(rgb|hsl)a?\(.*\)\Z/
-        "color"
-      when /\A(black|silver|gray|white|maroon|red|purple|fuchsia|green|lime|olive|yellow|navy|blue|teal|aqua|orange)\Z/
-        "color"
-      when /\Atransparent\Z/
-        "color"
-      else
-        nil
+      when :ident
+        case val[0][:value]
+        when "true", "false"
+          return "boolean"
+        when "rgb", "rgba", "hsl", "hsla"
+          return "color"
+        when "black", "silver", "gray", "white", "maroon",
+          "red", "purple", "fuchsia", "green", "lime", "olive",
+          "yellow", "navy", "blue", "teal", "aqua", "orange"
+          return "color"
+        when "transparent"
+          return "color"
+        end
       end
     end
 
