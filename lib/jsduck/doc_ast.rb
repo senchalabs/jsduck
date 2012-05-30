@@ -113,6 +113,7 @@ module JsDuck
         :name => detect_name(:css_var, doc_map),
         :owner => detect_owner(doc_map),
         :type => detect_type(:css_var, doc_map),
+        :default => detect_default(:css_var, doc_map),
         :doc => detect_doc(docs),
       }, doc_map)
     end

@@ -268,7 +268,7 @@ module JsDuck
       match(/@var/)
       add_tag(:css_var)
       maybe_type
-      maybe_name
+      maybe_name_with_default
       skip_white
     end
 

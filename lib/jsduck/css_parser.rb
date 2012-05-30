@@ -1,10 +1,10 @@
-require 'jsduck/lexer'
+require 'jsduck/css_lexer'
 
 module JsDuck
 
   class CssParser
     def initialize(input, options = {})
-      @lex = Lexer.new(input)
+      @lex = CssLexer.new(input)
       @docs = []
     end
 
@@ -27,31 +27,75 @@ module JsDuck
       @docs
     end
 
-    # <code-block> := <mixin> | <nop>
+    # <code-block> := <mixin-declaration> | <var-declaration> | <nop>
     def code_block
-      if look("@", "mixin")
-        mixin
+      if look("@mixin")
+        mixin_declaration
+      elsif look(:var, ":")
+        var_declaration
       else
         {:tagname => :nop}
       end
     end
 
-    # <mixin> := "@mixin" <css-ident>
-    def mixin
-      match("@", "mixin")
+    # <mixin-declaration> := "@mixin" <ident>
+    def mixin_declaration
+      match("@mixin")
       return {
         :tagname => :css_mixin,
-        :name => look(:ident) ? css_ident : nil,
+        :name => look(:ident) ? match(:ident) : nil,
       }
     end
 
-    # <css-ident> := <ident>  [ "-" <ident> ]*
-    def css_ident
-      chain = [match(:ident)]
-      while look("-", :ident) do
-        chain << match("-", :ident)
+    # <var-declaration> := <var> ":" <css-value>
+    def var_declaration
+      name = match(:var)
+      match(":")
+      value_list = css_value
+      return {
+        :tagname => :css_var,
+        :name => name,
+        :default => value_list.map {|v| v[:value] }.join(""),
+        :type => value_type(value_list),
+      }
+    end
+
+    # <css-value> := ...anything up to... [ ";" | "}" | "!default" ]
+    def css_value
+      val = []
+      while !look(";") && !look("}") && !look("!", "default")
+        val << @lex.next(true)
       end
-      return chain.join("-")
+      val
+    end
+
+    # Determines type of CSS value
+    def value_type(val)
+      case val[0][:type]
+      when :number
+        "number"
+      when :dimension
+        "measurement"
+      when :percentage
+        "percentage"
+      when :string
+        "string"
+      when :hash
+        "color"
+      when :ident
+        case val[0][:value]
+        when "true", "false"
+          return "boolean"
+        when "rgb", "rgba", "hsl", "hsla"
+          return "color"
+        when "black", "silver", "gray", "white", "maroon",
+          "red", "purple", "fuchsia", "green", "lime", "olive",
+          "yellow", "navy", "blue", "teal", "aqua", "orange"
+          return "color"
+        when "transparent"
+          return "color"
+        end
+      end
     end
 
     # Matches all arguments, returns the value of last match
