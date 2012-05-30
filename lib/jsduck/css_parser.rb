@@ -32,6 +32,13 @@ module JsDuck
     def code_block
       if look("@", "mixin")
         mixin
+      elsif look(:ident)
+        name = css_ident
+        if name =~ /\A\$/ && look(":")
+          {:type => :css_var, :name => name}
+        else
+          {:type => :nop}
+        end
       else
         {:type => :nop}
       end

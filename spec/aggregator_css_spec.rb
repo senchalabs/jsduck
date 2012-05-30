@@ -52,6 +52,24 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "CSS doc-comment followed with $var-name:" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /**
+         * Default height for buttons.
+         */
+        $button-height: 25px;
+      EOCSS
+    end
+
+    it "detects variable" do
+      @doc[:tagname].should == :css_var
+    end
+    it "detects variable name" do
+      @doc[:name].should == "$button-height"
+    end
+  end
+
   describe "CSS doc-comment followed by @mixin" do
     before do
       @doc = parse(<<-EOCSS)[0]

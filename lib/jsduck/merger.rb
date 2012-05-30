@@ -63,6 +63,8 @@ module JsDuck
         :class
       elsif code[:type] == :css_mixin
         :css_mixin
+      elsif code[:type] == :css_var
+        :css_var
       elsif doc_map[:cfg]
         :cfg
       elsif code[:type] == :function
@@ -251,7 +253,7 @@ module JsDuck
         main_tag[:name]
       elsif doc_map[:constructor]
         "constructor"
-      elsif code[:type] == :function || code[:type] == :css_mixin
+      elsif code[:type] == :function || code[:type] == :css_mixin || code[:type] == :css_var
         code[:name]
       elsif code[:type] == :assignment
         name_type == :full_name ? code[:left].join(".") : code[:left].last
