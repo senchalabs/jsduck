@@ -10,7 +10,18 @@ module JsDuck
       super(input)
       @doc_parser = DocParser.new
       @docs = []
-      @ext_namespaces = options[:ext_namespaces] || ["Ext"]
+      @ext_namespaces = (options[:ext_namespaces] || ["Ext"]).map {|ns| tokenize_ns(ns) }
+    end
+
+    # Splits namespace string into array like so:
+    #
+    # "Foo.Bar.Baz" --> ["Foo", ".", "Bar", ".", "Baz"]
+    #
+    def tokenize_ns(ns)
+      ns.split(".").reduce([]) do |res, x|
+        res << "." unless res.length == 0
+        res << x
+      end
     end
 
     # Parses the whole JavaScript block and returns array where for
@@ -78,9 +89,9 @@ module JsDuck
       elsif look(:var)
         var_declaration
       elsif ext_look(:ns, ".", "define", "(", :string)
-        ext_define
+        ext_define(:ns, ".", "define", "(", :string)
       elsif ext_look(:ns, ".", "ClassManager", ".", "create", "(", :string)
-        ext_define
+        ext_define(:ns, ".", "ClassManager", ".", "create", "(", :string)
       elsif look(:ident, ":") || look(:string, ":")
         property_literal
       elsif look(",", :ident, ":") || look(",", :string, ":")
@@ -244,10 +255,8 @@ module JsDuck
     end
 
     # <ext-define> := "Ext" "." ["define" | "ClassManager" "." "create" ] "(" <string> "," <ext-define-cfg>
-    def ext_define
-      match(:ident, ".");
-      look("define") ? match("define") : match("ClassManager", ".", "create");
-      name = match("(", :string)[:value]
+    def ext_define(*pattern)
+      name = ext_match(*pattern)[:value]
 
       if look(",", "{")
         match(",")
@@ -400,9 +409,20 @@ module JsDuck
     # names listed in @ext_namespaces
     def ext_look(placeholder, *args)
       @ext_namespaces.each do |ns|
-        return true if look(ns, *args)
+        return true if look(*(ns + args))
       end
       return false
+    end
+
+    # Like match() but tries as the first argument all the names
+    # listed in @ext_namespaces
+    def ext_match(placeholder, *args)
+      @ext_namespaces.each do |ns|
+        pattern = ns + args
+        if look(*pattern)
+          return match(*pattern)
+        end
+      end
     end
 
   end
