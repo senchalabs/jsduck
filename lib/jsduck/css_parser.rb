@@ -75,7 +75,7 @@ module JsDuck
       when :number
         "number"
       when :dimension
-        "measurement"
+        "length"
       when :percentage
         "percentage"
       when :string

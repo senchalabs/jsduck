@@ -44,7 +44,7 @@ module JsDuck
         docs = CssParser.new(contents, options).parse
       else
         docs = JsParser.new(contents, options).parse
-        docs = Ast.new(docs).detect_all!
+        docs = Ast.new(docs, options).detect_all!
       end
     end
 

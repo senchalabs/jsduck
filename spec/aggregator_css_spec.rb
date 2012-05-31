@@ -18,7 +18,7 @@ describe JsDuck::Aggregator do
     before do
       @doc = parse(<<-EOCSS)[0]
         /**
-         * @var {measurement} $button-height Default height for buttons.
+         * @var {length} $button-height Default height for buttons.
          */
       EOCSS
     end
@@ -30,7 +30,7 @@ describe JsDuck::Aggregator do
       @doc[:name].should == "$button-height"
     end
     it "detects variable type" do
-      @doc[:type].should == "measurement"
+      @doc[:type].should == "length"
     end
     it "detects variable description" do
       @doc[:doc].should == "Default height for buttons."
@@ -41,7 +41,7 @@ describe JsDuck::Aggregator do
     before do
       @doc = parse(<<-EOCSS)[0]
         /**
-         * @var {measurement} $button-height Default height for buttons.
+         * @var {length} $button-height Default height for buttons.
          * @member Ext.Button
          */
       EOCSS
@@ -56,7 +56,7 @@ describe JsDuck::Aggregator do
     before do
       @doc = parse(<<-EOCSS)[0]
         /**
-         * @var {measurement} [$button-height=25px]
+         * @var {length} [$button-height=25px]
          */
       EOCSS
     end
@@ -83,7 +83,7 @@ describe JsDuck::Aggregator do
       @doc[:name].should == "$button-height"
     end
     it "detects variable type" do
-      @doc[:type].should == "measurement"
+      @doc[:type].should == "length"
     end
     it "detects variable default value" do
       @doc[:default].should == "25px"
@@ -102,7 +102,7 @@ describe JsDuck::Aggregator do
       @doc[:tagname].should == :css_var
     end
     it "detects variable type" do
-      @doc[:type].should == "measurement"
+      @doc[:type].should == "length"
     end
     it "detects variable default value" do
       @doc[:default].should == "25px"
@@ -126,8 +126,8 @@ describe JsDuck::Aggregator do
     it "detects float begging with dot" do
       detect_type(".6").should == "number"
     end
-    it "detects measurement" do
-      detect_type("15em").should == "measurement"
+    it "detects length" do
+      detect_type("15em").should == "length"
     end
     it "detects percentage" do
       detect_type("99.9%").should == "percentage"

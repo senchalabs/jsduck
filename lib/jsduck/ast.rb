@@ -6,10 +6,22 @@ module JsDuck
   # Analyzes the AST produced by EsprimaParser.
   class Ast
     # Should be initialized with EsprimaParser#parse result.
-    def initialize(docs = [])
+    def initialize(docs = [], options = {})
       @serializer = JsDuck::Serializer.new
       @evaluator = JsDuck::Evaluator.new
+      @ext_define_patterns = build_ext_define_patterns(options[:ext_namespaces] || ["Ext"])
       @docs = docs
+    end
+
+    # Given Array of alternate Ext namespaces builds list of patterns
+    # for detecting Ext.define:
+    #
+    # ["Ext","Foo"] --> ["Ext.define", "Ext.ClassManager.create", "Foo.define", "Foo.ClassManager.create"]
+    #
+    def build_ext_define_patterns(namespaces)
+      namespaces.map do |ns|
+        [ns + ".define", ns + ".ClassManager.create"]
+      end.flatten
     end
 
     # Performs the detection of code in all docsets.
@@ -139,7 +151,7 @@ module JsDuck
     end
 
     def ext_define?(ast)
-      call?(ast) && ["Ext.define", "Ext.ClassManager.create"].include?(to_s(ast["callee"]))
+      call?(ast) && @ext_define_patterns.include?(to_s(ast["callee"]))
     end
 
     def ext_extend?(ast)
