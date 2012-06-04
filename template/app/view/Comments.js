@@ -236,7 +236,7 @@ Ext.define('Docs.view.Comments', {
                     'Here is an <em>italic</em> item<br/>',
                     'Here is an <code>inline</code> code snippet<br/>',
                     'Here is a <a href="#!/api">Link</a><br/>',
-                    '<pre>',
+                    '<pre class="prettyprint">',
                     "Indent with 4 spaces\n",
                     "for a code snippet",
                     '</pre>',
