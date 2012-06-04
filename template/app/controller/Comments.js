@@ -683,7 +683,9 @@ Ext.define('Docs.controller.Comments', {
                     userSubscribed: Docs.commentSubscriptions[id]
                 });
 
-                var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, formData, true);
+                var memInfo = Docs.view.Comments.extractMemberInfo(commentWrap);
+
+                var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, Ext.apply(memInfo, formData), true);
 
                 if (wrap) {
                     var textareaEl = wrap.down('textarea');

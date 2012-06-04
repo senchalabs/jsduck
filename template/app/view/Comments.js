@@ -257,6 +257,10 @@ Ext.define('Docs.view.Comments', {
             '<div class="new-comment{[values.hide ? "" : " open"]}">',
                 '<form class="newCommentForm">',
                     '<div class="postCommentWrap">',
+                        '<tpl if="definedIn">',
+                            "<p><b>Be aware.</b> This comment will be posted to <b>{definedIn}</b> class, ",
+                            "from where this member is inherited from.</p>",
+                        '</tpl>',
                         '<textarea></textarea>',
                         commentMetaAndGuide.join(''),
                     '</div>',
@@ -444,11 +448,12 @@ Ext.define('Docs.view.Comments', {
 
         Ext.Array.each(Ext.query('.new-comment-wrap'), function(newComment) {
             var hideCommentForm = Ext.get(newComment).up('.comment-list').parent().hasCls('hideCommentForm');
+            var memInfo = this.extractMemberInfo(newComment);
 
             if (hideCommentForm) {
                 // Do nothing
             } else if (Docs.App.getController('Auth').isLoggedIn()) {
-                var wrap = this.loggedInCommentTpl.overwrite(newComment, currentUser, true),
+                var wrap = this.loggedInCommentTpl.overwrite(newComment, Ext.apply(memInfo, currentUser), true),
                     textarea = wrap.down('textarea').dom;
 
                 this.makeCodeMirror(textarea, wrap);
@@ -456,6 +461,22 @@ Ext.define('Docs.view.Comments', {
                 Docs.view.auth.LoginHelper.renderToComments(newComment);
             }
         }, this);
+    },
+
+    /**
+     * Given an HTML element, determines the member it's in and if the
+     * member is inherited.  If it's inherited, returns hash with
+     * `{definedIn: "className"}`.  Otherwise just returns empty hash.
+     * The definedIn value is used inside template to print a notice
+     * about posting a possible out-of-context comment.
+     */
+    extractMemberInfo: function(el) {
+        var info = {};
+        var member = Ext.get(el).up(".member");
+        if (member && member.hasCls("inherited")) {
+            info.definedIn = member.down(".defined-in").getHTML();
+        }
+        return info;
     },
 
     makeCodeMirror: function(textarea, form) {
