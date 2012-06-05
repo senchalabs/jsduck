@@ -64,6 +64,7 @@ module JsDuck
         :doc => detect_doc(docs),
         :params => detect_params(doc_map),
         :return => detect_return(doc_map, name == "constructor" ? "Object" : "undefined"),
+        :throws => detect_throws(doc_map),
       }, doc_map)
     end
 
@@ -262,6 +263,17 @@ module JsDuck
         :doc => ret[:doc] || "",
         :properties => doc_map[:return] ? detect_subproperties(:return, doc_map[:return]) : []
       }
+    end
+
+    def detect_throws(doc_map)
+      return unless doc_map[:throws]
+
+      doc_map[:throws].map do |throws|
+        {
+          :type => throws[:type] || "Object",
+          :doc => throws[:doc] || "",
+        }
+      end
     end
 
     # Combines :doc-s of most tags

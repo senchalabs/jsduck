@@ -55,7 +55,7 @@ module JsDuck
       return {
         :tagname => :css_var,
         :name => name,
-        :default => value_list.map {|v| v[:value] }.join(""),
+        :default => value_list.map {|v| v[:value] }.join(" "),
         :type => value_type(value_list),
       }
     end

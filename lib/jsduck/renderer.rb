@@ -318,6 +318,10 @@ module JsDuck
         doc << render_return(ret)
       end
 
+      if item[:throws]
+        doc << render_throws(item[:throws])
+      end
+
       doc
     end
 
@@ -348,6 +352,22 @@ module JsDuck
               ret[:properties] && ret[:properties].length > 0 ? render_params_and_return(ret) : "",
             "</div>",
           "</li>",
+        "</ul>",
+      ]
+    end
+
+    def render_throws(throws)
+      return [
+        "<h3 class='pa'>Throws</h3>",
+        "<ul>",
+          throws.map do |thr|
+            [
+              "<li>",
+                "<span class='pre'>#{thr[:html_type]}</span>",
+                "<div class='sub-desc'>#{thr[:doc]}</div>",
+              "</li>",
+            ]
+          end,
         "</ul>",
       ]
     end

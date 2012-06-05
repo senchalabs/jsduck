@@ -94,7 +94,7 @@ describe JsDuck::Aggregator do
     before do
       @doc = parse(<<-EOCSS)[0]
         /** */
-        $button-height: 25px !default;
+        $foo: 25px !default;
       EOCSS
     end
 
@@ -106,6 +106,54 @@ describe JsDuck::Aggregator do
     end
     it "detects variable default value" do
       @doc[:default].should == "25px"
+    end
+  end
+
+  describe "$var-name: followed by multiple values" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /** */
+        $foo: 25px 0 1em 0;
+      EOCSS
+    end
+
+    it "detects variable type by first value" do
+      @doc[:type].should == "length"
+    end
+    it "detects variable default value" do
+      @doc[:default].should == "25px 0 1em 0"
+    end
+  end
+
+  describe "$var-name: followed by comma-separated values" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /** */
+        $foo: "Arial", "Verdana", sans-serif;
+      EOCSS
+    end
+
+    it "detects variable type by first value" do
+      @doc[:type].should == "string"
+    end
+    it "detects variable default value" do
+      @doc[:default].should == '"Arial" , "Verdana" , sans-serif'
+    end
+  end
+
+  describe "$var-name: followed by unknown function" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /** */
+        $foo: myfunc(1, 2);
+      EOCSS
+    end
+
+    it "doesn't detect variable type" do
+      @doc[:type].should == "Object"
+    end
+    it "detects variable default value" do
+      @doc[:default].should == 'myfunc ( 1 , 2 )'
     end
   end
 

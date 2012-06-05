@@ -128,6 +128,8 @@ module JsDuck
           at_alias
         elsif look(/@var\b/)
           at_var
+        elsif look(/@throws\b/)
+          at_throws
         elsif look(/@inheritable\b/)
           boolean_at_tag(/@inheritable/, :inheritable)
         elsif look(/@accessor\b/)
@@ -269,6 +271,14 @@ module JsDuck
       add_tag(:css_var)
       maybe_type
       maybe_name_with_default
+      skip_white
+    end
+
+    # matches @throws {type} ...
+    def at_throws
+      match(/@throws/)
+      add_tag(:throws)
+      maybe_type
       skip_white
     end
 

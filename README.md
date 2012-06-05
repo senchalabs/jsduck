@@ -149,3 +149,12 @@ Changelog
 ---------
 
 See [Changelog](https://github.com/senchalabs/jsduck/wiki/Changelog) page in wiki.
+
+
+More questions?
+---------------
+
+Feel free to [post an issue][issues], but read the [FAQ][] first.
+
+[issues]: https://github.com/senchalabs/jsduck/issues
+[FAQ]: https://github.com/senchalabs/jsduck/wiki/FAQ
