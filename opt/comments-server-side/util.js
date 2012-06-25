@@ -217,14 +217,6 @@ exports.findCommentMeta = function(req, res, next) {
 };
 
 /**
- * True if the user is moderator
- */
-function isModerator(user) {
-    return _.include(user.membergroupids, 7);
-}
-exports.isModerator = isModerator;
-
-/**
  * True if the user is author of the comment
  */
 function isAuthor(user, comment) {
@@ -241,7 +233,7 @@ exports.isAuthor = isAuthor;
  * @param {Function} next
  */
 exports.requireOwner = function(req, res, next) {
-    if (isModerator(req.session.user) || isAuthor(req.session.user, req.comment)) {
+    if (req.session.user.moderator || isAuthor(req.session.user, req.comment)) {
         next();
     }
     else {
@@ -430,7 +422,7 @@ exports.getCommentReads = function(req, res, next) {
     req.commentMeta = req.commentMeta || {};
     req.commentMeta.reads = req.commentMeta.reads || [];
 
-    if (req.session.user && isModerator(req.session.user)) {
+    if (req.session.user && req.session.user.moderator) {
         Meta.find({
             userId: req.session.user.userid
         }, function(err, commentMeta) {
