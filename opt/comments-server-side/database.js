@@ -32,7 +32,7 @@ CommentSchema = new mongoose.Schema({
 // When moderator posts comment, mark it automatically as read.
 CommentSchema.methods.saveNew = function(user, next) {
     var comment = this;
-    if (util.isModerator(user)) {
+    if (user.moderator) {
         comment.save(function(err) {
             var meta = new Meta({
                 userId: user.userid,
