@@ -12,69 +12,60 @@ var ForumUser = exports.ForumUser = function(client) {
 ForumUser.prototype = {
 
     login: function(username, password, callback) {
-
         var sql = "SELECT userid, usergroupid, membergroupids, email, username, password, salt FROM user WHERE username = ?",
             self = this;
 
-        this.client.query(sql, [username],
-
-            function selectCb(err, results, fields) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
-
-                if (results.length == 0) {
-                    callback("No such user");
-                    return;
-                }
-
-                if (!self.checkPassword(password, results[0].salt, results[0].password)) {
-                    callback("Invalid password");
-                    return;
-                }
-
-                var user = self.getUserFromResult(results[0]);
-
-                callback(null, user);
+        this.client.query(sql, [username], function(err, results, fields) {
+            if (err) {
+                callback(err);
+                return;
             }
-        );
+
+            if (results.length == 0) {
+                callback("No such user");
+                return;
+            }
+
+            var user = results[0];
+
+            if (!self.checkPassword(password, user.salt, user.password)) {
+                callback("Invalid password");
+                return;
+            }
+
+            user.moderator = self.isModerator(user);
+
+            callback(null, user);
+        });
     },
 
     clientUser: function(user) {
-
-        crypto.createHash('md5').update(user.email).digest("hex");
-
         return {
-            emailHash: user.email,
+            emailHash: crypto.createHash('md5').update(user.email).digest("hex"),
             userName: user.username,
             userId: user.userid,
-            mod: _.include(user.membergroupids, 7)
+            mod: user.moderator
         };
     },
 
     checkPassword: function(password, salt, saltedPassword) {
-
         password = crypto.createHash('md5').update(password).digest("hex") + salt;
         password = crypto.createHash('md5').update(password).digest("hex");
 
         return password == saltedPassword;
     },
 
-    getUserFromResult: function(result) {
+    isModerator: function(user) {
+        var COMMUNITY_SUPPORT_TEAM = 2;
+        var DEV_TEAM = 19;
 
-        var ids, id;
-
-        if (result.membergroupids) {
-            ids = result.membergroupids.split(',');
-            result.membergroupids = [];
-            for (id in ids) {
-                result.membergroupids.push(Number(ids[id]));
-            }
+        if (typeof user.membergroupids === "string") {
+            var ids = _.map(user.membergroupids.split(','), parseInt);
+        }
+        else {
+            var ids = [];
         }
 
-        result.moderator = _.include(result.membergroupids, 7);
-
-        return result;
+        return _.include(ids, COMMUNITY_SUPPORT_TEAM) || _.include(ids, DEV_TEAM);
     }
 };
