@@ -104,7 +104,12 @@ module JsDuck
     def parallel_parse(filenames)
       @parallel.map(filenames) do |fname|
         Logger.instance.log("Parsing", fname)
-        SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
+        begin
+          SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
+        rescue
+          Logger.instance.fatal("Error while parsing #{fname}", $!)
+          exit(1)
+        end
       end
     end
 
@@ -159,10 +164,15 @@ module JsDuck
       # Format all doc-objects in parallel
       formatted_classes = @parallel.map(@relations.classes) do |cls|
         Logger.instance.log("Markdown formatting #{cls[:name]}")
-        {
-          :doc => class_formatter.format(cls.internal_doc),
-          :images => doc_formatter.images
-        }
+        begin
+          {
+            :doc => class_formatter.format(cls.internal_doc),
+            :images => doc_formatter.images
+          }
+        rescue
+          Logger.instance.fatal("Error while formatting #{cls[:name]}", $!)
+          exit(1)
+        end
       end
       # Then merge the data back to classes sequentially
       formatted_classes.each do |cls|

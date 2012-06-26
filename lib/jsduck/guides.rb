@@ -59,16 +59,22 @@ module JsDuck
 
     def load_guide(guide)
       in_dir = @path + "/guides/" + guide["name"]
-      return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
 
-      guide_file = in_dir + "/README.md"
-      return Logger.instance.warn(:guide, "README.md not found in #{in_dir}") unless File.exists?(guide_file)
+      begin
+        return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
 
-      @formatter.doc_context = {:filename => guide_file, :linenr => 0}
-      name = File.basename(in_dir)
-      @formatter.img_path = "guides/#{name}"
+        guide_file = in_dir + "/README.md"
+        return Logger.instance.warn(:guide, "README.md not found in #{in_dir}") unless File.exists?(guide_file)
 
-      return add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
+        @formatter.doc_context = {:filename => guide_file, :linenr => 0}
+        name = File.basename(in_dir)
+        @formatter.img_path = "guides/#{name}"
+
+        return add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
+      rescue
+        Logger.instance.fatal("Error while reading/formatting guide #{in_dir}", $!)
+        exit(1)
+      end
     end
 
     def write_guide(guide, dir)
