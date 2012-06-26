@@ -109,6 +109,18 @@ describe "JsDuck::Ast detects property with" do
       detect("/** */ foo = 15;")[:default].should == "15"
     end
 
+    it "assignment with number 0" do
+      detect("/** */ foo = 0;")[:default].should == "0"
+    end
+
+    it "assignment with boolean true" do
+      detect("/** */ foo = true;")[:default].should == "true"
+    end
+
+    it "assignment with boolean false" do
+      detect("/** */ foo = false;")[:default].should == "false"
+    end
+
     it "assignment with regex" do
       detect("/** */ foo = /abc/;")[:default].should == "/abc/"
     end

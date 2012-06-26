@@ -383,7 +383,7 @@ module JsDuck
     end
 
     def make_default(ast)
-      ast && to_value(ast) ? to_s(ast) : nil
+      ast && to_value(ast) != nil ? to_s(ast) : nil
     end
 
     def make_value_type(ast)

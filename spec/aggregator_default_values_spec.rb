@@ -174,7 +174,7 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "cfg with explicit boolean default value" do
+  describe "cfg with explicit boolean true default value" do
     before do
       @doc = parse(<<-EOS)[0]
         /**
@@ -184,6 +184,19 @@ describe JsDuck::Aggregator do
     end
     it "has default value" do
       @doc[:default].should == "true"
+    end
+  end
+
+  describe "cfg with explicit boolean false default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=false] Something
+         */
+      EOS
+    end
+    it "has default value" do
+      @doc[:default].should == "false"
     end
   end
 
