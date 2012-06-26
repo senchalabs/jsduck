@@ -13,27 +13,44 @@ module JsDuck
     def resolve_all
       @relations.each do |cls|
         resolve_class(cls) if cls[:inheritdoc]
+
+        new_cfgs = []
         cls.all_local_members.each do |member|
           if member[:inheritdoc] || member[:autodetected]
-            resolve(member)
+            resolve(member, new_cfgs)
           end
         end
+        move_cfgs(cls, new_cfgs)
       end
     end
 
     private
 
     # Copy over doc/params/return from parent member.
-    def resolve(m)
+    def resolve(m, new_cfgs)
       parent = find_parent(m)
 
       if m[:inheritdoc] && parent
         m[:doc] = (m[:doc] + "\n\n" + parent[:doc]).strip
         m[:params] = parent[:params] if parent[:params]
         m[:return] = parent[:return] if parent[:return]
+
+        # remember properties that have changed to configs
+        if m[:tagname] != parent[:tagname]
+          new_cfgs << m
+        end
       end
 
       resolve_visibility(m, parent)
+    end
+
+    # Changes given properties into configs within class
+    def move_cfgs(cls, members)
+      members.each do |m|
+        m[:tagname] = :cfg
+        cls[:members][:property].delete(m)
+        cls[:members][:cfg] << m
+      end
     end
 
     # For auto-detected members/classes (which have @private == :inherit)
@@ -101,7 +118,29 @@ module JsDuck
 
     def lookup_member(cls, m)
       inherit = m[:inheritdoc] || {}
-      cls.get_members(inherit[:member] || m[:name], inherit[:type] || m[:tagname], inherit[:static] || m[:meta][:static])[0]
+      name = inherit[:member] || m[:name]
+      tagname = inherit[:type] || m[:tagname]
+      static = inherit[:static] || m[:meta][:static]
+
+      # Auto-detected properties can override either a property or a
+      # config. So look for both types.
+      if m[:autodetected] && tagname == :property
+        cfg = cls.get_members(name, :cfg, static)[0]
+        prop = cls.get_members(name, :property, static)[0]
+
+        if cfg && prop
+          prop
+        elsif cfg
+          cfg
+        elsif prop
+          prop
+        else
+          nil
+        end
+
+      else
+        cls.get_members(name, tagname, static)[0]
+      end
     end
 
     # Copy over doc from parent class.
