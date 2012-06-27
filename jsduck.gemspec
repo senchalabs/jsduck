@@ -2,8 +2,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.5"
 
   s.name = 'jsduck'
-  s.version = '3.11.0'
-  s.date = '2012-06-05'
+  s.version = '4.0.beta'
+  s.date = '2012-06-27'
   s.summary = "Simple JavaScript Duckumentation generator"
   s.description = "Documentation generator for Sencha JS frameworks"
   s.homepage = "https://github.com/senchalabs/jsduck"
@@ -16,6 +16,8 @@ Gem::Specification.new do |s|
   end
   # Add files not in git
   s.files += Dir['template-min/**/*']
+  # Add Esprima
+  s.files += Dir['esprima/esprima.js']
 
   s.executables = ["jsduck"]
 
