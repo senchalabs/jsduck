@@ -39,7 +39,7 @@ module JsDuck
           throw "Unable to handle this MemberExpression"
         end
       when "Literal"
-        if ast["value"] == nil && ast["raw"] =~ /\A\//
+        if ast["raw"] =~ /\A\//
           :regexp
         else
           ast["value"]
