@@ -114,6 +114,15 @@ module JsDuck
       end
       out
     end
+
+    # Prints fatal error message with backtrace.
+    # The error param should be $! from resque block.
+    def fatal(msg, error)
+      puts "#{msg}: #{error}"
+      puts
+      puts "Here's a full backtrace:"
+      puts error.backtrace
+    end
   end
 
 end
