@@ -19,7 +19,7 @@ module JsDuck
       @html_filename = ""
       @links = {}
 
-      @docs = SourceFileParser.instance.parse(@contents, @filename, options)
+      @docs = SourceFileParser.new.parse(@contents, @filename, options)
 
       @docs.map do |docset|
         link(docset[:linenr], docset)

@@ -1,4 +1,3 @@
-require 'singleton'
 require 'jsduck/js_parser'
 require 'jsduck/css_parser'
 require 'jsduck/doc_parser'
@@ -15,7 +14,6 @@ module JsDuck
   # This is the class that brings together all the different steps of
   # parsing the source.
   class SourceFileParser
-    include Singleton
 
     def initialize
       @doc_type = DocType.new
