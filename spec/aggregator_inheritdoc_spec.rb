@@ -629,5 +629,73 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "autoinherit with several meta tags" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            /**
+             * My property.
+             * @protected
+             * @deprecated 4.0 Use something else.
+             */
+            foo: 5
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            foo: 10
+        });
+      EOF
+      @cls = @docs["Child"]
+      @cfg = @cls[:members][:property][0]
+    end
+
+    it "inherits @protected" do
+      @cfg[:meta][:protected].should == true
+    end
+
+    it "inherits @deprecated" do
+      @cfg[:meta][:deprecated][:version].should == "4.0"
+      @cfg[:meta][:deprecated][:text].should == "Use something else."
+    end
+  end
+
+  describe "autoinherit with his own and parent meta tags" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            /**
+             * My property.
+             * @protected
+             * @deprecated 3.0
+             */
+            foo: 5
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            // @readonly
+            // @deprecated 4.0
+            foo: 10
+        });
+      EOF
+      @cls = @docs["Child"]
+      @cfg = @cls[:members][:property][0]
+    end
+
+    it "inherits @protected" do
+      @cfg[:meta][:protected].should == true
+    end
+
+    it "keeps @readonly" do
+      @cfg[:meta][:readonly].should == true
+    end
+
+    it "overrides @deprecated of parent with its own @deprecated" do
+      @cfg[:meta][:deprecated][:version].should == "4.0"
+    end
+  end
 end
 

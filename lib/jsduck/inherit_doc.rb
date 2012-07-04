@@ -35,6 +35,10 @@ module JsDuck
         m[:params] = parent[:params] if parent[:params]
         m[:return] = parent[:return] if parent[:return]
 
+        if m[:autodetected]
+          m[:meta] = parent[:meta].merge(m[:meta])
+        end
+
         # remember properties that have changed to configs
         if m[:tagname] != parent[:tagname]
           new_cfgs << m
