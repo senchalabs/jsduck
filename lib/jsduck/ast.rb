@@ -217,6 +217,7 @@ module JsDuck
       cls[:aliases] = []
       cls[:members] = []
       cls[:statics] = []
+      cls[:code_type] = :ext_define
 
       each_pair_in_object_expression(ast["arguments"][1]) do |key, value, pair|
         case key
