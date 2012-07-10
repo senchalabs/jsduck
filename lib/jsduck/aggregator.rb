@@ -228,6 +228,22 @@ module JsDuck
       end
     end
 
+    def infer_enum_types
+      @classes.each_value do |cls|
+        if cls[:enum] && !cls[:type]
+          if cls[:members][:property].length > 0
+            types = cls[:members][:property].map {|p| p[:type] }
+            cls[:type] = types.sort.uniq.join("/")
+          else
+            cls[:type] = "Object"
+            file = cls[:files][0][:filename]
+            line = cls[:files][0][:linenr]
+            Logger.instance.warn(:enum, "Enum #{cls[:name]} defined without values in it", file, line)
+          end
+        end
+      end
+    end
+
     # Are we dealing with ExtJS 4?
     # True if any of the classes is defined with Ext.define()
     def ext4?

@@ -5,6 +5,7 @@ describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.infer_enum_types
     agr.result
   end
 
@@ -95,6 +96,61 @@ describe JsDuck::Aggregator do
     end
 
     it_should_behave_like "enum"
+  end
+
+  describe "enum without a type" do
+    let(:doc) do
+      parse(<<-EOS)[0]
+        /**
+         * @enum
+         * Some documentation.
+         */
+        My.enum.Type = {
+            foo: 'a',
+            bar: 'b'
+        };
+      EOS
+    end
+
+    it "infers type from code" do
+      doc[:type].should == 'String'
+    end
+  end
+
+  describe "enum without a type and no type in code" do
+    let(:doc) do
+      parse(<<-EOS)[0]
+        /**
+         * @enum
+         * Some documentation.
+         */
+        My.enum.Type = {};
+      EOS
+    end
+
+    it "defaults to Object type" do
+      doc[:type].should == 'Object'
+    end
+  end
+
+  describe "enum with multiple types in code" do
+    let(:doc) do
+      parse(<<-EOS)[0]
+        /**
+         * @enum
+         * Some documentation.
+         */
+        My.enum.Type = {
+            foo: 15,
+            bar: 'hello',
+            baz: 8
+        };
+      EOS
+    end
+
+    it "defaults to auto-generated type union" do
+      doc[:type].should == 'Number/String'
+    end
   end
 
 end

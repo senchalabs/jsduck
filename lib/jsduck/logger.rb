@@ -31,6 +31,7 @@ module JsDuck
         [:sing_static, "Singleton class member marked as @static"],
         [:type_syntax, "Syntax error in {type definition}"],
         [:type_name, "Unknown type referenced in {type definition}"],
+        [:enum, "Enum defined without any values in it"],
 
         [:image, "{@img} referring to missing file"],
         [:image_unused, "An image exists in --images dir that's not used"],
