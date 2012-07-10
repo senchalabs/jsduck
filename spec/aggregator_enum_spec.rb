@@ -13,14 +13,14 @@ describe JsDuck::Aggregator do
     it "creates class" do
       doc[:tagname].should == :class
     end
-    it "sets :enum flag to true" do
-      doc[:enum].should == true
+    it "sets :enum field" do
+      doc[:enum].should_not == nil
     end
     it "detects name" do
       doc[:name].should == "My.enum.Type"
     end
     it "detects type" do
-      doc[:type].should == "String"
+      doc[:enum][:type].should == "String"
     end
     it "detects no extends" do
       doc[:extends].should == nil
@@ -113,7 +113,7 @@ describe JsDuck::Aggregator do
     end
 
     it "infers type from code" do
-      doc[:type].should == 'String'
+      doc[:enum][:type].should == 'String'
     end
   end
 
@@ -129,7 +129,7 @@ describe JsDuck::Aggregator do
     end
 
     it "defaults to Object type" do
-      doc[:type].should == 'Object'
+      doc[:enum][:type].should == 'Object'
     end
   end
 
@@ -149,7 +149,7 @@ describe JsDuck::Aggregator do
     end
 
     it "defaults to auto-generated type union" do
-      doc[:type].should == 'Number/String'
+      doc[:enum][:type].should == 'Number/String'
     end
   end
 

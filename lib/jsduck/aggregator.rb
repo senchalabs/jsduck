@@ -232,7 +232,7 @@ module JsDuck
     # Loops through all enums and auto-detects their types if needed.
     def infer_enum_types
       @classes.each_value do |cls|
-        if cls[:enum] && !cls[:type]
+        if cls[:enum] && !cls[:enum][:type]
           Enum.infer_type(cls)
         end
       end

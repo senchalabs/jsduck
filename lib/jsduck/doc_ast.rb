@@ -51,9 +51,7 @@ module JsDuck
         :singleton => !!doc_map[:singleton],
         :requires => detect_list(:requires, doc_map),
         :uses => detect_list(:uses, doc_map),
-        # properties of enum-classes
-        :enum => extract(doc_map, :class, :enum),
-        :type => extract(doc_map, :class, :type),
+        :enum => detect_enum(doc_map),
       }, doc_map)
     end
 
@@ -277,6 +275,14 @@ module JsDuck
           :doc => throws[:doc] || "",
         }
       end
+    end
+
+    def detect_enum(doc_map)
+      return nil unless extract(doc_map, :class, :enum)
+
+      return {
+        :type => extract(doc_map, :class, :type)
+      }
     end
 
     # Combines :doc-s of most tags
