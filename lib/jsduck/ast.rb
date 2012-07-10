@@ -73,7 +73,7 @@ module JsDuck
 
       # Foo = ...
       elsif exp && assignment?(exp) && class_name?(to_s(exp["left"]))
-        make_class(to_s(exp["left"]))
+        make_class(to_s(exp["left"]), exp["right"])
 
       # var foo = Ext.extend("Parent", {})
       elsif var && var["init"] && ext_extend?(var["init"])
@@ -81,7 +81,7 @@ module JsDuck
 
       # var Foo = ...
       elsif var && class_name?(to_s(var["id"]))
-        make_class(to_s(var["id"]))
+        make_class(to_s(var["id"]), var["right"])
 
       # function Foo() {}
       elsif function?(ast) && class_name?(to_s(ast["id"]))
@@ -193,12 +193,14 @@ module JsDuck
         :name => name,
       }
 
-      # apply information from Ext.extend or Ext.define
+      # apply information from Ext.extend, Ext.define, or {}
       if ast
         if ext_extend?(ast)
           cls[:extends] = to_s(ast["arguments"][0])
         elsif ext_define?(ast)
           detect_ext_define(cls, ast)
+        elsif ast["type"] == "ObjectExpression"
+          detect_class_members(cls, ast)
         end
       end
 
@@ -248,14 +250,27 @@ module JsDuck
         when "inheritableStatics"
           cls[:statics] += make_statics(value, {:inheritable => true})
         else
-          if function?(value)
-            m = make_method(key, value)
-            cls[:members] << m if apply_autodetected(m, pair)
-          else
-            p = make_property(key, value)
-            cls[:members] << p if apply_autodetected(p, pair)
-          end
+          detect_method_or_property(cls, key, value, pair)
         end
+      end
+    end
+
+    # Detects class members from object literal
+    def detect_class_members(cls, ast)
+      cls[:members] = []
+      each_pair_in_object_expression(ast) do |key, value, pair|
+        detect_method_or_property(cls, key, value, pair)
+      end
+    end
+
+    # Detects item in object literal either as method or property
+    def detect_method_or_property(cls, key, value, pair)
+      if function?(value)
+        m = make_method(key, value)
+        cls[:members] << m if apply_autodetected(m, pair)
+      else
+        p = make_property(key, value)
+        cls[:members] << p if apply_autodetected(p, pair)
       end
     end
 

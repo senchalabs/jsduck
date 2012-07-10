@@ -80,4 +80,21 @@ describe JsDuck::Aggregator do
     it_should_behave_like "enum"
   end
 
+  describe "enum with implicit values" do
+    let(:doc) do
+      parse(<<-EOS)[0]
+        /**
+         * @enum {String}
+         * Some documentation.
+         */
+        My.enum.Type = {
+            foo: 'a',
+            bar: 'b'
+        };
+      EOS
+    end
+
+    it_should_behave_like "enum"
+  end
+
 end
