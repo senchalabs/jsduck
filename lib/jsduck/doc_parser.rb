@@ -130,6 +130,8 @@ module JsDuck
           at_var
         elsif look(/@throws\b/)
           at_throws
+        elsif look(/@enum\b/)
+          at_enum
         elsif look(/@inheritable\b/)
           boolean_at_tag(/@inheritable/, :inheritable)
         elsif look(/@accessor\b/)
@@ -279,6 +281,16 @@ module JsDuck
       match(/@throws/)
       add_tag(:throws)
       maybe_type
+      skip_white
+    end
+
+    # matches @enum {type} name ...
+    def at_enum
+      match(/@enum/)
+      add_tag(:class)
+      @current_tag[:enum] = true
+      maybe_type
+      maybe_name_with_default
       skip_white
     end
 

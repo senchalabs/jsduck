@@ -51,6 +51,9 @@ module JsDuck
         :singleton => !!doc_map[:singleton],
         :requires => detect_list(:requires, doc_map),
         :uses => detect_list(:uses, doc_map),
+        # properties of enum-classes
+        :enum => extract(doc_map, :class, :enum),
+        :type => extract(doc_map, :class, :type),
       }, doc_map)
     end
 
