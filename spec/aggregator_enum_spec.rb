@@ -180,7 +180,7 @@ describe JsDuck::Aggregator do
         /** @enum [xtype=widget.*] */
         /** @class Form @alias widget.form */
         /** @class Button @alias widget.button */
-        /** @class TextArea @alias widget.textarea */
+        /** @class TextArea @alias widget.textarea @private */
       EOS
     end
 
@@ -199,6 +199,11 @@ describe JsDuck::Aggregator do
     it "sets property type to String" do
       props[0][:type].should == "String"
     end
+
+    it "sets enum value from private class as private" do
+      props.find_all {|p| p[:private] }.map {|p| p[:name] }.should == ["textarea"]
+    end
+
   end
 
 end

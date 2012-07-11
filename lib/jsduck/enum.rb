@@ -20,7 +20,7 @@ module JsDuck
     def process(cls)
       cls[:enum][:type] = infer_type(cls) unless cls[:enum][:type]
       expand_default(cls)
-      unsure_public(cls)
+      strip_inheritdoc(cls)
     end
 
     # Given an enum class, returns the type infered from its values.
@@ -36,14 +36,15 @@ module JsDuck
     # Expands default value like widget.* into list of properties
     def expand_default(cls)
       if cls[:enum][:default] =~ /\A(.*)\.\*\Z/
-        gather_aliases($1).each do |name|
+        each_alias($1) do |name, owner|
           cls[:members][:property] << {
             :tagname => :property,
             :id => 'property-' + name,
             :name => name,
             :default => "'" + name + "'",
             :type => "String",
-            :meta => {},
+            :meta => {:private => owner[:private]},
+            :private => owner[:private],
             :files => cls[:files],
             :owner => cls[:name],
             :doc => "",
@@ -52,19 +53,17 @@ module JsDuck
       end
     end
 
-    def gather_aliases(prefix)
-      result = []
+    def each_alias(prefix)
       @classes.each_value do |cls|
         if cls[:aliases] && cls[:aliases][prefix]
-          result += cls[:aliases][prefix]
+          cls[:aliases][prefix].each {|name| yield(name, cls) }
         end
       end
-      result
     end
 
-    # Ensures that enum values are all public.
-    # For this we remove the auto-inserted inheritdoc tag.
-    def unsure_public(cls)
+    # Remove the auto-inserted inheritdoc tag so the auto-detected enum
+    # values default to being public.
+    def strip_inheritdoc(cls)
       cls[:members][:property].each do |p|
         p[:inheritdoc] = nil if p[:autodetected]
       end
