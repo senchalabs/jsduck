@@ -174,4 +174,31 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "enum of widget.*" do
+    let(:props) do
+      parse(<<-EOS)[0][:members][:property]
+        /** @enum [xtype=widget.*] */
+        /** @class Form @alias widget.form */
+        /** @class Button @alias widget.button */
+        /** @class TextArea @alias widget.textarea */
+      EOS
+    end
+
+    it "gathers all 3 widget.* aliases" do
+      props.length.should == 3
+    end
+
+    it "lists all widget.* names" do
+      Set.new(props.map {|p| p[:name] }).should == Set.new(["form", "button", "textarea"])
+    end
+
+    it "auto-generates property default values" do
+      Set.new(props.map {|p| p[:default] }).should == Set.new(["'form'", "'button'", "'textarea'"])
+    end
+
+    it "sets property type to String" do
+      props[0][:type].should == "String"
+    end
+  end
+
 end

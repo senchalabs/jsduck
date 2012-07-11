@@ -281,7 +281,8 @@ module JsDuck
       return nil unless extract(doc_map, :class, :enum)
 
       return {
-        :type => extract(doc_map, :class, :type)
+        :type => extract(doc_map, :class, :type),
+        :default => extract(doc_map, :class, :default),
       }
     end
 

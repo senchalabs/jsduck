@@ -231,11 +231,7 @@ module JsDuck
 
     # Loops through all enums and auto-detects their types if needed.
     def process_enums
-      @classes.each_value do |cls|
-        if cls[:enum]
-          Enum.process(cls)
-        end
-      end
+      Enum.new(@classes).process_all!
     end
 
     # Are we dealing with ExtJS 4?
