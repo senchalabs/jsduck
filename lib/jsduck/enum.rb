@@ -47,7 +47,7 @@ module JsDuck
             :private => owner[:private],
             :files => cls[:files],
             :owner => cls[:name],
-            :doc => "",
+            :doc => "Alias for {@link #{owner[:name]}}.",
           }
         end
       end

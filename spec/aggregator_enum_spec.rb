@@ -204,6 +204,9 @@ describe JsDuck::Aggregator do
       props.find_all {|p| p[:private] }.map {|p| p[:name] }.should == ["textarea"]
     end
 
+    it "lists class name in enum property docs" do
+      props.find_all {|p| p[:name] == 'form' }[0][:doc].should == "Alias for {@link Form}."
+    end
   end
 
 end
