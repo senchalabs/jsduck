@@ -16,7 +16,7 @@ module JsDuck
 
         new_cfgs = []
         cls.all_local_members.each do |member|
-          if member[:inheritdoc] || member[:autodetected]
+          if member[:inheritdoc]
             resolve(member, new_cfgs)
           end
         end

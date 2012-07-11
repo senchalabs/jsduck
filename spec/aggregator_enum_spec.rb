@@ -5,7 +5,7 @@ describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))
-    agr.infer_enum_types
+    agr.process_enums
     agr.result
   end
 
@@ -150,6 +150,27 @@ describe JsDuck::Aggregator do
 
     it "defaults to auto-generated type union" do
       doc[:enum][:type].should == 'Number/String'
+    end
+  end
+
+  describe "enum two properties" do
+    let(:doc) do
+      parse(<<-EOS)[0]
+        /** @enum */
+        My.enum.Type = {
+            foo: "hello",
+            /** @inheritdoc */
+            bar: 8
+        };
+      EOS
+    end
+
+    it "gets stripped from :inheritdoc tag in auto-detected property" do
+      doc[:members][:property][0][:inheritdoc].should == nil
+    end
+
+    it "keeps the explicit :inheritdoc tag in doc-commented property" do
+      doc[:members][:property][1][:inheritdoc].should_not == nil
     end
   end
 

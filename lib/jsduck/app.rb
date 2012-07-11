@@ -125,7 +125,7 @@ module JsDuck
       agr.remove_ignored_classes
       agr.create_accessors
       agr.append_ext4_event_options
-      agr.infer_enum_types
+      agr.process_enums
       agr.result
     end
 
