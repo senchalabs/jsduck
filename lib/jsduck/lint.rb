@@ -17,6 +17,7 @@ module JsDuck
       warn_optional_params
       warn_duplicate_params
       warn_duplicate_members
+      warn_empty_enums
     end
 
     # print warning for each member or parameter with no name
@@ -90,6 +91,15 @@ module JsDuck
           end
           hash[name] = m
           members[group][type] = hash
+        end
+      end
+    end
+
+    # print warnings for enums with no values
+    def warn_empty_enums
+      @relations.each do |cls|
+        if cls[:enum] && cls[:members][:property].length == 0
+          warn(:enum, "Enum #{cls[:name]} defined without values in it", cls)
         end
       end
     end

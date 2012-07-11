@@ -1,5 +1,3 @@
-require 'jsduck/logger'
-
 module JsDuck
 
   class Enum
@@ -31,9 +29,6 @@ module JsDuck
         types = cls[:members][:property].map {|p| p[:type] }
         types.sort.uniq.join("/")
       else
-        file = cls[:files][0][:filename]
-        line = cls[:files][0][:linenr]
-        Logger.instance.warn(:enum, "Enum #{cls[:name]} defined without values in it", file, line)
         "Object"
       end
     end
