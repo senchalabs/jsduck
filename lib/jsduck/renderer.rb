@@ -20,6 +20,7 @@ module JsDuck
               render_meta_data(@cls[:html_meta], :top),
               render_private_class_notice,
               @cls[:doc],
+              render_enum_class_notice,
               render_meta_data(@cls[:html_meta], :bottom),
             "</div>",
             "<div class='members'>",
@@ -36,6 +37,26 @@ module JsDuck
         "This is a private utility class for internal use by the framework. ",
         "Don't rely on its existence.</p>",
       ]
+    end
+
+    def render_enum_class_notice
+      return if !@cls[:enum]
+
+      if @cls[:enum][:type] == "String"
+        first = @cls[:members][:property][0] || {:name => 'foo', :default => '"foo"'}
+        [
+          "<p class='enum'><strong>ENUM:</strong> ",
+          "This enumeration defines a set of String values. ",
+          "It exists primarily for documentation purposes - ",
+          "in code use the actual string values like #{first[:default]}, ",
+          "don't reference them through this class like #{@cls[:name]}.#{first[:name]}.</p>",
+        ]
+      else
+        [
+          "<p class='enum'><strong>ENUM:</strong> ",
+          "This enumeration defines a set of #{@cls[:enum][:type]} values.</p>",
+        ]
+      end
     end
 
     def render_meta_data(meta_data, position)
