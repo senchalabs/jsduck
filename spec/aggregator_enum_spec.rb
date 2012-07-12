@@ -153,7 +153,7 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "enum two properties" do
+  describe "enum of two properties" do
     let(:doc) do
       parse(<<-EOS)[0]
         /** @enum */
@@ -171,6 +171,56 @@ describe JsDuck::Aggregator do
 
     it "keeps the explicit :inheritdoc tag in doc-commented property" do
       doc[:members][:property][1][:inheritdoc].should_not == nil
+    end
+  end
+
+  describe "enum with array value" do
+    let(:props) do
+      parse(<<-EOS)[0][:members][:property]
+        /** @enum */
+        My.enum.Type = [
+            "foo",
+            "bar"
+        ];
+      EOS
+    end
+
+    it "detects all properties" do
+      props.length.should == 2
+    end
+
+    it "gets name" do
+      props[0][:name].should == 'foo'
+    end
+
+    it "gets default value" do
+      props[0][:default].should == '"foo"'
+    end
+
+    it "gets type" do
+      props[0][:type].should == 'String'
+    end
+  end
+
+  describe "enum with documented array values" do
+    let(:props) do
+      parse(<<-EOS)[0][:members][:property]
+        /** @enum */
+        My.enum.Smartness = [
+            // A wise choice.
+            "wise",
+            // A foolish decision.
+            "fool"
+        ];
+      EOS
+    end
+
+    it "detects docs of first property" do
+      props[0][:doc].should == 'A wise choice.'
+    end
+
+    it "detects docs of second property" do
+      props[1][:doc].should == 'A foolish decision.'
     end
   end
 

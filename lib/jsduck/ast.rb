@@ -200,7 +200,9 @@ module JsDuck
         elsif ext_define?(ast)
           detect_ext_define(cls, ast)
         elsif ast["type"] == "ObjectExpression"
-          detect_class_members(cls, ast)
+          detect_class_members_from_object(cls, ast)
+        elsif ast["type"] == "ArrayExpression"
+          detect_class_members_from_array(cls, ast)
         end
       end
 
@@ -256,10 +258,18 @@ module JsDuck
     end
 
     # Detects class members from object literal
-    def detect_class_members(cls, ast)
+    def detect_class_members_from_object(cls, ast)
       cls[:members] = []
       each_pair_in_object_expression(ast) do |key, value, pair|
         detect_method_or_property(cls, key, value, pair)
+      end
+    end
+
+    # Detects class members from array literal
+    def detect_class_members_from_array(cls, ast)
+      cls[:members] = []
+      ast["elements"].each do |el|
+        detect_method_or_property(cls, key_value(el), el, el)
       end
     end
 
@@ -341,8 +351,8 @@ module JsDuck
     # returns false.
     #
     # Otherwise detects the line number of member and returns true.
-    def apply_autodetected(m, pair, inheritable=true)
-      docset = find_docset(pair)
+    def apply_autodetected(m, ast, inheritable=true)
+      docset = find_docset(ast)
 
       if !docset || docset[:type] != :doc_comment
         if inheritable
@@ -360,7 +370,7 @@ module JsDuck
         # Get line number from third place at range array.
         # This third item exists in forked EsprimaJS at
         # https://github.com/nene/esprima/tree/linenr-in-range
-        m[:linenr] = pair["range"][2]
+        m[:linenr] = ast["range"][2]
         return true
       end
     end
