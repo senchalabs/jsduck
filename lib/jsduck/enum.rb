@@ -18,9 +18,9 @@ module JsDuck
 
     # processes single class
     def process(cls)
-      cls[:enum][:type] = infer_type(cls) unless cls[:enum][:type]
       expand_default(cls)
       strip_inheritdoc(cls)
+      cls[:enum][:type] = infer_type(cls) unless cls[:enum][:type]
     end
 
     # Given an enum class, returns the type infered from its values.

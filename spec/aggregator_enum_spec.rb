@@ -225,14 +225,20 @@ describe JsDuck::Aggregator do
   end
 
   describe "enum of widget.*" do
-    let(:props) do
-      parse(<<-EOS)[0][:members][:property]
+    let(:doc) do
+      parse(<<-EOS)[0]
         /** @enum [xtype=widget.*] */
         /** @class Form @alias widget.form */
         /** @class Button @alias widget.button */
         /** @class TextArea @alias widget.textarea @private */
       EOS
     end
+
+    it "detects enum type as String" do
+      doc[:enum][:type].should == "String"
+    end
+
+    let(:props) { doc[:members][:property] }
 
     it "gathers all 3 widget.* aliases" do
       props.length.should == 3
