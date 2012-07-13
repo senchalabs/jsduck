@@ -99,7 +99,7 @@ describe "JsDuck::Ast detects class with" do
     end
   end
 
-  describe "requries in" do
+  describe "requires in" do
     it "Ext.define() with requires as string" do
       detect(<<-EOS)[:requires].should == ["Other.Class"]
         /** */
@@ -119,7 +119,7 @@ describe "JsDuck::Ast detects class with" do
     end
   end
 
-  describe "no requries in" do
+  describe "no requires in" do
     it "Ext.define() without requires" do
       detect(<<-EOS)[:requires].should == []
         /** */
