@@ -239,7 +239,11 @@ module JsDuck
     #
     # Optionally one can also specify type name to differenciate
     # between different types of members.
-    def get_members(name, type_name=nil, static=false)
+    #
+    # Finally static flag can be specified. True to look only at
+    # static members, false to look at instance members, and nil to
+    # look at both.
+    def get_members(name, type_name=nil, static=nil)
       # build hash of all members
       unless @members_map
         @members_map = {}
@@ -254,7 +258,9 @@ module JsDuck
 
       ms = @members_map[name] || []
       ms = ms.find_all {|m| m[:tagname] == type_name } if type_name
-      ms = ms.find_all {|m| m[:meta][:static] } if static
+      # static = true | false | nil
+      ms = ms.find_all {|m| m[:meta][:static] } if static == true
+      ms = ms.find_all {|m| !m[:meta][:static] } if static == false
       return ms
     end
 

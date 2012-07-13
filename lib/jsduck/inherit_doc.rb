@@ -117,6 +117,7 @@ module JsDuck
         end
       end
 
+      #pp parent[:doc]
       return parent[:inheritdoc] ? find_parent(parent) : parent
     end
 
@@ -126,22 +127,28 @@ module JsDuck
       tagname = inherit[:type] || m[:tagname]
       static = inherit[:static] || m[:meta][:static]
 
-      # Auto-detected properties can override either a property or a
-      # config. So look for both types.
-      if m[:autodetected] && tagname == :property
-        cfg = cls.get_members(name, :cfg, static)[0]
-        prop = cls.get_members(name, :property, static)[0]
+      if m[:autodetected]
+        # Auto-detected properties can override either a property or a
+        # config. So look for both types.
+        if tagname == :property
+          cfg = cls.get_members(name, :cfg, static || false)[0]
+          prop = cls.get_members(name, :property, static || false)[0]
 
-        if cfg && prop
-          prop
-        elsif cfg
-          cfg
-        elsif prop
-          prop
+          if cfg && prop
+            prop
+          elsif cfg
+            cfg
+          elsif prop
+            prop
+          else
+            nil
+          end
+
         else
-          nil
+          # Unless the auto-detected member is detected as static,
+          # look only at instance members.
+          cls.get_members(name, tagname, static || false)[0]
         end
-
       else
         cls.get_members(name, tagname, static)[0]
       end

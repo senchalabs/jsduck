@@ -697,5 +697,71 @@ describe JsDuck::Aggregator do
       @cfg[:meta][:deprecated][:version].should == "4.0"
     end
   end
+
+  describe "instance members autoinherit with parent containing statics" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            inheritableStatics: {
+                /** My method. */
+                foo: function() {},
+                /** My property. */
+                bar: 10
+            }
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            foo: function(){},
+            bar: 11
+        });
+      EOF
+      @cls = @docs["Child"]
+      @cfg = @cls[:members][:property][0]
+    end
+
+    it "doesn't inherit from parent static method" do
+      @cls[:members][:method][0][:doc].should_not == "My method."
+    end
+
+    it "doesn't inherit from parent static property" do
+      @cls[:members][:property][0][:doc].should_not == "My property."
+    end
+  end
+
+  describe "static members autoinherit with parent containing statics" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            inheritableStatics: {
+                /** My method. */
+                foo: function() {},
+                /** My property. */
+                bar: 10
+            }
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            inheritableStatics: {
+                foo: function(){},
+                bar: 11
+            }
+        });
+      EOF
+      @cls = @docs["Child"]
+      @cfg = @cls[:members][:property][0]
+    end
+
+    it "inherits from parent static method" do
+      @cls[:statics][:method][0][:doc].should == "My method."
+    end
+
+    it "inherits from parent static property" do
+      @cls[:statics][:property][0][:doc].should == "My property."
+    end
+  end
 end
 
