@@ -196,7 +196,11 @@ module JsDuck
       # apply information from Ext.extend, Ext.define, or {}
       if ast
         if ext_extend?(ast)
-          cls[:extends] = to_s(ast["arguments"][0])
+          args = ast["arguments"]
+          cls[:extends] = to_s(args[0])
+          if args.length == 2 && args[1]["type"] == "ObjectExpression"
+            detect_class_members_from_object(cls, args[1])
+          end
         elsif ext_define?(ast)
           detect_ext_define(cls, ast)
         elsif ast["type"] == "ObjectExpression"

@@ -187,9 +187,7 @@ describe JsDuck::Aggregator do
   describe "method without comment inside Ext.define" do
     let(:method) do
       parse(<<-EOS)[0][:members][:method][0]
-        /**
-         * Some documentation.
-         */
+        /** Some documentation. */
         Ext.define("MyClass", {
             foo: function() {}
         });
@@ -202,9 +200,7 @@ describe JsDuck::Aggregator do
   describe "method with line comment inside Ext.define" do
     let(:method) do
       parse(<<-EOS)[0][:members][:method][0]
-        /**
-         * Some documentation.
-         */
+        /** Some documentation. */
         Ext.define("MyClass", {
             // My docs
             foo: function() {}
@@ -222,9 +218,7 @@ describe JsDuck::Aggregator do
   describe "property with value Ext.emptyFn inside Ext.define" do
     let(:method) do
       parse(<<-EOS)[0][:members][:method][0]
-        /**
-         * Some documentation.
-         */
+        /** Some documentation. */
         Ext.define("MyClass", {
             foo: Ext.emptyFn
         });
@@ -233,6 +227,68 @@ describe JsDuck::Aggregator do
 
     it "detects a method" do
       method[:tagname].should == :method
+    end
+  end
+
+  describe "method without comment inside Ext.extend" do
+    let(:method) do
+      parse(<<-EOS)[0][:members][:method][0]
+        /** Some documentation. */
+        MyClass = Ext.extend(Object, {
+            foo: function(){}
+        });
+      EOS
+    end
+
+    it_should_behave_like "auto detected method"
+  end
+
+  describe "method with line comment inside Ext.extend" do
+    let(:method) do
+      parse(<<-EOS)[0][:members][:method][0]
+        /** Some documentation. */
+        MyClass = Ext.extend(Object, {
+            // My docs
+            foo: function(){}
+        });
+      EOS
+    end
+
+    it_should_behave_like "auto detected method"
+
+    it "detects method documentation" do
+      method[:doc].should == 'My docs'
+    end
+  end
+
+  describe "method without comment inside object literal" do
+    let(:method) do
+      parse(<<-EOS)[0][:members][:method][0]
+        /** Some documentation. */
+        MyClass = {
+            foo: function(){}
+        };
+      EOS
+    end
+
+    it_should_behave_like "auto detected method"
+  end
+
+  describe "method with line comment inside object literal" do
+    let(:method) do
+      parse(<<-EOS)[0][:members][:method][0]
+        /** Some documentation. */
+        MyClass = {
+            // My docs
+            foo: function(){}
+        };
+      EOS
+    end
+
+    it_should_behave_like "auto detected method"
+
+    it "detects method documentation" do
+      method[:doc].should == 'My docs'
     end
   end
 
