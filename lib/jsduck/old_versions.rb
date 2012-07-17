@@ -55,14 +55,17 @@ module JsDuck
     # classes/members.
     def generate_since_tags(versions, relations)
       relations.each do |cls|
-        cls[:meta][:since] = available_since(versions, cls[:name])
+        cls[:meta][:since] = available_since(versions, cls)
       end
     end
 
     # Returns name of the version since which the class is available
-    def available_since(versions, class_name)
+    def available_since(versions, cls)
       versions.each do |ver|
-        return ver[:version] if ver[:classes][class_name]
+        return ver[:version] if ver[:classes][cls[:name]]
+        cls[:alternateClassNames].each do |name|
+          return ver[:version] if ver[:classes][name]
+        end
       end
     end
 

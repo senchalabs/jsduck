@@ -13,6 +13,7 @@ describe "JsDuck::OldVersions#generate_since_tags" do
         :version => "2.0", :classes => {
           "VeryOldClass" => {},
           "OldClass" => {},
+          "ClassWithOldName" => {},
         },
       },
       {
@@ -20,9 +21,10 @@ describe "JsDuck::OldVersions#generate_since_tags" do
       }
     ]
     @relations = [
-      {:name => "VeryOldClass", :meta => {}},
-      {:name => "OldClass", :meta => {}},
-      {:name => "NewClass", :meta => {}},
+      {:name => "VeryOldClass", :meta => {}, :alternateClassNames => []},
+      {:name => "OldClass", :meta => {}, :alternateClassNames => []},
+      {:name => "NewClass", :meta => {}, :alternateClassNames => []},
+      {:name => "ClassWithNewName", :meta => {}, :alternateClassNames => ["ClassWithOldName"]},
     ]
     JsDuck::OldVersions.generate_since_tags(@versions, @relations)
   end
@@ -37,6 +39,10 @@ describe "JsDuck::OldVersions#generate_since_tags" do
 
   it "adds @since 3.0 to NewClass" do
     @relations[2][:meta][:since].should == "3.0"
+  end
+
+  it "adds @since 2.0 to ClassWithNewName" do
+    @relations[3][:meta][:since].should == "2.0"
   end
 
 end
