@@ -25,7 +25,7 @@ module JsDuck
     end
 
     def current_version
-      NullObject.new(:[] => {})
+      NullObject.new(:[] => NullObject.new(:[] => true))
     end
 
     # Reads in data from all .json files in directory
@@ -55,12 +55,26 @@ module JsDuck
     # classes/members.
     def generate_since_tags(versions, relations)
       relations.each do |cls|
-        cls[:meta][:since] = available_since(versions, cls)
+        cls[:meta][:since] = class_since(versions, cls)
+        cls.all_local_members.each do |m|
+          m[:meta][:since] = member_since(versions, cls, m)
+        end
+      end
+    end
+
+    def member_since(versions, cls, m)
+      versions.each do |ver|
+        c = ver[:classes][cls[:name]]
+        return ver[:version] if c && c[m[:id]]
+        cls[:alternateClassNames].each do |name|
+          c = ver[:classes][name]
+          return ver[:version] if c && c[m[:id]]
+        end
       end
     end
 
     # Returns name of the version since which the class is available
-    def available_since(versions, cls)
+    def class_since(versions, cls)
       versions.each do |ver|
         return ver[:version] if ver[:classes][cls[:name]]
         cls[:alternateClassNames].each do |name|
