@@ -44,6 +44,7 @@ module JsDuck
     attr_accessor :local_storage_db
     attr_accessor :touch_examples_ui
     attr_accessor :ext_namespaces
+    attr_accessor :old_versions
 
     def initialize
       @input_files = []
@@ -112,6 +113,7 @@ module JsDuck
       @local_storage_db = "docs"
       @touch_examples_ui = false
       @ext_namespaces = ["Ext"]
+      @old_versions = []
 
       # enable all warnings except :link_auto
       Logger.instance.set_warning(:all, true)
@@ -358,6 +360,16 @@ module JsDuck
         opts.on('--ext-namespaces=Ext,Foo', Array,
           "Namespace(s) of ExtJS. Defaults to 'Ext'.", " ") do |ns|
           @ext_namespaces = ns
+        end
+
+        opts.on('--old-version=VERSION:PATH',
+          "Path to exported docs of specified version.",
+          "For the current version, leave the path portion off.", " ") do |v|
+          if v =~ /\A(.*?):(.*)\Z/
+            @old_versions << {:version => $1, :path => canonical($2)}
+          else
+            @old_versions << {:version => v}
+          end
         end
 
         opts.on('--config=PATH',

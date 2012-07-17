@@ -233,6 +233,10 @@ task :sdk => :sass do
     "--output", OUT_DIR,
     "--config", "#{SDK_DIR}/extjs/docs/config.json",
     "--examples-base-url", "extjs-build/examples/",
+    "--old-version", "2.3.0:compare/ext23",
+    "--old-version", "3.4.0:compare/ext34",
+    "--old-version", "4.0.7:compare/ext407",
+    "--old-version", "4.1.1",
     "--seo",
     "--tests"
   )
