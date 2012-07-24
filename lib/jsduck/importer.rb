@@ -59,12 +59,12 @@ module JsDuck
       last_version = versions.last[:version]
 
       relations.each do |cls|
-        v = class_since(versions, cls)
+        v = cls[:meta][:since] || class_since(versions, cls)
         cls[:meta][:since] = v
         cls[:meta][:new] = true if v == last_version
 
         cls.all_local_members.each do |m|
-          v = member_since(versions, cls, m)
+          v = m[:meta][:since] || member_since(versions, cls, m)
           m[:meta][:since] = v
           m[:meta][:new] = true if v == last_version
         end
