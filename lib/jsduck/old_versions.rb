@@ -9,7 +9,9 @@ module JsDuck
 
     # Loads in exported docs and generates @since tags based on that data.
     def import(versions, relations)
-      generate_since_tags(read_all(versions), relations)
+      if versions.length > 0
+        generate_since_tags(read_all(versions), relations)
+      end
     end
 
     # Reads in data for all versions, returning array of
