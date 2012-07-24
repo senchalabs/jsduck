@@ -7,7 +7,7 @@
     "express": "git://github.com/visionmedia/express.git",
     "express-namespace": "",
     "connect": "",
-    "connect-mongo": "",
+    "connect-mongo": "0.1.7",
     "marked": "",
     "mongoose": "",
     "mysql": "",
