@@ -1,6 +1,6 @@
-require "jsduck/old_versions"
+require "jsduck/importer"
 
-describe "JsDuck::OldVersions#generate_since_tags" do
+describe "JsDuck::Importer#generate_since_tags" do
 
   before do
     @versions = [
@@ -17,7 +17,7 @@ describe "JsDuck::OldVersions#generate_since_tags" do
         },
       },
       {
-        :version => "3.0", :classes => JsDuck::OldVersions.current_version
+        :version => "3.0", :classes => JsDuck::Importer.current_version
       }
     ]
 
@@ -32,7 +32,7 @@ describe "JsDuck::OldVersions#generate_since_tags" do
       {:name => "ClassWithNewName", :meta => {}, :alternateClassNames => ["ClassWithOldName"]},
     ].map {|cfg| JsDuck::Class.new(cfg) }
 
-    JsDuck::OldVersions.generate_since_tags(@versions, @relations)
+    JsDuck::Importer.generate_since_tags(@versions, @relations)
   end
 
   it "adds @since 1.0 to VeryOldClass" do

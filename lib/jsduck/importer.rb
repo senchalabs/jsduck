@@ -4,21 +4,21 @@ require 'jsduck/null_object'
 module JsDuck
 
   # Reads in JSDuck exports of different versions of docs.
-  module OldVersions
+  module Importer
     module_function
 
     # Loads in exported docs and generates @since tags based on that data.
-    def import(versions, relations)
-      if versions.length > 0
-        generate_since_tags(read_all(versions), relations)
+    def import(imports, relations)
+      if imports.length > 0
+        generate_since_tags(read_all(imports), relations)
       end
     end
 
     # Reads in data for all versions, returning array of
     # version/class-data pairs.  We don't use a hash to preserve the
     # order of versions (from oldest to newest).
-    def read_all(versions)
-      versions.map do |ver|
+    def read_all(imports)
+      imports.map do |ver|
         {
           :version => ver[:version],
           :classes => ver[:path] ? read(ver[:path]) : current_version,
