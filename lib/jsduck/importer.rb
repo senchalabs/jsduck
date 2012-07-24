@@ -7,7 +7,7 @@ module JsDuck
   module Importer
     module_function
 
-    # Loads in exported docs and generates @since tags based on that data.
+    # Loads in exported docs and generates @since and @new tags based on that data.
     def import(imports, relations)
       if imports.length > 0
         generate_since_tags(read_all(imports), relations)
@@ -56,10 +56,17 @@ module JsDuck
     # Using the imported versions data, adds @since tags to all
     # classes/members.
     def generate_since_tags(versions, relations)
+      last_version = versions.last[:version]
+
       relations.each do |cls|
-        cls[:meta][:since] = class_since(versions, cls)
+        v = class_since(versions, cls)
+        cls[:meta][:since] = v
+        cls[:meta][:new] = true if v == last_version
+
         cls.all_local_members.each do |m|
-          m[:meta][:since] = member_since(versions, cls, m)
+          v = member_since(versions, cls, m)
+          m[:meta][:since] = v
+          m[:meta][:new] = true if v == last_version
         end
       end
     end
