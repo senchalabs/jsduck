@@ -24,109 +24,119 @@ describe "JsDuck::Importer#generate_since_tags" do
 
     @relations = [
       {:name => "VeryOldClass", :meta => {}, :alternateClassNames => [], :members => {
-          :cfg => [{:id => "cfg-foo", :meta => {}}],
-          :method => [{:id => "cfg-bar", :meta => {}}],
-          :event => [{:id => "event-baz", :meta => {}}],
-          :property => [
-            {:id => "property-zap", :meta => {:since => "1.0"}},
-            {:id => "property-new", :meta => {:new => true}},
+          :cfg => [
+            {:id => "cfg-foo", :meta => {}},
+            {:id => "cfg-bar", :meta => {}},
+            {:id => "cfg-baz", :meta => {}},
+            {:id => "cfg-zap", :meta => {:since => "1.0"}},
+            {:id => "cfg-new", :meta => {:new => true}},
           ],
         }},
       {:name => "OldClass", :meta => {}, :alternateClassNames => []},
       {:name => "NewClass", :meta => {}, :alternateClassNames => []},
       {:name => "ClassWithNewName", :meta => {}, :alternateClassNames => ["ClassWithOldName"]},
-      {:name => "ExplicitClass", :meta => {:since => "1.0"}, :alternateClassNames => []},
+      {:name => "ExplicitSinceClass", :meta => {:since => "1.0"}, :alternateClassNames => []},
       {:name => "ExplicitNewClass", :meta => {:new => true}, :alternateClassNames => []},
     ].map {|cfg| JsDuck::Class.new(cfg) }
 
     JsDuck::Importer.generate_since_tags(@versions, @relations)
+
+    # build className/member index for easy lookup in specs
+    @stuff = {}
+    @relations.each do |cls|
+      @stuff[cls[:name]] = cls[:meta]
+      configs = cls[:members] && cls[:members][:cfg]
+      (configs || []).each do |cfg|
+        @stuff[cls[:name]+"#"+cfg[:id]] = cfg[:meta]
+      end
+    end
   end
 
   # @since
 
   it "adds @since 1.0 to VeryOldClass" do
-    @relations[0][:meta][:since].should == "1.0"
+    @stuff["VeryOldClass"][:since].should == "1.0"
   end
 
   it "adds @since 2.0 to OldClass" do
-    @relations[1][:meta][:since].should == "2.0"
+    @stuff["OldClass"][:since].should == "2.0"
   end
 
   it "adds @since 3.0 to NewClass" do
-    @relations[2][:meta][:since].should == "3.0"
+    @stuff["NewClass"][:since].should == "3.0"
   end
 
   it "adds @since 2.0 to ClassWithNewName" do
-    @relations[3][:meta][:since].should == "2.0"
+    @stuff["ClassWithNewName"][:since].should == "2.0"
   end
 
-  it "doesn't override explicit @since 1.0 in ExplicitClass" do
-    @relations[4][:meta][:since].should == "1.0"
+  it "doesn't override explicit @since 1.0 in ExplicitSinceClass" do
+    @stuff["ExplicitSinceClass"][:since].should == "1.0"
   end
 
-  it "adds @since 1.0 to VeryOldClass#cfg-foo" do
-    @relations[0][:members][:cfg][0][:meta][:since].should == "1.0"
+  it "adds @since 1.0 to #foo" do
+    @stuff["VeryOldClass#cfg-foo"][:since].should == "1.0"
   end
 
-  it "adds @since 2.0 to VeryOldClass#method-bar" do
-    @relations[0][:members][:method][0][:meta][:since].should == "2.0"
+  it "adds @since 2.0 to #bar" do
+    @stuff["VeryOldClass#cfg-bar"][:since].should == "2.0"
   end
 
-  it "adds @since 3.0 to VeryOldClass#event-baz" do
-    @relations[0][:members][:event][0][:meta][:since].should == "3.0"
+  it "adds @since 3.0 to #baz" do
+    @stuff["VeryOldClass#cfg-baz"][:since].should == "3.0"
   end
 
-  it "doesn't override explicit @since 1.0 in VeryOldClass#property-zap" do
-    @relations[0][:members][:property][0][:meta][:since].should == "1.0"
+  it "doesn't override explicit @since 1.0 in #zap" do
+    @stuff["VeryOldClass#cfg-zap"][:since].should == "1.0"
   end
 
   # @new
 
   it "doesn't add @new to VeryOldClass" do
-    @relations[0][:meta][:new].should_not == true
+    @stuff["VeryOldClass"][:new].should_not == true
   end
 
   it "doesn't add @new to OldClass" do
-    @relations[1][:meta][:new].should_not == true
+    @stuff["OldClass"][:new].should_not == true
   end
 
   it "adds @new to NewClass" do
-    @relations[2][:meta][:new].should == true
+    @stuff["NewClass"][:new].should == true
   end
 
   it "doesn't add @new to ClassWithNewName" do
-    @relations[3][:meta][:new].should_not == true
+    @stuff["ClassWithNewName"][:new].should_not == true
   end
 
-  it "doesn't add @new to ExplicitClass" do
-    @relations[4][:meta][:new].should_not == true
+  it "doesn't add @new to ExplicitSinceClass" do
+    @stuff["ExplicitSinceClass"][:new].should_not == true
   end
 
   it "keeps explicit @new on ExplicitNewClass" do
     # Though it seems like a weird case, there could be a situation
     # where 1.0 had class Foo, which was removed in 2.0, but in 3.0 a
     # completely unrelated Foo class was introduced.
-    @relations[5][:meta][:new].should == true
+    @stuff["ExplicitNewClass"][:new].should == true
   end
 
-  it "doesn't add @new to VeryOldClass#cfg-foo" do
-    @relations[0][:members][:cfg][0][:meta][:new].should_not == true
+  it "doesn't add @new to #foo" do
+    @stuff["VeryOldClass#cfg-foo"][:new].should_not == true
   end
 
-  it "doesn't add @new to VeryOldClass#method-bar" do
-    @relations[0][:members][:method][0][:meta][:new].should_not == true
+  it "doesn't add @new to #bar" do
+    @stuff["VeryOldClass#cfg-bar"][:new].should_not == true
   end
 
-  it "adds @new to VeryOldClass#event-baz" do
-    @relations[0][:members][:event][0][:meta][:new].should == true
+  it "adds @new to #baz" do
+    @stuff["VeryOldClass#cfg-baz"][:new].should == true
   end
 
-  it "doesn't add @new to VeryOldClass#property-zap" do
-    @relations[0][:members][:property][0][:meta][:new].should_not == true
+  it "doesn't add @new to #zap" do
+    @stuff["VeryOldClass#cfg-zap"][:new].should_not == true
   end
 
-  it "keeps explicit @new in VeryOldClass#property-new" do
-    @relations[0][:members][:property][1][:meta][:new].should == true
+  it "keeps explicit @new in #new" do
+    @stuff["VeryOldClass#cfg-new"][:new].should == true
   end
 
 end
