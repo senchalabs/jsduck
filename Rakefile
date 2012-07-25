@@ -233,6 +233,11 @@ task :sdk => :sass do
     "--output", OUT_DIR,
     "--config", "#{SDK_DIR}/extjs/docs/config.json",
     "--examples-base-url", "extjs-build/examples/",
+    "--import", "Ext JS 2:compare/ext23",
+    "--import", "Ext JS 3:compare/ext34",
+    "--import", "Ext JS 4.0.7:compare/ext407",
+    "--import", "Ext JS 4.1.0:compare/ext410",
+    "--import", "Ext JS 4.1.1",
     "--seo",
     "--tests"
   )

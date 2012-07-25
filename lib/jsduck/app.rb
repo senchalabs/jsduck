@@ -11,6 +11,7 @@ require 'jsduck/logger'
 require 'jsduck/assets'
 require 'jsduck/json_duck'
 require 'jsduck/io'
+require 'jsduck/importer'
 require 'jsduck/lint'
 require 'jsduck/template_dir'
 require 'jsduck/class_writer'
@@ -46,6 +47,7 @@ module JsDuck
       result = aggregate(parsed_files)
       @relations = filter_classes(result)
       InheritDoc.new(@relations).resolve_all
+      Importer.import(@opts.imports, @relations)
       Lint.new(@relations).run
 
       # Initialize guides, videos, examples, ...

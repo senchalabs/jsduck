@@ -132,6 +132,9 @@
     background-color: $docs-text-color; }
   &.required {
     background-color: $docs-text-color; }
+  &.new {
+    color: $docs-text-color;
+    background-color: #F5D833; }
   &.private {
     background-color: #FD6B1B; }
   &.protected {
