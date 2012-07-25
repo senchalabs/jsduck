@@ -9,7 +9,10 @@ require "cgi"
 require "optparse"
 require "jsduck/json_duck"
 
-options = {}
+options = {
+  :title => "Comparison of Ext 4.0.7 and Ext 4.1.1",
+}
+
 input_files = OptionParser.new do |opts|
   opts.banner = "Produces diff of two JSDuck exports.\n\n" +
     "Usage: compare [options] old/classes/ new/classes/ output.html\n\n"
@@ -20,6 +23,11 @@ input_files = OptionParser.new do |opts|
 
   opts.on("--type=NAME", "Only produce diff of cfg, property, method or event.") do |name|
     options[:type] = name
+  end
+
+  opts.on("--title=TEXT", "Title for the generated HTML page.",
+    "Defaults to: 'Comparison of Ext 4.0.7 and Ext 4.1.1'") do |text|
+    options[:title] = text
   end
 
   opts.on("-h", "--help", "Show this help message") do
@@ -270,7 +278,7 @@ html << <<-EOHTML
 <!DOCTYPE html>
 <html>
 <head>
-<title>#{title}</title>
+<title>#{options[:title]}</title>
 <style type="text/css">
 body { font-family: Georgia, serif; }
 li h2 { font-size: medium; font-weight: normal; }
@@ -287,7 +295,7 @@ $(function() {
 </script>
 </head>
 <body>
-<h1>#{title}</h1>
+<h1>#{options[:title]}</h1>
 EOHTML
 
 html << "<ul>"
