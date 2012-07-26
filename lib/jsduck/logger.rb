@@ -101,6 +101,8 @@ module JsDuck
       elsif !@warnings.has_key?(type)
         warn(nil, "Unknown warning type #{type}")
       end
+
+      return false
     end
 
     # Formats filename and line number for output
