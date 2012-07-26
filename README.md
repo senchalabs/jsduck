@@ -41,7 +41,10 @@ For **Windows** users out there, you can download the binary version,
 which includes Ruby interpreter and all dependencies bundled in a
 single .exe file.  Grab it from the [download page][].
 
+If you are brave enough: [try out JSDuck 4.0 beta.][beta]
+
 [download page]: https://github.com/senchalabs/jsduck/downloads
+[beta]: https://github.com/senchalabs/jsduck/wiki/4.0-beta
 
 Usage
 -----

@@ -36,15 +36,13 @@ module JsDuck
     end
 
     # Modified each_item that also loads HTML for each guide
-    def each_item(&block)
-      unless @loaded
-        super do |guide|
-          guide[:html] = load_guide(guide)
-        end
-        @loaded = true
+    def each_item
+      super do |guide|
+        # Load the guide if not loaded
+        guide[:html] = load_guide(guide) if guide[:html] == nil
+        # Pass guide to block if it was successfully loaded.
+        yield guide if guide[:html]
       end
-
-      super(&block)
     end
 
     # Modified to_array that excludes the :html from guide nodes
@@ -60,12 +58,13 @@ module JsDuck
     def load_guide(guide)
       in_dir = @path + "/guides/" + guide["name"]
 
+      return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
+
+      guide_file = in_dir + "/README.md"
+
+      return Logger.instance.warn(:guide, "README.md not found in #{in_dir}") unless File.exists?(guide_file)
+
       begin
-        return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
-
-        guide_file = in_dir + "/README.md"
-        return Logger.instance.warn(:guide, "README.md not found in #{in_dir}") unless File.exists?(guide_file)
-
         @formatter.doc_context = {:filename => guide_file, :linenr => 0}
         name = File.basename(in_dir)
         @formatter.img_path = "guides/#{name}"
