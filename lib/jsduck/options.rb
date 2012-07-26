@@ -78,8 +78,8 @@ module JsDuck
       @version = "3.11.0"
 
       # Customizing output
-      @title = "Sencha Docs - Ext JS"
-      @header = "<strong>Sencha Docs</strong> Ext JS"
+      @title = "Ext JS - Sencha Docs"
+      @header = "<strong>Ext JS</strong> Sencha Docs"
       @footer = "Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> #{@version}."
       @head_html = ""
       @body_html = ""
@@ -181,7 +181,7 @@ module JsDuck
 
         opts.on('--title=TEXT',
           "Custom title text for the documentation.",
-          "Defaults to 'Sencha Docs - Ext JS'", " ") do |text|
+          "Defaults to 'Ext JS - Sencha Docs'", " ") do |text|
           @title = text
           @header = text.sub(/^(.*?) +- +/, "<strong>\\1 </strong>")
         end
