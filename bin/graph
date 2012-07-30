@@ -4,6 +4,7 @@
 $:.unshift File.dirname(File.dirname(__FILE__)) + "/lib"
 
 require "rubygems"
+require "pp"
 require "jsduck/json_duck"
 
 def with_each_class(dir)
@@ -20,21 +21,32 @@ def arrow(a, b, opts="")
   "  #{quote(a)}->#{quote(b)} #{opts};"
 end
 
+input_dir = ARGV[0]
+
+# Build a map that links each classname or alternate classname to its
+# canonical form
+$canonical_map = {}
+with_each_class(input_dir) do |cls|
+  $canonical_map[cls["name"]] = cls["name"]
+  cls["alternateClassNames"].each do |name|
+    $canonical_map[name] = cls["name"]
+  end
+end
+
+def canonical(name)
+  $canonical_map[name] || name
+end
+
+# Print out the graph description
 puts 'digraph G {'
 puts 'rankdir=LR;'
-with_each_class(ARGV[0]) do |cls|
+with_each_class(input_dir) do |cls|
   if cls["extends"] && cls["extends"] != "Object"
-    puts arrow(cls["extends"], cls['name'], '[style=bold,weight=10]')
+    puts arrow(canonical(cls["extends"]), cls['name'], '[style=bold,weight=10]')
   end
   if cls["mixins"]
-    cls["mixins"].each {|mx| puts arrow(mx, cls['name'], '[weight=1,style=dashed]') }
+    cls["mixins"].each {|mx| puts arrow(canonical(mx), cls['name'], '[weight=1,style=dashed]') }
   end
-  # if cls["requires"]
-  #   cls["requires"].each {|mx| puts arrow(mx, cls['name'], '[style=dotted,weight=0]') }
-  # end
-  # if cls["uses"]
-  #   cls["uses"].each {|mx| puts arrow(mx, cls['name'], '[style=dotted,weight=0]') }
-  # end
 end
 puts '}'
 
