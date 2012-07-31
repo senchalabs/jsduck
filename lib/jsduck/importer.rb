@@ -1,5 +1,6 @@
 require 'jsduck/json_duck'
 require 'jsduck/null_object'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -21,7 +22,7 @@ module JsDuck
       imports.map do |ver|
         {
           :version => ver[:version],
-          :classes => ver[:path] ? read(ver[:path]) : current_version,
+          :classes => ver[:path] ? read(ver) : current_version,
         }
       end
     end
@@ -31,9 +32,10 @@ module JsDuck
     end
 
     # Reads in data from all .json files in directory
-    def read(path)
+    def read(ver)
       classes = {}
-      Dir[path + "/*.json"].each do |filename|
+      Dir[ver[:path] + "/*.json"].each do |filename|
+        JsDuck::Logger.instance.log("Importing #{ver[:version]}", filename)
         json = JsonDuck.read(filename)
         classes[json["name"]] = members_id_index(json)
       end
