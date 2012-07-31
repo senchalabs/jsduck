@@ -10,7 +10,6 @@ module JsDuck
     def initialize(exporter_class, guides, opts)
       @guides = guides
       @exporter = exporter_class.new(guides, opts)
-      @parallel = ParallelWrap.new(:in_processes => opts.processes)
     end
 
     # Writes guide data into given directory or STDOUT when dir == :stdout.
@@ -24,13 +23,13 @@ module JsDuck
     private
 
     def write_stdout
-      json = @parallel.map(all_guides) {|guide| @exporter.export_guide(guide) }.compact
+      json = ParallelWrap.map(all_guides) {|guide| @exporter.export_guide(guide) }.compact
       Stdout.instance.add(json)
     end
 
     def write_dir(dir, extension)
       FileUtils.mkdir(dir) unless File.exists?(dir)
-      @parallel.each(all_guides) do |guide|
+      ParallelWrap.each(all_guides) do |guide|
         filename = dir + "/" + guide["name"] + extension
         Logger.instance.log("Writing guide", filename)
         json = @exporter.export_guide(guide)

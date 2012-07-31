@@ -1,6 +1,7 @@
 require 'jsduck/json_duck'
 require 'jsduck/null_object'
 require 'jsduck/logger'
+require 'jsduck/parallel_wrap'
 
 module JsDuck
 
@@ -9,20 +10,20 @@ module JsDuck
     module_function
 
     # Loads in exported docs and generates @since and @new tags based on that data.
-    def import(imports, relations, parallel)
+    def import(imports, relations)
       if imports.length > 0
-        generate_since_tags(read_all(imports, parallel), relations)
+        generate_since_tags(read_all(imports), relations)
       end
     end
 
     # Reads in data for all versions, returning array of
     # version/class-data pairs.  We don't use a hash to preserve the
     # order of versions (from oldest to newest).
-    def read_all(imports, parallel)
+    def read_all(imports)
       imports.map do |ver|
         {
           :version => ver[:version],
-          :classes => ver[:path] ? read(ver, parallel) : current_version,
+          :classes => ver[:path] ? read(ver) : current_version,
         }
       end
     end
@@ -32,9 +33,9 @@ module JsDuck
     end
 
     # Reads in data from all .json files in directory
-    def read(ver, parallel)
+    def read(ver)
       # Map list of files into pairs of (classname, members-hash)
-      pairs = parallel.map(Dir[ver[:path] + "/*.json"]) do |filename|
+      pairs = ParallelWrap.map(Dir[ver[:path] + "/*.json"]) do |filename|
         JsDuck::Logger.instance.log("Importing #{ver[:version]}", filename)
         json = JsonDuck.read(filename)
         [json["name"],  members_id_index(json)]

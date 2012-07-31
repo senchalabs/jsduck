@@ -10,7 +10,6 @@ module JsDuck
     def initialize(exporter_class, relations, opts)
       @relations = relations
       @exporter = exporter_class.new(relations, opts)
-      @parallel = ParallelWrap.new(:in_processes => opts.processes)
     end
 
     # Writes class data into given directory or STDOUT when dir == :stdout.
@@ -24,13 +23,13 @@ module JsDuck
     private
 
     def write_stdout
-      json = @parallel.map(@relations.classes) {|cls| @exporter.export(cls) }.compact
+      json = ParallelWrap.map(@relations.classes) {|cls| @exporter.export(cls) }.compact
       Stdout.instance.add(json)
     end
 
     def write_dir(dir, extension)
       FileUtils.mkdir(dir)
-      @parallel.each(@relations.classes) do |cls|
+      ParallelWrap.each(@relations.classes) do |cls|
         filename = dir + "/" + cls[:name] + extension
         Logger.instance.log("Writing docs", filename)
         json = @exporter.export(cls)
