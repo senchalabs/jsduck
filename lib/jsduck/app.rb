@@ -36,7 +36,7 @@ module JsDuck
       @opts = opts
       # Sets the nr of parallel processes to use.
       # Set to 0 to disable parallelization completely.
-      @parallel = ParallelWrap.new(:in_processes => @opts.processes)
+      ParallelWrap.in_processes = @opts.processes
       # Turn JSON pretty-printing on/off
       JsonDuck.pretty = @opts.pretty_json
     end
@@ -83,7 +83,7 @@ module JsDuck
         # between source files and classes. Therefore it MUST to be done
         # after writing sources which needs the links to work.
         if @opts.source
-          source_writer = SourceWriter.new(parsed_files, @parallel)
+          source_writer = SourceWriter.new(parsed_files)
           source_writer.write(@opts.output_dir + "/source")
         end
         format_classes
@@ -104,7 +104,7 @@ module JsDuck
 
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
-      @parallel.map(filenames) do |fname|
+      ParallelWrap.map(filenames) do |fname|
         Logger.instance.log("Parsing", fname)
         begin
           SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
@@ -165,7 +165,7 @@ module JsDuck
       # Don't format types when exporting
       class_formatter.include_types = !@opts.export
       # Format all doc-objects in parallel
-      formatted_classes = @parallel.map(@relations.classes) do |cls|
+      formatted_classes = ParallelWrap.map(@relations.classes) do |cls|
         Logger.instance.log("Markdown formatting #{cls[:name]}")
         begin
           {
