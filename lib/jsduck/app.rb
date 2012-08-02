@@ -124,7 +124,9 @@ module JsDuck
       agr.create_global_class
       agr.remove_ignored_classes
       agr.create_accessors
-      agr.append_ext4_event_options
+      if @opts.ext4_events == true || (@opts.ext4_events == nil && agr.ext4?)
+        agr.append_ext4_event_options
+      end
       agr.result
     end
 

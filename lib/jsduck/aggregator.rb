@@ -205,10 +205,7 @@ module JsDuck
     end
 
     # Appends Ext4 options parameter to each event parameter list.
-    # But only when we are dealing with Ext4 codebase.
     def append_ext4_event_options
-      return unless ext4?
-
       options = {
         :tagname => :param,
         :name => "eOpts",
