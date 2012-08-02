@@ -220,7 +220,6 @@ task :ext4 => :sass do
   runner = JsDuckRunner.new
   runner.add_ext4
   runner.add_debug
-  runner.add_options("--tests")
   runner.run
 
   system("cp -r #{EXT_BUILD} #{OUT_DIR}/extjs-build")
@@ -234,7 +233,6 @@ task :sdk => :sass do
     "--config", "#{SDK_DIR}/extjs/docs/config.json",
     "--examples-base-url", "extjs-build/examples/",
     "--seo",
-    "--tests"
   )
   runner.add_debug
   runner.add_comments('ext-js', '4')
@@ -251,7 +249,6 @@ task :touch2 => :sass do
     "--config", "#{SDK_DIR}/touch/docs/config.json",
     "--examples-base-url", "touch-build/examples/production/",
     "--seo",
-    "--tests"
   )
 
   runner.add_debug
