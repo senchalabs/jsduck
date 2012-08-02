@@ -13,7 +13,17 @@
   <link rel="stylesheet" href="resources/codemirror/codemirror.css" type="text/css" />
   <!-- END CSS -->
   <link rel="stylesheet" href="resources/prettify/prettify.css" type="text/css" />
-  <link href="http://fonts.googleapis.com/css?family=Exo" rel="stylesheet" type="text/css" />
+
+  <script type="text/javascript" id="loadFont">
+      (function() {
+          var fontStyleLink = document.createElement('link');
+          fontStyleLink.rel = 'stylesheet';
+          fontStyleLink.type = 'text/css';
+          fontStyleLink.src = ('https:' === document.location.protocol ? 'https://' : 'http://') + 'fonts.googleapis.com/css?family=Exo';
+          var loadFontScript = document.getElementById('loadFont');
+          document.getElementsByTagName('head')[0].insertBefore(fontStyleLink, loadFontScript);
+      })();
+  </script>
 
   <script type="text/javascript" src="{extjs_path}"></script>
   <script type="text/javascript" src="data.js"></script>
