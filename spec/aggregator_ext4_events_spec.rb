@@ -5,7 +5,7 @@ describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::SourceFile.new(string))
-    agr.append_ext4_event_options
+    agr.append_ext4_event_options if agr.ext4?
     agr.result
   end
 
