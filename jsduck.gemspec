@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rdiscount'
   s.add_dependency 'json'
   s.add_dependency 'parallel'
-  s.add_dependency 'execjs'
+  s.add_dependency 'therubyracer'
 
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rake'
