@@ -12,6 +12,7 @@ module JsDuck
     attr_accessor :output_dir
     attr_accessor :ignore_global
     attr_accessor :external_classes
+    attr_accessor :ext4_events
 
     # Customizing output
     attr_accessor :title
@@ -74,6 +75,7 @@ module JsDuck
         # Special anything-goes type
         "Mixed",
       ]
+      @ext4_events = nil
       @meta_tag_paths = []
 
       @version = "4.0.beta2"
@@ -157,6 +159,14 @@ module JsDuck
           "will then not generate warnings when used in type",
           "definitions or inherited from.", " ") do |classes|
           @external_classes += classes
+        end
+
+        opts.on('--[no-]ext4-events',
+          "Appends extra options parameter that all Ext events have.",
+          "The default is to auto-detect if we're using Ext JS 4",
+          "based on whether the code uses Ext.define.",
+          "Use this option to override the auto-detection.", " ") do |e|
+          @ext4_events = e
         end
 
         opts.on('--builtin-classes',
