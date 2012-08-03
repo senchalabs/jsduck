@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'rubygems'
 require 'strscan'
-require 'jsduck/markdown'
+require 'rdiscount'
 require 'jsduck/logger'
 require 'jsduck/inline_img'
 require 'jsduck/inline_video'
@@ -310,7 +310,7 @@ module JsDuck
       # code-blocks beginning with empty line.
       input.gsub!(/<pre>(<code>)?\n?/, "<pre>\\1")
 
-      replace(JsDuck::Markdown.to_html(input))
+      replace(RDiscount.new(input).to_html)
     end
 
     # Shortens text
