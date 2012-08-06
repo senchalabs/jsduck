@@ -16,9 +16,8 @@ Ext.define('Docs.view.cls.Header', {
                 '<tpl if="private">',
                     '<span class="private">Private</span>',
                 '</tpl>',
-                '<a href="#" class="class-source-link">{name}',
-                  '<span class="class-source-tip">View source...</span>',
-                '</a>',
+                '<a>{name}</a>',
+                '<small class="typestr">{[this.renderTypestr(values.meta)]}</small>',
                 '{[this.renderAliases(values.aliases)]}',
             '</h1>',
             Docs.data.showPrintButton ? '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>' : '',
@@ -33,6 +32,14 @@ Ext.define('Docs.view.cls.Header', {
                     else {
                         return "class";
                     }
+                },
+				// Render Ti typestring
+                renderTypestr: function(meta){
+                	if(meta == null || meta.typestr == null || meta.typestr.length == 0){
+                		return;
+                	}
+
+                	return "<span>{ " + meta.typestr[0] + " }</span>";
                 },
                 renderAliases: function(aliases) {
                     var titles = {
@@ -85,10 +92,11 @@ Ext.define('Docs.view.cls.Header', {
 
     // Helper for binding handlers to class name link
     classLinkEvent: function(eventName, fun, scope) {
-        this.el.on(eventName, fun, scope, {
-            preventDefault: true,
-            delegate: 'a.class-source-link'
-        });
+// Not used for Ti.
+//        this.el.on(eventName, fun, scope, {
+//            preventDefault: true,
+//            delegate: 'a.class-source-link'
+//        });
     },
 
     createFileMenu: function(files) {

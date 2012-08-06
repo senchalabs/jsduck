@@ -31,14 +31,14 @@
     clear: both; }
   p, ul, ol {
     color: #484848;
-    max-width: 900px; }
+    max-width: 80%; }
   p {
     padding: 0;
     margin: 0 0 1em; }
   p:last-child {
     margin: 0; }
   ul {
-    margin: 0 0 1em 2em;
+    margin: 0 0 1em 1em;
     li {
       list-style: disc outside; } }
   ol {
@@ -51,24 +51,31 @@
     font-weight: bold; }
   h3 {
     font-weight: bold;
-    font-size: 1.1em; }
+    font-size: 1.1em;
+	margin-top: 10px;
+  }
   h4 {
-    font-weight: bold; }
+    font-weight: bold;
+	margin-top: 10px;
+  }
   table {
     margin-bottom: 10px;
-    tr:first-child {
+    thead {
       td {
         color: #000;
         font-weight: bold; } }
+    tbody {
     td {
       color: #484848;
-      padding: 2px 20px 2px 0; } }
-  pre {
-    background-color: #f7f7f7;
+      padding: 2px 20px 2px 0; } } }
+  pre, .hierarchy .classes {
+    //background-color: #f7f7f7;
+    background-image: url(../images/bg_example.png);
     border: solid 1px #e8e8e8;
     @include border-radius(5px);
     color: #314e64;
     font-family: $docs-monospace-font;
+	  font-size: 9pt;
     padding: 10px 20px;
     line-height: 1.3em;
     margin: 10px 0 14px 0;
@@ -76,7 +83,8 @@
     overflow-x: auto;
     overflow-y: hidden;
     code {
-      font-family: $docs-monospace-font; }
+      font-family: $docs-monospace-font;
+	}
     i,em {
       font-style: normal; } }
   pre.prettyprint {
@@ -88,13 +96,12 @@
   padding: 10px;
   font-size: 14px;
   h1 {
-    background: url(../images/doc-m.png) no-repeat -5px -5px;
-    padding: 10px 0 10px 55px;
+    padding-top: 7px;
     font-family: $docs-heading-font;
-    letter-spacing: -1px;
     margin-bottom: 16px;
-    font-size: 2.3em;
-    color: #66ab16; }
+    font-size: 16pt;
+    color: #66ab16;
+  }
   h2 {
     @include guides-h2-heading; }
   h3 {
@@ -126,7 +133,8 @@ p.screenshot {
 
 
 .x-panel-body-default {
-  border-width: 0; }
+  border-width: 0; 
+  font-size: 13px; }
 
 
 // Examples

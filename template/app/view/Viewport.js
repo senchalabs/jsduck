@@ -34,35 +34,31 @@ Ext.define('Docs.view.Viewport', {
             {
                 region: 'north',
                 id: 'north-region',
-                height: 65,
+				// Ti changed height
+                height: 73,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
                 },
                 items: [
-                    {
-                        height: 37,
-                        xtype: 'container',
-                        layout: 'hbox',
-                        items: [
-                            {
-                                xtype: 'docheader'
-                            },
-                            {   xtype: 'container', flex: 1 },
-                            {
-                                id: 'loginContainer',
-                                xtype: 'authentication',
-                                width: 500,
-                                padding: '10 20 0 0'
-                            },
-                            {
-                                xtype: 'searchcontainer',
-                                id: 'search-container',
-                                width: 230,
-                                margin: '4 0 0 0'
-                            }
-                        ]
-                    },
+					// Ti change -- removed login container, adjusted height
+					{
+						xtype: 'container',
+						height: 45,
+						layout: 'hbox',
+						items: [
+							{
+								xtype: 'docheader'
+							},
+							{   xtype: 'container', flex: 1 },
+						   {
+							   xtype: 'searchcontainer',
+							   id: 'search-container',
+							   width: 224,
+							   margin: '5 0 0 0'
+						   }
+						]
+					},
                     {
                         xtype: 'doctabs'
                     }
@@ -70,7 +66,7 @@ Ext.define('Docs.view.Viewport', {
             },
             {
                 region: 'center',
-                layout: 'border',
+				layout: 'border',
                 minWidth: 800,
                 items: [
                     {
@@ -79,7 +75,8 @@ Ext.define('Docs.view.Viewport', {
                         id: 'treecontainer',
                         border: 1,
                         bodyPadding: '10 9 4 9',
-                        width: 240
+						// Ti changed width
+                        width: 220
                     },
                     {
                         region: 'center',
@@ -160,7 +157,8 @@ Ext.define('Docs.view.Viewport', {
             {
                 region: 'south',
                 id: 'footer',
-                height: 20,
+				// Ti changed height. 
+                height: 76,
                 contentEl: 'footer-content'
             }
         ];

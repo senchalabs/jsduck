@@ -260,6 +260,7 @@ Ext.define('Docs.controller.Classes', {
         this.currentCls = cls;
 
         if (anchor) {
+			anchor = anchor.replace(/:/g, "\\:");
             this.getOverview().scrollToEl("#" + anchor);
             this.fireEvent('showMember', cls.name, anchor);
         }

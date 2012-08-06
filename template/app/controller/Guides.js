@@ -106,7 +106,7 @@ Ext.define('Docs.controller.Guides', {
     loadGuide: function(url, noHistory) {
         Ext.getCmp('card-panel').layout.setActiveItem('guide');
         Ext.getCmp('treecontainer').showTree('guidetree');
-        var m = url.match(/^#!\/guide\/(.*?)(-section-[0-9]+)?$/);
+		var m = url.match(/^#!\/guide\/(.*?)(?:-section-(.+))?$/);
         var name = m[1];
         var section = m[2];
         url = "#!/guide/"+name; // ignore section in URL
@@ -157,7 +157,7 @@ Ext.define('Docs.controller.Guides', {
             reRendered = true;
         }
         this.activeUrl = url;
-        section ? this.getGuide().scrollToEl(name+section) : this.getGuide().scrollToTop();
+        section ? this.getGuide().scrollToEl(decodeURIComponent(section)) : this.getGuide().scrollToTop();
         this.fireEvent('showGuide', name, { reRendered: reRendered });
         this.getTree().selectUrl(url);
     }

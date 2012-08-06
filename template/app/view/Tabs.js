@@ -371,7 +371,8 @@ Ext.define('Docs.view.Tabs', {
      * @return {Number} Maximum number of tabs we can fit in the tab bar
      */
     maxTabsInBar: function() {
-        return Math.floor(this.tabBarWidth() / this.minTabWidth);
+        // Ti change -- ToDo check questionable change here (orig /this.minTabWidth)
+        return Math.floor(this.tabBarWidth() / this.maxTabWidth);
     },
 
     /**
@@ -397,7 +398,8 @@ Ext.define('Docs.view.Tabs', {
      * @return {Number} Width of the tab bar (not including the static tabs)
      */
     tabBarWidth: function() {
-        return this.getWidth() - (this.staticTabs.length * 50) - 15;
+        //  Ti change -- adjustment from -15 to -50 
+        return this.getWidth() - (this.staticTabs.length * 50) - 50;
     },
 
     /**

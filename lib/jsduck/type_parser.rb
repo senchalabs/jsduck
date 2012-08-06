@@ -59,8 +59,13 @@ module JsDuck
     #
     # dot-separated identifiers followed by optional "[]"
     def base_type
-      type = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*/)
+      is_wrapped = @input.check(/(Dictionary|Callback)</)
+      if is_wrapped
+      	out << @input.scan(/(Dictionary|Callback)/) + "&lt;"
 
+      	@input.getch # remove <
+      end
+      type = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*/)
       if !type
         return false
       elsif @relations[type]
@@ -72,10 +77,16 @@ module JsDuck
         return false
       end
 
+
+      if is_wrapped
+        out << "&gt;" 
+      	@input.getch # remove <
+      end
+
       while @input.scan(/\[\]/)
         @out << "[]"
       end
-
+      
       @out << "..." if @input.scan(/\.\.\./)
 
       true

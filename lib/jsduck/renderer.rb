@@ -11,7 +11,13 @@ module JsDuck
 
         return [
           "<div>",
-            render_sidebar,
+          	"<div class='sidebar'>",
+#            render_sidebar,
+             @cls[:meta] != nil && @cls[:meta][:platform] != nil && @cls[:meta][:platform].length != 0 ? render_platforms(@cls[:meta][:platform], true) : '',
+            "</div>",
+            "<div class='hierarchy'>",
+            render_tree,
+            "</div>",
             "<div class='doc-contents'>",
               render_private_class_notice,
               @cls[:doc],
@@ -39,10 +45,33 @@ module JsDuck
       MetaTagRegistry.instance.tags.map {|tag| meta_data[tag.key] }
     end
 
+    def render_platforms(platforms, sidebar)
+      mapping = {
+		'android' => 'Android',
+		'iphone' => 'iPhone',
+		'ipad' => 'iPad',
+		'mobileweb' => 'Mobile Web'
+	  }
+
+      return [
+        '<ul class="',
+        sidebar ? 'sidebar-platforms' : 'platforms',
+        '">',
+        platforms.map do |platform| 
+        	begin
+	        	"<li class='platform-" + platform + "' title='" + mapping[platform] + "'>" + (sidebar ? mapping[platform] : '&nbsp;') + "</li>" 
+	        rescue
+	    	    puts "[ERROR] Unknown plaform: '" + platform + "'"
+    	    end
+        end,
+        '</ul>'
+      ]
+    end
+
     def render_sidebar
       items = [
         render_alternate_class_names,
-        render_tree,
+#        render_tree,
         render_dependencies(:allMixins, "Mixins"),
         render_dependencies(:requires, "Requires"),
         render_dependencies(:uses, "Uses"),
@@ -72,6 +101,8 @@ module JsDuck
     end
 
     def render_files
+      # We don't need to output this section since we don't have real JS sources
+      return 
       return if @cls[:files].length == 0 || @cls[:files][0][:filename] == ""
       return [
         "<h4>Files</h4>",
@@ -88,24 +119,29 @@ module JsDuck
     # We still create the tree, but without links in it.
     def render_tree
       return if !@cls[:extends] || @cls[:extends] == "Object"
-      tree = ["<h4>Hierarchy</h4>"]
+      tree = ["<div class='classes'>"]#<h4>Hierarchy</h4>
 
       if @cls[:superclasses].length > 0
-        tree + render_class_tree(@cls[:superclasses].concat([@cls[:name]]), {:first => true, :links => true})
+        tree + render_class_tree(@cls[:superclasses].concat([@cls[:name]]), {:first => true, :links => true}) + ["</div>"]
       else
-        tree + render_class_tree([@cls[:extends], @cls[:name]], {:first => true})
+        tree + render_class_tree([@cls[:extends], @cls[:name]], {:first => true}) + ["</div>"]
       end
+      #tree + ["</div>"]
+
     end
 
     def render_class_tree(superclasses, o)
       return "" if superclasses.length == 0
 
       name = superclasses[0]
+      # note render_class_tree was moved below the </div>. need to figure out whether
+      # Andrew did this on purpose, or by accident.
       return [
-        "<div class='subclass #{o[:first] ? 'first-child' : ''}'>",
+        "<div class='subclass'>",
+          (o[:first] ? '' : ' &gt; '),
           superclasses.length > 1 ? (o[:links] ? render_link(name) : name) : "<strong>#{name}</strong>",
-          render_class_tree(superclasses.slice(1, superclasses.length-1), {:links => o[:links]}),
         "</div>",
+        render_class_tree(superclasses.slice(1, superclasses.length-1), {:links => o[:links]})
       ]
     end
 
@@ -174,8 +210,6 @@ module JsDuck
             "<div class='meta'>",
               inherited ? "<a href='#!/api/#{owner}' rel='#{owner}' class='defined-in docClass'>#{owner}</a>" :
                           "<span class='defined-in' rel='#{owner}'>#{owner}</span>",
-              "<br/>",
-              "<a href='source/#{m[:files][0][:href]}' target='_blank' class='view-source'>view source</a>",
             "</div>",
             # method params signature or property type signature
             render_signature(m),
@@ -205,7 +239,7 @@ module JsDuck
 
       if m[:tagname] == :cfg || m[:tagname] == :property || m[:tagname] == :css_var
         params = "<span> : #{m[:html_type]}</span>"
-      else
+      elsif m[:tagname] != :event
         ps = m[:params].map {|p| render_short_param(p) }.join(", ")
         params = "( <span class='pre'>#{ps}</span> )"
         if m[:tagname] == :method && m[:return][:type] != "undefined"
@@ -274,8 +308,10 @@ module JsDuck
       end
 
       if params
-        if item[:type] == "Function" || item[:tagname] == :method || item[:tagname] == :event
+        if item[:type] == "Function" || item[:tagname] == :method
           doc << '<h3 class="pa">Parameters</h3>'
+        elsif item[:tagname] == :event
+          doc << '<h3 class="pa">Properties</h3>'
         end
         doc << [
           "<ul>",
@@ -299,8 +335,10 @@ module JsDuck
           "<span class='pre'>#{p[:name]}</span> : ",
           p[:html_type],
           p[:optional] ? " (optional)" : "",
+          p[:deprecated] ? '<strong class="deprecated signature">deprecated</strong>' : "",
           "<div class='sub-desc'>",
             p[:doc],
+            p[:platforms] != nil && p[:platforms].length > 0 ? render_platforms(p[:platforms], false) : '',
             p[:default] ? "<p>Defaults to: <code>#{CGI.escapeHTML(p[:default])}</code></p>" : "",
             p[:properties] && p[:properties].length > 0 ? render_params_and_return(p) : "",
           "</div>",
@@ -309,7 +347,7 @@ module JsDuck
     end
 
     def render_return(ret)
-      return if ret[:type] == "undefined"
+      return ["<h3 class='pa'>Returns</h3><ul><li><span class='pre'>void</span></li></ul>"] if ret[:type] == "undefined"
       return [
         "<h3 class='pa'>Returns</h3>",
         "<ul>",

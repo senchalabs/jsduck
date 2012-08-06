@@ -19,7 +19,9 @@ Ext.define('Docs.view.cls.Tree', {
         this.setLogic(Docs.Settings.get("classTreeLogic"), Docs.Settings.get("showPrivateClasses"));
 
         this.dockedItems = [
-            {
+// Ti change -- suppress the private classes checkbox. 
+// Could surely be done more elegantly via configuration.
+/*            {
                 xtype: 'container',
                 dock: 'bottom',
                 layout: 'hbox',
@@ -39,6 +41,7 @@ Ext.define('Docs.view.cls.Tree', {
                     }
                 ]
             },
+*/
             {
                 xtype: 'container',
                 dock: 'bottom',

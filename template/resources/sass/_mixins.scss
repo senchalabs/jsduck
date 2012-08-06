@@ -49,11 +49,15 @@
 
 @mixin icons {
   .icon-pkg {
-    background: url(../images/icons.png) no-repeat 0 -0px; }
+    // Ti change offset
+    background: url(../images/icons.png) no-repeat 0 -400px; }
   .icon-class {
-    background: url(../images/icons.png) no-repeat 0 -40px; }
-  .icon-singleton {
     background: url(../images/icons.png) no-repeat 0 -80px; }
+  // Ti add object icon
+  .icon-object {
+    background: url(../images/icons.png) no-repeat 0 -40px; }
+  //.icon-singleton {
+  //  background: url(../images/icons.png) no-repeat 0 -80px; }
   .icon-subclass {
     background: url(../images/icons.png) no-repeat 0 -120px; }
   .icon-component {
@@ -61,13 +65,14 @@
   .icon-cfg {
     background: url(../images/icons.png) no-repeat 0 -200px; }
   .icon-property {
-    background: url(../images/icons.png) no-repeat 0 -240px; }
+    // Ti tweaked positioning
+    background: url(../images/icons.png) no-repeat 0 -238px; }
   .icon-method {
     background: url(../images/icons.png) no-repeat 0 -280px; }
   .icon-event {
     background: url(../images/icons.png) no-repeat 0 -320px; }
   .icon-guide {
-    background: url(../images/icons.png) no-repeat 0 -360px; }
+  		background: url(../images/tabs.png) no-repeat -3px -60px; }
   .icon-video {
     background: url(../images/icons.png) no-repeat 0 -400px; }
   .icon-example {
@@ -131,13 +136,13 @@
   border-bottom: 1px solid #f1f1f1;
   font-size: 20px;
   font-weight: bold;
-  color: #314e64;
+  color: #666666;
   margin: 30px 0 15px;
   padding-bottom: 5px; }
 
 @mixin guides-h3-heading {
   font-weight: bold;
-  color: #314e64;
+  color: #666666;
   margin-top: 0.5em;
   padding-top: 16px;
   font-size: 16px;
@@ -160,3 +165,17 @@
     background-color: #FD6B1B; }
   &.protected {
     background-color: #9B86FC; } }
+
+@mixin clearfix() {
+	zoom: 1;
+	&:before,
+	&:after {
+		display: table;
+		content: "";
+		zoom: 1;
+		*display: inline;
+	}
+	&:after {
+		clear: both;
+	}
+}

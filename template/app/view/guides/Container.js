@@ -27,7 +27,8 @@ Ext.define('Docs.view.guides.Container', {
     scrollToEl: function(id) {
         var el = Ext.get(id);
         if (el) {
-            var scrollOffset = el.getY() - 100;
+			// Ti change -- different offset. Should probably be configurable
+            var scrollOffset = el.getY() - 60;
             var currentScroll = this.getEl().getScroll()['top'];
             this.getEl().scrollTo('top', currentScroll + scrollOffset);
             el.highlight();

@@ -142,6 +142,9 @@ module JsDuck
         ms.merge!(local_members_hash(type, :statics)) {|k,o,n| store_overrides(k,o,n)}
       end
 
+      # Remove explicitly hidden members (tagged with @hide)
+      ms.reject! {|k, v| v[:meta] && v[:meta][:hide] }
+
       ms
     end
 

@@ -19,4 +19,5 @@ css_path = File.join(sass_path, "..", "css")
 output_style = :compact
 
 # We need to load in the Ext4 themes folder, which includes all it's default styling, images, variables and mixins
-load File.join(File.dirname(__FILE__), $ext_path, 'resources', 'themes')
+# Ti change--for some reason, we use a different folder
+load File.join(File.dirname(__FILE__), $ext_path, 'resources', 'css')

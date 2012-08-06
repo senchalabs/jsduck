@@ -1,5 +1,6 @@
 /**
  * Container for all trees.
+ * Note several Ti changes here to support multi-level guides tree.
  */
 Ext.define('Docs.view.TreeContainer', {
     extend: 'Ext.panel.Panel',
@@ -38,22 +39,38 @@ Ext.define('Docs.view.TreeContainer', {
                     return {
                         leaf: true,
                         text: example.text,
+						// Ti -- added isObject
+                        isObject: example.isObject,
                         url: '#!/example/' + example.url,
                         iconCls: 'icon-example'
                     };
                 }
             },
             {
-                xtype: 'grouptree',
+                // Ti -- added guidesgrouptree type
+                xtype: 'guidesgrouptree',
                 id: 'guidetree',
                 data: Docs.data.guides,
                 convert: function(guide) {
-                    return {
-                        leaf: true,
+					// IE bug here - if you will uncomment at least one more attribute or add more guides - IE will start failing with stack overflow
+                    var res = {
+//                        leaf: false,
                         text: guide.title,
+//                        expanded: true,
                         url: '#!/guide/' + guide.name,
                         iconCls: 'icon-guide'
                     };
+                   	var self = arguments.callee;
+                    if(typeof(guide.items) != 'undefined' &&  guide.items.length > 0){
+                    	res.children = [];
+                    	Ext.Array.each(guide.items, function(item){
+                    		res.children.push(self(item));
+                    	});
+                    } else {
+						res.leaf = true;
+					}
+
+                    return res;
                 }
             },
             {

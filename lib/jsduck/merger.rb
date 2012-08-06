@@ -397,6 +397,8 @@ module JsDuck
           :type => ex[:type] || im[:type] || "Object",
           :name => ex[:name] || im[:name] || "",
           :doc => doc,
+          :deprecated => ex[:deprecated] || false,
+          :platforms => ex[:platforms] || nil,
           :optional => ex[:optional] || false,
           :default => ex[:default],
           :properties => ex[:properties] || [],

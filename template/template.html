@@ -19,26 +19,6 @@
     <link rel="stylesheet" href="resources/css/welcome_ie6.css" type="text/css" />
   <![endif]-->
 
-  <!-- Async script to not block while loading TypeKit fonts -->
-  <script type="text/javascript">
-  (function() {
-    var TypekitConfig = {
-      kitId: 'uxj6dew'
-    };
-    var tk = document.createElement('script');
-    tk.src = '//use.typekit.com/' + TypekitConfig.kitId + '.js';
-    tk.type = 'text/javascript';
-    tk.async = 'true';
-    tk.onload = tk.onreadystatechange = function() {
-      var rs = this.readyState;
-      if (rs && rs != 'complete' && rs != 'loaded') return;
-      try { Typekit.load(TypekitConfig); } catch (e) {}
-    };
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(tk, s);
-  })();
-  </script>
-
   <script type="text/javascript" src="{extjs_path}"></script>
   <script type="text/javascript" src="data.js"></script>
   <!-- BEGIN JS -->
@@ -62,13 +42,70 @@
       <iframe id="x-history-frame"></iframe>
   </form>
 
-  <div id="header-content">{header}</div>
+	<div id="header-content">
+		<a href="http://www.appcelerator.com">
+			<img src="resources/images/appc_header.png" alt="">
+		</a>
+	</div>
   {welcome}
   {categories}
   {guides}
-  {footer}
+  <div id='footer-content' style='display: none'>
+	  <a class="logo" href="http://www.appcelerator.com">
+		<img src="resources/images/appc_header.png" alt="">
+	</a>
+	  <div class="links">
+	  	 	<a href="http://www.facebook.com/appcelerator" class="facebook"></a>
+	 		<a href="https://twitter.com/#!/appcelerator" class="twitter"></a>
+	 		<a href="http://developer.appcelerator.com/blog/feed" class="rss"></a>
+	 		<a href="mailto:info@appcelerator.com" class="mail"></a>
+	 	</div>
+	<div class="inner-container">
+		<div>
+			<div class="first-row">
+				<a href="http://www.appcelerator.com/platform" class="br">platform</a>
+				<a href="http://www.appcelerator.com/cloud" class="br">cloud services</a>
+				<a href="http://marketplace.appcelerator.com" class="br">marketplace</a>
+				<a href="http://www.appcelerator.com/thinkmobile" class="br">think mobile</a>
+				<a href="http://www.appcelerator.com/help" class="br">get help</a>
+				<a href="http://www.appcelerator.com/partners" class="br">partners</a>
+				<a href="http://www.appcelerator.com/company" class="br">company</a>
+				<a href="http://www.appcelerator.com/developers">developers</a>
+			</div>
+			<div class="second-row">
+				<a href="http://www.appcelerator.com/company/privacy" class="u br">Privacy Policy</a>
+				<a href="http://www.appcelerator.com/legal" class="u">Legal Information</a>
+				<span id="copyright_notice">&copy; 2008&mdash;2012 Appcelerator Inc. All rights reserved. Appcelerator is a registered trademark</span>
+			</div>
+			<div class="third-row">
+			<span id="ducktype1">We believe in the power of open source.</span>
+			<span id="ducktype2">This site is generated using the Simple JavaScript Duckumentation generator &mdash; <a href="https://github.com/senchalabs/jsduck">JSDuck</a>
+			</span>
+			</div>
+		</div>
+	</div>
+  </div>
 
   {body_html}
 
+<script src="http://munchkin.marketo.net/munchkin.js"></script>
+<script>try { mktoMunchkin("636-NHJ-871"); } catch (err) {}</script>
+<script>
+var _qoptions={qacct:"p-4aHbaizUurMCQ"},
+	_gaq=[['_setAccount','UA-5155164-1'],['_setDomainName','none'],['_setAllowLinker',true],['_setAllowAnchor',true],['_setAllowHash',false],['_addIgnoredOrganic',document.location.host],['_initData'],['_trackPageview']];
+
+(function(d) {
+function load(u){var s=d.getElementsByTagName('script')[0],sc=d.createElement('script');sc.async=true;sc.src=u;s.parentNode.insertBefore(sc,s);}
+
+load('http://www.google-analytics.com/ga.js');
+load('http://api.appcelerator.net/p/beacon.js');
+load('http://api.appcelerator.net/p/analytics.js');
+load('http://edge.quantserve.com/quant.js');
+
+function cc(l,n,s){if(!l||!n||!s||l==''||n==''||s==''){return'-'}var i,i2,i3,c='1';i=l.indexOf(n);i3=n.indexOf('=')+1;if(i>-1){i2=l.indexOf(s,i);if(i2<0){i2=l.length}c=l.substring((i+i3),i2)}return c};
+window._gaToMarketo=function(){var gaCookie=cc(document.cookie,'__utmz=',';');return {cf_campaign:cc(gaCookie,'utmccn=','|'),cf_source:cc(gaCookie,'utmsrc=','|'),cf_medium:cc(gaCookie,'utmcmd=','|'),cf_content:cc(gaCookie,'utmcct=','|'),cf_keyword:cc(gaCookie,'utmctr=','|'),cf_visits:cc(document.cookie,'__utma=',';').split('.')[5]}};
+})(document);
+</script>
+<noscript><img src="http://pixel.quantserve.com/pixel/p-4aHbaizUurMCQ.gif" style="border:0;display:none;" height="1" width="1" alt="Quantcast"/></noscript>
 </body>
 </html>

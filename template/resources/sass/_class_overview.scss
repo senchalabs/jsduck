@@ -3,27 +3,45 @@
 @import "mixins";
 
 .class-overview {
-  .hierarchy {
-    @include border-radius(5px);
-    background-color: #f7f7f7;
-    border: 1px solid #ebebeb;
-    padding: 0 15px 15px 10px;
-    float: right;
-    margin: 0 0 40px 60px;
-    font-size: 12px;
-    @include gray-h4;
-    .dependency, .alternate-class-name {
-      padding: 0 0 0 12px;
-      margin-top: 3px; }
-    .alternate-class-name {
-      color: $docs-text-color; }
-    .subclass {
-      background: url(../images/elbow-end.gif) no-repeat -5px 0;
-      margin-top: 3px;
-      padding: 0 0 0 12px;
-      &.first-child {
-        background: none;
-        padding-left: 15px; } } } }
+	// Ti changes to hierarchy style. ToDo: Clean up this mess.
+	.hierarchy {
+		border: none !important;
+		background: none !important;
+		//@include border-radius(5px);
+		//background-color: #f7f7f7;
+		//border: 1px solid #ebebeb;
+		//padding: 0 15px 15px 10px;
+		 padding: 0 !important;
+		//margin: 0 0 40px 60px;
+		font-size: 12px;
+		overflow: auto;
+		width: 80%;
+		@include gray-h4;
+		h4 {
+			padding: 0 0 0 15px;
+		}
+		.dependency, .alternate-class-name {
+			padding: 0 0 0 12px;
+			margin-top: 3px;
+		}
+		.alternate-class-name {
+			color: $docs-text-color;
+		}
+		.classes {
+			.subclass {
+				float: left;
+				font-weight: bold;
+				padding: 0 0 0 5px;
+				strong {
+					color: #8b0e04;
+				}
+				&.first-child {
+					padding-left: 15px;
+				}
+			}
+		}
+	}
+}
 
 // Nice styles for headings inside documentation
 #center-container .doc-contents {
@@ -156,6 +174,8 @@
   &.deprecated {
     color: #600;
     background-color: #fee;
+	// Ti changed width.
+	width: 80%;
     strong {
       text-transform: uppercase;
       color: white;

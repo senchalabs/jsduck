@@ -75,8 +75,8 @@ module JsDuck
       @version = "3.4.1"
 
       # Customizing output
-      @title = "Sencha Docs - Ext JS"
-      @header = "<strong>Sencha Docs</strong> Ext JS"
+      @title = "Titanium Mobile"
+      @header = "<strong>Titanium Mobile</strong>"
       @footer = "Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> #{@version}."
       @head_html = ""
       @body_html = ""
