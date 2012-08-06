@@ -68,6 +68,14 @@ describe JsDuck::Aggregator do
       classes["Child"][:members][:cfg].length.should == 1
     end
 
+    it "detects the child config with correct tagname" do
+      classes["Child"][:members][:cfg][0][:tagname] == :cfg
+    end
+
+    it "detects the child config with correct id" do
+      classes["Child"][:members][:cfg][0][:id] == "cfg-blah"
+    end
+
     it "detects no properties in child" do
       classes["Child"][:members][:property].length.should == 0
     end
