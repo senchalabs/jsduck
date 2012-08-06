@@ -148,6 +148,10 @@ describe JsDuck::Aggregator do
       methods["bar"][:doc].should == "Bar comment.\n\n**Defined in override FooOverride.**"
     end
 
+    it "changes owner of bar method to target class" do
+      methods["bar"][:owner].should == "Foo"
+    end
+
     it "keeps the foobar method that's in both original and override" do
       methods["foobar"].should_not == nil
     end
@@ -158,6 +162,10 @@ describe JsDuck::Aggregator do
 
     it "adds override source to list of files to overridden member" do
       methods["foobar"][:files].length.should == 2
+    end
+
+    it "keeps owner of foobar method to be the original class" do
+      methods["foobar"][:owner].should == "Foo"
     end
   end
 

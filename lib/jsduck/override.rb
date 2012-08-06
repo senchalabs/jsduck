@@ -60,6 +60,7 @@ module JsDuck
         else
           add_member(target, m)
           add_doc(m, "**Defined in override #{override[:name]}.**")
+          m[:owner] = target[:name]
         end
       end
     end
