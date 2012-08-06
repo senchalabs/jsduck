@@ -193,5 +193,33 @@ describe JsDuck::Aggregator do
       methods["foobar"][:doc].should == "Original comment.\n\n**Overridden in FooOverride.**"
     end
   end
+
+  describe "auto-detected override: in Ext.define" do
+    let(:classes) do
+      parse(<<-EOF)
+        /** */
+        Ext.define("Foo", {
+            foobar: function(){}
+        });
+
+        /** */
+        Ext.define("FooOverride", {
+            override: "Foo",
+            bar: function(){},
+            foobar: function(){ return true; }
+        });
+      EOF
+    end
+
+    let(:methods) { create_members_map(classes["Foo"]) }
+
+    it "adds member to overridden class" do
+      methods["bar"].should_not == nil
+    end
+
+    it "adds note to docs about member being overridden" do
+      methods["foobar"][:doc].should == "**Overridden in FooOverride.**"
+    end
+  end
 end
 

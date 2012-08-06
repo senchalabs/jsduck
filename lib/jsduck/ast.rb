@@ -230,7 +230,9 @@ module JsDuck
       each_pair_in_object_expression(ast["arguments"][1]) do |key, value, pair|
         case key
         when "extend"
-          cls[:extends] = make_extends(value)
+          cls[:extends] = make_string(value)
+        when "override"
+          cls[:override] = make_string(value)
         when "requires"
           cls[:requires] = make_string_list(value)
         when "uses"
@@ -288,7 +290,7 @@ module JsDuck
       end
     end
 
-    def make_extends(cfg_value)
+    def make_string(cfg_value)
       return nil unless cfg_value
 
       parent = to_value(cfg_value)

@@ -36,7 +36,7 @@ module JsDuck
 
       # Combine comments of classes
       if override[:doc].length > 0
-        target[:doc] += "\n\n**From override #{override[:name]}:** " + override[:doc]
+        add_doc(target, "**From override #{override[:name]}:** " + override[:doc])
       end
       target[:files] += override[:files]
 
@@ -52,14 +52,14 @@ module JsDuck
         ex = existing[m[:id]]
         if ex
           if m[:doc].length > 0
-            ex[:doc] += "\n\n**From override #{override[:name]}:** " + m[:doc]
+            add_doc(ex, "**From override #{override[:name]}:** " + m[:doc])
           else
-            ex[:doc] += "\n\n**Overridden in #{override[:name]}.**"
+            add_doc(ex, "**Overridden in #{override[:name]}.**")
           end
           ex[:files] += m[:files]
         else
           add_member(target, m)
-          m[:doc] += "\n\n**Defined in override #{override[:name]}.**"
+          add_doc(m, "**Defined in override #{override[:name]}.**")
         end
       end
     end
@@ -76,6 +76,10 @@ module JsDuck
 
     def add_member(cls, m)
       cls[m[:static] ? :statics : :members][m[:tagname]] << m
+    end
+
+    def add_doc(m, doc)
+      m[:doc] = (m[:doc] + "\n\n" + doc).strip
     end
   end
 
