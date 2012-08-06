@@ -55,6 +55,9 @@ module JsDuck
         cls[:members][:property].delete(m)
         cls[:members][:cfg] << m
       end
+      # The members lookup table inside class is no more valid, so
+      # reset it.
+      cls.reset_members_lookup!
     end
 
     # For auto-detected members/classes (which have @private == :inherit)

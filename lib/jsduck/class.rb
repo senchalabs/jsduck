@@ -264,6 +264,11 @@ module JsDuck
       return ms
     end
 
+    # Call this when renaming or moving members inside class.
+    def reset_members_lookup!
+      @members_map = nil
+    end
+
     # Returns all members of class, including the inherited and mixed in ones
     def all_members
       all = []
