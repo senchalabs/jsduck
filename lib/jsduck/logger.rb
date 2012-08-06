@@ -92,7 +92,7 @@ module JsDuck
     #
     # Optionally filename and line number will be inserted to message.
     def warn(type, msg, filename=nil, line=nil)
-      msg = "Warning: " + format(filename, line) + " " + msg
+      msg = paint(:yellow, "Warning: ") + format(filename, line) + " " + msg
 
       if type == nil || @warnings[type]
         if !@shown_warnings[msg]
@@ -115,16 +115,40 @@ module JsDuck
           out += ":#{line}:"
         end
       end
-      out
+      paint(:magenta, out)
     end
 
     # Prints fatal error message with backtrace.
     # The error param should be $! from resque block.
     def fatal(msg, error)
-      puts "#{msg}: #{error}"
+      puts "#{paint(:red, msg)}: #{error}"
       puts
       puts "Here's a full backtrace:"
       puts error.backtrace
+    end
+
+    private
+
+    COLORS = {
+      :black   => "\e[30m",
+      :red     => "\e[31m",
+      :green   => "\e[32m",
+      :yellow  => "\e[33m",
+      :blue    => "\e[34m",
+      :magenta => "\e[35m",
+      :cyan    => "\e[36m",
+      :white   => "\e[37m",
+    }
+
+    CLEAR = "\e[0m"
+
+    # Helper for doing colored output in UNIX terminal
+    def paint(color_name, msg)
+      if OS.windows?
+        msg
+      else
+        COLORS[color_name] + msg + CLEAR
+      end
     end
   end
 
