@@ -10,9 +10,9 @@ module JsDuck
     module_function
 
     # Loads in exported docs and generates @since and @new tags based on that data.
-    def import(imports, relations)
+    def import(imports, relations, new_since=nil)
       if imports.length > 0
-        generate_since_tags(read_all(imports), relations)
+        generate_since_tags(read_all(imports), relations, new_since)
       end
     end
 
@@ -60,20 +60,39 @@ module JsDuck
 
     # Using the imported versions data, adds @since tags to all
     # classes/members.
-    def generate_since_tags(versions, relations)
-      last_version = versions.last[:version]
+    def generate_since_tags(versions, relations, new_since=nil)
+      new_versions = build_new_versions_map(versions, new_since)
 
       relations.each do |cls|
         v = cls[:meta][:since] || class_since(versions, cls)
         cls[:meta][:since] = v
-        cls[:meta][:new] = true if v == last_version
+        cls[:meta][:new] = true if new_versions[v]
 
         cls.all_local_members.each do |m|
           v = m[:meta][:since] || member_since(versions, cls, m)
           m[:meta][:since] = v
-          m[:meta][:new] = true if v == last_version
+          m[:meta][:new] = true if new_versions[v]
         end
       end
+    end
+
+    # Generates a lookup table of versions that we are going to label
+    # with @new tags.  By default we use the latest version, otherwise
+    # use all versions since the latest.
+    def build_new_versions_map(versions, new_since=nil)
+      new_versions = {}
+
+      if new_since
+        versions.map {|v| v[:version] }.each do |v|
+          if v == new_since || !new_versions.empty?
+            new_versions[v] = true
+          end
+        end
+      else
+        new_versions[versions.last[:version]] = true
+      end
+
+      new_versions
     end
 
     def member_since(versions, cls, m)

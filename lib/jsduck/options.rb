@@ -46,6 +46,7 @@ module JsDuck
     attr_accessor :touch_examples_ui
     attr_accessor :ext_namespaces
     attr_accessor :imports
+    attr_accessor :new_since
 
     def initialize
       @input_files = []
@@ -116,6 +117,7 @@ module JsDuck
       @touch_examples_ui = false
       @ext_namespaces = ["Ext"]
       @imports = []
+      @new_since = nil
 
       # enable all warnings except :link_auto
       Logger.instance.set_warning(:all, true)
@@ -381,6 +383,12 @@ module JsDuck
           else
             @imports << {:version => v}
           end
+        end
+
+        opts.on('--new-since=VERSION',
+          "Defines since which version to label items with @new tag.",
+          "Defaults to the last version listed by --import.", " ") do |v|
+          @new_since = v
         end
 
         opts.on('--config=PATH',

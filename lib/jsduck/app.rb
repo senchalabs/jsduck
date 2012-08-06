@@ -47,7 +47,7 @@ module JsDuck
       result = aggregate(parsed_files)
       @relations = filter_classes(result)
       InheritDoc.new(@relations).resolve_all
-      Importer.import(@opts.imports, @relations)
+      Importer.import(@opts.imports, @relations, @opts.new_since)
       Lint.new(@relations).run
 
       # Initialize guides, videos, examples, ...

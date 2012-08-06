@@ -140,3 +140,46 @@ describe "JsDuck::Importer#generate_since_tags" do
   end
 
 end
+
+describe "JsDuck::Importer#generate_since_tags with explicit new_since" do
+
+  before do
+    @versions = [
+      {
+        :version => "1.0", :classes => {
+          "VeryOldClass" => {},
+        },
+      },
+      {
+        :version => "2.0", :classes => {
+          "OldClass" => {},
+        },
+      },
+      {
+        :version => "3.0", :classes => JsDuck::Importer.current_version
+      }
+    ]
+
+    @relations = [
+      {:name => "VeryOldClass", :meta => {}, :alternateClassNames => []},
+      {:name => "OldClass", :meta => {}, :alternateClassNames => []},
+      {:name => "NewClass", :meta => {}, :alternateClassNames => []},
+    ].map {|cfg| JsDuck::Class.new(cfg) }
+
+    JsDuck::Importer.generate_since_tags(@versions, @relations, "2.0")
+  end
+
+  # @since
+
+  it "gives no @new to VeryOldClass" do
+    @relations[0][:meta][:new].should_not == true
+  end
+
+  it "gives @new to OldClass" do
+    @relations[1][:meta][:new].should == true
+  end
+
+  it "gives no @new to NewClass" do
+    @relations[2][:meta][:new].should == true
+  end
+end
