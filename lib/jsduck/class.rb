@@ -147,8 +147,10 @@ module JsDuck
       # Singletons have no static members
       if @doc[:singleton] && context == :statics
         # Warn if singleton has static members
-        if @doc[context][type].length > 0
-          Logger.instance.warn(:sing_static, "Singleton class #{@doc[:name]} can't have static members, remove the @static tag.")
+        @doc[context][type].each do |m|
+          ctx = m[:files][0]
+          msg = "Singleton class #{@doc[:name]} can't have static members, remove the @static tag."
+          Logger.instance.warn(:sing_static, msg, ctx[:filename], ctx[:linenr])
         end
         return {}
       end
@@ -185,7 +187,8 @@ module JsDuck
             hash1.delete(name)
           else
             ctx = m[:files][0]
-            Logger.instance.warn(:hide, "@hide used but #{m[:tagname]} #{m[:name]} not found in parent class", ctx[:filename], ctx[:linenr])
+            msg = "@hide used but #{m[:tagname]} #{m[:name]} not found in parent class"
+            Logger.instance.warn(:hide, msg, ctx[:filename], ctx[:linenr])
           end
         else
           if hash1[name]

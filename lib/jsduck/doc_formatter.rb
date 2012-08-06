@@ -95,7 +95,7 @@ module JsDuck
           out += replace_link_tag(s.scan(@link_re))
         elsif substitute = @inline_img.replace(s)
           out += substitute
-        elsif substitute = @inline_video.replace(s)
+        elsif substitute = @inline_video.replace(s, @doc_context)
           out += substitute
         elsif s.check(/[{]/)
           # There might still be "{" that doesn't begin {@link} or {@img} - ignore it

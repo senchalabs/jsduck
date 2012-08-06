@@ -491,7 +491,7 @@ module JsDuck
           @input_files << fname
         end
       else
-        Logger.instance.warn(nil, "File #{fname} not found")
+        Logger.instance.warn(nil, "File not found", fname)
       end
     end
 
