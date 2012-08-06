@@ -52,6 +52,7 @@ module JsDuck
         :requires => detect_list(:requires, doc_map),
         :uses => detect_list(:uses, doc_map),
         :enum => detect_enum(doc_map),
+        :override => extract(doc_map, :override, :class),
       }, doc_map)
     end
 

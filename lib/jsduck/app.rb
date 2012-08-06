@@ -130,6 +130,7 @@ module JsDuck
         agr.append_ext4_event_options
       end
       agr.process_enums
+      agr.process_overrides
       agr.result
     end
 

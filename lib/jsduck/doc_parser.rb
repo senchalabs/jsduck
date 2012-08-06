@@ -132,6 +132,8 @@ module JsDuck
           at_throws
         elsif look(/@enum\b/)
           at_enum
+        elsif look(/@override\b/)
+          at_override
         elsif look(/@inheritable\b/)
           boolean_at_tag(/@inheritable/, :inheritable)
         elsif look(/@accessor\b/)
@@ -291,6 +293,14 @@ module JsDuck
       @current_tag[:enum] = true
       maybe_type
       maybe_name_with_default
+      skip_white
+    end
+
+    # matches @override name ...
+    def at_override
+      match(/@override/)
+      add_tag(:override)
+      maybe_ident_chain(:class)
       skip_white
     end
 

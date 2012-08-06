@@ -2,6 +2,7 @@ require 'jsduck/class'
 require 'jsduck/accessors'
 require 'jsduck/logger'
 require 'jsduck/enum'
+require 'jsduck/override'
 
 module JsDuck
 
@@ -229,6 +230,11 @@ module JsDuck
     # Loops through all enums and auto-detects their types if needed.
     def process_enums
       Enum.new(@classes).process_all!
+    end
+
+    # Processes all overrides
+    def process_overrides
+      Override.new(@classes, @documentation).process_all!
     end
 
     # Are we dealing with ExtJS 4?
