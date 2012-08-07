@@ -143,8 +143,11 @@ module JsDuck
     CLEAR = "\e[0m"
 
     # Helper for doing colored output in UNIX terminal
+    #
+    # Only does color output when STDERR is attached to TTY
+    # i.e. is not piped/redirected.
     def paint(color_name, msg)
-      if OS.windows?
+      if OS.windows? || !$stderr.tty?
         msg
       else
         COLORS[color_name] + msg + CLEAR
