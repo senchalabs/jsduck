@@ -3247,7 +3247,8 @@ parseStatement: true, parseSourceElement: true */
                 }
 
                 if (range && typeof node.range === 'undefined') {
-                    node.range = [node.left.range[0], node.right.range[1]];
+                    // HACK: Add line number as last item in range array
+                    node.range = [node.left.range[0], node.right.range[1], node.left.range[2]];
                 }
                 if (loc && typeof node.loc === 'undefined') {
                     node.loc = {
@@ -3261,7 +3262,8 @@ parseStatement: true, parseSourceElement: true */
                 var node, rangeInfo, locInfo;
 
                 skipComment();
-                rangeInfo = [index, 0];
+                // HACK: Add line number as last item in range array
+                rangeInfo = [index, 0, lineNumber];
                 locInfo = {
                     start: {
                         line: lineNumber,
@@ -3292,6 +3294,8 @@ parseStatement: true, parseSourceElement: true */
                     if (node.type === Syntax.MemberExpression) {
                         if (typeof node.object.range !== 'undefined') {
                             node.range[0] = node.object.range[0];
+                            // HACK: Add line number as last item in range array
+                            node.range[2] = node.object.range[2];
                         }
                         if (typeof node.object.loc !== 'undefined') {
                             node.loc.start = node.object.loc.start;
