@@ -16,8 +16,6 @@ Gem::Specification.new do |s|
   end
   # Add files not in git
   s.files += Dir['template-min/**/*']
-  # Add Esprima
-  s.files += Dir['esprima/esprima.js']
 
   s.executables = ["jsduck"]
 
