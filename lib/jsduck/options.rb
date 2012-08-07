@@ -77,7 +77,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "3.11.1"
+      @version = "3.11.2"
 
       # Customizing output
       @title = "Ext JS - Sencha Docs"
