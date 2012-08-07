@@ -155,7 +155,7 @@ module JsDuck
       properties = NODE_TYPES[node["type"]]
 
       unless properties
-        puts "Unknown node type: "+node["type"]
+        $stderr.puts "Unknown node type: "+node["type"]
         exit(1)
       end
 

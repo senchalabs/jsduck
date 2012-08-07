@@ -397,7 +397,7 @@ module JsDuck
           if File.exists?(path)
             config = read_json_config(path)
           else
-            puts "Oh noes!  The config file #{path} doesn't exist."
+            $stderr.puts "Oh noes!  The config file #{path} doesn't exist."
             exit(1)
           end
           # treat paths inside JSON config relative to the location of
@@ -520,35 +520,35 @@ module JsDuck
     # Runs checks on the options
     def validate
       if @input_files.length == 0 && !@welcome && !@guides && !@videos && !@examples
-        puts "You should specify some input files, otherwise there's nothing I can do :("
+        $stderr.puts "You should specify some input files, otherwise there's nothing I can do :("
         exit(1)
       elsif @output_dir == :stdout && !@export
-        puts "Output to STDOUT only works when using --export option."
+        $stderr.puts "Output to STDOUT only works when using --export option."
         exit(1)
       elsif ![nil, :full, :api, :examples].include?(@export)
-        puts "Unknown export format: #{@export}"
+        $stderr.puts "Unknown export format: #{@export}"
         exit(1)
       elsif @output_dir != :stdout
         if !@output_dir
-          puts "You should also specify an output directory, where I could write all this amazing documentation."
+          $stderr.puts "You should also specify an output directory, where I could write all this amazing documentation."
           exit(1)
         elsif File.exists?(@output_dir) && !File.directory?(@output_dir)
-          puts "Oh noes!  The output directory is not really a directory at all :("
+          $stderr.puts "Oh noes!  The output directory is not really a directory at all :("
           exit(1)
         elsif !File.exists?(File.dirname(@output_dir))
-          puts "Oh noes!  The parent directory for #{@output_dir} doesn't exist."
+          $stderr.puts "Oh noes!  The parent directory for #{@output_dir} doesn't exist."
           exit(1)
         elsif !@export && !File.exists?(@template_dir + "/extjs")
-          puts "Oh noes!  The template directory does not contain extjs/ directory :("
-          puts "Please copy ExtJS over to template/extjs or create symlink."
-          puts "For example:"
-          puts "    $ cp -r /path/to/ext-4.0.0 " + @template_dir + "/extjs"
+          $stderr.puts "Oh noes!  The template directory does not contain extjs/ directory :("
+          $stderr.puts "Please copy ExtJS over to template/extjs or create symlink."
+          $stderr.puts "For example:"
+          $stderr.puts "    $ cp -r /path/to/ext-4.0.0 " + @template_dir + "/extjs"
           exit(1)
         elsif !@export && !File.exists?(@template_dir + "/resources/css")
-          puts "Oh noes!  CSS files for custom ExtJS theme missing :("
-          puts "Please compile SASS files in template/resources/sass with compass."
-          puts "For example:"
-          puts "    $ compass compile " + @template_dir + "/resources/sass"
+          $stderr.puts "Oh noes!  CSS files for custom ExtJS theme missing :("
+          $stderr.puts "Please compile SASS files in template/resources/sass with compass."
+          $stderr.puts "For example:"
+          $stderr.puts "    $ compass compile " + @template_dir + "/resources/sass"
           exit(1)
         end
       end

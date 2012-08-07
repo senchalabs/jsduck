@@ -57,7 +57,7 @@ module JsDuck
     # Prints log message with optional filename appended
     def log(msg, filename=nil)
       if @verbose
-        puts paint(:green, msg) + " " + format(filename) + " ..."
+        $stderr.puts paint(:green, msg) + " " + format(filename) + " ..."
       end
     end
 
@@ -121,10 +121,10 @@ module JsDuck
     # Prints fatal error message with backtrace.
     # The error param should be $! from resque block.
     def fatal(msg, error)
-      puts "#{paint(:red, msg)}: #{error}"
-      puts
-      puts "Here's a full backtrace:"
-      puts error.backtrace
+      $stderr.puts "#{paint(:red, msg)}: #{error}"
+      $stderr.puts
+      $stderr.puts "Here's a full backtrace:"
+      $stderr.puts error.backtrace
     end
 
     private

@@ -37,7 +37,7 @@ module JsDuck
       begin
         self.parse(JsDuck::IO.read(filename))
       rescue
-        puts "Oh noes!  #{filename} is not a valid JSON file."
+        $stderr.puts "Oh noes!  #{filename} is not a valid JSON file."
         exit(1)
       end
     end
