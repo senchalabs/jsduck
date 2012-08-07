@@ -57,7 +57,7 @@ module JsDuck
     # Prints log message with optional filename appended
     def log(msg, filename=nil)
       if @verbose
-        puts msg + " " + format(filename) + "..."
+        puts paint(:green, msg) + " " + format(filename) + " ..."
       end
     end
 
