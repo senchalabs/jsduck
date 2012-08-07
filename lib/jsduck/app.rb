@@ -109,7 +109,7 @@ module JsDuck
         begin
           SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
         rescue
-          Logger.instance.fatal("Error while parsing #{fname}", $!)
+          Logger.instance.fatal_backtrace("Error while parsing #{fname}", $!)
           exit(1)
         end
       end
@@ -177,7 +177,7 @@ module JsDuck
             :images => doc_formatter.images
           }
         rescue
-          Logger.instance.fatal("Error while formatting #{cls[:name]} #{files}", $!)
+          Logger.instance.fatal_backtrace("Error while formatting #{cls[:name]} #{files}", $!)
           exit(1)
         end
       end

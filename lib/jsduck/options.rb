@@ -397,7 +397,7 @@ module JsDuck
           if File.exists?(path)
             config = read_json_config(path)
           else
-            $stderr.puts "Oh noes!  The config file #{path} doesn't exist."
+            Logger.instance.fatal("The config file #{path} doesn't exist")
             exit(1)
           end
           # treat paths inside JSON config relative to the location of
@@ -520,35 +520,35 @@ module JsDuck
     # Runs checks on the options
     def validate
       if @input_files.length == 0 && !@welcome && !@guides && !@videos && !@examples
-        $stderr.puts "You should specify some input files, otherwise there's nothing I can do :("
+        Logger.instance.fatal("You should specify some input files, otherwise there's nothing I can do :(")
         exit(1)
       elsif @output_dir == :stdout && !@export
-        $stderr.puts "Output to STDOUT only works when using --export option."
+        Logger.instance.fatal("Output to STDOUT only works when using --export option")
         exit(1)
       elsif ![nil, :full, :api, :examples].include?(@export)
-        $stderr.puts "Unknown export format: #{@export}"
+        Logger.instance.fatal("Unknown export format: #{@export}")
         exit(1)
       elsif @output_dir != :stdout
         if !@output_dir
-          $stderr.puts "You should also specify an output directory, where I could write all this amazing documentation."
+          Logger.instance.fatal("You should also specify an output directory, where I could write all this amazing documentation")
           exit(1)
         elsif File.exists?(@output_dir) && !File.directory?(@output_dir)
-          $stderr.puts "Oh noes!  The output directory is not really a directory at all :("
+          Logger.instance.fatal("The output directory is not really a directory at all :(")
           exit(1)
         elsif !File.exists?(File.dirname(@output_dir))
-          $stderr.puts "Oh noes!  The parent directory for #{@output_dir} doesn't exist."
+          Logger.instance.fatal("The parent directory for #{@output_dir} doesn't exist")
           exit(1)
         elsif !@export && !File.exists?(@template_dir + "/extjs")
-          $stderr.puts "Oh noes!  The template directory does not contain extjs/ directory :("
-          $stderr.puts "Please copy ExtJS over to template/extjs or create symlink."
-          $stderr.puts "For example:"
-          $stderr.puts "    $ cp -r /path/to/ext-4.0.0 " + @template_dir + "/extjs"
+          Logger.instance.fatal("Oh noes!  The template directory does not contain extjs/ directory :(")
+          Logger.instance.fatal("Please copy ExtJS over to template/extjs or create symlink.")
+          Logger.instance.fatal("For example:")
+          Logger.instance.fatal("    $ cp -r /path/to/ext-4.0.0 " + @template_dir + "/extjs")
           exit(1)
         elsif !@export && !File.exists?(@template_dir + "/resources/css")
-          $stderr.puts "Oh noes!  CSS files for custom ExtJS theme missing :("
-          $stderr.puts "Please compile SASS files in template/resources/sass with compass."
-          $stderr.puts "For example:"
-          $stderr.puts "    $ compass compile " + @template_dir + "/resources/sass"
+          Logger.instance.fatal("Oh noes!  CSS files for custom ExtJS theme missing :(")
+          Logger.instance.fatal("Please compile SASS files in template/resources/sass with compass.")
+          Logger.instance.fatal("For example:")
+          Logger.instance.fatal("    $ compass compile " + @template_dir + "/resources/sass")
           exit(1)
         end
       end

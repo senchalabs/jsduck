@@ -1,4 +1,5 @@
 require 'jsduck/io'
+require 'jsduck/logger'
 require 'json'
 
 module JsDuck
@@ -37,7 +38,7 @@ module JsDuck
       begin
         self.parse(JsDuck::IO.read(filename))
       rescue
-        $stderr.puts "Oh noes!  #{filename} is not a valid JSON file."
+        Logger.instance.fatal("#{filename} is not a valid JSON file")
         exit(1)
       end
     end

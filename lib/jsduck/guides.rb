@@ -71,7 +71,7 @@ module JsDuck
 
         return add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
       rescue
-        Logger.instance.fatal("Error while reading/formatting guide #{in_dir}", $!)
+        Logger.instance.fatal_backtrace("Error while reading/formatting guide #{in_dir}", $!)
         exit(1)
       end
     end

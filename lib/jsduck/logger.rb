@@ -120,8 +120,14 @@ module JsDuck
 
     # Prints fatal error message with backtrace.
     # The error param should be $! from resque block.
-    def fatal(msg, error)
-      $stderr.puts "#{paint(:red, msg)}: #{error}"
+    def fatal(msg)
+      $stderr.puts paint(:red, "Error: ") + msg
+    end
+
+    # Prints fatal error message with backtrace.
+    # The error param should be $! from resque block.
+    def fatal_backtrace(msg, error)
+      $stderr.puts paint(:red, "Error: ") + "#{msg}: #{error}"
       $stderr.puts
       $stderr.puts "Here's a full backtrace:"
       $stderr.puts error.backtrace

@@ -1,4 +1,5 @@
 require 'jsduck/esprima'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -155,7 +156,7 @@ module JsDuck
       properties = NODE_TYPES[node["type"]]
 
       unless properties
-        $stderr.puts "Unknown node type: "+node["type"]
+        Logger.instance.fatal("Unknown node type: "+node["type"])
         exit(1)
       end
 
