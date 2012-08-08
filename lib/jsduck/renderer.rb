@@ -121,30 +121,51 @@ module JsDuck
         end
       ]
     end
-
     # Take care of the special case where class has parent for which we have no docs.
     # In that case the "extends" property exists but "superclasses" is empty.
     # We still create the tree, but without links in it.
+    #
+    # Restoring Ti versions of render_tree and render_class_tree
+    #
     def render_tree
       return if !@cls[:extends] || @cls[:extends] == "Object"
       tree = ["<div class='classes'>"]#<h4>Hierarchy</h4>
 
-      tree + render_class_tree(@cls[:superclasses] + [@cls[:name]]) 
-      tree + ["</div>"]
-      return tree
+      if @cls[:superclasses].length > 0
+        tree + render_class_tree(@cls[:superclasses].concat([@cls[:name]]), {:first => true, :links =>        true}) + ["</div>"]
+      else
+        tree + render_class_tree([@cls[:extends], @cls[:name]], {:first => true}) + ["</div>"]
+      end
+      #tree + ["</div>"]
+
     end
 
-    def render_class_tree(classes, i=0)
-      return "" if classes.length <= i
+    def render_class_tree(superclasses, o)
+      return "" if superclasses.length == 0
 
-      name = classes[i]
+      name = superclasses[0]
+      # note render_class_tree was moved below the </div>. need to figure out whether
+      # Andrew did this on purpose, or by accident.
       return [
-        "<div class='subclass #{i == 0 ? 'first-child' : ''}'>",
-          classes.length-1 == i ? "<strong>#{name}</strong>" : (name.exists? ? render_link(name) : name),
-          render_class_tree(classes, i+1),
+        "<div class='subclass'>",
+          (o[:first] ? '' : ' &gt; '),
+          superclasses.length > 1 ? (o[:links] ? render_link(name) : name) : "<strong>#{name}</strong>",
         "</div>",
+        render_class_tree(superclasses.slice(1, superclasses.length-1), {:links => o[:links]})
       ]
     end
+
+#    def render_class_tree(classes, i=0)
+#      return "" if classes.length <= i
+#
+#      name = classes[i]
+#      return [
+#        "<div class='subclass #{i == 0 ? 'first-child' : ''}'>",
+#          classes.length-1 == i ? "<strong>#{name}</strong>" : (name.exists? ? render_link(name) : name),
+#         render_class_tree(classes, i+1),
+#        "</div>",
+#      ]
+#    end
 
     def render_link(cls_name, member=nil)
       id = member ? cls_name + "-" + member[:id] : cls_name
