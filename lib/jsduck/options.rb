@@ -165,46 +165,15 @@ module JsDuck
           @output_dir = path == "-" ? :stdout : canonical(path)
         end
 
-        opts.on('--ignore-global',
-          "Turns off the creation of 'global' class.",
+        opts.on('--export=TYPE',
+          "Exports docs in JSON.",
           "",
-          "The 'global' class gets created when members that",
-          "don't belong to any class are found - all these",
-          "members will be placed into the 'global' class.",
+          "TYPE is one of:",
           "",
-          "Using this option won't suppress the warning that's",
-          "given when global members are found.  For that you",
-          "need to additionally use --warnings=-global") do
-          @ignore_global = true
-        end
-
-        opts.on('--external=Foo,Bar,Baz', Array,
-          "Declares list of external classes.",
-          "",
-          "These classes will then no more generate warnings",
-          "when used in type definitions or inherited from.",
-          "",
-          "Multiple classes can be given in comma-separated list,",
-          "or by using the option repeatedly.") do |classes|
-          @external_classes += classes
-        end
-
-        opts.on('--[no-]ext4-events',
-          "Forces appending of Ext4-style options param to events.",
-          "",
-          "In Ext JS 4 and Sencha Touch 2 all event handlers are",
-          "passed an additional options object at the end of the",
-          "parameters list.  This options object is skipped in the",
-          "documentation of Ext4/Touch2 events, so it needs to be",
-          "appended by JSDuck.",
-          "",
-          "The default is to auto-detect if we're using Ext JS 4",
-          "or Sencha Touch 2 based on whether the code defines",
-          "classes using Ext.define(), and only then append the",
-          "options parameter.  This should work most of the time.",
-          "",
-          "Use this option to override the auto-detection.") do |e|
-          @ext4_events = e
+          "- full     - full class docs.",
+          "- api      - only class- and member names.",
+          "- examples - extracts inline examples from classes.") do |format|
+          @export = format.to_sym
         end
 
         opts.on('--builtin-classes',
@@ -223,24 +192,36 @@ module JsDuck
           read_filenames(@root_dir + "/js-classes")
         end
 
-        opts.on('--meta-tags=PATH',
-          "Path to custom meta-tag implementations.",
+        opts.on('--seo', "Enables SEO-friendly print version.",
           "",
-          "Can be a path to single Ruby file or a directory.",
+          "Instead of index.html creates index.php that will serve",
+          "the regular docs, print-friendly docs, and search-engine-",
+          "friendly docs (the latter two are pretty much the same).") do
+          @seo = true
+        end
+
+        opts.on('--config=PATH',
+          "Loads config options from JSON file.",
           "",
-          "This option can be used repeatedly to include multiple",
-          "meta tags from different places.",
+          "An alternative to listing all options on command line.",
           "",
-          "See also: https://github.com/senchalabs/jsduck/wiki/Custom-tags") do |path|
-          @meta_tag_paths << canonical(path)
+          "See also: https://github.com/senchalabs/jsduck/wiki/Config-file") do |path|
+          path = canonical(path)
+          if File.exists?(path)
+            config = read_json_config(path)
+          else
+            Logger.instance.fatal("The config file #{path} doesn't exist")
+            exit(1)
+          end
+          # treat paths inside JSON config relative to the location of
+          # config file.  When done, switch back to current working dir.
+          @working_dir = File.dirname(path)
+          optparser.parse!(config).each {|fname| read_filenames(canonical(fname)) }
+          @working_dir = nil
         end
 
         opts.on('--encoding=NAME', "Input encoding (defaults to UTF-8).") do |encoding|
           JsDuck::IO.encoding = encoding
-        end
-
-        opts.on('-v', '--verbose', "This will fill up your console.") do
-          Logger.instance.verbose = true
         end
 
         opts.separator ""
@@ -349,72 +330,6 @@ module JsDuck
           @images << canonical(path)
         end
 
-        opts.on('--link=TPL',
-          "HTML template for replacing {@link}.",
-          "",
-          "Possible placeholders:",
-          "",
-          "%c - full class name (e.g. 'Ext.Panel')",
-          "%m - class member name prefixed with member type",
-          "     (e.g. 'method-urlEncode')",
-          "%# - inserts '#' if member name present",
-          "%- - inserts '-' if member name present",
-          "%a - anchor text for link",
-          "",
-          "Defaults to: '<a href=\"#!/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'") do |tpl|
-          @link_tpl = tpl
-        end
-
-        opts.on('--img=TPL',
-          "HTML template for replacing {@img}.",
-          "",
-          "Possible placeholders:",
-          "",
-          "%u - URL from @img tag (e.g. 'some/path.png')",
-          "%a - alt text for image",
-          "",
-          "Defaults to: '<p><img src=\"%u\" alt=\"%a\"></p>'") do |tpl|
-          @img_tpl = tpl
-        end
-
-        opts.on('--export=TYPE',
-          "Exports docs in JSON.",
-          "",
-          "TYPE is one of:",
-          "",
-          "- full     - full class docs.",
-          "- api      - only class- and member names.",
-          "- examples - extracts inline examples from classes.") do |format|
-          @export = format.to_sym
-        end
-
-        opts.on('--seo', "Enables SEO-friendly print version.",
-          "",
-          "Instead of index.html creates index.php that will serve",
-          "the regular docs, print-friendly docs, and search-engine-",
-          "friendly docs (the latter two are pretty much the same).") do
-          @seo = true
-        end
-
-        opts.on('--eg-iframe=PATH',
-          "An HTML file used to display inline examples.",
-          "",
-          "The file will be used inside <iframe> that renders the",
-          "example.  Not just any HTML file will work - it needs to",
-          "define loadInlineExample function that will be called",
-          "with the example code.",
-          "",
-          "See also: https://github.com/senchalabs/jsduck/wiki/Inline-examples") do |path|
-          @eg_iframe = canonical(path)
-        end
-
-        opts.on('--examples-base-url=URL',
-          "Base URL for examples with relative URL-s.",
-          " ",
-          "Defaults to: 'extjs-build/examples/'") do |path|
-          @examples_base_url = path
-        end
-
         opts.on('--tests',
           "Creates page for testing inline examples.") do
           @tests = true
@@ -423,101 +338,6 @@ module JsDuck
         opts.on('--stats',
           "Creates page with all kinds of statistics.") do
           @stats = true
-        end
-
-        opts.separator ""
-        opts.separator "Debugging:"
-        opts.separator ""
-
-        opts.on('--pretty-json',
-          "Turns on pretty-printing of JSON.") do
-          @pretty_json = true
-        end
-
-        opts.on('--warnings=+A,-B,+C', Array,
-          "Turns warnings selectively on/off.",
-          "",
-          " +all - to turn on all warnings",
-          "",
-          "List of all available warning types:",
-          "(Those with '+' in front of them default to on)",
-          "",
-          *Logger.instance.doc_warnings) do |warnings|
-          warnings.each do |op|
-            if op =~ /^([-+]?)(.*)$/
-              enable = !($1 == "-")
-              name = $2.to_sym
-              Logger.instance.set_warning(name, enable)
-            end
-          end
-        end
-
-        opts.on('-p', '--processes=COUNT',
-          "The number of parallel processes to use.",
-          "",
-          "Defaults to the number of processors/cores.",
-          "",
-          "Set to 0 to disable parallel processing completely.",
-          "This is often useful in debugging to get deterministic",
-          "results.",
-          "",
-          "In Windows this option is disabled.") do |count|
-          @processes = count.to_i
-        end
-
-        opts.on('--template=PATH',
-          "Directory containing the UI template files.",
-          "",
-          "Useful when developing the template files.") do |path|
-          @template_dir = canonical(path)
-        end
-
-        opts.on('--template-links',
-          "Creates symbolic links to UI template files.",
-          "",
-          "Useful for template files development.",
-          "Only works on platforms supporting symbolic links.") do
-          @template_links = true
-        end
-
-        opts.on('--extjs-path=PATH',
-          "Path for main ExtJS JavaScript file.",
-          "",
-          "This is the ExtJS file that's used by the docs app UI.",
-          "",
-          "Defaults to extjs/ext-all.js",
-          "",
-          "Useful for switching to extjs/ext-all-debug.js in development.") do |path|
-          @extjs_path = path # NB! must be relative path
-        end
-
-        opts.on('--local-storage-db=NAME',
-          "Prefix for LocalStorage database names.",
-          "",
-          "Defaults to 'docs'") do |name|
-          @local_storage_db = name
-        end
-
-        opts.on('--touch-examples-ui',
-          "Turns on phone/tablet UI for examples.",
-          "",
-          "This is a very Sencha Touch 2 docs specific option.",
-          "Effects both normal- and inline-examples.") do
-          @touch_examples_ui = true
-        end
-
-        opts.on('--ext-namespaces=Ext,Foo', Array,
-          "Additional ExtJS/Touch namespaces to recognize.",
-          "",
-          "Defaults to 'Ext'",
-          "",
-          "Useful when using Ext JS in sandbox mode where instead",
-          "of Ext.define() your code contains YourNs.define().",
-          "In such case pass --ext-namespaces=Ext,YourNS option",
-          "and JSDuck will recognize both Ext.define() and",
-          "YourNs.define() plus few other things that depend on",
-          "Ext namespace like Ext.emptyFn.") do |ns|
-          @ext_namespaces = ns
         end
 
         opts.on('--import=VERSION:PATH',
@@ -556,24 +376,216 @@ module JsDuck
           @new_since = v
         end
 
-        opts.on('--config=PATH',
-          "Loads config options from JSON file.",
+        opts.separator ""
+        opts.separator "Tweaking:"
+        opts.separator ""
+
+        opts.on('--meta-tags=PATH',
+          "Path to custom meta-tag implementations.",
           "",
-          "An alternative to listing all options on command line.",
+          "Can be a path to single Ruby file or a directory.",
           "",
-          "See also: https://github.com/senchalabs/jsduck/wiki/Config-file") do |path|
-          path = canonical(path)
-          if File.exists?(path)
-            config = read_json_config(path)
-          else
-            Logger.instance.fatal("The config file #{path} doesn't exist")
-            exit(1)
+          "This option can be used repeatedly to include multiple",
+          "meta tags from different places.",
+          "",
+          "See also: https://github.com/senchalabs/jsduck/wiki/Custom-tags") do |path|
+          @meta_tag_paths << canonical(path)
+        end
+
+        opts.on('--ignore-global',
+          "Turns off the creation of 'global' class.",
+          "",
+          "The 'global' class gets created when members that",
+          "don't belong to any class are found - all these",
+          "members will be placed into the 'global' class.",
+          "",
+          "Using this option won't suppress the warning that's",
+          "given when global members are found.  For that you",
+          "need to additionally use --warnings=-global") do
+          @ignore_global = true
+        end
+
+        opts.on('--external=Foo,Bar,Baz', Array,
+          "Declares list of external classes.",
+          "",
+          "These classes will then no more generate warnings",
+          "when used in type definitions or inherited from.",
+          "",
+          "Multiple classes can be given in comma-separated list,",
+          "or by using the option repeatedly.") do |classes|
+          @external_classes += classes
+        end
+
+        opts.on('--[no-]ext4-events',
+          "Forces appending of Ext4 options param to events.",
+          "",
+          "In Ext JS 4 and Sencha Touch 2 all event handlers are",
+          "passed an additional options object at the end of the",
+          "parameters list.  This options object is skipped in the",
+          "documentation of Ext4/Touch2 events, so it needs to be",
+          "appended by JSDuck.",
+          "",
+          "The default is to auto-detect if we're using Ext JS 4",
+          "or Sencha Touch 2 based on whether the code defines",
+          "classes using Ext.define(), and only then append the",
+          "options parameter.  This should work most of the time.",
+          "",
+          "Use this option to override the auto-detection.") do |e|
+          @ext4_events = e
+        end
+
+        opts.on('--examples-base-url=URL',
+          "Base URL for examples with relative URL-s.",
+          " ",
+          "Defaults to: 'extjs-build/examples/'") do |path|
+          @examples_base_url = path
+        end
+
+        opts.on('--link=TPL',
+          "HTML template for replacing {@link}.",
+          "",
+          "Possible placeholders:",
+          "",
+          "%c - full class name (e.g. 'Ext.Panel')",
+          "%m - class member name prefixed with member type",
+          "     (e.g. 'method-urlEncode')",
+          "%# - inserts '#' if member name present",
+          "%- - inserts '-' if member name present",
+          "%a - anchor text for link",
+          "",
+          "Defaults to: '<a href=\"#!/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'") do |tpl|
+          @link_tpl = tpl
+        end
+
+        opts.on('--img=TPL',
+          "HTML template for replacing {@img}.",
+          "",
+          "Possible placeholders:",
+          "",
+          "%u - URL from @img tag (e.g. 'some/path.png')",
+          "%a - alt text for image",
+          "",
+          "Defaults to: '<p><img src=\"%u\" alt=\"%a\"></p>'") do |tpl|
+          @img_tpl = tpl
+        end
+
+        opts.on('--eg-iframe=PATH',
+          "An HTML file used to display inline examples.",
+          "",
+          "The file will be used inside <iframe> that renders the",
+          "example.  Not just any HTML file will work - it needs to",
+          "define loadInlineExample function that will be called",
+          "with the example code.",
+          "",
+          "See also: https://github.com/senchalabs/jsduck/wiki/Inline-examples") do |path|
+          @eg_iframe = canonical(path)
+        end
+
+        opts.on('--ext-namespaces=Ext,Foo', Array,
+          "Additional ExtJS/Touch namespaces to recognize.",
+          "",
+          "Defaults to 'Ext'",
+          "",
+          "Useful when using Ext JS in sandbox mode where instead",
+          "of Ext.define() your code contains YourNs.define().",
+          "In such case pass --ext-namespaces=Ext,YourNS option",
+          "and JSDuck will recognize both Ext.define() and",
+          "YourNs.define() plus few other things that depend on",
+          "Ext namespace like Ext.emptyFn.") do |ns|
+          @ext_namespaces = ns
+        end
+
+        opts.on('--touch-examples-ui',
+          "Turns on phone/tablet UI for examples.",
+          "",
+          "This is a very Sencha Touch 2 docs specific option.",
+          "Effects both normal- and inline-examples.") do
+          @touch_examples_ui = true
+        end
+
+        opts.separator ""
+        opts.separator "Debugging:"
+        opts.separator ""
+
+        opts.on('-v', '--verbose',
+          "Turns on excessive logging.",
+          "",
+          "Log messages are writted to STDERR.") do
+          Logger.instance.verbose = true
+        end
+
+        opts.on('--warnings=+A,-B,+C', Array,
+          "Turns warnings selectively on/off.",
+          "",
+          " +all - to turn on all warnings",
+          "",
+          "List of all available warning types:",
+          "(Those with '+' in front of them default to on)",
+          "",
+          *Logger.instance.doc_warnings) do |warnings|
+          warnings.each do |op|
+            if op =~ /^([-+]?)(.*)$/
+              enable = !($1 == "-")
+              name = $2.to_sym
+              Logger.instance.set_warning(name, enable)
+            end
           end
-          # treat paths inside JSON config relative to the location of
-          # config file.  When done, switch back to current working dir.
-          @working_dir = File.dirname(path)
-          optparser.parse!(config).each {|fname| read_filenames(canonical(fname)) }
-          @working_dir = nil
+        end
+
+        opts.on('-p', '--processes=COUNT',
+          "The number of parallel processes to use.",
+          "",
+          "Defaults to the number of processors/cores.",
+          "",
+          "Set to 0 to disable parallel processing completely.",
+          "This is often useful in debugging to get deterministic",
+          "results.",
+          "",
+          "In Windows this option is disabled.") do |count|
+          @processes = count.to_i
+        end
+
+        opts.on('--pretty-json',
+          "Turns on pretty-printing of JSON.",
+          "",
+          "This is useful when studying the JSON files generated",
+          "by --export option.  But the option effects any JSON",
+          "that gets generated, so it's also useful when debugging",
+          "the resource files generated for the docs app.") do
+          @pretty_json = true
+        end
+
+        opts.on('--template=PATH',
+          "Directory containing the UI template files.",
+          "",
+          "Useful when developing the template files.") do |path|
+          @template_dir = canonical(path)
+        end
+
+        opts.on('--template-links',
+          "Creates symbolic links to UI template files.",
+          "",
+          "Useful for template files development.",
+          "Only works on platforms supporting symbolic links.") do
+          @template_links = true
+        end
+
+        opts.on('--extjs-path=PATH',
+          "Path for main ExtJS JavaScript file.",
+          "",
+          "This is the ExtJS file that's used by the docs app UI.",
+          "",
+          "Defaults to extjs/ext-all.js",
+          "",
+          "Useful for switching to extjs/ext-all-debug.js in development.") do |path|
+          @extjs_path = path # NB! must be relative path
+        end
+
+        opts.on('--local-storage-db=NAME',
+          "Prefix for LocalStorage database names.",
+          "",
+          "Defaults to 'docs'") do |name|
+          @local_storage_db = name
         end
 
         opts.on('-h', '--help[=--some-option]',

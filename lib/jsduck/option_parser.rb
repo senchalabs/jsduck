@@ -87,7 +87,7 @@ module JsDuck
 
     # Returns long help text for a single option.
     def help_single(option_name)
-      o = @full_options_index[option_name] || {:keys => [option_name], :desc => ["No such option."]}
+      o = @full_options_index[option_name] || {:keys => [option_name], :desc => ["No such option. See --help=help"]}
 
       r = []
 
