@@ -1,4 +1,4 @@
-require 'optparse'
+require 'jsduck/option_parser'
 require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
 require 'jsduck/json_duck'
@@ -142,8 +142,19 @@ module JsDuck
     end
 
     def create_option_parser
-      optparser = OptionParser.new do | opts |
-        opts.banner = "Usage: jsduck [options] files/dirs...\n\n"
+      optparser = JsDuck::OptionParser.new do | opts |
+        opts.banner = "Usage: jsduck [options] files/dirs..."
+        opts.separator ""
+        opts.separator "For example:"
+        opts.separator ""
+        opts.separator "    # Documentation for builtin JavaScript classes like Array and String"
+        opts.separator "    jsduck --output output/dir  --builtin-classes"
+        opts.separator ""
+        opts.separator "    # Documentation for your own JavaScript"
+        opts.separator "    jsduck --output output/dir  input-file.js some/input/dir"
+        opts.separator ""
+        opts.separator "The main options:"
+        opts.separator ""
 
         opts.on('-o', '--output=PATH',
           "Directory to output all this amazing documentation.",
@@ -190,6 +201,7 @@ module JsDuck
           Logger.instance.verbose = true
         end
 
+        opts.separator ""
         opts.separator "Customizing output:"
         opts.separator ""
 
@@ -312,6 +324,7 @@ module JsDuck
           @stats = true
         end
 
+        opts.separator ""
         opts.separator "Debugging:"
         opts.separator ""
 
@@ -407,43 +420,12 @@ module JsDuck
           @working_dir = nil
         end
 
-        opts.on('-h', '--help[=full]',
-          "Short help or --help=full for all available options.", " ") do |v|
-          if v == 'full'
-            puts opts
+        opts.on('-h', '--help[=--some-option]',
+          "This help or --help=--option for help on specific option.", " ") do |v|
+          if v
+            puts opts.help_single(v)
           else
-            puts opts.banner
-            puts "For example:"
-            puts
-            puts "    # Documentation for builtin JavaScript classes like Array and String"
-            puts "    jsduck --output output/dir  --builtin-classes"
-            puts
-            puts "    # Documentation for your own JavaScript"
-            puts "    jsduck --output output/dir  input-file.js some/input/dir"
-            puts
-            puts "The main options:"
-            puts
-
-            show_help = false
-            main_opts = [
-              /--output/,
-              /--builtin-classes/,
-              /--encoding/,
-              /--verbose/,
-              /--help/,
-              /--version/,
-            ]
-            opts.summarize([], opts.summary_width) do |helpline|
-              if main_opts.any? {|re| helpline =~ re }
-                puts helpline
-                show_help = true
-              elsif helpline =~ /^\s*$/ && show_help == true
-                puts helpline
-                show_help = false
-              elsif show_help == true
-                puts helpline
-              end
-            end
+            puts opts.help
           end
           exit
         end
