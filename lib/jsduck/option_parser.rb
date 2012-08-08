@@ -99,6 +99,9 @@ module JsDuck
         r << "            " + line
       end
 
+      r << ""
+      r << ""
+
       return r.join("\n")
     end
   end

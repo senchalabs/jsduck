@@ -77,7 +77,7 @@ module JsDuck
 
     # get documentation for all warnings
     def doc_warnings
-      @warning_docs.map {|w| " #{@warnings[w[0]] ? '+' : '-'}#{w[0]} - #{w[1]}" } + [" "]
+      @warning_docs.map {|w| " #{@warnings[w[0]] ? '+' : '-'}#{w[0]} - #{w[1]}" }
     end
 
     # Prints warning message.
