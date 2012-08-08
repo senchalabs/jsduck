@@ -27,14 +27,15 @@ module JsDuck
       @docs
     end
 
-    # <code-block> := <mixin-declaration> | <var-declaration> | <nop>
+    # <code-block> := <mixin-declaration> | <var-declaration> | <property>
     def code_block
       if look("@mixin")
         mixin_declaration
       elsif look(:var, ":")
         var_declaration
       else
-        {:tagname => :nop}
+        # Default to property like in JsParser.
+        {:tagname => :property}
       end
     end
 
