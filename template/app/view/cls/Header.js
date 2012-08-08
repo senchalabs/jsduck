@@ -16,16 +16,18 @@ Ext.define('Docs.view.cls.Header', {
                 '<tpl if="private">',
                     '<span class="private">Private</span>',
                 '</tpl>',
-                '<tpl if="Docs.data.source">',
-                    '<a href="#" class="class-source-link">{name}',
-                        '<span class="class-source-tip">View source...</span>',
-                    '</a>',
-                '<tpl else>',
-                    '<strong class="class-source-link">{name}</strong>',
-                '</tpl>',
-                '<tpl if="singleton">',
-                    '<span>singleton</span>',
-                '</tpl>',
+//                '<tpl if="Docs.data.source">',
+//                    '<a href="#" class="class-source-link">{name}',
+//                        '<span class="class-source-tip">View source...</span>',
+//                    '</a>',
+//                '<tpl else>',
+//                    '<strong class="class-source-link">{name}</strong>',
+//                '</tpl>',
+//                '<tpl if="singleton">',
+//                    '<span>singleton</span>',
+//                '</tpl>',
+                '<a>{name}</a>',
+                '<small class="typestr">{[this.renderTypestr(values.meta)]}</small>',
                 '{[this.renderAliases(values.aliases)]}',
             '</h1>',
             '<tpl if="Docs.data.showPrintButton">',
@@ -42,6 +44,14 @@ Ext.define('Docs.view.cls.Header', {
                     else {
                         return "class";
                     }
+                },
+				// Render Ti typestring
+                renderTypestr: function(meta){
+                	if(meta == null || meta.typestr == null || meta.typestr.length == 0){
+                		return;
+                	}
+
+                	return "<span>{ " + meta.typestr[0] + " }</span>";
                 },
                 renderAliases: function(aliases) {
                     var titles = {
@@ -96,10 +106,11 @@ Ext.define('Docs.view.cls.Header', {
 
     // Helper for binding handlers to class name link
     classLinkEvent: function(eventName, fun, scope) {
-        this.el.on(eventName, fun, scope, {
-            preventDefault: true,
-            delegate: 'a.class-source-link'
-        });
+// Not used for Ti.
+//        this.el.on(eventName, fun, scope, {
+//            preventDefault: true,
+//            delegate: 'a.class-source-link'
+//        });
     },
 
     createFileMenu: function(files) {

@@ -25,7 +25,7 @@ module JsDuck
   #
   class DocParser
     def initialize
-      @ident_pattern = /[$\w-]+/
+      @ident_pattern = /[$\w:-]+/
       @ident_chain_pattern = /[$\w-]+(\.[$\w-]+)*/
       @meta_tags = MetaTagRegistry.instance
     end
@@ -226,6 +226,8 @@ module JsDuck
       match(/@param/)
       add_tag(:param)
       maybe_type
+      maybe_deprecated
+      maybe_platforms
       maybe_name_with_default
       maybe_optional
       skip_white
@@ -402,6 +404,25 @@ module JsDuck
       if look(/\(optional\)/i)
         match(/\(optional\)/i)
         @current_tag[:optional] = true
+      end
+    end
+
+    # matches: "(deprecated)"
+    def maybe_deprecated
+      skip_horiz_white
+      if look(/\(deprecated\)/i)
+        match(/\(deprecated\)/i)
+        @current_tag[:deprecated] = true
+      end
+    end
+
+    # matches: "(iphone ipad android mobileweb)"
+    def maybe_platforms
+      skip_horiz_white
+      if look(/\(((iphone|ipad|android|mobileweb) ?)+\)/i)
+        match(/\(/i)
+        @current_tag[:platforms] = class_list
+        match(/\)/i)
       end
     end
 

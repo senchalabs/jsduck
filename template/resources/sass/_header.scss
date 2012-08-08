@@ -4,19 +4,22 @@
 
 // The header container itself
 #north-region {
-  @include vertical-gradient(#074e7c, #095f93);
+  // Ti remove gradient
+  //@include vertical-gradient(#074e7c, #095f93);
   .dropdown {
     padding-right: 15px;
     background: url(../images/down-arr.png) no-repeat bottom right; } }
 
 // Title
 #header-content {
-  background: url(../images/logo.png) 0 0 no-repeat;
+  // Ti change remove background
+  // background: url(../images/logo.png) 0 0 no-repeat;
   color: #fff;
   font-family: $docs-font;
   line-height: 20px;
-  margin: 10px 0 0 8px;
-  padding-left: 21px;
+  // Ti change margin and padding.
+  // margin: 10px 0 0 8px;
+  // padding-left: 21px;
   font-size: 1.1em;
   // Make it all appear in one line in IE7
   white-space: nowrap;

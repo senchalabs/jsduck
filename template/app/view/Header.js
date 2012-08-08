@@ -12,7 +12,7 @@ Ext.define('Docs.view.Header', {
 
     initComponent: function() {
         if (Docs.otherProducts) {
-            this.style = 'cursor: pointer;',
+            this.style = 'cursor: pointer;';
             this.cls = 'dropdown';
 
             this.menu = Ext.create('Ext.menu.Menu', {

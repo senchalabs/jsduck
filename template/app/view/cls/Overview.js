@@ -40,6 +40,14 @@ Ext.define('Docs.view.cls.Overview', {
         var el = (typeof query == 'string') ? Ext.get(Ext.query(query)[0]) : query;
         if (el) {
             var isMember = el.hasCls("member");
+			// Modify offset for Ti header... This should be set in configuration somewhere,
+			// not hardcoded.
+            // ToDo: Removed this section during upgrade. May need to correct scrolling offset?
+            // var scrollOffset = el.getY() - (isMember ? 235 : 225) + (offset || 0);
+            // var docContent = this.getEl().down('.x-panel-body');
+            // var currentScroll = docContent.getScroll()['top'];
+            // docContent.scrollTo('top', currentScroll + scrollOffset);
+            // End removed section
 
             // First make the element visible.
             // For example a private member might be hidden initially
@@ -59,7 +67,8 @@ Ext.define('Docs.view.cls.Overview', {
 
             this.scrollToView(el, {
                 highlight: true,
-                offset: (offset || 0) - (isMember ? 165 : 155)
+                // Ti changed offset correction
+                offset: (offset || 0) - (isMember ? 235 : 225)
             });
         }
     },
@@ -175,7 +184,8 @@ Ext.define('Docs.view.cls.Overview', {
 
     buildAccessorsMap: function(name) {
         var accessors = {};
-        Ext.Array.forEach(this.docClass.members.cfg, function(m) {
+		// Ti change -- properties instead of cfgs
+        Ext.Array.forEach(this.docClass.members.property, function(m) {
             var capName = Ext.String.capitalize(m.name);
             accessors["get"+capName] = true;
             accessors["set"+capName] = true;

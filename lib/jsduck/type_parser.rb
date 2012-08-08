@@ -36,6 +36,12 @@ module JsDuck
   #     function(this:goog.ui.Menu, string)
   #     function(?string=, number=)
   #     function(string, ...[number])
+  # 
+  # 3. Titanium Specific formats
+  #
+  #     Array<type> (equivalent to Closure Array.<type>)
+  #     Dictionary<type>
+  #     Callback<type> (equivalent to Closure {function(type)})
   #
   class TypeParser
     # Allows to check the type of error that was encountered.
@@ -323,6 +329,14 @@ module JsDuck
       # All type names besides * can be followed by .<arguments>
       if name != "*" && @input.scan(/\.</)
         @out << ".&lt;"
+        return false unless type_arguments
+        return false unless @input.scan(/>/)
+        @out << "&gt;"
+      end
+
+      # Titanium wrapped types
+      if /Dictionary|Array|Callback/.match(name) && @input.scan(/</)
+        @out << "&lt;"
         return false unless type_arguments
         return false unless @input.scan(/>/)
         @out << "&gt;"

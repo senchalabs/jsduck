@@ -18,6 +18,7 @@ module JsDuck
       @groups.each do |group|
         group_map = {}
         group["items"].each do |item|
+          # Ti has some ungrouped guides (for example, the Quick Start)
           if group_map[item["name"]]
             Logger.instance.warn(:dup_asset, "#{warning_msg} '#{item['name']}'")
           end

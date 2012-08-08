@@ -5,8 +5,9 @@
 .doctabs {
   @include icons;
   padding-left: 10px;
-  height: 19px;
+  height: 28px;
   position: relative;
+  border-bottom: 1px solid $docs-border-color;
 
   .doctab {
     position: relative;
@@ -14,7 +15,7 @@
     float: left;
     overflow: hidden;
     top: 0;
-    margin-left: -8px;
+    margin-left: -1px;
     cursor: pointer;
     height: 28px;
     .l {
@@ -36,13 +37,13 @@
     .m {
       z-index: 5;
       position: relative;
-      padding: 6px 3px 0 6px;
+      padding: 2px 3px 0 6px;
       margin: 0 7px;
       background: url(../images/tabs.png) repeat-x 0 -173px;
       height: 29px;
       overflow: hidden;
       white-space: nowrap;
-      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+      /*text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);*/
       font-family: $docs-font;
       font-weight: bold;
       font-size: 11px;
@@ -50,7 +51,7 @@
         padding-bottom: 5px;
         line-height: 16px;
         display: block;
-        color: #2e3841;
+		  color: #666;
         white-space: nowrap;
         overflow: hidden;
         float: left; }
@@ -58,6 +59,11 @@
         overflow: hidden;
         padding: 0 14px 0 17px; }
       a.ov-tab-text {
+        overflow: hidden; }
+      a.tabUrl {
+        padding: 0 14px 0 17px;
+        width: 140px;
+		margin-top: 4px;
         overflow: hidden; }
       a.main-tab {
         overflow: hidden;
@@ -67,24 +73,26 @@
         display: block;
         position: absolute;
         left: 3px;
+        top: 6px;
         padding-left: 15px;
-        padding-bottom: 0; } }
+      }
+	}
     a.close {
       position: absolute;
-      width: 11px;
-      height: 11px;
+      width: 13px;
+      height: 13px;
       top: 8px;
       right: 9px;
       z-index: 6;
-      background: url(../images/tabs.png) no-repeat -8px -111px !important; }
+      background: url(../images/tabs.png) no-repeat -7px -110px !important; }
     a.close.ovr {
-      background: url(../images/tabs.png) no-repeat -8px -123px !important; } }
+      background: url(../images/tabs.png) no-repeat -7px -122px !important; } }
   .doctab.highlight {
     border-width: 0;
     .l {
-      background: url(../images/tabs.png) no-repeat -9px -271px; }
+      background: url(../images/tabs.png) no-repeat -10px -271px; }
     .r {
-      background: url(../images/tabs.png) no-repeat -9px -335px;
+      background: url(../images/tabs.png) no-repeat -10px -335px;
       width: 10px; }
     .m {
       background: url(../images/tabs.png) repeat-x 0 -303px; } }
@@ -100,29 +108,74 @@
       width: 28px; }
     .m {
       background: url(../images/tabs.png) repeat-x 0 -405px;
-      z-index: 5; } }
-  .doctab.overview .m {
-    z-index: 6; }
-  .doctab.index .m a {
-    background: url(../images/tabs.png) no-repeat 1px 1px;
-    padding-left: 16px; padding-right: 12px; padding-bottom: 20px; }
-  .doctab.classes .m a {
-    background: url(../images/tabs.png) no-repeat 2px -20px;
-    padding-left: 16px; padding-right: 12px; }
-  .doctab.guides .m a {
-    background: url(../images/tabs.png) no-repeat 3px -55px;
-    padding-left: 16px; padding-right: 12px; }
-  .doctab.videos .m a {
-    background: url(../images/tabs.png) no-repeat 2px -38px;
-    padding-left: 16px; padding-right: 12px; }
-  .doctab.examples .m a {
-    background: url(../images/tabs.png) no-repeat 1px -93px;
-    padding-left: 16px; padding-right: 12px; }
-  .doctab.comments .m a {
-    background: url(../images/tabs.png) no-repeat 2px -72px;
-    padding-left: 16px; padding-right: 12px; }
+      z-index: 5;
 
-  .tab-overflow {
+      a {
+		color: #8b0e04 !important;
+	  }
+     } }
+	.doctab.overview .m {
+		z-index: 6;
+		a.tabUrl {
+			width: auto !important;
+		}
+	}
+	.doctab.index .m a {
+		background: url(../images/tabs.png) no-repeat 1px 0px;
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+/*
+	.doctab.index.active .m a,
+	.doctab.index.highlight .m a {
+		background: url(../images/tabs.png) no-repeat 1px -524px;
+	}
+*/
+	.doctab.classes .m a {
+		background: url(../images/tabs.png) no-repeat 2px -20px;
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+/*
+	.doctab.classes.active .m a,
+	.doctab.classes.highlight .m a {
+		background: url(../images/tabs.png) no-repeat 3px -543px;
+	}
+*/
+	.doctab.guides .m a {
+		background: url(../images/tabs.png) no-repeat 3px -60px;
+		padding-left: 16px;
+		padding-right: 12px;
+	}
+/*
+	.doctab.guides.active .m a,
+	.doctab.guides.highlight .m a {
+		background: url(../images/tabs.png) no-repeat 3px -578px;
+	}
+*/
+	.doctab.videos .m a {
+		background: url(../images/tabs.png) no-repeat 2px -40px;
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+/*
+	.doctab.videos.active .m a,
+	.doctab.videos.highlight .m a {
+		background: url(../images/tabs.png) no-repeat 3px -561px;
+	}
+*/
+	.doctab.examples .m a {
+		background: url(../images/tabs.png) no-repeat 1px -93px;
+		padding-left: 16px;
+		padding-right: 12px;
+	}
+	.doctab.comments .m a {
+		background: url(../images/tabs.png) no-repeat 2px -72px;
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+
+	.tab-overflow {
     position: absolute;
     right: 5px;
     top: 8px;
@@ -130,7 +183,7 @@
       cursor: pointer;
       display: block;
       width: 14px;
-      height: 20px;
+      height: 14px;
       background: url(../images/tabs.png) no-repeat -7px -513px;
       border: 0; } } }
 

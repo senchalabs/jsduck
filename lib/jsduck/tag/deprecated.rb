@@ -7,7 +7,7 @@ module JsDuck::Tag
       @name = "deprecated"
       @key = :deprecated
       @signature = {:long => "deprecated", :short => "DEP"}
-      @multiline = true
+      @multiline = false
     end
 
     def to_value(contents)
@@ -20,11 +20,10 @@ module JsDuck::Tag
     end
 
     def to_html(depr)
-      v = depr[:version] ? "since " + depr[:version] : ""
+      v = depr[:version] ? " since " + depr[:version] : ""
       <<-EOHTML
         <div class='signature-box deprecated'>
-        <p>This #{@context[:tagname]} has been <strong>deprecated</strong> #{v}</p>
-        #{format(depr[:text])}
+        <p><strong>deprecated</strong>#{v} #{format(depr[:text])}</p>
         </div>
       EOHTML
     end

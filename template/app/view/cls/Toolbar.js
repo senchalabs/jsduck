@@ -88,10 +88,12 @@ Ext.define('Docs.view.cls.Toolbar', {
             }
         }
 
+        // For Ti, public/protected/private are not used currently. Set them to true and 
+		// don't show them.
         this.checkItems = {
-            "public": this.createCb("Public", "public"),
-            "protected": this.createCb("Protected", "protected"),
-            "private": this.createCb("Private", "private"),
+            "public": {checked: true}, //this.createCb("Public", "public"),
+            "protected": {checked: true}, //this.createCb("Protected", "protected"),
+            "private": {checked: true}, //this.createCb("Private", "private"),
             "inherited": this.createCb("Inherited", "inherited"),
             "accessor": this.createCb("Accessor", "accessor"),
             "deprecated": this.createCb("Deprecated", "deprecated"),
@@ -134,10 +136,11 @@ Ext.define('Docs.view.cls.Toolbar', {
                 xtype: 'button',
                 text: 'Show',
                 menu: [
-                    this.checkItems['public'],
-                    this.checkItems['protected'],
-                    this.checkItems['private'],
-                    '-',
+//	Ti change -- hide public, protected, private checkboxes
+//                    this.checkItems['public'],
+//                    this.checkItems['protected'],
+//                    this.checkItems['private'],
+//                    '-',
                     this.checkItems['inherited'],
                     this.checkItems['accessor'],
                     this.checkItems['deprecated'],

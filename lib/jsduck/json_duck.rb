@@ -18,7 +18,7 @@ module JsDuck
     # Turns object into JSON, places it inside JavaScript that calls the
     # given callback name, and writes the result to file.
     def self.write_jsonp(filename, callback_name, data)
-      jsonp = "Ext.data.JsonP." + callback_name + "(" + self.generate(data) + ");"
+      jsonp = "Ext.data.JsonP['" + callback_name + "'](" + self.generate(data) + ");"
       File.open(filename, 'w') {|f| f.write(jsonp) }
     end
 

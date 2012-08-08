@@ -255,6 +255,7 @@ Ext.define('Docs.controller.Classes', {
         this.getOverview().setScrollContext("#!/api/"+cls.name);
 
         if (anchor) {
+			anchor = anchor.replace(/:/g, "\\:");
             this.getOverview().scrollToEl("#" + anchor);
             this.fireEvent('showMember', cls.name, anchor);
         }

@@ -1,0 +1,179 @@
+@import "mixins";
+$appc-gray: #666666;
+$appc-gray-bg: #6E6D71;
+$appc-red: #9B1C1F;
+
+#north-region {
+	background-image: url(../images/bkgd.png);
+	background-repeat: repeat-x;
+
+	#search-field input {
+		font-family: "Helvetica Neue" !important;
+	}
+}
+
+#header-content {
+	padding:  10px 0 0 15px;
+}
+
+.x-border-layout-ct{
+	background-color: #FFF !important;
+}
+
+#welcomeindex {
+	overflow: hidden !important;
+}
+
+// hide expand-collapse for guides
+.thumb-list h2{
+    cursor: auto !important;
+    div {
+		background: none !important;
+		padding: 4px !important;
+	}
+}
+
+#center-container{
+	h1 {
+		color: $appc-red !important;
+		font-size: 16pt !important;
+		a {
+			color: $appc-red !important;
+		}
+
+		.typestr {
+			font-weight: bold;
+		}
+	}
+
+	.thumb-list {
+		h2 {
+			border-bottom: 2px solid $appc-gray !important;
+
+			div {
+				color: #314e64 !important;
+				font-size: 14pt !important;
+			}
+		}
+
+		dd h4 {
+		    font-size: 10pt !important;
+			padding: 5px 0 !important;
+		}
+	}
+
+	.class-categories {
+		.section {
+			background: none;
+			border: none;
+
+			h1 {
+				color: $appc-gray !important;
+			}
+
+			h3 {
+				color: black;
+				font-size: 14pt;
+			}
+
+			.links a {
+				//color: #a7a9ac;
+			}
+		}
+	}
+}
+
+
+.class-overview .x-toolbar-default {
+	margin-left: 5px !important;
+    background-image: none !important;
+	background-color: #f1f1f1 !important;
+
+	border-color: #f1f1f1 !important;
+	.hover-menu-button {
+		background: none;
+	}
+}
+.hover-menu {
+	background-color: #f1f1f1 !important;
+}
+
+.x-grid-row-selected .x-grid-cell, .x-grid-row-selected .x-grid-rowwrap-div {
+	border-style: none !important;
+	border-color: transparent !important;
+	background-color: transparent !important;
+	div, a {
+		color: $appc-red !important;
+		font-weight: bold;
+	}
+}
+
+.platform-android {
+	background-image: url(../images/icon_android.png);
+}
+
+.platform-iphone {
+	background-image: url(../images/icon_iphone.png);
+}
+
+.platform-ipad{
+	background-image: url(../images/icon_ipad.png);
+}
+
+.platform-mobileweb{
+	background-image: url(../images/icon_mobileweb.png);
+}
+
+.sidebar {
+    width: 20%;
+    float: right;
+	.sidebar-platforms {
+		clear: right;
+		float: right;
+		color: $appc-gray !important;
+
+		li	{
+			list-style: none !important;
+			height: 40px;
+			background-position: 100% 50%;
+			background-repeat: no-repeat;
+			padding: 12px 40px 0 0;
+			text-align: right;
+		    font-size: 12pt;
+		}
+
+	}
+}
+.hierarchy {
+	width: 80%;
+	clear: none;
+}
+
+.doc-contents, .members{
+	.platforms {
+	    @include clearfix;
+
+		li {
+			width: 40px;
+			height: 40px;
+			background-repeat: no-repeat;
+			float: left;
+			list-style: none !important;
+		}
+	}
+}
+
+.doc-contents {
+    // hide platforms in class description
+	.platforms {
+		display: none;
+	}
+}
+
+.container ol, .container ul {
+	padding-left: 1em !important;
+}
+#videoindex .thumb-list dd .thumb img {
+	border: none !important;
+}
+

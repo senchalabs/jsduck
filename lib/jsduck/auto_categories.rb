@@ -2,6 +2,7 @@ module JsDuck
 
   # Automatically divides all available classes into categories
   class AutoCategories
+    @@miscName = "Miscellaneous"
     def initialize(relations)
       @relations = relations
     end
@@ -9,7 +10,7 @@ module JsDuck
     # Performs the generation
     def generate
       # list names of all public classes
-      class_names = @relations.to_a.find_all {|cls| !cls[:private] }.map {|cls| cls[:name] }
+      class_names = @relations.to_a.find_all {|cls| !cls[:meta][:pseudo] }.map {|cls| cls[:name] }
 
       # divide classes into top-level categories by namespace
       categories = categorize(class_names)
@@ -26,7 +27,7 @@ module JsDuck
         groups.each_pair do |gns, classes|
           groups_array << {
             "name" => gns,
-            "classes" => classes.sort
+            "classes" => classes.sort! {|a, b| classname_compare(a, b) }
           }
         end
         groups_array.sort! {|a, b| cat_compare(a, b) }
@@ -42,12 +43,14 @@ module JsDuck
 
     # Divides classes into categories by namespace.  Collapses
     # categories having only one class into a category "Others..."
+    # Substitute the Ti alias for Titanium everywhere except group names
     def categorize(class_names, level=0)
       categories = {}
       class_names.each do |name|
         ns = name.split(/\./)[level] || name.split(/\./)[0]
+        short_name = name.sub(/^Titanium\./, "Ti.")
         categories[ns] = [] unless categories[ns]
-        categories[ns] << name
+        categories[ns] << short_name
       end
 
       globals = []
@@ -58,21 +61,36 @@ module JsDuck
         end
       end
       if globals.length > 0
-        categories["Others..."] = globals
+        categories[@@miscName] = globals
       end
 
       categories
     end
 
     # Comparison function for sorting categories that always places
-    # "Others..." category at the end.
+    # "Globals" category at the end and sorts top-level modules to the top
     def cat_compare(a, b)
-      if a["name"] == "Others..."
+      if a["name"] == @@miscName
         1
-      elsif b["name"] == "Others..."
+      elsif b["name"] == @@miscName
+        -1
+      elsif a["name"] == "Global"
+        1
+      elsif b["name"] == "Global"
         -1
       else
         a["name"] <=> b["name"]
+      end
+    end
+
+    # Sort "Titanium" to the top to sort it ahead of aliased class names (Ti.*)
+    def classname_compare(a, b)
+      if a == "Titanium" 
+        -1
+      elsif b == "Titanium"
+        1
+      else
+        a <=> b
       end
     end
   end

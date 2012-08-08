@@ -63,7 +63,7 @@
 #treecontainer > .x-panel-body {
   background: transparent;
   border-color: #ebebeb;
-  border-width: 0 1px 0 0 !important; }
+  border-width: 0 3px 0 0 !important; }
 
 .x-resizable-over .x-resizable-handle-east {
   cursor: col-resize; }
@@ -93,8 +93,8 @@
   button {
     display: inline-block;
     float: left;
-    margin: 0 3px;
-    padding: 1px 13px 2px 13px;
+    margin: 0;
+    padding: 1px 5px 2px 5px;
     border: 1px solid transparent;
     cursor: pointer;
     background: transparent;

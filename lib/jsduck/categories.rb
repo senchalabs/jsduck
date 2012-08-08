@@ -59,9 +59,23 @@ module JsDuck
         [
           "<h3>#{g['name']}</h3>",
           "<div class='links'>",
-          g["classes"].map {|cls| @relations[cls] ? @doc_formatter.link(cls, nil, cls) : cls },
+          g["classes"].map {|cls| format_class_link(cls)},
           "</div>",
         ]
+      end
+    end
+
+    # formats a link, expanding any we previously shortened to Ti.
+    def format_class_link(cls)
+      if @relations[cls]
+        return @doc_formatter.link(cls, nil, cls)
+      elsif
+        expanded_cls = cls.sub(/^Ti\./, "Titanium.")
+        if @relations[expanded_cls]
+          return @doc_formatter.link(expanded_cls, nil, cls)
+        else
+          return cls
+        end
       end
     end
 

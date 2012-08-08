@@ -3,53 +3,96 @@
 @import "mixins";
 
 .class-overview {
-  .hierarchy, .aside {
-    @include border-radius(5px);
-    background-color: #f7f7f7;
-    border: 1px solid #ebebeb;
-    padding: 0 15px 15px 10px;
-    float: right;
-    clear: right;
-    margin: 0 0 10px 60px;
-    color: $docs-text-color;
-    font-size: 12px; }
-  .hierarchy {
-    h4 {
-      font-family: $docs-font;
-      font-size: 90%;
-      padding: 11px 0 5px 0;
-      text-transform: uppercase;
-      color: #999999; }
-    .dependency, .alternate-class-name {
-      padding: 0 0 0 12px;
-      margin-top: 3px; }
-    .alternate-class-name {
-      color: $docs-text-color; }
-    .subclass {
-      background: url(../images/elbow-end.gif) no-repeat -5px 0;
-      margin-top: 3px;
-      padding: 0 0 0 12px;
-      &.first-child {
-        background: none;
-        padding-left: 15px; } } }
-  .aside {
-    width: 180px;
-    h4 {
-      margin: 4px 0;
-      font-size: larger;
-      color: #526c83;
-      padding-left: 22px; }
-    img {
-      width: 50px;
-      float: left;
-      margin-right: 10px; }
-    &.guide h4 {
-      background: url(../images/tabs.png) no-repeat -5px -55px; }
-    &.video h4 {
-      background: url(../images/tabs.png) no-repeat -6px -38px; }
-    &.example h4 {
-      background: url(../images/tabs.png) no-repeat -7px -93px; } } }
+//  .hierarchy, .aside {
+//    @include border-radius(5px);
+//    background-color: #f7f7f7;
+//    border: 1px solid #ebebeb;
+//    padding: 0 15px 15px 10px;
+//    float: right;
+//    clear: right;
+//    margin: 0 0 10px 60px;
+//    color: $docs-text-color;
+//    font-size: 12px; }
+//  .hierarchy {
+//    h4 {
+//      font-family: $docs-font;
+//      font-size: 90%;
+//      padding: 11px 0 5px 0;
+//      text-transform: uppercase;
+//      color: #999999; }
+//    .dependency, .alternate-class-name {
+//      padding: 0 0 0 12px;
+//      margin-top: 3px; }
+//    .alternate-class-name {
+//      color: $docs-text-color; }
+//    .subclass {
+//      background: url(../images/elbow-end.gif) no-repeat -5px 0;
+//      margin-top: 3px;
+//      padding: 0 0 0 12px;
+//      &.first-child {
+//        background: none;
+//        padding-left: 15px; } } }
+//  .aside {
+//    width: 180px;
+//    h4 {
+//      margin: 4px 0;
+//      font-size: larger;
+//      color: #526c83;
+//      padding-left: 22px; }
+//    img {
+//      width: 50px;
+//      float: left;
+//      margin-right: 10px; }
+//    &.guide h4 {
+//      background: url(../images/tabs.png) no-repeat -5px -55px; }
+//    &.video h4 {
+//      background: url(../images/tabs.png) no-repeat -6px -38px; }
+//    &.example h4 {
+//      background: url(../images/tabs.png) no-repeat -7px -93px; } } }
 
+	// Ti changes to hierarchy style. ToDo: Clean up this mess.
+	.hierarchy {
+		border: none !important;
+		background: none !important;
+		//@include border-radius(5px);
+		//background-color: #f7f7f7;
+		//border: 1px solid #ebebeb;
+		//padding: 0 15px 15px 10px;
+		 padding: 0 !important;
+		//margin: 0 0 40px 60px;
+		font-size: 12px;
+		overflow: auto;
+		width: 80%;
+		h4 {
+			padding: 0 0 0 15px;
+			font-family: $docs-font;
+			font-size: 90%;
+			padding: 11px 0 5px 0;
+			text-transform: uppercase;
+			color: #999999; 
+		}
+		.dependency, .alternate-class-name {
+			padding: 0 0 0 12px;
+			margin-top: 3px;
+		}
+		.alternate-class-name {
+			color: $docs-text-color;
+		}
+		.classes {
+			.subclass {
+				float: left;
+				font-weight: bold;
+				padding: 0 0 0 5px;
+				strong {
+					color: #8b0e04;
+				}
+				&.first-child {
+					padding-left: 15px;
+				}
+			}
+		}
+	}
+}
 
 // Nice styles for headings inside documentation
 #center-container .doc-contents {
@@ -186,6 +229,8 @@
   &.deprecated, &.removed {
     color: #600;
     background-color: #fee;
+	// Ti changed width.
+	width: 80%;
     strong {
       text-transform: uppercase;
       @include border-radius(2px);

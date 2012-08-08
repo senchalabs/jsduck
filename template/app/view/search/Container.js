@@ -16,7 +16,8 @@ Ext.define('Docs.view.search.Container', {
                 {
                     xtype: 'triggerfield',
                     triggerCls: 'reset',
-                    emptyText: 'Search',
+                    // Ti change -- changed search text 
+                    emptyText: 'Find API',
                     width: 170,
                     id: 'search-field',
                     enableKeyEvents: true,

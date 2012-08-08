@@ -32,19 +32,22 @@ Ext.define('Docs.view.cls.PackageLogic', {
     },
 
     // Comparson method that sorts package nodes before class nodes.
+    // Note changes for Ti, where isObject takes the place of .leaf
+    // because our object models differ... Can this be abstracted?
     compare: function(a, b) {
-        if (a.leaf === b.leaf) {
+        if (a.isObject === b.isObject) {
             var aa = a.text.toLowerCase();
             var bb = b.text.toLowerCase();
             return aa > bb ? 1 : (aa < bb ? -1 : 0);
         }
         else {
-            return a.leaf ? 1 : -1;
+            return a.isObject ? 1 : -1;
         }
     },
 
     // When package for the class exists, add class node to that
     // package; otherwise create the package first.
+    // For Ti, add isObject flag.
     addClass: function(cls) {
         if (cls["private"] && !this.showPrivateClasses) {
             this.privates.push(this.classNode(cls));
@@ -56,6 +59,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
             // Just add icon and URL to the node.
             var pkg = this.packages[cls.name];
             var node = this.classNode(cls);
+			pkg.isObject = cls.isObject;
             pkg.iconCls = node.iconCls;
             pkg.url = node.url;
         }
@@ -63,6 +67,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
             var parentName = this.packageName(cls.name);
             var parent = this.packages[parentName] || this.addPackage(parentName);
             var node = this.classNode(cls);
+			node.isObject = cls.isObject;
             this.addChild(parent, node);
             this.packages[cls.name] = node;
         }
@@ -107,7 +112,8 @@ Ext.define('Docs.view.cls.PackageLogic', {
     packageNode: function(name) {
       return {
         text: this.shortName(name),
-        iconCls: "icon-pkg",
+		// Ti change -- class name from 'icon-pkg' to 'icon-class' ... seems kind of arbitrary
+        iconCls: "icon-class",
         leaf: false,
         children: []
       };

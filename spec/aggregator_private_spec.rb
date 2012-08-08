@@ -96,4 +96,18 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "@hide" do
+    before do
+      @doc = parse("/** @hide */")[0]
+    end
+
+    it "does not mark item as private" do
+      @doc[:private].should_not == true
+    end
+
+    it "marks item as :hide" do
+      @doc[:meta][:hide].should == true
+    end
+  end
+
 end

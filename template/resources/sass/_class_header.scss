@@ -12,17 +12,19 @@
     padding-bottom: 5px;
     padding-top: 2px;
     border-bottom: 1px #f1f1f1;
-    font-size: 2em;
+	// Ti change. ToDo: Check color.
+    /*font-size: 16pt;*/
     color: #66ab16;
 
     // Icons for different class types
     .class-source-link {
       color: #66ab16; // Same color as h1 itself
-      margin-left: -3px;
-      padding: 0.1em 0 0.4em 2.3em; }
-    &.class .class-source-link {
-      background: url(../images/class-m.png) no-repeat 0 -5px; }
-    &.component .class-source-link {
+        // Ti changes
+		padding-top: 7px;	}
+    &.class a {
+      //background: url(../images/class-m.png) no-repeat 0 8px;
+      }
+    &.component a {
       background: url(../images/component-m.png) no-repeat 0 -5px; }
     &.singleton .class-source-link {
       background: url(../images/singleton-m.png) no-repeat 0 -5px; }

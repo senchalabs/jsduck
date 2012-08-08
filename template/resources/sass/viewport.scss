@@ -100,12 +100,12 @@
     margin: 0 14px;
     @include border-radius(5px); }
   h1 {
-    background: url(../images/doc-m.png) no-repeat -5px -5px;
-    padding: 10px 0 10px 55px;
+    padding-top: 7px;
     font-family: $docs-heading-font;
     margin-bottom: 16px;
-    font-size: 2em;
-    color: #66ab16; }
+    font-size: 16pt;
+    color: #66ab16;
+  }
   h2 {
     @include guides-h2-heading; }
   h3 {
@@ -137,7 +137,8 @@ p.screenshot {
 
 
 .x-panel-body-default {
-  border-width: 0; }
+  border-width: 0; 
+  font-size: 13px; }
 
 
 // Examples

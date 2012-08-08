@@ -13,8 +13,8 @@ Ext.define('Docs.view.auth.LoginHelper', {
             '<input class="password" type="password" name="password" placeholder="Password" />',
             '<label><input type="checkbox" name="remember" /> Remember Me</label>',
             '<input class="submit" type="submit" value="Sign in" />',
-            ' or ',
-            '<a class="register" href="http://www.sencha.com/forum/register.php" target="_blank">Register</a>',
+//            ' or ',
+//            '<a class="register" href="http://www.sencha.com/forum/register.php" target="_blank">Register</a>',
         '</form>'
     ],
 

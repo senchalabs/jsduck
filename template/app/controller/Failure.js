@@ -23,12 +23,9 @@ Ext.define('Docs.controller.Failure', {
      */
     show404: function(msg) {
         var tpl = new Ext.XTemplate(
-            "<h1>Oops...</h1>",
+            "<h1>Page not found...</h1>",
             "<p>{msg}</p>",
-            "<p>Maybe it was renamed to something else? Or maybe your internet connection has failed? ",
-            "This would be sad. Hopefully it's just a bug on our side. ",
-            "Report it to <a href='http://www.sencha.com/forum/showthread.php?135036'>Sencha Forum</a> if you feel so.</p>",
-            "<p>Sorry for all this :(</p>"
+            "<p>If you think this is an error, please <a href='https://jira.appcelerator.org'>file a bug</a>.</p>"
         );
         Ext.getCmp("failure").update(tpl.apply({msg: msg}));
         Ext.getCmp('card-panel').layout.setActiveItem("failure");
