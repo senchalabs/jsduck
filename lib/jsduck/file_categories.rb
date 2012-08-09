@@ -13,7 +13,7 @@ module JsDuck
 
       # Don't crash if old syntax is used.
       if @categories.is_a?(Hash) && @categories["categories"]
-        Logger.instance.warn(nil, 'Update categories file to contain just the array inside {"categories": [...]}')
+        Logger.instance.warn(nil, 'Update categories file to contain just the array inside {"categories": [...]}', @filename)
         @categories = @categories["categories"]
       end
 
@@ -36,7 +36,7 @@ module JsDuck
       re = Regexp.new("^" + name.split(/\*/, -1).map {|part| Regexp.escape(part) }.join('.*') + "$")
       classes = @relations.to_a.find_all {|cls| re =~ cls[:name] && !cls[:private] }.map {|cls| cls[:name] }.sort
       if classes.length == 0
-        Logger.instance.warn(:cat_no_match, "No class found matching a pattern '#{name}' in categories file.")
+        Logger.instance.warn(:cat_no_match, "No class found matching a pattern '#{name} in categories file'", @filename)
       end
       classes
     end
@@ -56,7 +56,7 @@ module JsDuck
       # Check that each existing non-private class is listed
       @relations.each do |cls|
         unless listed_classes[cls[:name]] || cls[:private]
-          Logger.instance.warn(:cat_class_missing, "Class '#{cls[:name]}' not found in categories file")
+          Logger.instance.warn(:cat_class_missing, "Class '#{cls[:name]}' not found in categories file", @filename)
         end
       end
     end

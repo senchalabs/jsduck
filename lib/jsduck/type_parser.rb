@@ -8,6 +8,8 @@ module JsDuck
   #
   # 1. Traditional type expressions found in ExtJS code:
   #
+  #     "string"
+  #     3.14
   #     SomeType
   #     Name.spaced.Type
   #     Number[]
@@ -141,7 +143,7 @@ module JsDuck
     #
     #     <array-type> ::= <atomic-type> [ "[]" ]*
     #
-    #     <atomic-type> ::= <union-type> | <record-type> | <function-type> | <type-name>
+    #     <atomic-type> ::= <union-type> | <record-type> | <function-type> | <string-literal> | <type-name>
     #
     def null_type
       if nullability = @input.scan(/[?!]/)
@@ -154,6 +156,10 @@ module JsDuck
         return false unless record_type
       elsif @input.check(/function\(/)
         return false unless function_type
+      elsif @input.check(/['"]/)
+        return false unless string_literal
+      elsif @input.check(/\d/)
+        return false unless number_literal
       else
         return false unless type_name
       end
@@ -285,6 +291,24 @@ module JsDuck
       # Each argument can be optional (ending with "=")
       @out << "=" if @input.scan(/[=]/)
       skip_whitespace
+
+      true
+    end
+
+    #
+    #     <string-literal> ::= '.*' | ".*"
+    #
+    def string_literal
+      @out << @input.scan(/"([^\\"]|\\.)*?"|'([^\\']|\\.)*?'/)
+
+      true
+    end
+
+    #
+    #     <number-literal> ::= <digit>+ [ "." <digit>+ ]
+    #
+    def number_literal
+      @out << @input.scan(/\d+(\.\d+)?/)
 
       true
     end

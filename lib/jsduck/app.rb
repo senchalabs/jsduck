@@ -11,6 +11,7 @@ require 'jsduck/logger'
 require 'jsduck/assets'
 require 'jsduck/json_duck'
 require 'jsduck/io'
+require 'jsduck/importer'
 require 'jsduck/lint'
 require 'jsduck/template_dir'
 require 'jsduck/class_writer'
@@ -35,7 +36,7 @@ module JsDuck
       @opts = opts
       # Sets the nr of parallel processes to use.
       # Set to 0 to disable parallelization completely.
-      @parallel = ParallelWrap.new(:in_processes => @opts.processes)
+      ParallelWrap.in_processes = @opts.processes
       # Turn JSON pretty-printing on/off
       JsonDuck.pretty = @opts.pretty_json
     end
@@ -46,6 +47,7 @@ module JsDuck
       result = aggregate(parsed_files)
       @relations = filter_classes(result)
       InheritDoc.new(@relations).resolve_all
+      Importer.import(@opts.imports, @relations, @opts.new_since)
       Lint.new(@relations).run
 
       # Initialize guides, videos, examples, ...
@@ -81,7 +83,7 @@ module JsDuck
         # between source files and classes. Therefore it MUST to be done
         # after writing sources which needs the links to work.
         if @opts.source
-          source_writer = SourceWriter.new(parsed_files, @parallel)
+          source_writer = SourceWriter.new(parsed_files)
           source_writer.write(@opts.output_dir + "/source")
         end
         format_classes
@@ -102,12 +104,12 @@ module JsDuck
 
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
-      @parallel.map(filenames) do |fname|
+      ParallelWrap.map(filenames) do |fname|
         Logger.instance.log("Parsing", fname)
         begin
           SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
         rescue
-          Logger.instance.fatal("Error while parsing #{fname}", $!)
+          Logger.instance.fatal_backtrace("Error while parsing #{fname}", $!)
           exit(1)
         end
       end
@@ -127,6 +129,8 @@ module JsDuck
       if @opts.ext4_events == true || (@opts.ext4_events == nil && agr.ext4?)
         agr.append_ext4_event_options
       end
+      agr.process_enums
+      agr.process_overrides
       agr.result
     end
 
@@ -164,7 +168,7 @@ module JsDuck
       # Don't format types when exporting
       class_formatter.include_types = !@opts.export
       # Format all doc-objects in parallel
-      formatted_classes = @parallel.map(@relations.classes) do |cls|
+      formatted_classes = ParallelWrap.map(@relations.classes) do |cls|
         files = cls[:files].map {|f| f[:filename] }.join(" ")
         Logger.instance.log("Markdown formatting #{cls[:name]}", files)
         begin
@@ -173,7 +177,7 @@ module JsDuck
             :images => doc_formatter.images
           }
         rescue
-          Logger.instance.fatal("Error while formatting #{cls[:name]} #{files}", $!)
+          Logger.instance.fatal_backtrace("Error while formatting #{cls[:name]} #{files}", $!)
           exit(1)
         end
       end

@@ -9,12 +9,10 @@ describe JsDuck::DocParser do
   describe "simple method doc-comment" do
     before do
       @doc = parse_single(<<-EOS.strip)
-        /**
          * @method foo
          * Some docs.
          * @param {Number} x doc for x
          * @return {String} resulting value
-         */
       EOS
     end
 
@@ -74,9 +72,7 @@ describe JsDuck::DocParser do
   describe "@type without curlies" do
     before do
       @tag = parse_single(<<-EOS.strip)[0]
-        /**
          * @type Boolean|String
-         */
       EOS
     end
     it "detects tagname" do
@@ -89,7 +85,7 @@ describe JsDuck::DocParser do
 
   describe "single-line doc-comment" do
     before do
-      @tag = parse_single("/** @event blah */")[0]
+      @tag = parse_single("@event blah")[0]
     end
     it "detects tagname" do
       @tag[:tagname].should == :event
@@ -101,13 +97,13 @@ describe JsDuck::DocParser do
 
   describe "doc-comment without *-s on left side" do
     before do
-      @tag = parse_single("/**
+      @tag = parse_single("
         @event blah
         Some comment.
         More text.
 
             code sample
-      */")[0]
+        ")[0]
     end
     it "detects the @event tag" do
       @tag[:tagname].should == :event
@@ -120,9 +116,7 @@ describe JsDuck::DocParser do
   describe "type definition with nested {braces}" do
     before do
       @tag = parse_single(<<-EOS.strip)[0]
-        /**
          * @param {{foo:{bar:Number}}} x
-         */
       EOS
     end
     it "is parsed ensuring balanced braces" do

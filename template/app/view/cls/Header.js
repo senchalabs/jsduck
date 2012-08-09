@@ -13,9 +13,6 @@ Ext.define('Docs.view.cls.Header', {
     initComponent: function() {
         this.tpl = Ext.create('Ext.XTemplate',
             '<h1 class="{[this.getClass(values)]}">',
-                '<tpl if="private">',
-                    '<span class="private">Private</span>',
-                '</tpl>',
                 '<tpl if="Docs.data.source">',
                     '<a href="#" class="class-source-link">{name}',
                         '<span class="class-source-tip">View source...</span>',
@@ -26,7 +23,11 @@ Ext.define('Docs.view.cls.Header', {
                 '<tpl if="singleton">',
                     '<span>singleton</span>',
                 '</tpl>',
+                '<tpl if="enum">',
+                    '<span>enum of <b>{enum.type}</b></span>',
+                '</tpl>',
                 '{[this.renderAliases(values.aliases)]}',
+                '{[this.renderMetaTags(values.meta)]}',
             '</h1>',
             '<tpl if="Docs.data.showPrintButton">',
                 '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>',
@@ -60,6 +61,11 @@ Ext.define('Docs.view.cls.Header', {
                     else {
                         return "";
                     }
+                },
+                renderMetaTags: function(metaTags) {
+                    return ' ' + Ext.Array.map(Docs.data.signatures, function(s) {
+                        return metaTags[s.key] ? '<span class="signature '+s.key+'">'+(s["long"])+'</span>' : '';
+                    }).join(' ');
                 }
             }
         );

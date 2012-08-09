@@ -280,8 +280,8 @@ describe JsDuck::Aggregator do
       @doc = parse(<<-EOS)[0]
         /** */
         Ext.define('MyClass', {
-          xtype: 'foo',
-          alias: 'widget.bar'
+          alias: 'widget.foo',
+          xtype: 'bar'
         });
       EOS
     end

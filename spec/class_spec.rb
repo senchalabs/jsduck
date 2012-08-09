@@ -73,12 +73,12 @@ describe JsDuck::Class do
           :singleton => true,
           :members => {
             :method => [
-              {:name => "sing", :owner => "Singleton"},
+              {:name => "sing", :owner => "Singleton", :files => [{}]},
             ]
           },
           :statics => {
             :method => [
-              {:name => "singStat", :owner => "Singleton"},
+              {:name => "singStat", :owner => "Singleton", :files => [{}]},
             ]
           }
         });

@@ -24,7 +24,7 @@ module JsDuck
     def initialize(filename, formatter, opts)
       @path = File.dirname(filename)
       @groups = JsonDuck.read(filename)
-      build_map_by_name("Two guides have the same name")
+      build_map_by_name("Two guides have the same name", filename)
       @formatter = formatter
       @opts = opts
     end
@@ -58,11 +58,11 @@ module JsDuck
     def load_guide(guide)
       in_dir = @path + "/guides/" + guide["name"]
 
-      return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
+      return Logger.instance.warn(:guide, "Guide not found", in_dir) unless File.exists?(in_dir)
 
       guide_file = in_dir + "/README.md"
 
-      return Logger.instance.warn(:guide, "README.md not found in #{in_dir}") unless File.exists?(guide_file)
+      return Logger.instance.warn(:guide, "Guide not found", guide_file) unless File.exists?(guide_file)
 
       begin
         @formatter.doc_context = {:filename => guide_file, :linenr => 0}
@@ -71,7 +71,7 @@ module JsDuck
 
         return add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
       rescue
-        Logger.instance.fatal("Error while reading/formatting guide #{in_dir}", $!)
+        Logger.instance.fatal_backtrace("Error while reading/formatting guide #{in_dir}", $!)
         exit(1)
       end
     end

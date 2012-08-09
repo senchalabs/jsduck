@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 require "jsduck/doc_formatter"
 require "jsduck/relations"
+require "jsduck/class"
 
 describe JsDuck::DocFormatter do
 

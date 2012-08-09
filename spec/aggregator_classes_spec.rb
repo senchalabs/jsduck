@@ -36,7 +36,7 @@ describe JsDuck::Aggregator do
       @doc[:extends].should == "Your.Class"
     end
     it "detects mixins" do
-      @doc[:mixins].should == ["Foo.Mixin", "Bar.Mixin"]
+      Set.new(@doc[:mixins]).should == Set.new(["Foo.Mixin", "Bar.Mixin"])
     end
     it "detects alternate class names" do
       @doc[:alternateClassNames].should == ["AltClass"]
@@ -88,7 +88,7 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "collects all mixins together" do
-      @doc[:mixins].should == ["My.Mixin", "Your.Mixin", "Other.Mixin"]
+      Set.new(@doc[:mixins]).should == Set.new(["My.Mixin", "Your.Mixin", "Other.Mixin"])
     end
   end
 
@@ -167,7 +167,7 @@ describe JsDuck::Aggregator do
       @doc[:extends].should == "Your.Class"
     end
     it "detects implied mixins" do
-      @doc[:mixins].should == ["Ext.util.Observable", "Foo.Bar"]
+      Set.new(@doc[:mixins]).should == Set.new(["Ext.util.Observable", "Foo.Bar"])
     end
     it "detects implied alternateClassNames" do
       @doc[:alternateClassNames].should == ["JustClass"]
@@ -316,34 +316,6 @@ describe JsDuck::Aggregator do
       EOS
     end
     it_should_behave_like "class"
-  end
-
-  describe "class with constructor" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * Comment here.
-         * @constructor
-         * This constructs the class
-         * @param {Number} nr
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "has one method" do
-      @doc[:members][:method].length.should == 1
-    end
-    it "has method with name 'constructor'" do
-      @doc[:members][:method][0][:name].should == "constructor"
-    end
-    it "has method with needed parameters" do
-      @doc[:members][:method][0][:params].length.should == 1
-    end
-    it "has method with default return type Object" do
-      @doc[:members][:method][0][:return][:type].should == "Object"
-    end
   end
 
   describe "member docs after class doc" do
