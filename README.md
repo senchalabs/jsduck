@@ -73,36 +73,39 @@ You can also use `--verbose` option to see what's actually happening.
 
 To generate docs for Ext JS 4 add path to the corresponding src/ dir:
 
-    $ jsduck ext-4.0.7/src \
+    $ jsduck ext-4.1.1/src \
              --builtin-classes \
-             --images ext-4.0.7/docs/images \
+             --images ext-4.1.1/docs/images \
+             --warnings=-no_doc,-dup_member,-link_ambiguous \
+             --external XMLHttpRequest \
              --output your/docs
 
 The `--images` option specifies a path for images included with
 `{@img}` tags inside the source code.
 
-To generate docs for your own project, simply name additional input
-directories:
-
-    $ jsduck ext-4.0.7/src project1/js project2/js ...
-
-Note that the resulting documentation will only contain the API
-documentation.  Guides, videos and examples will not be present.
-These can be added using more command line options as explained in the
-[Advanced Usage][adv] section of wiki.
-
-Running latest JSDuck is expected to generate lots of warnings.
-That's because some warning types were added after Ext JS 4.0.7
-release.  Sorry for that, JSDuck just wants to be helpful.  If you are
-overwhelmed by the warnings, you can disable them selectively using
-something like `--warnings=-link_ambiguous,-no_doc` or you could
-disable them all by `--warnings=-all`.
+The `--warnings` option disables some of the warnings which you would
+otherwise be overwhelmed with. That's because Ext JS 4.1.1 was
+released when JSDuck 4 wasn't out yet.  Sorry for that, JSDuck just
+wants to be helpful. Similarly the `--external` option defines
+`XMLHttpRequest` as an external class, otherwise a warning would be
+thrown.
 
 Another thing that often happens is that JSDuck is unable to determine
 into which class a member belongs and will place all such items into a
 global class - you can disable this using the `--ignore-global`
 switch.  For full list of all command line options type
-`jsduck --help=full`.
+`jsduck --help`.  For help on a specific option use
+`--help=--some-option`.
+
+To generate docs for your own project, simply name additional input
+directories:
+
+    $ jsduck ext-4.1.1/src project1/js project2/js ...
+
+Note that the resulting documentation will only contain the API
+documentation.  Guides, videos and examples will not be present.
+These can be added using more command line options as explained in the
+[Advanced Usage][adv] section of wiki.
 
 [adv]: https://github.com/senchalabs/jsduck/wiki/Advanced-Usage
 
