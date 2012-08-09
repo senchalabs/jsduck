@@ -144,6 +144,9 @@ Thanks to [Ondřej Jirman](https://github.com/megous),
 Katherine Chu,
 [Rob Dougan](https://github.com/rdougan),
 [Dave Thompson](https://github.com/limscoder),
+[burnnat](https://github.com/burnnat),
+[vjetteam](https://github.com/vjetteam),
+[Chris Westbrook](https://github.com/cnstaging),
 and many-many others who reported bugs, submitted patches, and
 provided a lot of useful input.
 
