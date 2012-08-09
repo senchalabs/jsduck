@@ -33,8 +33,8 @@ Standard rubygems install should do:
     $ [sudo] gem install jsduck
 
 If you encounter errors during gem installation, you may need to
-install the header files for compiling extension modules for ruby 1.8.
-For Debian systems you'll need the `ruby1.8-dev` package.  For Red Hat
+install the header files for compiling extension modules for Ruby 1.9.
+For Debian systems you'll need the `ruby1.9-dev` package.  For Red Hat
 / CentOS / Fedora use the `ruby-devel` package.
 
 For **Windows** users out there, you can download the binary version,
