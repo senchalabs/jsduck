@@ -157,7 +157,7 @@ module JsDuck
         opts.separator ""
 
         opts.on('-o', '--output=PATH',
-          "Directory to output all this amazing documentation.",
+          "Directory to write all this documentation.",
           "",
           "This option is REQUIRED.  When the directory exists,",
           "it will be overwritten.  Give dash '-' as argument",
@@ -177,7 +177,7 @@ module JsDuck
         end
 
         opts.on('--builtin-classes',
-          "Includes docs for JavaScript builtin classes.",
+          "Includes docs for JavaScript builtins.",
           "",
           "Docs for the following classes are included:",
           "",
@@ -251,7 +251,7 @@ module JsDuck
         end
 
         opts.on('--head-html=HTML',
-          "HTML to append to the <head> section of index.html.",
+          "HTML for the <head> section of index.html.",
           "",
           "Useful for adding extra <style> and other tags.",
           "",
@@ -261,7 +261,7 @@ module JsDuck
         end
 
         opts.on('--body-html=HTML',
-          "HTML to append to the <body> section index.html.",
+          "HTML for the <body> section of index.html.",
           "",
           "Useful for adding extra markup to the page.",
           "",
@@ -271,7 +271,7 @@ module JsDuck
         end
 
         opts.on('--welcome=PATH',
-          "Path to HTML file with content for welcome page.",
+          "HTML file with content for welcome page.",
           "",
           "It should only contain the <body> part of a HTML page.",
           "",
@@ -280,7 +280,7 @@ module JsDuck
         end
 
         opts.on('--guides=PATH',
-          "Path to JSON file describing the guides.",
+          "JSON file describing the guides.",
           "",
           "The file should be in a dir containing the actual guides.",
           "A guide is a dir containing README.md, icon.png, and",
@@ -291,21 +291,21 @@ module JsDuck
         end
 
         opts.on('--videos=PATH',
-          "Path to JSON file describing the videos.",
+          "JSON file describing the videos.",
           "",
           "See also: https://github.com/senchalabs/jsduck/wiki/Videos") do |path|
           @videos = canonical(path)
         end
 
         opts.on('--examples=PATH',
-          "Path to JSON file describing the examples.",
+          "JSON file describing the examples.",
           "",
           "See also: https://github.com/senchalabs/jsduck/wiki/Examples") do |path|
           @examples = canonical(path)
         end
 
         opts.on('--categories=PATH',
-          "Path to JSON file defining categories for classes.",
+          "JSON file defining categories for classes.",
           "",
           "Without this option the classes will be categorized",
           "based on how they are namespaced.",
@@ -320,7 +320,7 @@ module JsDuck
         end
 
         opts.on('--images=PATH',
-          "Path for including images referenced by {@img} tag.",
+          "Path for images referenced by {@img} tag.",
           "",
           "Several paths can be specified by using the option",
           "multiple times.  This option only applies to {@img}",
@@ -341,7 +341,7 @@ module JsDuck
         end
 
         opts.on('--import=VERSION:PATH',
-          "Imports exported docs generating @since & @new tags.",
+          "Imports docs generating @since & @new.",
           "",
           "For example:",
           "",
@@ -367,7 +367,7 @@ module JsDuck
         end
 
         opts.on('--new-since=VERSION',
-          "Since which version to label items with @new tag.",
+          "Since when to label items with @new tag.",
           "",
           "The VERSION must be one of the version names defined",
           "with --import option.",
@@ -417,7 +417,7 @@ module JsDuck
         end
 
         opts.on('--[no-]ext4-events',
-          "Forces appending of Ext4 options param to events.",
+          "Forces Ext4 options param on events.",
           "",
           "In Ext JS 4 and Sencha Touch 2 all event handlers are",
           "passed an additional options object at the end of the",
@@ -470,7 +470,7 @@ module JsDuck
         end
 
         opts.on('--eg-iframe=PATH',
-          "An HTML file used to display inline examples.",
+          "HTML file used to display inline examples.",
           "",
           "The file will be used inside <iframe> that renders the",
           "example.  Not just any HTML file will work - it needs to",
@@ -482,7 +482,7 @@ module JsDuck
         end
 
         opts.on('--ext-namespaces=Ext,Foo', Array,
-          "Additional ExtJS/Touch namespaces to recognize.",
+          "Additional Ext JS namespaces to recognize.",
           "",
           "Defaults to 'Ext'",
           "",
@@ -556,14 +556,14 @@ module JsDuck
         end
 
         opts.on('--template=PATH',
-          "Directory containing the UI template files.",
+          "Dir containing the UI template files.",
           "",
           "Useful when developing the template files.") do |path|
           @template_dir = canonical(path)
         end
 
         opts.on('--template-links',
-          "Creates symbolic links to UI template files.",
+          "Creates symlinks to UI template files.",
           "",
           "Useful for template files development.",
           "Only works on platforms supporting symbolic links.") do
@@ -589,7 +589,7 @@ module JsDuck
         end
 
         opts.on('-h', '--help[=--some-option]',
-          "This help or --help=--option for help on specific option.",
+          "Use --help=--option for help on option.",
           "",
           "For example To get help on --processes option any of the",
           "following will work:",
