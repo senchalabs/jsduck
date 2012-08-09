@@ -41,10 +41,24 @@ For **Windows** users out there, you can download the binary version,
 which includes Ruby interpreter and all dependencies bundled in a
 single .exe file.  Grab it from the [download page][].
 
-If you are brave enough: [try out JSDuck 4.0 beta.][beta]
+Alternatively you can install through rubygems, but you need to do
+some additional tweaks. First go and [download][libs download]
+therubyracer gem and v8 lib that stereobooster has built for
+windows. You need to install this special rubyracer version instead of
+the one from rubygems:
+
+    > gem install therubyracer-0.11.0beta1-x86-mingw32.gem
+
+To make it actually work you need `v8.dll` somewhere in your
+system. Extract the `lib_v8.3.11.9.zip` take the `v8.dll` inside it
+and place into the `bin` directory of your Ruby installation (other
+dirs that are on your PATH can work too, but I've found this to be the
+most sensible place to put it). Now you're ready to install JSDuck:
+
+    > gem install jsduck
 
 [download page]: https://github.com/senchalabs/jsduck/downloads
-[beta]: https://github.com/senchalabs/jsduck/wiki/4.0-beta
+[libs download]: https://github.com/stereobooster/therubyracer/downloads
 
 Usage
 -----
