@@ -1,3 +1,5 @@
+require 'jsduck/logger'
+
 module JsDuck
 
   # Reads categories info from config file
