@@ -37,6 +37,10 @@ install the header files for compiling extension modules for Ruby 1.9.
 For Debian systems you'll need the `ruby1.9-dev` package.  For Red Hat
 / CentOS / Fedora use the `ruby-devel` package.
 
+In **OSX Mountain Lion** the compilation of `therubyracer` dependency
+often fails for so far unknown reasons.  Most users have found a
+solution in upgrading to Ruby 1.9 using [RVM][].
+
 For **Windows** users out there, you can download the binary version,
 which includes Ruby interpreter and all dependencies bundled in a
 single .exe file.  Grab it from the [download page][].
@@ -57,6 +61,7 @@ most sensible place to put it). Now you're ready to install JSDuck:
 
     > gem install jsduck
 
+[RVM]: https://rvm.io/
 [download page]: https://github.com/senchalabs/jsduck/downloads
 [libs download]: https://github.com/stereobooster/therubyracer/downloads
 
