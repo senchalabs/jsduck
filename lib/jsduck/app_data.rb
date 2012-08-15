@@ -1,7 +1,6 @@
 require 'jsduck/json_duck'
 require 'jsduck/icons'
 require 'jsduck/search_data'
-require 'jsduck/stats'
 require 'jsduck/meta_tag_registry'
 
 module JsDuck
@@ -23,7 +22,6 @@ module JsDuck
           :videos => @assets.videos.to_array,
           :examples => @assets.examples.to_array,
           :search => SearchData.new.create(@relations.classes, @assets),
-          :stats => @opts.stats ? Stats.new.create(@relations.classes) : [],
           :tests => @opts.tests,
           :signatures => MetaTagRegistry.instance.signatures,
           :localStorageDb => @opts.local_storage_db,

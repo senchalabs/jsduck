@@ -24,7 +24,6 @@ module JsDuck
     attr_accessor :guides
     attr_accessor :videos
     attr_accessor :examples
-    attr_accessor :stats
     attr_accessor :categories_path
     attr_accessor :source
     attr_accessor :pretty_json
@@ -91,7 +90,6 @@ module JsDuck
       @guides = nil
       @videos = nil
       @examples = nil
-      @stats = false
       @categories_path = nil
       @source = true
       @pretty_json = false
@@ -333,11 +331,6 @@ module JsDuck
         opts.on('--tests',
           "Creates page for testing inline examples.") do
           @tests = true
-        end
-
-        opts.on('--stats',
-          "Creates page with all kinds of statistics.") do
-          @stats = true
         end
 
         opts.on('--import=VERSION:PATH',

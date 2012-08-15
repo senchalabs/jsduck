@@ -68,9 +68,6 @@ Ext.define("Docs.History", {
         else if (url.type === "example") {
             Docs.App.getController('Examples').loadExample(url.url, noHistory);
         }
-        else if (url.url === "#!/stats") {
-            Docs.App.getController('Stats').loadIndex();
-        }
         else if (url.url === "#!/comment") {
             Docs.App.getController('Comments').loadIndex();
         }

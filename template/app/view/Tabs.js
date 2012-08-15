@@ -579,9 +579,6 @@ Ext.define('Docs.view.Tabs', {
         else if (/#!?\/example/.test(url)) {
             return 'Examples';
         }
-        else if (/#!?\/stats/.test(url)) {
-            return 'Stats';
-        }
         else if (/#!?\/tests/.test(url)) {
             return 'Tests';
         }

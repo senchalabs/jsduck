@@ -110,7 +110,6 @@ Ext.define('Docs.controller.Tabs', {
             this.getGuideIndex().getTab(),
             this.getVideoIndex().getTab(),
             this.getExampleIndex().getTab(),
-            this.getStatsIndex().getTab(),
             this.getTestsIndex().getTab()
         ], function(x){return x;}));
 
