@@ -25,8 +25,8 @@ module JsDuck
 
     # Given an enum class, returns the type infered from its values.
     def infer_type(cls)
-      if cls[:members][:property].length > 0
-        types = cls[:members][:property].map {|p| p[:type] }
+      if cls[:members].length > 0
+        types = cls[:members].map {|p| p[:type] }
         types.sort.uniq.join("/")
       else
         "Object"
@@ -37,7 +37,7 @@ module JsDuck
     def expand_default(cls)
       if cls[:enum][:default] =~ /\A(.*)\.\*\Z/
         each_alias($1) do |name, owner|
-          cls[:members][:property] << {
+          cls[:members] << {
             :tagname => :property,
             :id => 'property-' + name,
             :name => name,
@@ -64,7 +64,7 @@ module JsDuck
     # Remove the auto-inserted inheritdoc tag so the auto-detected enum
     # values default to being public.
     def strip_inheritdoc(cls)
-      cls[:members][:property].each do |p|
+      cls[:members].each do |p|
         p[:inheritdoc] = nil if p[:autodetected]
       end
     end

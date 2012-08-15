@@ -107,13 +107,8 @@ module JsDuck
       results = []
 
       if docset[:code]
-
         (docset[:code][:members] || []).each do |m|
           results << code_to_docset(m) unless @constructor_found && m[:name] == "constructor"
-        end
-
-        (docset[:code][:statics] || []).each do |m|
-          results << code_to_docset(m)
         end
       end
 

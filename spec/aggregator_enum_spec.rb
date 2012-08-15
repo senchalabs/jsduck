@@ -29,12 +29,12 @@ describe JsDuck::Aggregator do
       doc[:doc].should == "Some documentation."
     end
 
-    it "detects two properties" do
-      doc[:members][:property].length.should == 2
+    it "detects two members" do
+      doc[:members].length.should == 2
     end
 
-    describe "in first property" do
-      let(:prop) { doc[:members][:property][0] }
+    describe "in first member" do
+      let(:prop) { doc[:members][0] }
       it "detects name" do
         prop[:name].should == 'foo'
       end
@@ -165,18 +165,18 @@ describe JsDuck::Aggregator do
       EOS
     end
 
-    it "gets stripped from :inheritdoc tag in auto-detected property" do
-      doc[:members][:property][0][:inheritdoc].should == nil
+    it "gets stripped from :inheritdoc tag in auto-detected member" do
+      doc[:members][0][:inheritdoc].should == nil
     end
 
-    it "keeps the explicit :inheritdoc tag in doc-commented property" do
-      doc[:members][:property][1][:inheritdoc].should_not == nil
+    it "keeps the explicit :inheritdoc tag in doc-commented member" do
+      doc[:members][1][:inheritdoc].should_not == nil
     end
   end
 
   describe "enum with array value" do
-    let(:props) do
-      parse(<<-EOS)[0][:members][:property]
+    let(:members) do
+      parse(<<-EOS)[0][:members]
         /** @enum */
         My.enum.Type = [
             "foo",
@@ -185,26 +185,30 @@ describe JsDuck::Aggregator do
       EOS
     end
 
-    it "detects all properties" do
-      props.length.should == 2
+    it "detects all members" do
+      members.length.should == 2
+    end
+
+    it "detects as property" do
+      members[0][:tagname].should == :property
     end
 
     it "gets name" do
-      props[0][:name].should == 'foo'
+      members[0][:name].should == 'foo'
     end
 
     it "gets default value" do
-      props[0][:default].should == '"foo"'
+      members[0][:default].should == '"foo"'
     end
 
     it "gets type" do
-      props[0][:type].should == 'String'
+      members[0][:type].should == 'String'
     end
   end
 
   describe "enum with documented array values" do
-    let(:props) do
-      parse(<<-EOS)[0][:members][:property]
+    let(:members) do
+      parse(<<-EOS)[0][:members]
         /** @enum */
         My.enum.Smartness = [
             // A wise choice.
@@ -215,12 +219,12 @@ describe JsDuck::Aggregator do
       EOS
     end
 
-    it "detects docs of first property" do
-      props[0][:doc].should == 'A wise choice.'
+    it "detects docs of first member" do
+      members[0][:doc].should == 'A wise choice.'
     end
 
-    it "detects docs of second property" do
-      props[1][:doc].should == 'A foolish decision.'
+    it "detects docs of second member" do
+      members[1][:doc].should == 'A foolish decision.'
     end
   end
 
@@ -238,30 +242,30 @@ describe JsDuck::Aggregator do
       doc[:enum][:type].should == "String"
     end
 
-    let(:props) { doc[:members][:property] }
+    let(:members) { doc[:members] }
 
     it "gathers all 3 widget.* aliases" do
-      props.length.should == 3
+      members.length.should == 3
     end
 
     it "lists all widget.* names" do
-      Set.new(props.map {|p| p[:name] }).should == Set.new(["form", "button", "textarea"])
+      Set.new(members.map {|p| p[:name] }).should == Set.new(["form", "button", "textarea"])
     end
 
     it "auto-generates property default values" do
-      Set.new(props.map {|p| p[:default] }).should == Set.new(["'form'", "'button'", "'textarea'"])
+      Set.new(members.map {|p| p[:default] }).should == Set.new(["'form'", "'button'", "'textarea'"])
     end
 
     it "sets property type to String" do
-      props[0][:type].should == "String"
+      members[0][:type].should == "String"
     end
 
     it "sets enum value from private class as private" do
-      props.find_all {|p| p[:private] }.map {|p| p[:name] }.should == ["textarea"]
+      members.find_all {|p| p[:private] }.map {|p| p[:name] }.should == ["textarea"]
     end
 
     it "lists class name in enum property docs" do
-      props.find_all {|p| p[:name] == 'form' }[0][:doc].should == "Alias for {@link Form}."
+      members.find_all {|p| p[:name] == 'form' }[0][:doc].should == "Alias for {@link Form}."
     end
   end
 

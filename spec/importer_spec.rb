@@ -1,4 +1,5 @@
 require "jsduck/importer"
+require "jsduck/class"
 
 describe "JsDuck::Importer#generate_since_tags" do
 
@@ -23,15 +24,13 @@ describe "JsDuck::Importer#generate_since_tags" do
     ]
 
     @relations = [
-      {:name => "VeryOldClass", :meta => {}, :alternateClassNames => [], :members => {
-          :cfg => [
-            {:id => "cfg-foo", :meta => {}},
-            {:id => "cfg-bar", :meta => {}},
-            {:id => "cfg-baz", :meta => {}},
-            {:id => "cfg-zap", :meta => {:since => "1.0"}},
-            {:id => "cfg-new", :meta => {:new => true}},
-          ],
-        }},
+      {:name => "VeryOldClass", :meta => {}, :alternateClassNames => [], :members => [
+          {:tagname => :cfg, :id => "cfg-foo", :meta => {}},
+          {:tagname => :cfg, :id => "cfg-bar", :meta => {}},
+          {:tagname => :cfg, :id => "cfg-baz", :meta => {}},
+          {:tagname => :cfg, :id => "cfg-zap", :meta => {:since => "1.0"}},
+          {:tagname => :cfg, :id => "cfg-new", :meta => {:new => true}},
+        ]},
       {:name => "OldClass", :meta => {}, :alternateClassNames => []},
       {:name => "NewClass", :meta => {}, :alternateClassNames => []},
       {:name => "ClassWithNewName", :meta => {}, :alternateClassNames => ["ClassWithOldName"]},
@@ -45,8 +44,7 @@ describe "JsDuck::Importer#generate_since_tags" do
     @stuff = {}
     @relations.each do |cls|
       @stuff[cls[:name]] = cls[:meta]
-      configs = cls[:members] && cls[:members][:cfg]
-      (configs || []).each do |cfg|
+      cls[:members].each do |cfg|
         @stuff[cls[:name]+"#"+cfg[:id]] = cfg[:meta]
       end
     end

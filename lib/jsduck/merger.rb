@@ -48,8 +48,7 @@ module JsDuck
       # Used by Aggregator to determine if we're dealing with Ext4 code
       h[:code_type] = code[:code_type] if code[:code_type]
 
-      h[:members] = Class.default_members_hash
-      h[:statics] = Class.default_members_hash
+      h[:members] = []
 
       h
     end

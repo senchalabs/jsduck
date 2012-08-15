@@ -14,13 +14,11 @@ describe JsDuck::Class do
     @classes = {}
     @parent = JsDuck::Class.new({
         :name => "ParentClass",
-        :members => {
-          :method => [
-            {:name => "foo", :owner => "ParentClass"},
-            {:name => "bar", :owner => "ParentClass"},
-            {:name => "zappa", :owner => "ParentClass"},
-          ]
-        }
+        :members => [
+          {:tagname => :method, :name => "foo", :owner => "ParentClass"},
+          {:tagname => :method, :name => "bar", :owner => "ParentClass"},
+          {:tagname => :method, :name => "zappa", :owner => "ParentClass"},
+        ]
       });
     @classes["ParentClass"] = @parent
     @parent.relations = @classes
@@ -28,13 +26,11 @@ describe JsDuck::Class do
     @child = JsDuck::Class.new({
         :name => "ChildClass",
         :extends => "ParentClass",
-        :members => {
-          :method => [
-            {:name => "bar", :owner => "ChildClass"},
-            {:name => "baz", :owner => "ChildClass"},
-            {:name => "zappa", :owner => "ChildClass", :meta => {:hide => true}},
-          ]
-        }
+        :members => [
+          {:tagname => :method, :name => "bar", :owner => "ChildClass"},
+          {:tagname => :method, :name => "baz", :owner => "ChildClass"},
+          {:tagname => :method, :name => "zappa", :owner => "ChildClass", :meta => {:hide => true}},
+        ]
       });
     @classes["ChildClass"] = @child
     @child.relations = @classes

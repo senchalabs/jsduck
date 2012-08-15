@@ -11,7 +11,7 @@ describe JsDuck::Aggregator do
 
   describe "event inside Ext.define get extra parameter" do
     let(:event) do
-      parse(<<-EOF)[0][:members][:event][0]
+      parse(<<-EOF)[0][:members][0]
         /** */
         Ext.define("Blah", {
             /**
@@ -42,7 +42,7 @@ describe JsDuck::Aggregator do
 
   describe "When some class defined with Ext.define" do
     let(:events) do
-      parse(<<-EOF)[0][:members][:event]
+      parse(<<-EOF)[0][:members]
         /** @class Foo */
             /**
              * @event click
@@ -65,7 +65,7 @@ describe JsDuck::Aggregator do
 
   describe "Without Ext.define-d class" do
     let(:events) do
-      parse(<<-EOF)[0][:members][:event]
+      parse(<<-EOF)[0][:members]
         /** @class Foo */
             /**
              * @event click

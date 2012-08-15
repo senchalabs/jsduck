@@ -11,24 +11,22 @@ describe JsDuck::DocFormatter do
     @formatter.relations = JsDuck::Relations.new([
       JsDuck::Class.new({
         :name => "Context",
-        :members => {
-          :method => [{:tagname => :method, :name => "bar", :id => "method-bar"}]
-        },
-        :statics => {
-          :method => [{:tagname => :method, :name => "id", :id => "static-method-id"}],
-        },
+        :members => [
+          {:tagname => :method, :name => "bar", :id => "method-bar"},
+          {:tagname => :method, :name => "id", :id => "static-method-id",
+            :meta => {:static => true}},
+        ],
       }),
       JsDuck::Class.new({
         :name => 'Ext.Msg'
       }),
       JsDuck::Class.new({
         :name => "Foo",
-        :members => {
-          :cfg => [{:tagname => :cfg, :name => "bar", :id => "cfg-bar"}],
-        },
-        :statics => {
-          :method => [{:tagname => :method, :name => "id", :id => "static-method-id"}],
-        },
+        :members => [
+          {:tagname => :cfg, :name => "bar", :id => "cfg-bar"},
+          {:tagname => :method, :name => "id", :id => "static-method-id",
+            :meta => {:static => true}},
+        ],
         :alternateClassNames => ["FooBar"]
       }),
     ])
@@ -136,9 +134,9 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({:name => 'Foo.Bar.Blah'}),
           JsDuck::Class.new({
             :name => 'Ext.form.Field',
-            :members => {
-              :method => [{:tagname => :method, :name => "getValues", :id => "method-getValues"}]
-            }
+            :members => [
+              {:tagname => :method, :name => "getValues", :id => "method-getValues"}
+            ]
           }),
           JsDuck::Class.new({
             :name => 'Ext.XTemplate',
@@ -146,15 +144,15 @@ describe JsDuck::DocFormatter do
           }),
           JsDuck::Class.new({
             :name => 'Ext',
-            :members => {
-              :method => [{:tagname => :method, :name => "encode", :id => "method-encode"}]
-            }
+            :members => [
+              {:tagname => :method, :name => "encode", :id => "method-encode"}
+            ]
           }),
           JsDuck::Class.new({
             :name => "Context",
-            :members => {
-              :method => [{:tagname => :method, :name => "bar", :id => "method-bar"}]
-            },
+            :members => [
+              {:tagname => :method, :name => "bar", :id => "method-bar"}
+            ]
           }),
         ])
       end
@@ -300,10 +298,10 @@ describe JsDuck::DocFormatter do
         @formatter.relations = JsDuck::Relations.new([
           JsDuck::Class.new({
             :name => 'Foo',
-            :members => {
-              :method => [{:tagname => :method, :name => "select", :id => "method-select"}],
-              :event => [{:tagname => :event, :name => "select", :id => "event-select"}],
-            }
+            :members => [
+              {:tagname => :method, :name => "select", :id => "method-select"},
+              {:tagname => :event, :name => "select", :id => "event-select"},
+            ]
           })
         ])
       end
@@ -324,12 +322,11 @@ describe JsDuck::DocFormatter do
         @formatter.relations = JsDuck::Relations.new([
           JsDuck::Class.new({
             :name => 'Foo',
-            :members => {
-              :method => [{:tagname => :method, :name => "select", :id => "method-select", :meta => {}}],
-            },
-            :statics => {
-              :method => [{:tagname => :method, :name => "select", :id => "static-method-select", :meta => {:static => true}}],
-            }
+            :members => [
+              {:tagname => :method, :name => "select", :id => "method-select", :meta => {}},
+              {:tagname => :method, :name => "select", :id => "static-method-select",
+                :meta => {:static => true}},
+            ]
           })
         ])
       end

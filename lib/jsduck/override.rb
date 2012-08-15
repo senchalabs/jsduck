@@ -68,15 +68,11 @@ module JsDuck
     # helpers
 
     def each_member(cls)
-      [:members, :statics].each do |category|
-        cls[category].each_pair do |key, members|
-          members.each {|m| yield m }
-        end
-      end
+      cls[:members].each {|m| yield m }
     end
 
     def add_member(cls, m)
-      cls[m[:static] ? :statics : :members][m[:tagname]] << m
+      cls[:members] << m
     end
 
     def add_doc(m, doc)

@@ -34,8 +34,8 @@ describe JsDuck::Aggregator do
          * @member Bar
          */
       EOS
-      items[0][:members][:cfg].length.should == 1
-      items[1][:members][:cfg].length.should == 0
+      items[0][:members].length.should == 1
+      items[1][:members].length.should == 0
     end
 
     it "when used before the corresponding @class" do
@@ -48,7 +48,7 @@ describe JsDuck::Aggregator do
          * @class Bar
          */
       EOS
-      items[0][:members][:cfg].length.should == 1
+      items[0][:members].length.should == 1
     end
   end
 

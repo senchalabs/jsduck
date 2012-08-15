@@ -28,7 +28,7 @@ describe JsDuck::Aggregator do
 
   describe "class with @constructor" do
     let(:methods) do
-      parse(<<-EOS)[0][:members][:method]
+      parse(<<-EOS)[0][:members]
         /**
          * @class MyClass
          * Comment here.
@@ -44,7 +44,7 @@ describe JsDuck::Aggregator do
 
   describe "class with method named constructor" do
     let(:methods) do
-      parse(<<-EOS)[0][:members][:method]
+      parse(<<-EOS)[0][:members]
         /**
          * Comment here.
          */
@@ -63,7 +63,7 @@ describe JsDuck::Aggregator do
 
   describe "class with member containing @constructor" do
     let(:methods) do
-      parse(<<-EOS)[0][:members][:method]
+      parse(<<-EOS)[0][:members]
         /**
          * Comment here.
          */
@@ -82,7 +82,7 @@ describe JsDuck::Aggregator do
 
   describe "class with both @constructor tag and constructor property inside Ext.define()" do
     let(:methods) do
-      parse(<<-EOS)[0][:members][:method]
+      parse(<<-EOS)[0][:members]
         /**
          * Comment here.
          * @constructor

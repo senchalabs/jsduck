@@ -86,8 +86,7 @@ module JsDuck
       @links[linenr] << {:doc => doc, :file => file}
       doc[:files] = [file]
       if doc[:tagname] == :class
-        doc[:members][:cfg].each {|cfg| link(linenr, cfg) }
-        doc[:members][:method].each {|method| link(linenr, method) }
+        doc[:members].each {|m| link(linenr, m) }
       end
       doc
     end

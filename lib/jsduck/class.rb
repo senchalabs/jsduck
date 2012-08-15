@@ -18,8 +18,8 @@ module JsDuck
       # differenciating between existing and missing classes.
       @doc[:name] = ClassNameString.new(@doc[:name], class_exists)
 
-      @doc[:members] = Class.default_members_hash if !@doc[:members]
-      @doc[:statics] = Class.default_members_hash if !@doc[:statics]
+      @doc[:members] = [] if !@doc[:members]
+
       @relations = nil
     end
 
@@ -121,7 +121,7 @@ module JsDuck
     #
     # See members_hash for details.
     def members(type, context=:members)
-      ms = members_hash(type, context).values #.find_all {|m| !m[:private] }
+      ms = members_hash(type, context).values
       ms.sort! {|a,b| a[:name] <=> b[:name] }
       type == :method ? constructor_first(ms) : ms
     end
@@ -147,10 +147,12 @@ module JsDuck
       # Singletons have no static members
       if @doc[:singleton] && context == :statics
         # Warn if singleton has static members
-        @doc[context][type].each do |m|
-          ctx = m[:files][0]
-          msg = "Singleton class #{@doc[:name]} can't have static members, remove the @static tag."
-          Logger.instance.warn(:sing_static, msg, ctx[:filename], ctx[:linenr])
+        @doc[:members].each do |m|
+          if m[:meta] && m[:meta][:static]
+            ctx = m[:files][0]
+            msg = "Singleton class #{@doc[:name]} can't have static members, remove the @static tag."
+            Logger.instance.warn(:sing_static, msg, ctx[:filename], ctx[:linenr])
+          end
         end
         return {}
       end
@@ -172,7 +174,7 @@ module JsDuck
       # instance members.  Otherwise they will be completely excluded
       # from the docs, as the static members block is not created for
       # singletons.
-      if @doc[:singleton] && @doc[:statics][type].length > 0
+      if @doc[:singleton]
         merge!(ms, local_members_hash(type, :statics))
       end
 
@@ -230,10 +232,16 @@ module JsDuck
 
     # Helper method to get the direct members of this class
     def local_members_hash(type, context)
+      is_static = (context == :statics)
       local_members = {}
-      (@doc[context][type] || []).each do |m|
+
+      @doc[:members].find_all do |m|
+        static = (m[:meta] || {})[:static] || false
+        m[:tagname] == type && static == is_static
+      end.each do |m|
         local_members[m[:name]] = m
       end
+
       local_members
     end
 
@@ -250,12 +258,8 @@ module JsDuck
       # build hash of all members
       unless @members_map
         @members_map = {}
-        [:members, :statics].each do |group|
-          @doc[group].each_key do |type|
-            members_hash(type, group).each_pair do |key, member|
-              @members_map[key] = (@members_map[key] || []) + [member]
-            end
-          end
+        all_members.each do |m|
+          @members_map[m[:name]] = (@members_map[m[:name]] || []) + [m]
         end
       end
 
@@ -275,23 +279,16 @@ module JsDuck
     # Returns all members of class, including the inherited and mixed in ones
     def all_members
       all = []
-      [:members, :statics].each do |group|
-        @doc[group].each_key do |type|
-          all += members(type, group)
-        end
+      [:cfg, :property, :method, :event, :css_mixin, :css_var].each do |type|
+        all += members(type, :members)
+        all += members(type, :statics)
       end
       all
     end
 
     # Returns all local members of class
     def all_local_members
-      all = []
-      [:members, :statics].each do |group|
-        @doc[group].each_value do |ms|
-          all += ms
-        end
-      end
-      all
+      @doc[:members]
     end
 
     # A way to access full class name with similar syntax to

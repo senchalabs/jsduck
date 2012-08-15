@@ -74,11 +74,11 @@ describe JsDuck::Aggregator do
     end
 
     it "ignores one member" do
-      @doc[:members][:method].length.should == 1
+      @doc[:members].length.should == 1
     end
 
     it "lets the other member stay" do
-      @doc[:members][:method][0][:doc].should == "First method docs"
+      @doc[:members][0][:doc].should == "First method docs"
     end
   end
 

@@ -186,7 +186,7 @@ describe JsDuck::Aggregator do
 
   describe "method without comment inside Ext.define" do
     let(:method) do
-      parse(<<-EOS)[0][:members][:method][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         Ext.define("MyClass", {
             foo: function() {}
@@ -199,7 +199,7 @@ describe JsDuck::Aggregator do
 
   describe "method with line comment inside Ext.define" do
     let(:method) do
-      parse(<<-EOS)[0][:members][:method][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         Ext.define("MyClass", {
             // My docs
@@ -217,7 +217,7 @@ describe JsDuck::Aggregator do
 
   describe "property with value Ext.emptyFn inside Ext.define" do
     let(:method) do
-      parse(<<-EOS)[0][:members][:method][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         Ext.define("MyClass", {
             foo: Ext.emptyFn
@@ -232,7 +232,7 @@ describe JsDuck::Aggregator do
 
   describe "method without comment inside Ext.extend" do
     let(:method) do
-      parse(<<-EOS)[0][:members][:method][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         MyClass = Ext.extend(Object, {
             foo: function(){}
@@ -245,7 +245,7 @@ describe JsDuck::Aggregator do
 
   describe "method with line comment inside Ext.extend" do
     let(:method) do
-      parse(<<-EOS)[0][:members][:method][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         MyClass = Ext.extend(Object, {
             // My docs
@@ -263,7 +263,7 @@ describe JsDuck::Aggregator do
 
   describe "method without comment inside object literal" do
     let(:method) do
-      parse(<<-EOS)[0][:members][:method][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         MyClass = {
             foo: function(){}
@@ -276,7 +276,7 @@ describe JsDuck::Aggregator do
 
   describe "method with line comment inside object literal" do
     let(:method) do
-      parse(<<-EOS)[0][:members][:method][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         MyClass = {
             // My docs

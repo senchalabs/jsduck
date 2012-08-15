@@ -13,6 +13,7 @@ module JsDuck
     def export(cls)
       h = cls.to_hash
       h[:members] = {}
+      h[:statics] = {}
       Class.default_members_hash.each_key do |key|
         h[:members][key] = cls.members(key)
         h[:statics][key] = cls.members(key, :statics)

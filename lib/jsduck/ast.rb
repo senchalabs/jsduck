@@ -224,7 +224,6 @@ module JsDuck
       cls[:mixins] = []
       cls[:aliases] = []
       cls[:members] = []
-      cls[:statics] = []
       cls[:code_type] = :ext_define
 
       each_pair_in_object_expression(ast["arguments"][1]) do |key, value, pair|
@@ -254,9 +253,9 @@ module JsDuck
         when "eventedConfig"
           cls[:members] += make_configs(value, {:accessor => true, :evented => true})
         when "statics"
-          cls[:statics] += make_statics(value)
+          cls[:members] += make_statics(value)
         when "inheritableStatics"
-          cls[:statics] += make_statics(value, {:inheritable => true})
+          cls[:members] += make_statics(value, {:inheritable => true})
         else
           detect_method_or_property(cls, key, value, pair)
         end

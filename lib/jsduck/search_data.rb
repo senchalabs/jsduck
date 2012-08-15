@@ -22,15 +22,9 @@ module JsDuck
           end
         end
 
-        [:members, :statics].each do |group|
-          cls[group].each_key do |type|
-            cls.members(type, group).each do |m|
-              # skip inherited items and constructors
-              if m[:owner] == cls.full_name && m[:name] != cls.short_name
-                list << member_node(m, cls)
-              end
-            end
-          end
+        # add all local members, but skip constructors
+        cls[:members].each do |m|
+          list << member_node(m, cls) unless m[:name] == cls.short_name
         end
       end
 

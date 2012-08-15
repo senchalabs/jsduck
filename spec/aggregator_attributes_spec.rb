@@ -102,7 +102,7 @@ describe JsDuck::Aggregator do
       @doc[:meta][:required].should_not == true
     end
     it "contains required config" do
-      @doc[:members][:cfg][0][:meta][:required].should == true
+      @doc[:members][0][:meta][:required].should == true
     end
   end
 

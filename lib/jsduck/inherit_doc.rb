@@ -20,7 +20,7 @@ module JsDuck
             resolve(member, new_cfgs)
           end
         end
-        move_cfgs(cls, new_cfgs)
+        move_cfgs(cls, new_cfgs) if new_cfgs.length > 0
       end
     end
 
@@ -52,8 +52,6 @@ module JsDuck
     def move_cfgs(cls, members)
       members.each do |m|
         m[:tagname] = :cfg
-        cls[:members][:property].delete(m)
-        cls[:members][:cfg] << m
       end
       # The members lookup table inside class is no more valid, so
       # reset it.

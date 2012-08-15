@@ -7,81 +7,64 @@ describe JsDuck::Class do
     before do
       @classes = {}
       @parent = JsDuck::Class.new({
-          :name => "ParentClass",
-          :members => {
-            :method => [
-              {:name => "baz", :owner => "ParentClass"},
-              {:name => "foo", :owner => "ParentClass"},
-              {:name => "constructor", :owner => "ParentClass"},
-              {:name => "frank", :owner => "ParentClass", :private => true},
-              {:name => "zappa", :owner => "ParentClass", :private => false},
-            ]
-          },
-          :statics => {
-            :method => [
-              {:name => "parentA", :owner => "ParentClass"},
-              {:name => "parentB", :owner => "ParentClass", :inheritable => true},
-            ]
-          }
-        });
+        :name => "ParentClass",
+        :members => [
+          {:tagname => :method, :name => "baz", :owner => "ParentClass"},
+          {:tagname => :method, :name => "foo", :owner => "ParentClass"},
+          {:tagname => :method, :name => "constructor", :owner => "ParentClass"},
+          {:tagname => :method, :name => "frank", :owner => "ParentClass", :private => true},
+          {:tagname => :method, :name => "zappa", :owner => "ParentClass", :private => false},
+          {:tagname => :method, :name => "parentA", :owner => "ParentClass",
+            :meta => {:static => true}},
+          {:tagname => :method, :name => "parentB", :owner => "ParentClass",
+            :inheritable => true, :meta => {:static => true}},
+        ]
+      });
       @classes["ParentClass"] = @parent
       @parent.relations = @classes
 
       @mixin = JsDuck::Class.new({
-          :name => "MixinClass",
-          :members => {
-            :method => [
-              {:name => "xxx", :owner => "MixinClass"},
-              {:name => "pri", :owner => "MixinClass", :private => true},
-            ]
-          },
-          :statics => {
-            :method => [
-              {:name => "mixinA", :owner => "MixinClass"},
-              {:name => "mixinB", :owner => "MixinClass", :inheritable => true},
-            ]
-          }
-        });
+        :name => "MixinClass",
+        :members => [
+          {:tagname => :method, :name => "xxx", :owner => "MixinClass"},
+          {:tagname => :method, :name => "pri", :owner => "MixinClass", :private => true},
+          {:tagname => :method, :name => "mixinA", :owner => "MixinClass",
+            :meta => {:static => true}},
+          {:tagname => :method, :name => "mixinB", :owner => "MixinClass",
+            :inheritable => true, :meta => {:static => true}},
+        ]
+      });
       @classes["MixinClass"] = @mixin
       @mixin.relations = @classes
 
       @child = JsDuck::Class.new({
-          :name => "ChildClass",
-          :extends => "ParentClass",
-          :mixins => ["MixinClass"],
-          :members => {
-            :method => [
-              {:name => "foo", :owner => "ChildClass"},
-              {:name => "bar", :owner => "ChildClass"},
-              {:name => "zappa", :owner => "ChildClass", :private => true},
-            ]
-          },
-          :statics => {
-            :method => [
-              {:name => "childA", :owner => "ChildClass"},
-              {:name => "childB", :owner => "ChildClass", :inheritable => true},
-            ]
-          }
-        });
+        :name => "ChildClass",
+        :extends => "ParentClass",
+        :mixins => ["MixinClass"],
+        :members => [
+          {:tagname => :method, :name => "foo", :owner => "ChildClass"},
+          {:tagname => :method, :name => "bar", :owner => "ChildClass"},
+          {:tagname => :method, :name => "zappa", :owner => "ChildClass", :private => true},
+          {:tagname => :method, :name => "childA", :owner => "ChildClass",
+            :meta => {:static => true}},
+          {:tagname => :method, :name => "childB", :owner => "ChildClass",
+            :inheritable => true, :meta => {:static => true}},
+        ]
+      });
       @classes["ChildClass"] = @child
       @child.relations = @classes
 
       @singletonChild = JsDuck::Class.new({
-          :name => "Singleton",
-          :extends => "ParentClass",
-          :mixins => ["MixinClass"],
-          :singleton => true,
-          :members => {
-            :method => [
-              {:name => "sing", :owner => "Singleton", :files => [{}]},
-            ]
-          },
-          :statics => {
-            :method => [
-              {:name => "singStat", :owner => "Singleton", :files => [{}]},
-            ]
-          }
-        });
+        :name => "Singleton",
+        :extends => "ParentClass",
+        :mixins => ["MixinClass"],
+        :singleton => true,
+        :members => [
+          {:tagname => :method, :name => "sing", :owner => "Singleton", :files => [{}]},
+          {:tagname => :method, :name => "singStat", :owner => "Singleton", :files => [{}],
+            :meta => {:static => true}},
+        ]
+      });
       @classes["Singleton"] = @singletonChild
       @singletonChild.relations = @classes
     end
