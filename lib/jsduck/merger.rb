@@ -80,7 +80,7 @@ module JsDuck
       end
 
       h[:name] = merge_name(docs, code)
-      h[:id] = create_member_id(h)
+      h[:id] = JsDuck::Class.member_id(h)
 
       # Copy private to meta
       h[:meta][:private] = h[:private] if h[:private]
@@ -93,12 +93,6 @@ module JsDuck
       h[:autodetected] = code[:autodetected] if code[:autodetected]
 
       h
-    end
-
-    def create_member_id(m)
-      # Sanitize $ in member names with something safer
-      name = m[:name].gsub(/\$/, 'S-')
-      "#{m[:meta][:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
     end
 
     # Given array of full alias names like "foo.bar", "foo.baz"

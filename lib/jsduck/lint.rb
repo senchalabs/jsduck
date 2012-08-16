@@ -17,6 +17,7 @@ module JsDuck
       warn_optional_params
       warn_duplicate_params
       warn_duplicate_members
+      warn_singleton_statics
       warn_empty_enums
     end
 
@@ -91,6 +92,17 @@ module JsDuck
           end
           hash[name] = m
           members[group][type] = hash
+        end
+      end
+    end
+
+    # Print warnings for static members in singleton classes
+    def warn_singleton_statics
+      @relations.each do |cls|
+        if cls[:singleton]
+          cls.find_members({:static => true}).each do |m|
+            warn(:sing_static, "Static members don't make sense in singleton class #{@doc[:name]}", m)
+          end
         end
       end
     end

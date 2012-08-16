@@ -4,7 +4,7 @@ module JsDuck
 
   # Exporter for all the class docs.
   class FullExporter
-    def initialize(relations, opts)
+    def initialize(relations, opts={})
       @relations = relations
       # opts parameter is here just for compatibility with other exporters
     end
@@ -14,9 +14,9 @@ module JsDuck
       h = cls.to_hash
       h[:members] = {}
       h[:statics] = {}
-      Class.default_members_hash.each_key do |key|
-        h[:members][key] = cls.members(key)
-        h[:statics][key] = cls.members(key, :statics)
+      Class.default_members_hash.each_key do |tagname|
+        h[:members][tagname] = export_members(cls, {:tagname => tagname, :static => false})
+        h[:statics][tagname] = export_members(cls, {:tagname => tagname, :static => true})
       end
       h[:component] = cls.inherits_from?("Ext.Component")
       h[:superclasses] = cls.superclasses.collect {|c| c.full_name }
@@ -29,6 +29,25 @@ module JsDuck
       h[:uses] = cls.deps(:uses).collect {|c| c.full_name }
 
       h
+    end
+
+    private
+
+    # Looks up members, and sorts them so that constructor method is first
+    def export_members(cls, cfg)
+      ms = cls.find_members(cfg)
+      ms.sort! {|a,b| a[:name] <=> b[:name] }
+      cfg[:tagname] == :method ? constructor_first(ms) : ms
+    end
+
+    # If methods list contains constructor, move it into the beginning.
+    def constructor_first(ms)
+      constr = ms.find {|m| m[:name] == "constructor" }
+      if constr
+        ms.delete(constr)
+        ms.unshift(constr)
+      end
+      ms
     end
 
   end

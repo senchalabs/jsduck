@@ -53,9 +53,8 @@ module JsDuck
       members.each do |m|
         m[:tagname] = :cfg
       end
-      # The members lookup table inside class is no more valid, so
-      # reset it.
-      cls.reset_members_lookup!
+      # Ask class to update its internal caches for these members
+      cls.update_members!(members)
     end
 
     # For auto-detected members/classes (which have @private == :inherit)
@@ -73,6 +72,7 @@ module JsDuck
     #
     # If the parent also has @inheritdoc, continues recursively.
     def find_parent(m)
+
       inherit = m[:inheritdoc] || {}
       if inherit[:cls]
         # @inheritdoc MyClass#member
@@ -118,7 +118,6 @@ module JsDuck
         end
       end
 
-      #pp parent[:doc]
       return parent[:inheritdoc] ? find_parent(parent) : parent
     end
 
@@ -132,8 +131,8 @@ module JsDuck
         # Auto-detected properties can override either a property or a
         # config. So look for both types.
         if tagname == :property
-          cfg = cls.get_members(name, :cfg, static || false)[0]
-          prop = cls.get_members(name, :property, static || false)[0]
+          cfg = cls.find_members(:name => name, :tagname => :cfg, :static => static || false)[0]
+          prop = cls.find_members(:name => name, :tagname => :property, :static => static || false)[0]
 
           if cfg && prop
             prop
@@ -148,10 +147,10 @@ module JsDuck
         else
           # Unless the auto-detected member is detected as static,
           # look only at instance members.
-          cls.get_members(name, tagname, static || false)[0]
+          cls.find_members(:name => name, :tagname => tagname, :static => static || false)[0]
         end
       else
-        cls.get_members(name, tagname, static)[0]
+        cls.find_members(:name => name, :tagname => tagname, :static => static)[0]
       end
     end
 

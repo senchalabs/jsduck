@@ -4,38 +4,50 @@ require "jsduck/class"
 
 describe JsDuck::Class do
 
-  def members_as_hash(cls, type, context=:members)
+  def make_class(cfg)
+    cfg[:members].each do |m|
+      m[:tagname] = :property unless m[:tagname]
+      m[:owner] = cfg[:name]
+      m[:meta] = {} unless m[:meta]
+      m[:meta][:static] = true if m[:static]
+      m[:id] = JsDuck::Class.member_id(m)
+    end
+
+    JsDuck::Class.new(cfg)
+  end
+
+  def members_as_hash(cls)
     h = {}
-    cls.members(type, context).each {|m| h[m[:name]] = m }
+    cls.find_members().each {|m| h[m[:name]] = m }
     h
   end
 
   before do
     @classes = {}
-    @parent = JsDuck::Class.new({
+    @parent = make_class({
         :name => "ParentClass",
         :members => [
-          {:tagname => :method, :name => "foo", :owner => "ParentClass"},
-          {:tagname => :method, :name => "bar", :owner => "ParentClass"},
-          {:tagname => :method, :name => "zappa", :owner => "ParentClass"},
+          {:name => "foo"},
+          {:name => "bar"},
+          {:name => "zappa"},
         ]
       });
     @classes["ParentClass"] = @parent
     @parent.relations = @classes
 
-    @child = JsDuck::Class.new({
+    @child = make_class({
         :name => "ChildClass",
         :extends => "ParentClass",
         :members => [
-          {:tagname => :method, :name => "bar", :owner => "ChildClass"},
-          {:tagname => :method, :name => "baz", :owner => "ChildClass"},
-          {:tagname => :method, :name => "zappa", :owner => "ChildClass", :meta => {:hide => true}},
+          {:name => "bar"},
+          {:name => "baz"},
+          {:name => "zappa", :meta => {:hide => true}},
         ]
       });
     @classes["ChildClass"] = @child
     @child.relations = @classes
 
-    @members = members_as_hash(@child, :method)
+    @members = members_as_hash(@child)
   end
 
   it "has member that's inherited from parent" do

@@ -158,7 +158,7 @@ module JsDuck
           Logger.instance.warn(:link, "#{input} links to non-existing class", file, line)
           return text
         elsif member
-          ms = get_members(cls, member, type, static)
+          ms = find_members(cls, {:name => member, :tagname => type, :static => static})
           if ms.length == 0
             Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
             return text
@@ -171,7 +171,7 @@ module JsDuck
             # report ambiguity.
             instance_ms = ms.find_all {|m| !m[:meta][:static] }
             if instance_ms.length > 1
-              alternatives = instance_ms.map {|m| m[:tagname].to_s }.join(", ")
+              alternatives = instance_ms.map {|m| "#{m[:tagname]} in #{m[:owner]}" }.join(", ")
               Logger.instance.warn(:link_ambiguous, "#{input} is ambiguous: "+alternatives, file, line)
             elsif instance_ms.length == 0
               static_ms = ms.find_all {|m| m[:meta][:static] }
@@ -215,7 +215,7 @@ module JsDuck
 
     def replace_magic_link(cls, member)
       if cls && member
-        if @relations[cls] && get_matching_member(cls, member)
+        if @relations[cls] && get_matching_member(cls, {:name => member})
           return link(cls, member, cls+"."+member)
         else
           warn_magic_link("#{cls}##{member} links to non-existing " + (@relations[cls] ? "member" : "class"))
@@ -225,7 +225,7 @@ module JsDuck
           return link(cls, nil, cls)
         else
           cls2, member2 = split_to_cls_and_member(cls)
-          if @relations[cls2] && get_matching_member(cls2, member2)
+          if @relations[cls2] && get_matching_member(cls2, {:name => member2})
             return link(cls2, member2, cls2+"."+member2)
           elsif cls =~ /\.(js|css|html|php)\Z/
             # Ignore common filenames
@@ -234,7 +234,7 @@ module JsDuck
           end
         end
       elsif !cls && member
-        if get_matching_member(@class_context, member)
+        if get_matching_member(@class_context, {:name => member})
           return link(@class_context, member, member)
         elsif member =~ /\A([A-F0-9]{3}|[A-F0-9]{6})\Z/i || member =~ /\A[0-9]/
           # Ignore HEX color codes and
@@ -261,7 +261,7 @@ module JsDuck
       # Use the canonical class name for link (not some alternateClassName)
       cls = @relations[cls].full_name
       # prepend type name to member name
-      member = member && get_matching_member(cls, member, type, static)
+      member = member && get_matching_member(cls, {:name => member, :tagname => type, :static => static})
 
       @link_tpl.gsub(/(%[\w#-])/) do
         case $1
@@ -281,8 +281,8 @@ module JsDuck
       end
     end
 
-    def get_matching_member(cls, member, type=nil, static=nil)
-      ms = get_members(cls, member, type, static).find_all {|m| !m[:private] }
+    def get_matching_member(cls, query)
+      ms = find_members(cls, query).find_all {|m| !m[:private] }
       if ms.length > 1
         instance_ms = ms.find_all {|m| !m[:meta][:static] }
         instance_ms.length > 0 ? instance_ms[0] : ms.find_all {|m| m[:meta][:static] }[0]
@@ -291,8 +291,8 @@ module JsDuck
       end
     end
 
-    def get_members(cls, member, type=nil, static=nil)
-      @relations[cls] ? @relations[cls].get_members(member, type, static) : []
+    def find_members(cls, query)
+      @relations[cls] ? @relations[cls].find_members(query) : []
     end
 
     # Formats doc-comment for placement into HTML.

@@ -30,7 +30,7 @@ describe JsDuck::Aggregator do
         /** @class Child @extends Parent */
           /** @method foo */
       EOF
-      @method = @docs["Child"].members(:method)[0]
+      @method = @docs["Child"].find_members(:tagname => :method)[0]
     end
 
     it_should_behave_like "override"
@@ -46,7 +46,7 @@ describe JsDuck::Aggregator do
 
         /** @class Child @extends Parent @mixins Mixin */
       EOF
-      @method = @docs["Child"].members(:method)[0]
+      @method = @docs["Child"].find_members(:tagname => :method)[0]
     end
 
     it_should_behave_like "override"
@@ -67,10 +67,10 @@ describe JsDuck::Aggregator do
       EOF
       # Call #members on two child classes, this will init the
       # :overrides in Mixin class
-      @docs["Child1"].members(:method)
-      @docs["Child2"].members(:method)
+      @docs["Child1"].find_members(:tagname => :method)[0]
+      @docs["Child2"].find_members(:tagname => :method)[0]
 
-      @method = @docs["Mixin"].members(:method)[0]
+      @method = @docs["Mixin"].find_members(:tagname => :method)[0]
     end
 
     it "gets :override property listing multiple methods" do

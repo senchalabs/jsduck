@@ -114,73 +114,6 @@ module JsDuck
       return full_name == class_name || (parent ? parent.inherits_from?(class_name) : false)
     end
 
-    # Returns array of all public members of particular type in a class,
-    # sorted by name.
-    #
-    # For methods the the constructor is listed first.
-    #
-    # See members_hash for details.
-    def members(type, context=:members)
-      ms = members_hash(type, context).values
-      ms.sort! {|a,b| a[:name] <=> b[:name] }
-      type == :method ? constructor_first(ms) : ms
-    end
-
-    # If methods list contains constructor, rename it with class name
-    # and move into beginning of methods list.
-    def constructor_first(ms)
-      constr = ms.find {|m| m[:name] == "constructor" }
-      if constr
-        ms.delete(constr)
-        ms.unshift(constr)
-      end
-      ms
-    end
-
-    # Returns hash of all members in class (and of parent classes
-    # and mixin classes).  Members are methods, properties, cfgs,
-    # events (member type is specified through 'type' parameter).
-    #
-    # When parent and child have members with same name,
-    # member from child overrides tha parent member.
-    def members_hash(type, context=:members)
-      # Singletons have no static members
-      if @doc[:singleton] && context == :statics
-        # Warn if singleton has static members
-        @doc[:members].each do |m|
-          if m[:meta] && m[:meta][:static]
-            ctx = m[:files][0]
-            msg = "Singleton class #{@doc[:name]} can't have static members, remove the @static tag."
-            Logger.instance.warn(:sing_static, msg, ctx[:filename], ctx[:linenr])
-          end
-        end
-        return {}
-      end
-
-      ms = parent ? parent.members_hash(type, context) : {}
-
-      mixins.each do |mix|
-        merge!(ms, mix.members_hash(type, context))
-      end
-
-      # For static members, exclude everything not explicitly marked as inheritable
-      if context == :statics
-        ms.delete_if {|key, member| !member[:inheritable] }
-      end
-
-      merge!(ms, local_members_hash(type, context))
-
-      # If singleton has static members, include them as if they were
-      # instance members.  Otherwise they will be completely excluded
-      # from the docs, as the static members block is not created for
-      # singletons.
-      if @doc[:singleton]
-        merge!(ms, local_members_hash(type, :statics))
-      end
-
-      ms
-    end
-
     # merges second members hash into first one
     def merge!(hash1, hash2, skip_overrides=false)
       hash2.each_pair do |name, m|
@@ -230,53 +163,6 @@ module JsDuck
       end
     end
 
-    # Helper method to get the direct members of this class
-    def local_members_hash(type, context)
-      is_static = (context == :statics)
-      local_members = {}
-
-      @doc[:members].find_all do |m|
-        static = (m[:meta] || {})[:static] || false
-        m[:tagname] == type && static == is_static
-      end.each do |m|
-        local_members[m[:name]] = m
-      end
-
-      local_members
-    end
-
-    # Returns members by name. An array of one or more members, or
-    # empty array when nothing matches.
-    #
-    # Optionally one can also specify type name to differenciate
-    # between different types of members.
-    #
-    # Finally static flag can be specified. True to look only at
-    # static members, false to look at instance members, and nil to
-    # look at both.
-    def get_members(name, type_name=nil, static=nil)
-      # build hash of all members
-      unless @members_map
-        @members_map = {}
-        all_members.each do |m|
-          @members_map[m[:name]] = (@members_map[m[:name]] || []) + [m]
-        end
-      end
-
-      ms = @members_map[name] || []
-      ms = ms.find_all {|m| m[:tagname] == type_name } if type_name
-      # static = true | false | nil
-      ms = ms.find_all {|m| m[:meta][:static] } if static == true
-      ms = ms.find_all {|m| !m[:meta][:static] } if static == false
-      return ms
-    end
-
-    # Call this when renaming or moving members inside class.
-    def reset_members_lookup!
-      @members_map = nil
-    end
-
-
     # Generates local members hash by ID
     def new_local_members_hash
       unless @map_by_id
@@ -293,7 +179,9 @@ module JsDuck
     # Generates global members hash by ID
     def new_global_members_hash
       unless @global_map_by_id
-        @global_map_by_id = parent ? parent.new_global_members_hash : {}
+        # Make copy of parent class members.
+        # Otherwise we'll be merging directly into parent class.
+        @global_map_by_id = parent ? parent.new_global_members_hash.clone : {}
 
         mixins.each do |mix|
           merge!(@global_map_by_id, mix.new_global_members_hash)
@@ -346,8 +234,16 @@ module JsDuck
       ms
     end
 
+    # This must be called whenever member hashes are changed.
+    # It updates the :id fields of members and clears the caches.
+    def update_members!(members)
+      members.each do |m|
+        m[:id] = Class.member_id(m)
+      end
+      invalidate_search_cache!
+    end
+
     # Clears the search cache.
-    # This is used by InheritDoc after transforming configs into properties.
     # This is also REALLY BAD - try to get rid of it.
     def invalidate_search_cache!
       @map_by_id = nil
@@ -357,17 +253,6 @@ module JsDuck
       parent.invalidate_search_cache! if parent
 
       mixins.each {|mix| mix.invalidate_search_cache! }
-    end
-
-
-    # Returns all members of class, including the inherited and mixed in ones
-    def all_members
-      all = []
-      [:cfg, :property, :method, :event, :css_mixin, :css_var].each do |type|
-        all += members(type, :members)
-        all += members(type, :statics)
-      end
-      all
     end
 
     # Returns all local members of class
@@ -428,6 +313,13 @@ module JsDuck
         short = parts.pop + "." + short
       end
       short
+    end
+
+    # Generates member :id from member hash
+    def self.member_id(m)
+      # Sanitize $ in member names with something safer
+      name = m[:name].gsub(/\$/, 'S-')
+      "#{m[:meta][:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
     end
 
     # Returns default hash that has empty array for each member type

@@ -28,17 +28,17 @@ module JsDuck
     def export(cls)
       {
         :name => cls[:name],
-        :members => export_members(cls, :members),
-        :statics => export_members(cls, :statics),
+        :members => export_members(cls, false),
+        :statics => export_members(cls, true),
       }
     end
 
     private
 
-    def export_members(cls, context)
+    def export_members(cls, static)
       h = {}
       Class.default_members_hash.each_key do |type|
-        h[type] = cls.members(type, context).map {|m| m[:name] }
+        h[type] = cls.find_members(:tagname => type, :static => static).map {|m| m[:name] }
       end
       h
     end
