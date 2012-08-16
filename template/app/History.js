@@ -90,7 +90,7 @@ Ext.define("Docs.History", {
 
     // Parses current browser location
     parseToken: function(token) {
-        var matches = token && token.match(/!?(\/(api|guide|example|video|stats|comment|tests)(\/(.*))?)/);
+        var matches = token && token.match(/!?(\/(api|guide|example|video|comment|tests)(\/(.*))?)/);
         return matches ? {type: matches[2], url: "#!"+matches[1]} : {};
     },
 

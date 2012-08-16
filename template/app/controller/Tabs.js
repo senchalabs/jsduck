@@ -30,10 +30,6 @@ Ext.define('Docs.controller.Tabs', {
             selector: '#exampleindex'
         },
         {
-            ref: 'statsIndex',
-            selector: '#statsindex'
-        },
-        {
             ref: 'testsIndex',
             selector: '#testsindex'
         },
