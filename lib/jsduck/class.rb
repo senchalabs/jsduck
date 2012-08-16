@@ -337,8 +337,10 @@ module JsDuck
         ms = ms.find_all {|m| m[:tagname] == query[:tagname] }
       end
 
-      if query[:static]
+      if query[:static] == true
         ms = ms.find_all {|m| m[:meta] && m[:meta][:static] }
+      elsif query[:static] == false
+        ms = ms.reject {|m| m[:meta] && m[:meta][:static] }
       end
 
       ms

@@ -71,8 +71,12 @@ describe JsDuck::Class do
       cls.find_members(:tagname => :cfg).length.should == 0
     end
 
-    it "finds no statics when there are no static members" do
+    it "finds no members when :static => true specified" do
       cls.find_members(:static => true).length.should == 0
+    end
+
+    it "finds all members when :static => false specified" do
+      cls.find_members(:static => false).length.should == 6
     end
 
     it "finds member in itself" do
@@ -161,6 +165,10 @@ describe JsDuck::Class do
 
     it "finds all static members" do
       cls.find_members(:static => true).length.should == 4
+    end
+
+    it "finds no static members when :static=>false specified" do
+      cls.find_members(:static => false).length.should == 0
     end
   end
 
