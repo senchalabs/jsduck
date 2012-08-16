@@ -344,6 +344,19 @@ module JsDuck
       ms
     end
 
+    # Clears the search cache.
+    # This is used by InheritDoc after transforming configs into properties.
+    # This is also REALLY BAD - try to get rid of it.
+    def invalidate_search_cache!
+      @map_by_id = nil
+      @global_map_by_id = nil
+      @global_map_by_name = nil
+
+      parent.invalidate_search_cache! if parent
+
+      mixins.each {|mix| mix.invalidate_search_cache! }
+    end
+
 
     # Returns all members of class, including the inherited and mixed in ones
     def all_members

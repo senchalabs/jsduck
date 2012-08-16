@@ -164,6 +164,83 @@ describe JsDuck::Class do
     end
   end
 
+  describe "when #find_members called before" do
+    let (:parent) do
+      make_class({
+        :name => "ParentClass",
+        :members => [
+          {:name => "oldName"},
+        ]
+      });
+    end
+
+    let (:child) do
+      make_class({
+        :name => "ChildClass",
+        :extends => "ParentClass",
+        :members => [
+          {:name => "oldName"},
+        ]
+      });
+    end
+
+    before do
+      classes = {}
+
+      classes["ParentClass"] = parent
+      parent.relations = classes
+
+      classes["ChildClass"] = child
+      child.relations = classes
+
+      child.find_members(:name => "oldName")
+
+      child
+    end
+
+    describe "then after changing child member name" do
+      before do
+        child[:members][0][:name] = "changedName"
+        child[:members][0][:id] = "property-changedName"
+      end
+
+      it "the new member can't be found" do
+        child.find_members(:name => "changedName").length.should == 0
+      end
+
+      describe "and after calling #invalidate_search_cache!" do
+        before do
+          child.invalidate_search_cache!
+        end
+
+        it "the new member is now findable" do
+          child.find_members(:name => "changedName").length.should == 1
+        end
+      end
+    end
+
+    describe "then after changing parent member tagname" do
+      before do
+        parent[:members][0][:tagname] = :method
+        parent[:members][0][:id] = "method-oldName"
+      end
+
+      it "the new member can't be found" do
+        child.find_members(:tagname => :method).length.should == 0
+      end
+
+      describe "and after calling #invalidate_search_cache!" do
+        before do
+          child.invalidate_search_cache!
+        end
+
+        it "the new member is now findable" do
+          child.find_members(:tagname => :method).length.should == 1
+        end
+      end
+    end
+  end
+
   describe "#members" do
 
     before do
