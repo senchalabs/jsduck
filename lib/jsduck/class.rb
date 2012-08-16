@@ -276,6 +276,75 @@ module JsDuck
       @members_map = nil
     end
 
+
+    # Generates local members hash by ID
+    def new_local_members_hash
+      unless @map_by_id
+        @map_by_id = {}
+
+        @doc[:members].each do |m|
+          @map_by_id[m[:id]] = m
+        end
+      end
+
+      @map_by_id
+    end
+
+    # Generates global members hash by ID
+    def new_global_members_hash
+      unless @global_map_by_id
+        @global_map_by_id = parent ? parent.new_global_members_hash : {}
+
+        mixins.each do |mix|
+          merge!(@global_map_by_id, mix.new_global_members_hash)
+        end
+
+        # Exclude all non-inheritable static members
+        @global_map_by_id.delete_if {|id, m| m[:meta][:static] && !m[:inheritable] }
+
+        merge!(@global_map_by_id, new_local_members_hash)
+      end
+
+      @global_map_by_id
+    end
+
+    # Generates global members hash by name
+    def new_global_members_hash_by_name
+      unless @global_map_by_name
+        @global_map_by_name = {}
+
+        new_global_members_hash.each_pair do |id, m|
+          @global_map_by_name[m[:name]] = [] unless @global_map_by_name[m[:name]]
+          @global_map_by_name[m[:name]] << m
+        end
+      end
+
+      @global_map_by_name
+    end
+
+    # Searches members by name.  Finds both local members and those
+    # inherited from parents and mixins.
+    #
+    # Returns an array of members found or empty array
+    def find_members(query={})
+      if query[:name]
+        ms = new_global_members_hash_by_name[query[:name]] || []
+      else
+        ms = new_global_members_hash.values
+      end
+
+      if query[:tagname]
+        ms = ms.find_all {|m| m[:tagname] == query[:tagname] }
+      end
+
+      if query[:static]
+        ms = ms.find_all {|m| m[:meta] && m[:meta][:static] }
+      end
+
+      ms
+    end
+
+
     # Returns all members of class, including the inherited and mixed in ones
     def all_members
       all = []

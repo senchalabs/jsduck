@@ -2,6 +2,168 @@ require "jsduck/class"
 
 describe JsDuck::Class do
 
+  def make_class(cfg)
+    cfg[:members].each do |m|
+      m[:tagname] = :property unless m[:tagname]
+      m[:owner] = cfg[:name]
+      m[:id] = (m[:static] ? "static-" : "") + (m[:tagname] ? "#{m[:tagname]}-" : "property-") + m[:name]
+      m[:meta] = {} unless m[:meta]
+      m[:meta][:static] = true if m[:static]
+    end
+
+    JsDuck::Class.new(cfg)
+  end
+
+  describe "#find_members" do
+    let (:cls) do
+      classes = {}
+
+      parent = make_class({
+        :name => "ParentClass",
+        :members => [
+          {:name => "inParent"},
+          {:name => "alsoInParent"},
+        ]
+      });
+      classes["ParentClass"] = parent
+      parent.relations = classes
+
+      parent = make_class({
+        :name => "MixinClass",
+        :members => [
+          {:name => "inMixin"},
+          {:name => "alsoInMixin"},
+        ]
+      });
+      classes["MixinClass"] = parent
+      parent.relations = classes
+
+      child = make_class({
+        :name => "ChildClass",
+        :extends => "ParentClass",
+        :mixins => ["MixinClass"],
+        :members => [
+          {:name => "inChild", :tagname => :method},
+          {:name => "alsoInParent"},
+          {:name => "alsoInMixin"},
+          {:name => "childEvent", :tagname => :event},
+        ]
+      });
+      classes["ChildClass"] = child
+      child.relations = classes
+
+      child
+    end
+
+    it "finds all members when called without arguments" do
+      cls.find_members().length.should == 6
+    end
+
+    it "finds all properties by specifying tagname" do
+      cls.find_members(:tagname => :property).length.should == 4
+    end
+
+    it "finds all methods by specifying tagname" do
+      cls.find_members(:tagname => :method).length.should == 1
+    end
+
+    it "finds no members when specifying non-existing tagname" do
+      cls.find_members(:tagname => :cfg).length.should == 0
+    end
+
+    it "finds no statics when there are no static members" do
+      cls.find_members(:static => true).length.should == 0
+    end
+
+    it "finds member in itself" do
+      cls.find_members(:name => "inChild").length.should == 1
+    end
+
+    it "finds member in parent" do
+      cls.find_members(:name => "inParent").length.should == 1
+    end
+
+    it "finds member in mixin" do
+      cls.find_members(:name => "inMixin").length.should == 1
+    end
+
+    it "finds overridden parent member" do
+      cls.find_members(:name => "alsoInParent")[0][:owner].should == "ChildClass"
+    end
+
+    it "finds overridden mixin member" do
+      cls.find_members(:name => "alsoInMixin")[0][:owner].should == "ChildClass"
+    end
+  end
+
+  describe "#find_members with statics" do
+    let (:cls) do
+      classes = {}
+
+      parent = make_class({
+        :name => "ParentClass",
+        :members => [
+          {:name => "inParent", :static => true},
+          {:name => "inParentInheritable", :static => true, :inheritable => true},
+        ]
+      });
+      classes["ParentClass"] = parent
+      parent.relations = classes
+
+      parent = make_class({
+        :name => "MixinClass",
+        :members => [
+          {:name => "inMixin", :static => true},
+          {:name => "inMixinInheritable", :static => true, :inheritable => true},
+        ]
+      });
+      classes["MixinClass"] = parent
+      parent.relations = classes
+
+      child = make_class({
+        :name => "ChildClass",
+        :extends => "ParentClass",
+        :mixins => ["MixinClass"],
+        :members => [
+          {:name => "inChild", :static => true},
+          {:name => "inChildInheritable", :static => true, :inheritable => true},
+        ]
+      });
+      classes["ChildClass"] = child
+      child.relations = classes
+
+      child
+    end
+
+    it "finds the static member in child" do
+      cls.find_members(:name => "inChild", :static => true).length.should == 1
+    end
+
+    it "finds the static inheritable member in child" do
+      cls.find_members(:name => "inChildInheritable", :static => true).length.should == 1
+    end
+
+    it "doesn't find the normal parent static member" do
+      cls.find_members(:name => "inParent", :static => true).length.should == 0
+    end
+
+    it "finds the inheritable parent static member" do
+      cls.find_members(:name => "inParentInheritable", :static => true).length.should == 1
+    end
+
+    it "doesn't find the normal parent mixin member" do
+      cls.find_members(:name => "inMixin", :static => true).length.should == 0
+    end
+
+    it "finds the inheritable mixin static member" do
+      cls.find_members(:name => "inMixinInheritable", :static => true).length.should == 1
+    end
+
+    it "finds all static members" do
+      cls.find_members(:static => true).length.should == 4
+    end
+  end
+
   describe "#members" do
 
     before do
