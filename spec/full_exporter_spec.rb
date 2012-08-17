@@ -1,25 +1,14 @@
 require "jsduck/full_exporter"
 require "jsduck/class"
 require "jsduck/relations"
+require "class_factory"
 
 describe JsDuck::FullExporter do
-
-  def make_class(cfg)
-    cfg[:members].each do |m|
-      m[:tagname] = :property unless m[:tagname]
-      m[:owner] = cfg[:name]
-      m[:meta] = {} unless m[:meta]
-      m[:meta][:static] = true if m[:static]
-      m[:id] = JsDuck::Class.member_id(m)
-    end
-
-    JsDuck::Class.new(cfg)
-  end
 
   describe "#export" do
 
     let(:cls) do
-      make_class({
+      Helper::ClassFactory.create({
         :name => "Foo",
         :members => [
           {:tagname => :cfg, :name => "foo"},

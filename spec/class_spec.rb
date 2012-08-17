@@ -1,4 +1,5 @@
 require "jsduck/class"
+require "class_factory"
 
 describe JsDuck::Class do
 
@@ -18,7 +19,7 @@ describe JsDuck::Class do
     let (:cls) do
       classes = {}
 
-      parent = make_class({
+      parent = Helper::ClassFactory.create({
         :name => "ParentClass",
         :members => [
           {:name => "inParent"},
@@ -28,7 +29,7 @@ describe JsDuck::Class do
       classes["ParentClass"] = parent
       parent.relations = classes
 
-      parent = make_class({
+      parent = Helper::ClassFactory.create({
         :name => "MixinClass",
         :members => [
           {:name => "inMixin"},
@@ -38,7 +39,7 @@ describe JsDuck::Class do
       classes["MixinClass"] = parent
       parent.relations = classes
 
-      child = make_class({
+      child = Helper::ClassFactory.create({
         :name => "ChildClass",
         :extends => "ParentClass",
         :mixins => ["MixinClass"],
@@ -104,7 +105,7 @@ describe JsDuck::Class do
     let (:cls) do
       classes = {}
 
-      parent = make_class({
+      parent = Helper::ClassFactory.create({
         :name => "ParentClass",
         :members => [
           {:name => "inParent", :static => true},
@@ -114,7 +115,7 @@ describe JsDuck::Class do
       classes["ParentClass"] = parent
       parent.relations = classes
 
-      parent = make_class({
+      parent = Helper::ClassFactory.create({
         :name => "MixinClass",
         :members => [
           {:name => "inMixin", :static => true},
@@ -124,7 +125,7 @@ describe JsDuck::Class do
       classes["MixinClass"] = parent
       parent.relations = classes
 
-      child = make_class({
+      child = Helper::ClassFactory.create({
         :name => "ChildClass",
         :extends => "ParentClass",
         :mixins => ["MixinClass"],
@@ -174,7 +175,7 @@ describe JsDuck::Class do
 
   describe "when #find_members called before" do
     let (:parent) do
-      make_class({
+      Helper::ClassFactory.create({
         :name => "ParentClass",
         :members => [
           {:name => "oldName"},
@@ -183,7 +184,7 @@ describe JsDuck::Class do
     end
 
     let (:child) do
-      make_class({
+      Helper::ClassFactory.create({
         :name => "ChildClass",
         :extends => "ParentClass",
         :members => [
