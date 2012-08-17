@@ -230,16 +230,10 @@ module JsDuck
       "#{m[:meta][:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
     end
 
-    # Returns default hash that has empty array for each member type
-    def self.default_members_hash
-      return {
-        :cfg => [],
-        :property => [],
-        :method => [],
-        :event => [],
-        :css_var => [],
-        :css_mixin => [],
-      }
+    # Loops through all available member types,
+    # passing the tagname of the member to the block.
+    def self.each_member_type(&block)
+      [:cfg, :property, :method, :event, :css_var, :css_mixin].each(&block)
     end
   end
 

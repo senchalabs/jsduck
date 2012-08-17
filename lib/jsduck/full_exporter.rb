@@ -17,7 +17,7 @@ module JsDuck
 
       h[:members] = {}
       h[:statics] = {}
-      Class.default_members_hash.each_key do |tagname|
+      Class.each_member_type do |tagname|
         h[:members][tagname] = export_members(cls, {:tagname => tagname, :static => false})
         h[:statics][tagname] = export_members(cls, {:tagname => tagname, :static => true})
       end
