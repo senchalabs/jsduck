@@ -100,7 +100,7 @@ module JsDuck
     def warn_singleton_statics
       @relations.each do |cls|
         if cls[:singleton]
-          cls.find_members({:static => true}).each do |m|
+          cls.find_members({:local => true, :static => true}).each do |m|
             warn(:sing_static, "Static members don't make sense in singleton class #{@doc[:name]}", m)
           end
         end
