@@ -99,15 +99,6 @@ module JsDuck
       end
     end
 
-    # Returns copy of @doc hash
-    def to_hash
-      @doc.clone
-    end
-
-    def to_json(*a)
-      to_hash.to_json(*a)
-    end
-
     # Returns true when this class inherits from the specified class.
     # Also returns true when the class itself is the one we are asking about.
     def inherits_from?(class_name)

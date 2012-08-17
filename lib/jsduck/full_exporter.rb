@@ -11,7 +11,10 @@ module JsDuck
 
     # Returns all data in Class object as hash.
     def export(cls)
-      h = cls.to_hash
+      # Make copy of the internal data structure of a class
+      # so our modifications on it will be safe.
+      h = cls.internal_doc.clone
+
       h[:members] = {}
       h[:statics] = {}
       Class.default_members_hash.each_key do |tagname|
