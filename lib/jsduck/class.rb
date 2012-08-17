@@ -119,12 +119,17 @@ module JsDuck
     #                       When nil or unspecified, both static
     #                       and instance members are returned.
     #
+    # - :local : Boolean -  true to only return non-inherited members.
+    #
     # When called without arguments all members are returned.
     #
     # When nothing found, an empty array is returned.
     def find_members(query={})
       if query[:name]
         ms = global_members_hash_by_name[query[:name]] || []
+        ms = ms.find_all {|m| m[:owner] == @doc[:name]} if query[:local]
+      elsif query[:local]
+        ms = local_members_hash.values
       else
         ms = global_members_hash.values
       end

@@ -99,6 +99,22 @@ describe JsDuck::Class do
     it "finds overridden mixin member" do
       cls.find_members(:name => "alsoInMixin")[0][:owner].should == "ChildClass"
     end
+
+    it "finds just local members with :local=>true" do
+      cls.find_members(:local => true).length.should == 4
+    end
+
+    it "finds a local member if :local=>true" do
+      cls.find_members(:name => "inChild", :local => true).length.should == 1
+    end
+
+    it "doesn't find parent member if :local=>true" do
+      cls.find_members(:name => "inParent", :local => true).length.should == 0
+    end
+
+    it "doesn't find mixin member if :local=>true" do
+      cls.find_members(:name => "inMixin", :local => true).length.should == 0
+    end
   end
 
   describe "#find_members with statics" do
