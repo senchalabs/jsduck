@@ -1,4 +1,5 @@
 require 'jsduck/logger'
+require 'jsduck/members_index'
 
 module JsDuck
 
@@ -7,6 +8,10 @@ module JsDuck
   # method.
   class Class
     attr_accessor :relations
+
+    # Used only by MembersIndex class itself to access the
+    # MembersIndex instances of parents and mixins.
+    attr_accessor :members_index
 
     # Creates JSDuck class.
     #
@@ -19,6 +24,8 @@ module JsDuck
       @doc[:name] = ClassNameString.new(@doc[:name], class_exists)
 
       @doc[:members] = [] if !@doc[:members]
+
+      @members_index = MembersIndex.new(self)
 
       @relations = nil
     end
@@ -126,12 +133,12 @@ module JsDuck
     # When nothing found, an empty array is returned.
     def find_members(query={})
       if query[:name]
-        ms = global_members_hash_by_name[query[:name]] || []
+        ms = @members_index.global_by_name[query[:name]] || []
         ms = ms.find_all {|m| m[:owner] == @doc[:name]} if query[:local]
       elsif query[:local]
-        ms = local_members_hash.values
+        ms = @members_index.local_by_id.values
       else
-        ms = global_members_hash.values
+        ms = @members_index.global_by_id.values
       end
 
       if query[:tagname]
@@ -147,121 +154,13 @@ module JsDuck
       ms
     end
 
-    # Generates global members hash by name
-    def global_members_hash_by_name
-      unless @global_map_by_name
-        @global_map_by_name = {}
-
-        global_members_hash.each_pair do |id, m|
-          @global_map_by_name[m[:name]] = [] unless @global_map_by_name[m[:name]]
-          @global_map_by_name[m[:name]] << m
-        end
-      end
-
-      @global_map_by_name
-    end
-
-    # Generates global members hash by ID
-    def global_members_hash
-      unless @global_map_by_id
-        # Make copy of parent class members.
-        # Otherwise we'll be merging directly into parent class.
-        @global_map_by_id = parent ? parent.global_members_hash.clone : {}
-
-        mixins.each do |mix|
-          merge!(@global_map_by_id, mix.global_members_hash)
-        end
-
-        # Exclude all non-inheritable static members
-        @global_map_by_id.delete_if {|id, m| m[:meta][:static] && !m[:inheritable] }
-
-        merge!(@global_map_by_id, local_members_hash)
-      end
-
-      @global_map_by_id
-    end
-
-    # Generates local members hash by ID
-    def local_members_hash
-      unless @map_by_id
-        @map_by_id = {}
-
-        @doc[:members].each do |m|
-          @map_by_id[m[:id]] = m
-        end
-      end
-
-      @map_by_id
-    end
-
-    # merges second members hash into first one
-    def merge!(hash1, hash2, skip_overrides=false)
-      hash2.each_pair do |name, m|
-        if m[:meta] && m[:meta][:hide]
-          if hash1[name]
-            hash1.delete(name)
-          else
-            ctx = m[:files][0]
-            msg = "@hide used but #{m[:tagname]} #{m[:name]} not found in parent class"
-            Logger.instance.warn(:hide, msg, ctx[:filename], ctx[:linenr])
-          end
-        else
-          if hash1[name]
-            store_overrides(hash1[name], m)
-          end
-          hash1[name] = m
-        end
-      end
-    end
-
-    # Invoked when merge! finds two members with the same name.
-    # New member always overrides the old, but inside new we keep
-    # a list of members it overrides.  Normally one member will
-    # override one other member, but a member from mixin can override
-    # multiple members - although there's not a single such case in
-    # ExtJS, we have to handle it.
-    #
-    # Every overridden member is listed just once.
-    def store_overrides(old, new)
-      # Sometimes a class is included multiple times (like Ext.Base)
-      # resulting in its members overriding themselves.  Because of
-      # this, ignore overriding itself.
-      if new[:owner] != old[:owner]
-        new[:overrides] = [] unless new[:overrides]
-        unless new[:overrides].any? {|m| m[:owner] == old[:owner] }
-          # Make a copy of the important properties for us.  We can't
-          # just push the actual `old` member itself, because there
-          # can be circular overrides (notably with Ext.Base), which
-          # will result in infinite loop when we try to convert our
-          # class into JSON.
-          new[:overrides] << {
-            :name => old[:name],
-            :owner => old[:owner],
-            :id => old[:id],
-          }
-        end
-      end
-    end
-
     # This must be called whenever member hashes are changed.
     # It updates the :id fields of members and clears the caches.
     def update_members!(members)
       members.each do |m|
         m[:id] = Class.member_id(m)
       end
-      invalidate_search_cache!
-    end
-
-    # Clears the search cache.
-    # This is also REALLY BAD - try to get rid of it.
-    def invalidate_search_cache!
-      @map_by_id = nil
-      @global_map_by_id = nil
-      @global_map_by_name = nil
-
-      parent.invalidate_search_cache! if parent
-
-      mixins.each {|mix| mix.invalidate_search_cache! }
+      @members_index.invalidate!
     end
 
     # Returns all local members of class

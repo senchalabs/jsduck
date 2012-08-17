@@ -226,16 +226,15 @@ describe JsDuck::Class do
     describe "then after changing child member name" do
       before do
         child[:members][0][:name] = "changedName"
-        child[:members][0][:id] = "property-changedName"
       end
 
       it "the new member can't be found" do
         child.find_members(:name => "changedName").length.should == 0
       end
 
-      describe "and after calling #invalidate_search_cache!" do
+      describe "and after calling #update_members!" do
         before do
-          child.invalidate_search_cache!
+          child.update_members!(child[:members])
         end
 
         it "the new member is now findable" do
@@ -247,16 +246,15 @@ describe JsDuck::Class do
     describe "then after changing parent member tagname" do
       before do
         parent[:members][0][:tagname] = :method
-        parent[:members][0][:id] = "method-oldName"
       end
 
       it "the new member can't be found" do
         child.find_members(:tagname => :method).length.should == 0
       end
 
-      describe "and after calling #invalidate_search_cache!" do
+      describe "and after calling #update_members!" do
         before do
-          child.invalidate_search_cache!
+          child.update_members!(parent[:members])
         end
 
         it "the new member is now findable" do
