@@ -260,19 +260,25 @@ module JsDuck
         end
       end
 
-      after = ""
-      MetaTagRegistry.instance.signatures.each do |s|
-        after += "<strong class='#{s[:key]} signature'>#{s[:long]}</strong>" if m[:meta][s[:key]]
-      end
-
       uri = "#!/api/#{m[:owner]}-#{m[:id]}"
 
       return [
         before,
         "<a href='#{uri}' class='name #{expandable}'>#{name}</a>",
         params,
-        after
+        render_meta_signatures(m)
       ]
+    end
+
+    def render_meta_signatures(m)
+      html = ""
+      MetaTagRegistry.instance.signatures.each do |s|
+        if m[:meta][s[:key]]
+          title = s[:tooltip] ? "title='#{s[:tooltip]}'" : ""
+          html += "<strong class='#{s[:key]} signature' #{title}>#{s[:long]}</strong>"
+        end
+      end
+      html
     end
 
     def render_short_param(param)

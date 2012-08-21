@@ -138,6 +138,7 @@ module JsDuck
 
       reg = MetaTagRegistry.new
       reg.load([:builtins] + @meta_tag_paths)
+      reg[:new].create_tooltip!(@imports, @new_since)
       MetaTagRegistry.instance = reg
     end
 
