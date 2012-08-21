@@ -243,31 +243,43 @@ module JsDuck
     def render_signature(m)
       expandable = m[:shortDoc] ? "expandable" : "not-expandable"
 
-      name = m[:name]
-      before = ""
-      if m[:tagname] == :method && m[:name] == "constructor"
-        before = "<strong class='new-keyword'>new</strong>"
-        name = @cls[:name]
-      end
-
-      if m[:tagname] == :cfg || m[:tagname] == :property || m[:tagname] == :css_var
-        params = "<span> : #{m[:html_type]}</span>"
-      else
-        ps = m[:params].map {|p| render_short_param(p) }.join(", ")
-        params = "( <span class='pre'>#{ps}</span> )"
-        if m[:tagname] == :method && m[:return][:type] != "undefined"
-          params += " : " + m[:return][:html_type]
-        end
-      end
-
       uri = "#!/api/#{m[:owner]}-#{m[:id]}"
 
       return [
-        before,
-        "<a href='#{uri}' class='name #{expandable}'>#{name}</a>",
-        params,
+        render_new_signature(m),
+        "<a href='#{uri}' class='name #{expandable}'>#{render_member_name(m)}</a>",
+        render_params_signature(m),
         render_meta_signatures(m)
       ]
+    end
+
+    def render_new_signature(m)
+      constructor?(m) ? "<strong class='new-keyword'>new</strong>" : ""
+    end
+
+    def render_member_name(m)
+      constructor?(m) ? @cls[:name] : m[:name]
+    end
+
+    def constructor?(m)
+      m[:tagname] == :method && m[:name] == "constructor"
+    end
+
+    def render_params_signature(m)
+      if m[:tagname] == :cfg || m[:tagname] == :property || m[:tagname] == :css_var
+        "<span> : #{m[:html_type]}</span>"
+      else
+        ps = m[:params].map {|p| render_short_param(p) }.join(", ")
+        "( <span class='pre'>#{ps}</span> )" + render_return_signature(m)
+      end
+    end
+
+    def render_return_signature(m)
+      method_with_return?(m) ? (" : " + m[:return][:html_type]) : ""
+    end
+
+    def method_with_return?(m)
+      m[:tagname] == :method && m[:return][:type] != "undefined"
     end
 
     def render_meta_signatures(m)
