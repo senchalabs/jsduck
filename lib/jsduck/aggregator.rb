@@ -232,9 +232,15 @@ module JsDuck
       Enum.new(@classes).process_all!
     end
 
-    # Processes all overrides
+    # Processes all overrides.
+    # Returns list of override classes.
     def process_overrides
-      Override.new(@classes, @documentation).process_all!
+      Override.new(@classes).process_all!.map do |cls|
+        # discard each override class
+        @classes.delete(cls[:name])
+        @documentation.delete(cls)
+        cls
+      end
     end
 
     # Are we dealing with ExtJS 4?
