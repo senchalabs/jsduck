@@ -1,5 +1,6 @@
 require 'jsduck/meta_tag_registry'
 require 'jsduck/html'
+require 'jsduck/signature_renderer'
 
 module JsDuck
 
@@ -12,6 +13,7 @@ module JsDuck
 
     def render(cls)
         @cls = cls
+        @signature = SignatureRenderer.new(cls)
 
         return [
           "<div>",
@@ -241,61 +243,7 @@ module JsDuck
     end
 
     def render_signature(m)
-      expandable = m[:shortDoc] ? "expandable" : "not-expandable"
-
-      uri = "#!/api/#{m[:owner]}-#{m[:id]}"
-
-      return [
-        render_new_signature(m),
-        "<a href='#{uri}' class='name #{expandable}'>#{render_member_name(m)}</a>",
-        render_params_signature(m),
-        render_meta_signatures(m)
-      ]
-    end
-
-    def render_new_signature(m)
-      constructor?(m) ? "<strong class='new-keyword'>new</strong>" : ""
-    end
-
-    def render_member_name(m)
-      constructor?(m) ? @cls[:name] : m[:name]
-    end
-
-    def constructor?(m)
-      m[:tagname] == :method && m[:name] == "constructor"
-    end
-
-    def render_params_signature(m)
-      if m[:tagname] == :cfg || m[:tagname] == :property || m[:tagname] == :css_var
-        "<span> : #{m[:html_type]}</span>"
-      else
-        ps = m[:params].map {|p| render_short_param(p) }.join(", ")
-        "( <span class='pre'>#{ps}</span> )" + render_return_signature(m)
-      end
-    end
-
-    def render_return_signature(m)
-      method_with_return?(m) ? (" : " + m[:return][:html_type]) : ""
-    end
-
-    def method_with_return?(m)
-      m[:tagname] == :method && m[:return][:type] != "undefined"
-    end
-
-    def render_meta_signatures(m)
-      html = ""
-      MetaTagRegistry.instance.signatures.each do |s|
-        if m[:meta][s[:key]]
-          title = s[:tooltip] ? "title='#{s[:tooltip]}'" : ""
-          html += "<strong class='#{s[:key]} signature' #{title}>#{s[:long]}</strong>"
-        end
-      end
-      html
-    end
-
-    def render_short_param(param)
-      p = param[:html_type] + " " + param[:name]
-      return param[:optional] ? "["+p+"]" : p
+      @signature.render(m)
     end
 
     def render_long_doc(m)
