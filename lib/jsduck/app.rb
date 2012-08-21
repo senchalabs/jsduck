@@ -12,6 +12,7 @@ require 'jsduck/assets'
 require 'jsduck/json_duck'
 require 'jsduck/io'
 require 'jsduck/importer'
+require 'jsduck/chainable'
 require 'jsduck/lint'
 require 'jsduck/template_dir'
 require 'jsduck/class_writer'
@@ -48,6 +49,7 @@ module JsDuck
       @relations = filter_classes(result)
       InheritDoc.new(@relations).resolve_all
       Importer.import(@opts.imports, @relations, @opts.new_since)
+      Chainable.auto_detect(@relations)
       Lint.new(@relations).run
 
       # Initialize guides, videos, examples, ...
