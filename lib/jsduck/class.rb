@@ -189,28 +189,7 @@ module JsDuck
       @doc[:name]
     end
 
-    # Returns last part of full class name
-    #
-    # For example for "My.package.Class" it is "Class"
-    def short_name
-      Class.short_name(@doc[:name])
-    end
-
     # Static methods
-
-    # Utility method that given full package or class name extracts
-    # the "class"-part of the name.
-    #
-    # Because we try to emulate ext-doc, it's not as simple as just
-    # taking the last part.  See class_spec.rb for details.
-    def self.short_name(name)
-      parts = name.split(/\./)
-      short = parts.pop
-      while parts.length > 1 && parts.last =~ /^[A-Z]/
-        short = parts.pop + "." + short
-      end
-      short
-    end
 
     # Generates member :id from member hash
     def self.member_id(m)

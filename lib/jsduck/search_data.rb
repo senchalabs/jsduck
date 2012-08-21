@@ -1,4 +1,5 @@
 require 'jsduck/icons'
+require 'jsduck/class_name'
 
 module JsDuck
 
@@ -25,7 +26,7 @@ module JsDuck
 
         # add all local members, but skip constructors
         cls[:members].each do |m|
-          list << member_node(m, cls) unless m[:name] == cls.short_name
+          list << member_node(m, cls) unless m[:name] == ClassName.short(cls[:name])
         end
       end
 
@@ -53,7 +54,7 @@ module JsDuck
 
     def class_node(cls)
       return {
-        :name => cls.short_name,
+        :name => ClassName.short(cls[:name]),
         :fullName => cls.full_name,
         :icon => Icons::class_icon(cls),
         :url => "#!/api/" + cls.full_name,
@@ -64,7 +65,7 @@ module JsDuck
 
     def alt_node(name, cls)
       return {
-        :name => Class.short_name(name),
+        :name => ClassName.short(name),
         :fullName => name,
         :type => :class,
         :icon => Icons::class_icon(cls) + "-redirect",
