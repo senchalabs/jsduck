@@ -17,6 +17,8 @@ module JsDuck
     #
     #     {:long => "something", :short => "SOM"}
     #
+    # Additionally the hash can contain a :tooltip which is the text
+    # to be shown when the signature bubble is hovered over in docs.
     attr_reader :signature
 
     # True to include all lines up to next @tag as part of this meta-tag

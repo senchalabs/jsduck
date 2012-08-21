@@ -1,5 +1,6 @@
-require 'jsduck/meta_tag_registry'
 require 'jsduck/html'
+require 'jsduck/meta_tag_renderer'
+require 'jsduck/signature_renderer'
 
 module JsDuck
 
@@ -12,6 +13,7 @@ module JsDuck
 
     def render(cls)
         @cls = cls
+        @signature = SignatureRenderer.new(cls)
 
         return [
           "<div>",
@@ -60,9 +62,7 @@ module JsDuck
     end
 
     def render_meta_data(meta_data, position)
-      return if meta_data.size == 0
-
-      MetaTagRegistry.instance.tags(position).map {|tag| meta_data[tag.key] }
+      MetaTagRenderer.render(meta_data, position)
     end
 
     def render_sidebar
@@ -241,43 +241,7 @@ module JsDuck
     end
 
     def render_signature(m)
-      expandable = m[:shortDoc] ? "expandable" : "not-expandable"
-
-      name = m[:name]
-      before = ""
-      if m[:tagname] == :method && m[:name] == "constructor"
-        before = "<strong class='new-keyword'>new</strong>"
-        name = @cls[:name]
-      end
-
-      if m[:tagname] == :cfg || m[:tagname] == :property || m[:tagname] == :css_var
-        params = "<span> : #{m[:html_type]}</span>"
-      else
-        ps = m[:params].map {|p| render_short_param(p) }.join(", ")
-        params = "( <span class='pre'>#{ps}</span> )"
-        if m[:tagname] == :method && m[:return][:type] != "undefined"
-          params += " : " + m[:return][:html_type]
-        end
-      end
-
-      after = ""
-      MetaTagRegistry.instance.signatures.each do |s|
-        after += "<strong class='#{s[:key]} signature'>#{s[:long]}</strong>" if m[:meta][s[:key]]
-      end
-
-      uri = "#!/api/#{m[:owner]}-#{m[:id]}"
-
-      return [
-        before,
-        "<a href='#{uri}' class='name #{expandable}'>#{name}</a>",
-        params,
-        after
-      ]
-    end
-
-    def render_short_param(param)
-      p = param[:html_type] + " " + param[:name]
-      return param[:optional] ? "["+p+"]" : p
+      @signature.render(m)
     end
 
     def render_long_doc(m)
