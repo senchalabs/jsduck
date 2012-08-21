@@ -184,19 +184,9 @@ module JsDuck
       @doc[:members]
     end
 
-    # A way to access full class name with similar syntax to
-    # package_name and short_name
+    # A way to access full class name with similar syntax to short_name
     def full_name
       @doc[:name]
-    end
-
-    # Returns package name of the class.
-    #
-    # That is the namespace part of full class name.
-    #
-    # For example "My.package" is package_name of "My.package.Class"
-    def package_name
-      Class.package_name(@doc[:name])
     end
 
     # Returns last part of full class name
@@ -207,12 +197,6 @@ module JsDuck
     end
 
     # Static methods
-
-    # Utility method that given a package or class name finds the name
-    # of its parent package.
-    def self.package_name(name)
-      name.slice(0, name.length - self.short_name(name).length - 1) || ""
-    end
 
     # Utility method that given full package or class name extracts
     # the "class"-part of the name.
