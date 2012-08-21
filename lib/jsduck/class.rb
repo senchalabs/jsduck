@@ -30,14 +30,30 @@ module JsDuck
       @relations = nil
     end
 
-    # Accessors for internal doc object.  These are used to run
-    # ClassFormatter on the internal doc object and then assign it
-    # back.
+    # Returns the internal doc object.
     def internal_doc
       @doc
     end
+
+    # Sets the internal doc object.
+    #
+    # The doc object is processed in parallel and then assigned back
+    # through this method.  But because of parallel processing the
+    # assigned doc object will not be just a modified old @doc but a
+    # completely new.  If we were to just assign to @doc the
+    # #find_members caches would still point to old @doc members
+    # resulting in mysterious errors further along...
     def internal_doc=(doc)
-      @doc = doc
+      @doc.merge!(doc) do |key, oldval, newval|
+        if key == :members
+          oldval.zip(newval) do |ms|
+            ms[0].merge!(ms[1])
+          end
+          oldval
+        else
+          newval
+        end
+      end
     end
 
     # Accessor to internal hash
