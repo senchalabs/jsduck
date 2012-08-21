@@ -9,8 +9,19 @@ module JsDuck
           :name => cls[:name],
           :extends => cls[:extends],
           :private => cls[:private],
-          :icon => cls.icon,
+          :icon => Icons::class_icon(cls),
         }
+      end
+    end
+
+    # Returns CSS class name for an icon of class
+    def self.class_icon(cls)
+      if cls[:singleton]
+        "icon-singleton"
+      elsif cls.inherits_from?("Ext.Component")
+        "icon-component"
+      else
+        "icon-class"
       end
     end
   end

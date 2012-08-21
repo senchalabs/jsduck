@@ -1,3 +1,4 @@
+require 'jsduck/icons'
 
 module JsDuck
 
@@ -43,7 +44,7 @@ module JsDuck
       return {
         :name => name,
         :fullName => alias_display_name(key)+": "+name,
-        :icon => cls.icon + "-redirect",
+        :icon => Icons::class_icon(cls) + "-redirect",
         :url => "#!/api/" + cls.full_name,
         :meta => cls[:meta],
         :sort => 0,
@@ -54,7 +55,7 @@ module JsDuck
       return {
         :name => cls.short_name,
         :fullName => cls.full_name,
-        :icon => cls.icon,
+        :icon => Icons::class_icon(cls),
         :url => "#!/api/" + cls.full_name,
         :meta => cls[:meta],
         :sort => 1,
@@ -66,7 +67,7 @@ module JsDuck
         :name => Class.short_name(name),
         :fullName => name,
         :type => :class,
-        :icon => cls.icon + "-redirect",
+        :icon => Icons::class_icon(cls) + "-redirect",
         :url => "#!/api/" + cls.full_name,
         :meta => cls[:meta],
         :sort => 2,

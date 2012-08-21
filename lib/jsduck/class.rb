@@ -206,17 +206,6 @@ module JsDuck
       Class.short_name(@doc[:name])
     end
 
-    # Returns CSS icons class for the class
-    def icon
-      if @doc[:singleton]
-        "icon-singleton"
-      elsif inherits_from?("Ext.Component")
-        "icon-component"
-      else
-        "icon-class"
-      end
-    end
-
     # Static methods
 
     # Utility method that given a package or class name finds the name
