@@ -1,4 +1,4 @@
-require 'jsduck/meta_tag_registry'
+require 'jsduck/meta_tag_renderer'
 
 module JsDuck
 
@@ -84,14 +84,7 @@ module JsDuck
     end
 
     def render_meta
-      html = ""
-      MetaTagRegistry.instance.signatures.each do |s|
-        if @m[:meta][s[:key]]
-          title = s[:tooltip] ? "title='#{s[:tooltip]}'" : ""
-          html += "<strong class='#{s[:key]} signature' #{title}>#{s[:long]}</strong>"
-        end
-      end
-      html
+      MetaTagRenderer.render_signature(@m)
     end
 
   end

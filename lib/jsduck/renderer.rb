@@ -1,5 +1,5 @@
-require 'jsduck/meta_tag_registry'
 require 'jsduck/html'
+require 'jsduck/meta_tag_renderer'
 require 'jsduck/signature_renderer'
 
 module JsDuck
@@ -62,9 +62,7 @@ module JsDuck
     end
 
     def render_meta_data(meta_data, position)
-      return if meta_data.size == 0
-
-      MetaTagRegistry.instance.tags(position).map {|tag| meta_data[tag.key] }
+      MetaTagRenderer.render(meta_data, position)
     end
 
     def render_sidebar
