@@ -46,7 +46,7 @@ module JsDuck
         :name => name,
         :fullName => alias_display_name(key)+": "+name,
         :icon => Icons::class_icon(cls) + "-redirect",
-        :url => "#!/api/" + cls.full_name,
+        :url => "#!/api/" + cls[:name],
         :meta => cls[:meta],
         :sort => 0,
       }
@@ -55,9 +55,9 @@ module JsDuck
     def class_node(cls)
       return {
         :name => ClassName.short(cls[:name]),
-        :fullName => cls.full_name,
+        :fullName => cls[:name],
         :icon => Icons::class_icon(cls),
-        :url => "#!/api/" + cls.full_name,
+        :url => "#!/api/" + cls[:name],
         :meta => cls[:meta],
         :sort => 1,
       }
@@ -69,7 +69,7 @@ module JsDuck
         :fullName => name,
         :type => :class,
         :icon => Icons::class_icon(cls) + "-redirect",
-        :url => "#!/api/" + cls.full_name,
+        :url => "#!/api/" + cls[:name],
         :meta => cls[:meta],
         :sort => 2,
       }
@@ -78,9 +78,9 @@ module JsDuck
     def member_node(member, cls)
       return {
         :name => member[:name],
-        :fullName => cls.full_name + "." + member[:name],
+        :fullName => cls[:name] + "." + member[:name],
         :icon => "icon-" + member[:tagname].to_s,
-        :url => "#!/api/" + cls.full_name + "-" + member[:id],
+        :url => "#!/api/" + cls[:name] + "-" + member[:id],
         :meta => member[:meta],
         :sort => 3,
       }

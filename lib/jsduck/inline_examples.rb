@@ -16,9 +16,9 @@ module JsDuck
       relations.each do |cls|
         extract(cls[:doc]).each_with_index do |ex, i|
           @examples << {
-            :id => cls.full_name + "-" + i.to_s,
-            :name => cls.full_name + " example #" + (i+1).to_s,
-            :href => '#!/api/' + cls.full_name,
+            :id => cls[:name] + "-" + i.to_s,
+            :name => cls[:name] + " example #" + (i+1).to_s,
+            :href => '#!/api/' + cls[:name],
             :code => ex[:code],
             :options => ex[:options],
           }

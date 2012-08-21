@@ -20,7 +20,7 @@ module JsDuck
       # mixins and subclasses will depend on that.
       @lookup = {}
       @classes.each do |cls|
-        @lookup[cls.full_name] = cls
+        @lookup[cls[:name]] = cls
         (cls[:alternateClassNames] || []).each do |alt_name|
           @lookup[alt_name] = cls
         end
@@ -58,31 +58,31 @@ module JsDuck
     def reg_subclasses(cls)
       if !cls.parent
         # do nothing
-      elsif @subs[cls.parent.full_name]
-        @subs[cls.parent.full_name] << cls
+      elsif @subs[cls.parent[:name]]
+        @subs[cls.parent[:name]] << cls
       else
-        @subs[cls.parent.full_name] = [cls]
+        @subs[cls.parent[:name]] = [cls]
       end
     end
 
     # Returns subclasses of particular class, empty array if none
     def subclasses(cls)
-      @subs[cls.full_name] || []
+      @subs[cls[:name]] || []
     end
 
     def reg_mixed_into(cls)
       cls.mixins.each do |mix|
-        if @mixes[mix.full_name]
-          @mixes[mix.full_name] << cls
+        if @mixes[mix[:name]]
+          @mixes[mix[:name]] << cls
         else
-          @mixes[mix.full_name] = [cls]
+          @mixes[mix[:name]] = [cls]
         end
       end
     end
 
     # Returns classes having particular mixin, empty array if none
     def mixed_into(cls)
-      @mixes[cls.full_name] || []
+      @mixes[cls[:name]] || []
     end
   end
 

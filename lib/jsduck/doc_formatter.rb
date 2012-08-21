@@ -259,7 +259,7 @@ module JsDuck
     # applies the link template
     def link(cls, member, anchor_text, type=nil, static=nil)
       # Use the canonical class name for link (not some alternateClassName)
-      cls = @relations[cls].full_name
+      cls = @relations[cls][:name]
       # prepend type name to member name
       member = member && get_matching_member(cls, {:name => member, :tagname => type, :static => static})
 

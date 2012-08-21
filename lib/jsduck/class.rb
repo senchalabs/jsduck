@@ -125,7 +125,7 @@ module JsDuck
     # Returns true when this class inherits from the specified class.
     # Also returns true when the class itself is the one we are asking about.
     def inherits_from?(class_name)
-      return full_name == class_name || (parent ? parent.inherits_from?(class_name) : false)
+      return @doc[:name] == class_name || (parent ? parent.inherits_from?(class_name) : false)
     end
 
     # Returns list of members filtered by a query.
@@ -182,11 +182,6 @@ module JsDuck
     # Returns all local members of class
     def all_local_members
       @doc[:members]
-    end
-
-    # A way to access full class name with similar syntax to short_name
-    def full_name
-      @doc[:name]
     end
 
     # Static methods

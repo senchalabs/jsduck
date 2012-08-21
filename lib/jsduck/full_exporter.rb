@@ -22,14 +22,14 @@ module JsDuck
         h[:statics][tagname] = export_members(cls, {:tagname => tagname, :static => true})
       end
       h[:component] = cls.inherits_from?("Ext.Component")
-      h[:superclasses] = cls.superclasses.collect {|c| c.full_name }
-      h[:subclasses] = @relations.subclasses(cls).collect {|c| c.full_name }
-      h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c.full_name }
+      h[:superclasses] = cls.superclasses.collect {|c| c[:name] }
+      h[:subclasses] = @relations.subclasses(cls).collect {|c| c[:name] }
+      h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c[:name] }
 
-      h[:mixins] = cls.deps(:mixins).collect {|c| c.full_name }
-      h[:parentMixins] = cls.parent_deps(:mixins).collect {|c| c.full_name }
-      h[:requires] = cls.deps(:requires).collect {|c| c.full_name }
-      h[:uses] = cls.deps(:uses).collect {|c| c.full_name }
+      h[:mixins] = cls.deps(:mixins).collect {|c| c[:name] }
+      h[:parentMixins] = cls.parent_deps(:mixins).collect {|c| c[:name] }
+      h[:requires] = cls.deps(:requires).collect {|c| c[:name] }
+      h[:uses] = cls.deps(:uses).collect {|c| c[:name] }
 
       h
     end
