@@ -71,8 +71,7 @@ module JsDuck
     end
 
     def render_single_param(param)
-      p = param[:html_type] + " " + param[:name]
-      param[:optional] ? "["+p+"]" : p
+      param[:optional] ? "["+param[:name]+"]" : param[:name]
     end
 
     def render_return
