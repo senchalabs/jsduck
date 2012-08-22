@@ -65,18 +65,18 @@ CREATE TABLE read_comments (
     FOREIGN KEY (comment_id) REFERENCES comments (id)
 );
 
+CREATE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 'N';
 
 -- Example queries
 
 -- get comments for a particular member
 
-SELECT * FROM comments JOIN targets ON comments.target_id = targets.id
+SELECT * FROM visible_comments c JOIN targets ON c.target_id = targets.id
 WHERE targets.domain = ? AND targets.type = ? AND targets.cls = ? AND targets.member = ?
-AND comments.deleted = 'N'
 
 -- get 100 most recent comments
 
-SELECT * FROM comments JOIN targets ON comments.target_id = targets.id
+SELECT * FROM visible_comments c JOIN targets ON c.target_id = targets.id
 WHERE targets.domain = ?
 ORDER BY created_at DESC LIMIT 100
 
@@ -87,7 +87,7 @@ SELECT
     target.cls AS cls,
     target.member AS member,
     count(*) AS cnt
-FROM comments JOIN targets ON comments.target_id = targets.id
+FROM visible_comments c JOIN targets ON c.target_id = targets.id
 WHERE target.domain = ?
 GROUP BY target.id
 
@@ -96,7 +96,7 @@ GROUP BY target.id
 SELECT
     target.cls AS cls,
     count(*) AS cnt
-FROM comments JOIN targets ON comments.target_id = targets.id
+FROM visible_comments c JOIN targets ON c.target_id = targets.id
 WHERE target.domain = ? AND target.type = 'class'
 GROUP BY target.cls
 
@@ -104,7 +104,7 @@ GROUP BY target.cls
 
 SELECT
     user.name,
-    SUM(comments.rating)
-FROM users JOIN comments ON comments.user_id = users.id
+    SUM(c.rating)
+FROM users JOIN visible_comments c ON c.user_id = users.id
 GROUP BY user.id
 
