@@ -1,5 +1,7 @@
 *.gem
+Gemfile*
 template/extjs*
+template/*.jsb3
 template/resources/css
 template/resources/sass/.sass-cache
 template-min/

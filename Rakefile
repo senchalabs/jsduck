@@ -117,16 +117,16 @@ def compress
   File.open(print_template, 'w') {|f| f.write(html) }
 
   # Concatenate CSS and JS files referenced in template.html file
-  template_html = "#{dir}/template.html"
-  html = IO.read(template_html)
-  html = combine_css(html, dir)
-  html = combine_js(html, dir)
-  File.open(template_html, 'w') {|f| f.write(html) }
+  # template_html = "#{dir}/template.html"
+  # html = IO.read(template_html)
+  # html = combine_css(html, dir)
+  # html = combine_js(html, dir)
+  # File.open(template_html, 'w') {|f| f.write(html) }
 
   # Clean up SASS files
   # (But keep prettify lib, which is needed for source files)
   system "rm -rf #{dir}/resources/sass"
-  system "rm -rf #{dir}/resources/codemirror"
+  # system "rm -rf #{dir}/resources/codemirror"
   system "rm -rf #{dir}/resources/.sass-cache"
 
   # Empty the extjs dir, leave only the main JS file and images
@@ -135,6 +135,7 @@ def compress
   system "cp template/extjs/ext-all.js #{dir}/extjs"
   system "mkdir -p #{dir}/extjs/resources/themes/images"
   system "cp -r template/extjs/resources/themes/images/default #{dir}/extjs/resources/themes/images"
+  system "cp -r template/extjs/resources/css #{dir}/extjs/resources/css"
 end
 
 
@@ -195,6 +196,11 @@ end
 # Run compass to generate CSS files
 task :sass do
   system "compass compile --quiet template/resources/sass"
+end
+
+desc "Compress output"
+task :compress => :sass do
+  compress
 end
 
 desc "Build JSDuck gem"
@@ -261,4 +267,15 @@ task :touch2 => :sass do
   system("cp -r #{TOUCH_BUILD} #{OUT_DIR}/touch-build")
 end
 
+desc "Run JSDuck on Titanium Mobile repo (for internal use at Appcelerator)"
+task :timobile => :sass do
+  runner = JsDuckRunner.new
+  runner.add_options(
+    "--config", "#{DOCTOOLS_DIR}/jsduck.config"
+  )
+
+  # runner.add_debug
+  # runner.add_comments('touch', '2')
+  runner.run
+end
 task :default => :spec
