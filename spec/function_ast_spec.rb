@@ -1,29 +1,29 @@
 require "jsduck/js_parser"
 require "jsduck/function_ast"
 
-describe "JsDuck::FunctionAst#returns" do
+describe "JsDuck::FunctionAst#chainable?" do
   def chainable?(string)
     node = JsDuck::JsParser.new(string).parse[0]
     return JsDuck::FunctionAst.chainable?(node[:code])
   end
 
-  it "fails when no AST given at all" do
+  it "false when no AST given at all" do
     chainable?("/** */").should == false
   end
 
-  it "fails when no function AST given" do
+  it "false when no function AST given" do
     chainable?("/** */ Ext.emptyFn;").should == false
   end
 
-  it "fails when body has no return statement." do
+  it "false when body has no return statement." do
     chainable?("/** */ function foo() {}").should == false
   end
 
-  it "returns this when single return this statement in body" do
+  it "true when single RETURN THIS statement in body" do
     chainable?("/** */ function foo() {return this;}").should == true
   end
 
-  it "returns this when return this after a few expression statements" do
+  it "true when RETURN THIS after a few expression statements" do
     chainable?(<<-EOJS).should == true
       /** */
       function foo() {
@@ -35,7 +35,7 @@ describe "JsDuck::FunctionAst#returns" do
     EOJS
   end
 
-  it "returns this when return this after a few declarations" do
+  it "true when RETURN THIS after a few declarations" do
     chainable?(<<-EOJS).should == true
       /** */
       function foo() {
