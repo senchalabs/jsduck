@@ -47,4 +47,97 @@ describe "JsDuck::FunctionAst#chainable?" do
     EOJS
   end
 
+  it "true when RETURN THIS after an IF without RETURNs" do
+    chainable?(<<-EOJS).should == true
+      /** */
+      function foo() {
+          if (condition) {
+              doSomething();
+          } else {
+              if (cond2) foo();
+          }
+          return this;
+      }
+    EOJS
+  end
+
+  it "true when RETURN THIS after SWITCH without returns" do
+    chainable?(<<-EOJS).should == true
+      /** */
+      function foo() {
+          switch (x) {
+              case 1: break;
+              case 2: break;
+              default: foo();
+          }
+          return this;
+      }
+    EOJS
+  end
+
+  it "true when RETURN THIS after loops without returns" do
+    chainable?(<<-EOJS).should == true
+      /** */
+      function foo() {
+          for (i=0; i<10; i++) {
+              for (j in i) {
+                  doBlah();
+              }
+          }
+          while (hoo) {
+            do {
+              sasa();
+            } while(boo);
+          }
+          return this;
+      }
+    EOJS
+  end
+
+  it "true when RETURN THIS after TRY CATCH without returns" do
+    chainable?(<<-EOJS).should == true
+      /** */
+      function foo() {
+          try {
+            foo();
+          } catch (e) {
+            bar();
+          } finally {
+            baz();
+          }
+          return this;
+      }
+    EOJS
+  end
+
+  it "true when RETURN THIS after WITH & BLOCK without returns" do
+    chainable?(<<-EOJS).should == true
+      /** */
+      function foo() {
+          with (x) {
+            foo();
+          }
+          tada: {
+            bar();
+          }
+          return this;
+      }
+    EOJS
+  end
+
+  it "false when RETURN THIS after statements containing a RETURN" do
+    chainable?(<<-EOJS).should == false
+      /** */
+      function foo() {
+          while (x) {
+            if (foo) {
+            } else if (ooh) {
+              return whoKnowsWhat;
+            }
+          }
+          return this;
+      }
+    EOJS
+  end
+
 end

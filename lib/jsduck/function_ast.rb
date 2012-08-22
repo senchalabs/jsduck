@@ -31,7 +31,7 @@ module JsDuck
     end
 
     def body_returns(body)
-      body = skip_non_control_flow_statements(body)
+      body = skip_returnless_statements(body)
 
       return body.length > 0 && return_this?(body[0])
     end
@@ -48,8 +48,8 @@ module JsDuck
       ast["type"] == "ThisExpression"
     end
 
-    def skip_non_control_flow_statements(statements)
-      i = statements.find_index {|s| control_flow?(s) }
+    def skip_returnless_statements(statements)
+      i = statements.find_index {|s| contains_return?(s) }
       if i
         statements.slice(i, statements.length)
       else
@@ -57,21 +57,47 @@ module JsDuck
       end
     end
 
-    def control_flow?(ast)
-      [
-        "IfStatement",
-        "SwitchStatement",
-        "ForStatement",
-        "ForInStatement",
-        "WhileStatement",
-        "DoWhileStatement",
-        "ReturnStatement",
-        "TryStatement",
-        "WithStatement",
-        "LabeledStatement",
-        "BlockStatement",
-      ].include?(ast["type"])
+    def contains_return?(ast)
+      if return?(ast)
+        true
+      elsif control_flow?(ast)
+        extract_body(ast).any? {|s| contains_return?(s) }
+      else
+        false
+      end
     end
+
+    def control_flow?(ast)
+      CONTROL_FLOW[ast["type"]]
+    end
+
+    def extract_body(ast)
+      body = []
+      CONTROL_FLOW[ast["type"]].each do |name|
+        statements = ast[name]
+        if statements.is_a?(Hash)
+          body << statements
+        else
+          body += Array(statements)
+        end
+      end
+      body
+    end
+
+    CONTROL_FLOW = {
+      "IfStatement" => ["consequent", "alternate"],
+      "SwitchStatement" => ["cases"],
+      "SwitchCase" => ["consequent"],
+      "ForStatement" => ["body"],
+      "ForInStatement" => ["body"],
+      "WhileStatement" => ["body"],
+      "DoWhileStatement" => ["body"],
+      "TryStatement" => ["block", "handlers", "finalizer"],
+      "CatchClause" => ["body"],
+      "WithStatement" => ["body"],
+      "LabeledStatement" => ["body"],
+      "BlockStatement" => ["body"],
+    }
   end
 
 end
