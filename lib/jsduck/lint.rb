@@ -110,7 +110,7 @@ module JsDuck
     # print warnings for enums with no values
     def warn_empty_enums
       @relations.each do |cls|
-        if cls[:enum] && cls[:members][:property].length == 0
+        if cls[:enum] && cls[:members].length == 0
           warn(:enum, "Enum #{cls[:name]} defined without values in it", cls)
         end
       end
