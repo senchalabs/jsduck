@@ -407,7 +407,7 @@ module JsDuck
     end
 
     def chainable?(ast)
-      FunctionAst.new.returns(ast) == "this"
+      FunctionAst.chainable?(ast)
     end
 
     def make_property(name=nil, ast=nil, tagname=:property)

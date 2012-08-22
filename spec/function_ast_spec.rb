@@ -2,29 +2,29 @@ require "jsduck/js_parser"
 require "jsduck/function_ast"
 
 describe "JsDuck::FunctionAst#returns" do
-  def returns(string)
+  def chainable?(string)
     node = JsDuck::JsParser.new(string).parse[0]
-    return JsDuck::FunctionAst.new.returns(node[:code])
+    return JsDuck::FunctionAst.chainable?(node[:code])
   end
 
   it "fails when no AST given at all" do
-    returns("/** */").should == nil
+    chainable?("/** */").should == false
   end
 
   it "fails when no function AST given" do
-    returns("/** */ Ext.emptyFn;").should == nil
+    chainable?("/** */ Ext.emptyFn;").should == false
   end
 
   it "fails when body has no return statement." do
-    returns("/** */ function foo() {}").should == nil
+    chainable?("/** */ function foo() {}").should == false
   end
 
   it "returns this when single return this statement in body" do
-    returns("/** */ function foo() {return this;}").should == "this"
+    chainable?("/** */ function foo() {return this;}").should == true
   end
 
   it "returns this when return this after a few expression statements" do
-    returns(<<-EOJS).should == "this"
+    chainable?(<<-EOJS).should == true
       /** */
       function foo() {
           doSomething();
@@ -36,7 +36,7 @@ describe "JsDuck::FunctionAst#returns" do
   end
 
   it "returns this when return this after a few declarations" do
-    returns(<<-EOJS).should == "this"
+    chainable?(<<-EOJS).should == true
       /** */
       function foo() {
           var x = 10;
