@@ -21,8 +21,7 @@ CREATE TABLE users (
 
 CREATE TABLE targets (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    sdk VARCHAR(255) NOT NULL,
-    version VARCHAR(255) NOT NULL,
+    domain VARCHAR(255) NOT NULL, -- combines sdk & version
     type ENUM('class', 'guide', 'video') NOT NULL DEFAULT 'class',
     cls VARCHAR(255) NOT NULL,    -- "Ext.draw.Sprite"
     member VARCHAR(255) NOT NULL  -- "method-setAttributes"
@@ -72,13 +71,13 @@ CREATE TABLE read_comments (
 -- get comments for a particular member
 
 SELECT * FROM comments JOIN targets ON comments.target_id = targets.id
-WHERE targets.sdk = ? AND targets.version = ? AND targets.type = ? AND targets.cls = ? AND targets.member = ?
+WHERE targets.domain = ? AND targets.type = ? AND targets.cls = ? AND targets.member = ?
 AND comments.deleted = 'N'
 
 -- get 100 most recent comments
 
 SELECT * FROM comments JOIN targets ON comments.target_id = targets.id
-WHERE targets.sdk = ? AND targets.version = ?
+WHERE targets.domain = ?
 ORDER BY created_at DESC LIMIT 100
 
 -- get number of comments for each target
@@ -89,7 +88,7 @@ SELECT
     target.member AS member,
     count(*) AS cnt
 FROM comments JOIN targets ON comments.target_id = targets.id
-WHERE target.sdk = ? AND target.version = ?
+WHERE target.domain = ?
 GROUP BY target.id
 
 -- get users with the highest score
