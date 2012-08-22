@@ -159,4 +159,25 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "function with 'return this;' in code" do
+    let(:cls) do
+      parse(<<-EOS)["MyClass"]
+        /** */
+        Ext.define("MyClass", {
+            /** */
+            bar: function() { return this; }
+        });
+      EOS
+    end
+
+    it "adds @chainable tag" do
+      cls[:members][0][:meta][:chainable].should == true
+    end
+
+    it "adds @return {MyClass} this" do
+      cls[:members][0][:return][:type].should == "MyClass"
+      cls[:members][0][:return][:doc].should == "this"
+    end
+  end
+
 end

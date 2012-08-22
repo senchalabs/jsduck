@@ -1,5 +1,6 @@
 require "jsduck/serializer"
 require "jsduck/evaluator"
+require "jsduck/function_ast"
 
 module JsDuck
 
@@ -392,7 +393,8 @@ module JsDuck
       return {
         :tagname => :method,
         :name => name,
-        :params => make_params(ast)
+        :params => make_params(ast),
+        :chainable => chainable?(ast),
       }
     end
 
@@ -402,6 +404,10 @@ module JsDuck
       else
         []
       end
+    end
+
+    def chainable?(ast)
+      FunctionAst.new.returns(ast) == "this"
     end
 
     def make_property(name=nil, ast=nil, tagname=:property)

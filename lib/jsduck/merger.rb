@@ -56,6 +56,7 @@ module JsDuck
     def merge_like_method(docs, code)
       h = do_merge(docs, code)
       h[:params] = merge_params(docs, code)
+      h[:meta][:chainable] = code[:chainable] if code[:chainable]
       h
     end
 
