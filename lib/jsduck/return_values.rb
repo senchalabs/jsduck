@@ -28,11 +28,17 @@ module JsDuck
     private
 
     def process(m)
-      if chainable?(m)
+      if constructor?(m)
+        add_return_new(m)
+      elsif chainable?(m)
         add_return_this(m)
       elsif returns_this?(m)
         add_chainable(m)
       end
+    end
+
+    def constructor?(m)
+      m[:name] == "constructor"
     end
 
     def chainable?(m)
@@ -50,6 +56,15 @@ module JsDuck
     def add_return_this(m)
       if m[:return][:type] == "undefined" && m[:return][:doc] == ""
         m[:return] = {:type => @cls[:name], :doc => "this"}
+      end
+    end
+
+    def add_return_new(m)
+      if m[:return][:type] == "undefined"
+        # Create a whole new :return hash.
+        # If we were to just change the :type field it would modify
+        # the type of all the inherited constructor docs.
+        m[:return] = {:type => @cls[:name], :doc => m[:return][:doc]}
       end
     end
   end

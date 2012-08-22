@@ -58,14 +58,13 @@ module JsDuck
 
     def create_method(docs)
       doc_map = build_doc_map(docs)
-      name = detect_name(:method, doc_map)
       return add_shared({
         :tagname => :method,
-        :name => name,
+        :name => detect_name(:method, doc_map),
         :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(doc_map),
-        :return => detect_return(doc_map, name == "constructor" ? "Object" : "undefined"),
+        :return => detect_return(doc_map),
         :throws => detect_throws(doc_map),
       }, doc_map)
     end
@@ -257,10 +256,10 @@ module JsDuck
       items
     end
 
-    def detect_return(doc_map, default_type="undefined")
+    def detect_return(doc_map)
       ret = extract(doc_map, :return) || {}
       return {
-        :type => ret[:type] || default_type,
+        :type => ret[:type] || "undefined",
         :name => ret[:name] || "return",
         :doc => ret[:doc] || "",
         :properties => doc_map[:return] ? detect_subproperties(:return, doc_map[:return]) : []

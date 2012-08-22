@@ -20,10 +20,6 @@ describe JsDuck::Aggregator do
     it "has method with needed parameters" do
       methods[0][:params].length.should == 1
     end
-
-    it "has method with default return type Object" do
-      methods[0][:return][:type].should == "Object"
-    end
   end
 
   describe "class with @constructor" do

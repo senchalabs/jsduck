@@ -394,7 +394,7 @@ module JsDuck
         :tagname => :method,
         :name => name,
         :params => make_params(ast),
-        :chainable => chainable?(ast),
+        :chainable => chainable?(ast) && name != "constructor",
       }
     end
 

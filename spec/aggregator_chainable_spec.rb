@@ -180,4 +180,87 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "constructor with no @return" do
+    let(:cls) do
+      parse(<<-EOS)["MyClass"]
+        /** */
+        Ext.define("MyClass", {
+            /** */
+            constructor: function() {}
+        });
+      EOS
+    end
+
+    it "sets return type to owner class" do
+      cls[:members][0][:return][:type].should == "MyClass"
+    end
+  end
+
+  describe "constructor with simple @return" do
+    let(:cls) do
+      parse(<<-EOS)["MyClass"]
+        /** */
+        Ext.define("MyClass", {
+            /**
+             * @return new instance
+             */
+            constructor: function() {}
+        });
+      EOS
+    end
+
+    it "sets return type to owner class" do
+      cls[:members][0][:return][:type].should == "MyClass"
+    end
+  end
+
+  describe "constructor with @constructor tag" do
+    let(:cls) do
+      parse(<<-EOS)["MyClass"]
+        /** */
+        Ext.define("MyClass", {
+            /**
+             * @constructor
+             */
+            constructor: function() {}
+        });
+      EOS
+    end
+
+    it "sets return type to owner class" do
+      cls[:members][0][:return][:type].should == "MyClass"
+    end
+  end
+
+  describe "constructor containing 'return this;'" do
+    let(:cls) do
+      parse(<<-EOS)["MyClass"]
+        /** */
+        Ext.define("MyClass", {
+            /** */
+            constructor: function() {return this;}
+        });
+      EOS
+    end
+
+    it "doesn't get @chainable tag" do
+      cls[:members][0][:meta][:chainable].should_not == true
+    end
+  end
+
+  describe "constructor with some other explicit return type" do
+    let(:cls) do
+      parse(<<-EOS)["MyClass"]
+        /** */
+        Ext.define("MyClass", {
+            /** @return {OtherClass} new instance */
+            constructor: function() {}
+        });
+      EOS
+    end
+
+    it "keeps the explicit return type" do
+      cls[:members][0][:return][:type].should == "OtherClass"
+    end
+  end
 end
