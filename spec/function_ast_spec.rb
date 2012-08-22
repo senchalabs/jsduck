@@ -19,6 +19,10 @@ describe "JsDuck::FunctionAst#chainable?" do
     chainable?("/** */ function foo() {}").should == false
   end
 
+  it "false when body has empty return statement" do
+    chainable?("/** */ function foo() { return; }").should == false
+  end
+
   it "true when single RETURN THIS statement in body" do
     chainable?("/** */ function foo() {return this;}").should == true
   end

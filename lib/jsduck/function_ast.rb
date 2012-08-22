@@ -37,7 +37,7 @@ module JsDuck
     end
 
     def return_this?(ast)
-      return?(ast) && this?(ast["argument"])
+      return?(ast) && !!ast["argument"] && this?(ast["argument"])
     end
 
     def return?(ast)
