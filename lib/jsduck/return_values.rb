@@ -1,14 +1,14 @@
 module JsDuck
 
-  # Auto-detector of @chainable tags.
+  # Auto-detector return values and @chainable tags.
   #
   # Adds @chainable tag when doc-comment contains @return {OwnerClass}
   # this.  Also the other way around: when @chainable found, adds
   # appropriate @return.
-  class Chainable
+  class ReturnValues
     # Only this static method of this class should be called.
     def self.auto_detect(relations)
-      Chainable.new(relations).process_all!
+      ReturnValues.new(relations).process_all!
     end
 
     def initialize(relations)
