@@ -91,6 +91,15 @@ FROM comments JOIN targets ON comments.target_id = targets.id
 WHERE target.domain = ?
 GROUP BY target.id
 
+-- get number of comments for each class (including comments for class members)
+
+SELECT
+    target.cls AS cls,
+    count(*) AS cnt
+FROM comments JOIN targets ON comments.target_id = targets.id
+WHERE target.domain = ? AND target.type = 'class'
+GROUP BY target.cls
+
 -- get users with the highest score
 
 SELECT
