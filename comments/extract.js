@@ -57,6 +57,17 @@ var UsersTable = (function() {
             };
             // always overwrite with latest user data
             usersMap[buildKey(c)] = record;
+
+            // Also add voters.
+            // But in this case don't overwrite user data if already
+            // present as votes only contain username.
+            c.upVotes.concat(c.downVotes).forEach(function(username) {
+                if (!usersMap[username]) {
+                    usersMap[username] = {
+                        username: username
+                    };
+                }
+            });
         });
 
         return usersMap;
@@ -108,8 +119,16 @@ var TargetsTable = (function() {
 
 var CommentsTable = (function() {
     function extract(data, next) {
-        data.comments = data.mongo_comments.map(function(c) {
-            return {
+        data.commentsMap = buildCommentsMap(data);
+        data.comments = objectValues(data.commentsMap);
+        addIds(data.comments);
+        next();
+    }
+
+    function buildCommentsMap(data) {
+        var map = {};
+        data.mongo_comments.forEach(function(c) {
+            map[buildKey(c)] = {
                 user_id: data.usersMap[UsersTable.buildKey(c)].id,
                 target_id: data.targetsMap[TargetsTable.buildKey(c)].id,
                 content: c.content,
@@ -118,7 +137,43 @@ var CommentsTable = (function() {
                 deleted: c.deleted
             };
         });
-        addIds(data.comments);
+        return map;
+    }
+
+    function buildKey(c) {
+        return c._id;
+    }
+
+    return {
+        extract: extract,
+        buildKey: buildKey
+    };
+})();
+
+var VotesTable = (function() {
+    function extract(data, next) {
+        var votes = [];
+
+        function addVotes(c, usernames, value) {
+            usernames.forEach(function(username) {
+                votes.push({
+                    user_id: data.usersMap[username].id,
+                    comment_id: data.commentsMap[CommentsTable.buildKey(c)].id,
+                    value: value,
+                    created_at: null
+                });
+            });
+        }
+
+        data.mongo_comments.forEach(function(c) {
+            addVotes(c, c.upVotes, +1);
+            addVotes(c, c.downVotes, -1);
+        });
+
+        addIds(votes);
+
+        data.votes = votes;
+
         next();
     }
 
@@ -165,10 +220,12 @@ Comment.find({}, function(err, mongo_comments) {
         UsersTable.extract,
         TargetsTable.extract,
         CommentsTable.extract,
+        VotesTable.extract,
         function(data, next) {
             console.log(data.users.length + " users");
             console.log(data.targets.length + " targets");
             console.log(data.comments.length + " comments");
+            console.log(data.votes.length + " votes");
             process.exit();
         }
     ]);
