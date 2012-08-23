@@ -16,7 +16,7 @@ var db = mysql.createConnection({
 
 var UsersTable = (function() {
     function extract(data, next) {
-        var usersMap = extractUniqueUsers(data.comments);
+        var usersMap = extractUniqueUsers(data.mongo_comments);
         var users = objectValues(usersMap);
 
         var usersWithoutId = users.filter(function(u){ return !u.external_id; });
@@ -38,7 +38,9 @@ var UsersTable = (function() {
                 }
             });
 
+            data.usersMap = usersMap;
             data.users = users;
+            addIds(data.users);
             next();
         });
     }
@@ -54,20 +56,27 @@ var UsersTable = (function() {
                 moderator: c.moderator
             };
             // always overwrite with latest user data
-            usersMap[c.author] = record;
+            usersMap[buildKey(c)] = record;
         });
 
         return usersMap;
     }
 
+    function buildKey(c) {
+        return c.author;
+    }
+
     return {
-        extract: extract
+        extract: extract,
+        buildKey: buildKey
     };
 })();
 
 var TargetsTable = (function() {
     function extract(data, next) {
-        data.targets = objectValues(extractUniqueTargets(data.comments));
+        data.targetsMap = extractUniqueTargets(data.mongo_comments);
+        data.targets = objectValues(data.targetsMap);
+        addIds(data.targets);
         next();
     }
 
@@ -81,11 +90,36 @@ var TargetsTable = (function() {
                 cls: c.target[1],
                 member: c.target[2]
             };
-            var id = [target.domain, target.type, target.cls, target.member].join(":");
-            map[id] = target;
+            map[buildKey(c)] = target;
         });
 
         return map;
+    }
+
+    function buildKey(c) {
+        return [c.sdk+"-"+c.version, c.target[0], c.target[1], c.target[2]].join(":");
+    }
+
+    return {
+        extract: extract,
+        buildKey: buildKey
+    };
+})();
+
+var CommentsTable = (function() {
+    function extract(data, next) {
+        data.comments = data.mongo_comments.map(function(c) {
+            return {
+                user_id: data.usersMap[UsersTable.buildKey(c)].id,
+                target_id: data.targetsMap[TargetsTable.buildKey(c)].id,
+                content: c.content,
+                content_html: c.contentHtml,
+                created_at: c.createdAt,
+                deleted: c.deleted
+            };
+        });
+        addIds(data.comments);
+        next();
     }
 
     return {
@@ -112,19 +146,29 @@ function objectValues(obj) {
     return values;
 }
 
+// Adds id: properties with values 1, 2, 3, ... to every object.
+function addIds(objects) {
+    var id = 1;
+    objects.forEach(function(obj) {
+        obj.id = id;
+        id++;
+    });
+}
 
-Comment.find({}, function(err, comments) {
+
+Comment.find({}, function(err, mongo_comments) {
     if (err) throw err;
 
-    var data = {comments: comments};
+    var data = {mongo_comments: mongo_comments};
 
     sequence(data, [
         UsersTable.extract,
         TargetsTable.extract,
+        CommentsTable.extract,
         function(data, next) {
-            console.log(data.comments.length + " comments");
             console.log(data.users.length + " users");
             console.log(data.targets.length + " targets");
+            console.log(data.comments.length + " comments");
             process.exit();
         }
     ]);
