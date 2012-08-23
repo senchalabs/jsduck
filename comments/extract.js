@@ -68,6 +68,10 @@ var UsersTable = (function() {
                     };
                 }
             });
+
+            // For completeness I should also add users from updates,
+            // but it turns out that everybody who has edited comments
+            // has also posted them too.  So I skip this part.
         });
 
         return usersMap;
@@ -182,6 +186,33 @@ var VotesTable = (function() {
     };
 })();
 
+var UpdatesTable = (function() {
+    function extract(data, next) {
+        var updates = [];
+
+        data.mongo_comments.forEach(function(c) {
+            c.updates.forEach(function(u) {
+                updates.push({
+                    user_id: data.usersMap[u.author].id,
+                    comment_id: data.commentsMap[CommentsTable.buildKey(c)].id,
+                    action: u.action || 'update',
+                    created_at: u.updatedAt
+                });
+            });
+        });
+
+        addIds(updates);
+
+        data.updates = updates;
+
+        next();
+    }
+
+    return {
+        extract: extract
+    };
+})();
+
 // Calls an array of functions in sequence passing to each function
 // the data argument and a function to call when it finishes.
 function sequence(data, callbacks) {
@@ -221,11 +252,13 @@ Comment.find({}, function(err, mongo_comments) {
         TargetsTable.extract,
         CommentsTable.extract,
         VotesTable.extract,
+        UpdatesTable.extract,
         function(data, next) {
             console.log(data.users.length + " users");
             console.log(data.targets.length + " targets");
             console.log(data.comments.length + " comments");
             console.log(data.votes.length + " votes");
+            console.log(data.updates.length + " updates");
             process.exit();
         }
     ]);
