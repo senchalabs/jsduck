@@ -12,7 +12,7 @@ CREATE TABLE comments (
 
 CREATE TABLE users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL,
     external_id INT NOT NULL, -- (link to Sencha Forum database)
     email VARCHAR(255) NOT NULL, -- (from subscriptions)
     email_hash VARCHAR(255) NOT NULL,
@@ -108,7 +108,7 @@ GROUP BY target.cls
 -- get users with most upvotes
 
 SELECT
-    user.name,
+    user.username,
     SUM(c.vote) AS votes
 FROM users JOIN voted_comments c ON c.user_id = users.id
 GROUP BY user.id
