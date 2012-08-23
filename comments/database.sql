@@ -5,7 +5,6 @@ CREATE TABLE comments (
     content TEXT NOT NULL,
     content_html TEXT NOT NULL,
     created_at DATETIME NOT NULL,
-    rating INT NOT NULL DEFAULT 0,
     deleted ENUM('Y', 'N') NOT NULL DEFAULT 'N',
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (target_id) REFERENCES targets (id)
@@ -67,6 +66,11 @@ CREATE TABLE read_comments (
 
 CREATE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 'N';
 
+CREATE VIEW voted_comments AS SELECT
+    c.*,
+    SUM(v.value) AS vote
+FROM visible_comments c LEFT JOIN votes v ON c.id = v.comment_id;
+
 -- Example queries
 
 -- get comments for a particular member
@@ -100,11 +104,12 @@ FROM visible_comments c JOIN targets ON c.target_id = targets.id
 WHERE target.domain = ? AND target.type = 'class'
 GROUP BY target.cls
 
--- get users with the highest score
+-- get users with most upvotes
 
 SELECT
     user.name,
-    SUM(c.rating)
-FROM users JOIN visible_comments c ON c.user_id = users.id
+    SUM(c.vote) AS votes
+FROM users JOIN voted_comments c ON c.user_id = users.id
 GROUP BY user.id
+ORDER BY votes DESC
 
