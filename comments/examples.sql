@@ -34,9 +34,10 @@ GROUP BY target.cls
 -- get users with most upvotes
 
 SELECT
-    user.username,
+    users.username,
     SUM(c.vote) AS votes
-FROM users JOIN voted_comments c ON c.user_id = users.id
-GROUP BY user.id
+FROM users LEFT JOIN voted_comments c ON c.user_id = users.id
+GROUP BY users.id
 ORDER BY votes DESC
+LIMIT 10;
 
