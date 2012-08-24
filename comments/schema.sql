@@ -1,7 +1,7 @@
 CREATE TABLE users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    external_id INT NOT NULL, -- (link to Sencha Forum database)
+    username VARCHAR(255) NOT NULL UNIQUE,
+    external_id INT NOT NULL UNIQUE, -- (link to Sencha Forum database)
     email VARCHAR(255) NOT NULL, -- (from subscriptions)
     moderator BOOLEAN NOT NULL DEFAULT 0
 );
@@ -11,7 +11,9 @@ CREATE TABLE targets (
     domain VARCHAR(255) NOT NULL, -- combines sdk & version
     type ENUM('class', 'guide', 'video', 'unknown', 'challenge') NOT NULL DEFAULT 'class',
     cls VARCHAR(255) NOT NULL,    -- "Ext.draw.Sprite"
-    member VARCHAR(255) NOT NULL  -- "method-setAttributes"
+    member VARCHAR(255) NOT NULL, -- "method-setAttributes"
+    -- the whole target must be unique
+    UNIQUE KEY (domain, type, cls, member)
 );
 
 CREATE TABLE comments (
@@ -33,7 +35,9 @@ CREATE TABLE votes (
     value INT NOT NULL, -- +1 or -1
     created_at DATETIME NOT NULL, -- (no data available for now)
     FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (comment_id) REFERENCES comments (id)
+    FOREIGN KEY (comment_id) REFERENCES comments (id),
+    -- can't vote twice on the same comment
+    UNIQUE KEY (user_id, comment_id)
 );
 
 CREATE TABLE updates (
@@ -52,7 +56,9 @@ CREATE TABLE subscriptions (
     target_id INT NOT NULL,
     created_at DATETIME NOT NULL, -- (no data available for now)
     FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (target_id) REFERENCES targets (id)
+    FOREIGN KEY (target_id) REFERENCES targets (id),
+    -- can't subscribe twice to the same thread
+    UNIQUE KEY (user_id, target_id)
 );
 
 CREATE TABLE readings (
@@ -61,7 +67,9 @@ CREATE TABLE readings (
     comment_id INT NOT NULL,
     created_at DATETIME NOT NULL, -- (no data available for now)
     FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (comment_id) REFERENCES comments (id)
+    FOREIGN KEY (comment_id) REFERENCES comments (id),
+    -- can't read the same comment twice
+    UNIQUE KEY (user_id, comment_id)
 );
 
 CREATE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 0;
