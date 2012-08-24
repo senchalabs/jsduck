@@ -5,7 +5,7 @@ CREATE TABLE comments (
     content TEXT NOT NULL,
     content_html TEXT NOT NULL,
     created_at DATETIME NOT NULL,
-    deleted ENUM('Y', 'N') NOT NULL DEFAULT 'N',
+    deleted BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (target_id) REFERENCES targets (id)
 );
@@ -15,7 +15,7 @@ CREATE TABLE users (
     username VARCHAR(255) NOT NULL,
     external_id INT NOT NULL, -- (link to Sencha Forum database)
     email VARCHAR(255) NOT NULL, -- (from subscriptions)
-    moderator ENUM('Y', 'N') NOT NULL DEFAULT 'N'
+    moderator BOOLEAN NOT NULL DEFAULT 0
 );
 
 CREATE TABLE targets (

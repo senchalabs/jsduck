@@ -293,7 +293,7 @@ var CommentsTable = (function() {
                 content: c.content,
                 content_html: c.contentHtml,
                 created_at: c.createdAt,
-                deleted: c.deleted
+                deleted: !!c.deleted
             };
         });
         return map;
@@ -454,13 +454,22 @@ function asyncPrint(msg) {
 
 function printInserts(table) {
     return function(data, next) {
-        data[table].forEach(function(row) {
+        data[table].map(fixBooleans).forEach(function(row) {
             console.log(db.format("INSERT INTO "+table+" SET ?;", row));
         });
         next();
     };
 }
 
+// turn true and false into 0 and 1 for MySQL insertion
+function fixBooleans(row) {
+    for (var i in row) {
+        if (row[i] === true || row[i] === false) {
+            row[i] = row[i] ? 1 : 0;
+        }
+    }
+    return row;
+}
 
 
 sequence({}, [
