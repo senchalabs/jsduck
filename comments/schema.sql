@@ -77,5 +77,6 @@ CREATE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 0;
 CREATE VIEW voted_comments AS SELECT
     c.*,
     SUM(v.value) AS vote
-FROM visible_comments c LEFT JOIN votes v ON c.id = v.comment_id;
+FROM visible_comments c LEFT JOIN votes v ON c.id = v.comment_id
+GROUP BY c.id;
 
