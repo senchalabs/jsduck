@@ -14,7 +14,7 @@ var db = mysql.createConnection({
 });
 
 // Default date for all items that are missing a date.
-var DEFAULT_DATE = Date.parse("Jan 1, 2011");
+var DEFAULT_DATE = new Date("Jan 1, 2011");
 
 var MongoComments = (function() {
     function extract(data, next) {
@@ -367,7 +367,7 @@ var UpdatesTable = (function() {
     }
 
     function fixDate(date) {
-        return (typeof date === "string") ? Date.parse(date) : date;
+        return (typeof date === "string") ? new Date(date) : date;
     }
 
     return {
