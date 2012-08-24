@@ -13,7 +13,7 @@ CREATE TABLE targets (
     cls VARCHAR(100) NOT NULL,    -- "Ext.draw.Sprite"
     member VARCHAR(100) NOT NULL, -- "method-setAttributes"
     -- the whole target must be unique
-    UNIQUE KEY (domain, type, cls, member)
+    CONSTRAINT unique_targets UNIQUE KEY (domain, type, cls, member)
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE comments (
@@ -37,7 +37,7 @@ CREATE TABLE votes (
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (comment_id) REFERENCES comments (id),
     -- can't vote twice on the same comment
-    UNIQUE KEY (user_id, comment_id)
+    CONSTRAINT unique_votes UNIQUE KEY (user_id, comment_id)
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE updates (
@@ -58,7 +58,7 @@ CREATE TABLE subscriptions (
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (target_id) REFERENCES targets (id),
     -- can't subscribe twice to the same thread
-    UNIQUE KEY (user_id, target_id)
+    CONSTRAINT unique_subscriptions UNIQUE KEY (user_id, target_id)
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE readings (
@@ -69,7 +69,7 @@ CREATE TABLE readings (
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (comment_id) REFERENCES comments (id),
     -- can't read the same comment twice
-    UNIQUE KEY (user_id, comment_id)
+    CONSTRAINT unique_readings UNIQUE KEY (user_id, comment_id)
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 0;
