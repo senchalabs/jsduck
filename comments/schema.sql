@@ -2,7 +2,7 @@ CREATE TABLE users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     external_id INT NOT NULL UNIQUE, -- (link to Sencha Forum database)
-    email VARCHAR(255) NOT NULL, -- (from subscriptions)
+    email VARCHAR(255) NOT NULL,
     moderator BOOLEAN NOT NULL DEFAULT 0
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
 
@@ -33,7 +33,7 @@ CREATE TABLE votes (
     user_id INT NOT NULL,
     comment_id INT NOT NULL,
     value INT NOT NULL, -- +1 or -1
-    created_at DATETIME NOT NULL, -- (no data available for now)
+    created_at DATETIME NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE,
     -- can't vote twice on the same comment
@@ -54,7 +54,7 @@ CREATE TABLE subscriptions (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     target_id INT NOT NULL,
-    created_at DATETIME NOT NULL, -- (no data available for now)
+    created_at DATETIME NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (target_id) REFERENCES targets (id) ON DELETE CASCADE,
     -- can't subscribe twice to the same thread
@@ -65,7 +65,7 @@ CREATE TABLE readings (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     comment_id INT NOT NULL,
-    created_at DATETIME NOT NULL, -- (no data available for now)
+    created_at DATETIME NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE,
     -- can't read the same comment twice
