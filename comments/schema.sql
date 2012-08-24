@@ -64,7 +64,7 @@ CREATE TABLE readings (
     FOREIGN KEY (comment_id) REFERENCES comments (id)
 );
 
-CREATE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 'N';
+CREATE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 0;
 
 CREATE VIEW voted_comments AS SELECT
     c.*,
