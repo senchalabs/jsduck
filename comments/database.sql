@@ -15,7 +15,6 @@ CREATE TABLE users (
     username VARCHAR(255) NOT NULL,
     external_id INT NOT NULL, -- (link to Sencha Forum database)
     email VARCHAR(255) NOT NULL, -- (from subscriptions)
-    email_hash VARCHAR(255) NOT NULL,
     moderator ENUM('Y', 'N') NOT NULL DEFAULT 'N'
 );
 

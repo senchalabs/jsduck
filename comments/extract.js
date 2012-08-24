@@ -98,9 +98,7 @@ var UsersTable = (function() {
         data.mongo_comments.forEach(function(c) {
             var record = {
                 username: c.author,
-                email_hash: c.emailHash,
-                external_id: c.userId,
-                moderator: c.moderator
+                external_id: c.userId
             };
             // always overwrite with latest user data
             usersMap[buildKey(c)] = record;
@@ -192,8 +190,47 @@ var UsersTable = (function() {
         return c.author;
     }
 
+    // Loads additional data from Sencha Forum users table:
+    //
+    // - e-mail
+    // - moderator status
+    //
+    function addExtraData(data, next) {
+        var externalIds = data.users.map(function(u){ return u.external_id; });
+        db.query("SELECT userid, email, membergroupids FROM user WHERE userid IN (?)", [externalIds], function(err, rows) {
+            if (err) throw err;
+
+            rows.forEach(function(r) {
+                if (data.usersMapByExternalId[r.userid]) {
+                    data.usersMapByExternalId[r.userid].email = r.email;
+                    data.usersMapByExternalId[r.userid].moderator = isModerator(r);
+                }
+                else {
+                    console.log("external_id not found: "+r.userid);
+                }
+            });
+
+            next();
+        });
+    }
+
+    function isModerator(user) {
+        var COMMUNITY_SUPPORT_TEAM = 2;
+        var DEV_TEAM = 19;
+
+        if (typeof user.membergroupids === "string") {
+            var ids = user.membergroupids.split(',').map(parseInt);
+        }
+        else {
+            var ids = [];
+        }
+
+        return ids.indexOf(COMMUNITY_SUPPORT_TEAM) != -1 || ids.indexOf(DEV_TEAM) != -1;
+    }
+
     return {
         extract: extract,
+        addExtraData: addExtraData,
         buildKey: buildKey
     };
 })();
@@ -426,6 +463,7 @@ sequence({}, [
 
     asyncPrint("build users table..."),
     UsersTable.extract,
+    UsersTable.addExtraData,
     asyncPrint("build targets table..."),
     TargetsTable.extract,
     asyncPrint("build comments table..."),
