@@ -24,8 +24,8 @@ CREATE TABLE comments (
     content_html TEXT NOT NULL,
     created_at DATETIME NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (target_id) REFERENCES targets (id)
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (target_id) REFERENCES targets (id) ON DELETE CASCADE
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE votes (
@@ -34,8 +34,8 @@ CREATE TABLE votes (
     comment_id INT NOT NULL,
     value INT NOT NULL, -- +1 or -1
     created_at DATETIME NOT NULL, -- (no data available for now)
-    FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (comment_id) REFERENCES comments (id),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE,
     -- can't vote twice on the same comment
     CONSTRAINT unique_votes UNIQUE KEY (user_id, comment_id)
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
@@ -46,8 +46,8 @@ CREATE TABLE updates (
     comment_id INT NOT NULL,
     action ENUM('update', 'delete') DEFAULT 'update',
     created_at DATETIME NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (comment_id) REFERENCES comments (id)
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE subscriptions (
@@ -55,8 +55,8 @@ CREATE TABLE subscriptions (
     user_id INT NOT NULL,
     target_id INT NOT NULL,
     created_at DATETIME NOT NULL, -- (no data available for now)
-    FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (target_id) REFERENCES targets (id),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (target_id) REFERENCES targets (id) ON DELETE CASCADE,
     -- can't subscribe twice to the same thread
     CONSTRAINT unique_subscriptions UNIQUE KEY (user_id, target_id)
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
@@ -66,8 +66,8 @@ CREATE TABLE readings (
     user_id INT NOT NULL,
     comment_id INT NOT NULL,
     created_at DATETIME NOT NULL, -- (no data available for now)
-    FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (comment_id) REFERENCES comments (id),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE,
     -- can't read the same comment twice
     CONSTRAINT unique_readings UNIQUE KEY (user_id, comment_id)
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
