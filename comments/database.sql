@@ -1,15 +1,3 @@
-CREATE TABLE comments (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    target_id INT NOT NULL,
-    content TEXT NOT NULL,
-    content_html TEXT NOT NULL,
-    created_at DATETIME NOT NULL,
-    deleted BOOLEAN NOT NULL DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (target_id) REFERENCES targets (id)
-);
-
 CREATE TABLE users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
@@ -24,6 +12,18 @@ CREATE TABLE targets (
     type ENUM('class', 'guide', 'video', 'unknown', 'challenge') NOT NULL DEFAULT 'class',
     cls VARCHAR(255) NOT NULL,    -- "Ext.draw.Sprite"
     member VARCHAR(255) NOT NULL  -- "method-setAttributes"
+);
+
+CREATE TABLE comments (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    target_id INT NOT NULL,
+    content TEXT NOT NULL,
+    content_html TEXT NOT NULL,
+    created_at DATETIME NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (target_id) REFERENCES targets (id)
 );
 
 CREATE TABLE votes (
