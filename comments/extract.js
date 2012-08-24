@@ -13,6 +13,9 @@ var db = mysql.createConnection({
     database: config.db.dbName
 });
 
+// Default date for all items that are missing a date.
+var DEFAULT_DATE = Date.parse("Jan 1, 2011");
+
 var MongoComments = (function() {
     function extract(data, next) {
         Comment.find({}, function(err, mongo_comments) {
@@ -319,7 +322,7 @@ var VotesTable = (function() {
                     user_id: data.usersMap[username].id,
                     comment_id: data.commentsMap[CommentsTable.buildKey(c)].id,
                     value: value,
-                    created_at: null
+                    created_at: DEFAULT_DATE
                 });
             });
         }
@@ -384,7 +387,7 @@ var SubscriptionsTable = (function() {
                 subscriptions.push({
                     user_id: data.usersMapByExternalId[s.userId].id,
                     target_id: data.targetsMap[TargetsTable.buildKey(s)].id,
-                    created_at: null
+                    created_at: DEFAULT_DATE
                 });
             }
         });
@@ -407,7 +410,7 @@ var ReadingsTable = (function() {
             readings.push({
                 user_id: data.usersMapByExternalId[m.userId].id,
                 comment_id: data.commentsMap[m.commentId].id,
-                created_at: null
+                created_at: DEFAULT_DATE
             });
         });
 
