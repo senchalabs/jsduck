@@ -43,6 +43,21 @@ var MongoSubscriptions = (function() {
     };
 })();
 
+var MongoMetas = (function() {
+    function extract(data, next) {
+        Meta.find({}, function(err, mongo_metas) {
+            if (err) throw err;
+
+            data.mongo_metas = mongo_metas;
+            next();
+        });
+    }
+
+    return {
+        extract: extract
+    };
+})();
+
 
 var UsersTable = (function() {
     function extract(data, next) {
@@ -343,6 +358,28 @@ var SubscriptionsTable = (function() {
     };
 })();
 
+var ReadingsTable = (function() {
+    function extract(data, next) {
+        var readings = [];
+
+        data.mongo_metas.forEach(function(m) {
+            readings.push({
+                user_id: data.usersMapByExternalId[m.userId].id,
+                comment_id: data.commentsMap[m.commentId].id,
+                created_at: null
+            });
+        });
+
+        addIds(readings);
+        data.readings = readings;
+        next();
+    }
+
+    return {
+        extract: extract
+    };
+})();
+
 // Calls an array of functions in sequence passing to each function
 // the data argument and a function to call when it finishes.
 function sequence(data, callbacks) {
@@ -384,6 +421,8 @@ sequence({}, [
     MongoComments.extract,
     asyncPrint("get mongo subscriptions..."),
     MongoSubscriptions.extract,
+    asyncPrint("get mongo metas..."),
+    MongoMetas.extract,
 
     asyncPrint("build users table..."),
     UsersTable.extract,
@@ -397,6 +436,8 @@ sequence({}, [
     UpdatesTable.extract,
     asyncPrint("build subscriptions table..."),
     SubscriptionsTable.extract,
+    asyncPrint("build readings table..."),
+    ReadingsTable.extract,
 
     function(data, next) {
         console.log(data.users.length + " users");
@@ -405,6 +446,7 @@ sequence({}, [
         console.log(data.votes.length + " votes");
         console.log(data.updates.length + " updates");
         console.log(data.subscriptions.length + " subscriptions");
+        console.log(data.readings.length + " readings");
         process.exit();
     }
 ]);

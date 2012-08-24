@@ -56,7 +56,7 @@ CREATE TABLE subscriptions (
     FOREIGN KEY (target_id) REFERENCES targets (id)
 );
 
-CREATE TABLE read_comments (
+CREATE TABLE readings (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     comment_id INT NOT NULL,
