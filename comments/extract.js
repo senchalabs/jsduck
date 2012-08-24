@@ -461,9 +461,11 @@ function asyncPrint(msg) {
 
 function printInserts(table) {
     return function(data, next) {
+        console.log("START TRANSACTION;");
         data[table].map(fixBooleans).forEach(function(row) {
             console.log(db.format("INSERT INTO "+table+" SET ?;", row));
         });
+        console.log("COMMIT;");
         next();
     };
 }
