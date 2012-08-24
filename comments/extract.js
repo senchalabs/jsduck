@@ -351,7 +351,7 @@ var UpdatesTable = (function() {
                     user_id: data.usersMap[u.author].id,
                     comment_id: data.commentsMap[CommentsTable.buildKey(c)].id,
                     action: u.action || 'update',
-                    created_at: u.updatedAt
+                    created_at: fixDate(u.updatedAt)
                 });
             });
         });
@@ -361,6 +361,10 @@ var UpdatesTable = (function() {
         data.updates = updates;
 
         next();
+    }
+
+    function fixDate(date) {
+        return (typeof date === "string") ? Date.parse(date) : date;
     }
 
     return {
