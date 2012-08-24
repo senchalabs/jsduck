@@ -379,16 +379,24 @@ var SubscriptionsTable = (function() {
     function extract(data, next) {
         var subscriptions = [];
 
+        // to check for duplicate subscriptions
+        var uniqueMap = {};
+
         data.mongo_subscriptions.forEach(function(s) {
             // There's one particular user who's ID doesn't exist in Sencha Forum DB.
             // Though... I was able to find a user with the same e-mail address,
             // but I think it's safer to just delete subscriptions of that user.
             if (s.userId !== 462980) {
-                subscriptions.push({
+                var r = {
                     user_id: data.usersMapByExternalId[s.userId].id,
                     target_id: data.targetsMap[TargetsTable.buildKey(s)].id,
                     created_at: DEFAULT_DATE
-                });
+                };
+                // ignore duplicate subscriptions
+                if (!uniqueMap[r.user_id+"-"+r.target_id]) {
+                    subscriptions.push(r);
+                }
+                uniqueMap[r.user_id+"-"+r.target_id] = true;
             }
         });
 
