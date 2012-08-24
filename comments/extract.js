@@ -13,42 +13,74 @@ var db = mysql.createConnection({
     database: config.db.dbName
 });
 
-
-var UsersTable = (function() {
+var MongoComments = (function() {
     function extract(data, next) {
-        var usersMap = extractUniqueUsers(data.mongo_comments);
-        var users = objectValues(usersMap);
-
-        var usersWithoutId = users.filter(function(u){ return !u.external_id; });
-
-        var usernames = usersWithoutId.map(function(u){ return u.username; });
-        db.query("SELECT userid, username FROM user WHERE username IN (?)", [usernames], function(err, rows) {
+        Comment.find({}, function(err, mongo_comments) {
             if (err) throw err;
 
-            rows.forEach(function(r) {
-                if (usersMap[r.username]) {
-                    usersMap[r.username].external_id = r.userid;
-                }
-                else {
-                    // Turns out that Sencha Forum DB contains users zoob
-                    // and Zoob.  Only Zoob has commented in docs, but our
-                    // SELECT query compares strings case-insensitively
-                    // resulting in bot zoob and Zoob being selected.
-                    // So simply ignore zoob and other users like him.
-                }
-            });
-
-            data.usersMap = usersMap;
-            data.users = users;
-            addIds(data.users);
+            data.mongo_comments = mongo_comments;
             next();
         });
     }
 
-    function extractUniqueUsers(comments) {
+    return {
+        extract: extract
+    };
+})();
+
+var MongoSubscriptions = (function() {
+    function extract(data, next) {
+        Subscription.find({}, function(err, mongo_subscriptions) {
+            if (err) throw err;
+
+            data.mongo_subscriptions = mongo_subscriptions;
+            next();
+        });
+    }
+
+    return {
+        extract: extract
+    };
+})();
+
+
+var UsersTable = (function() {
+    function extract(data, next) {
+        data.usersMap = extractUsersFromComments(data);
+        data.users = objectValues(data.usersMap);
+
+        // until now all users are with usernames, but some are missing external id.
+
+        loadMissingExternalIds(data, function() {
+            // all users have now buth username and external id.
+
+            // build map by external id and extract additional users from subscriptions.
+            // those will be added to usersMapByExternalId.
+            // rebuild the users list from the external id map.
+            data.usersMapByExternalId = buildExternalIdMap(data.users);
+            extractUsersFromSubscriptions(data);
+            data.users = objectValues(data.usersMapByExternalId);
+
+            // now all users have external id but some will be missing username.
+            // also the usersMap will be missing those without username.
+
+            loadMissingUsernames(data, function() {
+                // usersMap now has also the users that were previously missing the username.
+                // re-extract list of users from it.
+                // and re-build map by external id.
+                data.users = objectValues(data.usersMap);
+                data.usersMapByExternalId = buildExternalIdMap(data.users);
+
+                addIds(data.users);
+                next();
+            });
+        });
+    }
+
+    function extractUsersFromComments(data) {
         var usersMap = {};
 
-        comments.forEach(function(c) {
+        data.mongo_comments.forEach(function(c) {
             var record = {
                 username: c.author,
                 email_hash: c.emailHash,
@@ -77,6 +109,70 @@ var UsersTable = (function() {
         return usersMap;
     }
 
+    function extractUsersFromSubscriptions(data) {
+        data.mongo_subscriptions.forEach(function(s) {
+            // only add if no such user yet found
+            if (!data.usersMapByExternalId[s.userId]) {
+                data.usersMapByExternalId[s.userId] = {
+                    external_id: s.userId
+                };
+            }
+        });
+    }
+
+    function loadMissingExternalIds(data, next) {
+        var usersWithoutId = data.users.filter(function(u){ return !u.external_id; });
+        var usernames = usersWithoutId.map(function(u){ return u.username; });
+        db.query("SELECT userid, username FROM user WHERE username IN (?)", [usernames], function(err, rows) {
+            if (err) throw err;
+
+            rows.forEach(function(r) {
+                if (data.usersMap[r.username]) {
+                    data.usersMap[r.username].external_id = r.userid;
+                }
+                else {
+                    // Turns out that Sencha Forum DB contains users zoob
+                    // and Zoob.  Only Zoob has commented in docs, but our
+                    // SELECT query compares strings case-insensitively
+                    // resulting in bot zoob and Zoob being selected.
+                    // So simply ignore zoob and other users like him.
+                }
+            });
+
+            next();
+        });
+    }
+
+    function loadMissingUsernames(data, next) {
+        var usersWithoutName = data.users.filter(function(u){ return !u.username; });
+        var externalIds = usersWithoutName.map(function(u){ return u.external_id; });
+        db.query("SELECT userid, username FROM user WHERE userid IN (?)", [externalIds], function(err, rows) {
+            if (err) throw err;
+
+            rows.forEach(function(r) {
+                if (data.usersMap[r.username]) {
+                    console.log(r.username + " already exists");
+                }
+                else {
+                    data.usersMap[r.username] = {
+                        username: r.username,
+                        external_id: r.userid
+                    };
+                }
+            });
+
+            next();
+        });
+    }
+
+    function buildExternalIdMap(users) {
+        var map = {};
+        users.forEach(function(u) {
+            map[u.external_id] = u;
+        });
+        return map;
+    }
+
     function buildKey(c) {
         return c.author;
     }
@@ -89,26 +185,33 @@ var UsersTable = (function() {
 
 var TargetsTable = (function() {
     function extract(data, next) {
-        data.targetsMap = extractUniqueTargets(data.mongo_comments);
+        data.targetsMap = extractUniqueTargets(data);
         data.targets = objectValues(data.targetsMap);
         addIds(data.targets);
         next();
     }
 
-    function extractUniqueTargets(comments) {
+    function extractUniqueTargets(data) {
         var map = {};
 
-        comments.forEach(function(c) {
-            var target = {
-                domain: c.sdk + "-" + c.version,
-                type: c.target[0],
-                cls: c.target[1],
-                member: c.target[2]
-            };
-            map[buildKey(c)] = target;
+        data.mongo_comments.forEach(function(c) {
+            map[buildKey(c)] = buildTarget(c);
+        });
+
+        data.mongo_subscriptions.forEach(function(s) {
+            map[buildKey(s)] = buildTarget(s);
         });
 
         return map;
+    }
+
+    function buildTarget(c) {
+        return {
+            domain: c.sdk + "-" + c.version,
+            type: c.target[0],
+            cls: c.target[1],
+            member: c.target[2]
+        };
     }
 
     function buildKey(c) {
@@ -213,6 +316,33 @@ var UpdatesTable = (function() {
     };
 })();
 
+var SubscriptionsTable = (function() {
+    function extract(data, next) {
+        var subscriptions = [];
+
+        data.mongo_subscriptions.forEach(function(s) {
+            // There's one particular user who's ID doesn't exist in Sencha Forum DB.
+            // Though... I was able to find a user with the same e-mail address,
+            // but I think it's safer to just delete subscriptions of that user.
+            if (s.userId !== 462980) {
+                subscriptions.push({
+                    user_id: data.usersMapByExternalId[s.userId].id,
+                    target_id: data.targetsMap[TargetsTable.buildKey(s)].id,
+                    created_at: null
+                });
+            }
+        });
+
+        addIds(subscriptions);
+        data.subscriptions = subscriptions;
+        next();
+    }
+
+    return {
+        extract: extract
+    };
+})();
+
 // Calls an array of functions in sequence passing to each function
 // the data argument and a function to call when it finishes.
 function sequence(data, callbacks) {
@@ -241,26 +371,40 @@ function addIds(objects) {
     });
 }
 
+function asyncPrint(msg) {
+    return function(data, next) {
+        console.log(msg);
+        next();
+    };
+}
 
-Comment.find({}, function(err, mongo_comments) {
-    if (err) throw err;
 
-    var data = {mongo_comments: mongo_comments};
+sequence({}, [
+    asyncPrint("get mongo comments..."),
+    MongoComments.extract,
+    asyncPrint("get mongo subscriptions..."),
+    MongoSubscriptions.extract,
 
-    sequence(data, [
-        UsersTable.extract,
-        TargetsTable.extract,
-        CommentsTable.extract,
-        VotesTable.extract,
-        UpdatesTable.extract,
-        function(data, next) {
-            console.log(data.users.length + " users");
-            console.log(data.targets.length + " targets");
-            console.log(data.comments.length + " comments");
-            console.log(data.votes.length + " votes");
-            console.log(data.updates.length + " updates");
-            process.exit();
-        }
-    ]);
-});
+    asyncPrint("build users table..."),
+    UsersTable.extract,
+    asyncPrint("build targets table..."),
+    TargetsTable.extract,
+    asyncPrint("build comments table..."),
+    CommentsTable.extract,
+    asyncPrint("build votes table..."),
+    VotesTable.extract,
+    asyncPrint("build updates table..."),
+    UpdatesTable.extract,
+    asyncPrint("build subscriptions table..."),
+    SubscriptionsTable.extract,
 
+    function(data, next) {
+        console.log(data.users.length + " users");
+        console.log(data.targets.length + " targets");
+        console.log(data.comments.length + " comments");
+        console.log(data.votes.length + " votes");
+        console.log(data.updates.length + " updates");
+        console.log(data.subscriptions.length + " subscriptions");
+        process.exit();
+    }
+]);
