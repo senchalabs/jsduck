@@ -41,3 +41,43 @@ GROUP BY users.id
 ORDER BY votes DESC
 LIMIT 10;
 
+-- get users with most downvotes
+
+SELECT
+    users.username,
+    SUM(c.vote) AS votes
+FROM users LEFT JOIN voted_comments c ON c.user_id = users.id
+GROUP BY users.id
+HAVING votes IS NOT NULL
+ORDER BY votes ASC
+LIMIT 10;
+
+-- get users with most comments
+
+SELECT
+    users.username,
+    COUNT(*) AS comment_count
+FROM users LEFT JOIN visible_comments c ON c.user_id = users.id
+GROUP BY users.id
+ORDER BY comment_count DESC
+LIMIT 10;
+
+-- get users with most edits
+
+SELECT
+    users.username,
+    COUNT(*) AS updates_count
+FROM users LEFT JOIN updates u ON u.user_id = users.id
+GROUP BY users.id
+ORDER BY updates_count DESC
+LIMIT 10;
+
+-- get all moderators, sorted by comment counts
+
+SELECT
+    username,
+    COUNT(*) AS comment_count
+FROM users LEFT JOIN visible_comments c ON c.user_id = users.id
+WHERE users.moderator = 1
+GROUP BY users.id
+ORDER BY comment_count DESC;
