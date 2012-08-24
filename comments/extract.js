@@ -452,6 +452,16 @@ function asyncPrint(msg) {
     };
 }
 
+function printInserts(table) {
+    return function(data, next) {
+        data[table].forEach(function(row) {
+            console.log(db.format("INSERT INTO "+table+" SET ?;", row));
+        });
+        next();
+    };
+}
+
+
 
 sequence({}, [
     asyncPrint("get mongo comments..."),
@@ -485,6 +495,18 @@ sequence({}, [
         console.log(data.updates.length + " updates");
         console.log(data.subscriptions.length + " subscriptions");
         console.log(data.readings.length + " readings");
+        next();
+    },
+
+    printInserts("users"),
+    printInserts("targets"),
+    printInserts("comments"),
+    printInserts("votes"),
+    printInserts("updates"),
+    printInserts("subscriptions"),
+    printInserts("readings"),
+
+    function(data, next) {
         process.exit();
     }
 ]);
