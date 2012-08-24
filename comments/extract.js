@@ -264,8 +264,8 @@ var TargetsTable = (function() {
         return {
             domain: c.sdk + "-" + c.version,
             type: c.target[0],
-            cls: c.target[1],
-            member: c.target[2]
+            cls: c.target[1] || '',
+            member: c.target[2] || ''
         };
     }
 
