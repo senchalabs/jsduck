@@ -4,7 +4,7 @@ CREATE TABLE users (
     external_id INT NOT NULL UNIQUE, -- (link to Sencha Forum database)
     email VARCHAR(255) NOT NULL, -- (from subscriptions)
     moderator BOOLEAN NOT NULL DEFAULT 0
-) ENGINE=InnoDB;
+) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE targets (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -14,7 +14,7 @@ CREATE TABLE targets (
     member VARCHAR(100) NOT NULL, -- "method-setAttributes"
     -- the whole target must be unique
     UNIQUE KEY (domain, type, cls, member)
-) ENGINE=InnoDB;
+) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE comments (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -26,7 +26,7 @@ CREATE TABLE comments (
     deleted BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (target_id) REFERENCES targets (id)
-) ENGINE=InnoDB;
+) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE votes (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -38,7 +38,7 @@ CREATE TABLE votes (
     FOREIGN KEY (comment_id) REFERENCES comments (id),
     -- can't vote twice on the same comment
     UNIQUE KEY (user_id, comment_id)
-) ENGINE=InnoDB;
+) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE updates (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -48,7 +48,7 @@ CREATE TABLE updates (
     created_at DATETIME NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (comment_id) REFERENCES comments (id)
-) ENGINE=InnoDB;
+) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE subscriptions (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -59,7 +59,7 @@ CREATE TABLE subscriptions (
     FOREIGN KEY (target_id) REFERENCES targets (id),
     -- can't subscribe twice to the same thread
     UNIQUE KEY (user_id, target_id)
-) ENGINE=InnoDB;
+) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE TABLE readings (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -70,7 +70,7 @@ CREATE TABLE readings (
     FOREIGN KEY (comment_id) REFERENCES comments (id),
     -- can't read the same comment twice
     UNIQUE KEY (user_id, comment_id)
-) ENGINE=InnoDB;
+) ENGINE = InnoDB, CHARACTER SET = utf8;
 
 CREATE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 0;
 
