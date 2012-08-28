@@ -80,3 +80,21 @@ CREATE VIEW voted_comments AS SELECT
 FROM visible_comments c LEFT JOIN votes v ON c.id = v.comment_id
 GROUP BY c.id;
 
+-- comments table joined with users and targets for easier quering
+CREATE VIEW full_visible_comments AS SELECT
+    c.id,
+    c.content,
+    c.content_html,
+    c.created_at,
+    users.username,
+    users.external_id,
+    users.email,
+    users.moderator,
+    targets.domain,
+    targets.type,
+    targets.cls,
+    targets.member
+FROM visible_comments AS c
+    LEFT JOIN users ON c.user_id = users.id
+    LEFT JOIN targets ON c.target_id = targets.id;
+
