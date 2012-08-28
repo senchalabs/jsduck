@@ -22,6 +22,7 @@ CREATE TABLE comments (
     target_id INT NOT NULL,
     content TEXT NOT NULL,
     content_html TEXT NOT NULL,
+    vote INT NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
@@ -72,20 +73,11 @@ CREATE TABLE readings (
     CONSTRAINT unique_readings UNIQUE KEY (user_id, comment_id)
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
 
-CREATE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 0;
-
-CREATE VIEW voted_comments AS SELECT
-    c.*,
-    SUM(v.value) AS vote
-FROM visible_comments c LEFT JOIN votes v ON c.id = v.comment_id
-GROUP BY c.id;
+CREATE OR REPLACE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 0;
 
 -- comments table joined with users and targets for easier quering
-CREATE VIEW full_visible_comments AS SELECT
-    c.id,
-    c.content,
-    c.content_html,
-    c.created_at,
+CREATE OR REPLACE VIEW full_visible_comments AS SELECT
+    c.*,
     users.username,
     users.external_id,
     users.email,
@@ -97,4 +89,3 @@ CREATE VIEW full_visible_comments AS SELECT
 FROM visible_comments AS c
     LEFT JOIN users ON c.user_id = users.id
     LEFT JOIN targets ON c.target_id = targets.id;
-

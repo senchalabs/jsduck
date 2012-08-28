@@ -2,52 +2,57 @@
 
 -- get comments for a particular member
 
-SELECT * FROM visible_comments c JOIN targets ON c.target_id = targets.id
-WHERE targets.domain = ? AND targets.type = ? AND targets.cls = ? AND targets.member = ?
+SELECT *
+FROM visible_comments
+WHERE domain = ? AND type = ? AND cls = ? AND member = ?;
 
 -- get 100 most recent comments
 
-SELECT * FROM visible_comments c JOIN targets ON c.target_id = targets.id
-WHERE targets.domain = ?
-ORDER BY created_at DESC LIMIT 100
+SELECT *
+FROM full_visible_comments
+WHERE domain = 'ext-js-4'
+ORDER BY created_at DESC
+LIMIT 100;
 
 -- get number of comments for each target
 
 SELECT
-    target.type AS type,
-    target.cls AS cls,
-    target.member AS member,
+    type AS type,
+    cls AS cls,
+    member AS member,
     count(*) AS cnt
-FROM visible_comments c JOIN targets ON c.target_id = targets.id
-WHERE target.domain = ?
-GROUP BY target.id
+FROM full_visible_comments
+WHERE domain = 'ext-js-4'
+GROUP BY target_id
+ORDER BY cnt;
 
 -- get number of comments for each class (including comments for class members)
 
 SELECT
-    target.cls AS cls,
+    cls AS cls,
     count(*) AS cnt
-FROM visible_comments c JOIN targets ON c.target_id = targets.id
-WHERE target.domain = ? AND target.type = 'class'
-GROUP BY target.cls
+FROM full_visible_comments
+WHERE domain = 'ext-js-4' AND type = 'class'
+GROUP BY cls
+ORDER BY cnt;
 
 -- get users with most upvotes
 
 SELECT
-    users.username,
-    SUM(c.vote) AS votes
-FROM users LEFT JOIN voted_comments c ON c.user_id = users.id
-GROUP BY users.id
+    username,
+    SUM(vote) AS votes
+FROM full_visible_comments
+GROUP BY username
 ORDER BY votes DESC
 LIMIT 10;
 
 -- get users with most downvotes
 
 SELECT
-    users.username,
-    SUM(c.vote) AS votes
-FROM users LEFT JOIN voted_comments c ON c.user_id = users.id
-GROUP BY users.id
+    username,
+    SUM(vote) AS votes
+FROM full_visible_comments
+GROUP BY username
 HAVING votes IS NOT NULL
 ORDER BY votes ASC
 LIMIT 10;
@@ -55,10 +60,10 @@ LIMIT 10;
 -- get users with most comments
 
 SELECT
-    users.username,
+    username,
     COUNT(*) AS comment_count
-FROM users LEFT JOIN visible_comments c ON c.user_id = users.id
-GROUP BY users.id
+FROM full_visible_comments
+GROUP BY username
 ORDER BY comment_count DESC
 LIMIT 10;
 
@@ -77,7 +82,7 @@ LIMIT 10;
 SELECT
     username,
     COUNT(*) AS comment_count
-FROM users LEFT JOIN visible_comments c ON c.user_id = users.id
-WHERE users.moderator = 1
-GROUP BY users.id
+FROM full_visible_comments
+WHERE moderator = 1
+GROUP BY username
 ORDER BY comment_count DESC;
