@@ -4,9 +4,8 @@
     "description": "Commenting backend for JSDuck Documentation",
     "author": "Rene Saarsoo <nene@triin.net>",
     "dependencies": {
-        // The github page of node-mysql recommends me to install the
-        // 2.0 version despite it being alpha.
         "mysql": "2.0.0-alpha3",
+        "jasmine-node": "",
         "mongoose": ""
     }
 }
