@@ -54,4 +54,11 @@ describe("Comments", function() {
         });
     });
 
+    it("#countPerTarget gets number of comments for each target", function(done) {
+        comments.countsPerTarget(function(counts) {
+            expect(counts["class__Ext.grid.column.Column__cfg-renderer"]).toEqual(20);
+            done();
+        });
+    });
+
 });

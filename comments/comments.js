@@ -85,6 +85,41 @@ module.exports = (function(){
             });
         },
 
+        /**
+         * Returns number of comments for each target in the current
+         * domain.  Excludes deleted comments.
+         *
+         * @param {Function} callback Called with the result.
+         * @param {Object} callback.counts Map of targets to counts:
+         *
+         *     {
+         *         "class__Ext__": 3,
+         *         "class__Ext__method-define": 1,
+         *         "class__Ext.Panel__cfg-title": 8
+         *     }
+         */
+        countsPerTarget: function(callback) {
+            var sql = [
+                'SELECT',
+                '    type,',
+                '    cls,',
+                '    member,',
+                '    count(*) AS count',
+                'FROM full_visible_comments',
+                'WHERE domain = ?',
+                'GROUP BY target_id'
+            ];
+
+            this.query(sql, [this.domain], function(rows) {
+                var map = {};
+                rows.forEach(function(r) {
+                    var id = [r.type, r.cls, r.member].join("__");
+                    map[id] = +r.count;
+                });
+                callback(map);
+            });
+        },
+
         query: function(sqlLines, params, callback) {
             this.db.query(sqlLines.join("\n"), params, function(err, rows) {
                 if (err) throw err;
