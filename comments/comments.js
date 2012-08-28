@@ -46,8 +46,8 @@ module.exports = (function(){
          * Excludes deleted comments.
          *
          * @param {Object} opts Options for the query:
-         * @param {Number} opts.limit Number of rows to return.
-         * @param {Number} opts.offset The starting index.
+         * @param {Number} [opts.limit=100] Number of rows to return.
+         * @param {Number} [opts.offset=0] The starting index.
          *
          * @param {Function} callback Called with the result.
          * @param {Object[]} callback.comments An array of comment rows.
@@ -61,7 +61,7 @@ module.exports = (function(){
                 'LIMIT ? OFFSET ?'
             ];
 
-            this.query(sql, [this.domain, opts.limit, opts.offset], callback);
+            this.query(sql, [this.domain, opts.limit||100, opts.offset||0], callback);
         },
 
         /**
@@ -81,7 +81,7 @@ module.exports = (function(){
             ];
 
             this.query(sql, [this.domain], function(rows) {
-                callback(rows[0].count);
+                callback(+rows[0].count);
             });
         },
 
