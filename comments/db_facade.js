@@ -56,7 +56,7 @@ DbFacade.prototype = {
      */
     insert: function(table, fields, callback) {
         this.query("INSERT INTO "+table+" SET ?", [fields], function(err, result) {
-            callback(err, result.insertId);
+            callback(err, result && result.insertId);
         });
     },
 

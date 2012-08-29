@@ -25,12 +25,17 @@ Targets.prototype = {
      * @param {Number} callback.id The ID of the target
      */
     ensure: function(target, callback) {
-        this.get(target, function(err, targetFound) {
-            if (targetFound) {
-                callback(err, targetFound.id);
+        // first try to insert. If that fails, the target already
+        // exists and we can instead look it up. If insert succeeds,
+        // great also.
+        this.add(target, function(err, target_id) {
+            if (err) {
+                this.get(target, function(err, t) {
+                    callback(err, t.id);
+                });
             }
             else {
-                this.add(target, callback);
+                callback(err, target_id);
             }
         }.bind(this));
     },
