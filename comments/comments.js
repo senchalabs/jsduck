@@ -19,8 +19,8 @@ module.exports = (function(){
 
     Comments.prototype = {
         /**
-         * Finds a single comment by ID.
-         * Excludes deleted comments.
+         * Finds a single comment by ID in the current domain.
+         * Does not fine deleted comments.
          *
          * @param {Number} id The ID of the comment to find.
          * @param {Function} callback Called with the result.

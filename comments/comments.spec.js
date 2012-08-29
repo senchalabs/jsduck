@@ -54,6 +54,20 @@ describe("Comments", function() {
         });
     });
 
+    it("#find returns empty array when target not found", function(done) {
+        comments.find({type: "class", cls: "Foo", member: "bar"}, function(rows) {
+            expect(rows.length).toEqual(0);
+            done();
+        });
+    });
+
+    it("#find returns empty array when target not in current domain", function(done) {
+        comments.find({type: "guide", cls: "forms", member: ""}, function(rows) {
+            expect(rows.length).toEqual(0);
+            done();
+        });
+    });
+
     it("#findRecent returns n recent comments", function(done) {
         comments.findRecent({limit: 10, offset: 0}, function(rows) {
             expect(rows.length).toEqual(10);
@@ -75,10 +89,23 @@ describe("Comments", function() {
         });
     });
 
-    it("#count gets total number of comments", function(done) {
+    it("#count gets total number of comments in current domain", function(done) {
         comments.count({}, function(cnt) {
             expect(cnt).toEqual(24);
             done();
+        });
+    });
+
+    describe("when initializing Comments to other domain", function() {
+        beforeEach(function() {
+            comments = new Comments(connection, "touch-2");
+        });
+
+        it("#count gets total number of comments in the other domain", function(done) {
+            comments.count({}, function(cnt) {
+                expect(cnt).toEqual(4);
+                done();
+            });
         });
     });
 
