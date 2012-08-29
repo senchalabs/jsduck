@@ -26,25 +26,22 @@ DbFacade.prototype = {
      * whitespace.
      * @param {Mixed[]} params Parameters for the query
      * @param {Function} callback Called after query finishes:.
+     * @param {Error} callback.err The error object on failure or null on success.
      * @param {Object[]/Object} callback.result The result of callback.
      * In case of SELECT it's an array of rows,
      * In case of INSERT it's object with insertId property.
      */
     query: function(sql, params, callback) {
         sql = (typeof sql === "string") ? sql : sql.join("\n");
-        this.connection.query(sql, params, function(err, result) {
-            if (err) throw err;
-
-            callback(result);
-        });
+        this.connection.query(sql, params, callback);
     },
 
     /**
      * Exactly like #query, except that the result is just one row.
      */
     queryOne: function(sql, params, callback) {
-        this.query(sql, params, function(rows) {
-            callback(rows[0]);
+        this.query(sql, params, function(err, rows) {
+            callback(err, rows[0]);
         });
     },
 
@@ -54,11 +51,12 @@ DbFacade.prototype = {
      * @param {String} table Name of the table.
      * @param {Object} fields The row to insert.
      * @param {Function} callback Called when query finishes.
+     * @param {Error} callback.err The error object.
      * @param {Number} callback.insertId ID of the inserted row.
      */
     insert: function(table, fields, callback) {
-        this.query("INSERT INTO "+table+" SET ?", [fields], function(result) {
-            callback(result.insertId);
+        this.query("INSERT INTO "+table+" SET ?", [fields], function(err, result) {
+            callback(err, result.insertId);
         });
     },
 
@@ -69,6 +67,7 @@ DbFacade.prototype = {
      * @param {Object} fields The row to update. This must contain
      * an `id` field that's used to decide which row to update.
      * @param {Function} callback Called when query finishes.
+     * @param {Error} callback.err The error object.
      */
     update: function(table, fields, callback) {
         var id = fields.id;

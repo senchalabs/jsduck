@@ -21,12 +21,13 @@ Targets.prototype = {
      * @param {String} target.cls
      * @param {String} target.member
      * @param {Function} callback
+     * @param {Error} callback.err
      * @param {Number} callback.id The ID of the target
      */
     ensure: function(target, callback) {
-        this.get(target, function(targetFound) {
+        this.get(target, function(err, targetFound) {
             if (targetFound) {
-                callback(targetFound.id);
+                callback(err, targetFound.id);
             }
             else {
                 this.add(target, callback);

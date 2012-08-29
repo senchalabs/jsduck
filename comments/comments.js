@@ -25,6 +25,7 @@ Comments.prototype = {
      *
      * @param {Number} id The ID of the comment to find.
      * @param {Function} callback Called with the result.
+     * @param {Error} callback.err The error object.
      * @param {Object} callback.comment The comment found or undefined.
      */
     getById: function(id, callback) {
@@ -47,6 +48,7 @@ Comments.prototype = {
      * @param {String} target.member The name of class member or empty string.
      *
      * @param {Function} callback Called with the result.
+     * @param {Error} callback.err The error object.
      * @param {Object[]} callback.comments An array of comment rows.
      */
     find: function(target, callback) {
@@ -69,6 +71,7 @@ Comments.prototype = {
      * @param {Number} [opts.offset=0] The starting index.
      *
      * @param {Function} callback Called with the result.
+     * @param {Error} callback.err The error object.
      * @param {Object[]} callback.comments An array of comment rows.
      */
     findRecent: function(opts, callback) {
@@ -90,6 +93,7 @@ Comments.prototype = {
      * @param {Object} opts Reserved for future.
      *
      * @param {Function} callback Called with the result.
+     * @param {Error} callback.err The error object.
      * @param {Number} callback.count The number of comments found.
      */
     count: function(opts, callback) {
@@ -99,8 +103,8 @@ Comments.prototype = {
             'WHERE domain = ?'
         ];
 
-        this.db.queryOne(sql, [this.domain], function(row) {
-            callback(+row.count);
+        this.db.queryOne(sql, [this.domain], function(err, row) {
+            callback(err, +row.count);
         });
     },
 
@@ -109,6 +113,7 @@ Comments.prototype = {
      * domain.  Excludes deleted comments.
      *
      * @param {Function} callback Called with the result.
+     * @param {Error} callback.err The error object.
      * @param {Object} callback.counts Map of targets to counts:
      *
      *     {
@@ -129,13 +134,13 @@ Comments.prototype = {
             'GROUP BY target_id'
         ];
 
-        this.db.query(sql, [this.domain], function(rows) {
+        this.db.query(sql, [this.domain], function(err, rows) {
             var map = {};
             rows.forEach(function(r) {
                 var id = [r.type, r.cls, r.member].join("__");
                 map[id] = +r.count;
             });
-            callback(map);
+            callback(err, map);
         });
     },
 
@@ -151,10 +156,15 @@ Comments.prototype = {
      * @param {String} comment.cls    Class name of target.
      * @param {String} comment.member Member name of target.
      * @param {Function} callback
+     * @param {Error} callback.err The error object.
      * @param {Function} callback.id The ID of newly inserted comment.
      */
     add: function(comment, callback) {
-        this.targets.ensure(comment, function(target_id) {
+        this.targets.ensure(comment, function(err, target_id) {
+            if (err) {
+                callback(err);
+                return;
+            }
             this.db.insert('comments', {
                 target_id: target_id,
                 user_id: comment.user_id,
@@ -173,6 +183,7 @@ Comments.prototype = {
      * @param {Number} comment.user_id ID of the user doing the update.
      * @param {String} comment.content New text for the comment.
      * @param {String} comment.content_html New formatted text for the comment.
+     * @param {Error} callback.err The error object.
      * @param {Function} callback Called when done.
      */
     update: function(comment, callback) {
@@ -181,7 +192,11 @@ Comments.prototype = {
             content: comment.content,
             content_html: comment.content_html
         };
-        this.db.update("comments", data, function() {
+        this.db.update("comments", data, function(err) {
+            if (err) {
+                callback(err);
+                return;
+            }
             this.db.insert("updates", {
                 comment_id: comment.id,
                 user_id: comment.user_id,

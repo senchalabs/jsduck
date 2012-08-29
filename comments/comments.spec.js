@@ -20,77 +20,77 @@ describe("Comments", function() {
     });
 
     it("#getById returns comment with given ID", function(done) {
-        comments.getById(7, function(com) {
+        comments.getById(7, function(err, com) {
             expect(com.id).toEqual(7);
             done();
         });
     });
 
     it("#getById returns undefined when no comment with such ID", function(done) {
-        comments.getById(123456, function(com) {
+        comments.getById(123456, function(err, com) {
             expect(com).toEqual(undefined);
             done();
         });
     });
 
     it("#getById returns undefined when ID exists in other domain.", function(done) {
-        comments.getById(30, function(com) {
+        comments.getById(30, function(err, com) {
             expect(com).toEqual(undefined);
             done();
         });
     });
 
     it("#getById returns undefined when comment with ID is deleted", function(done) {
-        comments.getById(6, function(com) {
+        comments.getById(6, function(err, com) {
             expect(com).toEqual(undefined);
             done();
         });
     });
 
     it("#find returns all undeleted comments for a target", function(done) {
-        comments.find({type: "class", cls: "Ext", member: ""}, function(rows) {
+        comments.find({type: "class", cls: "Ext", member: ""}, function(err, rows) {
             expect(rows.length).toEqual(5);
             done();
         });
     });
 
     it("#find returns empty array when target not found", function(done) {
-        comments.find({type: "class", cls: "Foo", member: "bar"}, function(rows) {
+        comments.find({type: "class", cls: "Foo", member: "bar"}, function(err, rows) {
             expect(rows.length).toEqual(0);
             done();
         });
     });
 
     it("#find returns empty array when target not in current domain", function(done) {
-        comments.find({type: "guide", cls: "forms", member: ""}, function(rows) {
+        comments.find({type: "guide", cls: "forms", member: ""}, function(err, rows) {
             expect(rows.length).toEqual(0);
             done();
         });
     });
 
     it("#findRecent returns n recent comments", function(done) {
-        comments.findRecent({limit: 10, offset: 0}, function(rows) {
+        comments.findRecent({limit: 10, offset: 0}, function(err, rows) {
             expect(rows.length).toEqual(10);
             done();
         });
     });
 
     it("#findRecent without offset option defaults to offset:0", function(done) {
-        comments.findRecent({limit: 10}, function(rows) {
+        comments.findRecent({limit: 10}, function(err, rows) {
             expect(rows.length).toEqual(10);
             done();
         });
     });
 
     it("#findRecent without limit option defaults to limit:100 or max nr of comments", function(done) {
-        comments.findRecent({}, function(rows) {
+        comments.findRecent({}, function(err, rows) {
             expect(rows.length).toEqual(24);
             done();
         });
     });
 
     it("#count gets total number of comments in current domain", function(done) {
-        comments.count({}, function(cnt) {
+        comments.count({}, function(err, cnt) {
             expect(cnt).toEqual(24);
             done();
         });
@@ -102,7 +102,7 @@ describe("Comments", function() {
         });
 
         it("#count gets total number of comments in the other domain", function(done) {
-            comments.count({}, function(cnt) {
+            comments.count({}, function(err, cnt) {
                 expect(cnt).toEqual(4);
                 done();
             });
@@ -110,7 +110,7 @@ describe("Comments", function() {
     });
 
     it("#countPerTarget gets number of comments for each target", function(done) {
-        comments.countsPerTarget(function(counts) {
+        comments.countsPerTarget(function(err, counts) {
             expect(counts["class__Ext__"]).toEqual(5);
             done();
         });
@@ -127,8 +127,8 @@ describe("Comments", function() {
             cls: "Ext",
             member: "method-getBody"
         };
-        comments.add(com, function(id) {
-            comments.getById(id, function(newCom) {
+        comments.add(com, function(err, id) {
+            comments.getById(id, function(err, newCom) {
                 expect(newCom.id).toEqual(id);
                 done();
             });
@@ -146,8 +146,8 @@ describe("Comments", function() {
             cls: "Blah",
             member: "method-foo"
         };
-        comments.add(com, function(id) {
-            comments.getById(id, function(newCom) {
+        comments.add(com, function(err, id) {
+            comments.getById(id, function(err, newCom) {
                 expect(newCom.cls).toEqual("Blah");
                 done();
             });
@@ -163,8 +163,8 @@ describe("Comments", function() {
             content: "New content.",
             content_html: "<p>New content.</p>"
         };
-        comments.update(com, function() {
-            comments.getById(com.id, function(newCom) {
+        comments.update(com, function(err) {
+            comments.getById(com.id, function(err, newCom) {
                 expect(newCom.content).toEqual("New content.");
                 done();
             });
@@ -179,8 +179,8 @@ describe("Comments", function() {
             content: "New content.",
             content_html: "<p>New content.</p>"
         };
-        comments.update(com, function() {
-            comments.getById(com.id, function(newCom) {
+        comments.update(com, function(err) {
+            comments.getById(com.id, function(err, newCom) {
                 expect(newCom.user_id).toEqual(4);
                 done();
             });
