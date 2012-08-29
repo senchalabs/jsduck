@@ -1,3 +1,4 @@
+var Targets = require("./targets");
 
 module.exports = (function(){
     /**
@@ -15,6 +16,7 @@ module.exports = (function(){
     function Comments(db, domain) {
         this.db = db;
         this.domain = domain;
+        this.targets = new Targets(db, domain);
     }
 
     Comments.prototype = {
@@ -153,7 +155,7 @@ module.exports = (function(){
          * @param {Function} callback.id The ID of newly inserted comment.
          */
         add: function(comment, callback) {
-            this.ensureTarget(comment, function(target_id) {
+            this.targets.ensure(comment, function(target_id) {
                 this.db.insert('comments', {
                     target_id: target_id,
                     user_id: comment.user_id,
@@ -188,35 +190,6 @@ module.exports = (function(){
                     created_at: new Date()
                 }, callback);
             }.bind(this));
-        },
-
-        ensureTarget: function(target, callback) {
-            this.getTarget(target, function(targetFound) {
-                if (targetFound) {
-                    callback(targetFound.id);
-                }
-                else {
-                    this.addTarget(target, callback);
-                }
-            }.bind(this));
-        },
-
-        getTarget: function(target, callback) {
-            var sql = [
-                'SELECT * FROM targets',
-                'WHERE domain = ? AND type = ? AND cls = ? AND member = ?'
-            ];
-            var params = [this.domain, target.type, target.cls, target.member];
-            this.db.queryOne(sql, params, callback);
-        },
-
-        addTarget: function(target, callback) {
-            this.db.insert("targets", {
-                domain: this.domain,
-                type: target.type,
-                cls: target.cls,
-                member: target.member
-            }, callback);
         }
     };
 
