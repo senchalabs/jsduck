@@ -33,9 +33,7 @@ module.exports = (function(){
                 'WHERE domain = ? AND id = ?'
             ];
 
-            this.query(sql, [this.domain, id], function(rows) {
-                callback(rows[0]);
-            });
+            this.queryOne(sql, [this.domain, id], callback);
         },
 
         /**
@@ -100,8 +98,8 @@ module.exports = (function(){
                 'WHERE domain = ?'
             ];
 
-            this.query(sql, [this.domain], function(rows) {
-                callback(+rows[0].count);
+            this.queryOne(sql, [this.domain], function(row) {
+                callback(+row.count);
             });
         },
 
@@ -137,6 +135,73 @@ module.exports = (function(){
                     map[id] = +r.count;
                 });
                 callback(map);
+            });
+        },
+
+        /**
+         * Adds new comment for a target.
+         * If the target doesn't yet exist, creates it first.
+         *
+         * @param {Object} comment A comment object with fields:
+         * @param {Number} comment.user_id ID of logged-in user.
+         * @param {String} comment.content The text of comment.
+         * @param {String} comment.content_html Formatted text of comment.
+         * @param {String} comment.type   Type name of target.
+         * @param {String} comment.cls    Class name of target.
+         * @param {String} comment.member Member name of target.
+         * @param {Function} callback
+         * @param {Function} callback.id The ID of newly inserted comment.
+         */
+        add: function(comment, callback) {
+            this.ensureTarget(comment, function(target_id) {
+                this.insert('comments', {
+                    target_id: target_id,
+                    user_id: comment.user_id,
+                    content: comment.content,
+                    content_html: comment.content_html,
+                    created_at: new Date()
+                }, callback);
+            }.bind(this));
+        },
+
+        ensureTarget: function(target, callback) {
+            this.getTarget(target, function(targetFound) {
+                if (targetFound) {
+                    callback(targetFound.id);
+                }
+                else {
+                    this.addTarget(target, callback);
+                }
+            }.bind(this));
+        },
+
+        getTarget: function(target, callback) {
+            var sql = [
+                'SELECT * FROM targets',
+                'WHERE domain = ? AND type = ? AND cls = ? AND member = ?'
+            ];
+            var params = [this.domain, target.type, target.cls, target.member];
+            this.queryOne(sql, params, callback);
+        },
+
+        addTarget: function(target, callback) {
+            this.insert("targets", {
+                domain: this.domain,
+                type: target.type,
+                cls: target.cls,
+                member: target.member
+            }, callback);
+        },
+
+        insert: function(table, fields, callback) {
+            this.query(["INSERT INTO "+table+" SET ?"], [fields], function(result) {
+                callback(result.insertId);
+            });
+        },
+
+        queryOne: function(sqlLines, params, callback) {
+            this.query(sqlLines, params, function(rows) {
+                callback(rows[0]);
             });
         },
 
