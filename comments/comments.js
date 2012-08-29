@@ -6,7 +6,7 @@ module.exports = (function(){
      * @constructor
      * Initializes Comments with a database connection and a target domain.
      *
-     * @param {mysql.Connection} db MySQL connection object.
+     * @param {DbFacade} db Instance of DbFacade.
      *
      * @param {String} domain The comments domain within which to work.
      * For example by passing "touch-2" the #find method will only find
@@ -33,7 +33,7 @@ module.exports = (function(){
                 'WHERE domain = ? AND id = ?'
             ];
 
-            this.queryOne(sql, [this.domain, id], callback);
+            this.db.queryOne(sql, [this.domain, id], callback);
         },
 
         /**
@@ -56,7 +56,7 @@ module.exports = (function(){
                 'ORDER BY created_at'
             ];
 
-            this.query(sql, [this.domain, target.type, target.cls, target.member], callback);
+            this.db.query(sql, [this.domain, target.type, target.cls, target.member], callback);
         },
 
         /**
@@ -79,7 +79,7 @@ module.exports = (function(){
                 'LIMIT ? OFFSET ?'
             ];
 
-            this.query(sql, [this.domain, opts.limit||100, opts.offset||0], callback);
+            this.db.query(sql, [this.domain, opts.limit||100, opts.offset||0], callback);
         },
 
         /**
@@ -98,7 +98,7 @@ module.exports = (function(){
                 'WHERE domain = ?'
             ];
 
-            this.queryOne(sql, [this.domain], function(row) {
+            this.db.queryOne(sql, [this.domain], function(row) {
                 callback(+row.count);
             });
         },
@@ -128,7 +128,7 @@ module.exports = (function(){
                 'GROUP BY target_id'
             ];
 
-            this.query(sql, [this.domain], function(rows) {
+            this.db.query(sql, [this.domain], function(rows) {
                 var map = {};
                 rows.forEach(function(r) {
                     var id = [r.type, r.cls, r.member].join("__");
@@ -154,7 +154,7 @@ module.exports = (function(){
          */
         add: function(comment, callback) {
             this.ensureTarget(comment, function(target_id) {
-                this.doInsert('comments', {
+                this.db.insert('comments', {
                     target_id: target_id,
                     user_id: comment.user_id,
                     content: comment.content,
@@ -180,8 +180,8 @@ module.exports = (function(){
                 content: comment.content,
                 content_html: comment.content_html
             };
-            this.doUpdate("comments", data, function() {
-                this.doInsert("updates", {
+            this.db.update("comments", data, function() {
+                this.db.insert("updates", {
                     comment_id: comment.id,
                     user_id: comment.user_id,
                     action: 'update',
@@ -207,52 +207,16 @@ module.exports = (function(){
                 'WHERE domain = ? AND type = ? AND cls = ? AND member = ?'
             ];
             var params = [this.domain, target.type, target.cls, target.member];
-            this.queryOne(sql, params, callback);
+            this.db.queryOne(sql, params, callback);
         },
 
         addTarget: function(target, callback) {
-            this.doInsert("targets", {
+            this.db.insert("targets", {
                 domain: this.domain,
                 type: target.type,
                 cls: target.cls,
                 member: target.member
             }, callback);
-        },
-
-        doInsert: function(table, fields, callback) {
-            this.query(["INSERT INTO "+table+" SET ?"], [fields], function(result) {
-                callback(result.insertId);
-            });
-        },
-
-        doUpdate: function(table, fields, callback) {
-            var id = fields.id;
-            var fieldsWithoutId = this.removeField(fields, "id");
-            this.query(["UPDATE "+table+" SET ? WHERE id = ?"], [fieldsWithoutId, id], callback);
-        },
-
-        removeField: function(obj, fieldName) {
-            var newObj = {};
-            for (var i in obj) {
-                if (i !== fieldName) {
-                    newObj[i] = obj[i];
-                }
-            }
-            return newObj;
-        },
-
-        queryOne: function(sqlLines, params, callback) {
-            this.query(sqlLines, params, function(rows) {
-                callback(rows[0]);
-            });
-        },
-
-        query: function(sqlLines, params, callback) {
-            this.db.query(sqlLines.join("\n"), params, function(err, rows) {
-                if (err) throw err;
-
-                callback(rows);
-            });
         }
     };
 

@@ -1,11 +1,11 @@
 describe("Comments", function() {
     var Comments = require("./comments");
-    var mysql = require('mysql');
+    var DbFacade = require('./db_facade');
     var connection;
     var comments;
 
     beforeEach(function() {
-        connection = mysql.createConnection({
+        connection = new DbFacade({
             host: 'localhost',
             user: '',
             password: '',
