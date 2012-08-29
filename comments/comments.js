@@ -154,11 +154,37 @@ module.exports = (function(){
          */
         add: function(comment, callback) {
             this.ensureTarget(comment, function(target_id) {
-                this.insert('comments', {
+                this.doInsert('comments', {
                     target_id: target_id,
                     user_id: comment.user_id,
                     content: comment.content,
                     content_html: comment.content_html,
+                    created_at: new Date()
+                }, callback);
+            }.bind(this));
+        },
+
+        /**
+         * Updates existing comment.
+         *
+         * @param {Object} comment A comment object with fields:
+         * @param {Number} comment.id ID of the comment to update.
+         * @param {Number} comment.user_id ID of the user doing the update.
+         * @param {String} comment.content New text for the comment.
+         * @param {String} comment.content_html New formatted text for the comment.
+         * @param {Function} callback Called when done.
+         */
+        update: function(comment, callback) {
+            var data = {
+                id: comment.id,
+                content: comment.content,
+                content_html: comment.content_html
+            };
+            this.doUpdate("comments", data, function() {
+                this.doInsert("updates", {
+                    comment_id: comment.id,
+                    user_id: comment.user_id,
+                    action: 'update',
                     created_at: new Date()
                 }, callback);
             }.bind(this));
@@ -185,7 +211,7 @@ module.exports = (function(){
         },
 
         addTarget: function(target, callback) {
-            this.insert("targets", {
+            this.doInsert("targets", {
                 domain: this.domain,
                 type: target.type,
                 cls: target.cls,
@@ -193,10 +219,26 @@ module.exports = (function(){
             }, callback);
         },
 
-        insert: function(table, fields, callback) {
+        doInsert: function(table, fields, callback) {
             this.query(["INSERT INTO "+table+" SET ?"], [fields], function(result) {
                 callback(result.insertId);
             });
+        },
+
+        doUpdate: function(table, fields, callback) {
+            var id = fields.id;
+            var fieldsWithoutId = this.removeField(fields, "id");
+            this.query(["UPDATE "+table+" SET ? WHERE id = ?"], [fieldsWithoutId, id], callback);
+        },
+
+        removeField: function(obj, fieldName) {
+            var newObj = {};
+            for (var i in obj) {
+                if (i !== fieldName) {
+                    newObj[i] = obj[i];
+                }
+            }
+            return newObj;
         },
 
         queryOne: function(sqlLines, params, callback) {

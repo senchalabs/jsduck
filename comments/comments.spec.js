@@ -154,4 +154,37 @@ describe("Comments", function() {
         });
     });
 
+
+    it("#update modifies content of existing comment", function(done) {
+        var com = {
+            id: 10,
+            user_id: 1,
+
+            content: "New content.",
+            content_html: "<p>New content.</p>"
+        };
+        comments.update(com, function() {
+            comments.getById(com.id, function(newCom) {
+                expect(newCom.content).toEqual("New content.");
+                done();
+            });
+        });
+    });
+
+    it("#update doesn't change the user_id of the comment it modified", function(done) {
+        var com = {
+            id: 10,
+            user_id: 1,
+
+            content: "New content.",
+            content_html: "<p>New content.</p>"
+        };
+        comments.update(com, function() {
+            comments.getById(com.id, function(newCom) {
+                expect(newCom.user_id).toEqual(4);
+                done();
+            });
+        });
+    });
+
 });
