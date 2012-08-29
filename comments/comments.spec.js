@@ -19,7 +19,35 @@ describe("Comments", function() {
         connection.end();
     });
 
-    it("#find returns comments for a target", function(done) {
+    it("#getById returns comment with given ID", function(done) {
+        comments.getById(7, function(com) {
+            expect(com.id).toEqual(7);
+            done();
+        });
+    });
+
+    it("#getById returns undefined when no comment with such ID", function(done) {
+        comments.getById(123456, function(com) {
+            expect(com).toEqual(undefined);
+            done();
+        });
+    });
+
+    it("#getById returns undefined when ID exists in other domain.", function(done) {
+        comments.getById(30, function(com) {
+            expect(com).toEqual(undefined);
+            done();
+        });
+    });
+
+    it("#getById returns undefined when comment with ID is deleted", function(done) {
+        comments.getById(6, function(com) {
+            expect(com).toEqual(undefined);
+            done();
+        });
+    });
+
+    it("#find returns all undeleted comments for a target", function(done) {
         comments.find({type: "class", cls: "Ext", member: ""}, function(rows) {
             expect(rows.length).toEqual(5);
             done();

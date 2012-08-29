@@ -19,6 +19,26 @@ module.exports = (function(){
 
     Comments.prototype = {
         /**
+         * Finds a single comment by ID.
+         * Excludes deleted comments.
+         *
+         * @param {Number} id The ID of the comment to find.
+         * @param {Function} callback Called with the result.
+         * @param {Object} callback.comment The comment found or undefined.
+         */
+        getById: function(id, callback) {
+            var sql = [
+                'SELECT *',
+                'FROM full_visible_comments',
+                'WHERE domain = ? AND id = ?'
+            ];
+
+            this.query(sql, [this.domain, id], function(rows) {
+                callback(rows[0]);
+            });
+        },
+
+        /**
          * Finds list of all comments for a particular target.
          * Excludes deleted comments.
          *
