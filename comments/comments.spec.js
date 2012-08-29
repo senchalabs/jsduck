@@ -9,7 +9,7 @@ describe("Comments", function() {
             host: 'localhost',
             user: '',
             password: '',
-            database: 'comments'
+            database: 'comments_test'
         });
 
         comments = new Comments(connection, "ext-js-4");
@@ -20,8 +20,8 @@ describe("Comments", function() {
     });
 
     it("#find returns comments for a target", function(done) {
-        comments.find({type: "class", cls: "Ext", member: "method-define"}, function(rows) {
-            expect(rows.length).toEqual(4);
+        comments.find({type: "class", cls: "Ext", member: ""}, function(rows) {
+            expect(rows.length).toEqual(5);
             done();
         });
     });
@@ -33,30 +33,30 @@ describe("Comments", function() {
         });
     });
 
-    it("#findRecent without offset option default to offset:0", function(done) {
+    it("#findRecent without offset option defaults to offset:0", function(done) {
         comments.findRecent({limit: 10}, function(rows) {
             expect(rows.length).toEqual(10);
             done();
         });
     });
 
-    it("#findRecent without limit option default to limit:100", function(done) {
+    it("#findRecent without limit option defaults to limit:100 or max nr of comments", function(done) {
         comments.findRecent({}, function(rows) {
-            expect(rows.length).toEqual(100);
+            expect(rows.length).toEqual(24);
             done();
         });
     });
 
     it("#count gets total number of comments", function(done) {
         comments.count({}, function(cnt) {
-            expect(cnt).toEqual(1705);
+            expect(cnt).toEqual(24);
             done();
         });
     });
 
     it("#countPerTarget gets number of comments for each target", function(done) {
         comments.countsPerTarget(function(counts) {
-            expect(counts["class__Ext.grid.column.Column__cfg-renderer"]).toEqual(20);
+            expect(counts["class__Ext__"]).toEqual(5);
             done();
         });
     });
