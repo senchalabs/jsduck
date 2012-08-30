@@ -147,15 +147,16 @@ Comments.prototype = {
      * @param {Number} comment.user_id ID of logged-in user.
      * @param {String} comment.content The text of comment.
      * @param {String} comment.content_html Formatted text of comment.
-     * @param {String} comment.type   Type name of target.
-     * @param {String} comment.cls    Class name of target.
-     * @param {String} comment.member Member name of target.
+     * @param {Object} comment.target The target:
+     * @param {String} comment.target.type   Type name of target.
+     * @param {String} comment.target.cls    Class name of target.
+     * @param {String} comment.target.member Member name of target.
      * @param {Function} callback
      * @param {Error} callback.err The error object.
      * @param {Function} callback.id The ID of newly inserted comment.
      */
     add: function(comment, callback) {
-        this.targets.ensure(comment, function(err, target_id) {
+        this.targets.ensure(comment.target, function(err, target_id) {
             if (err) {
                 callback(err);
                 return;

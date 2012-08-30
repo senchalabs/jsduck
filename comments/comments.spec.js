@@ -124,9 +124,11 @@ describe("Comments", function() {
             content: "Blah.",
             content_html: "<p>Blah.</p>",
 
-            type: "class",
-            cls: "Ext",
-            member: "method-getBody"
+            target: {
+                type: "class",
+                cls: "Ext",
+                member: "method-getBody"
+            }
         };
         comments.add(com, function(err, id) {
             comments.getById(id, function(err, newCom) {
@@ -143,9 +145,11 @@ describe("Comments", function() {
             content: "Blah.",
             content_html: "<p>Blah.</p>",
 
-            type: "class",
-            cls: "Blah",
-            member: "method-foo"
+            target: {
+                type: "class",
+                cls: "Blah",
+                member: "method-foo"
+            }
         };
         comments.add(com, function(err, id) {
             comments.getById(id, function(err, newCom) {
