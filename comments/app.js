@@ -57,10 +57,47 @@ app.configure(function() {
     app.use(express.logger('dev'));
 });
 
-// Authentication is disabled for now.
+// Authentication
+
 app.get('/auth/session', function(req, res) {
-    res.json(false);
+    if (req.session && req.session.user) {
+        res.json({
+            userName: req.session.user.username,
+            external_id: req.session.user.external_id,
+            mod: req.session.user.moderator
+        });
+    }
+    else {
+        res.json(false);
+    }
 });
+
+app.post('/auth/login', services.forumAuth, function(req, res) {
+    req.forumAuth.login(req.body.username, req.body.password, function(err, user) {
+        if (err) {
+            res.json({ success: false, reason: err });
+            return;
+        }
+
+        req.session = req.session || {};
+        req.session.user = user;
+
+        res.json({
+            userName: user.username,
+            mod: user.moderator,
+            sessionID: req.sessionID,
+            success: true
+        });
+    });
+});
+
+app.post('/auth/logout', function(req, res) {
+    req.session.user = null;
+    res.json({ success: true });
+});
+
+
+// Requests for Comments
 
 // Returns number of comments for each class/member,
 app.get('/auth/:sdk/:version/comments_meta', services.comments, function(req, res) {
@@ -83,6 +120,12 @@ app.get('/auth/:sdk/:version/comments', services.comments, function(req, res) {
     req.comments.find(target, function(err, comments) {
         res.json(comments.map(ApiAdapter.commentToJson));
     });
+});
+
+// Returns all subscriptions for logged in user
+// For now does nothing.
+app.get('/auth/:sdk/:version/subscriptions', function(req, res) {
+    res.json({ subscriptions: [] });
 });
 
 app.listen(config.port);
