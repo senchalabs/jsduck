@@ -37,7 +37,8 @@ app.configure(function() {
         store: new MySQLStore(
             config.mysql.database,
             config.mysql.user,
-            config.mysql.password
+            config.mysql.password,
+            {logging: false}
         )
     }));
 
@@ -53,6 +54,8 @@ app.configure(function() {
     app.use(express.methodOverride());
 
     app.enable('jsonp callback');
+
+    app.use(express.logger('dev'));
 });
 
 // Authentication is disabled for now.
