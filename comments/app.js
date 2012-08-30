@@ -2,7 +2,7 @@ var config = require('./config');
 var express = require('express');
 var MySQLStore = require('connect-mysql-session')(express);
 var services = require('./services');
-var crypto = require('crypto');
+var ApiAdapter = require('./api_adapter');
 
 var app = express();
 
@@ -79,25 +79,9 @@ app.get('/auth/:sdk/:version/comments', services.comments, function(req, res) {
         return;
     }
 
-    function formatComment(comment) {
-        return {
-            author: comment.username,
-            contentHtml: comment.content_html,
-            createdAt: String(comment.created_at),
-            score: comment.vote,
-            moderator: comment.moderator,
-            emailHash: crypto.createHash('md5').update(comment.email).digest("hex")
-        };
-    }
-
-    var target = JSON.parse(req.query.startkey);
-    var query = {
-        type: target[0],
-        cls: target[1],
-        member: target[2] || ""
-    };
-    req.comments.find(query, function(err, comments) {
-        res.json(comments.map(formatComment));
+    var target = ApiAdapter.targetFromJson(JSON.parse(req.query.startkey));
+    req.comments.find(target, function(err, comments) {
+        res.json(comments.map(ApiAdapter.commentToJson));
     });
 });
 
