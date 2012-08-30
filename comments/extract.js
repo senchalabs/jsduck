@@ -7,10 +7,10 @@ require('./database');
 
 var mysql = require('mysql');
 var db = mysql.createConnection({
-    host: config.db.host,
-    user: config.db.user,
-    password: config.db.password,
-    database: config.db.dbName
+    host: config.forumDb.host,
+    user: config.forumDb.user,
+    password: config.forumDb.password,
+    database: config.forumDb.database
 });
 
 // Default date for all items that are missing a date.

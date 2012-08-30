@@ -5,7 +5,9 @@
     "author": "Rene Saarsoo <nene@triin.net>",
     "dependencies": {
         "mysql": "2.0.0-alpha3",
-        "jasmine-node": "",
-        "mongoose": ""
+        "jasmine-node": "~1.0",
+        "express": "~3.0",
+        "connect-mysql-session": "~0.1",
+        "mongoose": "~3.0"
     }
 }
