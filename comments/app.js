@@ -3,6 +3,7 @@ var express = require('express');
 var MySQLStore = require('connect-mysql-session')(express);
 var DbFacade = require('./db_facade');
 var Comments = require('./comments');
+var crypto = require('crypto');
 
 var app = express();
 
@@ -68,6 +69,37 @@ app.get('/auth/:sdk/:version/comments_meta', function(req, res) {
             comments: counts,
             subscriptions: []
         });
+    });
+});
+
+// Returns a list of comments for a particular target (eg class, guide, video)
+app.get('/auth/:sdk/:version/comments', function(req, res) {
+    if (!req.query.startkey) {
+        res.json({error: 'Invalid request'});
+        return;
+    }
+
+    function formatComment(comment) {
+        return {
+            author: comment.username,
+            contentHtml: comment.content_html,
+            createdAt: String(comment.created_at),
+            score: comment.vote,
+            moderator: comment.moderator,
+            emailHash: crypto.createHash('md5').update(comment.email).digest("hex")
+        };
+    }
+
+    var db = new DbFacade(config.mysql);
+    var comments = new Comments(db, req.params.sdk+"-"+req.params.version);
+    var target = JSON.parse(req.query.startkey);
+    var query = {
+        type: target[0],
+        cls: target[1],
+        member: target[2] || ""
+    };
+    comments.find(query, function(err, comments) {
+        res.json(comments.map(formatComment));
     });
 });
 
