@@ -11,6 +11,7 @@ module.exports = {
      */
     commentToJson: function(comment) {
         return {
+            _id: comment.id,
             author: comment.username,
             contentHtml: comment.content_html,
             createdAt: String(comment.created_at),

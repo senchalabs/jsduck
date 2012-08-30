@@ -121,6 +121,23 @@ app.get('/auth/:sdk/:version/comments', services.comments, function(req, res) {
     });
 });
 
+// Adds new comment
+app.post('/auth/:sdk/:version/comments', services.requireLogin, services.comments, function(req, res) {
+    var comment = {
+        user_id: req.session.user.id,
+        target: ApiAdapter.targetFromJson(JSON.parse(req.body.target)),
+        content: req.body.comment
+    };
+
+    req.comments.add(comment, function(err, comment_id) {
+        res.json({
+            id: comment_id,
+            success: true
+        });
+    });
+});
+
+
 // Returns all subscriptions for logged in user
 // For now does nothing.
 app.get('/auth/:sdk/:version/subscriptions', function(req, res) {

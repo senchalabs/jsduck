@@ -25,5 +25,17 @@ module.exports = {
         var forumAuth = new ForumAuth(new DbFacade(config.forumDb));
         req.users = new Users(new DbFacade(config.mysql), forumAuth);
         next();
+    },
+
+    /**
+     * Requires that user is logged in.
+     */
+    requireLogin: function(req, res, next) {
+        if (!req.session || !req.session.user) {
+            res.json({success: false, reason: 'Forbidden'}, 403);
+        }
+        else {
+            next();
+        }
     }
 };
