@@ -204,6 +204,34 @@ Comments.prototype = {
                 created_at: new Date()
             }, callback);
         }.bind(this));
+    },
+
+    /**
+     * Marks comment as deleted.
+     *
+     * @param {Object} action A delete action:
+     * @param {Number} action.id ID of the comment to delete.
+     * @param {Number} action.user_id ID of the user doing the delete.
+     * @param {Error} callback.err The error object.
+     * @param {Function} callback Called when done.
+     */
+    setDeleted: function(action, callback) {
+        var data = {
+            id: action.id,
+            deleted: 1
+        };
+        this.db.update("comments", data, function(err) {
+            if (err) {
+                callback(err);
+                return;
+            }
+            this.db.insert("updates", {
+                comment_id: action.id,
+                user_id: action.user_id,
+                action: 'delete',
+                created_at: new Date()
+            }, callback);
+        }.bind(this));
     }
 };
 

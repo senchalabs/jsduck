@@ -187,4 +187,13 @@ describe("Comments", function() {
         });
     });
 
+    it("#setDeleted marks comment as deleted, so it can't be accessed any more", function(done) {
+        comments.setDeleted({id: 10, user_id: 1}, function(err) {
+            comments.getById(10, function(err, newCom) {
+                expect(newCom).toEqual(null);
+                done();
+            });
+        });
+    });
+
 });
