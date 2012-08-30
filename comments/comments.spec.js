@@ -120,10 +120,7 @@ describe("Comments", function() {
     it("#add adds a new comment and returns its ID which we can then use to retrieve the comment", function(done) {
         var com = {
             user_id: 1,
-
             content: "Blah.",
-            content_html: "<p>Blah.</p>",
-
             target: {
                 type: "class",
                 cls: "Ext",
@@ -141,10 +138,7 @@ describe("Comments", function() {
     it("#add adds a new target when it doesn't yet exist", function(done) {
         var com = {
             user_id: 1,
-
             content: "Blah.",
-            content_html: "<p>Blah.</p>",
-
             target: {
                 type: "class",
                 cls: "Blah",
@@ -154,6 +148,24 @@ describe("Comments", function() {
         comments.add(com, function(err, id) {
             comments.getById(id, function(err, newCom) {
                 expect(newCom.cls).toEqual("Blah");
+                done();
+            });
+        });
+    });
+
+    it("#add auto-generates content_html field", function(done) {
+        var com = {
+            user_id: 1,
+            content: "Blah.",
+            target: {
+                type: "class",
+                cls: "Ext",
+                member: "method-getBody"
+            }
+        };
+        comments.add(com, function(err, id) {
+            comments.getById(id, function(err, newCom) {
+                expect(newCom.content_html.trim()).toEqual("<p>Blah.</p>");
                 done();
             });
         });

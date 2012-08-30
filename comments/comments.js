@@ -1,4 +1,5 @@
 var Targets = require("./targets");
+var Formatter = require("./formatter");
 
 /**
  * Represents a Comments table.
@@ -146,7 +147,6 @@ Comments.prototype = {
      * @param {Object} comment A comment object with fields:
      * @param {Number} comment.user_id ID of logged-in user.
      * @param {String} comment.content The text of comment.
-     * @param {String} comment.content_html Formatted text of comment.
      * @param {Object} comment.target The target:
      * @param {String} comment.target.type   Type name of target.
      * @param {String} comment.target.cls    Class name of target.
@@ -165,7 +165,7 @@ Comments.prototype = {
                 target_id: target_id,
                 user_id: comment.user_id,
                 content: comment.content,
-                content_html: comment.content_html,
+                content_html: Formatter.format(comment.content),
                 created_at: new Date()
             }, callback);
         }.bind(this));
@@ -178,7 +178,6 @@ Comments.prototype = {
      * @param {Number} comment.id ID of the comment to update.
      * @param {Number} comment.user_id ID of the user doing the update.
      * @param {String} comment.content New text for the comment.
-     * @param {String} comment.content_html New formatted text for the comment.
      * @param {Error} callback.err The error object.
      * @param {Function} callback Called when done.
      */
@@ -186,7 +185,7 @@ Comments.prototype = {
         var data = {
             id: comment.id,
             content: comment.content,
-            content_html: comment.content_html
+            content_html: Formatter.format(comment.content)
         };
         this.db.update("comments", data, function(err) {
             if (err) {
