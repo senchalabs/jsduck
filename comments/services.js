@@ -1,5 +1,6 @@
 var DbFacade = require('./db_facade');
 var Comments = require('./comments');
+var Users = require('./users');
 var ForumAuth = require('./forum_auth');
 var config = require('./config');
 
@@ -18,11 +19,11 @@ module.exports = {
     },
 
     /**
-     * Adds forumAuth service to request.
+     * Adds users service to request.
      */
-    forumAuth: function(req, res, next) {
-        var db = new DbFacade(config.forumDb);
-        req.forumAuth = new ForumAuth(db);
+    users: function(req, res, next) {
+        var forumAuth = new ForumAuth(new DbFacade(config.forumDb));
+        req.users = new Users(new DbFacade(config.mysql), forumAuth);
         next();
     }
 };

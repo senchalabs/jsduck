@@ -42,6 +42,7 @@ ForumAuth.prototype = {
             callback(null, {
                 username: user.username,
                 external_id: user.userid,
+                email: user.email,
                 moderator: this.isModerator(user)
             });
         }.bind(this));

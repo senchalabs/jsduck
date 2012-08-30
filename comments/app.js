@@ -63,7 +63,6 @@ app.get('/auth/session', function(req, res) {
     if (req.session && req.session.user) {
         res.json({
             userName: req.session.user.username,
-            external_id: req.session.user.external_id,
             mod: req.session.user.moderator
         });
     }
@@ -72,8 +71,8 @@ app.get('/auth/session', function(req, res) {
     }
 });
 
-app.post('/auth/login', services.forumAuth, function(req, res) {
-    req.forumAuth.login(req.body.username, req.body.password, function(err, user) {
+app.post('/auth/login', services.users, function(req, res) {
+    req.users.login(req.body.username, req.body.password, function(err, user) {
         if (err) {
             res.json({ success: false, reason: err });
             return;
