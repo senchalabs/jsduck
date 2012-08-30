@@ -114,33 +114,28 @@ Comments.prototype = {
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
-     * @param {Object} callback.counts Map of targets to counts:
+     * @param {Object[]} callback.counts Array of counts per target:
      *
-     *     {
-     *         "class__Ext__": 3,
-     *         "class__Ext__method-define": 1,
-     *         "class__Ext.Panel__cfg-title": 8
-     *     }
+     *     [
+     *         {_id: "class__Ext__": value: 3},
+     *         {_id: "class__Ext__method-define": value: 1},
+     *         {_id: "class__Ext.Panel__cfg-title": value: 8}
+     *     ]
      */
     countsPerTarget: function(callback) {
         var sql = [
             'SELECT',
-            '    type,',
-            '    cls,',
-            '    member,',
-            '    count(*) AS count',
+            "    CONCAT(type, '__', cls, '__', member) AS _id,",
+            "    count(*) AS value",
             'FROM full_visible_comments',
             'WHERE domain = ?',
             'GROUP BY target_id'
         ];
 
         this.db.query(sql, [this.domain], function(err, rows) {
-            var map = {};
-            rows.forEach(function(r) {
-                var id = [r.type, r.cls, r.member].join("__");
-                map[id] = +r.count;
-            });
-            callback(err, map);
+            // convert values to numbers
+            rows.forEach(function(r) { r.value = +r.value; });
+            callback(err, rows);
         });
     },
 

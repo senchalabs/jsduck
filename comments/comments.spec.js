@@ -111,7 +111,8 @@ describe("Comments", function() {
 
     it("#countPerTarget gets number of comments for each target", function(done) {
         comments.countsPerTarget(function(err, counts) {
-            expect(counts["class__Ext__"]).toEqual(5);
+            var line = counts.filter(function(row) { return row._id === "class__Ext__"; })[0];
+            expect(line.value).toEqual(5);
             done();
         });
     });
