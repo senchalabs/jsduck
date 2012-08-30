@@ -1,8 +1,7 @@
 var config = require('./config');
 var express = require('express');
 var MySQLStore = require('connect-mysql-session')(express);
-var DbFacade = require('./db_facade');
-var Comments = require('./comments');
+var services = require('./services');
 var crypto = require('crypto');
 
 var app = express();
@@ -64,10 +63,8 @@ app.get('/auth/session', function(req, res) {
 });
 
 // Returns number of comments for each class/member,
-app.get('/auth/:sdk/:version/comments_meta', function(req, res) {
-    var db = new DbFacade(config.mysql);
-    var comments = new Comments(db, req.params.sdk+"-"+req.params.version);
-    comments.countsPerTarget(function(err, counts) {
+app.get('/auth/:sdk/:version/comments_meta', services.comments, function(req, res) {
+    req.comments.countsPerTarget(function(err, counts) {
         res.send({
             comments: counts,
             subscriptions: []
@@ -76,7 +73,7 @@ app.get('/auth/:sdk/:version/comments_meta', function(req, res) {
 });
 
 // Returns a list of comments for a particular target (eg class, guide, video)
-app.get('/auth/:sdk/:version/comments', function(req, res) {
+app.get('/auth/:sdk/:version/comments', services.comments, function(req, res) {
     if (!req.query.startkey) {
         res.json({error: 'Invalid request'});
         return;
@@ -93,15 +90,13 @@ app.get('/auth/:sdk/:version/comments', function(req, res) {
         };
     }
 
-    var db = new DbFacade(config.mysql);
-    var comments = new Comments(db, req.params.sdk+"-"+req.params.version);
     var target = JSON.parse(req.query.startkey);
     var query = {
         type: target[0],
         cls: target[1],
         member: target[2] || ""
     };
-    comments.find(query, function(err, comments) {
+    req.comments.find(query, function(err, comments) {
         res.json(comments.map(formatComment));
     });
 });
