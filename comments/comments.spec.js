@@ -187,10 +187,19 @@ describe("Comments", function() {
         });
     });
 
-    it("#setDeleted marks comment as deleted, so it can't be accessed any more", function(done) {
-        comments.setDeleted({id: 10, user_id: 1}, function(err) {
+    it("#setDeleted(true) marks comment as deleted, so it can't be accessed any more", function(done) {
+        comments.setDeleted({deleted: true, id: 10, user_id: 1}, function(err) {
             comments.getById(10, function(err, newCom) {
                 expect(newCom).toEqual(null);
+                done();
+            });
+        });
+    });
+
+    it("#setDeleted(false) undoes the delete, so comment can be accessed again", function(done) {
+        comments.setDeleted({deleted: false, id: 10, user_id: 1}, function(err) {
+            comments.getById(10, function(err, newCom) {
+                expect(newCom).not.toEqual(null);
                 done();
             });
         });

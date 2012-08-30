@@ -207,18 +207,19 @@ Comments.prototype = {
     },
 
     /**
-     * Marks comment as deleted.
+     * Marks comment as deleted or not deleted.
      *
-     * @param {Object} action A delete action:
-     * @param {Number} action.id ID of the comment to delete.
-     * @param {Number} action.user_id ID of the user doing the delete.
+     * @param {Object} action An action config:
+     * @param {Number} action.id ID of the comment.
+     * @param {Number} action.user_id ID of the user doing the delete or undelete.
+     * @param {Boolean} action.deleted True to delete, false to undo delete.
      * @param {Error} callback.err The error object.
      * @param {Function} callback Called when done.
      */
     setDeleted: function(action, callback) {
         var data = {
             id: action.id,
-            deleted: 1
+            deleted: action.deleted ? 1 : 0
         };
         this.db.update("comments", data, function(err) {
             if (err) {
@@ -228,7 +229,7 @@ Comments.prototype = {
             this.db.insert("updates", {
                 comment_id: action.id,
                 user_id: action.user_id,
-                action: 'delete',
+                action: action.deleted ? 'delete' : 'undo_delete',
                 created_at: new Date()
             }, callback);
         }.bind(this));
