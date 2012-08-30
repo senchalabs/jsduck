@@ -121,6 +121,13 @@ app.get('/auth/:sdk/:version/comments', services.comments, function(req, res) {
     });
 });
 
+// Returns plain markdown content of individual comment (used when editing a comment)
+app.get('/auth/:sdk/:version/comments/:commentId', services.comments, function(req, res) {
+    req.comments.getById(req.params.commentId, function(err, comment) {
+        res.json({ success: true, content: comment.content });
+    });
+});
+
 // Adds new comment
 app.post('/auth/:sdk/:version/comments', services.requireLogin, services.comments, function(req, res) {
     var comment = {
