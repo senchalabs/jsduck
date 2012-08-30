@@ -8,6 +8,8 @@
         "jasmine-node": "~1.0",
         "express": "~3.0",
         "connect-mysql-session": "~0.1",
+        "marked": "~0.2",
+        "sanitizer": "~0.0",
         "mongoose": "~3.0"
     }
 }
