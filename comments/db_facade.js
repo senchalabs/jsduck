@@ -41,7 +41,7 @@ DbFacade.prototype = {
      */
     queryOne: function(sql, params, callback) {
         this.query(sql, params, function(err, rows) {
-            callback(err, rows[0]);
+            callback(err, rows && rows[0]);
         });
     },
 
