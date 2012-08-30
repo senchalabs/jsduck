@@ -20,9 +20,9 @@ task :jasmine do
   test_db = "comments_test"
   system("echo 'DROP DATABASE IF EXISTS #{test_db};' | mysql")
   system("echo 'CREATE DATABASE #{test_db};' | mysql")
-  system("mysql #{test_db} < comments/schema.sql")
-  system("mysql #{test_db} < comments/test_data.sql")
-  system("mysql #{test_db} < comments/update_votes.sql")
+  system("mysql #{test_db} < comments/sql/schema.sql")
+  system("mysql #{test_db} < comments/sql/test_data.sql")
+  system("mysql #{test_db} < comments/sql/update_votes.sql")
 
   # run jasmine tests against that database
   system("node comments/node_modules/jasmine-node/lib/jasmine-node/cli.js comments/")
