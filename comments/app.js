@@ -188,6 +188,44 @@ app.post('/auth/:sdk/:version/comments/:commentId', services.requireLogin, servi
     });
 });
 
+// Deletes a comment
+app.post('/auth/:sdk/:version/comments/:commentId/delete', services.requireLogin, services.comments, services.users, function(req, res) {
+    req.comments.getById(req.params.commentId, function(err, comment) {
+        if (!req.users.canModify(req.session.user, comment)) {
+            res.json({ success: false, reason: 'Forbidden' }, 403);
+            return;
+        }
+
+        var action = {
+            id: req.params.commentId,
+            user_id: req.session.user.id,
+            deleted: true
+        };
+        req.comments.setDeleted(action, function(err) {
+            res.send({ success: true });
+        });
+    });
+});
+
+// Restores a deleted comment
+app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', services.requireLogin, services.comments, services.users, function(req, res) {
+    req.comments.showDeleted(true);
+    req.comments.getById(req.params.commentId, function(err, comment) {
+        if (!req.users.canModify(req.session.user, comment)) {
+            res.json({ success: false, reason: 'Forbidden' }, 403);
+            return;
+        }
+
+        var action = {
+            id: req.params.commentId,
+            user_id: req.session.user.id,
+            deleted: false
+        };
+        req.comments.setDeleted(action, function(err) {
+            res.send({ success: true, comment: ApiAdapter.commentToJson(comment) });
+        });
+    });
+});
 
 // Returns all subscriptions for logged in user
 // For now does nothing.

@@ -47,6 +47,18 @@ describe("Comments", function() {
         });
     });
 
+    describe("after calling showDeleted(true)", function() {
+        beforeEach(function() {
+            comments.showDeleted(true);
+        });
+        it("#getById also finds the deleted comment", function(done) {
+            comments.getById(6, function(err, com) {
+                expect(com.id).toEqual(6);
+                done();
+            });
+        });
+    });
+
     it("#find returns all undeleted comments for a target", function(done) {
         comments.find({type: "class", cls: "Ext", member: ""}, function(err, rows) {
             expect(rows.length).toEqual(5);

@@ -17,12 +17,23 @@ function Comments(db, domain) {
     this.db = db;
     this.domain = domain;
     this.targets = new Targets(db, domain);
+    this.view = "full_visible_comments";
 }
 
 Comments.prototype = {
     /**
+     * Toggles between showing and hiding deleted comments.  By
+     * default all the #get* #find* and #count* methods will exclude
+     * the deleted comments.  But by first calling showDeleted(true)
+     * the deleted comments will also be included.
+     * @param {Boolean} show
+     */
+    showDeleted: function(show) {
+        this.view = show ? "full_comments" : "full_visible_comments";
+    },
+
+    /**
      * Finds a single comment by ID in the current domain.
-     * Does not fine deleted comments.
      *
      * @param {Number} id The ID of the comment to find.
      * @param {Function} callback Called with the result.
@@ -32,7 +43,7 @@ Comments.prototype = {
     getById: function(id, callback) {
         var sql = [
             'SELECT *',
-            'FROM full_visible_comments',
+            'FROM', this.view,
             'WHERE domain = ? AND id = ?'
         ];
 
@@ -41,7 +52,6 @@ Comments.prototype = {
 
     /**
      * Finds list of all comments for a particular target.
-     * Excludes deleted comments.
      *
      * @param {Object} target The target:
      * @param {String} target.type One of: class, guide, video.
@@ -55,7 +65,7 @@ Comments.prototype = {
     find: function(target, callback) {
         var sql = [
             'SELECT *',
-            'FROM full_visible_comments',
+            'FROM', this.view,
             'WHERE domain = ? AND type = ? AND cls = ? AND member = ?',
             'ORDER BY created_at'
         ];
@@ -65,7 +75,6 @@ Comments.prototype = {
 
     /**
      * Returns all comments sorted in reverse chronological order.
-     * Excludes deleted comments.
      *
      * @param {Object} opts Options for the query:
      * @param {Number} [opts.limit=100] Number of rows to return.
@@ -78,7 +87,7 @@ Comments.prototype = {
     findRecent: function(opts, callback) {
         var sql = [
             'SELECT *',
-            'FROM full_visible_comments',
+            'FROM', this.view,
             'WHERE domain = ?',
             'ORDER BY created_at DESC',
             'LIMIT ? OFFSET ?'
@@ -89,7 +98,6 @@ Comments.prototype = {
 
     /**
      * Counts number of comments in the current domain.
-     * Excludes deleted comments.
      *
      * @param {Object} opts Reserved for future.
      *
@@ -100,7 +108,7 @@ Comments.prototype = {
     count: function(opts, callback) {
         var sql = [
             'SELECT COUNT(*) as count',
-            'FROM full_visible_comments',
+            'FROM', this.view,
             'WHERE domain = ?'
         ];
 
@@ -111,7 +119,7 @@ Comments.prototype = {
 
     /**
      * Returns number of comments for each target in the current
-     * domain.  Excludes deleted comments.
+     * domain.
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
@@ -128,7 +136,7 @@ Comments.prototype = {
             'SELECT',
             "    CONCAT(type, '__', cls, '__', member) AS _id,",
             "    count(*) AS value",
-            'FROM full_visible_comments',
+            'FROM', this.view,
             'WHERE domain = ?',
             'GROUP BY target_id'
         ];

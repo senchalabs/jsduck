@@ -89,3 +89,18 @@ CREATE OR REPLACE VIEW full_visible_comments AS SELECT
 FROM visible_comments AS c
     LEFT JOIN users ON c.user_id = users.id
     LEFT JOIN targets ON c.target_id = targets.id;
+
+-- the same as above, but including deleted comments
+CREATE OR REPLACE VIEW full_comments AS SELECT
+    c.*,
+    users.username,
+    users.external_id,
+    users.email,
+    users.moderator,
+    targets.domain,
+    targets.type,
+    targets.cls,
+    targets.member
+FROM comments AS c
+    LEFT JOIN users ON c.user_id = users.id
+    LEFT JOIN targets ON c.target_id = targets.id;
