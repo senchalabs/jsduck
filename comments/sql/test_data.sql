@@ -129,8 +129,8 @@ INSERT INTO votes SET `user_id` = 2, `comment_id` = 15, `value` = -1, `created_a
 INSERT INTO votes SET `user_id` = 1, `comment_id` = 19, `value` = 1, `created_at` = '2011-01-01 00:00:00';
 
 -- +2 votes to mary in guide:testing
-INSERT INTO votes SET `user_id` = 4, `comment_id` = 19, `value` = 1, `created_at` = '2011-01-01 00:00:00';
-INSERT INTO votes SET `user_id` = 2, `comment_id` = 19, `value` = 1, `created_at` = '2011-01-01 00:00:00';
+INSERT INTO votes SET `user_id` = 4, `comment_id` = 24, `value` = 1, `created_at` = '2011-01-01 00:00:00';
+INSERT INTO votes SET `user_id` = 2, `comment_id` = 24, `value` = 1, `created_at` = '2011-01-01 00:00:00';
 
 -- 3-1 votes to jack in video:17666102
 INSERT INTO votes SET `user_id` = 2, `comment_id` = 25, `value` = 1, `created_at` = '2011-01-01 00:00:00';

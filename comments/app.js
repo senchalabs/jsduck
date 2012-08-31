@@ -148,7 +148,24 @@ app.get('/auth/:sdk/:version/comments/:commentId', services.comments, function(r
 app.post('/auth/:sdk/:version/comments/:commentId', services.requireLogin, services.comments, services.users, function(req, res) {
     req.comments.getById(req.params.commentId, function(err, comment) {
         if (req.body.vote) {
-            // TODO: voting...
+            if (req.session.user.id === comment.user_id) {
+                res.json({success: false, reason: 'You cannot vote on your own content'});
+                return;
+            }
+
+            var vote = {
+                user_id: req.session.user.id,
+                comment_id: comment.id,
+                value: req.body.vote === "up" ? 1 : -1
+            };
+
+            req.comments.vote(vote, function(err, voteDir, total) {
+                res.json({
+                    success: true,
+                    direction: voteDir === 1 ? "up" : (voteDir === -1 ? "down" : null),
+                    total: total
+                });
+            });
         }
         else {
             if (!req.users.canModify(req.session.user, comment)) {

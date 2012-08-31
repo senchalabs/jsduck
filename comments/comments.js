@@ -228,6 +228,62 @@ Comments.prototype = {
                 created_at: new Date()
             }, callback);
         }.bind(this));
+    },
+
+    /**
+     * Votes a comment up or down.
+     *
+     * @param {Object} vote
+     * @param {Number} vote.user_id The user who's voting
+     * @param {Number} vote.comment_id The comment he's voting on
+     * @param {Number} vote.value The value of the vote (1 or -1)
+     * @param {Function} callback
+     * @param {Error} callback.err
+     * @param {Number} callback.resultingVote The vote that was actually casted (-1, 1 or 0)
+     * @param {Number} callback.resultingTotal The final voting score for the comment.
+     */
+    vote: function(vote, callback) {
+        this.castVote(vote, function(err, voteDir) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            var sql = "SELECT vote FROM comments WHERE id = ?";
+            this.db.queryOne(sql, [vote.comment_id], function(err, comment) {
+                callback(err, voteDir, comment && comment.vote);
+            });
+        }.bind(this));
+    },
+
+    castVote: function(vote, callback) {
+        vote.created_at = new Date();
+        this.db.insert("votes", vote, function(err, vote_id) {
+            if (err) {
+                // vote already exists, retrieve it
+                var sql = "SELECT * FROM votes WHERE user_id = ? AND comment_id = ?";
+                this.db.queryOne(sql, [vote.user_id, vote.comment_id], function(err, oldVote) {
+                    if (err) {
+                        callback(err);
+                    }
+                    else if (oldVote.value !== vote.value) {
+                        // We're either upvoting a downvote or downvoting an upvote.
+                        // In both cases the result is zero, so we remove the vote completely.
+                        var sql = "DELETE FROM votes WHERE user_id = ? AND comment_id = ?";
+                        this.db.query(sql, [vote.user_id, vote.comment_id], function(err) {
+                            callback(err, 0);
+                        });
+                    }
+                    else {
+                        // can't upvote or downvote twice, so ignore and do nothing
+                        callback(null, 0);
+                    }
+                }.bind(this));
+            }
+            else {
+                callback(null, vote.value);
+            }
+        }.bind(this));
     }
 };
 

@@ -222,4 +222,36 @@ describe("Comments", function() {
         });
     });
 
+    it("#vote(value:1) votes a comment up", function(done) {
+        comments.vote({value: 1, comment_id: 7, user_id: 3}, function(err, voteDir, total) {
+            expect(voteDir).toEqual(1);
+            expect(total).toEqual(3);
+            done();
+        });
+    });
+
+    it("#vote(value:-1) votes a comment down", function(done) {
+        comments.vote({value: -1, comment_id: 15, user_id: 3}, function(err, voteDir, total) {
+            expect(voteDir).toEqual(-1);
+            expect(total).toEqual(-2);
+            done();
+        });
+    });
+
+    it("#vote(value:-1) on already upvoted comment eliminates the vote", function(done) {
+        comments.vote({value: -1, comment_id: 19, user_id: 1}, function(err, voteDir, total) {
+            expect(voteDir).toEqual(0);
+            expect(total).toEqual(0);
+            done();
+        });
+    });
+
+    it("#vote(value:1) on already downvoted comment eliminates the vote", function(done) {
+        comments.vote({value: 1, comment_id: 6, user_id: 3}, function(err, voteDir, total) {
+            expect(voteDir).toEqual(0);
+            expect(total).toEqual(-2);
+            done();
+        });
+    });
+
 });
