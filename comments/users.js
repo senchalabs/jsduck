@@ -32,6 +32,19 @@ Users.prototype = {
         }.bind(this));
     },
 
+    /**
+     * True if the user can modify the comment.  Normal user can
+     * modify his own comments, but moderators can modify all
+     * comments.
+     *
+     * @param {Object} user User record.
+     * @param {Object} comment Comment record.
+     * @return {Boolean}
+     */
+    canModify: function(user, comment) {
+        return user.moderator || user.id == comment.user_id;
+    },
+
     ensure: function(user, callback) {
         // first try to insert. If that fails, the user already
         // exists and we can instead look it up. If insert succeeds,

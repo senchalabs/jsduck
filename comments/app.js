@@ -121,13 +121,6 @@ app.get('/auth/:sdk/:version/comments', services.comments, function(req, res) {
     });
 });
 
-// Returns plain markdown content of individual comment (used when editing a comment)
-app.get('/auth/:sdk/:version/comments/:commentId', services.comments, function(req, res) {
-    req.comments.getById(req.params.commentId, function(err, comment) {
-        res.json({ success: true, content: comment.content });
-    });
-});
-
 // Adds new comment
 app.post('/auth/:sdk/:version/comments', services.requireLogin, services.comments, function(req, res) {
     var comment = {
@@ -141,6 +134,40 @@ app.post('/auth/:sdk/:version/comments', services.requireLogin, services.comment
             id: comment_id,
             success: true
         });
+    });
+});
+
+// Returns plain markdown content of individual comment (used when editing a comment)
+app.get('/auth/:sdk/:version/comments/:commentId', services.comments, function(req, res) {
+    req.comments.getById(req.params.commentId, function(err, comment) {
+        res.json({ success: true, content: comment.content });
+    });
+});
+
+// Updates an existing comment (for voting or updating contents)
+app.post('/auth/:sdk/:version/comments/:commentId', services.requireLogin, services.comments, services.users, function(req, res) {
+    req.comments.getById(req.params.commentId, function(err, comment) {
+        if (req.body.vote) {
+            // TODO: voting...
+        }
+        else {
+            if (!req.users.canModify(req.session.user, comment)) {
+                res.json({ success: false, reason: 'Forbidden' }, 403);
+                return;
+            }
+
+            var update = {
+                id: comment.id,
+                user_id: req.session.user.id,
+                content: req.body.content
+            };
+
+            req.comments.update(update, function(err) {
+                req.comments.getById(comment.id, function(err, comment) {
+                    res.json({ success: true, content: comment.content_html });
+                });
+            });
+        }
     });
 });
 
