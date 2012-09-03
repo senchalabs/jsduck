@@ -1,6 +1,7 @@
 var DbFacade = require('./db_facade');
 var Comments = require('./comments');
 var Users = require('./users');
+var Subscriptions = require('./subscriptions');
 var ForumAuth = require('./forum_auth');
 var config = require('./config');
 
@@ -24,6 +25,15 @@ module.exports = {
     users: function(req, res, next) {
         var forumAuth = new ForumAuth(new DbFacade(config.forumDb));
         req.users = new Users(new DbFacade(config.mysql), forumAuth);
+        next();
+    },
+
+    /**
+     * Adds subscriptions service to request.
+     */
+    subscriptions: function(req, res, next) {
+        var db = new DbFacade(config.mysql);
+        req.subscriptions = new Subscriptions(db, req.params.sdk+"-"+req.params.version);
         next();
     },
 

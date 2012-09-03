@@ -99,12 +99,23 @@ app.post('/auth/logout', function(req, res) {
 // Requests for Comments
 
 // Returns number of comments for each class/member,
-app.get('/auth/:sdk/:version/comments_meta', services.comments, function(req, res) {
+// and when user is logged in, all his subscriptions.
+app.get('/auth/:sdk/:version/comments_meta', services.comments, services.subscriptions, function(req, res) {
     req.comments.countsPerTarget(function(err, counts) {
-        res.send({
-            comments: counts,
-            subscriptions: []
-        });
+        if (req.session.user) {
+            req.subscriptions.findTargetsByUser(req.session.user.id, function(err, targets) {
+                res.send({
+                    comments: counts,
+                    subscriptions: targets.map(ApiAdapter.targetToJson)
+                });
+            });
+        }
+        else {
+            res.send({
+                comments: counts,
+                subscriptions: []
+            });
+        }
     });
 });
 
@@ -231,9 +242,19 @@ app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', services.require
 });
 
 // Returns all subscriptions for logged in user
-// For now does nothing.
-app.get('/auth/:sdk/:version/subscriptions', function(req, res) {
-    res.json({ subscriptions: [] });
+app.get('/auth/:sdk/:version/subscriptions', services.subscriptions, function(req, res) {
+    if (req.session.user.id) {
+        req.subscriptions.findTargetsByUser(req.session.user.id, function(err, targets) {
+            res.json({
+                subscriptions: targets.map(ApiAdapter.targetToJson)
+            });
+        });
+    }
+    else {
+        res.json({
+            subscriptions: []
+        });
+    }
 });
 
 app.listen(config.port);

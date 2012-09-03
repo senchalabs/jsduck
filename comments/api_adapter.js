@@ -32,5 +32,16 @@ module.exports = {
             cls: target[1],
             member: target[2] || ""
         };
+    },
+
+    /**
+     * Turns target object into array.
+     */
+    targetToJson: function(target) {
+        return [
+            target.type,
+            target.cls,
+            target.member
+        ];
     }
 };
