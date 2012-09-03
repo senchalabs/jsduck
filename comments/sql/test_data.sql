@@ -162,3 +162,21 @@ INSERT INTO updates SET `user_id` = 1, `comment_id` = 1, `action` = 'update', `c
 INSERT INTO updates SET `user_id` = 1, `comment_id` = 6,  `action` = 'delete', `created_at` = '2011-10-05 00:00:00';
 INSERT INTO updates SET `user_id` = 5, `comment_id` = 9,  `action` = 'delete', `created_at` = '2012-01-08 00:00:00';
 INSERT INTO updates SET `user_id` = 6, `comment_id` = 25, `action` = 'delete', `created_at` = '2012-05-20 00:00:00';
+
+
+-- subscriptions
+
+-- subscribe renku to Ext & Ext.Img
+INSERT INTO subscriptions SET `user_id` = 1, `target_id` = 1, `created_at` = '2011-01-01 00:00:00';
+INSERT INTO subscriptions SET `user_id` = 1, `target_id` = 8, `created_at` = '2011-01-01 00:00:00';
+
+-- subscribe john to Ext & String#replace
+INSERT INTO subscriptions SET `user_id` = 2, `target_id` = 1, `created_at` = '2011-01-01 00:00:00';
+INSERT INTO subscriptions SET `user_id` = 2, `target_id` = 6, `created_at` = '2011-01-01 00:00:00';
+
+-- subscribe mary to Ext
+INSERT INTO subscriptions SET `user_id` = 3, `target_id` = 1, `created_at` = '2011-01-01 00:00:00';
+
+-- subscribe jack to touch-2 Ext
+INSERT INTO subscriptions SET `user_id` = 4, `target_id` = 14, `created_at` = '2011-01-01 00:00:00';
+
