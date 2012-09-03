@@ -82,6 +82,17 @@ DbFacade.prototype = {
         this.connection.end();
     },
 
+    /**
+     * Replaces ? placeholders in SQL string.
+     *
+     * @param {String} sql
+     * @param {Array} params
+     * @return {String}
+     */
+    format: function(sql, params) {
+        return this.connection.format(sql, params);
+    },
+
     removeField: function(obj, fieldName) {
         var newObj = {};
         for (var i in obj) {

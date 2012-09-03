@@ -59,6 +59,30 @@ describe("Comments", function() {
         });
     });
 
+    describe("after calling showVoteDirBy(author)", function() {
+        beforeEach(function() {
+            comments.showVoteDirBy(2);
+        });
+        it("includes the upvote by that author", function(done) {
+            comments.getById(1, function(err, com) {
+                expect(com.vote_dir).toEqual(1);
+                done();
+            });
+        });
+        it("includes the downvote by that author", function(done) {
+            comments.getById(15, function(err, com) {
+                expect(com.vote_dir).toEqual(-1);
+                done();
+            });
+        });
+        it("includes no vote if user hasn't voted on a comment", function(done) {
+            comments.getById(7, function(err, com) {
+                expect(com.vote_dir).toEqual(null);
+                done();
+            });
+        });
+    });
+
     it("#find returns all undeleted comments for a target", function(done) {
         comments.find({type: "class", cls: "Ext", member: ""}, function(err, rows) {
             expect(rows.length).toEqual(5);

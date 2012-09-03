@@ -16,6 +16,8 @@ module.exports = {
             contentHtml: comment.content_html,
             createdAt: String(comment.created_at),
             score: comment.vote,
+            upVote: comment.vote_dir === 1,
+            downVote: comment.vote_dir === -1,
             moderator: comment.moderator,
             emailHash: crypto.createHash('md5').update(comment.email).digest("hex")
         };

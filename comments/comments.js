@@ -17,7 +17,8 @@ function Comments(db, domain) {
     this.db = db;
     this.domain = domain;
     this.targets = new Targets(db, domain);
-    this.view = "full_visible_comments";
+    this.view = "full_visible_comments AS comments";
+    this.fields = "*";
 }
 
 Comments.prototype = {
@@ -29,7 +30,19 @@ Comments.prototype = {
      * @param {Boolean} show
      */
     showDeleted: function(show) {
-        this.view = show ? "full_comments" : "full_visible_comments";
+        this.view = show ? "full_comments AS comments" : "full_visible_comments as comments";
+    },
+
+    /**
+     * Includes a `vote_dir` field into the comment records returned
+     * by #get* and #find* methods.  The `vote_dir` field will be 1
+     * when the user has upvoted the comment, -1 if he has downvoted
+     * it or null if he has not voted on the comment.
+     * @param {Number} user_id The ID of the user who's votes to inspect.
+     */
+    showVoteDirBy: function(user_id) {
+        var sql = "*, (SELECT SUM(value) FROM votes WHERE user_id = ? AND comment_id = comments.id) AS vote_dir";
+        this.fields = this.db.format(sql, [user_id]);
     },
 
     /**
@@ -42,12 +55,14 @@ Comments.prototype = {
      */
     getById: function(id, callback) {
         var sql = [
-            'SELECT *',
+            'SELECT ', this.fields,
             'FROM', this.view,
             'WHERE domain = ? AND id = ?'
         ];
 
-        this.db.queryOne(sql, [this.domain, id], callback);
+        this.db.query(sql, [this.domain, id], this.fixVoteDir(function(err, rows) {
+            callback(err, rows && rows[0]);
+        }));
     },
 
     /**
@@ -64,13 +79,13 @@ Comments.prototype = {
      */
     find: function(target, callback) {
         var sql = [
-            'SELECT *',
+            'SELECT ', this.fields,
             'FROM', this.view,
             'WHERE domain = ? AND type = ? AND cls = ? AND member = ?',
             'ORDER BY created_at'
         ];
 
-        this.db.query(sql, [this.domain, target.type, target.cls, target.member], callback);
+        this.db.query(sql, [this.domain, target.type, target.cls, target.member], this.fixVoteDir(callback));
     },
 
     /**
@@ -86,14 +101,14 @@ Comments.prototype = {
      */
     findRecent: function(opts, callback) {
         var sql = [
-            'SELECT *',
+            'SELECT ', this.fields,
             'FROM', this.view,
             'WHERE domain = ?',
             'ORDER BY created_at DESC',
             'LIMIT ? OFFSET ?'
         ];
 
-        this.db.query(sql, [this.domain, opts.limit||100, opts.offset||0], callback);
+        this.db.query(sql, [this.domain, opts.limit||100, opts.offset||0], this.fixVoteDir(callback));
     },
 
     /**
@@ -292,6 +307,25 @@ Comments.prototype = {
                 callback(null, vote.value);
             }
         }.bind(this));
+    },
+
+    // Helper that converts all vote_dir fields into numbers. For some
+    // reason the vote_dir field is a string by default, but we don't
+    // want that.
+    fixVoteDir: function(callback) {
+        return function(err, rows) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            callback(null, rows.map(function(r) {
+                if (r.vote_dir) {
+                    r.vote_dir = +r.vote_dir;
+                }
+                return r;
+            }));
+        };
     }
 };
 

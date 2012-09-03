@@ -116,6 +116,9 @@ app.get('/auth/:sdk/:version/comments', services.comments, function(req, res) {
     }
 
     var target = ApiAdapter.targetFromJson(JSON.parse(req.query.startkey));
+    if (req.session.user) {
+        req.comments.showVoteDirBy(req.session.user.id);
+    }
     req.comments.find(target, function(err, comments) {
         res.json(comments.map(ApiAdapter.commentToJson));
     });
