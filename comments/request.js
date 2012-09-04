@@ -68,17 +68,6 @@ Request.prototype = {
         });
     },
 
-    getSubscriptions: function(callback) {
-        if (!this.isLoggedIn()) {
-            callback([]);
-            return;
-        }
-
-        this.db.subscriptions().findTargetsByUser(this.getUserId(), function(err, targets) {
-            callback(targets.map(ApiAdapter.targetToJson));
-        });
-    },
-
     updateComment: function(comment_id, content, callback) {
         var update = {
             id: comment_id,
@@ -104,6 +93,31 @@ Request.prototype = {
             var direction = voteDir === 1 ? "up" : (voteDir === -1 ? "down" : null);
             callback(direction, total);
         });
+    },
+
+    getSubscriptions: function(callback) {
+        if (!this.isLoggedIn()) {
+            callback([]);
+            return;
+        }
+
+        this.db.subscriptions().findTargetsByUser(this.getUserId(), function(err, targets) {
+            callback(targets.map(ApiAdapter.targetToJson));
+        });
+    },
+
+    changeSubscription: function(target, subscribe, callback) {
+        var sub = {
+            user_id: this.getUserId(),
+            target: ApiAdapter.targetFromJson(JSON.parse(target))
+        };
+
+        if (subscribe) {
+            this.db.subscriptions().add(sub, callback);
+        }
+        else {
+            this.db.subscriptions().remove(sub, callback);
+        }
     },
 
     getUser: function(callback) {

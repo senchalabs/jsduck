@@ -168,5 +168,12 @@ app.get('/auth/:sdk/:version/subscriptions', function(req, res) {
     });
 });
 
+// Subscibe / unsubscribe to a comment thread
+app.post('/auth/:sdk/:version/subscribe', validator.isLoggedIn, function(req, res) {
+    new Request(req).changeSubscription(req.body.target, req.body.subscribed === 'true', function() {
+        res.send({ success: true });
+    });
+});
+
 app.listen(config.port);
 console.log("Server started at port "+config.port+"...");

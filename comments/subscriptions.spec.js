@@ -64,4 +64,39 @@ describe("Subscriptions", function() {
         });
     });
 
+    it("#add adds new subscription", function(done) {
+        subscriptions.add({user_id: 1, target: {type: "guide", cls: "testing", member: ""}}, function(err, id) {
+            subscriptions.findTargetsByUser(1, function(err, subs) {
+                expect(subs.length).toEqual(3);
+                done();
+            });
+        });
+    });
+
+    it("#add does nothing when subscription already exists", function(done) {
+        subscriptions.add({user_id: 1, target: {type: "guide", cls: "testing", member: ""}}, function(err, id) {
+            subscriptions.findTargetsByUser(1, function(err, subs) {
+                expect(subs.length).toEqual(3);
+                done();
+            });
+        });
+    });
+
+    it("#remove removes existing subscription", function(done) {
+        subscriptions.remove({user_id: 1, target: {type: "guide", cls: "testing", member: ""}}, function(err, id) {
+            subscriptions.findTargetsByUser(1, function(err, subs) {
+                expect(subs.length).toEqual(2);
+                done();
+            });
+        });
+    });
+
+    it("#remove does nothing when subscription doesn't exist", function(done) {
+        subscriptions.remove({user_id: 1, target: {type: "guide", cls: "testing", member: ""}}, function(err, id) {
+            subscriptions.findTargetsByUser(1, function(err, subs) {
+                expect(subs.length).toEqual(2);
+                done();
+            });
+        });
+    });
 });

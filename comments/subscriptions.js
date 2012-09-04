@@ -1,3 +1,5 @@
+var Targets = require("./targets");
+
 /**
  * Represents a Subscriptions table.
  *
@@ -10,6 +12,7 @@
 function Subscriptions(db, domain) {
     this.db = db;
     this.domain = domain;
+    this.targets = new Targets(db, domain);
 }
 
 Subscriptions.prototype = {
@@ -47,6 +50,44 @@ Subscriptions.prototype = {
         ];
 
         this.db.query(sql, [target_id], callback);
+    },
+
+    /**
+     * Adds new subscription.
+     * @param {Object} subscription
+     * @param {Number} subscription.user_id
+     * @param {Object} subscription.target
+     * @param {Function} callback
+     * @param {Error} callback.err The error object.
+     * @param {Number} callback.subscriptionId ID of the new subscription.
+     */
+    add: function(subscription, callback) {
+        // First remove any existing subscriptions, then continue with
+        // adding the new one.
+        this.remove(subscription, function(err) {
+            this.targets.ensure(subscription.target, function(err, target_id) {
+                this.db.insert("subscriptions", {
+                    user_id: subscription.user_id,
+                    target_id: target_id,
+                    created_at: new Date()
+                }, callback);
+            }.bind(this));
+        }.bind(this));
+    },
+
+    /**
+     * Removes an existing subscription.
+     * @param {Object} subscription
+     * @param {Number} subscription.user_id
+     * @param {Object} subscription.target
+     * @param {Function} callback
+     * @param {Error} callback.err The error object.
+     */
+    remove: function(subscription, callback) {
+        this.targets.ensure(subscription.target, function(err, target_id) {
+            var sql = "DELETE FROM subscriptions WHERE user_id = ? AND target_id = ?";
+            this.db.query(sql, [subscription.user_id, target_id], callback);
+        }.bind(this));
     }
 };
 
