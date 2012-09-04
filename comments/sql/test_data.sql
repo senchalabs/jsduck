@@ -180,3 +180,12 @@ INSERT INTO subscriptions SET `user_id` = 3, `target_id` = 1, `created_at` = '20
 -- subscribe jack to touch-2 Ext
 INSERT INTO subscriptions SET `user_id` = 4, `target_id` = 14, `created_at` = '2011-01-01 00:00:00';
 
+-- readings
+
+-- renku has read all comments in Ext thread
+INSERT INTO readings SET `user_id` = 1, `comment_id` = 1, `created_at` = '2011-01-01 00:00:00';
+INSERT INTO readings SET `user_id` = 1, `comment_id` = 2, `created_at` = '2011-01-01 00:00:00';
+INSERT INTO readings SET `user_id` = 1, `comment_id` = 3, `created_at` = '2011-01-01 00:00:00';
+INSERT INTO readings SET `user_id` = 1, `comment_id` = 4, `created_at` = '2011-01-01 00:00:00';
+INSERT INTO readings SET `user_id` = 1, `comment_id` = 5, `created_at` = '2011-01-01 00:00:00';
+INSERT INTO readings SET `user_id` = 1, `comment_id` = 6, `created_at` = '2011-01-01 00:00:00';

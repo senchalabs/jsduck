@@ -19,6 +19,7 @@ module.exports = {
             score: comment.vote,
             upVote: comment.vote_dir === 1,
             downVote: comment.vote_dir === -1,
+            read: comment.read,
             moderator: comment.moderator,
             emailHash: crypto.createHash('md5').update(comment.email).digest("hex")
         };

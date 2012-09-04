@@ -32,6 +32,9 @@ Request.prototype = {
 
         if (this.isLoggedIn()) {
             this.db.comments().showVoteDirBy(this.getUserId());
+            if (this.isModerator()) {
+                this.db.comments().showReadBy(this.getUserId());
+            }
         }
 
         this.db.comments().find(targetObj, function(err, comments) {
@@ -138,6 +141,10 @@ Request.prototype = {
      */
     isLoggedIn: function() {
         return this.req.session && this.req.session.user;
+    },
+
+    isModerator: function() {
+        return this.req.session.user.moderator;
     },
 
     /**

@@ -18,7 +18,7 @@ function Comments(db, domain) {
     this.domain = domain;
     this.targets = new Targets(db, domain);
     this.view = "full_visible_comments AS comments";
-    this.fields = "*";
+    this.fields = ["*"];
 }
 
 Comments.prototype = {
@@ -41,8 +41,19 @@ Comments.prototype = {
      * @param {Number} user_id The ID of the user who's votes to inspect.
      */
     showVoteDirBy: function(user_id) {
-        var sql = "*, (SELECT SUM(value) FROM votes WHERE user_id = ? AND comment_id = comments.id) AS vote_dir";
-        this.fields = this.db.format(sql, [user_id]);
+        var sql = "(SELECT SUM(value) FROM votes WHERE user_id = ? AND comment_id = comments.id) AS vote_dir";
+        this.fields.push(this.db.format(sql, [user_id]));
+    },
+
+    /**
+     * Includes a `read` field into the comment records returned
+     * by #get* and #find* methods.  The `read` field will be 1
+     * when the user has read the comment, 0 if he hasn't.
+     * @param {Number} user_id The ID of the user who's readings to inspect.
+     */
+    showReadBy: function(user_id) {
+        var sql = "(SELECT COUNT(*) FROM readings WHERE user_id = ? AND comment_id = comments.id) AS `read`";
+        this.fields.push(this.db.format(sql, [user_id]));
     },
 
     /**
@@ -55,12 +66,12 @@ Comments.prototype = {
      */
     getById: function(id, callback) {
         var sql = [
-            'SELECT ', this.fields,
+            'SELECT ', this.fields.join(", "),
             'FROM', this.view,
             'WHERE domain = ? AND id = ?'
         ];
 
-        this.db.query(sql, [this.domain, id], this.fixVoteDir(function(err, rows) {
+        this.db.query(sql, [this.domain, id], this.fixFields(function(err, rows) {
             callback(err, rows && rows[0]);
         }));
     },
@@ -79,13 +90,13 @@ Comments.prototype = {
      */
     find: function(target, callback) {
         var sql = [
-            'SELECT ', this.fields,
+            'SELECT ', this.fields.join(", "),
             'FROM', this.view,
             'WHERE domain = ? AND type = ? AND cls = ? AND member = ?',
             'ORDER BY created_at'
         ];
 
-        this.db.query(sql, [this.domain, target.type, target.cls, target.member], this.fixVoteDir(callback));
+        this.db.query(sql, [this.domain, target.type, target.cls, target.member], this.fixFields(callback));
     },
 
     /**
@@ -101,14 +112,14 @@ Comments.prototype = {
      */
     findRecent: function(opts, callback) {
         var sql = [
-            'SELECT ', this.fields,
+            'SELECT ', this.fields.join(", "),
             'FROM', this.view,
             'WHERE domain = ?',
             'ORDER BY created_at DESC',
             'LIMIT ? OFFSET ?'
         ];
 
-        this.db.query(sql, [this.domain, opts.limit||100, opts.offset||0], this.fixVoteDir(callback));
+        this.db.query(sql, [this.domain, opts.limit||100, opts.offset||0], this.fixFields(callback));
     },
 
     /**
@@ -309,10 +320,11 @@ Comments.prototype = {
         }.bind(this));
     },
 
-    // Helper that converts all vote_dir fields into numbers. For some
-    // reason the vote_dir field is a string by default, but we don't
-    // want that.
-    fixVoteDir: function(callback) {
+    // Helper that converts all `vote_dir` and `read` fields into
+    // appropriate type. For some reason the vote_dir field is a
+    // string by default, but we don't want that.  The `read` field is
+    // a string, but we really want a boolean instead.
+    fixFields: function(callback) {
         return function(err, rows) {
             if (err) {
                 callback(err);
@@ -322,6 +334,9 @@ Comments.prototype = {
             callback(null, rows.map(function(r) {
                 if (r.vote_dir) {
                     r.vote_dir = +r.vote_dir;
+                }
+                if (r.read) {
+                    r.read = !!(+r.read);
                 }
                 return r;
             }));

@@ -83,6 +83,25 @@ describe("Comments", function() {
         });
     });
 
+    describe("after calling showReadBy(user)", function() {
+        beforeEach(function() {
+            comments.showReadBy(1);
+        });
+        it("#getById includes read:true when user has read the comment", function(done) {
+            comments.getById(1, function(err, com) {
+                if (err) throw err;
+                expect(com.read).toEqual(true);
+                done();
+            });
+        });
+        it("#getById includes read:false when user hasn't read the comment", function(done) {
+            comments.getById(7, function(err, com) {
+                expect(com.read).toEqual(false);
+                done();
+            });
+        });
+    });
+
     it("#find returns all undeleted comments for a target", function(done) {
         comments.find({type: "class", cls: "Ext", member: ""}, function(err, rows) {
             expect(rows.length).toEqual(5);
