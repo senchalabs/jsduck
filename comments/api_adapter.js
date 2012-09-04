@@ -13,6 +13,7 @@ module.exports = {
         return {
             _id: comment.id,
             author: comment.username,
+            content: comment.content,
             contentHtml: comment.content_html,
             createdAt: String(comment.created_at),
             score: comment.vote,
