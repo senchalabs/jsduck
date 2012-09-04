@@ -17,6 +17,10 @@ function Request(req) {
 }
 
 Request.prototype = {
+    login: function(user, pass, callback) {
+        this.db.users().login(user, pass, callback);
+    },
+
     getCommentCountsPerTarget: function(callback) {
         this.db.comments().countsPerTarget(function(err, counts) {
             callback(counts);

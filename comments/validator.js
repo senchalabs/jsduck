@@ -73,8 +73,8 @@ var validator = {
                 return;
             }
 
-            this.req.session = req.session || {};
-            this.req.session.user = user;
+            req.session = req.session || {};
+            req.session.user = user;
 
             next();
         }.bind(this));
@@ -84,7 +84,7 @@ var validator = {
      * Performs the logout.
      */
     doLogout: function(req, res, next) {
-        this.req.session.user = null;
+        req.session.user = null;
         next();
     }
 
