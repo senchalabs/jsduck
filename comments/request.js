@@ -56,8 +56,15 @@ Request.prototype = {
         };
 
         this.db.comments().add(comment, function(err, comment_id) {
-            callback(comment_id);
-        });
+            if (this.isModerator()) {
+                this.markRead(comment_id, function() {
+                    callback(comment_id);
+                });
+            }
+            else {
+                callback(comment_id);
+            }
+        }.bind(this));
     },
 
     setDeleted: function(comment_id, deleted, callback) {
