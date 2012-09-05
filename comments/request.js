@@ -22,6 +22,10 @@ Request.prototype = {
     },
 
     getRecentComments: function(query, callback) {
+        if (query.hideCurrentUser) {
+            query.hideUser = this.getUserId();
+        }
+
         this.db.comments().findRecent(query, function(err, comments) {
             this.db.comments().count(query, function(err, total) {
                 var commentsOut = comments.map(ApiAdapter.commentToJson, ApiAdapter);

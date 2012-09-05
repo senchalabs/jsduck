@@ -107,6 +107,7 @@ Comments.prototype = {
      * @param {Number} [opts.offset=0] The starting index.
      * @param {Number} [opts.orderBy="created_at"] By which column to sort the results.
      * Two possible options here: "created_at" and "vote".
+     * @param {Number} [opts.hideUser=undefined] A user_id to hide.
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
@@ -118,18 +119,19 @@ Comments.prototype = {
         var sql = [
             'SELECT ', this.fields.join(", "),
             'FROM', this.view,
-            'WHERE domain = ?',
+            'WHERE ', this.buildWhere(opts),
             'ORDER BY '+opts.orderBy+' DESC',
             'LIMIT ? OFFSET ?'
         ];
 
-        this.db.query(sql, [this.domain, opts.limit||100, opts.offset||0], this.fixFields(callback));
+        this.db.query(sql, [opts.limit||100, opts.offset||0], this.fixFields(callback));
     },
 
     /**
      * Counts number of comments in the current domain.
      *
-     * @param {Object} opts Reserved for future.
+     * @param {Object} opts Options for the query:
+     * @param {Number} [opts.hideUser=undefined] A user_id to hide.
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
@@ -139,12 +141,21 @@ Comments.prototype = {
         var sql = [
             'SELECT COUNT(*) as count',
             'FROM', this.view,
-            'WHERE domain = ?'
+            'WHERE ', this.buildWhere(opts)
         ];
 
-        this.db.queryOne(sql, [this.domain], function(err, row) {
+        this.db.queryOne(sql, [], function(err, row) {
             callback(err, +row.count);
         });
+    },
+
+    // helper for building the WHERE expression in #findRecent and #count.
+    buildWhere: function(opts) {
+        var where = [this.db.format("domain = ?", [this.domain])];
+        if (opts.hideUser) {
+            where.push(this.db.format("user_id <> ?", [opts.hideUser]));
+        }
+        return where.join(" AND ");
     },
 
     /**

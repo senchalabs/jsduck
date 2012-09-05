@@ -96,7 +96,8 @@ app.get('/auth/:sdk/:version/comments_recent', function(req, res) {
     var query = {
         offset: parseInt(req.query.offset, 10),
         limit: parseInt(req.query.limit, 10),
-        orderBy: req.query.sortByScore ? "vote" : "created_at"
+        orderBy: req.query.sortByScore ? "vote" : "created_at",
+        hideCurrentUser: req.query.hideCurrentUser
     };
     new Request(req).getRecentComments(query, function(comments) {
         res.json(comments);

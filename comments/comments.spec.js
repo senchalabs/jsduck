@@ -151,6 +151,13 @@ describe("Comments", function() {
         });
     });
 
+    it("#findRecent with hideUser:1 excludes user with ID 1 from results", function(done) {
+        comments.findRecent({hideUser: 1}, function(err, rows) {
+            expect(rows.every(function(r){return r.user_id !== 1;})).toEqual(true);
+            done();
+        });
+    });
+
     it("#count gets total number of comments in current domain", function(done) {
         comments.count({}, function(err, cnt) {
             expect(cnt).toEqual(24);
@@ -168,6 +175,13 @@ describe("Comments", function() {
                 expect(cnt).toEqual(4);
                 done();
             });
+        });
+    });
+
+    it("#count with hideUser:1 excludes comments by that user from the count", function(done) {
+        comments.count({hideUser: 1}, function(err, cnt) {
+            expect(cnt).toEqual(19);
+            done();
         });
     });
 
