@@ -21,6 +21,25 @@ Request.prototype = {
         this.db.users().login(user, pass, callback);
     },
 
+    getRecentComments: function(query, callback) {
+        this.db.comments().findRecent(query, function(err, comments) {
+            this.db.comments().count(query, function(err, total) {
+                var commentsOut = comments.map(ApiAdapter.commentToJson, ApiAdapter);
+
+                // store total count to last comment.
+                // It's a hack, but that's what we're left with for now.
+                var last = commentsOut[commentsOut.length-1];
+                if (last) {
+                    last.total_rows = total;
+                    last.offset = query.offset;
+                    last.limit = query.limit;
+                }
+
+                callback(commentsOut);
+            });
+        }.bind(this));
+    },
+
     getCommentCountsPerTarget: function(callback) {
         this.db.comments().countsPerTarget(function(err, counts) {
             callback(counts);
@@ -38,7 +57,7 @@ Request.prototype = {
         }
 
         this.db.comments().find(targetObj, function(err, comments) {
-            callback(comments.map(ApiAdapter.commentToJson));
+            callback(comments.map(ApiAdapter.commentToJson, ApiAdapter));
         });
     },
 
@@ -127,7 +146,7 @@ Request.prototype = {
         }
 
         this.db.subscriptions().findTargetsByUser(this.getUserId(), function(err, targets) {
-            callback(targets.map(ApiAdapter.targetToJson));
+            callback(targets.map(ApiAdapter.targetToJson, ApiAdapter));
         });
     },
 
