@@ -144,6 +144,13 @@ describe("Comments", function() {
         });
     });
 
+    it("#findRecent with orderBy:vote sorts to highest voted comment to top", function(done) {
+        comments.findRecent({orderBy: "vote"}, function(err, rows) {
+            expect(rows[0].vote).toEqual(4);
+            done();
+        });
+    });
+
     it("#count gets total number of comments in current domain", function(done) {
         comments.count({}, function(err, cnt) {
             expect(cnt).toEqual(24);

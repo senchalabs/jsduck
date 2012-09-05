@@ -105,17 +105,21 @@ Comments.prototype = {
      * @param {Object} opts Options for the query:
      * @param {Number} [opts.limit=100] Number of rows to return.
      * @param {Number} [opts.offset=0] The starting index.
+     * @param {Number} [opts.orderBy="created_at"] By which column to sort the results.
+     * Two possible options here: "created_at" and "vote".
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
      * @param {Object[]} callback.comments An array of comment rows.
      */
     findRecent: function(opts, callback) {
+        opts.orderBy = opts.orderBy || "created_at";
+
         var sql = [
             'SELECT ', this.fields.join(", "),
             'FROM', this.view,
             'WHERE domain = ?',
-            'ORDER BY created_at DESC',
+            'ORDER BY '+opts.orderBy+' DESC',
             'LIMIT ? OFFSET ?'
         ];
 
