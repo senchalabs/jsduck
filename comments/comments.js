@@ -52,8 +52,13 @@ Comments.prototype = {
      * @param {Number} user_id The ID of the user who's readings to inspect.
      */
     showReadBy: function(user_id) {
-        var sql = "(SELECT COUNT(*) FROM readings WHERE user_id = ? AND comment_id = comments.id) AS `read`";
-        this.fields.push(this.db.format(sql, [user_id]));
+        this.readBy = user_id;
+        this.fields.push(this.getReadExpression() + " AS `read`");
+    },
+
+    getReadExpression: function() {
+        var sql = "(SELECT COUNT(*) FROM readings WHERE user_id = ? AND comment_id = comments.id)";
+        return this.db.format(sql, [this.readBy]);
     },
 
     /**
@@ -108,6 +113,7 @@ Comments.prototype = {
      * @param {Number} [opts.orderBy="created_at"] By which column to sort the results.
      * Two possible options here: "created_at" and "vote".
      * @param {Number} [opts.hideUser=undefined] A user_id to hide.
+     * @param {Number} [opts.hideRead=false] True to hide comments marked as read.
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
@@ -154,6 +160,9 @@ Comments.prototype = {
         var where = [this.db.format("domain = ?", [this.domain])];
         if (opts.hideUser) {
             where.push(this.db.format("user_id <> ?", [opts.hideUser]));
+        }
+        if (opts.hideRead) {
+            where.push(this.getReadExpression() + " = 0");
         }
         return where.join(" AND ");
     },

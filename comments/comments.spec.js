@@ -158,6 +158,14 @@ describe("Comments", function() {
         });
     });
 
+    it("#findRecent with hideRead:true excludes comments that have been read by current user", function(done) {
+        comments.showReadBy(1);
+        comments.findRecent({hideRead: true}, function(err, rows) {
+            expect(rows.every(function(r){return r.read === false;})).toEqual(true);
+            done();
+        });
+    });
+
     it("#count gets total number of comments in current domain", function(done) {
         comments.count({}, function(err, cnt) {
             expect(cnt).toEqual(24);
@@ -180,6 +188,22 @@ describe("Comments", function() {
 
     it("#count with hideUser:1 excludes comments by that user from the count", function(done) {
         comments.count({hideUser: 1}, function(err, cnt) {
+            expect(cnt).toEqual(19);
+            done();
+        });
+    });
+
+    it("#count with hideRead:false counts all comments", function(done) {
+        comments.showReadBy(1);
+        comments.count({hideRead: false}, function(err, cnt) {
+            expect(cnt).toEqual(24);
+            done();
+        });
+    });
+
+    it("#count with hideRead:true excludes comments that have been read by current user", function(done) {
+        comments.showReadBy(1);
+        comments.count({hideRead: true}, function(err, cnt) {
             expect(cnt).toEqual(19);
             done();
         });
