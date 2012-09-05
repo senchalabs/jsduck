@@ -102,6 +102,17 @@ Request.prototype = {
         });
     },
 
+    markRead: function(comment_id, callback) {
+        var read = {
+            user_id: this.getUserId(),
+            comment_id: comment_id
+        };
+
+        this.db.comments().markRead(read, function(err) {
+            callback();
+        });
+    },
+
     getSubscriptions: function(callback) {
         if (!this.isLoggedIn()) {
             callback([]);

@@ -320,6 +320,27 @@ Comments.prototype = {
         }.bind(this));
     },
 
+    /**
+     * Marks comment as read.
+     *
+     * @param {Object} read
+     * @param {Number} read.user_id The user who's marking it.
+     * @param {Number} read.comment_id The comment he's marking.
+     * @param {Function} callback
+     * @param {Error} callback.err
+     */
+    markRead: function(read, callback) {
+        read.created_at = new Date();
+        this.db.insert("readings", read, function(err) {
+            if (err && err.code === "ER_DUP_ENTRY") {
+                callback();
+            }
+            else {
+                callback(err);
+            }
+        });
+    },
+
     // Helper that converts all `vote_dir` and `read` fields into
     // appropriate type. For some reason the vote_dir field is a
     // string by default, but we don't want that.  The `read` field is

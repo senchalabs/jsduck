@@ -309,4 +309,25 @@ describe("Comments", function() {
         });
     });
 
+    it("#markRead marks comment as read", function(done) {
+        comments.markRead({comment_id: 7, user_id: 1}, function(err) {
+            if (err) throw err;
+            comments.showReadBy(1);
+            comments.getById(7, function(err, com) {
+                expect(com.read).toEqual(true);
+                done();
+            });
+        });
+    });
+
+    it("#markRead on already read comment keeps the comment as read", function(done) {
+        comments.markRead({comment_id: 7, user_id: 1}, function(err) {
+            if (err) throw err;
+            comments.showReadBy(1);
+            comments.getById(7, function(err, com) {
+                expect(com.read).toEqual(true);
+                done();
+            });
+        });
+    });
 });

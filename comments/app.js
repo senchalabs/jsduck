@@ -161,6 +161,13 @@ app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', validator.isLogg
     });
 });
 
+// Marks a comment 'read'
+app.post('/auth/:sdk/:version/comments/:commentId/read', validator.isLoggedIn, function(req, res) {
+    new Request(req).markRead(req.params.commentId, function() {
+        res.send({ success: true });
+    });
+});
+
 // Returns all subscriptions for logged in user
 app.get('/auth/:sdk/:version/subscriptions', function(req, res) {
     new Request(req).getSubscriptions(function(subs) {
