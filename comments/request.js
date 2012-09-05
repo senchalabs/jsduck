@@ -1,5 +1,6 @@
 var TableFactory = require("./table_factory");
 var ApiAdapter = require("./api_adapter");
+var Mailer = require("./mailer");
 
 /**
  * Handles JSON API request.
@@ -77,7 +78,7 @@ Request.prototype = {
         });
     },
 
-    addComment: function(target, content, callback) {
+    addComment: function(target, content, threadUrl, callback) {
         var comment = {
             user_id: this.getUserId(),
             target: ApiAdapter.targetFromJson(JSON.parse(target)),
@@ -93,6 +94,19 @@ Request.prototype = {
             else {
                 callback(comment_id);
             }
+
+            this.sendEmailUpdates(comment_id, threadUrl);
+        }.bind(this));
+    },
+
+    sendEmailUpdates: function(comment_id, threadUrl) {
+        this.db.comments().getById(comment_id, function(err, comment) {
+            var mailer = new Mailer({
+                db: this.db,
+                comment: comment,
+                threadUrl: threadUrl
+            });
+            mailer.sendEmailUpdates();
         }.bind(this));
     },
 

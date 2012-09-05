@@ -125,7 +125,7 @@ app.get('/auth/:sdk/:version/comments', validator.hasStartKey, function(req, res
 
 // Adds new comment
 app.post('/auth/:sdk/:version/comments', validator.isLoggedIn, function(req, res) {
-    new Request(req).addComment(req.body.target, req.body.comment, function(comment_id) {
+    new Request(req).addComment(req.body.target, req.body.comment, req.body.url, function(comment_id) {
         res.json({ id: comment_id, success: true });
     });
 });
