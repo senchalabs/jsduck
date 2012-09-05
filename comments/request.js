@@ -26,6 +26,8 @@ Request.prototype = {
             query.hideUser = this.getUserId();
         }
 
+        this.setCommentsTableOptions();
+
         this.db.comments().findRecent(query, function(err, comments) {
             this.db.comments().count(query, function(err, total) {
                 var commentsOut = comments.map(ApiAdapter.commentToJson, ApiAdapter);
@@ -53,16 +55,20 @@ Request.prototype = {
     getComments: function(target, callback) {
         var targetObj = ApiAdapter.targetFromJson(JSON.parse(target));
 
+        this.setCommentsTableOptions();
+
+        this.db.comments().find(targetObj, function(err, comments) {
+            callback(comments.map(ApiAdapter.commentToJson, ApiAdapter));
+        });
+    },
+
+    setCommentsTableOptions: function() {
         if (this.isLoggedIn()) {
             this.db.comments().showVoteDirBy(this.getUserId());
             if (this.isModerator()) {
                 this.db.comments().showReadBy(this.getUserId());
             }
         }
-
-        this.db.comments().find(targetObj, function(err, comments) {
-            callback(comments.map(ApiAdapter.commentToJson, ApiAdapter));
-        });
     },
 
     getComment: function(comment_id, callback) {
