@@ -68,8 +68,7 @@ Subscriptions.prototype = {
             this.targets.ensure(subscription.target, function(err, target_id) {
                 this.db.insert("subscriptions", {
                     user_id: subscription.user_id,
-                    target_id: target_id,
-                    created_at: new Date()
+                    target_id: target_id
                 }, callback);
             }.bind(this));
         }.bind(this));

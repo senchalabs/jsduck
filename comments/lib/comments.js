@@ -223,8 +223,7 @@ Comments.prototype = {
                 target_id: target_id,
                 user_id: comment.user_id,
                 content: comment.content,
-                content_html: Formatter.format(comment.content),
-                created_at: new Date()
+                content_html: Formatter.format(comment.content)
             }, callback);
         }.bind(this));
     },
@@ -253,8 +252,7 @@ Comments.prototype = {
             this.db.insert("updates", {
                 comment_id: comment.id,
                 user_id: comment.user_id,
-                action: 'update',
-                created_at: new Date()
+                action: 'update'
             }, callback);
         }.bind(this));
     },
@@ -282,8 +280,7 @@ Comments.prototype = {
             this.db.insert("updates", {
                 comment_id: action.id,
                 user_id: action.user_id,
-                action: action.deleted ? 'delete' : 'undo_delete',
-                created_at: new Date()
+                action: action.deleted ? 'delete' : 'undo_delete'
             }, callback);
         }.bind(this));
     },
@@ -315,7 +312,6 @@ Comments.prototype = {
     },
 
     castVote: function(vote, callback) {
-        vote.created_at = new Date();
         this.db.insert("votes", vote, function(err, vote_id) {
             if (err) {
                 // vote already exists, retrieve it
@@ -354,7 +350,6 @@ Comments.prototype = {
      * @param {Error} callback.err
      */
     markRead: function(read, callback) {
-        read.created_at = new Date();
         this.db.insert("readings", read, function(err) {
             if (err && err.code === "ER_DUP_ENTRY") {
                 callback();

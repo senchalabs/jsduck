@@ -23,7 +23,7 @@ CREATE TABLE comments (
     content TEXT NOT NULL,
     content_html TEXT NOT NULL,
     vote INT NOT NULL DEFAULT 0,
-    created_at DATETIME NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (target_id) REFERENCES targets (id) ON DELETE CASCADE
@@ -34,7 +34,7 @@ CREATE TABLE votes (
     user_id INT NOT NULL,
     comment_id INT NOT NULL,
     value INT NOT NULL, -- +1 or -1
-    created_at DATETIME NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE,
     -- can't vote twice on the same comment
@@ -46,7 +46,7 @@ CREATE TABLE updates (
     user_id INT NOT NULL,
     comment_id INT NOT NULL,
     action ENUM('update', 'delete') DEFAULT 'update',
-    created_at DATETIME NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
@@ -55,7 +55,7 @@ CREATE TABLE subscriptions (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     target_id INT NOT NULL,
-    created_at DATETIME NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (target_id) REFERENCES targets (id) ON DELETE CASCADE,
     -- can't subscribe twice to the same thread
@@ -66,7 +66,7 @@ CREATE TABLE readings (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     comment_id INT NOT NULL,
-    created_at DATETIME NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE,
     -- can't read the same comment twice
