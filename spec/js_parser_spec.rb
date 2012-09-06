@@ -129,20 +129,6 @@ describe JsDuck::JsParser do
     end
   end
 
-  shared_examples_for "three comments merged" do
-    it "finds one comment" do
-      @docs.length.should == 1
-    end
-
-    it "merges all the line-comments together" do
-      @docs[0][:comment].should == " Very\n Long\n Comment"
-    end
-
-    it "detects the whole comment as belonging to the function" do
-      @docs[0][:code]["type"].should == "FunctionDeclaration"
-    end
-  end
-
   describe "parsing three line comments before one function" do
     before do
       @docs = parse(<<-EOS)
@@ -154,7 +140,17 @@ describe JsDuck::JsParser do
       EOS
     end
 
-    it_should_behave_like "three comments merged"
+    it "finds one comment" do
+      @docs.length.should == 1
+    end
+
+    it "merges all the line-comments together" do
+      @docs[0][:comment].should == " Very\n Long\n Comment"
+    end
+
+    it "detects the whole comment as belonging to the function" do
+      @docs[0][:code]["type"].should == "FunctionDeclaration"
+    end
   end
 
   describe "parsing three separated line comments before one function" do

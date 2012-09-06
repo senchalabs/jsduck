@@ -62,10 +62,11 @@ module JsDuck
     end
 
     # Two comments can be merged if they are both line-comments and
-    # they are separated only by whitespace (but no newlines)
+    # they are separated only by whitespace (only one newline at the
+    # end of the first comment is allowed)
     def mergeable?(c1, c2)
       if c1["type"] == "Line" && c2["type"] == "Line"
-        /\A[ \t]*\Z/ =~ @input.slice((c1["range"][1])..(c2["range"][0]-1))
+        /\A(\r\n|\n|\r)?[ \t]*\Z/ =~ @input.slice((c1["range"][1])..(c2["range"][0]-1))
       else
         false
       end
