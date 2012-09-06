@@ -1,20 +1,14 @@
-var mysql = require('mysql');
-
 /**
  * A facade in front of node-mysql providing several methods in
  * addition to simple #query method that node-mysql provides.
  *
  * @constructor
- * Initializes the database connection with given config options.
+ * Initializes the database facade with a connection object.
  *
- * @param {Object} cfg A config for mysql.createConnection:
- * @param {String} cfg.user
- * @param {String} cfg.password
- * @param {String} cfg.database
- * @param {String} cfg.host
+ * @param {mysql.Connection} connection
  */
-function DbFacade(cfg) {
-    this.connection = mysql.createConnection(cfg);
+function DbFacade(connection) {
+    this.connection = connection;
 }
 
 DbFacade.prototype = {
@@ -73,13 +67,6 @@ DbFacade.prototype = {
         var id = fields.id;
         var fieldsWithoutId = this.removeField(fields, "id");
         this.query(["UPDATE "+table+" SET ? WHERE id = ?"], [fieldsWithoutId, id], callback);
-    },
-
-    /**
-     * Closes the database connection.
-     */
-    end: function() {
-        this.connection.end();
     },
 
     /**

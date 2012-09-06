@@ -1,18 +1,19 @@
 describe("Comments", function() {
+    var mysql = require("mysql");
     var Comments = require("../lib/comments");
     var DbFacade = require('../lib/db_facade');
     var connection;
     var comments;
 
     beforeEach(function() {
-        connection = new DbFacade({
+        connection = mysql.createConnection({
             host: 'localhost',
             user: '',
             password: '',
             database: 'comments_test'
         });
 
-        comments = new Comments(connection, "ext-js-4");
+        comments = new Comments(new DbFacade(connection), "ext-js-4");
     });
 
     afterEach(function() {
@@ -175,7 +176,7 @@ describe("Comments", function() {
 
     describe("when initializing Comments to other domain", function() {
         beforeEach(function() {
-            comments = new Comments(connection, "touch-2");
+            comments = new Comments(new DbFacade(connection), "touch-2");
         });
 
         it("#count gets total number of comments in the other domain", function(done) {

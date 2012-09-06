@@ -3,6 +3,7 @@ var Comments = require('./comments');
 var Users = require('./users');
 var Subscriptions = require('./subscriptions');
 var ForumAuth = require('./forum_auth');
+var ConnectionPool = require('./connection_pool');
 var config = require('../config');
 
 /**
@@ -35,7 +36,8 @@ TableFactory.prototype = {
      */
     users: function() {
         return this.cache("users", function() {
-            var forumAuth = new ForumAuth(new DbFacade(config.forumDb));
+            var connection = ConnectionPool.get("users", config.forumDb);
+            var forumAuth = new ForumAuth(new DbFacade(connection));
             return new Users(this.database(), forumAuth);
         });
     },
@@ -52,7 +54,8 @@ TableFactory.prototype = {
 
     database: function() {
         return this.cache("database", function() {
-            return new DbFacade(config.mysql);
+            var connection = ConnectionPool.get("comments", config.mysql);
+            return new DbFacade(connection);
         });
     },
 
