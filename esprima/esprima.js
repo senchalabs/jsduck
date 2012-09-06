@@ -29,7 +29,7 @@
 */
 
 /*jslint bitwise:true plusplus:true */
-/*global esprima:true, exports:true,
+/*global esprima:true, define:true, exports:true, window: true,
 throwError: true, createLiteral: true, generateStatement: true,
 parseAssignmentExpression: true, parseBlock: true, parseExpression: true,
 parseFunctionDeclaration: true, parseFunctionExpression: true,
@@ -37,7 +37,19 @@ parseFunctionSourceElements: true, parseVariableIdentifier: true,
 parseLeftHandSideExpression: true,
 parseStatement: true, parseSourceElement: true */
 
-(function (exports) {
+(function (factory) {
+    'use strict';
+
+    // Universal Module Definition (UMD) to support AMD, CommonJS/Node.js,
+    // and plain browser loading,
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], factory);
+    } else if (typeof exports !== 'undefined') {
+        factory(exports);
+    } else {
+        factory((window.esprima = {}));
+    }
+}(function (exports) {
     'use strict';
 
     var Token,
@@ -139,6 +151,7 @@ parseStatement: true, parseSourceElement: true */
         UnterminatedRegExp:  'Invalid regular expression: missing /',
         InvalidLHSInAssignment:  'Invalid left-hand side in assignment',
         InvalidLHSInForIn:  'Invalid left-hand side in for-in',
+        MultipleDefaultsInSwitch: 'More than one default clause in switch statement',
         NoCatchOrFinally:  'Missing catch or finally after try',
         UnknownLabel: 'Undefined label \'%0\'',
         Redeclaration: '%0 \'%1\' has already been declared',
@@ -948,7 +961,7 @@ parseStatement: true, parseSourceElement: true */
     }
 
     function scanRegExp() {
-        var str = '', ch, start, pattern, flags, value, classMarker = false, restore;
+        var str = '', ch, start, pattern, flags, value, classMarker = false, restore, terminated = false;
 
         buffer = null;
         skipComment();
@@ -973,20 +986,18 @@ parseStatement: true, parseSourceElement: true */
                         throwError({}, Messages.UnterminatedRegExp);
                     }
                     str += ch;
-                }
-                else if (ch === '/') {
+                } else if (ch === '/') {
+                    terminated = true;
                     break;
-                }
-                else if (ch === '[') {
+                } else if (ch === '[') {
                     classMarker = true;
-                }
-                else if (isLineTerminator(ch)) {
+                } else if (isLineTerminator(ch)) {
                     throwError({}, Messages.UnterminatedRegExp);
                 }
             }
         }
 
-        if (str.length === 1) {
+        if (!terminated) {
             throwError({}, Messages.UnterminatedRegExp);
         }
 
@@ -1163,7 +1174,6 @@ parseStatement: true, parseSourceElement: true */
     }
 
     function throwErrorTolerant() {
-        var error;
         try {
             throwError.apply(null, arguments);
         } catch (e) {
@@ -1179,8 +1189,6 @@ parseStatement: true, parseSourceElement: true */
     // Throw an exception because of the token.
 
     function throwUnexpected(token) {
-        var s;
-
         if (token.type === Token.EOF) {
             throwError(token, Messages.UnexpectedEOS);
         }
@@ -1297,31 +1305,20 @@ parseStatement: true, parseSourceElement: true */
     // Return true if provided expression is LeftHandSideExpression
 
     function isLeftHandSide(expr) {
-        switch (expr.type) {
-        case 'AssignmentExpression':
-        case 'BinaryExpression':
-        case 'ConditionalExpression':
-        case 'LogicalExpression':
-        case 'SequenceExpression':
-        case 'UnaryExpression':
-        case 'UpdateExpression':
-            return false;
-        }
-        return true;
+        return expr.type === Syntax.Identifier || expr.type === Syntax.MemberExpression;
     }
 
     // 11.1.4 Array Initialiser
 
     function parseArrayInitialiser() {
-        var elements = [],
-            undef;
+        var elements = [];
 
         expect('[');
 
         while (!match(']')) {
             if (match(',')) {
                 lex();
-                elements.push(undef);
+                elements.push(null);
             } else {
                 elements.push(parseAssignmentExpression());
 
@@ -1355,7 +1352,11 @@ parseStatement: true, parseSourceElement: true */
             type: Syntax.FunctionExpression,
             id: null,
             params: param,
-            body: body
+            defaults: [],
+            body: body,
+            rest: null,
+            generator: false,
+            expression: false
         };
     }
 
@@ -1438,7 +1439,7 @@ parseStatement: true, parseSourceElement: true */
     }
 
     function parseObjectInitialiser() {
-        var token, properties = [], property, name, kind, map = {}, toString = String;
+        var properties = [], property, name, kind, map = {}, toString = String;
 
         expect('{');
 
@@ -1690,6 +1691,11 @@ parseStatement: true, parseSourceElement: true */
             if (strict && expr.type === Syntax.Identifier && isRestrictedWord(expr.name)) {
                 throwError({}, Messages.StrictLHSPostfix);
             }
+
+            if (!isLeftHandSide(expr)) {
+                throwError({}, Messages.InvalidLHSInAssignment);
+            }
+
             expr = {
                 type: Syntax.UpdateExpression,
                 operator: lex().value,
@@ -1713,6 +1719,11 @@ parseStatement: true, parseSourceElement: true */
             if (strict && expr.type === Syntax.Identifier && isRestrictedWord(expr.name)) {
                 throwError({}, Messages.StrictLHSPrefix);
             }
+
+            if (!isLeftHandSide(expr)) {
+                throwError({}, Messages.InvalidLHSInAssignment);
+            }
+
             expr = {
                 type: Syntax.UpdateExpression,
                 operator: token.value,
@@ -1803,34 +1814,19 @@ parseStatement: true, parseSourceElement: true */
 
         previousAllowIn = state.allowIn;
         state.allowIn = true;
-        expr = parseShiftExpression();
-        state.allowIn = previousAllowIn;
 
-        if (match('<') || match('>') || match('<=') || match('>=')) {
+        expr = parseShiftExpression();
+
+        while (match('<') || match('>') || match('<=') || match('>=') || (previousAllowIn && matchKeyword('in')) || matchKeyword('instanceof')) {
             expr = {
                 type: Syntax.BinaryExpression,
                 operator: lex().value,
                 left: expr,
-                right: parseRelationalExpression()
-            };
-        } else if (state.allowIn && matchKeyword('in')) {
-            lex();
-            expr = {
-                type: Syntax.BinaryExpression,
-                operator: 'in',
-                left: expr,
-                right: parseRelationalExpression()
-            };
-        } else if (matchKeyword('instanceof')) {
-            lex();
-            expr = {
-                type: Syntax.BinaryExpression,
-                operator: 'instanceof',
-                left: expr,
-                right: parseRelationalExpression()
+                right: parseShiftExpression()
             };
         }
 
+        state.allowIn = previousAllowIn;
         return expr;
     }
 
@@ -1869,14 +1865,14 @@ parseStatement: true, parseSourceElement: true */
         return expr;
     }
 
-    function parseBitwiseORExpression() {
+    function parseBitwiseXORExpression() {
         var expr = parseBitwiseANDExpression();
 
-        while (match('|')) {
+        while (match('^')) {
             lex();
             expr = {
                 type: Syntax.BinaryExpression,
-                operator: '|',
+                operator: '^',
                 left: expr,
                 right: parseBitwiseANDExpression()
             };
@@ -1885,16 +1881,16 @@ parseStatement: true, parseSourceElement: true */
         return expr;
     }
 
-    function parseBitwiseXORExpression() {
-        var expr = parseBitwiseORExpression();
+    function parseBitwiseORExpression() {
+        var expr = parseBitwiseXORExpression();
 
-        while (match('^')) {
+        while (match('|')) {
             lex();
             expr = {
                 type: Syntax.BinaryExpression,
-                operator: '^',
+                operator: '|',
                 left: expr,
-                right: parseBitwiseORExpression()
+                right: parseBitwiseXORExpression()
             };
         }
 
@@ -1904,7 +1900,7 @@ parseStatement: true, parseSourceElement: true */
     // 11.11 Binary Logical Operators
 
     function parseLogicalANDExpression() {
-        var expr = parseBitwiseXORExpression();
+        var expr = parseBitwiseORExpression();
 
         while (match('&&')) {
             lex();
@@ -1912,7 +1908,7 @@ parseStatement: true, parseSourceElement: true */
                 type: Syntax.LogicalExpression,
                 operator: '&&',
                 left: expr,
-                right: parseBitwiseXORExpression()
+                right: parseBitwiseORExpression()
             };
         }
 
@@ -1970,7 +1966,7 @@ parseStatement: true, parseSourceElement: true */
 
         if (matchAssign()) {
             // LeftHandSideExpression
-            if (state.lastParenthesized !== expr && !isLeftHandSide(expr)) {
+            if (!isLeftHandSide(expr)) {
                 throwError({}, Messages.InvalidLHSInAssignment);
             }
 
@@ -2288,9 +2284,10 @@ parseStatement: true, parseSourceElement: true */
 
                 if (matchKeyword('in')) {
                     // LeftHandSideExpression
-                    if (matchKeyword('in') && (state.lastParenthesized !== init && !isLeftHandSide(init))) {
+                    if (!isLeftHandSide(init)) {
                         throwError({}, Messages.InvalidLHSInForIn);
                     }
+
                     lex();
                     left = init;
                     right = parseExpression();
@@ -2555,7 +2552,7 @@ parseStatement: true, parseSourceElement: true */
     }
 
     function parseSwitchStatement() {
-        var discriminant, cases, oldInSwitch;
+        var discriminant, cases, clause, oldInSwitch, defaultFound;
 
         expectKeyword('switch');
 
@@ -2579,12 +2576,20 @@ parseStatement: true, parseSourceElement: true */
 
         oldInSwitch = state.inSwitch;
         state.inSwitch = true;
+        defaultFound = false;
 
         while (index < length) {
             if (match('}')) {
                 break;
             }
-            cases.push(parseSwitchCase());
+            clause = parseSwitchCase();
+            if (clause.test === null) {
+                if (defaultFound) {
+                    throwError({}, Messages.MultipleDefaultsInSwitch);
+                }
+                defaultFound = true;
+            }
+            cases.push(clause);
         }
 
         state.inSwitch = oldInSwitch;
@@ -2639,7 +2644,6 @@ parseStatement: true, parseSourceElement: true */
         return {
             type: Syntax.CatchClause,
             param: param,
-            guard: null,
             body: parseBlock()
         };
     }
@@ -2667,6 +2671,7 @@ parseStatement: true, parseSourceElement: true */
         return {
             type: Syntax.TryStatement,
             block: block,
+            guardedHandlers: [],
             handlers: handlers,
             finalizer: finalizer
         };
@@ -2907,7 +2912,11 @@ parseStatement: true, parseSourceElement: true */
             type: Syntax.FunctionDeclaration,
             id: id,
             params: params,
-            body: body
+            defaults: [],
+            body: body,
+            rest: null,
+            generator: false,
+            expression: false
         };
     }
 
@@ -2982,7 +2991,11 @@ parseStatement: true, parseSourceElement: true */
             type: Syntax.FunctionExpression,
             id: id,
             params: params,
-            body: body
+            defaults: [],
+            body: body,
+            rest: null,
+            generator: false,
+            expression: false
         };
     }
 
@@ -3059,7 +3072,7 @@ parseStatement: true, parseSourceElement: true */
     // The following functions are needed only when the option to preserve
     // the comments is active.
 
-    function addComment(start, end, type, value) {
+    function addComment(type, value, start, end, loc) {
         assert(typeof start === 'number', 'Comment must have valid position');
 
         // Because the way the actual token is scanned, often the comments
@@ -3073,14 +3086,15 @@ parseStatement: true, parseSourceElement: true */
         }
 
         extra.comments.push({
-            range: [start, end],
             type: type,
-            value: value
+            value: value,
+            range: [start, end],
+            loc: loc
         });
     }
 
     function scanComment() {
-        var comment, ch, start, blockComment, lineComment;
+        var comment, ch, loc, start, blockComment, lineComment;
 
         comment = '';
         blockComment = false;
@@ -3091,19 +3105,27 @@ parseStatement: true, parseSourceElement: true */
 
             if (lineComment) {
                 ch = nextChar();
-                if (index >= length) {
+                if (isLineTerminator(ch)) {
+                    loc.end = {
+                        line: lineNumber,
+                        column: index - lineStart - 1
+                    };
                     lineComment = false;
-                    comment += ch;
-                    addComment(start, index, 'Line', comment);
-                } else if (isLineTerminator(ch)) {
-                    lineComment = false;
-                    addComment(start, index, 'Line', comment);
+                    addComment('Line', comment, start, index - 1, loc);
                     if (ch === '\r' && source[index] === '\n') {
                         ++index;
                     }
                     ++lineNumber;
                     lineStart = index;
                     comment = '';
+                } else if (index >= length) {
+                    lineComment = false;
+                    comment += ch;
+                    loc.end = {
+                        line: lineNumber,
+                        column: length - lineStart
+                    };
+                    addComment('Line', comment, start, length, loc);
                 } else {
                     comment += ch;
                 }
@@ -3133,7 +3155,11 @@ parseStatement: true, parseSourceElement: true */
                             comment = comment.substr(0, comment.length - 1);
                             blockComment = false;
                             ++index;
-                            addComment(start, index, 'Block', comment);
+                            loc.end = {
+                                line: lineNumber,
+                                column: index - lineStart
+                            };
+                            addComment('Block', comment, start, index, loc);
                             comment = '';
                         }
                     }
@@ -3141,13 +3167,33 @@ parseStatement: true, parseSourceElement: true */
             } else if (ch === '/') {
                 ch = source[index + 1];
                 if (ch === '/') {
+                    loc = {
+                        start: {
+                            line: lineNumber,
+                            column: index - lineStart
+                        }
+                    };
                     start = index;
                     index += 2;
                     lineComment = true;
+                    if (index >= length) {
+                        loc.end = {
+                            line: lineNumber,
+                            column: index - lineStart
+                        };
+                        lineComment = false;
+                        addComment('Line', comment, start, index, loc);
+                    }
                 } else if (ch === '*') {
                     start = index;
                     index += 2;
                     blockComment = true;
+                    loc = {
+                        start: {
+                            line: lineNumber,
+                            column: index - lineStart - 2
+                        }
+                    };
                     if (index >= length) {
                         throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
                     }
@@ -3169,10 +3215,44 @@ parseStatement: true, parseSourceElement: true */
         }
     }
 
+    function filterCommentLocation() {
+        var i, entry, comment, comments = [];
+
+        for (i = 0; i < extra.comments.length; ++i) {
+            entry = extra.comments[i];
+            comment = {
+                type: entry.type,
+                value: entry.value
+            };
+            if (extra.range) {
+                comment.range = entry.range;
+            }
+            if (extra.loc) {
+                comment.loc = entry.loc;
+            }
+            comments.push(comment);
+        }
+
+        extra.comments = comments;
+    }
+
     function collectToken() {
-        var token = extra.advance(),
-            range,
-            value;
+        var start, loc, token, range, value;
+
+        skipComment();
+        start = index;
+        loc = {
+            start: {
+                line: lineNumber,
+                column: index - lineStart
+            }
+        };
+
+        token = extra.advance();
+        loc.end = {
+            line: lineNumber,
+            column: index - lineStart
+        };
 
         if (token.type !== Token.EOF) {
             range = [token.range[0], token.range[1]];
@@ -3180,7 +3260,8 @@ parseStatement: true, parseSourceElement: true */
             extra.tokens.push({
                 type: TokenName[token.type],
                 value: value,
-                range: range
+                range: range,
+                loc: loc
             });
         }
 
@@ -3188,12 +3269,23 @@ parseStatement: true, parseSourceElement: true */
     }
 
     function collectRegex() {
-        var pos, regex, token;
+        var pos, loc, regex, token;
 
         skipComment();
 
         pos = index;
+        loc = {
+            start: {
+                line: lineNumber,
+                column: index - lineStart
+            }
+        };
+
         regex = extra.scanRegExp();
+        loc.end = {
+            line: lineNumber,
+            column: index - lineStart
+        };
 
         // Pop the previous token, which is likely '/' or '/='
         if (extra.tokens.length > 0) {
@@ -3208,10 +3300,32 @@ parseStatement: true, parseSourceElement: true */
         extra.tokens.push({
             type: 'RegularExpression',
             value: regex.literal,
-            range: [pos, index]
+            range: [pos, index],
+            loc: loc
         });
 
         return regex;
+    }
+
+    function filterTokenLocation() {
+        var i, entry, token, tokens = [];
+
+        for (i = 0; i < extra.tokens.length; ++i) {
+            entry = extra.tokens[i];
+            token = {
+                type: entry.type,
+                value: entry.value
+            };
+            if (extra.range) {
+                token.range = entry.range;
+            }
+            if (extra.loc) {
+                token.loc = entry.loc;
+            }
+            tokens.push(token);
+        }
+
+        extra.tokens = tokens;
     }
 
     function createLiteral(token) {
@@ -3274,12 +3388,12 @@ parseStatement: true, parseSourceElement: true */
                 node = parseFunction.apply(null, arguments);
                 if (typeof node !== 'undefined') {
 
-                    if (range) {
+                    if (range && typeof node.range === 'undefined') {
                         rangeInfo[1] = index;
                         node.range = rangeInfo;
                     }
 
-                    if (loc) {
+                    if (loc && typeof node.loc === 'undefined') {
                         locInfo.end = {
                             line: lineNumber,
                             column: index - lineStart
@@ -3299,6 +3413,15 @@ parseStatement: true, parseSourceElement: true */
                         }
                         if (typeof node.object.loc !== 'undefined') {
                             node.loc.start = node.object.loc.start;
+                        }
+                    }
+
+                    if (node.type === Syntax.CallExpression) {
+                        if (typeof node.callee.range !== 'undefined') {
+                            node.range[0] = node.callee.range[0];
+                        }
+                        if (typeof node.callee.loc !== 'undefined') {
+                            node.loc.start = node.callee.loc.start;
                         }
                     }
                     return node;
@@ -3533,9 +3656,11 @@ parseStatement: true, parseSourceElement: true */
         try {
             program = parseProgram();
             if (typeof extra.comments !== 'undefined') {
+                filterCommentLocation();
                 program.comments = extra.comments;
             }
             if (typeof extra.tokens !== 'undefined') {
+                filterTokenLocation();
                 program.tokens = extra.tokens;
             }
             if (typeof extra.errors !== 'undefined') {
@@ -3577,5 +3702,5 @@ parseStatement: true, parseSourceElement: true */
         return types;
     }());
 
-}(typeof exports === 'undefined' ? (esprima = {}) : exports));
+}));
 /* vim: set sw=4 ts=4 et tw=80 : */
