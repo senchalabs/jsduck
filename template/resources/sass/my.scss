@@ -177,3 +177,12 @@ $appc-red: #9B1C1F;
 	border: none !important;
 }
 
+.doc-table {
+    table,th,td {
+        border-style: solid;
+        border-width: 1px;
+    }
+    td, td {
+        padding: 3px 5px 3px 5px !important;
+    }
+}
