@@ -4,7 +4,7 @@
  */
 
 var mongoose = require('mongoose'),
-    config = require('./config');
+    config = require('../config');
 
 CommentSchema = new mongoose.Schema({
     sdk:         String,

@@ -2,7 +2,7 @@
  * Extracts data from comments database
  */
 
-var config = require('./config');
+var config = require('../config');
 require('./database');
 
 var mysql = require('mysql');
