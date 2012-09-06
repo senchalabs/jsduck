@@ -51,9 +51,19 @@ Users.prototype = {
         // great also.
         this.add(user, function(err, user_id) {
             if (err) {
-                this.get(user, function(err, u) {
-                    callback(err, u.id);
-                });
+                this.get(user, function(err, localUser) {
+                    // It might be that user has changed his e-mail
+                    // address in the forum database. In such case
+                    // update the local e-mail address accordingly.
+                    if (user.email === localUser.email) {
+                        callback(err, localUser.id);
+                    }
+                    else {
+                        this.updateEmail(localUser.id, user.email, function(err) {
+                            callback(err, localUser.id);
+                        });
+                    }
+                }.bind(this));
             }
             else {
                 callback(err, user_id);
@@ -67,6 +77,10 @@ Users.prototype = {
 
     get: function(user, callback) {
         this.db.queryOne('SELECT * FROM users WHERE external_id = ?', [user.external_id], callback);
+    },
+
+    updateEmail: function(user_id, email, callback) {
+        this.db.update("users", {id: user_id, email: email}, callback);
     }
 
 };
