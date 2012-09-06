@@ -1,6 +1,6 @@
 describe("Subscriptions", function() {
-    var Subscriptions = require("./subscriptions");
-    var DbFacade = require('./db_facade');
+    var Subscriptions = require("../lib/subscriptions");
+    var DbFacade = require('../lib/db_facade');
     var connection;
     var subscriptions;
 

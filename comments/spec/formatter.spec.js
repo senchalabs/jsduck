@@ -1,5 +1,5 @@
 describe("Formatter#format", function() {
-    var Formatter = require("./formatter");
+    var Formatter = require("../lib/formatter");
 
     function format(text) {
         return Formatter.format(text).trim();

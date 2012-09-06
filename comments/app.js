@@ -1,8 +1,8 @@
-var config = require('./config');
 var express = require('express');
 var MySQLStore = require('connect-mysql-session')(express);
-var Request = require('./request');
-var validator = require('./validator');
+var config = require('./config');
+var Request = require('./lib/request');
+var validator = require('./lib/validator');
 
 var app = express();
 

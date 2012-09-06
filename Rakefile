@@ -25,7 +25,7 @@ task :jasmine do
   system("mysql #{test_db} < comments/sql/update_votes.sql")
 
   # run jasmine tests against that database
-  system("node comments/node_modules/jasmine-node/lib/jasmine-node/cli.js comments/")
+  system("node comments/node_modules/jasmine-node/lib/jasmine-node/cli.js comments/spec/")
 end
 
 def load_sdk_vars

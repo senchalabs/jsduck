@@ -3,7 +3,7 @@ var Comments = require('./comments');
 var Users = require('./users');
 var Subscriptions = require('./subscriptions');
 var ForumAuth = require('./forum_auth');
-var config = require('./config');
+var config = require('../config');
 
 /**
  * Produces instances of classes representing different tables.  Each

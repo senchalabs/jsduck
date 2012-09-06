@@ -1,6 +1,6 @@
 describe("Comments", function() {
-    var Comments = require("./comments");
-    var DbFacade = require('./db_facade');
+    var Comments = require("../lib/comments");
+    var DbFacade = require('../lib/db_facade');
     var connection;
     var comments;
 

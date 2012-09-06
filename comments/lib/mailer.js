@@ -1,5 +1,5 @@
 var nodemailer = require("nodemailer");
-var config = require("./config");
+var config = require("../config");
 
 /**
  * Takes care of notifying subscribers about a new comment.
