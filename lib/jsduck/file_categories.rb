@@ -1,4 +1,5 @@
 require 'jsduck/logger'
+require 'jsduck/util/json'
 
 module JsDuck
 
@@ -11,7 +12,7 @@ module JsDuck
 
     # Parses categories in JSON file
     def generate
-      @categories = JsonDuck.read(@filename)
+      @categories = Util::Json.read(@filename)
 
       # Don't crash if old syntax is used.
       if @categories.is_a?(Hash) && @categories["categories"]

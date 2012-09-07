@@ -10,7 +10,7 @@ require 'jsduck/inherit_doc'
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
 require 'jsduck/assets'
-require 'jsduck/json_duck'
+require 'jsduck/util/json'
 require 'jsduck/util/io'
 require 'jsduck/importer'
 require 'jsduck/return_values'
@@ -39,7 +39,7 @@ module JsDuck
       # Set to 0 to disable parallelization completely.
       ParallelWrap.in_processes = @opts.processes
       # Turn JSON pretty-printing on/off
-      JsonDuck.pretty = @opts.pretty_json
+      Util::Json.pretty = @opts.pretty_json
     end
 
     # Call this after input parameters set

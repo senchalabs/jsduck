@@ -1,4 +1,4 @@
-require 'jsduck/json_duck'
+require 'jsduck/util/json'
 require 'jsduck/null_object'
 require 'jsduck/grouped_asset'
 
@@ -16,7 +16,7 @@ module JsDuck
     end
 
     def initialize(filename)
-      @groups = JsonDuck.read(filename)
+      @groups = Util::Json.read(filename)
       add_names_if_missing
       build_map_by_name("Two videos have the same name", filename)
     end

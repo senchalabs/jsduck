@@ -1,5 +1,5 @@
 require 'jsduck/logger'
-require 'jsduck/json_duck'
+require 'jsduck/util/json'
 require 'jsduck/util/io'
 require 'jsduck/null_object'
 require 'jsduck/logger'
@@ -23,7 +23,7 @@ module JsDuck
     # Parses guides config file
     def initialize(filename, formatter, opts)
       @path = File.dirname(filename)
-      @groups = JsonDuck.read(filename)
+      @groups = Util::Json.read(filename)
       build_map_by_name("Two guides have the same name", filename)
       @formatter = formatter
       @opts = opts
@@ -89,7 +89,7 @@ module JsDuck
       # Ensure the guide has an icon
       fix_icon(out_dir)
 
-      JsonDuck.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => guide[:html], :title => guide["title"]})
+      Util::Json.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => guide[:html], :title => guide["title"]})
     end
 
     # Ensures the guide dir contains icon.png.

@@ -1,4 +1,3 @@
-require 'jsduck/json_duck'
 require 'jsduck/class'
 
 module JsDuck

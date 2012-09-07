@@ -1,6 +1,7 @@
 require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
 require 'jsduck/stdout'
+require 'jsduck/util/json'
 require 'fileutils'
 
 module JsDuck
@@ -36,9 +37,9 @@ module JsDuck
         # skip file if exporter returned nil
         if json
           if extension == ".json"
-            JsonDuck.write_json(filename, json)
+            Util::Json.write_json(filename, json)
           elsif extension == ".js"
-            JsonDuck.write_jsonp(filename, cls[:name].gsub(/\./, "_"), json)
+            Util::Json.write_jsonp(filename, cls[:name].gsub(/\./, "_"), json)
           else
             throw "Unexpected file extension: #{extension}"
           end

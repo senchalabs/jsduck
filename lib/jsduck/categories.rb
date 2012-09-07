@@ -1,5 +1,4 @@
 require 'jsduck/logger'
-require 'jsduck/json_duck'
 require 'jsduck/file_categories'
 require 'jsduck/auto_categories'
 

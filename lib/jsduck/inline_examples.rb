@@ -1,4 +1,4 @@
-require 'jsduck/json_duck'
+require 'jsduck/util/json'
 require 'jsduck/util/html'
 
 module JsDuck
@@ -47,7 +47,7 @@ module JsDuck
 
     # Writes all found examples to .js file
     def write(filename)
-      JsonDuck.write_jsonp(filename, "__inline_examples__", @examples)
+      Util::Json.write_jsonp(filename, "__inline_examples__", @examples)
     end
 
     # Extracts inline examples from HTML

@@ -1,4 +1,4 @@
-require 'jsduck/json_duck'
+require 'jsduck/util/json'
 require 'singleton'
 
 module JsDuck
@@ -23,7 +23,7 @@ module JsDuck
     # Writes data to STDOUT in JSON format,
     # but only if some data was added.
     def flush
-      puts JsonDuck.generate(@data) if @data
+      puts Util::Json.generate(@data) if @data
     end
 
   end

@@ -1,4 +1,4 @@
-require 'jsduck/json_duck'
+require 'jsduck/util/json'
 require 'jsduck/icons'
 require 'jsduck/search_data'
 require 'jsduck/meta_tag_registry'
@@ -15,7 +15,7 @@ module JsDuck
 
     # Writes classes, guides, videos, and search data to one big .js file
     def write(filename)
-      js = "Docs = " + JsonDuck.generate({
+      js = "Docs = " + Util::Json.generate({
         :data => {
           :classes => Icons.new.create(@relations.classes),
           :guides => @assets.guides.to_array,

@@ -1,7 +1,7 @@
 require 'jsduck/option_parser'
 require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
-require 'jsduck/json_duck'
+require 'jsduck/util/json'
 
 module JsDuck
 
@@ -613,7 +613,7 @@ module JsDuck
     # config options that can be feeded into optparser.
     def read_json_config(fname)
       config = []
-      json = JsonDuck.read(fname)
+      json = Util::Json.read(fname)
       json.each_pair do |key, value|
         if key == "--"
           # filenames
@@ -649,7 +649,7 @@ module JsDuck
 
     # Extracts files of first build in jsb file
     def extract_jsb_files(jsb_file)
-      json = JsonDuck::read(jsb_file)
+      json = Util::Json.read(jsb_file)
       basedir = File.dirname(jsb_file)
 
       return json["builds"][0]["packages"].map do |package_id|

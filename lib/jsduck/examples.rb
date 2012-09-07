@@ -1,4 +1,4 @@
-require 'jsduck/json_duck'
+require 'jsduck/util/json'
 require 'jsduck/null_object'
 require 'jsduck/grouped_asset'
 
@@ -17,7 +17,7 @@ module JsDuck
 
     # Parses examples config file
     def initialize(filename, opts)
-      @groups = JsonDuck.read(filename)
+      @groups = Util::Json.read(filename)
       @opts = opts
       fix_examples_data
       build_map_by_name("Two examples have the same name", filename)
