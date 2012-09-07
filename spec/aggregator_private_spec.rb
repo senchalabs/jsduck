@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     agr.remove_ignored_classes
     agr.result
   end

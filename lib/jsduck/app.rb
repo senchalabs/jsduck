@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'jsduck/aggregator'
-require 'jsduck/source_file'
+require 'jsduck/source/file'
+require 'jsduck/source/writer'
 require 'jsduck/doc_formatter'
 require 'jsduck/class_formatter'
 require 'jsduck/class'
@@ -16,7 +17,6 @@ require 'jsduck/return_values'
 require 'jsduck/lint'
 require 'jsduck/template_dir'
 require 'jsduck/class_writer'
-require 'jsduck/source_writer'
 require 'jsduck/app_data'
 require 'jsduck/index_html'
 require 'jsduck/exporter/api'
@@ -85,7 +85,7 @@ module JsDuck
         # between source files and classes. Therefore it MUST to be done
         # after writing sources which needs the links to work.
         if @opts.source
-          source_writer = SourceWriter.new(parsed_files)
+          source_writer = Source::Writer.new(parsed_files)
           source_writer.write(@opts.output_dir + "/source")
         end
         format_classes
@@ -109,7 +109,7 @@ module JsDuck
       ParallelWrap.map(filenames) do |fname|
         Logger.instance.log("Parsing", fname)
         begin
-          SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
+          Source::File.new(JsDuck::IO.read(fname), fname, @opts)
         rescue
           Logger.instance.fatal_backtrace("Error while parsing #{fname}", $!)
           exit(1)

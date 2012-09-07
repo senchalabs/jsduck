@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string, ".css"))
+    agr.aggregate(JsDuck::Source::File.new(string, ".css"))
     agr.result
   end
 

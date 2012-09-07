@@ -1,5 +1,5 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 require "jsduck/class"
 require "jsduck/relations"
 require "jsduck/inherit_doc"
@@ -7,7 +7,7 @@ require "jsduck/inherit_doc"
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
     JsDuck::InheritDoc.new(relations).resolve_all
     relations
