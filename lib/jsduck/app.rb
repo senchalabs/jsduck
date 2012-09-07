@@ -19,10 +19,10 @@ require 'jsduck/class_writer'
 require 'jsduck/source_writer'
 require 'jsduck/app_data'
 require 'jsduck/index_html'
-require 'jsduck/api_exporter'
-require 'jsduck/full_exporter'
-require 'jsduck/app_exporter'
-require 'jsduck/examples_exporter'
+require 'jsduck/exporter/api'
+require 'jsduck/exporter/full'
+require 'jsduck/exporter/app'
+require 'jsduck/exporter/examples'
 require 'jsduck/inline_examples'
 require 'jsduck/guide_writer'
 require 'jsduck/stdout'
@@ -62,9 +62,9 @@ module JsDuck
         format_classes
         FileUtils.rm_rf(@opts.output_dir) unless @opts.output_dir == :stdout
         exporters = {
-          :full => FullExporter,
-          :api => ApiExporter,
-          :examples => ExamplesExporter,
+          :full => Exporter::Full,
+          :api => Exporter::Api,
+          :examples => ExamplesExporter::Examples,
         }
         cw = ClassWriter.new(exporters[@opts.export], @relations, @opts)
         cw.write(@opts.output_dir, ".json")
@@ -97,7 +97,7 @@ module JsDuck
           examples.write(@opts.output_dir+"/inline-examples.js")
         end
 
-        cw = ClassWriter.new(AppExporter, @relations, @opts)
+        cw = ClassWriter.new(Exporter::App, @relations, @opts)
         cw.write(@opts.output_dir+"/output", ".js")
 
         @assets.write

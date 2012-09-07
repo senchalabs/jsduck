@@ -1,9 +1,9 @@
-require "jsduck/full_exporter"
+require "jsduck/exporter/full"
 require "jsduck/class"
 require "jsduck/relations"
 require "class_factory"
 
-describe JsDuck::FullExporter do
+describe JsDuck::Exporter::Full do
 
   describe "#export" do
 
@@ -25,7 +25,7 @@ describe JsDuck::FullExporter do
     end
 
     let(:result) do
-      JsDuck::FullExporter.new(JsDuck::Relations.new([cls])).export(cls)
+      JsDuck::Exporter::Full.new(JsDuck::Relations.new([cls])).export(cls)
     end
 
     it "places configs into :members->:cfg" do
