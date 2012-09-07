@@ -1,6 +1,6 @@
 require 'jsduck/logger'
 require 'jsduck/json_duck'
-require 'jsduck/io'
+require 'jsduck/util/io'
 require 'jsduck/null_object'
 require 'jsduck/logger'
 require 'jsduck/grouped_asset'
@@ -69,7 +69,7 @@ module JsDuck
         name = File.basename(in_dir)
         @formatter.img_path = "guides/#{name}"
 
-        return add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
+        return add_toc(guide, @formatter.format(Util::IO.read(guide_file)))
       rescue
         Logger.instance.fatal_backtrace("Error while reading/formatting guide #{in_dir}", $!)
         exit(1)

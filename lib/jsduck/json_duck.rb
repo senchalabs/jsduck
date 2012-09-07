@@ -1,4 +1,4 @@
-require 'jsduck/io'
+require 'jsduck/util/io'
 require 'jsduck/logger'
 require 'json'
 
@@ -36,7 +36,7 @@ module JsDuck
     # Reads and parses JSON from file
     def self.read(filename)
       begin
-        self.parse(JsDuck::IO.read(filename))
+        self.parse(Util::IO.read(filename))
       rescue
         Logger.instance.fatal("#{filename} is not a valid JSON file")
         exit(1)

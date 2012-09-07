@@ -11,7 +11,7 @@ require 'jsduck/parallel_wrap'
 require 'jsduck/logger'
 require 'jsduck/assets'
 require 'jsduck/json_duck'
-require 'jsduck/io'
+require 'jsduck/util/io'
 require 'jsduck/importer'
 require 'jsduck/return_values'
 require 'jsduck/lint'
@@ -109,7 +109,7 @@ module JsDuck
       ParallelWrap.map(filenames) do |fname|
         Logger.instance.log("Parsing", fname)
         begin
-          Source::File.new(JsDuck::IO.read(fname), fname, @opts)
+          Source::File.new(Util::IO.read(fname), fname, @opts)
         rescue
           Logger.instance.fatal_backtrace("Error while parsing #{fname}", $!)
           exit(1)

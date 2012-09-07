@@ -1,5 +1,5 @@
 require 'jsduck/logger'
-require 'jsduck/io'
+require 'jsduck/util/io'
 require 'fileutils'
 
 module JsDuck
@@ -50,7 +50,7 @@ module JsDuck
     # Opens in_file, replaces {keys} inside it, writes to out_file
     def write_template(in_file, out_file, replacements)
       Logger.instance.log("Writing", out_file)
-      html = JsDuck::IO.read(in_file)
+      html = Util::IO.read(in_file)
       html.gsub!(/\{\w+\}/) do |key|
         replacements[key] ? replacements[key] : key
       end
