@@ -64,9 +64,10 @@ module JsDuck
         '">',
         platforms.map do |platform| 
         	begin
-	        	"<li class='platform-" + platform + "' title='" + mapping[platform] + "'>" + (sidebar ? mapping[platform] : '&nbsp;') + "</li>" 
+                name, version = platform.split()
+	        	"<li class='platform-" + name + "' title='" + mapping[name] + " since Titanium SDK "+version+"'>" + (sidebar ? (mapping[name] + " "+ version)  : '&nbsp;') + "</li>" 
 	        rescue
-	    	    puts "[ERROR] Unknown plaform: '" + platform + "'"
+	    	    puts "[ERROR] Unknown platform: '" + platform + "'"
     	    end
         end,
         '</ul>'
@@ -386,7 +387,7 @@ module JsDuck
           p[:deprecated] ? '<strong class="deprecated signature">deprecated</strong>' : "",
           "<div class='sub-desc'>",
             p[:doc],
-            p[:platforms] != nil && p[:platforms].length > 0 ? render_platforms(p[:platforms], false) : '',
+            p[:platform] != nil && p[:platform].length > 0 ? render_platforms(p[:platform], false) : '',
             p[:default] ? "<p>Defaults to: <code>#{CGI.escapeHTML(p[:default])}</code></p>" : "",
             p[:properties] && p[:properties].length > 0 ? render_params_and_return(p) : "",
           "</div>",
