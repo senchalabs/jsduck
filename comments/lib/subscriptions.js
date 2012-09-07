@@ -53,6 +53,23 @@ Subscriptions.prototype = {
     },
 
     /**
+     * Gets all users who have posted to the given target.
+     *
+     * @param {Number} target_id ID of the target.
+     * @param {Function} callback Called with the result.
+     * @param {Error} callback.err The error object.
+     * @param {Object[]} callback.users An array of users.
+     */
+    findImplicitSubscribersByTarget: function(target_id, callback) {
+        var sql = [
+            "SELECT DISTINCT users.*",
+            "FROM visible_comments JOIN users on visible_comments.user_id = users.id",
+            "WHERE target_id = ?"
+        ];
+        this.db.query(sql, [target_id], callback);
+    },
+
+    /**
      * Adds new subscription.
      * @param {Object} subscription
      * @param {Number} subscription.user_id

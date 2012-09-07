@@ -65,6 +65,13 @@ describe("Subscriptions", function() {
         });
     });
 
+    it("#findImplicitSubscribersByTarget returns username and email fields", function(done) {
+        subscriptions.findImplicitSubscribersByTarget(1, function(err, users) {
+            expect(users.map(function(u){return u.username;})).toEqual(["renku", "john", "mary"]);
+            done();
+        });
+    });
+
     it("#add adds new subscription", function(done) {
         subscriptions.add({user_id: 1, target: {type: "guide", cls: "testing", member: ""}}, function(err, id) {
             subscriptions.findTargetsByUser(1, function(err, subs) {
