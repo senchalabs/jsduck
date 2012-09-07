@@ -1,4 +1,4 @@
-require 'jsduck/html'
+require 'jsduck/util/html'
 require 'jsduck/logger'
 
 module JsDuck
@@ -48,7 +48,7 @@ module JsDuck
           when '%u'
             url
           when '%a'
-            HTML.escape(alt_text||"")
+            Util::HTML.escape(alt_text||"")
           else
             $1
           end

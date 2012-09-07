@@ -5,7 +5,7 @@ require 'rdiscount'
 require 'jsduck/logger'
 require 'jsduck/inline/img'
 require 'jsduck/inline/video'
-require 'jsduck/html'
+require 'jsduck/util/html'
 
 module JsDuck
 
@@ -274,7 +274,7 @@ module JsDuck
         when '%-'
           member ? "-" : ""
         when '%a'
-          HTML.escape(anchor_text||"")
+          Util::HTML.escape(anchor_text||"")
         else
           $1
         end
@@ -327,7 +327,7 @@ module JsDuck
     #   Blah blah blah some text.
     #
     def shorten(input)
-      sent = first_sentence(HTML.strip_tags(input).strip)
+      sent = first_sentence(Util::HTML.strip_tags(input).strip)
       # Use u-modifier to correctly count multi-byte characters
       chars = sent.scan(/./mu)
       if chars.length > @max_length
@@ -343,7 +343,7 @@ module JsDuck
 
     # Returns true when input should get shortened.
     def too_long?(input)
-      stripped = HTML.strip_tags(input).strip
+      stripped = Util::HTML.strip_tags(input).strip
       # for sentence v/s full - compare byte length
       # for full v/s max - compare char length
       first_sentence(stripped).length < stripped.length || stripped.scan(/./mu).length > @max_length

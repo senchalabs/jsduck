@@ -1,4 +1,4 @@
-require 'jsduck/html'
+require 'jsduck/util/html'
 require 'jsduck/meta_tag_renderer'
 require 'jsduck/signature_renderer'
 
@@ -252,7 +252,7 @@ module JsDuck
       doc << m[:doc]
 
       if m[:default] && m[:default] != "undefined"
-        doc << "<p>Defaults to: <code>" + HTML.escape(m[:default]) + "</code></p>"
+        doc << "<p>Defaults to: <code>" + Util::HTML.escape(m[:default]) + "</code></p>"
       end
 
       doc << render_meta_data(m[:html_meta], :bottom)
@@ -318,7 +318,7 @@ module JsDuck
           p[:optional] ? " (optional)" : "",
           "<div class='sub-desc'>",
             p[:doc],
-            p[:default] ? "<p>Defaults to: <code>#{HTML.escape(p[:default])}</code></p>" : "",
+            p[:default] ? "<p>Defaults to: <code>#{Util::HTML.escape(p[:default])}</code></p>" : "",
             p[:properties] && p[:properties].length > 0 ? render_params_and_return(p) : "",
           "</div>",
         "</li>",

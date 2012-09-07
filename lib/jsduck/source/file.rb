@@ -1,5 +1,5 @@
 require 'jsduck/source/file_parser'
-require 'jsduck/html'
+require 'jsduck/util/html'
 
 module JsDuck
   module Source
@@ -51,7 +51,7 @@ module JsDuck
         # Use #each_line instead of #lines to support Ruby 1.6
         @contents.each_line do |line|
           linenr += 1;
-          line = HTML.escape(line)
+          line = Util::HTML.escape(line)
           # wrap the line in as many spans as there are links to this line number.
           if @links[linenr]
             @links[linenr].each do |link|

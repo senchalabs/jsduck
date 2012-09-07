@@ -1,5 +1,5 @@
 require 'jsduck/json_duck'
-require 'jsduck/html'
+require 'jsduck/util/html'
 
 module JsDuck
 
@@ -65,7 +65,7 @@ module JsDuck
             ex = s.scan_until(@end_example_re).sub(@end_example_re, '')
 
             examples << {
-              :code => HTML.unescape(HTML.strip_tags(ex)),
+              :code => Util::HTML.unescape(Util::HTML.strip_tags(ex)),
               :options => options,
             }
           else
