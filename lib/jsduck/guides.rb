@@ -1,7 +1,7 @@
 require 'jsduck/logger'
 require 'jsduck/util/json'
 require 'jsduck/util/io'
-require 'jsduck/null_object'
+require 'jsduck/util/null_object'
 require 'jsduck/logger'
 require 'jsduck/grouped_asset'
 require 'jsduck/util/html'
@@ -16,7 +16,7 @@ module JsDuck
       if filename
         Guides.new(filename, formatter, opts)
       else
-        NullObject.new(:to_array => [], :to_html => "", :[] => nil)
+        Util::NullObject.new(:to_array => [], :to_html => "", :[] => nil)
       end
     end
 

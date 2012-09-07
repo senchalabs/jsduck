@@ -1,5 +1,5 @@
 require 'jsduck/util/json'
-require 'jsduck/null_object'
+require 'jsduck/util/null_object'
 require 'jsduck/grouped_asset'
 
 module JsDuck
@@ -11,7 +11,7 @@ module JsDuck
       if filename
         Videos.new(filename)
       else
-        NullObject.new(:to_array => [], :[] => nil)
+        Util::NullObject.new(:to_array => [], :[] => nil)
       end
     end
 

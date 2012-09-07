@@ -1,4 +1,4 @@
-require 'jsduck/null_object'
+require 'jsduck/util/null_object'
 require 'jsduck/util/io'
 
 module JsDuck
@@ -9,7 +9,7 @@ module JsDuck
       if filename
         Welcome.new(filename)
       else
-        NullObject.new(:to_html => "")
+        Util::NullObject.new(:to_html => "")
       end
     end
 

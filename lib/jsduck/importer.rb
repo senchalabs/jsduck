@@ -1,5 +1,5 @@
 require 'jsduck/util/json'
-require 'jsduck/null_object'
+require 'jsduck/util/null_object'
 require 'jsduck/logger'
 require 'jsduck/util/parallel'
 
@@ -29,7 +29,7 @@ module JsDuck
     end
 
     def current_version
-      NullObject.new(:[] => NullObject.new(:[] => true))
+      Util::NullObject.new(:[] => Util::NullObject.new(:[] => true))
     end
 
     # Reads in data from all .json files in directory
