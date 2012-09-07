@@ -3,8 +3,8 @@ require 'rubygems'
 require 'strscan'
 require 'rdiscount'
 require 'jsduck/logger'
-require 'jsduck/inline_img'
-require 'jsduck/inline_video'
+require 'jsduck/inline/img'
+require 'jsduck/inline/video'
 require 'jsduck/html'
 
 module JsDuck
@@ -49,8 +49,8 @@ module JsDuck
       @relations = relations
       @images = []
 
-      @inline_img = InlineImg.new(opts)
-      @inline_video = InlineVideo.new(opts)
+      @inline_img = Inline::Img.new(opts)
+      @inline_video = Inline::Video.new(opts)
 
       @link_tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
       @link_re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
