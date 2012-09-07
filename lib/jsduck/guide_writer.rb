@@ -1,4 +1,4 @@
-require 'jsduck/parallel_wrap'
+require 'jsduck/util/parallel'
 require 'jsduck/logger'
 require 'jsduck/util/stdout'
 require 'fileutils'
@@ -29,7 +29,7 @@ module JsDuck
 
     def write_dir(dir, extension)
       FileUtils.mkdir(dir) unless File.exists?(dir)
-      ParallelWrap.each(all_guides) do |guide|
+      Util::Parallel.each(all_guides) do |guide|
         filename = dir + "/" + guide["name"] + extension
         Logger.instance.log("Writing guide", filename)
         json = @exporter.export_guide(guide)

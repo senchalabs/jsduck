@@ -1,4 +1,4 @@
-require 'jsduck/parallel_wrap'
+require 'jsduck/util/parallel'
 require 'jsduck/logger'
 require 'jsduck/util/json'
 require 'jsduck/util/stdout'
@@ -24,13 +24,13 @@ module JsDuck
     private
 
     def write_stdout
-      json = ParallelWrap.map(@relations.classes) {|cls| @exporter.export(cls) }.compact
+      json = Util::Parallel.map(@relations.classes) {|cls| @exporter.export(cls) }.compact
       Util::Stdout.instance.add(json)
     end
 
     def write_dir(dir, extension)
       FileUtils.mkdir(dir)
-      ParallelWrap.each(@relations.classes) do |cls|
+      Util::Parallel.each(@relations.classes) do |cls|
         filename = dir + "/" + cls[:name] + extension
         Logger.instance.log("Writing docs", filename)
         json = @exporter.export(cls)

@@ -7,7 +7,7 @@ require 'jsduck/class_formatter'
 require 'jsduck/class'
 require 'jsduck/relations'
 require 'jsduck/inherit_doc'
-require 'jsduck/parallel_wrap'
+require 'jsduck/util/parallel'
 require 'jsduck/logger'
 require 'jsduck/assets'
 require 'jsduck/util/json'
@@ -37,7 +37,7 @@ module JsDuck
       @opts = opts
       # Sets the nr of parallel processes to use.
       # Set to 0 to disable parallelization completely.
-      ParallelWrap.in_processes = @opts.processes
+      Util::Parallel.in_processes = @opts.processes
       # Turn JSON pretty-printing on/off
       Util::Json.pretty = @opts.pretty_json
     end
@@ -106,7 +106,7 @@ module JsDuck
 
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
-      ParallelWrap.map(filenames) do |fname|
+      Util::Parallel.map(filenames) do |fname|
         Logger.instance.log("Parsing", fname)
         begin
           Source::File.new(Util::IO.read(fname), fname, @opts)
@@ -171,7 +171,7 @@ module JsDuck
       # Don't format types when exporting
       class_formatter.include_types = !@opts.export
       # Format all doc-objects in parallel
-      formatted_classes = ParallelWrap.map(@relations.classes) do |cls|
+      formatted_classes = Util::Parallel.map(@relations.classes) do |cls|
         files = cls[:files].map {|f| f[:filename] }.join(" ")
         Logger.instance.log("Markdown formatting #{cls[:name]}", files)
         begin

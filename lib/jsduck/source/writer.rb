@@ -1,5 +1,5 @@
 require 'jsduck/logger'
-require 'jsduck/parallel_wrap'
+require 'jsduck/util/parallel'
 require 'fileutils'
 
 module JsDuck
@@ -16,7 +16,7 @@ module JsDuck
         generate_html_filenames
 
         FileUtils.mkdir(destination)
-        ParallelWrap.each(@source_files) do |file|
+        Util::Parallel.each(@source_files) do |file|
           Logger.instance.log("Writing source", file.html_filename)
           write_single(destination + "/" + file.html_filename, file.to_html)
         end
