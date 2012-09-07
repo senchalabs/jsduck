@@ -2,6 +2,7 @@ require 'jsduck/option_parser'
 require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
 require 'jsduck/util/json'
+require 'jsduck/util/os'
 
 module JsDuck
 
@@ -106,7 +107,7 @@ module JsDuck
 
       # Debugging
       # Turn multiprocessing off by default in Windows
-      @processes = OS::windows? ? 0 : nil
+      @processes = Util::OS::windows? ? 0 : nil
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
       @template_dir = @root_dir + "/template-min"
       @template_links = false

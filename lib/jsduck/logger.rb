@@ -1,5 +1,5 @@
 require 'singleton'
-require 'jsduck/os'
+require 'jsduck/util/os'
 
 module JsDuck
 
@@ -110,7 +110,7 @@ module JsDuck
     def format(filename=nil, line=nil)
       out = ""
       if filename
-        out = OS::windows? ? filename.gsub('/', '\\') : filename
+        out = Util::OS.windows? ? filename.gsub('/', '\\') : filename
         if line
           out += ":#{line}:"
         end
@@ -153,7 +153,7 @@ module JsDuck
     # Only does color output when STDERR is attached to TTY
     # i.e. is not piped/redirected.
     def paint(color_name, msg)
-      if OS.windows? || !$stderr.tty?
+      if Util::OS.windows? || !$stderr.tty?
         msg
       else
         COLORS[color_name] + msg + CLEAR
