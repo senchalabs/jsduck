@@ -1,5 +1,5 @@
 require 'v8'
-require 'json'
+require 'jsduck/util/json'
 require 'jsduck/util/singleton'
 
 module JsDuck
@@ -29,7 +29,7 @@ module JsDuck
     def parse(input)
       @v8['js'] = input
       json = @v8.eval("JSON.stringify(esprima.parse(js, {comment: true, range: true, raw: true}))")
-      return JSON.parse(json, :max_nesting => false)
+      return Util::Json.parse(json, :max_nesting => false)
     end
 
   end

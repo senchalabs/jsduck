@@ -50,8 +50,8 @@ module JsDuck
       end
 
       # Parses JSON string
-      def parse(string)
-        JSON.parse(string)
+      def parse(string, opts = {})
+        JSON.parse(string, opts)
       end
 
     end
