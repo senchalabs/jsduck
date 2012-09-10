@@ -1,11 +1,10 @@
 var Request = require("./request");
 
 /**
- * @class
  * @singleton
- * Performs validations.
+ * Performs authentication and authorization related checks.
  */
-var validator = {
+var Auth = {
     /**
      * Throws error when user is not logged in.
      */
@@ -90,4 +89,4 @@ var validator = {
 
 };
 
-module.exports = validator;
+module.exports = Auth;

@@ -2,7 +2,7 @@ var express = require('express');
 var MySQLStore = require('connect-mysql-session')(express);
 var config = require('./config');
 var Request = require('./lib/request');
-var validator = require('./lib/validator');
+var Auth = require('./lib/auth');
 
 var app = express();
 
@@ -73,7 +73,7 @@ app.get('/auth/session', function(req, res) {
     });
 });
 
-app.post('/auth/login', validator.attemptLogin, function(req, res) {
+app.post('/auth/login', Auth.attemptLogin, function(req, res) {
     new Request(req).getUser(function(user) {
         res.json({
             userName: user.username,
@@ -84,7 +84,7 @@ app.post('/auth/login', validator.attemptLogin, function(req, res) {
     });
 });
 
-app.post('/auth/logout', validator.doLogout, function(req, res) {
+app.post('/auth/logout', Auth.doLogout, function(req, res) {
     res.json({ success: true });
 });
 
@@ -117,14 +117,14 @@ app.get('/auth/:sdk/:version/comments_meta', function(req, res) {
 });
 
 // Returns a list of comments for a particular target (eg class, guide, video)
-app.get('/auth/:sdk/:version/comments', validator.hasStartKey, function(req, res) {
+app.get('/auth/:sdk/:version/comments', Auth.hasStartKey, function(req, res) {
     new Request(req).getComments(req.query.startkey, function(comments) {
         res.json(comments);
     });
 });
 
 // Adds new comment
-app.post('/auth/:sdk/:version/comments', validator.isLoggedIn, function(req, res) {
+app.post('/auth/:sdk/:version/comments', Auth.isLoggedIn, function(req, res) {
     new Request(req).addComment(req.body.target, req.body.comment, req.body.url, function(comment_id) {
         res.json({ id: comment_id, success: true });
     });
@@ -138,9 +138,9 @@ app.get('/auth/:sdk/:version/comments/:commentId', function(req, res) {
 });
 
 // Updates an existing comment (for voting or updating contents)
-app.post('/auth/:sdk/:version/comments/:commentId', validator.isLoggedIn, function(req, res) {
+app.post('/auth/:sdk/:version/comments/:commentId', Auth.isLoggedIn, function(req, res) {
     if (req.body.vote) {
-        validator.canVote(req, res, function() {
+        Auth.canVote(req, res, function() {
             new Request(req).vote(req.params.commentId, req.body.vote, function(direction, total) {
                 res.json({
                     success: true,
@@ -151,7 +151,7 @@ app.post('/auth/:sdk/:version/comments/:commentId', validator.isLoggedIn, functi
         });
     }
     else {
-        validator.canModify(req, res, function() {
+        Auth.canModify(req, res, function() {
             new Request(req).updateComment(req.params.commentId, req.body.content, function(comment) {
                 res.json({ success: true, content: comment.contentHtml });
             });
@@ -160,14 +160,14 @@ app.post('/auth/:sdk/:version/comments/:commentId', validator.isLoggedIn, functi
 });
 
 // Deletes a comment
-app.post('/auth/:sdk/:version/comments/:commentId/delete', validator.isLoggedIn, validator.canModify, function(req, res) {
+app.post('/auth/:sdk/:version/comments/:commentId/delete', Auth.isLoggedIn, Auth.canModify, function(req, res) {
     new Request(req).setDeleted(req.params.commentId, true, function() {
         res.send({ success: true });
     });
 });
 
 // Restores a deleted comment
-app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', validator.isLoggedIn, validator.canModify, function(req, res) {
+app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', Auth.isLoggedIn, Auth.canModify, function(req, res) {
     new Request(req).setDeleted(req.params.commentId, false, function() {
         r.getComment(req.params.commentId, function(comment) {
             res.send({ success: true, comment: comment });
@@ -176,7 +176,7 @@ app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', validator.isLogg
 });
 
 // Marks a comment 'read'
-app.post('/auth/:sdk/:version/comments/:commentId/read', validator.isLoggedIn, function(req, res) {
+app.post('/auth/:sdk/:version/comments/:commentId/read', Auth.isLoggedIn, function(req, res) {
     new Request(req).markRead(req.params.commentId, function() {
         res.send({ success: true });
     });
@@ -190,7 +190,7 @@ app.get('/auth/:sdk/:version/subscriptions', function(req, res) {
 });
 
 // Subscibe / unsubscribe to a comment thread
-app.post('/auth/:sdk/:version/subscribe', validator.isLoggedIn, function(req, res) {
+app.post('/auth/:sdk/:version/subscribe', Auth.isLoggedIn, function(req, res) {
     new Request(req).changeSubscription(req.body.target, req.body.subscribed === 'true', function() {
         res.send({ success: true });
     });
