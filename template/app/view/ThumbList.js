@@ -103,13 +103,12 @@ Ext.define('Docs.view.ThumbList', {
     // - group B
     //   - item 5
     //
-    // Eliminates the subgroups so we're left with:
+    // Eliminates the subgroups so we're left with just the first item
+    // each subgroup:
     //
     // - group A
-    //   - item 1
-    //   - item 2
-    //   - item 3
-    //   - item 4
+    //   - item 1 (titled as: subgroup AA)
+    //   - item 3 (titled as: subgroup AB)
     // - group B
     //   - item 5
     //
@@ -127,7 +126,16 @@ Ext.define('Docs.view.ThumbList', {
             return {
                 id: group.id,
                 title: group.title,
-                items: Ext.Array.flatten(Ext.Array.map(group.items, expand))
+                items: Ext.Array.map(group.items, function(item) {
+                    if (item.items) {
+                        var groupItem = Ext.apply({}, expand(item)[0]);
+                        groupItem.title = item.title;
+                        return groupItem;
+                    }
+                    else {
+                        return item;
+                    }
+                })
             };
         });
     },
