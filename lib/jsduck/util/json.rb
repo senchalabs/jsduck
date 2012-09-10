@@ -1,3 +1,4 @@
+require 'jsduck/util/singleton'
 require 'jsduck/util/io'
 require 'jsduck/logger'
 require 'json'
@@ -10,34 +11,38 @@ module JsDuck
     # The main benefit of it is that we have a central place for
     # controlling how the JSON is created (pretty-formatted or not).
     class Json
-      @@pretty = false
+      include Util::Singleton
+
+      def initialize
+        @pretty = false
+      end
 
       # Set to true to turn on pretty-formatting of JSON
-      def self.pretty=(pretty)
-        @@pretty = pretty
+      def pretty=(pretty)
+        @pretty = pretty
       end
 
       # Turns object into JSON, places it inside JavaScript that calls the
       # given callback name, and writes the result to file.
-      def self.write_jsonp(filename, callback_name, data)
-        jsonp = "Ext.data.JsonP." + callback_name + "(" + self.generate(data) + ");"
+      def write_jsonp(filename, callback_name, data)
+        jsonp = "Ext.data.JsonP." + callback_name + "(" + generate(data) + ");"
         File.open(filename, 'w') {|f| f.write(jsonp) }
       end
 
       # Turns object into JSON and writes inside a file
-      def self.write_json(filename, data)
-        File.open(filename, 'w') {|f| f.write(self.generate(data)) }
+      def write_json(filename, data)
+        File.open(filename, 'w') {|f| f.write(generate(data)) }
       end
 
       # Generates JSON from object
-      def self.generate(data)
-        @@pretty ? JSON.pretty_generate(data) : JSON.generate(data)
+      def generate(data)
+        @pretty ? JSON.pretty_generate(data) : JSON.generate(data)
       end
 
       # Reads and parses JSON from file
-      def self.read(filename)
+      def read(filename)
         begin
-          self.parse(Util::IO.read(filename))
+          parse(Util::IO.read(filename))
         rescue
           Logger.fatal("#{filename} is not a valid JSON file")
           exit(1)
@@ -45,7 +50,7 @@ module JsDuck
       end
 
       # Parses JSON string
-      def self.parse(string)
+      def parse(string)
         JSON.parse(string)
       end
 
