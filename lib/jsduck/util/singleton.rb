@@ -1,3 +1,4 @@
+require 'singleton'
 
 module JsDuck
   module Util
@@ -20,9 +21,7 @@ module JsDuck
     module Singleton
       def self.included(base)
         base.class_eval do
-          def self.instance
-            @instance ||= self.new
-          end
+          include ::Singleton
 
           # Redirect calls from MyClass.method to MyClass.instance.method
           def self.method_missing(meth, *args, &block)
