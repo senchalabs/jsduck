@@ -1,12 +1,12 @@
 require 'jsduck/util/json'
-require 'singleton'
+require 'jsduck/util/singleton'
 
 module JsDuck
   module Util
 
     # Central place for buffering JSON data that's meant to be written to STDOUT
     class Stdout
-      include Singleton
+      include Util::Singleton
 
       def initialize
         @data = nil

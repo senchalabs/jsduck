@@ -1,6 +1,6 @@
 require 'v8'
 require 'json'
-require 'singleton'
+require 'jsduck/util/singleton'
 
 module JsDuck
 
@@ -9,7 +9,7 @@ module JsDuck
   # Initialized as singleton to avoid loading the esprima.js more
   # than once - otherwise performace will severely suffer.
   class Esprima
-    include Singleton
+    include Util::Singleton
 
     def initialize
       @v8 = V8::Context.new

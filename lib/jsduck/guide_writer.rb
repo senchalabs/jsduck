@@ -24,7 +24,7 @@ module JsDuck
 
     def write_stdout
       json = ParallelWrap.map(all_guides) {|guide| @exporter.export_guide(guide) }.compact
-      Util::Stdout.instance.add(json)
+      Util::Stdout.add(json)
     end
 
     def write_dir(dir, extension)

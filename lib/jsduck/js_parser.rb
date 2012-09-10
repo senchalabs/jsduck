@@ -25,7 +25,7 @@ module JsDuck
     #     }
     #
     def parse
-      @ast = Esprima.instance.parse(@input)
+      @ast = Esprima.parse(@input)
 
       @ast["comments"] = merge_comments(@ast["comments"])
       locate_comments

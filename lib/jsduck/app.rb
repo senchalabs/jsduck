@@ -72,7 +72,7 @@ module JsDuck
           gw = GuideWriter.new(exporters[@opts.export], @assets.guides, @opts)
           gw.write(@opts.output_dir, ".json")
         end
-        Util::Stdout.instance.flush
+        Util::Stdout.flush
       else
         FileUtils.rm_rf(@opts.output_dir)
         TemplateDir.new(@opts).write

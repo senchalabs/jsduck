@@ -25,7 +25,7 @@ module JsDuck
 
     def write_stdout
       json = Util::Parallel.map(@relations.classes) {|cls| @exporter.export(cls) }.compact
-      Util::Stdout.instance.add(json)
+      Util::Stdout.add(json)
     end
 
     def write_dir(dir, extension)

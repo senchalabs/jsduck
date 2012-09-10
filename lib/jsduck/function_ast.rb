@@ -1,4 +1,4 @@
-require "singleton"
+require "jsduck/util/singleton"
 require "jsduck/serializer"
 require "jsduck/evaluator"
 
@@ -6,16 +6,12 @@ module JsDuck
 
   # Analyzes the AST of a FunctionDeclaration or FunctionExpression.
   class FunctionAst
-    include Singleton
+    include Util::Singleton
 
     # True when function always finishes by returning this.  False
     # doesn't neccessarily mean that the function doesn't return this
     # - rather it means our static analyzes wasn't able to determine
     # what the function returns.
-    def self.chainable?(ast)
-      FunctionAst.instance.chainable?(ast)
-    end
-
     def chainable?(ast)
       if ast && function?(ast)
         body_returns(ast["body"]["body"])
@@ -101,4 +97,3 @@ module JsDuck
   end
 
 end
-
