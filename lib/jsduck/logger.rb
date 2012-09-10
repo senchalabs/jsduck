@@ -1,18 +1,11 @@
-require 'singleton'
+require 'jsduck/util/singleton'
 require 'jsduck/util/os'
 
 module JsDuck
 
   # Central logging of JsDuck
   class Logger
-    include Singleton
-
-    # Eliminate the need to add .instance. when calling Logger
-    # methods.  So one can just call Logger.warn and behind the scenes
-    # the Logger.instance.warn will be invoked.
-    def self.method_missing(meth, *args, &block)
-      Logger.instance.send(meth, *args, &block)
-    end
+    include Util::Singleton
 
     # Set to true to enable verbose logging
     attr_accessor :verbose
