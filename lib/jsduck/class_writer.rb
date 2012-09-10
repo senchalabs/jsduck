@@ -32,7 +32,7 @@ module JsDuck
       FileUtils.mkdir(dir)
       Util::Parallel.each(@relations.classes) do |cls|
         filename = dir + "/" + cls[:name] + extension
-        Logger.instance.log("Writing docs", filename)
+        Logger.log("Writing docs", filename)
         json = @exporter.export(cls)
         # skip file if exporter returned nil
         if json

@@ -157,7 +157,7 @@ module JsDuck
       properties = NODE_TYPES[node["type"]]
 
       unless properties
-        Logger.instance.fatal("Unknown node type: "+node["type"])
+        Logger.fatal("Unknown node type: "+node["type"])
         exit(1)
       end
 

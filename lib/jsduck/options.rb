@@ -119,8 +119,8 @@ module JsDuck
       @new_since = nil
 
       # enable all warnings except :link_auto
-      Logger.instance.set_warning(:all, true)
-      Logger.instance.set_warning(:link_auto, false)
+      Logger.set_warning(:all, true)
+      Logger.set_warning(:link_auto, false)
     end
 
     # Make options object behave like hash.
@@ -210,7 +210,7 @@ module JsDuck
           if File.exists?(path)
             config = read_json_config(path)
           else
-            Logger.instance.fatal("The config file #{path} doesn't exist")
+            Logger.fatal("The config file #{path} doesn't exist")
             exit(1)
           end
           # treat paths inside JSON config relative to the location of
@@ -506,7 +506,7 @@ module JsDuck
           "Turns on excessive logging.",
           "",
           "Log messages are writted to STDERR.") do
-          Logger.instance.verbose = true
+          Logger.verbose = true
         end
 
         opts.on('--warnings=+A,-B,+C', Array,
@@ -517,12 +517,12 @@ module JsDuck
           "List of all available warning types:",
           "(Those with '+' in front of them default to on)",
           "",
-          *Logger.instance.doc_warnings) do |warnings|
+          *Logger.doc_warnings) do |warnings|
           warnings.each do |op|
             if op =~ /^([-+]?)(.*)$/
               enable = !($1 == "-")
               name = $2.to_sym
-              Logger.instance.set_warning(name, enable)
+              Logger.set_warning(name, enable)
             end
           end
         end
@@ -644,7 +644,7 @@ module JsDuck
           @input_files << fname
         end
       else
-        Logger.instance.warn(nil, "File not found", fname)
+        Logger.warn(nil, "File not found", fname)
       end
     end
 
@@ -673,35 +673,35 @@ module JsDuck
     # Runs checks on the options
     def validate
       if @input_files.length == 0 && !@welcome && !@guides && !@videos && !@examples
-        Logger.instance.fatal("You should specify some input files, otherwise there's nothing I can do :(")
+        Logger.fatal("You should specify some input files, otherwise there's nothing I can do :(")
         exit(1)
       elsif @output_dir == :stdout && !@export
-        Logger.instance.fatal("Output to STDOUT only works when using --export option")
+        Logger.fatal("Output to STDOUT only works when using --export option")
         exit(1)
       elsif ![nil, :full, :api, :examples].include?(@export)
-        Logger.instance.fatal("Unknown export format: #{@export}")
+        Logger.fatal("Unknown export format: #{@export}")
         exit(1)
       elsif @output_dir != :stdout
         if !@output_dir
-          Logger.instance.fatal("You should also specify an output directory, where I could write all this amazing documentation")
+          Logger.fatal("You should also specify an output directory, where I could write all this amazing documentation")
           exit(1)
         elsif File.exists?(@output_dir) && !File.directory?(@output_dir)
-          Logger.instance.fatal("The output directory is not really a directory at all :(")
+          Logger.fatal("The output directory is not really a directory at all :(")
           exit(1)
         elsif !File.exists?(File.dirname(@output_dir))
-          Logger.instance.fatal("The parent directory for #{@output_dir} doesn't exist")
+          Logger.fatal("The parent directory for #{@output_dir} doesn't exist")
           exit(1)
         elsif !@export && !File.exists?(@template_dir + "/extjs")
-          Logger.instance.fatal("Oh noes!  The template directory does not contain extjs/ directory :(")
-          Logger.instance.fatal("Please copy ExtJS over to template/extjs or create symlink.")
-          Logger.instance.fatal("For example:")
-          Logger.instance.fatal("    $ cp -r /path/to/ext-4.0.0 " + @template_dir + "/extjs")
+          Logger.fatal("Oh noes!  The template directory does not contain extjs/ directory :(")
+          Logger.fatal("Please copy ExtJS over to template/extjs or create symlink.")
+          Logger.fatal("For example:")
+          Logger.fatal("    $ cp -r /path/to/ext-4.0.0 " + @template_dir + "/extjs")
           exit(1)
         elsif !@export && !File.exists?(@template_dir + "/resources/css")
-          Logger.instance.fatal("Oh noes!  CSS files for custom ExtJS theme missing :(")
-          Logger.instance.fatal("Please compile SASS files in template/resources/sass with compass.")
-          Logger.instance.fatal("For example:")
-          Logger.instance.fatal("    $ compass compile " + @template_dir + "/resources/sass")
+          Logger.fatal("Oh noes!  CSS files for custom ExtJS theme missing :(")
+          Logger.fatal("Please compile SASS files in template/resources/sass with compass.")
+          Logger.fatal("For example:")
+          Logger.fatal("    $ compass compile " + @template_dir + "/resources/sass")
           exit(1)
         end
       end

@@ -81,7 +81,7 @@ module JsDuck
     def warn_alt_name(cls)
       file = cls[:files][0][:filename]
       line = cls[:files][0][:linenr]
-      Logger.instance.warn(:alt_name, "Name #{cls[:name]} used as both classname and alternate classname", file, line)
+      Logger.warn(:alt_name, "Name #{cls[:name]} used as both classname and alternate classname", file, line)
     end
 
     # Merges new class-doc into old one.

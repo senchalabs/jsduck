@@ -40,7 +40,7 @@ module JsDuck
       # applies the video template of the specified type
       def apply_tpl(type, url, alt_text, ctx)
         unless @templates.has_key?(type)
-          Logger.instance.warn(nil, "Unknown video type #{type}", ctx[:filename], ctx[:linenr])
+          Logger.warn(nil, "Unknown video type #{type}", ctx[:filename], ctx[:linenr])
         end
 
         @templates[type].gsub(/(%\w)/) do

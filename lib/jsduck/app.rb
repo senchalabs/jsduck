@@ -107,11 +107,11 @@ module JsDuck
     # Parses the files in parallel using as many processes as available CPU-s
     def parallel_parse(filenames)
       Util::Parallel.map(filenames) do |fname|
-        Logger.instance.log("Parsing", fname)
+        Logger.log("Parsing", fname)
         begin
           Source::File.new(Util::IO.read(fname), fname, @opts)
         rescue
-          Logger.instance.fatal_backtrace("Error while parsing #{fname}", $!)
+          Logger.fatal_backtrace("Error while parsing #{fname}", $!)
           exit(1)
         end
       end
@@ -121,7 +121,7 @@ module JsDuck
     def aggregate(parsed_files)
       agr = Aggregator.new
       parsed_files.each do |file|
-        Logger.instance.log("Aggregating", file.filename)
+        Logger.log("Aggregating", file.filename)
         agr.aggregate(file)
       end
       agr.classify_orphans
@@ -156,7 +156,7 @@ module JsDuck
             type = m[:tagname].to_s
             name = m[:name]
             file = m[:files][0]
-            Logger.instance.warn(:global, "Global #{type}: #{name}", file[:filename], file[:linenr])
+            Logger.warn(:global, "Global #{type}: #{name}", file[:filename], file[:linenr])
           end
         end
       end
@@ -173,14 +173,14 @@ module JsDuck
       # Format all doc-objects in parallel
       formatted_classes = Util::Parallel.map(@relations.classes) do |cls|
         files = cls[:files].map {|f| f[:filename] }.join(" ")
-        Logger.instance.log("Markdown formatting #{cls[:name]}", files)
+        Logger.log("Markdown formatting #{cls[:name]}", files)
         begin
           {
             :doc => class_formatter.format(cls.internal_doc),
             :images => doc_formatter.images
           }
         rescue
-          Logger.instance.fatal_backtrace("Error while formatting #{cls[:name]} #{files}", $!)
+          Logger.fatal_backtrace("Error while formatting #{cls[:name]} #{files}", $!)
           exit(1)
         end
       end

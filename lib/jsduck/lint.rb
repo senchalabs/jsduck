@@ -124,7 +124,7 @@ module JsDuck
     # Prints warning + filename and linenumber from doc-context
     def warn(type, msg, member)
       context = member[:files][0]
-      Logger.instance.warn(type, msg, context[:filename], context[:linenr])
+      Logger.warn(type, msg, context[:filename], context[:linenr])
     end
 
   end

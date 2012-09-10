@@ -68,9 +68,9 @@ module JsDuck
       else
         context = @formatter.doc_context
         if tp.error == :syntax
-          Logger.instance.warn(:type_syntax, "Incorrect type syntax #{type}", context[:filename], context[:linenr])
+          Logger.warn(:type_syntax, "Incorrect type syntax #{type}", context[:filename], context[:linenr])
         else
-          Logger.instance.warn(:type_name, "Unknown type #{type}", context[:filename], context[:linenr])
+          Logger.warn(:type_name, "Unknown type #{type}", context[:filename], context[:linenr])
         end
         type
       end

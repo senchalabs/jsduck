@@ -17,7 +17,7 @@ module JsDuck
 
         FileUtils.mkdir(destination)
         Util::Parallel.each(@source_files) do |file|
-          Logger.instance.log("Writing source", file.html_filename)
+          Logger.log("Writing source", file.html_filename)
           write_single(destination + "/" + file.html_filename, file.to_html)
         end
       end

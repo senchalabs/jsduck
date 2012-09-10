@@ -36,7 +36,7 @@ module JsDuck
     def read(ver)
       # Map list of files into pairs of (classname, members-hash)
       pairs = Util::Parallel.map(Dir[ver[:path] + "/*.json"]) do |filename|
-        JsDuck::Logger.instance.log("Importing #{ver[:version]}", filename)
+        JsDuck::Logger.log("Importing #{ver[:version]}", filename)
         json = Util::Json.read(filename)
         [json["name"],  members_id_index(json)]
       end

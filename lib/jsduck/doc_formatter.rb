@@ -155,12 +155,12 @@ module JsDuck
         file = @doc_context[:filename]
         line = @doc_context[:linenr]
         if !@relations[cls]
-          Logger.instance.warn(:link, "#{input} links to non-existing class", file, line)
+          Logger.warn(:link, "#{input} links to non-existing class", file, line)
           return text
         elsif member
           ms = find_members(cls, {:name => member, :tagname => type, :static => static})
           if ms.length == 0
-            Logger.instance.warn(:link, "#{input} links to non-existing member", file, line)
+            Logger.warn(:link, "#{input} links to non-existing member", file, line)
             return text
           end
 
@@ -172,11 +172,11 @@ module JsDuck
             instance_ms = ms.find_all {|m| !m[:meta][:static] }
             if instance_ms.length > 1
               alternatives = instance_ms.map {|m| "#{m[:tagname]} in #{m[:owner]}" }.join(", ")
-              Logger.instance.warn(:link_ambiguous, "#{input} is ambiguous: "+alternatives, file, line)
+              Logger.warn(:link_ambiguous, "#{input} is ambiguous: "+alternatives, file, line)
             elsif instance_ms.length == 0
               static_ms = ms.find_all {|m| m[:meta][:static] }
               alternatives = static_ms.map {|m| "static " + m[:tagname].to_s }.join(", ")
-              Logger.instance.warn(:link_ambiguous, "#{input} is ambiguous: "+alternatives, file, line)
+              Logger.warn(:link_ambiguous, "#{input} is ambiguous: "+alternatives, file, line)
             end
           end
 
@@ -253,7 +253,7 @@ module JsDuck
     end
 
     def warn_magic_link(msg)
-      Logger.instance.warn(:link_auto, msg, @doc_context[:filename], @doc_context[:linenr])
+      Logger.warn(:link_auto, msg, @doc_context[:filename], @doc_context[:linenr])
     end
 
     # applies the link template

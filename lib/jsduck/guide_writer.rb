@@ -31,7 +31,7 @@ module JsDuck
       FileUtils.mkdir(dir) unless File.exists?(dir)
       Util::Parallel.each(all_guides) do |guide|
         filename = dir + "/" + guide["name"] + extension
-        Logger.instance.log("Writing guide", filename)
+        Logger.log("Writing guide", filename)
         json = @exporter.export_guide(guide)
         # skip file if exporter returned nil
         if json

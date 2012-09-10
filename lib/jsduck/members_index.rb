@@ -87,7 +87,7 @@ module JsDuck
           else
             ctx = m[:files][0]
             msg = "@hide used but #{m[:tagname]} #{m[:name]} not found in parent class"
-            Logger.instance.warn(:hide, msg, ctx[:filename], ctx[:linenr])
+            Logger.warn(:hide, msg, ctx[:filename], ctx[:linenr])
           end
         else
           if hash1[name]

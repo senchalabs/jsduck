@@ -39,7 +39,7 @@ module JsDuck
         begin
           self.parse(Util::IO.read(filename))
         rescue
-          Logger.instance.fatal("#{filename} is not a valid JSON file")
+          Logger.fatal("#{filename} is not a valid JSON file")
           exit(1)
         end
       end
