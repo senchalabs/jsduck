@@ -18,7 +18,7 @@ module JsDuck
     def initialize(filename)
       @groups = Util::Json.read(filename)
       add_names_if_missing
-      build_map_by_name("Two videos have the same name", filename)
+      build_map_by_name
     end
 
     # Each video should have a name, which is used in URL to reference the video.

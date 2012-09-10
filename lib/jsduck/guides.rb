@@ -24,9 +24,10 @@ module JsDuck
     def initialize(filename, formatter, opts)
       @path = File.dirname(filename)
       @groups = Util::Json.read(filename)
-      build_map_by_name("Two guides have the same name", filename)
       @formatter = formatter
       @opts = opts
+      build_map_by_name
+      load_all_guides
     end
 
     # Writes all guides to given dir in JsonP format
@@ -35,23 +36,16 @@ module JsDuck
       each_item {|guide| write_guide(guide, dir) }
     end
 
-    # Modified each_item that also loads HTML for each guide
-    def each_item
-      super do |guide|
-        # Load the guide if not loaded
-        guide[:html] = load_guide(guide) if guide[:html] == nil
-        # Pass guide to block if it was successfully loaded.
-        yield guide if guide[:html]
+    def load_all_guides
+      each_item do |guide|
+        guide[:html] = load_guide(guide)
       end
     end
 
     # Modified to_array that excludes the :html from guide nodes
     def to_array
-      @groups.map do |group|
-        {
-          "title" => group["title"],
-          "items" => group["items"].map {|g| Hash[g.select {|k, v| k != :html }] }
-        }
+      map_items do |item|
+        Hash[item.select {|k, v| k != :html }]
       end
     end
 
@@ -141,7 +135,7 @@ module JsDuck
         [
           "<h3>#{group['title']}</h3>",
           "<ul>",
-          group["items"].map {|g| "<li><a href='#!/guide/#{g['name']}'>#{g['title']}</a></li>" },
+          flatten_subgroups(group["items"]).map {|g| "<li><a href='#!/guide/#{g['name']}'>#{g['title']}</a></li>" },
           "</ul>",
         ]
       end.flatten.join("\n")
@@ -151,6 +145,14 @@ module JsDuck
             #{html}
         </div>
       EOHTML
+    end
+
+    def flatten_subgroups(items)
+      result = []
+      each_item(items) do |item|
+        result << item
+      end
+      result
     end
 
     # Extracts guide icon URL from guide hash

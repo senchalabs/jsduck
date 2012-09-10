@@ -20,7 +20,7 @@ module JsDuck
       @groups = Util::Json.read(filename)
       @opts = opts
       fix_examples_data
-      build_map_by_name("Two examples have the same name", filename)
+      build_map_by_name
     end
 
     # Prefix all relative URL-s in examples list with path given in --examples-base-url

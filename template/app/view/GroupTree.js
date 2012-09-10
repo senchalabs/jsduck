@@ -25,19 +25,26 @@ Ext.define('Docs.view.GroupTree', {
 
     initComponent: function() {
         this.root = {
-            children: [],
-            text: 'Root'
+            text: 'Root',
+            children: this.buildTree(this.data)
         };
 
-        Ext.Array.each(this.data, function(group) {
-            this.root.children.push({
-                text: group.title,
-                expanded: true,
-                children: Ext.Array.map(group.items, this.convert),
-                iconCls: 'icon-pkg'
-            });
-        }, this);
-
         this.callParent();
+    },
+
+    buildTree: function(items) {
+        return Ext.Array.map(items, function(item) {
+            if (item.items) {
+                return {
+                    text: item.title,
+                    expanded: true,
+                    iconCls: 'icon-pkg',
+                    children: this.buildTree(item.items)
+                };
+            }
+            else {
+                return this.convert(item);
+            }
+        }, this);
     }
 });
