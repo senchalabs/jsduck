@@ -18,10 +18,16 @@ function Request(req) {
 }
 
 Request.prototype = {
+    /**
+     * Performs the login.
+     */
     login: function(user, pass, callback) {
         this.db.users().login(user, pass, callback);
     },
 
+    /**
+     * Does the recent comments query.
+     */
     getRecentComments: function(query, callback) {
         if (query.hideCurrentUser) {
             query.hideUser = this.getUserId();
@@ -47,12 +53,18 @@ Request.prototype = {
         }.bind(this));
     },
 
+    /**
+     * Provides the comments_meta request data.
+     */
     getCommentCountsPerTarget: function(callback) {
         this.db.comments().countsPerTarget(function(err, counts) {
             callback(counts);
         });
     },
 
+    /**
+     * Retrieves comments for a particular target.
+     */
     getComments: function(target, callback) {
         var targetObj = ApiAdapter.targetFromJson(JSON.parse(target));
 
@@ -72,12 +84,18 @@ Request.prototype = {
         }
     },
 
+    /**
+     * Gets one comment by ID.
+     */
     getComment: function(comment_id, callback) {
         this.db.comments().getById(comment_id, function(err, comment) {
             callback(ApiAdapter.commentToJson(comment));
         });
     },
 
+    /**
+     * Adds new comment.
+     */
     addComment: function(target, content, threadUrl, callback) {
         var comment = {
             user_id: this.getUserId(),
@@ -110,6 +128,9 @@ Request.prototype = {
         }.bind(this));
     },
 
+    /**
+     * Deletes or undeletes a comment.
+     */
     setDeleted: function(comment_id, deleted, callback) {
         if (deleted === false) {
             this.db.comments().showDeleted(true);
@@ -125,6 +146,9 @@ Request.prototype = {
         });
     },
 
+    /**
+     * Updates contents of a comment.
+     */
     updateComment: function(comment_id, content, callback) {
         var update = {
             id: comment_id,
@@ -139,6 +163,9 @@ Request.prototype = {
         }.bind(this));
     },
 
+    /**
+     * Votes comment up or down.
+     */
     vote: function(comment_id, vote, callback) {
         var voteObj = {
             user_id: this.getUserId(),
@@ -152,6 +179,9 @@ Request.prototype = {
         });
     },
 
+    /**
+     * Marks comment as read.
+     */
     markRead: function(comment_id, callback) {
         var read = {
             user_id: this.getUserId(),
@@ -163,6 +193,9 @@ Request.prototype = {
         });
     },
 
+    /**
+     * Returns all subscriptions for current user.
+     */
     getSubscriptions: function(callback) {
         if (!this.isLoggedIn()) {
             callback([]);
@@ -174,6 +207,9 @@ Request.prototype = {
         });
     },
 
+    /**
+     * Subscribes or unsubscribes a user.
+     */
     changeSubscription: function(target, subscribe, callback) {
         var sub = {
             user_id: this.getUserId(),
@@ -188,10 +224,17 @@ Request.prototype = {
         }
     },
 
+    /**
+     * Retrieves the currently logged in user.
+     */
     getUser: function(callback) {
         callback(this.req.session && this.req.session.user);
     },
 
+    /**
+     * Returns ID of logged in user.
+     * @return {Number}
+     */
     getUserId: function() {
         return this.req.session.user.id;
     },
@@ -204,6 +247,11 @@ Request.prototype = {
         return this.req.session && this.req.session.user;
     },
 
+    /**
+     * Returns true when logged in user is moderator.
+     * @return {Boolean}
+     * @private
+     */
     isModerator: function() {
         return this.req.session.user.moderator;
     },

@@ -6,7 +6,7 @@ var config = require("../config");
  * Takes care of notifying subscribers about a new comment.
  *
  * @constructor
- *
+ * Creates a new mailer.
  * @param {Object} cfg Config object:
  * @param {TableFactory} cfg.db Access to database tables.
  * @param {Object} cfg.comment The new comment that was posted.
