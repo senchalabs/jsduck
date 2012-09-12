@@ -10,7 +10,10 @@
   <!-- END CSS -->
   <link rel="stylesheet" href="resources/prettify/prettify.css" type="text/css" />
   <script type="text/javascript">
-  document.write("<link href='"+document.location.protocol+"//fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />");
+  (function(){
+    var protocol = (document.location.protocol === "https:") ? "https:" : "http:";
+    document.write("<link href='"+protocol+"//fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />");
+  })();
   </script>
   <style type="text/css">
   .description .short { display: none !important }
