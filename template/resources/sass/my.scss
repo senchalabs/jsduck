@@ -185,7 +185,10 @@ $appc-red: #9B1C1F;
         border-style: solid;
         border-width: 1px;
     }
-    td, td {
+    th { 
+        font-weight: bold;
+    }
+    th, td {
         padding: 3px 5px 3px 5px !important;
     }
 }
