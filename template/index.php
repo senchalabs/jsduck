@@ -1,4 +1,5 @@
 <?php
+include("Mobile_Detect.php");
 
 header("Access-Control-Allow-Origin: http://localhost");
 header("Access-Control-Allow-Credentials: true ");
@@ -13,7 +14,7 @@ function print_page($subtitle, $body, $fragment) {
 }
 
 function print_index_page() {
-  echo file_get_contents("template.html");
+  echo fix_links(file_get_contents("index-template.html"));
 }
 
 function jsonp_decode($jsonp) {
@@ -31,13 +32,18 @@ function decode_file($filename) {
   }
 }
 
+function is_mobile() {
+  $detect = new Mobile_Detect();
+  return $detect->isMobile();
+}
+
 // Turns #! links into ?print= links when in print mode.
 //
 // <a href="#!/api/Ext.Element">  -->  <a href="?print=/api/Ext.Element">
 // <a href="#!/api/Ext.Element-cfg-id">  -->  <a href="?print=/api/Ext.Element#cfg-id">
 //
 function fix_links($html) {
-  if (isset($_GET["print"])) {
+  if (isset($_GET["print"]) || is_mobile()) {
     $patterns = array(
       '/<a href=([\'"])#!?\/(api\/[^-\'"]+)-([^\'"]+)/' => '<a href=$1?print=/$2#$3',
       '/<a href=([\'"])#!?\//' => '<a href=$1?print=/',
@@ -49,8 +55,17 @@ function fix_links($html) {
   }
 }
 
-if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
-  $fragment = isset($_GET["_escaped_fragment_"]) ? $_GET["_escaped_fragment_"] : $_GET["print"];
+if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"]) || is_mobile()) {
+  if (isset($_GET["_escaped_fragment_"])) {
+    $fragment = $_GET["_escaped_fragment_"];
+  }
+  elseif (isset($_GET["print"])) {
+    $fragment = $_GET["print"];
+  }
+  else {
+    $fragment = "";
+  }
+
   try {
     if (preg_match('/^\/api\/([^-]+)/', $fragment, $m)) {
       $className = $m[1];
@@ -76,7 +91,7 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
   }
 }
 else {
-  print_index_page();
+  echo file_get_contents("template.html");
 }
 
 ?>

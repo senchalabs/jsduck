@@ -19,8 +19,8 @@ module JsDuck
     end
 
     # Returns the HTML
-    def to_html
-      "<div id='welcome-content' style='display:none'>#{@html}</div>"
+    def to_html(style="")
+      "<div id='welcome-content' style='#{style}'>#{@html}</div>"
     end
 
   end

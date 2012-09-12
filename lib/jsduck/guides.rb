@@ -130,7 +130,7 @@ module JsDuck
     end
 
     # Returns HTML listing of guides
-    def to_html
+    def to_html(style="")
       html = @groups.map do |group|
         [
           "<h3>#{group['title']}</h3>",
@@ -141,7 +141,7 @@ module JsDuck
       end.flatten.join("\n")
 
       return <<-EOHTML
-        <div id='guides-content' style='display:none'>
+        <div id='guides-content' style='#{style}'>
             #{html}
         </div>
       EOHTML

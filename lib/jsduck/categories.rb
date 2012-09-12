@@ -22,7 +22,7 @@ module JsDuck
     end
 
     # Returns HTML listing of classes divided into categories
-    def to_html
+    def to_html(style="")
       html = @categories.map do |category|
         [
           "<div class='section'>",
@@ -34,7 +34,7 @@ module JsDuck
       end.flatten.join("\n")
 
       return <<-EOHTML
-        <div id='categories-content' style='display:none'>
+        <div id='categories-content' style='#{style}'>
             #{html}
         </div>
       EOHTML
@@ -57,9 +57,9 @@ module JsDuck
       return groups.map do |g|
         [
           "<h3>#{g['name']}</h3>",
-          "<div class='links'>",
-          g["classes"].map {|cls| @relations[cls] ? @doc_formatter.link(cls, nil, cls) : cls },
-          "</div>",
+          "<ul class='links'>",
+          g["classes"].map {|cls| "<li>" + (@relations[cls] ? @doc_formatter.link(cls, nil, cls) : cls) + "</li>" },
+          "</ul>",
         ]
       end
     end
