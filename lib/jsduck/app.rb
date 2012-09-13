@@ -1,16 +1,12 @@
 require 'rubygems'
 require 'jsduck/util/parallel'
 require 'jsduck/util/json'
-require 'jsduck/util/stdout'
 require 'jsduck/source/writer'
-require 'jsduck/exporter/api'
-require 'jsduck/exporter/full'
 require 'jsduck/exporter/app'
-require 'jsduck/exporter/examples'
 require 'jsduck/batch_parser'
 require 'jsduck/batch_formatter'
+require 'jsduck/export_writer'
 require 'jsduck/inherit_doc'
-require 'jsduck/logger'
 require 'jsduck/assets'
 require 'jsduck/importer'
 require 'jsduck/return_values'
@@ -20,7 +16,6 @@ require 'jsduck/class_writer'
 require 'jsduck/app_data'
 require 'jsduck/index_html'
 require 'jsduck/inline_examples'
-require 'jsduck/guide_writer'
 require 'fileutils'
 
 module JsDuck
@@ -75,35 +70,8 @@ module JsDuck
 
 
     def generate_export
-      format_classes
-
-      clean_output_dir unless @opts.output_dir == :stdout
-
-      export_classes
-      export_examples_in_guides if @opts.export == :examples
-
-      Util::Stdout.flush if @opts.output_dir == :stdout
+      ExportWriter.new(@relations, @assets, @opts).write
     end
-
-    def export_classes
-      cw = ClassWriter.new(get_exporter, @relations, @opts)
-      cw.write(@opts.output_dir, ".json")
-    end
-
-    def get_exporter
-      exporters = {
-        :full => Exporter::Full,
-        :api => Exporter::Api,
-        :examples => Exporter::Examples,
-      }
-      exporters[@opts.export]
-    end
-
-    def export_examples_in_guides
-      gw = GuideWriter.new(Exporter::Examples, @assets.guides, @opts)
-      gw.write(@opts.output_dir, ".json")
-    end
-
 
     # -- web page --
 
