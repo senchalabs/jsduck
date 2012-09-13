@@ -1,6 +1,7 @@
 require 'jsduck/type_parser'
 require 'jsduck/logger'
 require 'jsduck/meta_tag_registry'
+require 'jsduck/shortener'
 
 module JsDuck
 
@@ -34,8 +35,8 @@ module JsDuck
     def format_member(m)
       @formatter.doc_context = m[:files][0]
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
-      if expandable?(m) || @formatter.too_long?(m[:doc])
-        m[:shortDoc] = @formatter.shorten(m[:doc])
+      if expandable?(m) || Shortener.too_long?(m[:doc])
+        m[:shortDoc] = Shortener.shorten(m[:doc])
       end
 
       # We don't validate and format CSS var and mixin type definitions

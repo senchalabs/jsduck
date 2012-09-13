@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'rubygems'
 require 'strscan'
 require 'rdiscount'
@@ -6,17 +5,13 @@ require 'jsduck/logger'
 require 'jsduck/inline/link'
 require 'jsduck/inline/img'
 require 'jsduck/inline/video'
-require 'jsduck/util/html'
 
 module JsDuck
 
   # Formats doc-comments
   class DocFormatter
-    # Maximum length for text that doesn't get shortened, defaults to 120
-    attr_accessor :max_length
 
     def initialize(relations={}, opts={})
-      @max_length = 120
       @images = []
 
       @inline_link = Inline::Link.new(opts)
@@ -145,42 +140,6 @@ module JsDuck
       input.gsub!(/<pre>(<code>)?\n?/, "<pre>\\1")
 
       replace(RDiscount.new(input).to_html)
-    end
-
-    # Shortens text
-    #
-    # 116 chars is also where ext-doc makes its cut, but unlike
-    # ext-doc we only make the cut when there's more than 120 chars.
-    #
-    # This way we don't get stupid expansions like:
-    #
-    #   Blah blah blah some text...
-    #
-    # expanding to:
-    #
-    #   Blah blah blah some text.
-    #
-    def shorten(input)
-      sent = first_sentence(Util::HTML.strip_tags(input).strip)
-      # Use u-modifier to correctly count multi-byte characters
-      chars = sent.scan(/./mu)
-      if chars.length > @max_length
-        chars[0..(@max_length-4)].join + "..."
-      else
-        sent + " ..."
-      end
-    end
-
-    def first_sentence(str)
-      str.sub(/\A(.+?(\.|。))\s.*\Z/mu, "\\1")
-    end
-
-    # Returns true when input should get shortened.
-    def too_long?(input)
-      stripped = Util::HTML.strip_tags(input).strip
-      # for sentence v/s full - compare byte length
-      # for full v/s max - compare char length
-      first_sentence(stripped).length < stripped.length || stripped.scan(/./mu).length > @max_length
     end
 
   end
