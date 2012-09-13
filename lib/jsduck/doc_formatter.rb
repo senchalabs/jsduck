@@ -1,10 +1,10 @@
 require 'rubygems'
 require 'strscan'
 require 'rdiscount'
-require 'jsduck/logger'
 require 'jsduck/inline/link'
 require 'jsduck/inline/img'
 require 'jsduck/inline/video'
+require 'jsduck/inline/example'
 
 module JsDuck
 
@@ -18,8 +18,7 @@ module JsDuck
       @inline_link.relations = relations
       @inline_img = Inline::Img.new(opts)
       @inline_video = Inline::Video.new(opts)
-
-      @example_annotation_re = /<pre><code>\s*@example( +[^\n]*)?\s+/m
+      @inline_example = Inline::Example.new(opts)
     end
 
     # Sets base path to prefix images from {@img} tags.
@@ -92,12 +91,8 @@ module JsDuck
         elsif s.check(/[{]/)
           # There might still be "{" that doesn't begin {@link} or {@img} - ignore it
           out += s.scan(/[{]/)
-        elsif s.check(@example_annotation_re)
-          # Match possible classnames following @example and add them
-          # as CSS classes inside <pre> element.
-          s.scan(@example_annotation_re) =~ @example_annotation_re
-          css_classes = ($1 || "").strip
-          out += "<pre class='inline-example #{css_classes}'><code>"
+        elsif substitute = @inline_example.replace(s)
+          out += substitute
         elsif s.check(/<a\b/)
           # Increment number of open <a> tags.
           open_a_tags += 1
