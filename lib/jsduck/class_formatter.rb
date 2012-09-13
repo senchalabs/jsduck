@@ -32,6 +32,13 @@ module JsDuck
       cls
     end
 
+    # Returns the images detected by doc-formatter
+    def images
+      @formatter.images
+    end
+
+    private
+
     def format_member(m)
       @formatter.doc_context = m[:files][0]
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]

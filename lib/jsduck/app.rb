@@ -2,8 +2,7 @@ require 'rubygems'
 require 'jsduck/aggregator'
 require 'jsduck/source/file'
 require 'jsduck/source/writer'
-require 'jsduck/doc_formatter'
-require 'jsduck/class_formatter'
+require 'jsduck/batch_formatter'
 require 'jsduck/class'
 require 'jsduck/relations'
 require 'jsduck/inherit_doc'
@@ -165,31 +164,7 @@ module JsDuck
 
     # Formats each class
     def format_classes
-      doc_formatter = DocFormatter.new(@opts)
-      doc_formatter.relations = @relations
-      doc_formatter.img_path = "images"
-      class_formatter = ClassFormatter.new(@relations, doc_formatter)
-      # Don't format types when exporting
-      class_formatter.include_types = !@opts.export
-      # Format all doc-objects in parallel
-      formatted_classes = Util::Parallel.map(@relations.classes) do |cls|
-        files = cls[:files].map {|f| f[:filename] }.join(" ")
-        Logger.log("Markdown formatting #{cls[:name]}", files)
-        begin
-          {
-            :doc => class_formatter.format(cls.internal_doc),
-            :images => doc_formatter.images
-          }
-        rescue
-          Logger.fatal_backtrace("Error while formatting #{cls[:name]} #{files}", $!)
-          exit(1)
-        end
-      end
-      # Then merge the data back to classes sequentially
-      formatted_classes.each do |cls|
-        @relations[cls[:doc][:name]].internal_doc = cls[:doc]
-        cls[:images].each {|img| @assets.images.add(img) }
-      end
+      BatchFormatter.format_all!(@relations, @assets, @opts)
     end
 
   end
