@@ -6,7 +6,13 @@ module JsDuck
 
     # Implementation of inline tag {@video}
     class Video
+      # Sets up instance to work in context of particular doc object.
+      # Used for error reporting.
+      attr_accessor :doc_context
+
       def initialize(opts={})
+        @doc_context = {}
+
         @templates = {
           "html5" => '<video src="%u">%a</video>',
           "vimeo" => [
@@ -29,17 +35,18 @@ module JsDuck
       # Looks for inline tag at the current scan pointer position, when
       # found, moves scan pointer forward and performs the apporpriate
       # replacement.
-      def replace(input, doc_context)
+      def replace(input)
         if input.check(@re)
-          input.scan(@re).sub(@re) { apply_tpl($1, $2, $3, doc_context) }
+          input.scan(@re).sub(@re) { apply_tpl($1, $2, $3) }
         else
           false
         end
       end
 
       # applies the video template of the specified type
-      def apply_tpl(type, url, alt_text, ctx)
+      def apply_tpl(type, url, alt_text)
         unless @templates.has_key?(type)
+          ctx = @doc_context
           Logger.warn(nil, "Unknown video type #{type}", ctx[:filename], ctx[:linenr])
         end
 
