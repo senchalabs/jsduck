@@ -165,7 +165,8 @@ module JsDuck
 
     # Formats each class
     def format_classes
-      doc_formatter = DocFormatter.new(@relations, @opts)
+      doc_formatter = DocFormatter.new(@opts)
+      doc_formatter.relations = @relations
       doc_formatter.img_path = "images"
       class_formatter = ClassFormatter.new(@relations, doc_formatter)
       # Don't format types when exporting

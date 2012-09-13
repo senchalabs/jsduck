@@ -11,11 +11,11 @@ module JsDuck
   # Formats doc-comments
   class DocFormatter
 
-    def initialize(relations={}, opts={})
-      @images = []
-
+    # Creates a formatter configured with options originating from
+    # command line.  For the actual effect of the options see
+    # Inline::* classes.
+    def initialize(opts={})
       @inline_link = Inline::Link.new(opts)
-      @inline_link.relations = relations
       @inline_img = Inline::Img.new(opts)
       @inline_video = Inline::Video.new(opts)
       @inline_example = Inline::Example.new(opts)
@@ -57,6 +57,24 @@ module JsDuck
     # name actually exists.
     def relations=(relations)
       @inline_link.relations = relations
+    end
+
+    # Formats doc-comment for placement into HTML.
+    # Renders it with Markdown-formatter and replaces @link-s.
+    def format(input)
+      # In ExtJS source "<pre>" is often at the end of paragraph, not
+      # on its own line.  But in that case RDiscount doesn't recognize
+      # it as the beginning of <pre>-block and goes on parsing it as
+      # normal Markdown, which often causes nested <pre>-blocks.
+      #
+      # To prevent this, we always add extra newline before <pre>.
+      input.gsub!(/([^\n])<pre>/, "\\1\n<pre>")
+
+      # But we remove trailing newline after <pre> to prevent
+      # code-blocks beginning with empty line.
+      input.gsub!(/<pre>(<code>)?\n?/, "<pre>\\1")
+
+      replace(RDiscount.new(input).to_html)
     end
 
     # Replaces {@link} and {@img} tags, auto-generates links for
@@ -111,30 +129,13 @@ module JsDuck
           out += open_a_tags > 0 ? text : @inline_link.create_magic_links(text)
         end
       end
+
       out
     end
 
     # Creates a link based on the link template.
     def link(cls, member, anchor_text, type=nil, static=nil)
       @inline_link.link(cls, member, anchor_text, type, static)
-    end
-
-    # Formats doc-comment for placement into HTML.
-    # Renders it with Markdown-formatter and replaces @link-s.
-    def format(input)
-      # In ExtJS source "<pre>" is often at the end of paragraph, not
-      # on its own line.  But in that case RDiscount doesn't recognize
-      # it as the beginning of <pre>-block and goes on parsing it as
-      # normal Markdown, which often causes nested <pre>-blocks.
-      #
-      # To prevent this, we always add extra newline before <pre>.
-      input.gsub!(/([^\n])<pre>/, "\\1\n<pre>")
-
-      # But we remove trailing newline after <pre> to prevent
-      # code-blocks beginning with empty line.
-      input.gsub!(/<pre>(<code>)?\n?/, "<pre>\\1")
-
-      replace(RDiscount.new(input).to_html)
     end
 
   end

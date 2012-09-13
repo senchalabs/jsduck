@@ -321,7 +321,8 @@ describe JsDuck::TypeParser do
 
     it "links primitive types to classes" do
       relations = JsDuck::Relations.new([JsDuck::Class.new({:name => "String"})])
-      doc_formatter = JsDuck::DocFormatter.new(relations)
+      doc_formatter = JsDuck::DocFormatter.new
+      doc_formatter.relations = relations
       p = JsDuck::TypeParser.new(relations, doc_formatter)
       p.parse("string")
       p.out.should == '<a href="String">string</a>'
@@ -355,4 +356,3 @@ describe JsDuck::TypeParser do
   end
 
 end
-
