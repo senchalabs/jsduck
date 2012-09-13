@@ -1,11 +1,8 @@
 require 'jsduck/util/parallel'
 require 'jsduck/util/json'
 require 'jsduck/batch_parser'
-require 'jsduck/inherit_doc'
-require 'jsduck/importer'
-require 'jsduck/return_values'
-require 'jsduck/lint'
 require 'jsduck/assets'
+require 'jsduck/meta_tag_registry'
 require 'jsduck/export_writer'
 require 'jsduck/web_writer'
 
@@ -24,12 +21,8 @@ module JsDuck
     end
 
     # Main App logic.
-    #
-    # Call this after input parameters set
     def run
       parse
-
-      apply_extra_processing
 
       init_assets
 
@@ -47,13 +40,6 @@ module JsDuck
       @relations = @batch_parser.run
     end
 
-    def apply_extra_processing
-      InheritDoc.new(@relations).resolve_all
-      Importer.import(@opts.imports, @relations, @opts.new_since)
-      ReturnValues.auto_detect(@relations)
-      Lint.new(@relations).run
-    end
-
     def init_assets
       # Initialize guides, videos, examples, ...
       @assets = Assets.new(@relations, @opts)
@@ -61,7 +47,6 @@ module JsDuck
       # Give access to assets from all meta-tags
       MetaTagRegistry.instance.assets = @assets
     end
-
 
     def generate_export
       ExportWriter.new(@relations, @assets, @opts).write

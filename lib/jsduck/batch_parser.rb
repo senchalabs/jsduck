@@ -5,6 +5,10 @@ require 'jsduck/aggregator'
 require 'jsduck/class'
 require 'jsduck/relations'
 require 'jsduck/logger'
+require 'jsduck/inherit_doc'
+require 'jsduck/importer'
+require 'jsduck/return_values'
+require 'jsduck/lint'
 
 module JsDuck
 
@@ -23,7 +27,9 @@ module JsDuck
     def run
       @parsed_files = parallel_parse(@opts.input_files)
       result = aggregate(@parsed_files)
-      return filter_classes(result)
+      @relations = filter_classes(result)
+      apply_extra_processing
+      return @relations
     end
 
     private
@@ -85,6 +91,14 @@ module JsDuck
         end
       end
       Relations.new(classes, @opts.external_classes)
+    end
+
+    # Do all kinds of post-processing on relations.
+    def apply_extra_processing
+      InheritDoc.new(@relations).resolve_all
+      Importer.import(@opts.imports, @relations, @opts.new_since)
+      ReturnValues.auto_detect(@relations)
+      Lint.new(@relations).run
     end
 
   end
