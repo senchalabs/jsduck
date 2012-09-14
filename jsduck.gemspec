@@ -2,8 +2,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.5"
 
   s.name = 'jsduck'
-  s.version = '4.0.1'
-  s.date = '2012-08-21'
+  s.version = '4.1.0'
+  s.date = '2012-09-14'
   s.summary = "Simple JavaScript Duckumentation generator"
   s.description = "Documentation generator for Sencha JS frameworks"
   s.homepage = "https://github.com/senchalabs/jsduck"
@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project = s.name
 
   s.files = `git ls-files`.split("\n").find_all do |file|
-    file !~ /spec.rb$/ && file !~ /benchmark/ && file !~ /template\// && file !~ /opt\//
+    file !~ /spec.rb$/ && file !~ /benchmark/ && file !~ /template\// && file !~ /opt\// && file !~ /comments\//
   end
   # Add files not in git
   s.files += Dir['template-min/**/*']
