@@ -1,5 +1,4 @@
 require 'jsduck/util/stdout'
-require 'jsduck/exporter/api'
 require 'jsduck/exporter/full'
 require 'jsduck/exporter/examples'
 require 'jsduck/batch_formatter'
@@ -38,7 +37,6 @@ module JsDuck
     def get_exporter
       exporters = {
         :full => Exporter::Full,
-        :api => Exporter::Api,
         :examples => Exporter::Examples,
       }
       exporters[@opts.export]

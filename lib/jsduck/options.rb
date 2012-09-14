@@ -171,9 +171,14 @@ module JsDuck
           "TYPE is one of:",
           "",
           "- full     - full class docs.",
-          "- api      - only class- and member names.",
           "- examples - extracts inline examples from classes.") do |format|
-          @export = format.to_sym
+          export_type = format.to_sym
+          if [:full, :examples].include?(export_type)
+            @export = export_type
+          else
+            Logger.fatal("Unsupported export type: '#{export_type}'")
+            exit(1)
+          end
         end
 
         opts.on('--builtin-classes',
