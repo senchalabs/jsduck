@@ -101,7 +101,7 @@ module JsDuck
       @relations.each do |cls|
         if cls[:singleton]
           cls.find_members({:local => true, :static => true}).each do |m|
-            warn(:sing_static, "Static members don't make sense in singleton class #{@doc[:name]}", m)
+            warn(:sing_static, "Static members don't make sense in singleton class #{cls[:name]}", m)
           end
         end
       end
