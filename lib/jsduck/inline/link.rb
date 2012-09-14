@@ -50,7 +50,7 @@ module JsDuck
       # replacement.
       def replace(input)
         if input.check(@re)
-          input.scan(@re).sub(@re) { apply_tpl($1, $2, $0) }
+          input.scan(@re).sub(@re) { apply_tpl($1, $2, $&) }
         else
           false
         end
