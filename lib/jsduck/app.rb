@@ -1,5 +1,3 @@
-require 'jsduck/util/parallel'
-require 'jsduck/util/json'
 require 'jsduck/batch_parser'
 require 'jsduck/assets'
 require 'jsduck/meta_tag_registry'
@@ -13,11 +11,6 @@ module JsDuck
     # Initializes app with JsDuck::Options object
     def initialize(opts)
       @opts = opts
-      # Sets the nr of parallel processes to use.
-      # Set to 0 to disable parallelization completely.
-      Util::Parallel.in_processes = @opts.processes
-      # Turn JSON pretty-printing on/off
-      Util::Json.pretty = @opts.pretty_json
     end
 
     # Main App logic.

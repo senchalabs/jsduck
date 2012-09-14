@@ -3,6 +3,7 @@ require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
 require 'jsduck/util/json'
 require 'jsduck/util/os'
+require 'jsduck/util/parallel'
 
 module JsDuck
 
@@ -27,7 +28,6 @@ module JsDuck
     attr_accessor :examples
     attr_accessor :categories_path
     attr_accessor :source
-    attr_accessor :pretty_json
     attr_accessor :images
     attr_accessor :link_tpl
     attr_accessor :img_tpl
@@ -38,7 +38,6 @@ module JsDuck
     attr_accessor :tests
 
     # Debugging
-    attr_accessor :processes
     attr_accessor :template_dir
     attr_accessor :template_links
     attr_accessor :extjs_path
@@ -93,7 +92,6 @@ module JsDuck
       @examples = nil
       @categories_path = nil
       @source = true
-      @pretty_json = false
       @images = []
       @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
@@ -106,8 +104,6 @@ module JsDuck
       @tests = false
 
       # Debugging
-      # Turn multiprocessing off by default in Windows
-      @processes = Util::OS::windows? ? 0 : nil
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
       @template_dir = @root_dir + "/template-min"
       @template_links = false
@@ -117,6 +113,9 @@ module JsDuck
       @ext_namespaces = ["Ext"]
       @imports = []
       @new_since = nil
+
+      # Turn multiprocessing off by default in Windows
+      Util::Parallel.in_processes = Util::OS::windows? ? 0 : nil
 
       # enable all warnings except :link_auto
       Logger.set_warning(:all, true)
@@ -542,7 +541,7 @@ module JsDuck
           "results.",
           "",
           "In Windows this option is disabled.") do |count|
-          @processes = count.to_i
+          Util::Parallel.in_processes = count.to_i
         end
 
         opts.on('--pretty-json',
@@ -552,7 +551,7 @@ module JsDuck
           "by --export option.  But the option effects any JSON",
           "that gets generated, so it's also useful when debugging",
           "the resource files generated for the docs app.") do
-          @pretty_json = true
+          Util::Json.pretty = true
         end
 
         opts.on('--template=PATH',
