@@ -12,12 +12,24 @@ module JsDuck
     #
     # For now there are three possible detected return values:
     #
-    # * :void - the code can finish without explicitly returning anything
     # * :this - the code contins 'return this;'
+    #
+    # * "undefined" - the code finishes by returning undefined or
+    #   without explicitly returning anything
+    #
     # * :other - some other value is returned.
     #
     def return_types(ast)
-      return_types_hash(ast["body"]["body"]).keys
+      h = return_types_hash(ast["body"]["body"])
+
+      # Replace the special :void value that signifies possibility of
+      # exiting without explicitly returning anything
+      if h[:void]
+        h["undefined"] = true
+        h.delete(:void)
+      end
+
+      h.keys
     end
 
     private
@@ -25,11 +37,9 @@ module JsDuck
     def return_types_hash(body)
       rvalues = {}
       body.each do |ast|
-        if return_this?(ast)
-          rvalues[:this] = true
-          return rvalues
-        elsif return?(ast)
-          rvalues[:other] = true
+        if return?(ast)
+          type = value_type(ast["argument"])
+          rvalues[type] = true
           return rvalues
         elsif possibly_blocking?(ast)
           extract_bodies(ast).each do |b|
@@ -52,12 +62,28 @@ module JsDuck
       return rvalues
     end
 
-    def return_this?(ast)
-      return?(ast) && !!ast["argument"] && this?(ast["argument"])
-    end
-
     def return?(ast)
       ast["type"] == "ReturnStatement"
+    end
+
+    def value_type(ast)
+      if !ast
+        :void
+      elsif undefined?(ast) || void?(ast)
+        "undefined"
+      elsif this?(ast)
+        :this
+      else
+        :other
+      end
+    end
+
+    def undefined?(ast)
+      ast["type"] == "Identifier" && ast["name"] == "undefined"
+    end
+
+    def void?(ast)
+      ast["type"] == "UnaryExpression" && ast["operator"] == "void"
     end
 
     def this?(ast)

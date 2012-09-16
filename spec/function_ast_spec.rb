@@ -161,7 +161,7 @@ describe "JsDuck::FunctionAst#return_types" do
   end
 
   describe "doesn't return [:this] when function body" do
-    it "has no return statement." do
+    it "is empty" do
       returns("/** */ function foo() {}").should_not == [:this]
     end
 
@@ -206,6 +206,28 @@ describe "JsDuck::FunctionAst#return_types" do
           }
       }
       EOJS
+    end
+  end
+
+  describe "returns ['undefined'] when function body" do
+    it "is empty" do
+      returns("/** */ function foo() {}").should == ["undefined"]
+    end
+
+    it "has no return statement" do
+      returns("/** */ function foo() { bar(); baz(); }").should == ["undefined"]
+    end
+
+    it "has empty return statement" do
+      returns("/** */ function foo() { return; }").should == ["undefined"]
+    end
+
+    it "has RETURN UNDEFINED statement" do
+      returns("/** */ function foo() { return undefined; }").should == ["undefined"]
+    end
+
+    it "has RETURN VOID statement" do
+      returns("/** */ function foo() { return void(blah); }").should == ["undefined"]
     end
   end
 
