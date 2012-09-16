@@ -77,6 +77,8 @@ module JsDuck
         "Boolean"
       elsif string?(ast)
         "String"
+      elsif regexp?(ast)
+        "RegExp"
       else
         :other
       end
@@ -128,6 +130,10 @@ module JsDuck
 
     def string_literal?(ast)
       ast["type"] == "Literal" && ast["value"].is_a?(String)
+    end
+
+    def regexp?(ast)
+      ast["type"] == "Literal" && ast["raw"] =~ /^\//
     end
 
     def control_flow?(ast)

@@ -307,4 +307,10 @@ describe "JsDuck::FunctionAst#return_types" do
     end
   end
 
+  describe "returns ['RegExp'] when function body" do
+    it "returns a regex literal" do
+      returns("/** */ function foo() { return /.*/; }").should == ["RegExp"]
+    end
+  end
+
 end
