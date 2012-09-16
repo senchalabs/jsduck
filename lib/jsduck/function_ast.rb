@@ -73,6 +73,8 @@ module JsDuck
         "undefined"
       elsif this?(ast)
         :this
+      elsif boolean?(ast)
+        "Boolean"
       else
         :other
       end
@@ -88,6 +90,26 @@ module JsDuck
 
     def this?(ast)
       ast["type"] == "ThisExpression"
+    end
+
+    def boolean?(ast)
+      if boolean_literal?(ast)
+        true
+      elsif ast["type"] == "UnaryExpression" || ast["type"] == "BinaryExpression"
+        !!BOOLEAN_RETURNING_OPERATORS[ast["operator"]]
+      elsif ast["type"] == "LogicalExpression"
+        boolean?(ast["left"]) && boolean?(ast["right"])
+      elsif ast["type"] == "ConditionalExpression"
+        boolean?(ast["consequent"]) && boolean?(ast["alternate"])
+      elsif ast["type"] == "AssignmentExpression" && ast["operator"] == "="
+        boolean?(ast["right"])
+      else
+        false
+      end
+    end
+
+    def boolean_literal?(ast)
+      ast["type"] == "Literal" && (ast["value"] == true || ast["value"] == false)
     end
 
     def control_flow?(ast)
@@ -117,6 +139,21 @@ module JsDuck
         false
       end
     end
+
+    BOOLEAN_RETURNING_OPERATORS = {
+      "!" => true,
+      ">" => true,
+      ">=" => true,
+      "<" => true,
+      "<=" => true,
+      "==" => true,
+      "!=" => true,
+      "===" => true,
+      "!==" => true,
+      "in" => true,
+      "instanceof" => true,
+      "delete" => true,
+    }
 
     POSSIBLY_BLOCKING = {
       "IfStatement" => true,

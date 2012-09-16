@@ -231,4 +231,58 @@ describe "JsDuck::FunctionAst#return_types" do
     end
   end
 
+  describe "returns ['Boolean'] when function body" do
+    it "returns true" do
+      returns("/** */ function foo() { return true; }").should == ["Boolean"]
+    end
+
+    it "returns false" do
+      returns("/** */ function foo() { return false; }").should == ["Boolean"]
+    end
+
+    it "returns negation" do
+      returns("/** */ function foo() { return !foo; }").should == ["Boolean"]
+    end
+
+    it "returns > comparison" do
+      returns("/** */ function foo() { return x > y; }").should == ["Boolean"]
+    end
+
+    it "returns <= comparison" do
+      returns("/** */ function foo() { return x <= y; }").should == ["Boolean"]
+    end
+
+    it "returns == comparison" do
+      returns("/** */ function foo() { return x == y; }").should == ["Boolean"]
+    end
+
+    it "returns 'in' expression" do
+      returns("/** */ function foo() { return key in object; }").should == ["Boolean"]
+    end
+
+    it "returns 'instanceof' expression" do
+      returns("/** */ function foo() { return obj instanceof cls; }").should == ["Boolean"]
+    end
+
+    it "returns 'delete' expression" do
+      returns("/** */ function foo() { return delete foo[bar]; }").should == ["Boolean"]
+    end
+
+    it "returns conjunction of boolean expressions" do
+      returns("/** */ function foo() { return x > y && y > z; }").should == ["Boolean"]
+    end
+
+    it "returns disjunction of boolean expressions" do
+      returns("/** */ function foo() { return x == y || y == z; }").should == ["Boolean"]
+    end
+
+    it "returns conditional expression evaluating to boolean" do
+      returns("/** */ function foo() { return x ? true : a > b; }").should == ["Boolean"]
+    end
+
+    it "returns assignment of boolean" do
+      returns("/** */ function foo() { return x = true; }").should == ["Boolean"]
+    end
+  end
+
 end
