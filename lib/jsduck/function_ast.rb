@@ -8,27 +8,7 @@ module JsDuck
   class FunctionAst
     include Util::Singleton
 
-    # True when function always finishes by returning this.  False
-    # doesn't neccessarily mean that the function doesn't return this
-    # - rather it means our static analyzes wasn't able to determine
-    # what the function returns.
-    def chainable?(ast)
-      if ast && function?(ast)
-        rvalues = return_values(ast["body"]["body"])
-        rvalues.keys == [:this]
-      else
-        false
-      end
-    end
-
-    private
-
-    def function?(ast)
-      ast["type"] == "FunctionDeclaration" || ast["type"] == "FunctionExpression"
-    end
-
-    # Given an array of statements determines the possible return values.
-    # Returns a hash with the return values.
+    # Detects possible return types of the given function.
     #
     # For now there are three possible detected return values:
     #
@@ -36,7 +16,13 @@ module JsDuck
     # * :this - the code contins 'return this;'
     # * :other - some other value is returned.
     #
-    def return_values(body)
+    def return_types(ast)
+      return_types_hash(ast["body"]["body"]).keys
+    end
+
+    private
+
+    def return_types_hash(body)
       rvalues = {}
       body.each do |ast|
         if return_this?(ast)
@@ -47,7 +33,7 @@ module JsDuck
           return rvalues
         elsif possibly_blocking?(ast)
           extract_bodies(ast).each do |b|
-            rvalues.merge!(return_values(b))
+            rvalues.merge!(return_types_hash(b))
           end
           if !rvalues[:void]
             return rvalues
@@ -56,7 +42,7 @@ module JsDuck
           end
         elsif control_flow?(ast)
           extract_bodies(ast).each do |b|
-            rvalues.merge!(return_values(b))
+            rvalues.merge!(return_types_hash(b))
           end
           rvalues.delete(:void)
         end

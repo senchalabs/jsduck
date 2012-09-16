@@ -1,34 +1,19 @@
 require "jsduck/js_parser"
 require "jsduck/function_ast"
 
-describe "JsDuck::FunctionAst#chainable?" do
-  def chainable?(string)
+describe "JsDuck::FunctionAst#return_types" do
+  def returns(string)
     node = JsDuck::JsParser.new(string).parse[0]
-    return JsDuck::FunctionAst.chainable?(node[:code])
+    return JsDuck::FunctionAst.return_types(node[:code])
   end
 
-  it "false when no AST given at all" do
-    chainable?("/** */").should == false
-  end
+  describe "returns [:this] when function body" do
+    it "has single RETURN THIS statement in body" do
+      returns("/** */ function foo() {return this;}").should == [:this]
+    end
 
-  it "false when no function AST given" do
-    chainable?("/** */ Ext.emptyFn;").should == false
-  end
-
-  it "false when body has no return statement." do
-    chainable?("/** */ function foo() {}").should == false
-  end
-
-  it "false when body has empty return statement" do
-    chainable?("/** */ function foo() { return; }").should == false
-  end
-
-  it "true when single RETURN THIS statement in body" do
-    chainable?("/** */ function foo() {return this;}").should == true
-  end
-
-  it "true when RETURN THIS after a few expression statements" do
-    chainable?(<<-EOJS).should == true
+    it "has RETURN THIS after a few expression statements" do
+      returns(<<-EOJS).should == [:this]
       /** */
       function foo() {
           doSomething();
@@ -36,11 +21,11 @@ describe "JsDuck::FunctionAst#chainable?" do
           truthy ? foo() : bar();
           return this;
       }
-    EOJS
-  end
+      EOJS
+    end
 
-  it "true when RETURN THIS after a few declarations" do
-    chainable?(<<-EOJS).should == true
+    it "has RETURN THIS after a few declarations" do
+      returns(<<-EOJS).should == [:this]
       /** */
       function foo() {
           var x = 10;
@@ -48,11 +33,11 @@ describe "JsDuck::FunctionAst#chainable?" do
           }
           return this;
       }
-    EOJS
-  end
+      EOJS
+    end
 
-  it "true when RETURN THIS after an IF without RETURNs" do
-    chainable?(<<-EOJS).should == true
+    it "has RETURN THIS after an IF without RETURNs" do
+      returns(<<-EOJS).should == [:this]
       /** */
       function foo() {
           if (condition) {
@@ -62,11 +47,11 @@ describe "JsDuck::FunctionAst#chainable?" do
           }
           return this;
       }
-    EOJS
-  end
+      EOJS
+    end
 
-  it "true when RETURN THIS after SWITCH without returns" do
-    chainable?(<<-EOJS).should == true
+    it "has RETURN THIS after SWITCH without returns" do
+      returns(<<-EOJS).should == [:this]
       /** */
       function foo() {
           switch (x) {
@@ -76,11 +61,11 @@ describe "JsDuck::FunctionAst#chainable?" do
           }
           return this;
       }
-    EOJS
-  end
+      EOJS
+    end
 
-  it "true when RETURN THIS after loops without returns" do
-    chainable?(<<-EOJS).should == true
+    it "has RETURN THIS after loops without returns" do
+      returns(<<-EOJS).should == [:this]
       /** */
       function foo() {
           for (i=0; i<10; i++) {
@@ -95,11 +80,11 @@ describe "JsDuck::FunctionAst#chainable?" do
           }
           return this;
       }
-    EOJS
-  end
+      EOJS
+    end
 
-  it "true when RETURN THIS after TRY CATCH without returns" do
-    chainable?(<<-EOJS).should == true
+    it "has RETURN THIS after TRY CATCH without returns" do
+      returns(<<-EOJS).should == [:this]
       /** */
       function foo() {
           try {
@@ -111,11 +96,11 @@ describe "JsDuck::FunctionAst#chainable?" do
           }
           return this;
       }
-    EOJS
-  end
+      EOJS
+    end
 
-  it "true when RETURN THIS after WITH & BLOCK without returns" do
-    chainable?(<<-EOJS).should == true
+    it "has RETURN THIS after WITH & BLOCK without returns" do
+      returns(<<-EOJS).should == [:this]
       /** */
       function foo() {
           with (x) {
@@ -126,26 +111,11 @@ describe "JsDuck::FunctionAst#chainable?" do
           }
           return this;
       }
-    EOJS
-  end
+      EOJS
+    end
 
-  it "false when RETURN THIS after statements containing a RETURN" do
-    chainable?(<<-EOJS).should == false
-      /** */
-      function foo() {
-          while (x) {
-            if (foo) {
-            } else if (ooh) {
-              return whoKnowsWhat;
-            }
-          }
-          return this;
-      }
-    EOJS
-  end
-
-  it "true when RETURN THIS after statements also containing a RETURN THIS" do
-    chainable?(<<-EOJS).should == true
+    it "has RETURN THIS after statements also containing a RETURN THIS" do
+      returns(<<-EOJS).should == [:this]
       /** */
       function foo() {
           while (x) {
@@ -156,24 +126,11 @@ describe "JsDuck::FunctionAst#chainable?" do
           }
           return this;
       }
-    EOJS
-  end
+      EOJS
+    end
 
-  it "false when only one branch finishes with RETURN THIS" do
-    chainable?(<<-EOJS).should == false
-      /** */
-      function foo() {
-          if (foo) {
-              doSomething();
-          } else {
-              return this;
-          }
-      }
-    EOJS
-  end
-
-  it "true when both branches of IF finish with RETURN THIS" do
-    chainable?(<<-EOJS).should == true
+    it "has both branches of IF finishing with RETURN THIS" do
+      returns(<<-EOJS).should == [:this]
       /** */
       function foo() {
           if (foo) {
@@ -188,28 +145,68 @@ describe "JsDuck::FunctionAst#chainable?" do
               return this;
           }
       }
-    EOJS
-  end
+      EOJS
+    end
 
-  it "true when DO WHILE contains RETURN THIS" do
-    chainable?(<<-EOJS).should == true
+    it "has DO WHILE containing RETURN THIS" do
+      returns(<<-EOJS).should == [:this]
       /** */
       function foo() {
           do {
               return this;
           } while(true);
       }
-    EOJS
+      EOJS
+    end
   end
 
-  it "false when WHILE contains RETURN THIS" do
-    chainable?(<<-EOJS).should == false
+  describe "doesn't return [:this] when function body" do
+    it "has no return statement." do
+      returns("/** */ function foo() {}").should_not == [:this]
+    end
+
+    it "has empty return statement" do
+      returns("/** */ function foo() { return; }").should_not == [:this]
+    end
+
+    it "has RETURN THIS after statements containing a RETURN" do
+      returns(<<-EOJS).should_not == [:this]
+      /** */
+      function foo() {
+          while (x) {
+            if (foo) {
+            } else if (ooh) {
+              return whoKnowsWhat;
+            }
+          }
+          return this;
+      }
+      EOJS
+    end
+
+    it "has WHILE containing RETURN THIS" do
+      returns(<<-EOJS).should_not == [:this]
       /** */
       function foo() {
           while (condition) {
               return this;
           };
       }
-    EOJS
+      EOJS
+    end
+
+    it "has only one branch finishing with RETURN THIS" do
+      returns(<<-EOJS).should_not == [:this]
+      /** */
+      function foo() {
+          if (foo) {
+              doSomething();
+          } else {
+              return this;
+          }
+      }
+      EOJS
+    end
   end
+
 end

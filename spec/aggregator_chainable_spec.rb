@@ -159,6 +159,37 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "method without any code" do
+    let(:cls) do
+      parse(<<-EOS)["MyClass"]
+        /** */
+        Ext.define("MyClass", {
+            /** @method bar */
+        });
+      EOS
+    end
+
+    it "doesn't add @chainable tag" do
+      cls[:members][0][:meta][:chainable].should_not == true
+    end
+  end
+
+  describe "method consisting of Ext.emptyFn in code" do
+    let(:cls) do
+      parse(<<-EOS)["MyClass"]
+        /** */
+        Ext.define("MyClass", {
+            /** */
+            bar: Ext.emptyFn
+        });
+      EOS
+    end
+
+    it "doesn't add @chainable tag" do
+      cls[:members][0][:meta][:chainable].should_not == true
+    end
+  end
+
   describe "function with 'return this;' in code" do
     let(:cls) do
       parse(<<-EOS)["MyClass"]
