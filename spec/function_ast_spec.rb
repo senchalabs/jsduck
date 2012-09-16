@@ -144,4 +144,72 @@ describe "JsDuck::FunctionAst#chainable?" do
     EOJS
   end
 
+  it "true when RETURN THIS after statements also containing a RETURN THIS" do
+    chainable?(<<-EOJS).should == true
+      /** */
+      function foo() {
+          while (x) {
+            if (foo) {
+            } else if (ooh) {
+              return this;
+            }
+          }
+          return this;
+      }
+    EOJS
+  end
+
+  it "false when only one branch finishes with RETURN THIS" do
+    chainable?(<<-EOJS).should == false
+      /** */
+      function foo() {
+          if (foo) {
+              doSomething();
+          } else {
+              return this;
+          }
+      }
+    EOJS
+  end
+
+  it "true when both branches of IF finish with RETURN THIS" do
+    chainable?(<<-EOJS).should == true
+      /** */
+      function foo() {
+          if (foo) {
+              blah();
+              if (true) {
+                  return this;
+              } else {
+                  chah();
+                  return this;
+              }
+          } else {
+              return this;
+          }
+      }
+    EOJS
+  end
+
+  it "true when DO WHILE contains RETURN THIS" do
+    chainable?(<<-EOJS).should == true
+      /** */
+      function foo() {
+          do {
+              return this;
+          } while(true);
+      }
+    EOJS
+  end
+
+  it "false when WHILE contains RETURN THIS" do
+    chainable?(<<-EOJS).should == false
+      /** */
+      function foo() {
+          while (condition) {
+              return this;
+          };
+      }
+    EOJS
+  end
 end

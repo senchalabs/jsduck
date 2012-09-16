@@ -14,7 +14,8 @@ module JsDuck
     # what the function returns.
     def chainable?(ast)
       if ast && function?(ast)
-        body_returns(ast["body"]["body"])
+        rvalues = return_values(ast["body"]["body"])
+        rvalues.keys == [:this]
       else
         false
       end
@@ -26,10 +27,43 @@ module JsDuck
       ast["type"] == "FunctionDeclaration" || ast["type"] == "FunctionExpression"
     end
 
-    def body_returns(body)
-      body = skip_returnless_statements(body)
+    # Given an array of statements determines the possible return values.
+    # Returns a hash with the return values.
+    #
+    # For now there are three possible detected return values:
+    #
+    # * :void - the code can finish without explicitly returning anything
+    # * :this - the code contins 'return this;'
+    # * :other - some other value is returned.
+    #
+    def return_values(body)
+      rvalues = {}
+      body.each do |ast|
+        if return_this?(ast)
+          rvalues[:this] = true
+          return rvalues
+        elsif return?(ast)
+          rvalues[:other] = true
+          return rvalues
+        elsif possibly_blocking?(ast)
+          extract_bodies(ast).each do |b|
+            rvalues.merge!(return_values(b))
+          end
+          if !rvalues[:void]
+            return rvalues
+          else
+            rvalues.delete(:void)
+          end
+        elsif control_flow?(ast)
+          extract_bodies(ast).each do |b|
+            rvalues.merge!(return_values(b))
+          end
+          rvalues.delete(:void)
+        end
+      end
 
-      return body.length > 0 && return_this?(body[0])
+      rvalues[:void] = true
+      return rvalues
     end
 
     def return_this?(ast)
@@ -44,41 +78,41 @@ module JsDuck
       ast["type"] == "ThisExpression"
     end
 
-    def skip_returnless_statements(statements)
-      i = statements.find_index {|s| contains_return?(s) }
-      if i
-        statements.slice(i, statements.length)
-      else
-        []
-      end
+    def control_flow?(ast)
+      CONTROL_FLOW[ast["type"]]
     end
 
-    def contains_return?(ast)
-      if return?(ast)
-        true
-      elsif control_flow?(ast)
-        extract_body(ast).any? {|s| contains_return?(s) }
+    def extract_bodies(ast)
+      body = []
+      CONTROL_FLOW[ast["type"]].each do |name|
+        statements = ast[name]
+        if statements.is_a?(Hash)
+          body << [statements]
+        else
+          body << Array(statements)
+        end
+      end
+      body
+    end
+
+    # True if the node is a control structure which will block further
+    # program flow when all its branches finish with a return
+    # statement.
+    def possibly_blocking?(ast)
+      if POSSIBLY_BLOCKING[ast["type"]]
+        CONTROL_FLOW[ast["type"]].all? {|key| ast[key] }
       else
         false
       end
     end
 
-    def control_flow?(ast)
-      CONTROL_FLOW[ast["type"]]
-    end
-
-    def extract_body(ast)
-      body = []
-      CONTROL_FLOW[ast["type"]].each do |name|
-        statements = ast[name]
-        if statements.is_a?(Hash)
-          body << statements
-        else
-          body += Array(statements)
-        end
-      end
-      body
-    end
+    POSSIBLY_BLOCKING = {
+      "IfStatement" => true,
+      "DoWhileStatement" => true,
+      "WithStatement" => true,
+      "LabeledStatement" => true,
+      "BlockStatement" => true,
+    }
 
     CONTROL_FLOW = {
       "IfStatement" => ["consequent", "alternate"],
