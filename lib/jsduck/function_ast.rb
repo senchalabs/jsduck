@@ -75,6 +75,8 @@ module JsDuck
         :this
       elsif boolean?(ast)
         "Boolean"
+      elsif string?(ast)
+        "String"
       else
         :other
       end
@@ -110,6 +112,22 @@ module JsDuck
 
     def boolean_literal?(ast)
       ast["type"] == "Literal" && (ast["value"] == true || ast["value"] == false)
+    end
+
+    def string?(ast)
+      if string_literal?(ast)
+        true
+      elsif ast["type"] == "BinaryExpression" && ast["operator"] == "+"
+        string?(ast["left"]) || string?(ast["right"])
+      elsif ast["type"] == "UnaryExpression" && ast["operator"] == "typeof"
+        true
+      else
+        false
+      end
+    end
+
+    def string_literal?(ast)
+      ast["type"] == "Literal" && ast["value"].is_a?(String)
     end
 
     def control_flow?(ast)

@@ -285,4 +285,26 @@ describe "JsDuck::FunctionAst#return_types" do
     end
   end
 
+  describe "returns ['String'] when function body" do
+    it "returns a string literal" do
+      returns("/** */ function foo() { return 'foo'; }").should == ["String"]
+    end
+
+    it "returns a string concatenation" do
+      returns("/** */ function foo() { return 'foo' + 'bar'; }").should == ["String"]
+    end
+
+    it "returns a string concatenated with number" do
+      returns("/** */ function foo() { return 'foo' + 7; }").should == ["String"]
+    end
+
+    it "returns a number concatenated with string" do
+      returns("/** */ function foo() { return 8 + 'foo'; }").should == ["String"]
+    end
+
+    it "returns a typeof expression" do
+      returns("/** */ function foo() { return typeof 8; }").should == ["String"]
+    end
+  end
+
 end
