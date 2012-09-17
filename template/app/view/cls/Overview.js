@@ -57,9 +57,10 @@ Ext.define('Docs.view.cls.Overview', {
                 el.addCls('open');
             }
 
+            var top = this.body.getBox().y;
             this.scrollToView(el, {
                 highlight: true,
-                offset: (offset || 0) - (isMember ? 165 : 155)
+                offset: (offset || 0) - (isMember ? top : top - 10)
             });
         }
     },
