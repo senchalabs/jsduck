@@ -64,11 +64,12 @@ app.get('/auth/session', function(req, res) {
         if (user) {
             res.json({
                 userName: user.username,
-                mod: user.moderator
+                mod: user.moderator,
+                sessionID: req.sessionID
             });
         }
         else {
-            res.json(false);
+            res.json({sessionID: req.sessionID});
         }
     });
 });
