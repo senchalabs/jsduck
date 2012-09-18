@@ -17,9 +17,7 @@ end
 desc "Run Jasmine specs for comments backend"
 task :jasmine do
   # Initialize database with test data
-  test_db = "comments_test"
-  system("mysql #{test_db} < comments/sql/schema.sql")
-  system("mysql #{test_db} < comments/sql/test_data.sql")
+  system("cd comments/; node load_test_db.js")
 
   # run jasmine tests against that database
   system("node comments/node_modules/jasmine-node/lib/jasmine-node/cli.js comments/spec/")
