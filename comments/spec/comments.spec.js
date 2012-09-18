@@ -2,16 +2,12 @@ describe("Comments", function() {
     var mysql = require("mysql");
     var Comments = require("../lib/comments");
     var DbFacade = require('../lib/db_facade');
+    var config = require('../config');
     var connection;
     var comments;
 
     beforeEach(function() {
-        connection = mysql.createConnection({
-            host: 'localhost',
-            user: '',
-            password: '',
-            database: 'comments_test'
-        });
+        connection = mysql.createConnection(config.testDb);
 
         comments = new Comments(new DbFacade(connection), "ext-js-4");
     });

@@ -2,16 +2,12 @@ describe("Subscriptions", function() {
     var mysql = require("mysql");
     var Subscriptions = require("../lib/subscriptions");
     var DbFacade = require('../lib/db_facade');
+    var config = require('../config');
     var connection;
     var subscriptions;
 
     beforeEach(function() {
-        connection = mysql.createConnection({
-            host: 'localhost',
-            user: '',
-            password: '',
-            database: 'comments_test'
-        });
+        connection = mysql.createConnection(config.testDb);
 
         subscriptions = new Subscriptions(new DbFacade(connection), "ext-js-4");
     });

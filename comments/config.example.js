@@ -19,6 +19,14 @@ module.exports = {
         database: ''
     },
 
+    // The database to run jasmine unit tests in
+    testDb: {
+        user: "",
+        password: "",
+        database: "comments_test",
+        host: "localhost"
+    },
+
     // Config for nodemailer
     email: {
         from: "Sencha Documentation <no-reply@sencha.com>",
