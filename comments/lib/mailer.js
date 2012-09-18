@@ -90,7 +90,7 @@ Mailer.prototype = {
             to: user.email,
             subject: "Comment on '" + title + "'",
             text: [
-                "A comment by " + user.username + " on '" + title + "' was posted on the Sencha Documentation:\n",
+                "A comment by " + this.comment.username + " on '" + title + "' was posted on the Sencha Documentation:\n",
                 this.comment.content + "\n",
                 "--",
                 "Original thread: " + this.threadUrl
