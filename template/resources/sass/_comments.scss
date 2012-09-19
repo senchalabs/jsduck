@@ -24,7 +24,7 @@
   padding: 5px; }
 #recentcomments {
   margin: 0 auto;
-  max-width: 900px; }
+  max-width: 1000px; }
 .toggleMemberComments {
   cursor: pointer;
   background: url(../images/comment-bubble.png) no-repeat 2px -55px;
@@ -300,3 +300,33 @@
 #comment-index-container .x-mask {
   opacity: 0.9;
   background: #fff url(../images/ajax-loader.gif) no-repeat center; }
+
+
+// Table with top-voted users
+
+#top-users {
+  ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none; }
+  li {
+    height: 30px; }
+ .score {
+    display: block;
+    float: left;
+    width: 40px;
+    padding: 3px;
+    font-weight: bold;
+    color: #aaa;
+    text-align: center;
+    font-size: 16px; }
+  img {
+    @include border-radius(2px);
+    display: block;
+    float: left;
+    margin-right: 10px; }
+  .username {
+    line-height: 30px;
+    font-weight: bold;
+    &.moderator {
+      color: #3D7E00; } } }

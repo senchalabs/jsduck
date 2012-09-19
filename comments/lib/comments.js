@@ -360,6 +360,28 @@ Comments.prototype = {
         });
     },
 
+    /**
+     * Retrieves users ordered by number of upvotes.
+     * @param {Function} callback Called when done.
+     * @param {String} callback.err Error message when login failed.
+     * @param {Object} callback.users The top users.
+     */
+    getTopUsers: function(callback) {
+        var sql = [
+            "SELECT",
+                "user_id AS id,",
+                "username,",
+                "email,",
+                "moderator,",
+                "COALESCE(SUM(vote), 0) AS vote",
+            "FROM ", this.view,
+            "WHERE domain = ?",
+            "GROUP BY user_id",
+            "ORDER BY vote DESC"
+        ];
+        this.db.query(sql, [this.domain], callback);
+    },
+
     // Helper that converts all `vote_dir` and `read` fields into
     // appropriate type. For some reason the vote_dir field is a
     // string by default, but we don't want that.  The `read` field is

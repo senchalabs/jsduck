@@ -67,7 +67,7 @@ Ext.define('Docs.controller.Comments', {
             },
             loggedIn:  function() {
                 Docs.view.Comments.renderNewCommentForms();
-                this.isMod() && this.getController("Tabs").showCommentsTab();
+                this.getController("Tabs").showCommentsTab();
             },
             loggedOut: function() {
                 Docs.view.Comments.renderNewCommentForms();
@@ -152,7 +152,7 @@ Ext.define('Docs.controller.Comments', {
     },
 
     isMod: function() {
-        return this.getController('Auth').currentUser.mod;
+        return this.getController('Auth').isModerator();
     },
 
     enableComments: function() {
@@ -167,8 +167,20 @@ Ext.define('Docs.controller.Comments', {
         if (!this.recentComments) {
             this.fetchRecentComments();
             this.recentComments = true;
+            this.fetchUsers();
         }
         this.callParent([true]);
+    },
+
+    fetchUsers: function() {
+        this.request("jsonp", {
+            url: '/users',
+            method: 'GET',
+            success: function(users) {
+                this.renderUsers(users);
+            },
+            scope: this
+        });
     },
 
     fetchComments: function(id, callback, opts) {
@@ -631,6 +643,22 @@ Ext.define('Docs.controller.Comments', {
             num: 0,
             id: 'video-' + video
         });
+    },
+
+    renderUsers: function(users) {
+        var tpl = new Ext.XTemplate(
+            '<ul>',
+            '<tpl for=".">',
+                '<li>',
+                    '<span class="score">{vote}</span>',
+                    '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
+                          '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
+                    '<span class="username <tpl if="moderator">moderator</tpl>">{username}</span>',
+                '</li>',
+            '</tpl>',
+            '</ul>'
+        );
+        tpl.append(Ext.get("top-users"), users);
     },
 
     renderComments: function(rows, id, opts) {

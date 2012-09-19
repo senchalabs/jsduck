@@ -176,6 +176,14 @@ Ext.define('Docs.controller.Auth', {
     },
 
     /**
+     * True when current user is moderator.
+     * @return {Boolean}
+     */
+    isModerator: function() {
+        return this.currentUser.mod;
+    },
+
+    /**
      * Sets the session ID.
      * @param {String} sid  The session ID
      * @param {Object} opts (optional)

@@ -214,6 +214,20 @@ describe("Comments", function() {
         });
     });
 
+    it("#getTopUsers gives all users who have posted to this domain", function(done) {
+        comments.getTopUsers(function(err, users) {
+            expect(users.length).toEqual(5);
+            done();
+        });
+    });
+
+    it("#getTopUsers gives users sorted by votes", function(done) {
+        comments.getTopUsers(function(err, users) {
+            expect(users[0].vote).toBeGreaterThan(users[1].vote);
+            done();
+        });
+    });
+
     it("#add adds a new comment and returns its ID which we can then use to retrieve the comment", function(done) {
         var com = {
             user_id: 1,

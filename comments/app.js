@@ -106,6 +106,13 @@ app.get('/auth/:sdk/:version/comments_recent', function(req, res) {
     });
 });
 
+// Returns the most upvoted users.
+app.get('/auth/:sdk/:version/users', function(req, res) {
+    new Request(req).getTopUsers(function(users) {
+        res.json(users);
+    });
+});
+
 // Returns number of comments for each class/member,
 // and when user is logged in, all his subscriptions.
 app.get('/auth/:sdk/:version/comments_meta', function(req, res) {

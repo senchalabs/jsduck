@@ -27,6 +27,19 @@ module.exports = {
     },
 
     /**
+     * Turns user row into JSON response.
+     */
+    userToJson: function(user) {
+        return {
+            id: user.id,
+            username: user.username,
+            vote: user.vote,
+            moderator: user.moderator,
+            emailHash: crypto.createHash('md5').update(user.email).digest("hex")
+        };
+    },
+
+    /**
      * Turns target array in JSON into {type,cls,member} object.
      */
     targetFromJson: function(target) {

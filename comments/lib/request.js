@@ -54,6 +54,15 @@ Request.prototype = {
     },
 
     /**
+     * Retrieves most upvoted users.
+     */
+    getTopUsers: function(callback) {
+        this.db.comments().getTopUsers(function(err, users) {
+            callback(users.map(ApiAdapter.userToJson, ApiAdapter));
+        });
+    },
+
+    /**
      * Provides the comments_meta request data.
      */
     getCommentCountsPerTarget: function(callback) {
