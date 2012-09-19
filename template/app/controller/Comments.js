@@ -138,9 +138,6 @@ Ext.define('Docs.controller.Comments', {
             'commentindex': {
                 settingChange: function() {
                     this.fetchRecentComments();
-                },
-                usersTabChange: function(sortBy) {
-                    this.fetchUsers(sortBy);
                 }
             },
 
@@ -170,23 +167,8 @@ Ext.define('Docs.controller.Comments', {
         if (!this.recentComments) {
             this.fetchRecentComments();
             this.recentComments = true;
-            this.fetchUsers("votes");
         }
         this.callParent([true]);
-    },
-
-    fetchUsers: function(sortBy) {
-        this.request("jsonp", {
-            url: '/users',
-            method: 'GET',
-            params: {
-                sortBy: sortBy
-            },
-            success: function(users) {
-                this.renderUsers(users);
-            },
-            scope: this
-        });
     },
 
     fetchComments: function(id, callback, opts) {
@@ -649,22 +631,6 @@ Ext.define('Docs.controller.Comments', {
             num: 0,
             id: 'video-' + video
         });
-    },
-
-    renderUsers: function(users) {
-        var tpl = new Ext.XTemplate(
-            '<ul>',
-            '<tpl for=".">',
-                '<li>',
-                    '<span class="score">{score}</span>',
-                    '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
-                          '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                    '<span class="username <tpl if="moderator">moderator</tpl>">{username}</span>',
-                '</li>',
-            '</tpl>',
-            '</ul>'
-        );
-        tpl.overwrite(Ext.get("top-users"), users);
     },
 
     renderComments: function(rows, id, opts) {

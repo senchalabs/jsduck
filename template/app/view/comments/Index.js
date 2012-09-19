@@ -5,7 +5,10 @@ Ext.define('Docs.view.comments.Index', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.commentindex',
     mixins: ['Docs.view.Scrolling'],
-    requires: ['Docs.Settings'],
+    requires: [
+        'Docs.Settings',
+        'Docs.view.comments.TopUsers'
+    ],
 
     cls: 'comment-index',
     margin: '10 0 0 0',
@@ -57,41 +60,9 @@ Ext.define('Docs.view.comments.Index', {
         },
         {
             region: "east",
+            xtype: "topusers",
             width: 300,
-            layout: "border",
-            margin: '0 0 0 20',
-            dockedItems: [
-                {
-                    xtype: 'container',
-                    dock: 'top',
-                    height: 35,
-                    html: '<h1>Users</h1>'
-                }
-            ],
-            items: [
-                {
-                    xtype: "tabpanel",
-                    cls: "users-tabpanel",
-                    plain: true,
-                    region: "north",
-                    height: 25,
-                    items: [
-                        {
-                            title: "Votes"
-                        },
-                        {
-                            title: "Comments"
-                        }
-                    ]
-                },
-                {
-                    region: "center",
-                    xtype: 'container',
-                    id: 'top-users',
-                    cls: "iScroll",
-                    autoScroll: true
-                }
-            ]
+            margin: '0 0 0 20'
         }
     ],
 
@@ -162,15 +133,6 @@ Ext.define('Docs.view.comments.Index', {
             else {
                 this.saveSetting("sortByScore", true);
                 this.fireEvent("settingChange", "sortByScore", true);
-            }
-        }, this);
-
-        this.down("tabpanel[cls=users-tabpanel]").on("tabchange", function(panel, newTab) {
-            if (newTab.title === "Votes") {
-                this.fireEvent("usersTabChange", "votes");
-            }
-            else {
-                this.fireEvent("usersTabChange", "comments");
             }
         }, this);
     },
