@@ -71,12 +71,16 @@ Ext.define('Docs.view.comments.Index', {
             items: [
                 {
                     xtype: "tabpanel",
+                    cls: "users-tabpanel",
                     plain: true,
                     region: "north",
                     height: 25,
                     items: [
                         {
                             title: "Votes"
+                        },
+                        {
+                            title: "Comments"
                         }
                     ]
                 },
@@ -158,6 +162,15 @@ Ext.define('Docs.view.comments.Index', {
             else {
                 this.saveSetting("sortByScore", true);
                 this.fireEvent("settingChange", "sortByScore", true);
+            }
+        }, this);
+
+        this.down("tabpanel[cls=users-tabpanel]").on("tabchange", function(panel, newTab) {
+            if (newTab.title === "Votes") {
+                this.fireEvent("usersTabChange", "votes");
+            }
+            else {
+                this.fireEvent("usersTabChange", "comments");
             }
         }, this);
     },

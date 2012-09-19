@@ -108,7 +108,7 @@ app.get('/auth/:sdk/:version/comments_recent', function(req, res) {
 
 // Returns the most upvoted users.
 app.get('/auth/:sdk/:version/users', function(req, res) {
-    new Request(req).getTopUsers(function(users) {
+    new Request(req).getTopUsers(req.query.sortBy, function(users) {
         res.json(users);
     });
 });

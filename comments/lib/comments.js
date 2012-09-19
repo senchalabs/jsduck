@@ -362,22 +362,30 @@ Comments.prototype = {
 
     /**
      * Retrieves users ordered by number of upvotes.
+     * @param {String} sortBy Either "votes" or "comments"
      * @param {Function} callback Called when done.
      * @param {String} callback.err Error message when login failed.
      * @param {Object} callback.users The top users.
      */
-    getTopUsers: function(callback) {
+    getTopUsers: function(sortBy, callback) {
+        if (sortBy === "votes") {
+            var score = "COALESCE(SUM(vote), 0) AS score";
+        }
+        else {
+            var score = "COUNT(*) AS score";
+        }
+
         var sql = [
             "SELECT",
                 "user_id AS id,",
                 "username,",
                 "email,",
                 "moderator,",
-                "COALESCE(SUM(vote), 0) AS vote",
+                score,
             "FROM ", this.view,
             "WHERE domain = ?",
             "GROUP BY user_id",
-            "ORDER BY vote DESC"
+            "ORDER BY score DESC"
         ];
         this.db.query(sql, [this.domain], callback);
     },

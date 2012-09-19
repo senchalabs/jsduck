@@ -33,7 +33,7 @@ module.exports = {
         return {
             id: user.id,
             username: user.username,
-            vote: user.vote,
+            score: user.score,
             moderator: user.moderator,
             emailHash: crypto.createHash('md5').update(user.email).digest("hex")
         };

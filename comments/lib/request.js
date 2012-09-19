@@ -56,8 +56,8 @@ Request.prototype = {
     /**
      * Retrieves most upvoted users.
      */
-    getTopUsers: function(callback) {
-        this.db.comments().getTopUsers(function(err, users) {
+    getTopUsers: function(sortBy, callback) {
+        this.db.comments().getTopUsers(sortBy, function(err, users) {
             callback(users.map(ApiAdapter.userToJson, ApiAdapter));
         });
     },
