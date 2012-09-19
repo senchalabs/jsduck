@@ -132,7 +132,12 @@ Ext.define('Docs.view.Comments', {
                     urlPrefix = '#!/guide/';
                 } else if (target[2] != '') {
                     url += '-' + target[2];
-                    title += ' ' + target[2];
+                    if (target[0] == "class") {
+                        title += '#' + target[2].replace(/^.*-/, "");
+                    }
+                    else {
+                        title += ' ' + target[2];
+                    }
                 }
 
                 return '<a href="' + urlPrefix + url + '">' + title + '</a>';
