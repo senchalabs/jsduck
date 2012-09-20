@@ -1,6 +1,9 @@
 // Styles for comment system
 @import "mixins";
 
+$moderator-color: #3D7E00;
+$moderator-color-light: #94b773;
+
 .comment-btn {
   background: url(../images/comment-bubble.png) no-repeat;
   color: #fff;
@@ -211,7 +214,7 @@
       top: 2px;
       font-size: 14px;
       &.moderator {
-        color: #3D7E00; } }
+        color: $moderator-color; } }
     .time {
       position: absolute;
       right: 20px;
@@ -238,7 +241,7 @@
       &.read {
         color: white;
         @include border-radius(2px);
-        background: #3D7E00;
+        background: $moderator-color;
         font-weight: bold;
         padding: 0 1em;
         @include opacity(0.5); } }
@@ -308,12 +311,16 @@
     padding: 0;
     list-style: none; }
   li {
-    height: 30px; }
+    height: 30px;
+    &.selected {
+      @include border-radius(2px);
+      background: $moderator-color-light; } }
  .score {
     display: block;
     float: left;
     width: 40px;
-    padding: 3px;
+    padding: 0 5px;
+    line-height: 30px;
     font-weight: bold;
     color: #aaa;
     text-align: center;
@@ -322,9 +329,17 @@
     @include border-radius(2px);
     display: block;
     float: left;
+    margin-top: 2px;
     margin-right: 10px; }
   .username {
     line-height: 30px;
     font-weight: bold;
     &.moderator {
-      color: #3D7E00; } } }
+      color: $moderator-color;
+      &:hover {
+        color:  $moderator-color-light; } } }
+  .selected {
+    .score {
+      color: $docs-text-color; }
+    .username.moderator {
+      color: $docs-link-color; } } }

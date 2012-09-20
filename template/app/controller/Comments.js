@@ -36,6 +36,9 @@ Ext.define('Docs.controller.Comments', {
         }
     ],
 
+    // Recent comments query parameters that aren't saved into cookies.
+    recentCommentsSettings: {},
+
     init: function() {
         this.addEvents(
             /**
@@ -141,6 +144,13 @@ Ext.define('Docs.controller.Comments', {
 
             'commentslist': {
                 settingChange: function() {
+                    this.fetchRecentComments();
+                }
+            },
+
+            'topusers': {
+                select: function(username) {
+                    this.recentCommentsSettings.username = username;
                     this.fetchRecentComments();
                 }
             },
@@ -287,7 +297,8 @@ Ext.define('Docs.controller.Comments', {
             limit: 100,
             hideRead: settings.hideRead ? 1 : undefined,
             hideCurrentUser: settings.hideCurrentUser ? 1 : undefined,
-            sortByScore: settings.sortByScore ? 1 : undefined
+            sortByScore: settings.sortByScore ? 1 : undefined,
+            username: this.recentCommentsSettings.username
         };
 
         this.getCommentsList().setMasked(true);

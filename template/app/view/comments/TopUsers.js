@@ -60,6 +60,31 @@ Ext.define('Docs.view.comments.TopUsers', {
     afterRender: function() {
         this.callParent(arguments);
         this.fetchUsers("votes");
+        this.initClickHandlers();
+    },
+
+    initClickHandlers: function() {
+        this.usersList.getEl().on("click", function(event, target) {
+            var username = target.innerHTML;
+            var li = Ext.get(target).up("li");
+
+            // remove "selected" class from all other items and add it
+            // to the current item unless it was already selected
+            // before, in which case all items become unselected.
+            var wasSelected = li.hasCls("selected");
+            this.usersList.getEl().select("li").removeCls("selected");
+            if (!wasSelected) {
+                li.addCls("selected");
+            }
+
+            /**
+             * @event select
+             * Fired when user is selected from users list.
+             * @param {String} username  The name of the user
+             * or undefined when all users were deselected.
+             */
+            this.fireEvent("select", wasSelected ? undefined : username);
+        }, this, {preventDefault: true, delegate: "a"});
     },
 
     fetchUsers: function(sortBy) {
@@ -84,7 +109,7 @@ Ext.define('Docs.view.comments.TopUsers', {
                     '<span class="score">{score}</span>',
                     '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
                           '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                    '<span class="username <tpl if="moderator">moderator</tpl>">{username}</span>',
+                    '<a href="#" class="username <tpl if="moderator">moderator</tpl>">{username}</a>',
                 '</li>',
             '</tpl>',
             '</ul>'
