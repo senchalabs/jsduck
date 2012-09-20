@@ -307,8 +307,11 @@ $moderator-color-light: #94b773;
     list-style: none; }
   li {
     height: 30px;
-    &.selected {
-      @include border-radius(2px);
+    @include border-radius(2px);
+    cursor: pointer;
+    &:hover {
+      background: #eee; }
+    &.x-item-selected {
       background: $moderator-color-light; } }
  .score {
     display: block;
@@ -330,10 +333,8 @@ $moderator-color-light: #94b773;
     line-height: 30px;
     font-weight: bold;
     &.moderator {
-      color: $moderator-color;
-      &:hover {
-        color:  $moderator-color-light; } } }
-  .selected {
+      color: $moderator-color; } }
+  .x-item-selected {
     .score {
       color: $docs-text-color; }
     .username.moderator {

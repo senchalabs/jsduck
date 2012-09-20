@@ -18,73 +18,96 @@ Ext.define('Docs.view.comments.Users', {
     ],
 
     layout: "border",
-    items: [
-        {
-            xtype: "tabpanel",
-            plain: true,
-            region: "north",
-            height: 25,
-            items: [
-                {
-                    title: "Votes"
-                },
-                {
-                    title: "Comments"
-                }
-            ]
-        },
-        {
-            region: "center",
-            xtype: 'container',
-            cls: "iScroll users-list",
-            autoScroll: true
-        }
-    ],
+
+    /**
+     * @event select
+     * Fired when user is selected from users list.
+     * @param {String} username  The name of the user
+     * or undefined when all users were deselected.
+     */
 
     initComponent: function() {
+        this.items = [
+            this.tabpanel = Ext.widget("tabpanel", {
+                plain: true,
+                region: "north",
+                height: 25,
+                items: [
+                    {
+                        title: "Votes"
+                    },
+                    {
+                        title: "Comments"
+                    }
+                ],
+                listeners: {
+                    tabchange: this.onTabChange,
+                    scope: this
+                }
+            }),
+            this.usersList = Ext.widget("dataview", {
+                region: "center",
+                cls: "iScroll users-list",
+                autoScroll: true,
+                store: Ext.create('Ext.data.Store', {
+                    model: 'Image',
+                    fields: ["username", "score", "emailHash", "moderator"]
+                }),
+                allowDeselect: true,
+                tpl: [
+                    '<ul>',
+                    '<tpl for=".">',
+                        '<li>',
+                            '<span class="score">{score}</span>',
+                            '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
+                                  '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
+                            '<span href="#" class="username <tpl if="moderator">moderator</tpl>">{username}</span>',
+                        '</li>',
+                    '</tpl>',
+                    '</ul>'
+                ],
+                itemSelector: "li",
+                listeners: {
+                    select: this.onSelect,
+                    deselect: this.onDeselect,
+                    scope: this
+                }
+            })
+        ];
+
         this.callParent(arguments);
-
-        this.tabpanel = this.down("tabpanel");
-        this.usersList = this.down("container[region=center]");
-
-        this.tabpanel.on("tabchange", function(panel, newTab) {
-            if (newTab.title === "Votes") {
-                this.fetchUsers("votes");
-            }
-            else {
-                this.fetchUsers("comments");
-            }
-        }, this);
     },
 
     afterRender: function() {
         this.callParent(arguments);
         this.fetchUsers("votes");
-        this.initClickHandlers();
     },
 
-    initClickHandlers: function() {
-        this.usersList.getEl().on("click", function(event, target) {
-            var username = target.innerHTML;
-            var li = Ext.get(target).up("li");
+    onTabChange: function(panel, newTab) {
+        if (newTab.title === "Votes") {
+            this.fetchUsers("votes");
+        }
+        else {
+            this.fetchUsers("comments");
+        }
+    },
 
-            // remove "selected" class from all other items and add it
-            // to the current item unless it was already selected
-            // before, in which case all items become unselected.
-            var wasSelected = li.hasCls("selected");
-            this.usersList.getEl().select("li").removeCls("selected");
-            if (!wasSelected) {
-                li.addCls("selected");
+    onSelect: function(view, user) {
+        this.selectedUser = user;
+        this.fireEvent("select", user.get("username"));
+    },
+
+    onDeselect: function() {
+        // Don't fire empty "select" event when the deselect occured
+        // only because another user was selected (and so the previous
+        // was unselected).  Wait a tiny delay and when no user
+        // becomes selected, onle then fire the empty select event.
+        this.selectedUser = undefined;
+        Ext.Function.defer(function() {
+            if (!this.selectedUser) {
+                this.fireEvent("select", undefined);
             }
-
-            /**
-             * @event select
-             * Fired when user is selected from users list.
-             * @param {String} username  The name of the user
-             * or undefined when all users were deselected.
-             */
-            this.fireEvent("select", wasSelected ? undefined : username);
-        }, this, {preventDefault: true, delegate: "a"});
+        }, 10, this);
     },
 
     fetchUsers: function(sortBy) {
@@ -95,25 +118,9 @@ Ext.define('Docs.view.comments.Users', {
                 sortBy: sortBy
             },
             success: function(users) {
-                this.renderUsers(users);
+                this.usersList.getStore().loadData(users);
             },
             scope: this
         });
-    },
-
-    renderUsers: function(users) {
-        var tpl = new Ext.XTemplate(
-            '<ul>',
-            '<tpl for=".">',
-                '<li>',
-                    '<span class="score">{score}</span>',
-                    '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
-                          '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                    '<a href="#" class="username <tpl if="moderator">moderator</tpl>">{username}</a>',
-                '</li>',
-            '</tpl>',
-            '</ul>'
-        );
-        tpl.overwrite(this.usersList.getEl(), users);
     }
 });
