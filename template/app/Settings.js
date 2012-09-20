@@ -20,7 +20,6 @@ Ext.define("Docs.Settings", {
         },
         comments: {
             hideRead: false,
-            hideCurrentUser: false,
             sortByScore: false
         },
         showPrivateClasses: false,

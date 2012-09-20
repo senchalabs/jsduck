@@ -16,7 +16,6 @@ Ext.define('Docs.view.comments.List', {
                 '<h1 style="float:left;">Comments</h1>',
                 '<p style="float:left; margin: 5px 0 0 25px">',
                 '<label style="padding-right: 10px;"><input type="checkbox" name="hideRead" id="hideRead" /> Hide read</label>',
-                '<label><input type="checkbox" name="hideCurrentUser" id="hideCurrentUser" /> Hide current User</label>',
                 '</p>'
             ].join(" ")
         }
@@ -68,26 +67,23 @@ Ext.define('Docs.view.comments.List', {
         }
     },
 
-    // Initializes all checkboxes from settings.
-    // Bind event handlers to fire changeSetting event when checked/unchecked.
+    // Initializes the hideRead checkbox from settings.
     initCheckboxes: function() {
         var settings = Docs.Settings.get("comments");
-        Ext.Array.forEach(['hideRead', 'hideCurrentUser'], function(id) {
-            var cb = Ext.get(id);
-            if (cb) {
-                cb.dom.checked = settings[id];
-                cb.on("change", function() {
-                    this.saveSetting(id, cb.dom.checked);
-                    /**
-                     * @event settingChange
-                     * Fired when one of the comments settings checkboxes is checked/unchecked.
-                     * @param {String} name The name of the setting
-                     * @param {Boolean} enabled True if setting is turned on, false when off.
-                     */
-                    this.fireEvent("settingChange", id, cb.dom.checked);
-                }, this);
-            }
-        }, this);
+        var cb = Ext.get('hideRead');
+        if (cb) {
+            cb.dom.checked = settings.hideRead;
+            cb.on("change", function() {
+                this.saveSetting('hideRead', cb.dom.checked);
+                /**
+                 * @event settingChange
+                 * Fired when one of the comments settings checkboxes is checked/unchecked.
+                 * @param {String} name The name of the setting
+                 * @param {Boolean} enabled True if setting is turned on, false when off.
+                 */
+                this.fireEvent("settingChange", 'hideRead', cb.dom.checked);
+            }, this);
+        }
 
         // Hide the hideRead checkbox if user is not moderator
         this.setHideReadVisibility();

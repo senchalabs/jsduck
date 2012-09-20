@@ -296,7 +296,6 @@ Ext.define('Docs.controller.Comments', {
             offset: offset || 0,
             limit: 100,
             hideRead: settings.hideRead ? 1 : undefined,
-            hideCurrentUser: settings.hideCurrentUser ? 1 : undefined,
             sortByScore: settings.sortByScore ? 1 : undefined,
             username: this.recentCommentsSettings.username
         };
