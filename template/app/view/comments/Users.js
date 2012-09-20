@@ -2,10 +2,10 @@
  * View for showing users.
  * Either sorted by upvotes or comment count.
  */
-Ext.define('Docs.view.comments.TopUsers', {
-    alias: "widget.topusers",
+Ext.define('Docs.view.comments.Users', {
+    alias: "widget.commentsusers",
     extend: 'Ext.panel.Panel',
-    componentCls: "top-users",
+    componentCls: "comments-users",
     requires: ["Docs.Comments"],
 
     dockedItems: [

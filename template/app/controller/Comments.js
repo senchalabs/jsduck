@@ -148,7 +148,7 @@ Ext.define('Docs.controller.Comments', {
                 }
             },
 
-            'topusers': {
+            'commentsusers': {
                 select: function(username) {
                     this.recentCommentsSettings.username = username;
                     this.fetchRecentComments();

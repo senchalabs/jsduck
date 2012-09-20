@@ -7,7 +7,7 @@ Ext.define('Docs.view.comments.Index', {
     mixins: ['Docs.view.Scrolling'],
     requires: [
         'Docs.view.comments.List',
-        'Docs.view.comments.TopUsers'
+        'Docs.view.comments.Users'
     ],
 
     cls: 'comment-index',
@@ -21,7 +21,7 @@ Ext.define('Docs.view.comments.Index', {
         },
         {
             region: "east",
-            xtype: "topusers",
+            xtype: "commentsusers",
             width: 300,
             margin: '0 0 0 20'
         }
