@@ -293,11 +293,6 @@ $moderator-color-light: #94b773;
     @include border-radius(4px);
     font-weight: bold; } }
 
-#comment-index-controls {
-  padding-top: 1em;
-  li {
-    list-style-type: none; } }
-
 .comment-index-container .x-mask {
   opacity: 0.9;
   background: #fff url(../images/ajax-loader.gif) no-repeat center; }
