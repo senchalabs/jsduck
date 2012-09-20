@@ -117,10 +117,16 @@ Ext.define('Docs.view.comments.Users', {
             params: {
                 sortBy: sortBy
             },
-            success: function(users) {
-                this.usersList.getStore().loadData(users);
-            },
+            success: this.loadUsers,
             scope: this
         });
+    },
+
+    loadUsers: function(users) {
+        this.usersList.getStore().loadData(users);
+        if (this.selectedUser) {
+            var index = this.usersList.getStore().findExact("username", this.selectedUser.get("username"));
+            this.usersList.getSelectionModel().select(index, false, true);
+        }
     }
 });
