@@ -115,6 +115,7 @@ Comments.prototype = {
      * @param {Number} [opts.hideUser=undefined] A user_id to hide.
      * @param {Number} [opts.hideRead=false] True to hide comments marked as read.
      * @param {Number} [opts.username=undefined] The name of the user who's comments to show.
+     * @param {Number} [opts.targetId=undefined] The ID of the target to show.
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
@@ -140,6 +141,7 @@ Comments.prototype = {
      * @param {Object} opts Options for the query:
      * @param {Number} [opts.hideUser=undefined] A user_id to hide.
      * @param {Number} [opts.username=undefined] The name of the user who's comments to show.
+     * @param {Number} [opts.targetId=undefined] The ID of the target to show.
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
@@ -168,6 +170,9 @@ Comments.prototype = {
         }
         if (opts.username) {
             where.push(this.db.format("username = ?", [opts.username]));
+        }
+        if (opts.targetId) {
+            where.push(this.db.format("target_id = ?", [opts.targetId]));
         }
         return where.join(" AND ");
     },
@@ -404,6 +409,7 @@ Comments.prototype = {
     getTopTargets: function(callback) {
         var sql = [
             "SELECT",
+                "target_id AS id,",
                 "type,",
                 "cls,",
                 "member,",

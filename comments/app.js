@@ -100,7 +100,8 @@ app.get('/auth/:sdk/:version/comments_recent', function(req, res) {
         orderBy: req.query.sortByScore ? "vote" : "created_at",
         hideCurrentUser: req.query.hideCurrentUser,
         hideRead: req.query.hideRead,
-        username: req.query.username
+        username: req.query.username,
+        targetId: req.query.targetId
     };
     new Request(req).getRecentComments(query, function(comments) {
         res.json(comments);

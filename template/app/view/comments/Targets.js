@@ -42,7 +42,7 @@ Ext.define('Docs.view.comments.Targets', {
                 cls: "iScroll targets-list",
                 autoScroll: true,
                 store: Ext.create('Ext.data.Store', {
-                    fields: ["type", "cls", "member", "score"]
+                    fields: ["id", "type", "cls", "member", "score"]
                 }),
                 allowDeselect: true,
                 tpl: [

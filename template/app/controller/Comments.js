@@ -155,6 +155,13 @@ Ext.define('Docs.controller.Comments', {
                 }
             },
 
+            'commentstargets': {
+                select: function(target) {
+                    this.recentCommentsSettings.targetId = target && target.get("id");
+                    this.fetchRecentComments();
+                }
+            },
+
             'classoverview toolbar': {
                 commentcountclick: function(cmp) {
                     var commentsDiv = Ext.get(Ext.query('.comments-section .comments-div')[0]);
@@ -297,7 +304,8 @@ Ext.define('Docs.controller.Comments', {
             limit: 100,
             hideRead: settings.hideRead ? 1 : undefined,
             sortByScore: settings.sortByScore ? 1 : undefined,
-            username: this.recentCommentsSettings.username
+            username: this.recentCommentsSettings.username,
+            targetId: this.recentCommentsSettings.targetId
         };
 
         this.getCommentsList().setMasked(true);

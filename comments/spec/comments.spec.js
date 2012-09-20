@@ -170,6 +170,13 @@ describe("Comments", function() {
         });
     });
 
+    it("#findRecent with targetId:1 includes only comments for that target", function(done) {
+        comments.findRecent({targetId: 1}, function(err, rows) {
+            expect(rows.every(function(r){return r.target_id === 1;})).toEqual(true);
+            done();
+        });
+    });
+
     it("#count gets total number of comments in current domain", function(done) {
         comments.count({}, function(err, cnt) {
             expect(cnt).toEqual(24);
@@ -215,6 +222,13 @@ describe("Comments", function() {
 
     it("#count with username:renku includes only comments of that user", function(done) {
         comments.count({username: "renku"}, function(err, cnt) {
+            expect(cnt).toEqual(5);
+            done();
+        });
+    });
+
+    it("#count with targetId:1 includes only comments of that target", function(done) {
+        comments.count({targetId: 1}, function(err, cnt) {
             expect(cnt).toEqual(5);
             done();
         });
