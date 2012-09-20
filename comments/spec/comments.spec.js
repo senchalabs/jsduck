@@ -249,6 +249,20 @@ describe("Comments", function() {
         });
     });
 
+    it("#getTopTargets gives all targets that have received posts in this domain", function(done) {
+        comments.getTopTargets(function(err, targets) {
+            expect(targets.length).toEqual(11);
+            done();
+        });
+    });
+
+    it("#getTopTargets sorts targets by number of comments", function(done) {
+        comments.getTopTargets(function(err, targets) {
+            expect(targets[0].score).toBeGreaterThan(targets[1].score);
+            done();
+        });
+    });
+
     it("#add adds a new comment and returns its ID which we can then use to retrieve the comment", function(done) {
         var com = {
             user_id: 1,

@@ -114,6 +114,13 @@ app.get('/auth/:sdk/:version/users', function(req, res) {
     });
 });
 
+// Returns the most commented targets.
+app.get('/auth/:sdk/:version/targets', function(req, res) {
+    new Request(req).getTopTargets(function(users) {
+        res.json(users);
+    });
+});
+
 // Returns number of comments for each class/member,
 // and when user is logged in, all his subscriptions.
 app.get('/auth/:sdk/:version/comments_meta', function(req, res) {

@@ -395,6 +395,27 @@ Comments.prototype = {
         this.db.query(sql, [this.domain], callback);
     },
 
+    /**
+     * Retrieves targets ordered by number of comments.
+     * @param {Function} callback Called when done.
+     * @param {String} callback.err Error message when query failed.
+     * @param {Object} callback.targets The top targets.
+     */
+    getTopTargets: function(callback) {
+        var sql = [
+            "SELECT",
+                "type,",
+                "cls,",
+                "member,",
+                "COUNT(*) AS score",
+            "FROM ", this.view,
+            "WHERE domain = ?",
+            "GROUP BY target_id",
+            "ORDER BY score DESC"
+        ];
+        this.db.query(sql, [this.domain], callback);
+    },
+
     // Helper that converts all `vote_dir` and `read` fields into
     // appropriate type. For some reason the vote_dir field is a
     // string by default, but we don't want that.  The `read` field is

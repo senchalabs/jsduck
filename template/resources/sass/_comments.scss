@@ -339,3 +339,38 @@ $moderator-color-light: #94b773;
       color: $docs-text-color; }
     .username.moderator {
       color: $docs-link-color; } } }
+
+
+// Table with top-voted targets
+
+.comments-targets .x-panel-body .targets-list {
+  ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none; }
+  li {
+    height: 30px;
+    @include border-radius(2px);
+    cursor: pointer;
+    &:hover {
+      background: #eee; }
+    &.x-item-selected {
+      background: $moderator-color-light; } }
+ .score {
+    display: block;
+    float: left;
+    width: 40px;
+    padding: 0 5px;
+    line-height: 30px;
+    font-weight: bold;
+    color: #aaa;
+    text-align: center;
+    font-size: 16px; }
+  .x-item-selected .score {
+    color: $docs-text-color; }
+  .target {
+    float: left;
+    width: 250px;
+    overflow: hidden;
+    line-height: 30px;
+    font-weight: bold; } }

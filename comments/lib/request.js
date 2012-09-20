@@ -63,6 +63,15 @@ Request.prototype = {
     },
 
     /**
+     * Retrieves most commented targets.
+     */
+    getTopTargets: function(callback) {
+        this.db.comments().getTopTargets(function(err, targets) {
+            callback(targets);
+        });
+    },
+
+    /**
      * Provides the comments_meta request data.
      */
     getCommentCountsPerTarget: function(callback) {
