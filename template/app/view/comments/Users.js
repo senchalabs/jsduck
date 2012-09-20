@@ -50,7 +50,6 @@ Ext.define('Docs.view.comments.Users', {
                 cls: "iScroll users-list",
                 autoScroll: true,
                 store: Ext.create('Ext.data.Store', {
-                    model: 'Image',
                     fields: ["username", "score", "emailHash", "moderator"]
                 }),
                 allowDeselect: true,
@@ -61,7 +60,7 @@ Ext.define('Docs.view.comments.Users', {
                             '<span class="score">{score}</span>',
                             '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
                                   '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                            '<span href="#" class="username <tpl if="moderator">moderator</tpl>">{username}</span>',
+                            '<span class="username <tpl if="moderator">moderator</tpl>">{username}</span>',
                         '</li>',
                     '</tpl>',
                     '</ul>'

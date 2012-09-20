@@ -366,10 +366,10 @@ Comments.prototype = {
     },
 
     /**
-     * Retrieves users ordered by number of upvotes.
+     * Retrieves users ordered by number of upvotes or number of comments.
      * @param {String} sortBy Either "votes" or "comments"
      * @param {Function} callback Called when done.
-     * @param {String} callback.err Error message when login failed.
+     * @param {String} callback.err Error message when query failed.
      * @param {Object} callback.users The top users.
      */
     getTopUsers: function(sortBy, callback) {
