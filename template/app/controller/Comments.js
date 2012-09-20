@@ -29,6 +29,10 @@ Ext.define('Docs.controller.Comments', {
         {
             ref: 'index',
             selector: '#commentindex'
+        },
+        {
+            ref: 'commentsList',
+            selector: 'commentslist'
         }
     ],
 
@@ -135,7 +139,7 @@ Ext.define('Docs.controller.Comments', {
                 }
             },
 
-            'commentindex': {
+            'commentslist': {
                 settingChange: function() {
                     this.fetchRecentComments();
                 }
@@ -286,14 +290,14 @@ Ext.define('Docs.controller.Comments', {
             sortByScore: settings.sortByScore ? 1 : undefined
         };
 
-        this.getIndex().setMasked(true);
+        this.getCommentsList().setMasked(true);
 
         this.request("jsonp", {
             url: '/comments_recent',
             method: 'GET',
             params: params,
             success: function(response) {
-                this.getIndex().setMasked(false);
+                this.getCommentsList().setMasked(false);
 
                 this.renderComments(response, 'recentcomments', {
                     hideCommentForm: true,
