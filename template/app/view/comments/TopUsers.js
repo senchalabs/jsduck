@@ -6,6 +6,7 @@ Ext.define('Docs.view.comments.TopUsers', {
     alias: "widget.topusers",
     extend: 'Ext.panel.Panel',
     componentCls: "top-users",
+    requires: ["Docs.Comments"],
 
     dockedItems: [
         {
@@ -62,7 +63,7 @@ Ext.define('Docs.view.comments.TopUsers', {
     },
 
     fetchUsers: function(sortBy) {
-        this.request("jsonp", {
+        Docs.Comments.request("jsonp", {
             url: '/users',
             method: 'GET',
             params: {
@@ -73,10 +74,6 @@ Ext.define('Docs.view.comments.TopUsers', {
             },
             scope: this
         });
-    },
-
-    request: function(type, config) {
-        Docs.App.getController("Comments").request(type, config);
     },
 
     renderUsers: function(users) {
