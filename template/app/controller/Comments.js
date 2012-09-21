@@ -12,6 +12,7 @@ Ext.define('Docs.controller.Comments', {
 
     requires: [
         "Docs.view.auth.LoginHelper",
+        "Docs.view.comments.Form",
         "Docs.Settings",
         "Docs.Syntax",
         "Docs.Tip"
@@ -449,15 +450,12 @@ Ext.define('Docs.controller.Comments', {
                 if (data.success) {
                     contentEl.dom.origContent = contentEl.dom.innerHTML;
 
-                    var commentData = Ext.merge(Ext.clone(currentUser), {
+                    new Docs.view.comments.Form({
+                        renderTo: contentEl,
+                        user: currentUser,
                         content: data.content,
                         updateComment: true
                     });
-
-                    var editForm = Docs.view.Comments.editCommentTpl.overwrite(contentEl, commentData, true);
-
-                    var textarea = editForm.down('textarea').dom;
-                    Docs.view.Comments.makeCodeMirror(textarea, editForm);
                 }
             },
             scope: this
@@ -705,20 +703,14 @@ Ext.define('Docs.controller.Comments', {
             var commentWrap = comments.down('.new-comment-wrap');
             if (this.isLoggedIn()) {
 
-                var formData = Ext.apply(this.getController('Auth').currentUser, {
-                    userSubscribed: Docs.commentSubscriptions[id]
-                });
-
                 var memInfo = Docs.view.Comments.extractMemberInfo(commentWrap);
 
-                var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, Ext.apply(memInfo, formData), true);
-
-                if (wrap) {
-                    var textareaEl = wrap.down('textarea');
-                    if (textareaEl) {
-                        Docs.view.Comments.makeCodeMirror(textareaEl.dom, wrap);
-                    }
-                }
+                new Docs.view.comments.Form({
+                    renderTo: commentWrap,
+                    definedIn: memInfo.definedIn,
+                    user: this.getController('Auth').currentUser,
+                    userSubscribed: Docs.commentSubscriptions[id]
+                });
             } else {
                 Docs.view.auth.LoginHelper.renderToComments(commentWrap);
             }
