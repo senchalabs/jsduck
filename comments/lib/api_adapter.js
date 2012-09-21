@@ -32,9 +32,9 @@ module.exports = {
     userToJson: function(user) {
         return {
             id: user.id,
-            username: user.username,
+            userName: user.username,
             score: user.score,
-            moderator: user.moderator,
+            mod: user.moderator,
             emailHash: crypto.createHash('md5').update(user.email).digest("hex")
         };
     },

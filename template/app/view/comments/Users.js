@@ -60,7 +60,7 @@ Ext.define('Docs.view.comments.Users', {
                 cls: "iScroll users-list",
                 autoScroll: true,
                 store: Ext.create('Ext.data.Store', {
-                    fields: ["username", "score", "emailHash", "moderator"]
+                    fields: ["userName", "score", "emailHash", "mod"]
                 }),
                 allowDeselect: true,
                 tpl: [
@@ -70,7 +70,7 @@ Ext.define('Docs.view.comments.Users', {
                             '<span class="score">{score}</span>',
                             '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
                                   '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                            '<span class="username <tpl if="moderator">moderator</tpl>">{username}</span>',
+                            '<span class="username <tpl if="mod">moderator</tpl>">{userName}</span>',
                         '</li>',
                     '</tpl>',
                     '</ul>'
@@ -105,7 +105,7 @@ Ext.define('Docs.view.comments.Users', {
     onFilter: function(pattern) {
         this.list.getSelectionModel().deselectAll();
         this.list.getStore().clearFilter(true);
-        this.list.getStore().filter({property: "username", value: pattern, anyMatch: true});
+        this.list.getStore().filter({property: "userName", value: pattern, anyMatch: true});
     },
 
     /**
@@ -117,7 +117,7 @@ Ext.define('Docs.view.comments.Users', {
 
     onSelect: function(user) {
         this.selectedUser = user;
-        this.fireEvent("select", user.get("username"));
+        this.fireEvent("select", user.get("userName"));
     },
 
     onDeselect: function() {
@@ -140,7 +140,7 @@ Ext.define('Docs.view.comments.Users', {
     loadUsers: function(users) {
         this.list.getStore().loadData(users);
         if (this.selectedUser) {
-            var index = this.list.getStore().findExact("username", this.selectedUser.get("username"));
+            var index = this.list.getStore().findExact("username", this.selectedUser.get("userName"));
             this.list.getSelectionModel().select(index, false, true);
         }
     }

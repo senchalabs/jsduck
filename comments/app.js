@@ -3,6 +3,7 @@ var MySQLStore = require('connect-mysql-session')(express);
 var config = require('./config');
 var Request = require('./lib/request');
 var Auth = require('./lib/auth');
+var ApiAdapter = require('./lib/api_adapter');
 
 var app = express();
 
@@ -78,11 +79,9 @@ app.get('/auth/session', function(req, res) {
 app.get('/auth/session_new', function(req, res) {
     new Request(req).getUser(function(user) {
         if (user) {
-            res.json({
-                userName: user.username,
-                mod: user.moderator,
-                sessionID: req.sessionID
-            });
+            var json = ApiAdapter.userToJson(user);
+            json.sessionID = req.sessionID;
+            res.json(json);
         }
         else {
             res.json({sessionID: req.sessionID});
@@ -92,12 +91,10 @@ app.get('/auth/session_new', function(req, res) {
 
 app.post('/auth/login', Auth.attemptLogin, function(req, res) {
     new Request(req).getUser(function(user) {
-        res.json({
-            userName: user.username,
-            mod: user.moderator,
-            sessionID: req.sessionID,
-            success: true
-        });
+        var json = ApiAdapter.userToJson(user);
+        json.sessionID = req.sessionID;
+        json.success = true;
+        res.json(json);
     });
 });
 
