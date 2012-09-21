@@ -13,11 +13,11 @@
     padding-top: 2px;
     border-bottom: 1px #f1f1f1;
     font-size: 2em;
-    color: #66ab16;
+    color: $docs-heading-color;
 
     // Icons for different class types
     .class-source-link {
-      color: #66ab16; // Same color as h1 itself
+      color: $docs-heading-color;
       margin-left: -3px;
       padding: 0.1em 0 0.4em 2.3em; }
     &.class .class-source-link {

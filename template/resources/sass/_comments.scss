@@ -307,7 +307,7 @@ $moderator-color-light: #94b773;
   h1 a:hover {
     @include opacity(0.7); }
   h1 a.selected {
-    color: #66ab16; } }
+    color: $docs-heading-color; } }
 
 
 // Table with top-voted users

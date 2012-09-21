@@ -105,7 +105,7 @@
     font-family: $docs-heading-font;
     margin-bottom: 16px;
     font-size: 2em;
-    color: #66ab16; }
+    color: $docs-heading-color; }
   h2 {
     @include guides-h2-heading; }
   h3 {
