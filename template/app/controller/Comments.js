@@ -147,7 +147,7 @@ Ext.define('Docs.controller.Comments', {
                     this.fetchRecentComments();
                 },
                 sortOrderChange: function(orderBy) {
-                    this.recentCommentsSettings.sortByScore = (orderBy === "recent");
+                    this.recentCommentsSettings.sortByScore = (orderBy === "votes");
                     this.fetchRecentComments();
                 }
             },
