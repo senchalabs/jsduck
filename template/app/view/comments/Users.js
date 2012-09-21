@@ -6,7 +6,10 @@ Ext.define('Docs.view.comments.Users', {
     alias: "widget.commentsUsers",
     extend: 'Ext.panel.Panel',
     componentCls: "comments-users",
-    requires: ["Docs.Comments"],
+    requires: [
+        "Docs.Comments",
+        "Docs.view.SimpleSelectBehavior"
+    ],
 
     layout: "border",
 
@@ -56,14 +59,15 @@ Ext.define('Docs.view.comments.Users', {
                     '</tpl>',
                     '</ul>'
                 ],
-                itemSelector: "li",
-                listeners: {
-                    select: this.onSelect,
-                    deselect: this.onDeselect,
-                    scope: this
-                }
+                itemSelector: "li"
             })
         ];
+
+        new Docs.view.SimpleSelectBehavior(this.list, {
+            select: this.onSelect,
+            deselect: this.onDeselect,
+            scope: this
+        });
 
         this.callParent(arguments);
     },
@@ -89,22 +93,15 @@ Ext.define('Docs.view.comments.Users', {
         this.list.getSelectionModel().deselectAll();
     },
 
-    onSelect: function(view, user) {
+    onSelect: function(user) {
+        console.log("xselect");
         this.selectedUser = user;
         this.fireEvent("select", user.get("username"));
     },
 
     onDeselect: function() {
-        // Don't fire empty "select" event when the deselect occured
-        // only because another user was selected (and so the previous
-        // was unselected).  Wait a tiny delay and when no user
-        // becomes selected, onle then fire the empty select event.
         this.selectedUser = undefined;
-        Ext.Function.defer(function() {
-            if (!this.selectedUser) {
-                this.fireEvent("select", undefined);
-            }
-        }, 10, this);
+        this.fireEvent("select", undefined);
     },
 
     fetchUsers: function(sortBy) {

@@ -5,7 +5,10 @@ Ext.define('Docs.view.comments.Targets', {
     alias: "widget.commentsTargets",
     extend: 'Ext.panel.Panel',
     componentCls: "comments-targets",
-    requires: ["Docs.Comments"],
+    requires: [
+        "Docs.Comments",
+        "Docs.view.SimpleSelectBehavior"
+    ],
 
     layout: "border",
 
@@ -56,14 +59,15 @@ Ext.define('Docs.view.comments.Targets', {
                         }
                     }
                 ],
-                itemSelector: "li",
-                listeners: {
-                    select: this.onSelect,
-                    deselect: this.onDeselect,
-                    scope: this
-                }
+                itemSelector: "li"
             })
         ];
+
+        new Docs.view.SimpleSelectBehavior(this.list, {
+            select: this.onSelect,
+            deselect: this.onDeselect,
+            scope: this
+        });
 
         this.callParent(arguments);
     },
@@ -80,22 +84,12 @@ Ext.define('Docs.view.comments.Targets', {
         this.list.getSelectionModel().deselectAll();
     },
 
-    onSelect: function(view, target) {
-        this.selectedTarget = target;
+    onSelect: function(target) {
         this.fireEvent("select", target);
     },
 
     onDeselect: function() {
-        // Don't fire empty "select" event when the deselect occured
-        // only because another target was selected (and so the previous
-        // was unselected).  Wait a tiny delay and when no target
-        // becomes selected, onle then fire the empty select event.
-        this.selectedTarget = undefined;
-        Ext.Function.defer(function() {
-            if (!this.selectedTarget) {
-                this.fireEvent("select", undefined);
-            }
-        }, 10, this);
+        this.fireEvent("select", undefined);
     },
 
     fetchTargets: function(sortBy) {
