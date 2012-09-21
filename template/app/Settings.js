@@ -19,8 +19,7 @@ Ext.define("Docs.Settings", {
             "accessor": true
         },
         comments: {
-            hideRead: false,
-            sortByScore: false
+            hideRead: false
         },
         showPrivateClasses: false,
         classTreeLogic: "PackageLogic"

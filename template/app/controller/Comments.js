@@ -143,7 +143,11 @@ Ext.define('Docs.controller.Comments', {
             },
 
             'commentsList': {
-                settingChange: function() {
+                hideReadChange: function() {
+                    this.fetchRecentComments();
+                },
+                sortOrderChange: function(orderBy) {
+                    this.recentCommentsSettings.sortByScore = (orderBy === "recent");
                     this.fetchRecentComments();
                 }
             },
@@ -303,7 +307,7 @@ Ext.define('Docs.controller.Comments', {
             offset: offset || 0,
             limit: 100,
             hideRead: settings.hideRead ? 1 : undefined,
-            sortByScore: settings.sortByScore ? 1 : undefined,
+            sortByScore: this.recentCommentsSettings.sortByScore ? 1 : undefined,
             username: this.recentCommentsSettings.username,
             targetId: this.recentCommentsSettings.targetId
         };

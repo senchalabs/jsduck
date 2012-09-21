@@ -47,6 +47,17 @@ Ext.define('Docs.view.comments.List', {
         }
     ],
 
+    /**
+     * @event hideReadChange
+     * Fired when the hideRead checkbox is checked/unchecked.
+     */
+
+    /**
+     * @event sortOrderChange
+     * Fired when the tab is switched.
+     * @param {String} sortBy Either "recent" or "votes".
+     */
+
     afterRender: function() {
         this.callParent(arguments);
 
@@ -75,13 +86,7 @@ Ext.define('Docs.view.comments.List', {
             cb.dom.checked = settings.hideRead;
             cb.on("change", function() {
                 this.saveSetting('hideRead', cb.dom.checked);
-                /**
-                 * @event settingChange
-                 * Fired when one of the comments settings checkboxes is checked/unchecked.
-                 * @param {String} name The name of the setting
-                 * @param {Boolean} enabled True if setting is turned on, false when off.
-                 */
-                this.fireEvent("settingChange", 'hideRead', cb.dom.checked);
+                this.fireEvent("hideReadChange");
             }, this);
         }
 
@@ -105,12 +110,10 @@ Ext.define('Docs.view.comments.List', {
 
         this.down("tabpanel[cls=comments-tabpanel]").on("tabchange", function(panel, newTab) {
             if (newTab.title === "Recent") {
-                this.saveSetting("sortByScore", false);
-                this.fireEvent("settingChange", "sortByScore", false);
+                this.fireEvent("sortOrderChange", "recent");
             }
             else {
-                this.saveSetting("sortByScore", true);
-                this.fireEvent("settingChange", "sortByScore", true);
+                this.fireEvent("sortOrderChange", "votes");
             }
         }, this);
     },
