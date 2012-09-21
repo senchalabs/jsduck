@@ -8,7 +8,8 @@ Ext.define('Docs.view.comments.Users', {
     componentCls: "comments-users",
     requires: [
         "Docs.Comments",
-        "Docs.view.SimpleSelectBehavior"
+        "Docs.view.SimpleSelectBehavior",
+        "Docs.view.comments.FilterField"
     ],
 
     layout: "border",
@@ -25,13 +26,28 @@ Ext.define('Docs.view.comments.Users', {
             this.tabpanel = Ext.widget("tabpanel", {
                 plain: true,
                 region: "north",
-                height: 25,
+                height: 50,
                 items: [
                     {
                         title: "Votes"
                     },
                     {
                         title: "Comments"
+                    }
+                ],
+                dockedItems: [
+                    {
+                        dock: "bottom",
+                        items: [{
+                            xtype: "commentsFilterField",
+                            emptyText: "Filter users by name...",
+                            width: 320,
+                            height: 20,
+                            listeners: {
+                                filter: this.onFilter,
+                                scope: this
+                            }
+                        }]
                     }
                 ],
                 listeners: {
@@ -86,6 +102,12 @@ Ext.define('Docs.view.comments.Users', {
         }
     },
 
+    onFilter: function(pattern) {
+        this.list.getSelectionModel().deselectAll();
+        this.list.getStore().clearFilter(true);
+        this.list.getStore().filter({property: "username", value: pattern, anyMatch: true});
+    },
+
     /**
      * Clears the selection.
      */
@@ -94,7 +116,6 @@ Ext.define('Docs.view.comments.Users', {
     },
 
     onSelect: function(user) {
-        console.log("xselect");
         this.selectedUser = user;
         this.fireEvent("select", user.get("username"));
     },

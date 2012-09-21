@@ -7,7 +7,8 @@ Ext.define('Docs.view.comments.Targets', {
     componentCls: "comments-targets",
     requires: [
         "Docs.Comments",
-        "Docs.view.SimpleSelectBehavior"
+        "Docs.view.SimpleSelectBehavior",
+        "Docs.view.comments.FilterField"
     ],
 
     layout: "border",
@@ -24,10 +25,25 @@ Ext.define('Docs.view.comments.Targets', {
             this.tabpanel = Ext.widget("tabpanel", {
                 plain: true,
                 region: "north",
-                height: 25,
+                height: 50,
                 items: [
                     {
                         title: "By comment count"
+                    }
+                ],
+                dockedItems: [
+                    {
+                        dock: "bottom",
+                        items: [{
+                            xtype: "commentsFilterField",
+                            emptyText: "Filter topics by name...",
+                            width: 320,
+                            height: 20,
+                            listeners: {
+                                filter: this.onFilter,
+                                scope: this
+                            }
+                        }]
                     }
                 ]
             }),
@@ -36,7 +52,7 @@ Ext.define('Docs.view.comments.Targets', {
                 cls: "iScroll targets-list",
                 autoScroll: true,
                 store: Ext.create('Ext.data.Store', {
-                    fields: ["id", "type", "cls", "member", "score"]
+                    fields: ["id", "type", "cls", "member", "score", "text"]
                 }),
                 allowDeselect: true,
                 tpl: [
@@ -44,20 +60,10 @@ Ext.define('Docs.view.comments.Targets', {
                     '<tpl for=".">',
                         '<li>',
                             '<span class="score">{score}</span>',
-                            '<span class="target">{[this.target(values)]}</span>',
+                            '<span class="target">{text}</span>',
                         '</li>',
                     '</tpl>',
-                    '</ul>',
-                    {
-                        target: function(t) {
-                            if (t.type === "class") {
-                                return t.cls + (t.member ? "#"+t.member.replace(/^.*-/, "") : "");
-                            }
-                            else {
-                                return t.type + " " + t.cls;
-                            }
-                        }
-                    }
+                    '</ul>'
                 ],
                 itemSelector: "li"
             })
@@ -75,6 +81,12 @@ Ext.define('Docs.view.comments.Targets', {
     afterRender: function() {
         this.callParent(arguments);
         this.fetchTargets();
+    },
+
+    onFilter: function(pattern) {
+        this.list.getSelectionModel().deselectAll();
+        this.list.getStore().clearFilter(true);
+        this.list.getStore().filter({property: "text", value: pattern, anyMatch: true});
     },
 
     /**
@@ -102,6 +114,17 @@ Ext.define('Docs.view.comments.Targets', {
     },
 
     loadTargets: function(targets) {
-        this.list.getStore().loadData(targets);
+        this.list.getStore().loadData(Ext.Array.map(targets, this.convertTarget, this));
+    },
+
+    // Adds text field to target record.
+    convertTarget: function(t) {
+        if (t.type === "class") {
+            t.text = t.cls + (t.member ? "#"+t.member.replace(/^.*-/, "") : "");
+        }
+        else {
+            t.text = t.type + " " + t.cls;
+        }
+        return t;
     }
 });

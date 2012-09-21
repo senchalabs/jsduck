@@ -386,3 +386,20 @@ $moderator-color-light: #94b773;
     overflow: hidden;
     line-height: 30px;
     font-weight: bold; } }
+
+
+// Filter field with reset button
+.comments-filter-field {
+  table {
+    border-style: solid;
+    border-color: #bebebe;
+    border-width: 1px;
+    background: white url('../images/text-bg.gif') repeat-x 0 0; }
+  .x-form-trigger.reset {
+    background: url(../images/x12.png) no-repeat 2px 3px;
+    padding: 0;
+    margin: 0;
+    border: 0; }
+  input {
+    background: transparent;
+    border: none; } }
