@@ -3,7 +3,7 @@
  * Either sorted by upvotes or comment count.
  */
 Ext.define('Docs.view.comments.Users', {
-    alias: "widget.commentsusers",
+    alias: "widget.commentsUsers",
     extend: 'Ext.panel.Panel',
     componentCls: "comments-users",
     requires: ["Docs.Comments"],

@@ -32,7 +32,7 @@ Ext.define('Docs.controller.Comments', {
         },
         {
             ref: 'commentsList',
-            selector: 'commentslist'
+            selector: 'commentsList'
         }
     ],
 
@@ -142,20 +142,20 @@ Ext.define('Docs.controller.Comments', {
                 }
             },
 
-            'commentslist': {
+            'commentsList': {
                 settingChange: function() {
                     this.fetchRecentComments();
                 }
             },
 
-            'commentsusers': {
+            'commentsUsers': {
                 select: function(username) {
                     this.recentCommentsSettings.username = username;
                     this.fetchRecentComments();
                 }
             },
 
-            'commentstargets': {
+            'commentsTargets': {
                 select: function(target) {
                     this.recentCommentsSettings.targetId = target && target.get("id");
                     this.fetchRecentComments();

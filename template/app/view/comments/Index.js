@@ -19,7 +19,7 @@ Ext.define('Docs.view.comments.Index', {
     items: [
         {
             region: "center",
-            xtype: "commentslist"
+            xtype: "commentsList"
         },
         {
             region: "east",
@@ -37,10 +37,10 @@ Ext.define('Docs.view.comments.Index', {
             ],
             items: [
                 {
-                    xtype: "commentsusers"
+                    xtype: "commentsUsers"
                 },
                 {
-                    xtype: "commentstargets"
+                    xtype: "commentsTargets"
                 }
             ]
         }
@@ -50,8 +50,8 @@ Ext.define('Docs.view.comments.Index', {
         this.callParent(arguments);
 
         var cardPanel = this.down("#cardPanel");
-        var users = this.down("commentsusers");
-        var targets = this.down("commentstargets");
+        var users = this.down("commentsUsers");
+        var targets = this.down("commentsTargets");
         this.down("commentsHeaderMenu").on("select", function(item) {
             if (item === "users") {
                 targets.deselectAll();

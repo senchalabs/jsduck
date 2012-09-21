@@ -2,7 +2,7 @@
  * View for showing topics (classes, members, guides, ...).
  */
 Ext.define('Docs.view.comments.Targets', {
-    alias: "widget.commentstargets",
+    alias: "widget.commentsTargets",
     extend: 'Ext.panel.Panel',
     componentCls: "comments-targets",
     requires: ["Docs.Comments"],

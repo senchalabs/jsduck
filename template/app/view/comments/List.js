@@ -3,7 +3,7 @@
  */
 Ext.define('Docs.view.comments.List', {
     extend: 'Ext.panel.Panel',
-    alias: "widget.commentslist",
+    alias: "widget.commentsList",
     requires: ['Docs.Settings'],
     componentCls: 'comment-index-container',
 
