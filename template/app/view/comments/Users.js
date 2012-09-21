@@ -36,7 +36,7 @@ Ext.define('Docs.view.comments.Users', {
                     scope: this
                 }
             }),
-            this.usersList = Ext.widget("dataview", {
+            this.list = Ext.widget("dataview", {
                 region: "center",
                 cls: "iScroll users-list",
                 autoScroll: true,
@@ -86,7 +86,7 @@ Ext.define('Docs.view.comments.Users', {
      * Clears the selection.
      */
     deselectAll: function() {
-        this.usersList.getSelectionModel().deselectAll();
+        this.list.getSelectionModel().deselectAll();
     },
 
     onSelect: function(view, user) {
@@ -120,10 +120,10 @@ Ext.define('Docs.view.comments.Users', {
     },
 
     loadUsers: function(users) {
-        this.usersList.getStore().loadData(users);
+        this.list.getStore().loadData(users);
         if (this.selectedUser) {
-            var index = this.usersList.getStore().findExact("username", this.selectedUser.get("username"));
-            this.usersList.getSelectionModel().select(index, false, true);
+            var index = this.list.getStore().findExact("username", this.selectedUser.get("username"));
+            this.list.getSelectionModel().select(index, false, true);
         }
     }
 });
