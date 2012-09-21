@@ -59,7 +59,23 @@ app.configure(function() {
 
 // Authentication
 
+// Old version for backwards compat.
 app.get('/auth/session', function(req, res) {
+    new Request(req).getUser(function(user) {
+        if (user) {
+            res.json({
+                userName: user.username,
+                mod: user.moderator
+            });
+        }
+        else {
+            res.json(false);
+        }
+    });
+});
+
+// New version.
+app.get('/auth/session_new', function(req, res) {
     new Request(req).getUser(function(user) {
         if (user) {
             res.json({

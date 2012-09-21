@@ -74,7 +74,7 @@ Ext.define('Docs.controller.Auth', {
      */
     retrieveSession: function() {
         Ext.Ajax.request({
-            url: Docs.baseUrl + '/session',
+            url: Docs.baseUrl + '/session_new',
             params: { sid: this.sid },
             method: 'GET',
             cors: true,
