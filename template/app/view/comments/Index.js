@@ -7,6 +7,7 @@ Ext.define('Docs.view.comments.Index', {
     mixins: ['Docs.view.Scrolling'],
     requires: [
         'Docs.view.comments.List',
+        'Docs.view.comments.HeaderMenu',
         'Docs.view.comments.Users',
         'Docs.view.comments.Targets'
     ],
@@ -22,11 +23,46 @@ Ext.define('Docs.view.comments.Index', {
         },
         {
             region: "east",
-            xtype: "commentstargets",
+            itemId: "cardPanel",
+            layout: "border",
             width: 300,
-            margin: '0 0 0 20'
+            margin: '0 0 0 20',
+            layout: "card",
+            dockedItems: [
+                {
+                    xtype: 'commentsHeaderMenu',
+                    dock: "top",
+                    height: 35
+                }
+            ],
+            items: [
+                {
+                    xtype: "commentsusers"
+                },
+                {
+                    xtype: "commentstargets"
+                }
+            ]
         }
     ],
+
+    initComponent: function() {
+        this.callParent(arguments);
+
+        var cardPanel = this.down("#cardPanel");
+        var users = this.down("commentsusers");
+        var targets = this.down("commentstargets");
+        this.down("commentsHeaderMenu").on("select", function(item) {
+            if (item === "users") {
+                targets.deselectAll();
+                cardPanel.getLayout().setActiveItem(users);
+            }
+            else {
+                users.deselectAll();
+                cardPanel.getLayout().setActiveItem(targets);
+            }
+        }, this);
+    },
 
     /**
      * Returns tab config for comments page.

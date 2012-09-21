@@ -8,15 +8,6 @@ Ext.define('Docs.view.comments.Users', {
     componentCls: "comments-users",
     requires: ["Docs.Comments"],
 
-    dockedItems: [
-        {
-            xtype: 'container',
-            dock: 'top',
-            height: 35,
-            html: '<h1>Users</h1>'
-        }
-    ],
-
     layout: "border",
 
     /**
@@ -89,6 +80,13 @@ Ext.define('Docs.view.comments.Users', {
         else {
             this.fetchUsers("comments");
         }
+    },
+
+    /**
+     * Clears the selection.
+     */
+    deselectAll: function() {
+        this.usersList.getSelectionModel().deselectAll();
     },
 
     onSelect: function(view, user) {

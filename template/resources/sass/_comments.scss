@@ -298,6 +298,18 @@ $moderator-color-light: #94b773;
   background: #fff url(../images/ajax-loader.gif) no-repeat center; }
 
 
+// Menu for switching between Users and Topics
+
+.comments-header-menu {
+  h1 a {
+    margin-right: 1em;
+    color: gray; }
+  h1 a:hover {
+    @include opacity(0.7); }
+  h1 a.selected {
+    color: #66ab16; } }
+
+
 // Table with top-voted users
 
 .comments-users .x-panel-body .users-list {

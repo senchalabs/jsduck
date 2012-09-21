@@ -7,15 +7,6 @@ Ext.define('Docs.view.comments.Targets', {
     componentCls: "comments-targets",
     requires: ["Docs.Comments"],
 
-    dockedItems: [
-        {
-            xtype: 'container',
-            dock: 'top',
-            height: 35,
-            html: '<h1>Topics</h1>'
-        }
-    ],
-
     layout: "border",
 
     /**
@@ -80,6 +71,13 @@ Ext.define('Docs.view.comments.Targets', {
     afterRender: function() {
         this.callParent(arguments);
         this.fetchTargets();
+    },
+
+    /**
+     * Clears the selection.
+     */
+    deselectAll: function() {
+        this.list.getSelectionModel().deselectAll();
     },
 
     onSelect: function(view, target) {
