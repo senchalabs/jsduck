@@ -365,19 +365,5 @@ Ext.define('Docs.view.Comments', {
                 Docs.view.auth.LoginHelper.renderToComments(newComment);
             }
         }, this);
-    },
-
-    showMember: function(cls, member) {
-        var memberEl = Ext.get(member).down('.long'),
-            id = ('class-' + cls + '-' + member).replace(/\./g, '-');
-
-        if (!memberEl.hasCls('renderedComment')) {
-            this.commentsMetaTpl.append(memberEl, {
-                num: 0,
-                id: id
-            });
-            memberEl.addCls('renderedComment');
-            Docs.App.getController('CommentsMeta').commentIdMap['comments-' + id] = ['class', cls, member];
-        }
     }
 });
