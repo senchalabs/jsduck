@@ -353,36 +353,18 @@ Ext.define('Docs.view.Comments', {
 
         Ext.Array.each(Ext.query('.new-comment-wrap'), function(newComment) {
             var hideCommentForm = Ext.get(newComment).up('.comment-list').parent().hasCls('hideCommentForm');
-            var memInfo = this.extractMemberInfo(newComment);
 
             if (hideCommentForm) {
                 // Do nothing
             } else if (Docs.App.getController('Auth').isLoggedIn()) {
                 new Docs.view.comments.Form({
                     renderTo: newComment,
-                    definedIn: memInfo.definedIn,
                     user: currentUser
                 });
             } else {
                 Docs.view.auth.LoginHelper.renderToComments(newComment);
             }
         }, this);
-    },
-
-    /**
-     * Given an HTML element, determines the member it's in and if the
-     * member is inherited.  If it's inherited, returns hash with
-     * `{definedIn: "className"}`.  Otherwise just returns empty hash.
-     * The definedIn value is used inside template to print a notice
-     * about posting a possible out-of-context comment.
-     */
-    extractMemberInfo: function(el) {
-        var info = {};
-        var member = Ext.get(el).up(".member");
-        if (member && member.hasCls("inherited")) {
-            info.definedIn = member.down(".defined-in").getHTML();
-        }
-        return info;
     },
 
     showMember: function(cls, member) {

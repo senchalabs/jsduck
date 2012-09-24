@@ -703,11 +703,8 @@ Ext.define('Docs.controller.Comments', {
             var commentWrap = comments.down('.new-comment-wrap');
             if (this.isLoggedIn()) {
 
-                var memInfo = Docs.view.Comments.extractMemberInfo(commentWrap);
-
                 new Docs.view.comments.Form({
                     renderTo: commentWrap,
-                    definedIn: memInfo.definedIn,
                     user: this.getController('Auth').currentUser,
                     userSubscribed: Docs.commentSubscriptions[id]
                 });

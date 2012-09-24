@@ -11,12 +11,6 @@ Ext.define('Docs.view.comments.Form', {
      * Object describing currently logged in user.
      */
     /**
-     * @cfg {String} definedIn
-     * The name of the class the member which we're commenting is
-     * defined in.  Should only be supplied when editing a member
-     * belonging to parent class.
-     */
-    /**
      * @cfg {Boolean} userSubscribed
      * True when user is subscribed to this thread.
      */
@@ -147,7 +141,7 @@ Ext.define('Docs.view.comments.Form', {
 
     render: function() {
         var cfg = Ext.apply({
-            definedIn: this.definedIn,
+            definedIn: this.updateComment ? undefined : this.extractDefinedIn(this.renderTo),
             updateComment: this.updateComment,
             content: this.content,
             userSubscribed: this.userSubscribed
@@ -155,6 +149,19 @@ Ext.define('Docs.view.comments.Form', {
 
         var wrap = this.tpl.overwrite(this.renderTo, cfg, true);
         this.makeCodeMirror(wrap.down('textarea').dom);
+    },
+
+    // Given an HTML element, determines the member it's in and if the
+    // member is inherited.  If it's inherited, returns a string
+    // with the classname.  Otherwise just returns undefined.
+    // The definedIn value is used inside template to print a notice
+    // about posting a possible out-of-context comment.
+    extractDefinedIn: function(el) {
+        var member = Ext.get(el).up(".member");
+        if (member && member.hasCls("inherited")) {
+            return member.down(".defined-in").getHTML();
+        }
+        return undefined;
     },
 
     makeCodeMirror: function(textarea) {
