@@ -453,8 +453,7 @@ Ext.define('Docs.controller.Comments', {
                     new Docs.view.comments.Form({
                         renderTo: contentEl,
                         user: currentUser,
-                        content: data.content,
-                        updateComment: true
+                        content: data.content
                     });
                 }
             },

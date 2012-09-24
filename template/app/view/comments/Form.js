@@ -15,13 +15,10 @@ Ext.define('Docs.view.comments.Form', {
      * True when user is subscribed to this thread.
      */
     /**
-     * @cfg {Boolean} updateComment
-     * True to invoke the form in editing existing comment mode.
-     * The default is to use new comment form.
-     */
-    /**
      * @cfg {String} content
      * The existing content that we're about to edit.
+     * Setting this will start the form in editing-existing-comment mode.
+     * Without this a form for adding new comment is created.
      */
 
     /**
@@ -142,7 +139,7 @@ Ext.define('Docs.view.comments.Form', {
     render: function() {
         var cfg = Ext.apply({
             definedIn: this.updateComment ? undefined : this.extractDefinedIn(this.renderTo),
-            updateComment: this.updateComment,
+            updateComment: this.content !== undefined,
             content: this.content,
             userSubscribed: this.userSubscribed
         }, this.user);
