@@ -104,10 +104,6 @@ Ext.define('Docs.view.comments.List', {
     },
 
     initTabs: function() {
-        if (Docs.Settings.get("comments").sortByScore) {
-            this.down("tabpanel[cls=comments-tabpanel]").setActiveTab(1);
-        }
-
         this.down("tabpanel[cls=comments-tabpanel]").on("tabchange", function(panel, newTab) {
             if (newTab.title === "Recent") {
                 this.fireEvent("sortOrderChange", "recent");
