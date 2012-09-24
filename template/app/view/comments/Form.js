@@ -31,8 +31,8 @@ Ext.define('Docs.view.comments.Form', {
         var innerTpl = [
             '<div class="com-meta">',
                 '<img class="avatar" width="25" height="25"',
-                    ' src="http://www.gravatar.com/avatar/{emailHash}?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                '<div class="author">Logged in as {userName}</div>',
+                    ' src="http://www.gravatar.com/avatar/{user.emailHash}?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
+                '<div class="author">Logged in as {user.userName}</div>',
                 '<label class="subscribe">',
                     'Email updates? <input type="checkbox" class="subscriptionCheckbox" <tpl if="userSubscribed">checked="checked"</tpl> /><span class="sep"> | </span>',
                 '</label>',
@@ -137,14 +137,14 @@ Ext.define('Docs.view.comments.Form', {
     },
 
     render: function() {
-        var cfg = Ext.apply({
+        var wrap = this.tpl.overwrite(this.renderTo, {
             definedIn: this.updateComment ? undefined : this.extractDefinedIn(this.renderTo),
             updateComment: this.content !== undefined,
             content: this.content,
-            userSubscribed: this.userSubscribed
-        }, this.user);
+            userSubscribed: this.userSubscribed,
+            user: this.user
+        }, true);
 
-        var wrap = this.tpl.overwrite(this.renderTo, cfg, true);
         this.makeCodeMirror(wrap.down('textarea').dom);
     },
 
