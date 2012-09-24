@@ -1,9 +1,10 @@
 /**
- * Container for recent comments listing.
+ * Container for listing of all the comments.
+ * Sorted by date or votes.
  */
-Ext.define('Docs.view.comments.List', {
+Ext.define('Docs.view.comments.FullList', {
     extend: 'Ext.panel.Panel',
-    alias: "widget.commentsList",
+    alias: "widget.commentsFullList",
     requires: ['Docs.Settings'],
     componentCls: 'comment-index-container',
 
