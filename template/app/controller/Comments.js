@@ -33,8 +33,8 @@ Ext.define('Docs.controller.Comments', {
             selector: '#commentindex'
         },
         {
-            ref: 'commentsList',
-            selector: 'commentsList'
+            ref: 'commentsFullList',
+            selector: 'commentsFullList'
         }
     ],
 
@@ -314,14 +314,14 @@ Ext.define('Docs.controller.Comments', {
             targetId: this.recentCommentsSettings.targetId
         };
 
-        this.getCommentsList().setMasked(true);
+        this.getCommentsFullList().setMasked(true);
 
         this.request("jsonp", {
             url: '/comments_recent',
             method: 'GET',
             params: params,
             success: function(response) {
-                this.getCommentsList().setMasked(false);
+                this.getCommentsFullList().setMasked(false);
 
                 this.renderComments(response, 'recentcomments', {
                     hideCommentForm: true,
