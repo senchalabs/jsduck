@@ -3,6 +3,8 @@
  * comments data inside it.
  */
 Ext.define('Docs.view.comments.MemberWrap', {
+    requires: ["Docs.view.comments.Expander"],
+
     tpl: Ext.create("Ext.XTemplate", '<span class="toggleMemberComments">{0}</span>'),
 
     /**
@@ -28,7 +30,7 @@ Ext.define('Docs.view.comments.MemberWrap', {
         var expanderWrap = Ext.DomHelper.append(this.el.down('.long'), "<div></div>");
 
         this.expander = new Docs.view.comments.Expander({
-            num: this.num,
+            count: this.count,
             className: this.className,
             memberId: this.getMemberId(),
             renderTo: expanderWrap

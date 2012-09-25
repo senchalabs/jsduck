@@ -5,6 +5,12 @@ Ext.define('Docs.view.comments.Expander', {
     extend: 'Ext.Component',
 
     /**
+     * @cfg {String} type
+     * One of: "class", "guide", "video".
+     */
+    type: "class",
+
+    /**
      * @cfg {String} className
      */
     /**
@@ -16,11 +22,6 @@ Ext.define('Docs.view.comments.Expander', {
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
-            '<tpl if="isClass">',
-                '<div class="comments-section">',
-                    '<h3 class="members-title icon-comment">Comments</h3>',
-            '</tpl>',
-
             '<div class="comments-div first-child" id="comments-{id}">',
                 '<a href="#" class="side toggleComments"><span></span></a>',
                 '<a href="#" class="name toggleComments">',
@@ -34,11 +35,7 @@ Ext.define('Docs.view.comments.Expander', {
                         '</tpl>',
                     '</tpl>',
                 '</a>',
-            '</div>',
-
-            '<tpl if="isClass">',
-                '</div>',
-            '</tpl>'
+            '</div>'
         );
 
         this.data = this.prepareData();
@@ -56,12 +53,11 @@ Ext.define('Docs.view.comments.Expander', {
     },
 
     prepareData: function() {
-        var cls = 'class-' + this.className.replace(/\./g, '-');
+        var cls = this.type + '-' + this.className.replace(/\./g, '-');
 
         return {
             id: this.memberId ? cls+"-"+this.memberId : cls,
-            count: this.count,
-            isClass: !this.memberId
+            count: this.count
         };
     }
 

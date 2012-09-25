@@ -13,6 +13,7 @@ Ext.define('Docs.controller.Comments', {
     requires: [
         "Docs.view.auth.LoginHelper",
         "Docs.view.comments.Form",
+        "Docs.view.comments.LargeExpander",
         "Docs.Settings",
         "Docs.Syntax",
         "Docs.Tip"
@@ -643,16 +644,20 @@ Ext.define('Docs.controller.Comments', {
     },
 
     renderGuideCommentContainers: function(guide) {
-        Docs.view.Comments.classCommentsTpl.append(Ext.get('guide').down(".x-panel-body"), {
-            num: 0,
-            id: 'guide-' + guide
+        new Docs.view.comments.LargeExpander({
+            count: 0,
+            type: "guide",
+            name: guide,
+            el: Ext.get('guide').down(".x-panel-body")
         });
     },
 
     renderVideoCommentContainers: function(video) {
-        Docs.view.Comments.classCommentsTpl.append(Ext.get('video').down(".x-panel-body"), {
-            num: 0,
-            id: 'video-' + video
+        new Docs.view.comments.LargeExpander({
+            count: 0,
+            type: "video",
+            name: video,
+            el: Ext.get('video').down(".x-panel-body")
         });
     },
 

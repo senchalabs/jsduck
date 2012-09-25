@@ -8,7 +8,7 @@ Ext.define('Docs.view.cls.Overview', {
     requires: [
         'Docs.view.cls.Toolbar',
         'Docs.view.examples.Inline',
-        'Docs.view.comments.Expander',
+        'Docs.view.comments.LargeExpander',
         'Docs.view.comments.MemberWrap',
         'Docs.Syntax',
         'Docs.Settings'
@@ -113,16 +113,16 @@ Ext.define('Docs.view.cls.Overview', {
         this.toolbar.showCommentCount();
 
         // Insert class level comment container under class intro docs
-        this.clsExpander = new Docs.view.comments.Expander({
-            num: 0,
-            className: this.docClass.name,
-            renderTo: Ext.DomHelper.append(Ext.query('.doc-contents')[0], "<div></div>")
+        this.clsExpander = new Docs.view.comments.LargeExpander({
+            count: 0,
+            name: this.docClass.name,
+            el: Ext.query('.doc-contents')[0]
         });
 
         // Add a comment container to each class member
         this.memberWrappers = Ext.Array.map(Ext.query('.member'), function(memberDoc) {
             return new Docs.view.comments.MemberWrap({
-                num: 0,
+                count: 0,
                 className: this.docClass.name,
                 el: memberDoc
             });
