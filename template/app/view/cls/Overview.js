@@ -8,6 +8,8 @@ Ext.define('Docs.view.cls.Overview', {
     requires: [
         'Docs.view.cls.Toolbar',
         'Docs.view.examples.Inline',
+        'Docs.view.comments.Expander',
+        'Docs.view.comments.MemberWrap',
         'Docs.Syntax',
         'Docs.Settings'
     ],
@@ -104,6 +106,44 @@ Ext.define('Docs.view.cls.Overview', {
         this.filterMembers("", Docs.Settings.get("show"));
 
         this.fireEvent('afterload');
+    },
+
+    renderCommentContainers: function() {
+        // Add comment button to toolbar
+        this.toolbar.showCommentCount();
+
+        // Insert class level comment container under class intro docs
+        this.clsExpander = new Docs.view.comments.Expander({
+            num: 0,
+            className: this.docClass.name,
+            renderTo: Ext.DomHelper.append(Ext.query('.doc-contents')[0], "<div></div>")
+        });
+
+        // Add a comment container to each class member
+        this.memberWrappers = Ext.Array.map(Ext.query('.member'), function(memberDoc) {
+            return new Docs.view.comments.MemberWrap({
+                num: 0,
+                className: this.docClass.name,
+                el: memberDoc
+            });
+        }, this);
+    },
+
+    updateCommentMeta: function(metaData) {
+        var clsMeta = metaData['class'][this.docClass.name];
+
+        var clsCommentsCount = (clsMeta && clsMeta['']) ? clsMeta[''] : 0;
+        // Update toolbar icon
+        this.toolbar.setCommentCount(clsCommentsCount);
+        // Update class level comments meta
+        this.clsExpander.setCount(clsCommentsCount);
+
+        // Update class member comments meta
+        Ext.Array.forEach(this.memberWrappers, function(wrapper) {
+            var cls = metaData['class'][wrapper.getDefinedIn()];
+            var count = cls && cls[wrapper.getMemberId()];
+            wrapper.setCount(count);
+        });
     },
 
     /**

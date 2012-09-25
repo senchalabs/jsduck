@@ -212,84 +212,24 @@ Ext.define('Docs.view.Comments', {
      * Renders the comment containers for the currently active class
      */
     renderClassCommentContainers: function(cls) {
-        // Add comment button to class toolbar
-        this.getClassToolbar().showCommentCount();
-
-        // Insert class level comment container under class intro docs
-        this.classCommentsTpl.insertFirst(Ext.query('.members')[0], {
-            num: 0,
-            id: 'class-' + cls.name.replace(/\./g, '-')
-        });
-
-        // Add a comment container to each class member
-        Ext.Array.each(Ext.query('.member .long'), function(memberDoc) {
-            var id = Ext.get(memberDoc).up('.member').getAttribute('id');
-            this.commentsMetaTpl.append(memberDoc, {
-                num: 0,
-                id: 'class-' + cls.name.replace(/\./g, '-') + '-' + id.replace(/\./g, '-')
-            });
-        }, this);
+        this.getClassOverview().renderCommentContainers();
     },
 
     /**
      * Updates the comment meta information (i.e. number of comments) on a class page
      */
     updateClassCommentMeta: function(cls) {
-        var clsMeta = Docs.commentMeta['class'][cls];
-
-        if (clsMeta && clsMeta['']) {
-
-            // Update toolbar icon
-            this.getClassToolbar().setCommentCount(clsMeta['']);
-
-            // Update class level comments meta
-            this.numCommentsTpl.overwrite(Ext.get(Ext.query('.comments-section a.name')[0]), {
-                num: clsMeta['']
-            });
-        } else {
-            // Update toolbar icon
-            this.getClassToolbar().setCommentCount(0);
-
-            // Update class level comments meta
-            this.numCommentsTpl.overwrite(Ext.get(Ext.query('.comments-section a.name')[0]), {
-                num: 0
-            });
-        }
-
-        // Update class member comments meta
-        Ext.Array.each(Ext.query('.member'), function(memberDom) {
-            var memberEl = Ext.get(memberDom),
-                memberId = memberEl.getAttribute('id'),
-                memberCls = memberEl.down('.meta .defined-in').getAttribute('rel'),
-                commentsWrap = memberEl.down('.comments-div a.name'),
-                memberTitle = memberEl.down('.title'),
-                numComments = Docs.commentMeta['class'][memberCls] && Docs.commentMeta['class'][memberCls][memberId],
-                memberTitleComments = memberTitle.down('.toggleMemberComments');
-
-            if (numComments) {
-                this.numCommentsTpl.overwrite(commentsWrap, {
-                    num: numComments
-                });
-
-                if (memberTitleComments) {
-                    memberTitleComments.update(String(numComments));
-                } else {
-                    this.memberCommentsTpl.append(memberTitle, [numComments]);
-                }
-            } else {
-                if (memberTitleComments) memberTitleComments.remove();
-            }
-
-        }, this);
+        this.getClassOverview().updateCommentMeta(Docs.commentMeta);
 
         this.updateClassIndex();
+
         Ext.Array.each(Ext.ComponentQuery.query('hovermenu'), function(m) {
             m.fireEvent('refresh', this);
         });
     },
 
-    getClassToolbar: function() {
-        return Ext.ComponentQuery.query('classoverview toolbar')[0];
+    getClassOverview: function() {
+        return Ext.ComponentQuery.query('classoverview')[0];
     },
 
     updateGuideCommentMeta: function(guide) {
