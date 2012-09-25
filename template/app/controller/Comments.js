@@ -117,7 +117,6 @@ Ext.define('Docs.controller.Comments', {
                 afterrender: function(cmp) {
                     // Map comment interactions to methods
                     Ext.Array.each([
-                        [ '.toggleComments',       'click', this.toggleComments],
                         [ '.toggleMemberComments', 'click', this.showMemberComments],
                         [ '.toggleNewComment',     'click', this.toggleNewComment],
                         [ '.toggleCommentGuide',   'click', this.toggleCommentGuide],
@@ -141,6 +140,12 @@ Ext.define('Docs.controller.Comments', {
                     cmp.el.addListener('click', this.updateSubscription, this, {
                         delegate: '.subscriptionCheckbox'
                     });
+                }
+            },
+
+            'commentsExpander': {
+                fetchComments: function(id) {
+                    this.fetchComments(id, this.renderComments);
                 }
             },
 
