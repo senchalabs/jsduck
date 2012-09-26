@@ -3,7 +3,10 @@
  * comments data inside it.
  */
 Ext.define('Docs.view.comments.MemberWrap', {
-    requires: ["Docs.view.comments.Expander"],
+    requires: [
+        "Docs.CommentCounts",
+        "Docs.view.comments.Expander"
+    ],
 
     tpl: Ext.create("Ext.XTemplate", '<span class="toggleMemberComments">{0}</span>'),
 
@@ -17,24 +20,22 @@ Ext.define('Docs.view.comments.MemberWrap', {
      * The name of the current class.
      */
 
-    /**
-     * @cfg {Number} count
-     * The comment count of the member.
-     */
-
     constructor: function(cfg) {
         Ext.apply(this, cfg);
         this.el = Ext.get(cfg.el);
 
         // The expander needs to reside inside some element.
         var expanderWrap = Ext.DomHelper.append(this.el.down('.long'), "<div></div>");
+        var count = Docs.CommentCounts.get("class", this.getDefinedIn(), this.getMemberId());
 
         this.expander = new Docs.view.comments.Expander({
-            count: this.count,
+            count: Docs.CommentCounts.get("class", this.getDefinedIn(), this.getMemberId()),
             className: this.className,
             memberId: this.getMemberId(),
             renderTo: expanderWrap
         });
+
+        this.updateCountInTitle(count);
     },
 
     /**
@@ -43,7 +44,10 @@ Ext.define('Docs.view.comments.MemberWrap', {
      */
     setCount: function(count) {
         this.expander.setCount(count);
+        this.updateCountInTitle(count);
+    },
 
+    updateCountInTitle: function(count) {
         var titleEl = this.el.down(".title");
         var titleComments = titleEl.down('.toggleMemberComments');
 

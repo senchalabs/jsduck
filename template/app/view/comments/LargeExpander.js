@@ -2,7 +2,10 @@
  * The Expander with a h3 heading "Comments".
  */
 Ext.define('Docs.view.comments.LargeExpander', {
-    requires: ["Docs.view.comments.Expander"],
+    requires: [
+        "Docs.CommentCounts",
+        "Docs.view.comments.Expander"
+    ],
 
     html: [
         '<div class="comments-section">',
@@ -27,11 +30,6 @@ Ext.define('Docs.view.comments.LargeExpander', {
      * The name of the current class, guide or video.
      */
 
-    /**
-     * @cfg {Number} count
-     * The comment count of the member.
-     */
-
     constructor: function(cfg) {
         Ext.apply(this, cfg);
         this.el = Ext.get(cfg.el);
@@ -40,7 +38,7 @@ Ext.define('Docs.view.comments.LargeExpander', {
         var expanderWrap = Ext.DomHelper.append(this.el, this.html, true).down("div");
 
         this.expander = new Docs.view.comments.Expander({
-            count: this.count,
+            count: Docs.CommentCounts.get("class", this.name),
             type: this.type,
             className: this.name,
             renderTo: expanderWrap

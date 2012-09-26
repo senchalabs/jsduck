@@ -11,7 +11,8 @@ Ext.define('Docs.view.cls.Overview', {
         'Docs.view.comments.LargeExpander',
         'Docs.view.comments.MemberWrap',
         'Docs.Syntax',
-        'Docs.Settings'
+        'Docs.Settings',
+        'Docs.CommentCounts'
     ],
     mixins: ['Docs.view.Scrolling'],
 
@@ -105,16 +106,18 @@ Ext.define('Docs.view.cls.Overview', {
 
         this.filterMembers("", Docs.Settings.get("show"));
 
+        Docs.CommentCounts.afterLoaded(this.renderCommentCounts, this);
+
         this.fireEvent('afterload');
     },
 
-    renderCommentContainers: function() {
+    renderCommentCounts: function() {
         // Add comment button to toolbar
         this.toolbar.showCommentCount();
+        this.toolbar.setCommentCount(Docs.CommentCounts.get("class", this.docClass.name));
 
         // Insert class level comment container under class intro docs
         this.clsExpander = new Docs.view.comments.LargeExpander({
-            count: 0,
             name: this.docClass.name,
             el: Ext.query('.doc-contents')[0]
         });
@@ -122,28 +125,10 @@ Ext.define('Docs.view.cls.Overview', {
         // Add a comment container to each class member
         this.memberWrappers = Ext.Array.map(Ext.query('.member'), function(memberDoc) {
             return new Docs.view.comments.MemberWrap({
-                count: 0,
                 className: this.docClass.name,
                 el: memberDoc
             });
         }, this);
-    },
-
-    updateCommentMeta: function(metaData) {
-        var clsMeta = metaData['class'][this.docClass.name];
-
-        var clsCommentsCount = (clsMeta && clsMeta['']) ? clsMeta[''] : 0;
-        // Update toolbar icon
-        this.toolbar.setCommentCount(clsCommentsCount);
-        // Update class level comments meta
-        this.clsExpander.setCount(clsCommentsCount);
-
-        // Update class member comments meta
-        Ext.Array.forEach(this.memberWrappers, function(wrapper) {
-            var cls = metaData['class'][wrapper.getDefinedIn()];
-            var count = cls && cls[wrapper.getMemberId()];
-            wrapper.setCount(count);
-        });
     },
 
     /**

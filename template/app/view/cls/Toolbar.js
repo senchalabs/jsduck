@@ -295,6 +295,6 @@ Ext.define('Docs.view.cls.Toolbar', {
      * @param {Number} n
      */
     setCommentCount: function(n) {
-        this.commentCount.update(""+n);
+        this.commentCount.update(""+(n||0));
     }
 });
