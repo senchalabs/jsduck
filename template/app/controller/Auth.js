@@ -7,7 +7,8 @@ Ext.define('Docs.controller.Auth', {
     extend: 'Ext.app.Controller',
 
     requires: [
-        'Docs.Auth'
+        'Docs.Auth',
+        'Docs.CommentCounts'
     ],
 
     refs: [
@@ -25,6 +26,7 @@ Ext.define('Docs.controller.Auth', {
             else {
                 this.setLoggedOut();
             }
+            Docs.CommentCounts.fetch();
         }, this);
 
         this.control({

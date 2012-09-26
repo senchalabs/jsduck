@@ -5,7 +5,8 @@ Ext.define('Docs.view.cls.Index', {
     extend: 'Ext.container.Container',
     alias: 'widget.classindex',
     requires: [
-        'Docs.ContentGrabber'
+        'Docs.ContentGrabber',
+        'Docs.CommentCounts'
     ],
     mixins: ['Docs.view.Scrolling'],
     cls: 'class-categories iScroll',
@@ -25,7 +26,25 @@ Ext.define('Docs.view.cls.Index', {
             categories: Docs.ContentGrabber.get("categories-content")
         };
 
+        this.commentCountTpl = Ext.create('Ext.Template',
+            '<span class="toggleMemberComments">{0}</span>'
+        );
+
         this.callParent(arguments);
+    },
+
+    afterRender: function() {
+        this.callParent(arguments);
+
+        Docs.CommentCounts.afterLoaded(function() {
+            this.getEl().select("a.docClass").each(function(a) {
+                var className = a.getHTML();
+                var count = Docs.CommentCounts.getClassTotal(className);
+                if (count) {
+                    this.commentCountTpl.append(a, [count]);
+                }
+            }, this);
+        }, this);
     },
 
     /**
