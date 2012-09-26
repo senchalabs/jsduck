@@ -8,6 +8,10 @@ Ext.define('Docs.view.guides.Container', {
     alias: 'widget.guidecontainer',
     componentCls: 'guide-container',
     mixins: ['Docs.view.Scrolling'],
+    requires: [
+        "Docs.CommentCounts",
+        "Docs.view.comments.LargeExpander"
+    ],
 
     initComponent: function() {
         this.addEvents(
@@ -38,6 +42,8 @@ Ext.define('Docs.view.guides.Container', {
      * @param {Object} guide
      */
     load: function(guide) {
+        this.guide = guide;
+
         this.tpl = this.tpl || new Ext.XTemplate(
             Docs.data.showPrintButton ? '<a class="print guide" href="?print=/guide/{name}" target="_blank">Print</a>' : '',
             '{content}'
@@ -46,6 +52,16 @@ Ext.define('Docs.view.guides.Container', {
         this.update(this.tpl.apply(guide));
         Docs.Syntax.highlight(this.getEl());
 
+        Docs.CommentCounts.afterLoaded(this.initComments, this);
+
         this.fireEvent('afterload');
+    },
+
+    initComments: function() {
+        new Docs.view.comments.LargeExpander({
+            type: "guide",
+            name: this.guide.name,
+            el: this.getEl().down(".x-panel-body")
+        });
     }
 });

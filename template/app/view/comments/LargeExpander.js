@@ -38,7 +38,7 @@ Ext.define('Docs.view.comments.LargeExpander', {
         var expanderWrap = Ext.DomHelper.append(this.el, this.html, true).down("div");
 
         this.expander = new Docs.view.comments.Expander({
-            count: Docs.CommentCounts.get("class", this.name),
+            count: Docs.CommentCounts.get(this.type, this.name),
             type: this.type,
             className: this.name,
             renderTo: expanderWrap
