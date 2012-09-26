@@ -9,7 +9,7 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.Tabs',
         'Docs.view.TreeContainer',
         'Docs.view.welcome.Index',
-        'Docs.view.auth.Login',
+        'Docs.view.auth.Form',
         'Docs.view.comments.Index',
         'Docs.view.Comments',
         'Docs.view.cls.Index',
@@ -51,7 +51,7 @@ Ext.define('Docs.view.Viewport', {
                             {   xtype: 'container', flex: 1 },
                             {
                                 id: 'loginContainer',
-                                xtype: 'authentication',
+                                xtype: 'authForm',
                                 width: 500,
                                 padding: '10 20 0 0'
                             },

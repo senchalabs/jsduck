@@ -11,7 +11,7 @@ Ext.define('Docs.view.Comments', {
         // and indeed, when running in browser, the app will work just
         // fine, but when doing e.g. "rake gem" something goes wrong
         // and the "sencha create jsb" command just hangs.
-        'Docs.view.auth.Login',
+        'Docs.view.auth.Form',
         'Docs.view.comments.Form'
     ],
 
