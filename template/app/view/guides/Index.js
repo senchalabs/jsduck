@@ -4,9 +4,7 @@
 Ext.define('Docs.view.guides.Index', {
     extend: 'Ext.container.Container',
     alias: 'widget.guideindex',
-    requires: [
-        'Docs.view.ThumbList'
-    ],
+    requires: ['Docs.view.ThumbList'],
     mixins: ['Docs.view.Scrolling'],
 
     cls: 'iScroll',
@@ -17,6 +15,7 @@ Ext.define('Docs.view.guides.Index', {
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Guides</h1>' },
             Ext.create('Docs.view.ThumbList', {
+                type: "guide",
                 itemTpl: [
                     '<dd ext:url="#!/guide/{name}"><div class="thumb"><img src="guides/{name}/icon.png"/></div>',
                         '<div><h4>{title}</h4><p>{description}</p></div>',

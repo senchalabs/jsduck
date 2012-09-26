@@ -4,6 +4,9 @@
 Ext.define('Docs.view.ThumbList', {
     extend: 'Ext.view.View',
     alias: 'widget.thumblist',
+    requires: [
+        'Docs.CommentCounts'
+    ],
 
     cls: 'thumb-list',
     itemSelector: 'dl',
@@ -13,6 +16,13 @@ Ext.define('Docs.view.ThumbList', {
      * Name of the model field from which to read the URL for urlclick event.
      */
     urlField: 'url',
+
+    /**
+     * @cfg
+     * The type to use for retrieving comment counts.
+     * Should be either "guide" or "video".
+     */
+    commentType: "",
 
     /**
      * @cfg {String[]} itemTpl
@@ -73,22 +83,43 @@ Ext.define('Docs.view.ThumbList', {
         this.itemTpl = undefined;
         this.data = undefined;
 
-        this.on({
-            'afterrender': function(cmp) {
-                cmp.el.addListener('mouseover', function(evt, el) {
-                    Ext.get(el).addCls('over');
-                }, this, {
-                    delegate: 'dd'
-                });
-                cmp.el.addListener('mouseout', function(evt, el) {
-                    Ext.get(el).removeCls('over');
-                }, this, {
-                    delegate: 'dd'
-                });
-            }
-        });
+        this.commentCountTpl = Ext.create('Ext.Template',
+            '<span class="toggleMemberComments">{0}</span>'
+        );
+
+        // Listen to viewready because the whole HTML is not yet
+        // rendered when afterrender fires - and initComments relies
+        // on the view being rendered fully.
+        this.on("viewready", function() {
+            this.initHover();
+            Docs.CommentCounts.afterLoaded(this.initComments, this);
+        }, this);
 
         this.callParent(arguments);
+    },
+
+    initHover: function() {
+        this.getEl().on('mouseover', function(event, el) {
+            Ext.get(el).addCls('over');
+        }, this, {
+            delegate: 'dd'
+        });
+
+        this.getEl().on('mouseout', function(event, el) {
+            Ext.get(el).removeCls('over');
+        }, this, {
+            delegate: 'dd'
+        });
+    },
+
+    initComments: function() {
+        this.getEl().select("dd").each(function(dd) {
+            var name = dd.getAttributeNS("ext", this.urlField).replace(/^.*\//, "");
+            var count = Docs.CommentCounts.get(this.commentType, name);
+            if (count) {
+                this.commentCountTpl.append(dd.down("p"), [count]);
+            }
+        }, this);
     },
 
     // Given groups data with subgroups like this:
