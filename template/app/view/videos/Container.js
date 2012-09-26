@@ -7,12 +7,31 @@ Ext.define('Docs.view.videos.Container', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.videocontainer',
     componentCls: 'video-container',
+    requires: [
+        "Docs.CommentCounts",
+        "Docs.view.comments.LargeExpander"
+    ],
+
+    initComponent: function() {
+        this.callParent(arguments);
+
+        this.on("hide", this.pauseVideo, this);
+    },
+
+    pauseVideo: function() {
+        var videoPlayer = document.getElementById('video_player');
+        if (videoPlayer && videoPlayer.api_pause) {
+            videoPlayer.api_pause();
+        }
+    },
 
     /**
      * Loads video into the page.
      * @param {Object} video
      */
     load: function(video) {
+        this.video = video;
+
         this.tpl = this.tpl || new Ext.XTemplate(
             '<object width="640" height="360" id="video_player">',
                 '<param name="allowfullscreen" value="true" />',
@@ -33,14 +52,15 @@ Ext.define('Docs.view.videos.Container', {
         );
 
         this.update(this.tpl.apply(video));
+
+        Docs.CommentCounts.afterLoaded(this.initComments, this);
     },
 
-    listeners: {
-        hide: function() {
-            var videoPlayer = document.getElementById('video_player');
-            if (videoPlayer && videoPlayer.api_pause) {
-                videoPlayer.api_pause();
-            }
-        }
+    initComments: function() {
+        new Docs.view.comments.LargeExpander({
+            type: "video",
+            name: this.video.name,
+            el: this.getEl().down(".x-panel-body")
+        });
     }
 });
