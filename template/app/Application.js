@@ -10,6 +10,7 @@ Ext.define('Docs.Application', {
 
     requires: [
         'Docs.History',
+        'Docs.Auth',
         'Docs.Settings'
     ],
 
@@ -39,6 +40,10 @@ Ext.define('Docs.Application', {
         Ext.create('Docs.view.Viewport');
 
         Docs.History.init();
+
+        if (Docs.enableComments) {
+            Docs.Auth.init();
+        }
 
         // When google analytics event tracking script present on page
         if (Docs.initEventTracking) {

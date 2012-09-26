@@ -18,17 +18,7 @@ Ext.define('Docs.controller.Auth', {
     ],
 
     init: function() {
-        this.control({
-            'authForm': {
-                afterrender: this.initSession,
-                login: this.login,
-                logout: this.logout
-            }
-        });
-    },
-
-    initSession: function() {
-        Docs.Auth.init(function() {
+        Docs.Auth.on("initialized", function() {
             if (Docs.Auth.isLoggedIn()) {
                 this.setLoggedIn();
             }
@@ -36,6 +26,13 @@ Ext.define('Docs.controller.Auth', {
                 this.setLoggedOut();
             }
         }, this);
+
+        this.control({
+            'authForm': {
+                login: this.login,
+                logout: this.logout
+            }
+        });
     },
 
     login: function(username, password, remember) {
