@@ -77,6 +77,11 @@ Ext.define('Docs.view.comments.List', {
      * @param {Object[]} comments
      */
     load: function(comments) {
+        // hide the spinning loader when no comments.
+        if (comments.length === 0) {
+            this.emptyText = "";
+        }
+
         this.store.loadData(comments);
     },
 
