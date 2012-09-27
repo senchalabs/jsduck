@@ -5,7 +5,11 @@
 Ext.define('Docs.view.comments.FullList', {
     extend: 'Ext.panel.Panel',
     alias: "widget.commentsFullList",
-    requires: ['Docs.Settings'],
+    requires: [
+        'Docs.Settings',
+        'Docs.Auth',
+        'Docs.view.comments.List'
+    ],
     componentCls: 'comment-index-container',
 
     dockedItems: [
@@ -41,7 +45,7 @@ Ext.define('Docs.view.comments.FullList', {
         },
         {
             region: "center",
-            xtype: 'container',
+            xtype: 'commentsList',
             id: 'recentcomments',
             cls: "iScroll",
             autoScroll: true
@@ -66,6 +70,10 @@ Ext.define('Docs.view.comments.FullList', {
         this.initTabs();
 
         this.setMasked(true);
+    },
+
+    load: function(comments) {
+        this.down("commentsList").load(comments);
     },
 
     /**
@@ -100,7 +108,7 @@ Ext.define('Docs.view.comments.FullList', {
     },
 
     setHideReadVisibility: function() {
-        var mod = Docs.App.getController("Auth").isModerator();
+        var mod = Docs.Auth.isModerator();
         Ext.get("hideRead").up("label").setStyle("display", mod ? "inline" : "none");
     },
 

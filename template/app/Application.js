@@ -38,6 +38,7 @@ Ext.define('Docs.Application', {
                 'Guides',
                 'Videos',
                 'Tabs',
+                'Comments',
                 'Tests'
             ],
             launch: this.launch

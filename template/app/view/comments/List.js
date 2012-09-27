@@ -3,6 +3,7 @@
  */
 Ext.define('Docs.view.comments.List', {
     extend: 'Ext.view.View',
+    alias: 'widget.commentsList',
     requires: [
         'Docs.Auth'
     ],
