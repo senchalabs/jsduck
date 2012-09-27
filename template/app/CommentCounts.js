@@ -1,24 +1,31 @@
 /**
- *
+ * Manages comment counts.
  */
 Ext.define('Docs.CommentCounts', {
-    singleton: true,
-    requires: ["Docs.Comments"],
 
-    constructor: function() {
+    /**
+     * Initialized CommentCounts with the main Comments class instance
+     * which is used to perform queries.
+     * @param {Docs.Comments} comments
+     */
+    constructor: function(comments) {
+        this.comments = comments;
         this.loadCallbacks = [];
     },
 
     /**
      * Fetches all comment counts.
+     *
+     * @param {Function} callback Called after done.
+     * @param {Object} scope
      */
-    fetch: function() {
-        Docs.Comments.request("jsonp", {
+    fetch: function(callback, scope) {
+        this.comments.request("jsonp", {
             url: '/comments_meta',
             method: 'GET',
             success: function(response) {
                 this.load(response.comments);
-                this.fireLoadCallbacks();
+                callback.call(scope);
             },
             scope: this
         });
@@ -60,27 +67,6 @@ Ext.define('Docs.CommentCounts', {
             }, this);
         }
         return this.totals[className];
-    },
-
-    /**
-     * Calls the given function after comment counts have been loaded.
-     * @param {Function} callback
-     * @param {Object} scope
-     */
-    afterLoaded: function(callback, scope) {
-        if (this.counts) {
-            callback.call(scope);
-        }
-        else {
-            this.loadCallbacks.push(Ext.Function.bind(callback, scope));
-        }
-    },
-
-    fireLoadCallbacks: function() {
-        Ext.Array.forEach(this.loadCallbacks, function(cb) {
-            cb();
-        });
-        this.loadCallbacks = [];
     }
 
 });

@@ -8,7 +8,7 @@ Ext.define('Docs.controller.Auth', {
 
     requires: [
         'Docs.Auth',
-        'Docs.CommentCounts'
+        'Docs.Comments'
     ],
 
     refs: [
@@ -19,22 +19,30 @@ Ext.define('Docs.controller.Auth', {
     ],
 
     init: function() {
-        Docs.Auth.on("initialized", function() {
-            if (Docs.Auth.isLoggedIn()) {
-                this.setLoggedIn();
-            }
-            else {
-                this.setLoggedOut();
-            }
-            Docs.CommentCounts.fetch();
-        }, this);
-
         this.control({
             'authForm': {
                 login: this.login,
                 logout: this.logout
             }
         });
+
+        // HACK:
+        // Because the initialization of comments involves adding an
+        // additional tab, we need to ensure that we do this addition
+        // after Tabs controller has been launched.
+        var tabs = this.getController("Tabs");
+        tabs.onLaunch = Ext.Function.createSequence(tabs.onLaunch, this.afterTabsLaunch, this);
+    },
+
+    afterTabsLaunch: function() {
+        if (Docs.Comments.isEnabled()) {
+            if (Docs.Auth.isLoggedIn()) {
+                this.setLoggedIn();
+            }
+            else {
+                this.setLoggedOut();
+            }
+        }
     },
 
     login: function(username, password, remember) {

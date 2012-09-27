@@ -3,9 +3,6 @@
  */
 Ext.define('Docs.Auth', {
     singleton: true,
-    mixins: {
-        observable: "Ext.util.Observable"
-    },
     requires: [
         'Ext.Ajax',
         'Ext.JSON',
@@ -13,20 +10,14 @@ Ext.define('Docs.Auth', {
     ],
 
     /**
-     * @event initialized
-     * Fired after the connection to comments server is successfully
-     * established.
-     */
-
-    constructor: function(config) {
-        this.mixins.observable.constructor.call(this, config);
-    },
-
-    /**
      * Checks if a user is logged in server side and sets up a local
      * session if they are.
+     *
+     * @param {Function} callback Fired after init attempt finished.
+     * @param {Boolean} callback.success True when session initialized.
+     * @param {Object} scope
      */
-    init: function() {
+    init: function(callback, scope) {
         Ext.Ajax.request({
             url: Docs.baseUrl + '/session_new',
             params: { sid: this.getSid() },
@@ -43,13 +34,10 @@ Ext.define('Docs.Auth', {
                     if (data && data.userName) {
                         this.currentUser = data;
                     }
-
-                    this.fireEvent("initialized");
+                    callback.call(scope, true);
                 }
                 else {
-                    // when comments server is down or something else
-                    // is seriously wrong, don't fire the event.
-                    // By this we stop the whole comments system.
+                    callback.call(scope, false);
                 }
             },
             scope: this

@@ -9,7 +9,7 @@ Ext.define('Docs.view.guides.Container', {
     componentCls: 'guide-container',
     mixins: ['Docs.view.Scrolling'],
     requires: [
-        "Docs.CommentCounts",
+        "Docs.Comments",
         "Docs.view.comments.LargeExpander"
     ],
 
@@ -52,7 +52,9 @@ Ext.define('Docs.view.guides.Container', {
         this.update(this.tpl.apply(guide));
         Docs.Syntax.highlight(this.getEl());
 
-        Docs.CommentCounts.afterLoaded(this.initComments, this);
+        if (Docs.Comments.isEnabled()) {
+            this.initComments();
+        }
 
         this.fireEvent('afterload');
     },

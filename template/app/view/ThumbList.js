@@ -5,7 +5,7 @@ Ext.define('Docs.view.ThumbList', {
     extend: 'Ext.view.View',
     alias: 'widget.thumblist',
     requires: [
-        'Docs.CommentCounts'
+        'Docs.Comments'
     ],
 
     cls: 'thumb-list',
@@ -92,7 +92,9 @@ Ext.define('Docs.view.ThumbList', {
         // on the view being rendered fully.
         this.on("viewready", function() {
             this.initHover();
-            Docs.CommentCounts.afterLoaded(this.initComments, this);
+            if (Docs.Comments.isEnabled()) {
+                this.initComments();
+            }
         }, this);
 
         this.callParent(arguments);
@@ -115,7 +117,7 @@ Ext.define('Docs.view.ThumbList', {
     initComments: function() {
         this.getEl().select("dd").each(function(dd) {
             var name = dd.getAttributeNS("ext", this.urlField).replace(/^.*\//, "");
-            var count = Docs.CommentCounts.get(this.commentType, name);
+            var count = Docs.Comments.getCount(this.commentType, name);
             if (count) {
                 this.commentCountTpl.append(dd.down("p"), [count]);
             }

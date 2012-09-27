@@ -4,7 +4,7 @@
  */
 Ext.define('Docs.view.comments.MemberWrap', {
     requires: [
-        "Docs.CommentCounts",
+        "Docs.Comments",
         "Docs.view.comments.Expander"
     ],
 
@@ -26,10 +26,10 @@ Ext.define('Docs.view.comments.MemberWrap', {
 
         // The expander needs to reside inside some element.
         var expanderWrap = Ext.DomHelper.append(this.el.down('.long'), "<div></div>");
-        var count = Docs.CommentCounts.get("class", this.getDefinedIn(), this.getMemberId());
+        var count = Docs.Comments.getCount("class", this.getDefinedIn(), this.getMemberId());
 
         this.expander = new Docs.view.comments.Expander({
-            count: Docs.CommentCounts.get("class", this.getDefinedIn(), this.getMemberId()),
+            count: count,
             className: this.className,
             memberId: this.getMemberId(),
             renderTo: expanderWrap

@@ -1,37 +1,48 @@
 /**
- * Main application definition for Docs app.
+ * Launcher of the Docs app.
  *
- * We define our own Application class because this way we can also
- * easily define the dependencies.
+ * To have greater control of all the dependencies and do some
+ * additional setup before launching the actual Ext.app.Application
+ * instance we're not using the basic Ext.application().
  */
 Ext.define('Docs.Application', {
-    extend: 'Ext.app.Application',
-    name: 'Docs',
-
     requires: [
+        'Ext.app.Application',
         'Docs.History',
-        'Docs.Auth',
-        'Docs.Settings'
+        'Docs.Comments',
+        'Docs.Settings',
+        'Docs.view.Viewport'
     ],
 
-    uses: [
-        'Ext.util.History',
-        'Ext.data.JsonP'
-    ],
+    constructor: function() {
+        // Initialize the comments system before anything else.
+        //
+        // This way all the controllers and views can rely on the
+        // basic comments data being already loaded and they don't
+        // need to set up additional listeners and callback to wait
+        // for it being loaded.
+        Docs.Comments.init(this.createApp, this);
+    },
 
-    controllers: [
-        'Auth',
-        'Welcome',
-        'Failure',
-        'Classes',
-        'Search',
-        'InlineExamples',
-        'Examples',
-        'Guides',
-        'Videos',
-        'Tabs',
-        'Tests'
-    ],
+    createApp: function() {
+        new Ext.app.Application({
+            name: "Docs",
+            controllers: [
+                'Auth',
+                'Welcome',
+                'Failure',
+                'Classes',
+                'Search',
+                'InlineExamples',
+                'Examples',
+                'Guides',
+                'Videos',
+                'Tabs',
+                'Tests'
+            ],
+            launch: this.launch
+        });
+    },
 
     launch: function() {
         Docs.App = this;
@@ -40,10 +51,6 @@ Ext.define('Docs.Application', {
         Ext.create('Docs.view.Viewport');
 
         Docs.History.init();
-
-        if (Docs.enableComments) {
-            Docs.Auth.init();
-        }
 
         // When google analytics event tracking script present on page
         if (Docs.initEventTracking) {

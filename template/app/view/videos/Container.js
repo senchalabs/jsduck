@@ -8,7 +8,7 @@ Ext.define('Docs.view.videos.Container', {
     alias: 'widget.videocontainer',
     componentCls: 'video-container',
     requires: [
-        "Docs.CommentCounts",
+        "Docs.Comments",
         "Docs.view.comments.LargeExpander"
     ],
 
@@ -53,7 +53,9 @@ Ext.define('Docs.view.videos.Container', {
 
         this.update(this.tpl.apply(video));
 
-        Docs.CommentCounts.afterLoaded(this.initComments, this);
+        if (Docs.Comments.isEnabled()) {
+            this.initComments();
+        }
     },
 
     initComments: function() {

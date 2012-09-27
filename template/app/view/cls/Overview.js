@@ -12,7 +12,7 @@ Ext.define('Docs.view.cls.Overview', {
         'Docs.view.comments.MemberWrap',
         'Docs.Syntax',
         'Docs.Settings',
-        'Docs.CommentCounts'
+        'Docs.Comments'
     ],
     mixins: ['Docs.view.Scrolling'],
 
@@ -106,15 +106,17 @@ Ext.define('Docs.view.cls.Overview', {
 
         this.filterMembers("", Docs.Settings.get("show"));
 
-        Docs.CommentCounts.afterLoaded(this.renderCommentCounts, this);
+        if (Docs.Comments.isEnabled()) {
+            this.initComments();
+        }
 
         this.fireEvent('afterload');
     },
 
-    renderCommentCounts: function() {
+    initComments: function() {
         // Add comment button to toolbar
         this.toolbar.showCommentCount();
-        this.toolbar.setCommentCount(Docs.CommentCounts.get("class", this.docClass.name));
+        this.toolbar.setCommentCount(Docs.Comments.getCount("class", this.docClass.name));
 
         // Insert class level comment container under class intro docs
         this.clsExpander = new Docs.view.comments.LargeExpander({
