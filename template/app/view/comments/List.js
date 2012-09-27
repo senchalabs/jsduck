@@ -3,8 +3,14 @@
  */
 Ext.define('Docs.view.comments.List', {
     extend: 'Ext.view.View',
+    requires: [
+        'Docs.Auth'
+    ],
 
     itemSelector: "div.comment",
+
+    emptyText: '<div class="loading">Loading...</div>',
+    deferEmptyText: false,
 
     initComponent: function() {
         this.store = Ext.create('Ext.data.Store', {
@@ -62,6 +68,14 @@ Ext.define('Docs.view.comments.List', {
         this.callParent(arguments);
     },
 
+    /**
+     * Loads array of comments into the view.
+     * @param {Object[]} comments
+     */
+    load: function(comments) {
+        this.store.loadData(comments);
+    },
+
     dateStr: function(date) {
         try {
             var now = Math.ceil(Number(new Date()) / 1000);
@@ -100,11 +114,11 @@ Ext.define('Docs.view.comments.List', {
     },
 
     isMod: function() {
-        return Docs.App.getController('Auth').currentUser.mod;
+        return Docs.Auth.isModerator();
     },
 
     isAuthor: function(author) {
-        return Docs.App.getController('Auth').currentUser.userName == author;
+        return Docs.Auth.getUser().userName == author;
     },
 
     target: function(target) {

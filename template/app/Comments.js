@@ -60,6 +60,25 @@ Ext.define('Docs.Comments', {
     },
 
     /**
+     * Loads the comments of a particular target.
+     * @param {String[]} target An array of `[type, cls, member]`
+     * @param {Function} callback Called when finished.
+     * @param {Object[]} callback.comments An array of comments.
+     * @param {Object} scope
+     */
+    load: function(target, callback, scope) {
+        this.request("jsonp", {
+            url: '/comments',
+            method: 'GET',
+            params: {
+                startkey: Ext.JSON.encode(target)
+            },
+            success: callback,
+            scope: scope
+        });
+    },
+
+    /**
      * Performs request to the comments server.
      *
      * Works as if calling Ext.Ajax.request or Ext.data.JsonP.request

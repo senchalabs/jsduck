@@ -4,6 +4,10 @@
 Ext.define('Docs.view.comments.Expander', {
     alias: "widget.commentsExpander",
     extend: 'Ext.Component',
+    requires: [
+        'Docs.Comments',
+        'Docs.view.comments.List'
+    ],
 
     /**
      * @cfg {String} type
@@ -21,12 +25,6 @@ Ext.define('Docs.view.comments.Expander', {
      * @cfg {Number} count
      */
 
-    /**
-     * @event fetchComments
-     * Fired when new comments need to be loaded.
-     * @param {String} id ID of the comments expander div.
-     */
-
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
             '<div class="comments-div first-child" id="comments-{id}">',
@@ -39,8 +37,6 @@ Ext.define('Docs.view.comments.Expander', {
                 renderCount: this.renderCount
             }
         );
-
-        this.loadingTpl = new Ext.XTemplate('<div class="loading">Loading...</div>');
 
         var cls = this.type + '-' + this.className.replace(/\./g, '-');
         this.data = {
@@ -86,8 +82,7 @@ Ext.define('Docs.view.comments.Expander', {
             list.setStyle('display', 'block');
         }
         else {
-            this.loadingTpl.append(div);
-            this.fireEvent("fetchComments", div.getAttribute('id'));
+            this.loadComments(div);
         }
     },
 
@@ -101,6 +96,17 @@ Ext.define('Docs.view.comments.Expander', {
         if (list) {
             list.setStyle('display', 'none');
         }
+    },
+
+    loadComments: function(div) {
+        this.list = new Docs.view.comments.List({
+            renderTo: div
+        });
+
+        var target = [this.type, this.className, this.memberId];
+        Docs.Comments.load(target, function(comments) {
+            this.list.load(comments);
+        }, this);
     },
 
     /**
