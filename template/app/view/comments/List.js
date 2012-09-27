@@ -5,7 +5,8 @@ Ext.define('Docs.view.comments.List', {
     extend: 'Ext.view.View',
     alias: 'widget.commentsList',
     requires: [
-        'Docs.Auth'
+        'Docs.Auth',
+        'Docs.Syntax'
     ],
 
     itemSelector: "div.comment",
@@ -67,6 +68,8 @@ Ext.define('Docs.view.comments.List', {
         ];
 
         this.callParent(arguments);
+
+        this.on("refresh", this.syntaxHighlight, this);
     },
 
     /**
@@ -75,6 +78,10 @@ Ext.define('Docs.view.comments.List', {
      */
     load: function(comments) {
         this.store.loadData(comments);
+    },
+
+    syntaxHighlight: function() {
+        Docs.Syntax.highlight(this.getEl());
     },
 
     dateStr: function(date) {
