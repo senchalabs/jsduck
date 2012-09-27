@@ -30,7 +30,7 @@ Ext.define('Docs.view.comments.MemberWrap', {
 
         this.expander = new Docs.view.comments.Expander({
             count: count,
-            className: this.className,
+            className: this.getDefinedIn(),
             memberId: this.getMemberId(),
             renderTo: expanderWrap
         });
