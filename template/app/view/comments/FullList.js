@@ -8,7 +8,8 @@ Ext.define('Docs.view.comments.FullList', {
     requires: [
         'Docs.Settings',
         'Docs.Auth',
-        'Docs.view.comments.List'
+        'Docs.view.comments.List',
+        'Docs.view.comments.Pager'
     ],
     componentCls: 'comment-index-container',
 
@@ -45,10 +46,18 @@ Ext.define('Docs.view.comments.FullList', {
         },
         {
             region: "center",
-            xtype: 'commentsList',
-            id: 'recentcomments',
+            xtype: "container",
+            autoScroll: true,
             cls: "iScroll",
-            autoScroll: true
+            items: [
+                {
+                    xtype: 'commentsList',
+                    id: 'recentcomments'
+                },
+                {
+                    xtype: 'commentsPager'
+                }
+            ]
         }
     ],
 
@@ -74,6 +83,7 @@ Ext.define('Docs.view.comments.FullList', {
 
     load: function(comments) {
         this.down("commentsList").load(comments);
+        this.down("commentsPager").configure(comments[comments.length-1]);
     },
 
     /**

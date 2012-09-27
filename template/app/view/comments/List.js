@@ -63,6 +63,7 @@ Ext.define('Docs.view.comments.List', {
                 '</tpl>',
                 '<div class="new-comment-wrap"></div>',
             '</div>',
+            '{[this.recentCommentsPager(values)]}',
             // to use all methods of this class inside the template
             this
         ];
