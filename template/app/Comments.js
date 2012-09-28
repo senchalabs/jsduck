@@ -103,6 +103,16 @@ Ext.define('Docs.Comments', {
     buildUrl: function(url) {
         url = Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + url;
         return url + (url.match(/\?/) ? '&' : '?') + 'sid=' + Docs.Auth.getSid();
+    },
+
+    /**
+     * Generates an `<img>` tag for loading the avatar.
+     * @param {String} emailHash MD5 hash of users e-mail address.
+     * @return {String}
+     */
+    avatar: function(emailHash) {
+        return '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/' +
+               emailHash + '?s=25&amp;r=PG&amp;d=monsterid">';
     }
 
 });

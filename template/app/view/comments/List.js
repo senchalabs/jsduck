@@ -6,7 +6,8 @@ Ext.define('Docs.view.comments.List', {
     alias: 'widget.commentsList',
     requires: [
         'Docs.Auth',
-        'Docs.Syntax'
+        'Docs.Syntax',
+        'Docs.Comments'
     ],
 
     itemSelector: "div.comment",
@@ -35,8 +36,7 @@ Ext.define('Docs.view.comments.List', {
                 '<tpl for=".">',
                 '<div class="comment" id="{id}">',
                     '<div class="com-meta">',
-                        '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
-                              '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
+                        '{[Docs.Comments.avatar(values.emailHash)]}',
                         '<div class="author<tpl if="moderator"> moderator" title="Sencha Engineer</tpl>">',
                             '{author}',
                             '<tpl if="showCls">',
