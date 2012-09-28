@@ -81,8 +81,13 @@ Ext.define('Docs.view.comments.FullList', {
         this.setMasked(true);
     },
 
-    load: function(comments) {
-        this.down("commentsList").load(comments);
+    /**
+     * Loads array of comments into the view.
+     * @param {Object[]} comments
+     * @param {Boolean} append True to append the comments to existing ones.
+     */
+    load: function(comments, append) {
+        this.down("commentsList").load(comments, append);
         this.down("commentsPager").configure(comments[comments.length-1]);
     },
 

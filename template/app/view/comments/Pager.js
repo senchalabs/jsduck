@@ -10,10 +10,12 @@ Ext.define('Docs.view.comments.Pager', {
         this.callParent(arguments);
         this.getEl().on("click", function() {
             /**
-             * @event click
+             * @event loadMore
              * Fired when the link clicked to load more comments.
+             * @param {Number} offset Index offset to the next page of
+             * comments to load.
              */
-            this.fireEvent("click");
+            this.fireEvent("loadMore", this.offset + this.limit);
         }, this, {preventDefault: true, delegate: "a.fetchMoreComments"});
     },
 
@@ -26,13 +28,14 @@ Ext.define('Docs.view.comments.Pager', {
      * @param {Object} cfg.total_rows
      */
     configure: function(cfg) {
-        this.update(this.getPagerHtml(cfg));
+        Ext.apply(this, cfg);
+        this.update(this.getPagerHtml());
     },
 
-    getPagerHtml: function(cfg) {
-        var total = cfg.total_rows || 0;
-        var loaded = cfg.offset + cfg.limit;
-        var next_load = Math.min(cfg.limit, total - loaded);
+    getPagerHtml: function() {
+        var total = this.total_rows || 0;
+        var loaded = this.offset + this.limit;
+        var next_load = Math.min(this.limit, total - loaded);
 
         if (total > loaded) {
             return [

@@ -76,14 +76,15 @@ Ext.define('Docs.view.comments.List', {
     /**
      * Loads array of comments into the view.
      * @param {Object[]} comments
+     * @param {Boolean} append True to append the comments to existing ones.
      */
-    load: function(comments) {
+    load: function(comments, append) {
         // hide the spinning loader when no comments.
         if (comments.length === 0) {
             this.emptyText = "";
         }
 
-        this.store.loadData(comments);
+        this.store.loadData(comments, append);
     },
 
     syntaxHighlight: function() {

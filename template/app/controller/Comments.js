@@ -41,6 +41,12 @@ Ext.define('Docs.controller.Comments', {
                 }
             },
 
+            'commentsPager': {
+                loadMore: function(offset) {
+                    this.fetchRecentComments(offset);
+                }
+            },
+
             'commentsUsers': {
                 select: function(username) {
                     this.recentCommentsSettings.username = username;
@@ -87,7 +93,8 @@ Ext.define('Docs.controller.Comments', {
             params: params,
             success: function(comments) {
                 this.getCommentsFullList().setMasked(false);
-                this.getCommentsFullList().load(comments);
+                var append = offset > 0;
+                this.getCommentsFullList().load(comments, append);
             },
             scope: this
         });
