@@ -12,6 +12,7 @@ module.exports = {
     commentToJson: function(comment) {
         return {
             _id: comment.id,
+            user_id: comment.user_id,
             author: comment.username,
             target: this.targetToJson(comment),
             content: comment.content,
