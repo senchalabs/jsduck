@@ -40,7 +40,7 @@ module JsDuck
         end
 
         # remember properties that have changed to configs
-        if m[:tagname] != parent[:tagname]
+        if m[:autodetected] && m[:tagname] != parent[:tagname]
           new_cfgs << m
         end
       end

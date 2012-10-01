@@ -218,6 +218,33 @@ describe JsDuck::Aggregator do
     it_behaves_like "@inheritdoc"
   end
 
+  describe "using @inheritdoc to inherit from another type of member" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @method bar
+           * Original comment.
+           */
+
+        /** @class Core */
+          /**
+           * @event foobar
+           * New comment.
+           * @inheritdoc Foo#method-bar
+           */
+      EOF
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
+    end
+
+    it_behaves_like "@inheritdoc"
+
+    it "keeps the type of the member" do
+      @inheritdoc[:tagname].should == :event
+    end
+  end
+
   describe "@inheritdoc without type info uses the type of itself" do
     before do
       @docs = parse(<<-EOF)
