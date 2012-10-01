@@ -2,6 +2,10 @@
  * The form for adding and editing comments.
  */
 Ext.define('Docs.view.comments.Form', {
+    mixins: {
+        observable: 'Ext.util.Observable'
+    },
+
     /**
      * @cfg {Ext.dom.Element/HTMLElement} renderTo
      * Element where to render the form.
@@ -29,6 +33,8 @@ Ext.define('Docs.view.comments.Form', {
         Ext.apply(this, cfg);
         this.updateComment = (this.content !== undefined);
 
+        this.mixins.observable.constructor.call(this, {listeners: cfg.listeners});
+
         var innerTpl = [
             '<div class="com-meta">',
                 '<img class="avatar" width="25" height="25"',
@@ -38,7 +44,7 @@ Ext.define('Docs.view.comments.Form', {
                     'Email updates? <input type="checkbox" class="subscriptionCheckbox" <tpl if="userSubscribed">checked="checked"</tpl> /><span class="sep"> | </span>',
                 '</label>',
                 '<a href="#" class="toggleCommentGuide">View help &#8595;</a>',
-                '<input type="submit" class="sub {[values.updateComment ? "update" : "post"]}Comment" value="{[values.updateComment ? "Update" : "Post"]} comment" />',
+                '<input type="submit" class="sub submitComment" value="{[values.updateComment ? "Update" : "Post"]} comment" />',
                 '<tpl if="updateComment">',
                     ' or <a href="#" class="cancelUpdateComment">cancel</a>',
                 '</tpl>',
@@ -138,7 +144,7 @@ Ext.define('Docs.view.comments.Form', {
     },
 
     render: function() {
-        var wrap = this.tpl.overwrite(this.renderTo, {
+        var wrap = this.tpl.overwrite(this.getEl(), {
             definedIn: this.updateComment ? undefined : this.extractDefinedIn(this.renderTo),
             updateComment: this.updateComment,
             content: this.content,
@@ -147,6 +153,8 @@ Ext.define('Docs.view.comments.Form', {
         }, true);
 
         this.makeCodeMirror(wrap.down('textarea').dom);
+
+        this.bindEvents();
     },
 
     // Given an HTML element, determines the member it's in and if the
@@ -163,11 +171,55 @@ Ext.define('Docs.view.comments.Form', {
     },
 
     makeCodeMirror: function(textarea) {
-        textarea.editor = CodeMirror.fromTextArea(textarea, {
+        this.codeMirror = CodeMirror.fromTextArea(textarea, {
             mode: 'markdown',
             lineWrapping: true,
             indentUnit: 4
         });
+    },
+
+    bindEvents: function() {
+        this.getEl().on("click", function() {
+            this.toggleGuide();
+        }, this, {preventDefault: true, delegate: "a.toggleCommentGuide"});
+
+        this.getEl().on("click", function() {
+            /**
+             * @event cancel
+             * Fired when editing canceled.
+             */
+            this.fireEvent("cancel");
+        }, this, {preventDefault: true, delegate: "a.cancelUpdateComment"});
+
+        this.getEl().on("click", function() {
+            /**
+             * @event submit
+             * Fired when the "save" or "update" buttom pressed to finish editing.
+             * @param {String} content The edited comment.
+             */
+            this.fireEvent("submit", this.codeMirror.getValue());
+        }, this, {preventDefault: true, delegate: "input.submitComment"});
+
+        this.getEl().on("click", function(event, el) {
+            /**
+             * @event changeSubscription
+             * Fired when the subscription checkbox ticked.
+             * @param {Boolean} subscribe True to subscribe.
+             * False to unsubscribe.
+             */
+            this.fireEvent("changeSubscription", Ext.get(el).getAttribute("checked"));
+        }, this, {delegate: "input.subscriptionCheckbox"});
+    },
+
+    toggleGuide: function() {
+        var guideText = this.getEl().down('.commentGuideTxt');
+        var curDisplay = guideText.getStyle('display');
+
+        guideText.setStyle('display', (curDisplay === 'none') ? 'block' : 'none');
+    },
+
+    getEl: function() {
+        return Ext.get(this.renderTo);
     }
 
 });
