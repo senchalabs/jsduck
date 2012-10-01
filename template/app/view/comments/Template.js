@@ -3,11 +3,35 @@
  */
 Ext.define('Docs.view.comments.Template', {
     extend: 'Ext.XTemplate',
-    singleton: true,
     requires: [
         'Docs.Auth',
         'Docs.Comments'
     ],
+
+    statics: {
+        /**
+         * A factory method to get an instance of the template.  For
+         * every different config object, returns a cached instance of
+         * the template, avoiding creating a new each time.
+         *
+         * @param {Object} cfg An additional configuration to
+         * apply to the template object.
+         * @return {Docs.view.comments.Template}
+         */
+        create: function(cfg) {
+            var key = "tpl-" + Ext.JSON.encode(cfg);
+            if (!this[key]) {
+                this[key] = new this();
+                Ext.apply(this[key], cfg);
+            }
+            return this[key];
+        }
+    },
+
+    /**
+     * @cfg {Boolean} showTarget
+     * True to show a link to the target in each comment.
+     */
 
     constructor: function() {
         this.callParent([
@@ -18,7 +42,7 @@ Ext.define('Docs.view.comments.Template', {
                         '{[Docs.Comments.avatar(values.emailHash)]}',
                         '<div class="author<tpl if="moderator"> moderator" title="Sencha Engineer</tpl>">',
                             '{author}',
-                            '<tpl if="showCls">',
+                            '<tpl if="this.isTargetVisible()">',
                                 '<span class="target"> on {[this.target(values.target)]}</span>',
                             '</tpl>',
                         '</div>',
@@ -45,6 +69,10 @@ Ext.define('Docs.view.comments.Template', {
             // to use all methods of this class inside the template
             this
         ]);
+    },
+
+    isTargetVisible: function() {
+        return this.showTarget;
     },
 
     dateStr: function(date) {

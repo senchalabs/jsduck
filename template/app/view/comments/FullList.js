@@ -52,7 +52,8 @@ Ext.define('Docs.view.comments.FullList', {
             items: [
                 {
                     xtype: 'commentsList',
-                    id: 'recentcomments'
+                    id: 'recentcomments',
+                    showTarget: true
                 },
                 {
                     xtype: 'commentsPager'

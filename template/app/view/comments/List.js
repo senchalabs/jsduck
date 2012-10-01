@@ -17,6 +17,12 @@ Ext.define('Docs.view.comments.List', {
     emptyText: '<div class="loading">Loading...</div>',
     deferEmptyText: false,
 
+    /**
+     * @cfg {Boolean} showTarget
+     * True to show a link to the target in each comment.
+     * Used in Docs.view.comments.FullList.
+     */
+
     initComponent: function() {
         this.store = Ext.create('Ext.data.Store', {
             fields: [
@@ -33,7 +39,7 @@ Ext.define('Docs.view.comments.List', {
             ]
         });
 
-        this.tpl = Docs.view.comments.Template;
+        this.tpl = Docs.view.comments.Template.create({showTarget: this.showTarget});
 
         this.callParent(arguments);
 
