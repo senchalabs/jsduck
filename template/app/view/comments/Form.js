@@ -27,6 +27,7 @@ Ext.define('Docs.view.comments.Form', {
      */
     constructor: function(cfg) {
         Ext.apply(this, cfg);
+        this.updateComment = (this.content !== undefined);
 
         var innerTpl = [
             '<div class="com-meta">',
@@ -139,7 +140,7 @@ Ext.define('Docs.view.comments.Form', {
     render: function() {
         var wrap = this.tpl.overwrite(this.renderTo, {
             definedIn: this.updateComment ? undefined : this.extractDefinedIn(this.renderTo),
-            updateComment: this.content !== undefined,
+            updateComment: this.updateComment,
             content: this.content,
             userSubscribed: this.userSubscribed,
             user: this.user

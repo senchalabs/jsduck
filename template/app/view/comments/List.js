@@ -9,6 +9,7 @@ Ext.define('Docs.view.comments.List', {
         'Docs.Syntax',
         'Docs.Comments',
         'Docs.view.comments.Template',
+        'Docs.view.comments.Form',
         'Docs.Tip'
     ],
 
@@ -59,6 +60,9 @@ Ext.define('Docs.view.comments.List', {
         this.delegateClick("a.voteCommentDown", function(el, r) {
             this.vote(el, r, "down");
         }, this);
+        this.delegateClick("a.editComment", function(el, r) {
+            this.edit(el, r);
+        }, this);
     },
 
     delegateClick: function(selector, callback, scope) {
@@ -92,6 +96,32 @@ Ext.define('Docs.view.comments.List', {
                 }
                 else {
                     Docs.Tip.show(data.reason, el);
+                }
+            },
+            scope: this
+        });
+    },
+
+    // starts an editor on the comment
+    edit: function(el, comment) {
+        this.loadOrigContent(comment, function(content) {
+            var contentEl = Ext.get(el).up(".comment").down(".content");
+            new Docs.view.comments.Form({
+                renderTo: contentEl,
+                user: Docs.Auth.getUser(),
+                content: content
+            });
+        }, this);
+    },
+
+    loadOrigContent: function(comment, callback, scope) {
+        Docs.Comments.request("ajax", {
+            url: '/comments/' + comment.get("_id"),
+            method: 'GET',
+            callback: function(options, success, response) {
+                var data = Ext.JSON.decode(response.responseText);
+                if (data.success) {
+                    callback.call(scope, data.content);
                 }
             },
             scope: this
