@@ -140,7 +140,7 @@ Ext.define('Docs.view.comments.Users', {
     loadUsers: function(users) {
         this.list.getStore().loadData(users);
         if (this.selectedUser) {
-            var index = this.list.getStore().findExact("username", this.selectedUser.get("userName"));
+            var index = this.list.getStore().findExact("userName", this.selectedUser.get("userName"));
             this.list.getSelectionModel().select(index, false, true);
         }
     }
