@@ -104,20 +104,54 @@ Ext.define('Docs.view.comments.List', {
 
     // starts an editor on the comment
     edit: function(el, comment) {
-        this.loadOrigContent(comment, function(content) {
+        this.loadContent(comment, function(content) {
             var contentEl = Ext.get(el).up(".comment").down(".content");
             new Docs.view.comments.Form({
                 renderTo: contentEl,
                 user: Docs.Auth.getUser(),
-                content: content
+                content: content,
+                listeners: {
+                    submit: function(newContent) {
+                        this.saveContent(comment, newContent, function(contentHtml) {
+                            comment.set("contentHtml", contentHtml);
+                            comment.commit();
+                        }, this);
+                    },
+                    cancel: function() {
+                        this.refreshComment(comment);
+                    },
+                    scope: this
+                }
             });
         }, this);
     },
 
-    loadOrigContent: function(comment, callback, scope) {
+    // re-renders the comment, discarding the form.
+    refreshComment: function(comment) {
+        this.refreshNode(this.getStore().findExact("_id", comment.get("_id")));
+    },
+
+    loadContent: function(comment, callback, scope) {
         Docs.Comments.request("ajax", {
             url: '/comments/' + comment.get("_id"),
             method: 'GET',
+            callback: function(options, success, response) {
+                var data = Ext.JSON.decode(response.responseText);
+                if (data.success) {
+                    callback.call(scope, data.content);
+                }
+            },
+            scope: this
+        });
+    },
+
+    saveContent: function(comment, newContent, callback, scope) {
+        Docs.Comments.request("ajax", {
+            url: '/comments/' + comment.get("_id"),
+            method: 'POST',
+            params: {
+                content: newContent
+            },
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
                 if (data.success) {
