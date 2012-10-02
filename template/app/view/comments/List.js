@@ -36,7 +36,8 @@ Ext.define('Docs.view.comments.List', {
                 "score",
                 "upVote",
                 "downVote",
-                "contentHtml"
+                "contentHtml",
+                "deleted"
             ]
         });
 
@@ -62,6 +63,12 @@ Ext.define('Docs.view.comments.List', {
         }, this);
         this.delegateClick("a.editComment", function(el, r) {
             this.edit(el, r);
+        }, this);
+        this.delegateClick("a.deleteComment", function(el, r) {
+            this.setDeleted(el, r, true);
+        }, this);
+        this.delegateClick("a.undoDeleteComment", function(el, r) {
+            this.setDeleted(el, r, false);
         }, this);
     },
 
@@ -156,6 +163,25 @@ Ext.define('Docs.view.comments.List', {
                 var data = Ext.JSON.decode(response.responseText);
                 if (data.success) {
                     callback.call(scope, data.content);
+                }
+            },
+            scope: this
+        });
+    },
+
+    // marks the comment as deleted or undoes the delete
+    setDeleted: function(el, comment, deleted) {
+        Docs.Comments.request("ajax", {
+            url: '/comments/' + comment.get("_id") + (deleted ? '/delete' : '/undo_delete'),
+            method: 'POST',
+            callback: function(options, success, response) {
+                var data = Ext.JSON.decode(response.responseText);
+                if (data.success) {
+                    comment.set("deleted", deleted);
+                    comment.commit();
+                }
+                else {
+                    Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
                 }
             },
             scope: this
