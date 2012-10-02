@@ -2,14 +2,9 @@
  * The form for adding and editing comments.
  */
 Ext.define('Docs.view.comments.Form', {
-    mixins: {
-        observable: 'Ext.util.Observable'
-    },
+    extend: 'Ext.Component',
+    alias: "widget.commentsForm",
 
-    /**
-     * @cfg {Ext.dom.Element/HTMLElement} renderTo
-     * Element where to render the form.
-     */
     /**
      * @cfg {Object} user
      * Object describing currently logged in user.
@@ -25,15 +20,8 @@ Ext.define('Docs.view.comments.Form', {
      * Without this a form for adding new comment is created.
      */
 
-    /**
-     * Creates a new comment form inside the configured #renderTo element.
-     * @param {Object} cfg
-     */
-    constructor: function(cfg) {
-        Ext.apply(this, cfg);
+    initComponent: function() {
         this.updateComment = (this.content !== undefined);
-
-        this.mixins.observable.constructor.call(this, {listeners: cfg.listeners});
 
         var innerTpl = [
             '<div class="com-meta">',
@@ -143,20 +131,21 @@ Ext.define('Docs.view.comments.Form', {
             );
         }
 
-        this.render();
-    },
-
-    render: function() {
-        var wrap = this.tpl.overwrite(this.getEl(), {
-            definedIn: this.updateComment ? undefined : this.extractDefinedIn(this.renderTo),
+        this.data = {
+            //definedIn: this.updateComment ? undefined : this.extractDefinedIn(this.renderTo),
             updateComment: this.updateComment,
             content: this.content,
             userSubscribed: this.userSubscribed,
             user: this.user
-        }, true);
+        };
 
-        this.makeCodeMirror(wrap.down('textarea').dom);
+        this.callParent(arguments);
+    },
 
+    afterRender: function() {
+        this.callParent(arguments);
+
+        this.makeCodeMirror(this.getEl().down('textarea').dom);
         this.bindEvents();
     },
 
@@ -219,10 +208,6 @@ Ext.define('Docs.view.comments.Form', {
         var curDisplay = guideText.getStyle('display');
 
         guideText.setStyle('display', (curDisplay === 'none') ? 'block' : 'none');
-    },
-
-    getEl: function() {
-        return Ext.get(this.renderTo);
     }
 
 });

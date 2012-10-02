@@ -92,8 +92,12 @@ Ext.define('Docs.view.comments.List', {
     // starts an editor on the comment
     edit: function(el, comment) {
         comment.loadContent(function(content) {
+            // empty the content of comment.
+            var contentEl = Ext.get(el).up(".comment").down(".content");
+            contentEl.update("");
+
             new Docs.view.comments.Form({
-                renderTo: Ext.get(el).up(".comment").down(".content"),
+                renderTo: contentEl,
                 user: Docs.Auth.getUser(),
                 content: content,
                 listeners: {

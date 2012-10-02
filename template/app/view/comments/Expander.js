@@ -6,7 +6,7 @@ Ext.define('Docs.view.comments.Expander', {
     extend: 'Ext.Component',
     requires: [
         'Docs.Comments',
-        'Docs.view.comments.List'
+        'Docs.view.comments.ListWithForm'
     ],
 
     /**
@@ -77,9 +77,8 @@ Ext.define('Docs.view.comments.Expander', {
         div.addCls('open');
         div.down('.name').setStyle("display", "none");
 
-        var list = div.down('.comment-list');
-        if (list) {
-            list.setStyle('display', 'block');
+        if (this.list) {
+            this.list.show();
         }
         else {
             this.loadComments(div);
@@ -92,14 +91,13 @@ Ext.define('Docs.view.comments.Expander', {
         div.removeCls('open');
         div.down('.name').setStyle("display", "block");
 
-        var list = div.down('.comment-list');
-        if (list) {
-            list.setStyle('display', 'none');
+        if (this.list) {
+            this.list.hide();
         }
     },
 
     loadComments: function(div) {
-        this.list = new Docs.view.comments.List({
+        this.list = new Docs.view.comments.ListWithForm({
             renderTo: div
         });
 

@@ -66,8 +66,6 @@ $moderator-color-light: #94b773;
   &.open {
     min-height: 40px; } }
 
-.comment-list {
-  color: #444;
   .new-comment {
     .note {
       padding-bottom: 10px;
@@ -183,9 +181,7 @@ $moderator-color-light: #94b773;
         padding-left: 5px; }
       ul {
         margin-top: 5px; } } }
-  &.open {
-    form.newCommentForm {
-      display: block; } } }
+
 .comment {
   padding-top: 10px;
   padding-left: 2px;
