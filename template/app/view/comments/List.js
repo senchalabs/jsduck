@@ -63,6 +63,9 @@ Ext.define('Docs.view.comments.List', {
         this.delegateClick("a.undoDeleteComment", function(el, r) {
             this.setDeleted(el, r, false);
         }, this);
+        this.delegateClick("a.readComment", function(el, r) {
+            this.markRead(el, r);
+        }, this);
     },
 
     delegateClick: function(selector, callback, scope) {
@@ -152,6 +155,16 @@ Ext.define('Docs.view.comments.List', {
                 Ext.Msg.alert('Error', msg || "There was an error submitting your request");
             },
             scope: this
+        });
+    },
+
+    markRead: function(el, comment) {
+        Docs.Comments.markRead({
+            comment: comment,
+            success: function() {
+                comment.set("read", true);
+                comment.commit();
+            }
         });
     },
 

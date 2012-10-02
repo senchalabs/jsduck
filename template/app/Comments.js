@@ -186,6 +186,32 @@ Ext.define('Docs.Comments', {
     },
 
     /**
+     * Marks the comment as deleted or undoes the delete.
+     * @param {Object} cfg
+     * @param {Docs.model.Comment} cfg.comment
+     * @param {Boolean} cfg.deleted True to delete, false to undo.
+     * @param {Function} cfg.success
+     * @param {Function} cfg.failure
+     * @param {Object} cfg.scope
+     */
+    markRead: function(cfg) {
+        Docs.Comments.request("ajax", {
+            url: '/comments/' + cfg.comment.get("id") + '/read',
+            method: 'POST',
+            callback: function(options, success, response) {
+                var data = Ext.JSON.decode(response.responseText);
+                if (success && data.success) {
+                    cfg.success && cfg.success.call(cfg.scope);
+                }
+                else {
+                    cfg.failure && cfg.failure.call(cfg.scope, data.reason);
+                }
+            },
+            scope: this
+        });
+    },
+
+    /**
      * Performs request to the comments server.
      *
      * Works as if calling Ext.Ajax.request or Ext.data.JsonP.request

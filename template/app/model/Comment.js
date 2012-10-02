@@ -14,6 +14,7 @@ Ext.define('Docs.model.Comment', {
         "upVote",
         "downVote",
         "contentHtml",
+        "read",
         "deleted"
     ],
     proxy: {
