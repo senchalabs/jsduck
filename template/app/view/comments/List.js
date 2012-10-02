@@ -84,57 +84,29 @@ Ext.define('Docs.view.comments.List', {
             return;
         }
 
-        Docs.Comments.vote({
-            comment: comment,
-            direction: direction,
-            success: function(direction, total) {
-                comment.set("upVote", direction === "up");
-                comment.set("downVote", direction === "down");
-                comment.set("score", total);
-                comment.commit();
-            },
-            failure: function(msg) {
-                Docs.Tip.show(msg, el);
-            },
-            scope: this
-        });
+        comment.vote(direction, {failure: function(msg) {
+            Docs.Tip.show(msg, el);
+        }});
     },
 
     // starts an editor on the comment
     edit: function(el, comment) {
-        Docs.Comments.loadContent({
-            comment: comment,
-            success: function(content) {
-                var contentEl = Ext.get(el).up(".comment").down(".content");
-                new Docs.view.comments.Form({
-                    renderTo: contentEl,
-                    user: Docs.Auth.getUser(),
-                    content: content,
-                    listeners: {
-                        submit: function(newContent) {
-                            this.saveContent(comment, newContent);
-                        },
-                        cancel: function() {
-                            this.refreshComment(comment);
-                        },
-                        scope: this
-                    }
-                });
-            },
-            scope: this
-        });
-    },
-
-    saveContent: function(comment, newContent) {
-        Docs.Comments.saveContent({
-            comment: comment,
-            newContent: newContent,
-            success: function(contentHtml) {
-                comment.set("contentHtml", contentHtml);
-                comment.commit();
-            },
-            scope: this
-        });
+        comment.loadContent(function(content) {
+            new Docs.view.comments.Form({
+                renderTo: Ext.get(el).up(".comment").down(".content"),
+                user: Docs.Auth.getUser(),
+                content: content,
+                listeners: {
+                    submit: function(newContent) {
+                        comment.saveContent(newContent);
+                    },
+                    cancel: function() {
+                        this.refreshComment(comment);
+                    },
+                    scope: this
+                }
+            });
+        }, this);
     },
 
     // re-renders the comment, discarding the form.
@@ -144,28 +116,11 @@ Ext.define('Docs.view.comments.List', {
 
     // marks the comment as deleted or undoes the delete
     setDeleted: function(el, comment, deleted) {
-        Docs.Comments.setDeleted({
-            comment: comment,
-            deleted: deleted,
-            success: function() {
-                comment.set("deleted", deleted);
-                comment.commit();
-            },
-            failure: function(msg) {
-                Ext.Msg.alert('Error', msg || "There was an error submitting your request");
-            },
-            scope: this
-        });
+        comment.setDeleted(deleted);
     },
 
     markRead: function(el, comment) {
-        Docs.Comments.markRead({
-            comment: comment,
-            success: function() {
-                comment.set("read", true);
-                comment.commit();
-            }
-        });
+        comment.markRead();
     },
 
     /**
