@@ -67,32 +67,27 @@ Ext.define('Docs.view.comments.List', {
         }, this, {preventDefault: true, delegate: selector});
     },
 
-    vote: function(el, record, direction) {
+    vote: function(el, comment, direction) {
         if (!Docs.Auth.isLoggedIn()) {
             Docs.Tip.show('Please login to vote on this comment', el);
             return;
         }
-        if (record.get("upVote") && direction === "up" || record.get("downVote") && direction === "down") {
+        if (comment.get("upVote") && direction === "up" || comment.get("downVote") && direction === "down") {
             Docs.Tip.show('You have already voted on this comment', el);
             return;
         }
 
-        Docs.Comments.request("ajax", {
-            url: '/comments/' + record.get("id"),
-            method: 'POST',
-            params: { vote: direction },
-            callback: function(options, success, response) {
-                var data = Ext.JSON.decode(response.responseText);
-
-                if (data.success) {
-                    record.set("score", data.total);
-                    record.set("upVote", data.direction === "up");
-                    record.set("downVote", data.direction === "down");
-                    record.commit();
-                }
-                else {
-                    Docs.Tip.show(data.reason, el);
-                }
+        Docs.Comments.vote({
+            comment: comment,
+            direction: direction,
+            success: function(direction, total) {
+                comment.set("upVote", direction === "up");
+                comment.set("downVote", direction === "down");
+                comment.set("score", total);
+                comment.commit();
+            },
+            failure: function(msg) {
+                Docs.Tip.show(msg, el);
             },
             scope: this
         });
@@ -100,26 +95,39 @@ Ext.define('Docs.view.comments.List', {
 
     // starts an editor on the comment
     edit: function(el, comment) {
-        this.loadContent(comment, function(content) {
-            var contentEl = Ext.get(el).up(".comment").down(".content");
-            new Docs.view.comments.Form({
-                renderTo: contentEl,
-                user: Docs.Auth.getUser(),
-                content: content,
-                listeners: {
-                    submit: function(newContent) {
-                        this.saveContent(comment, newContent, function(contentHtml) {
-                            comment.set("contentHtml", contentHtml);
-                            comment.commit();
-                        }, this);
-                    },
-                    cancel: function() {
-                        this.refreshComment(comment);
-                    },
-                    scope: this
-                }
-            });
-        }, this);
+        Docs.Comments.loadContent({
+            comment: comment,
+            success: function(content) {
+                var contentEl = Ext.get(el).up(".comment").down(".content");
+                new Docs.view.comments.Form({
+                    renderTo: contentEl,
+                    user: Docs.Auth.getUser(),
+                    content: content,
+                    listeners: {
+                        submit: function(newContent) {
+                            this.saveContent(comment, newContent);
+                        },
+                        cancel: function() {
+                            this.refreshComment(comment);
+                        },
+                        scope: this
+                    }
+                });
+            },
+            scope: this
+        });
+    },
+
+    saveContent: function(comment, newContent) {
+        Docs.Comments.saveContent({
+            comment: comment,
+            newContent: newContent,
+            success: function(contentHtml) {
+                comment.set("contentHtml", contentHtml);
+                comment.commit();
+            },
+            scope: this
+        });
     },
 
     // re-renders the comment, discarding the form.
@@ -127,51 +135,17 @@ Ext.define('Docs.view.comments.List', {
         this.refreshNode(this.getStore().findExact("id", comment.get("id")));
     },
 
-    loadContent: function(comment, callback, scope) {
-        Docs.Comments.request("ajax", {
-            url: '/comments/' + comment.get("id"),
-            method: 'GET',
-            callback: function(options, success, response) {
-                var data = Ext.JSON.decode(response.responseText);
-                if (data.success) {
-                    callback.call(scope, data.content);
-                }
-            },
-            scope: this
-        });
-    },
-
-    saveContent: function(comment, newContent, callback, scope) {
-        Docs.Comments.request("ajax", {
-            url: '/comments/' + comment.get("id"),
-            method: 'POST',
-            params: {
-                content: newContent
-            },
-            callback: function(options, success, response) {
-                var data = Ext.JSON.decode(response.responseText);
-                if (data.success) {
-                    callback.call(scope, data.content);
-                }
-            },
-            scope: this
-        });
-    },
-
     // marks the comment as deleted or undoes the delete
     setDeleted: function(el, comment, deleted) {
-        Docs.Comments.request("ajax", {
-            url: '/comments/' + comment.get("id") + (deleted ? '/delete' : '/undo_delete'),
-            method: 'POST',
-            callback: function(options, success, response) {
-                var data = Ext.JSON.decode(response.responseText);
-                if (data.success) {
-                    comment.set("deleted", deleted);
-                    comment.commit();
-                }
-                else {
-                    Ext.Msg.alert('Error', data.reason || "There was an error submitting your request");
-                }
+        Docs.Comments.setDeleted({
+            comment: comment,
+            deleted: deleted,
+            success: function() {
+                comment.set("deleted", deleted);
+                comment.commit();
+            },
+            failure: function(msg) {
+                Ext.Msg.alert('Error', msg || "There was an error submitting your request");
             },
             scope: this
         });
