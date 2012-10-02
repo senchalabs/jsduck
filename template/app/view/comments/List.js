@@ -44,6 +44,10 @@ Ext.define('Docs.view.comments.List', {
 
     afterRender: function() {
         this.callParent(arguments);
+        // Remove the keydown handler set up in Ext.view.View#afterRender
+        // which prevents CodeMirror from receiving the event when the SPACE key is pressed.
+        this.mun(this.getTargetEl(), "keydown");
+
         this.delegateClick("a.voteCommentUp", function(el, r) {
             this.vote(el, r, "up");
         }, this);
