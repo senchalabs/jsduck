@@ -10,6 +10,7 @@ Ext.define('Docs.view.comments.List', {
         'Docs.Comments',
         'Docs.view.comments.Template',
         'Docs.view.comments.Form',
+        'Docs.model.Comment',
         'Docs.Tip'
     ],
 
@@ -26,19 +27,7 @@ Ext.define('Docs.view.comments.List', {
 
     initComponent: function() {
         this.store = Ext.create('Ext.data.Store', {
-            fields: [
-                "_id",
-                "author",
-                "emailHash",
-                "moderator",
-                "createdAt",
-                "target",
-                "score",
-                "upVote",
-                "downVote",
-                "contentHtml",
-                "deleted"
-            ]
+            model: "Docs.model.Comment"
         });
 
         this.tpl = Docs.view.comments.Template.create({showTarget: this.showTarget});
@@ -89,7 +78,7 @@ Ext.define('Docs.view.comments.List', {
         }
 
         Docs.Comments.request("ajax", {
-            url: '/comments/' + record.get("_id"),
+            url: '/comments/' + record.get("id"),
             method: 'POST',
             params: { vote: direction },
             callback: function(options, success, response) {
@@ -135,12 +124,12 @@ Ext.define('Docs.view.comments.List', {
 
     // re-renders the comment, discarding the form.
     refreshComment: function(comment) {
-        this.refreshNode(this.getStore().findExact("_id", comment.get("_id")));
+        this.refreshNode(this.getStore().findExact("id", comment.get("id")));
     },
 
     loadContent: function(comment, callback, scope) {
         Docs.Comments.request("ajax", {
-            url: '/comments/' + comment.get("_id"),
+            url: '/comments/' + comment.get("id"),
             method: 'GET',
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
@@ -154,7 +143,7 @@ Ext.define('Docs.view.comments.List', {
 
     saveContent: function(comment, newContent, callback, scope) {
         Docs.Comments.request("ajax", {
-            url: '/comments/' + comment.get("_id"),
+            url: '/comments/' + comment.get("id"),
             method: 'POST',
             params: {
                 content: newContent
@@ -172,7 +161,7 @@ Ext.define('Docs.view.comments.List', {
     // marks the comment as deleted or undoes the delete
     setDeleted: function(el, comment, deleted) {
         Docs.Comments.request("ajax", {
-            url: '/comments/' + comment.get("_id") + (deleted ? '/delete' : '/undo_delete'),
+            url: '/comments/' + comment.get("id") + (deleted ? '/delete' : '/undo_delete'),
             method: 'POST',
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
@@ -199,7 +188,8 @@ Ext.define('Docs.view.comments.List', {
             this.emptyText = "";
         }
 
-        this.store.loadData(comments, append);
+        var processedComments = this.store.getProxy().getReader().readRecords(comments).records;
+        this.store.loadData(processedComments, append);
     }
 
 });
