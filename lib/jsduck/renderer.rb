@@ -74,6 +74,29 @@ module JsDuck
       ]
     end
 
+    def render_inline_platforms(platforms, sidebar)
+      mapping = {
+		'android' => 'Android',
+		'iphone' => 'iPhone',
+		'ipad' => 'iPad',
+		'mobileweb' => 'Mobile Web'
+	  }
+
+      return [
+        '<ul class="',
+        sidebar ? 'sidebar-platforms' : 'platforms',
+        '">',
+        platforms.map do |platform| 
+        	begin
+	        	"<li class='platform-" + platform + "' title='" + mapping[platform]+"' >" + (sidebar ? (mapping[platform])  : '&nbsp;') + "</li>" 
+	        rescue
+	    	    puts "[ERROR] Unknown platform: '" + platform + "'"
+    	    end
+        end,
+        '</ul>'
+      ]
+    end
+
     def render_sidebar
       items = [
         render_alternate_class_names,
@@ -388,6 +411,7 @@ module JsDuck
           "<div class='sub-desc'>",
             p[:doc],
             p[:platform] != nil && p[:platform].length > 0 ? render_platforms(p[:platform], false) : '',
+            p[:inline_platforms] != nil && p[:inline_platforms].length > 0 ?  render_inline_platforms(p[:inline_platforms], false) : '',
             p[:default] ? "<p>Defaults to: <code>#{CGI.escapeHTML(p[:default])}</code></p>" : "",
             p[:properties] && p[:properties].length > 0 ? render_params_and_return(p) : "",
           "</div>",
