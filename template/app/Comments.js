@@ -79,6 +79,51 @@ Ext.define('Docs.Comments', {
     },
 
     /**
+     * Posts a new comments to a particular target.
+     * @param {String[]} target An array of `[type, cls, member]`
+     * @param {String} content The new content
+     * @param {Function} callback Called when finished.
+     * @param {Object} callback.comment The newly posted comment.
+     * @param {Object} scope
+     */
+    post: function(target, content, callback, scope) {
+        this.request("ajax", {
+            url: '/comments',
+            method: 'POST',
+            params: {
+                target: Ext.JSON.encode(target),
+                comment: content,
+                url: this.buildPostUrl(target)
+            },
+            callback: function(options, success, response) {
+                var data = Ext.JSON.decode(response.responseText);
+                if (success && data.success) {
+                    callback && callback.call(scope, data.comment);
+                }
+            },
+            scope: this
+        });
+    },
+
+    buildPostUrl: function(target) {
+        var type = target[0];
+        var cls = target[1];
+        var member = target[2];
+
+        if (type == 'video') {
+            var hash = '#!/video/' + cls;
+        }
+        else if (type == 'guide') {
+            var hash = '#!/guide/' + cls;
+        }
+        else {
+            var hash = '#!/api/' + cls + (member ? '-' + member : '');
+        }
+
+        return "http://" + window.location.host + window.location.pathname + hash;
+    },
+
+    /**
      * Performs request to the comments server.
      *
      * Works as if calling Ext.Ajax.request or Ext.data.JsonP.request
@@ -89,7 +134,7 @@ Ext.define('Docs.Comments', {
      * @param {Object} config
      */
     request: function(type, config) {
-        config.url = this.buildUrl(config.url);
+        config.url = this.buildRequestUrl(config.url);
         if (type === "jsonp") {
             Ext.data.JsonP.request(config);
         }
@@ -100,7 +145,7 @@ Ext.define('Docs.Comments', {
         }
     },
 
-    buildUrl: function(url) {
+    buildRequestUrl: function(url) {
         url = Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + url;
         return url + (url.match(/\?/) ? '&' : '?') + 'sid=' + Docs.Auth.getSid();
     },
