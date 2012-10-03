@@ -124,11 +124,12 @@ Request.prototype = {
         this.db.comments().add(comment, function(err, comment_id) {
             if (this.isModerator()) {
                 this.markRead(comment_id, function() {
-                    callback(comment_id);
-                });
+                    this.setCommentsTableOptions();
+                    this.getComment(comment_id, callback);
+                }.bind(this));
             }
             else {
-                callback(comment_id);
+                this.getComment(comment_id, callback);
             }
 
             this.sendEmailUpdates(comment_id, threadUrl);

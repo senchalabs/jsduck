@@ -142,6 +142,14 @@ Ext.define('Docs.view.comments.Form', {
         this.callParent(arguments);
     },
 
+    /**
+     * Sets the text inside editor.
+     * @param {String} value
+     */
+    setValue: function(value) {
+        this.codeMirror.setValue(value);
+    },
+
     afterRender: function() {
         this.callParent(arguments);
 

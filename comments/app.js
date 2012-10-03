@@ -155,8 +155,8 @@ app.get('/auth/:sdk/:version/comments', Auth.hasStartKey, function(req, res) {
 
 // Adds new comment
 app.post('/auth/:sdk/:version/comments', Auth.isLoggedIn, function(req, res) {
-    new Request(req).addComment(req.body.target, req.body.comment, req.body.url, function(comment_id) {
-        res.json({ id: comment_id, success: true });
+    new Request(req).addComment(req.body.target, req.body.comment, req.body.url, function(comment) {
+        res.json({ id: comment._id, comment: comment, success: true });
     });
 });
 

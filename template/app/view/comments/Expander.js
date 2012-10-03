@@ -97,11 +97,12 @@ Ext.define('Docs.view.comments.Expander', {
     },
 
     loadComments: function(div) {
+        var target = [this.type, this.className, this.memberId];
         this.list = new Docs.view.comments.ListWithForm({
+            target: target,
             renderTo: div
         });
 
-        var target = [this.type, this.className, this.memberId];
         Docs.Comments.load(target, function(comments) {
             this.list.load(comments);
         }, this);
