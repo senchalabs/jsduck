@@ -32,6 +32,7 @@ Ext.define('Docs.view.comments.MemberWrap', {
             count: count,
             className: this.getDefinedIn(),
             memberId: this.getMemberId(),
+            newCommentTitle: this.getNewCommentTitle(),
             renderTo: expanderWrap
         });
 
@@ -61,6 +62,18 @@ Ext.define('Docs.view.comments.MemberWrap', {
         }
         else if (titleComments) {
             titleComments.remove();
+        }
+    },
+
+    getNewCommentTitle: function() {
+        if (this.getDefinedIn() !== this.className) {
+            return [
+                "<b>Be aware.</b> This comment will be posted to <b>" + this.getDefinedIn() + "</b> class, ",
+                "from where this member is inherited from."
+            ].join("");
+        }
+        else {
+            return undefined;
         }
     },
 

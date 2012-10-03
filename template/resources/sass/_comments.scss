@@ -51,7 +51,9 @@ $moderator-color-light: #94b773;
   &:hover span {
     background-position: -59px -25px; } }
 
+
 .comments-div {
+  color: $docs-text-color;
   border-width: 1px 0;
   border-style: solid;
   border-color: #e0e0e0;
@@ -62,42 +64,41 @@ $moderator-color-light: #94b773;
     font-weight: bold;
     background: url(../images/ajax-loader.gif) no-repeat 0 9px;
     padding: 8px 0 0 25px; }
-  .name { padding: 10px 0 0 0px; display: block; font-weight: normal !important; }
+  .name {
+    padding: 10px 0 0 0px;
+    display: block;
+    font-weight: normal !important; }
   &.open {
     min-height: 40px; } }
 
-  .new-comment {
-    .note {
-      padding-bottom: 10px;
-      label {
-        margin-left: 20px;
-        display: block; }}
-    form.loginForm {
-      position: relative;
-      display: inline-block;
-      .username,
-      .password {
-        border: 1px solid #bbb; } }
-    .toggleNewComment {
-      display: inline-block;
-      line-height: 22px;
-      margin: 10px 10px 1px 4px;
-      font-weight: bold; } }
-  form.newCommentForm {
-    margin: 20px 55px 10px 5px; }
-  form.editCommentForm {
-    margin: 10px 55px 0px 0; }
-  form.editCommentForm,
-  form.newCommentForm {
+.new-comment {
+  .note {
+    padding-bottom: 10px;
+    label {
+      margin-left: 20px;
+      display: block; } }
+  form.loginForm {
+    position: relative;
+    display: inline-block;
+    .username,
+    .password {
+      border: 1px solid #bbb; } }
+  .toggleNewComment {
+    display: inline-block;
+    line-height: 22px;
+    margin: 10px 10px 1px 4px;
+    font-weight: bold; } }
+
+
+  form.commentForm {
     position: relative;
     border: 1px solid #c7d1d9;
     padding: 10px 15px 15px 15px;
     @include border-radius(4px);
     background: #ecf5fc;
-    .action {
-      display: block;
-      font-weight: bold;
-      padding-bottom: 7px; }
+    margin: 10px 55px 0px 0;
+    &.newComment {
+      margin: 20px 55px 10px 5px; }
     .subscribe {
       margin-right: 5px;
       color: #444;
@@ -115,11 +116,14 @@ $moderator-color-light: #94b773;
         font-weight: bold; } }
     img {
       @include border-radius(2px);
-      position: absolute; left: 0;
+      position: absolute;
+      left: 0;
       margin-right: 10px; }
-    .author {
+    .form-author {
+      font-weight: normal;
       line-height: 25px;
-      position: absolute; left: 35px;
+      position: absolute;
+      left: 35px;
       margin-bottom: 10px; }
     .CodeMirror,
     textarea {
@@ -140,16 +144,6 @@ $moderator-color-light: #94b773;
       margin-left: 20px;
       padding: 5px 8px;
       font-size: 12px; }
-    .toggleCodeEditor {
-      position: absolute;
-      top: 15px;
-      text-indent: -9999px;
-      width: 20px;
-      background: url(../images/example-icons.png) no-repeat -2px -20px;
-      right: 15px;
-      &.selected,
-      &:hover {
-        background-position: -30px -20px; } }
     .commentGuideTxt {
       border-top: 1px solid #C7D1D9;
       margin-top: 15px;

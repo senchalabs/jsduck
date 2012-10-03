@@ -24,10 +24,14 @@ Ext.define('Docs.view.comments.Expander', {
     /**
      * @cfg {Number} count
      */
+    /**
+     * @cfg {String} newCommentTitle
+     * A custom title for the new comment form.
+     */
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
-            '<div class="comments-div first-child" id="comments-{id}">',
+            '<div class="comments-div first-child">',
                 '<a href="#" class="side toggleComments"><span></span></a>',
                 '<a href="#" class="name toggleComments">',
                     '{[this.renderCount(values.count)]}',
@@ -38,9 +42,7 @@ Ext.define('Docs.view.comments.Expander', {
             }
         );
 
-        var cls = this.type + '-' + this.className.replace(/\./g, '-');
         this.data = {
-            id: this.memberId ? cls+"-"+this.memberId : cls,
             count: this.count
         };
 
@@ -100,6 +102,7 @@ Ext.define('Docs.view.comments.Expander', {
         var target = [this.type, this.className, this.memberId];
         this.list = new Docs.view.comments.ListWithForm({
             target: target,
+            newCommentTitle: this.newCommentTitle,
             renderTo: div
         });
 

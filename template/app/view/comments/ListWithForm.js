@@ -16,12 +16,17 @@ Ext.define('Docs.view.comments.ListWithForm', {
      * @cfg {String[]} target
      * The target of the comments (used for posting new comment).
      */
+    /**
+     * @cfg {String} newCommentTitle
+     * A custom title for the new comment form.
+     */
 
     initComponent: function() {
         this.items = [
             this.list = new Docs.view.comments.List({
             }),
             this.form = new Docs.view.comments.Form({
+                title: this.newCommentTitle,
                 user: Docs.Auth.getUser(),
                 listeners: {
                     submit: this.postComment,

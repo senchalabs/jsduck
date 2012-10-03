@@ -98,6 +98,7 @@ Ext.define('Docs.view.comments.List', {
 
             new Docs.view.comments.Form({
                 renderTo: contentEl,
+                title: '<b>Edit comment</b>',
                 user: Docs.Auth.getUser(),
                 content: content,
                 listeners: {

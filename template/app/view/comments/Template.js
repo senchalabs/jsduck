@@ -68,7 +68,6 @@ Ext.define('Docs.view.comments.Template', {
                     '</tpl>',
                 '</div>',
                 '</tpl>',
-                '<div class="new-comment-wrap"></div>',
             '</div>',
             // to use all methods of this class inside the template
             this

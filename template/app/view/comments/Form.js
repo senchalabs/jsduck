@@ -19,15 +19,21 @@ Ext.define('Docs.view.comments.Form', {
      * Setting this will start the form in editing-existing-comment mode.
      * Without this a form for adding new comment is created.
      */
+    /**
+     * @cfg {String} title
+     * The title text to show above form.
+     */
 
-    initComponent: function() {
-        this.updateComment = (this.content !== undefined);
-
-        var innerTpl = [
+    tpl: [
+         '<form class="commentForm <tpl if="!updateComment">newComment</tpl>">',
+            '<tpl if="title">',
+                '<p>{title}</p>',
+            '</tpl>',
+            '<textarea>{content}</textarea>',
             '<div class="com-meta">',
                 '<img class="avatar" width="25" height="25"',
                     ' src="http://www.gravatar.com/avatar/{user.emailHash}?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
-                '<div class="author">Logged in as {user.userName}</div>',
+                '<div class="form-author">Logged in as {user.userName}</div>',
                 '<tpl if="!updateComment">',
                     '<label class="subscribe">',
                         'Email updates? <input type="checkbox" class="subscriptionCheckbox" <tpl if="userSubscribed">checked="checked"</tpl> />',
@@ -102,38 +108,14 @@ Ext.define('Docs.view.comments.Form', {
                     '</ul>',
                     'End a line with two spaces<br/>to create a line break<br/><br/>',
                 '</div>',
-            '</div>'
-        ];
+            '</div>',
+        '</form>'
+    ],
 
-        if (this.updateComment) {
-            this.tpl = new Ext.XTemplate(
-                '<form class="editCommentForm">',
-                    '<span class="action">Edit comment</span>',
-                    '<textarea>{content}</textarea>',
-                    innerTpl.join(''),
-                '</form>'
-            );
-        }
-        else {
-            this.tpl = new Ext.XTemplate(
-                '<div class="new-comment{[values.hide ? "" : " open"]}">',
-                    '<form class="newCommentForm">',
-                        '<div class="postCommentWrap">',
-                            '<tpl if="definedIn">',
-                                "<p><b>Be aware.</b> This comment will be posted to <b>{definedIn}</b> class, ",
-                                "from where this member is inherited from.</p>",
-                            '</tpl>',
-                            '<textarea></textarea>',
-                            innerTpl.join(''),
-                        '</div>',
-                    '</form>',
-                '</div>'
-            );
-        }
-
+    initComponent: function() {
         this.data = {
-            //definedIn: this.updateComment ? undefined : this.extractDefinedIn(this.renderTo),
-            updateComment: this.updateComment,
+            title: this.title,
+            updateComment: (this.content !== undefined),
             content: this.content,
             userSubscribed: this.userSubscribed,
             user: this.user
@@ -155,19 +137,6 @@ Ext.define('Docs.view.comments.Form', {
 
         this.makeCodeMirror(this.getEl().down('textarea').dom);
         this.bindEvents();
-    },
-
-    // Given an HTML element, determines the member it's in and if the
-    // member is inherited.  If it's inherited, returns a string
-    // with the classname.  Otherwise just returns undefined.
-    // The definedIn value is used inside template to print a notice
-    // about posting a possible out-of-context comment.
-    extractDefinedIn: function(el) {
-        var member = Ext.get(el).up(".member");
-        if (member && member.hasCls("inherited")) {
-            return member.down(".defined-in").getHTML();
-        }
-        return undefined;
     },
 
     makeCodeMirror: function(textarea) {
