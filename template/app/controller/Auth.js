@@ -63,7 +63,7 @@ Ext.define('Docs.controller.Auth', {
     },
 
     setLoggedIn: function() {
-        this.getAuthForm().showLoggedIn(Docs.Auth.getUser().userName);
+        this.getAuthForm().showLoggedIn(Docs.Auth.getUser());
         this.getController("Tabs").showCommentsTab();
     },
 

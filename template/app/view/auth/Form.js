@@ -4,7 +4,10 @@
 Ext.define('Docs.view.auth.Form', {
     extend: 'Ext.container.Container',
     alias: 'widget.authForm',
-    requires: ['Docs.Tip'],
+    requires: [
+        'Docs.Tip',
+        'Docs.Comments'
+    ],
 
     loginTplHtml: [
         '<form class="loginForm">',
@@ -83,10 +86,11 @@ Ext.define('Docs.view.auth.Form', {
 
     /**
      * Shows message about who's logged in.
-     * @param {String} username
+     * @param {Object} user
      */
-    showLoggedIn: function(username) {
-        this.update('Welcome, ' + username + ' | <a href="#" class="logout">Logout</a>');
+    showLoggedIn: function(user) {
+        var userSignature = Docs.Comments.avatar(user.emailHash) + ' ' + user.userName;
+        this.update('<span>' + userSignature + '</span> | <a href="#" class="logout">Logout</a>');
     },
 
     /**
