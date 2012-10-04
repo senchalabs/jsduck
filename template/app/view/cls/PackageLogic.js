@@ -17,6 +17,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
         };
         this.packages = {"": this.root};
         this.privates = [];
+        this.topLevelNames = { "Global": 0,  "Alloy": 1, "Titanium": 2 };
         Ext.Array.forEach(this.classes, this.addClass, this);
         this.sortTree(this.root);
         return {
@@ -27,17 +28,24 @@ Ext.define('Docs.view.cls.PackageLogic', {
 
     // Sorts all child nodes, and recursively all child packages.
     sortTree: function(node) {
-        node.children.sort(this.compare);
+        node.children.sort(this.compare.bind(this));
         Ext.Array.forEach(node.children, this.sortTree, this);
     },
 
     // Comparson method that sorts package nodes before class nodes.
     // Note changes for Ti, where isObject takes the place of .leaf
     // because our object models differ... Can this be abstracted?
+    // Also sort top level packages as determined by the topLevelNames dict.
     compare: function(a, b) {
+        var aa, bb;
+        if (a.text in this.topLevelNames && b.text in this.topLevelNames) {
+            aa = this.topLevelNames[a.text];
+            bb = this.topLevelNames[b.text];
+            return aa > bb ? 1 : (aa < bb ? -1 : 0)
+        }
         if (a.isObject === b.isObject) {
-            var aa = a.text.toLowerCase();
-            var bb = b.text.toLowerCase();
+            aa = a.text.toLowerCase();
+            bb = b.text.toLowerCase();
             return aa > bb ? 1 : (aa < bb ? -1 : 0);
         }
         else {
