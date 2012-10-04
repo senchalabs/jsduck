@@ -46,11 +46,11 @@ Ext.define('Docs.view.comments.LargeExpander', {
     },
 
     /**
-     * Updates the comment count.
-     * @param {Number} count
+     * Access the embedded Expander element.
+     * @return {Docs.view.comments.Expander}
      */
-    setCount: function(count) {
-        this.expander.setCount(count);
+    getExpander: function() {
+        return this.expander;
     }
 
 });

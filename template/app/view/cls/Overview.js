@@ -95,6 +95,7 @@ Ext.define('Docs.view.cls.Overview', {
                 menubuttonclick: function(type) {
                     this.scrollToEl("h3.members-title.icon-"+type, -20);
                 },
+                commentcountclick: this.expandClassComments,
                 scope: this
             }
         });
@@ -132,6 +133,13 @@ Ext.define('Docs.view.cls.Overview', {
                 el: memberDoc
             });
         }, this);
+    },
+
+    expandClassComments: function() {
+        var expaned = this.clsExpander.getExpander();
+        expander.expand();
+        // add a small arbitrary -40 offset to make the header visible.
+        this.scrollToEl(expander.getEl(), -40);
     },
 
     /**
