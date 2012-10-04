@@ -40,18 +40,65 @@ Ext.define('Docs.view.comments.Form', {
                         '<span class="sep"> | </span>',
                     '</label>',
                 '</tpl>',
-                '<a href="#" class="toggleCommentGuide">View help &#8595;</a>',
+                '<a href="#" class="toggleCommentGuide">Show help &#8595;</a>',
                 '<input type="submit" class="sub submitComment" value="{[values.updateComment ? "Update" : "Post"]} comment" />',
                 '<tpl if="updateComment">',
                     ' or <a href="#" class="cancelUpdateComment">cancel</a>',
                 '</tpl>',
             '</div>',
-            '<div class="commentGuideTxt" style="display: none">',
+            '<div class="commentGuideTxt" style="display: none;">',
                 '<ul>',
-                    '<li>Comments should be an <strong>extension</strong> of the documentation.<br>',
-                    ' Inform us about bugs in documentation.',
-                    ' Give useful tips to other developers.',
-                    ' Warn about bugs and problems that might bite.',
+                    '<li>Use <strong><a href="http://daringfireball.net/projects/markdown/syntax" target="_blank">Markdown</a></strong>',
+                    ' for formatting:</li>',
+                '</ul>',
+                '<div class="markdown preview">',
+                    '<h4>Markdown</h4>',
+                    '<pre>',
+                        "**Bold**, _italic_\n",
+                        "and `monospaced font`.\n",
+                        "\n",
+                        "    Indent with 4 spaces\n",
+                        "    for a code block.\n",
+                        "\n",
+                        "1. numbered lists\n",
+                        "2. are cool\n",
+                        "\n",
+                        "- bulleted lists\n",
+                        "- make your point\n",
+                        "\n",
+                        "[External link](http//example.com)\n",
+                        "\n",
+                        "Leave a blank line\n",
+                        "between paragraphs.\n",
+                    '</pre>',
+                '</div>',
+                '<div class="markdown result">',
+                    '<h4>Result</h4>',
+                    '<strong>Bold</strong>, <em>italic</em> and<br/>',
+                    '<code>monospaced font</code>.<br/>',
+                    '<pre class="prettyprint">',
+                    "Indent with 4 spaces\n",
+                    "for a code block.",
+                    '</pre>',
+                    '<ol>',
+                        '<li>numbered lists</li>',
+                        '<li>are cool</li>',
+                    '</ol>',
+                    '<ul>',
+                        '<li>bulleted lists</li>',
+                        '<li>make your point</li>',
+                    '</ul>',
+                    '<a href="http://example.com">External link</a><br/>',
+                    '<br/>',
+                    'Leave a blank line between paragraphs.<br/><br/>',
+                '</div>',
+                '<ul>',
+                    '<li>Use comments to:',
+                    '<ul>',
+                        '<li>Inform us about <strong>bugs in documentation.</strong></li>',
+                        '<li>Give <strong>useful tips</strong> to other developers.</li>',
+                        '<li><strong>Warn about bugs</strong> and problems that might bite.</li>',
+                    '</ul>',
                     '</li>',
                     "<li>Don't post comments for:",
                     '<ul>',
@@ -64,50 +111,8 @@ Ext.define('Docs.view.comments.Form', {
                     '</ul></li>',
                     '<li>Comments may be edited or deleted at any time by a moderator.</li>',
                     '<li>Avatars can be managed at <a href="http://www.gravatar.com" target="_blank">Gravatar</a> (use your forum email address).</li>',
-                    '<li>To write a reply use <code>@username</code> syntax - the user will get notified.</li>',
-                    '<li>Comments will be formatted using the Markdown syntax, eg:</li>',
+                    '<li>To write a reply use <strong><code>@username</code></strong> syntax &ndash; the user will get notified.</li>',
                 '</ul>',
-                '<div class="markdown preview">',
-                    '<h4>Markdown</h4>',
-                    '<pre>',
-                        "Here is a **bold** item\n",
-                        "Here is an _italic_ item\n",
-                        "Here is an `inline` code snippet\n",
-                        "Here is a [Link](#!/api)\n",
-                        "\n",
-                        "    Indent with 4 spaces\n",
-                        "    for a code snippet\n",
-                        "\n",
-                        "1. Here is a numbered list\n",
-                        "2. Second numbered list item\n",
-                        "\n",
-                        "- Here is an unordered list\n",
-                        "- Second unordered list item\n",
-                        "\n",
-                        "End a line with two spaces&nbsp;&nbsp;\n",
-                        "to create a line break\n",
-                    '</pre>',
-                '</div>',
-                '<div class="markdown result">',
-                    '<h4>Result</h4>',
-                    'Here is a <strong>bold</strong> item<br/>',
-                    'Here is an <em>italic</em> item<br/>',
-                    'Here is an <code>inline</code> code snippet<br/>',
-                    'Here is a <a href="#!/api">Link</a><br/>',
-                    '<pre class="prettyprint">',
-                    "Indent with 4 spaces\n",
-                    "for a code snippet",
-                    '</pre>',
-                    '<ol>',
-                        '<li>Here is a numbered list</li>',
-                        '<li>Second numbered list item</li>',
-                    '</ol>',
-                    '<ul>',
-                        '<li>Here is an unordered list</li>',
-                        '<li>Second unordered list item</li>',
-                    '</ul>',
-                    'End a line with two spaces<br/>to create a line break<br/><br/>',
-                '</div>',
             '</div>',
         '</form>'
     ],
@@ -140,10 +145,17 @@ Ext.define('Docs.view.comments.Form', {
     },
 
     makeCodeMirror: function(textarea) {
+        var firstTime = true;
         this.codeMirror = CodeMirror.fromTextArea(textarea, {
             mode: 'markdown',
             lineWrapping: true,
-            indentUnit: 4
+            indentUnit: 4,
+            onFocus: Ext.Function.bind(function() {
+                if (firstTime && this.codeMirror.getValue() === "") {
+                    this.toggleGuide(true);
+                }
+                firstTime = false;
+            }, this)
         });
     },
 
@@ -180,11 +192,19 @@ Ext.define('Docs.view.comments.Form', {
         }, this, {delegate: "input.subscriptionCheckbox"});
     },
 
-    toggleGuide: function() {
+    toggleGuide: function(expand) {
         var guideText = this.getEl().down('.commentGuideTxt');
-        var curDisplay = guideText.getStyle('display');
+        guideText.setVisibilityMode(Ext.dom.Element.DISPLAY);
+        var helpLink = this.getEl().down('.toggleCommentGuide');
 
-        guideText.setStyle('display', (curDisplay === 'none') ? 'block' : 'none');
+        if (!guideText.isVisible() || expand === true) {
+            guideText.show(true);
+            helpLink.update("Hide help &#8593;");
+        }
+        else {
+            guideText.hide(true);
+            helpLink.update("Show help &#8595;");
+        }
     }
 
 });
