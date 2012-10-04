@@ -11,8 +11,8 @@ Ext.define('Docs.view.comments.Index', {
         'Docs.view.comments.Users',
         'Docs.view.comments.Targets'
     ],
+    componentCls: 'comments-index',
 
-    cls: 'comment-index',
     margin: '10 0 0 0',
     layout: 'border',
 

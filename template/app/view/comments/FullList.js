@@ -11,7 +11,7 @@ Ext.define('Docs.view.comments.FullList', {
         'Docs.view.comments.List',
         'Docs.view.comments.Pager'
     ],
-    componentCls: 'comment-index-container',
+    componentCls: 'comments-full-list',
 
     dockedItems: [
         {

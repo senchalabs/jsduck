@@ -275,16 +275,15 @@ form.commentForm {
 
 // Comments index page
 #commentindex {
-  padding: 5px; }
-#recentcomments {
-  margin: 0 auto;
-  max-width: 1000px; }
-
-
-// load-mask in comments index page
-.comment-index-container .x-mask {
-  opacity: 0.9;
-  background: #fff url(../images/ajax-loader.gif) no-repeat center; }
+  padding: 5px;
+  .comments-full-list {
+    .comments-list {
+      margin: 0 auto;
+      max-width: 1000px; }
+    // load-mask
+    .x-mask {
+      opacity: 0.9;
+      background: #fff url(../images/ajax-loader.gif) no-repeat center; } } }
 
 
 // pager on comments index page

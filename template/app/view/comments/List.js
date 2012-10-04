@@ -13,6 +13,7 @@ Ext.define('Docs.view.comments.List', {
         'Docs.model.Comment',
         'Docs.Tip'
     ],
+    componentCls: 'comments-list',
 
     itemSelector: "div.comment",
 

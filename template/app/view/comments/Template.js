@@ -35,7 +35,7 @@ Ext.define('Docs.view.comments.Template', {
 
     constructor: function() {
         this.callParent([
-            '<div class="comment-list">',
+            '<div>',
                 '<tpl for=".">',
                 '<div class="comment" id="{id}">',
                     '<tpl if="deleted">',
