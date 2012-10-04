@@ -7,7 +7,7 @@ $:.unshift File.dirname(File.dirname(__FILE__)) + "/lib"
 require "rubygems"
 require "cgi"
 require "optparse"
-require "jsduck/json_duck"
+require "jsduck/util/json"
 
 options = {
   :title => "Comparison of Ext 4.0.7 and Ext 4.1.1",
@@ -47,7 +47,7 @@ end
 
 
 def read_class(filename)
-  JsDuck::JsonDuck.read(filename)
+  JsDuck::Util::Json.read(filename)
 end
 
 # loops through all members of class
@@ -301,44 +301,43 @@ EOHTML
 html << "<ul>"
 diff_data.sort! {|a, b| a[:name] <=> b[:name] }
 diff_data.each do |cls|
-  if !cls[:found] || cls[:diff].length > 0
-    html << "<li>"
-    if cls[:found]
-      new_name = (cls[:new_name] == cls[:name] ? "" : " --> " + cls[:new_name])
-      diff_count = cls[:diff].length > 0 ? "(#{cls[:diff].length} changes)" : ""
-      link = cls[:diff].length > 0 ? "<a href='#expand'>#{cls[:name]}</a>" : cls[:name]
-      html << "<h2>#{link} #{new_name} #{diff_count}</h2>"
-      if cls[:diff].length > 0
-        html << "<ul>"
-        cls[:diff].each do |m|
-          html << "<li>"
-          html << m[:what] + " " + m[:type] + " " + m[:name]
-          if m[:other]
-            o = m[:other]
-            stat = o[:static] ? 'static' : ''
-            priv = o[:private] ? 'private' : ''
-            prot = o[:protected] ? 'protected' : ''
-            html << " (found #{stat} #{priv} #{prot} #{o[:type]} with the same name)"
-          elsif m[:changes]
-            m[:changes].each do |c|
-              html << " (#{c[:what]} changed from #{CGI.escapeHTML(c[:a])} to #{CGI.escapeHTML(c[:b])})"
-            end
+  html << "<li>"
+  if cls[:found]
+    new_name = (cls[:new_name] == cls[:name] ? "" : " --> " + cls[:new_name])
+    diff_count = cls[:diff].length > 0 ? "(#{cls[:diff].length} changes)" : ""
+    link = cls[:diff].length > 0 ? "<a href='#expand'>#{cls[:name]}</a>" : "<span style='color:green'>"+cls[:name]+'</span>'
+    html << "<h2>#{link} #{new_name} #{diff_count}</h2>"
+    if cls[:diff].length > 0
+      html << "<ul>"
+      cls[:diff].each do |m|
+        html << "<li>"
+        html << m[:what] + " " + m[:type] + " " + m[:name]
+        if m[:other]
+          o = m[:other]
+          stat = o[:static] ? 'static' : ''
+          priv = o[:private] ? 'private' : ''
+          prot = o[:protected] ? 'protected' : ''
+          html << " (found #{stat} #{priv} #{prot} #{o[:type]} with the same name)"
+        elsif m[:changes]
+          m[:changes].each do |c|
+            html << " (#{c[:what]} changed from #{CGI.escapeHTML(c[:a])} to #{CGI.escapeHTML(c[:b])})"
           end
-          html << "</li>"
         end
-        html << "</ul>"
+        html << "</li>"
       end
-    else
-      html << "<h2>" + cls[:name] + " <b>not found</b></h2>"
+      html << "</ul>"
     end
-    html << "</li>"
+  else
+    html << "<h2>" + cls[:name] + " <b>not found</b></h2>"
   end
+  html << "</li>"
 end
 html << "</ul>"
 
 html << "<h2>Summary</h2>"
 dd = diff_data
 html << "<p>" + dd.find_all {|c| !c[:found] }.length.to_s + " classes not found</p>"
+html << "<p>" + dd.find_all {|c| c[:found] && c[:diff].length == 0 }.length.to_s + " classes exactly the same</p>"
 html << "<p>" + dd.find_all {|c| c[:found] && c[:name] == c[:new_name] }.length.to_s + " classes with same name</p>"
 html << "<p>" + dd.find_all {|c| c[:found] && c[:name] != c[:new_name] }.length.to_s + " renamed classes</p>"
 html << "<p>" + dd.find_all {|c| c[:diff].length > 0 }.length.to_s + " classes with changed members</p>"
