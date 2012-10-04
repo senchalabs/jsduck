@@ -4,6 +4,7 @@
 $moderator-color: #3D7E00;
 $moderator-color-light: #94b773;
 
+// comment count button in class toolbar.
 .comment-btn {
   background: url(../images/comment-bubble.png) no-repeat;
   color: #fff;
@@ -14,21 +15,8 @@ $moderator-color-light: #94b773;
   font-weight: bold;
   cursor: pointer; }
 
-// Header icon of Class/Guide/Video level comments expander
-#center-container .comments-section h3.icon-comment {
-    padding: 0 0 5px 25px;
-    margin: 30px 0 5px 0;
-    background: url(../images/comment-bubble.png) no-repeat 1px -26px; }
 
-.comments-section {
-  .comments-div {
-    @include member-expander; } }
-#commentindex {
-  padding: 5px; }
-#recentcomments {
-  margin: 0 auto;
-  max-width: 1000px; }
-
+// The small comment count with icon, used all over in several places.
 .comment-counter-small {
   cursor: pointer;
   background: url(../images/comment-bubble.png) no-repeat 2px -55px;
@@ -36,23 +24,19 @@ $moderator-color-light: #94b773;
   font-weight: normal;
   font-size: 11px; }
 
-.recent-comments-pager {
-  display: block;
-  padding: 10px 0 5px 35px;
-  position: relative;
-  color: gray;
-  span {
-    display: block;
-    position: absolute;
-    left: 0;
-    top: 5px;
-    width: 27px;
-    height: 28px;
-    background: url(../images/comment.png) no-repeat 0 -25px; }
-  &:hover span {
-    background-position: -59px -25px; } }
+
+// Large comments expander (Class/Guide/Video)
+#center-container .comments-section {
+  .comments-div {
+    @include member-expander; }
+  // Header icon in large comments expander
+  h3.icon-comment {
+    padding: 0 0 5px 25px;
+    margin: 30px 0 5px 0;
+    background: url(../images/comment-bubble.png) no-repeat 1px -26px; } }
 
 
+// Comments expander
 .comments-div {
   color: $docs-text-color;
   border-width: 1px 0;
@@ -60,7 +44,6 @@ $moderator-color-light: #94b773;
   border-color: #e0e0e0;
   position: relative;
   padding: 0 0 10px 25px;
-
   .loading {
     font-weight: bold;
     background: url(../images/ajax-loader.gif) no-repeat 0 9px;
@@ -72,6 +55,8 @@ $moderator-color-light: #94b773;
   &.open {
     min-height: 40px; } }
 
+
+// login form in place of new comment button.
 .new-comment {
   .note {
     padding-bottom: 10px;
@@ -91,92 +76,95 @@ $moderator-color-light: #94b773;
     font-weight: bold; } }
 
 
-  form.commentForm {
-    position: relative;
-    border: 1px solid #c7d1d9;
-    padding: 10px 15px 15px 15px;
-    @include border-radius(4px);
-    background: #ecf5fc;
-    margin: 10px 55px 0px 0;
-    &.newComment {
-      margin: 20px 55px 10px 5px; }
-    .subscribe {
+// Form for posting/editing comment
+form.commentForm {
+  position: relative;
+  border: 1px solid #c7d1d9;
+  padding: 10px 15px 15px 15px;
+  @include border-radius(4px);
+  background: #ecf5fc;
+  margin: 10px 55px 0px 0;
+  &.newComment {
+    margin: 20px 55px 10px 5px; }
+  .subscribe {
+    margin-right: 5px;
+    color: #444;
+    .sep {
+      color: #aaa; }
+    input {
+      color: #000;
       margin-right: 5px;
-      color: #444;
-      .sep {
-        color: #aaa; }
-      input {
-        color: #000;
-        margin-right: 5px;
-        margin-left: 5px; } }
-    .com-meta {
-      position: relative;
-      margin-top: 8px;
-      text-align: right;
-      .toggleCommentGuide {
-        font-weight: bold; } }
-    img {
-      @include border-radius(2px);
-      position: absolute;
-      left: 0;
-      margin-right: 10px; }
-    .form-author {
-      font-weight: normal;
-      line-height: 25px;
-      position: absolute;
-      left: 35px;
-      margin-bottom: 10px; }
-    .CodeMirror,
-    textarea {
-      border: 1px solid #ccc;
+      margin-left: 5px; } }
+  .com-meta {
+    position: relative;
+    margin-top: 8px;
+    text-align: right;
+    .toggleCommentGuide {
+      font-weight: bold; } }
+  img {
+    @include border-radius(2px);
+    position: absolute;
+    left: 0;
+    margin-right: 10px; }
+  .form-author {
+    font-weight: normal;
+    line-height: 25px;
+    position: absolute;
+    left: 35px;
+    margin-bottom: 10px; }
+  .CodeMirror,
+  textarea {
+    border: 1px solid #ccc;
+    background: #fff;
+    @include border-radius(3px);
+    width: 100%;
+    padding: 3px;
+    border: auto; }
+  .CodeMirror .CodeMirror-scroll,
+  textarea {
+    height: auto;
+    min-height: 8em; }
+  input.sub {
+    @include green-button();
+    font-weight: bold;
+    width: 120px;
+    margin-left: 20px;
+    padding: 5px 8px;
+    font-size: 12px; }
+  .commentGuideTxt {
+    border-top: 1px solid #C7D1D9;
+    margin-top: 15px;
+    padding-top: 10px;
+    .markdown.preview {
+      float: left;
+      width: 310px;
+      pre {
+        border: 0;
+        padding: 0;
+        margin: 0;
+        line-height: 1.5em;
+        background: transparent; } }
+    .markdown.result {
+      margin-left: 320px;
+      width: 260px; }
+    .markdown {
       background: #fff;
-      @include border-radius(3px);
-      width: 100%;
-      padding: 3px;
-      border: auto; }
-    .CodeMirror .CodeMirror-scroll,
-    textarea {
-      height: auto;
-      min-height: 8em; }
-    input.sub {
-      @include green-button();
-      font-weight: bold;
-      width: 120px;
-      margin-left: 20px;
-      padding: 5px 8px;
-      font-size: 12px; }
-    .commentGuideTxt {
-      border-top: 1px solid #C7D1D9;
-      margin-top: 15px;
-      padding-top: 10px;
-      .markdown.preview {
-        float: left;
-        width: 310px;
-        pre {
-          border: 0;
-          padding: 0;
-          margin: 0;
-          line-height: 1.5em;
-          background: transparent; } }
-      .markdown.result {
-        margin-left: 320px;
-        width: 260px; }
-      .markdown {
-        background: #fff;
-        padding: 20px;
-        position: relative;
-        @include border-radius(5px);
-        h4 {
-          position: absolute;
-          top: 0px;
-          right: 0px;
-          padding: 5px 10px;
-          background: rgba(0,0,0,0.05); } }
-      code {
-        padding-left: 5px; }
-      ul {
-        margin-top: 5px; } } }
+      padding: 20px;
+      position: relative;
+      @include border-radius(5px);
+      h4 {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        padding: 5px 10px;
+        background: rgba(0,0,0,0.05); } }
+    code {
+      padding-left: 5px; }
+    ul {
+      margin-top: 5px; } } }
 
+
+// Single comment
 .comment {
   padding-top: 10px;
   padding-left: 2px;
@@ -284,13 +272,40 @@ $moderator-color-light: #94b773;
     @include border-radius(4px);
     font-weight: bold; } }
 
+
+// Comments index page
+#commentindex {
+  padding: 5px; }
+#recentcomments {
+  margin: 0 auto;
+  max-width: 1000px; }
+
+
+// load-mask in comments index page
 .comment-index-container .x-mask {
   opacity: 0.9;
   background: #fff url(../images/ajax-loader.gif) no-repeat center; }
 
 
-// Menu for switching between Users and Topics
+// pager on comments index page
+.recent-comments-pager {
+  display: block;
+  padding: 10px 0 5px 35px;
+  position: relative;
+  color: gray;
+  span {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 27px;
+    height: 28px;
+    background: url(../images/comment.png) no-repeat 0 -25px; }
+  &:hover span {
+    background-position: -59px -25px; } }
 
+
+// Menu for switching between Users and Topics
 .comments-header-menu {
   h1 a {
     margin-right: 1em;
@@ -302,7 +317,6 @@ $moderator-color-light: #94b773;
 
 
 // Table with top-voted users
-
 .comments-users .x-panel-body .users-list {
   ul, li {
     margin: 0;
@@ -345,7 +359,6 @@ $moderator-color-light: #94b773;
 
 
 // Table with top-voted targets
-
 .comments-targets .x-panel-body .targets-list {
   ul, li {
     margin: 0;
