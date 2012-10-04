@@ -150,6 +150,10 @@ Ext.define('Docs.view.comments.Form', {
             mode: 'markdown',
             lineWrapping: true,
             indentUnit: 4,
+            extraKeys: {
+                "Tab": "indentMore",
+                "Shift-Tab": "indentLess"
+            },
             onFocus: Ext.Function.bind(function() {
                 if (firstTime && this.codeMirror.getValue() === "") {
                     this.toggleGuide(true);
