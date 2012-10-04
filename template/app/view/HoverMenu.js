@@ -36,11 +36,15 @@ Ext.define('Docs.view.HoverMenu', {
             '</table>',
             {
                 columnHeight: this.columnHeight,
+
                 renderLink: function(values) {
                     var tags = Ext.Array.map(Docs.data.signatures, function(s) {
                         return values.meta[s.key] ? '<span class="signature '+s.key+'">'+(s["short"])+'</span>' : '';
                     }).join(' ');
-                    return Ext.String.format('<a href="#!/api/{0}" rel="{0}" class="docClass">{1} {2}</a>', values.url, values.label, tags);
+
+                    var cnt = values.commentCount > 0 ? '<span class="toggleMemberComments">'+values.commentCount+'</span>' : '';
+
+                    return Ext.String.format('<a href="#!/api/{0}" rel="{0}" class="docClass">{1} {2} {3}</a>', values.url, values.label, tags, cnt);
                 }
             }
         );
