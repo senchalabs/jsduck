@@ -158,6 +158,16 @@ Ext.define('Docs.Comments', {
     avatar: function(emailHash) {
         return '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/' +
                emailHash + '?s=25&amp;r=PG&amp;d=monsterid">';
+    },
+
+    /**
+     * Returns HTML for rendering the span with comments count.
+     * Defined here so we can uniformly use the same HTML everywhere.
+     * @param {Number} count
+     * @return {String}
+     */
+    counterHtml: function(count) {
+        return count > 0 ? '<span class="comment-counter-small">'+count+'</span>' : '';
     }
 
 });

@@ -3,6 +3,9 @@
  */
 Ext.define('Docs.view.HoverMenu', {
     extend: 'Ext.view.View',
+    requires: [
+        'Docs.Comments'
+    ],
 
     alias: 'widget.hovermenu',
     componentCls: 'hover-menu',
@@ -42,7 +45,7 @@ Ext.define('Docs.view.HoverMenu', {
                         return values.meta[s.key] ? '<span class="signature '+s.key+'">'+(s["short"])+'</span>' : '';
                     }).join(' ');
 
-                    var cnt = values.commentCount > 0 ? '<span class="toggleMemberComments">'+values.commentCount+'</span>' : '';
+                    var cnt = Docs.Comments.counterHtml(values.commentCount);
 
                     return Ext.String.format('<a href="#!/api/{0}" rel="{0}" class="docClass">{1} {2} {3}</a>', values.url, values.label, tags, cnt);
                 }

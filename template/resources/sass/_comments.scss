@@ -28,7 +28,8 @@ $moderator-color-light: #94b773;
 #recentcomments {
   margin: 0 auto;
   max-width: 1000px; }
-.toggleMemberComments {
+
+.comment-counter-small {
   cursor: pointer;
   background: url(../images/comment-bubble.png) no-repeat 2px -55px;
   padding-left: 21px;

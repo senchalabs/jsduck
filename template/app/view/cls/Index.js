@@ -26,10 +26,6 @@ Ext.define('Docs.view.cls.Index', {
             categories: Docs.ContentGrabber.get("categories-content")
         };
 
-        this.commentCountTpl = Ext.create('Ext.Template',
-            '<span class="toggleMemberComments">{0}</span>'
-        );
-
         this.callParent(arguments);
     },
 
@@ -44,7 +40,7 @@ Ext.define('Docs.view.cls.Index', {
             var className = a.getHTML();
             var count = Docs.Comments.getClassTotalCount(className);
             if (count) {
-                this.commentCountTpl.append(a, [count]);
+                Ext.DomHelper.append(a, Docs.Comments.counterHtml(count));
             }
         }, this);
     },

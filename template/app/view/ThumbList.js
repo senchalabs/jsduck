@@ -83,10 +83,6 @@ Ext.define('Docs.view.ThumbList', {
         this.itemTpl = undefined;
         this.data = undefined;
 
-        this.commentCountTpl = Ext.create('Ext.Template',
-            '<span class="toggleMemberComments">{0}</span>'
-        );
-
         // Listen to viewready because the whole HTML is not yet
         // rendered when afterrender fires - and initComments relies
         // on the view being rendered fully.
@@ -119,7 +115,7 @@ Ext.define('Docs.view.ThumbList', {
             var name = dd.getAttributeNS("ext", this.urlField).replace(/^.*\//, "");
             var count = Docs.Comments.getCount(this.commentType, name);
             if (count) {
-                this.commentCountTpl.append(dd.down("p"), [count]);
+                Ext.DomHelper.append(dd.down("p"), Docs.Comments.counterHtml(count));
             }
         }, this);
     },

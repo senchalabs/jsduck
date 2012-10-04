@@ -8,8 +8,6 @@ Ext.define('Docs.view.comments.MemberWrap', {
         "Docs.view.comments.Expander"
     ],
 
-    tpl: Ext.create("Ext.XTemplate", '<span class="toggleMemberComments">{0}</span>'),
-
     /**
      * @cfg {Docs.view.cls.Overview} parent
      * The parent class Overview component.
@@ -55,14 +53,14 @@ Ext.define('Docs.view.comments.MemberWrap', {
 
     updateCountInTitle: function(count) {
         var titleEl = this.el.down(".title");
-        var titleComments = titleEl.down('.toggleMemberComments');
+        var titleComments = titleEl.down('.comment-counter-small');
 
         if (count > 0) {
             if (titleComments) {
                 titleComments.update(""+count);
             }
             else {
-                var el = this.tpl.append(titleEl, [count], true);
+                var el = Ext.DomHelper.append(titleEl, Docs.Comments.counterHtml(count), true);
                 el.on("click", function() {
                     this.el.addCls("open");
                     this.expander.expand();
