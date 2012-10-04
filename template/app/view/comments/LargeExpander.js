@@ -9,7 +9,7 @@ Ext.define('Docs.view.comments.LargeExpander', {
 
     html: [
         '<div class="comments-section">',
-            '<h3 class="members-title icon-comment">Comments</h3>',
+            '<h3 class="icon-comment">Comments</h3>',
             '<div></div>',
         '</div>'
     ].join(""),
