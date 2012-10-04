@@ -11,7 +11,6 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.welcome.Index',
         'Docs.view.auth.Form',
         'Docs.view.comments.Index',
-        'Docs.view.Comments',
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
         'Docs.view.guides.Index',
