@@ -73,6 +73,9 @@ Ext.define('Docs.view.comments.Expander', {
         this.expanded ? this.collapse() : this.expand();
     },
 
+    /**
+     * Expands the comments list.
+     */
     expand: function() {
         this.expanded = true;
         var div = this.getEl().down(".comments-div");
@@ -87,6 +90,9 @@ Ext.define('Docs.view.comments.Expander', {
         }
     },
 
+    /**
+     * Collapses the comments list, leaving just count.
+     */
     collapse: function() {
         this.expanded = false;
         var div = this.getEl().down(".comments-div");

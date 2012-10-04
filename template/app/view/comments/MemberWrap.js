@@ -11,6 +11,11 @@ Ext.define('Docs.view.comments.MemberWrap', {
     tpl: Ext.create("Ext.XTemplate", '<span class="toggleMemberComments">{0}</span>'),
 
     /**
+     * @cfg {Docs.view.cls.Overview} parent
+     * The parent class Overview component.
+     */
+
+    /**
      * @cfg {Ext.Element/HTMLElement} el
      * The member element to wrap.
      */
@@ -57,7 +62,12 @@ Ext.define('Docs.view.comments.MemberWrap', {
                 titleComments.update(""+count);
             }
             else {
-                this.tpl.append(titleEl, [count]);
+                var el = this.tpl.append(titleEl, [count], true);
+                el.on("click", function() {
+                    this.el.addCls("open");
+                    this.expander.expand();
+                    this.parent.scrollToEl(this.expander.getEl());
+                }, this);
             }
         }
         else if (titleComments) {

@@ -127,6 +127,7 @@ Ext.define('Docs.view.cls.Overview', {
         // Add a comment container to each class member
         this.memberWrappers = Ext.Array.map(Ext.query('.member'), function(memberDoc) {
             return new Docs.view.comments.MemberWrap({
+                parent: this,
                 className: this.docClass.name,
                 el: memberDoc
             });
