@@ -26,8 +26,8 @@ $moderator-color-light: #94b773;
 
 
 // Large comments expander (Class/Guide/Video)
-#center-container .comments-section {
-  .comments-div {
+#center-container .comments-large-expander {
+  .comments-expander {
     @include member-expander; }
   // Header icon in large comments expander
   h3.icon-comment {
@@ -37,13 +37,15 @@ $moderator-color-light: #94b773;
 
 
 // Comments expander
-.comments-div {
+.comments-expander {
   color: $docs-text-color;
   border-width: 1px 0;
   border-style: solid;
   border-color: #e0e0e0;
   position: relative;
   padding: 0 0 10px 25px;
+  &.open {
+    min-height: 40px; }
   .loading {
     font-weight: bold;
     background: url(../images/ajax-loader.gif) no-repeat 0 9px;
@@ -51,9 +53,7 @@ $moderator-color-light: #94b773;
   .name {
     padding: 10px 0 0 0px;
     display: block;
-    font-weight: normal !important; }
-  &.open {
-    min-height: 40px; } }
+    font-weight: normal !important; } }
 
 
 // login form at the end of comments list.

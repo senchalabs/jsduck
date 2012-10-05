@@ -69,7 +69,6 @@
     @include box-shadow(#d7d7d7 0 1px 0 0 inset); } }
 
 @mixin member-expander {
-
   &.open > a.side.toggleComments,
   &.open > a.side.expandable {
     background: #EBF3FE;

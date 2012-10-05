@@ -8,6 +8,7 @@ Ext.define('Docs.view.comments.Expander', {
         'Docs.Comments',
         'Docs.view.comments.ListWithForm'
     ],
+    componentCls: "comments-expander",
 
     /**
      * @cfg {String} type
@@ -31,12 +32,10 @@ Ext.define('Docs.view.comments.Expander', {
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
-            '<div class="comments-div first-child">',
-                '<a href="#" class="side toggleComments"><span></span></a>',
-                '<a href="#" class="name toggleComments">',
-                    '{[this.renderCount(values.count)]}',
-                '</a>',
-            '</div>',
+            '<a href="#" class="side toggleComments"><span></span></a>',
+            '<a href="#" class="name toggleComments">',
+                '{[this.renderCount(values.count)]}',
+            '</a>',
             {
                 renderCount: this.renderCount
             }
@@ -78,15 +77,14 @@ Ext.define('Docs.view.comments.Expander', {
      */
     expand: function() {
         this.expanded = true;
-        var div = this.getEl().down(".comments-div");
-        div.addCls('open');
-        div.down('.name').setStyle("display", "none");
+        this.getEl().addCls('open');
+        this.getEl().down('.name').setStyle("display", "none");
 
         if (this.list) {
             this.list.show();
         }
         else {
-            this.loadComments(div);
+            this.loadComments();
         }
     },
 
@@ -95,21 +93,20 @@ Ext.define('Docs.view.comments.Expander', {
      */
     collapse: function() {
         this.expanded = false;
-        var div = this.getEl().down(".comments-div");
-        div.removeCls('open');
-        div.down('.name').setStyle("display", "block");
+        this.getEl().removeCls('open');
+        this.getEl().down('.name').setStyle("display", "block");
 
         if (this.list) {
             this.list.hide();
         }
     },
 
-    loadComments: function(div) {
+    loadComments: function() {
         var target = [this.type, this.className, this.memberId];
         this.list = new Docs.view.comments.ListWithForm({
             target: target,
             newCommentTitle: this.newCommentTitle,
-            renderTo: div
+            renderTo: this.getEl()
         });
 
         Docs.Comments.load(target, function(comments) {
