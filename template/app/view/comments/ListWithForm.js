@@ -8,6 +8,7 @@ Ext.define('Docs.view.comments.ListWithForm', {
     requires: [
         'Docs.view.comments.List',
         'Docs.view.comments.Form',
+        'Docs.view.auth.Form',
         'Docs.Comments',
         'Docs.Auth'
     ],
@@ -24,23 +25,22 @@ Ext.define('Docs.view.comments.ListWithForm', {
     initComponent: function() {
         this.items = [
             this.list = new Docs.view.comments.List({
-            }),
-            this.form = new Docs.view.comments.Form({
-                title: this.newCommentTitle,
-                user: Docs.Auth.getUser(),
-                listeners: {
-                    submit: this.postComment,
-                    scope: this
-                }
             })
         ];
 
         this.callParent(arguments);
+
+        if (Docs.Auth.isLoggedIn()) {
+            this.showCommentingForm();
+        }
+        else {
+            this.showAuthForm();
+        }
     },
 
     postComment: function(content) {
         Docs.Comments.post(this.target, content, function(comment) {
-            this.form.setValue('');
+            this.commentingForm.setValue('');
             this.list.load([comment], true);
         }, this);
     },
@@ -51,7 +51,38 @@ Ext.define('Docs.view.comments.ListWithForm', {
      * @param {Boolean} append True to append the comments to existing ones.
      */
     load: function(comments, append) {
-        this.down("commentsList").load(comments, append);
+        this.list.load(comments, append);
+    },
+
+    /**
+     * Shows the login form.
+     */
+    showAuthForm: function() {
+        if (this.commentingForm) {
+            this.remove(this.commentingForm);
+            delete this.commentingForm;
+        }
+        this.authForm = new Docs.view.auth.Form();
+        this.add(this.authForm);
+    },
+
+    /**
+     * Shows the commenting form.
+     */
+    showCommentingForm: function() {
+        if (this.authForm) {
+            this.remove(this.authForm);
+            delete this.authForm;
+        }
+        this.commentingForm = new Docs.view.comments.Form({
+            title: this.newCommentTitle,
+            user: Docs.Auth.getUser(),
+            listeners: {
+                submit: this.postComment,
+                scope: this
+            }
+        });
+        this.add(this.commentingForm);
     }
 
 });

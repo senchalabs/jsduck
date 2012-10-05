@@ -1,15 +1,15 @@
 /**
- * View for login form at the end of comments.
+ * View for login form in header.
  */
-Ext.define('Docs.view.auth.Form', {
+Ext.define('Docs.view.auth.HeaderForm', {
     extend: 'Ext.container.Container',
-    alias: 'widget.authForm',
+    alias: 'widget.authHeaderForm',
     requires: [
-        'Docs.Tip'
+        'Docs.Tip',
+        'Docs.Comments'
     ],
 
-    html: [
-        '<span class="toggleNewComment"><span></span>Sign in to post a comment:</span>',
+    loginTplHtml: [
         '<form class="loginForm">',
             '<input class="username" type="text" name="username" placeholder="Username" />',
             '<input class="password" type="password" name="password" placeholder="Password" />',
@@ -20,21 +20,48 @@ Ext.define('Docs.view.auth.Form', {
         '</form>'
     ],
 
-    cls: "new-comment",
-
     /**
      * @event login
      * Fires when user fills in username and password and presses
      * submit button.
-     * @param {Docs.view.auth.CommentForm} form
+     * @param {Docs.view.auth.HeaderForm} form
      * @param {String} username
      * @param {String} password
      * @param {Boolean} remember True when remember-me checked.
      */
 
+    /**
+     * @event logout
+     * Fired when logout link clicked.
+     * @param {Docs.view.auth.HeaderForm} form
+     */
+
     afterRender: function() {
         this.callParent(arguments);
 
+        this.getEl().addListener('click', this.showLoginForm, this, {
+            preventDefault: true,
+            delegate: '.login'
+        });
+
+        this.getEl().addListener('click', function() {
+            this.fireEvent("logout", this);
+        }, this, {
+            preventDefault: true,
+            delegate: '.logout'
+        });
+    },
+
+    /**
+     * Shows login form.
+     */
+    showLoginForm: function() {
+        var tpl = Ext.create('Ext.Template', this.loginTplHtml.join(''));
+        tpl.overwrite(this.getEl(), {showLabel: this.showLabel});
+        this.bindSubmit();
+    },
+
+    bindSubmit: function() {
         this.getEl().down("form").on("submit", this.submitLogin, this, {preventDefault: true});
     },
 
@@ -57,6 +84,22 @@ Ext.define('Docs.view.auth.Form', {
     showMessage: function(msg) {
         var submitEl = this.getEl().down('input[type=submit]');
         Docs.Tip.show(msg, submitEl, 'bottom');
+    },
+
+    /**
+     * Shows message about who's logged in.
+     * @param {Object} user
+     */
+    showLoggedIn: function(user) {
+        var userSignature = Docs.Comments.avatar(user.emailHash) + ' ' + user.userName;
+        this.update('<span>' + userSignature + '</span> | <a href="#" class="logout">Logout</a>');
+    },
+
+    /**
+     * Shows message about being currently logged out.
+     */
+    showLoggedOut: function() {
+        this.update('<a href="#" class="login">Sign in / Register</a>');
     }
 
 });

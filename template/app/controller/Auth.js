@@ -13,14 +13,14 @@ Ext.define('Docs.controller.Auth', {
 
     refs: [
         {
-            ref: 'authForm',
-            selector: 'authForm'
+            ref: "authHeaderForm",
+            selector: "authHeaderForm"
         }
     ],
 
     init: function() {
         this.control({
-            'authForm': {
+            'authHeaderForm, authForm': {
                 login: this.login,
                 logout: this.logout
             }
@@ -45,31 +45,47 @@ Ext.define('Docs.controller.Auth', {
         }
     },
 
-    login: function(username, password, remember) {
+    login: function(form, username, password, remember) {
         Docs.Auth.login({
             username: username,
             password: password,
             remember: remember,
             success: this.setLoggedIn,
             failure: function(reason) {
-                this.getAuthForm().showMessage(reason);
+                form.showMessage(reason);
             },
             scope: this
         });
     },
 
-    logout: function() {
+    logout: function(form) {
         Docs.Auth.logout(this.setLoggedOut, this);
     },
 
     setLoggedIn: function() {
-        this.getAuthForm().showLoggedIn(Docs.Auth.getUser());
+        this.getAuthHeaderForm().showLoggedIn(Docs.Auth.getUser());
+        this.eachCmp("commentsListWithForm", function(list) {
+            list.showCommentingForm();
+        });
+        this.eachCmp("commentsList", function(list) {
+            list.refresh();
+        });
         this.getController("Tabs").showCommentsTab();
     },
 
-    setLoggedOut: function(user) {
-        this.getAuthForm().showLoggedOut();
+    setLoggedOut: function() {
+        this.getAuthHeaderForm().showLoggedOut();
+        this.eachCmp("commentsListWithForm", function(list) {
+            list.showAuthForm();
+        });
+        this.eachCmp("commentsList", function(list) {
+            list.refresh();
+        });
         this.getController("Tabs").hideCommentsTab();
+    },
+
+    eachCmp: function(selector, callback, scope) {
+        Ext.Array.forEach(Ext.ComponentQuery.query(selector), callback, scope);
     }
 
 });
