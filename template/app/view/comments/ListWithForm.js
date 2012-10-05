@@ -29,13 +29,6 @@ Ext.define('Docs.view.comments.ListWithForm', {
         ];
 
         this.callParent(arguments);
-
-        if (Docs.Auth.isLoggedIn()) {
-            this.showCommentingForm();
-        }
-        else {
-            this.showAuthForm();
-        }
     },
 
     postComment: function(content) {
@@ -52,6 +45,14 @@ Ext.define('Docs.view.comments.ListWithForm', {
      */
     load: function(comments, append) {
         this.list.load(comments, append);
+
+        // Only show auth/comment form after the initial load.
+        if (Docs.Auth.isLoggedIn()) {
+            this.showCommentingForm();
+        }
+        else {
+            this.showAuthForm();
+        }
     },
 
     /**
