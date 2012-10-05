@@ -56,20 +56,14 @@ $moderator-color-light: #94b773;
     min-height: 40px; } }
 
 
-// login form in place of new comment button.
-.new-comment {
-  .note {
-    padding-bottom: 10px;
-    label {
-      margin-left: 20px;
-      display: block; } }
-  form.loginForm {
+// login form at the end of comments list.
+.auth-form {
+  form {
     position: relative;
     display: inline-block;
-    .username,
-    .password {
+    .username, .password {
       border: 1px solid #bbb; } }
-  .toggleNewComment {
+  .before-text {
     display: inline-block;
     line-height: 22px;
     margin: 10px 10px 1px 4px;

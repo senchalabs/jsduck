@@ -4,11 +4,11 @@
 Ext.define('Docs.view.auth.Form', {
     extend: 'Docs.view.auth.BaseForm',
     alias: 'widget.authForm',
-    cls: "new-comment",
+    componentCls: "auth-form",
 
     initComponent: function() {
         this.html = [
-            '<span class="toggleNewComment"><span></span>Sign in to post a comment:</span>',
+            '<span class="before-text">Sign in to post a comment:</span>',
             this.createLoginFormHtml()
         ];
 
