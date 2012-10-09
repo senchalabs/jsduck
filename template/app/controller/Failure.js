@@ -27,7 +27,7 @@ Ext.define('Docs.controller.Failure', {
             "<p>{msg}</p>",
             "<p>Maybe it was renamed to something else? Or maybe your internet connection has failed? ",
             "This would be sad. Hopefully it's just a bug on our side. ",
-            "Report it to <a href='http://www.sencha.com/forum/showthread.php?135036'>Sencha Forum</a> if you feel so.</p>",
+            "Report it to <a href='https://github.com/senchalabs/jsduck/issues'>JSDuck issue tracker</a> if you feel so.</p>",
             "<p>Sorry for all this :(</p>"
         );
         Ext.getCmp("failure").update(tpl.apply({msg: msg}));
