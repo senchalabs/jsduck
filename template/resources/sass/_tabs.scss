@@ -6,8 +6,9 @@
   @include icons;
   padding-left: 10px;
   height: 28px;
+  margin-top: 1px;
   position: relative;
-  border-bottom: 1px solid $docs-border-color;
+  // border-bottom: 1px solid $docs-border-color;
 
   .doctab {
     position: relative;
@@ -22,7 +23,7 @@
       position: absolute;
       top: 0;
       left: 0px;
-      width: 9px;
+      width: 8px;
       height: 29px;
       background: url(../images/tabs.png) no-repeat -8px -141px;
       z-index: 3; }
@@ -38,7 +39,7 @@
       z-index: 5;
       position: relative;
       padding: 2px 3px 0 6px;
-      margin: 0 7px;
+      margin: 0 6px;
       background: url(../images/tabs.png) repeat-x 0 -173px;
       height: 29px;
       overflow: hidden;
@@ -120,9 +121,9 @@
 		}
 	}
 	.doctab.index .m a {
-		background: url(../images/tabs.png) no-repeat 1px 0px;
-		padding-left: 16px;
-		padding-right: 16px;
+		background: url(../images/tabs.png) no-repeat 6px 0px;
+		padding-left: 0px;
+		padding-right: 40px;
 	}
 /*
 	.doctab.index.active .m a,
@@ -131,9 +132,9 @@
 	}
 */
 	.doctab.classes .m a {
-		background: url(../images/tabs.png) no-repeat 2px -20px;
-		padding-left: 16px;
-		padding-right: 16px;
+		background: url(../images/tabs.png) no-repeat 6px -20px;
+		padding-left: 0px;
+		padding-right: 40px;
 	}
 /*
 	.doctab.classes.active .m a,
@@ -142,9 +143,9 @@
 	}
 */
 	.doctab.guides .m a {
-		background: url(../images/tabs.png) no-repeat 3px -60px;
-		padding-left: 16px;
-		padding-right: 12px;
+		background: url(../images/tabs.png) no-repeat 6px -60px;
+		padding-left: 0px;
+		padding-right: 40px;
 	}
 /*
 	.doctab.guides.active .m a,
@@ -153,9 +154,9 @@
 	}
 */
 	.doctab.videos .m a {
-		background: url(../images/tabs.png) no-repeat 2px -40px;
-		padding-left: 16px;
-		padding-right: 16px;
+		background: url(../images/tabs.png) no-repeat 6px -40px;
+		padding-left: 0px;
+		padding-right: 40px;
 	}
 /*
 	.doctab.videos.active .m a,
