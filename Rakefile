@@ -167,7 +167,7 @@ class JsDuckRunner
   # We check explicitly for IE version to make sure the code works the
   # same way in both real IE7 and IE7-mode of IE8/9.
   def add_comments(db_name, version)
-    comments_base_url = "http://projects.sencha.com/auth"
+    comments_base_url = "http://localhost:3000/auth"
     @options += ["--head-html", <<-EOHTML]
       <script type="text/javascript">
         Docs.enableComments = ("withCredentials" in new XMLHttpRequest()) || (Ext.ieVersion >= 8);
