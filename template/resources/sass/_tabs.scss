@@ -33,7 +33,7 @@
       top: 0;
       width: 26px;
       height: 29px;
-      background: url(../images/tabs.png) no-repeat 0 -239px;
+      background: url(../images/tabs.png) no-repeat 0px -239px;
       z-index: 5; }
     .m {
       z-index: 5;
@@ -103,7 +103,7 @@
       z-index: 6;
       width: 13px; }
     .r {
-      background: url(../images/tabs.png) no-repeat 3px -479px;
+      background: url(../images/tabs.png) no-repeat 0px -479px;
       z-index: 5;
       width: 26px; }
     .m {
@@ -121,49 +121,25 @@
 		}
 	}
 	.doctab.index .m a {
-		background: url(../images/tabs.png) no-repeat 6px 0px;
-		padding-left: 0px;
-		padding-right: 40px;
+		background: url(../images/tabs.png) no-repeat 2px 0px;
+		padding-left: 16px;
+		padding-right: 15px;
 	}
-/*
-	.doctab.index.active .m a,
-	.doctab.index.highlight .m a {
-		background: url(../images/tabs.png) no-repeat 1px -524px;
-	}
-*/
 	.doctab.classes .m a {
-		background: url(../images/tabs.png) no-repeat 6px -20px;
-		padding-left: 0px;
-		padding-right: 40px;
+		background: url(../images/tabs.png) no-repeat 2px -20px;
+		padding-left: 16px;
+		padding-right: 15px;
 	}
-/*
-	.doctab.classes.active .m a,
-	.doctab.classes.highlight .m a {
-		background: url(../images/tabs.png) no-repeat 3px -543px;
-	}
-*/
 	.doctab.guides .m a {
-		background: url(../images/tabs.png) no-repeat 6px -60px;
-		padding-left: 0px;
-		padding-right: 40px;
+		background: url(../images/tabs.png) no-repeat 2px -60px;
+		padding-left: 16px;
+		padding-right: 15px;
 	}
-/*
-	.doctab.guides.active .m a,
-	.doctab.guides.highlight .m a {
-		background: url(../images/tabs.png) no-repeat 3px -578px;
-	}
-*/
 	.doctab.videos .m a {
-		background: url(../images/tabs.png) no-repeat 6px -40px;
-		padding-left: 0px;
-		padding-right: 40px;
+		background: url(../images/tabs.png) no-repeat 2px -40px;
+		padding-left: 16px;
+		padding-right: 15px;
 	}
-/*
-	.doctab.videos.active .m a,
-	.doctab.videos.highlight .m a {
-		background: url(../images/tabs.png) no-repeat 3px -561px;
-	}
-*/
 	.doctab.examples .m a {
 		background: url(../images/tabs.png) no-repeat 1px -93px;
 		padding-left: 16px;

@@ -77,7 +77,7 @@ Ext.define('Docs.view.Viewport', {
                         border: 1,
                         bodyPadding: '10 9 4 9',
 						// Ti changed width
-                        width: 220
+                        width: 224
                     },
                     {
                         region: 'center',
