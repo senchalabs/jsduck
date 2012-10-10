@@ -32,7 +32,7 @@ module JsDuck
 
     # Writes all guides to given dir in JsonP format
     def write(dir)
-      FileUtils.mkdir(dir) unless File.exists?(dir)
+      FileUtils.mkdir_p(dir) unless File.exists?(dir)
       each_item {|guide| write_guide(guide, dir) }
     end
 
