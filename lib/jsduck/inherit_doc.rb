@@ -37,6 +37,7 @@ module JsDuck
 
         if m[:autodetected]
           m[:meta] = parent[:meta].merge(m[:meta])
+          m[:type] = parent[:type] if parent[:type]
         end
 
         # remember properties that have changed to configs

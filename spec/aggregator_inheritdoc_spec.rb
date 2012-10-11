@@ -725,6 +725,37 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "autoinherit of property with type explicitly defined in parent class" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            /**
+             * @property {String/Number}
+             */
+            foo: 5,
+            bar: 42
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            foo: 10,
+            bar: true
+        });
+      EOF
+      @cls = @docs["Child"]
+      @members = @cls[:members]
+    end
+
+    it "keeps the type from public parent" do
+      @members[0][:type].should == "String/Number"
+    end
+
+    it "overrides the type from private parent" do
+      @members[1][:type].should == "Boolean"
+    end
+  end
+
   describe "instance members autoinherit with parent containing statics" do
     before do
       @docs = parse(<<-EOF)
@@ -789,4 +820,3 @@ describe JsDuck::Aggregator do
     end
   end
 end
-
