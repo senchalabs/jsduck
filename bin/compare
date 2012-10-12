@@ -356,10 +356,11 @@ html << "</ul>"
 
 html << "<h2>Summary</h2>"
 dd = diff_data
-html << "<p>" + dd.find_all {|c| !c[:found] }.length.to_s + " classes not found</p>"
-html << "<p>" + dd.find_all {|c| c[:found] && c[:diff].length == 0 }.length.to_s + " classes exactly the same</p>"
-html << "<p>" + dd.find_all {|c| c[:found] && c[:name] == c[:new_name] }.length.to_s + " classes with same name</p>"
-html << "<p>" + dd.find_all {|c| c[:found] && c[:name] != c[:new_name] }.length.to_s + " renamed classes</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :old }.length.to_s + " classes removed</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :new }.length.to_s + " new classes added</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :both && c[:diff].length == 0 }.length.to_s + " classes exactly the same</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :both && c[:name] == c[:new_name] }.length.to_s + " classes with same name</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :both && c[:name] != c[:new_name] }.length.to_s + " renamed classes</p>"
 html << "<p>" + dd.find_all {|c| c[:diff].length > 0 }.length.to_s + " classes with changed members</p>"
 html << "<p>" + dd.map {|c| c[:diff].length }.inject {|sum,x| sum + x }.to_s + " changed members</p>"
 
