@@ -11,6 +11,7 @@ require "jsduck/util/json"
 
 options = {
   :title => "Comparison of Ext 4.0.7 and Ext 4.1.1",
+  :remap => {},
 }
 
 input_files = OptionParser.new do |opts|
@@ -28,6 +29,17 @@ input_files = OptionParser.new do |opts|
   opts.on("--title=TEXT", "Title for the generated HTML page.",
     "Defaults to: 'Comparison of Ext 4.0.7 and Ext 4.1.1'") do |text|
     options[:title] = text
+  end
+
+  opts.on("--show-unchanged", "To list classes that have not changed.",
+    "By default only classes with changes are listed.") do
+    options[:show_unchanged] = true
+  end
+
+  opts.on("--map=A:B", "Maps class A in old/classes/ to class B",
+    "in new/classes/. For example --map Ext.Foo:Ext.NewFoo") do |pair|
+    (a, b) = pair.split(/:/)
+    options[:remap][a] = b
   end
 
   opts.on("-h", "--help", "Show this help message") do
@@ -229,22 +241,12 @@ old_classes = read_all_classes(options[:old_classes], :ignore_private)
 new_classes = read_all_classes(options[:new_classes])
 ignored_members = options[:ignore] ? read_ignored_members(options[:ignore]) : {}
 
-# Explicit remapping of classes
-remap = {
-  "Array" => "Ext.Array",
-  "Date" => "Ext.Date",
-  "Function" => "Ext.Function",
-  "Number" => "Ext.Number",
-  "String" => "Ext.String",
-  "Ext.supports" => "Ext.feature.has",
-}
-
 diff_data = []
 old_classes.each_pair do |name, cls|
   # only go through classes, not alternate names
   if name == cls["name"]
-    if remap[name]
-      new_cls = new_classes[remap[name]]
+    if options[:remap][name]
+      new_cls = new_classes[options[:remap][name]]
     else
       new_cls = new_classes[name]
     end
@@ -301,36 +303,40 @@ EOHTML
 html << "<ul>"
 diff_data.sort! {|a, b| a[:name] <=> b[:name] }
 diff_data.each do |cls|
-  html << "<li>"
   if cls[:found]
-    new_name = (cls[:new_name] == cls[:name] ? "" : " --> " + cls[:new_name])
-    diff_count = cls[:diff].length > 0 ? "(#{cls[:diff].length} changes)" : ""
-    link = cls[:diff].length > 0 ? "<a href='#expand'>#{cls[:name]}</a>" : "<span style='color:green'>"+cls[:name]+'</span>'
-    html << "<h2>#{link} #{new_name} #{diff_count}</h2>"
-    if cls[:diff].length > 0
-      html << "<ul>"
-      cls[:diff].each do |m|
-        html << "<li>"
-        html << m[:what] + " " + m[:type] + " " + m[:name]
-        if m[:other]
-          o = m[:other]
-          stat = o[:static] ? 'static' : ''
-          priv = o[:private] ? 'private' : ''
-          prot = o[:protected] ? 'protected' : ''
-          html << " (found #{stat} #{priv} #{prot} #{o[:type]} with the same name)"
-        elsif m[:changes]
-          m[:changes].each do |c|
-            html << " (#{c[:what]} changed from #{CGI.escapeHTML(c[:a])} to #{CGI.escapeHTML(c[:b])})"
+    if cls[:diff].length > 0 || options[:show_unchanged]
+      html << "<li>"
+      new_name = (cls[:new_name] == cls[:name] ? "" : " --> " + cls[:new_name])
+      diff_count = cls[:diff].length > 0 ? "(#{cls[:diff].length} changes)" : ""
+      link = cls[:diff].length > 0? "<a href='#expand'>#{cls[:name]}</a>" : "<span style='color:green'>"+cls[:name]+'</span>'
+      html << "<h2>#{link} #{new_name} #{diff_count}</h2>"
+      if cls[:diff].length > 0
+        html << "<ul>"
+        cls[:diff].each do |m|
+          html << "<li>"
+          html << m[:what] + " " + m[:type] + " " + m[:name]
+          if m[:other]
+            o = m[:other]
+            stat = o[:static] ? 'static' : ''
+            priv = o[:private] ? 'private' : ''
+            prot = o[:protected] ? 'protected' : ''
+            html << " (found #{stat} #{priv} #{prot} #{o[:type]} with the same name)"
+          elsif m[:changes]
+            m[:changes].each do |c|
+              html << " (#{c[:what]} changed from #{CGI.escapeHTML(c[:a])} to #{CGI.escapeHTML(c[:b])})"
+            end
           end
+          html << "</li>"
         end
-        html << "</li>"
+        html << "</ul>"
       end
-      html << "</ul>"
+      html << "</li>"
     end
   else
+    html << "<li>"
     html << "<h2>" + cls[:name] + " <b>not found</b></h2>"
+    html << "</li>"
   end
-  html << "</li>"
 end
 html << "</ul>"
 
