@@ -725,34 +725,57 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "autoinherit of property with type explicitly defined in parent class" do
-    before do
-      @docs = parse(<<-EOF)
+  describe "inheriting cfg/property type" do
+    let(:members) do
+      ms = parse(<<-EOF)["Child"][:members]
         /** */
         Ext.define("Parent", {
             /**
              * @property {String/Number}
              */
-            foo: 5,
-            bar: 42
+            foo: 42,
+            /**
+             * @property {String/Number}
+             */
+            bar: 5,
+            baz: 15,
+            /**
+             * @property {String/Number}
+             * @private
+             */
+            zap: 7
         });
         /** */
         Ext.define("Child", {
             extend: "Parent",
-            foo: 10,
-            bar: true
+            /**
+             * @inheritdoc
+             */
+            foo: "blah",
+            bar: "blah",
+            baz: "blah",
+            zap: "blah"
         });
       EOF
-      @cls = @docs["Child"]
-      @members = @cls[:members]
+      hash = {}
+      ms.each {|p| hash[p[:name]] = p }
+      hash
     end
 
-    it "keeps the type from public parent" do
-      @members[0][:type].should == "String/Number"
+    it "explicit inherit from public parent keeps the type of parent" do
+      members["foo"][:type].should == "String/Number"
     end
 
-    it "overrides the type from private parent" do
-      @members[1][:type].should == "Boolean"
+    it "autoinherit from public parent keeps the type of parent" do
+      members["bar"][:type].should == "String/Number"
+    end
+
+    it "autoinherit from private parent overrides parent type" do
+      members["baz"][:type].should == "String"
+    end
+
+    it "autoinherit from explicitly documented private parent keeps parent type" do
+      members["zap"][:type].should == "String/Number"
     end
   end
 

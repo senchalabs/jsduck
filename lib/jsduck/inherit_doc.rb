@@ -34,10 +34,10 @@ module JsDuck
         m[:doc] = (m[:doc] + "\n\n" + parent[:doc]).strip
         m[:params] = parent[:params] if parent[:params]
         m[:return] = parent[:return] if parent[:return]
+        m[:type] = parent[:type] if parent[:type]
 
         if m[:autodetected]
           m[:meta] = parent[:meta].merge(m[:meta])
-          m[:type] = parent[:type] if parent[:type]
         end
 
         # remember properties that have changed to configs
