@@ -24,13 +24,14 @@ module JsDuck
         end
         h[:component] = cls.inherits_from?("Ext.Component")
         h[:superclasses] = cls.superclasses.collect {|c| c[:name] }
-        h[:subclasses] = @relations.subclasses(cls).collect {|c| c[:name] }
-        h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c[:name] }
+        h[:subclasses] = @relations.subclasses(cls).collect {|c| c[:name] }.sort
+        h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c[:name] }.sort
+        h[:alternateClassNames] = cls[:alternateClassNames].sort
 
-        h[:mixins] = cls.deps(:mixins).collect {|c| c[:name] }
-        h[:parentMixins] = cls.parent_deps(:mixins).collect {|c| c[:name] }
-        h[:requires] = cls.deps(:requires).collect {|c| c[:name] }
-        h[:uses] = cls.deps(:uses).collect {|c| c[:name] }
+        h[:mixins] = cls.deps(:mixins).collect {|c| c[:name] }.sort
+        h[:parentMixins] = cls.parent_deps(:mixins).collect {|c| c[:name] }.sort
+        h[:requires] = cls.deps(:requires).collect {|c| c[:name] }.sort
+        h[:uses] = cls.deps(:uses).collect {|c| c[:name] }.sort
 
         h
       end
