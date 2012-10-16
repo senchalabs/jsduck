@@ -1,3 +1,5 @@
+require 'jsduck/class'
+
 module JsDuck
 
   # Expands class docset into one or more docsets.
@@ -108,7 +110,7 @@ module JsDuck
 
       if docset[:code]
         (docset[:code][:members] || []).each do |m|
-          results << code_to_docset(m) unless @constructor_found && m[:name] == "constructor"
+          results << code_to_docset(m) unless @constructor_found && JsDuck::Class.constructor?(m)
         end
       end
 

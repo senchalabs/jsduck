@@ -47,7 +47,7 @@ module JsDuck
 
       # If methods list contains constructor, move it into the beginning.
       def constructor_first(ms)
-        constr = ms.find {|m| m[:name] == "constructor" }
+        constr = ms.find {|m| JsDuck::Class.constructor?(m) }
         if constr
           ms.delete(constr)
           ms.unshift(constr)
