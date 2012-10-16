@@ -1,5 +1,5 @@
 require 'jsduck/logger'
-require 'pp'
+require 'jsduck/class'
 
 module JsDuck
 
@@ -61,7 +61,7 @@ module JsDuck
     # For auto-detected members/classes (which have @private == :inherit)
     # Use the visibility from parent class (defaulting to private when no parent).
     def resolve_visibility(m, parent)
-      if m[:autodetected]
+      if m[:autodetected] && !JsDuck::Class.constructor?(m)
         if !parent || parent[:private]
           m[:meta][:private] = m[:private] = true
         end

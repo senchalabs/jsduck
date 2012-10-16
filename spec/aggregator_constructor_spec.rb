@@ -1,11 +1,16 @@
 require "jsduck/aggregator"
 require "jsduck/source/file"
+require "jsduck/relations"
+require "jsduck/class"
+require "jsduck/inherit_doc"
 
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
-    agr.result
+    relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
+    JsDuck::InheritDoc.new(relations).resolve_all
+    relations
   end
 
   shared_examples_for "constructor" do
@@ -24,7 +29,7 @@ describe JsDuck::Aggregator do
 
   describe "class with @constructor" do
     let(:methods) do
-      parse(<<-EOS)[0][:members]
+      parse(<<-EOS)["MyClass"][:members]
         /**
          * @class MyClass
          * Comment here.
@@ -40,7 +45,7 @@ describe JsDuck::Aggregator do
 
   describe "class with method named constructor" do
     let(:methods) do
-      parse(<<-EOS)[0][:members]
+      parse(<<-EOS)["MyClass"][:members]
         /**
          * Comment here.
          */
@@ -59,7 +64,7 @@ describe JsDuck::Aggregator do
 
   describe "class with member containing @constructor" do
     let(:methods) do
-      parse(<<-EOS)[0][:members]
+      parse(<<-EOS)["MyClass"][:members]
         /**
          * Comment here.
          */
@@ -78,7 +83,7 @@ describe JsDuck::Aggregator do
 
   describe "class with both @constructor tag and constructor property inside Ext.define()" do
     let(:methods) do
-      parse(<<-EOS)[0][:members]
+      parse(<<-EOS)["MyClass"][:members]
         /**
          * Comment here.
          * @constructor
@@ -94,6 +99,30 @@ describe JsDuck::Aggregator do
 
     it "detects just one constructor" do
       methods.length.should == 1
+    end
+  end
+
+  describe "class with constructor property inside Ext.define()" do
+    let(:methods) do
+      parse(<<-EOS)["MyClass"][:members]
+        /**
+         * Comment here.
+         * @private
+         */
+        Ext.define("MyClass", {
+            constructor: function() {
+            },
+            foo: []
+        });
+      EOS
+    end
+
+    it "detects the constructor method" do
+      methods[0][:name].should == "constructor"
+    end
+
+    it "doesn't detect the constructor as private" do
+      methods[0][:private].should_not == true
     end
   end
 
