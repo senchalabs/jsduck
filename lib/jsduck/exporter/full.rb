@@ -26,7 +26,7 @@ module JsDuck
         h[:superclasses] = cls.superclasses.collect {|c| c[:name] }
         h[:subclasses] = @relations.subclasses(cls).collect {|c| c[:name] }.sort
         h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c[:name] }.sort
-        h[:alternateClassNames] = cls[:alternateClassNames].sort
+        h[:alternateClassNames] = cls[:alternateClassNames].sort if cls[:alternateClassNames]
 
         h[:mixins] = cls.deps(:mixins).collect {|c| c[:name] }.sort
         h[:parentMixins] = cls.parent_deps(:mixins).collect {|c| c[:name] }.sort
