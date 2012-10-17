@@ -347,7 +347,7 @@ module JsDuck
           "",
           "    --import='1.0:/path/to/first/version'",
           "    --import='2.0:/path/to/second/version'",
-          "    --import='3.0",
+          "    --import='3.0'",
           "",
           "Several versions can be imported using the option multiple",
           "times.  The last version must always be the current one",
