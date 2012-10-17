@@ -206,6 +206,15 @@ class JsDuckRunner
   end
 end
 
+desc "Download ExtJS into template/extjs"
+task :get_extjs do
+  system "curl -o template/extjs.zip http://cdn.sencha.com/ext-4.1.1a-gpl.zip"
+  system "unzip template/extjs.zip -d template/"
+  system "rm -rf template/extjs"
+  system "mv template/ext-4.1.1a template/extjs"
+  system "rm template/extjs.zip"
+end
+
 # Run compass to generate CSS files
 task :sass do
   system "compass compile --quiet template/resources/sass"
