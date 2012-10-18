@@ -412,6 +412,7 @@ module JsDuck
           :doc => doc,
           :deprecated => ex[:deprecated] || false,
           :platforms => ex[:platforms] || nil,
+          :inline_platforms => ex[:inline_platforms] || nil,
           :optional => ex[:optional] || false,
           :default => ex[:default],
           :properties => ex[:properties] || [],
