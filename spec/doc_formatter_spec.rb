@@ -26,6 +26,7 @@ describe JsDuck::DocFormatter do
           {:tagname => :cfg, :name => "bar", :id => "cfg-bar"},
           {:tagname => :method, :name => "id", :id => "static-method-id",
             :meta => {:static => true}},
+          {:tagname => :method, :name => "privMeth", :id => "method-privMeth", :private => true},
         ],
         :alternateClassNames => ["FooBar"]
       }),
@@ -49,6 +50,11 @@ describe JsDuck::DocFormatter do
     it "replaces {@link Foo#id} with link to static class member" do
       @formatter.replace("Look at {@link Foo#id}").should ==
         'Look at <a href="Foo#static-method-id">Foo.id</a>'
+    end
+
+    it "replaces {@link Foo#privMeth} with link to private class member" do
+      @formatter.replace("Look at {@link Foo#privMeth}").should ==
+        'Look at <a href="Foo#method-privMeth">Foo.privMeth</a>'
     end
 
     it "uses context to replace {@link #bar} with link to class member" do
@@ -151,7 +157,8 @@ describe JsDuck::DocFormatter do
           JsDuck::Class.new({
             :name => "Context",
             :members => [
-              {:tagname => :method, :name => "bar", :id => "method-bar"}
+              {:tagname => :method, :name => "bar", :id => "method-bar"},
+              {:tagname => :method, :name => "privMeth", :id => "method-privMeth", :private => true},
             ]
           }),
         ])
@@ -232,6 +239,11 @@ describe JsDuck::DocFormatter do
       it "converts #bar to link to current class method" do
         @formatter.replace("Look at #bar method").should ==
           'Look at <a href="Context#method-bar">bar</a> method'
+      end
+
+      it "converts #privMeth to link to private method" do
+        @formatter.replace("Look at #privMeth method").should ==
+          'Look at <a href="Context#method-privMeth">privMeth</a> method'
       end
 
       it "Doesn't convert #unknown to link" do
