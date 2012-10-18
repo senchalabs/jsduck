@@ -28,13 +28,27 @@ Ext.define('Docs.Comments', {
         Docs.Auth.init(function(success) {
             if (success) {
                 this.enabled = true;
-                this.counts = new Docs.CommentCounts(this);
-                this.counts.fetch(callback, scope);
+                this.fetchCountsAndSubscriptions(function(counts, subscriptions) {
+                    this.counts = new Docs.CommentCounts(counts);
+                    callback.call(scope);
+                }, this);
             }
             else {
                 callback.call(scope);
             }
         }, this);
+    },
+
+    // Fetches comment counts and subscriptions.
+    fetchCountsAndSubscriptions: function(callback, scope) {
+        this.request("jsonp", {
+            url: '/comments_meta',
+            method: 'GET',
+            success: function(response) {
+                callback.call(scope, response.comments, response.subscriptions);
+            },
+            scope: this
+        });
     },
 
     /**

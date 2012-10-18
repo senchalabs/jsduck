@@ -4,34 +4,11 @@
 Ext.define('Docs.CommentCounts', {
 
     /**
-     * Initialized CommentCounts with the main Comments class instance
-     * which is used to perform queries.
-     * @param {Docs.Comments} comments
+     * Initializes CommentCounts with the list of counts from
+     * comments_meta request result.
+     * @param {Object[]} counts Objects with `_id` and `value` fields.
      */
-    constructor: function(comments) {
-        this.comments = comments;
-        this.loadCallbacks = [];
-    },
-
-    /**
-     * Fetches all comment counts.
-     *
-     * @param {Function} callback Called after done.
-     * @param {Object} scope
-     */
-    fetch: function(callback, scope) {
-        this.comments.request("jsonp", {
-            url: '/comments_meta',
-            method: 'GET',
-            success: function(response) {
-                this.load(response.comments);
-                callback.call(scope);
-            },
-            scope: this
-        });
-    },
-
-    load: function(counts) {
+    constructor: function(counts) {
         this.counts = {};
         Ext.Array.each(counts, function(r) {
             this.counts[r._id] = r.value;
