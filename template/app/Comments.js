@@ -6,6 +6,7 @@ Ext.define('Docs.Comments', {
     requires: [
         "Docs.Auth",
         "Docs.CommentCounts",
+        "Docs.CommentSubscriptions",
         "Ext.data.JsonP",
         "Ext.Ajax"
     ],
@@ -30,6 +31,7 @@ Ext.define('Docs.Comments', {
                 this.enabled = true;
                 this.fetchCountsAndSubscriptions(function(counts, subscriptions) {
                     this.counts = new Docs.CommentCounts(counts);
+                    this.subscriptions = new Docs.CommentSubscriptions(subscriptions);
                     callback.call(scope);
                 }, this);
             }
@@ -64,6 +66,13 @@ Ext.define('Docs.Comments', {
      */
     getCount: function(type, cls, member) {
         return this.counts.get(type, cls, member);
+    },
+
+    /**
+     * @inheritdoc Docs.CommentSubscriptions#has
+     */
+    hasSubscription: function(target) {
+        return this.subscriptions.has(target);
     },
 
     /**

@@ -78,6 +78,7 @@ Ext.define('Docs.view.comments.ListWithForm', {
         this.commentingForm = new Docs.view.comments.Form({
             title: this.newCommentTitle,
             user: Docs.Auth.getUser(),
+            userSubscribed: Docs.Comments.hasSubscription(this.target),
             listeners: {
                 submit: this.postComment,
                 scope: this
