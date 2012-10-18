@@ -90,7 +90,7 @@ Ext.define('Docs.view.comments.ListWithForm', {
 
     subscribe: function(subscribed) {
         Docs.Comments.subscribe(this.target, subscribed, function() {
-            alert("Subscription changed!");
+            this.commentingForm.showSubscriptionMessage(subscribed);
         }, this);
     }
 

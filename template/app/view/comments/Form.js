@@ -4,6 +4,7 @@
 Ext.define('Docs.view.comments.Form', {
     extend: 'Ext.Component',
     alias: "widget.commentsForm",
+    requires: ["Docs.Tip"],
 
     /**
      * @cfg {Object} user
@@ -209,6 +210,19 @@ Ext.define('Docs.view.comments.Form', {
             guideText.hide(true);
             helpLink.update("Show help &#8595;");
         }
+    },
+
+    /**
+     * Shows a notification near the checkbox to notify user about the
+     * changes subscription status.
+     * @param {Boolean} subscribed
+     */
+    showSubscriptionMessage: function(subscribed) {
+        var el = this.getEl().down("input.subscriptionCheckbox");
+        var msg = subscribed ?
+            "Updates to this thread will be e-mailed to you" :
+            "You have unsubscribed from this thread";
+        Docs.Tip.show(msg, el, 'bottom');
     }
 
 });
