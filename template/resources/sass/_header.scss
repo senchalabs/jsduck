@@ -8,7 +8,7 @@
   //@include vertical-gradient(#074e7c, #095f93);
   .dropdown {
     padding-right: 15px;
-    background: url(../images/down-arr.png) no-repeat bottom right; } }
+    background: url(../images/down-arr.png) no-repeat 98% 80%; } }
 
 // Title
 #header-content {
@@ -23,6 +23,14 @@
   font-size: 1.1em;
   // Make it all appear in one line in IE7
   white-space: nowrap;
+  #header-content-logo {
+      float: left;
+  }
+  #header-content-menu {
+      float: left;
+      margin-left: 10px;
+      margin-top: 7px;
+  }
   a {
     color: #fff; }
   strong {
