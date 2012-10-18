@@ -44,7 +44,7 @@ module JsDuck
     def render_enum_class_notice
       return if !@cls[:enum]
 
-      if @cls[:enum][:type] == "String"
+      if @cls[:enum][:doc_only]
         first = @cls[:members][:property][0] || {:name => 'foo', :default => '"foo"'}
         [
           "<p class='enum'><strong>ENUM:</strong> ",

@@ -48,6 +48,8 @@ module JsDuck
       # Used by Aggregator to determine if we're dealing with Ext4 code
       h[:code_type] = code[:code_type] if code[:code_type]
 
+      h[:enum] = merge_enum(docs, code) if docs[:enum]
+
       h[:members] = []
 
       h
@@ -161,6 +163,14 @@ module JsDuck
     # Also true when no explicit name documented.
     def code_matches_doc?(docs, code)
       return docs[:name] == nil || docs[:name] == code[:name]
+    end
+
+    # Takes the :enum always from docs, but the :doc_only can come
+    # from either code or docs.
+    def merge_enum(docs, code)
+      enum = docs[:enum]
+      enum[:doc_only] = docs[:enum][:doc_only] || (code[:enum] && code[:enum][:doc_only])
+      enum
     end
 
   end
