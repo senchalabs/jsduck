@@ -79,7 +79,7 @@ module JsDuck
 
       # Customizing output
       @title = "Titanium Mobile"
-      @header = "<strong>Titanium Mobile</strong>"
+      @header = "<strong>Titanium</strong>"
       @footer = "Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> #{@version}."
       @head_html = ""
       @body_html = ""
@@ -183,7 +183,7 @@ module JsDuck
           "Custom title text for the documentation.",
           "Defaults to 'Ext JS - Sencha Docs'", " ") do |text|
           @title = text
-          @header = text.sub(/^(.*?) +- +/, "<strong>\\1 </strong>")
+          @header = text.sub(/^(.*?) +- +.*/, "<strong>\\1 </strong>")
         end
 
         opts.on('--footer=TEXT',

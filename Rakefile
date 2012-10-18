@@ -117,11 +117,11 @@ def compress
   File.open(print_template, 'w') {|f| f.write(html) }
 
   # Concatenate CSS and JS files referenced in template.html file
-  # template_html = "#{dir}/template.html"
-  # html = IO.read(template_html)
-  # html = combine_css(html, dir)
-  # html = combine_js(html, dir)
-  # File.open(template_html, 'w') {|f| f.write(html) }
+  template_html = "#{dir}/template.html"
+  html = IO.read(template_html)
+  html = combine_css(html, dir)
+  html = combine_js(html, dir)
+  File.open(template_html, 'w') {|f| f.write(html) }
 
   # Clean up SASS files
   # (But keep prettify lib, which is needed for source files)

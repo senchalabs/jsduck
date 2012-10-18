@@ -29,7 +29,7 @@ Ext.define('Docs.view.Header', {
         afterrender: function(cmp) {
             if (this.menu) {
                 cmp.el.addListener('click', function(cmp, el) {
-                    this.menu.showBy(this.el, 'bl', [120, 0]);
+                    this.menu.showBy(this.el, 'bl', [160, -4]);
                 }, this);
             }
         }

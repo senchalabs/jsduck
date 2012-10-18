@@ -40,7 +40,9 @@
     p:last-child {
       margin: 0; }
     ul {
-      margin: 0 0 1em 2em;
+      margin: 0 0 1em 1em;
+      p { 
+          margin: 0; }
       li {
         list-style: disc outside; } }
     ol {
