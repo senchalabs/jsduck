@@ -147,6 +147,32 @@ Ext.define('Docs.Comments', {
     },
 
     /**
+     * Subscribes (or unsubscribes) the current user to particular target.
+     * @param {String[]} target An array of `[type, cls, member]`
+     * @param {Boolean} subscribed True to subscribe, false to unsubscribe.
+     * @param {Function} callback Called when finished.
+     * @param {Object} scope
+     */
+    subscribe: function(target, subscribed, callback, scope) {
+        this.request("ajax", {
+            url: '/subscribe',
+            method: 'POST',
+            params: {
+                target: Ext.JSON.encode(target),
+                subscribed: subscribed
+            },
+            callback: function(options, success, response) {
+                var data = Ext.JSON.decode(response.responseText);
+                if (success && data.success) {
+                    this.subscriptions.set(target, subscribed);
+                    callback && callback.call(scope);
+                }
+            },
+            scope: this
+        });
+    },
+
+    /**
      * Performs request to the comments server.
      *
      * Works as if calling Ext.Ajax.request or Ext.data.JsonP.request

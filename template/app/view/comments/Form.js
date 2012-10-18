@@ -187,12 +187,12 @@ Ext.define('Docs.view.comments.Form', {
 
         this.getEl().on("click", function(event, el) {
             /**
-             * @event changeSubscription
+             * @event subscriptionChange
              * Fired when the subscription checkbox ticked.
              * @param {Boolean} subscribe True to subscribe.
              * False to unsubscribe.
              */
-            this.fireEvent("changeSubscription", Ext.get(el).getAttribute("checked"));
+            this.fireEvent("subscriptionChange", Ext.get(el).dom.checked);
         }, this, {delegate: "input.subscriptionCheckbox"});
     },
 

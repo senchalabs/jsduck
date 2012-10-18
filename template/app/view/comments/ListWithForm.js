@@ -31,13 +31,6 @@ Ext.define('Docs.view.comments.ListWithForm', {
         this.callParent(arguments);
     },
 
-    postComment: function(content) {
-        Docs.Comments.post(this.target, content, function(comment) {
-            this.commentingForm.setValue('');
-            this.list.load([comment], true);
-        }, this);
-    },
-
     /**
      * Loads array of comments into the view.
      * @param {Object[]} comments
@@ -81,10 +74,24 @@ Ext.define('Docs.view.comments.ListWithForm', {
             userSubscribed: Docs.Comments.hasSubscription(this.target),
             listeners: {
                 submit: this.postComment,
+                subscriptionChange: this.subscribe,
                 scope: this
             }
         });
         this.add(this.commentingForm);
+    },
+
+    postComment: function(content) {
+        Docs.Comments.post(this.target, content, function(comment) {
+            this.commentingForm.setValue('');
+            this.list.load([comment], true);
+        }, this);
+    },
+
+    subscribe: function(subscribed) {
+        Docs.Comments.subscribe(this.target, subscribed, function() {
+            alert("Subscription changed!");
+        }, this);
     }
 
 });

@@ -28,6 +28,15 @@ Ext.define('Docs.CommentSubscriptions', {
      */
     has: function(target) {
         return this.subscriptions[target.join("__")];
+    },
+
+    /**
+     * Sets the subscribed/unsubscribed status of a target.
+     * @param {String[]} target
+     * @param {Boolean} subscribed
+     */
+    set: function(target, subscribed) {
+        this.subscriptions[target.join("__")] = subscribed;
     }
 
 });
