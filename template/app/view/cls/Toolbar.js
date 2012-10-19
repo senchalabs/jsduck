@@ -213,6 +213,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     // Creates link object referencing a class member
     createLinkRecord: function(cls, member) {
         return {
+            id: member.id,
             url: cls + "-" + member.id,
             label: (member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name,
             inherited: member.owner !== cls,
@@ -298,5 +299,14 @@ Ext.define('Docs.view.cls.Toolbar', {
      */
     setCommentCount: function(n) {
         this.commentCount.update(""+(n||0));
+        this.refreshMenuCommentCounts();
+    },
+
+    refreshMenuCommentCounts: function() {
+        Ext.Object.each(this.memberButtons, function(key, btn) {
+            btn.getStore().each(function(r) {
+                r.set("commentCount", Docs.Comments.getCount(["class", this.docClass.name, r.get("id")]));
+            }, this);
+        }, this);
     }
 });
