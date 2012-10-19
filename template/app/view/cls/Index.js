@@ -36,6 +36,10 @@ Ext.define('Docs.view.cls.Index', {
             return;
         }
 
+        this.initComments();
+    },
+
+    initComments: function() {
         this.getEl().select("a.docClass").each(function(a) {
             var className = a.getHTML();
             var count = Docs.Comments.getClassTotalCount(className);
@@ -43,6 +47,18 @@ Ext.define('Docs.view.cls.Index', {
                 Ext.DomHelper.append(a, Docs.Comments.counterHtml(count));
             }
         }, this);
+    },
+
+    /**
+     * Updates all comment counters.
+     */
+    updateCommentCounts: function() {
+        if (!this.getEl()) {
+            return;
+        }
+
+        this.getEl().select(".comment-counter-small").remove();
+        this.initComments();
     },
 
     /**

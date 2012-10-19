@@ -31,6 +31,9 @@ Ext.define('Docs.CommentCounts', {
      * @return {Number} The resulting total amount of comments.
      */
     change: function(target, amount) {
+        // reset the totals cache
+        delete this.totals;
+
         return this.counts[target.join("__")] = this.get(target) + amount;
     },
 
