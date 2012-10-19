@@ -60,10 +60,20 @@ Ext.define('Docs.view.guides.Container', {
     },
 
     initComments: function() {
-        new Docs.view.comments.LargeExpander({
+        this.expander = new Docs.view.comments.LargeExpander({
             type: "guide",
             name: this.guide.name,
             el: this.getEl().down(".x-panel-body")
         });
+    },
+
+    /**
+     * Updates the comments counter.
+     */
+    updateCommentCounts: function() {
+        if (!this.expander) {
+            return;
+        }
+        this.expander.getExpander().setCount(Docs.Comments.getCount(["guide", this.guide.name, ""]));
     }
 });

@@ -10,8 +10,16 @@ Ext.define('Docs.controller.CommentCounts', {
 
     refs: [
         {
-            ref: "classOverview",
+            ref: "class",
             selector: "classoverview"
+        },
+        {
+            ref: 'guide',
+            selector: '#guide'
+        },
+        {
+            ref: 'video',
+            selector: '#video'
         }
     ],
 
@@ -20,7 +28,9 @@ Ext.define('Docs.controller.CommentCounts', {
     },
 
     updateCounts: function(target, count) {
-        this.getClassOverview().updateCommentCounts();
+        this.getClass().updateCommentCounts();
+        this.getGuide().updateCommentCounts();
+        this.getVideo().updateCommentCounts();
     }
 
 });

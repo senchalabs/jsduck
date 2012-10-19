@@ -59,10 +59,20 @@ Ext.define('Docs.view.videos.Container', {
     },
 
     initComments: function() {
-        new Docs.view.comments.LargeExpander({
+        this.expander = new Docs.view.comments.LargeExpander({
             type: "video",
             name: this.video.name,
             el: this.getEl().down(".x-panel-body")
         });
+    },
+
+    /**
+     * Updates the comments counter.
+     */
+    updateCommentCounts: function() {
+        if (!this.expander) {
+            return;
+        }
+        this.expander.getExpander().setCount(Docs.Comments.getCount(["video", this.video.name, ""]));
     }
 });
