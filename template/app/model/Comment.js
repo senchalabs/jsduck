@@ -94,6 +94,7 @@ Ext.define('Docs.model.Comment', {
             success: function() {
                 this.set("deleted", deleted);
                 this.commit();
+                Docs.Comments.changeCount(this.get("target"), deleted ? -1 : +1);
             },
             scope: this
         });

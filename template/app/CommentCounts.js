@@ -16,15 +16,22 @@ Ext.define('Docs.CommentCounts', {
     },
 
     /**
-     * Returns comments count for a specific item.
-     * @param {String} type
-     * @param {String} cls
-     * @param {String} member
+     * Returns comments count for a specific target.
+     * @param {String[]} target
      * @return {Number}
      */
-    get: function(type, cls, member) {
-        var key = [type||"", cls||"", member||""].join("__");
-        return this.counts[key];
+    get: function(target) {
+        return this.counts[target.join("__")] || 0;
+    },
+
+    /**
+     * Changes comment count of a target by the given amount.
+     * @param {String[]} target The target which count to change.
+     * @param {Number} amount Usually +1 or -1.
+     * @return {Number} The resulting total amount of comments.
+     */
+    change: function(target, amount) {
+        return this.counts[target.join("__")] = this.get(target) + amount;
     },
 
     /**

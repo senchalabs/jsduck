@@ -218,7 +218,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             inherited: member.owner !== cls,
             accessor: member.tagname === "method" && this.accessors.hasOwnProperty(member.name),
             meta: member.meta,
-            commentCount: Docs.Comments.getCount("class", cls, member.id)
+            commentCount: Docs.Comments.getCount(["class", cls, member.id])
         };
     },
 

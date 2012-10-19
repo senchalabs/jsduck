@@ -29,17 +29,27 @@ Ext.define('Docs.view.comments.MemberWrap', {
 
         // The expander needs to reside inside some element.
         var expanderWrap = Ext.DomHelper.append(this.el.down('.long'), "<div></div>");
-        var count = Docs.Comments.getCount("class", this.getDefinedIn(), this.getMemberId());
+        var count = Docs.Comments.getCount(this.getTarget());
 
         this.expander = new Docs.view.comments.Expander({
             count: count,
-            className: this.getDefinedIn(),
-            memberId: this.getMemberId(),
+            target: this.getTarget(),
             newCommentTitle: this.getNewCommentTitle(),
             renderTo: expanderWrap
         });
 
-        this.updateCountInTitle(count);
+        this.updateSignatureCommentCount(count);
+    },
+
+    /**
+     * Returns the comments target definition array.
+     * @return {String[]}
+     */
+    getTarget: function() {
+        if (!this.target) {
+            this.target = ["class", this.getDefinedIn(), this.getMemberId()];
+        }
+        return this.target;
     },
 
     /**
@@ -48,10 +58,11 @@ Ext.define('Docs.view.comments.MemberWrap', {
      */
     setCount: function(count) {
         this.expander.setCount(count);
-        this.updateCountInTitle(count);
+        this.updateSignatureCommentCount(count);
     },
 
-    updateCountInTitle: function(count) {
+    // Updates the comment count in member signature.
+    updateSignatureCommentCount: function(count) {
         var titleEl = this.el.down(".title");
         var titleComments = titleEl.down('.comment-counter-small');
 

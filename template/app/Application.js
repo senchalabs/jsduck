@@ -39,6 +39,7 @@ Ext.define('Docs.Application', {
                 'Videos',
                 'Tabs',
                 'Comments',
+                'CommentCounts',
                 'Tests'
             ],
             launch: this.launch

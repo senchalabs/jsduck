@@ -11,16 +11,8 @@ Ext.define('Docs.view.comments.Expander', {
     componentCls: "comments-expander",
 
     /**
-     * @cfg {String} type
-     * One of: "class", "guide", "video".
-     */
-    type: "class",
-
-    /**
-     * @cfg {String} className
-     */
-    /**
-     * @cfg {String} memberId
+     * @cfg {String[]} target
+     * The target specification array `[type, cls, member]`.
      */
     /**
      * @cfg {Number} count
@@ -102,14 +94,13 @@ Ext.define('Docs.view.comments.Expander', {
     },
 
     loadComments: function() {
-        var target = [this.type, this.className, this.memberId];
         this.list = new Docs.view.comments.ListWithForm({
-            target: target,
+            target: this.target,
             newCommentTitle: this.newCommentTitle,
             renderTo: this.getEl()
         });
 
-        Docs.Comments.load(target, function(comments) {
+        Docs.Comments.load(this.target, function(comments) {
             this.list.load(comments);
         }, this);
     },

@@ -30,6 +30,11 @@ Ext.define('Docs.view.comments.LargeExpander', {
      * The name of the current class, guide or video.
      */
 
+    /**
+     * @cfg {Function} onCountUpdated
+     * A function to call when the count gets updated.
+     */
+
     constructor: function(cfg) {
         Ext.apply(this, cfg);
         this.el = Ext.get(cfg.el);
@@ -37,11 +42,12 @@ Ext.define('Docs.view.comments.LargeExpander', {
         // The expander needs to reside inside some element.
         var expanderWrap = Ext.DomHelper.append(this.el, this.html, true).down("div");
 
+        var target = [this.type, this.name, ""];
         this.expander = new Docs.view.comments.Expander({
-            count: Docs.Comments.getCount(this.type, this.name),
-            type: this.type,
-            className: this.name,
-            renderTo: expanderWrap
+            count: Docs.Comments.getCount(target),
+            target: target,
+            renderTo: expanderWrap,
+            onCountUpdated: this.onCountUpdated
         });
     },
 

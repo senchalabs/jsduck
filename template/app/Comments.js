@@ -2,6 +2,7 @@
  * Provides a way to perform queries to the comments backend.
  */
 Ext.define('Docs.Comments', {
+    extend: 'Ext.util.Observable',
     singleton: true,
     requires: [
         "Docs.Auth",
@@ -96,8 +97,22 @@ Ext.define('Docs.Comments', {
     /**
      * @inheritdoc Docs.CommentCounts#get
      */
-    getCount: function(type, cls, member) {
-        return this.counts.get(type, cls, member);
+    getCount: function(target) {
+        return this.counts.get(target);
+    },
+
+    /**
+     * @inheritdoc Docs.CommentCounts#change
+     */
+    changeCount: function(target, amount) {
+        var count = this.counts.change(target, amount);
+        /**
+         * @event countChange
+         * Fired when comment count of a target changes.
+         * @param {String[]} target
+         * @param {Number} count
+         */
+        this.fireEvent("countChange", target, count);
     },
 
     /**
@@ -153,6 +168,7 @@ Ext.define('Docs.Comments', {
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
                 if (success && data.success) {
+                    this.changeCount(target, +1);
                     callback && callback.call(scope, data.comment);
                 }
             },

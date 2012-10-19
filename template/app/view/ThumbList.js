@@ -113,7 +113,7 @@ Ext.define('Docs.view.ThumbList', {
     initComments: function() {
         this.getEl().select("dd").each(function(dd) {
             var name = dd.getAttributeNS("ext", this.urlField).replace(/^.*\//, "");
-            var count = Docs.Comments.getCount(this.commentType, name);
+            var count = Docs.Comments.getCount([this.commentType, name, ""]);
             if (count) {
                 Ext.DomHelper.append(dd.down("p"), Docs.Comments.counterHtml(count));
             }

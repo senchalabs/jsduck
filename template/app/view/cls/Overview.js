@@ -117,7 +117,7 @@ Ext.define('Docs.view.cls.Overview', {
     initComments: function() {
         // Add comment button to toolbar
         this.toolbar.showCommentCount();
-        this.toolbar.setCommentCount(Docs.Comments.getCount("class", this.docClass.name));
+        this.toolbar.setCommentCount(Docs.Comments.getCount(["class", this.docClass.name, ""]));
 
         // Insert class level comment container under class intro docs
         this.clsExpander = new Docs.view.comments.LargeExpander({
@@ -132,6 +132,25 @@ Ext.define('Docs.view.cls.Overview', {
                 className: this.docClass.name,
                 el: memberDoc
             });
+        }, this);
+    },
+
+    /**
+     * Updates comment counts of the class itself and of all its members.
+     */
+    updateCommentCounts: function() {
+        // do nothing when no class loaded
+        if (!this.docClass) {
+            return;
+        }
+
+        var clsCount = Docs.Comments.getCount(["class", this.docClass.name, ""]);
+        this.toolbar.setCommentCount(clsCount);
+
+        this.clsExpander.getExpander().setCount(clsCount);
+
+        Ext.Array.forEach(this.memberWrappers, function(wrap) {
+            wrap.setCount(Docs.Comments.getCount(wrap.getTarget()));
         }, this);
     },
 
