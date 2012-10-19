@@ -38,5 +38,12 @@ Ext.define('Docs.view.videos.Index', {
     getTab: function() {
         var enabled = (Docs.data.videos || []).length > 0;
         return enabled ? {cls: 'videos', href: '#!/video', tooltip: 'Videos'} : false;
+    },
+
+    /**
+     * Refreshes the comment counters.
+     */
+    updateCommentCounts: function() {
+        this.down("thumblist").updateCommentCounts();
     }
 });

@@ -35,5 +35,12 @@ Ext.define('Docs.view.guides.Index', {
     getTab: function() {
         var enabled = (Docs.data.guides|| []).length > 0;
         return enabled ? {cls: 'guides', href: '#!/guide', tooltip: 'Guides'} : false;
+    },
+
+    /**
+     * Refreshes the comment counters.
+     */
+    updateCommentCounts: function() {
+        this.down("thumblist").updateCommentCounts();
     }
 });

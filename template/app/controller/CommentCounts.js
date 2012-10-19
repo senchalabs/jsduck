@@ -18,8 +18,16 @@ Ext.define('Docs.controller.CommentCounts', {
             selector: '#guide'
         },
         {
+            ref: 'guideIndex',
+            selector: '#guideindex'
+        },
+        {
             ref: 'video',
             selector: '#video'
+        },
+        {
+            ref: 'videoIndex',
+            selector: '#videoindex'
         }
     ],
 
@@ -30,7 +38,9 @@ Ext.define('Docs.controller.CommentCounts', {
     updateCounts: function(target, count) {
         this.getClass().updateCommentCounts();
         this.getGuide().updateCommentCounts();
+        this.getGuideIndex().updateCommentCounts();
         this.getVideo().updateCommentCounts();
+        this.getVideoIndex().updateCommentCounts();
     }
 
 });

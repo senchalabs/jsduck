@@ -120,6 +120,18 @@ Ext.define('Docs.view.ThumbList', {
         }, this);
     },
 
+    /**
+     * Refreshes the comment counters.
+     */
+    updateCommentCounts: function() {
+        if (!this.getEl()) {
+            return;
+        }
+
+        this.getEl().select(".comment-counter-small").remove();
+        this.initComments();
+    },
+
     // Given groups data with subgroups like this:
     //
     // - group A
