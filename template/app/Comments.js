@@ -54,6 +54,38 @@ Ext.define('Docs.Comments', {
     },
 
     /**
+     * Loads subscription data for current user.
+     * Called after logging in.
+     * @param {Function} callback Called after done.
+     * @param {Object} scope
+     */
+    loadSubscriptions: function(callback, scope) {
+        this.fetchSubscriptions(function(subscriptions) {
+            this.subscriptions = new Docs.CommentSubscriptions(subscriptions);
+            callback.call(scope);
+        }, this);
+    },
+
+    /**
+     * Clears the data about all subcsriptions.
+     * Called after logging out.
+     */
+    clearSubscriptions: function() {
+        this.subscriptions = new Docs.CommentSubscriptions([]);
+    },
+
+    fetchSubscriptions: function(callback, scope) {
+        this.request("jsonp", {
+            url: '/subscriptions',
+            method: 'GET',
+            success: function(response) {
+                callback.call(scope, response.subscriptions);
+            },
+            scope: this
+        });
+    },
+
+    /**
      * True when comments system is enabled.
      * @return {Boolean}
      */

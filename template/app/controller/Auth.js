@@ -63,17 +63,21 @@ Ext.define('Docs.controller.Auth', {
     },
 
     setLoggedIn: function() {
-        this.getAuthHeaderForm().showLoggedIn(Docs.Auth.getUser());
-        this.eachCmp("commentsListWithForm", function(list) {
-            list.showCommentingForm();
-        });
-        this.eachCmp("commentsList", function(list) {
-            list.refresh();
-        });
-        this.getController("Tabs").showCommentsTab();
+        Docs.Comments.loadSubscriptions(function() {
+            this.getAuthHeaderForm().showLoggedIn(Docs.Auth.getUser());
+            this.eachCmp("commentsListWithForm", function(list) {
+                list.showCommentingForm();
+            });
+            this.eachCmp("commentsList", function(list) {
+                list.refresh();
+            });
+            this.getController("Tabs").showCommentsTab();
+        }, this);
     },
 
     setLoggedOut: function() {
+        Docs.Comments.clearSubscriptions();
+
         this.getAuthHeaderForm().showLoggedOut();
         this.eachCmp("commentsListWithForm", function(list) {
             list.showAuthForm();
