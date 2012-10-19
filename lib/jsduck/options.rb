@@ -3,6 +3,7 @@ require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
 require 'jsduck/util/json'
 require 'jsduck/util/os'
+require 'jsduck/util/io'
 require 'jsduck/util/parallel'
 
 module JsDuck
@@ -78,7 +79,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.2.0"
+      @version = "4.2.1"
 
       # Customizing output
       @title = "Documentation - JSDuck"
@@ -225,7 +226,7 @@ module JsDuck
         end
 
         opts.on('--encoding=NAME', "Input encoding (defaults to UTF-8).") do |encoding|
-          JsDuck::IO.encoding = encoding
+          JsDuck::Util::IO.encoding = encoding
         end
 
         opts.separator ""
@@ -346,7 +347,7 @@ module JsDuck
           "",
           "    --import='1.0:/path/to/first/version'",
           "    --import='2.0:/path/to/second/version'",
-          "    --import='3.0",
+          "    --import='3.0'",
           "",
           "Several versions can be imported using the option multiple",
           "times.  The last version must always be the current one",

@@ -35,7 +35,7 @@ def load_sdk_vars
     puts "    OUT_DIR='/path/to/ouput/dir'"
     puts "    # path to Ext JS 4 build"
     puts "    EXT_BUILD='/path/to/ext-4'"
-    puts "    # path to Touch 2 build"
+    puts "    # path to Touch 2 build (for building Sencha Touch)"
     puts "    TOUCH_BUILD='/path/to/touch-2'"
     puts "    # path to SDK (for developers at Sencha)"
     puts "    SDK_DIR='/path/to/SDK'"
@@ -205,6 +205,36 @@ class JsDuckRunner
     system(*["ruby", "bin/jsduck"].concat(@options))
   end
 end
+
+# Download ExtJS into template/extjs
+task :get_extjs do
+  system "curl -o template/extjs.zip http://cdn.sencha.com/ext-4.1.1a-gpl.zip"
+  system "unzip template/extjs.zip -d template/"
+  system "rm -rf template/extjs"
+  system "mv template/ext-4.1.1a template/extjs"
+  system "rm template/extjs.zip"
+end
+
+# Auto-generate sdk-vars.rb config file
+task :config_file do
+  if File.exists?("sdk-vars.rb")
+    puts "sdk-vars.rb already exists. Keeping it."
+  else
+    puts "Generating sdk-vars.rb with the following content:"
+    config = <<-EORUBY
+# where to output the docs
+OUT_DIR='#{Dir.pwd}/output'
+# path to Ext JS 4 build
+EXT_BUILD='#{Dir.pwd}/template/extjs'
+    EORUBY
+    puts
+    puts config
+    File.open("sdk-vars.rb", "w") {|h| h.write(config) }
+  end
+end
+
+desc "Download ExtJS and initialize sdk-vars.rb config file"
+task :configure => [:get_extjs, :config_file]
 
 # Run compass to generate CSS files
 task :sass do

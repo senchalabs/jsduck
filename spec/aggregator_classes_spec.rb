@@ -308,6 +308,26 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "class with cfgs with subproperties" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * Comment here.
+         * @cfg {Object} foo
+         * @cfg {String} foo.one
+         * @cfg {String} foo.two
+         * @cfg {Function} bar
+         * @cfg {Boolean} bar.arg
+         */
+      EOS
+    end
+
+    it "detects the configs taking account the subproperties" do
+      @doc[:members].length.should == 2
+    end
+  end
+
   describe "implicit class with more than one cfg" do
     before do
       @doc = parse(<<-EOS)[0]

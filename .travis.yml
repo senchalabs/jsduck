@@ -1,0 +1,11 @@
+language: ruby
+rvm:
+  - "1.8.7"
+  - "1.9.2"
+install:
+  - gem install rdiscount
+  - gem install json
+  - gem install parallel
+  - gem install therubyracer
+  - gem install rspec
+  - gem install rake

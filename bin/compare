@@ -11,6 +11,7 @@ require "jsduck/util/json"
 
 options = {
   :title => "Comparison of Ext 4.0.7 and Ext 4.1.1",
+  :remap => {},
 }
 
 input_files = OptionParser.new do |opts|
@@ -28,6 +29,17 @@ input_files = OptionParser.new do |opts|
   opts.on("--title=TEXT", "Title for the generated HTML page.",
     "Defaults to: 'Comparison of Ext 4.0.7 and Ext 4.1.1'") do |text|
     options[:title] = text
+  end
+
+  opts.on("--show-unchanged", "To list classes that have not changed.",
+    "By default only classes with changes are listed.") do
+    options[:show_unchanged] = true
+  end
+
+  opts.on("--map=A:B", "Maps class A in old/classes/ to class B",
+    "in new/classes/. For example --map Ext.Foo:Ext.NewFoo") do |pair|
+    (a, b) = pair.split(/:/)
+    options[:remap][a] = b
   end
 
   opts.on("-h", "--help", "Show this help message") do
@@ -69,17 +81,15 @@ def discard_docs(cls)
   cls
 end
 
-def read_all_classes(dir, ignore_private=false)
+def read_all_classes(dir)
   map = {}
   Dir[dir+"/*.json"].each do |filename|
     print "."
     STDOUT.flush
     cls = discard_docs(read_class(filename))
-    unless ignore_private && cls["private"]
-      map[cls["name"]] = cls
-      cls["alternateClassNames"].each do |name|
-        map[name] = cls
-      end
+    map[cls["name"]] = cls
+    cls["alternateClassNames"].each do |name|
+      map[name] = cls
     end
   end
   puts "OK"
@@ -225,36 +235,38 @@ def compare_classes(cls1, cls2)
 end
 
 
-old_classes = read_all_classes(options[:old_classes], :ignore_private)
+old_classes = read_all_classes(options[:old_classes])
 new_classes = read_all_classes(options[:new_classes])
 ignored_members = options[:ignore] ? read_ignored_members(options[:ignore]) : {}
-
-# Explicit remapping of classes
-remap = {
-  "Array" => "Ext.Array",
-  "Date" => "Ext.Date",
-  "Function" => "Ext.Function",
-  "Number" => "Ext.Number",
-  "String" => "Ext.String",
-  "Ext.supports" => "Ext.feature.has",
-}
 
 diff_data = []
 old_classes.each_pair do |name, cls|
   # only go through classes, not alternate names
-  if name == cls["name"]
-    if remap[name]
-      new_cls = new_classes[remap[name]]
+  if name == cls["name"] && !cls["private"]
+    if options[:remap][name]
+      new_cls = new_classes[options[:remap][name]]
     else
       new_cls = new_classes[name]
     end
 
     diff_data << {
       :name => cls["name"],
-      :found => !!new_cls || ignored_members[name],
+      :found => (new_cls || ignored_members[name]) ? :both : :old,
       :new_name => new_cls && new_cls["name"],
       :diff => new_cls ? compare_classes(cls, new_cls) : [],
     }
+  end
+end
+
+new_classes.each_pair do |name, cls|
+  if name == cls["name"] && !cls["private"]
+    unless old_classes[name]
+      diff_data << {
+        :name => cls["name"],
+        :found => :new,
+        :diff => [],
+      }
+    end
   end
 end
 
@@ -283,6 +295,9 @@ html << <<-EOHTML
 body { font-family: Georgia, serif; }
 li h2 { font-size: medium; font-weight: normal; }
 li ul { display: none; }
+b.unchanged { color: green; }
+b.removed { color: red; }
+b.new { color: black; }
 </style>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
 <script>
@@ -301,34 +316,42 @@ EOHTML
 html << "<ul>"
 diff_data.sort! {|a, b| a[:name] <=> b[:name] }
 diff_data.each do |cls|
-  html << "<li>"
-  if cls[:found]
-    new_name = (cls[:new_name] == cls[:name] ? "" : " --> " + cls[:new_name])
-    diff_count = cls[:diff].length > 0 ? "(#{cls[:diff].length} changes)" : ""
-    link = cls[:diff].length > 0 ? "<a href='#expand'>#{cls[:name]}</a>" : "<span style='color:green'>"+cls[:name]+'</span>'
-    html << "<h2>#{link} #{new_name} #{diff_count}</h2>"
-    if cls[:diff].length > 0
-      html << "<ul>"
-      cls[:diff].each do |m|
-        html << "<li>"
-        html << m[:what] + " " + m[:type] + " " + m[:name]
-        if m[:other]
-          o = m[:other]
-          stat = o[:static] ? 'static' : ''
-          priv = o[:private] ? 'private' : ''
-          prot = o[:protected] ? 'protected' : ''
-          html << " (found #{stat} #{priv} #{prot} #{o[:type]} with the same name)"
-        elsif m[:changes]
-          m[:changes].each do |c|
-            html << " (#{c[:what]} changed from #{CGI.escapeHTML(c[:a])} to #{CGI.escapeHTML(c[:b])})"
+  if cls[:found] == :both
+    if cls[:diff].length > 0 || options[:show_unchanged]
+      html << "<li>"
+      new_name = (cls[:new_name] == cls[:name] ? "" : " --> " + cls[:new_name])
+      diff_count = cls[:diff].length > 0 ? "(#{cls[:diff].length} changes)" : ""
+      link = cls[:diff].length > 0 ? "<a href='#expand'>#{cls[:name]}</a>" : cls[:name]+" <b class='unchanged'>Unchanged</b>"
+      html << "<h2>#{link} #{new_name} #{diff_count}</h2>"
+      if cls[:diff].length > 0
+        html << "<ul>"
+        cls[:diff].each do |m|
+          html << "<li>"
+          html << m[:what] + " " + m[:type] + " " + m[:name]
+          if m[:other]
+            o = m[:other]
+            stat = o[:static] ? 'static' : ''
+            priv = o[:private] ? 'private' : ''
+            prot = o[:protected] ? 'protected' : ''
+            html << " (found #{stat} #{priv} #{prot} #{o[:type]} with the same name)"
+          elsif m[:changes]
+            m[:changes].each do |c|
+              html << " (#{c[:what]} changed from #{CGI.escapeHTML(c[:a])} to #{CGI.escapeHTML(c[:b])})"
+            end
           end
         end
         html << "</li>"
       end
-      html << "</ul>"
+      html << "</li>"
     end
-  else
-    html << "<h2>" + cls[:name] + " <b>not found</b></h2>"
+  elsif cls[:found] == :old
+    html << "<li>"
+    html << "<h2>" + cls[:name] + " <b class='removed'>Removed</b></h2>"
+    html << "</li>"
+  elsif cls[:found] == :new
+    html << "<li>"
+    html << "<h2>" + cls[:name] + " <b class='new'>New class</b></h2>"
+    html << "</li>"
   end
   html << "</li>"
 end
@@ -336,10 +359,11 @@ html << "</ul>"
 
 html << "<h2>Summary</h2>"
 dd = diff_data
-html << "<p>" + dd.find_all {|c| !c[:found] }.length.to_s + " classes not found</p>"
-html << "<p>" + dd.find_all {|c| c[:found] && c[:diff].length == 0 }.length.to_s + " classes exactly the same</p>"
-html << "<p>" + dd.find_all {|c| c[:found] && c[:name] == c[:new_name] }.length.to_s + " classes with same name</p>"
-html << "<p>" + dd.find_all {|c| c[:found] && c[:name] != c[:new_name] }.length.to_s + " renamed classes</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :old }.length.to_s + " classes removed</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :new }.length.to_s + " new classes added</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :both && c[:diff].length == 0 }.length.to_s + " classes exactly the same</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :both && c[:name] == c[:new_name] }.length.to_s + " classes with same name</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :both && c[:name] != c[:new_name] }.length.to_s + " renamed classes</p>"
 html << "<p>" + dd.find_all {|c| c[:diff].length > 0 }.length.to_s + " classes with changed members</p>"
 html << "<p>" + dd.map {|c| c[:diff].length }.inject {|sum,x| sum + x }.to_s + " changed members</p>"
 

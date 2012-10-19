@@ -38,6 +38,7 @@ module JsDuck
 
     def load_all_guides
       each_item do |guide|
+        guide["url"] = resolve_url(guide)
         guide[:html] = load_guide(guide)
       end
     end
@@ -50,22 +51,20 @@ module JsDuck
     end
 
     def load_guide(guide)
-      in_dir = @path + "/guides/" + guide["name"]
+      return Logger.warn(:guide, "Guide not found", guide["url"]) unless File.exists?(guide["url"])
 
-      return Logger.warn(:guide, "Guide not found", in_dir) unless File.exists?(in_dir)
-
-      guide_file = in_dir + "/README.md"
+      guide_file = guide["url"] + "/README.md"
 
       return Logger.warn(:guide, "Guide not found", guide_file) unless File.exists?(guide_file)
 
       begin
         @formatter.doc_context = {:filename => guide_file, :linenr => 0}
-        name = File.basename(in_dir)
+        name = File.basename(guide["url"])
         @formatter.img_path = "guides/#{name}"
 
         return add_toc(guide, @formatter.format(Util::IO.read(guide_file)))
       rescue
-        Logger.fatal_backtrace("Error while reading/formatting guide #{in_dir}", $!)
+        Logger.fatal_backtrace("Error while reading/formatting guide #{guide['url']}", $!)
         exit(1)
       end
     end
@@ -73,17 +72,26 @@ module JsDuck
     def write_guide(guide, dir)
       return unless guide[:html]
 
-      in_dir = @path + "/guides/" + guide["name"]
       out_dir = dir + "/" + guide["name"]
 
       Logger.log("Writing guide", out_dir)
       # Copy the whole guide dir over
-      FileUtils.cp_r(in_dir, out_dir)
+      FileUtils.cp_r(guide["url"], out_dir)
 
       # Ensure the guide has an icon
       fix_icon(out_dir)
 
       Util::Json.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => guide[:html], :title => guide["title"]})
+    end
+
+    # Turns guide URL into full path.
+    # If no URL given at all, creates it from guide name.
+    def resolve_url(guide)
+      if guide["url"]
+        File.expand_path(guide["url"], @path)
+      else
+        @path + "/guides/" + guide["name"]
+      end
     end
 
     # Ensures the guide dir contains icon.png.

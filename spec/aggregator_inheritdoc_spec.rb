@@ -725,6 +725,60 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "inheriting cfg/property type" do
+    let(:members) do
+      ms = parse(<<-EOF)["Child"][:members]
+        /** */
+        Ext.define("Parent", {
+            /**
+             * @property {String/Number}
+             */
+            foo: 42,
+            /**
+             * @property {String/Number}
+             */
+            bar: 5,
+            baz: 15,
+            /**
+             * @property {String/Number}
+             * @private
+             */
+            zap: 7
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            /**
+             * @inheritdoc
+             */
+            foo: "blah",
+            bar: "blah",
+            baz: "blah",
+            zap: "blah"
+        });
+      EOF
+      hash = {}
+      ms.each {|p| hash[p[:name]] = p }
+      hash
+    end
+
+    it "explicit inherit from public parent keeps the type of parent" do
+      members["foo"][:type].should == "String/Number"
+    end
+
+    it "autoinherit from public parent keeps the type of parent" do
+      members["bar"][:type].should == "String/Number"
+    end
+
+    it "autoinherit from private parent overrides parent type" do
+      members["baz"][:type].should == "String"
+    end
+
+    it "autoinherit from explicitly documented private parent keeps parent type" do
+      members["zap"][:type].should == "String/Number"
+    end
+  end
+
   describe "instance members autoinherit with parent containing statics" do
     before do
       @docs = parse(<<-EOF)
@@ -789,4 +843,3 @@ describe JsDuck::Aggregator do
     end
   end
 end
-

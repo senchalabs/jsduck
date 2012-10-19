@@ -24,7 +24,7 @@ module JsDuck
       @categories.each do |cat|
         cat["groups"].each do |group|
           group["classes"] = group["classes"].map do |name|
-            expand(name) # name =~ /\*/ ? expand(name) : name
+            expand(name)
           end.flatten
         end
       end
@@ -37,7 +37,11 @@ module JsDuck
     # Expands class name like 'Foo.*' into multiple class names.
     def expand(name)
       re = Regexp.new("^" + name.split(/\*/, -1).map {|part| Regexp.escape(part) }.join('.*') + "$")
-      classes = @relations.to_a.find_all {|cls| re =~ cls[:name] && !cls[:private] }.map {|cls| cls[:name] }.sort
+
+      classes = @relations.to_a.find_all do |cls|
+        re =~ cls[:name] && !cls[:private] && !deprecated?(cls)
+      end.map {|cls| cls[:name] }.sort
+
       if classes.length == 0
         Logger.warn(:cat_no_match, "No class found matching a pattern '#{name} in categories file'", @filename)
       end
@@ -56,12 +60,16 @@ module JsDuck
         end
       end
 
-      # Check that each existing non-private class is listed
+      # Check that each existing non-private & non-deprecated class is listed
       @relations.each do |cls|
-        unless listed_classes[cls[:name]] || cls[:private]
+        unless listed_classes[cls[:name]] || cls[:private] || deprecated?(cls)
           Logger.warn(:cat_class_missing, "Class '#{cls[:name]}' not found in categories file", @filename)
         end
       end
+    end
+
+    def deprecated?(cls)
+      cls[:meta] && cls[:meta][:deprecated]
     end
   end
 

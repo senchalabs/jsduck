@@ -1,6 +1,8 @@
 JSDuck
 ======
 
+[![Build Status](https://travis-ci.org/senchalabs/jsduck.png)](https://travis-ci.org/senchalabs/jsduck)
+
 API documentation generator for Sencha JavaScript frameworks.
 
 JSDuck aims to be a better documentation generator for [Ext JS][] than

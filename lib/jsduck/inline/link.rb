@@ -208,7 +208,7 @@ module JsDuck
       end
 
       def get_matching_member(cls, query)
-        ms = find_members(cls, query).find_all {|m| !m[:private] }
+        ms = find_members(cls, query)
         if ms.length > 1
           instance_ms = ms.find_all {|m| !m[:meta][:static] }
           instance_ms.length > 0 ? instance_ms[0] : ms.find_all {|m| m[:meta][:static] }[0]

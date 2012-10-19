@@ -44,7 +44,7 @@ module JsDuck
     def render_enum_class_notice
       return if !@cls[:enum]
 
-      if @cls[:enum][:type] == "String"
+      if @cls[:enum][:doc_only]
         first = @cls[:members][:property][0] || {:name => 'foo', :default => '"foo"'}
         [
           "<p class='enum'><strong>ENUM:</strong> ",
@@ -88,7 +88,7 @@ module JsDuck
       return if @cls[:alternateClassNames].length == 0
       return [
         "<h4>Alternate names</h4>",
-        @cls[:alternateClassNames].sort.map {|name| "<div class='alternate-class-name'>#{name}</div>" },
+        @cls[:alternateClassNames].map {|name| "<div class='alternate-class-name'>#{name}</div>" },
       ]
     end
 
@@ -96,7 +96,7 @@ module JsDuck
       return if !@cls[type] || @cls[type].length == 0
       return [
         "<h4>#{title}</h4>",
-        @cls[type].sort.map {|name| "<div class='dependency'>#{name.exists? ? render_link(name) : name}</div>" },
+        @cls[type].map {|name| "<div class='dependency'>#{name.exists? ? render_link(name) : name}</div>" },
       ]
     end
 

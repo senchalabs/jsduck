@@ -47,6 +47,18 @@ describe JsDuck::Aggregator do
     end
   end
 
+  shared_examples_for "doc_enum" do
+    it "detects enum as only for documentation purposes" do
+      doc[:enum][:doc_only].should == true
+    end
+  end
+
+  shared_examples_for "non_doc_enum" do
+    it "doesn't detect an enum for doc purposes only" do
+      doc[:enum][:doc_only].should_not == true
+    end
+  end
+
   describe "explicit enum" do
     let(:doc) do
       parse(<<-EOS)[0]
@@ -60,6 +72,7 @@ describe JsDuck::Aggregator do
     end
 
     it_should_behave_like "enum"
+    it_should_behave_like "non_doc_enum"
   end
 
   describe "implicitly named enum" do
@@ -79,6 +92,7 @@ describe JsDuck::Aggregator do
     end
 
     it_should_behave_like "enum"
+    it_should_behave_like "non_doc_enum"
   end
 
   describe "enum with implicit values" do
@@ -175,8 +189,8 @@ describe JsDuck::Aggregator do
   end
 
   describe "enum with array value" do
-    let(:members) do
-      parse(<<-EOS)[0][:members]
+    let(:doc) do
+      parse(<<-EOS)[0]
         /** @enum */
         My.enum.Type = [
             "foo",
@@ -184,6 +198,10 @@ describe JsDuck::Aggregator do
         ];
       EOS
     end
+
+    let(:members) { doc[:members] }
+
+    it_should_behave_like "doc_enum"
 
     it "detects all members" do
       members.length.should == 2
@@ -207,8 +225,8 @@ describe JsDuck::Aggregator do
   end
 
   describe "enum with documented array values" do
-    let(:members) do
-      parse(<<-EOS)[0][:members]
+    let(:doc) do
+      parse(<<-EOS)[0]
         /** @enum */
         My.enum.Smartness = [
             // A wise choice.
@@ -218,6 +236,10 @@ describe JsDuck::Aggregator do
         ];
       EOS
     end
+
+    let(:members) { doc[:members] }
+
+    it_should_behave_like "doc_enum"
 
     it "detects docs of first member" do
       members[0][:doc].should == 'A wise choice.'
@@ -241,6 +263,8 @@ describe JsDuck::Aggregator do
     it "detects enum type as String" do
       doc[:enum][:type].should == "String"
     end
+
+    it_should_behave_like "doc_enum"
 
     let(:members) { doc[:members] }
 

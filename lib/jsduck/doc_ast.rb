@@ -280,9 +280,12 @@ module JsDuck
     def detect_enum(doc_map)
       return nil unless extract(doc_map, :class, :enum)
 
+      default = extract(doc_map, :class, :default)
+
       return {
         :type => extract(doc_map, :class, :type),
-        :default => extract(doc_map, :class, :default),
+        :default => default,
+        :doc_only => !!default,
       }
     end
 
