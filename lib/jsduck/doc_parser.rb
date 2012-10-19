@@ -417,11 +417,12 @@ module JsDuck
     end
 
     # matches: "(iphone ipad android mobileweb)"
+    # ToDo: add support for since-versions here
     def maybe_platforms
       skip_horiz_white
       if look(/\(((iphone|ipad|android|mobileweb) ?)+\)/i)
         match(/\(/i)
-        @current_tag[:platforms] = class_list
+        @current_tag[:inline_platforms] = class_list
         match(/\)/i)
       end
     end
