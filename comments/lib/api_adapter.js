@@ -22,6 +22,7 @@ module.exports = {
             upVote: comment.vote_dir === 1,
             downVote: comment.vote_dir === -1,
             read: comment.read,
+            tags: comment.tags ? comment.tags.split("\t") : [],
             moderator: comment.moderator,
             emailHash: crypto.createHash('md5').update(comment.email).digest("hex")
         };

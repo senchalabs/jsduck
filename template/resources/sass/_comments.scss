@@ -163,7 +163,7 @@ form.commentForm {
   padding-top: 10px;
   padding-left: 2px;
   &:hover {
-    .com-meta {
+    .com-meta .top-right {
       .readComment,
       .readComment.read,
       .editComment,
@@ -188,36 +188,64 @@ form.commentForm {
       font-size: 14px;
       &.moderator {
         color: $moderator-color; } }
-    .time {
+    .top-right {
       position: absolute;
       right: 20px;
-      color: #999;
-      top: 0; }
-    .deleteComment {
-      right: 110px;
-      color: #999;
-      @include opacity(0);
-      @include transition(opacity, 0.2s, linear);
-      position: absolute; }
-    .editComment {
-      right: 160px;
-      color: #999;
-      @include opacity(0);
-      @include transition(opacity, 0.2s, linear);
-      position: absolute; }
-    .readComment {
-      right: 200px;
-      color: #999;
-      @include opacity(0);
-      @include transition(opacity, 0.2s, linear);
-      position: absolute;
-      &.read {
+      top: 0;
+      span, a {
+        display: inline-block;
+        margin-left: 10px; }
+      .tag {
+        @include border-radius(2px);
+        padding: 0 1em;
+        font-weight: bold;
+        color: white;
+        background: $docs-text-color;
+        position: relative;
+        a {
+          margin: 0;
+          color: $docs-text-color;
+          position: absolute;
+          top: -5px;
+          right: -5px;
+          background: white;
+          width: 13px;
+          height: 13px;
+          text-align: center;
+          line-height: 7px;
+          border: 2px solid $docs-text-color;
+          @include border-radius(7px);
+          &:hover {
+            border-color: red;
+            color: red; } } }
+      .add-tag {
+        color: $docs-text-color;
+        background: white;
+        width: 13px;
+        height: 13px;
+        text-align: center;
+        text-indent: -1px;
+        line-height: 9px;
+        border: 2px solid $docs-text-color;
+        @include border-radius(7px);
+        &:hover {
+          border-color: $moderator-color;
+          color: $moderator-color; } }
+      .editComment, .deleteComment, .readComment {
+        color: #999;
+        @include opacity(0);
+        @include transition(opacity, 0.2s, linear); }
+      .readComment.read {
         color: white;
         @include border-radius(2px);
         background: $moderator-color;
         font-weight: bold;
         padding: 0 1em;
-        @include opacity(0.5); } }
+        @include opacity(0.5); }
+      .time {
+        color: #999;
+        text-align: right;
+        width: 90px; } }
     .vote {
       position: absolute;
       left: 2px;

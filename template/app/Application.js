@@ -64,7 +64,7 @@ Ext.define('Docs.Application', {
         Ext.get("loading").remove();
 
         // setInterval(function(){
-        //     Ext.DomQuery.select('link')[2].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000)
+        //     Ext.DomQuery.select('link')[2].href = "resources/css/viewport.css?" + Math.ceil(Math.random() * 100000000);
         // }, 1000);
     }
 });
