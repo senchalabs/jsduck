@@ -55,6 +55,7 @@ Ext.define('Docs.view.comments.List', {
         this.delegateClick("a.voteCommentDown", function(el, r) {
             this.vote(el, r, "down");
         }, this);
+
         this.delegateClick("a.editComment", function(el, r) {
             this.edit(el, r);
         }, this);
@@ -64,9 +65,11 @@ Ext.define('Docs.view.comments.List', {
         this.delegateClick("a.undoDeleteComment", function(el, r) {
             this.setDeleted(el, r, false);
         }, this);
-        this.delegateClick("a.readComment", function(el, r) {
-            this.markRead(el, r);
-        }, this);
+
+        this.delegateClick("a.readComment", this.markRead, this);
+
+        this.delegateClick("a.add-tag", this.addTag, this);
+        this.delegateClick("a.remove-tag", this.removeTag, this);
     },
 
     delegateClick: function(selector, callback, scope) {
@@ -127,6 +130,15 @@ Ext.define('Docs.view.comments.List', {
 
     markRead: function(el, comment) {
         comment.markRead();
+    },
+
+    addTag: function(el, comment) {
+        // TODO...
+    },
+
+    removeTag: function(el, comment) {
+        var tagname = Ext.get(el).up(".tag").down("b").getHTML();
+        comment.removeTag(tagname);
     },
 
     /**

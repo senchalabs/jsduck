@@ -104,12 +104,31 @@ Ext.define('Docs.model.Comment', {
     /**
      * Marks the comment as read.
      */
-    markRead: function(cfg) {
+    markRead: function() {
         this.request({
             url: '/comments/' + this.get("id") + '/read',
             method: 'POST',
             success: function() {
                 this.set("read", true);
+                this.commit();
+            },
+            scope: this
+        });
+    },
+
+    /**
+     * Removes tag from comment.
+     * @param {String} tagname
+     */
+    removeTag: function(tagname) {
+        this.request({
+            url: '/comments/' + this.get("id") + '/remove_tag',
+            method: 'POST',
+            params: {
+                tagname: tagname
+            },
+            success: function() {
+                Ext.Array.remove(this.get("tags"), tagname);
                 this.commit();
             },
             scope: this
