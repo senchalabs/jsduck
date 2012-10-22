@@ -206,6 +206,20 @@ app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', Auth.isLoggedIn,
     });
 });
 
+// Tags a comment
+app.post('/auth/:sdk/:version/comments/:commentId/add_tag', Auth.isLoggedIn, Auth.isModerator, function(req, res) {
+    new Request(req).addTag(req.params.commentId, req.body.tagname, function() {
+        res.send({ success: true });
+    });
+});
+
+// Removes tag from a comment
+app.post('/auth/:sdk/:version/comments/:commentId/remove_tag', Auth.isLoggedIn, Auth.isModerator, function(req, res) {
+    new Request(req).removeTag(req.params.commentId, req.body.tagname, function() {
+        res.send({ success: true });
+    });
+});
+
 // Marks a comment 'read'
 app.post('/auth/:sdk/:version/comments/:commentId/read', Auth.isLoggedIn, function(req, res) {
     new Request(req).markRead(req.params.commentId, function() {

@@ -199,6 +199,27 @@ Request.prototype = {
     },
 
     /**
+     * Adds tag to comment.
+     */
+    addTag: function(comment_id, tagname, callback) {
+        this.db.comments().addTag({
+            user_id: this.getUserId(),
+            comment_id: comment_id,
+            tagname: tagname
+        }, callback);
+    },
+
+    /**
+     * Removes tag from comment.
+     */
+    removeTag: function(comment_id, tagname, callback) {
+        this.db.comments().removeTag({
+            comment_id: comment_id,
+            tagname: tagname
+        }, callback);
+    },
+
+    /**
      * Marks comment as read.
      */
     markRead: function(comment_id, callback) {
