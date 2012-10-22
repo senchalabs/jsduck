@@ -435,4 +435,12 @@ describe("Comments", function() {
             });
         });
     });
+
+    it("#getById includes concatenated list of tags in the returned comment", function(done) {
+        comments.getById(1, function(err, com) {
+            expect(com.tags).toEqual("bug\tfeature");
+            done();
+        });
+    });
+
 });

@@ -189,3 +189,13 @@ INSERT INTO readings SET `user_id` = 1, `comment_id` = 3, `created_at` = '2011-0
 INSERT INTO readings SET `user_id` = 1, `comment_id` = 4, `created_at` = '2011-01-01 00:00:00';
 INSERT INTO readings SET `user_id` = 1, `comment_id` = 5, `created_at` = '2011-01-01 00:00:00';
 INSERT INTO readings SET `user_id` = 1, `comment_id` = 6, `created_at` = '2011-01-01 00:00:00';
+
+
+-- tags
+INSERT INTO tags SET id = 1, domain = 'ext-js-4', tagname = 'bug';
+INSERT INTO tags SET id = 2, domain = 'ext-js-4', tagname = 'feature';
+
+-- comment_tags
+INSERT INTO comment_tags SET tag_id = 1, comment_id = 1, user_id = 1;
+INSERT INTO comment_tags SET tag_id = 2, comment_id = 1, user_id = 1;
+INSERT INTO comment_tags SET tag_id = 2, comment_id = 2, user_id = 1;

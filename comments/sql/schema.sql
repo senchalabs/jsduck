@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS comment_tags;
+DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS readings;
 DROP TABLE IF EXISTS subscriptions;
 DROP TABLE IF EXISTS updates;
@@ -31,6 +33,7 @@ CREATE TABLE comments (
     content TEXT NOT NULL,
     content_html TEXT NOT NULL,
     vote INT NOT NULL DEFAULT 0,
+    tags TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted BOOLEAN NOT NULL DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
@@ -81,6 +84,28 @@ CREATE TABLE readings (
     CONSTRAINT unique_readings UNIQUE KEY (user_id, comment_id)
 ) ENGINE = InnoDB, CHARACTER SET = utf8;
 
+CREATE TABLE tags (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    domain VARCHAR(50) NOT NULL,
+    tagname VARCHAR(100) NOT NULL,
+    -- unique tags within domain
+    CONSTRAINT unique_tags UNIQUE KEY (domain, tagname)
+) ENGINE = InnoDB, CHARACTER SET = utf8;
+
+CREATE TABLE comment_tags (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    comment_id INT NOT NULL,
+    tag_id INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE,
+    -- a comment can't have the same tag twice
+    CONSTRAINT unique_comment_tags UNIQUE KEY (tag_id, comment_id)
+) ENGINE = InnoDB, CHARACTER SET = utf8;
+
+
 CREATE OR REPLACE VIEW visible_comments AS SELECT * FROM comments WHERE deleted = 0;
 
 -- comments table joined with users and targets for easier quering
@@ -128,4 +153,28 @@ CREATE TRIGGER on_vote_deleted AFTER DELETE ON votes
 FOR EACH ROW
     UPDATE comments
     SET vote = (SELECT SUM(value) FROM votes WHERE votes.comment_id = comments.id)
+    WHERE id = OLD.comment_id;
+
+-- set up triggers to recalculate the tags column automatically
+
+CREATE OR REPLACE VIEW concatenated_tags AS
+    SELECT
+        comment_id,
+        GROUP_CONCAT(tagname ORDER BY tagname SEPARATOR '\t') AS tagstring
+    FROM comment_tags
+    JOIN tags on tags.id = comment_tags.tag_id
+    GROUP BY comment_id;
+
+DROP TRIGGER IF EXISTS on_tag_added;
+CREATE TRIGGER on_tag_added AFTER INSERT ON comment_tags
+FOR EACH ROW
+    UPDATE comments
+    SET tags = (SELECT tagstring FROM concatenated_tags ctags WHERE ctags.comment_id = comments.id)
+    WHERE id = NEW.comment_id;
+
+DROP TRIGGER IF EXISTS on_tag_deleted;
+CREATE TRIGGER on_tag_deleted AFTER DELETE ON comment_tags
+FOR EACH ROW
+    UPDATE comments
+    SET tags = (SELECT tagstring FROM concatenated_tags ctags WHERE ctags.comment_id = comments.id)
     WHERE id = OLD.comment_id;
