@@ -117,6 +117,25 @@ Ext.define('Docs.model.Comment', {
     },
 
     /**
+     * Adds tag to comment.
+     * @param {String} tagname
+     */
+    addTag: function(tagname) {
+        this.request({
+            url: '/comments/' + this.get("id") + '/add_tag',
+            method: 'POST',
+            params: {
+                tagname: tagname
+            },
+            success: function() {
+                this.get("tags").push(tagname);
+                this.commit();
+            },
+            scope: this
+        });
+    },
+
+    /**
      * Removes tag from comment.
      * @param {String} tagname
      */

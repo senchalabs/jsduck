@@ -164,10 +164,7 @@ form.commentForm {
   padding-left: 2px;
   &:hover {
     .com-meta .top-right {
-      .readComment,
-      .readComment.read,
-      .editComment,
-      .deleteComment,
+      .command,
       .vote {
         @include transition(opacity, 0.2s, linear);
         @include opacity(1); } } }
@@ -192,7 +189,8 @@ form.commentForm {
       position: absolute;
       right: 20px;
       top: 0;
-      span, a {
+      .command,
+      .time {
         display: inline-block;
         margin-left: 10px; }
       .tag {
@@ -203,7 +201,6 @@ form.commentForm {
         background: $docs-text-color;
         position: relative;
         a {
-          margin: 0;
           color: $docs-text-color;
           position: absolute;
           top: -5px;

@@ -10,6 +10,7 @@ Ext.define('Docs.view.comments.List', {
         'Docs.Comments',
         'Docs.view.comments.Template',
         'Docs.view.comments.Form',
+        'Docs.view.comments.TagEditor',
         'Docs.model.Comment',
         'Docs.Tip'
     ],
@@ -133,7 +134,9 @@ Ext.define('Docs.view.comments.List', {
     },
 
     addTag: function(el, comment) {
-        // TODO...
+        var editor = new Docs.view.comments.TagEditor();
+        editor.on("select", comment.addTag, comment);
+        editor.popup(el);
     },
 
     removeTag: function(el, comment) {
