@@ -19,6 +19,22 @@ describe("Tags", function() {
         connection.end();
     });
 
+    it("#getAllTags returns all tags in current domain", function(done) {
+        comments.getAllTags(function(err, tags) {
+            expect(tags).toEqual([{tagname: "bug"}, {tagname: "feature"}]);
+            done();
+        });
+    });
+
+    it("#getAllTags returns empty array when no tags in current domain", function(done) {
+        comments = new Comments(new DbFacade(connection), "blabla");
+
+        comments.getAllTags(function(err, tags) {
+            expect(tags).toEqual([]);
+            done();
+        });
+    });
+
     it("each comment has concatenated list of tags", function(done) {
         comments.getById(1, function(err, com) {
             expect(com.tags).toEqual("bug\tfeature");

@@ -220,6 +220,13 @@ app.post('/auth/:sdk/:version/comments/:commentId/remove_tag', Auth.isLoggedIn, 
     });
 });
 
+// Returns list of all available tags
+app.get('/auth/:sdk/:version/tags', function(req, res) {
+    new Request(req).getAllTags(function(tags) {
+        res.send({ success: true, tags: tags });
+    });
+});
+
 // Marks a comment 'read'
 app.post('/auth/:sdk/:version/comments/:commentId/read', Auth.isLoggedIn, function(req, res) {
     new Request(req).markRead(req.params.commentId, function() {

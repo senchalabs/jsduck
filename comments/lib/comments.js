@@ -373,6 +373,13 @@ Comments.prototype = {
     },
 
     /**
+     * @inheritdoc Tags#getAll
+     */
+    getAllTags: function(callback) {
+        this.tags.getAll(callback);
+    },
+
+    /**
      * @inheritdoc Tags#add
      */
     addTag: function(tag, callback) {

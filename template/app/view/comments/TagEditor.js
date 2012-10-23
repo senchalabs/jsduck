@@ -3,30 +3,48 @@
  */
 Ext.define("Docs.view.comments.TagEditor", {
     extend: "Ext.container.Container",
+    requires: ["Docs.Comments"],
     floating: true,
     hidden: true,
     componentCls: "comments-tageditor",
 
-    initComponent: function() {
-        var tagnames = Ext.create('Ext.data.Store', {
-            fields: ['name'],
-            data: [
-                {name: "Fixed"},
-                {name: "Bug"},
-                {name: "Fixed in 4.1"}
-            ]
-        });
+    statics: {
+        cachedStore: undefined,
+        getStore: function() {
+            if (!this.cachedStore) {
+                this.cachedStore = Ext.create('Ext.data.Store', {
+                    fields: ['tagname'],
+                    proxy: {
+                        type: "ajax",
+                        url: Docs.Comments.buildRequestUrl("/tags"),
+                        reader: {
+                            type: "json",
+                            root: "tags"
+                        },
+                        sorters: [{
+                            property: 'tagname',
+                            direction: 'ASC'
+                        }]
+                    }
+                });
+                this.cachedStore.load();
+            }
 
+            return this.cachedStore;
+        }
+    },
+
+    initComponent: function() {
         this.items = [
             {
                 xtype: 'combobox',
                 listConfig: {
                     cls: "comments-tageditor-boundlist"
                 },
-                store: tagnames,
+                store: this.statics().getStore(),
                 queryMode: "local",
-                displayField: "name",
-                valueField: "name",
+                displayField: "tagname",
+                valueField: "tagname",
                 enableKeyEvents: true,
                 listeners: {
                     select: this.handleSelect,
@@ -56,15 +74,33 @@ Ext.define("Docs.view.comments.TagEditor", {
     },
 
     handleSelect: function() {
-        var value = Ext.String.trim(this.down("combobox").getValue());
+        var value = Ext.String.trim(this.down("combobox").getValue() || "");
         if (value) {
             /**
              * @event select
              * Fired when a tagname entered to the field and ENTER pressed.
              * @param {String} tagname
              */
-            this.fireEvent("select", value);
+            var tagname = this.rememberNewTag(value);
+            this.fireEvent("select", tagname);
         }
         this.destroy();
+    },
+
+    // when tagname doesn't exist in our tags story yet, add it there.
+    // in either case return the tagname that's going to be added to
+    // the current comment.
+    rememberNewTag: function(tagname) {
+        var store = this.statics().getStore();
+        var re = new RegExp("^" + Ext.String.escapeRegex(tagname) + "$", "i");
+        var matches = store.query("tagname", re);
+        if (matches.getCount() === 0) {
+            store.add({tagname: tagname});
+            store.sort();
+            return tagname;
+        }
+        else {
+            return matches.get(0).get("tagname");
+        }
     }
 });

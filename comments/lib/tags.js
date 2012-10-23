@@ -15,6 +15,24 @@ function Tags(db, domain) {
 
 Tags.prototype = {
     /**
+     * Retrieves all available tags in current domain.
+     *
+     * @param {Function} callback
+     * @param {Error} callback.err
+     * @param {Object[]} callback.tags Array of object with single `tagname` field.
+     */
+    getAll: function(callback) {
+        var sql = "SELECT tagname FROM tags WHERE domain = ? ORDER BY tagname";
+        this.db.query(sql, [this.domain], function(err, rows) {
+            if (err) {
+                callback(err);
+                return;
+            }
+            callback(null, rows.map(function(r) { return {tagname: r.tagname}; }));
+        });
+    },
+
+    /**
      * Adds tag to the comment.
      *
      * @param {Object} tag

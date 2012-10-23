@@ -199,6 +199,15 @@ Request.prototype = {
     },
 
     /**
+     * Retrieves array of all tags.
+     */
+    getAllTags: function(callback) {
+        this.db.comments().getAllTags(function(err, tags) {
+            callback(tags);
+        });
+    },
+
+    /**
      * Adds tag to comment.
      */
     addTag: function(comment_id, tagname, callback) {
