@@ -292,6 +292,13 @@ form.commentForm {
     font-weight: bold; } }
 
 
+// Editor for adding new tags.
+.comments-tageditor {
+  padding-top: 10px; }
+.comments-tageditor-boundlist .x-boundlist-item-over {
+  background: $moderator-color-light; }
+
+
 // Comments index page
 #commentindex {
   padding: 5px;
