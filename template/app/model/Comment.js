@@ -121,18 +121,9 @@ Ext.define('Docs.model.Comment', {
      * @param {String} tagname
      */
     addTag: function(tagname) {
-        this.request({
-            url: '/comments/' + this.get("id") + '/add_tag',
-            method: 'POST',
-            params: {
-                tagname: tagname
-            },
-            success: function() {
-                this.get("tags").push(tagname);
-                this.commit();
-            },
-            scope: this
-        });
+        this.changeTag("add_tag", tagname, function() {
+            this.get("tags").push(tagname);
+        }, this);
     },
 
     /**
@@ -140,14 +131,21 @@ Ext.define('Docs.model.Comment', {
      * @param {String} tagname
      */
     removeTag: function(tagname) {
+        this.changeTag("remove_tag", tagname, function() {
+            Ext.Array.remove(this.get("tags"), tagname);
+        }, this);
+    },
+
+    // helper for doing add_tag/remove_tag requests
+    changeTag: function(action, tagname, callback, scope) {
         this.request({
-            url: '/comments/' + this.get("id") + '/remove_tag',
+            url: '/comments/' + this.get("id") + '/' + action,
             method: 'POST',
             params: {
                 tagname: tagname
             },
             success: function() {
-                Ext.Array.remove(this.get("tags"), tagname);
+                callback.call(scope);
                 this.commit();
             },
             scope: this
