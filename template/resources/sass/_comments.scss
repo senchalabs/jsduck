@@ -385,8 +385,9 @@ form.commentForm {
       color: $docs-link-color; } } }
 
 
-// Table with top-voted targets
-.comments-targets .x-panel-body .targets-list {
+// Table with top targets or tags
+.comments-targets .x-panel-body .targets-list,
+.comments-tags .x-panel-body .targets-list {
   ul, li {
     margin: 0;
     padding: 0;

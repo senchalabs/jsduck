@@ -9,7 +9,8 @@ Ext.define('Docs.view.comments.Index', {
         'Docs.view.comments.FullList',
         'Docs.view.comments.HeaderMenu',
         'Docs.view.comments.Users',
-        'Docs.view.comments.Targets'
+        'Docs.view.comments.Targets',
+        'Docs.view.comments.Tags'
     ],
     componentCls: 'comments-index',
 
@@ -41,6 +42,9 @@ Ext.define('Docs.view.comments.Index', {
                 },
                 {
                     xtype: "commentsTargets"
+                },
+                {
+                    xtype: "commentsTags"
                 }
             ]
         }
@@ -52,14 +56,23 @@ Ext.define('Docs.view.comments.Index', {
         var cardPanel = this.down("#cardPanel");
         var users = this.down("commentsUsers");
         var targets = this.down("commentsTargets");
+        var tags = this.down("commentsTags");
+
         this.down("commentsHeaderMenu").on("select", function(item) {
             if (item === "users") {
                 targets.deselectAll();
+                tags.deselectAll();
                 cardPanel.getLayout().setActiveItem(users);
+            }
+            else if (item === "targets") {
+                users.deselectAll();
+                tags.deselectAll();
+                cardPanel.getLayout().setActiveItem(targets);
             }
             else {
                 users.deselectAll();
-                cardPanel.getLayout().setActiveItem(targets);
+                targets.deselectAll();
+                cardPanel.getLayout().setActiveItem(tags);
             }
         }, this);
     },

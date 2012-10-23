@@ -114,7 +114,8 @@ app.get('/auth/:sdk/:version/comments_recent', function(req, res) {
         hideCurrentUser: req.query.hideCurrentUser,
         hideRead: req.query.hideRead,
         username: req.query.username,
-        targetId: req.query.targetId
+        targetId: req.query.targetId,
+        tagname: req.query.tagname
     };
     new Request(req).getRecentComments(query, function(comments) {
         res.json(comments);

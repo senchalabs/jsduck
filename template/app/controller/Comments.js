@@ -59,6 +59,13 @@ Ext.define('Docs.controller.Comments', {
                     this.recentCommentsSettings.targetId = target && target.get("id");
                     this.fetchRecentComments();
                 }
+            },
+
+            'commentsTags': {
+                select: function(tag) {
+                    this.recentCommentsSettings.tagname = tag && tag.get("tagname");
+                    this.fetchRecentComments();
+                }
             }
         });
     },
@@ -82,7 +89,8 @@ Ext.define('Docs.controller.Comments', {
             hideRead: settings.hideRead ? 1 : undefined,
             sortByScore: this.recentCommentsSettings.sortByScore ? 1 : undefined,
             username: this.recentCommentsSettings.username,
-            targetId: this.recentCommentsSettings.targetId
+            targetId: this.recentCommentsSettings.targetId,
+            tagname: this.recentCommentsSettings.tagname
         };
 
         this.getCommentsFullList().setMasked(true);
