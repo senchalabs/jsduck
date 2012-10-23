@@ -60,10 +60,11 @@
       font-weight: bold; }
     table {
       margin-bottom: 10px;
-      tr:first-child {
-        td {
-          color: #000;
-          font-weight: bold; } }
+      // Assume rationally constructed tables and don't attempt to override their styling
+      // tr:first-child {
+      //  td {
+      //    color: #000;
+      //    font-weight: bold; } }
       td {
         color: #484848;
         padding: 2px 20px 2px 0; } }
