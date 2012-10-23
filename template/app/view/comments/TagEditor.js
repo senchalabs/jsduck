@@ -46,6 +46,7 @@ Ext.define("Docs.view.comments.TagEditor", {
                 displayField: "tagname",
                 valueField: "tagname",
                 enableKeyEvents: true,
+                emptyText: "New tag name...",
                 listeners: {
                     select: this.handleSelect,
                     blur: this.destroy,

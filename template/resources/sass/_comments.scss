@@ -3,6 +3,7 @@
 
 $moderator-color: #3D7E00;
 $moderator-color-light: #94b773;
+$comment-date-color: #999;
 
 // comment count button in class toolbar.
 .comment-btn {
@@ -216,20 +217,21 @@ form.commentForm {
             border-color: red;
             color: red; } } }
       .add-tag {
-        color: $docs-text-color;
+        color: $comment-date-color;
         background: white;
         width: 13px;
         height: 13px;
         text-align: center;
         text-indent: -1px;
         line-height: 9px;
-        border: 2px solid $docs-text-color;
+        border: 2px solid $comment-date-color;
         @include border-radius(7px);
+        @include opacity(0);
         &:hover {
           border-color: $moderator-color;
           color: $moderator-color; } }
       .editComment, .deleteComment, .readComment {
-        color: #999;
+        color: $comment-date-color;
         @include opacity(0);
         @include transition(opacity, 0.2s, linear); }
       .readComment.read {
@@ -240,7 +242,7 @@ form.commentForm {
         padding: 0 1em;
         @include opacity(0.5); }
       .time {
-        color: #999;
+        color: $comment-date-color;
         text-align: right;
         width: 90px; } }
     .vote {
