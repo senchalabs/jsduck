@@ -2,7 +2,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.5"
 
   s.name = 'jsduck'
-  s.version = '4.3.0'
+  s.version = '4.3.1'
   s.date = '2012-10-24'
   s.summary = "Simple JavaScript Duckumentation generator"
   s.description = "Documentation generator for Sencha JS frameworks"
