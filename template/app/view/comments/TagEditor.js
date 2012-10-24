@@ -3,7 +3,9 @@
  */
 Ext.define("Docs.view.comments.TagEditor", {
     extend: "Ext.container.Container",
-    requires: ["Docs.Comments"],
+    requires: [
+        "Docs.model.Tag"
+    ],
     floating: true,
     hidden: true,
     componentCls: "comments-tageditor",
@@ -13,15 +15,7 @@ Ext.define("Docs.view.comments.TagEditor", {
         getStore: function() {
             if (!this.cachedStore) {
                 this.cachedStore = Ext.create('Ext.data.Store', {
-                    fields: ['tagname'],
-                    proxy: {
-                        type: "ajax",
-                        url: Docs.Comments.buildRequestUrl("/tags"),
-                        reader: {
-                            type: "json",
-                            root: "data"
-                        }
-                    },
+                    model: "Docs.model.Tag",
                     listeners: {
                         load: function() {
                             this.cachedStore.sort("tagname", "ASC");

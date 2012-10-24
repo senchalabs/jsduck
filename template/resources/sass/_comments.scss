@@ -386,8 +386,7 @@ form.commentForm {
 
 
 // Table with top targets or tags
-.comments-targets .x-panel-body .targets-list,
-.comments-tags .x-panel-body .targets-list {
+.comments-toplist .x-panel-body .top-list {
   ul, li {
     margin: 0;
     padding: 0;
@@ -412,7 +411,7 @@ form.commentForm {
     font-size: 16px; }
   .x-item-selected .score {
     color: $docs-text-color; }
-  .target {
+  .text {
     float: left;
     width: 250px;
     overflow: hidden;
