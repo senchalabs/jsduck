@@ -125,21 +125,21 @@ app.get('/auth/:sdk/:version/comments_recent', function(req, res) {
 // Returns top users (with most upvotes or with most comments).
 app.get('/auth/:sdk/:version/users', function(req, res) {
     new Request(req).getTopUsers(req.query.sortBy, function(users) {
-        res.json(users);
+        res.json({ success: true, data: users });
     });
 });
 
 // Returns the most commented targets.
 app.get('/auth/:sdk/:version/targets', function(req, res) {
-    new Request(req).getTopTargets(function(users) {
-        res.json(users);
+    new Request(req).getTopTargets(function(targets) {
+        res.json({ success: true, data: targets });
     });
 });
 
 // Returns the most used tags.
 app.get('/auth/:sdk/:version/tags', function(req, res) {
     new Request(req).getTopTags(function(tags) {
-        res.send({ success: true, tags: tags });
+        res.send({ success: true, data: tags });
     });
 });
 

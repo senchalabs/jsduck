@@ -114,6 +114,6 @@ Ext.define('Docs.view.comments.Tags', {
     },
 
     loadTags: function(tags) {
-        this.list.getStore().loadData(tags.tags);
+        this.list.getStore().loadData(tags.data);
     }
 });

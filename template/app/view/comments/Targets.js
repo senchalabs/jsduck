@@ -114,7 +114,7 @@ Ext.define('Docs.view.comments.Targets', {
     },
 
     loadTargets: function(targets) {
-        this.list.getStore().loadData(Ext.Array.map(targets, this.convertTarget, this));
+        this.list.getStore().loadData(Ext.Array.map(targets.data, this.convertTarget, this));
     },
 
     // Adds text field to target record.

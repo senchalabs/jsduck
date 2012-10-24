@@ -19,7 +19,7 @@ Ext.define("Docs.view.comments.TagEditor", {
                         url: Docs.Comments.buildRequestUrl("/tags"),
                         reader: {
                             type: "json",
-                            root: "tags"
+                            root: "data"
                         }
                     },
                     listeners: {
