@@ -34,10 +34,18 @@ Ext.define('Docs.view.cls.PackageLogic', {
     // Comparson method that sorts package nodes before class nodes.
     // Note changes for Ti, where isObject takes the place of .leaf
     // because our object models differ... Can this be abstracted?
+    // Also sort top level packages as determined by the topLevelNames dict.
     compare: function(a, b) {
+        var aa, bb;
+        var topLevelNames = { "Global": 0,  "Alloy": 1, "Titanium": 2 };
+        if (a.text in topLevelNames && b.text in topLevelNames) {
+            aa = topLevelNames[a.text];
+            bb = topLevelNames[b.text];
+            return aa > bb ? 1 : (aa < bb ? -1 : 0)
+        }
         if (a.isObject === b.isObject) {
-            var aa = a.text.toLowerCase();
-            var bb = b.text.toLowerCase();
+            aa = a.text.toLowerCase();
+            bb = b.text.toLowerCase();
             return aa > bb ? 1 : (aa < bb ? -1 : 0);
         }
         else {
