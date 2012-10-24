@@ -136,6 +136,13 @@ app.get('/auth/:sdk/:version/targets', function(req, res) {
     });
 });
 
+// Returns the most used tags.
+app.get('/auth/:sdk/:version/tags', function(req, res) {
+    new Request(req).getTopTags(function(tags) {
+        res.send({ success: true, tags: tags });
+    });
+});
+
 // Returns number of comments for each class/member,
 // and when user is logged in, all his subscriptions.
 app.get('/auth/:sdk/:version/comments_meta', function(req, res) {
@@ -218,13 +225,6 @@ app.post('/auth/:sdk/:version/comments/:commentId/add_tag', Auth.isLoggedIn, Aut
 app.post('/auth/:sdk/:version/comments/:commentId/remove_tag', Auth.isLoggedIn, Auth.isModerator, function(req, res) {
     new Request(req).removeTag(req.params.commentId, req.body.tagname, function() {
         res.send({ success: true });
-    });
-});
-
-// Returns list of all available tags
-app.get('/auth/:sdk/:version/tags', function(req, res) {
-    new Request(req).getAllTags(function(tags) {
-        res.send({ success: true, tags: tags });
     });
 });
 

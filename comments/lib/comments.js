@@ -379,13 +379,6 @@ Comments.prototype = {
     },
 
     /**
-     * @inheritdoc Tags#getAll
-     */
-    getAllTags: function(callback) {
-        this.tags.getAll(callback);
-    },
-
-    /**
      * @inheritdoc Tags#add
      */
     addTag: function(tag, callback) {
@@ -397,6 +390,13 @@ Comments.prototype = {
      */
     removeTag: function(tag, callback) {
         this.tags.remove(tag, callback);
+    },
+
+    /**
+     * @inheritdoc Tags#getTop
+     */
+    getTopTags: function(callback) {
+        this.tags.getTop(callback);
     },
 
     /**

@@ -20,11 +20,13 @@ Ext.define("Docs.view.comments.TagEditor", {
                         reader: {
                             type: "json",
                             root: "tags"
+                        }
+                    },
+                    listeners: {
+                        load: function() {
+                            this.cachedStore.sort("tagname", "ASC");
                         },
-                        sorters: [{
-                            property: 'tagname',
-                            direction: 'ASC'
-                        }]
+                        scope: this
                     }
                 });
                 this.cachedStore.load();
@@ -97,7 +99,7 @@ Ext.define("Docs.view.comments.TagEditor", {
         var matches = store.query("tagname", re);
         if (matches.getCount() === 0) {
             store.add({tagname: tagname});
-            store.sort();
+            store.sort("tagname", "ASC");
             return tagname;
         }
         else {

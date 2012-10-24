@@ -72,6 +72,15 @@ Request.prototype = {
     },
 
     /**
+     * Retrieves most used tags.
+     */
+    getTopTags: function(callback) {
+        this.db.comments().getTopTags(function(err, tags) {
+            callback(tags);
+        });
+    },
+
+    /**
      * Provides the comments_meta request data.
      */
     getCommentCountsPerTarget: function(callback) {
@@ -195,15 +204,6 @@ Request.prototype = {
         this.db.comments().vote(voteObj, function(err, voteDir, total) {
             var direction = voteDir === 1 ? "up" : (voteDir === -1 ? "down" : null);
             callback(direction, total);
-        });
-    },
-
-    /**
-     * Retrieves array of all tags.
-     */
-    getAllTags: function(callback) {
-        this.db.comments().getAllTags(function(err, tags) {
-            callback(tags);
         });
     },
 

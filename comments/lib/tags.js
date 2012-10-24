@@ -15,20 +15,37 @@ function Tags(db, domain) {
 
 Tags.prototype = {
     /**
-     * Retrieves all available tags in current domain.
+     * Retrieves all available tags in current domain ordered by nr of
+     * comments tagged with them.
      *
      * @param {Function} callback
      * @param {Error} callback.err
-     * @param {Object[]} callback.tags Array of object with single `tagname` field.
+     * @param {Object[]} callback.tags Array of objects with fields `tagname` and `score`.
      */
-    getAll: function(callback) {
-        var sql = "SELECT tagname FROM tags WHERE domain = ? ORDER BY tagname";
+    getTop: function(callback) {
+        var sql = [
+            "SELECT",
+                "tagname,",
+                "COUNT(*) AS score",
+            "FROM tags",
+                "JOIN comment_tags ON tags.id = comment_tags.tag_id",
+            "WHERE domain = ?",
+            "GROUP BY tagname",
+            "ORDER BY score DESC"
+        ];
         this.db.query(sql, [this.domain], function(err, rows) {
             if (err) {
                 callback(err);
                 return;
             }
-            callback(null, rows.map(function(r) { return {tagname: r.tagname}; }));
+            // The rows var contains some extra fields we don't want,
+            // plus the score field is a string, so convert it.
+            callback(null, rows.map(function(r) {
+                return {
+                    tagname: r.tagname,
+                    score: parseInt(r.score, 10)
+                };
+            }));
         });
     },
 

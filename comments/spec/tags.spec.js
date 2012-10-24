@@ -19,17 +19,17 @@ describe("Tags", function() {
         connection.end();
     });
 
-    it("#getAllTags returns all tags in current domain", function(done) {
-        comments.getAllTags(function(err, tags) {
-            expect(tags).toEqual([{tagname: "bug"}, {tagname: "feature"}]);
+    it("#getTopTags returns all tags in current domain", function(done) {
+        comments.getTopTags(function(err, tags) {
+            expect(tags).toEqual([{tagname: "feature", score: 2}, {tagname: "bug", score: 1}]);
             done();
         });
     });
 
-    it("#getAllTags returns empty array when no tags in current domain", function(done) {
+    it("#getTopTags returns empty array when no tags in current domain", function(done) {
         comments = new Comments(new DbFacade(connection), "blabla");
 
-        comments.getAllTags(function(err, tags) {
+        comments.getTopTags(function(err, tags) {
             expect(tags).toEqual([]);
             done();
         });

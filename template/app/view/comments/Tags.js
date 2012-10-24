@@ -52,14 +52,14 @@ Ext.define('Docs.view.comments.Tags', {
                 cls: "iScroll targets-list",
                 autoScroll: true,
                 store: Ext.create('Ext.data.Store', {
-                    fields: ["tagname"]
+                    fields: ["tagname", "score"]
                 }),
                 allowDeselect: true,
                 tpl: [
                     '<ul>',
                     '<tpl for=".">',
                         '<li>',
-                            '<span class="score">{score}0</span>',
+                            '<span class="score">{score}</span>',
                             '<span class="target">{tagname}</span>',
                         '</li>',
                     '</tpl>',
