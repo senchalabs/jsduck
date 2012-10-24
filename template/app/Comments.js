@@ -98,7 +98,7 @@ Ext.define('Docs.Comments', {
      * @inheritdoc Docs.CommentCounts#get
      */
     getCount: function(target) {
-        return this.counts.get(target);
+        return this.enabled ? this.counts.get(target) : 0;
     },
 
     /**
