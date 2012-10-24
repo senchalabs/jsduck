@@ -185,7 +185,7 @@ class JsDuckRunner
                   " <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--ignore-global",
       "--warnings", "-all",
-      "--images", "#{EXT_BUILD}/docs/doc-resources",
+      "--images", "#{EXT_BUILD}/docs/images",
       "--local-storage-db", "ext-4",
       "--output", "#{OUT_DIR}",
       "#{EXT_BUILD}/src",
