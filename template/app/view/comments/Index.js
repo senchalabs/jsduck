@@ -54,26 +54,23 @@ Ext.define('Docs.view.comments.Index', {
         this.callParent(arguments);
 
         var cardPanel = this.down("#cardPanel");
-        var users = this.down("commentsUsers");
-        var targets = this.down("commentsTargets");
-        var tags = this.down("commentsTags");
 
-        this.down("commentsHeaderMenu").on("select", function(item) {
-            if (item === "users") {
-                targets.deselectAll();
-                tags.deselectAll();
-                cardPanel.getLayout().setActiveItem(users);
-            }
-            else if (item === "targets") {
-                users.deselectAll();
-                tags.deselectAll();
-                cardPanel.getLayout().setActiveItem(targets);
-            }
-            else {
-                users.deselectAll();
-                targets.deselectAll();
-                cardPanel.getLayout().setActiveItem(tags);
-            }
+        var cards = {
+            users: this.down("commentsUsers"),
+            targets: this.down("commentsTargets"),
+            tags: this.down("commentsTags")
+        };
+
+        this.down("commentsHeaderMenu").on("select", function(selectedName) {
+            // deselect items in the unselected cards
+            Ext.Object.each(cards, function(name, card) {
+                if (name !== selectedName) {
+                    card.deselectAll();
+                }
+            });
+
+            // activate the selected card
+            cardPanel.getLayout().setActiveItem(cards[selectedName]);
         }, this);
     },
 
