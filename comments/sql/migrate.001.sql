@@ -80,3 +80,10 @@ FOR EACH ROW
     UPDATE comments
     SET tags = (SELECT tagstring FROM concatenated_tags ctags WHERE ctags.comment_id = comments.id)
     WHERE id = OLD.comment_id;
+
+
+-- Remove unused target types
+
+DELETE FROM targets WHERE type = 'unknown' OR type = 'challenge';
+
+ALTER TABLE targets MODIFY COLUMN type ENUM('class', 'guide', 'video') NOT NULL DEFAULT 'class';

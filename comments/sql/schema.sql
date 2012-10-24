@@ -19,7 +19,7 @@ CREATE TABLE users (
 CREATE TABLE targets (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     domain VARCHAR(50) NOT NULL, -- combines sdk & version
-    type ENUM('class', 'guide', 'video', 'unknown', 'challenge') NOT NULL DEFAULT 'class',
+    type ENUM('class', 'guide', 'video') NOT NULL DEFAULT 'class',
     cls VARCHAR(100) NOT NULL,    -- "Ext.draw.Sprite"
     member VARCHAR(100) NOT NULL, -- "method-setAttributes"
     -- the whole target must be unique
