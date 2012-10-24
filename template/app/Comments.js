@@ -254,7 +254,7 @@ Ext.define('Docs.Comments', {
      */
     avatar: function(emailHash) {
         return '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/' +
-               emailHash + '?s=25&amp;r=PG&amp;d=monsterid">';
+               emailHash + '?s=25&amp;r=PG&amp;d=identicon">';
     },
 
     /**
