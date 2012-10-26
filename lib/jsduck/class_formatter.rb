@@ -51,6 +51,7 @@ module JsDuck
       m[:throws] = m[:throws].map {|t| format_item(t, is_css_tag) } if m[:throws]
       m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
       m[:html_meta] = format_meta_data(m)
+      m[:default] = @formatter.replace(m[:default]) if m[:default]
       m
     end
 
@@ -62,6 +63,7 @@ module JsDuck
       it[:doc] = @formatter.format(it[:doc]) if it[:doc]
       it[:html_type] = (@include_types && !is_css_tag) ? format_type(it[:type]) : it[:type] if it[:type]
       it[:properties] = it[:properties].map {|s| format_item(s, is_css_tag) } if it[:properties]
+      it[:default] = @formatter.replace(it[:default]) if it[:default]
       it
     end
 
