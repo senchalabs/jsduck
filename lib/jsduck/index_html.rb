@@ -17,7 +17,6 @@ module JsDuck
     def write
       if @opts.seo
         FileUtils.cp(@opts.template_dir+"/index.php", @opts.output_dir+"/index.php")
-        FileUtils.cp(@opts.template_dir+"/Mobile_Detect.php", @opts.output_dir+"/Mobile_Detect.php")
         create_template_html(@opts.template_dir+"/template.html", @opts.output_dir+"/template.html")
         create_print_template_html(@opts.template_dir+"/print-template.html", @opts.output_dir+"/print-template.html")
         create_index_template_html(@opts.template_dir+"/index-template.html", @opts.output_dir+"/index-template.html")
@@ -31,6 +30,7 @@ module JsDuck
     def create_template_html(in_file, out_file)
       write_template(in_file, out_file, {
         "{title}" => @opts.title,
+        "{mobile_redirect}" => @opts.seo ? include_script(@opts.template_dir+"/mobile-redirect.js") : "",
         "{header}" => @opts.header,
         "{footer}" => "<div id='footer-content' style='display: none'>#{@opts.footer}</div>",
         "{extjs_path}" => @opts.extjs_path,
@@ -59,6 +59,10 @@ module JsDuck
         "{categories}" => categories ? "<h1>API Documentation</h1> #{categories}" : "",
         "{guides}" => guides ? "<h1>Guides</h1> #{guides}" : "",
       })
+    end
+
+    def include_script(filename)
+      "<script type='text/javascript'>\n" + Util::IO.read(filename) + "\n</script>"
     end
 
     # Opens in_file, replaces {keys} inside it, writes to out_file
