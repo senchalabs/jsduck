@@ -28,6 +28,8 @@ module JsDuck
           :showPrintButton => @opts.seo,
           :touchExamplesUi => @opts.touch_examples_ui,
           :source => @opts.source,
+          :commentsUrl => @opts.comments_url,
+          :commentsDomain => @opts.comments_domain,
         }
       }) + ";\n"
       File.open(filename, 'w') {|f| f.write(js) }

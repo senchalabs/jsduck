@@ -162,20 +162,9 @@ class JsDuckRunner
     @options += options
   end
 
-  # Enables comments when CORS is supported by browser.
-  # This excludes Opera and IE < 8.
-  # We check explicitly for IE version to make sure the code works the
-  # same way in both real IE7 and IE7-mode of IE8/9.
   def add_comments(db_name, version)
-    comments_base_url = "http://localhost:3000/auth"
-    @options += ["--head-html", <<-EOHTML]
-      <script type="text/javascript">
-        Docs.enableComments = ("withCredentials" in new XMLHttpRequest()) || (Ext.ieVersion >= 8);
-        Docs.baseUrl = "#{comments_base_url}";
-        Docs.commentsDb = "#{db_name}";
-        Docs.commentsVersion = "#{version}";
-      </script>
-    EOHTML
+    add_options("--comments-url", "http://localhost:3000/auth")
+    add_options("--comments-domain", db_name+"/"+version)
   end
 
   def add_ext4

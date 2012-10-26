@@ -37,6 +37,8 @@ module JsDuck
     attr_accessor :eg_iframe
     attr_accessor :examples_base_url
     attr_accessor :tests
+    attr_accessor :comments_url
+    attr_accessor :comments_domain
 
     # Debugging
     attr_accessor :template_dir
@@ -103,6 +105,8 @@ module JsDuck
       @eg_iframe = nil
       @examples_base_url = "extjs-build/examples/"
       @tests = false
+      @comments_url = nil
+      @comments_domain = nil
 
       # Debugging
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
@@ -374,6 +378,24 @@ module JsDuck
           "",
           "Defaults to the last version listed by --import.") do |v|
           @new_since = v
+        end
+
+        opts.on('--comments-url=URL',
+          "Address of comments server.",
+          "",
+          "For example: http://projects.sencha.com/auth",
+          "",
+          "Must be used together with --comments-domain option.") do |url|
+          @comments_url = url
+        end
+
+        opts.on('--comments-domain=STRING',
+          "A string consisting of <name>/<version>.",
+          "",
+          "For example: ext-js/4",
+          "",
+          "Must be used together with --comments-url option.") do |domain|
+          @comments_domain = domain
         end
 
         opts.separator ""

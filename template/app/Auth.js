@@ -19,7 +19,7 @@ Ext.define('Docs.Auth', {
      */
     init: function(callback, scope) {
         Ext.Ajax.request({
-            url: Docs.baseUrl + '/session_new',
+            url: Docs.data.commentsUrl + '/session_new',
             params: { sid: this.getSid() },
             method: 'GET',
             cors: true,
@@ -58,7 +58,7 @@ Ext.define('Docs.Auth', {
      */
     login: function(cfg) {
         Ext.Ajax.request({
-            url: Docs.baseUrl + '/login',
+            url: Docs.data.commentsUrl + '/login',
             method: 'POST',
             cors: true,
             params: {
@@ -87,7 +87,7 @@ Ext.define('Docs.Auth', {
      */
     logout: function(callback, scope) {
         Ext.Ajax.request({
-            url: Docs.baseUrl + '/logout?sid=' + this.getSid(),
+            url: Docs.data.commentsUrl + '/logout?sid=' + this.getSid(),
             method: 'POST',
             cors: true,
             callback: function() {

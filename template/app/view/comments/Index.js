@@ -6,6 +6,7 @@ Ext.define('Docs.view.comments.Index', {
     alias: 'widget.commentindex',
     mixins: ['Docs.view.Scrolling'],
     requires: [
+        'Docs.Comments',
         'Docs.view.comments.FullList',
         'Docs.view.comments.HeaderMenu',
         'Docs.view.comments.Users',
@@ -79,6 +80,6 @@ Ext.define('Docs.view.comments.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.enableComments ? {cls: 'comments', href: '#!/comment', tooltip: 'Comments'} : false;
+        return Docs.Comments.isEnabled() ? {cls: 'comments', href: '#!/comment', tooltip: 'Comments'} : false;
     }
 });
