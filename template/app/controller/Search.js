@@ -6,6 +6,7 @@ Ext.define('Docs.controller.Search', {
 
     requires: [
         'Docs.ClassRegistry',
+        'Docs.store.Search',
         'Docs.History'
     ],
 

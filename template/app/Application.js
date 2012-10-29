@@ -11,7 +11,21 @@ Ext.define('Docs.Application', {
         'Docs.History',
         'Docs.Comments',
         'Docs.Settings',
-        'Docs.view.Viewport'
+        'Docs.view.Viewport',
+
+        'Docs.controller.Auth',
+        'Docs.controller.Welcome',
+        'Docs.controller.Failure',
+        'Docs.controller.Classes',
+        'Docs.controller.Search',
+        'Docs.controller.InlineExamples',
+        'Docs.controller.Examples',
+        'Docs.controller.Guides',
+        'Docs.controller.Videos',
+        'Docs.controller.Tabs',
+        'Docs.controller.Comments',
+        'Docs.controller.CommentCounts',
+        'Docs.controller.Tests'
     ],
 
     constructor: function() {

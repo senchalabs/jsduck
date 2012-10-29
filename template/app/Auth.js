@@ -5,7 +5,6 @@ Ext.define('Docs.Auth', {
     singleton: true,
     requires: [
         'Ext.Ajax',
-        'Ext.JSON',
         'Ext.util.Cookies'
     ],
 
