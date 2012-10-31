@@ -341,7 +341,7 @@ module JsDuck
       doc << m[:doc]
 
       if m[:default] && m[:default] != "undefined"
-        doc << "<p>Defaults to: <code>" + HTML.escape(m[:default]) + "</code></p>"
+        doc << "Default: " + m[:default]
       end
 
       doc << render_meta_data(m[:html_meta], :bottom)
@@ -412,7 +412,7 @@ module JsDuck
             p[:doc],
             p[:platform] != nil && p[:platform].length > 0 ? render_platforms(p[:platform], false) : '',
             p[:inline_platforms] != nil && p[:inline_platforms].length > 0 ?  render_inline_platforms(p[:inline_platforms], false) : '',
-            p[:default] ? "<p>Defaults to: <code>#{CGI.escapeHTML(p[:default])}</code></p>" : "",
+            p[:default] ? "Default: " + p[:default] : "",
             p[:properties] && p[:properties].length > 0 ? render_params_and_return(p) : "",
           "</div>",
         "</li>",
