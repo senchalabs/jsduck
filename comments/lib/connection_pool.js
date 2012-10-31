@@ -20,12 +20,21 @@ var ConnectionPool = {
      */
     get: function(name, cfg) {
         if (!this.connections[name]) {
-            this.connections[name] = mysql.createConnection(cfg);
+            this.initConnection(name, cfg);
         }
 
         return this.connections[name];
+    },
+
+    initConnection: function(name, cfg) {
+        this.connections[name] = mysql.createConnection(cfg);
+        this.connections[name].on("error", function(err) {
+            if (err.fatal && err.code === 'PROTOCOL_CONNECTION_LOST') {
+                console.error("MySQL Connection lost, reconnecting: "+err.stack);
+                this.initConnection(name, cfg);
+            }
+        }.bind(this));
     }
 };
 
 module.exports = ConnectionPool;
-
