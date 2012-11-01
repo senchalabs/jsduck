@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project = s.name
 
   s.files = `git ls-files`.split("\n").find_all do |file|
-    file !~ /spec.rb$/ && file !~ /benchmark/ && file !~ /template\// && file !~ /opt\// && file !~ /comments\//
+    file !~ /spec.rb$/ && file !~ /benchmark/ && file !~ /template\// && file !~ /opt\//
   end
   # Add files not in git
   s.files += Dir['template-min/**/*']
