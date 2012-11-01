@@ -152,6 +152,14 @@ Ext.define('Docs.Auth', {
      */
     isModerator: function() {
         return this.getUser() && this.getUser().mod;
+    },
+
+    /**
+     * Returns the URL that takes user to registration form.
+     * @return {String}
+     */
+    getRegistrationUrl: function() {
+        return Docs.data.commentsUrl + "/register";
     }
 
 });
