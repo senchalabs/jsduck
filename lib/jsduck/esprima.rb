@@ -13,7 +13,7 @@ module JsDuck
 
     def initialize
       @v8 = V8::Context.new
-      esprima = File.dirname(File.dirname(File.dirname(File.expand_path(__FILE__))))+"/esprima/esprima.js";
+      esprima = File.dirname(File.expand_path(__FILE__))+"/esprima/esprima.js";
 
       # Esprima attempts to assign to window.esprima, but our v8
       # engine has no global window variable defined.  So define our
