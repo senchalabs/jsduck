@@ -340,8 +340,14 @@ module JsDuck
 
       doc << m[:doc]
 
+      # TIDOC-869. Insert description after summary but before default.
+      if m[:html_meta][:description] && m[:html_meta][:description] != "undefined"
+        doc << m[:html_meta][:description]
+        m[:html_meta].delete(:description)
+      end
+
       if m[:default] && m[:default] != "undefined"
-        doc << "Default: " + m[:default]
+        doc << "<p>Default: " + m[:default] + "</p>"
       end
 
       doc << render_meta_data(m[:html_meta], :bottom)
