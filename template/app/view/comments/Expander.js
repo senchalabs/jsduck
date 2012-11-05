@@ -5,7 +5,9 @@ Ext.define('Docs.view.comments.Expander', {
     alias: "widget.commentsExpander",
     extend: 'Ext.Component',
     requires: [
-        'Docs.Comments',
+        'Docs.Comments'
+    ],
+    uses: [
         'Docs.view.comments.ListWithForm'
     ],
     componentCls: "comments-expander",
@@ -13,6 +15,10 @@ Ext.define('Docs.view.comments.Expander', {
     /**
      * @cfg {String[]} target
      * The target specification array `[type, cls, member]`.
+     */
+    /**
+     * @cfg {String[]} parentId
+     * ID of the parent comment, if any.
      */
     /**
      * @cfg {Number} count
@@ -54,10 +60,11 @@ Ext.define('Docs.view.comments.Expander', {
 
     afterRender: function() {
         this.callParent(arguments);
-        this.getEl().on("click", this.toggle, this, {
-            preventDefault: true,
-            delegate: ".toggleComments"
-        });
+        this.getEl().select(".toggleComments").each(function(el) {
+            el.on("click", this.toggle, this, {
+                preventDefault: true
+            });
+        }, this);
     },
 
     toggle: function() {
@@ -96,13 +103,21 @@ Ext.define('Docs.view.comments.Expander', {
     loadComments: function() {
         this.list = new Docs.view.comments.ListWithForm({
             target: this.target,
+            parentId: this.parentId,
             newCommentTitle: this.newCommentTitle,
             renderTo: this.getEl()
         });
 
-        Docs.Comments.load(this.target, function(comments) {
-            this.list.load(comments);
-        }, this);
+        if (this.parentId) {
+            Docs.Comments.loadReplies(this.parentId, function(comments) {
+                this.list.load(comments);
+            }, this);
+        }
+        else {
+            Docs.Comments.load(this.target, function(comments) {
+                this.list.load(comments);
+            }, this);
+        }
     },
 
     /**

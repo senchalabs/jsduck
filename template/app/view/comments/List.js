@@ -11,6 +11,7 @@ Ext.define('Docs.view.comments.List', {
         'Docs.view.comments.Template',
         'Docs.view.comments.Form',
         'Docs.view.comments.TagEditor',
+        'Docs.view.comments.Expander',
         'Docs.model.Comment',
         'Docs.Tip'
     ],
@@ -38,9 +39,27 @@ Ext.define('Docs.view.comments.List', {
 
         this.on("refresh", function() {
             Docs.Syntax.highlight(this.getEl());
+            this.renderExpanders(this.store.getRange());
         }, this);
-        this.on("itemupdate", function(record, index, node) {
+        this.on("itemupdate", function(comment, index, node) {
             Docs.Syntax.highlight(node);
+            this.renderExpanders([comment]);
+        }, this);
+    },
+
+    renderExpanders: function(comments) {
+        if (comments[0] && comments[0].get("parentId")) {
+            return;
+        }
+
+        Ext.Array.forEach(comments, function(comment) {
+            new Docs.view.comments.Expander({
+                count: comment.get("replyCount"),
+                target: comment.get("target"),
+                parentId: comment.get("id"),
+                newCommentTitle: "<b>Reply to comment</b>",
+                renderTo: this.getNode(comment)
+            });
         }, this);
     },
 

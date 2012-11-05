@@ -18,6 +18,10 @@ Ext.define('Docs.view.comments.ListWithForm', {
      * The target of the comments (used for posting new comment).
      */
     /**
+     * @cfg {Number} parentId
+     * ID of parent comment.
+     */
+    /**
      * @cfg {String} newCommentTitle
      * A custom title for the new comment form.
      */
@@ -82,10 +86,16 @@ Ext.define('Docs.view.comments.ListWithForm', {
     },
 
     postComment: function(content) {
-        Docs.Comments.post(this.target, content, function(comment) {
-            this.commentingForm.setValue('');
-            this.list.load([comment], true);
-        }, this);
+        Docs.Comments.post({
+            target: this.target,
+            parentId: this.parentId,
+            content: content,
+            callback: function(comment) {
+                this.commentingForm.setValue('');
+                this.list.load([comment], true);
+            },
+            scope: this
+        });
     },
 
     subscribe: function(subscribed) {

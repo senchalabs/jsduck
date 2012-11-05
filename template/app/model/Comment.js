@@ -19,7 +19,9 @@ Ext.define('Docs.model.Comment', {
         "contentHtml",
         "read",
         "tags",
-        "deleted"
+        "deleted",
+        "parentId",
+        "replyCount"
     ],
     proxy: {
         type: "ajax",
