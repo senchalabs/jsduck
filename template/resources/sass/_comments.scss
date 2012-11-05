@@ -227,6 +227,7 @@ form.commentForm {
         border: 2px solid $comment-date-color;
         @include border-radius(7px);
         @include opacity(0);
+        @include transition(opacity, 0.2s, linear);
         &:hover {
           border-color: $moderator-color;
           color: $moderator-color; } }
