@@ -164,11 +164,13 @@ form.commentForm {
   padding-top: 10px;
   padding-left: 2px;
   &:hover {
-    .com-meta .top-right {
-      .command,
-      .vote {
+    // Use child > selector to ensure the hover also
+    // happens for the list of comment replies.
+    > .com-meta > .top-right > .command,
+    > .com-meta > .top-right > .vote,
+    > .comments-replies-expander > .replies-button {
         @include transition(opacity, 0.2s, linear);
-        @include opacity(1); } } }
+        @include opacity(1); } }
   .target {
     color: #666;
     font-size: 90%;
@@ -285,8 +287,27 @@ form.commentForm {
         font-size: 16px; } } }
   .content {
     min-height: 65px;
-    padding: 0 0 15px 40px;
+    padding: 0 0 30px 40px;
     border-bottom: 1px solid #eee; }
+  .comments-replies-expander {
+    .replies-button {
+      position: relative;
+      top: -20px;
+      height: 0;
+      display: block;
+      padding-left: 40px;
+      font-weight: bold;
+      @include opacity(0);
+      @include transition(opacity, 0.2s, linear);
+      color: $moderator-color-light;
+      &.with-replies {
+        @include opacity(1); }
+      &:hover {
+        color: $moderator-color; } }
+    .comments-list-with-form {
+      padding-left: 1em;
+      border-left: 1em solid #EBF3FE; } }
+
   .deleted-comment {
     text-align: center;
     background: #ffd76e;

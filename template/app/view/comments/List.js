@@ -11,7 +11,7 @@ Ext.define('Docs.view.comments.List', {
         'Docs.view.comments.Template',
         'Docs.view.comments.Form',
         'Docs.view.comments.TagEditor',
-        'Docs.view.comments.Expander',
+        'Docs.view.comments.RepliesExpander',
         'Docs.model.Comment',
         'Docs.Tip'
     ],
@@ -53,11 +53,10 @@ Ext.define('Docs.view.comments.List', {
         }
 
         Ext.Array.forEach(comments, function(comment) {
-            new Docs.view.comments.Expander({
+            new Docs.view.comments.RepliesExpander({
                 count: comment.get("replyCount"),
                 target: comment.get("target"),
                 parentId: comment.get("id"),
-                newCommentTitle: "<b>Reply to comment</b>",
                 renderTo: this.getNode(comment)
             });
         }, this);

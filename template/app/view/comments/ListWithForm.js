@@ -12,6 +12,7 @@ Ext.define('Docs.view.comments.ListWithForm', {
         'Docs.Comments',
         'Docs.Auth'
     ],
+    componentCls: "comments-list-with-form",
 
     /**
      * @cfg {String[]} target
