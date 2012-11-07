@@ -43,7 +43,7 @@ module JsDuck
       end.map {|cls| cls[:name] }.sort
 
       if classes.length == 0
-        Logger.warn(:cat_no_match, "No class found matching a pattern '#{name} in categories file'", @filename)
+        Logger.warn(:cat_no_match, "No class found matching a pattern '#{name}' in categories file", @filename)
       end
       classes
     end
