@@ -94,7 +94,15 @@ Ext.define('Docs.view.comments.List', {
 
     delegateClick: function(selector, callback, scope) {
         this.getEl().on("click", function(event, el) {
-            callback.call(scope, el, this.getRecord(this.findItemByChild(el)));
+            var comment = this.getRecord(this.findItemByChild(el));
+            // In case of replies to comments, this handler will also
+            // pick up events really targeted for the sublist, but we
+            // don't want to act on these.  But in such case the view
+            // is unable to find the corresponding record - so we stop
+            // here.
+            if (comment) {
+                callback.call(scope, el, comment);
+            }
         }, this, {preventDefault: true, delegate: selector});
     },
 
