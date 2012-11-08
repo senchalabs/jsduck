@@ -42,7 +42,7 @@ Ext.define('Docs.view.comments.Template', {
                         '<div class="deleted-comment">Comment was deleted. <a href="#" class="undoDeleteComment">Undo</a>.</div>',
                     '<tpl else>',
                         '<div class="com-meta">',
-                            '{[Docs.Comments.avatar(values.emailHash)]}',
+                            '{[this.avatar(values.emailHash)]}',
                             '<div class="author<tpl if="moderator"> moderator" title="Sencha Engineer</tpl>">',
                                 '{author}',
                                 '<tpl if="this.isTargetVisible()">',
@@ -86,6 +86,11 @@ Ext.define('Docs.view.comments.Template', {
             // to use all methods of this class inside the template
             this
         ]);
+    },
+
+    avatar: function(emailHash) {
+        // turns avatars into drag-handles for moderators.
+        return Docs.Comments.avatar(emailHash, this.isMod() ? "drag-handle" : "");
     },
 
     isTargetVisible: function() {

@@ -163,6 +163,8 @@ form.commentForm {
 .comment {
   padding-top: 10px;
   padding-left: 2px;
+  &.drop-target-hover {
+    background-color: $moderator-color-light; }
   &:hover {
     // Use child > selector to ensure the hover also
     // happens for the list of comment replies.
@@ -179,7 +181,9 @@ form.commentForm {
     position: relative;
     text-size: 13px;
     img {
-      @include border-radius(2px); }
+      @include border-radius(2px);
+      &.drag-handle {
+        cursor: all-scroll; } }
     .author {
       position: absolute;
       left: 40px;

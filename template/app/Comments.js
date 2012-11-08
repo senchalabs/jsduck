@@ -280,11 +280,12 @@ Ext.define('Docs.Comments', {
     /**
      * Generates an `<img>` tag for loading the avatar.
      * @param {String} emailHash MD5 hash of users e-mail address.
+     * @param {String} [cls] Additional CSS class or classes to add to the image.
      * @return {String}
      */
-    avatar: function(emailHash) {
-        return '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/' +
-               emailHash + '?s=25&amp;r=PG&amp;d=identicon">';
+    avatar: function(emailHash, cls) {
+        return '<img class="avatar ' + (cls || "") + '" width="25" height="25" ' +
+               'src="http://www.gravatar.com/avatar/' + emailHash + '?s=25&amp;r=PG&amp;d=identicon">';
     },
 
     /**

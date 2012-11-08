@@ -12,6 +12,8 @@ Ext.define('Docs.view.comments.List', {
         'Docs.view.comments.Form',
         'Docs.view.comments.TagEditor',
         'Docs.view.comments.RepliesExpander',
+        'Docs.view.comments.DragZone',
+        'Docs.view.comments.DropZone',
         'Docs.model.Comment',
         'Docs.Tip'
     ],
@@ -93,6 +95,10 @@ Ext.define('Docs.view.comments.List', {
 
         this.delegateClick("a.add-tag", this.addTag, this);
         this.delegateClick("a.remove-tag", this.removeTag, this);
+
+        // initialize drag-drop
+        new Docs.view.comments.DragZone(this);
+        new Docs.view.comments.DropZone(this);
     },
 
     delegateClick: function(selector, callback, scope) {
