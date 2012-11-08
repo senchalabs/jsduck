@@ -26,6 +26,7 @@ module JsDuck
               render_meta_data(@cls[:html_meta], :top),
               render_private_class_notice,
               @cls[:doc],
+              render_meta_data(@cls[:html_meta], :custom),
               render_meta_data(@cls[:html_meta], :bottom),
             "</div>",
             "<div class='members'>",
@@ -340,11 +341,7 @@ module JsDuck
 
       doc << m[:doc]
 
-      # TIDOC-869. Insert description after summary but before default.
-      if m[:html_meta][:description] && m[:html_meta][:description] != "undefined"
-        doc << m[:html_meta][:description]
-        m[:html_meta].delete(:description)
-      end
+      doc << render_meta_data(m[:html_meta], :custom)
 
       if m[:default] && m[:default] != "undefined"
         doc << "<p>Default: " + m[:default] + "</p>"

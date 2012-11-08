@@ -59,6 +59,10 @@ module JsDuck
     def create_tag(cls)
       tag = cls.new
       tag.key = tag.name.to_sym unless tag.key
+      # TIDOC-869. Place description in a custom position
+      if tag.key == :description
+        tag.position = :custom
+      end
       tag.position = :bottom unless tag.position
       tag
     end
