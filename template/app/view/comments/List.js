@@ -30,7 +30,11 @@ Ext.define('Docs.view.comments.List', {
 
     initComponent: function() {
         this.store = Ext.create('Ext.data.Store', {
-            model: "Docs.model.Comment"
+            model: "Docs.model.Comment",
+            listeners: {
+                update: this.fireChangeEvent,
+                scope: this
+            }
         });
 
         this.tpl = Docs.view.comments.Template.create({showTarget: this.showTarget});
@@ -183,6 +187,19 @@ Ext.define('Docs.view.comments.List', {
 
         var processedComments = this.store.getProxy().getReader().readRecords(comments).records;
         this.store.loadData(processedComments, append);
+        this.fireChangeEvent();
+    },
+
+    fireChangeEvent: function() {
+        /**
+         * @event countChange
+         * Fired when nr of comments in list changes.
+         * @param {Number} count
+         */
+        var isNotDeleted = function(c) {
+            return !c.get("deleted");
+        };
+        this.fireEvent("countChange", this.getStore().queryBy(isNotDeleted).getCount());
     }
 
 });

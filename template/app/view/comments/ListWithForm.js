@@ -33,6 +33,12 @@ Ext.define('Docs.view.comments.ListWithForm', {
             })
         ];
 
+        /**
+         * @event countChange
+         * @inheritdoc Docs.view.comments.List#countChange
+         */
+        this.relayEvents(this.list, ["countChange"]);
+
         this.callParent(arguments);
     },
 

@@ -108,7 +108,11 @@ Ext.define('Docs.view.comments.RepliesExpander', {
             target: this.target,
             parentId: this.parentId,
             newCommentTitle: "<b>Reply to comment</b>",
-            renderTo: this.getEl()
+            renderTo: this.getEl(),
+            listeners: {
+                countChange: this.setCount,
+                scope: this
+            }
         });
 
         Docs.Comments.loadReplies(this.parentId, function(comments) {
@@ -122,7 +126,9 @@ Ext.define('Docs.view.comments.RepliesExpander', {
      */
     setCount: function(count) {
         this.count = count;
-        this.refreshRepliesButton();
+        if (!this.expanded) {
+            this.refreshRepliesButton();
+        }
     }
 
 });
