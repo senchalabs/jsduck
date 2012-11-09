@@ -40,9 +40,17 @@ Ext.define("Docs.view.comments.DropZone", {
 
     onNodeDrop: function(target, dd, e, data) {
         if (this.isValidDropTarget(target, data)) {
-            alert("drop!");
+            this.onValidDrop(data.comment, this.view.getRecord(target));
             return true;
         }
         return false;
-    }
+    },
+
+    /**
+     * Called when comment successfully dropped on another one.
+     * @template
+     * @param {Docs.model.Comment} comment The comment that was dragged.
+     * @param {Docs.model.Comment} parent The comment that it got dropped on.
+     */
+    onValidDrop: Ext.emptyFn
 });

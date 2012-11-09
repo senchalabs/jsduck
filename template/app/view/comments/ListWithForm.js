@@ -37,7 +37,11 @@ Ext.define('Docs.view.comments.ListWithForm', {
          * @event countChange
          * @inheritdoc Docs.view.comments.List#countChange
          */
-        this.relayEvents(this.list, ["countChange"]);
+        /**
+         * @event reorder
+         * @inheritdoc Docs.view.comments.List#reorder
+         */
+        this.relayEvents(this.list, ["countChange", "reorder"]);
 
         this.callParent(arguments);
     },
@@ -67,8 +71,10 @@ Ext.define('Docs.view.comments.ListWithForm', {
             this.remove(this.commentingForm);
             delete this.commentingForm;
         }
-        this.authForm = new Docs.view.auth.Form();
-        this.add(this.authForm);
+        if (!this.authForm) {
+            this.authForm = new Docs.view.auth.Form();
+            this.add(this.authForm);
+        }
     },
 
     /**
@@ -79,17 +85,19 @@ Ext.define('Docs.view.comments.ListWithForm', {
             this.remove(this.authForm);
             delete this.authForm;
         }
-        this.commentingForm = new Docs.view.comments.Form({
-            title: this.newCommentTitle,
-            user: Docs.Auth.getUser(),
-            userSubscribed: Docs.Comments.hasSubscription(this.target),
-            listeners: {
-                submit: this.postComment,
-                subscriptionChange: this.subscribe,
-                scope: this
-            }
-        });
-        this.add(this.commentingForm);
+        if (!this.commentingForm) {
+            this.commentingForm = new Docs.view.comments.Form({
+                title: this.newCommentTitle,
+                user: Docs.Auth.getUser(),
+                userSubscribed: Docs.Comments.hasSubscription(this.target),
+                listeners: {
+                    submit: this.postComment,
+                    subscriptionChange: this.subscribe,
+                    scope: this
+                }
+            });
+            this.add(this.commentingForm);
+        }
     },
 
     postComment: function(content) {

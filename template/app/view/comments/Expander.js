@@ -100,9 +100,18 @@ Ext.define('Docs.view.comments.Expander', {
         this.list = new Docs.view.comments.ListWithForm({
             target: this.target,
             newCommentTitle: this.newCommentTitle,
-            renderTo: this.getEl()
+            renderTo: this.getEl(),
+            listeners: {
+                reorder: this.reload,
+                scope: this
+            }
         });
 
+        this.reload();
+    },
+
+    // Reloads the comments list from backend.
+    reload: function() {
         Docs.Comments.load(this.target, function(comments) {
             this.list.load(comments);
         }, this);

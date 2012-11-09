@@ -119,6 +119,24 @@ Ext.define('Docs.model.Comment', {
     },
 
     /**
+     * Sets new parent for the comment.
+     * @param {Docs.model.Comment} parent
+     * @param {Function} callback
+     * @param {Object} scope
+     */
+    setParent: function(parent, callback, scope) {
+        this.request({
+            url: '/comments/' + this.get("id") + '/set_parent',
+            method: 'POST',
+            params: {
+                parentId: parent.get("id")
+            },
+            success: callback,
+            scope: scope
+        });
+    },
+
+    /**
      * Adds tag to comment.
      * @param {String} tagname
      */

@@ -98,7 +98,9 @@ Ext.define('Docs.view.comments.List', {
 
         // initialize drag-drop
         new Docs.view.comments.DragZone(this);
-        new Docs.view.comments.DropZone(this);
+        new Docs.view.comments.DropZone(this, {
+            onValidDrop: Ext.Function.bind(this.setParent, this)
+        });
     },
 
     delegateClick: function(selector, callback, scope) {
@@ -178,6 +180,16 @@ Ext.define('Docs.view.comments.List', {
     removeTag: function(el, comment) {
         var tagname = Ext.get(el).up(".tag").down("b").getHTML();
         comment.removeTag(tagname);
+    },
+
+    setParent: function(comment, parent) {
+        comment.setParent(parent, function() {
+            /**
+             * @event reorder
+             * Fired when comments reordered with drag-drop.
+             */
+            this.fireEvent("reorder");
+        }, this);
     },
 
     /**
