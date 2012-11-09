@@ -8,6 +8,7 @@ module JsDuck::Tag
       @key = :deprecated
       @signature = {:long => "deprecated", :short => "DEP"}
       @multiline = true
+      @position = :custom
     end
 
     def to_value(contents)
