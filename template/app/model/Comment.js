@@ -120,7 +120,8 @@ Ext.define('Docs.model.Comment', {
 
     /**
      * Sets new parent for the comment.
-     * @param {Docs.model.Comment} parent
+     * @param {Docs.model.Comment} parent The parent comment
+     * (pass undefined to remove the parent from comment).
      * @param {Function} callback
      * @param {Object} scope
      */
@@ -128,9 +129,7 @@ Ext.define('Docs.model.Comment', {
         this.request({
             url: '/comments/' + this.get("id") + '/set_parent',
             method: 'POST',
-            params: {
-                parentId: parent.get("id")
-            },
+            params: parent ? {parentId: parent.get("id")} : undefined,
             success: callback,
             scope: scope
         });

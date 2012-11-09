@@ -26,10 +26,16 @@ $comment-date-color: #999;
   font-size: 11px; }
 
 
+@mixin comments-expander-drop-target {
+   &.open > a.side.toggleComments.drop-target-hover {
+      background: $moderator-color-light; } }
+
+
 // Large comments expander (Class/Guide/Video)
 #center-container .comments-large-expander {
   .comments-expander {
-    @include member-expander; }
+    @include member-expander;
+    @include comments-expander-drop-target; }
   // Header icon in large comments expander
   h3.icon-comment {
     padding: 0 0 5px 25px;
@@ -45,6 +51,7 @@ $comment-date-color: #999;
   border-color: #e0e0e0;
   position: relative;
   padding: 0 0 10px 25px;
+  @include comments-expander-drop-target;
   &.open {
     min-height: 40px; }
   .loading {
@@ -164,7 +171,7 @@ form.commentForm {
   padding-top: 10px;
   padding-left: 2px;
   &.drop-target-hover {
-    background-color: $moderator-color-light; }
+    background: $moderator-color-light; }
   &:hover {
     // Use child > selector to ensure the hover also
     // happens for the list of comment replies.

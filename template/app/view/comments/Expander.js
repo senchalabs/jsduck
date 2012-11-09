@@ -5,7 +5,8 @@ Ext.define('Docs.view.comments.Expander', {
     alias: "widget.commentsExpander",
     extend: 'Ext.Component',
     requires: [
-        'Docs.Comments'
+        'Docs.Comments',
+        'Docs.view.comments.TopLevelDropZone'
     ],
     uses: [
         'Docs.view.comments.ListWithForm'
@@ -56,11 +57,20 @@ Ext.define('Docs.view.comments.Expander', {
 
     afterRender: function() {
         this.callParent(arguments);
+
         this.getEl().select(".toggleComments").each(function(el) {
             el.on("click", this.toggle, this, {
                 preventDefault: true
             });
         }, this);
+
+        new Docs.view.comments.TopLevelDropZone(this.getEl().down(".side.toggleComments"), {
+            onValidDrop: Ext.Function.bind(this.setParent, this)
+        });
+    },
+
+    setParent: function(comment, parent) {
+        comment.setParent(parent, this.reload, this);
     },
 
     toggle: function() {
