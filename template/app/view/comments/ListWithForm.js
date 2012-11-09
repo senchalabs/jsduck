@@ -30,6 +30,7 @@ Ext.define('Docs.view.comments.ListWithForm', {
     initComponent: function() {
         this.items = [
             this.list = new Docs.view.comments.List({
+                enableDragDrop: true
             })
         ];
 

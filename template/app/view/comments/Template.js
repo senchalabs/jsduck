@@ -33,6 +33,11 @@ Ext.define('Docs.view.comments.Template', {
      * True to show a link to the target in each comment.
      */
 
+    /**
+     * @cfg {Boolean} enableDragDrop
+     * True to allow drag-drop reorganization of comments.
+     */
+
     constructor: function() {
         this.callParent([
             '<div>',
@@ -90,7 +95,7 @@ Ext.define('Docs.view.comments.Template', {
 
     avatar: function(emailHash) {
         // turns avatars into drag-handles for moderators.
-        return Docs.Comments.avatar(emailHash, this.isMod() ? "drag-handle" : "");
+        return Docs.Comments.avatar(emailHash, this.isMod() && this.enableDragDrop ? "drag-handle" : "");
     },
 
     isTargetVisible: function() {

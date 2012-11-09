@@ -30,6 +30,11 @@ Ext.define('Docs.view.comments.List', {
      * Used in Docs.view.comments.FullList.
      */
 
+    /**
+     * @cfg {Boolean} enableDragDrop
+     * True to allow drag-drop reorganization of comments.
+     */
+
     initComponent: function() {
         this.store = Ext.create('Ext.data.Store', {
             model: "Docs.model.Comment",
@@ -39,7 +44,10 @@ Ext.define('Docs.view.comments.List', {
             }
         });
 
-        this.tpl = Docs.view.comments.Template.create({showTarget: this.showTarget});
+        this.tpl = Docs.view.comments.Template.create({
+            showTarget: this.showTarget,
+            enableDragDrop: this.enableDragDrop
+        });
 
         this.callParent(arguments);
 
@@ -97,10 +105,12 @@ Ext.define('Docs.view.comments.List', {
         this.delegateClick("a.remove-tag", this.removeTag, this);
 
         // initialize drag-drop
-        new Docs.view.comments.DragZone(this);
-        new Docs.view.comments.DropZone(this, {
-            onValidDrop: Ext.Function.bind(this.setParent, this)
-        });
+        if (this.enableDragDrop) {
+            new Docs.view.comments.DragZone(this);
+            new Docs.view.comments.DropZone(this, {
+                onValidDrop: Ext.Function.bind(this.setParent, this)
+            });
+        }
     },
 
     delegateClick: function(selector, callback, scope) {
