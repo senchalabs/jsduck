@@ -18,7 +18,7 @@ Ext.define('Docs.Auth', {
      */
     init: function(callback, scope) {
         Ext.Ajax.request({
-            url: Docs.data.commentsUrl + '/session_new',
+            url: Docs.data.commentsUrl + '/session',
             params: { sid: this.getSid() },
             method: 'GET',
             cors: true,
