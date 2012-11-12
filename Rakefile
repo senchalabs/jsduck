@@ -105,7 +105,7 @@ def compress
   dir = "template-min"
 
   # Create JSB3 file for Docs app
-  system("sencha", "create", "jsb", "-a", "#{dir}/build-js.html", "-p", "#{dir}/app.jsb3")
+  system("sencha", "create", "jsb", "-a", "http://localhost/docs/", "-p", "#{dir}/app.jsb3")
   # Concatenate files listed in JSB3 file
   system("sencha", "build", "-p", "#{dir}/app.jsb3", "-d", dir)
 
