@@ -32,6 +32,13 @@ Ext.define('Docs.view.comments.Pager', {
         this.update(this.getPagerHtml());
     },
 
+    /**
+     * Resets comment count to zero.
+     */
+    reset: function() {
+        this.update("<span></span>No comments found.");
+    },
+
     getPagerHtml: function() {
         var total = this.total_rows || 0;
         var loaded = this.offset + this.limit;
