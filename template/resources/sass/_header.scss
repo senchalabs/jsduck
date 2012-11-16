@@ -30,13 +30,12 @@
 #loginContainer {
   text-align: right;
   color: #fff;
-  span {
-    position: relative;
-    img.avatar {
-      @include border-radius(2px);
-      position: absolute;
-      top: -5px;
-      left: -35px; } }
+  line-height: 25px;
+  div {
+    padding-left: 10px;
+    float: right; }
+  img.avatar {
+    @include border-radius(2px); }
   .register {
     font-weight: bold; }
   a {

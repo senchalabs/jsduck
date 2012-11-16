@@ -43,8 +43,8 @@ Ext.define('Docs.view.auth.HeaderForm', {
      * @param {Object} user
      */
     showLoggedIn: function(user) {
-        var userSignature = Docs.Comments.avatar(user.emailHash) + ' ' + user.userName;
-        this.update('<span>' + userSignature + '</span> | <a href="#" class="logout">Logout</a>');
+        var avatar = Docs.Comments.avatar(user.emailHash);
+        this.update(avatar + '<div><span>' + user.userName + '</span> | <a href="#" class="logout">Logout</a></div>');
     },
 
     /**
