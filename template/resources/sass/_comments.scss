@@ -33,6 +33,8 @@ $comment-date-color: #999;
 
 // Large comments expander (Class/Guide/Video)
 #center-container .comments-large-expander {
+  // ensure class comments are below the hierarchy sidebar
+  clear: both;
   .comments-expander {
     @include member-expander;
     @include comments-expander-drop-target; }
