@@ -1,8 +1,9 @@
 require 'rubygems'
 require 'rake'
-require 'digest/md5'
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
+
+require 'jsduck/util/md5'
 
 def os_is_windows?
   RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
@@ -41,22 +42,6 @@ def yui_compress(fname)
   system "java -jar $(dirname $(which sencha))/bin/yuicompressor.jar -o #{fname} #{fname}"
 end
 
-# Calculates MD5 hash of a file and renames the file to contain the
-# hash inside the filename.
-def md5_rename(fname)
-  hash = Digest::MD5.file(fname).hexdigest
-  hashed_name = inject_hash_to_filename(fname, hash)
-  File.rename(fname, hashed_name)
-  return hashed_name
-end
-
-# Given filename "foo/bar.js" and hash "HASH" produces "foo/bar-HASH.js"
-def inject_hash_to_filename(fname, hash)
-  parts = File.basename(fname).split(/\./)
-  parts[0] += "-" + hash
-  File.dirname(fname) + "/" + parts.join(".")
-end
-
 # Reads in all CSS files referenced between BEGIN CSS and END CSS markers.
 # Deletes those input CSS files and writes out concatenated CSS to
 # resources/css/app.css
@@ -76,7 +61,7 @@ def combine_css(html, dir, opts = :write)
   if opts == :write
     File.open(fname, 'w') {|f| f.write(css.join("\n")) }
     yui_compress(fname)
-    fname = md5_rename(fname)
+    fname = JsDuck::Util::MD5.rename(fname)
   end
   html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/' + File.basename(fname) + '" type="text/css" />')
 end
@@ -101,7 +86,7 @@ def combine_js(html, dir)
 
   File.open(fname, 'w') {|f| f.write(js.join("\n")) }
   yui_compress(fname)
-  fname = md5_rename(fname)
+  fname = JsDuck::Util::MD5.rename(fname)
   html.sub(js_section_re, '<script type="text/javascript" src="' + File.basename(fname) + '"></script>')
 end
 
