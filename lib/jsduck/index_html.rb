@@ -34,6 +34,7 @@ module JsDuck
         "{header}" => @opts.header,
         "{footer}" => "<div id='footer-content' style='display: none'>#{@opts.footer}</div>",
         "{extjs_path}" => @opts.extjs_path,
+        "{data_path}" => File.basename(@opts.data_path),
         "{welcome}" => @assets.welcome.to_html("display:none"),
         "{categories}" => @assets.categories.to_html("display:none"),
         "{guides}" => @assets.guides.to_html("display:none"),

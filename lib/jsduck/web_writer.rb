@@ -6,6 +6,7 @@ require 'jsduck/app_data'
 require 'jsduck/class_writer'
 require 'jsduck/source/writer'
 require 'jsduck/inline_examples'
+require 'jsduck/util/md5'
 require 'fileutils'
 
 module JsDuck
@@ -24,6 +25,7 @@ module JsDuck
 
       write_template_files
       write_app_data
+      write_index_html
 
       # class-formatting is done in parallel which breaks the links
       # between source files and classes. Therefore it MUST to be done
@@ -40,11 +42,17 @@ module JsDuck
 
     def write_template_files
       TemplateDir.new(@opts).write
-      IndexHtml.new(@assets, @opts).write
     end
 
     def write_app_data
-      AppData.new(@relations, @assets, @opts).write(@opts.output_dir+"/data.js")
+      filename = @opts.output_dir+"/data.js"
+      AppData.new(@relations, @assets, @opts).write(filename)
+      # Rename the file and remember the name for use in IndexHtml.write
+      @opts.data_path = Util::MD5.rename(filename)
+    end
+
+    def write_index_html
+      IndexHtml.new(@assets, @opts).write
     end
 
     def write_source
