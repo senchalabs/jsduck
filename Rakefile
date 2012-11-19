@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'rake'
+require 'digest/md5'
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
@@ -40,6 +41,22 @@ def yui_compress(fname)
   system "java -jar $(dirname $(which sencha))/bin/yuicompressor.jar -o #{fname} #{fname}"
 end
 
+# Calculates MD5 hash of a file and renames the file to contain the
+# hash inside the filename.
+def md5_rename(fname)
+  hash = Digest::MD5.file(fname).hexdigest
+  hashed_name = inject_hash_to_filename(fname, hash)
+  File.rename(fname, hashed_name)
+  return hashed_name
+end
+
+# Given filename "foo/bar.js" and hash "HASH" produces "foo/bar-HASH.js"
+def inject_hash_to_filename(fname, hash)
+  parts = File.basename(fname).split(/\./)
+  parts[0] += "-" + hash
+  File.dirname(fname) + "/" + parts.join(".")
+end
+
 # Reads in all CSS files referenced between BEGIN CSS and END CSS markers.
 # Deletes those input CSS files and writes out concatenated CSS to
 # resources/css/app.css
@@ -55,12 +72,13 @@ def combine_css(html, dir, opts = :write)
     end
   end
 
+  fname = "#{dir}/resources/css/app.css"
   if opts == :write
-    fname = "#{dir}/resources/css/app.css"
     File.open(fname, 'w') {|f| f.write(css.join("\n")) }
     yui_compress(fname)
+    fname = md5_rename(fname)
   end
-  html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/app.css" type="text/css" />')
+  html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/' + File.basename(fname) + '" type="text/css" />')
 end
 
 # Same thing for JavaScript, result is written to: app.js
@@ -80,9 +98,11 @@ def combine_js(html, dir)
   end
 
   fname = "#{dir}/app.js"
+
   File.open(fname, 'w') {|f| f.write(js.join("\n")) }
   yui_compress(fname)
-  html.sub(js_section_re, '<script type="text/javascript" src="app.js"></script>')
+  fname = md5_rename(fname)
+  html.sub(js_section_re, '<script type="text/javascript" src="' + File.basename(fname) + '"></script>')
 end
 
 # Modifies HTML to link app.css.
