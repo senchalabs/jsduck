@@ -11,7 +11,7 @@ module JsDuck
       @opts = opts
       @files = [
         "app",
-        "app.js",
+        "app*.js",
         "favicon.ico",
         "extjs",
         "resources",
@@ -38,9 +38,8 @@ module JsDuck
     # moves files from one dir to another using a method of FileUtils module.
     def move_files(method)
       @files.each do |file|
-        source = File.expand_path(@opts.template_dir+"/"+file)
-        target = File.expand_path(@opts.output_dir+"/"+file)
-        if File.exists?(source)
+        target = File.expand_path(@opts.output_dir)
+        Dir.glob(File.expand_path(@opts.template_dir+"/"+file)).each do |source|
           FileUtils.send(method, source, target)
         end
       end
