@@ -24,6 +24,14 @@ describe JsDuck::Ast do
       detect("/** */ var MyClass = function() {}").should == :class
     end
 
+    it "object literal assignment to uppercase name" do
+      detect("/** */ MyClass = {};").should == :class
+    end
+
+    it "doc-comment right before object literal" do
+      detect("MyClass = makeClass( /** */ {} );").should == :class
+    end
+
     it "Ext.extend()" do
       detect("/** */ MyClass = Ext.extend(Your.Class, {  });").should == :class
     end

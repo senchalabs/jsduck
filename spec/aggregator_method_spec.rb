@@ -292,4 +292,20 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "method inside object literal marked with @class" do
+    let(:method) do
+      parse(<<-EOS)[0][:members][0]
+        /**
+         * @class MyClass
+         * Some documentation.
+         */
+        createClass("MyClass", /** @class MyClass */ {
+            foo: function(){}
+        });
+      EOS
+    end
+
+    it_should_behave_like "auto detected method"
+  end
+
 end
