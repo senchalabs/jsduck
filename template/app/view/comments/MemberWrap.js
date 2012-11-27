@@ -3,6 +3,7 @@
  * comments data inside it.
  */
 Ext.define('Docs.view.comments.MemberWrap', {
+    extend: 'Docs.view.cls.MemberWrap',
     requires: [
         "Docs.Comments",
         "Docs.view.comments.Expander"
@@ -14,31 +15,17 @@ Ext.define('Docs.view.comments.MemberWrap', {
      */
 
     /**
-     * @cfg {Ext.Element/HTMLElement} el
-     * The member element to wrap.
-     */
-
-    /**
      * @cfg {String} className
      * The name of the current class.
      */
 
     constructor: function(cfg) {
-        Ext.apply(this, cfg);
-        this.el = Ext.get(cfg.el);
+        this.callParent([cfg]);
 
-        // The expander needs to reside inside some element.
-        var expanderWrap = Ext.DomHelper.append(this.el.down('.long'), "<div></div>");
         var count = Docs.Comments.getCount(this.getTarget());
-
-        this.expander = new Docs.view.comments.Expander({
-            count: count,
-            target: this.getTarget(),
-            newCommentTitle: this.getNewCommentTitle(),
-            renderTo: expanderWrap
-        });
-
-        this.updateSignatureCommentCount(count);
+        if (count > 0) {
+            this.updateSignatureCommentCount(count);
+        }
     },
 
     /**
@@ -53,11 +40,30 @@ Ext.define('Docs.view.comments.MemberWrap', {
     },
 
     /**
+     * Returns the actual expander component, which it gets created
+     * when this function is called for the first time.
+     */
+    getExpander: function() {
+        if (!this.expander) {
+            // The expander needs to reside inside some element.
+            var expanderWrap = Ext.DomHelper.append(this.el.down('.long'), "<div></div>");
+
+            this.expander = new Docs.view.comments.Expander({
+                count: Docs.Comments.getCount(this.getTarget()),
+                target: this.getTarget(),
+                newCommentTitle: this.getNewCommentTitle(),
+                renderTo: expanderWrap
+            });
+        }
+        return this.expander;
+    },
+
+    /**
      * Updates the comment count.
      * @param {Number} count
      */
     setCount: function(count) {
-        this.expander.setCount(count);
+        this.getExpander().setCount(count);
         this.updateSignatureCommentCount(count);
     },
 
@@ -74,8 +80,8 @@ Ext.define('Docs.view.comments.MemberWrap', {
                 var el = Ext.DomHelper.append(titleEl, Docs.Comments.counterHtml(count), true);
                 el.on("click", function() {
                     this.el.addCls("open");
-                    this.expander.expand();
-                    this.parent.scrollToEl(this.expander.getEl());
+                    this.getExpander().expand();
+                    this.parent.scrollToEl(this.getExpander().getEl());
                 }, this);
             }
         }
@@ -97,19 +103,16 @@ Ext.define('Docs.view.comments.MemberWrap', {
     },
 
     /**
-     * Returns the class the wrapped member is defined in.
-     * @return {String}
+     * Expands of collapses the member.
+     * @param {Boolean} expanded
      */
-    getDefinedIn: function() {
-        return this.el.down('.meta .defined-in').getAttribute('rel');
-    },
+    setExpanded: function(expanded) {
+        this.callParent([expanded]);
 
-    /**
-     * Returns the ID of the wrapped member.
-     * @return {String}
-     */
-    getMemberId: function() {
-        return this.el.getAttribute('id');
+        if (expanded) {
+            // Initialize the expander.
+            this.getExpander().show();
+        }
     }
 
 });

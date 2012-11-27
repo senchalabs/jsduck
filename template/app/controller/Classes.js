@@ -86,9 +86,7 @@ Ext.define('Docs.controller.Classes', {
 
             'toolbar': {
                 toggleExpanded: function(expanded) {
-                    Ext.Array.forEach(Ext.query('.side.expandable'), function(el) {
-                        Ext.get(el).parent()[expanded ? "addCls" : "removeCls"]('open');
-                    });
+                    this.getOverview().setAllMembersExpanded(expanded);
                 }
             },
 
@@ -101,14 +99,13 @@ Ext.define('Docs.controller.Classes', {
                             clsName = docClass.getAttribute('rel'),
                             memberName = member.getAttribute('id');
 
-                        if (member.hasCls('open')) {
+                        if (this.getOverview().isMemberExpanded(memberName)) {
                             this.setExpanded(memberName, false);
                         }
                         else {
                             this.setExpanded(memberName, true);
                             this.fireEvent('showMember', clsName, memberName);
                         }
-                        member.toggleCls('open');
                     }, this, {
                         preventDefault: true,
                         delegate: '.expandable'
@@ -145,12 +142,15 @@ Ext.define('Docs.controller.Classes', {
         });
     },
 
-    // Remembers the expanded state of a member of current class
+    // Expands the member and remembers the expanded state of a member
+    // of current class
     setExpanded: function(member, expanded) {
         var cls = this.currentCls;
         if (!cls.expanded) {
             cls.expanded = {};
         }
+
+        this.getOverview().setMemberExpanded(member, expanded);
 
         if (expanded) {
             cls.expanded[member] = expanded;
