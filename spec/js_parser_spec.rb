@@ -256,5 +256,17 @@ describe JsDuck::JsParser do
     end
   end
 
-end
+  describe "parsing comment immediately before object literal" do
+    before do
+      @docs = parse(<<-EOS)
+          x = /* Blah */{};
+      EOS
+    end
 
+    it "associates comment with the code" do
+      @docs[0][:comment].should == " Blah "
+      @docs[0][:code]["type"].should == "ObjectExpression"
+    end
+  end
+
+end

@@ -138,17 +138,17 @@ module JsDuck
 
     # True if range A is less than range B
     def less(a, b)
-      return a[1] < b[0]
+      return a[1] <= b[0]
     end
 
     # True if range A is greater than range B
     def greater(a, b)
-      return a[0] > b[1]
+      return a[0] >= b[1]
     end
 
     # True if range A is within range B
     def within(a, b)
-      return b[0] < a[0] && a[1] < b[1]
+      return b[0] <= a[0] && a[1] <= b[1]
     end
 
 
