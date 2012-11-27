@@ -11,6 +11,7 @@ module JsDuck::Tag
       @key = :removed
       @signature = {:long => "removed", :short => "REM"}
       @multiline = true
+      @position = :custom
     end
 
     def to_value(contents)
