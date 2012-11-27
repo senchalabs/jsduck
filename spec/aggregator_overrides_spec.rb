@@ -258,4 +258,31 @@ describe JsDuck::Aggregator do
       methods["foobar"][:doc].should == "**Overridden in blah.js.**"
     end
   end
+
+  describe "override created with Ext.override" do
+    let(:classes) do
+      parse(<<-EOF)
+        /** */
+        Ext.define("Foo", {
+            foobar: function(){}
+        });
+
+        /** */
+        Ext.override(Foo, {
+            bar: function(){ },
+            foobar: function(){ return true; }
+        });
+      EOF
+    end
+
+    let(:methods) { create_members_map(classes["Foo"]) }
+
+    it "adds member to overridden class" do
+      methods["bar"].should_not == nil
+    end
+
+    it "adds note to docs about member being overridden" do
+      methods["foobar"][:doc].should == "**Overridden in blah.js.**"
+    end
+  end
 end

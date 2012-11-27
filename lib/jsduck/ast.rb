@@ -68,7 +68,11 @@ module JsDuck
       if exp && ext_define?(exp)
         make_class(to_value(exp["arguments"][0]), exp)
 
-      # foo = Ext.extend("Parent", {})
+      # Ext.override(Class, {})
+      elsif exp && ext_override?(exp)
+        make_class("", exp)
+
+      # foo = Ext.extend(Parent, {})
       elsif exp && assignment?(exp) && ext_extend?(exp["right"])
         make_class(to_s(exp["left"]), exp["right"])
 
@@ -76,7 +80,7 @@ module JsDuck
       elsif exp && assignment?(exp) && class_name?(to_s(exp["left"]))
         make_class(to_s(exp["left"]), exp["right"])
 
-      # var foo = Ext.extend("Parent", {})
+      # var foo = Ext.extend(Parent, {})
       elsif var && var["init"] && ext_extend?(var["init"])
         make_class(to_s(var["id"]), var["init"])
 
@@ -163,6 +167,10 @@ module JsDuck
       call?(ast) && to_s(ast["callee"]) == "Ext.extend"
     end
 
+    def ext_override?(ast)
+      call?(ast) && to_s(ast["callee"]) == "Ext.override"
+    end
+
     def function?(ast)
       ast["type"] == "FunctionDeclaration" || ast["type"] == "FunctionExpression" || empty_fn?(ast)
     end
@@ -204,14 +212,12 @@ module JsDuck
 
       # apply information from Ext.extend, Ext.define, or {}
       if ast
-        if ext_extend?(ast)
-          args = ast["arguments"]
-          cls[:extends] = to_s(args[0])
-          if args.length == 2 && object?(args[1])
-            detect_class_members_from_object(cls, args[1])
-          end
-        elsif ext_define?(ast)
+        if ext_define?(ast)
           detect_ext_define(cls, ast)
+        elsif ext_extend?(ast)
+          detect_ext_something(:extends, cls, ast)
+        elsif ext_override?(ast)
+          detect_ext_something(:override, cls, ast)
         elsif object?(ast)
           detect_class_members_from_object(cls, ast)
         elsif ast["type"] == "ArrayExpression"
@@ -220,6 +226,16 @@ module JsDuck
       end
 
       return cls
+    end
+
+    # Detection of Ext.extend() or Ext.override().
+    # The type parameter must be correspondingly either :extend or :override.
+    def detect_ext_something(type, cls, ast)
+      args = ast["arguments"]
+      cls[type] = to_s(args[0])
+      if args.length == 2 && object?(args[1])
+        detect_class_members_from_object(cls, args[1])
+      end
     end
 
     # Inspects Ext.define() and copies detected properties over to the
