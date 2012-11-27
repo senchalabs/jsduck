@@ -67,7 +67,15 @@ module JsDuck
         "Array",
         "Arguments",
         "Date",
+        # JavaScript builtin error classes
+        # https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Error
         "Error",
+        "EvalError",
+        "RangeError",
+        "ReferenceError",
+        "SyntaxError",
+        "TypeError",
+        "URIError",
         # DOM
         "HTMLElement",
         "XMLElement",

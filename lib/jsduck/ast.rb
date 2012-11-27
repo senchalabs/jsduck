@@ -88,6 +88,10 @@ module JsDuck
       elsif function?(ast) && class_name?(to_s(ast["id"]))
         make_class(to_s(ast["id"]))
 
+      # { ... }
+      elsif object?(ast)
+        make_class("", ast)
+
       # function foo() {}
       elsif function?(ast)
         make_method(to_s(ast["id"]), ast)
@@ -183,6 +187,10 @@ module JsDuck
       ast["type"] == "Literal" && ast["value"].is_a?(String)
     end
 
+    def object?(ast)
+      ast["type"] == "ObjectExpression"
+    end
+
     # Class name begins with upcase char
     def class_name?(name)
       return name.split(/\./).last =~ /\A[A-Z]/
@@ -199,12 +207,12 @@ module JsDuck
         if ext_extend?(ast)
           args = ast["arguments"]
           cls[:extends] = to_s(args[0])
-          if args.length == 2 && args[1]["type"] == "ObjectExpression"
+          if args.length == 2 && object?(args[1])
             detect_class_members_from_object(cls, args[1])
           end
         elsif ext_define?(ast)
           detect_ext_define(cls, ast)
-        elsif ast["type"] == "ObjectExpression"
+        elsif object?(ast)
           detect_class_members_from_object(cls, ast)
         elsif ast["type"] == "ArrayExpression"
           detect_class_members_from_array(cls, ast)
@@ -461,7 +469,7 @@ module JsDuck
     # are turned into strings, but values are left as is for further
     # processing.
     def each_pair_in_object_expression(ast)
-      return unless ast && ast["type"] == "ObjectExpression"
+      return unless ast && object?(ast)
 
       ast["properties"].each do |p|
         yield(key_value(p["key"]), p["value"], p)
