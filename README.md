@@ -141,6 +141,7 @@ Who's using JSDuck?
 - Appcelerator [Titanium SDK](http://docs.appcelerator.com/titanium/2.0/index.html)
 - AT&T [API Platform SDK for HTML5](https://code-api-att.com/SenchaSdk20Drop23Docs/)
 - Bryntum [Siesta unit testing framework](http://www.bryntum.com/products/siesta/docs/)
+- [CKEditor](http://docs.ckeditor.com)
 - [GeoExt 2](https://github.com/geoext/geoext2)
 - Rally Software [Rally App SDK](https://rally1.rallydev.com/apps/2.0p/doc/)
 - [Sencha](http://docs.sencha.com) - obviously :)
