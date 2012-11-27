@@ -88,6 +88,16 @@
       i, em {
         font-style: normal; } } } }
 
+// Work around ugly TOC spacing in exported guides.
+.guide-container .x-panel-body {
+    ul {
+        ul {
+            margin: 0 0 0 1em;
+        }
+    }
+}
+
+
 @import "class_overview";
 
 #center-container .guide-container {
