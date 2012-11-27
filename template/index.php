@@ -6,7 +6,7 @@ header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
 header("Access-Control-Allow-Headers: Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control");
 
 function print_page($subtitle, $body, $fragment) {
-  $uri = 'http://' . $_SERVER["HTTP_HOST"] . preg_replace('/\?.*$/', '', $_SERVER["REQUEST_URI"]);
+  $uri = 'http://' . $_SERVER["HTTP_HOST"] . preg_replace('/(index.php)?\?.*$/', '', $_SERVER["REQUEST_URI"]);
   $canonical = $uri."#!".$fragment;
   $html = file_get_contents('print-template.html');
   echo preg_replace(array('/\{subtitle}/', '/\{body}/', '/\{canonical}/'), array($subtitle, $body, $canonical), $html);
