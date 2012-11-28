@@ -10,19 +10,36 @@ module JsDuck
     def initialize(docs = [], options = {})
       @serializer = JsDuck::Serializer.new
       @evaluator = JsDuck::Evaluator.new
-      @ext_define_patterns = build_ext_define_patterns(options[:ext_namespaces] || ["Ext"])
+      init_ext_patterns(options[:ext_namespaces] || ["Ext"])
       @docs = docs
     end
 
+    def init_ext_patterns(namespaces)
+      @ext_patterns = {
+        :define => build_patterns(namespaces, [".define", ".ClassManager.create"]),
+        :extend => build_patterns(namespaces, [".extend"]),
+        :override => build_patterns(namespaces, [".override"]),
+        :emptyfn => build_patterns(namespaces, [".emptyFn"]),
+      }
+    end
+
     # Given Array of alternate Ext namespaces builds list of patterns
-    # for detecting Ext.define:
+    # for detecting Ext.define or some other construct:
     #
-    # ["Ext","Foo"] --> ["Ext.define", "Ext.ClassManager.create", "Foo.define", "Foo.ClassManager.create"]
+    # build_patterns(["Ext", "Foo"], [".define"]) --> ["Ext.define", "Foo.define"]
     #
-    def build_ext_define_patterns(namespaces)
-      namespaces.map do |ns|
-        [ns + ".define", ns + ".ClassManager.create"]
-      end.flatten
+    def build_patterns(namespaces, suffixes)
+      patterns = []
+      namespaces.each do |ns|
+        suffixes.each do |suffix|
+          patterns << ns + suffix
+        end
+      end
+      patterns
+    end
+
+    def ext_pattern?(pattern, ast)
+      @ext_patterns[pattern].include?(to_s(ast))
     end
 
     # Performs the detection of code in all docsets.
@@ -160,15 +177,15 @@ module JsDuck
     end
 
     def ext_define?(ast)
-      call?(ast) && @ext_define_patterns.include?(to_s(ast["callee"]))
+      call?(ast) && ext_pattern?(:define, ast["callee"])
     end
 
     def ext_extend?(ast)
-      call?(ast) && to_s(ast["callee"]) == "Ext.extend"
+      call?(ast) && ext_pattern?(:extend, ast["callee"])
     end
 
     def ext_override?(ast)
-      call?(ast) && to_s(ast["callee"]) == "Ext.override"
+      call?(ast) && ext_pattern?(:override, ast["callee"])
     end
 
     def function?(ast)
@@ -176,7 +193,7 @@ module JsDuck
     end
 
     def empty_fn?(ast)
-      ast["type"] == "MemberExpression" && to_s(ast) == "Ext.emptyFn"
+      ast["type"] == "MemberExpression" && ext_pattern?(:emptyfn, ast)
     end
 
     def var?(ast)
