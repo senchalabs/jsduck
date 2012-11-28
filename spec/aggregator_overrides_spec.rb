@@ -285,4 +285,22 @@ describe JsDuck::Aggregator do
       methods["foobar"][:doc].should == "**Overridden in blah.js.**"
     end
   end
+
+  describe "@override without classname" do
+    let(:classes) do
+      parse(<<-EOF)
+        /** */
+        Ext.define("Foo", {
+            /** @override */
+            foo: function() { }
+        });
+      EOF
+    end
+
+    let(:methods) { create_members_map(classes["Foo"]) }
+
+    it "gets ignored" do
+      methods["foo"].should_not == nil
+    end
+  end
 end

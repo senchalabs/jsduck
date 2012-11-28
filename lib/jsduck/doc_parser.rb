@@ -77,6 +77,11 @@ module JsDuck
       @tags << @current_tag = {:tagname => tag, :doc => ""}
     end
 
+    def remove_last_tag
+      @tags.pop
+      @current_tag = @tags.last
+    end
+
     def parse_loop
       add_tag(:default)
       while !@input.eos? do
@@ -302,6 +307,14 @@ module JsDuck
       add_tag(:override)
       maybe_ident_chain(:class)
       skip_white
+
+      # When @override not followed by class name, ignore the tag.
+      # That's because the current ext codebase has some methods
+      # tagged with @override to denote they override something.
+      # But that's not what @override is meant for in JSDuck.
+      unless @current_tag[:class]
+        remove_last_tag
+      end
     end
 
     # matches @type {type}  or  @type type
