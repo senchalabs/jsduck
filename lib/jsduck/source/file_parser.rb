@@ -49,7 +49,7 @@ module JsDuck
 
       # Parses the docs, detects tagname and expands class docset
       def expand(docset)
-        docset[:comment] = @doc_parser.parse(docset[:comment])
+        docset[:comment] = @doc_parser.parse(docset[:comment], @doc_ast.filename, docset[:linenr])
         docset[:tagname] = @doc_type.detect(docset[:comment], docset[:code])
 
         if docset[:tagname] == :class

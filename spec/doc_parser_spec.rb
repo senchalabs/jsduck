@@ -124,5 +124,37 @@ describe JsDuck::DocParser do
     end
   end
 
-end
+  describe "e-mail address containing a valid @tag" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+         * john@method.com
+      EOS
+    end
+    it "is treated as plain text" do
+      @tag[:doc].should == "john@method.com"
+    end
+  end
 
+  describe "{@inline} tag" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+         * {@inline Some#method}
+      EOS
+    end
+    it "is treated as plain text, to be processed later" do
+      @tag[:doc].should == "{@inline Some#method}"
+    end
+  end
+
+  describe "@example tag" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+         * @example blah
+      EOS
+    end
+    it "is treated as plain text, to be processed later" do
+      @tag[:doc].should == "@example blah"
+    end
+  end
+
+end

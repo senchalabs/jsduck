@@ -1,5 +1,6 @@
 require 'strscan'
 require 'jsduck/meta_tag_registry'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -28,7 +29,9 @@ module JsDuck
       @meta_tags = MetaTagRegistry.instance
     end
 
-    def parse(input)
+    def parse(input, filename="", linenr=0)
+      @filename = filename
+      @linenr = linenr
       @tags = []
       @input = StringScanner.new(purify(input))
       parse_loop
@@ -145,17 +148,45 @@ module JsDuck
           boolean_at_tag(/@accessor/, :accessor)
         elsif look(/@evented\b/)
           boolean_at_tag(/@evented/, :evented)
+        elsif look(/@example\b/)
+          at_example
         elsif look(/@/)
-          match(/@/)
-          tag = @meta_tags[look(/\w+/)]
-          if tag
-            meta_at_tag(tag)
-          else
-            @current_tag[:doc] += "@"
-          end
+          other_at_tag
         elsif look(/[^@]/)
-          @current_tag[:doc] += match(/[^@]+/)
+          skip_to_next_at_tag
         end
+      end
+    end
+
+    # Skips until the beginning of next @tag.
+    #
+    # There must be space before the next @tag - this ensures that we
+    # don't detect tags inside "foo@example.com" or "{@link}".
+    def skip_to_next_at_tag
+      @current_tag[:doc] += match(/[^@]+/)
+
+      while @current_tag[:doc][-1] =~ /\S/ && look(/@/)
+        @current_tag[:doc] += match(/@+[^@]+/)
+      end
+    end
+
+    # Processes anything else beginning with @-sign.
+    #
+    # - When @ is not followed by any word chards, do nothing.
+    # - When it's one of the meta-tags, process it as such.
+    # - When it's something else, print a warning.
+    #
+    def other_at_tag
+      match(/@/)
+
+      name = look(/\w+/)
+      tag = @meta_tags[name]
+
+      if tag
+        meta_at_tag(tag)
+      elsif name
+        Logger.warn(:tag, "Unsupported tag: @#{name}", @filename, @linenr)
+        @current_tag[:doc] += "@"
       end
     end
 
@@ -183,6 +214,12 @@ module JsDuck
         skip_white
         @current_tag = prev_tag
       end
+    end
+
+    # A special case for @example tag,
+    # which we leave as is to be processed later in DocFormatter
+    def at_example
+      @current_tag[:doc] += match(/@example/) + skip_white
     end
 
     # matches @class name ...
