@@ -165,9 +165,13 @@ module JsDuck
     def skip_to_next_at_tag
       @current_tag[:doc] += match(/[^@]+/)
 
-      while @current_tag[:doc][-1] =~ /\S/ && look(/@/)
+      while !prev_char_is_whitespace? && look(/@/)
         @current_tag[:doc] += match(/@+[^@]+/)
       end
+    end
+
+    def prev_char_is_whitespace?
+      @current_tag[:doc][-1,1] =~ /\s/
     end
 
     # Processes anything else beginning with @-sign.
