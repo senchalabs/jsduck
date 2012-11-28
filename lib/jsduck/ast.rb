@@ -106,6 +106,10 @@ module JsDuck
       elsif property?(ast) && function?(ast["value"])
         make_method(key_value(ast["key"]), ast["value"])
 
+      # this.fireEvent("foo", ...)
+      elsif exp && fire_event?(exp)
+        make_event(to_value(exp["arguments"][0]))
+
       # foo = ...
       elsif exp && assignment?(exp)
         make_property(to_s(exp["left"]), exp["right"])
@@ -171,6 +175,10 @@ module JsDuck
 
     def ext_pattern?(pattern, ast)
       @ext_patterns.matches?(pattern, to_s(ast))
+    end
+
+    def fire_event?(ast)
+      call?(ast) && to_s(ast["callee"]) == "this.fireEvent"
     end
 
     def var?(ast)
@@ -435,6 +443,13 @@ module JsDuck
       else
         false
       end
+    end
+
+    def make_event(name)
+      return {
+        :tagname => :event,
+        :name => name,
+      }
     end
 
     def make_property(name=nil, ast=nil, tagname=:property)
