@@ -1,6 +1,7 @@
 require "jsduck/serializer"
 require "jsduck/evaluator"
 require "jsduck/function_ast"
+require "jsduck/ext_patterns"
 
 module JsDuck
 
@@ -10,36 +11,8 @@ module JsDuck
     def initialize(docs = [], options = {})
       @serializer = JsDuck::Serializer.new
       @evaluator = JsDuck::Evaluator.new
-      init_ext_patterns(options[:ext_namespaces] || ["Ext"])
+      @ext_patterns = JsDuck::ExtPatterns.new(options[:ext_namespaces] || ["Ext"])
       @docs = docs
-    end
-
-    def init_ext_patterns(namespaces)
-      @ext_patterns = {
-        :define => build_patterns(namespaces, [".define", ".ClassManager.create"]),
-        :extend => build_patterns(namespaces, [".extend"]),
-        :override => build_patterns(namespaces, [".override"]),
-        :emptyfn => build_patterns(namespaces, [".emptyFn"]),
-      }
-    end
-
-    # Given Array of alternate Ext namespaces builds list of patterns
-    # for detecting Ext.define or some other construct:
-    #
-    # build_patterns(["Ext", "Foo"], [".define"]) --> ["Ext.define", "Foo.define"]
-    #
-    def build_patterns(namespaces, suffixes)
-      patterns = []
-      namespaces.each do |ns|
-        suffixes.each do |suffix|
-          patterns << ns + suffix
-        end
-      end
-      patterns
-    end
-
-    def ext_pattern?(pattern, ast)
-      @ext_patterns[pattern].include?(to_s(ast))
     end
 
     # Performs the detection of code in all docsets.
@@ -177,15 +150,15 @@ module JsDuck
     end
 
     def ext_define?(ast)
-      call?(ast) && ext_pattern?(:define, ast["callee"])
+      call?(ast) && ext_pattern?("Ext.define", ast["callee"])
     end
 
     def ext_extend?(ast)
-      call?(ast) && ext_pattern?(:extend, ast["callee"])
+      call?(ast) && ext_pattern?("Ext.extend", ast["callee"])
     end
 
     def ext_override?(ast)
-      call?(ast) && ext_pattern?(:override, ast["callee"])
+      call?(ast) && ext_pattern?("Ext.override", ast["callee"])
     end
 
     def function?(ast)
@@ -193,7 +166,11 @@ module JsDuck
     end
 
     def empty_fn?(ast)
-      ast["type"] == "MemberExpression" && ext_pattern?(:emptyfn, ast)
+      ast["type"] == "MemberExpression" && ext_pattern?("Ext.emptyFn", ast)
+    end
+
+    def ext_pattern?(pattern, ast)
+      @ext_patterns.matches?(pattern, to_s(ast))
     end
 
     def var?(ast)
