@@ -162,16 +162,23 @@ module JsDuck
     #
     # There must be space before the next @tag - this ensures that we
     # don't detect tags inside "foo@example.com" or "{@link}".
+    #
+    # Also check that the @tag is not part of an indented code block -
+    # in which case we also ignore the tag.
     def skip_to_next_at_tag
       @current_tag[:doc] += match(/[^@]+/)
 
-      while !prev_char_is_whitespace? && look(/@/)
+      while look(/@/) && (!prev_char_is_whitespace? || indented_as_code?)
         @current_tag[:doc] += match(/@+[^@]+/)
       end
     end
 
     def prev_char_is_whitespace?
       @current_tag[:doc][-1,1] =~ /\s/
+    end
+
+    def indented_as_code?
+      @current_tag[:doc] =~ /^ {4,}[^\n]*\Z/
     end
 
     # Processes anything else beginning with @-sign.

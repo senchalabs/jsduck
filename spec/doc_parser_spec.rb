@@ -157,4 +157,41 @@ describe JsDuck::DocParser do
     end
   end
 
+  describe "@tag indented by 4+ spaces" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+         * Code example:
+         *
+         *     @method
+      EOS
+    end
+    it "is treated as plain text within code example" do
+      @tag[:doc].should == "Code example:\n\n    @method"
+    end
+  end
+
+  describe "@tag indented by 4+ spaces and preceded by additional code" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+         * Code example:
+         *
+         *     if @method then
+      EOS
+    end
+    it "is treated as plain text within code example" do
+      @tag[:doc].should == "Code example:\n\n    if @method then"
+    end
+  end
+
+  describe "@tag simply separated by 4+ spaces" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[1]
+         * Foo:    @method
+      EOS
+    end
+    it "is parsed as normal tag" do
+      @tag[:tagname].should == :method
+    end
+  end
+
 end
