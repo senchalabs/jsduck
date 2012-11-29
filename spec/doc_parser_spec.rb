@@ -149,11 +149,13 @@ describe JsDuck::DocParser do
   describe "@example tag" do
     before do
       @tag = parse_single(<<-EOS.strip)[0]
-         * @example blah
+         * Code:
+         *
+         *     @example blah
       EOS
     end
     it "is treated as plain text, to be processed later" do
-      @tag[:doc].should == "@example blah"
+      @tag[:doc].should == "Code:\n\n    @example blah"
     end
   end
 

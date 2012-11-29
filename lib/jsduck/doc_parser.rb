@@ -148,8 +148,6 @@ module JsDuck
           boolean_at_tag(/@accessor/, :accessor)
         elsif look(/@evented\b/)
           boolean_at_tag(/@evented/, :evented)
-        elsif look(/@example\b/)
-          at_example
         elsif look(/@/)
           other_at_tag
         elsif look(/[^@]/)
@@ -225,12 +223,6 @@ module JsDuck
         skip_white
         @current_tag = prev_tag
       end
-    end
-
-    # A special case for @example tag,
-    # which we leave as is to be processed later in DocFormatter
-    def at_example
-      @current_tag[:doc] += match(/@example/) + skip_white
     end
 
     # matches @class name ...
