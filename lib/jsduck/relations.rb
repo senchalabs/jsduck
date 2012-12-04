@@ -1,3 +1,5 @@
+require 'jsduck/external_classes'
+
 module JsDuck
 
   # Provides information about relations between classes.
@@ -13,8 +15,7 @@ module JsDuck
 
     def initialize(classes = [], ignorables = [])
       @classes = classes
-      @ignorables = {}
-      ignorables.each {|classname| @ignorables[classname] = true }
+      @external_classes = ExternalClasses.new(ignorables)
 
       # First build class lookup table; building lookup tables for
       # mixins and subclasses will depend on that.
@@ -42,7 +43,7 @@ module JsDuck
 
     # Returns true if class is in list of ignored classes.
     def ignore?(classname)
-      @ignorables[classname]
+      @external_classes.is?(classname)
     end
 
     def each(&block)
