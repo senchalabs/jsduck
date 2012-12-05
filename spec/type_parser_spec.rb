@@ -34,6 +34,10 @@ describe JsDuck::TypeParser do
     parse('42').should == true
   end
 
+  it "matches negative number literal" do
+    parse('-6').should == true
+  end
+
   it "matches float number literal" do
     parse('3.14').should == true
   end

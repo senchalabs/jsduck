@@ -158,7 +158,7 @@ module JsDuck
         return false unless function_type
       elsif @input.check(/['"]/)
         return false unless string_literal
-      elsif @input.check(/\d/)
+      elsif @input.check(/[\d-]/)
         return false unless number_literal
       else
         return false unless type_name
@@ -305,10 +305,10 @@ module JsDuck
     end
 
     #
-    #     <number-literal> ::= <digit>+ [ "." <digit>+ ]
+    #     <number-literal> ::= [ "-" ] <digit>+ [ "." <digit>+ ]
     #
     def number_literal
-      @out << @input.scan(/\d+(\.\d+)?/)
+      @out << @input.scan(/-?\d+(\.\d+)?/)
 
       true
     end
