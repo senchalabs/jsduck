@@ -444,7 +444,11 @@ module JsDuck
           "when used in type definitions or inherited from.",
           "",
           "Multiple classes can be given in comma-separated list,",
-          "or by using the option repeatedly.") do |classes|
+          "or by using the option repeatedly.",
+          "",
+          "The wildcard '*' can be used to match a set of classes",
+          "e.g. to ignore all classes of a particular namespace:",
+          "--external='Foo.*'") do |classes|
           @external_classes += classes
         end
 
