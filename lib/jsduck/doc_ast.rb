@@ -292,7 +292,7 @@ module JsDuck
     # Combines :doc-s of most tags
     # Ignores tags that have doc comment themselves and subproperty tags
     def detect_doc(docs)
-      ignore_tags = [:param, :return, :meta]
+      ignore_tags = [:param, :return, :throws, :meta]
       doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) && !subproperty?(tag) }
       doc_tags.map { |tag| tag[:doc] }.compact.join(" ")
     end
