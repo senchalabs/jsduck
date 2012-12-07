@@ -30,7 +30,8 @@ module JsDuck
       else
         n = new_members_count(cls)
         if n > 0
-          "&nbsp;<span class='new-members' title='#{n} new members'>#{stars(n)}</span>"
+          title = "#{n} new member#{(n>1) ? 's' : ''}"
+          "&nbsp;<span class='new-members' title='#{title}'>#{stars(n)}</span>"
         else
           ""
         end
