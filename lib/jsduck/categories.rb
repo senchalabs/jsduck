@@ -58,10 +58,51 @@ module JsDuck
         [
           "<h3>#{g['name']}</h3>",
           "<ul class='links'>",
-          g["classes"].map {|cls| "<li>" + (@relations[cls] ? @doc_formatter.link(cls, nil, cls) : cls) + "</li>" },
+          g["classes"].map {|cls| "<li>" + render_class_name(cls) + "</li>" },
           "</ul>",
         ]
       end
+    end
+
+    def render_class_name(name)
+      cls = @relations[name]
+      if cls
+        @doc_formatter.link(name, nil, name) + render_new_label(cls)
+      else
+        name
+      end
+    end
+
+    # Adds small star to new classes in the current version.
+    def render_new_label(cls)
+      if cls[:meta][:new]
+        "&nbsp;<span class='new-class' title='New class'>#{stars(1)}</span>"
+      else
+        n = new_members_count(cls)
+        if n > 0
+          "&nbsp;<span class='new-members' title='#{n} new members'>#{stars(n)}</span>"
+        else
+          ""
+        end
+      end
+    end
+
+    # Produces string of n stars.
+    # First 3 stars are rendered as "<unicode-star>", the following as "+".
+    # At max 15 stars are rendered.
+    def stars(n)
+      if n > 15
+        stars(3) + ("+" * (15-3))
+      elsif n > 3
+        stars(3) + ("+" * (n-3))
+      else
+        "&#9733;" * n
+      end
+    end
+
+    # Returns number of new members the class has in the current version
+    def new_members_count(cls)
+      cls.find_members(:local => true).find_all {|m| m[:meta][:new] && !m[:private] }.length
     end
 
     # Splits the array of items into n chunks so that the sum of
