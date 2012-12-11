@@ -39,7 +39,11 @@ module JsDuck
 
     def build_lookup_table(members)
       map = {}
-      members.each {|m| map[m[:name]] = m }
+
+      members.each do |m|
+        next if m[:meta][:hide]
+        map[m[:name]] = m
+      end
       map
     end
 
