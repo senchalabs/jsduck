@@ -317,6 +317,33 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg with string ']' inside default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo="]"] Something
+         */
+      EOS
+    end
+    it "includes the ] inside default value" do
+      @doc[:default].should == '"]"'
+    end
+  end
+
+  describe "cfg with escaped quote inside default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=" \\"] "] Something
+         */
+      EOS
+    end
+    it "includes the \" inside default value" do
+      @doc[:default].should == '" \\"] "'
+      @doc[:doc].should == 'Something'
+    end
+  end
+
   describe "cfg with implicit default value" do
     before do
       @doc = parse(<<-EOS)[0]
