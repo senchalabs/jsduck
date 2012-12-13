@@ -172,6 +172,7 @@ Katherine Chu,
 [burnnat](https://github.com/burnnat),
 [vjetteam](https://github.com/vjetteam),
 [Chris Westbrook](https://github.com/cnstaging),
+[Scott Whittaker](https://github.com/scottrobertwhittaker),
 and many-many others who reported bugs, submitted patches, and
 provided a lot of useful input.
 
