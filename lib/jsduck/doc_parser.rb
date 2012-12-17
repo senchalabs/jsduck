@@ -37,14 +37,12 @@ module JsDuck
       "ftype" => [:at_xtype, "feature"],
       "ptype" => [:at_xtype, "plugin"],
 
-      "param" => [:at_param],
       "return" => [:at_return],
       "returns" => [:at_return],
       "type" => [:at_type],
       "inheritdoc" => [:at_inheritdoc],
       "inheritDoc" => [:at_inheritdoc],
       "alias" => [:at_alias_or_inheritdoc],
-      "throws" => [:at_throws],
       "enum" => [:at_enum],
       "override" => [:at_override],
     }
@@ -202,14 +200,6 @@ module JsDuck
     # Routines for parsing of concrete tags...
     #
 
-    # matches @param {type} [name] (optional) ...
-    def at_param
-      add_tag(:param)
-      maybe_type
-      maybe_name_with_default
-      maybe_optional
-    end
-
     # matches @return {type} [ return.name ] ...
     def at_return
       add_tag(:return)
@@ -220,12 +210,6 @@ module JsDuck
       else
         @current_tag[:name] = "return"
       end
-    end
-
-    # matches @throws {type} ...
-    def at_throws
-      add_tag(:throws)
-      maybe_type
     end
 
     # matches @enum {type} name ...
