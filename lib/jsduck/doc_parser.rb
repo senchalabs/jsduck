@@ -174,8 +174,10 @@ module JsDuck
       if !name
         # ignore
       elsif tagdef = BUILTIN_TAGS[name]
+        match(/\w+/)
         send(*tagdef)
       elsif tagdef = @meta_tags[name]
+        match(/\w+/)
         meta_at_tag(tagdef)
       else
         Logger.warn(:tag, "Unsupported tag: @#{name}", @filename, @linenr)
@@ -189,7 +191,6 @@ module JsDuck
 
       add_tag(:meta)
       @current_tag[:name] = tag.key
-      match(/\w+/)
       skip_horiz_white
 
       if tag.boolean
@@ -212,7 +213,7 @@ module JsDuck
     # matches @<tagname> [ classname ]
     # Used for @class, @extends, @member
     def class_at_tag(tagname, property_name)
-      parse_tag_as(tagname)
+      add_tag(tagname)
       maybe_ident_chain(property_name)
       skip_white
     end
@@ -220,7 +221,7 @@ module JsDuck
     # matches @<tagname> classname1 classname2 ...
     # Used for @mixins, @uses, etc...
     def class_list_at_tag(tagname)
-      parse_tag_as(tagname)
+      add_tag(tagname)
       skip_horiz_white
       @current_tag[tagname] = class_list
       skip_white
@@ -229,14 +230,14 @@ module JsDuck
     # matches @<tagname> [ name ]
     # Used for @method and @event
     def member_at_tag(tagname)
-      parse_tag_as(tagname)
+      add_tag(tagname)
       maybe_name
       skip_white
     end
 
     # matches @param {type} [name] (optional) ...
     def at_param
-      parse_tag_as(:param)
+      add_tag(:param)
       maybe_type
       maybe_name_with_default
       maybe_optional
@@ -245,7 +246,7 @@ module JsDuck
 
     # matches @return {type} [ return.name ] ...
     def at_return
-      parse_tag_as(:return)
+      add_tag(:return)
       maybe_type
       skip_white
       if look(/return\.\w/)
@@ -258,7 +259,7 @@ module JsDuck
 
     # matches @cfg {type} name ...
     def at_cfg
-      parse_tag_as(:cfg)
+      add_tag(:cfg)
       maybe_type
       maybe_name_with_default
       maybe_required
@@ -272,7 +273,7 @@ module JsDuck
     # jsdoc-toolkit on the other hand follows the sensible route, and
     # so do we.
     def at_property
-      parse_tag_as(:property)
+      add_tag(:property)
       maybe_type
       maybe_name_with_default
       skip_white
@@ -280,7 +281,7 @@ module JsDuck
 
     # matches @var {type} $name ...
     def at_var
-      parse_tag_as(:css_var)
+      add_tag(:css_var)
       maybe_type
       maybe_name_with_default
       skip_white
@@ -288,7 +289,7 @@ module JsDuck
 
     # matches @throws {type} ...
     def at_throws
-      parse_tag_as(:throws)
+      add_tag(:throws)
       maybe_type
       skip_white
     end
@@ -296,7 +297,7 @@ module JsDuck
     # matches @enum {type} name ...
     def at_enum
       # @enum is a special case of class
-      parse_tag_as(:class)
+      add_tag(:class)
       @current_tag[:enum] = true
       maybe_type
       maybe_name_with_default
@@ -305,7 +306,7 @@ module JsDuck
 
     # matches @override name ...
     def at_override
-      parse_tag_as(:override)
+      add_tag(:override)
       maybe_ident_chain(:class)
       skip_white
 
@@ -324,7 +325,7 @@ module JsDuck
     # ext-doc allows type name to be either inside curly braces or
     # without them at all.
     def at_type
-      parse_tag_as(:type)
+      add_tag(:type)
       skip_horiz_white
       if look(/\{/)
         tdf = typedef
@@ -338,7 +339,7 @@ module JsDuck
 
     # matches @xtype/ptype/ftype/... name
     def at_xtype(namespace)
-      parse_tag_as(:alias)
+      add_tag(:alias)
       skip_horiz_white
       @current_tag[:name] = namespace + "." + (ident_chain || "")
       skip_white
@@ -348,7 +349,7 @@ module JsDuck
     # as @inheritdoc (@alias used to have the meaning of @inheritdoc
     # before).
     def at_alias_or_inheritdoc
-      if look(/alias\s+([\w.]+)?#\w+/)
+      if look(/\s+([\w.]+)?#\w+/)
         at_inheritdoc
       else
         at_alias
@@ -357,7 +358,7 @@ module JsDuck
 
     # matches @alias <ident-chain>
     def at_alias
-      parse_tag_as(:alias)
+      add_tag(:alias)
       skip_horiz_white
       @current_tag[:name] = ident_chain
       skip_white
@@ -365,7 +366,7 @@ module JsDuck
 
     # matches @inheritdoc class.name#static-type-member
     def at_inheritdoc
-      parse_tag_as(:inheritdoc)
+      add_tag(:inheritdoc)
       skip_horiz_white
 
       if look(@ident_chain_pattern)
@@ -390,14 +391,8 @@ module JsDuck
 
     # Used to match @private, @ignore, @hide, ...
     def boolean_at_tag(tagname)
-      parse_tag_as(tagname)
-      skip_white
-    end
-
-    # matches @<tagname> and registers the given tag.
-    def parse_tag_as(tagname)
-      match(/\w+\b/)
       add_tag(tagname)
+      skip_white
     end
 
     # matches {type} if possible and sets it on @current_tag
