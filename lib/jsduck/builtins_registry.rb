@@ -22,8 +22,8 @@ module JsDuck
     def instantiate_tags
       JsDuck::Builtins::Tag.descendants.each do |cls|
         tag = cls.new()
-        if tag.pattern
-          @map[tag.pattern] = tag
+        Array(tag.pattern).each do |pattern|
+          @map[pattern] = tag
         end
       end
     end

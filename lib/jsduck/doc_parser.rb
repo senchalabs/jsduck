@@ -33,11 +33,6 @@ module JsDuck
     end
 
     BUILTIN_TAGS = {
-      "class" => [:class_at_tag, :class, :name],
-      "extend" => [:class_at_tag, :extends, :extends],
-      "extends" => [:class_at_tag, :extends, :extends],
-      "member" => [:class_at_tag, :member, :member],
-
       "mixin" => [:class_list_at_tag, :mixins],
       "mixins" => [:class_list_at_tag, :mixins],
       "alternateClassName" => [:class_list_at_tag, :alternateClassNames],
@@ -213,13 +208,6 @@ module JsDuck
     #
     # Routines for parsing of concrete tags...
     #
-
-    # matches @<tagname> [ classname ]
-    # Used for @class, @extends, @member
-    def class_at_tag(tagname, property_name)
-      add_tag(tagname)
-      maybe_ident_chain(property_name)
-    end
 
     # matches @<tagname> classname1 classname2 ...
     # Used for @mixins, @uses, etc...
