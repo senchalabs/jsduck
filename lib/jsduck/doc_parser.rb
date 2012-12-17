@@ -228,12 +228,8 @@ module JsDuck
     # without them at all.
     def at_type
       add_tag(:type)
-      skip_horiz_white
-      if look(/\{/)
-        tdf = typedef
-        @current_tag[:type] = tdf[:type]
-        @current_tag[:optional] = true if tdf[:optional]
-      elsif look(/\S/)
+      maybe_type
+      if !@current_tag[:type] && look(/\S/)
         @current_tag[:type] = match(/\S+/)
       end
     end
