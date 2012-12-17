@@ -89,25 +89,23 @@ module JsDuck
       add_tag(:default)
       while !@input.eos? do
         if look(/@class\b/)
-          at_class
+          class_at_tag(:class, :name)
         elsif look(/@extends?\b/)
-          at_extends
+          class_at_tag(:extends, :extends)
+        elsif look(/@member\b/)
+          class_at_tag(:member, :member)
         elsif look(/@mixins?\b/)
-          class_list_at_tag(/@mixins?/, :mixins)
+          class_list_at_tag(:mixins)
         elsif look(/@alternateClassNames?\b/)
-          class_list_at_tag(/@alternateClassNames?/, :alternateClassNames)
+          class_list_at_tag(:alternateClassNames)
         elsif look(/@uses\b/)
-          class_list_at_tag(/@uses/, :uses)
+          class_list_at_tag(:uses)
         elsif look(/@requires\b/)
-          class_list_at_tag(/@requires/, :requires)
-        elsif look(/@singleton\b/)
-          boolean_at_tag(/@singleton/, :singleton)
+          class_list_at_tag(:requires)
         elsif look(/@event\b/)
-          at_event
+          member_at_tag(:event)
         elsif look(/@method\b/)
-          at_method
-        elsif look(/@constructor\b/)
-          boolean_at_tag(/@constructor/, :constructor)
+          member_at_tag(:method)
         elsif look(/@param\b/)
           at_param
         elsif look(/@returns?\b/)
@@ -119,13 +117,11 @@ module JsDuck
         elsif look(/@type\b/)
           at_type
         elsif look(/@xtype\b/)
-          at_xtype(/@xtype/, "widget")
+          at_xtype("widget")
         elsif look(/@ftype\b/)
-          at_xtype(/@ftype/, "feature")
+          at_xtype("feature")
         elsif look(/@ptype\b/)
-          at_xtype(/@ptype/, "plugin")
-        elsif look(/@member\b/)
-          at_member
+          at_xtype("plugin")
         elsif look(/@inherit[dD]oc\b/)
           at_inheritdoc
         elsif look(/@alias\s+([\w.]+)?#\w+/)
@@ -142,12 +138,16 @@ module JsDuck
           at_enum
         elsif look(/@override\b/)
           at_override
+        elsif look(/@singleton\b/)
+          boolean_at_tag(:singleton)
+        elsif look(/@constructor\b/)
+          boolean_at_tag(:constructor)
         elsif look(/@inheritable\b/)
-          boolean_at_tag(/@inheritable/, :inheritable)
+          boolean_at_tag(:inheritable)
         elsif look(/@accessor\b/)
-          boolean_at_tag(/@accessor/, :accessor)
+          boolean_at_tag(:accessor)
         elsif look(/@evented\b/)
-          boolean_at_tag(/@evented/, :evented)
+          boolean_at_tag(:evented)
         elsif look(/@/)
           other_at_tag
         elsif look(/[^@]/)
@@ -225,51 +225,34 @@ module JsDuck
       end
     end
 
-    # matches @class name ...
-    def at_class
-      match(/@class/)
-      add_tag(:class)
-      maybe_ident_chain(:name)
-      skip_white
-    end
-
-    # matches @extends name ...
-    def at_extends
-      match(/@extends?/)
-      add_tag(:extends)
-      maybe_ident_chain(:extends)
+    # matches @<tagname> [ classname ]
+    # Used for @class, @extends, @member
+    def class_at_tag(tagname, property_name)
+      parse_tag_as(tagname)
+      maybe_ident_chain(property_name)
       skip_white
     end
 
     # matches @<tagname> classname1 classname2 ...
-    def class_list_at_tag(regex, tagname)
-      match(regex)
-      add_tag(tagname)
+    # Used for @mixins, @uses, etc...
+    def class_list_at_tag(tagname)
+      parse_tag_as(tagname)
       skip_horiz_white
       @current_tag[tagname] = class_list
       skip_white
     end
 
-    # matches @event name ...
-    def at_event
-      match(/@event/)
-      add_tag(:event)
-      maybe_name
-      skip_white
-    end
-
-    # matches @method name ...
-    def at_method
-      match(/@method/)
-      add_tag(:method)
+    # matches @<tagname> [ name ]
+    # Used for @method and @event
+    def member_at_tag(tagname)
+      parse_tag_as(tagname)
       maybe_name
       skip_white
     end
 
     # matches @param {type} [name] (optional) ...
     def at_param
-      match(/@param/)
-      add_tag(:param)
+      parse_tag_as(:param)
       maybe_type
       maybe_name_with_default
       maybe_optional
@@ -278,8 +261,7 @@ module JsDuck
 
     # matches @return {type} [ return.name ] ...
     def at_return
-      match(/@returns?/)
-      add_tag(:return)
+      parse_tag_as(:return)
       maybe_type
       skip_white
       if look(/return\.\w/)
@@ -292,8 +274,7 @@ module JsDuck
 
     # matches @cfg {type} name ...
     def at_cfg
-      match(/@cfg/)
-      add_tag(:cfg)
+      parse_tag_as(:cfg)
       maybe_type
       maybe_name_with_default
       maybe_required
@@ -307,8 +288,7 @@ module JsDuck
     # jsdoc-toolkit on the other hand follows the sensible route, and
     # so do we.
     def at_property
-      match(/@property/)
-      add_tag(:property)
+      parse_tag_as(:property)
       maybe_type
       maybe_name_with_default
       skip_white
@@ -316,8 +296,7 @@ module JsDuck
 
     # matches @var {type} $name ...
     def at_var
-      match(/@var/)
-      add_tag(:css_var)
+      parse_tag_as(:css_var)
       maybe_type
       maybe_name_with_default
       skip_white
@@ -325,16 +304,15 @@ module JsDuck
 
     # matches @throws {type} ...
     def at_throws
-      match(/@throws/)
-      add_tag(:throws)
+      parse_tag_as(:throws)
       maybe_type
       skip_white
     end
 
     # matches @enum {type} name ...
     def at_enum
-      match(/@enum/)
-      add_tag(:class)
+      # @enum is a special case of class
+      parse_tag_as(:class)
       @current_tag[:enum] = true
       maybe_type
       maybe_name_with_default
@@ -343,8 +321,7 @@ module JsDuck
 
     # matches @override name ...
     def at_override
-      match(/@override/)
-      add_tag(:override)
+      parse_tag_as(:override)
       maybe_ident_chain(:class)
       skip_white
 
@@ -363,8 +340,7 @@ module JsDuck
     # ext-doc allows type name to be either inside curly braces or
     # without them at all.
     def at_type
-      match(/@type/)
-      add_tag(:type)
+      parse_tag_as(:type)
       skip_horiz_white
       if look(/\{/)
         tdf = typedef
@@ -376,18 +352,9 @@ module JsDuck
       skip_white
     end
 
-    # matches @member name ...
-    def at_member
-      match(/@member/)
-      add_tag(:member)
-      maybe_ident_chain(:member)
-      skip_white
-    end
-
     # matches @xtype/ptype/ftype/... name
-    def at_xtype(tag, namespace)
-      match(tag)
-      add_tag(:alias)
+    def at_xtype(namespace)
+      parse_tag_as(:alias)
       skip_horiz_white
       @current_tag[:name] = namespace + "." + (ident_chain || "")
       skip_white
@@ -395,8 +362,7 @@ module JsDuck
 
     # matches @alias <ident-chain>
     def at_alias
-      match(/@alias/)
-      add_tag(:alias)
+      parse_tag_as(:alias)
       skip_horiz_white
       @current_tag[:name] = ident_chain
       skip_white
@@ -404,9 +370,7 @@ module JsDuck
 
     # matches @inheritdoc class.name#static-type-member
     def at_inheritdoc
-      match(/@inherit[dD]oc|@alias/)
-
-      add_tag(:inheritdoc)
+      parse_tag_as(:inheritdoc)
       skip_horiz_white
 
       if look(@ident_chain_pattern)
@@ -430,10 +394,15 @@ module JsDuck
     end
 
     # Used to match @private, @ignore, @hide, ...
-    def boolean_at_tag(regex, propname)
-      match(regex)
-      add_tag(propname)
+    def boolean_at_tag(tagname)
+      parse_tag_as(tagname)
       skip_white
+    end
+
+    # matches @<tagname> and registers the given tag.
+    def parse_tag_as(tagname)
+      match(/@\w+\b/)
+      add_tag(tagname)
     end
 
     # matches {type} if possible and sets it on @current_tag
