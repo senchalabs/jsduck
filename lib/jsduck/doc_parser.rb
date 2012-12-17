@@ -33,13 +33,6 @@ module JsDuck
     end
 
     BUILTIN_TAGS = {
-      "mixin" => [:class_list_at_tag, :mixins],
-      "mixins" => [:class_list_at_tag, :mixins],
-      "alternateClassName" => [:class_list_at_tag, :alternateClassNames],
-      "alternateClassNames" => [:class_list_at_tag, :alternateClassNames],
-      "uses" => [:class_list_at_tag, :uses],
-      "requires" => [:class_list_at_tag, :requires],
-
       "xtype" => [:at_xtype, "widget"],
       "ftype" => [:at_xtype, "feature"],
       "ptype" => [:at_xtype, "plugin"],
@@ -208,14 +201,6 @@ module JsDuck
     #
     # Routines for parsing of concrete tags...
     #
-
-    # matches @<tagname> classname1 classname2 ...
-    # Used for @mixins, @uses, etc...
-    def class_list_at_tag(tagname)
-      add_tag(tagname)
-      skip_horiz_white
-      @current_tag[tagname] = class_list
-    end
 
     # matches @param {type} [name] (optional) ...
     def at_param
@@ -480,14 +465,14 @@ module JsDuck
     end
 
     # matches <ident_chain> <ident_chain> ... until line end
-    def class_list
+    def classname_list(propname)
       skip_horiz_white
       classes = []
       while look(@ident_chain_pattern)
         classes << ident_chain
         skip_horiz_white
       end
-      classes
+      @current_tag[propname] = classes
     end
 
     # matches chained.identifier.name and returns it
