@@ -1,17 +1,16 @@
 require "jsduck/builtins/tag"
 
 module JsDuck::Builtins
-  class Cfg < Tag
+  class Property < Tag
     def initialize
-      @pattern = "cfg"
+      @pattern = "property"
     end
 
-    # @cfg {Type} [name=default] (required) ...
+    # @property {Type} [name=default] ...
     def parse(p)
-      p.add_tag(:cfg)
+      p.add_tag(:property)
       p.maybe_type
       p.maybe_name_with_default
-      p.maybe_required
     end
   end
 end

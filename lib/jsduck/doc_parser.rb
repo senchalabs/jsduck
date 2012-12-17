@@ -1,4 +1,5 @@
 require 'strscan'
+require 'jsduck/builtins_registry'
 require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
 
@@ -27,6 +28,7 @@ module JsDuck
     def initialize
       @ident_pattern = /[$\w-]+/
       @ident_chain_pattern = /[$\w-]+(\.[$\w-]+)*/
+      @builtins = BuiltinsRegistry
       @meta_tags = MetaTagRegistry.instance
     end
 
@@ -43,9 +45,6 @@ module JsDuck
       "uses" => [:class_list_at_tag, :uses],
       "requires" => [:class_list_at_tag, :requires],
 
-      "event" => [:member_at_tag, :event],
-      "method" => [:member_at_tag, :method],
-
       "xtype" => [:at_xtype, "widget"],
       "ftype" => [:at_xtype, "feature"],
       "ptype" => [:at_xtype, "plugin"],
@@ -59,13 +58,10 @@ module JsDuck
       "param" => [:at_param],
       "return" => [:at_return],
       "returns" => [:at_return],
-      "cfg" => [:at_cfg],
-      "property" => [:at_property],
       "type" => [:at_type],
       "inheritdoc" => [:at_inheritdoc],
       "inheritDoc" => [:at_inheritdoc],
       "alias" => [:at_alias_or_inheritdoc],
-      "var" => [:at_var],
       "throws" => [:at_throws],
       "enum" => [:at_enum],
       "override" => [:at_override],
@@ -159,6 +155,10 @@ module JsDuck
         match(/\w+/)
         send(*tagdef)
         skip_white
+      elsif tag = @builtins[name]
+        match(/\w+/)
+        tag.parse(self)
+        skip_white
       elsif tagdef = @meta_tags[name]
         match(/\w+/)
         parse_meta_tag(tagdef)
@@ -235,13 +235,6 @@ module JsDuck
       @current_tag[tagname] = class_list
     end
 
-    # matches @<tagname> [ name ]
-    # Used for @method and @event
-    def member_at_tag(tagname)
-      add_tag(tagname)
-      maybe_name
-    end
-
     # matches @param {type} [name] (optional) ...
     def at_param
       add_tag(:param)
@@ -260,33 +253,6 @@ module JsDuck
       else
         @current_tag[:name] = "return"
       end
-    end
-
-    # matches @cfg {type} name ...
-    def at_cfg
-      add_tag(:cfg)
-      maybe_type
-      maybe_name_with_default
-      maybe_required
-    end
-
-    # matches @property {type} name ...
-    #
-    # ext-doc doesn't support {type} and name for @property - name is
-    # inferred from source and @type is required to specify type,
-    # jsdoc-toolkit on the other hand follows the sensible route, and
-    # so do we.
-    def at_property
-      add_tag(:property)
-      maybe_type
-      maybe_name_with_default
-    end
-
-    # matches @var {type} $name ...
-    def at_var
-      add_tag(:css_var)
-      maybe_type
-      maybe_name_with_default
     end
 
     # matches @throws {type} ...
