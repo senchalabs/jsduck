@@ -29,6 +29,47 @@ module JsDuck
       @meta_tags = MetaTagRegistry.instance
     end
 
+    BUILTIN_TAGS = {
+      "class" => [:class_at_tag, :class, :name],
+      "extend" => [:class_at_tag, :extends, :extends],
+      "extends" => [:class_at_tag, :extends, :extends],
+      "member" => [:class_at_tag, :member, :member],
+
+      "mixin" => [:class_list_at_tag, :mixins],
+      "mixins" => [:class_list_at_tag, :mixins],
+      "alternateClassName" => [:class_list_at_tag, :alternateClassNames],
+      "alternateClassNames" => [:class_list_at_tag, :alternateClassNames],
+      "uses" => [:class_list_at_tag, :uses],
+      "requires" => [:class_list_at_tag, :requires],
+
+      "event" => [:member_at_tag, :event],
+      "method" => [:member_at_tag, :method],
+
+      "xtype" => [:at_xtype, "widget"],
+      "ftype" => [:at_xtype, "feature"],
+      "ptype" => [:at_xtype, "plugin"],
+
+      "singleton" => [:boolean_at_tag, :singleton],
+      "constructor" => [:boolean_at_tag, :constructor],
+      "inheritable" => [:boolean_at_tag, :inheritable],
+      "accessor" => [:boolean_at_tag, :accessor],
+      "evented" => [:boolean_at_tag, :evented],
+
+      "param" => [:at_param],
+      "return" => [:at_return],
+      "returns" => [:at_return],
+      "cfg" => [:at_cfg],
+      "property" => [:at_property],
+      "type" => [:at_type],
+      "inheritdoc" => [:at_inheritdoc],
+      "inheritDoc" => [:at_inheritdoc],
+      "alias" => [:at_alias_or_inheritdoc],
+      "var" => [:at_var],
+      "throws" => [:at_throws],
+      "enum" => [:at_enum],
+      "override" => [:at_override],
+    }
+
     def parse(input, filename="", linenr=0)
       @filename = filename
       @linenr = linenr
@@ -88,68 +129,8 @@ module JsDuck
     def parse_loop
       add_tag(:default)
       while !@input.eos? do
-        if look(/@class\b/)
-          class_at_tag(:class, :name)
-        elsif look(/@extends?\b/)
-          class_at_tag(:extends, :extends)
-        elsif look(/@member\b/)
-          class_at_tag(:member, :member)
-        elsif look(/@mixins?\b/)
-          class_list_at_tag(:mixins)
-        elsif look(/@alternateClassNames?\b/)
-          class_list_at_tag(:alternateClassNames)
-        elsif look(/@uses\b/)
-          class_list_at_tag(:uses)
-        elsif look(/@requires\b/)
-          class_list_at_tag(:requires)
-        elsif look(/@event\b/)
-          member_at_tag(:event)
-        elsif look(/@method\b/)
-          member_at_tag(:method)
-        elsif look(/@param\b/)
-          at_param
-        elsif look(/@returns?\b/)
-          at_return
-        elsif look(/@cfg\b/)
-          at_cfg
-        elsif look(/@property\b/)
-          at_property
-        elsif look(/@type\b/)
-          at_type
-        elsif look(/@xtype\b/)
-          at_xtype("widget")
-        elsif look(/@ftype\b/)
-          at_xtype("feature")
-        elsif look(/@ptype\b/)
-          at_xtype("plugin")
-        elsif look(/@inherit[dD]oc\b/)
-          at_inheritdoc
-        elsif look(/@alias\s+([\w.]+)?#\w+/)
-          # For backwards compatibility.
-          # @alias tag was used as @inheritdoc before
-          at_inheritdoc
-        elsif look(/@alias/)
-          at_alias
-        elsif look(/@var\b/)
-          at_var
-        elsif look(/@throws\b/)
-          at_throws
-        elsif look(/@enum\b/)
-          at_enum
-        elsif look(/@override\b/)
-          at_override
-        elsif look(/@singleton\b/)
-          boolean_at_tag(:singleton)
-        elsif look(/@constructor\b/)
-          boolean_at_tag(:constructor)
-        elsif look(/@inheritable\b/)
-          boolean_at_tag(:inheritable)
-        elsif look(/@accessor\b/)
-          boolean_at_tag(:accessor)
-        elsif look(/@evented\b/)
-          boolean_at_tag(:evented)
-        elsif look(/@/)
-          other_at_tag
+        if look(/@/)
+          parse_at_tag
         elsif look(/[^@]/)
           skip_to_next_at_tag
         end
@@ -179,21 +160,24 @@ module JsDuck
       @current_tag[:doc] =~ /^ {4,}[^\n]*\Z/
     end
 
-    # Processes anything else beginning with @-sign.
+    # Processes anything beginning with @-sign.
     #
     # - When @ is not followed by any word chards, do nothing.
+    # - When it's one of the builtin tags, process it as such.
     # - When it's one of the meta-tags, process it as such.
     # - When it's something else, print a warning.
     #
-    def other_at_tag
+    def parse_at_tag
       match(/@/)
-
       name = look(/\w+/)
-      tag = @meta_tags[name]
 
-      if tag
-        meta_at_tag(tag)
-      elsif name
+      if !name
+        # ignore
+      elsif tagdef = BUILTIN_TAGS[name]
+        send(*tagdef)
+      elsif tagdef = @meta_tags[name]
+        meta_at_tag(tagdef)
+      else
         Logger.warn(:tag, "Unsupported tag: @#{name}", @filename, @linenr)
         @current_tag[:doc] += "@"
       end
@@ -360,6 +344,17 @@ module JsDuck
       skip_white
     end
 
+    # For backwards compatibility decide whether the @alias was used
+    # as @inheritdoc (@alias used to have the meaning of @inheritdoc
+    # before).
+    def at_alias_or_inheritdoc
+      if look(/alias\s+([\w.]+)?#\w+/)
+        at_inheritdoc
+      else
+        at_alias
+      end
+    end
+
     # matches @alias <ident-chain>
     def at_alias
       parse_tag_as(:alias)
@@ -401,7 +396,7 @@ module JsDuck
 
     # matches @<tagname> and registers the given tag.
     def parse_tag_as(tagname)
-      match(/@\w+\b/)
+      match(/\w+\b/)
       add_tag(tagname)
     end
 
