@@ -64,7 +64,7 @@ most sensible place to put it). Now you're ready to install JSDuck:
     > gem install jsduck
 
 [RVM]: https://rvm.io/
-[download page]: https://github.com/senchalabs/jsduck/downloads
+[download page]: https://sourceforge.net/projects/jsduck/files/
 [libs download]: https://github.com/stereobooster/therubyracer/downloads
 
 Usage
