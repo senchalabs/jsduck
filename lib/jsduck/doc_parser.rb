@@ -254,7 +254,7 @@ module JsDuck
     def at_return
       add_tag(:return)
       maybe_type
-      skip_white
+      skip_horiz_white
       if look(/return\.\w/)
         @current_tag[:name] = ident_chain
       else
