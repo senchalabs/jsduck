@@ -20,7 +20,8 @@ module JsDuck
   # Unrecognized @tags are left as is into documentation as if they
   # were normal text.
   #
-  # @see and {@link} are parsed separately in JsDuck::DocFormatter.
+  # @example, {@img}, {@link} and {@video} are parsed separately in
+  # JsDuck::DocFormatter.
   #
   class DocParser
     def initialize
@@ -75,17 +76,11 @@ module JsDuck
       @linenr = linenr
       @tags = []
       @input = StringScanner.new(purify(input))
+
       parse_loop
-      # The parsing process can leave whitespace at the ends of
-      # doc-strings, here we get rid of it.  Additionally null all empty docs
-      @tags.each do |tag|
-        tag[:doc].strip!
-        tag[:doc] = nil if tag[:doc] == ""
-      end
-      # Get rid of empty default tag
-      if @tags.first && @tags.first[:tagname] == :default && !@tags.first[:doc]
-        @tags.shift
-      end
+
+      clean_empty_docs
+      clean_empty_default_tag
       @tags
     end
 
@@ -117,23 +112,83 @@ module JsDuck
       return result.join("\n")
     end
 
-    def add_tag(tag)
-      @tags << @current_tag = {:tagname => tag, :doc => ""}
+    # The parsing process can leave whitespace at the ends of
+    # doc-strings, here we get rid of it.
+    # Additionally null all empty docs.
+    def clean_empty_docs
+      @tags.each do |tag|
+        tag[:doc].strip!
+        tag[:doc] = nil if tag[:doc] == ""
+      end
     end
 
-    def remove_last_tag
-      @tags.pop
-      @current_tag = @tags.last
+    # Gets rid of empty default tag
+    def clean_empty_default_tag
+      if @tags.first && @tags.first[:tagname] == :default && !@tags.first[:doc]
+        @tags.shift
+      end
     end
 
+    # The main loop of the DocParser
     def parse_loop
       add_tag(:default)
+
       while !@input.eos? do
         if look(/@/)
           parse_at_tag
         elsif look(/[^@]/)
           skip_to_next_at_tag
         end
+      end
+    end
+
+    # Processes anything beginning with @-sign.
+    #
+    # - When @ is not followed by any word chards, do nothing.
+    # - When it's one of the builtin tags, process it as such.
+    # - When it's one of the meta-tags, process it as such.
+    # - When it's something else, print a warning.
+    #
+    def parse_at_tag
+      match(/@/)
+      name = look(/\w+/)
+
+      if !name
+        # ignore
+      elsif tagdef = BUILTIN_TAGS[name]
+        match(/\w+/)
+        send(*tagdef)
+      elsif tagdef = @meta_tags[name]
+        match(/\w+/)
+        parse_meta_tag(tagdef)
+      else
+        Logger.warn(:tag, "Unsupported tag: @#{name}", @filename, @linenr)
+        @current_tag[:doc] += "@"
+      end
+    end
+
+    # Matches the given meta-tag
+    def parse_meta_tag(tag)
+      prev_tag = @current_tag
+
+      add_tag(:meta)
+      @current_tag[:name] = tag.key
+      skip_horiz_white
+
+      if tag.boolean
+        # For boolean tags, only scan the tag name and switch context
+        # back to previous tag.
+        skip_white
+        @current_tag = prev_tag
+      elsif tag.multiline
+        # For multiline tags we leave the tag open for :doc addition
+        # just like with built-in multiline tags.
+      else
+        # Fors singleline tags, scan to the end of line and finish the
+        # tag.
+        @current_tag[:doc] = match(/.*$/).strip
+        skip_white
+        @current_tag = prev_tag
       end
     end
 
@@ -160,55 +215,9 @@ module JsDuck
       @current_tag[:doc] =~ /^ {4,}[^\n]*\Z/
     end
 
-    # Processes anything beginning with @-sign.
     #
-    # - When @ is not followed by any word chards, do nothing.
-    # - When it's one of the builtin tags, process it as such.
-    # - When it's one of the meta-tags, process it as such.
-    # - When it's something else, print a warning.
+    # Routines for parsing of concrete tags...
     #
-    def parse_at_tag
-      match(/@/)
-      name = look(/\w+/)
-
-      if !name
-        # ignore
-      elsif tagdef = BUILTIN_TAGS[name]
-        match(/\w+/)
-        send(*tagdef)
-      elsif tagdef = @meta_tags[name]
-        match(/\w+/)
-        meta_at_tag(tagdef)
-      else
-        Logger.warn(:tag, "Unsupported tag: @#{name}", @filename, @linenr)
-        @current_tag[:doc] += "@"
-      end
-    end
-
-    # Matches the given meta-tag
-    def meta_at_tag(tag)
-      prev_tag = @current_tag
-
-      add_tag(:meta)
-      @current_tag[:name] = tag.key
-      skip_horiz_white
-
-      if tag.boolean
-        # For boolean tags, only scan the tag name and switch context
-        # back to previous tag.
-        skip_white
-        @current_tag = prev_tag
-      elsif tag.multiline
-        # For multiline tags we leave the tag open for :doc addition
-        # just like with built-in multiline tags.
-      else
-        # Fors singleline tags, scan to the end of line and finish the
-        # tag.
-        @current_tag[:doc] = match(/.*$/).strip
-        skip_white
-        @current_tag = prev_tag
-      end
-    end
 
     # matches @<tagname> [ classname ]
     # Used for @class, @extends, @member
@@ -393,6 +402,21 @@ module JsDuck
     def boolean_at_tag(tagname)
       add_tag(tagname)
       skip_white
+    end
+
+    #
+    # Parsing helpers ...
+    #
+
+    # Appends new @tag to parsed tags list
+    def add_tag(tag)
+      @tags << @current_tag = {:tagname => tag, :doc => ""}
+    end
+
+    # Forgets the previously parsed tag
+    def remove_last_tag
+      @tags.pop
+      @current_tag = @tags.last
     end
 
     # matches {type} if possible and sets it on @current_tag
