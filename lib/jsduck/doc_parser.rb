@@ -37,8 +37,6 @@ module JsDuck
       "ftype" => [:at_xtype, "feature"],
       "ptype" => [:at_xtype, "plugin"],
 
-      "return" => [:at_return],
-      "returns" => [:at_return],
       "type" => [:at_type],
       "inheritdoc" => [:at_inheritdoc],
       "inheritDoc" => [:at_inheritdoc],
@@ -200,18 +198,6 @@ module JsDuck
     # Routines for parsing of concrete tags...
     #
 
-    # matches @return {type} [ return.name ] ...
-    def at_return
-      add_tag(:return)
-      maybe_type
-      skip_horiz_white
-      if look(/return\.\w/)
-        @current_tag[:name] = ident_chain
-      else
-        @current_tag[:name] = "return"
-      end
-    end
-
     # matches @enum {type} name ...
     def at_enum
       # @enum is a special case of class
@@ -303,6 +289,9 @@ module JsDuck
     #
     # Parsing helpers ...
     #
+
+    # Provides access to the tag that's currently being parsed
+    attr_reader :current_tag
 
     # Appends new @tag to parsed tags list
     def add_tag(tag)
