@@ -49,12 +49,6 @@ module JsDuck
       "ftype" => [:at_xtype, "feature"],
       "ptype" => [:at_xtype, "plugin"],
 
-      "singleton" => [:boolean_at_tag, :singleton],
-      "constructor" => [:boolean_at_tag, :constructor],
-      "inheritable" => [:boolean_at_tag, :inheritable],
-      "accessor" => [:boolean_at_tag, :accessor],
-      "evented" => [:boolean_at_tag, :evented],
-
       "param" => [:at_param],
       "return" => [:at_return],
       "returns" => [:at_return],
@@ -347,11 +341,6 @@ module JsDuck
         end
         @current_tag[:member] = ident
       end
-    end
-
-    # Used to match @private, @ignore, @hide, ...
-    def boolean_at_tag(tagname)
-      add_tag(tagname)
     end
 
     #
