@@ -158,6 +158,7 @@ module JsDuck
       elsif tagdef = BUILTIN_TAGS[name]
         match(/\w+/)
         send(*tagdef)
+        skip_white
       elsif tagdef = @meta_tags[name]
         match(/\w+/)
         parse_meta_tag(tagdef)
@@ -224,7 +225,6 @@ module JsDuck
     def class_at_tag(tagname, property_name)
       add_tag(tagname)
       maybe_ident_chain(property_name)
-      skip_white
     end
 
     # matches @<tagname> classname1 classname2 ...
@@ -233,7 +233,6 @@ module JsDuck
       add_tag(tagname)
       skip_horiz_white
       @current_tag[tagname] = class_list
-      skip_white
     end
 
     # matches @<tagname> [ name ]
@@ -241,7 +240,6 @@ module JsDuck
     def member_at_tag(tagname)
       add_tag(tagname)
       maybe_name
-      skip_white
     end
 
     # matches @param {type} [name] (optional) ...
@@ -250,7 +248,6 @@ module JsDuck
       maybe_type
       maybe_name_with_default
       maybe_optional
-      skip_white
     end
 
     # matches @return {type} [ return.name ] ...
@@ -263,7 +260,6 @@ module JsDuck
       else
         @current_tag[:name] = "return"
       end
-      skip_white
     end
 
     # matches @cfg {type} name ...
@@ -272,7 +268,6 @@ module JsDuck
       maybe_type
       maybe_name_with_default
       maybe_required
-      skip_white
     end
 
     # matches @property {type} name ...
@@ -285,7 +280,6 @@ module JsDuck
       add_tag(:property)
       maybe_type
       maybe_name_with_default
-      skip_white
     end
 
     # matches @var {type} $name ...
@@ -293,14 +287,12 @@ module JsDuck
       add_tag(:css_var)
       maybe_type
       maybe_name_with_default
-      skip_white
     end
 
     # matches @throws {type} ...
     def at_throws
       add_tag(:throws)
       maybe_type
-      skip_white
     end
 
     # matches @enum {type} name ...
@@ -310,14 +302,12 @@ module JsDuck
       @current_tag[:enum] = true
       maybe_type
       maybe_name_with_default
-      skip_white
     end
 
     # matches @override name ...
     def at_override
       add_tag(:override)
       maybe_ident_chain(:class)
-      skip_white
 
       # When @override not followed by class name, ignore the tag.
       # That's because the current ext codebase has some methods
@@ -343,7 +333,6 @@ module JsDuck
       elsif look(/\S/)
         @current_tag[:type] = match(/\S+/)
       end
-      skip_white
     end
 
     # matches @xtype/ptype/ftype/... name
@@ -351,7 +340,6 @@ module JsDuck
       add_tag(:alias)
       skip_horiz_white
       @current_tag[:name] = namespace + "." + (ident_chain || "")
-      skip_white
     end
 
     # For backwards compatibility decide whether the @alias was used
@@ -370,7 +358,6 @@ module JsDuck
       add_tag(:alias)
       skip_horiz_white
       @current_tag[:name] = ident_chain
-      skip_white
     end
 
     # matches @inheritdoc class.name#static-type-member
@@ -394,14 +381,11 @@ module JsDuck
         end
         @current_tag[:member] = ident
       end
-
-      skip_white
     end
 
     # Used to match @private, @ignore, @hide, ...
     def boolean_at_tag(tagname)
       add_tag(tagname)
-      skip_white
     end
 
     #
