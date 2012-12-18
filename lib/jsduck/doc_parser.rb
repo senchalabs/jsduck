@@ -33,9 +33,6 @@ module JsDuck
     end
 
     BUILTIN_TAGS = {
-      "inheritdoc" => [:at_inheritdoc],
-      "inheritDoc" => [:at_inheritdoc],
-      "alias" => [:at_alias_or_inheritdoc],
     }
 
     def parse(input, filename="", linenr=0)
@@ -185,35 +182,6 @@ module JsDuck
 
     def indented_as_code?
       @current_tag[:doc] =~ /^ {4,}[^\n]*\Z/
-    end
-
-    #
-    # Routines for parsing of concrete tags...
-    #
-
-    # For backwards compatibility decide whether the @alias was used
-    # as @inheritdoc (@alias used to have the meaning of @inheritdoc
-    # before).
-    def at_alias_or_inheritdoc
-      if look(/\s+([\w.]+)?#\w+/)
-        at_inheritdoc
-      else
-        at_alias
-      end
-    end
-
-    # matches @alias <ident-chain>
-    def at_alias
-      add_tag(:alias)
-      skip_horiz_white
-      @current_tag[:name] = ident_chain
-    end
-
-    # matches @inheritdoc class.name#static-type-member
-    def at_inheritdoc
-      add_tag(:inheritdoc)
-      maybe_ident_chain(:cls)
-      maybe_member_reference
     end
 
     #
