@@ -1,4 +1,5 @@
 require 'strscan'
+require 'jsduck/doc_comment'
 require 'jsduck/builtins_registry'
 require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
@@ -36,41 +37,13 @@ module JsDuck
       @filename = filename
       @linenr = linenr
       @tags = []
-      @input = StringScanner.new(purify(input))
+      @input = StringScanner.new(DocComment.purify(input))
 
       parse_loop
 
       clean_empty_docs
       clean_empty_default_tag
       @tags
-    end
-
-    # Extracts content inside /** ... */
-    def purify(input)
-      result = []
-      # We can have two types of lines:
-      # - those beginning with *
-      # - and those without it
-      indent = nil
-      input.each_line do |line|
-        line.chomp!
-        if line =~ /\A\s*\*\s?(.*)\Z/
-          # When comment contains *-lines, switch indent-trimming off
-          indent = 0
-          result << $1
-        elsif line =~ /\A\s*\Z/
-          # pass-through empty lines
-          result << line
-        elsif indent == nil && line =~ /\A(\s*)(.*?\Z)/
-          # When indent not measured, measure it and remember
-          indent = $1.length
-          result << $2
-        else
-          # Trim away indent if available
-          result << line.sub(/\A\s{0,#{indent||0}}/, "")
-        end
-      end
-      return result.join("\n")
     end
 
     # The parsing process can leave whitespace at the ends of
