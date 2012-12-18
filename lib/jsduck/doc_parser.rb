@@ -41,8 +41,6 @@ module JsDuck
       "inheritdoc" => [:at_inheritdoc],
       "inheritDoc" => [:at_inheritdoc],
       "alias" => [:at_alias_or_inheritdoc],
-      "enum" => [:at_enum],
-      "override" => [:at_override],
     }
 
     def parse(input, filename="", linenr=0)
@@ -197,29 +195,6 @@ module JsDuck
     #
     # Routines for parsing of concrete tags...
     #
-
-    # matches @enum {type} name ...
-    def at_enum
-      # @enum is a special case of class
-      add_tag(:class)
-      @current_tag[:enum] = true
-      maybe_type
-      maybe_name_with_default
-    end
-
-    # matches @override name ...
-    def at_override
-      add_tag(:override)
-      maybe_ident_chain(:class)
-
-      # When @override not followed by class name, ignore the tag.
-      # That's because the current ext codebase has some methods
-      # tagged with @override to denote they override something.
-      # But that's not what @override is meant for in JSDuck.
-      unless @current_tag[:class]
-        remove_last_tag
-      end
-    end
 
     # matches @type {type}  or  @type type
     #
