@@ -56,27 +56,27 @@ module JsDuck
 
       # Ext.define("Class", {})
       if exp && exp.ext_define?
-        make_class(exp["arguments"][0].to_value, exp.raw)
+        make_class(exp["arguments"][0].to_value, exp)
 
       # Ext.override(Class, {})
       elsif exp && exp.ext_override?
-        make_class("", exp.raw)
+        make_class("", exp)
 
       # foo = Ext.extend(Parent, {})
       elsif exp && exp.assignment_expression? && exp["right"].ext_extend?
-        make_class(exp["left"].to_s, exp["right"].raw)
+        make_class(exp["left"].to_s, exp["right"])
 
       # Foo = ...
       elsif exp && exp.assignment_expression? && class_name?(exp["left"].to_s)
-        make_class(exp["left"].to_s, exp["right"].raw)
+        make_class(exp["left"].to_s, exp["right"])
 
       # var foo = Ext.extend(Parent, {})
       elsif var && var["init"].ext_extend?
-        make_class(var["id"].to_s, var["init"].raw)
+        make_class(var["id"].to_s, var["init"])
 
       # var Foo = ...
       elsif var && class_name?(var["id"].to_s)
-        make_class(var["id"].to_s, var["right"].raw)
+        make_class(var["id"].to_s, var["right"])
 
       # function Foo() {}
       elsif ast.function? && class_name?(ast["id"].to_s)
@@ -84,7 +84,7 @@ module JsDuck
 
       # { ... }
       elsif ast.object_expression?
-        make_class("", ast.raw)
+        make_class("", ast)
 
       # function foo() {}
       elsif ast.function?
@@ -141,22 +141,6 @@ module JsDuck
 
     private
 
-    def call?(ast)
-      ast["type"] == "CallExpression"
-    end
-
-    def ext_define?(ast)
-      call?(ast) && ext_pattern?("Ext.define", ast["callee"])
-    end
-
-    def ext_extend?(ast)
-      call?(ast) && ext_pattern?("Ext.extend", ast["callee"])
-    end
-
-    def ext_override?(ast)
-      call?(ast) && ext_pattern?("Ext.override", ast["callee"])
-    end
-
     def function?(ast)
       ast["type"] == "FunctionDeclaration" || ast["type"] == "FunctionExpression" || empty_fn?(ast)
     end
@@ -186,16 +170,16 @@ module JsDuck
 
       # apply information from Ext.extend, Ext.define, or {}
       if ast
-        if ext_define?(ast)
-          detect_ext_define(cls, ast)
-        elsif ext_extend?(ast)
-          detect_ext_something(:extends, cls, ast)
-        elsif ext_override?(ast)
-          detect_ext_something(:override, cls, ast)
-        elsif object?(ast)
-          detect_class_members_from_object(cls, ast)
-        elsif ast["type"] == "ArrayExpression"
-          detect_class_members_from_array(cls, ast)
+        if ast.ext_define?
+          detect_ext_define(cls, ast.raw)
+        elsif ast.ext_extend?
+          detect_ext_something(:extends, cls, ast.raw)
+        elsif ast.ext_override?
+          detect_ext_something(:override, cls, ast.raw)
+        elsif ast.object_expression?
+          detect_class_members_from_object(cls, ast.raw)
+        elsif ast.array_expression?
+          detect_class_members_from_array(cls, ast.raw)
         end
       end
 

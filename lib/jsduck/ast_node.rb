@@ -117,6 +117,10 @@ module JsDuck
       @node["type"] == "ObjectExpression"
     end
 
+    def array_expression?
+      @node["type"] == "ArrayExpression"
+    end
+
     def function_expression?
       @node["type"] == "FunctionExpression"
     end
