@@ -212,24 +212,8 @@ module JsDuck
     # matches @inheritdoc class.name#static-type-member
     def at_inheritdoc
       add_tag(:inheritdoc)
-      skip_horiz_white
-
-      if look(@ident_chain_pattern)
-        @current_tag[:cls] = ident_chain
-      end
-
-      if look(/#\w/)
-        match(/#/)
-        if look(/static-/)
-          @current_tag[:static] = true
-          match(/static-/)
-        end
-        if look(/(cfg|property|method|event|css_var|css_mixin)-/)
-          @current_tag[:type] = ident.to_sym
-          match(/-/)
-        end
-        @current_tag[:member] = ident
-      end
+      maybe_ident_chain(:cls)
+      maybe_member_reference
     end
 
     #
@@ -312,6 +296,23 @@ module JsDuck
       skip_horiz_white
       if look(@ident_chain_pattern)
         @current_tag[propname] = ident_chain
+      end
+    end
+
+    # matches a member reference: "#" <static> "-" <type> "-" <member>
+    # setting the corresponding properties on @current_tag
+    def maybe_member_reference
+      if look(/#\w/)
+        match(/#/)
+        if look(/static-/)
+          @current_tag[:static] = true
+          match(/static-/)
+        end
+        if look(/(cfg|property|method|event|css_var|css_mixin)-/)
+          @current_tag[:type] = ident.to_sym
+          match(/-/)
+        end
+        @current_tag[:member] = ident
       end
     end
 
