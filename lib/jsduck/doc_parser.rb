@@ -32,9 +32,6 @@ module JsDuck
       @meta_tags = MetaTagRegistry.instance
     end
 
-    BUILTIN_TAGS = {
-    }
-
     def parse(input, filename="", linenr=0)
       @filename = filename
       @linenr = linenr
@@ -119,10 +116,6 @@ module JsDuck
 
       if !name
         # ignore
-      elsif tagdef = BUILTIN_TAGS[name]
-        match(/\w+/)
-        send(*tagdef)
-        skip_white
       elsif tag = @builtins[name]
         match(/\w+/)
         tag.parse(self)
