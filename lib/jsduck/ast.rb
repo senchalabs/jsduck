@@ -103,7 +103,7 @@ module JsDuck
 
       # foo: function() {}
       elsif ast.property? && ast["value"].function?
-        make_method(key_value(ast["key"].raw), ast["value"].raw)
+        make_method(ast["key"].key_value, ast["value"].raw)
 
       # this.fireEvent("foo", ...)
       elsif exp && exp.fire_event?
@@ -119,7 +119,7 @@ module JsDuck
 
       # foo: ...
       elsif ast.property?
-        make_property(key_value(ast["key"].raw), ast["value"].raw)
+        make_property(ast["key"].key_value, ast["value"].raw)
 
       # foo;
       elsif exp && exp.identifier?
@@ -166,7 +166,7 @@ module JsDuck
       # apply information from Ext.extend, Ext.define, or {}
       if ast
         if ast.ext_define?
-          detect_ext_define(cls, ast.raw)
+          detect_ext_define(cls, ast)
         elsif ast.ext_extend?
           detect_ext_something(:extends, cls, ast.raw)
         elsif ast.ext_override?
@@ -204,38 +204,38 @@ module JsDuck
       cls[:members] = []
       cls[:code_type] = :ext_define
 
-      each_pair_in_object_expression(ast["arguments"][1]) do |key, value, pair|
+      ast["arguments"][1].each_property do |key, value, pair|
         case key
         when "extend"
-          cls[:extends] = make_string(value)
+          cls[:extends] = make_string(value.raw)
         when "override"
-          cls[:override] = make_string(value)
+          cls[:override] = make_string(value.raw)
         when "requires"
-          cls[:requires] = make_string_list(value)
+          cls[:requires] = make_string_list(value.raw)
         when "uses"
-          cls[:uses] = make_string_list(value)
+          cls[:uses] = make_string_list(value.raw)
         when "alternateClassName"
-          cls[:alternateClassNames] = make_string_list(value)
+          cls[:alternateClassNames] = make_string_list(value.raw)
         when "mixins"
-          cls[:mixins] = make_mixins(value)
+          cls[:mixins] = make_mixins(value.raw)
         when "singleton"
-          cls[:singleton] = make_singleton(value)
+          cls[:singleton] = make_singleton(value.raw)
         when "alias"
-          cls[:aliases] += make_string_list(value)
+          cls[:aliases] += make_string_list(value.raw)
         when "xtype"
-          cls[:aliases] += make_string_list(value).map {|xtype| "widget."+xtype }
+          cls[:aliases] += make_string_list(value.raw).map {|xtype| "widget."+xtype }
         when "config"
-          cls[:members] += make_configs(value, {:accessor => true})
+          cls[:members] += make_configs(value.raw, {:accessor => true})
         when "cachedConfig"
-          cls[:members] += make_configs(value, {:accessor => true})
+          cls[:members] += make_configs(value.raw, {:accessor => true})
         when "eventedConfig"
-          cls[:members] += make_configs(value, {:accessor => true, :evented => true})
+          cls[:members] += make_configs(value.raw, {:accessor => true, :evented => true})
         when "statics"
-          cls[:members] += make_statics(value)
+          cls[:members] += make_statics(value.raw)
         when "inheritableStatics"
-          cls[:members] += make_statics(value, {:inheritable => true})
+          cls[:members] += make_statics(value.raw, {:inheritable => true})
         else
-          detect_method_or_property(cls, key, value, pair)
+          detect_method_or_property(cls, key, value.raw, pair.raw)
         end
       end
     end

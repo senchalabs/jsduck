@@ -44,6 +44,11 @@ module JsDuck
       end
     end
 
+    # Converts object expression property key to string value
+    def key_value
+      Evaluator.new.key_value(@node)
+    end
+
     # Returns the type of node value.
     def value_type
       v = to_value
@@ -61,6 +66,18 @@ module JsDuck
         "RegExp"
       else
         nil
+      end
+    end
+
+    # Iterates over keys and values in ObjectExpression.  The keys
+    # are turned into strings, but values are left as is for further
+    # processing.
+    def each_property
+      return unless object_expression?
+
+      @node["properties"].each do |p|
+        ast = AstNode.new(p)
+        yield(ast["key"].key_value, ast["value"], ast)
       end
     end
 
