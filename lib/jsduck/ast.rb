@@ -1,7 +1,6 @@
 require "jsduck/serializer"
 require "jsduck/evaluator"
 require "jsduck/function_ast"
-require "jsduck/ext_patterns"
 require "jsduck/ast_node"
 
 module JsDuck
@@ -142,15 +141,11 @@ module JsDuck
     private
 
     def function?(ast)
-      ast["type"] == "FunctionDeclaration" || ast["type"] == "FunctionExpression" || empty_fn?(ast)
+      AstNode.new(ast).function?
     end
 
     def empty_fn?(ast)
-      ast["type"] == "MemberExpression" && ext_pattern?("Ext.emptyFn", ast)
-    end
-
-    def ext_pattern?(pattern, ast)
-      ExtPatterns.matches?(pattern, to_s(ast))
+      AstNode.new(ast).ext_empty_fn?
     end
 
     def object?(ast)
