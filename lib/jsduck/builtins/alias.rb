@@ -6,6 +6,7 @@ module JsDuck::Builtins
     def initialize
       @pattern = "alias"
       @ext_define_pattern = "alias"
+      @ext_define_default = {:aliases => []}
     end
 
     # For backwards compatibility decide whether the @alias was used

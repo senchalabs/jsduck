@@ -10,6 +10,7 @@ module JsDuck
     def initialize
       @patterns = {}
       @ext_define_patterns = {}
+      @ext_define_defaults = {}
       load_tag_classes(File.dirname(__FILE__) + "/builtins")
       instantiate_tags
     end
@@ -29,6 +30,9 @@ module JsDuck
         Array(tag.ext_define_pattern).each do |pattern|
           @ext_define_patterns[pattern] = tag
         end
+        if tag.ext_define_default
+          @ext_define_defaults.merge!(tag.ext_define_default)
+        end
       end
     end
 
@@ -41,6 +45,9 @@ module JsDuck
     def get_ext_define(name)
       @ext_define_patterns[name]
     end
+
+    # Default values for class config when Ext.define is encountered.
+    attr_reader :ext_define_defaults
 
   end
 

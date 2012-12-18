@@ -16,6 +16,11 @@ module JsDuck::Builtins
     # #parse_ext_define method to be invoked.
     attr_reader :ext_define_pattern
 
+    # The default value to use when Ext.define is encountered, but the
+    # key in the config object itself is not found.
+    # This must be a Hash defining the key and value.
+    attr_reader :ext_define_default
+
     # Called by Ast class to parse a config in Ext.define().
     # @param {Hash} cls A simple Hash representing a class on which
     # various properties can be set.

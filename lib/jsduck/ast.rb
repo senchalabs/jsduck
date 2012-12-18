@@ -196,12 +196,7 @@ module JsDuck
     # given cls Hash
     def detect_ext_define(cls, ast)
       # defaults
-      cls[:extends] = "Ext.Base"
-      cls[:requires] = []
-      cls[:uses] = []
-      cls[:alternateClassNames] = []
-      cls[:mixins] = []
-      cls[:aliases] = []
+      cls.merge!(BuiltinsRegistry.ext_define_defaults)
       cls[:members] = []
       cls[:code_type] = :ext_define
 

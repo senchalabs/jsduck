@@ -6,6 +6,7 @@ module JsDuck::Builtins
     def initialize
       @pattern = "requires"
       @ext_define_pattern = "requires"
+      @ext_define_default = {:requires => []}
     end
 
     # @requires classname1 classname2 ...

@@ -6,6 +6,7 @@ module JsDuck::Builtins
     def initialize
       @pattern = ["alternateClassName", "alternateClassNames"]
       @ext_define_pattern = "alternateClassName"
+      @ext_define_default = {:alternateClassNames => []}
     end
 
     # @alternateClassNames classname1 classname2 ...

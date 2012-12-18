@@ -6,6 +6,7 @@ module JsDuck::Builtins
     def initialize
       @pattern = "uses"
       @ext_define_pattern = "uses"
+      @ext_define_default = {:uses => []}
     end
 
     # @uses classname1 classname2 ...

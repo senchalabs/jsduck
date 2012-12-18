@@ -5,6 +5,7 @@ module JsDuck::Builtins
     def initialize
       @pattern = ["mixin", "mixins"]
       @ext_define_pattern = "mixins"
+      @ext_define_default = {:mixins => []}
     end
 
     # @mixins classname1 classname2 ...
