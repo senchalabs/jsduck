@@ -1,9 +1,11 @@
 require "jsduck/builtins/tag"
+require "jsduck/ast_utils"
 
 module JsDuck::Builtins
   class Override < Tag
     def initialize
       @pattern = "override"
+      @ext_define_pattern = "override"
     end
 
     # @override nameOfOverride
@@ -18,6 +20,10 @@ module JsDuck::Builtins
       unless p.current_tag[:class]
         p.remove_last_tag
       end
+    end
+
+    def parse_ext_define(cls, ast)
+      cls[:override] = JsDuck::AstUtils.make_string(ast)
     end
 
   end

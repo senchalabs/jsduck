@@ -2,6 +2,7 @@ require "jsduck/serializer"
 require "jsduck/evaluator"
 require "jsduck/function_ast"
 require "jsduck/ast_node"
+require "jsduck/builtins_registry"
 
 module JsDuck
 
@@ -205,37 +206,23 @@ module JsDuck
       cls[:code_type] = :ext_define
 
       ast["arguments"][1].each_property do |key, value, pair|
-        case key
-        when "extend"
-          cls[:extends] = make_string(value)
-        when "override"
-          cls[:override] = make_string(value)
-        when "requires"
-          cls[:requires] = make_string_list(value)
-        when "uses"
-          cls[:uses] = make_string_list(value)
-        when "alternateClassName"
-          cls[:alternateClassNames] = make_string_list(value)
-        when "mixins"
-          cls[:mixins] = make_mixins(value)
-        when "singleton"
-          cls[:singleton] = make_singleton(value)
-        when "alias"
-          cls[:aliases] += make_string_list(value)
-        when "xtype"
-          cls[:aliases] += make_string_list(value).map {|xtype| "widget."+xtype }
-        when "config"
-          cls[:members] += make_configs(value.raw, {:accessor => true})
-        when "cachedConfig"
-          cls[:members] += make_configs(value.raw, {:accessor => true})
-        when "eventedConfig"
-          cls[:members] += make_configs(value.raw, {:accessor => true, :evented => true})
-        when "statics"
-          cls[:members] += make_statics(value.raw)
-        when "inheritableStatics"
-          cls[:members] += make_statics(value.raw, {:inheritable => true})
+        if tag = BuiltinsRegistry.get_ext_define(key)
+          tag.parse_ext_define(cls, value)
         else
-          detect_method_or_property(cls, key, value.raw, pair.raw)
+          case key
+          when "config"
+            cls[:members] += make_configs(value.raw, {:accessor => true})
+          when "cachedConfig"
+            cls[:members] += make_configs(value.raw, {:accessor => true})
+          when "eventedConfig"
+            cls[:members] += make_configs(value.raw, {:accessor => true, :evented => true})
+          when "statics"
+            cls[:members] += make_statics(value.raw)
+          when "inheritableStatics"
+            cls[:members] += make_statics(value.raw, {:inheritable => true})
+          else
+            detect_method_or_property(cls, key, value.raw, pair.raw)
+          end
         end
       end
     end
@@ -270,26 +257,6 @@ module JsDuck
         p = make_property(key, value)
         cls[:members] << p if apply_autodetected(p, pair)
       end
-    end
-
-    def make_string(ast)
-      str = ast.to_value
-      str.is_a?(String) ? str : nil
-    end
-
-    def make_string_list(ast)
-      strings = Array(ast.to_value)
-      strings.all? {|s| s.is_a?(String) } ? strings : []
-    end
-
-    def make_mixins(ast)
-      v = ast.to_value
-      mixins = v.is_a?(Hash) ? v.values : Array(v)
-      mixins.all? {|mx| mx.is_a? String } ? mixins : []
-    end
-
-    def make_singleton(ast)
-      ast.to_value == true
     end
 
     def make_configs(ast, defaults={})

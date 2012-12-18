@@ -11,6 +11,18 @@ module JsDuck::Builtins
     def parse(p)
     end
 
+    # Defines the name of object property in Ext.define()
+    # configuration which, when encountered, will cause the
+    # #parse_ext_define method to be invoked.
+    attr_reader :ext_define_pattern
+
+    # Called by Ast class to parse a config in Ext.define().
+    # @param {Hash} cls A simple Hash representing a class on which
+    # various properties can be set.
+    # @param {AstNode} ast Value of the config in Ext.define().
+    def parse_ext_define(cls, ast)
+    end
+
     # Returns all descendants of JsDuck::Builtins::Tag class.
     def self.descendants
       result = []

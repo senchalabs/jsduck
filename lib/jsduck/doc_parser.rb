@@ -89,7 +89,7 @@ module JsDuck
 
       if !name
         # ignore
-      elsif tag = @builtins[name]
+      elsif tag = @builtins.get_tag(name)
         match(/\w+/)
         tag.parse(self)
         skip_white

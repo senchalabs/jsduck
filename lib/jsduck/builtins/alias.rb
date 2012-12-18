@@ -1,9 +1,11 @@
 require "jsduck/builtins/inheritdoc"
+require "jsduck/ast_utils"
 
 module JsDuck::Builtins
   class Alias < Inheritdoc
     def initialize
       @pattern = "alias"
+      @ext_define_pattern = "alias"
     end
 
     # For backwards compatibility decide whether the @alias was used
@@ -21,6 +23,10 @@ module JsDuck::Builtins
     def parse_as_alias(p)
       p.add_tag(:alias)
       p.maybe_ident_chain(:name)
+    end
+
+    def parse_ext_define(cls, ast)
+      cls[:aliases] += JsDuck::AstUtils.make_string_list(ast)
     end
   end
 end

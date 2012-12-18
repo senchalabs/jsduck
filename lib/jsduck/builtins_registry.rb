@@ -8,7 +8,8 @@ module JsDuck
     include Util::Singleton
 
     def initialize
-      @map = {}
+      @patterns = {}
+      @ext_define_patterns = {}
       load_tag_classes(File.dirname(__FILE__) + "/builtins")
       instantiate_tags
     end
@@ -23,14 +24,22 @@ module JsDuck
       JsDuck::Builtins::Tag.descendants.each do |cls|
         tag = cls.new()
         Array(tag.pattern).each do |pattern|
-          @map[pattern] = tag
+          @patterns[pattern] = tag
+        end
+        Array(tag.ext_define_pattern).each do |pattern|
+          @ext_define_patterns[pattern] = tag
         end
       end
     end
 
     # Accesses tag by @name pattern
-    def [](name)
-      @map[name]
+    def get_tag(name)
+      @patterns[name]
+    end
+
+    # Accesses tag by Ext.define pattern
+    def get_ext_define(name)
+      @ext_define_patterns[name]
     end
 
   end
