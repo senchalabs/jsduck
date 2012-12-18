@@ -37,7 +37,6 @@ module JsDuck
       "ftype" => [:at_xtype, "feature"],
       "ptype" => [:at_xtype, "plugin"],
 
-      "type" => [:at_type],
       "inheritdoc" => [:at_inheritdoc],
       "inheritDoc" => [:at_inheritdoc],
       "alias" => [:at_alias_or_inheritdoc],
@@ -195,19 +194,6 @@ module JsDuck
     #
     # Routines for parsing of concrete tags...
     #
-
-    # matches @type {type}  or  @type type
-    #
-    # The presence of @type implies that we are dealing with property.
-    # ext-doc allows type name to be either inside curly braces or
-    # without them at all.
-    def at_type
-      add_tag(:type)
-      maybe_type
-      if !@current_tag[:type] && look(/\S/)
-        @current_tag[:type] = match(/\S+/)
-      end
-    end
 
     # matches @xtype/ptype/ftype/... name
     def at_xtype(namespace)
