@@ -159,7 +159,7 @@ module JsDuck
         ast["raw"]
 
       else
-        throw "Unknown node type: "+ast["type"]
+        throw "Unknown node type: " + (ast["type"] || "nil")
       end
     end
 

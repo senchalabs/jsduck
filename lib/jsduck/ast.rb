@@ -2,6 +2,7 @@ require "jsduck/serializer"
 require "jsduck/evaluator"
 require "jsduck/function_ast"
 require "jsduck/ext_patterns"
+require "jsduck/ast_node"
 
 module JsDuck
 
@@ -47,91 +48,91 @@ module JsDuck
     #
     #     { :tagname => :method, :name => "foo", ... }
     #
-    def detect(ast)
-      ast = ast || {}
+    def detect(node)
+      ast = AstNode.new(node)
 
-      exp = expression?(ast) ? ast["expression"] : nil
-      var = var?(ast) ? ast["declarations"][0] : nil
+      exp = ast.expression_statement? ? ast["expression"] : nil
+      var = ast.variable_declaration? ? ast["declarations"][0] : nil
 
       # Ext.define("Class", {})
-      if exp && ext_define?(exp)
-        make_class(to_value(exp["arguments"][0]), exp)
+      if exp && exp.ext_define?
+        make_class(exp["arguments"][0].to_value, exp.raw)
 
       # Ext.override(Class, {})
-      elsif exp && ext_override?(exp)
-        make_class("", exp)
+      elsif exp && exp.ext_override?
+        make_class("", exp.raw)
 
       # foo = Ext.extend(Parent, {})
-      elsif exp && assignment?(exp) && ext_extend?(exp["right"])
-        make_class(to_s(exp["left"]), exp["right"])
+      elsif exp && exp.assignment_expression? && exp["right"].ext_extend?
+        make_class(exp["left"].to_s, exp["right"].raw)
 
       # Foo = ...
-      elsif exp && assignment?(exp) && class_name?(to_s(exp["left"]))
-        make_class(to_s(exp["left"]), exp["right"])
+      elsif exp && exp.assignment_expression? && class_name?(exp["left"].to_s)
+        make_class(exp["left"].to_s, exp["right"].raw)
 
       # var foo = Ext.extend(Parent, {})
-      elsif var && var["init"] && ext_extend?(var["init"])
-        make_class(to_s(var["id"]), var["init"])
+      elsif var && var["init"].ext_extend?
+        make_class(var["id"].to_s, var["init"].raw)
 
       # var Foo = ...
-      elsif var && class_name?(to_s(var["id"]))
-        make_class(to_s(var["id"]), var["right"])
+      elsif var && class_name?(var["id"].to_s)
+        make_class(var["id"].to_s, var["right"].raw)
 
       # function Foo() {}
-      elsif function?(ast) && class_name?(to_s(ast["id"]))
-        make_class(to_s(ast["id"]))
+      elsif ast.function? && class_name?(ast["id"].to_s)
+        make_class(ast["id"].to_s)
 
       # { ... }
-      elsif object?(ast)
-        make_class("", ast)
+      elsif ast.object_expression?
+        make_class("", ast.raw)
 
       # function foo() {}
-      elsif function?(ast)
-        make_method(to_s(ast["id"]), ast)
+      elsif ast.function?
+        make_method(ast["id"].to_s, ast.raw)
 
       # foo = function() {}
-      elsif exp && assignment?(exp) && function?(exp["right"])
-        make_method(to_s(exp["left"]), exp["right"])
+      elsif exp && exp.assignment_expression? && exp["right"].function?
+        make_method(exp["left"].to_s, exp["right"].raw)
 
       # var foo = function() {}
-      elsif var && var["init"] && function?(var["init"])
-        make_method(to_s(var["id"]), var["init"])
+      elsif var && var["init"] && var["init"].function?
+        make_method(var["id"].to_s, var["init"].raw)
 
       # (function() {})
-      elsif exp && function?(exp)
-        make_method(exp["id"] ? to_s(exp["id"]) : "", exp)
+      elsif exp && exp.function?
+        make_method(exp["id"].to_s || "", exp.raw)
 
       # foo: function() {}
-      elsif property?(ast) && function?(ast["value"])
-        make_method(key_value(ast["key"]), ast["value"])
+      elsif ast.property? && ast["value"].function?
+        make_method(key_value(ast["key"].raw), ast["value"].raw)
 
       # this.fireEvent("foo", ...)
-      elsif exp && fire_event?(exp)
-        make_event(to_value(exp["arguments"][0]))
+      elsif exp && exp.fire_event?
+        make_event(exp["arguments"][0].to_value)
 
       # foo = ...
-      elsif exp && assignment?(exp)
-        make_property(to_s(exp["left"]), exp["right"])
+      elsif exp && exp.assignment_expression?
+        make_property(exp["left"].to_s, exp["right"].raw)
 
       # var foo = ...
       elsif var
-        make_property(to_s(var["id"]), var["init"])
+        make_property(var["id"].to_s, var["init"].raw)
 
       # foo: ...
-      elsif property?(ast)
-        make_property(key_value(ast["key"]), ast["value"])
+      elsif ast.property?
+        make_property(key_value(ast["key"].raw), ast["value"].raw)
 
       # foo;
-      elsif exp && ident?(exp)
-        make_property(to_s(exp))
+      elsif exp && exp.identifier?
+        make_property(exp.to_s)
 
       # "foo"  (inside some expression)
-      elsif string?(ast)
-        make_property(to_value(ast))
+      elsif ast.string?
+        make_property(ast.to_value)
 
       # "foo";  (as a statement of it's own)
-      elsif exp && string?(exp)
-        make_property(to_value(exp))
+      elsif exp && exp.string?
+        make_property(exp.to_value)
 
       else
         make_property()
@@ -140,16 +141,8 @@ module JsDuck
 
     private
 
-    def expression?(ast)
-      ast["type"] == "ExpressionStatement"
-    end
-
     def call?(ast)
       ast["type"] == "CallExpression"
-    end
-
-    def assignment?(ast)
-      ast["type"] == "AssignmentExpression"
     end
 
     def ext_define?(ast)
@@ -174,26 +167,6 @@ module JsDuck
 
     def ext_pattern?(pattern, ast)
       ExtPatterns.matches?(pattern, to_s(ast))
-    end
-
-    def fire_event?(ast)
-      call?(ast) && to_s(ast["callee"]) == "this.fireEvent"
-    end
-
-    def var?(ast)
-      ast["type"] == "VariableDeclaration"
-    end
-
-    def property?(ast)
-      ast["type"] == "Property"
-    end
-
-    def ident?(ast)
-      ast["type"] == "Identifier"
-    end
-
-    def string?(ast)
-      ast["type"] == "Literal" && ast["value"].is_a?(String)
     end
 
     def object?(ast)
