@@ -207,23 +207,23 @@ module JsDuck
       ast["arguments"][1].each_property do |key, value, pair|
         case key
         when "extend"
-          cls[:extends] = make_string(value.raw)
+          cls[:extends] = make_string(value)
         when "override"
-          cls[:override] = make_string(value.raw)
+          cls[:override] = make_string(value)
         when "requires"
-          cls[:requires] = make_string_list(value.raw)
+          cls[:requires] = make_string_list(value)
         when "uses"
-          cls[:uses] = make_string_list(value.raw)
+          cls[:uses] = make_string_list(value)
         when "alternateClassName"
-          cls[:alternateClassNames] = make_string_list(value.raw)
+          cls[:alternateClassNames] = make_string_list(value)
         when "mixins"
-          cls[:mixins] = make_mixins(value.raw)
+          cls[:mixins] = make_mixins(value)
         when "singleton"
-          cls[:singleton] = make_singleton(value.raw)
+          cls[:singleton] = make_singleton(value)
         when "alias"
-          cls[:aliases] += make_string_list(value.raw)
+          cls[:aliases] += make_string_list(value)
         when "xtype"
-          cls[:aliases] += make_string_list(value.raw).map {|xtype| "widget."+xtype }
+          cls[:aliases] += make_string_list(value).map {|xtype| "widget."+xtype }
         when "config"
           cls[:members] += make_configs(value.raw, {:accessor => true})
         when "cachedConfig"
@@ -272,33 +272,24 @@ module JsDuck
       end
     end
 
-    def make_string(cfg_value)
-      return nil unless cfg_value
-
-      parent = to_value(cfg_value)
-
-      return parent.is_a?(String) ? parent : nil
+    def make_string(ast)
+      str = ast.to_value
+      str.is_a?(String) ? str : nil
     end
 
-    def make_string_list(cfg_value)
-      return [] unless cfg_value
-
-      classes = Array(to_value(cfg_value))
-
-      return classes.all? {|c| c.is_a? String } ? classes : []
+    def make_string_list(ast)
+      strings = Array(ast.to_value)
+      strings.all? {|s| s.is_a?(String) } ? strings : []
     end
 
-    def make_mixins(cfg_value)
-      return [] unless cfg_value
-
-      v = to_value(cfg_value)
-      classes = v.is_a?(Hash) ? v.values : Array(v)
-
-      return classes.all? {|c| c.is_a? String } ? classes : []
+    def make_mixins(ast)
+      v = ast.to_value
+      mixins = v.is_a?(Hash) ? v.values : Array(v)
+      mixins.all? {|mx| mx.is_a? String } ? mixins : []
     end
 
-    def make_singleton(cfg_value)
-      cfg_value && to_value(cfg_value) == true
+    def make_singleton(ast)
+      ast.to_value == true
     end
 
     def make_configs(ast, defaults={})
