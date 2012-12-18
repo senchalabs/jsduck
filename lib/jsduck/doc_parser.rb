@@ -33,10 +33,6 @@ module JsDuck
     end
 
     BUILTIN_TAGS = {
-      "xtype" => [:at_xtype, "widget"],
-      "ftype" => [:at_xtype, "feature"],
-      "ptype" => [:at_xtype, "plugin"],
-
       "inheritdoc" => [:at_inheritdoc],
       "inheritDoc" => [:at_inheritdoc],
       "alias" => [:at_alias_or_inheritdoc],
@@ -194,13 +190,6 @@ module JsDuck
     #
     # Routines for parsing of concrete tags...
     #
-
-    # matches @xtype/ptype/ftype/... name
-    def at_xtype(namespace)
-      add_tag(:alias)
-      skip_horiz_white
-      @current_tag[:name] = namespace + "." + (ident_chain || "")
-    end
 
     # For backwards compatibility decide whether the @alias was used
     # as @inheritdoc (@alias used to have the meaning of @inheritdoc
