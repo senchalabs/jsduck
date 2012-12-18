@@ -1,3 +1,5 @@
+require "jsduck/util/singleton"
+
 module JsDuck
 
   # Identifies Ext JS builtins like Ext.define and Ext.extend, taking
@@ -15,17 +17,14 @@ module JsDuck
   # The matches? method will take care of identifying all these four
   # cases:
   #
-  #     ps = ExtPatterns.new(["Ext", "MyApp"])
-  #     matches?("Ext.define", "MyApp.define") --> true
+  #     ExtPatterns.set(["Ext", "MyApp"])
+  #     ExtPatterns.matches?("Ext.define", "MyApp.define") --> true
   #
   class ExtPatterns
-    def initialize(namespaces)
-      @patterns = {
-        "Ext.define" => build_patterns(namespaces, [".define", ".ClassManager.create"]),
-        "Ext.extend" => build_patterns(namespaces, [".extend"]),
-        "Ext.override" => build_patterns(namespaces, [".override"]),
-        "Ext.emptyFn" => build_patterns(namespaces, [".emptyFn"]),
-      }
+    include Util::Singleton
+
+    def initialize
+      set(["Ext"])
     end
 
     # True when string matches the given pattern type.
@@ -34,6 +33,17 @@ module JsDuck
     # "Ext.override", "Ext.emptyFn"
     def matches?(pattern, string)
       @patterns[pattern].include?(string)
+    end
+
+    # Reconfigures ExtPatterns with different set of namespaces.
+    # Called when --ext-namespaces option is passed to JSDuck.
+    def set(namespaces)
+      @patterns = {
+        "Ext.define" => build_patterns(namespaces, [".define", ".ClassManager.create"]),
+        "Ext.extend" => build_patterns(namespaces, [".extend"]),
+        "Ext.override" => build_patterns(namespaces, [".override"]),
+        "Ext.emptyFn" => build_patterns(namespaces, [".emptyFn"]),
+      }
     end
 
     private

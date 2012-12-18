@@ -8,10 +8,9 @@ module JsDuck
   # Analyzes the AST produced by EsprimaParser.
   class Ast
     # Should be initialized with EsprimaParser#parse result.
-    def initialize(docs = [], options = {})
+    def initialize(docs = [])
       @serializer = JsDuck::Serializer.new
       @evaluator = JsDuck::Evaluator.new
-      @ext_patterns = JsDuck::ExtPatterns.new(options[:ext_namespaces] || ["Ext"])
       @docs = docs
     end
 
@@ -174,7 +173,7 @@ module JsDuck
     end
 
     def ext_pattern?(pattern, ast)
-      @ext_patterns.matches?(pattern, to_s(ast))
+      ExtPatterns.matches?(pattern, to_s(ast))
     end
 
     def fire_event?(ast)

@@ -125,7 +125,6 @@ module JsDuck
       @data_path = nil # This gets assigned in JsDuck::WebWriter after writing the data file.
       @local_storage_db = "docs"
       @touch_examples_ui = false
-      @ext_namespaces = ["Ext"]
       @imports = []
       @new_since = nil
 
@@ -527,8 +526,8 @@ module JsDuck
           "In such case pass --ext-namespaces=Ext,YourNS option",
           "and JSDuck will recognize both Ext.define() and",
           "YourNs.define() plus few other things that depend on",
-          "Ext namespace like Ext.emptyFn.") do |ns|
-          @ext_namespaces = ns
+          "Ext namespace like Ext.emptyFn.") do |namespaces|
+          ExtPatterns.set(namespaces)
         end
 
         opts.on('--touch-examples-ui',

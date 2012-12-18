@@ -1,10 +1,19 @@
 require "jsduck/js_parser"
 require "jsduck/ast"
+require "jsduck/ext_patterns"
 
 describe "--ext-namespaces=Ext,MyNs,MyNs.Foo.Bar" do
+  before do
+    JsDuck::ExtPatterns.set(["Ext", "MyNs", "MyNs.Foo.Bar"])
+  end
+
+  after do
+    JsDuck::ExtPatterns.set(["Ext"])
+  end
+
   def parse(string)
     docs = JsDuck::JsParser.new(string).parse
-    JsDuck::Ast.new(docs, {:ext_namespaces => ["Ext", "MyNs", "MyNs.Foo.Bar"]}).detect_all!
+    JsDuck::Ast.new(docs).detect_all!
   end
 
   it "allows detecting Ext.define()" do
