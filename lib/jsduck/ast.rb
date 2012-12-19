@@ -1,5 +1,3 @@
-require "jsduck/serializer"
-require "jsduck/evaluator"
 require "jsduck/function_ast"
 require "jsduck/ast_node"
 require "jsduck/builtins_registry"
@@ -10,8 +8,6 @@ module JsDuck
   class Ast
     # Should be initialized with EsprimaParser#parse result.
     def initialize(docs = [])
-      @serializer = JsDuck::Serializer.new
-      @evaluator = JsDuck::Evaluator.new
       @docs = docs
     end
 
@@ -140,18 +136,6 @@ module JsDuck
     end
 
     private
-
-    def function?(ast)
-      AstNode.create(ast).function?
-    end
-
-    def empty_fn?(ast)
-      AstNode.create(ast).ext_empty_fn?
-    end
-
-    def object?(ast)
-      ast["type"] == "ObjectExpression"
-    end
 
     # Class name begins with upcase char
     def class_name?(name)
@@ -369,37 +353,6 @@ module JsDuck
       ast.to_value != nil ? ast.to_s : nil
     end
 
-    # -- various helper methods --
-
-    # Iterates over keys and values in ObjectExpression.  The keys
-    # are turned into strings, but values are left as is for further
-    # processing.
-    def each_pair_in_object_expression(ast)
-      return unless ast && object?(ast)
-
-      ast["properties"].each do |p|
-        yield(key_value(p["key"]), p["value"], p)
-      end
-    end
-
-    # Converts object expression property key to string value
-    def key_value(key)
-      @evaluator.key_value(key)
-    end
-
-    # Fully serializes the node
-    def to_s(ast)
-      @serializer.to_s(ast)
-    end
-
-    # Converts AST node into a value.
-    def to_value(ast)
-      begin
-        @evaluator.to_value(ast)
-      rescue
-        nil
-      end
-    end
   end
 
 end
