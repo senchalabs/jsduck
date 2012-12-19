@@ -81,7 +81,7 @@ module JsDuck
     # merges second members hash into first one
     def merge!(hash1, hash2)
       hash2.each_pair do |name, m|
-        if m[:meta] && m[:meta][:hide]
+        if m[:hide]
           if hash1[name]
             hash1.delete(name)
           else

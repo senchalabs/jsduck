@@ -135,6 +135,7 @@ module JsDuck
     def add_shared(hash, doc_map)
       hash.merge!({
         :inheritable => !!doc_map[:inheritable],
+        :hide => !!doc_map[:hide],
         :inheritdoc => extract(doc_map, :inheritdoc),
         :meta => detect_meta(doc_map),
       })

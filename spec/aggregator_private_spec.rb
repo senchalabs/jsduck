@@ -92,7 +92,7 @@ describe JsDuck::Aggregator do
     end
 
     it "marks item as :hide" do
-      @doc[:meta][:hide].should == true
+      @doc[:hide].should == true
     end
   end
 

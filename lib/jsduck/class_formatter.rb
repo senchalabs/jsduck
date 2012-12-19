@@ -28,7 +28,7 @@ module JsDuck
       @formatter.doc_context = cls[:files][0]
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
       # format all members (except hidden ones)
-      cls[:members] = cls[:members].map {|m| m[:meta][:hide] ? m : format_member(m)  }
+      cls[:members] = cls[:members].map {|m| m[:hide] ? m : format_member(m)  }
       cls[:html_meta] = format_meta_data(cls)
       cls
     end
