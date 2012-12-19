@@ -49,7 +49,7 @@ module JsDuck
     #     { :tagname => :method, :name => "foo", ... }
     #
     def detect(node)
-      ast = AstNode.new(node)
+      ast = AstNode.create(node)
 
       exp = ast.expression_statement? ? ast["expression"] : nil
       var = ast.variable_declaration? ? ast["declarations"][0] : nil
@@ -142,11 +142,11 @@ module JsDuck
     private
 
     def function?(ast)
-      AstNode.new(ast).function?
+      AstNode.create(ast).function?
     end
 
     def empty_fn?(ast)
-      AstNode.new(ast).ext_empty_fn?
+      AstNode.create(ast).ext_empty_fn?
     end
 
     def object?(ast)

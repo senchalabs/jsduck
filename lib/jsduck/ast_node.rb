@@ -1,12 +1,22 @@
 require "jsduck/serializer"
 require "jsduck/evaluator"
 require "jsduck/ext_patterns"
+require "jsduck/ast_node_array"
 
 module JsDuck
 
   # Wraps around AST node returned from Esprima, providing methods for
   # investigating it.
   class AstNode
+    # Factor method that creates either AstNode or AstNodeArray.
+    def self.create(node)
+      if node.is_a? Array
+        AstNodeArray.new(node)
+      else
+        AstNode.new(node)
+      end
+    end
+
     # Initialized with a AST Hash from Esprima.
     def initialize(node)
       @node = node || {}
@@ -14,7 +24,7 @@ module JsDuck
 
     # Returns a child AST node as AstNode class.
     def child(name)
-      AstNode.new(@node[name])
+      AstNode.create(@node[name])
     end
     # Shorthand for #child method
     def [](name)
@@ -75,8 +85,7 @@ module JsDuck
     def each_property
       return unless object_expression?
 
-      @node["properties"].each do |p|
-        ast = AstNode.new(p)
+      child("properties").each do |ast|
         yield(ast["key"].key_value, ast["value"], ast)
       end
     end
