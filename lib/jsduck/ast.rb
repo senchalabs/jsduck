@@ -299,9 +299,13 @@ module JsDuck
 
     # Looks up docset associated with given AST node.
     # A dead-stupid and -slow implementation, but works.
-    def find_docset(ast)
+    #
+    # The comparison needs to be done between raw AST nodes - multiple
+    # AstNode instances can be created to wrap a single raw AST node,
+    # and they will then not be equal.
+    def find_docset(raw_ast)
       @docs.find do |docset|
-        docset[:code] == ast
+        docset[:code] == raw_ast
       end
     end
 
