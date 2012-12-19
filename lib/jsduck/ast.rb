@@ -231,10 +231,10 @@ module JsDuck
     def detect_method_or_property(cls, key, value, pair)
       if value.function?
         m = make_method(key, value)
-        cls[:members] << m if apply_autodetected(m, pair.raw)
+        cls[:members] << m if apply_autodetected(m, pair)
       else
         p = make_property(key, value)
-        cls[:members] << p if apply_autodetected(p, pair.raw)
+        cls[:members] << p if apply_autodetected(p, pair)
       end
     end
 
@@ -244,7 +244,7 @@ module JsDuck
       ast.each_property do |name, value, pair|
         cfg = make_property(name, value, :cfg)
         cfg.merge!(defaults)
-        configs << cfg if apply_autodetected(cfg, pair.raw)
+        configs << cfg if apply_autodetected(cfg, pair)
       end
 
       configs
@@ -263,7 +263,7 @@ module JsDuck
         s[:meta] = {:static => true}
         s.merge!(defaults)
 
-        statics << s if apply_autodetected(s, pair.raw, defaults[:inheritable])
+        statics << s if apply_autodetected(s, pair, defaults[:inheritable])
       end
 
       statics
@@ -277,7 +277,7 @@ module JsDuck
     #
     # Otherwise detects the line number of member and returns true.
     def apply_autodetected(m, ast, inheritable=true)
-      docset = find_docset(ast)
+      docset = find_docset(ast.raw)
 
       if !docset || docset[:type] != :doc_comment
         if inheritable
@@ -292,10 +292,7 @@ module JsDuck
         docset[:code] = m
         return false
       else
-        # Get line number from third place at range array.
-        # This third item exists in forked EsprimaJS at
-        # https://github.com/nene/esprima/tree/linenr-in-range
-        m[:linenr] = ast["range"][2]
+        m[:linenr] = ast.linenr
         return true
       end
     end

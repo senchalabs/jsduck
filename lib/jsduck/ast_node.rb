@@ -90,6 +90,14 @@ module JsDuck
       end
     end
 
+    # Returns line number in parsed source where the AstNode resides.
+    def linenr
+      # Get line number from third place at range array.
+      # This third item exists in forked EsprimaJS at
+      # https://github.com/nene/esprima/tree/linenr-in-range
+      @node["range"][2]
+    end
+
     # Tests for higher level types which don't correspond directly to
     # Esprima AST types.
 
