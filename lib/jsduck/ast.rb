@@ -175,7 +175,7 @@ module JsDuck
         elsif ast.object_expression?
           detect_class_members_from_object(cls, ast)
         elsif ast.array_expression?
-          detect_class_members_from_array(cls, ast.raw)
+          detect_class_members_from_array(cls, ast)
         end
       end
 
@@ -239,7 +239,7 @@ module JsDuck
       cls[:enum] = {:doc_only => true}
 
       ast["elements"].each do |el|
-        detect_method_or_property(cls, key_value(el), el, el)
+        detect_method_or_property(cls, el.key_value, el.raw, el.raw)
       end
     end
 
