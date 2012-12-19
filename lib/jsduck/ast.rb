@@ -206,15 +206,15 @@ module JsDuck
         else
           case key
           when "config"
-            cls[:members] += make_configs(value.raw, {:accessor => true})
+            cls[:members] += make_configs(value, {:accessor => true})
           when "cachedConfig"
-            cls[:members] += make_configs(value.raw, {:accessor => true})
+            cls[:members] += make_configs(value, {:accessor => true})
           when "eventedConfig"
-            cls[:members] += make_configs(value.raw, {:accessor => true, :evented => true})
+            cls[:members] += make_configs(value, {:accessor => true, :evented => true})
           when "statics"
-            cls[:members] += make_statics(value.raw)
+            cls[:members] += make_statics(value)
           when "inheritableStatics"
-            cls[:members] += make_statics(value.raw, {:inheritable => true})
+            cls[:members] += make_statics(value, {:inheritable => true})
           else
             detect_method_or_property(cls, key, value.raw, pair.raw)
           end
@@ -257,10 +257,10 @@ module JsDuck
     def make_configs(ast, defaults={})
       configs = []
 
-      each_pair_in_object_expression(ast) do |name, value, pair|
-        cfg = make_property(name, value, :cfg)
+      ast.each_property do |name, value, pair|
+        cfg = make_property(name, value.raw, :cfg)
         cfg.merge!(defaults)
-        configs << cfg if apply_autodetected(cfg, pair)
+        configs << cfg if apply_autodetected(cfg, pair.raw)
       end
 
       configs
@@ -269,17 +269,17 @@ module JsDuck
     def make_statics(ast, defaults={})
       statics = []
 
-      each_pair_in_object_expression(ast) do |name, value, pair|
-        if function?(value)
-          s = make_method(name, value)
+      ast.each_property do |name, value, pair|
+        if value.function?
+          s = make_method(name, value.raw)
         else
-          s = make_property(name, value)
+          s = make_property(name, value.raw)
         end
 
         s[:meta] = {:static => true}
         s.merge!(defaults)
 
-        statics << s if apply_autodetected(s, pair, defaults[:inheritable])
+        statics << s if apply_autodetected(s, pair.raw, defaults[:inheritable])
       end
 
       statics
