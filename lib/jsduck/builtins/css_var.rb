@@ -1,7 +1,7 @@
 require "jsduck/builtins/tag"
 
 module JsDuck::Builtins
-  class Var < Tag
+  class CssVar < Tag
     def initialize
       @pattern = "var"
     end
