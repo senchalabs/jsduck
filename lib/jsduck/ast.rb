@@ -173,7 +173,7 @@ module JsDuck
         elsif ast.ext_override?
           detect_ext_something(:override, cls, ast)
         elsif ast.object_expression?
-          detect_class_members_from_object(cls, ast.raw)
+          detect_class_members_from_object(cls, ast)
         elsif ast.array_expression?
           detect_class_members_from_array(cls, ast.raw)
         end
@@ -188,7 +188,7 @@ module JsDuck
       args = ast["arguments"]
       cls[type] = args[0].to_s
       if args.length == 2 && args[1].object_expression?
-        detect_class_members_from_object(cls, args[1].raw)
+        detect_class_members_from_object(cls, args[1])
       end
     end
 
@@ -225,8 +225,8 @@ module JsDuck
     # Detects class members from object literal
     def detect_class_members_from_object(cls, ast)
       cls[:members] = []
-      each_pair_in_object_expression(ast) do |key, value, pair|
-        detect_method_or_property(cls, key, value, pair)
+      ast.each_property do |key, value, pair|
+        detect_method_or_property(cls, key, value.raw, pair.raw)
       end
     end
 
