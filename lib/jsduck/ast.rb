@@ -112,15 +112,15 @@ module JsDuck
 
       # foo = ...
       elsif exp && exp.assignment_expression?
-        make_property(exp["left"].to_s, exp["right"].raw)
+        make_property(exp["left"].to_s, exp["right"])
 
       # var foo = ...
       elsif var
-        make_property(var["id"].to_s, var["init"].raw)
+        make_property(var["id"].to_s, var["init"])
 
       # foo: ...
       elsif ast.property?
-        make_property(ast["key"].key_value, ast["value"].raw)
+        make_property(ast["key"].key_value, ast["value"])
 
       # foo;
       elsif exp && exp.identifier?
@@ -249,7 +249,7 @@ module JsDuck
         m = make_method(key, value)
         cls[:members] << m if apply_autodetected(m, pair.raw)
       else
-        p = make_property(key, value.raw)
+        p = make_property(key, value)
         cls[:members] << p if apply_autodetected(p, pair.raw)
       end
     end
@@ -258,7 +258,7 @@ module JsDuck
       configs = []
 
       ast.each_property do |name, value, pair|
-        cfg = make_property(name, value.raw, :cfg)
+        cfg = make_property(name, value, :cfg)
         cfg.merge!(defaults)
         configs << cfg if apply_autodetected(cfg, pair.raw)
       end
@@ -273,7 +273,7 @@ module JsDuck
         if value.function?
           s = make_method(name, value)
         else
-          s = make_property(name, value.raw)
+          s = make_property(name, value)
         end
 
         s[:meta] = {:static => true}
@@ -360,36 +360,13 @@ module JsDuck
       return {
         :tagname => tagname,
         :name => name,
-        :type => make_value_type(ast),
-        :default => make_default(ast),
+        :type => ast && ast.value_type,
+        :default => ast && make_default(ast),
       }
     end
 
     def make_default(ast)
-      ast && to_value(ast) != nil ? to_s(ast) : nil
-    end
-
-    def make_value_type(ast)
-      if ast
-        v = to_value(ast)
-        if v.is_a?(String)
-          "String"
-        elsif v.is_a?(Numeric)
-          "Number"
-        elsif v.is_a?(TrueClass) || v.is_a?(FalseClass)
-          "Boolean"
-        elsif v.is_a?(Array)
-          "Array"
-        elsif v.is_a?(Hash)
-          "Object"
-        elsif v == :regexp
-          "RegExp"
-        else
-          nil
-        end
-      else
-        nil
-      end
+      ast.to_value != nil ? ast.to_s : nil
     end
 
     # -- various helper methods --
