@@ -24,6 +24,11 @@ module JsDuck
       @nodes.each {|p| yield(AstNode.create(p)) }
     end
 
+    # Maps over all the AstNodes in array.
+    def map
+      @nodes.map {|p| yield(AstNode.create(p)) }
+    end
+
   end
 
 end

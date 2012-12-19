@@ -328,22 +328,22 @@ module JsDuck
       return {
         :tagname => :method,
         :name => name,
-        :params => make_params(ast.raw),
-        :chainable => chainable?(ast.raw) && name != "constructor",
+        :params => make_params(ast),
+        :chainable => chainable?(ast) && name != "constructor",
       }
     end
 
     def make_params(ast)
-      if ast && !empty_fn?(ast)
-        ast["params"].map {|p| {:name => to_s(p)} }
+      if ast.function? && !ast.ext_empty_fn?
+        ast["params"].map {|p| {:name => p.to_s} }
       else
         []
       end
     end
 
     def chainable?(ast)
-      if function?(ast) && !empty_fn?(ast)
-        FunctionAst.return_types(ast) == [:this]
+      if ast.function? && !ast.ext_empty_fn?
+        FunctionAst.return_types(ast.raw) == [:this]
       else
         false
       end
