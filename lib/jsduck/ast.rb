@@ -88,23 +88,23 @@ module JsDuck
 
       # function foo() {}
       elsif ast.function?
-        make_method(ast["id"].to_s, ast.raw)
+        make_method(ast["id"].to_s, ast)
 
       # foo = function() {}
       elsif exp && exp.assignment_expression? && exp["right"].function?
-        make_method(exp["left"].to_s, exp["right"].raw)
+        make_method(exp["left"].to_s, exp["right"])
 
       # var foo = function() {}
       elsif var && var["init"] && var["init"].function?
-        make_method(var["id"].to_s, var["init"].raw)
+        make_method(var["id"].to_s, var["init"])
 
       # (function() {})
       elsif exp && exp.function?
-        make_method(exp["id"].to_s || "", exp.raw)
+        make_method(exp["id"].to_s || "", exp)
 
       # foo: function() {}
       elsif ast.property? && ast["value"].function?
-        make_method(ast["key"].key_value, ast["value"].raw)
+        make_method(ast["key"].key_value, ast["value"])
 
       # this.fireEvent("foo", ...)
       elsif exp && exp.fire_event?
@@ -246,7 +246,7 @@ module JsDuck
     # Detects item in object literal either as method or property
     def detect_method_or_property(cls, key, value, pair)
       if value.function?
-        m = make_method(key, value.raw)
+        m = make_method(key, value)
         cls[:members] << m if apply_autodetected(m, pair.raw)
       else
         p = make_property(key, value.raw)
@@ -271,7 +271,7 @@ module JsDuck
 
       ast.each_property do |name, value, pair|
         if value.function?
-          s = make_method(name, value.raw)
+          s = make_method(name, value)
         else
           s = make_property(name, value.raw)
         end
@@ -324,12 +324,12 @@ module JsDuck
       end
     end
 
-    def make_method(name, ast=nil)
+    def make_method(name, ast)
       return {
         :tagname => :method,
         :name => name,
-        :params => make_params(ast),
-        :chainable => chainable?(ast) && name != "constructor",
+        :params => make_params(ast.raw),
+        :chainable => chainable?(ast.raw) && name != "constructor",
       }
     end
 
