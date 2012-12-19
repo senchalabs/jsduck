@@ -169,9 +169,9 @@ module JsDuck
         if ast.ext_define?
           detect_ext_define(cls, ast)
         elsif ast.ext_extend?
-          detect_ext_something(:extends, cls, ast.raw)
+          detect_ext_something(:extends, cls, ast)
         elsif ast.ext_override?
-          detect_ext_something(:override, cls, ast.raw)
+          detect_ext_something(:override, cls, ast)
         elsif ast.object_expression?
           detect_class_members_from_object(cls, ast.raw)
         elsif ast.array_expression?
@@ -186,9 +186,9 @@ module JsDuck
     # The type parameter must be correspondingly either :extend or :override.
     def detect_ext_something(type, cls, ast)
       args = ast["arguments"]
-      cls[type] = to_s(args[0])
-      if args.length == 2 && object?(args[1])
-        detect_class_members_from_object(cls, args[1])
+      cls[type] = args[0].to_s
+      if args.length == 2 && args[1].object_expression?
+        detect_class_members_from_object(cls, args[1].raw)
       end
     end
 
