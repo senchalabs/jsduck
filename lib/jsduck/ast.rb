@@ -216,7 +216,7 @@ module JsDuck
           when "inheritableStatics"
             cls[:members] += make_statics(value, {:inheritable => true})
           else
-            detect_method_or_property(cls, key, value.raw, pair.raw)
+            detect_method_or_property(cls, key, value, pair)
           end
         end
       end
@@ -226,7 +226,7 @@ module JsDuck
     def detect_class_members_from_object(cls, ast)
       cls[:members] = []
       ast.each_property do |key, value, pair|
-        detect_method_or_property(cls, key, value.raw, pair.raw)
+        detect_method_or_property(cls, key, value, pair)
       end
     end
 
@@ -239,18 +239,18 @@ module JsDuck
       cls[:enum] = {:doc_only => true}
 
       ast["elements"].each do |el|
-        detect_method_or_property(cls, el.key_value, el.raw, el.raw)
+        detect_method_or_property(cls, el.key_value, el, el)
       end
     end
 
     # Detects item in object literal either as method or property
     def detect_method_or_property(cls, key, value, pair)
-      if function?(value)
-        m = make_method(key, value)
-        cls[:members] << m if apply_autodetected(m, pair)
+      if value.function?
+        m = make_method(key, value.raw)
+        cls[:members] << m if apply_autodetected(m, pair.raw)
       else
-        p = make_property(key, value)
-        cls[:members] << p if apply_autodetected(p, pair)
+        p = make_property(key, value.raw)
+        cls[:members] << p if apply_autodetected(p, pair.raw)
       end
     end
 
