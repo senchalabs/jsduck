@@ -14,7 +14,7 @@ describe JsDuck::Aggregator do
     end
 
     it "gets protected attribute" do
-      @doc[:meta][:protected].should == true
+      @doc[:protected].should == true
     end
   end
 

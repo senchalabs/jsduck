@@ -65,6 +65,8 @@ module JsDuck
         if !parent || parent[:private]
           m[:private] = true
         end
+
+        m[:protected] = true if parent && parent[:protected]
       end
     end
 

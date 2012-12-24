@@ -112,6 +112,7 @@ module JsDuck
         :owner => cfg[:owner],
         :files => cfg[:files],
         :private => cfg[:private],
+        :protected => cfg[:protected],
         :autodetected => cfg[:autodetected],
         :meta => clone_meta(cfg),
       })

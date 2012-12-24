@@ -679,7 +679,7 @@ describe JsDuck::Aggregator do
     end
 
     it "inherits @protected" do
-      @property[:meta][:protected].should == true
+      @property[:protected].should == true
     end
 
     it "inherits @deprecated" do
@@ -713,7 +713,7 @@ describe JsDuck::Aggregator do
     end
 
     it "inherits @protected" do
-      @property[:meta][:protected].should == true
+      @property[:protected].should == true
     end
 
     it "keeps @readonly" do
