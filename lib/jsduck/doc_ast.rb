@@ -134,11 +134,15 @@ module JsDuck
     # Detects properties common for each doc-object and adds them
     def add_shared(hash, doc_map)
       hash.merge!({
-        :inheritable => !!doc_map[:inheritable],
-        :hide => !!doc_map[:hide],
         :inheritdoc => extract(doc_map, :inheritdoc),
         :meta => detect_meta(doc_map),
       })
+
+      doc_map.each_pair do |key, value|
+        if tag = BuiltinsRegistry.get_by_key(key)
+          hash[key] = tag.process_doc(value)
+        end
+      end
 
       # copy :private also to main hash
       hash[:private] = hash[:meta][:private] ? true : nil

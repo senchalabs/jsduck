@@ -11,6 +11,7 @@ module JsDuck
       @patterns = {}
       @ext_define_patterns = {}
       @ext_define_defaults = {}
+      @keys = {}
       load_tag_classes(File.dirname(__FILE__) + "/builtins")
       instantiate_tags
     end
@@ -33,6 +34,9 @@ module JsDuck
         if tag.ext_define_default
           @ext_define_defaults.merge!(tag.ext_define_default)
         end
+        if tag.key
+          @keys[tag.key] = tag
+        end
       end
     end
 
@@ -49,6 +53,11 @@ module JsDuck
     # Default values for class config when Ext.define is encountered.
     attr_reader :ext_define_defaults
 
+    # Accesses tag by key name - the symbol under which the tag data
+    # is stored in final hash.
+    def get_by_key(key)
+      @keys[key]
+    end
   end
 
 end

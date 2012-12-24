@@ -5,11 +5,16 @@ module JsDuck::Builtins
   class Hide < Tag
     def initialize
       @pattern = "hide"
+      @key = :hide
     end
 
     # @hide
     def parse(p)
       p.add_tag(:hide)
+    end
+
+    def process_doc(docs)
+      true
     end
   end
 end
