@@ -1,15 +1,11 @@
-require "jsduck/builtins/tag"
+require "jsduck/builtins/boolean_tag"
 
 module JsDuck::Builtins
-  class Singleton < Tag
+  class Singleton < BooleanTag
     def initialize
-      @pattern = "singleton"
+      @key = :singleton
       @ext_define_pattern = "singleton"
-    end
-
-    # @singleton
-    def parse(p)
-      p.add_tag(:singleton)
+      super
     end
 
     def parse_ext_define(cls, ast)

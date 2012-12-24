@@ -48,7 +48,6 @@ module JsDuck
         :mixins => detect_list(:mixins, doc_map),
         :alternateClassNames => detect_list(:alternateClassNames, doc_map),
         :aliases => detect_aliases(doc_map),
-        :singleton => !!doc_map[:singleton],
         :requires => detect_list(:requires, doc_map),
         :uses => detect_list(:uses, doc_map),
         :enum => detect_enum(doc_map),
