@@ -120,7 +120,7 @@ module JsDuck
     # When no class precedes them - they too are orphaned.
     def add_member(node)
       # Completely ignore member if @ignore used
-      return if node[:meta][:ignore]
+      return if node[:ignore]
 
       if node[:owner]
         if @classes[node[:owner]]
@@ -197,7 +197,7 @@ module JsDuck
     # Gets rid of classes marked with @ignore
     def remove_ignored_classes
       @documentation.delete_if do |cls|
-        if cls[:meta][:ignore]
+        if cls[:ignore]
           @classes.delete(cls["name"])
           true
         end
