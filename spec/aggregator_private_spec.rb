@@ -18,10 +18,6 @@ describe JsDuck::Aggregator do
     it "marks item as private" do
       @doc[:private].should == true
     end
-
-    it "adds private meta tag" do
-      @doc[:meta][:private].should == true
-    end
   end
 
   describe "@ignore in member" do

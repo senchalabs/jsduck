@@ -585,7 +585,7 @@ describe JsDuck::Aggregator do
     end
 
     it "inherits being public from parent (meta)" do
-      @cfg[:meta][:private].should == nil
+      @cfg[:private].should == nil
     end
   end
 
@@ -629,7 +629,7 @@ describe JsDuck::Aggregator do
     end
 
     it "inherits being public from parent (meta)" do
-      @cfg[:meta][:private].should == nil
+      @cfg[:private].should == nil
     end
   end
 
@@ -652,7 +652,7 @@ describe JsDuck::Aggregator do
     end
 
     it "becomes private (meta)" do
-      @cfg[:meta][:private].should == true
+      @cfg[:private].should == true
     end
   end
 

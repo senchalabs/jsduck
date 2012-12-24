@@ -89,9 +89,6 @@ module JsDuck
       h[:name] = merge_name(docs, code)
       h[:id] = JsDuck::Class.member_id(h)
 
-      # Copy private to meta
-      h[:meta][:private] = h[:private] if h[:private]
-
       # Copy :static and :inheritable flags from code if present
       h[:meta][:static] = true if code[:meta] && code[:meta][:static]
       h[:inheritable] = true if code[:inheritable]

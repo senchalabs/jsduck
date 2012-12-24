@@ -1,5 +1,6 @@
 require 'jsduck/icons'
 require 'jsduck/class_name'
+require 'jsduck/builtins_registry'
 
 module JsDuck
 
@@ -47,7 +48,7 @@ module JsDuck
         :fullName => alias_display_name(key)+": "+name,
         :icon => Icons::class_icon(cls) + "-redirect",
         :url => "#!/api/" + cls[:name],
-        :meta => cls[:meta],
+        :meta => combine_meta(cls),
         :sort => 0,
       }
     end
@@ -58,7 +59,7 @@ module JsDuck
         :fullName => cls[:name],
         :icon => Icons::class_icon(cls),
         :url => "#!/api/" + cls[:name],
-        :meta => cls[:meta],
+        :meta => combine_meta(cls),
         :sort => 1,
       }
     end
@@ -70,7 +71,7 @@ module JsDuck
         :type => :class,
         :icon => Icons::class_icon(cls) + "-redirect",
         :url => "#!/api/" + cls[:name],
-        :meta => cls[:meta],
+        :meta => combine_meta(cls),
         :sort => 2,
       }
     end
@@ -81,7 +82,7 @@ module JsDuck
         :fullName => cls[:name] + "." + member[:name],
         :icon => "icon-" + member[:tagname].to_s,
         :url => "#!/api/" + cls[:name] + "-" + member[:id],
-        :meta => member[:meta],
+        :meta => combine_meta(member),
         :sort => 3,
       }
     end
@@ -117,6 +118,17 @@ module JsDuck
         :meta => {},
         :sort => 4,
       }
+    end
+
+    # Add data for builtin tags with signatures to :meta field.
+    def combine_meta(hash)
+      meta = {}
+      BuiltinsRegistry.signatures.each do |s|
+        key = s[:key]
+        meta[key] = hash[key] if hash[key]
+      end
+      meta.merge!(hash[:meta])
+      meta
     end
 
     # Some alias types are shown differently.

@@ -63,7 +63,7 @@ module JsDuck
     def resolve_visibility(m, parent)
       if m[:autodetected] && !JsDuck::Class.constructor?(m)
         if !parent || parent[:private]
-          m[:meta][:private] = m[:private] = true
+          m[:private] = true
         end
       end
     end

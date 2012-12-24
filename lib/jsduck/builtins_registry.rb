@@ -12,6 +12,7 @@ module JsDuck
       @ext_define_patterns = {}
       @ext_define_defaults = {}
       @keys = {}
+      @signatures = []
       load_tag_classes(File.dirname(__FILE__) + "/builtins")
       instantiate_tags
     end
@@ -37,6 +38,10 @@ module JsDuck
         if tag.key
           @keys[tag.key] = tag
         end
+        if tag.signature
+          tag.signature[:key] = tag.key
+          @signatures << tag.signature
+        end
       end
     end
 
@@ -58,6 +63,10 @@ module JsDuck
     def get_by_key(key)
       @keys[key]
     end
+
+    # Array of attributes to be shown in member signatures
+    # (and in order they should be shown in).
+    attr_reader :signatures
   end
 
 end

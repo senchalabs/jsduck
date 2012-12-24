@@ -90,6 +90,7 @@ module JsDuck
       context[:meta].each_pair do |key, value|
         if value
           tag = MetaTagRegistry.instance[key]
+          puts key if tag == nil
           tag.context = context
           result[key] = tag.to_html(value)
         end

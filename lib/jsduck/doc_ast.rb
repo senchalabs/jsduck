@@ -138,9 +138,6 @@ module JsDuck
 
       hash[:meta] = detect_meta(doc_map)
 
-      # copy :private also to main hash
-      hash[:private] = hash[:meta][:private] ? true : nil
-
       return hash
     end
 

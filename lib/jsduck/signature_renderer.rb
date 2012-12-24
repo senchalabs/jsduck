@@ -1,3 +1,4 @@
+require 'jsduck/builtins_renderer'
 require 'jsduck/meta_tag_renderer'
 
 module JsDuck
@@ -83,7 +84,7 @@ module JsDuck
     end
 
     def render_meta
-      MetaTagRenderer.render_signature(@m)
+      BuiltinsRenderer.render_signature(@m) + MetaTagRenderer.render_signature(@m)
     end
 
   end

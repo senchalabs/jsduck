@@ -1,6 +1,7 @@
 require 'jsduck/renderer'
 require 'jsduck/doc_formatter'
 require 'jsduck/exporter/full'
+require 'jsduck/builtins_registry'
 
 module JsDuck
   module Exporter
@@ -28,6 +29,7 @@ module JsDuck
         cls[:members] = compact_members_group(cls[:members])
         cls[:statics] = compact_members_group(cls[:statics])
         cls[:files] = compact_files(cls[:files])
+        cls[:meta] = combine_meta(cls)
         cls
       end
 
@@ -41,10 +43,22 @@ module JsDuck
 
       def compact_member(m)
         m_copy = {}
-        [:name, :tagname, :owner, :meta, :id].each do |key|
+        [:name, :tagname, :owner, :id].each do |key|
           m_copy[key] = m[key]
         end
+        m_copy[:meta] = combine_meta(m)
         m_copy
+      end
+
+      # Add data for builtin tags with signatures to :meta field.
+      def combine_meta(m)
+        meta = {}
+        BuiltinsRegistry.signatures.each do |s|
+          key = s[:key]
+          meta[key] = m[key] if m[key]
+        end
+        meta.merge!(m[:meta])
+        meta
       end
 
       # Remove full path from filename for privacy considerations as the

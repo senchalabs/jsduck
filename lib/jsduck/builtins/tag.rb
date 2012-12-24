@@ -21,6 +21,15 @@ module JsDuck::Builtins
     def process_doc(docs)
     end
 
+    # The text to display in member signature.  Must be a hash
+    # defining the short and long versions of the signature text:
+    #
+    #     {:long => "something", :short => "SOM"}
+    #
+    # Additionally the hash can contain a :tooltip which is the text
+    # to be shown when the signature bubble is hovered over in docs.
+    attr_reader :signature
+
     # Defines the name of object property in Ext.define()
     # configuration which, when encountered, will cause the
     # #parse_ext_define method to be invoked.
