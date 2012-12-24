@@ -1,14 +1,10 @@
-require "jsduck/builtins/tag"
+require "jsduck/builtins/boolean_tag"
 
 module JsDuck::Builtins
-  class Evented < Tag
+  class Evented < BooleanTag
     def initialize
-      @pattern = "evented"
-    end
-
-    # @evented
-    def parse(p)
-      p.add_tag(:evented)
+      @key = :evented
+      super
     end
   end
 end

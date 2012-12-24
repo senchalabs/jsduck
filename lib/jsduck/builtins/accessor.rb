@@ -1,14 +1,10 @@
-require "jsduck/builtins/tag"
+require "jsduck/builtins/boolean_tag"
 
 module JsDuck::Builtins
-  class Accessor < Tag
+  class Accessor < BooleanTag
     def initialize
-      @pattern = "accessor"
-    end
-
-    # @accessor
-    def parse(p)
-      p.add_tag(:accessor)
+      @key = :accessor
+      super
     end
   end
 end

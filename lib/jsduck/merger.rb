@@ -81,6 +81,10 @@ module JsDuck
       docs.each_pair do |key, value|
         h[key] = docs[key] || code[key] || defaults[key]
       end
+      # Add items only detected in code.
+      code.each_pair do |key, value|
+        h[key] = value unless h.has_key?(key)
+      end
 
       h[:name] = merge_name(docs, code)
       h[:id] = JsDuck::Class.member_id(h)
