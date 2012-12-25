@@ -24,7 +24,7 @@ describe JsDuck::Aggregator do
     end
 
     it "gets abstract attribute" do
-      @doc[:meta][:abstract].should == true
+      @doc[:abstract].should == true
     end
   end
 
