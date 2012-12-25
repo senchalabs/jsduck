@@ -44,7 +44,7 @@ describe JsDuck::Aggregator do
     end
 
     it "gets readonly attribute" do
-      @doc[:meta][:readonly].should == true
+      @doc[:readonly].should == true
     end
   end
 

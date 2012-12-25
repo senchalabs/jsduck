@@ -717,7 +717,7 @@ describe JsDuck::Aggregator do
     end
 
     it "keeps @readonly" do
-      @property[:meta][:readonly].should == true
+      @property[:readonly].should == true
     end
 
     it "overrides @deprecated of parent with its own @deprecated" do
