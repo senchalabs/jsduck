@@ -42,7 +42,7 @@ module JsDuck
     end
 
     def chainable?(m)
-      m[:meta][:chainable]
+      m[:chainable]
     end
 
     def returns_this?(m)
@@ -50,7 +50,7 @@ module JsDuck
     end
 
     def add_chainable(m)
-      m[:meta][:chainable] = true
+      m[:chainable] = true
     end
 
     def add_return_this(m)

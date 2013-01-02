@@ -28,7 +28,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects method as chainable" do
-      cls[:members][0][:meta][:chainable].should == true
+      cls[:members][0][:chainable].should == true
     end
 
     it "keeps the original @return docs" do
@@ -50,7 +50,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects method as chainable" do
-      cls[:members][0][:meta][:chainable].should == true
+      cls[:members][0][:chainable].should == true
     end
 
     it "adds @return {MyClass} this" do
@@ -78,7 +78,7 @@ describe JsDuck::Aggregator do
     end
 
     it "adds @chainable tag" do
-      cls[:members][0][:meta][:chainable].should == true
+      cls[:members][0][:chainable].should == true
     end
   end
 
@@ -101,7 +101,7 @@ describe JsDuck::Aggregator do
     end
 
     it "adds @chainable tag" do
-      cls[:members][0][:meta][:chainable].should == true
+      cls[:members][0][:chainable].should == true
     end
   end
 
@@ -119,7 +119,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't add @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -137,7 +137,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't add @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -155,7 +155,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't add @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -170,7 +170,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't add @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -186,7 +186,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't add @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -202,7 +202,7 @@ describe JsDuck::Aggregator do
     end
 
     it "adds @chainable tag" do
-      cls[:members][0][:meta][:chainable].should == true
+      cls[:members][0][:chainable].should == true
     end
 
     it "adds @return {MyClass} this" do
@@ -275,7 +275,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't get @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
