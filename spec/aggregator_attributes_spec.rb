@@ -63,6 +63,24 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "event with @preventable" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @event foo
+         * @preventable bla blah
+         * Some event
+         */
+      EOS
+    end
+    it "gets preventable attribute" do
+      @doc[:preventable].should == true
+    end
+    it "ignores text right after @preventable" do
+      @doc[:doc].should == "Some event"
+    end
+  end
+
   describe "a normal config option" do
     before do
       @doc = parse(<<-EOS)[0]

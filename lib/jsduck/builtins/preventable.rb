@@ -1,21 +1,29 @@
-require "jsduck/meta_tag"
+require "jsduck/builtins/tag"
 
-module JsDuck::Tag
-  # Implementation of @preventable tag
-  class Preventable < JsDuck::MetaTag
+module JsDuck::Builtins
+  # That's pretty much a boolean tag, but we don't inherit from
+  # BooleanTag as unlike other boolean tags it can be followed by some
+  # text.
+  class Preventable < Tag
     def initialize
-      @name = "preventable"
+      @pattern = "preventable"
       @key = :preventable
       @signature = {:long => "preventable", :short => "PREV"}
+      @html_position = :bottom
     end
 
     # @preventable is optionally followed by some method name, but we
     # don't document it.
-    def to_value(contents)
+    def parse(p)
+      p.add_tag(@key)
+      p.match(/.*$/)
+    end
+
+    def process_doc(docs)
       true
     end
 
-    def to_html(v)
+    def to_html(contents, formatter)
       <<-EOHTML
         <div class='signature-box preventable'>
         <p>This action following this event is <b>preventable</b>.
@@ -25,4 +33,3 @@ module JsDuck::Tag
     end
   end
 end
-
