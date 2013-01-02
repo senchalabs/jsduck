@@ -7,7 +7,7 @@ describe JsDuck::Aggregator do
 
   class AuthorTag < JsDuck::MetaTag
     def initialize
-      @name = "author"
+      @name = "xauthor"
       @key = :author
     end
   end
@@ -52,8 +52,8 @@ describe JsDuck::Aggregator do
       @doc = parse(<<-EOS)[0]
         /**
          * @class MyClass
-         * @author John Doe
-         * @author Steve Jobs
+         * @xauthor John Doe
+         * @xauthor Steve Jobs
          * @email Kill Bill
          * Comment here.
          */
@@ -77,7 +77,7 @@ describe JsDuck::Aggregator do
          * @long Some text
          * on multiple
          * lines.
-         * @author Steve Jobs
+         * @xauthor Steve Jobs
          */
       EOS
     end
@@ -96,7 +96,7 @@ describe JsDuck::Aggregator do
         /**
          * @class MyClass
          * @long Me {@link foo bar}
-         * @author Me {@link foo bar}
+         * @xauthor Me {@link foo bar}
          */
       EOS
     end
@@ -115,7 +115,7 @@ describe JsDuck::Aggregator do
         /**
          * @method foo
          * Some description.
-         * @author John Doe
+         * @xauthor John Doe
          */
       EOS
     end
