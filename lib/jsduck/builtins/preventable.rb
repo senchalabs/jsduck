@@ -23,7 +23,7 @@ module JsDuck::Builtins
       true
     end
 
-    def to_html(context, formatter)
+    def to_html(context)
       <<-EOHTML
         <div class='signature-box preventable'>
         <p>This action following this event is <b>preventable</b>.

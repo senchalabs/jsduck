@@ -15,9 +15,17 @@ module JsDuck
     def initialize(relations, formatter)
       @relations = relations
       @formatter = formatter
+      @include_types = true
+      inject_formatter_to_tags
+    end
+
+    def inject_formatter_to_tags
       # inject formatter to all meta-tags
       MetaTagRegistry.instance.formatter = formatter
-      @include_types = true
+      # inject formatter to all html-producing tags
+      BuiltinsRegistry.get_html_renderers.each do |tag|
+        tag.formatter = @formatter
+      end
     end
 
     # Runs the formatter on doc object of a class.
@@ -104,7 +112,7 @@ module JsDuck
       result = {}
       BuiltinsRegistry.get_html_renderers.each do |tag|
         if context[tag.key]
-          result[tag.key] = tag.to_html(context, @formatter)
+          result[tag.key] = tag.to_html(context)
         end
       end
       result

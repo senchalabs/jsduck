@@ -60,11 +60,17 @@ module JsDuck::Builtins
     #
     # It gets passed the full class/member hash. It should return an
     # HTML string to inject into document.  For help in that it can
-    # use the #format method of formatter, which is also passed in, to
-    # easily support Markdown and {@link/img} tags inside the
-    # contents.
-    def to_html(context, formatter)
+    # use the #format method to easily support Markdown and
+    # {@link/img} tags inside the contents.
+    def to_html(context)
     end
+
+    # Helper method for use if #to_html for rendering markdown.
+    def format(markdown)
+      @formatter.format(markdown)
+    end
+
+    attr_accessor :formatter
 
     # Returns all descendants of JsDuck::Builtins::Tag class.
     def self.descendants

@@ -22,12 +22,12 @@ module JsDuck::Builtins
       v
     end
 
-    def to_html(context, formatter)
+    def to_html(context)
       v = context[:deprecated][:version] ? "since " + context[:deprecated][:version] : ""
       <<-EOHTML
         <div class='signature-box deprecated'>
         <p>This #{context[:tagname]} has been <strong>deprecated</strong> #{v}</p>
-        #{formatter.format(depr[:text])}
+        #{format(depr[:text])}
         </div>
       EOHTML
     end
