@@ -90,7 +90,7 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "is not required by default" do
-      @doc[:meta][:required].should_not == true
+      @doc[:required].should_not == true
     end
   end
 
@@ -103,7 +103,7 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "has required flag set to true" do
-      @doc[:meta][:required].should == true
+      @doc[:required].should == true
     end
   end
 
@@ -117,10 +117,10 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "doesn't become a required class" do
-      @doc[:meta][:required].should_not == true
+      @doc[:required].should_not == true
     end
     it "contains required config" do
-      @doc[:members][0][:meta][:required].should == true
+      @doc[:members][0][:required].should == true
     end
   end
 

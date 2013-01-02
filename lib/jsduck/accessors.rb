@@ -122,13 +122,11 @@ module JsDuck
       str[0,1].upcase + str[1..-1]
     end
 
-    # Create copy of all meta attributes of config, except the
-    # :required which only applies to configs and must not be
-    # propagated to methods or events.
+    # Create copy of all meta attributes of config.
     def clone_meta(cfg)
       h = {}
       cfg[:meta].each_pair do |key, value|
-        h[key] = value unless key == :required
+        h[key] = value
       end
       h
     end

@@ -136,6 +136,8 @@ module JsDuck
         end
       end
 
+      hash[:required] = true if detect_required(doc_map)
+
       hash[:meta] = detect_meta(doc_map)
 
       return hash
@@ -204,7 +206,6 @@ module JsDuck
         meta[key] = tag.to_value(tag.boolean ? true : value)
       end
 
-      meta[:required] = true if detect_required(doc_map)
       meta
     end
 

@@ -164,7 +164,7 @@ module JsDuck
       configs = @cls[:members][:cfg] + @cls[:statics][:cfg]
 
       if configs.length > 0
-        required, optional = configs.partition {|c| c[:meta][:required] }
+        required, optional = configs.partition {|c| c[:required] }
         return [
           "<div class='members-section'>",
             required.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",

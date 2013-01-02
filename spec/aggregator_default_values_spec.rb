@@ -114,7 +114,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't default to required" do
-      @cfg[:meta][:required].should_not == true
+      @cfg[:required].should_not == true
     end
   end
 
