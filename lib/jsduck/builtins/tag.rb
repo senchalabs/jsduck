@@ -58,15 +58,13 @@ module JsDuck::Builtins
     # Implement #to_html to transform tag data to HTML to be included
     # into documentation.
     #
-    # It gets passed the value returned by #process_doc method. It
-    # should return an HTML string to inject into document.  For help
-    # in that it can use the #format method of formatter, which is
-    # also passed in, to easily support Markdown and {@link/img} tags
-    # inside the contents.
-    def to_html(data, formatter)
+    # It gets passed the full class/member hash. It should return an
+    # HTML string to inject into document.  For help in that it can
+    # use the #format method of formatter, which is also passed in, to
+    # easily support Markdown and {@link/img} tags inside the
+    # contents.
+    def to_html(context, formatter)
     end
-
-    attr_accessor :context
 
     # Returns all descendants of JsDuck::Builtins::Tag class.
     def self.descendants

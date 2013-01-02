@@ -9,7 +9,7 @@ module JsDuck::Builtins
       super
     end
 
-    def to_html(contents, formatter)
+    def to_html(context, formatter)
       <<-EOHTML
       <div class='signature-box template'>
       <p>This is a <a href="#!/guide/components">template method</a>.
