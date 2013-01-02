@@ -59,7 +59,7 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "gets template attribute" do
-      @doc[:meta][:template].should == true
+      @doc[:template].should == true
     end
   end
 

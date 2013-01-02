@@ -13,6 +13,7 @@ module JsDuck
       @ext_define_defaults = {}
       @keys = {}
       @signatures = []
+      @html_renderers = {:top => [], :bottom => []}
       load_tag_classes(File.dirname(__FILE__) + "/builtins")
       instantiate_tags
     end
@@ -42,6 +43,9 @@ module JsDuck
           tag.signature[:key] = tag.key
           @signatures << tag.signature
         end
+        if tag.html_position
+          @html_renderers[tag.html_position] << tag
+        end
       end
     end
 
@@ -62,6 +66,17 @@ module JsDuck
     # is stored in final hash.
     def get_by_key(key)
       @keys[key]
+    end
+
+    # Returns tags for rendering HTML.  One can ask for tags for
+    # rendering either :top or :bottom section.  By default renderers
+    # for both sections are returned.
+    def get_html_renderers(position = :all)
+      if position == :all
+        @html_renderers[:top] + @html_renderers[:bottom]
+      else
+        @html_renderers[position]
+      end
     end
 
     # Array of attributes to be shown in member signatures

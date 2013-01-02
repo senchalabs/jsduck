@@ -20,10 +20,12 @@ module JsDuck
             render_sidebar,
             "<div class='doc-contents'>",
               render_meta_data(@cls[:html_meta], :top),
+              render_builtins(@cls[:html_builtins], :top),
               render_private_class_notice,
               @cls[:doc],
               render_enum_class_notice,
               render_meta_data(@cls[:html_meta], :bottom),
+              render_builtins(@cls[:html_builtins], :bottom),
             "</div>",
             "<div class='members'>",
               render_all_sections,
@@ -63,6 +65,10 @@ module JsDuck
 
     def render_meta_data(meta_data, position)
       MetaTagRenderer.render(meta_data, position)
+    end
+
+    def render_builtins(member, position)
+      BuiltinsRenderer.render(member, position)
     end
 
     def render_sidebar
@@ -248,6 +254,7 @@ module JsDuck
       doc = []
 
       doc << render_meta_data(m[:html_meta], :top)
+      doc << render_builtins(m[:html_builtins], :top)
 
       doc << m[:doc]
 
@@ -256,6 +263,7 @@ module JsDuck
       end
 
       doc << render_meta_data(m[:html_meta], :bottom)
+      doc << render_builtins(m[:html_builtins], :bottom)
 
       doc << render_params_and_return(m)
 

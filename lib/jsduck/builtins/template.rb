@@ -1,16 +1,15 @@
-require "jsduck/meta_tag"
+require "jsduck/builtins/boolean_tag"
 
-module JsDuck::Tag
-  # Implementation of @template tag
-  class Template < JsDuck::MetaTag
+module JsDuck::Builtins
+  class Template < BooleanTag
     def initialize
-      @name = "template"
       @key = :template
       @signature = {:long => "template", :short => "TMP"}
-      @boolean = true
+      @html_position = :bottom
+      super
     end
 
-    def to_html(contents)
+    def to_html(contents, formatter)
       <<-EOHTML
       <div class='signature-box template'>
       <p>This is a <a href="#!/guide/components">template method</a>.
@@ -21,4 +20,3 @@ module JsDuck::Tag
     end
   end
 end
-

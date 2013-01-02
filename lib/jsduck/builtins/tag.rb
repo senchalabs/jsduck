@@ -47,6 +47,21 @@ module JsDuck::Builtins
     def parse_ext_define(cls, ast)
     end
 
+    # Whether to render the tag before other content (:top) or after
+    # it (:bottom).  Must be defined together with #to_html method.
+    attr_accessor :html_position
+
+    # Implement #to_html to transform tag data to HTML to be included
+    # into documentation.
+    #
+    # It gets passed the value returned by #process_doc method. It
+    # should return an HTML string to inject into document.  For help
+    # in that it can use the #format method of formatter, which is
+    # also passed in, to easily support Markdown and {@link/img} tags
+    # inside the contents.
+    def to_html(data, formatter)
+    end
+
     # Returns all descendants of JsDuck::Builtins::Tag class.
     def self.descendants
       result = []

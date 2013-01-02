@@ -30,6 +30,7 @@ module JsDuck
       # format all members (except hidden ones)
       cls[:members] = cls[:members].map {|m| m[:hide] ? m : format_member(m)  }
       cls[:html_meta] = format_meta_data(cls)
+      cls[:html_builtins] = format_builtins_data(cls)
       cls
     end
 
@@ -56,6 +57,7 @@ module JsDuck
       m[:throws] = m[:throws].map {|t| format_item(t, is_css_tag) } if m[:throws]
       m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
       m[:html_meta] = format_meta_data(m)
+      m[:html_builtins] = format_builtins_data(m)
       m
     end
 
@@ -93,6 +95,16 @@ module JsDuck
           puts key if tag == nil
           tag.context = context
           result[key] = tag.to_html(value)
+        end
+      end
+      result
+    end
+
+    def format_builtins_data(context)
+      result = {}
+      BuiltinsRegistry.get_html_renderers.each do |tag|
+        if context[tag.key]
+          result[tag.key] = tag.to_html(context[tag.key], @formatter)
         end
       end
       result
