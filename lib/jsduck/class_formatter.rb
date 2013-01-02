@@ -104,6 +104,7 @@ module JsDuck
       result = {}
       BuiltinsRegistry.get_html_renderers.each do |tag|
         if context[tag.key]
+          tag.context = context
           result[tag.key] = tag.to_html(context[tag.key], @formatter)
         end
       end

@@ -6,6 +6,10 @@ module JsDuck::Builtins
     # For example: "cfg"
     attr_reader :pattern
 
+    # True to include all lines up to next @tag as part of this tag's
+    # :doc property.
+    attr_reader :multiline
+
     # Called by DocParser when the @tag is reached to do the parsing
     # from that point forward.  Gets passed an instance of DocParser.
     def parse(p)
@@ -61,6 +65,8 @@ module JsDuck::Builtins
     # inside the contents.
     def to_html(data, formatter)
     end
+
+    attr_accessor :context
 
     # Returns all descendants of JsDuck::Builtins::Tag class.
     def self.descendants

@@ -126,7 +126,7 @@ describe JsDuck::Aggregator do
 
   describe "member with @deprecated" do
     before do
-      @deprecated = parse(<<-EOS)[0][:meta][:deprecated]
+      @deprecated = parse(<<-EOS)[0][:deprecated]
         /**
          * @deprecated 4.0 Use escapeRegex instead.
          */
@@ -148,7 +148,7 @@ describe JsDuck::Aggregator do
 
   describe "member with @deprecated without version number" do
     before do
-      @deprecated = parse(<<-EOS)[0][:meta][:deprecated]
+      @deprecated = parse(<<-EOS)[0][:deprecated]
         /**
          * @deprecated Use escapeRegex instead.
          */

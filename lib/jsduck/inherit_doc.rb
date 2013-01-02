@@ -38,6 +38,7 @@ module JsDuck
 
         if m[:autodetected]
           m[:meta] = parent[:meta].merge(m[:meta])
+          m[:deprecated] = parent[:deprecated] if parent[:deprecated] && !m[:deprecated]
         end
 
         # remember properties that have changed to configs

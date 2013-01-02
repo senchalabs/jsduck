@@ -683,8 +683,8 @@ describe JsDuck::Aggregator do
     end
 
     it "inherits @deprecated" do
-      @property[:meta][:deprecated][:version].should == "4.0"
-      @property[:meta][:deprecated][:text].should == "Use something else."
+      @property[:deprecated][:version].should == "4.0"
+      @property[:deprecated][:text].should == "Use something else."
     end
   end
 
@@ -721,7 +721,7 @@ describe JsDuck::Aggregator do
     end
 
     it "overrides @deprecated of parent with its own @deprecated" do
-      @property[:meta][:deprecated][:version].should == "4.0"
+      @property[:deprecated][:version].should == "4.0"
     end
   end
 
