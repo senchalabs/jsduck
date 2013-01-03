@@ -6,7 +6,9 @@ module JsDuck::Builtins
   # which will take care of setting up @pattern with the same name.
   class BooleanTag < Tag
     def initialize
-      @pattern = @key.to_s
+      if @key
+        @pattern = @key.to_s
+      end
     end
 
     # Parses just the name of the tag.
