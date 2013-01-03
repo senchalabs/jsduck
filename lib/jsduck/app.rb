@@ -1,6 +1,7 @@
 require 'jsduck/batch_parser'
 require 'jsduck/assets'
 require 'jsduck/meta_tag_registry'
+require 'jsduck/builtins_registry'
 require 'jsduck/export_writer'
 require 'jsduck/web_writer'
 
@@ -39,6 +40,7 @@ module JsDuck
 
       # Give access to assets from all meta-tags
       MetaTagRegistry.instance.assets = @assets
+      BuiltinsRegistry.assets = @assets
     end
 
     def generate_export

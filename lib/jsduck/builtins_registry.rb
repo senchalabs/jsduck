@@ -89,6 +89,11 @@ module JsDuck
     # Array of attributes to be shown in member signatures
     # (and in order they should be shown in).
     attr_reader :signatures
+
+    # Gives access to assets from @aside tag
+    def assets=(assets)
+      @keys[:aside].assets = assets
+    end
   end
 
 end
