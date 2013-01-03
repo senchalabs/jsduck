@@ -1,6 +1,6 @@
 require 'jsduck/type_parser'
 require 'jsduck/logger'
-require 'jsduck/builtins_registry'
+require 'jsduck/tag_registry'
 require 'jsduck/shortener'
 require 'jsduck/util/html'
 
@@ -21,7 +21,7 @@ module JsDuck
 
     def inject_formatter_to_tags
       # inject formatter to all html-producing tags
-      BuiltinsRegistry.get_html_renderers.each do |tag|
+      TagRegistry.get_html_renderers.each do |tag|
         tag.formatter = @formatter
       end
     end
@@ -35,7 +35,7 @@ module JsDuck
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
       # format all members (except hidden ones)
       cls[:members] = cls[:members].map {|m| m[:hide] ? m : format_member(m)  }
-      cls[:html_builtins] = format_builtins_data(cls)
+      cls[:html_tags] = format_tags_data(cls)
       cls
     end
 
@@ -61,7 +61,7 @@ module JsDuck
       m[:return] = format_item(m[:return], is_css_tag) if m[:return]
       m[:throws] = m[:throws].map {|t| format_item(t, is_css_tag) } if m[:throws]
       m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
-      m[:html_builtins] = format_builtins_data(m)
+      m[:html_tags] = format_tags_data(m)
       m
     end
 
@@ -91,9 +91,9 @@ module JsDuck
       end
     end
 
-    def format_builtins_data(context)
+    def format_tags_data(context)
       result = {}
-      BuiltinsRegistry.get_html_renderers.each do |tag|
+      TagRegistry.get_html_renderers.each do |tag|
         if context[tag.key]
           result[tag.key] = tag.to_html(context)
         end

@@ -1,5 +1,6 @@
 require 'jsduck/util/html'
 require 'jsduck/signature_renderer'
+require 'jsduck/tag_renderer'
 
 module JsDuck
 
@@ -18,11 +19,11 @@ module JsDuck
           "<div>",
             render_sidebar,
             "<div class='doc-contents'>",
-              render_builtins(@cls[:html_builtins], :top),
+              render_tags(@cls[:html_tags], :top),
               render_private_class_notice,
               @cls[:doc],
               render_enum_class_notice,
-              render_builtins(@cls[:html_builtins], :bottom),
+              render_tags(@cls[:html_tags], :bottom),
             "</div>",
             "<div class='members'>",
               render_all_sections,
@@ -60,8 +61,8 @@ module JsDuck
       end
     end
 
-    def render_builtins(member, position)
-      BuiltinsRenderer.render(member, position)
+    def render_tags(member, position)
+      TagRenderer.render(member, position)
     end
 
     def render_sidebar
@@ -246,7 +247,7 @@ module JsDuck
     def render_long_doc(m)
       doc = []
 
-      doc << render_builtins(m[:html_builtins], :top)
+      doc << render_tags(m[:html_tags], :top)
 
       doc << m[:doc]
 
@@ -254,7 +255,7 @@ module JsDuck
         doc << "<p>Defaults to: <code>" + Util::HTML.escape(m[:default]) + "</code></p>"
       end
 
-      doc << render_builtins(m[:html_builtins], :bottom)
+      doc << render_tags(m[:html_tags], :bottom)
 
       doc << render_params_and_return(m)
 

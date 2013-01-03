@@ -1,7 +1,7 @@
 require 'jsduck/renderer'
 require 'jsduck/doc_formatter'
 require 'jsduck/exporter/full'
-require 'jsduck/builtins_registry'
+require 'jsduck/tag_registry'
 
 module JsDuck
   module Exporter
@@ -53,7 +53,7 @@ module JsDuck
       # Add data for builtin tags with signatures to :meta field.
       def combine_meta(m)
         meta = {}
-        BuiltinsRegistry.signatures.each do |s|
+        TagRegistry.signatures.each do |s|
           key = s[:key]
           meta[key] = m[key] if m[key]
         end

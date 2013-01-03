@@ -1,7 +1,7 @@
 require 'strscan'
 require 'jsduck/doc_comment'
 require 'jsduck/doc_scanner'
-require 'jsduck/builtins_registry'
+require 'jsduck/tag_registry'
 require 'jsduck/logger'
 
 module JsDuck
@@ -26,11 +26,6 @@ module JsDuck
   # JsDuck::DocFormatter.
   #
   class DocParser < DocScanner
-    def initialize
-      super
-      @builtins = BuiltinsRegistry
-    end
-
     def parse(input, filename="", linenr=0)
       @filename = filename
       @linenr = linenr
@@ -86,7 +81,7 @@ module JsDuck
 
       if !name
         # ignore
-      elsif tag = @builtins.get_tag(name)
+      elsif tag = TagRegistry.get_tag(name)
         match(/\w+/)
         tag.parse(self)
         skip_white

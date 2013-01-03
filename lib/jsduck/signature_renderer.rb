@@ -1,4 +1,4 @@
-require 'jsduck/builtins_renderer'
+require 'jsduck/tag_renderer'
 
 module JsDuck
 
@@ -83,7 +83,7 @@ module JsDuck
     end
 
     def render_tag_signature
-      BuiltinsRenderer.render_signature(@m)
+      TagRenderer.render_signature(@m)
     end
 
   end

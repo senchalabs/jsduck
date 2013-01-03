@@ -1,4 +1,5 @@
 require 'jsduck/logger'
+require 'jsduck/tag_registry'
 
 module JsDuck
 
@@ -129,7 +130,7 @@ module JsDuck
     # Detects properties common for each doc-object and adds them
     def add_shared(hash, doc_map)
       doc_map.each_pair do |key, value|
-        if tag = BuiltinsRegistry.get_by_key(key)
+        if tag = TagRegistry.get_by_key(key)
           hash[key] = tag.process_doc(value)
         end
       end
@@ -270,7 +271,7 @@ module JsDuck
     # Combines :doc-s of most tags
     # Ignores tags that have doc comment themselves and subproperty tags
     def detect_doc(docs)
-      ignore_tags = [:param, :return, :throws] + BuiltinsRegistry.multiliners.map {|t| t.key }
+      ignore_tags = [:param, :return, :throws] + TagRegistry.multiliners.map {|t| t.key }
       doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) && !subproperty?(tag) }
       doc_tags.map { |tag| tag[:doc] }.compact.join(" ")
     end

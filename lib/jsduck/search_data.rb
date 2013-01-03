@@ -1,6 +1,6 @@
 require 'jsduck/icons'
 require 'jsduck/class_name'
-require 'jsduck/builtins_registry'
+require 'jsduck/tag_registry'
 
 module JsDuck
 
@@ -123,7 +123,7 @@ module JsDuck
     # Add data for builtin tags with signatures to :meta field.
     def combine_meta(hash)
       meta = {}
-      BuiltinsRegistry.signatures.each do |s|
+      TagRegistry.signatures.each do |s|
         key = s[:key]
         meta[key] = hash[key] if hash[key]
       end

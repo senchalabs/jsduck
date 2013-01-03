@@ -1,6 +1,6 @@
 require "jsduck/function_ast"
 require "jsduck/ast_node"
-require "jsduck/builtins_registry"
+require "jsduck/tag_registry"
 
 module JsDuck
 
@@ -180,12 +180,12 @@ module JsDuck
     # given cls Hash
     def detect_ext_define(cls, ast)
       # defaults
-      cls.merge!(BuiltinsRegistry.ext_define_defaults)
+      cls.merge!(TagRegistry.ext_define_defaults)
       cls[:members] = []
       cls[:code_type] = :ext_define
 
       ast["arguments"][1].each_property do |key, value, pair|
-        if tag = BuiltinsRegistry.get_ext_define(key)
+        if tag = TagRegistry.get_ext_define(key)
           tag.parse_ext_define(cls, value)
         else
           case key

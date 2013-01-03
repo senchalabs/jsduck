@@ -1,6 +1,6 @@
 require 'jsduck/batch_parser'
 require 'jsduck/assets'
-require 'jsduck/builtins_registry'
+require 'jsduck/tag_registry'
 require 'jsduck/export_writer'
 require 'jsduck/web_writer'
 
@@ -38,7 +38,7 @@ module JsDuck
       @assets = Assets.new(@relations, @opts)
 
       # Give access to assets from all tags
-      BuiltinsRegistry.assets = @assets
+      TagRegistry.assets = @assets
     end
 
     def generate_export
