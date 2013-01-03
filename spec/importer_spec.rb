@@ -24,18 +24,18 @@ describe "JsDuck::Importer#generate_since_tags" do
     ]
 
     @relations = [
-      {:name => "VeryOldClass", :meta => {}, :alternateClassNames => [], :members => [
-          {:tagname => :cfg, :id => "cfg-foo", :meta => {}},
-          {:tagname => :cfg, :id => "cfg-bar", :meta => {}},
-          {:tagname => :cfg, :id => "cfg-baz", :meta => {}},
-          {:tagname => :cfg, :id => "cfg-zap", :meta => {:since => "1.0"}},
-          {:tagname => :cfg, :id => "cfg-new", :meta => {:new => true}},
+      {:name => "VeryOldClass", :alternateClassNames => [], :members => [
+          {:tagname => :cfg, :id => "cfg-foo"},
+          {:tagname => :cfg, :id => "cfg-bar"},
+          {:tagname => :cfg, :id => "cfg-baz"},
+          {:tagname => :cfg, :id => "cfg-zap", :since => "1.0"},
+          {:tagname => :cfg, :id => "cfg-new", :new => true},
         ]},
-      {:name => "OldClass", :meta => {}, :alternateClassNames => []},
-      {:name => "NewClass", :meta => {}, :alternateClassNames => []},
-      {:name => "ClassWithNewName", :meta => {}, :alternateClassNames => ["ClassWithOldName"]},
-      {:name => "ExplicitSinceClass", :meta => {:since => "1.0"}, :alternateClassNames => []},
-      {:name => "ExplicitNewClass", :meta => {:new => true}, :alternateClassNames => []},
+      {:name => "OldClass", :alternateClassNames => []},
+      {:name => "NewClass", :alternateClassNames => []},
+      {:name => "ClassWithNewName", :alternateClassNames => ["ClassWithOldName"]},
+      {:name => "ExplicitSinceClass", :since => "1.0", :alternateClassNames => []},
+      {:name => "ExplicitNewClass", :new => true, :alternateClassNames => []},
     ].map {|cfg| JsDuck::Class.new(cfg) }
 
     JsDuck::Importer.generate_since_tags(@versions, @relations)
@@ -43,9 +43,9 @@ describe "JsDuck::Importer#generate_since_tags" do
     # build className/member index for easy lookup in specs
     @stuff = {}
     @relations.each do |cls|
-      @stuff[cls[:name]] = cls[:meta]
+      @stuff[cls[:name]] = cls
       cls[:members].each do |cfg|
-        @stuff[cls[:name]+"#"+cfg[:id]] = cfg[:meta]
+        @stuff[cls[:name]+"#"+cfg[:id]] = cfg
       end
     end
   end
@@ -159,9 +159,9 @@ describe "JsDuck::Importer#generate_since_tags with explicit new_since" do
     ]
 
     @relations = [
-      {:name => "VeryOldClass", :meta => {}, :alternateClassNames => []},
-      {:name => "OldClass", :meta => {}, :alternateClassNames => []},
-      {:name => "NewClass", :meta => {}, :alternateClassNames => []},
+      {:name => "VeryOldClass", :alternateClassNames => []},
+      {:name => "OldClass", :alternateClassNames => []},
+      {:name => "NewClass", :alternateClassNames => []},
     ].map {|cfg| JsDuck::Class.new(cfg) }
 
     JsDuck::Importer.generate_since_tags(@versions, @relations, "2.0")
@@ -170,14 +170,14 @@ describe "JsDuck::Importer#generate_since_tags with explicit new_since" do
   # @since
 
   it "gives no @new to VeryOldClass" do
-    @relations[0][:meta][:new].should_not == true
+    @relations[0][:new].should_not == true
   end
 
   it "gives @new to OldClass" do
-    @relations[1][:meta][:new].should == true
+    @relations[1][:new].should == true
   end
 
   it "gives no @new to NewClass" do
-    @relations[2][:meta][:new].should == true
+    @relations[2][:new].should == true
   end
 end

@@ -64,14 +64,14 @@ module JsDuck
       new_versions = build_new_versions_map(versions, new_since)
 
       relations.each do |cls|
-        v = cls[:meta][:since] || class_since(versions, cls)
-        cls[:meta][:since] = v
-        cls[:meta][:new] = true if new_versions[v]
+        v = cls[:since] || class_since(versions, cls)
+        cls[:since] = v
+        cls[:new] = true if new_versions[v]
 
         cls.all_local_members.each do |m|
-          v = m[:meta][:since] || member_since(versions, cls, m)
-          m[:meta][:since] = v
-          m[:meta][:new] = true if new_versions[v]
+          v = m[:since] || member_since(versions, cls, m)
+          m[:since] = v
+          m[:new] = true if new_versions[v]
         end
       end
     end

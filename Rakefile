@@ -257,6 +257,8 @@ task :sdk => :sass do
     "--output", OUT_DIR,
     "--config", "#{SDK_DIR}/extjs/docs/config.json",
     "--examples-base-url", "extjs-build/examples/",
+    # "--import", "4.1:../docs.sencha.com/exports/extjs-4.1.1",
+    # "--import", "4.2",
     "--seo"
   )
   runner.add_debug

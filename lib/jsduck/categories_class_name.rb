@@ -25,7 +25,7 @@ module JsDuck
 
     # Adds small star to new classes in the current version.
     def render_new_label(cls)
-      if cls[:meta][:new]
+      if cls[:new]
         "&nbsp;<span class='new-class' title='New class'>#{stars(1)}</span>"
       else
         n = new_members_count(cls)
@@ -53,7 +53,7 @@ module JsDuck
 
     # Returns number of new members the class has in the current version
     def new_members_count(cls)
-      cls.find_members(:local => true).find_all {|m| m[:meta][:new] && !m[:private] }.length
+      cls.find_members(:local => true).find_all {|m| m[:new] && !m[:private] }.length
     end
 
   end
