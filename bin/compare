@@ -105,7 +105,7 @@ def read_ignored_members(filename)
 end
 
 def normal_public_member?(m)
-  !m["private"] && !m["meta"]["protected"] && !m["meta"]["deprecated"] && !m["meta"]["removed"]
+  !m["private"] && !m["protected"] && !m["deprecated"] && !m["removed"]
 end
 
 def unify_default(v)
@@ -115,7 +115,7 @@ end
 def visibility(m)
   if m["private"]
     "private"
-  elsif m["meta"]["protected"]
+  elsif m["protected"]
     "protected"
   else
     "public"
@@ -125,7 +125,7 @@ end
 # Finds equivalent member to given member from class.
 # Returns the member found or nil.
 def find_member(cls, member)
-  cls[member["meta"]["static"] ? "statics" : "members"][member["tagname"]].find do |m|
+  cls[member["static"] ? "statics" : "members"][member["tagname"]].find do |m|
     member["name"] == m["name"]
   end
 end
@@ -190,9 +190,9 @@ def compare_classes(cls1, cls2)
         :what => "removed",
         :other => other ? {
           :type => other["tagname"],
-          :static => other["meta"]["static"],
+          :static => other["static"],
           :private => other["private"],
-          :protected => other["meta"]["protected"],
+          :protected => other["protected"],
         } : nil
       }
     end
