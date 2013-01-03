@@ -43,7 +43,7 @@ module JsDuck
         end
 
         # Exclude all non-inheritable static members
-        @global_map_by_id.delete_if {|id, m| m[:meta][:static] && !m[:inheritable] }
+        @global_map_by_id.delete_if {|id, m| m[:static] && !m[:inheritable] }
 
         merge!(@global_map_by_id, local_by_id)
       end

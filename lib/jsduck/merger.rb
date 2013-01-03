@@ -90,7 +90,7 @@ module JsDuck
       h[:id] = JsDuck::Class.member_id(h)
 
       # Copy :static and :inheritable flags from code if present
-      h[:meta][:static] = true if code[:meta] && code[:meta][:static]
+      h[:static] = true if code[:static]
       h[:inheritable] = true if code[:inheritable]
 
       # Remember auto-detection info

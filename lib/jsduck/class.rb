@@ -162,9 +162,9 @@ module JsDuck
       end
 
       if query[:static] == true
-        ms = ms.find_all {|m| m[:meta] && m[:meta][:static] }
+        ms = ms.find_all {|m| m[:static] }
       elsif query[:static] == false
-        ms = ms.reject {|m| m[:meta] && m[:meta][:static] }
+        ms = ms.reject {|m| m[:static] }
       end
 
       ms
@@ -190,7 +190,7 @@ module JsDuck
     def self.member_id(m)
       # Sanitize $ in member names with something safer
       name = m[:name].gsub(/\$/, 'S-')
-      "#{m[:meta][:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
+      "#{m[:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
     end
 
     # Loops through all available member types,

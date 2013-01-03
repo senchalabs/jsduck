@@ -96,12 +96,12 @@ module JsDuck
             # one when we ignore the static members. If there's more,
             # report ambiguity. If there's only static members, also
             # report ambiguity.
-            instance_ms = ms.find_all {|m| !m[:meta][:static] }
+            instance_ms = ms.find_all {|m| !m[:static] }
             if instance_ms.length > 1
               alternatives = instance_ms.map {|m| "#{m[:tagname]} in #{m[:owner]}" }.join(", ")
               Logger.warn(:link_ambiguous, "#{full_link} is ambiguous: "+alternatives, file, line)
             elsif instance_ms.length == 0
-              static_ms = ms.find_all {|m| m[:meta][:static] }
+              static_ms = ms.find_all {|m| m[:static] }
               alternatives = static_ms.map {|m| "static " + m[:tagname].to_s }.join(", ")
               Logger.warn(:link_ambiguous, "#{full_link} is ambiguous: "+alternatives, file, line)
             end
@@ -210,8 +210,8 @@ module JsDuck
       def get_matching_member(cls, query)
         ms = find_members(cls, query)
         if ms.length > 1
-          instance_ms = ms.find_all {|m| !m[:meta][:static] }
-          instance_ms.length > 0 ? instance_ms[0] : ms.find_all {|m| m[:meta][:static] }[0]
+          instance_ms = ms.find_all {|m| !m[:static] }
+          instance_ms.length > 0 ? instance_ms[0] : ms.find_all {|m| m[:static] }[0]
         else
           ms[0]
         end

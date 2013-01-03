@@ -129,7 +129,7 @@ module JsDuck
       inherit = m[:inheritdoc] || {}
       name = inherit[:member] || m[:name]
       tagname = inherit[:type] || m[:tagname]
-      static = inherit[:static] || m[:meta][:static]
+      static = inherit[:static] || m[:static]
 
       if m[:autodetected]
         # Auto-detected properties can override either a property or a

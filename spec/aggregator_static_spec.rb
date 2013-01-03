@@ -20,7 +20,7 @@ describe JsDuck::Aggregator do
     end
 
     it "labels that method as static" do
-      @doc[:meta][:static].should == true
+      @doc[:static].should == true
     end
 
     it "doesn't detect inheritable property" do
@@ -41,7 +41,7 @@ describe JsDuck::Aggregator do
     end
 
     it "labels that method as static" do
-      @doc[:meta][:static].should == true
+      @doc[:static].should == true
     end
 
     it "detects the @inheritable property" do
@@ -93,7 +93,7 @@ describe JsDuck::Aggregator do
       end
 
       it "with :static flag" do
-        member[:meta][:static].should == true
+        member[:static].should == true
       end
 
       it "with :autodetected flag" do
@@ -135,7 +135,7 @@ describe JsDuck::Aggregator do
       end
 
       it "with :static flag" do
-        member[:meta][:static].should == true
+        member[:static].should == true
       end
 
       it "with docs" do
@@ -176,7 +176,7 @@ describe JsDuck::Aggregator do
       end
 
       it "with :static flag" do
-        member[:meta][:static].should == true
+        member[:static].should == true
       end
 
       it "with :inheritable flag" do
@@ -205,7 +205,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects a static" do
-      member[:meta][:static].should == true
+      member[:static].should == true
     end
 
     it "detects a method" do
@@ -236,7 +236,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects a static" do
-      member[:meta][:static].should == true
+      member[:static].should == true
     end
 
     it "detects a method" do

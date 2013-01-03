@@ -34,7 +34,7 @@ describe JsDuck::Aggregator do
     end
 
     it "gets static attribute" do
-      @doc[:meta][:static].should == true
+      @doc[:static].should == true
     end
   end
 

@@ -32,7 +32,7 @@ describe "JsDuck::Ast detecting" do
         members[0][:name].should == "foo"
       end
       it "with :static flag" do
-        members[0][:meta][:static].should == true
+        members[0][:static].should == true
       end
     end
 
@@ -44,7 +44,7 @@ describe "JsDuck::Ast detecting" do
         members[1][:name].should == "bar"
       end
       it "with :static flag" do
-        members[1][:meta][:static].should == true
+        members[1][:static].should == true
       end
     end
 

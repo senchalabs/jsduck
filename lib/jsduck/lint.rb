@@ -85,7 +85,7 @@ module JsDuck
       @relations.each do |cls|
         members = {:members => {}, :statics => {}}
         cls.all_local_members.each do |m|
-          group = (m[:meta] && m[:meta][:static]) ? :statics : :members
+          group = m[:static] ? :statics : :members
           type = m[:tagname]
           name = m[:name]
           hash = members[group][type] || {}

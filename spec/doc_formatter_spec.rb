@@ -14,7 +14,7 @@ describe JsDuck::DocFormatter do
         :members => [
           {:tagname => :method, :name => "bar", :id => "method-bar"},
           {:tagname => :method, :name => "id", :id => "static-method-id",
-            :meta => {:static => true}},
+            :static => true},
         ],
       }),
       JsDuck::Class.new({
@@ -25,7 +25,7 @@ describe JsDuck::DocFormatter do
         :members => [
           {:tagname => :cfg, :name => "bar", :id => "cfg-bar"},
           {:tagname => :method, :name => "id", :id => "static-method-id",
-            :meta => {:static => true}},
+            :static => true},
           {:tagname => :method, :name => "privMeth", :id => "method-privMeth", :private => true},
         ],
         :alternateClassNames => ["FooBar"]
@@ -337,7 +337,7 @@ describe JsDuck::DocFormatter do
             :members => [
               {:tagname => :method, :name => "select", :id => "method-select", :meta => {}},
               {:tagname => :method, :name => "select", :id => "static-method-select",
-                :meta => {:static => true}},
+                :static => true},
             ]
           })
         ])

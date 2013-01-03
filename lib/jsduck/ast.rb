@@ -260,7 +260,7 @@ module JsDuck
           s = make_property(name, value)
         end
 
-        s[:meta] = {:static => true}
+        s[:static] = true
         s.merge!(defaults)
 
         statics << s if apply_autodetected(s, pair, defaults[:inheritable])
