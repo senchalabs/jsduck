@@ -21,12 +21,12 @@ module JsDuck
 
     # Loads tags from given dir.
     def load_tag_classes(dirname)
-      Dir[dirname+"/**/*.rb"].sort.each {|file| require(file) }
+      Dir[dirname+"/**/*.rb"].each {|file| require(file) }
     end
 
     # Instantiates all descendants of JsDuck::Builtins::Tag
     def instantiate_tags
-      JsDuck::Builtins::Tag.descendants.each do |cls|
+      tag_classes.each do |cls|
         tag = cls.new()
         Array(tag.pattern).each do |pattern|
           @patterns[pattern] = tag
@@ -51,6 +51,13 @@ module JsDuck
           @html_renderers[tag.html_position] << tag
         end
       end
+    end
+
+    # Returns all available Tag classes sorted alphabetically.  This
+    # ensures attributes in member signatures are always rendered in
+    # the same order.
+    def tag_classes
+      JsDuck::Builtins::Tag.descendants.sort {|a, b| a.to_s <=> b.to_s }
     end
 
     # Accesses tag by @name pattern
