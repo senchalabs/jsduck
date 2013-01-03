@@ -39,7 +39,7 @@ module JsDuck
       re = Regexp.new("^" + name.split(/\*/, -1).map {|part| Regexp.escape(part) }.join('.*') + "$")
 
       classes = @relations.to_a.find_all do |cls|
-        re =~ cls[:name] && !cls[:private] && !deprecated?(cls)
+        re =~ cls[:name] && !cls[:private] && !cls[:deprecated]
       end.map {|cls| cls[:name] }.sort
 
       if classes.length == 0
@@ -62,15 +62,12 @@ module JsDuck
 
       # Check that each existing non-private & non-deprecated class is listed
       @relations.each do |cls|
-        unless listed_classes[cls[:name]] || cls[:private] || deprecated?(cls)
+        unless listed_classes[cls[:name]] || cls[:private] || cls[:deprecated]
           Logger.warn(:cat_class_missing, "Class '#{cls[:name]}' not found in categories file", @filename)
         end
       end
     end
 
-    def deprecated?(cls)
-      cls[:meta] && cls[:meta][:deprecated]
-    end
   end
 
 end

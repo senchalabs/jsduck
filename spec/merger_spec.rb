@@ -13,7 +13,6 @@ describe JsDuck::Merger do
         :comment => {
           :tagname => :cfg,
           :name => nil,
-          :meta => {},
           :type => "String",
           :doc => "My Config"
         },
@@ -49,7 +48,6 @@ describe JsDuck::Merger do
         :comment => {
           :tagname => :property,
           :name => nil,
-          :meta => {},
           :type => nil,
           :doc => "Hello world"
         },
@@ -76,4 +74,3 @@ describe JsDuck::Merger do
   end
 
 end
-

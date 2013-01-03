@@ -1,5 +1,4 @@
 require 'jsduck/builtins_renderer'
-require 'jsduck/meta_tag_renderer'
 
 module JsDuck
 
@@ -20,7 +19,7 @@ module JsDuck
         render_new,
         render_link,
         render_type,
-        render_meta,
+        render_tag_signature,
       ]
     end
 
@@ -83,8 +82,8 @@ module JsDuck
       @m[:tagname] == :method && @m[:return][:type] != "undefined"
     end
 
-    def render_meta
-      BuiltinsRenderer.render_signature(@m) + MetaTagRenderer.render_signature(@m)
+    def render_tag_signature
+      BuiltinsRenderer.render_signature(@m)
     end
 
   end

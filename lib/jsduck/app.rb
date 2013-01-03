@@ -1,6 +1,5 @@
 require 'jsduck/batch_parser'
 require 'jsduck/assets'
-require 'jsduck/meta_tag_registry'
 require 'jsduck/builtins_registry'
 require 'jsduck/export_writer'
 require 'jsduck/web_writer'
@@ -38,8 +37,7 @@ module JsDuck
       # Initialize guides, videos, examples, ...
       @assets = Assets.new(@relations, @opts)
 
-      # Give access to assets from all meta-tags
-      MetaTagRegistry.instance.assets = @assets
+      # Give access to assets from all tags
       BuiltinsRegistry.assets = @assets
     end
 

@@ -127,7 +127,6 @@ module JsDuck
         key = s[:key]
         meta[key] = hash[key] if hash[key]
       end
-      meta.merge!(hash[:meta])
       meta
     end
 

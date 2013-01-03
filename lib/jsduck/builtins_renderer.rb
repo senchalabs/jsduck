@@ -6,7 +6,7 @@ module JsDuck
   class BuiltinsRenderer
     # Renders tags of a particular section.
     #
-    # Returns array of rendered HTML or nil if no meta data.
+    # Returns array of rendered HTML or nil if no tag data.
     def self.render(html_data, position)
       return if html_data.size == 0
 

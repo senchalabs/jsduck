@@ -2,7 +2,6 @@ require 'strscan'
 require 'jsduck/doc_comment'
 require 'jsduck/doc_scanner'
 require 'jsduck/builtins_registry'
-require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
 
 module JsDuck
@@ -30,7 +29,6 @@ module JsDuck
     def initialize
       super
       @builtins = BuiltinsRegistry
-      @meta_tags = MetaTagRegistry.instance
     end
 
     def parse(input, filename="", linenr=0)
@@ -80,7 +78,6 @@ module JsDuck
     #
     # - When @ is not followed by any word chars, do nothing.
     # - When it's one of the builtin tags, process it as such.
-    # - When it's one of the meta-tags, process it as such.
     # - When it's something else, print a warning.
     #
     def parse_at_tag
@@ -93,37 +90,9 @@ module JsDuck
         match(/\w+/)
         tag.parse(self)
         skip_white
-      elsif tagdef = @meta_tags[name]
-        match(/\w+/)
-        parse_meta_tag(tagdef)
       else
         Logger.warn(:tag, "Unsupported tag: @#{name}", @filename, @linenr)
         @current_tag[:doc] += "@"
-      end
-    end
-
-    # Matches the given meta-tag
-    def parse_meta_tag(tag)
-      prev_tag = @current_tag
-
-      add_tag(:meta)
-      @current_tag[:name] = tag.key
-      skip_horiz_white
-
-      if tag.boolean
-        # For boolean tags, only scan the tag name and switch context
-        # back to previous tag.
-        skip_white
-        @current_tag = prev_tag
-      elsif tag.multiline
-        # For multiline tags we leave the tag open for :doc addition
-        # just like with built-in multiline tags.
-      else
-        # Fors singleline tags, scan to the end of line and finish the
-        # tag.
-        @current_tag[:doc] = match(/.*$/).strip
-        skip_white
-        @current_tag = prev_tag
       end
     end
 

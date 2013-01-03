@@ -1,5 +1,4 @@
 require 'jsduck/logger'
-require 'jsduck/meta_tag_registry'
 
 module JsDuck
 
@@ -12,7 +11,6 @@ module JsDuck
     def initialize
       @filename = ""
       @linenr = 0
-      @meta_tags = MetaTagRegistry.instance
     end
 
     # Given tagname and array of tags from DocParser, produces docs
@@ -138,8 +136,6 @@ module JsDuck
 
       hash[:required] = true if detect_required(doc_map)
 
-      hash[:meta] = detect_meta(doc_map)
-
       return hash
     end
 
@@ -192,21 +188,6 @@ module JsDuck
       else
         nil
       end
-    end
-
-    def detect_meta(doc_map)
-      meta = {}
-      (doc_map[:meta] || []).map do |tag|
-        meta[tag[:name]] = [] unless meta[tag[:name]]
-        meta[tag[:name]] << tag[:doc]
-      end
-
-      meta.each_pair do |key, value|
-        tag = @meta_tags[key]
-        meta[key] = tag.to_value(tag.boolean ? true : value)
-      end
-
-      meta
     end
 
     def detect_required(doc_map)
@@ -289,7 +270,7 @@ module JsDuck
     # Combines :doc-s of most tags
     # Ignores tags that have doc comment themselves and subproperty tags
     def detect_doc(docs)
-      ignore_tags = [:param, :return, :throws, :meta] + BuiltinsRegistry.multiliners.map {|t| t.key }
+      ignore_tags = [:param, :return, :throws] + BuiltinsRegistry.multiliners.map {|t| t.key }
       doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) && !subproperty?(tag) }
       doc_tags.map { |tag| tag[:doc] }.compact.join(" ")
     end

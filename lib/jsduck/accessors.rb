@@ -114,21 +114,11 @@ module JsDuck
         :private => cfg[:private],
         :protected => cfg[:protected],
         :autodetected => cfg[:autodetected],
-        :meta => clone_meta(cfg),
       })
     end
 
     def upcase_first(str)
       str[0,1].upcase + str[1..-1]
-    end
-
-    # Create copy of all meta attributes of config.
-    def clone_meta(cfg)
-      h = {}
-      cfg[:meta].each_pair do |key, value|
-        h[key] = value
-      end
-      h
     end
   end
 

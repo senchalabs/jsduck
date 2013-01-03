@@ -583,10 +583,6 @@ describe JsDuck::Aggregator do
     it "inherits being public from parent" do
       @cfg[:private].should == nil
     end
-
-    it "inherits being public from parent (meta)" do
-      @cfg[:private].should == nil
-    end
   end
 
   describe "autoinherit with config:{} through two parents" do
@@ -627,10 +623,6 @@ describe JsDuck::Aggregator do
     it "inherits being public from parent" do
       @cfg[:private].should == nil
     end
-
-    it "inherits being public from parent (meta)" do
-      @cfg[:private].should == nil
-    end
   end
 
   describe "autoinherit with config:{} and no parent" do
@@ -650,13 +642,9 @@ describe JsDuck::Aggregator do
     it "becomes private" do
       @cfg[:private].should == true
     end
-
-    it "becomes private (meta)" do
-      @cfg[:private].should == true
-    end
   end
 
-  describe "autoinherit with several meta tags" do
+  describe "autoinherit with several tags" do
     before do
       @docs = parse(<<-EOF)
         /** */
@@ -688,7 +676,7 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "autoinherit with his own and parent meta tags" do
+  describe "autoinherit with his own and parent tags" do
     before do
       @docs = parse(<<-EOF)
         /** */

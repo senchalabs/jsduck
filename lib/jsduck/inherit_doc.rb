@@ -37,7 +37,6 @@ module JsDuck
         m[:type] = parent[:type] if parent[:type]
 
         if m[:autodetected]
-          m[:meta] = parent[:meta].merge(m[:meta])
           m[:deprecated] = parent[:deprecated] if parent[:deprecated] && !m[:deprecated]
         end
 

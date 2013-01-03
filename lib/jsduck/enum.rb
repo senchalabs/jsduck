@@ -43,7 +43,6 @@ module JsDuck
             :name => name,
             :default => "'" + name + "'",
             :type => "String",
-            :meta => {},
             :private => owner[:private],
             :files => cls[:files],
             :owner => cls[:name],

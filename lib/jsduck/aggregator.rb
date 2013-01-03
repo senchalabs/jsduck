@@ -94,10 +94,6 @@ module JsDuck
       [:mixins, :alternateClassNames, :files].each do |tag|
         old[tag] = old[tag] + new[tag]
       end
-      # Merge meta hashes
-      new[:meta].each_pair do |name, value|
-        old[:meta][name] = old[:meta][name] || value
-      end
       # Merge hashes of arrays
       [:aliases].each do |tag|
         new[tag].each_pair do |key, contents|
@@ -189,7 +185,6 @@ module JsDuck
         :alternateClassNames => [],
         :members => [],
         :aliases => {},
-        :meta => {},
         :files => [{:filename => "", :linenr => 0, :href => ""}],
       })
     end

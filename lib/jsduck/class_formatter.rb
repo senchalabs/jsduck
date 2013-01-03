@@ -1,6 +1,6 @@
 require 'jsduck/type_parser'
 require 'jsduck/logger'
-require 'jsduck/meta_tag_registry'
+require 'jsduck/builtins_registry'
 require 'jsduck/shortener'
 require 'jsduck/util/html'
 
@@ -20,8 +20,6 @@ module JsDuck
     end
 
     def inject_formatter_to_tags
-      # inject formatter to all meta-tags
-      MetaTagRegistry.instance.formatter = @formatter
       # inject formatter to all html-producing tags
       BuiltinsRegistry.get_html_renderers.each do |tag|
         tag.formatter = @formatter
@@ -37,7 +35,6 @@ module JsDuck
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
       # format all members (except hidden ones)
       cls[:members] = cls[:members].map {|m| m[:hide] ? m : format_member(m)  }
-      cls[:html_meta] = format_meta_data(cls)
       cls[:html_builtins] = format_builtins_data(cls)
       cls
     end
@@ -64,13 +61,12 @@ module JsDuck
       m[:return] = format_item(m[:return], is_css_tag) if m[:return]
       m[:throws] = m[:throws].map {|t| format_item(t, is_css_tag) } if m[:throws]
       m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
-      m[:html_meta] = format_meta_data(m)
       m[:html_builtins] = format_builtins_data(m)
       m
     end
 
     def expandable?(m)
-      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:meta][:deprecated] || m[:meta][:template]
+      m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:deprecated] || m[:template]
     end
 
     def format_item(it, is_css_tag)
@@ -93,19 +89,6 @@ module JsDuck
         end
         Util::HTML.escape(type)
       end
-    end
-
-    def format_meta_data(context)
-      result = {}
-      context[:meta].each_pair do |key, value|
-        if value
-          tag = MetaTagRegistry.instance[key]
-          puts key if tag == nil
-          tag.context = context
-          result[key] = tag.to_html(value)
-        end
-      end
-      result
     end
 
     def format_builtins_data(context)

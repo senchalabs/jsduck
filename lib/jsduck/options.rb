@@ -1,5 +1,4 @@
 require 'jsduck/option_parser'
-require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
 require 'jsduck/util/json'
 require 'jsduck/util/os'
@@ -88,7 +87,6 @@ module JsDuck
         "Mixed",
       ]
       @ext4_events = nil
-      @meta_tag_paths = []
 
       @version = "4.5.1"
 
@@ -147,10 +145,6 @@ module JsDuck
         read_filenames(canonical(fname))
       end
       validate
-
-      reg = MetaTagRegistry.new
-      reg.load([:builtins] + @meta_tag_paths)
-      MetaTagRegistry.instance = reg
     end
 
     def create_option_parser
@@ -409,18 +403,6 @@ module JsDuck
         opts.separator ""
         opts.separator "Tweaking:"
         opts.separator ""
-
-        opts.on('--meta-tags=PATH',
-          "Path to custom meta-tag implementations.",
-          "",
-          "Can be a path to single Ruby file or a directory.",
-          "",
-          "This option can be used repeatedly to include multiple",
-          "meta tags from different places.",
-          "",
-          "See also: https://github.com/senchalabs/jsduck/wiki/Custom-tags") do |path|
-          @meta_tag_paths << canonical(path)
-        end
 
         opts.on('--ignore-global',
           "Turns off the creation of 'global' class.",
