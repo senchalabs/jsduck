@@ -21,7 +21,7 @@ module JsDuck
 
     def inject_formatter_to_tags
       # inject formatter to all meta-tags
-      MetaTagRegistry.instance.formatter = formatter
+      MetaTagRegistry.instance.formatter = @formatter
       # inject formatter to all html-producing tags
       BuiltinsRegistry.get_html_renderers.each do |tag|
         tag.formatter = @formatter
