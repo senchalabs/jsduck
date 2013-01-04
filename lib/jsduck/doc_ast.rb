@@ -1,5 +1,5 @@
-require 'jsduck/logger'
 require 'jsduck/tag_registry'
+require 'jsduck/subproperties'
 
 module JsDuck
 
@@ -195,43 +195,16 @@ module JsDuck
     end
 
     def detect_params(doc_map)
-      combine_properties(doc_map[:param] || [])
+      nest_properties(doc_map[:param] || [])
     end
 
     def detect_subproperties(tagname, docs)
       prop_docs = docs.find_all {|tag| tag[:tagname] == tagname}
-      prop_docs.length > 0 ? combine_properties(prop_docs)[0][:properties] : []
+      prop_docs.length > 0 ? nest_properties(prop_docs)[0][:properties] : []
     end
 
-    def combine_properties(raw_items)
-      # First item can't be namespaced, if it is ignore the rest.
-      if raw_items[0] && raw_items[0][:name] =~ /\./
-        return [raw_items[0]]
-      end
-
-      # build name-index of all items
-      index = {}
-      raw_items.each {|it| index[it[:name]] = it }
-
-      # If item name has no dots, add it directly to items array.
-      # Otherwise look up the parent of item and add it as the
-      # property of that parent.
-      items = []
-      raw_items.each do |it|
-        if it[:name] =~ /^(.+)\.([^.]+)$/
-          it[:name] = $2
-          parent = index[$1]
-          if parent
-            parent[:properties] = [] unless parent[:properties]
-            parent[:properties] << it
-          else
-            Logger.warn(:subproperty, "Ignoring subproperty #{$1}.#{$2}, no parent found with name '#{$1}'.", @filename, @linenr)
-          end
-        else
-          items << it
-        end
-      end
-      items
+    def nest_properties(raw_items)
+      Subproperties.nest(raw_items, @filename, @linenr)
     end
 
     def detect_return(doc_map)
