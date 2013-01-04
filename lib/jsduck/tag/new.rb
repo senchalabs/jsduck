@@ -9,13 +9,15 @@ module JsDuck::Tag
 
     # Initializes the tooltip text.
     #
-    # FIXME: Copy-pasted code from old Boolean tag class, doesn't
-    # currently work as it's never called.
-    def create_tooltip!(imports, new_since)
-      if new_since
-        @signature[:tooltip] = "New since #{new_since}"
-      elsif imports.length > 0
-        @signature[:tooltip] = "New since #{imports.last[:version]}"
+    # Gets passed the options object containing command line parameters.
+    #
+    # FIXME: This method is exclusively called only for this New tag
+    # class.  Figure out some way to generalize this.
+    def options=(opts)
+      if opts.new_since
+        @signature[:tooltip] = "New since #{opts.new_since}"
+      elsif opts.imports.length > 0
+        @signature[:tooltip] = "New since #{opts.imports.last[:version]}"
       end
     end
 

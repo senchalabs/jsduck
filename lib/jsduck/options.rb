@@ -149,6 +149,7 @@ module JsDuck
       validate
 
       @custom_tag_paths.each {|path| TagRegistry.load_from(path) }
+      TagRegistry.options = self
     end
 
     def create_option_parser

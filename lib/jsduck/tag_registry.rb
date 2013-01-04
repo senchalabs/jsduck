@@ -103,6 +103,11 @@ module JsDuck
     def assets=(assets)
       @keys[:aside].assets = assets
     end
+
+    # Passes command line options to @new tag
+    def options=(opts)
+      @keys[:new].options = opts
+    end
   end
 
 end
