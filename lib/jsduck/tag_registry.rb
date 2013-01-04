@@ -16,7 +16,13 @@ module JsDuck
       @signatures = []
       @html_renderers = {:top => [], :bottom => []}
 
-      instantiate_tags(TagLoader.new.load_builtins)
+      @loader = TagLoader.new
+      load_from(File.dirname(__FILE__) + "/tag")
+    end
+
+    # Loads and instantiates tags from the given file or dir.
+    def load_from(path)
+      instantiate_tags(@loader.load_from(path))
     end
 
     # Instantiates all descendants of JsDuck::Tag::Tag

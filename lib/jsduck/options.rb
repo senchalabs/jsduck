@@ -4,6 +4,7 @@ require 'jsduck/util/json'
 require 'jsduck/util/os'
 require 'jsduck/util/io'
 require 'jsduck/util/parallel'
+require 'jsduck/tag_registry'
 
 module JsDuck
 
@@ -103,6 +104,7 @@ module JsDuck
       @categories_path = nil
       @source = true
       @images = []
+      @custom_tag_paths = []
       @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
       # appears inline within text, but that just looks ugly in HTML
@@ -145,6 +147,8 @@ module JsDuck
         read_filenames(canonical(fname))
       end
       validate
+
+      @custom_tag_paths.each {|path| TagRegistry.load_from(path) }
     end
 
     def create_option_parser
@@ -403,6 +407,18 @@ module JsDuck
         opts.separator ""
         opts.separator "Tweaking:"
         opts.separator ""
+
+        opts.on('--tags=PATH',
+          "Path to custom tag implementations.",
+          "",
+          "Can be a path to single Ruby file or a directory.",
+          "",
+          "This option can be used repeatedly to include multiple",
+          "tags from different places.",
+          "",
+          "See also: https://github.com/senchalabs/jsduck/wiki/Custom-tags") do |path|
+          @custom_tag_paths << canonical(path)
+        end
 
         opts.on('--ignore-global',
           "Turns off the creation of 'global' class.",
