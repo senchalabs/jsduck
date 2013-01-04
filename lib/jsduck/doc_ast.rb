@@ -63,7 +63,6 @@ module JsDuck
         :doc => detect_doc(docs),
         :params => detect_params(doc_map),
         :return => detect_return(doc_map),
-        :throws => detect_throws(doc_map),
       }, doc_map)
     end
 
@@ -245,17 +244,6 @@ module JsDuck
       }
     end
 
-    def detect_throws(doc_map)
-      return unless doc_map[:throws]
-
-      doc_map[:throws].map do |throws|
-        {
-          :type => throws[:type] || "Object",
-          :doc => throws[:doc] || "",
-        }
-      end
-    end
-
     def detect_enum(doc_map)
       return nil unless extract(doc_map, :class, :enum)
 
@@ -271,7 +259,7 @@ module JsDuck
     # Combines :doc-s of most tags
     # Ignores tags that have doc comment themselves and subproperty tags
     def detect_doc(docs)
-      ignore_tags = [:param, :return, :throws] + TagRegistry.multiliners.map {|t| t.key }
+      ignore_tags = [:param, :return] + TagRegistry.multiliners.map {|t| t.key }
       doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) && !subproperty?(tag) }
       doc_tags.map { |tag| tag[:doc] }.compact.join(" ")
     end
