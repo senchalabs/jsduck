@@ -10,7 +10,7 @@ module JsDuck
     def self.render(html_data, position)
       return if html_data.size == 0
 
-      TagRegistry.get_html_renderers(position).map do |tag|
+      TagRegistry.html_renderers(position).map do |tag|
         html_data[tag.key]
       end
     end

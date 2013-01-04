@@ -60,32 +60,24 @@ module JsDuck
       JsDuck::Tag::Tag.descendants.sort {|a, b| a.to_s <=> b.to_s }
     end
 
-    # Accesses tag by @name pattern
-    def get_tag(name)
-      @patterns[name]
-    end
+    #
+    # Accessors for lists of tags
+    #
 
     # Returns all multiline tags.
     attr_reader :multiliners
 
-    # Accesses tag by Ext.define pattern
-    def get_ext_define(name)
-      @ext_define_patterns[name]
-    end
-
     # Default values for class config when Ext.define is encountered.
     attr_reader :ext_define_defaults
 
-    # Accesses tag by key name - the symbol under which the tag data
-    # is stored in final hash.
-    def get_by_key(key)
-      @keys[key]
-    end
+    # Array of attributes to be shown in member signatures
+    # (and in order they should be shown in).
+    attr_reader :signatures
 
     # Returns tags for rendering HTML.  One can ask for tags for
     # rendering either :top or :bottom section.  By default renderers
     # for both sections are returned.
-    def get_html_renderers(position = :all)
+    def html_renderers(position = :all)
       if position == :all
         @html_renderers[:top] + @html_renderers[:bottom]
       else
@@ -93,9 +85,25 @@ module JsDuck
       end
     end
 
-    # Array of attributes to be shown in member signatures
-    # (and in order they should be shown in).
-    attr_reader :signatures
+    #
+    # Accessors for a single tag
+    #
+
+    # Accesses tag by @name pattern
+    def get_by_pattern(name)
+      @patterns[name]
+    end
+
+    # Accesses tag by Ext.define pattern
+    def get_by_ext_define_pattern(name)
+      @ext_define_patterns[name]
+    end
+
+    # Accesses tag by key name - the symbol under which the tag data
+    # is stored in final hash.
+    def get_by_key(key)
+      @keys[key]
+    end
 
     # Gives access to assets from @aside tag
     def assets=(assets)

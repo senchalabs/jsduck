@@ -21,7 +21,7 @@ module JsDuck
 
     def inject_formatter_to_tags
       # inject formatter to all html-producing tags
-      TagRegistry.get_html_renderers.each do |tag|
+      TagRegistry.html_renderers.each do |tag|
         tag.formatter = @formatter
       end
     end
@@ -93,7 +93,7 @@ module JsDuck
 
     def format_tags_data(context)
       result = {}
-      TagRegistry.get_html_renderers.each do |tag|
+      TagRegistry.html_renderers.each do |tag|
         if context[tag.key]
           result[tag.key] = tag.to_html(context)
         end

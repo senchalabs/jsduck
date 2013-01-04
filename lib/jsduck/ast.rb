@@ -185,7 +185,7 @@ module JsDuck
       cls[:code_type] = :ext_define
 
       ast["arguments"][1].each_property do |key, value, pair|
-        if tag = TagRegistry.get_ext_define(key)
+        if tag = TagRegistry.get_by_ext_define_pattern(key)
           tag.parse_ext_define(cls, value)
         else
           case key

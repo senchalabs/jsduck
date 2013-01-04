@@ -81,7 +81,7 @@ module JsDuck
 
       if !name
         # ignore
-      elsif tag = TagRegistry.get_tag(name)
+      elsif tag = TagRegistry.get_by_pattern(name)
         match(/\w+/)
         tag.parse(self)
         skip_white
