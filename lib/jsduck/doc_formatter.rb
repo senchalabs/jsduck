@@ -16,6 +16,7 @@ module JsDuck
     # command line.  For the actual effect of the options see
     # Inline::* classes.
     def initialize(opts={})
+      @opts = opts
       @inline_link = Inline::Link.new(opts)
       @inline_img = Inline::Img.new(opts)
       @inline_video = Inline::Video.new(opts)
@@ -100,7 +101,7 @@ module JsDuck
       # Keep track of open HTML tags. We're not auto-detecting class
       # names when inside <a>. Also we want to close down the unclosed
       # tags.
-      tags = HtmlStack.new(@doc_context)
+      tags = HtmlStack.new(@opts[:ignore_html] || {}, @doc_context)
 
       while !s.eos? do
         if substitute = @inline_link.replace(s)

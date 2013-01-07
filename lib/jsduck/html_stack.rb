@@ -18,14 +18,19 @@ module JsDuck
   #
   class HtmlStack
 
-    def initialize(doc_context={})
+    # Initializes the stack with two optional parameters:
+    #
+    # @param ignore_html A hash of additional HTML tags that don't need closing.
+    # @param doc_context Filename and linenr of the current doc-comment.
+    def initialize(ignore_html={}, doc_context={})
+      @ignore_html = ignore_html
       @doc_context = doc_context
       @open_tags = []
     end
 
     # Registers opening of a tag.  Returns the tag.
     def open(tag)
-      @open_tags.unshift(tag) unless VOID_TAGS[tag]
+      @open_tags.unshift(tag) unless void?(tag)
       tag
     end
 
@@ -59,6 +64,10 @@ module JsDuck
       ctx = @doc_context
       tag_list = @open_tags.map {|tag| "<#{tag}>" }.join(", ")
       Logger.warn(:html, "Unclosed HTML tag: #{tag_list}", ctx[:filename], ctx[:linenr])
+    end
+
+    def void?(tag)
+      VOID_TAGS[tag] || @ignore_html[tag]
     end
 
     # Tags that don't require closing
