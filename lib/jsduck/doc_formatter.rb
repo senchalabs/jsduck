@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'strscan'
 require 'rdiscount'
+require 'jsduck/logger'
 require 'jsduck/inline/link'
 require 'jsduck/inline/img'
 require 'jsduck/inline/video'
@@ -19,6 +20,7 @@ module JsDuck
       @inline_img = Inline::Img.new(opts)
       @inline_video = Inline::Video.new(opts)
       @inline_example = Inline::Example.new(opts)
+      @doc_context = {}
     end
 
     # Sets base path to prefix images from {@img} tags.
@@ -41,13 +43,14 @@ module JsDuck
     # Sets up instance to work in context of particular doc object.
     # Used for error reporting.
     def doc_context=(doc)
+      @doc_context = doc
       @inline_video.doc_context = doc
       @inline_link.doc_context = doc
     end
 
     # Returns the current documentation context
     def doc_context
-      @inline_link.doc_context
+      @doc_context
     end
 
     # JsDuck::Relations for looking up class names.
@@ -94,10 +97,10 @@ module JsDuck
       s = StringScanner.new(input)
       out = ""
 
-      # Keep track of the nesting level of <a> tags. We're not
-      # auto-detecting class names when inside <a>. Normally links
-      # shouldn't be nested, but just to be extra safe.
-      open_a_tags = 0
+      # Keep track of open HTML tags. We're not auto-detecting class
+      # names when inside <a>. Also we want to close down the unclosed
+      # tags.
+      open_tags = []
 
       while !s.eos? do
         if substitute = @inline_link.replace(s)
@@ -111,27 +114,62 @@ module JsDuck
           out += s.scan(/[{]/)
         elsif substitute = @inline_example.replace(s)
           out += substitute
-        elsif s.check(/<a\b/)
-          # Increment number of open <a> tags.
-          open_a_tags += 1
+        elsif s.check(/<\w/)
+          # Push the tag to open_tags stack
+          out += s.scan(/</)
+          tag = s.scan(/\w+/)
+          open_tags.unshift(tag) unless VOID_TAGS[tag]
+          out += tag
           out += s.scan_until(/>|\Z/)
-        elsif s.check(/<\/a>/)
-          # <a> closed, auto-detection may continue when no more <a> tags open.
-          open_a_tags -= 1
-          out += s.scan(/<\/a>/)
+        elsif s.check(/<\/\w+>/)
+          # Close the tag
+          out += s.scan(/<\//)
+          tag = s.scan(/\w+/)
+          if open_tags.include?(tag)
+            # delete the most recent unclosed tag in our tags stack
+            open_tags.delete_at(open_tags.index(tag))
+          end
+          out += tag
+          out += s.scan(/>/)
         elsif s.check(/</)
-          # Ignore all other HTML tags
-          out += s.scan_until(/>|\Z/)
+          # Ignore plain '<' char.
+          out += s.scan(/</)
         else
           # Replace class names in the following text up to next "<" or "{"
           # but only when we're not inside <a>...</a>
           text = s.scan(/[^{<]+/)
-          out += open_a_tags > 0 ? text : @inline_link.create_magic_links(text)
+          out += open_tags.include?("a") ? text : @inline_link.create_magic_links(text)
         end
+      end
+
+      if open_tags.length > 0
+        # Print warnings for unclosed tags
+        ctx = @doc_context
+        tag_list = open_tags.map {|tag| "<#{tag}>" }.join(", ")
+        Logger.warn(:html, "Unclosed HTML tag: #{tag_list}", ctx[:filename], ctx[:linenr])
+
+        # Automatically close all unclosed tags
+        out += open_tags.map {|tag| "</#{tag}>" }.join
       end
 
       out
     end
+
+    # Tags that don't require closing
+    VOID_TAGS = {
+      "base" => true,
+      "link" => true,
+      "meta" => true,
+      "hr" => true,
+      "br" => true,
+      "wbr" => true,
+      "area" => true,
+      "img" => true,
+      "param" => true,
+      "input" => true,
+      "isindex" => true,
+      "option" => true,
+    }
 
     # Creates a link based on the link template.
     def link(cls, member, anchor_text, type=nil, static=nil)
