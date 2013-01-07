@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'strscan'
 require 'rdiscount'
-require 'jsduck/logger'
+require 'jsduck/html_stack'
 require 'jsduck/inline/link'
 require 'jsduck/inline/img'
 require 'jsduck/inline/video'
@@ -100,7 +100,7 @@ module JsDuck
       # Keep track of open HTML tags. We're not auto-detecting class
       # names when inside <a>. Also we want to close down the unclosed
       # tags.
-      open_tags = []
+      tags = HtmlStack.new(@doc_context)
 
       while !s.eos? do
         if substitute = @inline_link.replace(s)
@@ -115,22 +115,11 @@ module JsDuck
         elsif substitute = @inline_example.replace(s)
           out += substitute
         elsif s.check(/<\w/)
-          # Push the tag to open_tags stack
-          out += s.scan(/</)
-          tag = s.scan(/\w+/)
-          open_tags.unshift(tag) unless VOID_TAGS[tag]
-          out += tag
-          out += s.scan_until(/>|\Z/)
+          # Open HTML tag
+          out += s.scan(/</) + tags.open(s.scan(/\w+/)) + s.scan_until(/>|\Z/)
         elsif s.check(/<\/\w+>/)
-          # Close the tag
-          out += s.scan(/<\//)
-          tag = s.scan(/\w+/)
-          if open_tags.include?(tag)
-            # delete the most recent unclosed tag in our tags stack
-            open_tags.delete_at(open_tags.index(tag))
-          end
-          out += tag
-          out += s.scan(/>/)
+          # Close HTML tag
+          out += s.scan(/<\//) + tags.close(s.scan(/\w+/)) + s.scan(/>/)
         elsif s.check(/</)
           # Ignore plain '<' char.
           out += s.scan(/</)
@@ -138,38 +127,12 @@ module JsDuck
           # Replace class names in the following text up to next "<" or "{"
           # but only when we're not inside <a>...</a>
           text = s.scan(/[^{<]+/)
-          out += open_tags.include?("a") ? text : @inline_link.create_magic_links(text)
+          out += tags.open?("a") ? text : @inline_link.create_magic_links(text)
         end
       end
 
-      if open_tags.length > 0
-        # Print warnings for unclosed tags
-        ctx = @doc_context
-        tag_list = open_tags.map {|tag| "<#{tag}>" }.join(", ")
-        Logger.warn(:html, "Unclosed HTML tag: #{tag_list}", ctx[:filename], ctx[:linenr])
-
-        # Automatically close all unclosed tags
-        out += open_tags.map {|tag| "</#{tag}>" }.join
-      end
-
-      out
+      out + tags.close_unfinished
     end
-
-    # Tags that don't require closing
-    VOID_TAGS = {
-      "base" => true,
-      "link" => true,
-      "meta" => true,
-      "hr" => true,
-      "br" => true,
-      "wbr" => true,
-      "area" => true,
-      "img" => true,
-      "param" => true,
-      "input" => true,
-      "isindex" => true,
-      "option" => true,
-    }
 
     # Creates a link based on the link template.
     def link(cls, member, anchor_text, type=nil, static=nil)
