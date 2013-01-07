@@ -45,7 +45,7 @@ module JsDuck
 
     # True when the tag is currently open.
     def open?(tag)
-      @open_tags.include?("a")
+      @open_tags.include?(tag)
     end
 
     # Returns HTML for closing the still open tags.
