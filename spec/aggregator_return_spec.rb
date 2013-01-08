@@ -23,6 +23,24 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "method with @return that has no type" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Some function
+         * @return Some value.
+         */
+        function foo() {}
+      EOS
+    end
+    it "defaults return type to Object" do
+      @doc[:return][:type].should == "Object"
+    end
+    it "recognizes documentation of return value" do
+      @doc[:return][:doc].should == "Some value."
+    end
+  end
+
   shared_examples_for "has return" do
     it "detects return type" do
       @doc[:return][:type].should == "String"
