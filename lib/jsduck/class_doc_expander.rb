@@ -55,7 +55,7 @@ module JsDuck
           end
         end
 
-        if tagname == :alias
+        if tagname == :aliases
           # For backwards compatibility allow @xtype after @constructor
           groups[:class] << tag
         elsif group_name == :cfg

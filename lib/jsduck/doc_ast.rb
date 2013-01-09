@@ -43,7 +43,6 @@ module JsDuck
         :tagname => :class,
         :name => detect_name(:class, doc_map),
         :doc => detect_doc(docs),
-        :aliases => detect_aliases(doc_map),
         :enum => detect_enum(doc_map),
         :override => extract(doc_map, :override, :class),
       }, doc_map)
@@ -152,14 +151,6 @@ module JsDuck
 
     def detect_default(tagname, doc_map)
       extract(doc_map, tagname, :default)
-    end
-
-    def detect_aliases(doc_map)
-      if doc_map[:alias]
-        doc_map[:alias].map {|tag| tag[:name] }
-      else
-        nil
-      end
     end
 
     def detect_required(doc_map)

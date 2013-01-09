@@ -5,6 +5,7 @@ module JsDuck::Tag
   class Alias < Inheritdoc
     def initialize
       @pattern = "alias"
+      @key = :aliases
       @ext_define_pattern = "alias"
       @ext_define_default = {:aliases => []}
     end
@@ -22,8 +23,12 @@ module JsDuck::Tag
 
     # @alias widget.foo
     def parse_as_alias(p)
-      p.add_tag(:alias)
+      p.add_tag(:aliases)
       p.maybe_ident_chain(:name)
+    end
+
+    def process_doc(tags)
+      tags.map {|tag| tag[:name] }
     end
 
     def parse_ext_define(cls, ast)
