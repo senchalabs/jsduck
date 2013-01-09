@@ -17,28 +17,42 @@ module JsDuck
     # Given tagname and array of tags from DocParser, produces docs
     # of the type determined by tagname.
     def detect(tagname, docs)
+      doc_map = build_doc_map(docs)
+
       case tagname
       when :class
-        create_class(docs)
+        create_class(docs, doc_map)
       when :event
-        create_event(docs)
+        create_event(docs, doc_map)
       when :method
-        create_method(docs)
+        create_method(docs, doc_map)
       when :cfg
-        create_cfg(docs)
+        create_cfg(docs, doc_map)
       when :property
-        create_property(docs)
+        create_property(docs, doc_map)
       when :css_var
-        create_css_var(docs)
+        create_css_var(docs, doc_map)
       when :css_mixin
-        create_css_mixin(docs)
+        create_css_mixin(docs, doc_map)
       end
     end
 
     private
 
-    def create_class(docs)
-      doc_map = build_doc_map(docs)
+    # Build map of at-tags for quick lookup
+    def build_doc_map(docs)
+      map = {}
+      docs.each do |tag|
+        if map[tag[:tagname]]
+          map[tag[:tagname]] << tag
+        else
+          map[tag[:tagname]] = [tag]
+        end
+      end
+      map
+    end
+
+    def create_class(docs, doc_map)
       return add_shared({
         :tagname => :class,
         :name => detect_name(:class, doc_map),
@@ -47,8 +61,7 @@ module JsDuck
       }, doc_map)
     end
 
-    def create_method(docs)
-      doc_map = build_doc_map(docs)
+    def create_method(docs, doc_map)
       return add_shared({
         :tagname => :method,
         :name => detect_name(:method, doc_map),
@@ -58,8 +71,7 @@ module JsDuck
       }, doc_map)
     end
 
-    def create_event(docs)
-      doc_map = build_doc_map(docs)
+    def create_event(docs, doc_map)
       return add_shared({
         :tagname => :event,
         :name => detect_name(:event, doc_map),
@@ -68,8 +80,7 @@ module JsDuck
       }, doc_map)
     end
 
-    def create_cfg(docs)
-      doc_map = build_doc_map(docs)
+    def create_cfg(docs, doc_map)
       return add_shared({
         :tagname => :cfg,
         :name => detect_name(:cfg, doc_map),
@@ -80,8 +91,7 @@ module JsDuck
       }, doc_map)
     end
 
-    def create_property(docs)
-      doc_map = build_doc_map(docs)
+    def create_property(docs, doc_map)
       return add_shared({
         :tagname => :property,
         :name => detect_name(:property, doc_map),
@@ -92,8 +102,7 @@ module JsDuck
       }, doc_map)
     end
 
-    def create_css_var(docs)
-      doc_map = build_doc_map(docs)
+    def create_css_var(docs, doc_map)
       return add_shared({
         :tagname => :css_var,
         :name => detect_name(:css_var, doc_map),
@@ -103,8 +112,7 @@ module JsDuck
       }, doc_map)
     end
 
-    def create_css_mixin(docs)
-      doc_map = build_doc_map(docs)
+    def create_css_mixin(docs, doc_map)
       return add_shared({
         :tagname => :css_mixin,
         :name => detect_name(:css_mixin, doc_map),
@@ -204,18 +212,6 @@ module JsDuck
       (tag[:tagname] == :cfg || tag[:tagname] == :property) && tag[:name] =~ /\./
     end
 
-    # Build map of at-tags for quick lookup
-    def build_doc_map(docs)
-      map = {}
-      docs.each do |tag|
-        if map[tag[:tagname]]
-          map[tag[:tagname]] << tag
-        else
-          map[tag[:tagname]] = [tag]
-        end
-      end
-      map
-    end
   end
 
 end
