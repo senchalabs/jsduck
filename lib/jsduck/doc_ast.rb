@@ -43,7 +43,6 @@ module JsDuck
         :tagname => :class,
         :name => detect_name(:class, doc_map),
         :doc => detect_doc(docs),
-        :mixins => detect_list(:mixins, doc_map),
         :alternateClassNames => detect_list(:alternateClassNames, doc_map),
         :aliases => detect_aliases(doc_map),
         :requires => detect_list(:requires, doc_map),

@@ -4,6 +4,7 @@ module JsDuck::Tag
   class Mixins < Tag
     def initialize
       @pattern = ["mixin", "mixins"]
+      @key = :mixins
       @ext_define_pattern = "mixins"
       @ext_define_default = {:mixins => []}
     end
@@ -12,6 +13,10 @@ module JsDuck::Tag
     def parse(p)
       p.add_tag(:mixins)
       p.classname_list(:mixins)
+    end
+
+    def process_doc(tags)
+      tags.map {|d| d[@key] }.flatten
     end
 
     def parse_ext_define(cls, ast)
