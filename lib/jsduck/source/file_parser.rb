@@ -4,6 +4,7 @@ require 'jsduck/doc_parser'
 require 'jsduck/merger'
 require 'jsduck/ast'
 require 'jsduck/doc_type'
+require 'jsduck/doc_map'
 require 'jsduck/doc_ast'
 require 'jsduck/class_doc_expander'
 
@@ -17,7 +18,6 @@ module JsDuck
     class FileParser
 
       def initialize
-        @doc_type = DocType.new
         @doc_parser = DocParser.new
         @class_doc_expander = ClassDocExpander.new
         @doc_ast = DocAst.new
@@ -50,10 +50,15 @@ module JsDuck
       # Parses the docs, detects tagname and expands class docset
       def expand(docset)
         docset[:comment] = @doc_parser.parse(docset[:comment], @doc_ast.filename, docset[:linenr])
-        docset[:tagname] = @doc_type.detect(docset[:comment], docset[:code])
+        docset[:doc_map] = DocMap.build(docset[:comment])
+        docset[:tagname] = DocType.detect(docset[:doc_map], docset[:code])
 
         if docset[:tagname] == :class
-          @class_doc_expander.expand(docset)
+          # expand class into several docsets, and rebuild doc-maps for all of them.
+          @class_doc_expander.expand(docset).map do |ds|
+            ds[:doc_map] = DocMap.build(ds[:comment])
+            ds
+          end
         else
           docset
         end
@@ -62,7 +67,8 @@ module JsDuck
       # Merges comment and code parts of docset
       def merge(docset)
         @doc_ast.linenr = docset[:linenr]
-        docset[:comment] = @doc_ast.detect(docset[:tagname], docset[:comment])
+        docset[:comment] = @doc_ast.detect(docset[:tagname], docset[:comment], docset[:doc_map])
+        docset.delete(:doc_map)
 
         @merger.merge(docset)
       end

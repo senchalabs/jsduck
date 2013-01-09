@@ -1,5 +1,6 @@
 require "jsduck/ast"
 require "jsduck/doc_type"
+require "jsduck/doc_map"
 require "jsduck/js_parser"
 require "jsduck/css_parser"
 require "jsduck/doc_parser"
@@ -15,7 +16,8 @@ describe JsDuck::DocType do
 
     doc_parser = JsDuck::DocParser.new
     node[:comment] = doc_parser.parse(node[:comment])
-    return JsDuck::DocType.new.detect(node[:comment], node[:code])
+    node[:doc_map] = JsDuck::DocMap.build(node[:comment])
+    return JsDuck::DocType.detect(node[:doc_map], node[:code])
   end
 
   describe "detects as class" do

@@ -5,13 +5,11 @@ module JsDuck
     # Given parsed documentation and code, returns the tagname for
     # documentation item.
     #
-    # @param docs Result from DocParser
+    # @param doc_map Result from DocParser turned into hash of tags.
     # @param code Result from Ast#detect or CssParser#parse
     # @returns One of: :class, :method, :event, :cfg, :property, :css_var, :css_mixin
     #
-    def detect(docs, code)
-      doc_map = build_doc_map(docs)
-
+    def self.detect(doc_map, code)
       if doc_map[:class] || doc_map[:override]
         :class
       elsif doc_map[:event]
@@ -38,21 +36,6 @@ module JsDuck
       else
         code[:tagname]
       end
-    end
-
-    private
-
-    # Build map of at-tags for quick lookup
-    def build_doc_map(docs)
-      map = {}
-      docs.each do |tag|
-        if map[tag[:tagname]]
-          map[tag[:tagname]] << tag
-        else
-          map[tag[:tagname]] = [tag]
-        end
-      end
-      map
     end
   end
 

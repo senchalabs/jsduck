@@ -16,9 +16,7 @@ module JsDuck
 
     # Given tagname and array of tags from DocParser, produces docs
     # of the type determined by tagname.
-    def detect(tagname, docs)
-      doc_map = build_doc_map(docs)
-
+    def detect(tagname, docs, doc_map)
       case tagname
       when :class
         create_class(docs, doc_map)
@@ -38,19 +36,6 @@ module JsDuck
     end
 
     private
-
-    # Build map of at-tags for quick lookup
-    def build_doc_map(docs)
-      map = {}
-      docs.each do |tag|
-        if map[tag[:tagname]]
-          map[tag[:tagname]] << tag
-        else
-          map[tag[:tagname]] = [tag]
-        end
-      end
-      map
-    end
 
     def create_class(docs, doc_map)
       return add_shared({
