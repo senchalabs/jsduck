@@ -114,6 +114,7 @@ module JsDuck
         :private => cfg[:private],
         :protected => cfg[:protected],
         :autodetected => cfg[:autodetected],
+        :hide => cfg[:hide],
       })
     end
 

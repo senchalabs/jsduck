@@ -150,6 +150,32 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "@accessor tag on hidden cfg" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class MyClass */
+          /**
+           * @cfg {String} foo
+           * @hide
+           * @accessor
+           */
+      EOF
+      @accessors = @docs[0][:members].find_all {|m| m[:tagname] == :method }
+    end
+
+    it "creates accessors" do
+      @accessors.length.should == 2
+    end
+
+    it "creates hidden getter" do
+      @accessors[0][:hide].should == true
+    end
+
+    it "creates hidden setter" do
+      @accessors[1][:hide].should == true
+    end
+  end
+
   describe "@cfg foo with @evented @accessor" do
     before do
       @docs = parse(<<-EOF)
@@ -260,4 +286,3 @@ describe JsDuck::Aggregator do
   end
 
 end
-
