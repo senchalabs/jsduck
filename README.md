@@ -173,6 +173,7 @@ Katherine Chu,
 [vjetteam](https://github.com/vjetteam),
 [Chris Westbrook](https://github.com/cnstaging),
 [Scott Whittaker](https://github.com/scottrobertwhittaker),
+[Timo Tijhof](https://github.com/Krinkle),
 and many-many others who reported bugs, submitted patches, and
 provided a lot of useful input.
 
