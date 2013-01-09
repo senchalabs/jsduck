@@ -1,25 +1,19 @@
 // Styles for loading screen
+@import "variables";
 
 #loading {
   position: absolute;
-  width: 180px;
-  margin: -70px 0 0 -90px;
-  height: 140px;
   top: 50%;
-  left: 50%;
+  width: 100%;
+  margin-top: -70px;
   .title {
-    background: url(../images/loading-title.png) no-repeat;
-    position: absolute;
-    display: block;
-    top: 0;
-    left: 0px;
-    width: 180px;
-    height: 27px; }
+    font-family: $docs-heading-font;
+    font-size: 2em;
+    color: gray;
+    text-align: center;
+    white-space: nowrap;
+    display: block; }
   .logo {
-    background: url(../images/loading.gif) no-repeat;
-    position: absolute;
+    background: url(../images/loading.gif) no-repeat center;
     display: block;
-    top: 25px;
-    left: 22px;
-    width: 120px;
     height: 120px; } }

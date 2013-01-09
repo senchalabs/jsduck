@@ -208,9 +208,10 @@ module JsDuck
     end
 
     def detect_return(doc_map)
+      has_return_tag = !!extract(doc_map, :return)
       ret = extract(doc_map, :return) || {}
       return {
-        :type => ret[:type] || "undefined",
+        :type => ret[:type] || (has_return_tag ? "Object" : "undefined"),
         :name => ret[:name] || "return",
         :doc => ret[:doc] || "",
         :properties => doc_map[:return] ? detect_subproperties(:return, doc_map[:return]) : []

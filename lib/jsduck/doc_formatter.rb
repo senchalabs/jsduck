@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'strscan'
 require 'rdiscount'
+require 'jsduck/html_stack'
 require 'jsduck/inline/link'
 require 'jsduck/inline/img'
 require 'jsduck/inline/video'
@@ -15,10 +16,12 @@ module JsDuck
     # command line.  For the actual effect of the options see
     # Inline::* classes.
     def initialize(opts={})
+      @opts = opts
       @inline_link = Inline::Link.new(opts)
       @inline_img = Inline::Img.new(opts)
       @inline_video = Inline::Video.new(opts)
       @inline_example = Inline::Example.new(opts)
+      @doc_context = {}
     end
 
     # Sets base path to prefix images from {@img} tags.
@@ -41,13 +44,14 @@ module JsDuck
     # Sets up instance to work in context of particular doc object.
     # Used for error reporting.
     def doc_context=(doc)
+      @doc_context = doc
       @inline_video.doc_context = doc
       @inline_link.doc_context = doc
     end
 
     # Returns the current documentation context
     def doc_context
-      @inline_link.doc_context
+      @doc_context
     end
 
     # JsDuck::Relations for looking up class names.
@@ -94,10 +98,10 @@ module JsDuck
       s = StringScanner.new(input)
       out = ""
 
-      # Keep track of the nesting level of <a> tags. We're not
-      # auto-detecting class names when inside <a>. Normally links
-      # shouldn't be nested, but just to be extra safe.
-      open_a_tags = 0
+      # Keep track of open HTML tags. We're not auto-detecting class
+      # names when inside <a>. Also we want to close down the unclosed
+      # tags.
+      tags = HtmlStack.new(@opts[:ignore_html] || {}, @doc_context)
 
       while !s.eos? do
         if substitute = @inline_link.replace(s)
@@ -111,26 +115,24 @@ module JsDuck
           out += s.scan(/[{]/)
         elsif substitute = @inline_example.replace(s)
           out += substitute
-        elsif s.check(/<a\b/)
-          # Increment number of open <a> tags.
-          open_a_tags += 1
-          out += s.scan_until(/>|\Z/)
-        elsif s.check(/<\/a>/)
-          # <a> closed, auto-detection may continue when no more <a> tags open.
-          open_a_tags -= 1
-          out += s.scan(/<\/a>/)
+        elsif s.check(/<\w/)
+          # Open HTML tag
+          out += s.scan(/</) + tags.open(s.scan(/\w+/)) + s.scan_until(/>|\Z/)
+        elsif s.check(/<\/\w+>/)
+          # Close HTML tag
+          out += s.scan(/<\//) + tags.close(s.scan(/\w+/)) + s.scan(/>/)
         elsif s.check(/</)
-          # Ignore all other HTML tags
-          out += s.scan_until(/>|\Z/)
+          # Ignore plain '<' char.
+          out += s.scan(/</)
         else
           # Replace class names in the following text up to next "<" or "{"
           # but only when we're not inside <a>...</a>
           text = s.scan(/[^{<]+/)
-          out += open_a_tags > 0 ? text : @inline_link.create_magic_links(text)
+          out += tags.open?("a") ? text : @inline_link.create_magic_links(text)
         end
       end
 
-      out
+      out + tags.close_unfinished
     end
 
     # Creates a link based on the link template.

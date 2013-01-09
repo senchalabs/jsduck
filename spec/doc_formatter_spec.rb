@@ -367,6 +367,18 @@ describe JsDuck::DocFormatter do
       @formatter.format("Hello **world**").should =~ /Hello <strong>world<\/strong>/
     end
 
+    it "closes unclosed <b> tags" do
+      @formatter.format("<b>Hello").should =~ /<b>Hello.*<\/b>/m
+    end
+
+    it "closes unclosed <a> and <b> in correct order" do
+      @formatter.format("<a><b>Hello").should =~ /<\/b><\/a>/
+    end
+
+    it "doesn't close unclosed <img> tags" do
+      @formatter.format("<img>").should_not =~ /<\/img>/
+    end
+
     shared_examples_for "code blocks" do
       it "contains text before" do
         @html.should =~ /Some code/
