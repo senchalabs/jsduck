@@ -44,7 +44,6 @@ module JsDuck
         :name => detect_name(:class, doc_map),
         :doc => detect_doc(docs),
         :enum => detect_enum(doc_map),
-        :override => extract(doc_map, :override, :class),
       }, doc_map)
     end
 
