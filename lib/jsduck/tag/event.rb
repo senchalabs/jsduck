@@ -4,6 +4,7 @@ module JsDuck::Tag
   class Event < Tag
     def initialize
       @pattern = "event"
+      @member_type = :event
     end
 
     # @event name ...

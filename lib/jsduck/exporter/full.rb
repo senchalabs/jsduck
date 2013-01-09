@@ -1,4 +1,4 @@
-require 'jsduck/class'
+require 'jsduck/tag_registry'
 
 module JsDuck
   module Exporter
@@ -18,7 +18,7 @@ module JsDuck
 
         h[:members] = {}
         h[:statics] = {}
-        Class.each_member_type do |tagname|
+        TagRegistry.member_types.each do |tagname|
           h[:members][tagname] = export_members(cls, {:tagname => tagname, :static => false})
           h[:statics][tagname] = export_members(cls, {:tagname => tagname, :static => true})
         end

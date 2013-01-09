@@ -4,6 +4,7 @@ module JsDuck::Tag
   class Property < Tag
     def initialize
       @pattern = "property"
+      @member_type = :property
     end
 
     # @property {Type} [name=default] ...

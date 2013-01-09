@@ -1,3 +1,5 @@
+require 'jsduck/tag_registry'
+
 module JsDuck
 
   # Abstract base class for parsing doc-comments.
@@ -104,7 +106,7 @@ module JsDuck
           @current_tag[:static] = true
           match(/static-/)
         end
-        if look(/(cfg|property|method|event|css_var|css_mixin)-/)
+        if look(TagRegistry.member_type_regex)
           @current_tag[:type] = ident.to_sym
           match(/-/)
         end

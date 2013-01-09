@@ -15,6 +15,7 @@ module JsDuck
       @keys = {}
       @signatures = []
       @html_renderers = {:top => [], :bottom => []}
+      @member_types = []
 
       @loader = TagLoader.new
       load_from(File.dirname(__FILE__) + "/tag")
@@ -44,6 +45,9 @@ module JsDuck
         if tag.key
           @keys[tag.key] = tag
         end
+        if tag.member_type
+          @member_types << tag.member_type
+        end
         if tag.signature
           tag.signature[:key] = tag.key
           @signatures << tag.signature
@@ -67,6 +71,19 @@ module JsDuck
     # Array of attributes to be shown in member signatures
     # (and in order they should be shown in).
     attr_reader :signatures
+
+    # Array of available member types.
+    attr_reader :member_types
+
+    # Regex for matching member type name in member reference.
+    #
+    # The regex matches strings like: "method-" or "event-".  It
+    # contains a capture group to capture the actual name of the
+    # member, leaving out the dash "-".
+    def member_type_regex
+      @member_type_regex if @member_type_regex
+      @member_type_regex = Regexp.new("(?:(" + TagRegistry.member_types.join("|") + ")-)")
+    end
 
     # Returns tags for rendering HTML.  One can ask for tags for
     # rendering either :top or :bottom section.  By default renderers

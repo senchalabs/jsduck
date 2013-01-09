@@ -5,6 +5,7 @@ module JsDuck::Tag
   class Method < Tag
     def initialize
       @pattern = "method"
+      @member_type = :method
     end
 
     # @method name ...

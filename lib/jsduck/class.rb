@@ -193,12 +193,6 @@ module JsDuck
       "#{m[:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
     end
 
-    # Loops through all available member types,
-    # passing the tagname of the member to the block.
-    def self.each_member_type(&block)
-      [:cfg, :property, :method, :event, :css_var, :css_mixin].each(&block)
-    end
-
     # True if the given member is a constructor method
     def self.constructor?(member)
       member[:tagname] == :method && member[:name] == "constructor"

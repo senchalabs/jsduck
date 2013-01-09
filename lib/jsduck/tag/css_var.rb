@@ -4,6 +4,7 @@ module JsDuck::Tag
   class CssVar < Tag
     def initialize
       @pattern = "var"
+      @member_type = :css_var
     end
 
     # @var {Type} [name=default] ...

@@ -25,6 +25,10 @@ module JsDuck::Tag
     def process_doc(docs)
     end
 
+    # Defines that the tag defines a class member and specifies a name
+    # for the member type.  For example :event.
+    attr_reader :member_type
+
     # The text to display in member signature.  Must be a hash
     # defining the short and long versions of the signature text:
     #

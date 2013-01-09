@@ -4,6 +4,7 @@ module JsDuck::Tag
   class Cfg < Tag
     def initialize
       @pattern = "cfg"
+      @member_type = :cfg
     end
 
     # @cfg {Type} [name=default] (required) ...

@@ -1,5 +1,6 @@
 require 'jsduck/util/html'
 require 'jsduck/logger'
+require 'jsduck/tag_registry'
 
 module JsDuck
   module Inline
@@ -58,7 +59,7 @@ module JsDuck
 
       # applies the link template
       def apply_tpl(target, text, full_link)
-        if target =~ /^(.*)#(static-)?(?:(cfg|property|method|event|css_var|css_mixin)-)?(.*)$/
+        if target =~ /^(.*)#(static-)?#{TagRegistry.member_type_regex}?(.*)$/
           cls = $1.empty? ? @class_context : $1
           static = $2 ? true : nil
           type = $3 ? $3.intern : nil
