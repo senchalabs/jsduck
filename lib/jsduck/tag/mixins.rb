@@ -1,7 +1,7 @@
-require "jsduck/tag/tag"
+require "jsduck/tag/class_list_tag"
 
 module JsDuck::Tag
-  class Mixins < Tag
+  class Mixins < ClassListTag
     def initialize
       @pattern = ["mixin", "mixins"]
       @key = :mixins
@@ -9,16 +9,8 @@ module JsDuck::Tag
       @ext_define_default = {:mixins => []}
     end
 
-    # @mixins classname1 classname2 ...
-    def parse(p)
-      p.add_tag(:mixins)
-      p.classname_list(:mixins)
-    end
-
-    def process_doc(tags)
-      tags.map {|d| d[@key] }.flatten
-    end
-
+    # Override definition in parent class.  In addition to Array
+    # literal, mixins can be defined with an object literal.
     def parse_ext_define(cls, ast)
       cls[:mixins] = to_mixins_array(ast)
     end

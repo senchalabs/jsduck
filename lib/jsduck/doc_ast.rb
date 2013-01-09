@@ -43,10 +43,7 @@ module JsDuck
         :tagname => :class,
         :name => detect_name(:class, doc_map),
         :doc => detect_doc(docs),
-        :alternateClassNames => detect_list(:alternateClassNames, doc_map),
         :aliases => detect_aliases(doc_map),
-        :requires => detect_list(:requires, doc_map),
-        :uses => detect_list(:uses, doc_map),
         :enum => detect_enum(doc_map),
         :override => extract(doc_map, :override, :class),
       }, doc_map)
@@ -155,15 +152,6 @@ module JsDuck
 
     def detect_default(tagname, doc_map)
       extract(doc_map, tagname, :default)
-    end
-
-    # for detecting mixins and alternateClassNames
-    def detect_list(type, doc_map)
-      if doc_map[type]
-        doc_map[type].map {|d| d[type] }.flatten
-      else
-        nil
-      end
     end
 
     def detect_aliases(doc_map)

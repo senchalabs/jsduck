@@ -1,22 +1,12 @@
-require "jsduck/tag/tag"
-require "jsduck/ast_utils"
+require "jsduck/tag/class_list_tag"
 
 module JsDuck::Tag
-  class Requires < Tag
+  class Requires < ClassListTag
     def initialize
       @pattern = "requires"
+      @key = :requires
       @ext_define_pattern = "requires"
       @ext_define_default = {:requires => []}
-    end
-
-    # @requires classname1 classname2 ...
-    def parse(p)
-      p.add_tag(:requires)
-      p.classname_list(:requires)
-    end
-
-    def parse_ext_define(cls, ast)
-      cls[:requires] = JsDuck::AstUtils.make_string_list(ast)
     end
   end
 end
