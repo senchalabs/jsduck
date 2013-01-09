@@ -91,7 +91,7 @@ module JsDuck
         old[tag] = old[tag] || new[tag]
       end
       # Merge arrays
-      [:mixins, :alternateClassNames, :files].each do |tag|
+      [:mixins, :alternateClassNames, :requires, :uses, :files].each do |tag|
         old[tag] = old[tag] + new[tag]
       end
       # Merge hashes of arrays
