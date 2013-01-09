@@ -59,7 +59,6 @@ module JsDuck
       return add_shared({
         :tagname => :method,
         :name => detect_name(:method, doc_map),
-        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(doc_map),
         :return => detect_return(doc_map),
@@ -71,7 +70,6 @@ module JsDuck
       return add_shared({
         :tagname => :event,
         :name => detect_name(:event, doc_map),
-        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(doc_map),
       }, doc_map)
@@ -82,7 +80,6 @@ module JsDuck
       return add_shared({
         :tagname => :cfg,
         :name => detect_name(:cfg, doc_map),
-        :owner => detect_owner(doc_map),
         :type => detect_type(:cfg, doc_map),
         :doc => detect_doc(docs),
         :default => detect_default(:cfg, doc_map),
@@ -95,7 +92,6 @@ module JsDuck
       return add_shared({
         :tagname => :property,
         :name => detect_name(:property, doc_map),
-        :owner => detect_owner(doc_map),
         :type => detect_type(:property, doc_map),
         :doc => detect_doc(docs),
         :default => detect_default(:property, doc_map),
@@ -108,7 +104,6 @@ module JsDuck
       return add_shared({
         :tagname => :css_var,
         :name => detect_name(:css_var, doc_map),
-        :owner => detect_owner(doc_map),
         :type => detect_type(:css_var, doc_map),
         :default => detect_default(:css_var, doc_map),
         :doc => detect_doc(docs),
@@ -120,7 +115,6 @@ module JsDuck
       return add_shared({
         :tagname => :css_mixin,
         :name => detect_name(:css_mixin, doc_map),
-        :owner => detect_owner(doc_map),
         :doc => detect_doc(docs),
         :params => detect_params(doc_map),
       }, doc_map)
@@ -155,10 +149,6 @@ module JsDuck
       else
         tag
       end
-    end
-
-    def detect_owner(doc_map)
-      extract(doc_map, :member, :member)
     end
 
     def detect_type(tagname, doc_map)
