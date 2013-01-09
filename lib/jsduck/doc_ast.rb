@@ -43,7 +43,6 @@ module JsDuck
         :tagname => :class,
         :name => detect_name(:class, doc_map),
         :doc => detect_doc(docs),
-        :extends => detect_extends(doc_map),
         :mixins => detect_list(:mixins, doc_map),
         :alternateClassNames => detect_list(:alternateClassNames, doc_map),
         :aliases => detect_aliases(doc_map),
@@ -153,10 +152,6 @@ module JsDuck
 
     def detect_type(tagname, doc_map)
       extract(doc_map, tagname, :type) || extract(doc_map, :type, :type)
-    end
-
-    def detect_extends(doc_map)
-      extract(doc_map, :extends, :extends)
     end
 
     def detect_default(tagname, doc_map)
