@@ -5,6 +5,9 @@ This is the Appcelerator fork of JSDuck, which contains several modifications to
 support Titanium and Alloy documentation. The [doctools](https://github.com/appcelerator/doctools) 
 repo contains related scripts and configuration files for building the docs.
 
+All Appcelerator-related changes to JSDuck are released under the same GPLv3 license as the original
+code.
+
 See the [main JSDuck repo](https://github.com/senchalabs/jsduck) for much more information on
 the JSDuck project.
 
