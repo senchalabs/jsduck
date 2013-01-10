@@ -223,6 +223,11 @@ module JsDuck
     def skip_horiz_white
       @input.scan(/[ \t]+/)
     end
+    # Shorthand alias
+    def hw
+      skip_horiz_white
+    end
+
   end
 
 end

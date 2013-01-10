@@ -8,8 +8,11 @@ module JsDuck::Tag
 
     # @class name
     def parse(p)
-      p.add_tag(:class)
-      p.maybe_ident_chain(:name)
+      {
+        :tagname => :class,
+        :name => p.hw && p.ident_chain,
+        :doc => "",
+      }
     end
   end
 end
