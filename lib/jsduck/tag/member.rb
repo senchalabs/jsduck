@@ -11,8 +11,10 @@ module JsDuck::Tag
 
     # @member classname
     def parse(p)
-      p.add_tag(:owner)
-      p.maybe_ident_chain(:owner)
+      {
+        :tagname => :owner,
+        :owner => p.hw.ident_chain,
+      }
     end
 
     def process_doc(tags)
