@@ -103,23 +103,6 @@ module JsDuck
       end
     end
 
-    # matches a member reference: "#" <static> "-" <type> "-" <member>
-    # setting the corresponding properties on @current_tag
-    def maybe_member_reference
-      if look(/#\w/)
-        match(/#/)
-        if look(/static-/)
-          @current_tag[:static] = true
-          match(/static-/)
-        end
-        if look(TagRegistry.member_type_regex)
-          @current_tag[:type] = ident.to_sym
-          match(/-/)
-        end
-        @current_tag[:member] = ident
-      end
-    end
-
     # Attempts to allow balanced braces in default value.
     # When the nested parsing doesn't finish at closing "]",
     # roll back to beginning and simply grab anything up to closing "]".

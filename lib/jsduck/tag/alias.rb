@@ -23,8 +23,10 @@ module JsDuck::Tag
 
     # @alias widget.foo
     def parse_as_alias(p)
-      p.add_tag(:aliases)
-      p.maybe_ident_chain(:name)
+      {
+        :tagname => :aliases,
+        :name => p.hw.ident_chain,
+      }
     end
 
     def process_doc(tags)
