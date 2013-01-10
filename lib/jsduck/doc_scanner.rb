@@ -189,7 +189,7 @@ module JsDuck
 
     # matches identifier and returns its name
     def ident
-      @input.scan(/\w+/)
+      @input.scan(@ident_pattern)
     end
 
     def look(re)
