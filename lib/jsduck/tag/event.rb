@@ -11,7 +11,7 @@ module JsDuck::Tag
     def parse(p)
       {
         :tagname => :event,
-        :name => p.hw && p.ident,
+        :name => p.hw.ident,
       }
     end
   end

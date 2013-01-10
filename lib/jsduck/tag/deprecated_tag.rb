@@ -17,7 +17,7 @@ module JsDuck::Tag
     def parse(p)
       {
         :tagname => @key,
-        :version => p.hw && p.match(/[0-9.]+/)
+        :version => p.hw.match(/[0-9.]+/)
       }
     end
 

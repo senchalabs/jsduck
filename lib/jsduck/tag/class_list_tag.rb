@@ -15,7 +15,7 @@ module JsDuck::Tag
     def parse(p)
       {
         :tagname => @key,
-        :classes => p.hw && p.classname_list,
+        :classes => p.hw.classname_list,
       }
     end
 

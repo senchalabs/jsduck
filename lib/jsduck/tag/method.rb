@@ -12,7 +12,7 @@ module JsDuck::Tag
     def parse(p)
       {
         :tagname => :method,
-        :name => p.hw && p.ident,
+        :name => p.hw.ident,
       }
     end
   end

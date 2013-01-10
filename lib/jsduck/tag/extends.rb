@@ -14,7 +14,7 @@ module JsDuck::Tag
     def parse(p)
       {
         :tagname => :extends,
-        :extends => p.hw && p.ident_chain,
+        :extends => p.hw.ident_chain,
       }
     end
 

@@ -228,6 +228,7 @@ module JsDuck
     # Shorthand alias
     def hw
       skip_horiz_white
+      self
     end
 
   end
