@@ -15,8 +15,17 @@ module JsDuck::Tag
     def parse(p)
       {
         :tagname => @key,
-        :classes => p.hw.classname_list,
+        :classes => classname_list(p),
       }
+    end
+
+    # matches <ident_chain> <ident_chain> ... until line end
+    def classname_list(p)
+      classes = []
+      while cls = p.hw.ident_chain
+        classes << cls
+      end
+      classes
     end
 
     def process_doc(tags)

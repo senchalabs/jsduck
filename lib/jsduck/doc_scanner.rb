@@ -157,17 +157,6 @@ module JsDuck
       match(re_quote) + match(re_rest) + (match(re_quote) || "")
     end
 
-    # matches <ident_chain> <ident_chain> ... until line end
-    def classname_list
-      skip_horiz_white
-      classes = []
-      while look(@ident_chain_pattern)
-        classes << ident_chain
-        skip_horiz_white
-      end
-      classes
-    end
-
     # matches chained.identifier.name and returns it
     def ident_chain
       @input.scan(@ident_chain_pattern)
