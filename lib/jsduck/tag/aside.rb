@@ -10,15 +10,15 @@ module JsDuck::Tag
     end
 
     def parse(p)
-      p.add_tag(:aside)
-      p.skip_horiz_white
-      maybe_aside_type(p)
-      p.skip_horiz_white
-      p.maybe_name
+      {
+        :tagname => :aside,
+        :type => aside_type(p),
+        :name => p.hw.ident,
+      }
     end
 
-    def maybe_aside_type(p)
-      p.current_tag[:type] = p.ident.to_sym if p.look(/\w+/)
+    def aside_type(p)
+      p.hw.look(/\w+/) ? p.ident.to_sym : nil
     end
 
     def process_doc(tags)
