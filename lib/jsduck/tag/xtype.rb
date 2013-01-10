@@ -10,15 +10,16 @@ module JsDuck::Tag
 
     # @xtype name
     def parse(p)
-      p.add_tag(:aliases)
-      parse_alias_shorthand(p, "widget")
+      {
+        :tagname => :aliases,
+        :name => parse_alias_shorthand(p, "widget")
+      }
     end
 
     # Parses the name after @ftype, @xtype or @ptype
-    # and saves it with the given namespace prefix.
+    # and returns it with the given namespace prefix.
     def parse_alias_shorthand(p, namespace)
-      p.skip_horiz_white
-      p.current_tag[:name] = namespace + "." + (p.ident_chain || "")
+      namespace + "." + (p.hw.ident_chain || "")
     end
 
     def parse_ext_define(cls, ast)
