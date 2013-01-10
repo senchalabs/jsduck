@@ -15,9 +15,10 @@ module JsDuck::Tag
     end
 
     def parse(p)
-      p.add_tag(@key)
-      p.skip_horiz_white
-      p.current_tag[:version] = p.match(/[0-9.]+/) if p.look(/[0-9]/)
+      {
+        :tagname => @key,
+        :version => p.hw && p.match(/[0-9.]+/)
+      }
     end
 
     def process_doc(tags)
