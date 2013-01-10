@@ -9,8 +9,10 @@ module JsDuck::Tag
 
     # @event name ...
     def parse(p)
-      p.add_tag(:event)
-      p.maybe_name
+      {
+        :tagname => :event,
+        :name => p.hw && p.ident,
+      }
     end
   end
 end

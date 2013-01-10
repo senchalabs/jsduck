@@ -10,8 +10,10 @@ module JsDuck::Tag
 
     # @method name ...
     def parse(p)
-      p.add_tag(:method)
-      p.maybe_name
+      {
+        :tagname => :method,
+        :name => p.hw && p.ident,
+      }
     end
   end
 end
