@@ -12,8 +12,10 @@ module JsDuck::Tag
 
     # @extends classname
     def parse(p)
-      p.add_tag(:extends)
-      p.maybe_ident_chain(:extends)
+      {
+        :tagname => :extends,
+        :extends => p.hw && p.ident_chain,
+      }
     end
 
     def process_doc(tags)
