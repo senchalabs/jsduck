@@ -1,4 +1,4 @@
-require 'jsduck/tag_registry'
+require 'jsduck/standard_tag_parser'
 
 module JsDuck
 
@@ -21,6 +21,9 @@ module JsDuck
     # Provides access to the tag that's currently being parsed
     attr_reader :current_tag
 
+    # Provides access to StringScanner
+    attr_reader :input
+
     # Appends new @tag to parsed tags list
     def add_tag(tag)
       if tag.is_a?(Hash)
@@ -30,6 +33,14 @@ module JsDuck
       end
 
       @current_tag[:doc] = "" unless @current_tag.has_key?(:doc)
+    end
+
+    # Parses standard pattern governing several builtin tags.
+    #
+    # @tag {Type} [some.name=default]
+    #
+    def standard_tag(tagdef)
+      StandardTagParser.new(self).parse(tagdef)
     end
 
     # matches {type} if possible and sets it on @current_tag

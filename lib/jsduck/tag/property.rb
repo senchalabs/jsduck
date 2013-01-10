@@ -9,9 +9,7 @@ module JsDuck::Tag
 
     # @property {Type} [name=default] ...
     def parse(p)
-      p.add_tag(:property)
-      p.maybe_type
-      p.maybe_name_with_default
+      p.standard_tag({:tagname => :property})
     end
   end
 end

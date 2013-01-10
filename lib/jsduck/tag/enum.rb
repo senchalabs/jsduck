@@ -9,10 +9,9 @@ module JsDuck::Tag
     # @enum {Type} [name=default] ...
     def parse(p)
       # @enum is a special case of class
-      p.add_tag(:class)
-      p.current_tag[:enum] = true
-      p.maybe_type
-      p.maybe_name_with_default
+      tag = p.standard_tag({:tagname => :class})
+      tag[:enum] = true
+      tag
     end
 
   end

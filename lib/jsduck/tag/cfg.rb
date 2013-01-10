@@ -9,10 +9,9 @@ module JsDuck::Tag
 
     # @cfg {Type} [name=default] (required) ...
     def parse(p)
-      p.add_tag(:cfg)
-      p.maybe_type
-      p.maybe_name_with_default
-      p.current_tag[:optional] = false if parse_required(p)
+      tag = p.standard_tag({:tagname => :cfg})
+      tag[:optional] = false if parse_required(p)
+      tag
     end
 
     def parse_required(p)

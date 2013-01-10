@@ -8,10 +8,9 @@ module JsDuck::Tag
 
     # @param {Type} [name=default] (optional) ...
     def parse(p)
-      p.add_tag(:param)
-      p.maybe_type
-      p.maybe_name_with_default
-      p.current_tag[:optional] = true if parse_optional(p)
+      tag = p.standard_tag({:tagname => :param})
+      tag[:optional] = true if parse_optional(p)
+      tag
     end
 
     def parse_optional(p)
