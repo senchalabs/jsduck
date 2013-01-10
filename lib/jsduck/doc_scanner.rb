@@ -32,12 +32,6 @@ module JsDuck
       @current_tag[:doc] = "" unless @current_tag.has_key?(:doc)
     end
 
-    # Forgets the previously parsed tag
-    def remove_last_tag
-      @tags.pop
-      @current_tag = @tags.last
-    end
-
     # matches {type} if possible and sets it on @current_tag
     # Also checks for {optionality=} in type definition.
     def maybe_type
@@ -84,14 +78,6 @@ module JsDuck
       if look(/\(required\)/i)
         match(/\(required\)/i)
         @current_tag[:optional] = false
-      end
-    end
-
-    # matches identifier name if possible and sets it on @current_tag
-    def maybe_name
-      skip_horiz_white
-      if look(@ident_pattern)
-        @current_tag[:name] = match(@ident_pattern)
       end
     end
 
