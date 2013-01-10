@@ -13,12 +13,15 @@ module JsDuck::Tag
   #
   class ClassListTag < Tag
     def parse(p)
-      p.add_tag(@key)
-      p.classname_list(@key)
+      {
+        :tagname => @key,
+        :classes => p.hw && p.classname_list,
+        :doc => "",
+      }
     end
 
     def process_doc(tags)
-      tags.map {|d| d[@key] }.flatten
+      tags.map {|d| d[:classes] }.flatten
     end
 
     def parse_ext_define(cls, ast)

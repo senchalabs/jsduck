@@ -187,14 +187,14 @@ module JsDuck
     end
 
     # matches <ident_chain> <ident_chain> ... until line end
-    def classname_list(propname)
+    def classname_list
       skip_horiz_white
       classes = []
       while look(@ident_chain_pattern)
         classes << ident_chain
         skip_horiz_white
       end
-      @current_tag[propname] = classes
+      classes
     end
 
     # matches chained.identifier.name and returns it
