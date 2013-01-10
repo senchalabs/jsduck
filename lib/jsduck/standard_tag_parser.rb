@@ -35,6 +35,8 @@ module JsDuck
       tag
     end
 
+    private
+
     # matches {type} if possible and sets it on given tag hash.
     # Also checks for {optionality=} in type definition.
     def add_type(tag)
@@ -68,7 +70,8 @@ module JsDuck
       if hw.match(/\[/)
         tag[:name] = hw.ident_chain
         if hw.match(/=/)
-          tag[:default] = hw.default_value
+          hw
+          tag[:default] = default_value
         end
         hw.match(/\]/)
         tag[:optional] = true
@@ -143,7 +146,6 @@ module JsDuck
 
     def hw
       @ds.hw
-      self
     end
   end
 
