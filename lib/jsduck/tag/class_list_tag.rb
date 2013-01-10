@@ -16,7 +16,6 @@ module JsDuck::Tag
       {
         :tagname => @key,
         :classes => p.hw && p.classname_list,
-        :doc => "",
       }
     end
 

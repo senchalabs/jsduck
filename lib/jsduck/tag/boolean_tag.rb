@@ -13,7 +13,7 @@ module JsDuck::Tag
 
     # Parses just the name of the tag.
     def parse(p)
-      {:tagname => @key, :doc => ""}
+      {:tagname => @key}
     end
 
     # When the tag is found, its value will always be true.

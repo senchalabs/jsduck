@@ -11,7 +11,6 @@ module JsDuck::Tag
       {
         :tagname => :class,
         :name => p.hw && p.ident_chain,
-        :doc => "",
       }
     end
   end

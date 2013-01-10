@@ -28,6 +28,8 @@ module JsDuck
       else
         @tags << @current_tag = {:tagname => tag, :doc => ""}
       end
+
+      @current_tag[:doc] = "" unless @current_tag.has_key?(:doc)
     end
 
     # Forgets the previously parsed tag
