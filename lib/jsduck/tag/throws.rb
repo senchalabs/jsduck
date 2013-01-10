@@ -10,8 +10,7 @@ module JsDuck::Tag
 
     # @throws {Type} ...
     def parse(p)
-      p.add_tag(:throws)
-      p.maybe_type
+      p.standard_tag({:tagname => :throws, :type => true})
     end
 
     def process_doc(tags)

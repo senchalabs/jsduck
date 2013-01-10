@@ -8,17 +8,16 @@ module JsDuck::Tag
 
     # @return {Type} return.name ...
     def parse(p)
-      p.add_tag(:return)
-      p.maybe_type
-      maybe_object_property(p)
+      tag = p.standard_tag({:tagname => :return, :type => true})
+      tag[:name] = subproperty_name(p)
+      tag
     end
 
-    def maybe_object_property(p)
-      p.skip_horiz_white
-      if p.look(/return\.\w/)
-        p.current_tag[:name] = p.ident_chain
+    def subproperty_name(p)
+      if p.hw.look(/return\.\w/)
+        p.ident_chain
       else
-        p.current_tag[:name] = "return"
+        "return"
       end
     end
   end

@@ -11,15 +11,31 @@ module JsDuck
       @ds = doc_scanner
     end
 
-    # Parses our tag.
-    def parse(tagdef)
-      tag = tagdef
-      add_type(tag)
-      add_name_with_default(tag)
+    # Parses the standard tag pattern.
+    #
+    # Takes as parameter a configuration hash which can contain the
+    # following keys:
+    #
+    # - :tagname => The :tagname of the hash to return.
+    #
+    # - :type => True to parse {Type} section.
+    #            Produces :type and :optional keys.
+    #
+    # - :name => Trye to parse [some.name=default] section.
+    #            Produces :name, :default and :optional keys.
+    #
+    # Returns tag definition hash containing the given :tagname and a
+    # set of other fields depending on whether :type and :name configs
+    # were specified and how their matching succeeded.
+    #
+    def parse(cfg)
+      tag = {:tagname => cfg[:tagname]}
+      add_type(tag) if cfg[:type]
+      add_name_with_default(tag) if cfg[:name]
       tag
     end
 
-    # matches {type} if possible and sets it on @current_tag
+    # matches {type} if possible and sets it on given tag hash.
     # Also checks for {optionality=} in type definition.
     def add_type(tag)
       if hw.look(/\{/)

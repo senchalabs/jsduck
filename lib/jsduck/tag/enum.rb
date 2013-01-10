@@ -9,7 +9,7 @@ module JsDuck::Tag
     # @enum {Type} [name=default] ...
     def parse(p)
       # @enum is a special case of class
-      tag = p.standard_tag({:tagname => :class})
+      tag = p.standard_tag({:tagname => :class, :type => true, :name => true})
       tag[:enum] = true
       tag
     end

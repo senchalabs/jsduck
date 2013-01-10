@@ -9,7 +9,7 @@ module JsDuck::Tag
 
     # @property {Type} [name=default] ...
     def parse(p)
-      p.standard_tag({:tagname => :property})
+      p.standard_tag({:tagname => :property, :type => true, :name => true})
     end
   end
 end
