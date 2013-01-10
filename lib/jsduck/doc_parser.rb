@@ -58,7 +58,7 @@ module JsDuck
 
     # The main loop of the DocParser
     def parse_loop
-      add_tag(:default)
+      add_tag({:tagname => :default, :doc => ""})
 
       while !@input.eos? do
         if look(/@/)
@@ -83,7 +83,10 @@ module JsDuck
         # ignore
       elsif tag = TagRegistry.get_by_pattern(name)
         match(/\w+/)
-        tag.parse(self)
+
+        t = tag.parse(self)
+        add_tag(t) if t.is_a?(Hash)
+
         skip_white
       else
         Logger.warn(:tag, "Unsupported tag: @#{name}", @filename, @linenr)

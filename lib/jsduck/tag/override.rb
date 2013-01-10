@@ -21,6 +21,9 @@ module JsDuck::Tag
       unless p.current_tag[:override]
         p.remove_last_tag
       end
+
+      # Ensure #parse returns nothing
+      nil
     end
 
     def process_doc(tags)

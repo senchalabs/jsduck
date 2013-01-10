@@ -23,7 +23,11 @@ module JsDuck
 
     # Appends new @tag to parsed tags list
     def add_tag(tag)
-      @tags << @current_tag = {:tagname => tag, :doc => ""}
+      if tag.is_a?(Hash)
+        @tags << @current_tag = tag
+      else
+        @tags << @current_tag = {:tagname => tag, :doc => ""}
+      end
     end
 
     # Forgets the previously parsed tag
