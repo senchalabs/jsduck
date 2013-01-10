@@ -43,14 +43,14 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
       $doc = new DOMDocument();
       $file = @$doc->loadHTML($json["html"]);
       $divs = $doc->getElementsByTagName('div');
-      if ( count($divs) ) {
-        foreach ( $divs as $div ) {
-          if ($div->attributes->getNamedItem('id')->nodeValue == $attribute) {
-            $content = $doc->saveHTML($div);
-          }
+      $content = "";
+      foreach ( $divs as $div ) {
+        if ($div->attributes->getNamedItem('id')->nodeValue == $attribute) {
+          $content = "<h1>" . $className . "." . $attrName . "</h1>" . $doc->saveHTML($div);
+          break;
         }
       }
-      print_page($className, "<h1>" . $className . "." . $attrName . "</h1>" . $content, $fragment);
+      print_page($className, $content, $fragment);
     }
     elseif (preg_match('/^\/api\/([^-]+)/', $fragment, $m)) {
       $className = $m[1];
