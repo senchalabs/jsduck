@@ -8,7 +8,7 @@ module JsDuck::Tag
 
     # @constructor
     def parse(p)
-      p.add_tag(:constructor)
+      {:tagname => :constructor}
     end
   end
 end
