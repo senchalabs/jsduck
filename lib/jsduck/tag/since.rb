@@ -10,9 +10,10 @@ module JsDuck::Tag
     end
 
     def parse(p)
-      p.add_tag(:since)
-      p.skip_horiz_white
-      p.current_tag[:version] = p.match(/.*$/).strip
+      {
+        :tagname => :since,
+        :version => p.hw.match(/.*$/).strip,
+      }
     end
 
     def process_doc(tags)
