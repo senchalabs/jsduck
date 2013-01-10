@@ -11,7 +11,11 @@ module JsDuck::Tag
       p.add_tag(:param)
       p.maybe_type
       p.maybe_name_with_default
-      p.maybe_optional
+      p.current_tag[:optional] = true if parse_optional(p)
+    end
+
+    def parse_optional(p)
+      p.hw.match(/\(optional\)/i)
     end
   end
 end

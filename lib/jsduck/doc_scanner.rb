@@ -63,24 +63,6 @@ module JsDuck
       end
     end
 
-    # matches: "(optional)"
-    def maybe_optional
-      skip_horiz_white
-      if look(/\(optional\)/i)
-        match(/\(optional\)/i)
-        @current_tag[:optional] = true
-      end
-    end
-
-    # matches: "(required)"
-    def maybe_required
-      skip_horiz_white
-      if look(/\(required\)/i)
-        match(/\(required\)/i)
-        @current_tag[:optional] = false
-      end
-    end
-
     # matches ident.chain if possible and sets it on @current_tag
     def maybe_ident_chain(propname)
       skip_horiz_white

@@ -12,7 +12,11 @@ module JsDuck::Tag
       p.add_tag(:cfg)
       p.maybe_type
       p.maybe_name_with_default
-      p.maybe_required
+      p.current_tag[:optional] = false if parse_required(p)
+    end
+
+    def parse_required(p)
+      p.hw.match(/\(required\)/i)
     end
   end
 end
