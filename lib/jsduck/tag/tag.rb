@@ -11,7 +11,17 @@ module JsDuck::Tag
     attr_reader :multiline
 
     # Called by DocParser when the @tag is reached to do the parsing
-    # from that point forward.  Gets passed an instance of DocParser.
+    # from that point forward.  Gets passed an instance of DocScanner.
+    #
+    # Can return a hash or array of hashes representing the detected
+    # @tag data.  Each returned hash must contain the :tagname key,
+    # e.g.:
+    #
+    #     {:tagname => :protected, :foo => "blah"}
+    #
+    # All hashes with the same :tagname will later be combined
+    # together and passed on to #process_doc method of this Tag class
+    # that has @key field set to that tagname.
     def parse(p)
     end
 
