@@ -42,7 +42,6 @@ module JsDuck
         :tagname => :class,
         :name => detect_name(:class, doc_map),
         :doc => detect_doc(docs),
-        :enum => detect_enum(doc_map),
       }, doc_map)
     end
 
@@ -170,18 +169,6 @@ module JsDuck
         :name => ret[:name] || "return",
         :doc => ret[:doc] || "",
         :properties => doc_map[:return] ? detect_subproperties(:return, doc_map[:return]) : []
-      }
-    end
-
-    def detect_enum(doc_map)
-      return nil unless extract(doc_map, :class, :enum)
-
-      default = extract(doc_map, :class, :default)
-
-      return {
-        :type => extract(doc_map, :class, :type),
-        :default => default,
-        :doc_only => !!default,
       }
     end
 
