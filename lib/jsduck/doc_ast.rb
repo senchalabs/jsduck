@@ -1,5 +1,6 @@
 require 'jsduck/tag_registry'
 require 'jsduck/subproperties'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -158,7 +159,9 @@ module JsDuck
     end
 
     def nest_properties(raw_items)
-      Subproperties.nest(raw_items, @filename, @linenr)
+      items, warnings = Subproperties.nest(raw_items)
+      warnings.each {|msg| Logger.warn(:subproperty, msg, @filename, @linenr) }
+      items
     end
 
     def detect_return(doc_map)
