@@ -200,21 +200,6 @@ module JsDuck
       end
     end
 
-    # Appends Ext4 options parameter to each event parameter list.
-    def append_ext4_event_options
-      options = {
-        :tagname => :param,
-        :name => "eOpts",
-        :type => "Object",
-        :doc => "The options object passed to {@link Ext.util.Observable#addListener}."
-      }
-      @classes.each_value do |cls|
-        cls[:members].each do |m|
-          m[:params] << options if m[:tagname] == :event
-        end
-      end
-    end
-
     # Processes all overrides.
     # Returns list of override classes.
     def process_overrides
@@ -224,12 +209,6 @@ module JsDuck
         @documentation.delete(cls)
         cls
       end
-    end
-
-    # Are we dealing with ExtJS 4?
-    # True if any of the classes is defined with Ext.define()
-    def ext4?
-      @documentation.any? {|cls| cls[:code_type] == :ext_define }
     end
 
     def result

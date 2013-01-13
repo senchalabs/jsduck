@@ -4,6 +4,7 @@ require 'jsduck/source/file'
 require 'jsduck/aggregator'
 require 'jsduck/enum'
 require 'jsduck/accessors'
+require 'jsduck/ext4_events'
 require 'jsduck/class'
 require 'jsduck/relations'
 require 'jsduck/logger'
@@ -61,9 +62,7 @@ module JsDuck
       agr.create_global_class
       agr.remove_ignored_classes
       Accessors.new(agr.classes).create_all!
-      if @opts.ext4_events == true || (@opts.ext4_events == nil && agr.ext4?)
-        agr.append_ext4_event_options
-      end
+      Ext4Events.new(agr.classes, @opts).process_all!
       Enum.new(agr.classes).process_all!
       # Ignore override classes after applying them to actual classes
       @opts.external_classes += agr.process_overrides.map {|o| o[:name] }
