@@ -3,7 +3,7 @@ require 'jsduck/welcome'
 require 'jsduck/guides'
 require 'jsduck/videos'
 require 'jsduck/examples'
-require 'jsduck/categories'
+require 'jsduck/categories/factory'
 require 'jsduck/doc_formatter'
 
 module JsDuck
@@ -34,7 +34,7 @@ module JsDuck
       @guides = Guides.create(@opts.guides, doc_formatter, @opts)
       @videos = Videos.create(@opts.videos)
       @examples = Examples.create(@opts.examples, @opts)
-      @categories = Categories.create(@opts.categories_path, doc_formatter, @relations)
+      @categories = Categories::Factory.create(@opts.categories_path, doc_formatter, @relations)
     end
 
     # Writes out the assets that can be written out separately:
