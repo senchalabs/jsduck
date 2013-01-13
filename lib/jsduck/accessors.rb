@@ -3,6 +3,15 @@ require 'jsduck/logger'
 module JsDuck
 
   class Accessors
+    def initialize(classes)
+      @classes = classes
+    end
+
+    # Generates accessors in all classes.
+    def create_all!
+      @classes.each_value {|cls| create(cls) }
+    end
+
     # Given a class, generates accessor methods to configs with
     # @accessor tag.  Modifies the class by adding these methods.
     # When class already contains a getter or setter, the method is

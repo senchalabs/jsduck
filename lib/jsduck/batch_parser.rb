@@ -3,6 +3,7 @@ require 'jsduck/util/io'
 require 'jsduck/source/file'
 require 'jsduck/aggregator'
 require 'jsduck/enum'
+require 'jsduck/accessors'
 require 'jsduck/class'
 require 'jsduck/relations'
 require 'jsduck/logger'
@@ -59,7 +60,7 @@ module JsDuck
       agr.classify_orphans
       agr.create_global_class
       agr.remove_ignored_classes
-      agr.create_accessors
+      Accessors.new(agr.classes).create_all!
       if @opts.ext4_events == true || (@opts.ext4_events == nil && agr.ext4?)
         agr.append_ext4_event_options
       end

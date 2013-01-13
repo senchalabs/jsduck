@@ -1,5 +1,4 @@
 require 'jsduck/class'
-require 'jsduck/accessors'
 require 'jsduck/logger'
 require 'jsduck/override'
 
@@ -213,14 +212,6 @@ module JsDuck
         cls[:members].each do |m|
           m[:params] << options if m[:tagname] == :event
         end
-      end
-    end
-
-    # Creates accessor method for configs marked with @accessor
-    def create_accessors
-      accessors = Accessors.new
-      @classes.each_value do |cls|
-        accessors.create(cls)
       end
     end
 
