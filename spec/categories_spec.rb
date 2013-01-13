@@ -1,6 +1,6 @@
-require "jsduck/categories"
+require "jsduck/categories/factory"
 
-describe JsDuck::Categories do
+describe JsDuck::Categories::Factory do
 
   # Small helper to check the sums
   def sum(arr)
@@ -9,7 +9,7 @@ describe JsDuck::Categories do
 
   # Replace the sum method with the one that simply sums the numbers,
   # so we can use simpler test-data.
-  class JsDuck::Categories
+  class JsDuck::Categories::Factory
     def sum(arr)
       arr.reduce(0) {|sum,x| sum + x }
     end
@@ -17,7 +17,7 @@ describe JsDuck::Categories do
 
   describe "#split" do
     before do
-      @categories = JsDuck::Categories.new([], {}, {})
+      @categories = JsDuck::Categories::Factory.new([], {}, {})
     end
 
     it "split(1 item by 1)" do
