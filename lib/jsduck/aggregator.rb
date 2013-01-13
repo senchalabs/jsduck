@@ -189,16 +189,6 @@ module JsDuck
       })
     end
 
-    # Gets rid of classes marked with @ignore
-    def remove_ignored_classes
-      @documentation.delete_if do |cls|
-        if cls[:ignore]
-          @classes.delete(cls["name"])
-          true
-        end
-      end
-    end
-
     # Now used only in tests.
     def result
       @documentation + @orphans

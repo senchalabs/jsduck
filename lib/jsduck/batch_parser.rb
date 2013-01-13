@@ -2,6 +2,7 @@ require 'jsduck/util/parallel'
 require 'jsduck/util/io'
 require 'jsduck/source/file'
 require 'jsduck/aggregator'
+require 'jsduck/ignore'
 require 'jsduck/enum'
 require 'jsduck/accessors'
 require 'jsduck/ext4_events'
@@ -61,9 +62,9 @@ module JsDuck
       end
       agr.classify_orphans
       agr.create_global_class
-      agr.remove_ignored_classes
       classes = agr.classes
 
+      Ignore.new(classes).process_all!
       Accessors.new(classes).create_all!
       Ext4Events.new(classes, @opts).process_all!
       Enum.new(classes).process_all!
