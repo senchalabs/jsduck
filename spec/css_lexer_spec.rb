@@ -1,9 +1,9 @@
-require "jsduck/css_lexer"
+require "jsduck/css/lexer"
 
-describe JsDuck::CssLexer do
+describe JsDuck::Css::Lexer do
 
   def lex(source)
-    lex = JsDuck::CssLexer.new(source)
+    lex = JsDuck::Css::Lexer.new(source)
     tokens = []
     while !lex.empty?
       t = lex.next(true)
@@ -119,4 +119,3 @@ describe JsDuck::CssLexer do
   end
 
 end
-
