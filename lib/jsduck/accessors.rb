@@ -8,15 +8,15 @@ module JsDuck
     end
 
     # Generates accessors in all classes.
-    def create_all!
-      @classes.each_value {|cls| create(cls) }
+    def process_all!
+      @classes.each_value {|cls| process(cls) }
     end
 
     # Given a class, generates accessor methods to configs with
     # @accessor tag.  Modifies the class by adding these methods.
     # When class already contains a getter or setter, the method is
     # not added.
-    def create(cls)
+    def process(cls)
       # Grab all configs tagged as @accessor
       accessors = cls[:members].find_all {|m| m[:tagname] == :cfg && m[:accessor] }
 

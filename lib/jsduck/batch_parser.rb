@@ -65,7 +65,7 @@ module JsDuck
       classes = agr.classes
 
       Ignore.new(classes).process_all!
-      Accessors.new(classes).create_all!
+      Accessors.new(classes).process_all!
       Ext4Events.new(classes, @opts).process_all!
       Enum.new(classes).process_all!
       # Ignore override classes after applying them to actual classes

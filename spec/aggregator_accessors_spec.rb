@@ -6,7 +6,7 @@ describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
-    JsDuck::Accessors.new(agr.classes).create_all!
+    JsDuck::Accessors.new(agr.classes).process_all!
     agr.result
   end
 
