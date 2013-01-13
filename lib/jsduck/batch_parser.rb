@@ -2,6 +2,7 @@ require 'jsduck/util/parallel'
 require 'jsduck/util/io'
 require 'jsduck/source/file'
 require 'jsduck/aggregator'
+require 'jsduck/enum'
 require 'jsduck/class'
 require 'jsduck/relations'
 require 'jsduck/logger'
@@ -62,7 +63,7 @@ module JsDuck
       if @opts.ext4_events == true || (@opts.ext4_events == nil && agr.ext4?)
         agr.append_ext4_event_options
       end
-      agr.process_enums
+      Enum.new(agr.classes).process_all!
       # Ignore override classes after applying them to actual classes
       @opts.external_classes += agr.process_overrides.map {|o| o[:name] }
       agr.result

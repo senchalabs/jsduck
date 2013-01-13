@@ -1,7 +1,6 @@
 require 'jsduck/class'
 require 'jsduck/accessors'
 require 'jsduck/logger'
-require 'jsduck/enum'
 require 'jsduck/override'
 
 module JsDuck
@@ -9,6 +8,9 @@ module JsDuck
   # Combines JavaScript Parser, DocParser and Merger.
   # Produces array of classes as result.
   class Aggregator
+    # Access to internal classes hash.
+    attr_reader :classes
+
     def initialize
       @documentation = []
       @classes = {}
@@ -220,11 +222,6 @@ module JsDuck
       @classes.each_value do |cls|
         accessors.create(cls)
       end
-    end
-
-    # Loops through all enums and auto-detects their types if needed.
-    def process_enums
-      Enum.new(@classes).process_all!
     end
 
     # Processes all overrides.
