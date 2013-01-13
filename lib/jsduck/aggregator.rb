@@ -1,6 +1,5 @@
 require 'jsduck/class'
 require 'jsduck/logger'
-require 'jsduck/override'
 
 module JsDuck
 
@@ -200,17 +199,7 @@ module JsDuck
       end
     end
 
-    # Processes all overrides.
-    # Returns list of override classes.
-    def process_overrides
-      Override.new(@classes).process_all!.map do |cls|
-        # discard each override class
-        @classes.delete(cls[:name])
-        @documentation.delete(cls)
-        cls
-      end
-    end
-
+    # Now used only in tests.
     def result
       @documentation + @orphans
     end

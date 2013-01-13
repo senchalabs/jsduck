@@ -5,6 +5,7 @@ require 'jsduck/aggregator'
 require 'jsduck/enum'
 require 'jsduck/accessors'
 require 'jsduck/ext4_events'
+require 'jsduck/override'
 require 'jsduck/class'
 require 'jsduck/relations'
 require 'jsduck/logger'
@@ -61,12 +62,15 @@ module JsDuck
       agr.classify_orphans
       agr.create_global_class
       agr.remove_ignored_classes
-      Accessors.new(agr.classes).create_all!
-      Ext4Events.new(agr.classes, @opts).process_all!
-      Enum.new(agr.classes).process_all!
+      classes = agr.classes
+
+      Accessors.new(classes).create_all!
+      Ext4Events.new(classes, @opts).process_all!
+      Enum.new(classes).process_all!
       # Ignore override classes after applying them to actual classes
-      @opts.external_classes += agr.process_overrides.map {|o| o[:name] }
-      agr.result
+      @opts.external_classes += Override.new(classes).process_all!
+
+      classes.values
     end
 
     # Turns all aggregated data into Class objects.

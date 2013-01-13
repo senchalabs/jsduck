@@ -1,3 +1,5 @@
+require 'jsduck/logger'
+
 module JsDuck
 
   class Override
@@ -5,8 +7,9 @@ module JsDuck
       @classes_hash = classes_hash
     end
 
-    # Applies all override classes to target classes
-    # Returns all the processed override classes.
+    # Applies all override classes to target classes, then deletes the
+    # overrides themselves from classes hash.  Returns names of all
+    # the processed override classes.
     def process_all!
       overrides = []
 
@@ -17,7 +20,12 @@ module JsDuck
         end
       end
 
-      overrides
+      # discard each override class
+      overrides.each do |cls|
+        @classes_hash.delete(cls[:name])
+      end
+
+      overrides.map {|c| c[:name] }
     end
 
     private
