@@ -10,14 +10,14 @@ module JsDuck::Tag
         @pattern = @key.to_s
         @signature = {:long => @key.to_s, :short => @key.to_s[0..2].upcase}
         @html_position = :bottom
-        @multiline = true
       end
     end
 
     def parse(p)
       {
         :tagname => @key,
-        :version => p.hw.match(/[0-9.]+/)
+        :version => p.hw.match(/[0-9.]+/),
+        :doc => :multiline,
       }
     end
 

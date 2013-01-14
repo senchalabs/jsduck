@@ -5,12 +5,13 @@ module JsDuck::Tag
     def initialize
       @pattern = "throws"
       @key = :throws
-      @multiline = true
     end
 
     # @throws {Type} ...
     def parse(p)
-      p.standard_tag({:tagname => :throws, :type => true})
+      tag = p.standard_tag({:tagname => :throws, :type => true})
+      tag[:doc] = :multiline
+      tag
     end
 
     def process_doc(h, tags)

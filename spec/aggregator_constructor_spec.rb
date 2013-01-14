@@ -22,6 +22,10 @@ describe JsDuck::Aggregator do
       methods[0][:name].should == "constructor"
     end
 
+    it "has method with constructor docs" do
+      methods[0][:doc].should == "This constructs the class"
+    end
+
     it "has method with needed parameters" do
       methods[0][:params].length.should == 1
     end

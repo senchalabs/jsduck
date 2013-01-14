@@ -6,10 +6,6 @@ module JsDuck::Tag
     # For example: "cfg"
     attr_reader :pattern
 
-    # True to include all lines up to next @tag as part of this tag's
-    # :doc property.
-    attr_reader :multiline
-
     # Called by DocParser when the @tag is reached to do the parsing
     # from that point forward.  Gets passed an instance of DocScanner.
     #
@@ -22,6 +18,11 @@ module JsDuck::Tag
     # All hashes with the same :tagname will later be combined
     # together and passed on to #process_doc method of this Tag class
     # that has @key field set to that tagname.
+    #
+    # The hash can also contain :doc => :multiline, in which case all
+    # the documentation following this tag will get added to the :doc
+    # field of the tag and will later be accessible in #process_doc
+    # method.
     def parse(p)
     end
 

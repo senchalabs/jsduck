@@ -35,31 +35,21 @@ module JsDuck
 
         parse_loop
 
-        clean_empty_docs
-        clean_empty_default_tag
+        strip_docs
         @tags
       end
 
       # The parsing process can leave whitespace at the ends of
       # doc-strings, here we get rid of it.
-      # Additionally null all empty docs.
-      def clean_empty_docs
+      def strip_docs
         @tags.each do |tag|
-          tag[:doc].strip!
-          tag[:doc] = nil if tag[:doc] == ""
-        end
-      end
-
-      # Gets rid of empty default tag
-      def clean_empty_default_tag
-        if @tags.first && @tags.first[:tagname] == :default && !@tags.first[:doc]
-          @tags.shift
+          tag[:doc].strip! if tag[:doc]
         end
       end
 
       # The main loop of the DocParser
       def parse_loop
-        add_tag({:tagname => :default, :doc => ""})
+        add_tag({:tagname => :doc, :doc => :multiline})
 
         while !@input.eos? do
           if look(/@/)
@@ -67,6 +57,16 @@ module JsDuck
           elsif look(/[^@]/)
             skip_to_next_at_tag
           end
+        end
+      end
+
+      # Appends new @tag to parsed tags list
+      def add_tag(tag)
+        @tags << tag
+
+        if tag[:doc] == :multiline
+          tag[:doc] = ""
+          @multiline_tag = tag
         end
       end
 
@@ -95,7 +95,7 @@ module JsDuck
           skip_white
         else
           Logger.warn(:tag, "Unsupported tag: @#{name}", @filename, @linenr)
-          @current_tag[:doc] += "@"
+          @multiline_tag[:doc] += "@"
         end
       end
 
@@ -107,19 +107,19 @@ module JsDuck
       # Also check that the @tag is not part of an indented code block -
       # in which case we also ignore the tag.
       def skip_to_next_at_tag
-        @current_tag[:doc] += match(/[^@]+/)
+        @multiline_tag[:doc] += match(/[^@]+/)
 
         while look(/@/) && (!prev_char_is_whitespace? || indented_as_code?)
-          @current_tag[:doc] += match(/@+[^@]+/)
+          @multiline_tag[:doc] += match(/@+[^@]+/)
         end
       end
 
       def prev_char_is_whitespace?
-        @current_tag[:doc][-1,1] =~ /\s/
+        @multiline_tag[:doc][-1,1] =~ /\s/
       end
 
       def indented_as_code?
-        @current_tag[:doc] =~ /^ {4,}[^\n]*\Z/
+        @multiline_tag[:doc] =~ /^ {4,}[^\n]*\Z/
       end
     end
 

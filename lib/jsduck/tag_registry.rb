@@ -9,7 +9,6 @@ module JsDuck
 
     def initialize
       @patterns = {}
-      @multiliners = []
       @ext_define_patterns = {}
       @ext_define_defaults = {}
       @keys = {}
@@ -32,9 +31,6 @@ module JsDuck
         tag = cls.new()
         Array(tag.pattern).each do |pattern|
           @patterns[pattern] = tag
-        end
-        if tag.multiline
-          @multiliners << tag
         end
         Array(tag.ext_define_pattern).each do |pattern|
           @ext_define_patterns[pattern] = tag
@@ -61,9 +57,6 @@ module JsDuck
     #
     # Accessors for lists of tags
     #
-
-    # Returns all multiline tags.
-    attr_reader :multiliners
 
     # Default values for class config when Ext.define is encountered.
     attr_reader :ext_define_defaults

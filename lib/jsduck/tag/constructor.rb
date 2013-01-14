@@ -9,7 +9,7 @@ module JsDuck::Tag
 
     # @constructor
     def parse(p)
-      {:tagname => :constructor}
+      {:tagname => :constructor, :doc => :multiline}
     end
 
     # The method name will become "constructor" unless a separate

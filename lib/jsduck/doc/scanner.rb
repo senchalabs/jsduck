@@ -15,23 +15,11 @@ module JsDuck
         @ident_pattern = /[$\w-]+/
         @ident_chain_pattern = /[$\w-]+(\.[$\w-]+)*/
 
-        @tags = []
         @input = nil # set to StringScanner in subclass
       end
 
       # Provides access to StringScanner
       attr_reader :input
-
-      # Appends new @tag to parsed tags list
-      def add_tag(tag)
-        if tag.is_a?(Hash)
-          @tags << @current_tag = tag
-        else
-          @tags << @current_tag = {:tagname => tag, :doc => ""}
-        end
-
-        @current_tag[:doc] = "" unless @current_tag.has_key?(:doc)
-      end
 
       # Parses standard pattern common in several builtin tags, which
       # goes like this:

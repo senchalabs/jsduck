@@ -42,14 +42,14 @@ module JsDuck
       def create_class(docs, doc_map)
         return add_shared({
             :tagname => :class,
-            :doc => detect_doc(docs),
+            :doc => detect_doc(:class, doc_map),
           }, doc_map)
       end
 
       def create_method(docs, doc_map)
         return add_shared({
             :tagname => :method,
-            :doc => detect_doc(docs),
+            :doc => detect_doc(:method, doc_map),
             :params => detect_params(doc_map),
             :return => detect_return(doc_map),
           }, doc_map)
@@ -58,7 +58,7 @@ module JsDuck
       def create_event(docs, doc_map)
         return add_shared({
             :tagname => :event,
-            :doc => detect_doc(docs),
+            :doc => detect_doc(:event, doc_map),
             :params => detect_params(doc_map),
           }, doc_map)
       end
@@ -68,7 +68,7 @@ module JsDuck
             :tagname => :cfg,
             :name => detect_name(:cfg, doc_map),
             :type => detect_type(:cfg, doc_map),
-            :doc => detect_doc(docs),
+            :doc => detect_doc(:cfg, doc_map),
             :default => detect_default(:cfg, doc_map),
             :properties => detect_subproperties(:cfg, docs),
           }, doc_map)
@@ -79,7 +79,7 @@ module JsDuck
             :tagname => :property,
             :name => detect_name(:property, doc_map),
             :type => detect_type(:property, doc_map),
-            :doc => detect_doc(docs),
+            :doc => detect_doc(:property, doc_map),
             :default => detect_default(:property, doc_map),
             :properties => detect_subproperties(:property, docs),
           }, doc_map)
@@ -91,7 +91,7 @@ module JsDuck
             :name => detect_name(:css_var, doc_map),
             :type => detect_type(:css_var, doc_map),
             :default => detect_default(:css_var, doc_map),
-            :doc => detect_doc(docs),
+            :doc => detect_doc(:css_var, doc_map),
           }, doc_map)
       end
 
@@ -99,7 +99,7 @@ module JsDuck
         return add_shared({
             :tagname => :css_mixin,
             :name => detect_name(:css_mixin, doc_map),
-            :doc => detect_doc(docs),
+            :doc => detect_doc(:css_mixin, doc_map),
             :params => detect_params(doc_map),
           }, doc_map)
       end
@@ -168,16 +168,15 @@ module JsDuck
         }
       end
 
-      # Combines :doc-s of most tags
-      # Ignores tags that have doc comment themselves and subproperty tags
-      def detect_doc(docs)
-        ignore_tags = [:param, :return] + TagRegistry.multiliners.map {|t| t.key }
-        doc_tags = docs.find_all { |tag| !ignore_tags.include?(tag[:tagname]) && !subproperty?(tag) }
-        doc_tags.map { |tag| tag[:doc] }.compact.join(" ")
-      end
-
-      def subproperty?(tag)
-        (tag[:tagname] == :cfg || tag[:tagname] == :property) && tag[:name] =~ /\./
+      # Returns documentation for class or member.
+      def detect_doc(tagname, doc_map)
+        doc = extract(doc_map, :doc, :doc) || ""
+        if tagname == :cfg || tagname == :property
+          doc += extract(doc_map, tagname, :doc) || ""
+        elsif tagname == :method && doc_map[:constructor]
+          doc += extract(doc_map, :constructor, :doc)
+        end
+        doc
       end
 
     end
