@@ -58,7 +58,6 @@ module JsDuck
       def create_event(docs, doc_map)
         return add_shared({
             :tagname => :event,
-            :name => detect_name(:event, doc_map),
             :doc => detect_doc(docs),
             :params => detect_params(doc_map),
           }, doc_map)
