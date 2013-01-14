@@ -11,7 +11,7 @@ require 'jsduck/process/accessors'
 require 'jsduck/process/ext4_events'
 require 'jsduck/process/overrides'
 require 'jsduck/process/inherit_doc'
-require 'jsduck/process/importer'
+require 'jsduck/process/versions'
 require 'jsduck/process/return_values'
 require 'jsduck/process/lint'
 require 'jsduck/process/circular_deps'
@@ -102,7 +102,7 @@ module JsDuck
     def apply_extra_processing
       Process::CircularDeps.new(@relations).process_all!
       Process::InheritDoc.new(@relations).process_all!
-      Process::Importer.new(@relations, @opts).process_all!
+      Process::Versions.new(@relations, @opts).process_all!
       Process::ReturnValues.new(@relations).process_all!
       Process::Lint.new(@relations).process_all!
     end
