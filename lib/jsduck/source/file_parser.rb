@@ -1,11 +1,11 @@
 require 'jsduck/js/parser'
 require 'jsduck/js/ast'
 require 'jsduck/css/parser'
-require 'jsduck/doc_parser'
+require 'jsduck/doc/parser'
+require 'jsduck/doc/ast'
+require 'jsduck/doc/map'
 require 'jsduck/merger'
 require 'jsduck/doc_type'
-require 'jsduck/doc_map'
-require 'jsduck/doc_ast'
 require 'jsduck/class_doc_expander'
 
 module JsDuck
@@ -18,9 +18,9 @@ module JsDuck
     class FileParser
 
       def initialize
-        @doc_parser = DocParser.new
+        @doc_parser = Doc::Parser.new
         @class_doc_expander = ClassDocExpander.new
-        @doc_ast = DocAst.new
+        @doc_ast = Doc::Ast.new
         @merger = Merger.new
       end
 
@@ -50,13 +50,13 @@ module JsDuck
       # Parses the docs, detects tagname and expands class docset
       def expand(docset)
         docset[:comment] = @doc_parser.parse(docset[:comment], @doc_ast.filename, docset[:linenr])
-        docset[:doc_map] = DocMap.build(docset[:comment])
+        docset[:doc_map] = Doc::Map.build(docset[:comment])
         docset[:tagname] = DocType.detect(docset[:doc_map], docset[:code])
 
         if docset[:tagname] == :class
           # expand class into several docsets, and rebuild doc-maps for all of them.
           @class_doc_expander.expand(docset).map do |ds|
-            ds[:doc_map] = DocMap.build(ds[:comment])
+            ds[:doc_map] = Doc::Map.build(ds[:comment])
             ds
           end
         else

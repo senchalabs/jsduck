@@ -1,9 +1,9 @@
-require "jsduck/doc_parser"
+require "jsduck/doc/parser"
 
-describe JsDuck::DocParser do
+describe JsDuck::Doc::Parser do
 
   def parse_single(doc)
-    return JsDuck::DocParser.new.parse(doc)
+    return JsDuck::Doc::Parser.new.parse(doc)
   end
 
   describe "simple method doc-comment" do
