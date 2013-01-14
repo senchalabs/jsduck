@@ -1,10 +1,10 @@
-require "jsduck/importer"
+require "jsduck/process/importer"
 require "jsduck/class"
 
-describe "JsDuck::Importer#generate_since_tags" do
+describe "JsDuck::Process::Importer#generate_since_tags" do
 
   before do
-    importer = JsDuck::Importer.new([])
+    importer = JsDuck::Process::Importer.new([])
 
     @versions = [
       {
@@ -141,10 +141,10 @@ describe "JsDuck::Importer#generate_since_tags" do
 
 end
 
-describe "JsDuck::Importer#generate_since_tags with explicit new_since" do
+describe "JsDuck::Process::Importer#generate_since_tags with explicit new_since" do
 
   before do
-    importer = JsDuck::Importer.new([])
+    importer = JsDuck::Process::Importer.new([])
 
     @versions = [
       {

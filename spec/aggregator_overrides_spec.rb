@@ -2,14 +2,14 @@ require "jsduck/aggregator"
 require "jsduck/source/file"
 require "jsduck/class"
 require "jsduck/relations"
-require "jsduck/override"
+require "jsduck/process/override"
 
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string, "blah.js"))
     classes = agr.classes
-    JsDuck::Override.new(classes).process_all!
+    JsDuck::Process::Override.new(classes).process_all!
     JsDuck::Relations.new(classes.values.map {|cls| JsDuck::Class.new(cls) })
   end
 

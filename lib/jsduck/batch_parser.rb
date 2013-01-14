@@ -2,19 +2,19 @@ require 'jsduck/util/parallel'
 require 'jsduck/util/io'
 require 'jsduck/source/file'
 require 'jsduck/aggregator'
-require 'jsduck/ignore'
-require 'jsduck/enum'
-require 'jsduck/accessors'
-require 'jsduck/ext4_events'
-require 'jsduck/override'
 require 'jsduck/class'
 require 'jsduck/relations'
 require 'jsduck/logger'
-require 'jsduck/inherit_doc'
-require 'jsduck/importer'
-require 'jsduck/return_values'
-require 'jsduck/lint'
-require 'jsduck/circular_deps'
+require 'jsduck/process/ignore'
+require 'jsduck/process/enum'
+require 'jsduck/process/accessors'
+require 'jsduck/process/ext4_events'
+require 'jsduck/process/override'
+require 'jsduck/process/inherit_doc'
+require 'jsduck/process/importer'
+require 'jsduck/process/return_values'
+require 'jsduck/process/lint'
+require 'jsduck/process/circular_deps'
 
 module JsDuck
 
@@ -64,12 +64,12 @@ module JsDuck
       agr.create_global_class
       classes = agr.classes
 
-      Ignore.new(classes).process_all!
-      Accessors.new(classes).process_all!
-      Ext4Events.new(classes, @opts).process_all!
-      Enum.new(classes).process_all!
+      Process::Ignore.new(classes).process_all!
+      Process::Accessors.new(classes).process_all!
+      Process::Ext4Events.new(classes, @opts).process_all!
+      Process::Enum.new(classes).process_all!
       # Ignore override classes after applying them to actual classes
-      @opts.external_classes += Override.new(classes).process_all!
+      @opts.external_classes += Process::Override.new(classes).process_all!
 
       classes.values
     end
@@ -102,11 +102,11 @@ module JsDuck
 
     # Do all kinds of post-processing on relations.
     def apply_extra_processing
-      CircularDeps.new(@relations).process_all!
-      InheritDoc.new(@relations).process_all!
-      Importer.new(@relations, @opts).process_all!
-      ReturnValues.new(@relations).process_all!
-      Lint.new(@relations).process_all!
+      Process::CircularDeps.new(@relations).process_all!
+      Process::InheritDoc.new(@relations).process_all!
+      Process::Importer.new(@relations, @opts).process_all!
+      Process::ReturnValues.new(@relations).process_all!
+      Process::Lint.new(@relations).process_all!
     end
 
   end

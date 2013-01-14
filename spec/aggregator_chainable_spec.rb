@@ -2,14 +2,14 @@ require "jsduck/aggregator"
 require "jsduck/source/file"
 require "jsduck/class"
 require "jsduck/relations"
-require "jsduck/return_values"
+require "jsduck/process/return_values"
 
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
     relations = JsDuck::Relations.new(agr.result.map {|doc| JsDuck::Class.new(doc) })
-    JsDuck::ReturnValues.new(relations).process_all!
+    JsDuck::Process::ReturnValues.new(relations).process_all!
     relations
   end
 

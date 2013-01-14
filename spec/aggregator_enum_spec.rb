@@ -1,12 +1,12 @@
 require "jsduck/aggregator"
 require "jsduck/source/file"
-require "jsduck/enum"
+require "jsduck/process/enum"
 
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
-    JsDuck::Enum.new(agr.classes).process_all!
+    JsDuck::Process::Enum.new(agr.classes).process_all!
     agr.result
   end
 

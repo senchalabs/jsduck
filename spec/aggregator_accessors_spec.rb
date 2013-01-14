@@ -1,12 +1,12 @@
 require "jsduck/aggregator"
 require "jsduck/source/file"
-require "jsduck/accessors"
+require "jsduck/process/accessors"
 
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
-    JsDuck::Accessors.new(agr.classes).process_all!
+    JsDuck::Process::Accessors.new(agr.classes).process_all!
     agr.result
   end
 

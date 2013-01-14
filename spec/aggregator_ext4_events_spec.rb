@@ -1,12 +1,12 @@
 require "jsduck/aggregator"
 require "jsduck/source/file"
-require "jsduck/ext4_events"
+require "jsduck/process/ext4_events"
 
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
-    JsDuck::Ext4Events.new(agr.classes).process_all!
+    JsDuck::Process::Ext4Events.new(agr.classes).process_all!
     agr.result
   end
 
