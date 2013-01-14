@@ -12,17 +12,17 @@ describe JsDuck::Aggregator do
   describe "@member defines the class of member" do
 
     it "when inside a lonely doc-comment" do
-      items = parse(<<-EOS)
+      classes = parse(<<-EOS)
         /**
          * @cfg foo
          * @member Bar
          */
       EOS
-      items[0][:owner].should == "Bar"
+      classes["Bar"][:members][0][:owner].should == "Bar"
     end
 
     it "when used after the corresponding @class" do
-      items = parse(<<-EOS)
+      classes = parse(<<-EOS)
         /**
          * @class Bar
          */
@@ -34,12 +34,12 @@ describe JsDuck::Aggregator do
          * @member Bar
          */
       EOS
-      items[0][:members].length.should == 1
-      items[1][:members].length.should == 0
+      classes["Bar"][:members].length.should == 1
+      classes["Baz"][:members].length.should == 0
     end
 
     it "when used before the corresponding @class" do
-      items = parse(<<-EOS)
+      classes = parse(<<-EOS)
         /**
          * @cfg foo
          * @member Bar
@@ -48,7 +48,7 @@ describe JsDuck::Aggregator do
          * @class Bar
          */
       EOS
-      items[0][:members].length.should == 1
+      classes["Bar"][:members].length.should == 1
     end
   end
 

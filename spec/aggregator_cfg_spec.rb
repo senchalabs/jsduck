@@ -9,6 +9,10 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
+  def parse_member(string)
+    parse(string)["global"][:members][0]
+  end
+
   shared_examples_for "example cfg" do
     it "creates cfg" do
       @doc[:tagname].should == :cfg
@@ -29,7 +33,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit @cfg" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {String} foo
          * Some documentation.
@@ -41,7 +45,7 @@ describe JsDuck::Aggregator do
 
   describe "implicit @cfg" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg
          * Some documentation.
@@ -54,7 +58,7 @@ describe JsDuck::Aggregator do
 
   describe "typeless @cfg" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg
          * Some documentation.
@@ -70,7 +74,7 @@ describe JsDuck::Aggregator do
 
   describe "null @cfg" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg
          * Some documentation.
@@ -86,7 +90,7 @@ describe JsDuck::Aggregator do
 
   describe "@cfg with dash in name" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {String} foo-bar
          * Some documentation.
@@ -101,7 +105,7 @@ describe JsDuck::Aggregator do
 
   describe "@cfg with uppercase name" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg {String} Foo
          */
@@ -116,7 +120,7 @@ describe JsDuck::Aggregator do
 
   describe "@cfg with uppercase name after description" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * Docs here
          * @cfg {String} Foo
@@ -131,7 +135,7 @@ describe JsDuck::Aggregator do
   end
 
   def parse_config_code(propertyName)
-    parse(<<-EOS)[0][:members]
+    parse(<<-EOS)["MyClass"][:members]
       /**
        * Some documentation.
        */
@@ -221,7 +225,7 @@ describe JsDuck::Aggregator do
 
   describe "detecting Ext.define() with all kind of configs" do
     let(:cfg) do
-      parse(<<-EOS)[0][:members]
+      parse(<<-EOS)["MyClass"][:members]
         /**
          * Some documentation.
          */
@@ -247,7 +251,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with line-comment before config:" do
     let(:cfg) do
-      parse(<<-EOS)[0][:members]
+      parse(<<-EOS)["MyClass"][:members]
         /**
          * Some documentation.
          */

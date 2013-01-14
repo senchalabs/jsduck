@@ -60,18 +60,16 @@ module JsDuck
         Logger.log("Aggregating", file.filename)
         agr.aggregate(file)
       end
-      agr.classify_orphans
-      agr.create_global_class
-      classes = agr.classes
+      classes_hash = agr.result
 
-      Process::IgnoredClasses.new(classes).process_all!
-      Process::Accessors.new(classes).process_all!
-      Process::Ext4Events.new(classes, @opts).process_all!
-      Process::Enums.new(classes).process_all!
+      Process::IgnoredClasses.new(classes_hash).process_all!
+      Process::Accessors.new(classes_hash).process_all!
+      Process::Ext4Events.new(classes_hash, @opts).process_all!
+      Process::Enums.new(classes_hash).process_all!
       # Ignore override classes after applying them to actual classes
-      @opts.external_classes += Process::Overrides.new(classes).process_all!
+      @opts.external_classes += Process::Overrides.new(classes_hash).process_all!
 
-      classes.values
+      classes_hash.values
     end
 
     # Turns all aggregated data into Class objects.

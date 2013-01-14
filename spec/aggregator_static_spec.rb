@@ -8,9 +8,13 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
+  def parse_member(string)
+    parse(string)["global"][:members][0]
+  end
+
   describe "normal @static on single method" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some function
          * @static
@@ -30,7 +34,7 @@ describe JsDuck::Aggregator do
 
   describe "@static with @inheritable" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some function
          * @static
@@ -51,7 +55,7 @@ describe JsDuck::Aggregator do
 
   describe "@static in class context" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse(<<-EOS)["Foo"]
         /**
          * @class Foo
          */
@@ -75,7 +79,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with undocumented property in statics:" do
     let(:member) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /**
          * Some documentation.
          */
@@ -116,7 +120,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with documented method in statics:" do
     let(:member) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /**
          * Some documentation.
          */
@@ -158,7 +162,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with undocumented method in inheritableStatics:" do
     let(:member) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /**
          * Some documentation.
          */
@@ -191,7 +195,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with line-comment before item in statics:" do
     let(:member) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /**
          * Some documentation.
          */
@@ -223,7 +227,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with property having value Ext.emptyFn in statics:" do
     let(:member) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /**
          * Some documentation.
          */

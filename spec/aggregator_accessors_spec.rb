@@ -6,8 +6,9 @@ describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
-    JsDuck::Process::Accessors.new(agr.classes).process_all!
-    agr.result
+    classes = agr.result
+    JsDuck::Process::Accessors.new(classes).process_all!
+    classes
   end
 
   describe "@cfg foo with @accessor" do
@@ -21,7 +22,7 @@ describe JsDuck::Aggregator do
            */
       EOF
       @members = {}
-      @docs[0][:members].each do |m|
+      @docs["MyClass"][:members].each do |m|
         @members[m[:name]] = m
       end
     end
@@ -96,7 +97,7 @@ describe JsDuck::Aggregator do
            */
       EOF
       @members = {}
-      @docs[0][:members].each do |m|
+      @docs["MyClass"][:members].each do |m|
         @members[m[:name]] = m
       end
     end
@@ -130,8 +131,8 @@ describe JsDuck::Aggregator do
            * @evented
            */
       EOF
-      @accessors = @docs[0][:members].find_all {|m| m[:tagname] == :method }
-      @events = @docs[0][:members].find_all {|m| m[:tagname] == :event }
+      @accessors = @docs["MyClass"][:members].find_all {|m| m[:tagname] == :method }
+      @events = @docs["MyClass"][:members].find_all {|m| m[:tagname] == :event }
     end
 
     it "creates accessors" do
@@ -161,7 +162,7 @@ describe JsDuck::Aggregator do
            * @accessor
            */
       EOF
-      @accessors = @docs[0][:members].find_all {|m| m[:tagname] == :method }
+      @accessors = @docs["MyClass"][:members].find_all {|m| m[:tagname] == :method }
     end
 
     it "creates accessors" do
@@ -188,7 +189,7 @@ describe JsDuck::Aggregator do
            * @evented
            */
       EOF
-      @events = @docs[0][:members].find_all {|m| m[:tagname] == :event }
+      @events = @docs["MyClass"][:members].find_all {|m| m[:tagname] == :event }
     end
 
     it "creates foochange event" do
@@ -274,7 +275,7 @@ describe JsDuck::Aggregator do
            * Event comment.
            */
       EOF
-      @events = @docs[0][:members].find_all {|m| m[:tagname] == :event }
+      @events = @docs["MyClass"][:members].find_all {|m| m[:tagname] == :event }
     end
 
     it "doesn't create any additional events" do

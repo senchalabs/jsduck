@@ -6,8 +6,9 @@ describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
-    JsDuck::Process::Enums.new(agr.classes).process_all!
-    agr.result
+    classes = agr.result
+    JsDuck::Process::Enums.new(classes).process_all!
+    classes
   end
 
   shared_examples_for "enum" do
@@ -62,7 +63,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit enum" do
     let(:doc) do
-      parse(<<-EOS)[0]
+      parse(<<-EOS)["My.enum.Type"]
         /**
          * @enum {String} My.enum.Type
          * Some documentation.
@@ -78,7 +79,7 @@ describe JsDuck::Aggregator do
 
   describe "implicitly named enum" do
     let(:doc) do
-      parse(<<-EOS)[0]
+      parse(<<-EOS)["My.enum.Type"]
         /**
          * @enum {String}
          * Some documentation.
@@ -98,7 +99,7 @@ describe JsDuck::Aggregator do
 
   describe "enum with implicit values" do
     let(:doc) do
-      parse(<<-EOS)[0]
+      parse(<<-EOS)["My.enum.Type"]
         /**
          * @enum {String}
          * Some documentation.
@@ -115,7 +116,7 @@ describe JsDuck::Aggregator do
 
   describe "enum without a type" do
     let(:doc) do
-      parse(<<-EOS)[0]
+      parse(<<-EOS)["My.enum.Type"]
         /**
          * @enum
          * Some documentation.
@@ -134,7 +135,7 @@ describe JsDuck::Aggregator do
 
   describe "enum without a type and no type in code" do
     let(:doc) do
-      parse(<<-EOS)[0]
+      parse(<<-EOS)["My.enum.Type"]
         /**
          * @enum
          * Some documentation.
@@ -150,7 +151,7 @@ describe JsDuck::Aggregator do
 
   describe "enum with multiple types in code" do
     let(:doc) do
-      parse(<<-EOS)[0]
+      parse(<<-EOS)["My.enum.Type"]
         /**
          * @enum
          * Some documentation.
@@ -170,7 +171,7 @@ describe JsDuck::Aggregator do
 
   describe "enum of two properties" do
     let(:doc) do
-      parse(<<-EOS)[0]
+      parse(<<-EOS)["My.enum.Type"]
         /** @enum */
         My.enum.Type = {
             foo: "hello",
@@ -191,7 +192,7 @@ describe JsDuck::Aggregator do
 
   describe "enum with array value" do
     let(:doc) do
-      parse(<<-EOS)[0]
+      parse(<<-EOS)["My.enum.Type"]
         /** @enum */
         My.enum.Type = [
             "foo",
@@ -227,7 +228,7 @@ describe JsDuck::Aggregator do
 
   describe "enum with documented array values" do
     let(:doc) do
-      parse(<<-EOS)[0]
+      parse(<<-EOS)["My.enum.Smartness"]
         /** @enum */
         My.enum.Smartness = [
             // A wise choice.
@@ -253,7 +254,7 @@ describe JsDuck::Aggregator do
 
   describe "enum of widget.*" do
     let(:doc) do
-      parse(<<-EOS)[0]
+      parse(<<-EOS)["xtype"]
         /** @enum [xtype=widget.*] */
         /** @class Form @alias widget.form */
         /** @class Button @alias widget.button */

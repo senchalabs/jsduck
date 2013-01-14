@@ -9,6 +9,10 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
+  def parse_member(string)
+    parse(string)["global"][:members][0]
+  end
+
   it "yields no results when parsing CSS without doc-comments" do
     @docs = parse("div > p a:link {text-align: top;}")
     @docs.length.should == 0
@@ -16,7 +20,7 @@ describe JsDuck::Aggregator do
 
   describe "CSS with @var in doc-comment" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse_member(<<-EOCSS)
         /**
          * @var {length} $button-height Default height for buttons.
          */
@@ -39,7 +43,7 @@ describe JsDuck::Aggregator do
 
   describe "CSS @var with @member" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse(<<-EOCSS)["Ext.Button"][:members][0]
         /**
          * @var {length} $button-height Default height for buttons.
          * @member Ext.Button
@@ -54,7 +58,7 @@ describe JsDuck::Aggregator do
 
   describe "CSS @var with explicit default value" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse_member(<<-EOCSS)
         /**
          * @var {length} [$button-height=25px]
          */
@@ -68,7 +72,7 @@ describe JsDuck::Aggregator do
 
   describe "CSS doc-comment followed with $var-name:" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse_member(<<-EOCSS)
         /**
          * Default height for buttons.
          */
@@ -92,7 +96,7 @@ describe JsDuck::Aggregator do
 
   describe "$var-name: value followed by !default" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse_member(<<-EOCSS)
         /** */
         $foo: 25px !default;
       EOCSS
@@ -111,7 +115,7 @@ describe JsDuck::Aggregator do
 
   describe "$var-name: followed by multiple values" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse_member(<<-EOCSS)
         /** */
         $foo: 25px 0 1em 0;
       EOCSS
@@ -127,7 +131,7 @@ describe JsDuck::Aggregator do
 
   describe "$var-name: followed by comma-separated values" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse_member(<<-EOCSS)
         /** */
         $foo: "Arial", "Verdana", sans-serif;
       EOCSS
@@ -143,7 +147,7 @@ describe JsDuck::Aggregator do
 
   describe "$var-name: followed by unknown function" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse_member(<<-EOCSS)
         /** */
         $foo: myfunc(1, 2);
       EOCSS
@@ -158,7 +162,7 @@ describe JsDuck::Aggregator do
   end
 
   def detect_type(value)
-    return parse(<<-EOCSS)[0][:type]
+    return parse_member(<<-EOCSS)[:type]
       /** */
       $foo: #{value};
     EOCSS
@@ -224,7 +228,7 @@ describe JsDuck::Aggregator do
 
   describe "CSS doc-comment followed by @mixin" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse_member(<<-EOCSS)
         /**
          * Creates an awesome button.
          *
@@ -261,7 +265,7 @@ describe JsDuck::Aggregator do
 
   describe "CSS doc-comment followed by CSS selector" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse_member(<<-EOCSS)
         /**
          * Some comment.
          */
@@ -278,7 +282,7 @@ describe JsDuck::Aggregator do
 
   describe "CSS doc-comment followed by nothing" do
     before do
-      @doc = parse(<<-EOCSS)[0]
+      @doc = parse_member(<<-EOCSS)
         /**
          * Some comment.
          */
@@ -291,4 +295,3 @@ describe JsDuck::Aggregator do
   end
 
 end
-

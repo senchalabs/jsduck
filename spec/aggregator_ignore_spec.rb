@@ -7,10 +7,9 @@ describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
-    agr.classify_orphans
-    agr.create_global_class
-    JsDuck::Process::IgnoredClasses.new(agr.classes).process_all!
-    agr.classes
+    classes = agr.result
+    JsDuck::Process::IgnoredClasses.new(classes).process_all!
+    classes
   end
 
   describe "@ignore in member" do

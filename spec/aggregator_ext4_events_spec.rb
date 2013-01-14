@@ -6,13 +6,14 @@ describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
-    JsDuck::Process::Ext4Events.new(agr.classes).process_all!
-    agr.result
+    classes = agr.result
+    JsDuck::Process::Ext4Events.new(classes).process_all!
+    classes
   end
 
   describe "event inside Ext.define get extra parameter" do
     let(:event) do
-      parse(<<-EOF)[0][:members][0]
+      parse(<<-EOF)["Blah"][:members][0]
         /** */
         Ext.define("Blah", {
             /**
@@ -43,7 +44,7 @@ describe JsDuck::Aggregator do
 
   describe "When some class defined with Ext.define" do
     let(:events) do
-      parse(<<-EOF)[0][:members]
+      parse(<<-EOF)["Foo"][:members]
         /** @class Foo */
             /**
              * @event click
@@ -66,7 +67,7 @@ describe JsDuck::Aggregator do
 
   describe "Without Ext.define-d class" do
     let(:events) do
-      parse(<<-EOF)[0][:members]
+      parse(<<-EOF)["Foo"][:members]
         /** @class Foo */
             /**
              * @event click

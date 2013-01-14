@@ -9,9 +9,13 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
+  def parse_member(string)
+    parse(string)["global"][:members][0]
+  end
+
   describe "@private" do
     before do
-      @doc = parse("/** @private */")[0]
+      @doc = parse_member("/** @private */")
     end
 
     it "marks item as private" do
@@ -21,7 +25,7 @@ describe JsDuck::Aggregator do
 
   describe "@hide" do
     before do
-      @doc = parse("/** @hide */")[0]
+      @doc = parse_member("/** @hide */")
     end
 
     it "does not mark item as private" do

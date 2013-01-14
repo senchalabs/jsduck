@@ -8,9 +8,13 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
+  def parse_member(string)
+    parse(string)["global"][:members][0]
+  end
+
   describe "@throws with type and description" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some function
          * @throws {Error} Some text
@@ -39,7 +43,7 @@ describe JsDuck::Aggregator do
 
   describe "@throws without type" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @throws Some description
          */
@@ -58,7 +62,7 @@ describe JsDuck::Aggregator do
 
   describe "multiple @throws" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @throws {Error} first
          * @throws {Error} second

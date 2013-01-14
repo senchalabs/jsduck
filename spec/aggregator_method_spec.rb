@@ -9,6 +9,10 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
+  def parse_method(string)
+    parse(string)["global"][:members][0]
+  end
+
   shared_examples_for "method" do
     it "creates method" do
       @doc[:tagname].should == :method
@@ -25,7 +29,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit method" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_method(<<-EOS)
         /**
          * @method foo
          * Some function
@@ -37,7 +41,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit @method after @params-s" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_method(<<-EOS)
         /**
          * Some function
          * @param {String} x First parameter
@@ -51,7 +55,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit @method followed by function with another name" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_method(<<-EOS)
         /**
          * Some function
          * @method foo
@@ -64,63 +68,63 @@ describe JsDuck::Aggregator do
 
   describe "function declaration" do
     before do
-      @doc = parse("/** Some function */ function foo() {}")[0]
+      @doc = parse_method("/** Some function */ function foo() {}")
     end
     it_should_behave_like "method"
   end
 
   describe "function-literal with var" do
     before do
-      @doc = parse("/** Some function */ var foo = function() {}")[0]
+      @doc = parse_method("/** Some function */ var foo = function() {}")
     end
     it_should_behave_like "method"
   end
 
   describe "function-literal without var" do
     before do
-      @doc = parse("/** Some function */ foo = function() {}")[0]
+      @doc = parse_method("/** Some function */ foo = function() {}")
     end
     it_should_behave_like "method"
   end
 
   describe "function-literal in object-literal" do
     before do
-      @doc = parse("({ /** Some function */ foo: function() {} })")[0]
+      @doc = parse_method("({ /** Some function */ foo: function() {} })")
     end
     it_should_behave_like "method"
   end
 
   describe "function-literal in object-literal-string" do
     before do
-      @doc = parse("({ /** Some function */ 'foo': function() {} })")[0]
+      @doc = parse_method("({ /** Some function */ 'foo': function() {} })")
     end
     it_should_behave_like "method"
   end
 
   describe "function-literal in prototype-chain" do
     before do
-      @doc = parse("/** Some function */ Some.long.prototype.foo = function() {}")[0]
+      @doc = parse_method("/** Some function */ Some.long.prototype.foo = function() {}")
     end
     it_should_behave_like "method"
   end
 
   describe "function-literal in comma-first style" do
     before do
-      @doc = parse("({ blah: 7 /** Some function */ , foo: function() {} })")[0]
+      @doc = parse_method("({ blah: 7 /** Some function */ , foo: function() {} })")
     end
     it_should_behave_like "method"
   end
 
   describe "Ext.emptyFn in object-literal" do
     before do
-      @doc = parse("({ /** Some function */ foo: Ext.emptyFn })")[0]
+      @doc = parse_method("({ /** Some function */ foo: Ext.emptyFn })")
     end
     it_should_behave_like "method"
   end
 
   describe "doc-comment followed by 'function'" do
     before do
-      @doc = parse("/** Some function */ 'function';")[0]
+      @doc = parse_method("/** Some function */ 'function';")
     end
 
     it "isn't detected as method" do
@@ -130,7 +134,7 @@ describe JsDuck::Aggregator do
 
   describe "Doc-comment not followed by function but containing @return" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_method(<<-EOS)
         /**
          * Some function
          * @returns {String} return value
@@ -143,7 +147,7 @@ describe JsDuck::Aggregator do
 
   describe "Doc-comment not followed by function but containing @param" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_method(<<-EOS)
         /**
          * Some function
          * @param {String} x
@@ -186,7 +190,7 @@ describe JsDuck::Aggregator do
 
   describe "method without comment inside Ext.define" do
     let(:method) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         Ext.define("MyClass", {
             foo: function() {}
@@ -199,7 +203,7 @@ describe JsDuck::Aggregator do
 
   describe "method with line comment inside Ext.define" do
     let(:method) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         Ext.define("MyClass", {
             // My docs
@@ -217,7 +221,7 @@ describe JsDuck::Aggregator do
 
   describe "property with value Ext.emptyFn inside Ext.define" do
     let(:method) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         Ext.define("MyClass", {
             foo: Ext.emptyFn
@@ -232,7 +236,7 @@ describe JsDuck::Aggregator do
 
   describe "method without comment inside Ext.extend" do
     let(:method) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         MyClass = Ext.extend(Object, {
             foo: function(){}
@@ -245,7 +249,7 @@ describe JsDuck::Aggregator do
 
   describe "method with line comment inside Ext.extend" do
     let(:method) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         MyClass = Ext.extend(Object, {
             // My docs
@@ -263,7 +267,7 @@ describe JsDuck::Aggregator do
 
   describe "method without comment inside object literal" do
     let(:method) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         MyClass = {
             foo: function(){}
@@ -276,7 +280,7 @@ describe JsDuck::Aggregator do
 
   describe "method with line comment inside object literal" do
     let(:method) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         MyClass = {
             // My docs
@@ -294,7 +298,7 @@ describe JsDuck::Aggregator do
 
   describe "method inside object literal marked with @class" do
     let(:method) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /**
          * @class MyClass
          * Some documentation.

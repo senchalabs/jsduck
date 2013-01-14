@@ -9,9 +9,13 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
+  def parse_member(string)
+    parse(string)["global"][:members][0]
+  end
+
   describe "method without @return" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some function
          */
@@ -25,7 +29,7 @@ describe JsDuck::Aggregator do
 
   describe "method with @return that has no type" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some function
          * @return Some value.
@@ -52,7 +56,7 @@ describe JsDuck::Aggregator do
 
   describe "@return documenting return value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some function
          * @return {String} return value
@@ -65,7 +69,7 @@ describe JsDuck::Aggregator do
 
   describe "@returns being alias for @return" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some function
          * @returns {String} return value

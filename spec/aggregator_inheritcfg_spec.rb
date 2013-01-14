@@ -8,7 +8,7 @@ describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
-    relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
+    relations = JsDuck::Relations.new(agr.result.values.map {|cls| JsDuck::Class.new(cls) })
     JsDuck::Process::InheritDoc.new(relations).process_all!
     relations
   end

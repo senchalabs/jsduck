@@ -2,12 +2,12 @@ require 'jsduck/logger'
 
 module JsDuck
 
-  # Combines JavaScript Parser, DocParser and Merger.
-  # Produces array of classes as result.
+  # Groups parsed documentation data from source files into classes.
+  #
+  # Produces Hash of classes as result.  When a member is found that
+  # doesn't belong to any class, it's placed into special "global"
+  # class.
   class Aggregator
-    # Access to internal classes hash.
-    attr_reader :classes
-
     def initialize
       @documentation = []
       @classes = {}
@@ -26,6 +26,18 @@ module JsDuck
       @current_class = nil
       file.each {|doc| register(doc) }
     end
+
+    # Returns the final result which is a Hash of all classes indexed
+    # by name.  It's a hash because some processors applied to this
+    # returned classes list need a random-access look up classes by
+    # name.
+    def result
+      classify_orphans
+      create_global_class
+      @classes
+    end
+
+    private
 
     # Registers documentation node either as class or as member of
     # some class.
@@ -186,11 +198,6 @@ module JsDuck
         :aliases => {},
         :files => [{:filename => "", :linenr => 0, :href => ""}],
       })
-    end
-
-    # Now used only in tests.
-    def result
-      @documentation + @orphans
     end
   end
 

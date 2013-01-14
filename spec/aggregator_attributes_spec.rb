@@ -8,9 +8,13 @@ describe JsDuck::Aggregator do
     agr.result
   end
 
+  def parse_member(string)
+    parse(string)["global"][:members][0]
+  end
+
   describe "member with @protected" do
     before do
-      @doc = parse("/** @protected */")[0]
+      @doc = parse_member("/** @protected */")
     end
 
     it "gets protected attribute" do
@@ -20,7 +24,7 @@ describe JsDuck::Aggregator do
 
   describe "member with @abstract" do
     before do
-      @doc = parse("/** @abstract */")[0]
+      @doc = parse_member("/** @abstract */")
     end
 
     it "gets abstract attribute" do
@@ -30,7 +34,7 @@ describe JsDuck::Aggregator do
 
   describe "member with @static" do
     before do
-      @doc = parse("/** @static */")[0]
+      @doc = parse_member("/** @static */")
     end
 
     it "gets static attribute" do
@@ -40,7 +44,7 @@ describe JsDuck::Aggregator do
 
   describe "Property with @readonly" do
     before do
-      @doc = parse("/** @readonly */")[0]
+      @doc = parse_member("/** @readonly */")
     end
 
     it "gets readonly attribute" do
@@ -50,7 +54,7 @@ describe JsDuck::Aggregator do
 
   describe "method with @template" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @method foo
          * Some function
@@ -65,7 +69,7 @@ describe JsDuck::Aggregator do
 
   describe "event with @preventable" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @event foo
          * @preventable bla blah
@@ -83,7 +87,7 @@ describe JsDuck::Aggregator do
 
   describe "a normal config option" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg foo Something
          */
@@ -96,7 +100,7 @@ describe JsDuck::Aggregator do
 
   describe "a config option labeled as required" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg foo (required) Something
          */
@@ -109,7 +113,7 @@ describe JsDuck::Aggregator do
 
   describe "a class with @cfg (required)" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse(<<-EOS)["MyClass"]
         /**
          * @class MyClass
          * @cfg foo (required)
@@ -126,7 +130,7 @@ describe JsDuck::Aggregator do
 
   describe "member with @deprecated" do
     before do
-      @deprecated = parse(<<-EOS)[0][:deprecated]
+      @deprecated = parse_member(<<-EOS)[:deprecated]
         /**
          * @deprecated 4.0 Use escapeRegex instead.
          */
@@ -148,7 +152,7 @@ describe JsDuck::Aggregator do
 
   describe "member with @deprecated without version number" do
     before do
-      @deprecated = parse(<<-EOS)[0][:deprecated]
+      @deprecated = parse_member(<<-EOS)[:deprecated]
         /**
          * @deprecated Use escapeRegex instead.
          */
@@ -166,7 +170,7 @@ describe JsDuck::Aggregator do
 
   describe "class with @markdown" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse(<<-EOS)["MyClass"]
         /**
          * @class MyClass
          * @markdown
