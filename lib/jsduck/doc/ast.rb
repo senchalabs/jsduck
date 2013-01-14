@@ -42,7 +42,6 @@ module JsDuck
       def create_class(docs, doc_map)
         return add_shared({
             :tagname => :class,
-            :name => detect_name(:class, doc_map),
             :doc => detect_doc(docs),
           }, doc_map)
       end
