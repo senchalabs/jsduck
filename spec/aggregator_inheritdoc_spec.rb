@@ -9,7 +9,7 @@ describe JsDuck::Aggregator do
     agr = JsDuck::Aggregator.new
     agr.aggregate(JsDuck::Source::File.new(string))
     relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
-    JsDuck::InheritDoc.new(relations).resolve_all
+    JsDuck::InheritDoc.new(relations).process_all!
     relations
   end
 

@@ -102,11 +102,11 @@ module JsDuck
 
     # Do all kinds of post-processing on relations.
     def apply_extra_processing
-      CircularDeps.new(@relations).check_all
-      InheritDoc.new(@relations).resolve_all
-      Importer.import(@opts.imports, @relations, @opts.new_since)
-      ReturnValues.auto_detect(@relations)
-      Lint.new(@relations).run
+      CircularDeps.new(@relations).process_all!
+      InheritDoc.new(@relations).process_all!
+      Importer.new(@relations, @opts).process_all!
+      ReturnValues.new(@relations).process_all!
+      Lint.new(@relations).process_all!
     end
 
   end

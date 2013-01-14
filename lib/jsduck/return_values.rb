@@ -6,11 +6,6 @@ module JsDuck
   # this.  Also the other way around: when @chainable found, adds
   # appropriate @return.
   class ReturnValues
-    # Only this static method of this class should be called.
-    def self.auto_detect(relations)
-      ReturnValues.new(relations).process_all!
-    end
-
     def initialize(relations)
       @relations = relations
       @cls = nil

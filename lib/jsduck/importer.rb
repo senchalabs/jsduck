@@ -6,13 +6,17 @@ require 'jsduck/util/parallel'
 module JsDuck
 
   # Reads in JSDuck exports of different versions of docs.
-  module Importer
-    module_function
+  class Importer
+    def initialize(relations, opts={})
+      @relations = relations
+      @opts = opts
+    end
 
-    # Loads in exported docs and generates @since and @new tags based on that data.
-    def import(imports, relations, new_since=nil)
-      if imports.length > 0
-        generate_since_tags(read_all(imports), relations, new_since)
+    # Loads in exported docs and generates @since and @new tags based
+    # on that data.
+    def process_all!
+      if @opts[:imports].length > 0
+        generate_since_tags(read_all(@opts[:imports]), @relations, @opts[:new_since])
       end
     end
 

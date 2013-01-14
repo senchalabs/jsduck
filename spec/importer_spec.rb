@@ -4,6 +4,8 @@ require "jsduck/class"
 describe "JsDuck::Importer#generate_since_tags" do
 
   before do
+    importer = JsDuck::Importer.new([])
+
     @versions = [
       {
         :version => "1.0", :classes => {
@@ -19,7 +21,7 @@ describe "JsDuck::Importer#generate_since_tags" do
         },
       },
       {
-        :version => "3.0", :classes => JsDuck::Importer.current_version
+        :version => "3.0", :classes => importer.current_version
       }
     ]
 
@@ -38,7 +40,7 @@ describe "JsDuck::Importer#generate_since_tags" do
       {:name => "ExplicitNewClass", :new => true, :alternateClassNames => []},
     ].map {|cfg| JsDuck::Class.new(cfg) }
 
-    JsDuck::Importer.generate_since_tags(@versions, @relations)
+    importer.generate_since_tags(@versions, @relations)
 
     # build className/member index for easy lookup in specs
     @stuff = {}
@@ -142,6 +144,8 @@ end
 describe "JsDuck::Importer#generate_since_tags with explicit new_since" do
 
   before do
+    importer = JsDuck::Importer.new([])
+
     @versions = [
       {
         :version => "1.0", :classes => {
@@ -154,7 +158,7 @@ describe "JsDuck::Importer#generate_since_tags with explicit new_since" do
         },
       },
       {
-        :version => "3.0", :classes => JsDuck::Importer.current_version
+        :version => "3.0", :classes => importer.current_version
       }
     ]
 
@@ -164,7 +168,7 @@ describe "JsDuck::Importer#generate_since_tags with explicit new_since" do
       {:name => "NewClass", :alternateClassNames => []},
     ].map {|cfg| JsDuck::Class.new(cfg) }
 
-    JsDuck::Importer.generate_since_tags(@versions, @relations, "2.0")
+    importer.generate_since_tags(@versions, @relations, "2.0")
   end
 
   # @since

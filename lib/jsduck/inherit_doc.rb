@@ -10,7 +10,7 @@ module JsDuck
     end
 
     # Performs all inheriting
-    def resolve_all
+    def process_all!
       @relations.each do |cls|
         resolve_class(cls) if cls[:inheritdoc]
 

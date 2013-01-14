@@ -12,7 +12,7 @@ module JsDuck
     end
 
     # Runs the linter
-    def run
+    def process_all!
       warn_no_doc
       warn_unnamed
       warn_optional_params
