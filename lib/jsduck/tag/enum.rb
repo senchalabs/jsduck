@@ -20,9 +20,11 @@ module JsDuck::Tag
 
     def process_doc(tags)
       return {
-        :type => tags[0][:type],
-        :default => tags[0][:default],
-        :doc_only => !!tags[0][:default],
+        :enum => {
+          :type => tags[0][:type],
+          :default => tags[0][:default],
+          :doc_only => !!tags[0][:default],
+        }
       }
     end
 

@@ -22,7 +22,7 @@ module JsDuck::Tag
     end
 
     def process_doc(tags)
-      tags
+      {:aside => tags}
     end
 
     def to_html(context)

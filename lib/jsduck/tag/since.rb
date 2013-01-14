@@ -20,7 +20,8 @@ module JsDuck::Tag
       if tags.length > 1
         JsDuck::Logger.warn(nil, "Only one @since tag allowed per class/member.")
       end
-      tags[0][:version]
+
+      {:since => tags[0][:version]}
     end
 
     def to_html(context)

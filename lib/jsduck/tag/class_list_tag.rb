@@ -29,7 +29,8 @@ module JsDuck::Tag
     end
 
     def process_doc(tags)
-      tags.map {|d| d[:classes] }.flatten
+      list = tags.map {|d| d[:classes] }.flatten
+      return {@key => list}
     end
 
     def parse_ext_define(cls, ast)

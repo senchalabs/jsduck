@@ -14,12 +14,14 @@ module JsDuck::Tag
     end
 
     def process_doc(tags)
-      tags.map do |throws|
+      result = tags.map do |throws|
         {
           :type => throws[:type] || "Object",
           :doc => throws[:doc] || "",
         }
       end
+
+      {:throws => result}
     end
   end
 end

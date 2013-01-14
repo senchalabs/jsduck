@@ -19,7 +19,7 @@ module JsDuck::Tag
     end
 
     def process_doc(tags)
-      tags[0][:extends]
+      {:extends => tags[0][:extends]}
     end
 
     def parse_ext_define(cls, ast)

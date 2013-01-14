@@ -26,7 +26,7 @@ module JsDuck::Tag
     end
 
     def process_doc(tags)
-      tags[0][:override]
+      {:override => tags[0][:override]}
     end
 
     def parse_ext_define(cls, ast)

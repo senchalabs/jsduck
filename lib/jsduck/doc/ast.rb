@@ -111,7 +111,7 @@ module JsDuck
       def add_shared(hash, doc_map)
         doc_map.each_pair do |key, value|
           if tag = TagRegistry.get_by_key(key)
-            hash[key] = tag.process_doc(value)
+            hash.merge!(tag.process_doc(value))
           end
         end
 

@@ -16,7 +16,7 @@ module JsDuck::Tag
     end
 
     def process_doc(docs)
-      true
+      {:required => true}
     end
   end
 end

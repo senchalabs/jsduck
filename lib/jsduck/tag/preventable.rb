@@ -20,7 +20,7 @@ module JsDuck::Tag
     end
 
     def process_doc(docs)
-      true
+      {:preventable => true}
     end
 
     def to_html(context)

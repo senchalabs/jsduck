@@ -30,7 +30,7 @@ module JsDuck::Tag
     end
 
     def process_doc(tags)
-      tags.map {|tag| tag[:name] }
+      {:aliases => tags.map {|tag| tag[:name] }}
     end
 
     def parse_ext_define(cls, ast)

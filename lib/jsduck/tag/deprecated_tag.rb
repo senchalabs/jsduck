@@ -24,7 +24,7 @@ module JsDuck::Tag
     def process_doc(tags)
       v = {:text => tags[0][:doc] || ""}
       v[:version] = tags[0][:version] if tags[0][:version]
-      v
+      return {@key => v}
     end
 
     def to_html(context)
