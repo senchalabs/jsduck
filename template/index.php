@@ -45,7 +45,10 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
       $divs = $doc->getElementsByTagName('div');
       $content = "";
       foreach ( $divs as $div ) {
-        if ($div->attributes->getNamedItem('id')->nodeValue == $attribute) {
+        if (!isset($div->attributes->getNamedItem('id')->nodeValue)) {
+          continue;
+        }
+        elseif ($div->attributes->getNamedItem('id')->nodeValue == $attribute) {
           $content = "<h1>" . $className . "." . $attrName . "</h1>" . $doc->saveHTML($div);
           break;
         }
