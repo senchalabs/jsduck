@@ -1,9 +1,9 @@
-require "jsduck/js_parser"
+require "jsduck/js/parser"
 
-describe JsDuck::JsParser do
+describe JsDuck::Js::Parser do
 
   def parse(input)
-    JsDuck::JsParser.new(input).parse
+    JsDuck::Js::Parser.new(input).parse
   end
 
   describe "parsing two comments" do

@@ -1,5 +1,5 @@
 require "jsduck/tag/tag"
-require "jsduck/ast_utils"
+require "jsduck/js/utils"
 
 module JsDuck::Tag
   class Override < Tag
@@ -30,7 +30,7 @@ module JsDuck::Tag
     end
 
     def parse_ext_define(cls, ast)
-      cls[:override] = JsDuck::AstUtils.make_string(ast)
+      cls[:override] = JsDuck::Js::Utils.make_string(ast)
     end
 
   end

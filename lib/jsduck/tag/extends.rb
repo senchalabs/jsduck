@@ -1,5 +1,5 @@
 require "jsduck/tag/tag"
-require "jsduck/ast_utils"
+require "jsduck/js/utils"
 
 module JsDuck::Tag
   class Extends < Tag
@@ -23,7 +23,7 @@ module JsDuck::Tag
     end
 
     def parse_ext_define(cls, ast)
-      cls[:extends] = JsDuck::AstUtils.make_string(ast)
+      cls[:extends] = JsDuck::Js::Utils.make_string(ast)
     end
   end
 end

@@ -1,10 +1,10 @@
-require "jsduck/esprima"
-require "jsduck/serializer"
+require "jsduck/js/esprima"
+require "jsduck/js/serializer"
 
-describe JsDuck::Serializer do
+describe JsDuck::Js::Serializer do
   def to_s(string)
-    ast = JsDuck::Esprima.instance.parse(string)
-    return JsDuck::Serializer.new.to_s(ast)
+    ast = JsDuck::Js::Esprima.instance.parse(string)
+    return JsDuck::Js::Serializer.new.to_s(ast)
   end
 
   def test(string)

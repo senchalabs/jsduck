@@ -1,5 +1,5 @@
 require "jsduck/tag/tag"
-require "jsduck/ast_utils"
+require "jsduck/js/utils"
 
 module JsDuck::Tag
   # Base class for tags like @mixins, @uses, etc
@@ -33,7 +33,7 @@ module JsDuck::Tag
     end
 
     def parse_ext_define(cls, ast)
-      cls[@key] = JsDuck::AstUtils.make_string_list(ast)
+      cls[@key] = JsDuck::Js::Utils.make_string_list(ast)
     end
   end
 end

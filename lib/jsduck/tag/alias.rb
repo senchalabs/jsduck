@@ -1,5 +1,5 @@
 require "jsduck/tag/inheritdoc"
-require "jsduck/ast_utils"
+require "jsduck/js/utils"
 
 module JsDuck::Tag
   class Alias < Inheritdoc
@@ -34,7 +34,7 @@ module JsDuck::Tag
     end
 
     def parse_ext_define(cls, ast)
-      cls[:aliases] += JsDuck::AstUtils.make_string_list(ast)
+      cls[:aliases] += JsDuck::Js::Utils.make_string_list(ast)
     end
   end
 end

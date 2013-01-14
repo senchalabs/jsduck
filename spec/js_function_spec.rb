@@ -1,10 +1,10 @@
-require "jsduck/js_parser"
-require "jsduck/function_ast"
+require "jsduck/js/parser"
+require "jsduck/js/function"
 
-describe "JsDuck::FunctionAst#return_types" do
+describe "JsDuck::Js::Function#return_types" do
   def returns(string)
-    node = JsDuck::JsParser.new(string).parse[0]
-    return JsDuck::FunctionAst.return_types(node[:code])
+    node = JsDuck::Js::Parser.new(string).parse[0]
+    return JsDuck::Js::Function::return_types(node[:code])
   end
 
   describe "returns [:this] when function body" do

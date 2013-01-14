@@ -35,7 +35,7 @@ module JsDuck
         elsif look(:var, ":")
           var_declaration
         else
-          # Default to property like in JsParser.
+          # Default to property like in Js::Parser.
           {:tagname => :property}
         end
       end

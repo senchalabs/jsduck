@@ -1,10 +1,10 @@
-require "jsduck/ast"
-require "jsduck/js_parser"
+require "jsduck/js/ast"
+require "jsduck/js/parser"
 
-describe "JsDuck::Ast detecting" do
+describe "JsDuck::Js::Ast detecting" do
   def detect(string)
-    node = JsDuck::JsParser.new(string).parse[0]
-    return JsDuck::Ast.new.detect(node[:code])
+    node = JsDuck::Js::Parser.new(string).parse[0]
+    return JsDuck::Js::Ast.new.detect(node[:code])
   end
 
   describe "Ext.define()" do

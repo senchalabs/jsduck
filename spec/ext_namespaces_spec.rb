@@ -1,19 +1,19 @@
-require "jsduck/js_parser"
-require "jsduck/ast"
-require "jsduck/ext_patterns"
+require "jsduck/js/parser"
+require "jsduck/js/ast"
+require "jsduck/js/ext_patterns"
 
 describe "--ext-namespaces=Ext,MyNs,MyNs.Foo.Bar" do
   before do
-    JsDuck::ExtPatterns.set(["Ext", "MyNs", "MyNs.Foo.Bar"])
+    JsDuck::Js::ExtPatterns.set(["Ext", "MyNs", "MyNs.Foo.Bar"])
   end
 
   after do
-    JsDuck::ExtPatterns.set(["Ext"])
+    JsDuck::Js::ExtPatterns.set(["Ext"])
   end
 
   def parse(string)
-    docs = JsDuck::JsParser.new(string).parse
-    JsDuck::Ast.new(docs).detect_all!
+    docs = JsDuck::Js::Parser.new(string).parse
+    JsDuck::Js::Ast.new(docs).detect_all!
   end
 
   it "allows detecting Ext.define()" do

@@ -1,8 +1,8 @@
-require 'jsduck/js_parser'
+require 'jsduck/js/parser'
+require 'jsduck/js/ast'
 require 'jsduck/css/parser'
 require 'jsduck/doc_parser'
 require 'jsduck/merger'
-require 'jsduck/ast'
 require 'jsduck/doc_type'
 require 'jsduck/doc_map'
 require 'jsduck/doc_ast'
@@ -42,8 +42,8 @@ module JsDuck
         if filename =~ /\.s?css$/
           docs = Css::Parser.new(contents, options).parse
         else
-          docs = JsParser.new(contents, options).parse
-          docs = Ast.new(docs).detect_all!
+          docs = Js::Parser.new(contents, options).parse
+          docs = Js::Ast.new(docs).detect_all!
         end
       end
 

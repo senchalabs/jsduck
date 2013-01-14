@@ -5,6 +5,7 @@ require 'jsduck/util/os'
 require 'jsduck/util/io'
 require 'jsduck/util/parallel'
 require 'jsduck/tag_registry'
+require 'jsduck/js/ext_patterns'
 
 module JsDuck
 
@@ -527,7 +528,7 @@ module JsDuck
           "and JSDuck will recognize both Ext.define() and",
           "YourNs.define() plus few other things that depend on",
           "Ext namespace like Ext.emptyFn.") do |namespaces|
-          ExtPatterns.set(namespaces)
+          Js::ExtPatterns.set(namespaces)
         end
 
         opts.on('--touch-examples-ui',

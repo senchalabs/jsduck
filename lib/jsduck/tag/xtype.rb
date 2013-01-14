@@ -1,5 +1,5 @@
 require "jsduck/tag/tag"
-require "jsduck/ast_utils"
+require "jsduck/js/utils"
 
 module JsDuck::Tag
   class Xtype < Tag
@@ -23,7 +23,7 @@ module JsDuck::Tag
     end
 
     def parse_ext_define(cls, ast)
-      cls[:aliases] += JsDuck::AstUtils.make_string_list(ast).map {|xtype| "widget."+xtype }
+      cls[:aliases] += JsDuck::Js::Utils.make_string_list(ast).map {|xtype| "widget."+xtype }
     end
 
   end

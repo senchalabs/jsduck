@@ -1,7 +1,7 @@
-require "jsduck/ast"
 require "jsduck/doc_type"
 require "jsduck/doc_map"
-require "jsduck/js_parser"
+require "jsduck/js/ast"
+require "jsduck/js/parser"
 require "jsduck/css/parser"
 require "jsduck/doc_parser"
 
@@ -10,8 +10,8 @@ describe JsDuck::DocType do
     if type == :css
       node = JsDuck::Css::Parser.new(string).parse[0]
     else
-      node = JsDuck::JsParser.new(string).parse[0]
-      node[:code] = JsDuck::Ast.new.detect(node[:code])
+      node = JsDuck::Js::Parser.new(string).parse[0]
+      node[:code] = JsDuck::Js::Ast.new.detect(node[:code])
     end
 
     doc_parser = JsDuck::DocParser.new
