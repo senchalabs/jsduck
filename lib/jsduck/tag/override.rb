@@ -25,8 +25,8 @@ module JsDuck::Tag
       end
     end
 
-    def process_doc(tags)
-      {:override => tags[0][:override]}
+    def process_doc(h, tags)
+      h[:override] = tags[0][:override]
     end
 
     def parse_ext_define(cls, ast)

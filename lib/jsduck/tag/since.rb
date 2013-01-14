@@ -16,12 +16,12 @@ module JsDuck::Tag
       }
     end
 
-    def process_doc(tags)
+    def process_doc(h, tags)
       if tags.length > 1
         JsDuck::Logger.warn(nil, "Only one @since tag allowed per class/member.")
       end
 
-      {:since => tags[0][:version]}
+      h[:since] = tags[0][:version]
     end
 
     def to_html(context)

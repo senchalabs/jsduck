@@ -21,8 +21,8 @@ module JsDuck::Tag
       p.hw.look(/\w+/) ? p.ident.to_sym : nil
     end
 
-    def process_doc(tags)
-      {:aside => tags}
+    def process_doc(h, tags)
+      h[:aside] = tags
     end
 
     def to_html(context)

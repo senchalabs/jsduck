@@ -19,8 +19,8 @@ module JsDuck::Tag
       {:tagname => :preventable}
     end
 
-    def process_doc(docs)
-      {:preventable => true}
+    def process_doc(h, docs)
+      h[:preventable] = true
     end
 
     def to_html(context)

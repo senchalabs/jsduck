@@ -15,8 +15,8 @@ module JsDuck::Tag
       }
     end
 
-    def process_doc(tags)
-      {:name => tags[0][:name]}
+    def process_doc(h, tags)
+      h[:name] = tags[0][:name]
     end
   end
 end

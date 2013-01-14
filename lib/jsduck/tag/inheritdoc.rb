@@ -41,8 +41,8 @@ module JsDuck::Tag
       tag
     end
 
-    def process_doc(docs)
-      {:inheritdoc => docs.first}
+    def process_doc(h, docs)
+      h[:inheritdoc] = docs.first
     end
   end
 end

@@ -15,8 +15,8 @@ module JsDuck::Tag
       @signature = {:long => "required", :short => "REQ"}
     end
 
-    def process_doc(docs)
-      {:required => true}
+    def process_doc(h, docs)
+      h[:required] = true
     end
   end
 end

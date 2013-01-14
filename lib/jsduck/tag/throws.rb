@@ -13,7 +13,7 @@ module JsDuck::Tag
       p.standard_tag({:tagname => :throws, :type => true})
     end
 
-    def process_doc(tags)
+    def process_doc(h, tags)
       result = tags.map do |throws|
         {
           :type => throws[:type] || "Object",
@@ -21,7 +21,7 @@ module JsDuck::Tag
         }
       end
 
-      {:throws => result}
+      h[:throws] = result
     end
   end
 end
