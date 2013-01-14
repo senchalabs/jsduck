@@ -34,7 +34,7 @@ function decode_file($filename) {
 if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
   $fragment = isset($_GET["_escaped_fragment_"]) ? $_GET["_escaped_fragment_"] : $_GET["print"];
   try {
-    if (preg_match('/^\/api\/([^-]+)-([^-]+)-(.+)/', $fragment, $m)) {
+    if (isset($_GET["_escaped_fragment_"]) && preg_match('/^\/api\/([^-]+)-([^-]+)-(.+)/', $fragment, $m)) {
       $className = $m[1];
       $attrType = $m[2];
       $attrName = $m[3];
