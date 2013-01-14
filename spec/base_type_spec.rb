@@ -1,11 +1,11 @@
-require "jsduck/doc_type"
+require "jsduck/base_type"
 require "jsduck/doc/map"
 require "jsduck/js/ast"
 require "jsduck/js/parser"
 require "jsduck/css/parser"
 require "jsduck/doc/parser"
 
-describe JsDuck::DocType do
+describe JsDuck::BaseType do
   def detect(string, type = :js)
     if type == :css
       node = JsDuck::Css::Parser.new(string).parse[0]
@@ -17,7 +17,7 @@ describe JsDuck::DocType do
     doc_parser = JsDuck::Doc::Parser.new
     node[:comment] = doc_parser.parse(node[:comment])
     node[:doc_map] = JsDuck::Doc::Map.build(node[:comment])
-    return JsDuck::DocType.detect(node[:doc_map], node[:code])
+    return JsDuck::BaseType.detect(node[:doc_map], node[:code])
   end
 
   describe "detects as class" do

@@ -1,7 +1,7 @@
 module JsDuck
 
   # Detects the type of documentation object: class, method, cfg, etc
-  class DocType
+  class BaseType
     # Given parsed documentation and code, returns the tagname for
     # documentation item.
     #

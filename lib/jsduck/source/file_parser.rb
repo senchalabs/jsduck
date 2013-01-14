@@ -5,7 +5,7 @@ require 'jsduck/doc/parser'
 require 'jsduck/doc/ast'
 require 'jsduck/doc/map'
 require 'jsduck/merger'
-require 'jsduck/doc_type'
+require 'jsduck/base_type'
 require 'jsduck/class_doc_expander'
 
 module JsDuck
@@ -51,7 +51,7 @@ module JsDuck
       def expand(docset)
         docset[:comment] = @doc_parser.parse(docset[:comment], @doc_ast.filename, docset[:linenr])
         docset[:doc_map] = Doc::Map.build(docset[:comment])
-        docset[:tagname] = DocType.detect(docset[:doc_map], docset[:code])
+        docset[:tagname] = BaseType.detect(docset[:doc_map], docset[:code])
 
         if docset[:tagname] == :class
           # expand class into several docsets, and rebuild doc-maps for all of them.
