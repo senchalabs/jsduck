@@ -49,7 +49,6 @@ module JsDuck
       def create_method(docs, doc_map)
         return add_shared({
             :tagname => :method,
-            :name => detect_name(:method, doc_map),
             :doc => detect_doc(docs),
             :params => detect_params(doc_map),
             :return => detect_return(doc_map),
@@ -120,12 +119,7 @@ module JsDuck
       end
 
       def detect_name(tagname, doc_map)
-        name = extract(doc_map, tagname, :name)
-        if name
-          name
-        else
-          doc_map[:constructor] ? "constructor" : nil
-        end
+        extract(doc_map, tagname, :name)
       end
 
       def extract(doc_map, tagname, propname = nil)
