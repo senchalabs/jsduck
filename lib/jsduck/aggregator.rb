@@ -9,7 +9,6 @@ module JsDuck
   # class.
   class Aggregator
     def initialize
-      @documentation = []
       @classes = {}
       @alt_names = {}
       @orphans = []
@@ -63,7 +62,6 @@ module JsDuck
         @current_class = old_cls
       else
         @current_class = cls
-        @documentation << cls
         @classes[cls[:name]] = cls
 
         # Register all alternate names of class for lookup too
@@ -78,7 +76,6 @@ module JsDuck
             # it by merging the class with alt-name into this class.
             if @classes[altname]
               merge_classes(cls, @classes[altname])
-              @documentation.delete(@classes[altname])
               @classes.delete(altname)
               warn_alt_name(cls)
             end
