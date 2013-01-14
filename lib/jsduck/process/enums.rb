@@ -1,14 +1,14 @@
 module JsDuck
   module Process
 
-    class Enum
-      def initialize(classes)
-        @classes = classes
+    class Enums
+      def initialize(classes_hash)
+        @classes_hash = classes_hash
       end
 
       # Applies additional processing to all enum-classes.
       def process_all!
-        @classes.each_value do |cls|
+        @classes_hash.each_value do |cls|
           if cls[:enum]
             process(cls)
           end
@@ -54,7 +54,7 @@ module JsDuck
       end
 
       def each_alias(prefix)
-        @classes.each_value do |cls|
+        @classes_hash.each_value do |cls|
           if cls[:aliases] && cls[:aliases][prefix]
             cls[:aliases][prefix].each {|name| yield(name, cls) }
           end

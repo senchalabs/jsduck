@@ -1,6 +1,6 @@
 require "jsduck/aggregator"
 require "jsduck/source/file"
-require "jsduck/process/ignore"
+require "jsduck/process/ignored_classes"
 
 describe JsDuck::Aggregator do
 
@@ -9,7 +9,7 @@ describe JsDuck::Aggregator do
     agr.aggregate(JsDuck::Source::File.new(string))
     agr.classify_orphans
     agr.create_global_class
-    JsDuck::Process::Ignore.new(agr.classes).process_all!
+    JsDuck::Process::IgnoredClasses.new(agr.classes).process_all!
     agr.classes
   end
 

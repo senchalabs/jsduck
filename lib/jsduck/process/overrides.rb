@@ -3,7 +3,7 @@ require 'jsduck/logger'
 module JsDuck
   module Process
 
-    class Override
+    class Overrides
       def initialize(classes_hash)
         @classes_hash = classes_hash
       end

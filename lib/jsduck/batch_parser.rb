@@ -5,11 +5,11 @@ require 'jsduck/aggregator'
 require 'jsduck/class'
 require 'jsduck/relations'
 require 'jsduck/logger'
-require 'jsduck/process/ignore'
-require 'jsduck/process/enum'
+require 'jsduck/process/ignored_classes'
+require 'jsduck/process/enums'
 require 'jsduck/process/accessors'
 require 'jsduck/process/ext4_events'
-require 'jsduck/process/override'
+require 'jsduck/process/overrides'
 require 'jsduck/process/inherit_doc'
 require 'jsduck/process/importer'
 require 'jsduck/process/return_values'
@@ -64,12 +64,12 @@ module JsDuck
       agr.create_global_class
       classes = agr.classes
 
-      Process::Ignore.new(classes).process_all!
+      Process::IgnoredClasses.new(classes).process_all!
       Process::Accessors.new(classes).process_all!
       Process::Ext4Events.new(classes, @opts).process_all!
-      Process::Enum.new(classes).process_all!
+      Process::Enums.new(classes).process_all!
       # Ignore override classes after applying them to actual classes
-      @opts.external_classes += Process::Override.new(classes).process_all!
+      @opts.external_classes += Process::Overrides.new(classes).process_all!
 
       classes.values
     end
