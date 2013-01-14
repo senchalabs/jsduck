@@ -1,4 +1,3 @@
-require 'jsduck/class'
 require 'jsduck/logger'
 
 module JsDuck
