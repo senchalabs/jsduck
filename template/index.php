@@ -34,7 +34,28 @@ function decode_file($filename) {
 if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
   $fragment = isset($_GET["_escaped_fragment_"]) ? $_GET["_escaped_fragment_"] : $_GET["print"];
   try {
-    if (preg_match('/^\/api\/([^-]+)/', $fragment, $m)) {
+    if (isset($_GET["_escaped_fragment_"]) && preg_match('/^\/api\/([^-]+)-([^-]+)-(.+)/', $fragment, $m)) {
+      $className = $m[1];
+      $attrType = $m[2];
+      $attrName = $m[3];
+      $attribute = $attrType . "-" . $attrName;
+      $json = decode_file("output/".$className.".js");
+      $doc = new DOMDocument();
+      $file = @$doc->loadHTML($json["html"]);
+      $divs = $doc->getElementsByTagName('div');
+      $content = "";
+      foreach ( $divs as $div ) {
+        if (!$div->hasAttribute('id')) {
+          continue;
+        }
+        elseif ($div->attributes->getNamedItem('id')->nodeValue == $attribute) {
+          $content = "<h1>" . $className . "." . $attrName . "</h1>" . $doc->saveHTML($div);
+          break;
+        }
+      }
+      print_page($className, $content, $fragment);
+    }
+    elseif (preg_match('/^\/api\/([^-]+)/', $fragment, $m)) {
       $className = $m[1];
       $json = decode_file("output/".$className.".js");
       print_page($className, "<h1>" . $className . "</h1>\n" . $json["html"], $fragment);
