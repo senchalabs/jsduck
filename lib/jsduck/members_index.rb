@@ -31,6 +31,30 @@ module JsDuck
       @global_map_by_name
     end
 
+    # Returns array of all members (including inherited ones)
+    def all_global
+      global_by_id.values
+    end
+
+    # Returns array of all local members (excludes inherited ones)
+    def all_local
+      local_by_id.values.reject {|m| m[:meta] && m[:meta][:hide] }
+    end
+
+    # Clears the search cache.
+    # Using this is REALLY BAD - try to get rid of it.
+    def invalidate!
+      @map_by_id = nil
+      @global_map_by_id = nil
+      @global_map_by_name = nil
+
+      @cls.parent.members_index.invalidate! if @cls.parent
+
+      @cls.mixins.each {|mix| mix.members_index.invalidate! }
+    end
+
+    protected
+
     # Returns hash of all members by ID (including inherited ones)
     def global_by_id
       unless @global_map_by_id
@@ -62,18 +86,6 @@ module JsDuck
       end
 
       @map_by_id
-    end
-
-    # Clears the search cache.
-    # Using this is REALLY BAD - try to get rid of it.
-    def invalidate!
-      @map_by_id = nil
-      @global_map_by_id = nil
-      @global_map_by_name = nil
-
-      @cls.parent.members_index.invalidate! if @cls.parent
-
-      @cls.mixins.each {|mix| mix.members_index.invalidate! }
     end
 
     private
