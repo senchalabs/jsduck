@@ -273,6 +273,10 @@ task :touch2 => :sass do
     "--output", OUT_DIR,
     "--config", "#{SDK_DIR}/touch/docs/config.json",
     "--examples-base-url", "touch-build/examples/production/",
+    # "--import", "Touch 1.1:../docs.sencha.com/exports/touch-1.1",
+    # "--import", "Touch 2.0:../docs.sencha.com/exports/touch-2.0.1",
+    # "--import", "Touch 2.1.0:../docs.sencha.com/exports/touch-2.1.0",
+    # "--import", "Touch 2.1.1",
     "--seo"
   )
 
