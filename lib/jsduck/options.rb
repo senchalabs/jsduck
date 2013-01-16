@@ -292,9 +292,11 @@ module JsDuck
         end
 
         opts.on('--welcome=PATH',
-          "HTML file with content for welcome page.",
+          "File with content for welcome page.",
           "",
-          "It should only contain the <body> part of a HTML page.",
+          "Either HTML or Markdown file with content for welcome page.",
+          "HTML file must only contain the <body> part of the page.",
+          "Markdown file must have a .md or .markdown extension.",
           "",
           "See also: https://github.com/senchalabs/jsduck/wiki/Welcome-page") do |path|
           @welcome = canonical(path)
