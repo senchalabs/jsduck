@@ -254,3 +254,83 @@
  *
  * @return {String} The function as a string.
  */
+
+// ECMAScript 5 methods
+
+/**
+ * @method bind
+ *
+ * Creates a new function that, when called, has its `this` keyword set
+ * to the provided value, with a given sequence of arguments preceding
+ * any provided when the new function was called.
+ *
+ * The `bind()` function creates a new function (a bound function) with
+ * the same function body (internal Call attribute in ECMAScript 5
+ * terms) as the function it is being called on (the bound function's
+ * target function) with the `this` value bound to the first argument of
+ * `bind()`, which cannot be overridden. `bind()` also accepts leading
+ * default arguments to provide to the target function when the bound
+ * function is called. A bound function may also be constructed using
+ * the new operator: doing so acts as though the target function had
+ * instead been constructed. The provided `this` value is ignored, while
+ * prepended arguments are provided to the emulated function.
+ *
+ * ## Creating a bound function
+ *
+ * The simplest use of `bind()` is to make a function that, no matter
+ * how it is called, is called with a particular `this` value. A common
+ * mistake for new JavaScript programmers is to extract a method from
+ * an object, then to later call that function and expect it to use
+ * the original object as its `this` (e.g. by using that method in
+ * callback-based code). Without special care, however, the original
+ * object is usually lost. Creating a bound function from the
+ * function, using the original object, neatly solves `this` problem:
+ *
+ *     var x = 9;
+ *     var module = {
+ *       x: 81,
+ *       getX: function() { return this.x; }
+ *     };
+ *
+ *     module.getX(); // 81
+ *
+ *     var getX = module.getX;
+ *     getX(); // 9, because in this case, "this" refers to the global object
+ *
+ *     // create a new function with 'this' bound to module
+ *     var boundGetX = getX.bind(module);
+ *     boundGetX(); // 81
+ *
+ * ## Partial functions
+ *
+ * The next simplest use of `bind()` is to make a function with
+ * pre-specified initial arguments. These arguments (if any) follow
+ * the provided this value and are then inserted at the start of the
+ * arguments passed to the target function, followed by the arguments
+ * passed to the bound function, whenever the bound function is
+ * called.
+ *
+ *     function list() {
+ *       return Array.prototype.slice.call(arguments);
+ *     }
+ *
+ *     var list1 = list(1, 2, 3); // [1, 2, 3]
+ *
+ *     //  Create a function with a preset leading argument
+ *     var leadingZeroList = list.bind(undefined, 37);
+ *
+ *     var list2 = leadingZeroList(); // [37]
+ *     var list3 = leadingZeroList(1, 2, 3); // [37, 1, 2, 3]
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Object} thisArg The value to be passed as the `this`
+ * parameter to the target function when the bound function is
+ * called. The value is ignored if the bound function is constructed
+ * using the new operator.
+ *
+ * @param {Mixed...} [args] Arguments to prepend to arguments provided
+ * to the bound function when invoking the target function.
+ *
+ * @return {Function} The bound function.
+ */
