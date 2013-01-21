@@ -1,3 +1,5 @@
+require 'dimensions'
+
 module JsDuck
 
   # Looks up images from a directory.
@@ -14,6 +16,8 @@ module JsDuck
     # - :filename - the same as the parameter of this method
     # - :full_path - actual path in the filesystem.
     # - :relative_path - relative path to be used inside <img> tag.
+    # - :width - Image width
+    # - :height - Image height
     #
     # When the image is not found, returns nil.
     def get(filename)
@@ -57,10 +61,15 @@ module JsDuck
     end
 
     def img_record(filename)
-      {
+      full_path = File.join(@full_path, filename)
+      width, height = Dimensions.dimensions(full_path)
+
+      return {
         :filename => filename,
         :relative_path => File.join(@relative_path, filename),
-        :full_path => File.join(@full_path, filename),
+        :full_path => full_path,
+        :width => width,
+        :height => height,
       }
     end
 

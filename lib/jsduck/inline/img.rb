@@ -16,7 +16,7 @@ module JsDuck
       attr_accessor :doc_context
 
       def initialize(opts={})
-        @tpl = opts[:img_tpl] || '<img src="%u" alt="%a"/>'
+        @tpl = opts[:img_tpl] || '<img src="%u" alt="%a" width="%w" height="%h"/>'
 
         @re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
       end
@@ -39,7 +39,7 @@ module JsDuck
         img = @images.get(url)
         if !img
           Logger.warn(:image, "Image #{url} not found.", @doc_context[:filename], @doc_context[:linenr])
-          img = {:relative_path => ""}
+          img = {}
         end
 
         @tpl.gsub(/(%\w)/) do
@@ -48,6 +48,10 @@ module JsDuck
             img[:relative_path]
           when '%a'
             Util::HTML.escape(alt_text||"")
+          when '%w'
+            img[:width]
+          when '%h'
+            img[:height]
           else
             $1
           end

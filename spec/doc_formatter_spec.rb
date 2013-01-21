@@ -12,7 +12,7 @@ describe JsDuck::DocFormatter do
   end
 
   before do
-    @formatter = JsDuck::DocFormatter.new
+    @formatter = JsDuck::DocFormatter.new(:img_tpl => '<img src="%u" alt="%a"/>')
     @formatter.class_context = "Context"
     @formatter.images = ImageDirMock.new
     @formatter.relations = JsDuck::Relations.new([

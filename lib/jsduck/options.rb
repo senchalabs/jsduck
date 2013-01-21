@@ -109,7 +109,7 @@ module JsDuck
       @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
       # appears inline within text, but that just looks ugly in HTML
-      @img_tpl = '<p><img src="%u" alt="%a"></p>'
+      @img_tpl = '<p><img src="%u" alt="%a" width="%w" height="%h"></p>'
       @export = nil
       @seo = false
       @eg_iframe = nil
@@ -504,8 +504,10 @@ module JsDuck
           "",
           "%u - URL from @img tag (e.g. 'some/path.png')",
           "%a - alt text for image",
+          "%w - width of image",
+          "%h - height of image",
           "",
-          "Defaults to: '<p><img src=\"%u\" alt=\"%a\"></p>'") do |tpl|
+          "Defaults to: '<p><img src=\"%u\" alt=\"%a\" width=\"%w\" height=\"%h\"></p>'") do |tpl|
           @img_tpl = tpl
         end
 
