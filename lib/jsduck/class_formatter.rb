@@ -33,7 +33,7 @@ module JsDuck
       cls
     end
 
-    # Returns the images detected by doc-formatter
+    # Access to the ImageDirSet object inside doc-formatter
     def images
       @formatter.images
     end

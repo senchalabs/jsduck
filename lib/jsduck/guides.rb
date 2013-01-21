@@ -5,6 +5,7 @@ require 'jsduck/util/null_object'
 require 'jsduck/logger'
 require 'jsduck/grouped_asset'
 require 'jsduck/util/html'
+require 'jsduck/image_dir'
 require 'fileutils'
 
 module JsDuck
@@ -59,7 +60,7 @@ module JsDuck
 
       begin
         @formatter.doc_context = {:filename => guide_file, :linenr => 0}
-        @formatter.img_path = "guides/#{guide["name"]}"
+        @formatter.images = ImageDir.new(guide["url"], "guides/#{guide["name"]}")
 
         return add_toc(guide, @formatter.format(Util::IO.read(guide_file)))
       rescue

@@ -1,25 +1,24 @@
 require 'jsduck/util/html'
 require 'jsduck/logger'
+require 'pp'
 
 module JsDuck
   module Inline
 
     # Implementation of inline tag {@img}
     class Img
-      # Base path to prefix images from {@img} tags.
-      # Defaults to no prefix.
-      attr_accessor :base_path
-
-      # This will hold list of all image paths gathered from {@img} tags.
+      # Instance of ImageDir or ImageDirSet that's used for looking up
+      # image information.
       attr_accessor :images
+
+      # Sets up instance to work in context of particular doc object.
+      # Used for error reporting.
+      attr_accessor :doc_context
 
       def initialize(opts={})
         @tpl = opts[:img_tpl] || '<img src="%u" alt="%a"/>'
 
         @re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
-
-        @base_path = nil
-        @images = []
       end
 
       # Takes StringScanner instance.
@@ -37,11 +36,16 @@ module JsDuck
 
       # applies the image template
       def apply_tpl(url, alt_text)
-        @images << url
+        img = @images.get(url)
+        if !img
+          Logger.warn(:image, "Image #{url} not found.", @doc_context[:filename], @doc_context[:linenr])
+          img = {:relative_path => ""}
+        end
+
         @tpl.gsub(/(%\w)/) do
           case $1
           when '%u'
-            @base_path ? (@base_path + "/" + url) : url
+            img[:relative_path]
           when '%a'
             Util::HTML.escape(alt_text||"")
           else

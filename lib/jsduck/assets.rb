@@ -1,4 +1,4 @@
-require 'jsduck/images'
+require 'jsduck/image_dir_set'
 require 'jsduck/welcome'
 require 'jsduck/guides'
 require 'jsduck/videos'
@@ -29,7 +29,7 @@ module JsDuck
       doc_formatter = DocFormatter.new(@opts)
       doc_formatter.relations = @relations
 
-      @images = Images.new(@opts.images)
+      @images = ImageDirSet.new(@opts.images, "images")
       @welcome = Welcome.create(@opts.welcome, doc_formatter)
       @guides = Guides.create(@opts.guides, doc_formatter, @opts)
       @videos = Videos.create(@opts.videos)
