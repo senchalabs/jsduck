@@ -3,8 +3,14 @@ require 'jsduck/tag_registry'
 module JsDuck
   module Doc
 
-    # Detects docs info directly from comment.
-    class Ast
+    # Processes @tag data detected from doc-comment, transforming it
+    # into a class/member hash which can be then later further merged
+    # with code hash.
+    #
+    # Its main work is done through calling the #process_doc method of
+    # all the Tag classes that have registered themselves to process a
+    # particular set of @tags through defining a .key attribute.
+    class Processor
       # Allow passing in filename and line for error reporting
       attr_accessor :filename
       attr_accessor :linenr
@@ -16,7 +22,7 @@ module JsDuck
 
       # Given tagname and map of tags from DocParser, produces docs
       # of the type determined by tagname.
-      def detect(tagname, doc_map)
+      def process(tagname, doc_map)
         hash = {
           :tagname => tagname,
           :doc => detect_doc(tagname, doc_map),

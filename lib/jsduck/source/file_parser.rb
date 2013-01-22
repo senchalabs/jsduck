@@ -2,7 +2,7 @@ require 'jsduck/js/parser'
 require 'jsduck/js/ast'
 require 'jsduck/css/parser'
 require 'jsduck/doc/parser'
-require 'jsduck/doc/ast'
+require 'jsduck/doc/processor'
 require 'jsduck/doc/map'
 require 'jsduck/merger'
 require 'jsduck/base_type'
@@ -20,13 +20,14 @@ module JsDuck
       def initialize
         @doc_parser = Doc::Parser.new
         @class_doc_expander = ClassDocExpander.new
-        @doc_ast = Doc::Ast.new
+        @doc_processor = Doc::Processor.new
         @merger = Merger.new
+        @filename = ""
       end
 
       # Parses file into final docset that can be fed into Aggregator
       def parse(contents, filename="", options={})
-        @doc_ast.filename = filename
+        @doc_processor.filename = @filename = filename
 
         parse_js_or_css(contents, filename, options).map do |docset|
           expand(docset)
@@ -49,7 +50,7 @@ module JsDuck
 
       # Parses the docs, detects tagname and expands class docset
       def expand(docset)
-        docset[:comment] = @doc_parser.parse(docset[:comment], @doc_ast.filename, docset[:linenr])
+        docset[:comment] = @doc_parser.parse(docset[:comment], @filename, docset[:linenr])
         docset[:doc_map] = Doc::Map.build(docset[:comment])
         docset[:tagname] = BaseType.detect(docset[:doc_map], docset[:code])
 
@@ -66,8 +67,8 @@ module JsDuck
 
       # Merges comment and code parts of docset
       def merge(docset)
-        @doc_ast.linenr = docset[:linenr]
-        docset[:comment] = @doc_ast.detect(docset[:tagname], docset[:doc_map])
+        @doc_processor.linenr = docset[:linenr]
+        docset[:comment] = @doc_processor.process(docset[:tagname], docset[:doc_map])
         docset.delete(:doc_map)
 
         @merger.merge(docset)
