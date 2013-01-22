@@ -95,7 +95,6 @@ module JsDuck
       def create_css_mixin(docs, doc_map)
         return add_shared({
             :tagname => :css_mixin,
-            :name => detect_name(:css_mixin, doc_map),
             :doc => detect_doc(:css_mixin, doc_map),
           }, doc_map)
       end
