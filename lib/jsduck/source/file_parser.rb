@@ -67,7 +67,7 @@ module JsDuck
       # Merges comment and code parts of docset
       def merge(docset)
         @doc_ast.linenr = docset[:linenr]
-        docset[:comment] = @doc_ast.detect(docset[:tagname], docset[:comment], docset[:doc_map])
+        docset[:comment] = @doc_ast.detect(docset[:tagname], docset[:doc_map])
         docset.delete(:doc_map)
 
         @merger.merge(docset)
