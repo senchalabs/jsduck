@@ -24,12 +24,10 @@ module JsDuck
       @doc_context = {}
     end
 
-    # Sets base path to prefix images from {@img} tags.
-    def img_path=(path)
-      @inline_img.base_path = path
+    # Accessors to the images attribute of Inline::Img
+    def images=(images)
+      @inline_img.images = images
     end
-
-    # Returns list of all image paths gathered from {@img} tags.
     def images
       @inline_img.images
     end
@@ -47,6 +45,7 @@ module JsDuck
       @doc_context = doc
       @inline_video.doc_context = doc
       @inline_link.doc_context = doc
+      @inline_img.doc_context = doc
     end
 
     # Returns the current documentation context

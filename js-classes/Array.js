@@ -559,3 +559,496 @@
  *
  * @return {String} The array as a string.
  */
+
+// ECMAScript 5 methods
+
+/**
+ * @method isArray
+ * @static
+ * Returns true if an object is an array, false if it is not.
+ *
+ *     // all following calls return true
+ *     Array.isArray([]);
+ *     Array.isArray([1]);
+ *     Array.isArray( new Array() );
+ *     Array.isArray( Array.prototype ); // Little known fact: Array.prototype itself is an array.
+ *
+ *     // all following calls return false
+ *     Array.isArray();
+ *     Array.isArray({});
+ *     Array.isArray(null);
+ *     Array.isArray(undefined);
+ *     Array.isArray(17);
+ *     Array.isArray("Array");
+ *     Array.isArray(true);
+ *     Array.isArray(false);
+ *     Array.isArray({ __proto__ : Array.prototype });
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Mixed} obj The object to be checked.
+ * @return {Boolean} True when Array.
+ */
+
+/**
+ * @method indexOf
+ * Returns the first index at which a given element can be found in the array, or -1 if it is not present.
+ *
+ * `indexOf` compares `searchElement` to elements of the Array using strict equality (the same method used
+ * by the `===`, or triple-equals, operator).
+ *
+ *     var array = [2, 5, 9];
+ *     var index = array.indexOf(2);
+ *     // index is 0
+ *     index = array.indexOf(7);
+ *     // index is -1
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Mixed} searchElement Element to locate in the array.
+ * @param {Number} [fromIndex] The index at which to begin the search. Defaults to 0, i.e. the whole array
+ * will be searched. If the index is greater than or equal to the length of the array, -1 is returned, i.e.
+ * the array will not be searched. If negative, it is taken as the offset from the end of the array. Note
+ * that even when the index is negative, the array is still searched from front to back. If the calculated
+ * index is less than 0, the whole array will be searched.
+ * @return {Number} The index of element found or -1.
+ */
+
+/**
+ * @method lastIndexOf
+ * Returns the last index at which a given element can be found in the array, or -1 if it is not present.
+ * The array is searched backwards, starting at `fromIndex`.
+ *
+ * `lastIndexOf` compares `searchElement` to elements of the Array using strict equality (the same method
+ * used by the `===`, or triple-equals, operator).
+ *
+ *     var array = [2, 5, 9, 2];
+ *     var index = array.lastIndexOf(2);
+ *     // index is 3
+ *     index = array.lastIndexOf(7);
+ *     // index is -1
+ *     index = array.lastIndexOf(2, 3);
+ *     // index is 3
+ *     index = array.lastIndexOf(2, 2);
+ *     // index is 0
+ *     index = array.lastIndexOf(2, -2);
+ *     // index is 0
+ *     index = array.lastIndexOf(2, -1);
+ *     // index is 3
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Mixed} searchElement Element to locate in the array.
+ * @param {Number} [fromIndex] The index at which to start searching backwards. Defaults to the array's
+ * length, i.e. the whole array will be searched. If the index is greater than or equal to the length of
+ * the array, the whole array will be searched. If negative, it is taken as the offset from the end of the
+ * array. Note that even when the index is negative, the array is still searched from back to front. If
+ * the calculated index is less than 0, -1 is returned, i.e. the array will not be searched.
+ * @return {Number} The index of element found or -1.
+ */
+
+/**
+ * @method forEach
+ * Executes a provided function once per array element.
+ *
+ * `forEach` executes the provided function (`callback`) once for each element present in the array. `callback`
+ * is invoked only for indexes of the array which have assigned values; it is not invoked for indexes which
+ * have been deleted or which have never been assigned values.
+ *
+ * If a `thisArg` parameter is provided to `forEach`, it will be used as the `this` value for each `callback`
+ * invocation as if `callback.call(thisArg, element, index, array)` was called. If `thisArg` is `undefined` or
+ * `null`, the `this` value within the function depends on whether the function is in strict mode or not
+ * (passed value if in strict mode, global object if in non-strict mode).
+ *
+ * The `range` of elements processed by `forEach` is set before the first invocation of `callback`. Elements
+ * which are appended to the array after the call to `forEach` begins will not be visited by `callback`. If
+ * existing elements of the array are changed, or deleted, their value as passed to callback will be the
+ * value at the time `forEach` visits them; elements that are deleted are not visited.
+ *
+ * The following code logs a line for each element in an array:
+ *
+ *     function logArrayElements(element, index, array) {
+ *         console.log("a[" + index + "] = " + element);
+ *     }
+ *     [2, 5, 9].forEach(logArrayElements);
+ *     // logs:
+ *     // a[0] = 2
+ *     // a[1] = 5
+ *     // a[2] = 9
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Function} callback Function to execute for each element.
+ * @param {Mixed} callback.value The element value.
+ * @param {Number} callback.index The element index.
+ * @param {Array} callback.array The array being traversed.
+ * @param {Object} [thisArg] Object to use as `this` when executing `callback`.
+ */
+
+/**
+ * @method every
+ * Tests whether all elements in the array pass the test implemented
+ * by the provided function.
+ *
+ * `every` executes the provided `callback` function once for each element
+ * present in the array until it finds one where `callback` returns a
+ * false value. If such an element is found, the `every` method
+ * immediately returns false. Otherwise, if `callback` returned a true
+ * value for all elements, `every` will return true. `callback` is invoked
+ * only for indexes of the array which have assigned values; it is not
+ * invoked for indexes which have been deleted or which have never
+ * been assigned values.
+ *
+ * If a `thisObject` parameter is provided to `every`, it will be used as
+ * the `this` for each invocation of the callback. If it is not
+ * provided, or is `null`, the global object associated with callback is
+ * used instead.
+ *
+ * `every` does not mutate the array on which it is called.
+ *
+ * The range of elements processed by `every` is set before the first
+ * invocation of callback. Elements which are appended to the array
+ * after the call to every begins will not be visited by `callback`. If
+ * existing elements of the array are changed, their value as passed
+ * to `callback` will be the value at the time `every` visits them;
+ * elements that are deleted are not visited.
+ *
+ * `every` acts like the "for all" quantifier in mathematics. In
+ * particular, for an empty array, it returns true. (It is vacuously
+ * true that all elements of the empty set satisfy any given
+ * condition.)
+ *
+ * The following example tests whether all elements in the array are
+ * bigger than 10.
+ *
+ *     function isBigEnough(element, index, array) {
+ *       return (element >= 10);
+ *     }
+ *     var passed = [12, 5, 8, 130, 44].every(isBigEnough);
+ *     // passed is false
+ *     passed = [12, 54, 18, 130, 44].every(isBigEnough);
+ *     // passed is true
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Function} callback Function to test for each element.
+ * @param {Mixed} callback.value The element value.
+ * @param {Number} callback.index The element index.
+ * @param {Array} callback.array The array being traversed.
+ * @param {Boolean} callback.return Should return true when element passes the test.
+ * @param {Object} [thisObject] Object to use as `this` when executing `callback`.
+ * @return {Boolean} True when all elements pass the test.
+ */
+
+/**
+ * @method some
+ * Tests whether some element in the array passes the test implemented
+ * by the provided function.
+ *
+ * `some` executes the `callback` function once for each element
+ * present in the array until it finds one where `callback` returns a
+ * true value. If such an element is found, some immediately returns
+ * true. Otherwise, some returns false. `callback` is invoked only for
+ * indexes of the array which have assigned values; it is not invoked
+ * for indexes which have been deleted or which have never been
+ * assigned values.
+ *
+ * If a `thisObject` parameter is provided to some, it will be used as
+ * the `this` for each invocation of the `callback`. If it is not
+ * provided, or is `null`, the global object associated with callback is
+ * used instead.
+ *
+ * `some` does not mutate the array on which it is called.
+ *
+ * The range of elements processed by `some` is set before the first
+ * invocation of callback. Elements that are appended to the array
+ * after the call to some begins will not be visited by `callback`. If
+ * an existing, unvisited element of the array is changed by `callback`,
+ * its value passed to the visiting callback will be the value at the
+ * time that `some` visits that element's index; elements that are
+ * deleted are not visited.
+ *
+ * The following example tests whether some element in the array is
+ * bigger than 10.
+ *
+ *     function isBigEnough(element, index, array) {
+ *       return (element >= 10);
+ *     }
+ *     var passed = [2, 5, 8, 1, 4].some(isBigEnough);
+ *     // passed is false
+ *     passed = [12, 5, 8, 1, 4].some(isBigEnough);
+ *     // passed is true
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Function} callback Function to test for each element.
+ * @param {Mixed} callback.value The element value.
+ * @param {Number} callback.index The element index.
+ * @param {Array} callback.array The array being traversed.
+ * @param {Boolean} callback.return Should return true when element passes the test.
+ * @param {Object} [thisObject] Object to use as `this` when executing `callback`.
+ * @return {Boolean} True when at least one element passes the test.
+ */
+
+/**
+ * @method filter
+ * Creates a new array with all elements that pass the test
+ * implemented by the provided function.
+ *
+ * `filter` calls a provided `callback` function once for each element in
+ * an array, and constructs a new array of all the values for which
+ * `callback` returns a true value. `callback` is invoked only for indexes
+ * of the array which have assigned values; it is not invoked for
+ * indexes which have been deleted or which have never been assigned
+ * values. Array elements which do not pass the `callback` test are
+ * simply skipped, and are not included in the new array.
+ *
+ * If a `thisObject` parameter is provided to `filter`, it will be
+ * used as the `this` for each invocation of the `callback`. If it is not
+ * provided, or is `null`, the global object associated with callback is
+ * used instead.
+ *
+ * `filter` does not mutate the array on which it is called.
+ *
+ * The range of elements processed by `filter` is set before the first
+ * invocation of `callback`. Elements which are appended to the array
+ * after the call to `filter` begins will not be visited by `callback`. If
+ * existing elements of the array are changed, or deleted, their value
+ * as passed to `callback` will be the value at the time `filter` visits
+ * them; elements that are deleted are not visited.
+ *
+ * The following example uses filter to create a filtered array that
+ * has all elements with values less than 10 removed.
+ *
+ *     function isBigEnough(element, index, array) {
+ *       return (element >= 10);
+ *     }
+ *     var filtered = [12, 5, 8, 130, 44].filter(isBigEnough);
+ *     // filtered is [12, 130, 44]
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Function} callback Function to test for each element.
+ * @param {Mixed} callback.value The element value.
+ * @param {Number} callback.index The element index.
+ * @param {Array} callback.array The array being traversed.
+ * @param {Boolean} callback.return Should return true when element passes the test.
+ * @param {Object} [thisObject] Object to use as `this` when executing `callback`.
+ * @return {Array} Array of elements that passed the test.
+ */
+
+/**
+ * @method map
+ * Creates a new array with the results of calling a provided function
+ * on every element in this array.
+ *
+ * `map` calls a provided `callback` function once for each element in
+ * an array, in order, and constructs a new array from the
+ * results. `callback` is invoked only for indexes of the array which
+ * have assigned values; it is not invoked for indexes which have been
+ * deleted or which have never been assigned values.
+ *
+ * If a `thisArg` parameter is provided to map, it will be used as the
+ * `this` for each invocation of the `callback`. If it is not provided, or
+ * is `null`, the global object associated with callback is used
+ * instead.
+ *
+ * `map` does not mutate the array on which it is called.
+ *
+ * The range of elements processed by `map` is set before the first
+ * invocation of `callback`. Elements which are appended to the array
+ * after the call to `map` begins will not be visited by `callback`. If
+ * existing elements of the array are changed, or deleted, their value
+ * as passed to `callback` will be the value at the time `map` visits
+ * them; elements that are deleted are not visited.
+ *
+ * The following code creates an array of "plural" forms of nouns from
+ * an array of their singular forms.
+ *
+ *     function fuzzyPlural(single) {
+ *       var result = single.replace(/o/g, 'e');
+ *       if( single === 'kangaroo'){
+ *         result += 'se';
+ *       }
+ *       return result;
+ *     }
+ *
+ *     var words = ["foot", "goose", "moose", "kangaroo"];
+ *     console.log(words.map(fuzzyPlural));
+ *
+ *     // ["feet", "geese", "meese", "kangareese"]
+ *
+ * The following code takes an array of numbers and creates a new
+ * array containing the square roots of the numbers in the first
+ * array.
+ *
+ *     var numbers = [1, 4, 9];
+ *     var roots = numbers.map(Math.sqrt);
+ *     // roots is now [1, 2, 3], numbers is still [1, 4, 9]
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Function} callback Function that produces an element of the new Array
+ * from an element of the current one.
+ * @param {Mixed} callback.value The element value.
+ * @param {Number} callback.index The element index.
+ * @param {Array} callback.array The array being traversed.
+ * @param {Boolean} callback.return Should return true when element passes the test.
+ * @param {Object} [thisObject] Object to use as `this` when executing `callback`.
+ * @return {Array} Array of the return values of `callback` function.
+ */
+
+/**
+ * @method reduce
+ * Applies a function against an accumulator and each value of the
+ * array (from left-to-right) as to reduce it to a single value.
+ *
+ * `reduce` executes the `callback` function once for each element
+ * present in the array, excluding holes in the array.
+ *
+ * The first time the `callback` is called, `previousValue` and
+ * `currentValue` can be one of two values. If `initialValue` is
+ * provided in the call to `reduce`, then `previousValue` will be equal to
+ * `initialValue` and `currentValue` will be equal to the first value in
+ * the array. If no `initialValue` was provided, then `previousValue` will
+ * be equal to the first value in the array and `currentValue` will be
+ * equal to the second.
+ *
+ * Suppose the following use of reduce occurred:
+ *
+ *     [0,1,2,3,4].reduce(function(previousValue, currentValue, index, array){
+ *       return previousValue + currentValue;
+ *     });
+ *
+ * The callback would be invoked four times, with the arguments and
+ * return values in each call being as follows:
+ *
+ * |             | previousValue | currentValue | index | array       | return value
+ * |:------------|:--------------|:-------------|:------|:------------|:------------
+ * | first call  | 0             | 1            | 1     | [0,1,2,3,4] | 1
+ * | second call | 1             | 2            | 2     | [0,1,2,3,4] | 3
+ * | third call  | 3             | 3            | 3     | [0,1,2,3,4] | 6
+ * | fourth call | 6             | 4            | 4     | [0,1,2,3,4] | 10
+ *
+ * The value returned by `reduce` would be that of the last callback
+ * invocation (10).
+ *
+ * If you were to provide an initial value as the second argument to
+ * reduce, the result would look like this:
+ *
+ *     [0,1,2,3,4].reduce(function(previousValue, currentValue, index, array){
+ *       return previousValue + currentValue;
+ *     }, 10);
+ *
+ * |             | previousValue | currentValue | index | array       | return value
+ * |:------------|:--------------|:-------------|:------|:------------|:------------
+ * | first call  | 10            | 0            | 0     | [0,1,2,3,4] | 10
+ * | second call | 10            | 1            | 1     | [0,1,2,3,4] | 11
+ * | third call  | 11            | 2            | 2     | [0,1,2,3,4] | 13
+ * | fourth call | 13            | 3            | 3     | [0,1,2,3,4] | 16
+ * | fifth call  | 16            | 4            | 4     | [0,1,2,3,4] | 20
+ *
+ * The value returned by `reduce` this time would be, of course, 20.
+ *
+ * Example: Sum up all values within an array:
+ *
+ *     var total = [0, 1, 2, 3].reduce(function(a, b) {
+ *         return a + b;
+ *     });
+ *     // total == 6
+ *
+ * Example: Flatten an array of arrays:
+ *
+ *     var flattened = [[0, 1], [2, 3], [4, 5]].reduce(function(a, b) {
+ *         return a.concat(b);
+ *     });
+ *     // flattened is [0, 1, 2, 3, 4, 5]
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Function} callback Function to execute on each value in the array.
+ * @param {Mixed} callback.previousValue The value previously returned in the last
+ * invocation of the `callback`, or `initialValue`, if supplied.
+ * @param {Mixed} callback.currentValue The current element being processed in the array.
+ * @param {Number} callback.index The index of the current element being processed in the array.
+ * @param {Array} callback.array The array `reduce` was called upon.
+ * @param {Mixed} [initialValue] Object to use as the first argument to the first call
+ * of the `callback`.
+ * @return {Mixed} The value returned by final invocation of the `callback`.
+ */
+
+/**
+ * @method reduceRight
+ * Applies a function simultaneously against two values of the array
+ * (from right-to-left) as to reduce it to a single value.
+ *
+ * `reduceRight` executes the `callback` function once for each
+ * element present in the array, excluding holes in the array.
+ *
+ * The first time the `callback` is called, `previousValue` and
+ * `currentValue` can be one of two values. If `initialValue` is
+ * provided in the call to `reduceRight`, then `previousValue` will be equal to
+ * `initialValue` and `currentValue` will be equal to the last value in
+ * the array. If no `initialValue` was provided, then `previousValue` will
+ * be equal to the last value in the array and `currentValue` will be
+ * equal to the second-to-last value.
+ *
+ * Some example run-throughs of the function would look like this:
+ *
+ *     [0, 1, 2, 3, 4].reduceRight(function(previousValue, currentValue, index, array) {
+ *         return previousValue + currentValue;
+ *     });
+ *
+ *     // First call
+ *     previousValue = 4, currentValue = 3, index = 3
+ *
+ *     // Second call
+ *     previousValue = 7, currentValue = 2, index = 2
+ *
+ *     // Third call
+ *     previousValue = 9, currentValue = 1, index = 1
+ *
+ *     // Fourth call
+ *     previousValue = 10, currentValue = 0, index = 0
+ *
+ *     // array is always the object [0,1,2,3,4] upon which reduceRight was called
+ *
+ *     // Return Value: 10
+ *
+ * And if you were to provide an initialValue, the result would look like this:
+ *
+ *     [0, 1, 2, 3, 4].reduceRight(function(previousValue, currentValue, index, array) {
+ *         return previousValue + currentValue;
+ *     }, 10);
+ *
+ *     // First call
+ *     previousValue = 10, currentValue = 4, index = 4
+ *
+ *     // Second call
+ *     previousValue = 14, currentValue = 3, index = 3
+ *
+ *     // Third call
+ *     previousValue = 17, currentValue = 2, index = 2
+ *
+ *     // Fourth call
+ *     previousValue = 19, currentValue = 1, index = 1
+ *
+ *     // Fifth call
+ *     previousValue = 20, currentValue = 0, index = 0
+ *
+ *     // array is always the object [0,1,2,3,4] upon which reduceRight was called
+ *
+ *     // Return Value: 20
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @param {Function} callback Function to execute on each value in the array.
+ * @param {Mixed} callback.previousValue The value previously returned in the last
+ * invocation of the `callback`, or `initialValue`, if supplied.
+ * @param {Mixed} callback.currentValue The current element being processed in the array.
+ * @param {Number} callback.index The index of the current element being processed in the array.
+ * @param {Array} callback.array The array `reduceRight` was called upon.
+ * @param {Mixed} [initialValue] Object to use as the first argument to the first call
+ * of the `callback`.
+ * @return {Mixed} The value returned by final invocation of the `callback`.
+ */

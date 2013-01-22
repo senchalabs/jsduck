@@ -91,7 +91,7 @@ module JsDuck
       ]
       @ext4_events = nil
 
-      @version = "4.6.0"
+      @version = "4.6.1"
 
       # Customizing output
       @title = "Documentation - JSDuck"
@@ -110,7 +110,7 @@ module JsDuck
       @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
       # appears inline within text, but that just looks ugly in HTML
-      @img_tpl = '<p><img src="%u" alt="%a"></p>'
+      @img_tpl = '<p><img src="%u" alt="%a" width="%w" height="%h"></p>'
       @export = nil
       @seo = false
       @eg_iframe = nil
@@ -290,9 +290,11 @@ module JsDuck
         end
 
         opts.on('--welcome=PATH',
-          "HTML file with content for welcome page.",
+          "File with content for welcome page.",
           "",
-          "It should only contain the <body> part of a HTML page.",
+          "Either HTML or Markdown file with content for welcome page.",
+          "HTML file must only contain the <body> part of the page.",
+          "Markdown file must have a .md or .markdown extension.",
           "",
           "See also: https://github.com/senchalabs/jsduck/wiki/Welcome-page") do |path|
           @welcome = canonical(path)
@@ -500,8 +502,10 @@ module JsDuck
           "",
           "%u - URL from @img tag (e.g. 'some/path.png')",
           "%a - alt text for image",
+          "%w - width of image",
+          "%h - height of image",
           "",
-          "Defaults to: '<p><img src=\"%u\" alt=\"%a\"></p>'") do |tpl|
+          "Defaults to: '<p><img src=\"%u\" alt=\"%a\" width=\"%w\" height=\"%h\"></p>'") do |tpl|
           @img_tpl = tpl
         end
 

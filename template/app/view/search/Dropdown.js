@@ -50,9 +50,13 @@ Ext.define('Docs.view.search.Dropdown', {
                 '</div>',
             '</tpl>',
             '<div class="footer">',
-                '<a href="#" class="prev">&lt;</a>',
-                '<span class="total">{[this.getStart()+1]}-{[this.getEnd()]} of {[this.getTotal()]}</span>',
-                '<a href="#" class="next">&gt;</a>',
+                '<tpl if="this.getTotal()">',
+                    '<a href="#" class="prev">&lt;</a>',
+                    '<span class="total">{[this.getStart()+1]}-{[this.getEnd()]} of {[this.getTotal()]}</span>',
+                    '<a href="#" class="next">&gt;</a>',
+                '<tpl else>',
+                    '<span class="total">Nothing found</span>',
+                '</tpl>',
             '</div>',
             {
                 getCls: function(meta) {

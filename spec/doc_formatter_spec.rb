@@ -5,9 +5,16 @@ require "jsduck/class"
 
 describe JsDuck::DocFormatter do
 
+  class ImageDirMock
+    def get(filename)
+      {:relative_path => filename}
+    end
+  end
+
   before do
-    @formatter = JsDuck::DocFormatter.new
+    @formatter = JsDuck::DocFormatter.new(:img_tpl => '<img src="%u" alt="%a"/>')
     @formatter.class_context = "Context"
+    @formatter.images = ImageDirMock.new
     @formatter.relations = JsDuck::Relations.new([
       JsDuck::Class.new({
         :name => "Context",
@@ -135,6 +142,7 @@ describe JsDuck::DocFormatter do
     describe "auto-detect" do
       before do
         @formatter.class_context = "Context"
+        @formatter.images = ImageDirMock.new
         @formatter.relations = JsDuck::Relations.new([
           JsDuck::Class.new({:name => 'Foo.Bar'}),
           JsDuck::Class.new({:name => 'Foo.Bar.Blah'}),

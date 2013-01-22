@@ -1034,3 +1034,21 @@
  *
  * @return {String} Returns value of string.
  */
+
+// ECMAScript 5 methods
+
+/**
+ * @method trim
+ * Removes whitespace from both ends of the string.
+ *
+ * Does not affect the value of the string itself.
+ *
+ * The following example displays the lowercase string `"foo"`:
+ *
+ *     var orig = "   foo  ";
+ *     alert(orig.trim());
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @return {String} A string stripped of whitespace on both ends.
+ */
