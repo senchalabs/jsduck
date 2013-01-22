@@ -103,9 +103,11 @@ module JsDuck
 
       # Detects properties common for each doc-object and adds them
       def add_shared(hash, doc_map)
+        position = {:filename => @filename, :linenr => @linenr}
+
         doc_map.each_pair do |key, value|
           if tag = TagRegistry.get_by_key(key)
-            tag.process_doc(hash, value)
+            tag.process_doc(hash, value, position)
           end
         end
 

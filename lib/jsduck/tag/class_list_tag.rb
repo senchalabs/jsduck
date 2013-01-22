@@ -28,7 +28,7 @@ module JsDuck::Tag
       classes
     end
 
-    def process_doc(h, tags)
+    def process_doc(h, tags, pos)
       h[@key] = tags.map {|d| d[:classes] }.flatten
     end
 

@@ -17,7 +17,7 @@ module JsDuck::Tag
     end
 
     # When the tag is found, its value will always be true.
-    def process_doc(h, docs)
+    def process_doc(h, docs, pos)
       h[@key] = true
     end
   end

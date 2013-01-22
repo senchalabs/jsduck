@@ -19,7 +19,7 @@ module JsDuck::Tag
 
     # Onle sets the name when it's actually specified.
     # Otherwise we might overwrite name coming from @constructor.
-    def process_doc(h, tags)
+    def process_doc(h, tags, pos)
       h[:name] = tags[0][:name] if tags[0][:name]
     end
   end

@@ -19,7 +19,7 @@ module JsDuck::Tag
       {:tagname => :preventable}
     end
 
-    def process_doc(h, docs)
+    def process_doc(h, docs, pos)
       h[:preventable] = true
     end
 

@@ -21,7 +21,7 @@ module JsDuck::Tag
       }
     end
 
-    def process_doc(h, tags)
+    def process_doc(h, tags, pos)
       v = {:text => tags[0][:doc] || ""}
       v[:version] = tags[0][:version] if tags[0][:version]
       h[@key] = v

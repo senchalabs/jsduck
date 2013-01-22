@@ -18,7 +18,7 @@ module JsDuck::Tag
       return [cls, enum]
     end
 
-    def process_doc(h, tags)
+    def process_doc(h, tags, pos)
       h[:enum] = {
         :type => tags[0][:type],
         :default => tags[0][:default],

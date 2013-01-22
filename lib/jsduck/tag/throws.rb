@@ -14,7 +14,7 @@ module JsDuck::Tag
       tag
     end
 
-    def process_doc(h, tags)
+    def process_doc(h, tags, pos)
       result = tags.map do |throws|
         {
           :type => throws[:type] || "Object",

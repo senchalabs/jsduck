@@ -25,7 +25,7 @@ module JsDuck::Tag
       end
     end
 
-    def process_doc(h, tags)
+    def process_doc(h, tags, pos)
       h[:override] = tags[0][:override]
     end
 

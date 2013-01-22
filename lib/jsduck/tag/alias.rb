@@ -29,7 +29,7 @@ module JsDuck::Tag
       }
     end
 
-    def process_doc(h, tags)
+    def process_doc(h, tags, pos)
       h[:aliases] = tags.map {|tag| tag[:name] }
     end
 
