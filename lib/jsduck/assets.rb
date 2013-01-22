@@ -1,4 +1,5 @@
 require 'jsduck/img/dir_set'
+require 'jsduck/img/writer'
 require 'jsduck/welcome'
 require 'jsduck/guides'
 require 'jsduck/videos'
@@ -43,7 +44,7 @@ module JsDuck
     # Welcome page and categories are written in JsDuck::IndexHtml
     def write
       @guides.write(@opts.output_dir+"/guides")
-      @images.copy(@opts.output_dir+"/images")
+      Img::Writer.copy(@images.all_used, @opts.output_dir+"/images")
     end
 
   end
