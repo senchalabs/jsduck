@@ -61,8 +61,14 @@ module JsDuck
       begin
         @formatter.doc_context = {:filename => guide_file, :linenr => 0}
         @formatter.images = ImageDir.new(guide["url"], "guides/#{guide["name"]}")
+        html = add_toc(guide, @formatter.format(Util::IO.read(guide_file)))
 
-        return add_toc(guide, @formatter.format(Util::IO.read(guide_file)))
+        # Report unused images (but ignore the icon files)
+        @formatter.images.get("icon.png")
+        @formatter.images.get("icon-lg.png")
+        @formatter.images.report_unused
+
+        return html
       rescue
         Logger.fatal_backtrace("Error while reading/formatting guide #{guide['url']}", $!)
         exit(1)

@@ -38,6 +38,9 @@ module JsDuck
         # amounts of images, the performance penalty should be minimal.
         cls[:images].each {|img| assets.images.get(img[:filename]) }
       end
+
+      # Print warnings for unused images
+      assets.images.report_unused
     end
 
     # Factory method to create new ClassFormatter instances.

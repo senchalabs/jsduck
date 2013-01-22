@@ -1,4 +1,5 @@
 require 'dimensions'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -33,9 +34,9 @@ module JsDuck
       @images.values
     end
 
-    # Returns all unused images.
-    def all_unused
-      scan_for_unused_images
+    # Print warnings about all unused images.
+    def report_unused
+      scan_for_unused_images.each {|img| warn_unused(img) }
     end
 
     private
@@ -58,6 +59,10 @@ module JsDuck
         unused << img_record(filename) unless @images[filename]
       end
       unused
+    end
+
+    def warn_unused(img)
+      Logger.warn(:image_unused, "Image not used.", img[:full_path])
     end
 
     def img_record(filename)

@@ -23,14 +23,13 @@ module JsDuck
       @dirs.map {|dir| dir.all_used }.flatten
     end
 
-    def all_unused
-      @dirs.map {|dir| dir.all_unused }.flatten
+    def report_unused
+      @dirs.each {|dir| dir.report_unused }
     end
 
     # Copys over images to given output dir
     def copy(output_dir)
       all_used.each {|img| copy_img(img, output_dir) }
-      all_unused.each {|img| report_unused(img) }
     end
 
     private
@@ -41,10 +40,6 @@ module JsDuck
       Logger.log("Copying image", dest)
       FileUtils.makedirs(File.dirname(dest))
       FileUtils.cp(img[:full_path], dest)
-    end
-
-    def report_unused(img)
-      Logger.warn(:image_unused, "Image not used.", img[:full_path])
     end
 
   end
