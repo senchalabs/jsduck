@@ -50,17 +50,20 @@ module JsDuck
       end
 
       def add_return_this(m)
-        if m[:return][:type] == "undefined" && m[:return][:doc] == ""
+        if m[:return] == nil
           m[:return] = {:type => @cls[:name], :doc => "this"}
         end
       end
 
       def add_return_new(m)
-        if m[:return][:type] == "undefined" || m[:return][:type] == "Object"
+        if m[:return] == nil || m[:return][:type] == "Object"
           # Create a whole new :return hash.
           # If we were to just change the :type field it would modify
           # the type of all the inherited constructor docs.
-          m[:return] = {:type => @cls[:name], :doc => m[:return][:doc]}
+          m[:return] = {
+            :type => @cls[:name],
+            :doc => m[:return] ? m[:return][:doc] : "",
+          }
         end
       end
     end

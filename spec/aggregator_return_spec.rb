@@ -22,8 +22,8 @@ describe JsDuck::Aggregator do
         function foo() {}
       EOS
     end
-    it "defaults return type to undefined" do
-      @doc[:return][:type].should == "undefined"
+    it "defaults return field to nil" do
+      @doc[:return].should == nil
     end
   end
 

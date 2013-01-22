@@ -50,7 +50,6 @@ module JsDuck
         return add_shared({
             :tagname => :method,
             :doc => detect_doc(:method, doc_map),
-            :return => detect_return(doc_map),
           }, doc_map)
       end
 
@@ -150,17 +149,6 @@ module JsDuck
         items, warnings = Doc::Subproperties.nest(raw_items)
         warnings.each {|msg| Logger.warn(:subproperty, msg, @filename, @linenr) }
         items
-      end
-
-      def detect_return(doc_map)
-        has_return_tag = !!extract(doc_map, :return)
-        ret = extract(doc_map, :return) || {}
-        return {
-          :type => ret[:type] || (has_return_tag ? "Object" : "undefined"),
-          :name => ret[:name] || "return",
-          :doc => ret[:doc] || "",
-          :properties => doc_map[:return] ? detect_subproperties(:return, doc_map[:return]) : []
-        }
       end
 
       # Returns documentation for class or member.

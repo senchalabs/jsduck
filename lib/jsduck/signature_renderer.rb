@@ -79,7 +79,7 @@ module JsDuck
     end
 
     def method_with_return?
-      @m[:tagname] == :method && @m[:return][:type] != "undefined"
+      @m[:tagname] == :method && @m[:return] != nil
     end
 
     def render_tag_signature
