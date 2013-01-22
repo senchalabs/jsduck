@@ -40,6 +40,7 @@ module JsDuck
     def load_all_guides
       each_item do |guide|
         guide["url"] = resolve_url(guide)
+        guide[:filename] = guide["url"] + "/README.md"
         guide[:html] = load_guide(guide)
       end
     end
@@ -53,26 +54,27 @@ module JsDuck
 
     def load_guide(guide)
       return Logger.warn(:guide, "Guide not found", guide["url"]) unless File.exists?(guide["url"])
-
-      guide_file = guide["url"] + "/README.md"
-
-      return Logger.warn(:guide, "Guide not found", guide_file) unless File.exists?(guide_file)
+      return Logger.warn(:guide, "Guide not found", guide[:filename]) unless File.exists?(guide[:filename])
 
       begin
-        @formatter.doc_context = {:filename => guide_file, :linenr => 0}
-        @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
-        html = add_toc(guide, @formatter.format(Util::IO.read(guide_file)))
-
-        # Report unused images (but ignore the icon files)
-        @formatter.images.get("icon.png")
-        @formatter.images.get("icon-lg.png")
-        @formatter.images.report_unused
-
-        return html
+        return format_guide(guide)
       rescue
         Logger.fatal_backtrace("Error while reading/formatting guide #{guide['url']}", $!)
         exit(1)
       end
+    end
+
+    def format_guide(guide)
+      @formatter.doc_context = {:filename => guide[:filename], :linenr => 0}
+      @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
+      html = add_toc(guide, @formatter.format(Util::IO.read(guide[:filename])))
+
+      # Report unused images (but ignore the icon files)
+      @formatter.images.get("icon.png")
+      @formatter.images.get("icon-lg.png")
+      @formatter.images.report_unused
+
+      return html
     end
 
     def write_guide(guide, dir)
