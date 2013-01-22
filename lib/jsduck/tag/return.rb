@@ -30,14 +30,8 @@ module JsDuck::Tag
         :type => ret[:type] || "Object",
         :name => ret[:name] || "return",
         :doc => ret[:doc] || "",
-        :properties => nest_properties(tags, pos)[0][:properties]
+        :properties => JsDuck::Doc::Subproperties.nest(tags, pos)[0][:properties],
       }
-    end
-
-    def nest_properties(tags, pos)
-      items, warnings = JsDuck::Doc::Subproperties.nest(tags)
-      warnings.each {|msg| JsDuck::Logger.warn(:subproperty, msg, pos[:filename], pos[:linenr]) }
-      items
     end
   end
 end

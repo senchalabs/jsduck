@@ -1,4 +1,5 @@
 require 'jsduck/util/singleton'
+require 'jsduck/logger'
 
 module JsDuck
   module Doc
@@ -22,13 +23,12 @@ module JsDuck
       #         {:name => "baz"}]},
       #     {:name => "zap"},
       #
-      # NOTE: It returns two values: the resulting nested items array
-      # and warnings array of :subproperty warnings that should get
-      # printed out.
-      def nest(raw_items)
+      # Secondly it takes a position argument which is used for
+      # logging warnings when bogus subproperty syntax is encountered.
+      def nest(raw_items, pos)
         # First item can't be namespaced, if it is ignore the rest.
         if raw_items[0] && raw_items[0][:name] =~ /\./
-          return [raw_items[0]], []
+          return [raw_items[0]]
         end
 
         # build name-index of all items
@@ -39,7 +39,6 @@ module JsDuck
         # Otherwise look up the parent of item and add it as the
         # property of that parent.
         items = []
-        warnings = []
         raw_items.each do |it|
           if it[:name] =~ /^(.+)\.([^.]+)$/
             it[:name] = $2
@@ -48,14 +47,15 @@ module JsDuck
               parent[:properties] = [] unless parent[:properties]
               parent[:properties] << it
             else
-              warnings << "Ignoring subproperty #{$1}.#{$2}, no parent found with name '#{$1}'."
+              msg = "Ignoring subproperty #{$1}.#{$2}, no parent found with name '#{$1}'."
+              Logger.warn(:subproperty, msg, pos[:filename], pos[:linenr])
             end
           else
             items << it
           end
         end
 
-        return items, warnings
+        return items
       end
 
     end

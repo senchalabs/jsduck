@@ -21,9 +21,7 @@ module JsDuck::Tag
     end
 
     def process_doc(h, tags, pos)
-      items, warnings = JsDuck::Doc::Subproperties.nest(tags)
-      warnings.each {|msg| JsDuck::Logger.warn(:subproperty, msg, pos[:filename], pos[:linenr]) }
-      h[:params] = items
+      h[:params] = JsDuck::Doc::Subproperties.nest(tags, pos)
     end
   end
 end

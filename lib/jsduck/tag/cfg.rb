@@ -26,14 +26,8 @@ module JsDuck::Tag
       h[:name] = p[:name]
       h[:type] = p[:type]
       h[:default] = p[:default]
-      h[:properties] = nest_properties(tags, pos)
+      h[:properties] = JsDuck::Doc::Subproperties.nest(tags, pos)[0][:properties]
       h[:required] = true if p[:optional] == false
-    end
-
-    def nest_properties(tags, pos)
-      items, warnings = JsDuck::Doc::Subproperties.nest(tags)
-      warnings.each {|msg| JsDuck::Logger.warn(:subproperty, msg, pos[:filename], pos[:linenr]) }
-      items[0][:properties]
     end
   end
 end
