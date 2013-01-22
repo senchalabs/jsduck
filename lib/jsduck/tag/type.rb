@@ -4,6 +4,7 @@ module JsDuck::Tag
   class Type < Tag
     def initialize
       @pattern = "type"
+      @key = :type
     end
 
     # matches @type {type}  or  @type type
@@ -19,6 +20,10 @@ module JsDuck::Tag
 
     def curlyless_type(p)
       p.hw.match(/\S+/)
+    end
+
+    def process_doc(h, tags, pos)
+      h[:type] = tags[0][:type] unless h[:type]
     end
 
   end

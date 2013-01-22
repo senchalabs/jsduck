@@ -74,11 +74,7 @@ module JsDuck
       def create_property(docs, doc_map)
         return add_shared({
             :tagname => :property,
-            :name => detect_name(:property, doc_map),
-            :type => detect_type(:property, doc_map),
             :doc => detect_doc(:property, doc_map),
-            :default => detect_default(:property, doc_map),
-            :properties => detect_subproperties(:property, docs),
           }, doc_map)
       end
 
