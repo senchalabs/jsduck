@@ -7,7 +7,7 @@ module JsDuck
 
     # Implementation of inline tag {@img}
     class Img
-      # Instance of ImageDir or ImageDirSet that's used for looking up
+      # Instance of Img::Dir or Img::DirSet that's used for looking up
       # image information.
       attr_accessor :images
 

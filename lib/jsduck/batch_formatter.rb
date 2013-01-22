@@ -1,7 +1,7 @@
 require 'jsduck/util/parallel'
 require 'jsduck/class_formatter'
 require 'jsduck/doc_formatter'
-require 'jsduck/image_dir_set'
+require 'jsduck/img/dir_set'
 require 'jsduck/logger'
 
 module JsDuck
@@ -47,7 +47,7 @@ module JsDuck
     def self.create_class_formatter(relations, opts)
       doc_formatter = DocFormatter.new(opts)
       doc_formatter.relations = relations
-      doc_formatter.images = ImageDirSet.new(opts.images, "images")
+      doc_formatter.images = Img::DirSet.new(opts.images, "images")
 
       class_formatter = ClassFormatter.new(relations, doc_formatter)
       # Don't format types when exporting
