@@ -1,6 +1,4 @@
 require 'jsduck/tag_registry'
-require 'jsduck/doc/subproperties'
-require 'jsduck/logger'
 
 module JsDuck
   module Doc
@@ -63,11 +61,7 @@ module JsDuck
       def create_cfg(docs, doc_map)
         return add_shared({
             :tagname => :cfg,
-            :name => detect_name(:cfg, doc_map),
-            :type => detect_type(:cfg, doc_map),
             :doc => detect_doc(:cfg, doc_map),
-            :default => detect_default(:cfg, doc_map),
-            :properties => detect_subproperties(:cfg, docs),
           }, doc_map)
       end
 
@@ -105,8 +99,6 @@ module JsDuck
           end
         end
 
-        hash[:required] = true if detect_required(doc_map)
-
         return hash
       end
 
@@ -129,21 +121,6 @@ module JsDuck
 
       def detect_default(tagname, doc_map)
         extract(doc_map, tagname, :default)
-      end
-
-      def detect_required(doc_map)
-        doc_map[:cfg] && doc_map[:cfg].first[:optional] == false
-      end
-
-      def detect_subproperties(tagname, docs)
-        prop_docs = docs.find_all {|tag| tag[:tagname] == tagname}
-        prop_docs.length > 0 ? nest_properties(prop_docs)[0][:properties] : []
-      end
-
-      def nest_properties(raw_items)
-        items, warnings = Doc::Subproperties.nest(raw_items)
-        warnings.each {|msg| Logger.warn(:subproperty, msg, @filename, @linenr) }
-        items
       end
 
       # Returns documentation for class or member.
