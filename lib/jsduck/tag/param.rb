@@ -1,9 +1,11 @@
 require "jsduck/tag/tag"
+require "jsduck/doc/subproperties"
 
 module JsDuck::Tag
   class Param < Tag
     def initialize
       @pattern = "param"
+      @key = :param
     end
 
     # @param {Type} [name=default] (optional) ...
@@ -16,6 +18,12 @@ module JsDuck::Tag
 
     def parse_optional(p)
       p.hw.match(/\(optional\)/i)
+    end
+
+    def process_doc(h, tags)
+      items, warnings = JsDuck::Doc::Subproperties.nest(tags)
+      # warnings.each {|msg| JsDuck::Logger.warn(:subproperty, msg, @filename, @linenr) }
+      h[:params] = items
     end
   end
 end

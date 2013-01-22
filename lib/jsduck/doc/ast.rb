@@ -50,7 +50,6 @@ module JsDuck
         return add_shared({
             :tagname => :method,
             :doc => detect_doc(:method, doc_map),
-            :params => detect_params(doc_map),
             :return => detect_return(doc_map),
           }, doc_map)
       end
@@ -59,7 +58,6 @@ module JsDuck
         return add_shared({
             :tagname => :event,
             :doc => detect_doc(:event, doc_map),
-            :params => detect_params(doc_map),
           }, doc_map)
       end
 
@@ -100,7 +98,6 @@ module JsDuck
             :tagname => :css_mixin,
             :name => detect_name(:css_mixin, doc_map),
             :doc => detect_doc(:css_mixin, doc_map),
-            :params => detect_params(doc_map),
           }, doc_map)
       end
 
@@ -140,10 +137,6 @@ module JsDuck
 
       def detect_required(doc_map)
         doc_map[:cfg] && doc_map[:cfg].first[:optional] == false
-      end
-
-      def detect_params(doc_map)
-        nest_properties(doc_map[:param] || [])
       end
 
       def detect_subproperties(tagname, docs)
