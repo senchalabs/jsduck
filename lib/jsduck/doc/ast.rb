@@ -75,9 +75,6 @@ module JsDuck
       def create_css_var(docs, doc_map)
         return add_shared({
             :tagname => :css_var,
-            :name => detect_name(:css_var, doc_map),
-            :type => detect_type(:css_var, doc_map),
-            :default => detect_default(:css_var, doc_map),
             :doc => detect_doc(:css_var, doc_map),
           }, doc_map)
       end
@@ -102,10 +99,6 @@ module JsDuck
         return hash
       end
 
-      def detect_name(tagname, doc_map)
-        extract(doc_map, tagname, :name)
-      end
-
       def extract(doc_map, tagname, propname = nil)
         tag = doc_map[tagname] ? doc_map[tagname].first : nil
         if tag && propname
@@ -113,14 +106,6 @@ module JsDuck
         else
           tag
         end
-      end
-
-      def detect_type(tagname, doc_map)
-        extract(doc_map, tagname, :type) || extract(doc_map, :type, :type)
-      end
-
-      def detect_default(tagname, doc_map)
-        extract(doc_map, tagname, :default)
       end
 
       # Returns documentation for class or member.
