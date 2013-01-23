@@ -1,4 +1,4 @@
-require 'jsduck/source/file_parser'
+require 'jsduck/parser'
 require 'jsduck/util/html'
 
 module JsDuck
@@ -20,7 +20,7 @@ module JsDuck
         @html_filename = ""
         @links = {}
 
-        @docs = Source::FileParser.new.parse(@contents, @filename, options)
+        @docs = Parser.new.parse(@contents, @filename, options)
 
         @docs.map do |docset|
           link(docset[:linenr], docset)
