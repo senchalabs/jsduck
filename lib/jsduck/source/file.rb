@@ -1,4 +1,3 @@
-require 'jsduck/parser'
 require 'jsduck/util/html'
 
 module JsDuck
@@ -14,13 +13,12 @@ module JsDuck
       attr_reader :docs
       attr_reader :html_filename
 
-      def initialize(contents, filename="", options={})
+      def initialize(contents, docs, filename="")
         @contents = contents
+        @docs = docs
         @filename = filename
         @html_filename = ""
         @links = {}
-
-        @docs = Parser.new.parse(@contents, @filename, options)
 
         @docs.map do |docset|
           link(docset[:linenr], docset)

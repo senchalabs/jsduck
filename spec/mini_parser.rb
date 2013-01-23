@@ -1,4 +1,5 @@
 require "jsduck/aggregator"
+require "jsduck/parser"
 require "jsduck/class"
 require "jsduck/relations"
 require "jsduck/source/file"
@@ -22,7 +23,7 @@ module Helper
   class MiniParser
     def self.parse(string, opts={})
       fname = opts[:filename] || ""
-      file = JsDuck::Source::File.new(string, fname)
+      file = JsDuck::Source::File.new(string, JsDuck::Parser.new.parse(string, fname), fname)
 
       agr = JsDuck::Aggregator.new
       agr.aggregate(file)
