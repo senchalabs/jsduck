@@ -45,8 +45,8 @@ describe JsDuck::Aggregator do
       @members.should have_key("setFoo")
     end
 
-    it "sets setFoo return type to undefined" do
-      @members["setFoo"][:return][:type].should == "undefined"
+    it "sets setFoo return type to nil" do
+      @members["setFoo"][:return].should == nil
     end
 
     it "sets setFoo parameter type to @cfg type" do
