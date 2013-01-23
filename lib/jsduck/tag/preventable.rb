@@ -14,7 +14,7 @@ module JsDuck::Tag
 
     # @preventable is optionally followed by some method name, but we
     # don't document it.
-    def parse(p)
+    def parse_doc(p)
       p.match(/.*$/)
       {:tagname => :preventable}
     end

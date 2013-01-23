@@ -8,7 +8,7 @@ module JsDuck::Tag
     end
 
     # @throws {Type} ...
-    def parse(p)
+    def parse_doc(p)
       tag = p.standard_tag({:tagname => :throws, :type => true})
       tag[:doc] = :multiline
       tag

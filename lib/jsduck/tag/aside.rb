@@ -9,7 +9,7 @@ module JsDuck::Tag
       @html_position = :top
     end
 
-    def parse(p)
+    def parse_doc(p)
       {
         :tagname => :aside,
         :type => aside_type(p),

@@ -10,7 +10,7 @@ module JsDuck::Tag
     end
 
     # @method name ...
-    def parse(p)
+    def parse_doc(p)
       {
         :tagname => :method,
         :name => p.hw.ident,

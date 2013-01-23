@@ -8,7 +8,7 @@ module JsDuck::Tag
     end
 
     # @enum {Type} [name=default] ...
-    def parse(p)
+    def parse_doc(p)
       enum = p.standard_tag({:tagname => :enum, :type => true, :name => true})
 
       # @enum is a special case of class, so we also generate a class

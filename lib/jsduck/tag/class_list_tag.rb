@@ -8,11 +8,11 @@ module JsDuck::Tag
   #     @tagname classname1 classname2 ...
   #
   # Subclasses need to define the @patterns and @key fields for the
-  # #parse and #process_doc methods to work. Plus @ext_define_pattern
+  # #parse_doc and #process_doc methods to work. Plus @ext_define_pattern
   # and @ext_define_default for the #parse_ext_define to work.
   #
   class ClassListTag < Tag
-    def parse(p)
+    def parse_doc(p)
       {
         :tagname => @key,
         :classes => classname_list(p),

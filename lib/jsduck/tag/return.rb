@@ -9,7 +9,7 @@ module JsDuck::Tag
     end
 
     # @return {Type} return.name ...
-    def parse(p)
+    def parse_doc(p)
       tag = p.standard_tag({:tagname => :return, :type => true})
       tag[:name] = subproperty_name(p)
       tag[:doc] = :multiline

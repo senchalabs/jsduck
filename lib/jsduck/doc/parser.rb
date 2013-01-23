@@ -85,7 +85,7 @@ module JsDuck
         elsif tag = TagRegistry.get_by_pattern(name)
           match(/\w+/)
 
-          tags = tag.parse(self)
+          tags = tag.parse_doc(self)
           if tags.is_a?(Hash)
             add_tag(tags)
           elsif tags.is_a?(Array)

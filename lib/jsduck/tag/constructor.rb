@@ -8,7 +8,7 @@ module JsDuck::Tag
     end
 
     # @constructor
-    def parse(p)
+    def parse_doc(p)
       {:tagname => :constructor, :doc => :multiline}
     end
 

@@ -8,7 +8,7 @@ module JsDuck::Tag
 
     # @author Name of Author <email@example.com> ...
     # Everything until the end of line gets just ignored.
-    def parse(p)
+    def parse_doc(p)
       p.match(/.*$/)
     end
   end

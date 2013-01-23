@@ -9,7 +9,7 @@ module JsDuck::Tag
     end
 
     # @inheritdoc class.name#static-type-member
-    def parse(p)
+    def parse_doc(p)
       parse_as_inheritdoc(p)
     end
 

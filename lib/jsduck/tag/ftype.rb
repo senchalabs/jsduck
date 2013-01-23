@@ -7,7 +7,7 @@ module JsDuck::Tag
     end
 
     # @ftype name
-    def parse(p)
+    def parse_doc(p)
       {
         :tagname => :aliases,
         :name => parse_alias_shorthand(p, "feature")

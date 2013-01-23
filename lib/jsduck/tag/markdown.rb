@@ -7,7 +7,7 @@ module JsDuck::Tag
     end
 
     # @markdown
-    def parse(p)
+    def parse_doc(p)
       # Just completely ignore this tag.
     end
   end

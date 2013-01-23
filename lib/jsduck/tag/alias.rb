@@ -13,7 +13,7 @@ module JsDuck::Tag
     # For backwards compatibility decide whether the @alias was used
     # as @inheritdoc (@alias used to have the meaning of @inheritdoc
     # before) or as a real Ext4 style alias definition.
-    def parse(p)
+    def parse_doc(p)
       if p.look(/\s+([\w.]+)?#\w+/)
         parse_as_inheritdoc(p)
       else

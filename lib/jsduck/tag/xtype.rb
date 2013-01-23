@@ -9,7 +9,7 @@ module JsDuck::Tag
     end
 
     # @xtype name
-    def parse(p)
+    def parse_doc(p)
       {
         :tagname => :aliases,
         :name => parse_alias_shorthand(p, "widget")

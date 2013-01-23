@@ -12,7 +12,7 @@ module JsDuck::Tag
     # The presence of @type implies that we are dealing with property.
     # ext-doc allows type name to be either inside curly braces or
     # without them at all.
-    def parse(p)
+    def parse_doc(p)
       tag = p.standard_tag({:tagname => :type, :type => true})
       tag[:type] = curlyless_type(p) unless tag[:type]
       tag

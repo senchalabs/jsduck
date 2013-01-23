@@ -9,7 +9,7 @@ module JsDuck::Tag
     end
 
     # @param {Type} [name=default] (optional) ...
-    def parse(p)
+    def parse_doc(p)
       tag = p.standard_tag({:tagname => :param, :type => true, :name => true})
       tag[:optional] = true if parse_optional(p)
       tag[:doc] = :multiline
