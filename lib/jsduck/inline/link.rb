@@ -142,11 +142,11 @@ module JsDuck
 
       # Generates regex for auto-linking class and member names in text.
       def magic_link_re
-        ident_re = "(?:[A-Za-z][A-Za-z0-9]*)"
+        ident_re = "(?:[A-Za-z_$][A-Za-z0-9_$]*)"
         cls_re = "(#{ident_re}(?:\\.#{ident_re})*)"
         ns_cls_re = "(#{ident_re}(?:\\.#{ident_re})+)"
         member_re = "(?:#(#{ident_re}))"
-        /\b#{cls_re}#{member_re}\b|\b#{ns_cls_re}\b|#{member_re}\b/m
+        /#{cls_re}#{member_re}|#{ns_cls_re}|#{member_re}/m
       end
 
       def replace_magic_link(cls, member)

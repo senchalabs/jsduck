@@ -175,6 +175,18 @@ describe JsDuck::DocFormatter do
               {:tagname => :method, :name => "blah", :id => "method-blah"},
             ]
           }),
+          JsDuck::Class.new({
+            :name => "_us.In_Cls_Name",
+            :members => [
+              {:tagname => :method, :name => "_sss", :id => "method-_sss"},
+            ]
+          }),
+          JsDuck::Class.new({
+            :name => "$Class",
+            :members => [
+              {:tagname => :method, :name => "$sss", :id => "method-S-sss"},
+            ]
+          }),
         ])
       end
 
@@ -223,6 +235,11 @@ describe JsDuck::DocFormatter do
           'Look at <a href="downcase.ClassName">downcase.ClassName</a>'
       end
 
+      it "converts classname with underscores to class link" do
+        @formatter.replace("Look at _us.In_Cls_Name").should ==
+          'Look at <a href="_us.In_Cls_Name">_us.In_Cls_Name</a>'
+      end
+
       it "converts ClassName ending with dot to class link" do
         @formatter.replace("Look at Foo.Bar.").should ==
           'Look at <a href="Foo.Bar">Foo.Bar</a>.'
@@ -253,6 +270,11 @@ describe JsDuck::DocFormatter do
       it "converts downcase.ClassName#blah to method link" do
         @formatter.replace("Look at downcase.ClassName#blah").should ==
           'Look at <a href="downcase.ClassName#method-blah">downcase.ClassName.blah</a>'
+      end
+
+      it 'converts $Class#$sss to method link' do
+        @formatter.replace('Look at $Class#$sss').should ==
+          'Look at <a href="$Class#method-S-sss">$Class.$sss</a>'
       end
 
       it "converts Ext.encode to method link" do
