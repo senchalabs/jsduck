@@ -12,7 +12,7 @@ module JsDuck
         if filename
           categories = Categories::File.new(filename, relations)
         else
-          categories = Categories::File.new(relations)
+          categories = Categories::Auto.new(relations)
         end
         Categories::Factory.new(categories.generate, doc_formatter, relations)
       end
