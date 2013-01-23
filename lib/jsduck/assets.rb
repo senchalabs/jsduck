@@ -27,8 +27,7 @@ module JsDuck
       @relations = relations
       @opts = opts
 
-      doc_formatter = DocFormatter.new(@opts)
-      doc_formatter.relations = @relations
+      doc_formatter = DocFormatter.new(@relations, @opts)
 
       @images = Img::DirSet.new(@opts.images, "images")
       @welcome = Welcome.create(@opts.welcome, doc_formatter)
