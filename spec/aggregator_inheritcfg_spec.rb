@@ -1,16 +1,8 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
-require "jsduck/class"
-require "jsduck/relations"
-require "jsduck/process/inherit_doc"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    relations = JsDuck::Relations.new(agr.result.values.map {|cls| JsDuck::Class.new(cls) })
-    JsDuck::Process::InheritDoc.new(relations).process_all!
-    relations
+    Helper::MiniParser.parse(string, {:inherit_doc => true})
   end
 
   describe "auto-detected property overriding property in parent" do

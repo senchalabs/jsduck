@@ -1,14 +1,8 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
-require "jsduck/process/accessors"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    classes = agr.result
-    JsDuck::Process::Accessors.new(classes).process_all!
-    classes
+    Helper::MiniParser.parse(string, {:accessors => true})
   end
 
   describe "@cfg foo with @accessor" do

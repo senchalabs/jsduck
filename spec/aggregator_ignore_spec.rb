@@ -1,15 +1,9 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
-require "jsduck/process/ignored_classes"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    classes = agr.result
-    JsDuck::Process::IgnoredClasses.new(classes).process_all!
-    classes
+    Helper::MiniParser.parse(string, {:ignored_classes => true})
   end
 
   describe "@ignore in member" do

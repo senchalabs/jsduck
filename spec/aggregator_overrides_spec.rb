@@ -1,16 +1,8 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
-require "jsduck/class"
-require "jsduck/relations"
-require "jsduck/process/overrides"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string, "blah.js"))
-    classes = agr.result
-    JsDuck::Process::Overrides.new(classes).process_all!
-    JsDuck::Relations.new(classes.values.map {|cls| JsDuck::Class.new(cls) })
+    Helper::MiniParser.parse(string, {:overrides => true, :filename => "blah.js"})
   end
 
   shared_examples_for "override" do

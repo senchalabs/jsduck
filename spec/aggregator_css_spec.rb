@@ -1,12 +1,9 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string, ".css"))
-    agr.result
+    Helper::MiniParser.parse(string, {:filename => ".css"})
   end
 
   def parse_member(string)

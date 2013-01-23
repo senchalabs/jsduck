@@ -1,14 +1,8 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
-require "jsduck/process/ext4_events"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    classes = agr.result
-    JsDuck::Process::Ext4Events.new(classes).process_all!
-    classes
+    Helper::MiniParser.parse(string, {:ext4_events => true})
   end
 
   describe "event inside Ext.define get extra parameter" do

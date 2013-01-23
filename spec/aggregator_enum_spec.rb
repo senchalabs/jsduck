@@ -1,14 +1,8 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
-require "jsduck/process/enums"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    classes = agr.result
-    JsDuck::Process::Enums.new(classes).process_all!
-    classes
+    Helper::MiniParser.parse(string, {:enums => true})
   end
 
   shared_examples_for "enum" do
