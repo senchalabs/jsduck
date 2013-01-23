@@ -41,6 +41,8 @@ module JsDuck
         @tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
 
         @re = /\{@link\s+(\S*?)(?:\s+(.+?))?\}/m
+
+        @magic_link_re = magic_link_re
       end
 
       # Takes StringScanner instance.
@@ -131,12 +133,20 @@ module JsDuck
       # class names containing a dot "."
       #
       def create_magic_links(input)
-        cls_re = "([A-Z][A-Za-z0-9.]*[A-Za-z0-9])"
-        member_re = "(?:#([A-Za-z0-9]+))"
-
-        input.gsub(/\b#{cls_re}#{member_re}?\b|#{member_re}\b/m) do
-          replace_magic_link($1, $2 || $3)
+        input.gsub(@magic_link_re) do
+          cls = $1 || $3
+          member = $2 || $4
+          replace_magic_link(cls, member)
         end
+      end
+
+      # Generates regex for auto-linking class and member names in text.
+      def magic_link_re
+        ident_re = "(?:[A-Za-z][A-Za-z0-9]*)"
+        cls_re = "(#{ident_re}(?:\\.#{ident_re})*)"
+        ns_cls_re = "(#{ident_re}(?:\\.#{ident_re})+)"
+        member_re = "(?:#(#{ident_re}))"
+        /\b#{cls_re}#{member_re}\b|\b#{ns_cls_re}\b|#{member_re}\b/m
       end
 
       def replace_magic_link(cls, member)
@@ -146,7 +156,7 @@ module JsDuck
           else
             warn_magic_link("#{cls}##{member} links to non-existing " + (@relations[cls] ? "member" : "class"))
           end
-        elsif cls && cls =~ /\./
+        elsif cls
           if @relations[cls]
             return link(cls, nil, cls)
           else
@@ -159,7 +169,7 @@ module JsDuck
               warn_magic_link("#{cls} links to non-existing class")
             end
           end
-        elsif !cls && member
+        else
           if get_matching_member(@class_context, {:name => member})
             return link(@class_context, member, member)
           elsif member =~ /\A([A-F0-9]{3}|[A-F0-9]{6})\Z/i || member =~ /\A[0-9]/

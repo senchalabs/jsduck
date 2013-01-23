@@ -169,6 +169,12 @@ describe JsDuck::DocFormatter do
               {:tagname => :method, :name => "privMeth", :id => "method-privMeth", :private => true},
             ]
           }),
+          JsDuck::Class.new({
+            :name => "downcase.ClassName",
+            :members => [
+              {:tagname => :method, :name => "blah", :id => "method-blah"},
+            ]
+          }),
         ])
       end
 
@@ -212,6 +218,11 @@ describe JsDuck::DocFormatter do
           'Look at <a href="Ext.XTemplate">Ext.AltXTemplate</a>'
       end
 
+      it "converts downcase.ClassName to class link" do
+        @formatter.replace("Look at downcase.ClassName").should ==
+          'Look at <a href="downcase.ClassName">downcase.ClassName</a>'
+      end
+
       it "converts ClassName ending with dot to class link" do
         @formatter.replace("Look at Foo.Bar.").should ==
           'Look at <a href="Foo.Bar">Foo.Bar</a>.'
@@ -237,6 +248,11 @@ describe JsDuck::DocFormatter do
       it "converts Ext.form.Field#getValues to method link" do
         @formatter.replace("Look at Ext.form.Field#getValues").should ==
           'Look at <a href="Ext.form.Field#method-getValues">Ext.form.Field.getValues</a>'
+      end
+
+      it "converts downcase.ClassName#blah to method link" do
+        @formatter.replace("Look at downcase.ClassName#blah").should ==
+          'Look at <a href="downcase.ClassName#method-blah">downcase.ClassName.blah</a>'
       end
 
       it "converts Ext.encode to method link" do
