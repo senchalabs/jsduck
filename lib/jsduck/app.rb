@@ -1,4 +1,5 @@
 require 'jsduck/batch_parser'
+require 'jsduck/batch_processor'
 require 'jsduck/assets'
 require 'jsduck/tag_registry'
 require 'jsduck/export_writer'
@@ -29,8 +30,8 @@ module JsDuck
     private
 
     def parse
-      @batch_parser = BatchParser.new(@opts)
-      @relations = @batch_parser.run
+      @parsed_files = BatchParser.parse(@opts)
+      @relations = BatchProcessor.process(@parsed_files, @opts)
     end
 
     def init_assets
@@ -46,7 +47,7 @@ module JsDuck
     end
 
     def generate_web_page
-      WebWriter.new(@relations, @assets, @batch_parser.parsed_files, @opts).write
+      WebWriter.new(@relations, @assets, @parsed_files, @opts).write
     end
 
   end
