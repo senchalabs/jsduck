@@ -45,8 +45,7 @@ module JsDuck
 
     # Factory method to create new ClassFormatter instances.
     def self.create_class_formatter(relations, opts)
-      doc_formatter = DocFormatter.new(opts)
-      doc_formatter.relations = relations
+      doc_formatter = DocFormatter.new(relations, opts)
       doc_formatter.images = Img::DirSet.new(opts.images, "images")
 
       class_formatter = ClassFormatter.new(relations, doc_formatter)
