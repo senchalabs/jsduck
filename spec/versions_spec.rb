@@ -46,7 +46,7 @@ describe JsDuck::Process::Versions do
         {:name => "ExplicitNewClass", :new => true, :alternateClassNames => []},
       ].map {|cfg| JsDuck::Class.new(cfg) }
 
-      JsDuck::Process::Versions.new(@relations, {:imports => [1,2,3]}, importer).process_all!
+      JsDuck::Process::Versions.new(@relations, {:imports => @versions}, importer).process_all!
 
       # build className/member index for easy lookup in specs
       @stuff = {}
@@ -172,7 +172,7 @@ describe JsDuck::Process::Versions do
         {:name => "NewClass", :alternateClassNames => []},
       ].map {|cfg| JsDuck::Class.new(cfg) }
 
-      JsDuck::Process::Versions.new(@relations, {:imports => [1,2,3], :new_since => "2.0"}, importer).process_all!
+      JsDuck::Process::Versions.new(@relations, {:imports => @versions, :new_since => "2.0"}, importer).process_all!
     end
 
     # @since
