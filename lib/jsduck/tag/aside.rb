@@ -9,6 +9,7 @@ module JsDuck::Tag
       @html_position = :top
     end
 
+    # Parses: @aside [ guide | video| example ] name
     def parse_doc(p)
       {
         :tagname => :aside,

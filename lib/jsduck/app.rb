@@ -38,8 +38,8 @@ module JsDuck
       # Initialize guides, videos, examples, ...
       @assets = Assets.new(@relations, @opts)
 
-      # Give access to assets from all tags
-      TagRegistry.assets = @assets
+      # HACK: Give access to assets from @aside tag
+      TagRegistry.get_by_key(:aside).assets = @assets
     end
 
     def generate_export

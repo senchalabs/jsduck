@@ -108,11 +108,6 @@ module JsDuck
     def get_by_key(key)
       @keys[key]
     end
-
-    # Gives access to assets from @aside tag
-    def assets=(assets)
-      @keys[:aside].assets = assets
-    end
   end
 
 end
