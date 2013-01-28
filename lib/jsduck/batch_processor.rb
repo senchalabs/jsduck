@@ -50,8 +50,7 @@ module JsDuck
       Process::Accessors.new(classes_hash).process_all!
       Process::Ext4Events.new(classes_hash, opts).process_all!
       Process::Enums.new(classes_hash).process_all!
-      # Ignore override classes after applying them to actual classes
-      opts.external_classes += Process::Overrides.new(classes_hash).process_all!
+      Process::Overrides.new(classes_hash, opts).process_all!
 
       classes_hash.values
     end

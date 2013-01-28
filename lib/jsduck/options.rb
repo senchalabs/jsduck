@@ -142,7 +142,10 @@ module JsDuck
     # Make options object behave like hash.
     # This allows us to substitute it with hash in unit tests.
     def [](key)
-      send(key)
+      instance_variable_get("@#{key}")
+    end
+    def []=(key, value)
+      instance_variable_set("@#{key}", value)
     end
 
     def parse!(argv)
