@@ -25,7 +25,7 @@ module JsDuck
       def process(tagname, doc_map)
         hash = {
           :tagname => tagname,
-          :doc => detect_doc(tagname, doc_map),
+          :doc => extract_doc(doc_map),
         }
 
         position = {:filename => @filename, :linenr => @linenr}
@@ -41,24 +41,9 @@ module JsDuck
 
       private
 
-      # Returns documentation for class or member.
-      def detect_doc(tagname, doc_map)
-        doc = extract(doc_map, :doc, :doc) || ""
-        if tagname == :cfg || tagname == :property
-          doc += extract(doc_map, tagname, :doc) || ""
-        elsif tagname == :method && doc_map[:constructor]
-          doc += extract(doc_map, :constructor, :doc)
-        end
-        doc
-      end
-
-      def extract(doc_map, tagname, propname = nil)
-        tag = doc_map[tagname] ? doc_map[tagname].first : nil
-        if tag && propname
-          tag[propname]
-        else
-          tag
-        end
+      def extract_doc(doc_map)
+        tag = doc_map[:doc] ? doc_map[:doc].first : {}
+        return tag[:doc] || ""
       end
 
     end

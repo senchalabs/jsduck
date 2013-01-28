@@ -28,6 +28,8 @@ module JsDuck::Tag
       h[:default] = p[:default]
       h[:properties] = JsDuck::Doc::Subproperties.nest(tags, pos)[0][:properties]
       h[:required] = true if p[:optional] == false
+      # Documentation after the first @cfg is part of the top-level docs.
+      h[:doc] += p[:doc]
     end
   end
 end

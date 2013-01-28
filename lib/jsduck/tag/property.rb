@@ -23,6 +23,8 @@ module JsDuck::Tag
       h[:type] = p[:type] if p[:type]
       h[:default] = p[:default]
       h[:properties] = JsDuck::Doc::Subproperties.nest(tags, pos)[0][:properties]
+      # Documentation after the first @property is part of the top-level docs.
+      h[:doc] += p[:doc]
     end
   end
 end
