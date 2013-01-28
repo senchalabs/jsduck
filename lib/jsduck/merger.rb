@@ -41,8 +41,6 @@ module JsDuck
         :singleton => false,
       })
 
-      h[:aliases] = build_aliases_hash(h[:aliases] || [])
-
       h[:enum] = merge_enum(docs, code) if docs[:enum]
 
       h[:members] = []
@@ -92,22 +90,6 @@ module JsDuck
       h[:id] = JsDuck::Class.member_id(h)
 
       h
-    end
-
-    # Given array of full alias names like "foo.bar", "foo.baz"
-    # build hash like {"foo" => ["bar", "baz"]}
-    def build_aliases_hash(aliases)
-      hash={}
-      aliases.each do |a|
-        if a =~ /^([^.]+)\.(.+)$/
-          if hash[$1]
-            hash[$1] << $2
-          else
-            hash[$1] = [$2]
-          end
-        end
-      end
-      hash
     end
 
     def merge_params(docs, code)
