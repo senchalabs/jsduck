@@ -5,6 +5,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "enum"
       @key = :enum
+      @merge_context = :class
     end
 
     # @enum {Type} [name=default] ...
@@ -24,6 +25,14 @@ module JsDuck::Tag
         :default => tags[0][:default],
         :doc_only => !!tags[0][:default],
       }
+    end
+
+    # Takes the :enum always from docs, but the :doc_only can come
+    # from either code or docs.
+    def merge(h, docs, code)
+      return unless docs[:enum]
+      h[:enum] = docs[:enum]
+      h[:enum][:doc_only] = docs[:enum][:doc_only] || (code[:enum] && code[:enum][:doc_only])
     end
 
   end
