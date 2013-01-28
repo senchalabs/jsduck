@@ -33,9 +33,7 @@ module JsDuck
     private
 
     def merge_class(docs, code)
-      h = do_merge(docs, code, {
-        :alternateClassNames => [],
-      })
+      h = do_merge(docs, code)
 
       h[:members] = []
 

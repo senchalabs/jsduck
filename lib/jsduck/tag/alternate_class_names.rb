@@ -7,6 +7,11 @@ module JsDuck::Tag
       @key = :alternateClassNames
       @ext_define_pattern = "alternateClassName"
       @ext_define_default = {:alternateClassNames => []}
+      @merge_context = :class
+    end
+
+    def merge(h, docs, code)
+      h[@key] = docs[@key] || code[@key] || []
     end
   end
 end
