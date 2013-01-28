@@ -38,7 +38,6 @@ module JsDuck
         :alternateClassNames => [],
         :requires => [],
         :uses => [],
-        :singleton => false,
       })
 
       h[:members] = []
