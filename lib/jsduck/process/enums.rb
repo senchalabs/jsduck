@@ -36,7 +36,7 @@ module JsDuck
 
       # Expands default value like widget.* into list of properties
       def expand_default(cls)
-        if cls[:enum][:default] =~ /\A(.*)\.\*\Z/
+        if cls[:enum][:default] =~ /\A(.*)\.\*\z/
           each_alias($1) do |name, owner|
             cls[:members] << {
               :tagname => :property,

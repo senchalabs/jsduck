@@ -374,7 +374,7 @@ module JsDuck
           "a @new tag (unless --new-since option is used).",
           "",
           "See also: https://github.com/senchalabs/jsduck/wiki/@since") do |v|
-          if v =~ /\A(.*?):(.*)\Z/
+          if v =~ /\A(.*?):(.*)\z/
             @imports << {:version => $1, :path => canonical($2)}
           else
             @imports << {:version => v}

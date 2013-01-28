@@ -14,14 +14,14 @@ module JsDuck
         indent = nil
         input.each_line do |line|
           line.chomp!
-          if line =~ /\A\s*\*\s?(.*)\Z/
+          if line =~ /\A\s*\*\s?(.*)\z/
             # When comment contains *-lines, switch indent-trimming off
             indent = 0
             result << $1
-          elsif line =~ /\A\s*\Z/
+          elsif line =~ /\A\s*\z/
             # pass-through empty lines
             result << line
-          elsif indent == nil && line =~ /\A(\s*)(.*?\Z)/
+          elsif indent == nil && line =~ /\A(\s*)(.*?\z)/
             # When indent not measured, measure it and remember
             indent = $1.length
             result << $2

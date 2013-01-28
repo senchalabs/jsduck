@@ -34,13 +34,13 @@ module JsDuck
           to_s(ast["expression"]) + ";"
 
         when "ForStatement"
-          init = ast["init"] ? to_s(ast["init"]).sub(/;\Z/, "") : ""
+          init = ast["init"] ? to_s(ast["init"]).sub(/;\z/, "") : ""
           test = ast["test"] ? to_s(ast["test"]) : ""
           update = ast["update"] ? to_s(ast["update"]) : ""
           "for (" + init + "; " + test + "; " + update + ") " + to_s(ast["body"])
 
         when "ForInStatement"
-          left = to_s(ast["left"]).sub(/;\Z/, "")
+          left = to_s(ast["left"]).sub(/;\z/, "")
           right = to_s(ast["right"])
           "for (" + left + " in " + right + ") " + to_s(ast["body"])
 

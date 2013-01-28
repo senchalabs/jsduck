@@ -107,12 +107,12 @@ module JsDuck
           elsif @input.check(/'/)
             return {
               :type => :string,
-              :value => @input.scan(/'([^'\\]|\\.)*('|\Z)/m)
+              :value => @input.scan(/'([^'\\]|\\.)*('|\z)/m)
             }
           elsif @input.check(/"/)
             return {
               :type => :string,
-              :value => @input.scan(/"([^"\\]|\\.)*("|\Z)/m)
+              :value => @input.scan(/"([^"\\]|\\.)*("|\z)/m)
             }
           elsif @input.check(/\//)
             # Several things begin with dash:
@@ -122,14 +122,14 @@ module JsDuck
                 :type => :doc_comment,
                 # Calculate current line number, starting with 1
                 :linenr => @input.string[0...@input.pos].count("\n") + 1,
-                :value => @input.scan_until(/\*\/|\Z/).sub(/\A\/\*\*/, "").sub(/\*\/\Z/, "")
+                :value => @input.scan_until(/\*\/|\z/).sub(/\A\/\*\*/, "").sub(/\*\/\z/, "")
               }
             elsif @input.check(/\/\*/)
               # skip multiline comment
-              @input.scan_until(/\*\/|\Z/)
+              @input.scan_until(/\*\/|\z/)
             elsif @input.check(/\/\//)
               # skip line comment
-              @input.scan_until(/\n|\Z/)
+              @input.scan_until(/\n|\z/)
             else
               return {
                 :type => :operator,

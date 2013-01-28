@@ -113,7 +113,7 @@ module JsDuck
           out += substitute
         elsif s.check(/<\w/)
           # Open HTML tag
-          out += s.scan(/</) + tags.open(s.scan(/\w+/)) + s.scan_until(/>|\Z/)
+          out += s.scan(/</) + tags.open(s.scan(/\w+/)) + s.scan_until(/>|\z/)
         elsif s.check(/<\/\w+>/)
           # Close HTML tag
           out += s.scan(/<\//) + tags.close(s.scan(/\w+/)) + s.scan(/>/)

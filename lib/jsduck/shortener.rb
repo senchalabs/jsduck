@@ -42,7 +42,7 @@ module JsDuck
 
     # Returns the first sentence inside a string.
     def first_sentence(str)
-      str.sub(/\A(.+?(\.|。))\s.*\Z/mu, "\\1")
+      str.sub(/\A(.+?(\.|。))\s.*\z/mu, "\\1")
     end
 
     # Returns true when input should get shortened.

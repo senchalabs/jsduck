@@ -67,7 +67,7 @@ module JsDuck
       # end of the first comment is allowed)
       def mergeable?(c1, c2)
         if c1["type"] == "Line" && c2["type"] == "Line"
-          /\A(\r\n|\n|\r)?[ \t]*\Z/ =~ @input.slice((c1["range"][1])..(c2["range"][0]-1))
+          /\A(\r\n|\n|\r)?[ \t]*\z/ =~ @input.slice((c1["range"][1])..(c2["range"][0]-1))
         else
           false
         end
