@@ -33,25 +33,24 @@ module JsDuck
     private
 
     def merge_class(docs, code)
-      h = do_merge(docs, code)
-
-      h[:members] = []
-
+      h = {}
       TagRegistry.mergers(:class).each do |tag|
         tag.merge(h, docs, code)
       end
+      h[:members] = []
 
-      h
+      do_merge(h, docs, code)
     end
 
     def merge_like_method(docs, code)
-      h = do_merge(docs, code)
+      h = {}
       h[:params] = merge_params(docs, code)
-      h
+
+      do_merge(h, docs, code)
     end
 
     def merge_like_property(docs, code)
-      h = do_merge(docs, code)
+      h = {}
 
       h[:type] = merge_if_code_matches(:type, docs, code)
       if h[:type] == nil
@@ -59,26 +58,23 @@ module JsDuck
       end
 
       h[:default] = merge_if_code_matches(:default, docs, code)
-      h
+
+      do_merge(h, docs, code)
     end
 
     # --- helpers ---
 
-    def do_merge(docs, code, defaults={})
-      h = {}
+    def do_merge(h, docs, code)
+      h[:name] = merge_name(docs, code)
+
       docs.each_pair do |key, value|
-        h[key] = docs[key] || code[key] || defaults[key]
+        h[key] = docs[key] || code[key] unless h.has_key?(key)
       end
       # Add items only detected in code.
       code.each_pair do |key, value|
         h[key] = value unless h.has_key?(key)
       end
-      # Add defaults if not yet applied
-      defaults.each_pair do |key, value|
-        h[key] = value unless h.has_key?(key)
-      end
 
-      h[:name] = merge_name(docs, code)
       h[:id] = JsDuck::Class.member_id(h)
 
       h
