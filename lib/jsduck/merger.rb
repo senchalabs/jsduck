@@ -1,4 +1,5 @@
 require 'jsduck/class'
+require 'jsduck/tag_registry'
 
 module JsDuck
 
@@ -40,9 +41,6 @@ module JsDuck
         :singleton => false,
       })
 
-      # Ignore extending of the Object class
-      h[:extends] = nil if h[:extends] == "Object"
-
       h[:aliases] = build_aliases_hash(h[:aliases] || [])
 
       # Used by Aggregator to determine if we're dealing with Ext4 code
@@ -51,6 +49,10 @@ module JsDuck
       h[:enum] = merge_enum(docs, code) if docs[:enum]
 
       h[:members] = []
+
+      TagRegistry.mergers(:class).each do |tag|
+        tag.merge(h, docs, code)
+      end
 
       h
     end

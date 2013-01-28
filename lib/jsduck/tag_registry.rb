@@ -12,6 +12,7 @@ module JsDuck
       @ext_define_patterns = {}
       @ext_define_defaults = {}
       @keys = {}
+      @mergers = {:class => [], :member => []}
       @signatures = []
       @html_renderers = {:top => [], :bottom => []}
       @member_types = []
@@ -40,6 +41,9 @@ module JsDuck
         end
         if tag.key
           @keys[tag.key] = tag
+        end
+        if tag.merge_context
+          @mergers[tag.merge_context] << tag
         end
         if tag.member_type
           @member_types << tag.member_type
@@ -76,6 +80,12 @@ module JsDuck
     def member_type_regex
       @member_type_regex if @member_type_regex
       @member_type_regex = Regexp.new("(?:(" + TagRegistry.member_types.join("|") + ")-)")
+    end
+
+    # Returns tags for doing the merging in a particular context.
+    # See Tag::Tag#merge_context for details.
+    def mergers(context)
+      @mergers[context] || []
     end
 
     # Returns tags for rendering HTML.  One can ask for tags for

@@ -69,6 +69,18 @@ module JsDuck::Tag
     def parse_ext_define(cls, ast)
     end
 
+    # In the context of which members or classes invoke the #merge
+    # method.  Possible values are:
+    #
+    # - :class
+    # - :member
+    #
+    attr_reader :merge_context
+
+    # Merges documentation and code hashes into the result hash.
+    def merge(hash, docs, code)
+    end
+
     # Whether to render the tag before other content (:top) or after
     # it (:bottom).  Must be defined together with #to_html method.
     attr_accessor :html_position
