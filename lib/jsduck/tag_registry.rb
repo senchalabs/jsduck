@@ -86,6 +86,9 @@ module JsDuck
     # Returns tags for doing the merging in a particular context.
     # See Tag::Tag#merge_context for details.
     def mergers(context)
+      if @mergers.has_key?(:member)
+        expand_member_context
+      end
       @mergers[context] || []
     end
 
@@ -119,6 +122,21 @@ module JsDuck
     def get_by_key(key)
       @keys[key]
     end
+
+    private
+
+    # Takes mergers registered under :member context and add them to
+    # the contexts all of the detected member types.
+    def expand_member_context
+      @mergers[:member].each do |tag|
+        @member_types.each do |tagname|
+          @mergers[tagname] = [] unless @mergers[tagname]
+          @mergers[tagname] << tag
+        end
+      end
+      @mergers.delete(:member)
+    end
+
   end
 
 end

@@ -18,7 +18,6 @@ module JsDuck
 
       h = {
         :tagname => docset[:tagname],
-        :name => merge_name(docs, code),
         :linenr => docset[:linenr],
       }
 
@@ -51,20 +50,6 @@ module JsDuck
       # Then add all in the items from code not already in result.
       code.each_pair do |key, value|
         h[key] = value unless h.has_key?(key)
-      end
-    end
-
-    def merge_name(docs, code)
-      if docs[:name]
-        docs[:name]
-      elsif code[:name]
-        if docs[:tagname] == :class
-          code[:name]
-        else
-          code[:name].split(/\./).last
-        end
-      else
-        ""
       end
     end
 

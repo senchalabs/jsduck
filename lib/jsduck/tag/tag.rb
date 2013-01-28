@@ -72,6 +72,10 @@ module JsDuck::Tag
     # In the context of which members or classes invoke the #merge
     # method.  This can be either a single tagname like :class,
     # :method, :cfg or an array of these.
+    #
+    # Additionally a special :member symbol can be used to register a
+    # merger for all the member types.  So to register a merger for
+    # everyting you would set @merge_context = [:class, :member]
     attr_reader :merge_context
 
     # Merges documentation and code hashes into the result hash.
