@@ -34,10 +34,7 @@ module JsDuck
 
     def merge_class(docs, code)
       h = do_merge(docs, code, {
-        :mixins => [],
         :alternateClassNames => [],
-        :requires => [],
-        :uses => [],
       })
 
       h[:members] = []
