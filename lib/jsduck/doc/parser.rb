@@ -119,7 +119,7 @@ module JsDuck
       end
 
       def indented_as_code?
-        @multiline_tag[:doc] =~ /^ {4,}[^\n]*\Z/
+        @multiline_tag[:doc] =~ /^ {4,}[^\n]*\z/
       end
     end
 
