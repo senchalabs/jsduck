@@ -56,8 +56,6 @@ module JsDuck
         tag.merge(h, docs, code)
       end
 
-      h[:default] = merge_if_code_matches(:default, docs, code)
-
       do_merge(h, docs, code)
     end
 
