@@ -5,7 +5,7 @@ module JsDuck
 
   # Takes data from comment and code that follows it and combines
   # these two pieces of information into one.  The code comes from
-  # JsDuck::Ast and comment from JsDuck::DocAst.
+  # JsDuck::JS::Ast and comment from JsDuck::Doc::Processor.
   #
   # The main method merge() produces a hash as a result.
   class Merger
@@ -16,65 +16,42 @@ module JsDuck
       docs = docset[:comment]
       code = docset[:code]
 
-      case docset[:tagname]
-      when :class
-        result = merge_class(docs, code)
-      when :method, :event, :css_mixin
-        result = merge_like_method(docs, code)
-      when :cfg, :property, :css_var
-        result = merge_like_property(docs, code)
-      end
+      h = {
+        :tagname => docset[:tagname],
+        :name => merge_name(docs, code),
+        :linenr => docset[:linenr],
+      }
 
-      result[:linenr] = docset[:linenr]
+      invoke_merge_in_tags(h, docs, code)
+      general_merge(h, docs, code)
 
-      result
+      # Needs to be calculated last, as it relies on the existance of
+      # :name, :static and :tagname fields.
+      h[:id] = JsDuck::Class.member_id(h)
+
+      h
     end
 
     private
 
-    def merge_class(docs, code)
-      h = {}
-      TagRegistry.mergers(:class).each do |tag|
+    # Invokes the #merge methods of tags registered for the given
+    # merge context.
+    def invoke_merge_in_tags(h, docs, code)
+      TagRegistry.mergers(h[:tagname]).each do |tag|
         tag.merge(h, docs, code)
       end
-
-      do_merge(h, docs, code)
     end
 
-    def merge_like_method(docs, code)
-      h = {}
-      TagRegistry.mergers(:method_like).each do |tag|
-        tag.merge(h, docs, code)
-      end
-
-      do_merge(h, docs, code)
-    end
-
-    def merge_like_property(docs, code)
-      h = {}
-      TagRegistry.mergers(:property_like).each do |tag|
-        tag.merge(h, docs, code)
-      end
-
-      do_merge(h, docs, code)
-    end
-
-    # --- helpers ---
-
-    def do_merge(h, docs, code)
-      h[:name] = merge_name(docs, code)
-
+    # Applies default merge algorithm to the rest of the data.
+    def general_merge(h, docs, code)
+      # Merge in all items in docs that don't occour already in result.
       docs.each_pair do |key, value|
-        h[key] = docs[key] || code[key] unless h.has_key?(key)
+        h[key] = value unless h.has_key?(key)
       end
-      # Add items only detected in code.
+      # Then add all in the items from code not already in result.
       code.each_pair do |key, value|
         h[key] = value unless h.has_key?(key)
       end
-
-      h[:id] = JsDuck::Class.member_id(h)
-
-      h
     end
 
     def merge_name(docs, code)

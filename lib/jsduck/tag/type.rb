@@ -6,7 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "type"
       @key = :type
-      @merge_context = :property_like
+      @merge_context = [:cfg, :property, :css_var]
     end
 
     # matches @type {type}  or  @type type

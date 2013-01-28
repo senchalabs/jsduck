@@ -12,7 +12,7 @@ module JsDuck::Tag
   # fields.
   class Default < Tag
     def initialize
-      @merge_context = :property_like
+      @merge_context = [:cfg, :property, :css_var]
     end
 
     def merge(h, docs, code)
