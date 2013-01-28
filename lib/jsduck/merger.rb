@@ -52,10 +52,8 @@ module JsDuck
 
     def merge_like_property(docs, code)
       h = {}
-
-      h[:type] = merge_if_code_matches(:type, docs, code)
-      if h[:type] == nil
-        h[:type] = code[:tagname] == :method ? "Function" : "Object"
+      TagRegistry.mergers(:property_like).each do |tag|
+        tag.merge(h, docs, code)
       end
 
       h[:default] = merge_if_code_matches(:default, docs, code)
