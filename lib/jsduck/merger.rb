@@ -37,7 +37,6 @@ module JsDuck
       TagRegistry.mergers(:class).each do |tag|
         tag.merge(h, docs, code)
       end
-      h[:members] = []
 
       do_merge(h, docs, code)
     end

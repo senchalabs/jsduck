@@ -5,6 +5,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "class"
       @key = :class
+      @merge_context = :class
     end
 
     # @class name
@@ -17,6 +18,11 @@ module JsDuck::Tag
 
     def process_doc(h, tags, pos)
       h[:name] = tags[0][:name]
+    end
+
+    # Ensure the empty members array.
+    def merge(h, docs, code)
+      h[:members] = []
     end
   end
 end
