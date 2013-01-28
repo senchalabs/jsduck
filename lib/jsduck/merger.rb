@@ -43,9 +43,6 @@ module JsDuck
 
       h[:aliases] = build_aliases_hash(h[:aliases] || [])
 
-      # Used by Aggregator to determine if we're dealing with Ext4 code
-      h[:code_type] = code[:code_type] if code[:code_type]
-
       h[:enum] = merge_enum(docs, code) if docs[:enum]
 
       h[:members] = []
