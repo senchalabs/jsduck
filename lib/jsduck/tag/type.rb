@@ -1,4 +1,5 @@
 require "jsduck/tag/tag"
+require "jsduck/docs_code_comparer"
 
 module JsDuck::Tag
   class Type < Tag
@@ -29,28 +30,11 @@ module JsDuck::Tag
 
     # Do the merging of :type field
     def merge(h, docs, code)
-      h[:type] = merge_if_code_matches(:type, docs, code)
+      h[:type] = JsDuck::DocsCodeComparer.merge_if_matches(:type, docs, code)
       if h[:type] == nil
         h[:type] = code[:tagname] == :method ? "Function" : "Object"
       end
     end
 
-    private
-
-    def merge_if_code_matches(key, docs, code, default=nil)
-      if docs[key]
-        docs[key]
-      elsif code[key] && code_matches_doc?(docs, code)
-        code[key]
-      else
-        default
-      end
-    end
-
-    # True if the name detected from code matches with explicitly documented name.
-    # Also true when no explicit name documented.
-    def code_matches_doc?(docs, code)
-      return docs[:name] == nil || docs[:name] == code[:name]
-    end
   end
 end

@@ -1,5 +1,6 @@
 require "jsduck/tag/tag"
 require "jsduck/doc/subproperties"
+require "jsduck/docs_code_comparer"
 
 module JsDuck::Tag
   class Param < Tag
@@ -33,7 +34,7 @@ module JsDuck::Tag
 
     def merge_params(docs, code)
       explicit = docs[:params] || []
-      implicit = code_matches_doc?(docs, code) ? (code[:params] || []) : []
+      implicit = JsDuck::DocsCodeComparer.matches?(docs, code) ? (code[:params] || []) : []
       # Override implicit parameters with explicit ones
       # But if explicit ones exist, don't append the implicit ones.
       params = []
@@ -52,10 +53,5 @@ module JsDuck::Tag
       params
     end
 
-    # True if the name detected from code matches with explicitly
-    # documented name.  Also true when no explicit name documented.
-    def code_matches_doc?(docs, code)
-      return docs[:name] == nil || docs[:name] == code[:name]
-    end
   end
 end
