@@ -70,11 +70,8 @@ module JsDuck::Tag
     end
 
     # In the context of which members or classes invoke the #merge
-    # method.  Possible values are:
-    #
-    # - :class
-    # - :member
-    #
+    # method.  This can be either a single tagname like :class,
+    # :method, :cfg or an array of these.
     attr_reader :merge_context
 
     # Merges documentation and code hashes into the result hash.

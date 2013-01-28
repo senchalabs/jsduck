@@ -12,7 +12,7 @@ module JsDuck
       @ext_define_patterns = {}
       @ext_define_defaults = {}
       @keys = {}
-      @mergers = {:class => [], :member => []}
+      @mergers = {}
       @signatures = []
       @html_renderers = {:top => [], :bottom => []}
       @member_types = []
@@ -42,8 +42,9 @@ module JsDuck
         if tag.key
           @keys[tag.key] = tag
         end
-        if tag.merge_context
-          @mergers[tag.merge_context] << tag
+        Array(tag.merge_context).each do |context|
+          @mergers[context] = [] unless @mergers[context]
+          @mergers[context] << tag
         end
         if tag.member_type
           @member_types << tag.member_type
