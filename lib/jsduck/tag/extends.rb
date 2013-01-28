@@ -12,10 +12,19 @@ module JsDuck::Tag
     end
 
     # @extends classname
+    # or
+    # @extends {classname}
     def parse_doc(p)
+      if p.hw.match(/\{/)
+        cls = p.ident_chain
+        p.match(/\}/)
+      else
+        cls = p.ident_chain
+      end
+
       {
         :tagname => :extends,
-        :extends => p.hw.ident_chain,
+        :extends => cls,
       }
     end
 

@@ -538,6 +538,21 @@ describe JsDuck::Aggregator do
   end
 
 
+  describe "@extend followed by class name in {curly brackets}" do
+    before do
+      @doc = parse(<<-EOS)["Foo"]
+        /**
+         * @class Foo
+         * @extends {Bar.Baz}
+         */
+      EOS
+    end
+    it "detectes the name of the extended class" do
+      @doc[:extends].should == "Bar.Baz"
+    end
+  end
+
+
   shared_examples_for "extending Object" do
     it "has extends == nil" do
       @doc[:extends].should == nil
