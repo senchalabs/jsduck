@@ -92,13 +92,6 @@ module JsDuck
       h[:name] = merge_name(docs, code)
       h[:id] = JsDuck::Class.member_id(h)
 
-      # Copy :static and :inheritable flags from code if present
-      h[:static] = true if code[:static]
-      h[:inheritable] = true if code[:inheritable]
-
-      # Remember auto-detection info
-      h[:autodetected] = code[:autodetected] if code[:autodetected]
-
       h
     end
 
