@@ -220,10 +220,6 @@ module JsDuck
 
       doc << m[:doc]
 
-      if m[:default] && m[:default] != "undefined"
-        doc << "<p>Defaults to: <code>" + Util::HTML.escape(m[:default]) + "</code></p>"
-      end
-
       doc << render_tags(m, :bottom)
 
       doc << render_params_and_return(m)
