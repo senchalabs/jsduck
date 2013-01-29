@@ -2,6 +2,7 @@ require 'jsduck/util/html'
 require 'jsduck/signature_renderer'
 require 'jsduck/tag_renderer'
 require 'jsduck/sidebar'
+require 'jsduck/subproperties'
 
 module JsDuck
 
@@ -145,99 +146,11 @@ module JsDuck
 
       doc << render_tags(m)
 
-      doc << render_params_and_return(m)
+      doc << Subproperties.render_member(m)
 
       doc
     end
 
-    # Handles both rendering of method parameters and return value.
-    # Plus the rendering of object properties, which could also be
-    # functions in which case they too will be rendered with
-    # parameters and return value.
-    def render_params_and_return(item)
-      doc = []
-
-      if item[:params] && item[:params].length > 0
-        params = item[:params]
-      elsif item[:properties] && item[:properties].length > 0
-        params = item[:properties]
-        # If the name of last property is "return"
-        # remove it from params list and handle it separately afterwards
-        if params.last[:name] == "return"
-          ret = params.last
-          params = params.slice(0, params.length-1)
-        end
-      end
-
-      if params
-        if item[:type] == "Function" || item[:tagname] == :method || item[:tagname] == :event
-          doc << '<h3 class="pa">Parameters</h3>'
-        end
-        doc << [
-          "<ul>",
-          params.map {|p| render_long_param(p) },
-          "</ul>",
-        ]
-      end
-
-      if item[:return]
-        doc << render_return(item[:return])
-      elsif ret
-        doc << render_return(ret)
-      end
-
-      if item[:throws]
-        doc << render_throws(item[:throws])
-      end
-
-      doc
-    end
-
-    def render_long_param(p)
-      return [
-        "<li>",
-          "<span class='pre'>#{p[:name]}</span> : ",
-          p[:html_type],
-          p[:optional] ? " (optional)" : "",
-          "<div class='sub-desc'>",
-            p[:doc],
-            p[:default] ? "<p>Defaults to: <code>#{Util::HTML.escape(p[:default])}</code></p>" : "",
-            p[:properties] && p[:properties].length > 0 ? render_params_and_return(p) : "",
-          "</div>",
-        "</li>",
-      ]
-    end
-
-    def render_return(ret)
-      return [
-        "<h3 class='pa'>Returns</h3>",
-        "<ul>",
-          "<li>",
-            "<span class='pre'>#{ret[:html_type]}</span>",
-            "<div class='sub-desc'>",
-              ret[:doc],
-              ret[:properties] && ret[:properties].length > 0 ? render_params_and_return(ret) : "",
-            "</div>",
-          "</li>",
-        "</ul>",
-      ]
-    end
-
-    def render_throws(throws)
-      return [
-        "<h3 class='pa'>Throws</h3>",
-        "<ul>",
-          throws.map do |thr|
-            [
-              "<li>",
-                "<span class='pre'>#{thr[:html_type]}</span>",
-                "<div class='sub-desc'>#{thr[:doc]}</div>",
-              "</li>",
-            ]
-          end,
-        "</ul>",
-      ]
-    end
   end
 
 end
