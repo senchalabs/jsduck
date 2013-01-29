@@ -16,14 +16,6 @@ module JsDuck
       @relations = relations
       @formatter = formatter
       @include_types = true
-      inject_formatter_to_tags
-    end
-
-    def inject_formatter_to_tags
-      # inject formatter to all html-producing tags
-      TagRegistry.html_renderers.each do |tag|
-        tag.formatter = @formatter
-      end
     end
 
     # Runs the formatter on doc object of a class.
@@ -35,7 +27,7 @@ module JsDuck
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
       # format all members (except hidden ones)
       cls[:members] = cls[:members].map {|m| m[:hide] ? m : format_member(m)  }
-      cls[:html_tags] = format_tags_data(cls)
+      format_tags_data(cls)
       cls
     end
 
@@ -61,7 +53,7 @@ module JsDuck
       m[:return] = format_item(m[:return], is_css_tag) if m[:return]
       m[:throws] = m[:throws].map {|t| format_item(t, is_css_tag) } if m[:throws]
       m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
-      m[:html_tags] = format_tags_data(m)
+      format_tags_data(m)
       m
     end
 
@@ -92,13 +84,11 @@ module JsDuck
     end
 
     def format_tags_data(context)
-      result = {}
       TagRegistry.html_renderers.each do |tag|
         if context[tag.key]
-          result[tag.key] = tag.to_html(context)
+          tag.format(context, @formatter)
         end
       end
-      result
     end
 
   end

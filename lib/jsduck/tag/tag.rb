@@ -84,24 +84,23 @@ module JsDuck::Tag
 
     # Whether to render the tag before other content (:top) or after
     # it (:bottom).  Must be defined together with #to_html method.
+    # Additionally the #format method can be defined to perform
+    # rendering of Markdown before #to_html is called.
     attr_accessor :html_position
+
+    # Called before #to_html to allow rendering of Markdown content.
+    # For this an instance of DocFormatter is passed in, on which one
+    # can call the #format method to turn Markdown into HTML.
+    def format(context, formatter)
+    end
 
     # Implement #to_html to transform tag data to HTML to be included
     # into documentation.
     #
     # It gets passed the full class/member hash. It should return an
-    # HTML string to inject into document.  For help in that it can
-    # use the #format method to easily support Markdown and
-    # {@link/img} tags inside the contents.
+    # HTML string to inject into document.
     def to_html(context)
     end
-
-    # Helper method for use in #to_html for rendering markdown.
-    def format(markdown)
-      @formatter.format(markdown)
-    end
-
-    attr_accessor :formatter
 
     # Returns all descendants of JsDuck::Tag::Tag class.
     def self.descendants

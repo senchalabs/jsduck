@@ -2,16 +2,19 @@ require 'jsduck/tag_registry'
 
 module JsDuck
 
-  # Performs the rendering of builtin tags (for now just the signature data).
+  # Performs the rendering of tags.
   class TagRenderer
     # Renders tags of a particular section.
     #
-    # Returns array of rendered HTML or nil if no tag data.
-    def self.render(html_data, position)
-      return if html_data.size == 0
-
+    # Takes member or class hash and a position symbol.
+    # Returns array of rendered HTML.
+    def self.render(member, position)
       TagRegistry.html_renderers(position).map do |tag|
-        html_data[tag.key]
+        if member[tag.key]
+          tag.to_html(member)
+        else
+          nil
+        end
       end
     end
 

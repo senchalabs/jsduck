@@ -19,11 +19,11 @@ module JsDuck
           "<div>",
             render_sidebar,
             "<div class='doc-contents'>",
-              render_tags(@cls[:html_tags], :top),
+              render_tags(@cls, :top),
               render_private_class_notice,
               @cls[:doc],
               render_enum_class_notice,
-              render_tags(@cls[:html_tags], :bottom),
+              render_tags(@cls, :bottom),
             "</div>",
             "<div class='members'>",
               render_all_sections,
@@ -247,7 +247,7 @@ module JsDuck
     def render_long_doc(m)
       doc = []
 
-      doc << render_tags(m[:html_tags], :top)
+      doc << render_tags(m, :top)
 
       doc << m[:doc]
 
@@ -255,7 +255,7 @@ module JsDuck
         doc << "<p>Defaults to: <code>" + Util::HTML.escape(m[:default]) + "</code></p>"
       end
 
-      doc << render_tags(m[:html_tags], :bottom)
+      doc << render_tags(m, :bottom)
 
       doc << render_params_and_return(m)
 

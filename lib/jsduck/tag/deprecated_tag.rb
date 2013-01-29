@@ -27,13 +27,17 @@ module JsDuck::Tag
       h[@key] = v
     end
 
+    def format(context, formatter)
+      context[@key][:text] = formatter.format(context[@key][:text])
+    end
+
     def to_html(context)
       depr = context[@key]
       v = depr[:version] ? "since " + depr[:version] : ""
       <<-EOHTML
         <div class='signature-box #{@key}'>
         <p>This #{context[:tagname]} has been <strong>#{@key}</strong> #{v}</p>
-        #{format(depr[:text])}
+        #{depr[:text]}
         </div>
       EOHTML
     end
