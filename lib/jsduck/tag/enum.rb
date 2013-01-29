@@ -6,6 +6,7 @@ module JsDuck::Tag
       @pattern = "enum"
       @key = :enum
       @merge_context = :class
+      @html_position = :bottom
     end
 
     # @enum {Type} [name=default] ...
@@ -33,6 +34,24 @@ module JsDuck::Tag
       return unless docs[:enum]
       h[:enum] = docs[:enum]
       h[:enum][:doc_only] = docs[:enum][:doc_only] || (code[:enum] && code[:enum][:doc_only])
+    end
+
+    def to_html(cls)
+      if cls[:enum][:doc_only]
+        first = cls[:members][:property][0] || {:name => 'foo', :default => '"foo"'}
+        [
+          "<p class='enum'><strong>ENUM:</strong> ",
+          "This enumeration defines a set of String values. ",
+          "It exists primarily for documentation purposes - ",
+          "in code use the actual string values like #{first[:default]}, ",
+          "don't reference them through this class like #{cls[:name]}.#{first[:name]}.</p>",
+        ]
+      else
+        [
+          "<p class='enum'><strong>ENUM:</strong> ",
+          "This enumeration defines a set of #{cls[:enum][:type]} values.</p>",
+        ]
+      end
     end
 
   end

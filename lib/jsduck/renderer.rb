@@ -21,7 +21,6 @@ module JsDuck
             "<div class='doc-contents'>",
               render_tags(@cls, :top),
               @cls[:doc],
-              render_enum_class_notice,
               render_tags(@cls, :bottom),
             "</div>",
             "<div class='members'>",
@@ -29,26 +28,6 @@ module JsDuck
             "</div>",
           "</div>",
         ].flatten.compact.join
-    end
-
-    def render_enum_class_notice
-      return if !@cls[:enum]
-
-      if @cls[:enum][:doc_only]
-        first = @cls[:members][:property][0] || {:name => 'foo', :default => '"foo"'}
-        [
-          "<p class='enum'><strong>ENUM:</strong> ",
-          "This enumeration defines a set of String values. ",
-          "It exists primarily for documentation purposes - ",
-          "in code use the actual string values like #{first[:default]}, ",
-          "don't reference them through this class like #{@cls[:name]}.#{first[:name]}.</p>",
-        ]
-      else
-        [
-          "<p class='enum'><strong>ENUM:</strong> ",
-          "This enumeration defines a set of #{@cls[:enum][:type]} values.</p>",
-        ]
-      end
     end
 
     def render_tags(member, position)
