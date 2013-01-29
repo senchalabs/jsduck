@@ -20,7 +20,6 @@ module JsDuck
             render_sidebar,
             "<div class='doc-contents'>",
               render_tags(@cls, :top),
-              render_private_class_notice,
               @cls[:doc],
               render_enum_class_notice,
               render_tags(@cls, :bottom),
@@ -30,15 +29,6 @@ module JsDuck
             "</div>",
           "</div>",
         ].flatten.compact.join
-    end
-
-    def render_private_class_notice
-      return if !@cls[:private]
-      return [
-        "<p class='private'><strong>NOTE</strong> ",
-        "This is a private utility class for internal use by the framework. ",
-        "Don't rely on its existence.</p>",
-      ]
     end
 
     def render_enum_class_notice
