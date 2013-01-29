@@ -5,7 +5,7 @@ module JsDuck::Tag
     def initialize
       @key = :private
       @signature = {:long => "private", :short => "PRI"}
-      @html_position = :top
+      @html_position = POS_BEFORE_DOC
       super
     end
 

@@ -14,7 +14,8 @@ module JsDuck
       @keys = {}
       @mergers = {}
       @signatures = []
-      @html_renderers = {:top => [], :doc => [], :bottom => []}
+      @html_renderers = []
+      @html_renderers_sorted = false
       @member_types = []
 
       @loader = TagLoader.new
@@ -54,7 +55,7 @@ module JsDuck
           @signatures << tag.signature
         end
         if tag.html_position
-          @html_renderers[tag.html_position] << tag
+          @html_renderers << tag
         end
       end
     end
@@ -92,15 +93,16 @@ module JsDuck
       @mergers[context] || []
     end
 
-    # Returns tags for rendering HTML.  One can ask for tags for
-    # rendering either :top or :bottom section.  By default renderers
-    # for both sections are returned.
-    def html_renderers(position = :all)
-      if position == :all
-        @html_renderers[:top] + @html_renderers[:doc] + @html_renderers[:bottom]
-      else
-        @html_renderers[position]
+    # Returns tags for rendering HTML, sorted in the order they should
+    # appear in final output. Sorting order is determined by the
+    # numeric :html_position field.
+    def html_renderers
+      if !@html_renderers_sorted
+        @html_renderers.sort! {|a, b| a.html_position <=> b.html_position }
+        @html_renderers_sorted = true
       end
+
+      @html_renderers
     end
 
     #

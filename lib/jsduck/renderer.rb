@@ -19,9 +19,7 @@ module JsDuck
           "<div>",
             render_sidebar,
             "<div class='doc-contents'>",
-              render_tags(@cls, :top),
-              render_tags(@cls, :doc),
-              render_tags(@cls, :bottom),
+              render_tags(@cls),
             "</div>",
             "<div class='members'>",
               render_all_sections,
@@ -30,8 +28,8 @@ module JsDuck
         ].flatten.compact.join
     end
 
-    def render_tags(member, position)
-      TagRenderer.render(member, position)
+    def render_tags(member)
+      TagRenderer.render(member)
     end
 
     def render_sidebar
@@ -216,11 +214,7 @@ module JsDuck
     def render_long_doc(m)
       doc = []
 
-      doc << render_tags(m, :top)
-
-      doc << render_tags(m, :doc)
-
-      doc << render_tags(m, :bottom)
+      doc << render_tags(m)
 
       doc << render_params_and_return(m)
 

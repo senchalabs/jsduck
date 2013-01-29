@@ -15,7 +15,7 @@ module JsDuck::Tag
     def initialize
       @key = :default
       @merge_context = [:cfg, :property, :css_var]
-      @html_position = :bottom
+      @html_position = POS_AFTER_DOC
     end
 
     def merge(h, docs, code)

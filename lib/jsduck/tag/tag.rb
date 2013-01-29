@@ -82,11 +82,18 @@ module JsDuck::Tag
     def merge(hash, docs, code)
     end
 
-    # Whether to render the tag before other content (:top) or after
-    # it (:bottom).  Must be defined together with #to_html method.
-    # Additionally the #format method can be defined to perform
-    # rendering of Markdown before #to_html is called.
+    # The position for outputting the HTML for the tag in final
+    # documentation.  For values, use the constants define below, or
+    # specify your own numberic value.
+    #
+    # Must be defined together with #to_html method.  Additionally the
+    # #format method can be defined to perform rendering of Markdown
+    # before #to_html is called.
     attr_accessor :html_position
+
+    POS_BEFORE_DOC = 1
+    POS_DOC = 2
+    POS_AFTER_DOC = 3
 
     # Called before #to_html to allow rendering of Markdown content.
     # For this an instance of DocFormatter is passed in, on which one

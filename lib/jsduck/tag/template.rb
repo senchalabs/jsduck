@@ -5,7 +5,7 @@ module JsDuck::Tag
     def initialize
       @key = :template
       @signature = {:long => "template", :short => "TMP"}
-      @html_position = :bottom
+      @html_position = POS_AFTER_DOC
       super
     end
 

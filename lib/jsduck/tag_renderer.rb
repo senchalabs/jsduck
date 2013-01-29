@@ -6,10 +6,10 @@ module JsDuck
   class TagRenderer
     # Renders tags of a particular section.
     #
-    # Takes member or class hash and a position symbol.
+    # Takes member or class hash.
     # Returns array of rendered HTML.
-    def self.render(member, position)
-      TagRegistry.html_renderers(position).map do |tag|
+    def self.render(member)
+      TagRegistry.html_renderers.map do |tag|
         if member[tag.key]
           tag.to_html(member)
         else

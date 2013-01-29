@@ -10,7 +10,7 @@ module JsDuck::Tag
   class Overrides < Tag
     def initialize
       @key = :overrides
-      @html_position = :bottom
+      @html_position = POS_AFTER_DOC
     end
 
     # Generate HTML links from :overrides data.

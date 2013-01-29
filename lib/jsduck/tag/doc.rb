@@ -6,7 +6,7 @@ module JsDuck::Tag
   class Doc < Tag
     def initialize
       @key = :doc
-      @html_position = :doc
+      @html_position = POS_DOC
     end
 
     def format(m, formatter)
