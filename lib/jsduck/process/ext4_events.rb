@@ -31,7 +31,7 @@ module JsDuck
       end
 
       OPTIONS = {
-        :tagname => :param,
+        :tagname => :params,
         :name => "eOpts",
         :type => "Object",
         :doc => "The options object passed to {@link Ext.util.Observable#addListener}."

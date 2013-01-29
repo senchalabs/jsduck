@@ -52,7 +52,7 @@ describe JsDuck::Doc::Parser do
         @tag = @doc[2]
       end
       it "detects tagname" do
-        @tag[:tagname].should == :param
+        @tag[:tagname].should == :params
       end
       it "detects name" do
         @tag[:name].should == "x"
@@ -210,7 +210,7 @@ describe JsDuck::Doc::Parser do
 
   describe "indented code on previous line" do
     before do
-      @params = parse_single(<<-EOS.strip).find_all {|t| t[:tagname] == :param }
+      @params = parse_single(<<-EOS.strip).find_all {|t| t[:tagname] == :params }
          * @param x
          *     Foo
          *     Bar

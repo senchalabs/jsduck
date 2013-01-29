@@ -1,11 +1,13 @@
 require "jsduck/tag/tag"
 require "jsduck/doc/subproperties"
+require "jsduck/subproperties"
 
 module JsDuck::Tag
   class Return < Tag
     def initialize
       @pattern = ["return", "returns"]
       @key = :return
+      @html_position = POS_RETURN
     end
 
     # @return {Type} return.name ...
@@ -32,6 +34,10 @@ module JsDuck::Tag
         :doc => ret[:doc] || "",
         :properties => JsDuck::Doc::Subproperties.nest(tags, pos)[0][:properties],
       }
+    end
+
+    def to_html(m)
+      JsDuck::Subproperties.render_return(m[:return])
     end
   end
 end

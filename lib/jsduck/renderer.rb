@@ -2,7 +2,6 @@ require 'jsduck/util/html'
 require 'jsduck/signature_renderer'
 require 'jsduck/tag_renderer'
 require 'jsduck/sidebar'
-require 'jsduck/subproperties'
 
 module JsDuck
 
@@ -142,13 +141,7 @@ module JsDuck
     end
 
     def render_long_doc(m)
-      doc = []
-
-      doc << render_tags(m)
-
-      doc << Subproperties.render_member(m)
-
-      doc
+      render_tags(m)
     end
 
   end

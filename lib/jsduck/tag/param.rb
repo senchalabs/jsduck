@@ -1,18 +1,20 @@
 require "jsduck/tag/tag"
 require "jsduck/doc/subproperties"
+require "jsduck/subproperties"
 require "jsduck/docs_code_comparer"
 
 module JsDuck::Tag
   class Param < Tag
     def initialize
       @pattern = "param"
-      @key = :param
+      @key = :params
       @merge_context = [:method, :event, :css_mixin]
+      @html_position = POS_PARAMS
     end
 
     # @param {Type} [name=default] (optional) ...
     def parse_doc(p)
-      tag = p.standard_tag({:tagname => :param, :type => true, :name => true})
+      tag = p.standard_tag({:tagname => :params, :type => true, :name => true})
       tag[:optional] = true if parse_optional(p)
       tag[:doc] = :multiline
       tag
@@ -28,6 +30,10 @@ module JsDuck::Tag
 
     def merge(h, docs, code)
       h[:params] = merge_params(docs, code)
+    end
+
+    def to_html(m)
+      JsDuck::Subproperties.render_params(m[:params]) if m[:params].length > 0
     end
 
     private

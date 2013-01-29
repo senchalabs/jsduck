@@ -94,6 +94,9 @@ module JsDuck::Tag
     POS_BEFORE_DOC = 1
     POS_DOC = 2
     POS_AFTER_DOC = 3
+    POS_PARAMS = 4
+    POS_RETURN = 5
+    POS_THROWS = 6
 
     # Called before #to_html to allow rendering of Markdown content.
     # For this an instance of DocFormatter is passed in, on which one

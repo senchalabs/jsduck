@@ -1,10 +1,12 @@
 require "jsduck/tag/tag"
+require "jsduck/subproperties"
 
 module JsDuck::Tag
   class Throws < Tag
     def initialize
       @pattern = "throws"
       @key = :throws
+      @html_position = POS_THROWS
     end
 
     # @throws {Type} ...
@@ -23,6 +25,10 @@ module JsDuck::Tag
       end
 
       h[:throws] = result
+    end
+
+    def to_html(m)
+      JsDuck::Subproperties.render_throws(m[:throws])
     end
   end
 end

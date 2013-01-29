@@ -8,14 +8,6 @@ module JsDuck
   class Subproperties
     include Util::Singleton
 
-    def render_member(item)
-      doc = []
-      doc << render_params(item[:params]) if item[:params] && item[:params].length > 0
-      doc << render_return(item[:return]) if item[:return]
-      doc << render_throws(item[:throws]) if item[:throws]
-      doc
-    end
-
     # Renders object properties, which could also be functions in
     # which case they will be rendered with parameters and return
     # value.
