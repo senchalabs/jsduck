@@ -1,11 +1,11 @@
 require 'jsduck/util/html'
 require 'jsduck/signature_renderer'
 require 'jsduck/tag_renderer'
+require 'jsduck/sidebar'
 
 module JsDuck
 
-  # Ruby-side implementation of class docs Renderer.
-  # Uses PhantomJS to run Docs.Renderer JavaScript.
+  # Renders the whole documentation page for a class.
   class Renderer
     def initialize(opts)
       @opts = opts
@@ -28,85 +28,14 @@ module JsDuck
         ].flatten.compact.join
     end
 
+    private
+
     def render_tags(member)
       TagRenderer.render(member)
     end
 
     def render_sidebar
-      items = [
-        render_alternate_class_names,
-        render_tree,
-        render_dependencies(:mixins, "Mixins"),
-        render_dependencies(:parentMixins, "Inherited mixins"),
-        render_dependencies(:requires, "Requires"),
-        render_dependencies(:subclasses, "Subclasses"),
-        render_dependencies(:mixedInto, "Mixed into"),
-        render_dependencies(:uses, "Uses"),
-        @opts.source ? render_files : nil,
-      ]
-      if items.compact.length > 0
-        return ['<pre class="hierarchy">', items, '</pre>']
-      else
-        return nil
-      end
-    end
-
-    def render_alternate_class_names
-      return if @cls[:alternateClassNames].length == 0
-      return [
-        "<h4>Alternate names</h4>",
-        @cls[:alternateClassNames].map {|name| "<div class='alternate-class-name'>#{name}</div>" },
-      ]
-    end
-
-    def render_dependencies(type, title)
-      return if !@cls[type] || @cls[type].length == 0
-      return [
-        "<h4>#{title}</h4>",
-        @cls[type].map {|name| "<div class='dependency'>#{name.exists? ? render_link(name) : name}</div>" },
-      ]
-    end
-
-    def render_files
-      return if @cls[:files].length == 0 || @cls[:files][0][:filename] == ""
-      return [
-        "<h4>Files</h4>",
-        @cls[:files].map do |file|
-          url = "source/" + file[:href]
-          title = File.basename(file[:filename])
-          "<div class='dependency'><a href='#{url}' target='_blank'>#{title}</a></div>"
-        end
-      ]
-    end
-
-    # Take care of the special case where class has parent for which we have no docs.
-    # In that case the "extends" property exists but "superclasses" is empty.
-    # We still create the tree, but without links in it.
-    def render_tree
-      return if !@cls[:extends] || @cls[:extends] == "Object"
-
-      return [
-        "<h4>Hierarchy</h4>",
-        render_class_tree(@cls[:superclasses] + [@cls[:name]])
-      ]
-    end
-
-    def render_class_tree(classes, i=0)
-      return "" if classes.length <= i
-
-      name = classes[i]
-      return [
-        "<div class='subclass #{i == 0 ? 'first-child' : ''}'>",
-          classes.length-1 == i ? "<strong>#{name}</strong>" : (name.exists? ? render_link(name) : name),
-          render_class_tree(classes, i+1),
-        "</div>",
-      ]
-    end
-
-    def render_link(cls_name, member=nil)
-      id = member ? cls_name + "-" + member[:id] : cls_name
-      label = member ? cls_name + "." + member[:name] : cls_name
-      return "<a href='#!/api/#{id}' rel='#{id}' class='docClass'>#{label}</a>"
+      Sidebar.new(@opts).render(@cls)
     end
 
     def render_all_sections
