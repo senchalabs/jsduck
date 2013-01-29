@@ -20,7 +20,7 @@ module JsDuck
             render_sidebar,
             "<div class='doc-contents'>",
               render_tags(@cls, :top),
-              @cls[:doc],
+              render_tags(@cls, :doc),
               render_tags(@cls, :bottom),
             "</div>",
             "<div class='members'>",
@@ -218,7 +218,7 @@ module JsDuck
 
       doc << render_tags(m, :top)
 
-      doc << m[:doc]
+      doc << render_tags(m, :doc)
 
       doc << render_tags(m, :bottom)
 

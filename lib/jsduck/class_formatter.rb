@@ -24,10 +24,9 @@ module JsDuck
       @cls = cls
       @formatter.class_context = cls[:name]
       @formatter.doc_context = cls[:files][0]
-      cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
+      format_tags(cls)
       # format all members (except hidden ones)
       cls[:members] = cls[:members].map {|m| m[:hide] ? m : format_member(m)  }
-      format_tags_data(cls)
       cls
     end
 
@@ -40,7 +39,7 @@ module JsDuck
 
     def format_member(m)
       @formatter.doc_context = m[:files][0]
-      m[:doc] = @formatter.format(m[:doc]) if m[:doc]
+      format_tags(m)
       if expandable?(m) || Shortener.too_long?(m[:doc])
         m[:shortDoc] = Shortener.shorten(m[:doc])
       end
@@ -53,7 +52,6 @@ module JsDuck
       m[:return] = format_item(m[:return], is_css_tag) if m[:return]
       m[:throws] = m[:throws].map {|t| format_item(t, is_css_tag) } if m[:throws]
       m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
-      format_tags_data(m)
       m
     end
 
@@ -83,7 +81,7 @@ module JsDuck
       end
     end
 
-    def format_tags_data(context)
+    def format_tags(context)
       TagRegistry.html_renderers.each do |tag|
         if context[tag.key]
           tag.format(context, @formatter)

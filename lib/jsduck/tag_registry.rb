@@ -14,7 +14,7 @@ module JsDuck
       @keys = {}
       @mergers = {}
       @signatures = []
-      @html_renderers = {:top => [], :bottom => []}
+      @html_renderers = {:top => [], :doc => [], :bottom => []}
       @member_types = []
 
       @loader = TagLoader.new
@@ -97,7 +97,7 @@ module JsDuck
     # for both sections are returned.
     def html_renderers(position = :all)
       if position == :all
-        @html_renderers[:top] + @html_renderers[:bottom]
+        @html_renderers[:top] + @html_renderers[:doc] + @html_renderers[:bottom]
       else
         @html_renderers[position]
       end
