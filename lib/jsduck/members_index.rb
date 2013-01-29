@@ -133,7 +133,6 @@ module JsDuck
           new[:overrides] << {
             :name => old[:name],
             :owner => old[:owner],
-            :id => old[:id],
           }
         end
       end

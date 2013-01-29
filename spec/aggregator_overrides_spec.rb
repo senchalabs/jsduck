@@ -13,6 +13,10 @@ describe JsDuck::Aggregator do
     it "lists parent method in :override property" do
       @method[:overrides][0][:owner].should == "Parent"
     end
+
+    it "lists name of the method in :override property" do
+      @method[:overrides][0][:name].should == "foo"
+    end
   end
 
   describe "method overriding parent class method" do

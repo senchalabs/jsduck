@@ -224,11 +224,6 @@ module JsDuck
 
       doc << render_params_and_return(m)
 
-      if m[:overrides]
-        overrides = m[:overrides].map {|o| render_link(o[:owner], o) }.join(", ")
-        doc << "<p>Overrides: #{overrides}</p>"
-      end
-
       doc
     end
 
