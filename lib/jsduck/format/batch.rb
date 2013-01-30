@@ -49,7 +49,7 @@ module JsDuck
         doc_formatter = Format::Doc.new(relations, opts)
         doc_formatter.images = Img::DirSet.new(opts.images, "images")
 
-        class_formatter = Format::Class.new(relations, doc_formatter)
+        class_formatter = Format::Class.new(doc_formatter)
         # Don't format types when exporting
         class_formatter.include_types = !opts.export
 

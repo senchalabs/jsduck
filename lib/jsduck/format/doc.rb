@@ -19,6 +19,7 @@ module JsDuck
       # command line.  For the actual effect of the options see
       # Inline::* classes.
       def initialize(relations={}, opts={})
+        @relations = relations
         @opts = opts
         @link_renderer = Inline::LinkRenderer.new(relations, opts)
         @inline_link = Inline::Link.new(@link_renderer)
@@ -28,6 +29,10 @@ module JsDuck
         @inline_example = Inline::Example.new(opts)
         @doc_context = {}
       end
+
+      # Access to the relations object.
+      # (Used by TypeParser.)
+      attr_reader :relations
 
       # Accessors to the images attribute of Inline::Img
       def images=(images)

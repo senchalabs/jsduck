@@ -1,7 +1,5 @@
-require 'jsduck/type_parser'
-require 'jsduck/logger'
 require 'jsduck/tag_registry'
-require 'jsduck/util/html'
+require 'jsduck/format/subproperties'
 
 module JsDuck
   module Format
@@ -12,8 +10,7 @@ module JsDuck
       # Set to false to disable HTML-formatting of type definitions.
       attr_accessor :include_types
 
-      def initialize(relations, formatter)
-        @relations = relations
+      def initialize(formatter)
         @formatter = formatter
         @include_types = true
       end
@@ -21,12 +18,14 @@ module JsDuck
       # Runs the formatter on doc object of a class.
       # Accessed using Class#internal_doc
       def format(cls)
-        @cls = cls
         @formatter.class_context = cls[:name]
         @formatter.doc_context = cls[:files][0]
+
         format_tags(cls)
+
         # format all members (except hidden ones)
-        cls[:members] = cls[:members].map {|m| m[:hide] ? m : format_member(m)  }
+        cls[:members].each {|m| format_member(m) unless m[:hide] }
+
         cls
       end
 
@@ -39,39 +38,25 @@ module JsDuck
 
       def format_member(m)
         @formatter.doc_context = m[:files][0]
+
         format_tags(m)
 
+        subs = make_subproperties_formatter(m)
+
+        m[:html_type] = subs.format_type(m[:type]) if m[:type]
+        m[:params].each {|p| subs.format(p) } if m[:params]
+        subs.format(m[:return]) if m[:return]
+        m[:throws].each {|t| subs.format(t) } if m[:throws]
+        m[:properties].each {|p| subs.format(p) } if m[:properties]
+      end
+
+      def make_subproperties_formatter(m)
         # We don't validate and format CSS var and mixin type definitions
         is_css_tag = m[:tagname] == :css_var || m[:tagname] == :css_mixin
+        # Also don't check types when @include_types setting is explicitly turned off
+        check_types = @include_types && !is_css_tag
 
-        m[:html_type] = (@include_types && !is_css_tag) ? format_type(m[:type]) : m[:type] if m[:type]
-        m[:params] = m[:params].map {|p| format_item(p, is_css_tag) } if m[:params]
-        m[:return] = format_item(m[:return], is_css_tag) if m[:return]
-        m[:throws] = m[:throws].map {|t| format_item(t, is_css_tag) } if m[:throws]
-        m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
-        m
-      end
-
-      def format_item(it, is_css_tag)
-        it[:doc] = @formatter.format(it[:doc]) if it[:doc]
-        it[:html_type] = (@include_types && !is_css_tag) ? format_type(it[:type]) : it[:type] if it[:type]
-        it[:properties] = it[:properties].map {|s| format_item(s, is_css_tag) } if it[:properties]
-        it
-      end
-
-      def format_type(type)
-        tp = TypeParser.new(@relations, @formatter)
-        if tp.parse(type)
-          tp.out
-        else
-          context = @formatter.doc_context
-          if tp.error == :syntax
-            Logger.warn(:type_syntax, "Incorrect type syntax #{type}", context[:filename], context[:linenr])
-          else
-            Logger.warn(:type_name, "Unknown type #{type}", context[:filename], context[:linenr])
-          end
-          Util::HTML.escape(type)
-        end
+        return Format::Subproperties.new(@formatter, check_types)
       end
 
       def format_tags(context)
