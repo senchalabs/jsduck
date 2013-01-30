@@ -40,7 +40,7 @@ module JsDuck
         # Skip the formatting entirely when type-parsing is turned off.
         return Util::HTML.escape(type) unless @format_types
 
-        tp = TypeParser.new(@formatter.relations, @formatter)
+        tp = TypeParser.new(@formatter)
         if tp.parse(type)
           tp.out
         else
