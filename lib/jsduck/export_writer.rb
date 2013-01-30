@@ -1,7 +1,7 @@
 require 'jsduck/util/stdout'
 require 'jsduck/exporter/full'
 require 'jsduck/exporter/examples'
-require 'jsduck/batch_formatter'
+require 'jsduck/format/batch'
 require 'jsduck/class_writer'
 require 'jsduck/guide_writer'
 require 'fileutils'
@@ -54,7 +54,7 @@ module JsDuck
     end
 
     def format_classes
-      BatchFormatter.format_all!(@relations, @assets, @opts)
+      Format::Batch.format_all!(@relations, @assets, @opts)
     end
 
   end

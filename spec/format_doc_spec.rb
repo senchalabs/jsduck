@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-require "jsduck/doc_formatter"
+require "jsduck/format/doc"
 require "jsduck/relations"
 require "jsduck/class"
 
-describe JsDuck::DocFormatter do
+describe JsDuck::Format::Doc do
 
   class ImageDirMock
     def get(filename)
@@ -37,7 +37,7 @@ describe JsDuck::DocFormatter do
           :alternateClassNames => ["FooBar"]
         }),
       ])
-      @formatter = JsDuck::DocFormatter.new(relations, :img_tpl => '<img src="%u" alt="%a"/>')
+      @formatter = JsDuck::Format::Doc.new(relations, :img_tpl => '<img src="%u" alt="%a"/>')
       @formatter.class_context = "Context"
       @formatter.images = ImageDirMock.new
     end
@@ -187,7 +187,7 @@ describe JsDuck::DocFormatter do
           ]
         }),
       ])
-      @formatter = JsDuck::DocFormatter.new(relations, :img_tpl => '<img src="%u" alt="%a"/>')
+      @formatter = JsDuck::Format::Doc.new(relations, :img_tpl => '<img src="%u" alt="%a"/>')
       @formatter.class_context = "Context"
       @formatter.images = ImageDirMock.new
     end
@@ -364,7 +364,7 @@ describe JsDuck::DocFormatter do
           ]
         })
       ])
-      @formatter = JsDuck::DocFormatter.new(relations)
+      @formatter = JsDuck::Format::Doc.new(relations)
     end
 
     it "replaces {@link Foo#method-select} with link to method" do
@@ -390,7 +390,7 @@ describe JsDuck::DocFormatter do
           ]
         })
       ])
-      @formatter = JsDuck::DocFormatter.new(relations)
+      @formatter = JsDuck::Format::Doc.new(relations)
     end
 
     it "replaces {@link Foo#select} with link to instance method" do
@@ -411,7 +411,7 @@ describe JsDuck::DocFormatter do
 
   describe "#format" do
     before do
-      @formatter = JsDuck::DocFormatter.new
+      @formatter = JsDuck::Format::Doc.new
     end
 
     # Just a sanity check that Markdown formatting works

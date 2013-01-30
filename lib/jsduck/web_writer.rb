@@ -1,5 +1,5 @@
 require 'jsduck/exporter/app'
-require 'jsduck/batch_formatter'
+require 'jsduck/format/batch'
 require 'jsduck/template_dir'
 require 'jsduck/index_html'
 require 'jsduck/app_data'
@@ -79,7 +79,7 @@ module JsDuck
     end
 
     def format_classes
-      BatchFormatter.format_all!(@relations, @assets, @opts)
+      Format::Batch.format_all!(@relations, @assets, @opts)
     end
 
   end

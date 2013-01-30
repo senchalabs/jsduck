@@ -5,7 +5,7 @@ require 'jsduck/guides'
 require 'jsduck/videos'
 require 'jsduck/examples'
 require 'jsduck/categories/factory'
-require 'jsduck/doc_formatter'
+require 'jsduck/format/doc'
 
 module JsDuck
 
@@ -27,7 +27,7 @@ module JsDuck
       @relations = relations
       @opts = opts
 
-      doc_formatter = DocFormatter.new(@relations, @opts)
+      doc_formatter = Format::Doc.new(@relations, @opts)
 
       @images = Img::DirSet.new(@opts.images, "images")
       @welcome = Welcome.create(@opts.welcome, doc_formatter)
