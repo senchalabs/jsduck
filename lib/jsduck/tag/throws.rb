@@ -1,5 +1,5 @@
 require "jsduck/tag/tag"
-require "jsduck/subproperties"
+require "jsduck/render/subproperties"
 
 module JsDuck::Tag
   class Throws < Tag
@@ -28,7 +28,7 @@ module JsDuck::Tag
     end
 
     def to_html(m)
-      JsDuck::Subproperties.render_throws(m[:throws])
+      JsDuck::Render::Subproperties.render_throws(m[:throws])
     end
   end
 end

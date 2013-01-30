@@ -1,5 +1,4 @@
-require 'jsduck/renderer'
-require 'jsduck/doc_formatter'
+require 'jsduck/render/class'
 require 'jsduck/exporter/full'
 require 'jsduck/tag_registry'
 
@@ -10,7 +9,7 @@ module JsDuck
     class App < Full
       def initialize(relations, opts)
         super(relations, opts)
-        @renderer = Renderer.new(opts)
+        @renderer = Render::Class.new(opts)
       end
 
       # Returns compacted class data hash which contains an additional

@@ -1,6 +1,6 @@
 require "jsduck/tag/tag"
 require "jsduck/doc/subproperties"
-require "jsduck/subproperties"
+require "jsduck/render/subproperties"
 require "jsduck/docs_code_comparer"
 
 module JsDuck::Tag
@@ -33,7 +33,7 @@ module JsDuck::Tag
     end
 
     def to_html(m)
-      JsDuck::Subproperties.render_params(m[:params]) if m[:params].length > 0
+      JsDuck::Render::Subproperties.render_params(m[:params]) if m[:params].length > 0
     end
 
     private

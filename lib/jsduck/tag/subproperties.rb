@@ -1,5 +1,5 @@
 require "jsduck/tag/tag"
-require "jsduck/subproperties"
+require "jsduck/render/subproperties"
 
 module JsDuck::Tag
   # There is no @subproperties tag.
@@ -15,7 +15,7 @@ module JsDuck::Tag
     end
 
     def to_html(m)
-      JsDuck::Subproperties.render(m)
+      JsDuck::Render::Subproperties.render(m)
     end
   end
 end
