@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-require "jsduck/shortener"
+require "jsduck/format/shortener"
 
-describe JsDuck::Shortener do
+describe JsDuck::Format::Shortener do
 
   describe "#shorten" do
 
     def shorten(text)
-      JsDuck::Shortener.shorten(text)
+      JsDuck::Format::Shortener.shorten(text)
     end
 
     before do
-      JsDuck::Shortener.instance.max_length = 10
+      JsDuck::Format::Shortener.instance.max_length = 10
     end
 
     it "appends ellipsis to short text" do
@@ -43,11 +43,11 @@ describe JsDuck::Shortener do
   describe "#too_long?" do
 
     def too_long?(text)
-      JsDuck::Shortener.too_long?(text)
+      JsDuck::Format::Shortener.too_long?(text)
     end
 
     before do
-      JsDuck::Shortener.instance.max_length = 10
+      JsDuck::Format::Shortener.instance.max_length = 10
     end
 
     it "is false when exactly equal to the max_length" do
@@ -75,7 +75,7 @@ describe JsDuck::Shortener do
 
   describe "#first_sentence" do
     def first_sentence(text)
-      JsDuck::Shortener.first_sentence(text)
+      JsDuck::Format::Shortener.first_sentence(text)
     end
 
     it "extracts first sentence" do
