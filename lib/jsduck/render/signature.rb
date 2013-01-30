@@ -39,7 +39,7 @@ module JsDuck
       end
 
       def render_expandable
-        @m[:shortDoc] ? "expandable" : "not-expandable"
+        @m[:short_doc] ? "expandable" : "not-expandable"
       end
 
       def render_name

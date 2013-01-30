@@ -6,11 +6,7 @@ describe JsDuck::Format::Shortener do
   describe "#shorten" do
 
     def shorten(text)
-      JsDuck::Format::Shortener.shorten(text)
-    end
-
-    before do
-      JsDuck::Format::Shortener.instance.max_length = 10
+      JsDuck::Format::Shortener.new(10).shorten(text)
     end
 
     it "appends ellipsis to short text" do
@@ -43,11 +39,7 @@ describe JsDuck::Format::Shortener do
   describe "#too_long?" do
 
     def too_long?(text)
-      JsDuck::Format::Shortener.too_long?(text)
-    end
-
-    before do
-      JsDuck::Format::Shortener.instance.max_length = 10
+      JsDuck::Format::Shortener.new(10).too_long?(text)
     end
 
     it "is false when exactly equal to the max_length" do
@@ -75,7 +67,7 @@ describe JsDuck::Format::Shortener do
 
   describe "#first_sentence" do
     def first_sentence(text)
-      JsDuck::Format::Shortener.first_sentence(text)
+      JsDuck::Format::Shortener.new.first_sentence(text)
     end
 
     it "extracts first sentence" do

@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 require 'jsduck/util/html'
-require 'jsduck/util/singleton'
 
 module JsDuck
   module Format
 
     # Little helper for shortening text
     class Shortener
-      include Util::Singleton
-
-      # Maximum length for text that doesn't get shortened.
-      # The accessor is used for testing purposes only.
-      attr_accessor :max_length
-
-      def initialize
-        @max_length = 120
+      # Takes as parameter the maximum length for text that doesn't
+      # get shortened.  Used for testing purposes.
+      def initialize(max_length = 120)
+        @max_length = max_length
       end
 
       # Shortens text

@@ -1,7 +1,6 @@
 require 'jsduck/type_parser'
 require 'jsduck/logger'
 require 'jsduck/tag_registry'
-require 'jsduck/format/shortener'
 require 'jsduck/util/html'
 
 module JsDuck
@@ -41,9 +40,6 @@ module JsDuck
       def format_member(m)
         @formatter.doc_context = m[:files][0]
         format_tags(m)
-        if expandable?(m) || Format::Shortener.too_long?(m[:doc])
-          m[:shortDoc] = Format::Shortener.shorten(m[:doc])
-        end
 
         # We don't validate and format CSS var and mixin type definitions
         is_css_tag = m[:tagname] == :css_var || m[:tagname] == :css_mixin
@@ -54,10 +50,6 @@ module JsDuck
         m[:throws] = m[:throws].map {|t| format_item(t, is_css_tag) } if m[:throws]
         m[:properties] = m[:properties].map {|b| format_item(b, is_css_tag) } if m[:properties]
         m
-      end
-
-      def expandable?(m)
-        m[:params] || (m[:properties] && m[:properties].length > 0) || m[:default] || m[:deprecated] || m[:template]
       end
 
       def format_item(it, is_css_tag)

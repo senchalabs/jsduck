@@ -126,7 +126,7 @@ module JsDuck
             # short and long descriptions
             "<div class='description'>",
               "<div class='short'>",
-                m[:shortDoc] ? m[:shortDoc] : m[:doc],
+                m[:short_doc] ? m[:short_doc] : m[:doc],
               "</div>",
               "<div class='long'>",
                 render_tags(m),
