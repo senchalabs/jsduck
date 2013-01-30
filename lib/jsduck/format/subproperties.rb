@@ -8,9 +8,10 @@ module JsDuck
     # Helper for recursively formatting subproperties.
     class Subproperties
 
-      def initialize(formatter, format_types=false)
+      def initialize(formatter, opts={})
         @formatter = formatter
-        @format_types = format_types
+        # Don't format types when exporting
+        @skip_types = !!opts[:export]
       end
 
       # Takes a hash of param, return value, throws value or subproperty.
@@ -19,15 +20,15 @@ module JsDuck
       # - Parses the :type field and saves HTML to :html_type.
       # - Recursively does the same with all items in :properties field.
       #
-      def format(item)
+      def format(item, skip_types=false)
         item[:doc] = @formatter.format(item[:doc]) if item[:doc]
 
         if item[:type]
-          item[:html_type] = format_type(item[:type])
+          item[:html_type] = format_type(item[:type], skip_types)
         end
 
         if item[:properties]
-          item[:properties].each {|p| format(p) }
+          item[:properties].each {|p| format(p, skip_types) }
         end
       end
 
@@ -36,9 +37,9 @@ module JsDuck
       # - On success returns HTML-version of the type definition.
       # - On failure logs error and returns the type string with only HTML escaped.
       #
-      def format_type(type)
+      def format_type(type, skip_types=false)
         # Skip the formatting entirely when type-parsing is turned off.
-        return Util::HTML.escape(type) unless @format_types
+        return Util::HTML.escape(type) if @skip_types || skip_types
 
         tp = TypeParser.new(@formatter)
         if tp.parse(type)

@@ -2,6 +2,7 @@ require 'rubygems'
 require 'strscan'
 require 'rdiscount'
 require 'jsduck/format/html_stack'
+require 'jsduck/format/subproperties'
 require 'jsduck/inline/link'
 require 'jsduck/inline/auto_link'
 require 'jsduck/inline/link_renderer'
@@ -21,6 +22,7 @@ module JsDuck
       def initialize(relations={}, opts={})
         @relations = relations
         @opts = opts
+        @subproperties = Format::Subproperties.new(self, opts)
         @link_renderer = Inline::LinkRenderer.new(relations, opts)
         @inline_link = Inline::Link.new(@link_renderer)
         @auto_link = Inline::AutoLink.new(@link_renderer)
@@ -140,6 +142,19 @@ module JsDuck
       # Creates a link based on the link template.
       def link(cls, member, anchor_text, type=nil, static=nil)
         @link_renderer.link(cls, member, anchor_text, type, static)
+      end
+
+      # Recursively formats a subproperty.
+      # See Format::Subproperties#format for details.
+      def format_subproperty(item, skip_types=false)
+        @subproperties.format(item, skip_types)
+      end
+
+      # Parses and formats type definition.
+      # Returns HTML-rendering of the type.
+      # See Format::Subproperties#format_type for details.
+      def format_type(type, skip_types=false)
+        @subproperties.format_type(type, skip_types)
       end
 
     end

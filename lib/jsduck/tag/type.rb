@@ -7,6 +7,10 @@ module JsDuck::Tag
       @pattern = "type"
       @key = :type
       @merge_context = [:cfg, :property, :css_var]
+
+      # We don't really care about the position as we don't output any
+      # HTML. We just need to set this up to do the formatting.
+      @html_position = POS_DOC
     end
 
     # matches @type {type}  or  @type type
@@ -34,6 +38,13 @@ module JsDuck::Tag
       if h[:type] == nil
         h[:type] = code[:tagname] == :method ? "Function" : "Object"
       end
+    end
+
+    def format(m, formatter)
+      # We don't validate and format CSS var and mixin type definitions
+      skip_type = m[:tagname] == :css_var || m[:tagname] == :css_mixin
+
+      m[:html_type] = formatter.format_type(m[:type], skip_type)
     end
 
   end

@@ -27,6 +27,10 @@ module JsDuck::Tag
       h[:throws] = result
     end
 
+    def format(m, formatter)
+      m[:throws].each {|t| formatter.format_subproperty(t) }
+    end
+
     def to_html(m)
       JsDuck::Render::Subproperties.render_throws(m[:throws])
     end

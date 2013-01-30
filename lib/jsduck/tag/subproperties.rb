@@ -14,6 +14,10 @@ module JsDuck::Tag
       @html_position = POS_PARAMS
     end
 
+    def format(m, formatter)
+      m[:properties].each {|p| formatter.format_subproperty(p) }
+    end
+
     def to_html(m)
       JsDuck::Render::Subproperties.render(m)
     end

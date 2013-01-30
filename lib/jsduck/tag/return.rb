@@ -36,6 +36,10 @@ module JsDuck::Tag
       }
     end
 
+    def format(m, formatter)
+      formatter.format_subproperty(m[:return])
+    end
+
     def to_html(m)
       JsDuck::Render::Subproperties.render_return(m[:return])
     end
