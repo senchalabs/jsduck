@@ -9,9 +9,7 @@ module JsDuck::Tag
   class Subproperties < Tag
     def initialize
       @key = :properties
-      # Reuse the PARAMS position - a member either has properties or
-      # params, not both.
-      @html_position = POS_PARAMS
+      @html_position = POS_SUBPROPERTIES
     end
 
     def format(m, formatter)

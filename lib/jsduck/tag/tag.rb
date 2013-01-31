@@ -83,20 +83,40 @@ module JsDuck::Tag
     end
 
     # The position for outputting the HTML for the tag in final
-    # documentation.  For values, use the constants define below, or
-    # specify your own numberic value.
+    # documentation.
     #
     # Must be defined together with #to_html method.  Additionally the
     # #format method can be defined to perform rendering of Markdown
     # before #to_html is called.
+    #
+    # All builtin tags have a position that's defined by one of the
+    # constants listed below.  For user-defined tags it's recommended
+    # to define your position relative to one of the builtin tags.
+    # For example if you want your tag to output HTML right after the
+    # return value documentation, use something like:
+    #
+    #     @html_position = POS_RETURN + 0.1
+    #
+    # Later versions of JSDuck might change the actual values of these
+    # constants, so don't rely on the concrete values, reference the
+    # constants and add/substract fractions smaller than 1 from them.
+    #
     attr_accessor :html_position
 
-    POS_BEFORE_DOC = 1
-    POS_DOC = 2
-    POS_AFTER_DOC = 3
-    POS_PARAMS = 4
-    POS_RETURN = 5
-    POS_THROWS = 6
+    POS_ASIDE = 1
+    POS_PRIVATE = 2
+    POS_DOC = 3
+    POS_DEFAULT = 4
+    POS_SINCE = 5
+    POS_DEPRECATED = 6
+    POS_ENUM = 7
+    POS_TEMPLATE = 8
+    POS_PREVENTABLE = 9
+    POS_PARAM = 10
+    POS_SUBPROPERTIES = 11
+    POS_RETURN = 12
+    POS_THROWS = 13
+    POS_OVERRIDES = 14
 
     # Called before #to_html to allow rendering of Markdown content.
     # For this an instance of DocFormatter is passed in, on which one

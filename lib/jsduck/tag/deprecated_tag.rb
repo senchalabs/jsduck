@@ -9,7 +9,7 @@ module JsDuck::Tag
       if @key
         @pattern = @key.to_s
         @signature = {:long => @key.to_s, :short => @key.to_s[0..2].upcase}
-        @html_position = POS_AFTER_DOC
+        @html_position = POS_DEPRECATED
       end
     end
 

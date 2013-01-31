@@ -6,7 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "aside"
       @key = :aside
-      @html_position = POS_BEFORE_DOC
+      @html_position = POS_ASIDE
     end
 
     # Parses: @aside [ guide | video| example ] name

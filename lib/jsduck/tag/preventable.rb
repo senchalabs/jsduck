@@ -9,7 +9,7 @@ module JsDuck::Tag
       @pattern = "preventable"
       @key = :preventable
       @signature = {:long => "preventable", :short => "PREV"}
-      @html_position = POS_AFTER_DOC
+      @html_position = POS_PREVENTABLE
     end
 
     # @preventable is optionally followed by some method name, but we

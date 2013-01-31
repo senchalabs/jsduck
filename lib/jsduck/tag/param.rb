@@ -9,7 +9,7 @@ module JsDuck::Tag
       @pattern = "param"
       @key = :params
       @merge_context = [:method, :event, :css_mixin]
-      @html_position = POS_PARAMS
+      @html_position = POS_PARAM
     end
 
     # @param {Type} [name=default] (optional) ...

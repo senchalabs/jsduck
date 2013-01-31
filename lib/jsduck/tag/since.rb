@@ -6,7 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "since"
       @key = :since
-      @html_position = POS_AFTER_DOC
+      @html_position = POS_SINCE
     end
 
     def parse_doc(p)

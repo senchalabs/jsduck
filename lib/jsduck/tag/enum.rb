@@ -6,7 +6,7 @@ module JsDuck::Tag
       @pattern = "enum"
       @key = :enum
       @merge_context = :class
-      @html_position = POS_AFTER_DOC
+      @html_position = POS_ENUM
     end
 
     # @enum {Type} [name=default] ...
