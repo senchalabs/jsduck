@@ -1,4 +1,5 @@
 require 'jsduck/render/tags'
+require 'jsduck/tag_registry'
 
 module JsDuck
   module Render
@@ -59,7 +60,7 @@ module JsDuck
       end
 
       def like_property?
-        @m[:tagname] == :cfg || @m[:tagname] == :property || @m[:tagname] == :css_var
+        TagRegistry.member_type_names(:property_like).include?(@m[:tagname])
       end
 
       def render_property_type
