@@ -5,7 +5,12 @@ module JsDuck::Tag
     def initialize
       @pattern = "var"
       @key = :css_var
-      @member_type = {:name => :css_var, :category => :property_like}
+      @member_type = {
+        :name => :css_var,
+        :category => :property_like,
+        :title => "CSS Variables",
+        :position => MEMBER_POS_CSS_VAR,
+      }
     end
 
     # @var {Type} [name=default] ...

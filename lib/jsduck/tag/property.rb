@@ -6,7 +6,12 @@ module JsDuck::Tag
     def initialize
       @pattern = "property"
       @key = :property
-      @member_type = {:name => :property, :category => :property_like}
+      @member_type = {
+        :name => :property,
+        :category => :property_like,
+        :title => "Properties",
+        :position => MEMBER_POS_PROPERTY,
+      }
     end
 
     # @property {Type} [name=default] ...

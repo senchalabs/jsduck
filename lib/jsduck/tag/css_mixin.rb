@@ -6,7 +6,12 @@ module JsDuck::Tag
   # :css_mixin.
   class CssMixin < Tag
     def initialize
-      @member_type = {:name => :css_mixin, :category => :method_like}
+      @member_type = {
+        :name => :css_mixin,
+        :category => :method_like,
+        :title => "CSS Mixins",
+        :position => MEMBER_POS_CSS_MIXIN,
+      }
     end
   end
 end

@@ -39,15 +39,31 @@ module JsDuck
       end
 
       def render_all_sections
-        sections = [
-          {:type => :property, :title => "Properties"},
-          {:type => :method, :title => "Methods"},
-          {:type => :event, :title => "Events"},
-          {:type => :css_var, :title => "CSS Variables"},
-          {:type => :css_mixin, :title => "CSS Mixins"},
-        ]
+        TagRegistry.member_types.map do |member_type|
+          render_section(member_type)
+        end
+      end
 
-        render_configs_section + sections.map {|sec| render_section(sec) }
+      def render_section(sec)
+        # We have special logic for configs.
+        return render_configs_section if sec[:name] == :cfg
+
+        members = @cls[:members][sec[:name]]
+        statics = @cls[:statics][sec[:name]]
+
+        # Skip rendering empty sections
+        if members.length > 0 || statics.length > 0
+          return [
+            "<div class='members-section'>",
+              statics.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
+              "<h3 class='members-title icon-#{sec[:name]}'>#{sec[:title]}</h3>",
+              render_subsection(members, statics.length > 0 ? "Instance #{sec[:title]}" : nil),
+              render_subsection(statics, "Static #{sec[:title]}"),
+            "</div>",
+          ]
+        else
+          return []
+        end
       end
 
       def render_configs_section
@@ -61,25 +77,6 @@ module JsDuck
               "<h3 class='members-title icon-cfg'>Config options</h3>",
               render_subsection(required, "Required Config options"),
               render_subsection(optional, required.length > 0 ? "Optional Config options" : nil),
-            "</div>",
-          ]
-        else
-          return []
-        end
-      end
-
-      def render_section(sec)
-        members = @cls[:members][sec[:type]]
-        statics = @cls[:statics][sec[:type]]
-
-        # Skip rendering empty sections
-        if members.length > 0 || statics.length > 0
-          return [
-            "<div class='members-section'>",
-              statics.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
-              "<h3 class='members-title icon-#{sec[:type]}'>#{sec[:title]}</h3>",
-              render_subsection(members, statics.length > 0 ? "Instance #{sec[:title]}" : nil),
-              render_subsection(statics, "Static #{sec[:title]}"),
             "</div>",
           ]
         else

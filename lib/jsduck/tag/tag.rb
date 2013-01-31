@@ -42,10 +42,25 @@ module JsDuck::Tag
     # Defines that the tag defines a class member and specifies a name
     # and category for the member type.  For example:
     #
-    #     {:name => :event, :category => :method_like}
+    #     {
+    #         :name => :event,
+    #         :category => :method_like,
+    #         :title => "Events",
+    #         :position => MEMBER_POS_EVENT,
+    #     }
     #
     # The category must be either :property_like or :method_like.
+    #
+    # Position defines the ordering of member section in final HTML
+    # output.  Title is shown at the top of each such section.
     attr_reader :member_type
+
+    MEMBER_POS_CFG = 1
+    MEMBER_POS_PROPERTY = 2
+    MEMBER_POS_METHOD = 3
+    MEMBER_POS_EVENT = 4
+    MEMBER_POS_CSS_VAR = 5
+    MEMBER_POS_CSS_MIXIN = 6
 
     # The text to display in member signature.  Must be a hash
     # defining the short and long versions of the signature text:
