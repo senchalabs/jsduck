@@ -44,7 +44,7 @@ module JsDuck
         assets.images.report_unused
       end
 
-      # Factory method to create new ClassFormatter instances.
+      # Factory method to create new Format::Class instances.
       def self.create_class_formatter(relations, opts)
         doc_formatter = Format::Doc.new(relations, opts)
         doc_formatter.images = Img::DirSet.new(opts.images, "images")

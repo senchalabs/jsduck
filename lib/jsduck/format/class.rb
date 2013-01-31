@@ -3,8 +3,16 @@ require 'jsduck/tag_registry'
 module JsDuck
   module Format
 
-    # Converts :doc properties of class from markdown to HTML, resolves
-    # @links, and converts type definitions to HTML.
+    # Performs documentation formatting of a class and all of its
+    # members.
+    #
+    # The actual work is delegated to the #format methods of Tag
+    # classes, to which we pass the Format::Doc instance which they
+    # can use to perform the formatting.
+    #
+    # The formatting done by #format methods usually consists of
+    # turning :doc properties of class from markdown to HTML,
+    # resolving @links, and converting type definitions to HTML.
     class Class
       def initialize(formatter)
         @formatter = formatter
