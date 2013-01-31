@@ -81,7 +81,6 @@ module JsDuck
                 :name => cfg[:name],
                 :doc => "",
               }],
-            :return => nil,
             :id => "method-" + name,
           }, cfg)
       end
