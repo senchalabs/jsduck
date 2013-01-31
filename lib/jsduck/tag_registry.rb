@@ -31,29 +31,37 @@ module JsDuck
     def instantiate_tags(tag_classes)
       tag_classes.each do |cls|
         tag = cls.new()
+
         Array(tag.pattern).each do |pattern|
           @patterns[pattern] = tag
         end
+
         Array(tag.ext_define_pattern).each do |pattern|
           @ext_define_patterns[pattern] = tag
         end
+
         if tag.ext_define_default
           @ext_define_defaults.merge!(tag.ext_define_default)
         end
+
         if tag.key
           @keys[tag.key] = tag
         end
+
         Array(tag.merge_context).each do |context|
           @mergers[context] = [] unless @mergers[context]
           @mergers[context] << tag
         end
+
         if tag.member_type
           @member_types << tag.member_type
         end
+
         if tag.signature
           tag.signature[:key] = tag.key
           @signatures << tag.signature
         end
+
         if tag.html_position
           @html_renderers << tag
         end
