@@ -1,3 +1,5 @@
+require 'jsduck/tag_registry'
+
 module JsDuck
 
   # Detects the type of documentation object: class, method, cfg, etc
@@ -7,22 +9,16 @@ module JsDuck
     #
     # @param doc_map Result from DocParser turned into hash of tags.
     # @param code Result from Ast#detect or CssParser#parse
-    # @returns One of: :class, :method, :event, :cfg, :property, :css_var, :css_mixin
+    # @returns :class or any of the member type symbols (:method, :event, ...).
     #
     def self.detect(doc_map, code)
       if doc_map[:class] || doc_map[:override]
         :class
-      elsif doc_map[:event]
-        :event
-      elsif doc_map[:method]
-        :method
-      elsif doc_map[:property] || doc_map[:type]
+      elsif type = detect_member(doc_map)
+        type
+      elsif doc_map[:type]
+        # @type also results in property
         :property
-      elsif doc_map[:css_var]
-        :css_var
-      elsif doc_map[:cfg] && doc_map[:cfg].length == 1
-        # When just one @cfg, avoid treating it as @class
-        :cfg
       elsif code[:tagname] == :class
         :class
       elsif code[:tagname] == :css_mixin
@@ -35,6 +31,21 @@ module JsDuck
         :method
       else
         code[:tagname]
+      end
+    end
+
+    # Detects any of the members defined using a Tag class.
+    # Returns the detected member type on success.
+    # Otherwise nil.
+    def self.detect_member(doc_map)
+      type = TagRegistry.member_type_names.find {|type| doc_map[type] }
+
+      if type == :cfg
+        # Only detect a single @cfg as a :cfg.
+        # Multiple ones can be part of a class.
+        return (doc_map[:cfg].length == 1) ? :cfg : nil
+      else
+        type
       end
     end
   end
