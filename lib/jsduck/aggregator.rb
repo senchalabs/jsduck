@@ -189,7 +189,6 @@ module JsDuck
         :tagname => :class,
         :name => name,
         :doc => doc,
-        :mixins => [],
         :alternateClassNames => [],
         :members => [],
         :aliases => {},
