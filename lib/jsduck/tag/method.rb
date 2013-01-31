@@ -6,7 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "method"
       @key = :method
-      @member_type = :method
+      @member_type = {:name => :method, :category => :method_like}
     end
 
     # @method name ...

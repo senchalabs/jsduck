@@ -14,7 +14,7 @@ module JsDuck::Tag
   class Default < Tag
     def initialize
       @key = :default
-      @merge_context = [:cfg, :property, :css_var]
+      @merge_context = :property_like
       @html_position = POS_DEFAULT
     end
 

@@ -71,8 +71,22 @@ module JsDuck
     # (and in order they should be shown in).
     attr_reader :signatures
 
-    # Array of available member types.
-    attr_reader :member_types
+    # Same as #member_types, but returns just the names of member types.
+    def member_type_names(category=:member)
+      member_types(category).map {|mt| mt[:name] }
+    end
+
+    # Returns array of available member types.
+    #
+    # An optional category argument can be given to limit the returned
+    # members to just :method_like or :property_like.
+    def member_types(category=:member)
+      if category == :member
+        @member_types
+      else
+        @member_types.find_all {|mt| mt[:category] == category }
+      end
+    end
 
     # Regex for matching member type name in member reference.
     #
@@ -81,15 +95,14 @@ module JsDuck
     # member, leaving out the dash "-".
     def member_type_regex
       @member_type_regex if @member_type_regex
-      @member_type_regex = Regexp.new("(?:(" + TagRegistry.member_types.join("|") + ")-)")
+      @member_type_regex = Regexp.new("(?:(" + member_type_names.join("|") + ")-)")
     end
 
     # Returns tags for doing the merging in a particular context.
     # See Tag::Tag#merge_context for details.
     def mergers(context)
-      if @mergers.has_key?(:member)
-        expand_member_context
-      end
+      expand_merge_contexts unless @mergers_expanded
+
       @mergers[context] || []
     end
 
@@ -127,16 +140,24 @@ module JsDuck
 
     private
 
-    # Takes mergers registered under :member context and add them to
-    # the contexts all of the detected member types.
-    def expand_member_context
-      @mergers[:member].each do |tag|
-        @member_types.each do |tagname|
+    # Takes mergers registered under :member, :method_like or
+    # :property_like context and adds them to the contexts all of the
+    # detected suitable member types.
+    def expand_merge_contexts
+      expand_merger(:member)
+      expand_merger(:method_like)
+      expand_merger(:property_like)
+      @mergers_expanded
+    end
+
+    def expand_merger(type_name)
+      Array(@mergers[type_name]).each do |tag|
+        member_type_names(type_name).each do |tagname|
           @mergers[tagname] = [] unless @mergers[tagname]
           @mergers[tagname] << tag
         end
       end
-      @mergers.delete(:member)
+      @mergers.delete(type_name)
     end
 
   end

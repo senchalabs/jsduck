@@ -8,7 +8,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "param"
       @key = :params
-      @merge_context = [:method, :event, :css_mixin]
+      @merge_context = :method_like
       @html_position = POS_PARAM
     end
 

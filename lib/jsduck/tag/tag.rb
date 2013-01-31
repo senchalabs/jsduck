@@ -40,7 +40,11 @@ module JsDuck::Tag
     end
 
     # Defines that the tag defines a class member and specifies a name
-    # for the member type.  For example :event.
+    # and category for the member type.  For example:
+    #
+    #     {:name => :event, :category => :method_like}
+    #
+    # The category must be either :property_like or :method_like.
     attr_reader :member_type
 
     # The text to display in member signature.  Must be a hash
@@ -73,9 +77,17 @@ module JsDuck::Tag
     # method.  This can be either a single tagname like :class,
     # :method, :cfg or an array of these.
     #
-    # Additionally a special :member symbol can be used to register a
-    # merger for all the member types.  So to register a merger for
-    # everyting you would set @merge_context = [:class, :member]
+    # Additionally a few special symbols can be used to register a
+    # merger for a set of member types:
+    #
+    #   - :member - all members.
+    #   - :method_like - members like :method, :event, :css_mixin
+    #   - :property_like - members like :cfg, :property, :css_var
+    #
+    # For example to register a merger for everyting:
+    #
+    #     @merge_context = [:class, :member]
+    #
     attr_reader :merge_context
 
     # Merges documentation and code hashes into the result hash.

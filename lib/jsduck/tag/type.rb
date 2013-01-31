@@ -6,7 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "type"
       @key = :type
-      @merge_context = [:cfg, :property, :css_var]
+      @merge_context = :property_like
 
       # We don't really care about the position as we don't output any
       # HTML. We just need to set this up to do the formatting.

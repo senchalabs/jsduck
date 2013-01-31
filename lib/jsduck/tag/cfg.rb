@@ -6,7 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "cfg"
       @key = :cfg
-      @member_type = :cfg
+      @member_type = {:name => :cfg, :category => :property_like}
     end
 
     # @cfg {Type} [name=default] (required) ...
