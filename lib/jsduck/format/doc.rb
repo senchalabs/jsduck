@@ -22,7 +22,7 @@ module JsDuck
       def initialize(relations={}, opts={})
         @relations = relations
         @opts = opts
-        @subproperties = Format::Subproperties.new(self, !!opts[:export])
+        @subproperties = Format::Subproperties.new(self)
         @link_renderer = Inline::LinkRenderer.new(relations, opts)
         @inline_link = Inline::Link.new(@link_renderer)
         @auto_link = Inline::AutoLink.new(@link_renderer)
@@ -147,11 +147,8 @@ module JsDuck
       # Turns type parsing on or off.
       #
       # Used to skipping parsing of CSS var and mixin types.
-      #
-      # Won't have any effect when performing export -
-      # type parsing is then automatically turned off.
       def skip_type_parsing=(skip)
-        @subproperties.skip_types = !!@opts[:export] || skip
+        @subproperties.skip_type_parsing = skip
       end
 
       # Recursively formats a subproperty.
