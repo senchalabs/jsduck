@@ -22,7 +22,7 @@ module JsDuck
       def initialize(relations={}, opts={})
         @relations = relations
         @opts = opts
-        @subproperties = Format::Subproperties.new(self, opts)
+        @subproperties = Format::Subproperties.new(self, !!opts[:export])
         @link_renderer = Inline::LinkRenderer.new(relations, opts)
         @inline_link = Inline::Link.new(@link_renderer)
         @auto_link = Inline::AutoLink.new(@link_renderer)
@@ -144,17 +144,27 @@ module JsDuck
         @link_renderer.link(cls, member, anchor_text, type, static)
       end
 
+      # Turns type parsing on or off.
+      #
+      # Used to skipping parsing of CSS var and mixin types.
+      #
+      # Won't have any effect when performing export -
+      # type parsing is then automatically turned off.
+      def skip_type_parsing=(skip)
+        @subproperties.skip_types = !!@opts[:export] || skip
+      end
+
       # Recursively formats a subproperty.
       # See Format::Subproperties#format for details.
-      def format_subproperty(item, skip_types=false)
-        @subproperties.format(item, skip_types)
+      def format_subproperty(item)
+        @subproperties.format(item)
       end
 
       # Parses and formats type definition.
       # Returns HTML-rendering of the type.
       # See Format::Subproperties#format_type for details.
-      def format_type(type, skip_types=false)
-        @subproperties.format_type(type, skip_types)
+      def format_type(type)
+        @subproperties.format_type(type)
       end
 
     end

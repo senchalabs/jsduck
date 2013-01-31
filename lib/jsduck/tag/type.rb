@@ -41,10 +41,7 @@ module JsDuck::Tag
     end
 
     def format(m, formatter)
-      # We don't validate and format CSS var and mixin type definitions
-      skip_type = m[:tagname] == :css_var || m[:tagname] == :css_mixin
-
-      m[:html_type] = formatter.format_type(m[:type], skip_type)
+      m[:html_type] = formatter.format_type(m[:type])
     end
 
   end

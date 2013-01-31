@@ -8,11 +8,14 @@ module JsDuck
     # Helper for recursively formatting subproperties.
     class Subproperties
 
-      def initialize(formatter, opts={})
+      def initialize(formatter, skip_types=false)
         @formatter = formatter
-        # Don't format types when exporting
-        @skip_types = !!opts[:export]
+        @skip_types = skip_types
       end
+
+      # Set to true to skip parsing and formatting of types.
+      # Used when doing export and to skip parsing of CSS typesdefs.
+      attr_accessor :skip_types
 
       # Takes a hash of param, return value, throws value or subproperty.
       #
@@ -20,15 +23,15 @@ module JsDuck
       # - Parses the :type field and saves HTML to :html_type.
       # - Recursively does the same with all items in :properties field.
       #
-      def format(item, skip_types=false)
+      def format(item)
         item[:doc] = @formatter.format(item[:doc]) if item[:doc]
 
         if item[:type]
-          item[:html_type] = format_type(item[:type], skip_types)
+          item[:html_type] = format_type(item[:type])
         end
 
         if item[:properties]
-          item[:properties].each {|p| format(p, skip_types) }
+          item[:properties].each {|p| format(p) }
         end
       end
 
@@ -37,9 +40,9 @@ module JsDuck
       # - On success returns HTML-version of the type definition.
       # - On failure logs error and returns the type string with only HTML escaped.
       #
-      def format_type(type, skip_types=false)
+      def format_type(type)
         # Skip the formatting entirely when type-parsing is turned off.
-        return Util::HTML.escape(type) if @skip_types || skip_types
+        return Util::HTML.escape(type) if @skip_types
 
         tp = TypeParser.new(@formatter)
         if tp.parse(type)
