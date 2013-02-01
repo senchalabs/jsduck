@@ -12,6 +12,10 @@ module JsDuck::Tag
         :title => "Config options",
         :toolbar_title => "Configs",
         :position => MEMBER_POS_CFG,
+        :subsections => [
+          {:title => "Required config options", :filter => {:required => true}},
+          {:title => "Optional config options", :filter => {:required => false}, :default => true},
+        ]
       }
     end
 

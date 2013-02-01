@@ -11,6 +11,10 @@ module JsDuck::Tag
         :category => :property_like,
         :title => "Properties",
         :position => MEMBER_POS_PROPERTY,
+        :subsections => [
+          {:title => "Instance properties", :filter => {:static => false}, :default => true},
+          {:title => "Static properties", :filter => {:static => true}},
+        ]
       }
     end
 

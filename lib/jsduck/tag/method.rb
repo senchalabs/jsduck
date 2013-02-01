@@ -11,6 +11,10 @@ module JsDuck::Tag
         :category => :method_like,
         :title => "Methods",
         :position => MEMBER_POS_METHOD,
+        :subsections => [
+          {:title => "Instance methods", :filter => {:static => false}, :default => true},
+          {:title => "Static methods", :filter => {:static => true}},
+        ]
       }
     end
 

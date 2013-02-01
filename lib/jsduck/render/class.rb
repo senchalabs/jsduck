@@ -45,43 +45,48 @@ module JsDuck
       end
 
       def render_section(sec)
-        # We have special logic for configs.
-        return render_configs_section if sec[:name] == :cfg
-
-        members = @cls[:members][sec[:name]]
-        statics = @cls[:statics][sec[:name]]
+        members = @cls[:members][sec[:name]] + @cls[:statics][sec[:name]]
 
         # Skip rendering empty sections
-        if members.length > 0 || statics.length > 0
+        return [] if members.length == 0
+
+        # Split members array into subsections
+        subsections = Array(sec[:subsections]).map do |subsec|
+          ms = members.find_all {|m| test_filter(m, subsec[:filter]) }
+          if ms.length > 0
+            {:title => subsec[:title], :members => ms, :default => subsec[:default]}
+          else
+            nil
+          end
+        end.compact
+
+        # Print no subsections when no subsections defined or there's
+        # just single subsection which is the default one.
+        if subsections.length == 0 || subsections.length == 1 && subsections[0][:default]
           return [
             "<div class='members-section'>",
-              statics.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
+              "<div class='definedBy'>Defined By</div>",
               "<h3 class='members-title icon-#{sec[:name]}'>#{sec[:title]}</h3>",
-              render_subsection(members, statics.length > 0 ? "Instance #{sec[:title]}" : nil),
-              render_subsection(statics, "Static #{sec[:title]}"),
+              render_subsection(members, nil),
             "</div>",
           ]
-        else
-          return []
         end
+
+        return [
+          "<div class='members-section'>",
+          "<h3 class='members-title icon-#{sec[:name]}'>#{sec[:title]}</h3>",
+          subsections.map {|ss| render_subsection(ss[:members], ss[:title]) },
+          "</div>",
+        ]
       end
 
-      def render_configs_section
-        configs = @cls[:members][:cfg] + @cls[:statics][:cfg]
-
-        if configs.length > 0
-          required, optional = configs.partition {|c| c[:required] }
-          return [
-            "<div class='members-section'>",
-              required.length == 0 ? "<div class='definedBy'>Defined By</div>" : "",
-              "<h3 class='members-title icon-cfg'>Config options</h3>",
-              render_subsection(required, "Required Config options"),
-              render_subsection(optional, required.length > 0 ? "Optional Config options" : nil),
-            "</div>",
-          ]
-        else
-          return []
+      # Returns true if member matches the conditions described by a
+      # subsection filter.
+      def test_filter(member, filter)
+        filter.each_pair do |field, truthy|
+          return false unless truthy ? member[field] : !member[field]
         end
+        return true
       end
 
       def render_subsection(members, title)
