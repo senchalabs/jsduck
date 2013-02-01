@@ -24,6 +24,7 @@ module JsDuck
           :search => SearchData.new.create(@relations.classes, @assets),
           :tests => @opts.tests,
           :signatures => TagRegistry.signatures,
+          :memberTypes => TagRegistry.member_types,
           :localStorageDb => @opts.local_storage_db,
           :showPrintButton => @opts.seo,
           :touchExamplesUi => @opts.touch_examples_ui,
