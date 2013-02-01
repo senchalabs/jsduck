@@ -10,6 +10,7 @@ module JsDuck::Tag
         :name => :cfg,
         :category => :property_like,
         :title => "Config options",
+        :toolbar_title => "Configs",
         :position => MEMBER_POS_CFG,
       }
     end

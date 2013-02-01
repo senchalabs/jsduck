@@ -9,6 +9,7 @@ module JsDuck::Tag
         :name => :css_var,
         :category => :property_like,
         :title => "CSS Variables",
+        :toolbar_title => "CSS Vars",
         :position => MEMBER_POS_CSS_VAR,
       }
     end

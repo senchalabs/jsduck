@@ -46,13 +46,16 @@ module JsDuck::Tag
     #         :name => :event,
     #         :category => :method_like,
     #         :title => "Events",
+    #         :toolbar_title => "Events", // optional
     #         :position => MEMBER_POS_EVENT,
     #     }
     #
     # The category must be either :property_like or :method_like.
     #
     # Position defines the ordering of member section in final HTML
-    # output.  Title is shown at the top of each such section.
+    # output.  Title is shown at the top of each such section and also
+    # as a label on Docs app toolbar button unless :toolbar_title is
+    # specified.
     attr_reader :member_type
 
     MEMBER_POS_CFG = 1

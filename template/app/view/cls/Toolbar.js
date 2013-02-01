@@ -72,7 +72,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             });
             if (members.length > 0) {
                 var btn = this.createMemberButton({
-                    text: type.title,
+                    text: type.toolbar_title || type.title,
                     type: type.name,
                     members: members
                 });
