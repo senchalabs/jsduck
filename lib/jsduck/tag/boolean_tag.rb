@@ -2,12 +2,12 @@ require "jsduck/tag/tag"
 
 module JsDuck::Tag
   # Base class for simple boolean @tags.
-  # Subclasses should only define @key and call #super,
-  # which will take care of setting up @pattern with the same name.
+  # Subclasses should only define @pattern and call #super,
+  # which will take care of setting up @key with the same name.
   class BooleanTag < Tag
     def initialize
-      if @key
-        @pattern = @key.to_s
+      if @pattern
+        @key = @pattern.to_sym
       end
     end
 

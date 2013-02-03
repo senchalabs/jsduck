@@ -3,7 +3,7 @@ require "jsduck/tag/boolean_tag"
 module JsDuck::Tag
   class Private < BooleanTag
     def initialize
-      @key = :private
+      @pattern = "private"
       @signature = {:long => "private", :short => "PRI"}
       @html_position = POS_PRIVATE
       super

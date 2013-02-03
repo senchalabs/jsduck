@@ -3,7 +3,7 @@ require "jsduck/tag/boolean_tag"
 module JsDuck::Tag
   class Singleton < BooleanTag
     def initialize
-      @key = :singleton
+      @pattern = "singleton"
       @ext_define_pattern = "singleton"
       super
     end

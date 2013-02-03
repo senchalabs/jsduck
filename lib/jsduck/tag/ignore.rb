@@ -5,7 +5,7 @@ module JsDuck::Tag
   # excluded from docs.
   class Ignore < BooleanTag
     def initialize
-      @key = :ignore
+      @pattern = "ignore"
       super
     end
   end

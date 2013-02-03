@@ -3,7 +3,7 @@ require "jsduck/tag/boolean_tag"
 module JsDuck::Tag
   class Template < BooleanTag
     def initialize
-      @key = :template
+      @pattern = "template"
       @signature = {:long => "template", :short => "TMP"}
       @html_position = POS_TEMPLATE
       super

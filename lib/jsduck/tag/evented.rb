@@ -3,7 +3,7 @@ require "jsduck/tag/boolean_tag"
 module JsDuck::Tag
   class Evented < BooleanTag
     def initialize
-      @key = :evented
+      @pattern = "evented"
       super
     end
   end

@@ -4,7 +4,7 @@ module JsDuck::Tag
   # Hides a member in parent class.
   class Hide < BooleanTag
     def initialize
-      @key = :hide
+      @pattern = "hide"
       super
     end
   end

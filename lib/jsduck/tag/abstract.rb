@@ -3,7 +3,7 @@ require "jsduck/tag/boolean_tag"
 module JsDuck::Tag
   class Abstract < BooleanTag
     def initialize
-      @key = :abstract
+      @pattern = "abstract"
       @signature = {:long => "abstract", :short => "ABS"}
       super
     end
