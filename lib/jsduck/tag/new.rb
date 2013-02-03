@@ -7,6 +7,7 @@ module JsDuck::Tag
       # unicode black star char
       # A :tooltip field gets injected to this signature in Process::Versions
       @signature = {:long => "&#9733;", :short => "&#9733;"}
+      super
     end
   end
 end
