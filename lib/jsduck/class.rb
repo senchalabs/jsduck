@@ -347,6 +347,7 @@ module JsDuck
         :event => [],
         :css_var => [],
         :css_mixin => [],
+        :example => []
       }
     end
   end

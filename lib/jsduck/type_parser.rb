@@ -308,7 +308,7 @@ module JsDuck
     #
     def type_name
       name = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*|\*/)
-
+      
       if !name
         return false
       elsif @relations[name]

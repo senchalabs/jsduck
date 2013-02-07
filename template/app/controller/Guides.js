@@ -152,8 +152,12 @@ Ext.define('Docs.controller.Guides', {
         this.getGuide().setScrollContext(this.activeUrl);
 
         if (section) {
-            //this.getGuide().scrollToEl(name+section);
-            this.getGuide().scrollToEl(decodeURIComponent(section));
+            if (Docs.isRESTDoc) {
+                this.getGuide().scrollToEl(name+"-section-"+section);
+            } 
+            else {
+                this.getGuide().scrollToEl(decodeURIComponent(section));
+            }
         }
         else {
             this.getGuide().restoreScrollState();
