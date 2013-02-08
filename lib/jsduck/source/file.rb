@@ -74,7 +74,6 @@ module JsDuck
       private
 
       # Creates two-way link between sourcefile and doc-object.
-      # If doc-object is class, links also the contained cfgs and constructor.
       # Returns the modified doc-object after done.
       def link(linenr, doc)
         @links[linenr] = [] unless @links[linenr]
@@ -84,9 +83,6 @@ module JsDuck
         }
         @links[linenr] << {:doc => doc, :file => file}
         doc[:files] = [file]
-        if doc[:tagname] == :class
-          doc[:members].each {|m| link(linenr, m) }
-        end
         doc
       end
 
