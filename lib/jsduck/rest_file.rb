@@ -48,6 +48,7 @@ module JsDuck
 
     # Parses the YAML file
     def parse
+      print "Parsing: " + @filename + "\n"
       data = YAML.load(@contents)
       objects = []
       data.each do |item|

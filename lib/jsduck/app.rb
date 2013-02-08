@@ -25,7 +25,6 @@ require 'jsduck/inline_examples'
 require 'jsduck/guide_writer'
 require 'jsduck/stdout'
 require 'jsduck/rest_file'
-require 'jsduck/rest_aggregator'
 require 'fileutils'
 
 module JsDuck
@@ -139,8 +138,8 @@ module JsDuck
         Logger.instance.log("Aggregating", file.filename)
         agr.aggregate(file)
       end
+      agr.classify_orphans
       if ! @opts.rest
-        agr.classify_orphans
         agr.create_global_class
         agr.remove_ignored_classes
         agr.create_accessors
