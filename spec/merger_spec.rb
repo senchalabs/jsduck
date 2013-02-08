@@ -2,8 +2,8 @@ require "jsduck/merger"
 
 describe JsDuck::Merger do
 
-  def merge(docset)
-    return JsDuck::Merger.new.merge(docset)
+  def merge(docset, filename="", linenr=0)
+    return JsDuck::Merger.new.merge(docset, filename, linenr)
   end
 
   describe "only name in code" do
@@ -20,8 +20,7 @@ describe JsDuck::Merger do
           :tagname => :property,
           :name => "option",
         },
-        :linenr => 15,
-      })
+      }, "somefile.js", 15)
     end
 
     it "gets tagname from doc" do
@@ -37,7 +36,7 @@ describe JsDuck::Merger do
       @doc[:name].should == "option"
     end
     it "keeps line number data" do
-      @doc[:linenr].should == 15
+      @doc[:files][0][:linenr].should == 15
     end
   end
 

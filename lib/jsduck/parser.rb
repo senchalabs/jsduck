@@ -69,7 +69,7 @@ module JsDuck
       docset[:comment] = @doc_processor.process(docset[:tagname], docset[:doc_map])
       docset.delete(:doc_map)
 
-      @merger.merge(docset)
+      @merger.merge(docset, @filename, docset[:linenr])
     end
   end
 

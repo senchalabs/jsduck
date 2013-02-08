@@ -12,13 +12,13 @@ module JsDuck
 
     # Takes a docset and merges the :comment and :code inside it,
     # producing hash as a result.
-    def merge(docset)
+    def merge(docset, filename="", linenr=0)
       docs = docset[:comment]
       code = docset[:code]
 
       h = {
         :tagname => docset[:tagname],
-        :linenr => docset[:linenr],
+        :files => [{:filename => filename, :linenr => linenr}],
       }
 
       invoke_merge_in_tags(h, docs, code)

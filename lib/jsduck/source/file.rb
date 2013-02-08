@@ -21,7 +21,7 @@ module JsDuck
         @links = {}
 
         @docs.map do |docset|
-          link(docset[:linenr], docset)
+          link(docset)
         end
       end
 
@@ -75,15 +75,12 @@ module JsDuck
 
       # Creates two-way link between sourcefile and doc-object.
       # Returns the modified doc-object after done.
-      def link(linenr, doc)
+      def link(docset)
+        file = docset[:files].first
+        linenr = file[:linenr]
         @links[linenr] = [] unless @links[linenr]
-        file = {
-          :filename => @filename,
-          :linenr => linenr,
-        }
-        @links[linenr] << {:doc => doc, :file => file}
-        doc[:files] = [file]
-        doc
+        @links[linenr] << {:doc => docset, :file => file}
+        docset
       end
 
     end

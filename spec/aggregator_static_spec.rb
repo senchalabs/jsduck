@@ -152,7 +152,7 @@ describe JsDuck::Aggregator do
       end
 
       it "with :linenr field" do
-        member[:linenr].should == 6
+        member[:files][0][:linenr].should == 6
       end
     end
   end
