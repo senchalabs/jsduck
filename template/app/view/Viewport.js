@@ -51,7 +51,6 @@ Ext.define('Docs.view.Viewport', {
                             {
                                 id: 'loginContainer',
                                 xtype: 'authHeaderForm',
-                                width: 500,
                                 padding: '10 20 0 0'
                             },
                             {
@@ -70,7 +69,6 @@ Ext.define('Docs.view.Viewport', {
             {
                 region: 'center',
                 layout: 'border',
-                minWidth: 800,
                 items: [
                     {
                         region: 'west',
@@ -84,7 +82,6 @@ Ext.define('Docs.view.Viewport', {
                         region: 'center',
                         id: 'center-container',
                         layout: 'fit',
-                        minWidth: 800,
                         border: false,
                         padding: '5 10',
                         items: {

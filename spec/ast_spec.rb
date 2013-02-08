@@ -90,8 +90,12 @@ describe JsDuck::Js::Ast do
       detect("/** */ var foo = Ext.emptyFn").should == :method
     end
 
-    it "anonymous function" do
+    it "anonymous function as expression" do
       detect("/** */ (function(){})").should == :method
+    end
+
+    it "anonymous function as parameter" do
+      detect("doSomething('blah', /** */ function(){});").should == :method
     end
 
     it "object property initialized with function" do
