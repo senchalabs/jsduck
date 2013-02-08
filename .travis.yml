@@ -9,3 +9,4 @@ install:
   - gem install therubyracer -v 0.10.1
   - gem install rspec
   - gem install rake
+  - gem install dimensions
