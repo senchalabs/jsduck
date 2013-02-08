@@ -79,7 +79,7 @@ module JsDuck
         make_class(to_s(var["id"]), var["right"])
 
       # function Foo() {}
-      elsif function?(ast) && class_name?(to_s(ast["id"]))
+      elsif function?(ast) && ast["id"] && class_name?(to_s(ast["id"]))
         make_class(to_s(ast["id"]))
 
       # { ... }
@@ -88,7 +88,7 @@ module JsDuck
 
       # function foo() {}
       elsif function?(ast)
-        make_method(to_s(ast["id"]), ast)
+        make_method(ast["id"] ? to_s(ast["id"]) : "", ast)
 
       # foo = function() {}
       elsif exp && assignment?(exp) && function?(exp["right"])
