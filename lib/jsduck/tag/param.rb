@@ -2,6 +2,7 @@ require "jsduck/tag/tag"
 require "jsduck/doc/subproperties"
 require "jsduck/render/subproperties"
 require "jsduck/docs_code_comparer"
+require "jsduck/logger"
 
 module JsDuck::Tag
   class Param < Tag
@@ -29,7 +30,7 @@ module JsDuck::Tag
     end
 
     def merge(h, docs, code)
-      h[:params] = merge_params(docs, code)
+      h[:params] = merge_params(docs, code, h[:files].first)
     end
 
     def format(m, formatter)
@@ -42,13 +43,21 @@ module JsDuck::Tag
 
     private
 
-    def merge_params(docs, code)
+    def merge_params(docs, code, file)
       explicit = docs[:params] || []
       implicit = JsDuck::DocsCodeComparer.matches?(docs, code) ? (code[:params] || []) : []
+      ex_len = explicit.length
+      im_len = implicit.length
+
+      # Warn when less parameters documented than found from code.
+      if ex_len < im_len && ex_len > 0
+        JsDuck::Logger.warn(:param_count, "Detected #{im_len} params, but only #{ex_len} documented.", file[:filename], file[:linenr])
+      end
+
       # Override implicit parameters with explicit ones
       # But if explicit ones exist, don't append the implicit ones.
       params = []
-      (explicit.length > 0 ? explicit.length : implicit.length).times do |i|
+      (ex_len > 0 ? ex_len : im_len).times do |i|
         im = implicit[i] || {}
         ex = explicit[i] || {}
         params << {

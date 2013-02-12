@@ -28,6 +28,7 @@ module JsDuck
         [:dup_param, "Method has two parameters with the same name"],
         [:dup_member, "Class has two members with the same name"],
         [:req_after_opt, "Required parameter comes after optional"],
+        [:param_count, "Less parameters documented than detected from code"],
         [:subproperty, "@param foo.bar where foo param doesn't exist"],
         [:sing_static, "Singleton class member marked as @static"],
         [:type_syntax, "Syntax error in {type definition}"],
