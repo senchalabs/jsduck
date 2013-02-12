@@ -27,6 +27,7 @@ module JsDuck
     def infer_type(cls)
       if cls[:members].length > 0
         types = cls[:members].map {|p| p[:type] }
+        types.delete_if {|type| type.nil?}
         types.sort.uniq.join("/")
       else
         "Object"
