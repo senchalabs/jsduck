@@ -49,9 +49,20 @@ module JsDuck::Tag
       ex_len = explicit.length
       im_len = implicit.length
 
-      # Warn when less parameters documented than found from code.
-      if ex_len < im_len && ex_len > 0
+      if ex_len == 0 || im_len == 0
+        # Skip
+      elsif ex_len < im_len
+        # Warn when less parameters documented than found from code.
         JsDuck::Logger.warn(:param_count, "Detected #{im_len} params, but only #{ex_len} documented.", file[:filename], file[:linenr])
+      elsif ex_len > im_len
+        # Warn when more parameters documented than found from code.
+        JsDuck::Logger.warn(:param_count, "Detected #{im_len} params, but #{ex_len} documented.", file[:filename], file[:linenr])
+      elsif implicit.map {|p| p[:name] } != explicit.map {|p| p[:name] }
+        # Warn when parameter names don't match up.
+        ex_names = explicit.map {|p| p[:name] }
+        im_names = implicit.map {|p| p[:name] }
+        str = ex_names.zip(im_names).map {|p| ex, im = p; ex == im ? ex : (ex||"")+"/"+(im||"") }.join(", ")
+        JsDuck::Logger.warn(:param_count, "Documented and auto-detected params don't match: #{str}", file[:filename], file[:linenr])
       end
 
       # Override implicit parameters with explicit ones
