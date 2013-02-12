@@ -137,6 +137,7 @@ module JsDuck
       # enable all warnings except :link_auto
       Logger.set_warning(:all, true)
       Logger.set_warning(:link_auto, false)
+      Logger.set_warning(:param_count, false)
     end
 
     # Make options object behave like hash.
