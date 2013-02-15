@@ -199,8 +199,9 @@ module JsDuck
     end
 
     def render_all_sections
+      properties = (@opts.rest && "Fields") || "Properties"
       sections = [
-        {:type => :property, :title => "Properties"},
+        {:type => :property, :title => properties },
         {:type => :method, :title => "Methods"},
         {:type => :event, :title => "Events"},
         {:type => :css_var, :title => "CSS Variables"},
@@ -422,11 +423,19 @@ module JsDuck
     end
 
     def render_long_param(p)
+      # for REST, default to optional parameters
+      if @opts.rest
+        optional = ""
+        required = ' <strong class="required signature">required</strong>'
+      else
+        optional = " (optional)"
+        required = ""
+      end
       return [
         "<li>",
           "<span class='pre'>#{p[:name]}</span> : ",
           p[:html_type],
-          p[:optional] ? " (optional)" : "",
+          p[:optional] ? optional : required,
           p[:deprecated] ? '<strong class="deprecated signature">deprecated</strong>' : "",
           "<div class='sub-desc'>",
             p[:doc],

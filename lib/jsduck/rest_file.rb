@@ -1,7 +1,7 @@
 require 'yaml'
+YAML::ENGINE.yamler = 'syck'
 
 module JsDuck
-
   # Represents one YAML file documenting a REST object
   #
   class RestFile
@@ -49,7 +49,11 @@ module JsDuck
     # Parses the YAML file
     def parse
       print "Parsing: " + @filename + "\n"
-      data = YAML.load(@contents)
+      begin 
+        data = YAML.load(@contents)
+      rescue Exception => e
+        print "Error: failed to parse " + @filename
+      end
       objects = []
       data.each do |item|
         if item[0] == "name"

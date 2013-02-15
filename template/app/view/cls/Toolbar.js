@@ -62,7 +62,7 @@ Ext.define('Docs.view.cls.Toolbar', {
 
         var memberTitles = {
             cfg: "Configs",
-            property: "Properties",
+            property: (Docs.isRESTDoc ? "Fields" : "Properties"),
             method: "Methods",
             event: "Events",
             css_var: "CSS Vars",
