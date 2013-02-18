@@ -1,3 +1,5 @@
+require 'jsduck/logger'
+
 module JsDuck
   module Process
 
@@ -20,18 +22,9 @@ module JsDuck
       # processes single class
       def process(cls)
         expand_default(cls)
+        reject_not_properties(cls)
         strip_inheritdoc(cls)
         cls[:enum][:type] = infer_type(cls) unless cls[:enum][:type]
-      end
-
-      # Given an enum class, returns the type infered from its values.
-      def infer_type(cls)
-        if cls[:members].length > 0
-          types = cls[:members].map {|p| p[:type] }
-          types.sort.uniq.join("/")
-        else
-          "Object"
-        end
       end
 
       # Expands default value like widget.* into list of properties
@@ -61,6 +54,19 @@ module JsDuck
         end
       end
 
+      # Only allow properties as members, throw away all others.
+      def reject_not_properties(cls)
+        cls[:members].reject! do |m|
+          if m[:tagname] == :property
+            false
+          else
+            f = m[:files][0]
+            Logger.warn(:enum, "Enums can only contain properties, #{m[:tagname]} found instead.", f[:filename], f[:linenr])
+            true
+          end
+        end
+      end
+
       # Remove the auto-inserted inheritdoc tag so the auto-detected enum
       # values default to being public.
       def strip_inheritdoc(cls)
@@ -68,6 +74,17 @@ module JsDuck
           p[:inheritdoc] = nil if p[:autodetected]
         end
       end
+
+      # Given an enum class, returns the type infered from its values.
+      def infer_type(cls)
+        if cls[:members].length > 0
+          types = cls[:members].map {|p| p[:type] }
+          types.sort.uniq.join("/")
+        else
+          "Object"
+        end
+      end
+
     end
 
   end

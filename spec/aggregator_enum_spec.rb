@@ -289,4 +289,21 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "enum with events as members" do
+    let(:doc) do
+      parse(<<-EOS)["My.enum.Type"]
+        /**
+         * @enum My.enum.Type
+         */
+            /** @event foo */
+            /** @event bar */
+            /** @property zap */
+      EOS
+    end
+
+    it "throws away all events, keeping only properties" do
+      doc[:members].length.should == 1
+    end
+  end
+
 end
