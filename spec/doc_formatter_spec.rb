@@ -431,6 +431,19 @@ describe JsDuck::DocFormatter do
       @formatter.format("<img>").should_not =~ /<\/img>/
     end
 
+    it "closes unclosed <b> when closing of <a> is encountered." do
+      @formatter.format("<a><b>blah</a>").should =~ Regexp.new("</b></a>")
+    end
+
+    it "throws away excessive close tags" do
+      @formatter.format("blah</div>").should_not =~ Regexp.new("</div>")
+    end
+
+    it "allows for p-s nested inside divs" do
+      @formatter.format("<div><small><p>Blah</p><p>Fah</p></small></div>").should =~
+             Regexp.new("<div><small><p>Blah</p><p>Fah</p></small></div>")
+    end
+
     shared_examples_for "code blocks" do
       it "contains text before" do
         @html.should =~ /Some code/
