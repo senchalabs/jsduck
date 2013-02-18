@@ -40,6 +40,7 @@ module JsDuck
         "{guides}" => @assets.guides.to_html("display:none"),
         "{head_html}" => @opts.head_html,
         "{body_html}" => @opts.body_html,
+        "{head_css}" => TagRegistry.css,
       })
     end
 
@@ -47,6 +48,7 @@ module JsDuck
       write_template(in_file, out_file, {
         "{title}" => @opts.title,
         "{header}" => @opts.header,
+        "{head_css}" => TagRegistry.css,
       })
     end
 
@@ -59,6 +61,7 @@ module JsDuck
         "{header}" => @opts.header,
         "{categories}" => categories ? "<h1>API Documentation</h1> #{categories}" : "",
         "{guides}" => guides ? "<h1>Guides</h1> #{guides}" : "",
+        "{head_css}" => TagRegistry.css,
       })
     end
 

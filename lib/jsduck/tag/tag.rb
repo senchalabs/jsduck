@@ -189,6 +189,13 @@ module JsDuck::Tag
     def to_html(context)
     end
 
+    # A string of CSS to add to the builtin CSS of the generated docs.
+    # For example, to style a signature label:
+    #
+    #     @css = ".signature .mytag { color: red }"
+    #
+    attr_reader :css
+
     # Returns all descendants of JsDuck::Tag::Tag class.
     def self.descendants
       result = []
