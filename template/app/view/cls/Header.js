@@ -3,12 +3,15 @@
  */
 Ext.define('Docs.view.cls.Header', {
     extend: 'Ext.container.Container',
+    requires: [
+        'Docs.view.Signature'
+    ],
+    alias: 'widget.classheader',
+    cls: 'classheader',
     padding: '10 0 17 0',
     // Initially the component will be empty and so the initial height
     // will not be correct if not set explicitly
     height: 55,
-    alias: 'widget.classheader',
-    cls: 'classheader',
 
     initComponent: function() {
         this.tpl = Ext.create('Ext.XTemplate',
@@ -63,9 +66,7 @@ Ext.define('Docs.view.cls.Header', {
                     }
                 },
                 renderMetaTags: function(metaTags) {
-                    return ' ' + Ext.Array.map(Docs.data.signatures, function(s) {
-                        return metaTags[s.tagname] ? '<span class="signature '+s.tagname+'">'+(s["long"])+'</span>' : '';
-                    }).join(' ');
+                    return ' ' + Docs.view.Signature.render(metaTags, "long");
                 }
             }
         );

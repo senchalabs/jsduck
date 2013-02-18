@@ -4,7 +4,8 @@
 Ext.define('Docs.view.HoverMenu', {
     extend: 'Ext.view.View',
     requires: [
-        'Docs.Comments'
+        'Docs.Comments',
+        'Docs.view.Signature'
     ],
 
     alias: 'widget.hovermenu',
@@ -41,12 +42,8 @@ Ext.define('Docs.view.HoverMenu', {
                 columnHeight: this.columnHeight,
 
                 renderLink: function(values) {
-                    var tags = Ext.Array.map(Docs.data.signatures, function(s) {
-                        return values.meta[s.tagname] ? '<span class="signature '+s.tagname+'">'+(s["short"])+'</span>' : '';
-                    }).join(' ');
-
+                    var tags = Docs.view.Signature.render(values.meta);
                     var cnt = Docs.Comments.counterHtml(values.commentCount);
-
                     return Ext.String.format('<a href="#!/api/{0}" rel="{0}" class="docClass">{1} {2} {3}</a>', values.url, values.label, tags, cnt);
                 }
             }
