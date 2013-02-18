@@ -7,6 +7,15 @@ module JsDuck::Tag
   class Removed < DeprecatedTag
     def initialize
       @tagname = :removed
+      # striked-through text with red border.
+      @css = <<-EOCSS
+        .signature .removed {
+          color: #aa0000;
+          background-color: transparent;
+          border: 1px solid #aa0000;
+          text-decoration: line-through;
+        }
+      EOCSS
       super
     end
   end

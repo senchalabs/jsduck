@@ -1,26 +1,6 @@
-// Styles for signature labels.
-@import "variables";
+// Base style for signature labels.
 
 .signature span {
   color: white;
   background-color: #aaa; }
-.signature .deprecated {
-  background-color: #aa0000; }
-.signature .removed {
-  color: #aa0000;
-  background-color: transparent;
-  border: 1px solid #aa0000;
-  text-decoration: line-through; }
-.signature .chainable {
-  background-color: #00aa00; }
-.signature .static {
-  background-color: $docs-text-color; }
-.signature .required {
-  background-color: $docs-text-color; }
-.signature .new {
-  color: $docs-text-color;
-  background-color: #F5D833; }
-.signature .private {
-  background-color: #FD6B1B; }
-.signature .protected {
-  background-color: #9B86FC; }
+

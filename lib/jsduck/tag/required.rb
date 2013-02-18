@@ -13,6 +13,7 @@ module JsDuck::Tag
     def initialize
       @tagname = :required
       @signature = {:long => "required", :short => "REQ"}
+      @css = ".signature .required { background-color: #484848 }" # Docs text color
     end
 
     def process_doc(h, docs, pos)

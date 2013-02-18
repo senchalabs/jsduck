@@ -5,6 +5,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "static"
       @signature = {:long => "static", :short => "STA"}
+      @css = ".signature .static { background-color: #484848 }" # Docs text color
       super
     end
   end

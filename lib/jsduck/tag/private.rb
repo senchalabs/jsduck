@@ -6,6 +6,7 @@ module JsDuck::Tag
       @pattern = "private"
       @signature = {:long => "private", :short => "PRI"}
       @html_position = POS_PRIVATE
+      @css = ".signature .private { background-color: #FD6B1B }" # Orange
       super
     end
 

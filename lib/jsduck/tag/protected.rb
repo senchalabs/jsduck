@@ -5,6 +5,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "protected"
       @signature = {:long => "protected", :short => "PRO"}
+      @css = ".signature .protected { background-color: #9B86FC }" # Violet
       super
     end
   end
