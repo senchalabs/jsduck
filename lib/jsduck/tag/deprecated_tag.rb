@@ -2,20 +2,20 @@ require "jsduck/tag/tag"
 
 module JsDuck::Tag
   # Base class for both @deprecated and @removed.  Child classes only
-  # need to define the @key attribute and call #super - all the
+  # need to define the @tagname attribute and call #super - all the
   # correct behavior will the fall out automatically.
   class DeprecatedTag < Tag
     def initialize
-      if @key
-        @pattern = @key.to_s
-        @signature = {:long => @key.to_s, :short => @key.to_s[0..2].upcase}
+      if @tagname
+        @pattern = @tagname.to_s
+        @signature = {:long => @tagname.to_s, :short => @tagname.to_s[0..2].upcase}
         @html_position = POS_DEPRECATED
       end
     end
 
     def parse_doc(p)
       {
-        :tagname => @key,
+        :tagname => @tagname,
         :version => p.hw.match(/[0-9.]+/),
         :doc => :multiline,
       }
@@ -24,19 +24,19 @@ module JsDuck::Tag
     def process_doc(h, tags, pos)
       v = {:text => tags[0][:doc] || ""}
       v[:version] = tags[0][:version] if tags[0][:version]
-      h[@key] = v
+      h[@tagname] = v
     end
 
     def format(context, formatter)
-      context[@key][:text] = formatter.format(context[@key][:text])
+      context[@tagname][:text] = formatter.format(context[@tagname][:text])
     end
 
     def to_html(context)
-      depr = context[@key]
+      depr = context[@tagname]
       v = depr[:version] ? "since " + depr[:version] : ""
       <<-EOHTML
-        <div class='signature-box #{@key}'>
-        <p>This #{context[:tagname]} has been <strong>#{@key}</strong> #{v}</p>
+        <div class='signature-box #{@tagname}'>
+        <p>This #{context[:tagname]} has been <strong>#{@tagname}</strong> #{v}</p>
         #{depr[:text]}
         </div>
       EOHTML

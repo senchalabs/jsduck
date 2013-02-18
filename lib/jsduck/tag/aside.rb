@@ -5,7 +5,7 @@ module JsDuck::Tag
   class Aside < Tag
     def initialize
       @pattern = "aside"
-      @key = :aside
+      @tagname = :aside
       @html_position = POS_ASIDE
     end
 

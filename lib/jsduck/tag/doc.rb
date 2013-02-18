@@ -6,7 +6,7 @@ module JsDuck::Tag
   # classes and members.
   class Doc < Tag
     def initialize
-      @key = :doc
+      @tagname = :doc
       @html_position = POS_DOC
       @shortener = JsDuck::Format::Shortener.new
     end

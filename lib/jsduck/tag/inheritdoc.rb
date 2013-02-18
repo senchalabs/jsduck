@@ -5,7 +5,7 @@ module JsDuck::Tag
   class Inheritdoc < Tag
     def initialize
       @pattern = ["inheritdoc", "inheritDoc"]
-      @key = :inheritdoc
+      @tagname = :inheritdoc
     end
 
     # @inheritdoc class.name#static-type-member

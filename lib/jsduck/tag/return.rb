@@ -6,7 +6,7 @@ module JsDuck::Tag
   class Return < Tag
     def initialize
       @pattern = ["return", "returns"]
-      @key = :return
+      @tagname = :return
       @html_position = POS_RETURN
     end
 

@@ -4,7 +4,7 @@ module JsDuck::Tag
   class Class < Tag
     def initialize
       @pattern = "class"
-      @key = :class
+      @tagname = :class
       @merge_context = :class
     end
 

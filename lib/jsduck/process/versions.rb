@@ -30,7 +30,7 @@ module JsDuck
 
       # Initializes the tooltip text for the signature of @new tag.
       def init_new_tag_tooltip!
-        signature = TagRegistry.get_by_key(:new).signature
+        signature = TagRegistry.get_by_name(:new).signature
         if @opts[:new_since]
           signature[:tooltip] = "New since #{@opts[:new_since]}"
         elsif @opts[:imports].length > 0

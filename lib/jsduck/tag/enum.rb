@@ -4,7 +4,7 @@ module JsDuck::Tag
   class Enum < Tag
     def initialize
       @pattern = "enum"
-      @key = :enum
+      @tagname = :enum
       @merge_context = :class
       @html_position = POS_ENUM
     end

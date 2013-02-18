@@ -5,7 +5,7 @@ module JsDuck::Tag
   class Throws < Tag
     def initialize
       @pattern = "throws"
-      @key = :throws
+      @tagname = :throws
       @html_position = POS_THROWS
     end
 

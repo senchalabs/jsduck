@@ -4,7 +4,7 @@ module JsDuck::Tag
   class Mixins < ClassListTag
     def initialize
       @pattern = ["mixin", "mixins"]
-      @key = :mixins
+      @tagname = :mixins
       @ext_define_pattern = "mixins"
       @ext_define_default = {:mixins => []}
     end

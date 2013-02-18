@@ -7,14 +7,15 @@ module JsDuck::Tag
   #
   #     @tagname classname1 classname2 ...
   #
-  # Subclasses need to define the @patterns and @key fields for the
-  # #parse_doc and #process_doc methods to work. Plus @ext_define_pattern
-  # and @ext_define_default for the #parse_ext_define to work.
+  # Subclasses need to define the @patterns and @tagname fields for
+  # the #parse_doc and #process_doc methods to work. Plus
+  # @ext_define_pattern and @ext_define_default for the
+  # #parse_ext_define to work.
   #
   class ClassListTag < Tag
     def parse_doc(p)
       {
-        :tagname => @key,
+        :tagname => @tagname,
         :classes => classname_list(p),
       }
     end
@@ -29,11 +30,11 @@ module JsDuck::Tag
     end
 
     def process_doc(h, tags, pos)
-      h[@key] = tags.map {|d| d[:classes] }.flatten
+      h[@tagname] = tags.map {|d| d[:classes] }.flatten
     end
 
     def parse_ext_define(cls, ast)
-      cls[@key] = JsDuck::Js::Utils.make_string_list(ast)
+      cls[@tagname] = JsDuck::Js::Utils.make_string_list(ast)
     end
   end
 end

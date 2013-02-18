@@ -11,7 +11,7 @@ module JsDuck
       # Returns array of rendered HTML.
       def self.render(member)
         TagRegistry.html_renderers.map do |tag|
-          if member[tag.key]
+          if member[tag.tagname]
             tag.to_html(member)
           else
             nil

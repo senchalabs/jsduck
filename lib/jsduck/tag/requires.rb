@@ -4,7 +4,7 @@ module JsDuck::Tag
   class Requires < ClassListTag
     def initialize
       @pattern = "requires"
-      @key = :requires
+      @tagname = :requires
       @ext_define_pattern = "requires"
       @ext_define_default = {:requires => []}
     end

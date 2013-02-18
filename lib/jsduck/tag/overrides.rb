@@ -9,7 +9,7 @@ module JsDuck::Tag
   # class.
   class Overrides < Tag
     def initialize
-      @key = :overrides
+      @tagname = :overrides
       @html_position = POS_OVERRIDES
     end
 

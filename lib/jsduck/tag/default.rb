@@ -13,7 +13,7 @@ module JsDuck::Tag
   # fields and to generate the "Defaults to:" text in final HTML.
   class Default < Tag
     def initialize
-      @key = :default
+      @tagname = :default
       @merge_context = :property_like
       @html_position = POS_DEFAULT
     end

@@ -5,7 +5,7 @@ module JsDuck::Tag
   class Cfg < Tag
     def initialize
       @pattern = "cfg"
-      @key = :cfg
+      @tagname = :cfg
       @member_type = {
         :name => :cfg,
         :category => :property_like,

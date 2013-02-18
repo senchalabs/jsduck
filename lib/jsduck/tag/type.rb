@@ -5,7 +5,7 @@ module JsDuck::Tag
   class Type < Tag
     def initialize
       @pattern = "type"
-      @key = :type
+      @tagname = :type
       @merge_context = :property_like
 
       # We don't really care about the position as we don't output any

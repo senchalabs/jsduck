@@ -5,7 +5,7 @@ module JsDuck::Tag
   class Extends < Tag
     def initialize
       @pattern = ["extend", "extends"]
-      @key = :extends
+      @tagname = :extends
       @ext_define_pattern = "extend"
       @ext_define_default = {:extends => "Ext.Base"}
       @merge_context = :class

@@ -6,7 +6,7 @@ module JsDuck::Tag
   # @deprecated.
   class Removed < DeprecatedTag
     def initialize
-      @key = :removed
+      @tagname = :removed
       super
     end
   end

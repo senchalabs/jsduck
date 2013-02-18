@@ -11,7 +11,7 @@ module JsDuck
       @patterns = {}
       @ext_define_patterns = {}
       @ext_define_defaults = {}
-      @keys = {}
+      @tagnames = {}
       @mergers = {}
       @signatures = []
       @html_renderers = []
@@ -44,8 +44,8 @@ module JsDuck
           @ext_define_defaults.merge!(tag.ext_define_default)
         end
 
-        if tag.key
-          @keys[tag.key] = tag
+        if tag.tagname
+          @tagnames[tag.tagname] = tag
         end
 
         Array(tag.merge_context).each do |context|
@@ -58,7 +58,7 @@ module JsDuck
         end
 
         if tag.signature
-          tag.signature[:key] = tag.key
+          tag.signature[:key] = tag.tagname
           @signatures << tag.signature
         end
 
@@ -146,10 +146,10 @@ module JsDuck
       @ext_define_patterns[name]
     end
 
-    # Accesses tag by key name - the symbol under which the tag data
+    # Accesses tag by name - the symbol under which the tag data
     # is stored in final hash.
-    def get_by_key(key)
-      @keys[key]
+    def get_by_name(name)
+      @tagnames[name]
     end
 
     private

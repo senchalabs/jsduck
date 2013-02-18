@@ -5,7 +5,7 @@ module JsDuck::Tag
   class Override < Tag
     def initialize
       @pattern = "override"
-      @key = :override
+      @tagname = :override
       @ext_define_pattern = "override"
     end
 

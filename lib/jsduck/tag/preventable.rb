@@ -7,7 +7,7 @@ module JsDuck::Tag
   class Preventable < Tag
     def initialize
       @pattern = "preventable"
-      @key = :preventable
+      @tagname = :preventable
       @signature = {:long => "preventable", :short => "PREV"}
       @html_position = POS_PREVENTABLE
     end

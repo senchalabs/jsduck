@@ -39,7 +39,7 @@ module JsDuck
       @assets = Assets.new(@relations, @opts)
 
       # HACK: Give access to assets from @aside tag
-      TagRegistry.get_by_key(:aside).assets = @assets
+      TagRegistry.get_by_name(:aside).assets = @assets
     end
 
     def generate_export

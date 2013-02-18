@@ -5,7 +5,7 @@ module JsDuck::Tag
   class Alias < Inheritdoc
     def initialize
       @pattern = "alias"
-      @key = :aliases
+      @tagname = :aliases
       @ext_define_pattern = "alias"
       @ext_define_default = {:aliases => []}
       @merge_context = :class

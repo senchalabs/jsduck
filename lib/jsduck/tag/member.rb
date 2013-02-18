@@ -6,7 +6,7 @@ module JsDuck::Tag
     # of it gets stored in :owner.
     def initialize
       @pattern = "member"
-      @key = :owner
+      @tagname = :owner
     end
 
     # @member classname

@@ -5,7 +5,7 @@ module JsDuck::Tag
   class Since < Tag
     def initialize
       @pattern = "since"
-      @key = :since
+      @tagname = :since
       @html_position = POS_SINCE
     end
 

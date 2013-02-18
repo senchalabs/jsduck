@@ -8,7 +8,7 @@ module JsDuck::Tag
   # field which can exist in :cfg, :property or :css_var members.
   class Subproperties < Tag
     def initialize
-      @key = :properties
+      @tagname = :properties
       @html_position = POS_SUBPROPERTIES
     end
 

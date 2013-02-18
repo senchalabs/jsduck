@@ -4,7 +4,7 @@ module JsDuck::Tag
   class Constructor < Tag
     def initialize
       @pattern = "constructor"
-      @key = :constructor
+      @tagname = :constructor
     end
 
     # @constructor

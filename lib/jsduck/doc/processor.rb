@@ -9,7 +9,7 @@ module JsDuck
     #
     # Its main work is done through calling the #process_doc method of
     # all the Tag classes that have registered themselves to process a
-    # particular set of @tags through defining a .key attribute.
+    # particular set of @tags through defining a .tagname attribute.
     class Processor
       # Allow passing in filename and line for error reporting
       attr_accessor :filename
@@ -30,8 +30,8 @@ module JsDuck
 
         position = {:filename => @filename, :linenr => @linenr}
 
-        doc_map.each_pair do |key, value|
-          if tag = TagRegistry.get_by_key(key)
+        doc_map.each_pair do |name, value|
+          if tag = TagRegistry.get_by_name(name)
             tag.process_doc(hash, value, position)
           end
         end

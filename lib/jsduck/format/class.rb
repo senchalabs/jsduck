@@ -50,7 +50,7 @@ module JsDuck
 
       def format_tags(context)
         TagRegistry.html_renderers.each do |tag|
-          if context[tag.key]
+          if context[tag.tagname]
             tag.format(context, @formatter)
           end
         end

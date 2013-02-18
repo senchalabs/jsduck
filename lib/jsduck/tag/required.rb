@@ -11,7 +11,7 @@ module JsDuck::Tag
   # with custom logic in @cfg and DocAst classes.
   class Required < Tag
     def initialize
-      @key = :required
+      @tagname = :required
       @signature = {:long => "required", :short => "REQ"}
     end
 
