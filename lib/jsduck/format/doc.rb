@@ -118,13 +118,15 @@ module JsDuck
             # There might still be "{" that doesn't begin {@link} or {@img} - ignore it
             out += s.scan(/[{]/)
           elsif substitute = @inline_example.replace(s)
+            tags.push_tag("pre")
+            tags.push_tag("code")
             out += substitute
           elsif s.check(/<\w/)
             # Open HTML tag
-            out += s.scan(/</) + tags.open(s.scan(/\w+/)) + s.scan_until(/>|\z/)
+            out += tags.open(s)
           elsif s.check(/<\/\w+>/)
             # Close HTML tag
-            out += s.scan(/<\//) + tags.close(s.scan(/\w+/)) + s.scan(/>/)
+            out += tags.close(s)
           elsif s.check(/</)
             # Ignore plain '<' char.
             out += s.scan(/</)
@@ -136,7 +138,7 @@ module JsDuck
           end
         end
 
-        out + tags.close_unfinished
+        out
       end
 
       # Creates a link based on the link template.

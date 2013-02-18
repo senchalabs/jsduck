@@ -6,17 +6,7 @@ module JsDuck
     # Tracks opening and closing of HTML tags, with the purpose of
     # closing down the unfinished tags.
     #
-    # Synopsis:
-    #
-    #     tags = HtmlStack.new
-    #     # open and close a bunch of tags
-    #     tags.open("a")
-    #     tags.open("b")
-    #     tags.close("b")
-    #
-    #     # ask which tags still need to be closed
-    #     tags.close_unfinished --> "</a>"
-    #
+    # See Format::Doc#replace for the use of this class.
     class HtmlStack
 
       # Initializes the stack with two optional parameters:
@@ -29,18 +19,23 @@ module JsDuck
         @open_tags = []
       end
 
-      # Registers opening of a tag.  Returns the tag.
-      def open(tag)
-        @open_tags.unshift(tag) unless void?(tag)
-        tag
+      # Scans an opening tag in HTML using the passed in StringScanner.
+      def open(s)
+        s.scan(/</) + push_tag(s.scan(/\w+/)) + s.scan_until(/>|\Z/)
       end
 
-      # Registers closing of a tag.  Returns the tag.
-      def close(tag)
-        if @open_tags.include?(tag)
-          # delete the most recent unclosed tag in our tags stack
-          @open_tags.delete_at(@open_tags.index(tag))
-        end
+      # Scans a closing tag in HTML using the passed in StringScanner.
+      def close(s)
+        s.scan(/<\//)
+        tag = s.scan(/\w+/)
+        s.scan(/>/)
+
+        pop_tags(tag).map {|t| "</#{t}>" }.join
+      end
+
+      # Registers opening of a tag.  Returns the tag.
+      def push_tag(tag)
+        @open_tags.push(tag) unless void?(tag)
         tag
       end
 
@@ -49,22 +44,43 @@ module JsDuck
         @open_tags.include?(tag)
       end
 
-      # Returns HTML for closing the still open tags.
-      # Also prints warnings for all the unclosed tags.
-      def close_unfinished
-        return "" if @open_tags.length == 0
-
-        warn_unfinished
-
-        @open_tags.map {|tag| "</#{tag}>" }.join
-      end
-
       private
 
-      def warn_unfinished
+      # Registers closing of a tag.  Returns all the tags that need to
+      # be closed at that point.
+      def pop_tags(tag)
+        if !@open_tags.include?(tag)
+          if @ignore_html[tag]
+            return [tag]
+          else
+            warn_unopened(tag)
+            return []
+          end
+        end
+
+        popped = []
+        begin
+          popped << t = @open_tags.pop
+          if t != tag
+            warn_unclosed(t)
+          end
+        end until t == tag
+
+        popped
+      end
+
+      def warn_unopened(*tags)
+        warn("Unopened HTML tag", tags)
+      end
+
+      def warn_unclosed(*tags)
+        warn("Unclosed HTML tag", tags)
+      end
+
+      def warn(msg, tags)
         ctx = @doc_context
-        tag_list = @open_tags.map {|tag| "<#{tag}>" }.join(", ")
-        Logger.warn(:html, "Unclosed HTML tag: #{tag_list}", ctx[:filename], ctx[:linenr])
+        tag_list = tags.map {|tag| "<#{tag}>" }.join(", ")
+        Logger.warn(:html, "#{msg}: #{tag_list}", ctx[:filename], ctx[:linenr])
       end
 
       def void?(tag)
