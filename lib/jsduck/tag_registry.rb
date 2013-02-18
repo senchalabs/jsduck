@@ -58,7 +58,7 @@ module JsDuck
         end
 
         if tag.signature
-          tag.signature[:key] = tag.tagname
+          tag.signature[:tagname] = tag.tagname
           @signatures << tag.signature
         end
 

@@ -53,8 +53,8 @@ module JsDuck
       def combine_meta(m)
         meta = {}
         TagRegistry.signatures.each do |s|
-          key = s[:key]
-          meta[key] = m[key] if m[key]
+          name = s[:tagname]
+          meta[name] = m[name] if m[name]
         end
         meta
       end

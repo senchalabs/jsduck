@@ -64,7 +64,7 @@ Ext.define('Docs.view.cls.Header', {
                 },
                 renderMetaTags: function(metaTags) {
                     return ' ' + Ext.Array.map(Docs.data.signatures, function(s) {
-                        return metaTags[s.key] ? '<span class="signature '+s.key+'">'+(s["long"])+'</span>' : '';
+                        return metaTags[s.tagname] ? '<span class="signature '+s.tagname+'">'+(s["long"])+'</span>' : '';
                     }).join(' ');
                 }
             }

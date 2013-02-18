@@ -124,8 +124,8 @@ module JsDuck
     def combine_meta(hash)
       meta = {}
       TagRegistry.signatures.each do |s|
-        key = s[:key]
-        meta[key] = hash[key] if hash[key]
+        name = s[:tagname]
+        meta[name] = hash[name] if hash[name]
       end
       meta
     end

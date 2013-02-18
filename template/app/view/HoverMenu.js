@@ -42,7 +42,7 @@ Ext.define('Docs.view.HoverMenu', {
 
                 renderLink: function(values) {
                     var tags = Ext.Array.map(Docs.data.signatures, function(s) {
-                        return values.meta[s.key] ? '<span class="signature '+s.key+'">'+(s["short"])+'</span>' : '';
+                        return values.meta[s.tagname] ? '<span class="signature '+s.tagname+'">'+(s["short"])+'</span>' : '';
                     }).join(' ');
 
                     var cnt = Docs.Comments.counterHtml(values.commentCount);

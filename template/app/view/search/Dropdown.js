@@ -64,7 +64,7 @@ Ext.define('Docs.view.search.Dropdown', {
                 },
                 getMetaTags: function(meta) {
                     return Ext.Array.map(Docs.data.signatures, function(s) {
-                        return meta[s.key] ? '<span class="signature '+s.key+'">'+(s["short"])+'</span>' : '';
+                        return meta[s.tagname] ? '<span class="signature '+s.tagname+'">'+(s["short"])+'</span>' : '';
                     }).join(' ');
                 },
                 getTotal: Ext.bind(this.getTotal, this),

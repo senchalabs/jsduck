@@ -24,9 +24,9 @@ module JsDuck
       def self.render_signature(member)
         html = []
         TagRegistry.signatures.each do |s|
-          if member[s[:key]]
+          if member[s[:tagname]]
             title = s[:tooltip] ? "title='#{s[:tooltip]}'" : ""
-            html << "<strong class='#{s[:key]} signature' #{title}>#{s[:long]}</strong>"
+            html << "<strong class='#{s[:tagname]} signature' #{title}>#{s[:long]}</strong>"
           end
         end
         html.join
