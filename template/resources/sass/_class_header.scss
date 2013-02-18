@@ -28,14 +28,14 @@
       background: url(../images/singleton-m.png) no-repeat 0 -5px; }
 
     // gray style for xtypes listing
-    span {
+    .xtype {
       color: #929292;
       letter-spacing: 0;
       margin-left: 10px;
       font-size: 0.5em; }
 
     // View source... tooltip when hovering class name
-    span.class-source-tip {
+    .class-source-tip {
       font-size: 0.5em;
       position: absolute;
       top: 35px;
@@ -45,7 +45,7 @@
       &.hover {
         color: #929292; } }
 
-    .signature {
+    .signature-container > span {
       font-weight: bold;
       text-transform: uppercase;
       font-size: 0.4em;

@@ -13,8 +13,9 @@ Ext.define('Docs.view.Signature', {
      */
     render: function(meta, format) {
         format = format || "short";
-        return Ext.Array.map(Docs.data.signatures, function(s) {
+        var spans = Ext.Array.map(Docs.data.signatures, function(s) {
             return meta[s.tagname] ? '<span class="signature '+s.tagname+'">'+(s[format])+'</span>' : '';
         }).join(' ');
+        return '<span class="signature-container">' + spans + '</span>';
     }
 });

@@ -59,7 +59,7 @@ Ext.define('Docs.view.cls.Header', {
                     });
 
                     if (r.length > 0) {
-                        return "<span>" + r.join(", ") + "</span>";
+                        return "<span class='xtype'>" + r.join(", ") + "</span>";
                     }
                     else {
                         return "";
