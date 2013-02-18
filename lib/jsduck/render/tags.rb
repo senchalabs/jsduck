@@ -26,10 +26,10 @@ module JsDuck
         TagRegistry.signatures.each do |s|
           if member[s[:tagname]]
             title = s[:tooltip] ? "title='#{s[:tooltip]}'" : ""
-            html << "<span class='#{s[:tagname]} signature' #{title}>#{s[:long]}</span>"
+            html << "<span class='#{s[:tagname]}' #{title}>#{s[:long]}</span>"
           end
         end
-        '<span class="signature-container">' + html.join + "</span>"
+        '<span class="signature">' + html.join + "</span>"
       end
 
     end

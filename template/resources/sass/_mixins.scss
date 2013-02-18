@@ -114,39 +114,11 @@
   line-height: 16px;
   margin-bottom: 4px; }
 
-// Shared colors for member signatures in toolbar menu and class api body
-@mixin signature-colors {
-  // the default colors
-  color: white;
-  background-color: #aaa;
-  // specific colors
-  &.deprecated {
-    background-color: #aa0000; }
-  &.removed {
-    color: #aa0000;
-    background-color: transparent;
-    border: 1px solid #aa0000;
-    text-decoration: line-through; }
-  &.chainable {
-    background-color: #00aa00; }
-  &.static {
-    background-color: $docs-text-color; }
-  &.required {
-    background-color: $docs-text-color; }
-  &.new {
-    color: $docs-text-color;
-    background-color: #F5D833; }
-  &.private {
-    background-color: #FD6B1B; }
-  &.protected {
-    background-color: #9B86FC; } }
-
 // shared styles for signature labels in hover-menus and search dropdown.
 @mixin mini-signature {
- .signature-container > span {
+ .signature span {
    font-size: 0.6em;
    text-transform: uppercase;
    font-weight: bold;
    padding: 0 0.5em;
-   @include border-radius(2px);
-   @include signature-colors; } }
+   @include border-radius(2px); } }

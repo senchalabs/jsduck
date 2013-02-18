@@ -74,14 +74,13 @@
     background-color: #efe;
     padding: 10px 50px;
     text-align: center; }
-  .signature-container > span {
+  .signature span {
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.7em;
     @include border-radius(2px);
     margin-left: 5px;
-    padding: 0 3px;
-    @include signature-colors; }
+    padding: 0 3px; }
   .new-keyword {
     margin-left: 0;
     margin-right: 3px;
