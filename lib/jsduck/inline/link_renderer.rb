@@ -3,7 +3,7 @@ require 'jsduck/util/html'
 module JsDuck
   module Inline
 
-    # Renders HTML link class or member.
+    # Renders HTML link to class or member.
     class LinkRenderer
       # Access to relations object, used by Inline::Link and
       # Inline::AutoLink.
