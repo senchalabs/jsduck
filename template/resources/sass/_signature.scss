@@ -1,6 +1,13 @@
-// Base style for signature labels.
 
+// Base style for signature labels.
 .signature span {
   color: white;
   background-color: #aaa; }
+
+// Helper class for Tag classes like deprecated and removed
+// to render box with rounded corners.
+.rounded-box {
+  border: 1px solid #999;
+  @include border-radius(5px);
+  padding: 10px 50px; }
 

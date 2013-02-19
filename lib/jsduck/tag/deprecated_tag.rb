@@ -10,6 +10,18 @@ module JsDuck::Tag
         @pattern = @tagname.to_s
         @signature = {:long => @tagname.to_s, :short => @tagname.to_s[0..2].upcase}
         @html_position = POS_DEPRECATED
+        @css += <<-EOCSS
+          .deprecated-tag-box {
+            text-align: center;
+            color: #600;
+            background-color: #fee;
+          }
+          .deprecated-tag-box strong {
+            text-transform: uppercase;
+            border-radius: 2px;
+            padding: 0 3px;
+          }
+        EOCSS
       end
     end
 
@@ -35,7 +47,7 @@ module JsDuck::Tag
       depr = context[@tagname]
       v = depr[:version] ? "since " + depr[:version] : ""
       <<-EOHTML
-        <div class='signature-box #{@tagname}'>
+        <div class='rounded-box #{@tagname}-box deprecated-tag-box'>
         <p>This #{context[:tagname]} has been <strong>#{@tagname}</strong> #{v}</p>
         #{depr[:text]}
         </div>

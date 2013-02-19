@@ -180,25 +180,3 @@
     .title {
       padding-bottom: 3px; } } }
 
-.signature-box {
-  border: 1px solid #999;
-  @include border-radius(5px);
-  padding: 10px 50px;
-  text-align: center;
-  &.template {
-    background-color: #eee; }
-  &.deprecated, &.removed {
-    color: #600;
-    background-color: #fee;
-    strong {
-      text-transform: uppercase;
-      @include border-radius(2px);
-      padding: 0 3px; } }
-  &.deprecated strong {
-    color: white;
-    background-color: #aa0000; }
-  &.removed strong {
-    color: #aa0000;
-    border: 1px solid #aa0000;
-    background-color: transparent;
-    text-decoration: line-through; } }

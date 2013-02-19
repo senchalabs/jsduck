@@ -10,6 +10,8 @@ module JsDuck::Tag
       @tagname = :preventable
       @signature = {:long => "preventable", :short => "PREV"}
       @html_position = POS_PREVENTABLE
+      # Use the default white box with dark gray border.
+      @css = ".preventable-box { text-align: center }"
     end
 
     # @preventable is optionally followed by some method name, but we
@@ -25,7 +27,7 @@ module JsDuck::Tag
 
     def to_html(context)
       <<-EOHTML
-        <div class='signature-box preventable'>
+        <div class='rounded-box preventable-box'>
         <p>This action following this event is <b>preventable</b>.
         When any of the listeners returns false, the action is cancelled.</p>
         </div>

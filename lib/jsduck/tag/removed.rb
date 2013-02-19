@@ -15,6 +15,12 @@ module JsDuck::Tag
           border: 1px solid #aa0000;
           text-decoration: line-through;
         }
+        .removed-box strong {
+          color: #aa0000;
+          border: 1px solid #aa0000;
+          background-color: transparent;
+          text-decoration: line-through;
+        }
       EOCSS
       super
     end
