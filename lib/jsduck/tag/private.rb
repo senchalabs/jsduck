@@ -6,7 +6,17 @@ module JsDuck::Tag
       @pattern = "private"
       @signature = {:long => "private", :short => "PRI"}
       @html_position = POS_PRIVATE
-      @css = ".signature .private { background-color: #FD6B1B }" # Orange
+      @css = <<-EOCSS
+        .signature .private {
+          background-color: #FD6B1B; /* orange */
+        }
+        .private-box {
+          background-color: #fee;
+          text-align: center;
+          color: #600;
+          margin-bottom: 1em;
+        }
+      EOCSS
       super
     end
 
@@ -15,9 +25,10 @@ module JsDuck::Tag
       return unless context[:tagname] == :class
 
       return [
-        "<p class='private'><strong>NOTE</strong> ",
-        "This is a private utility class for internal use by the framework. ",
-        "Don't rely on its existence.</p>",
+        "<div class='rounded-box private-box'>",
+        "<p><strong>NOTE:</strong> This is a private utility class for internal use ",
+        "by the framework. Don't rely on its existence.</p>",
+        "</div>",
       ]
     end
   end

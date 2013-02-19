@@ -60,13 +60,6 @@
     @include guides-h3-heading; } }
 
 .class-overview {
-  p.private {
-    border: 1px solid #999;
-    @include border-radius(5px);
-    color: #600;
-    background-color: #fee;
-    padding: 10px 50px;
-    text-align: center; }
   p.enum {
     border: 1px solid #999;
     @include border-radius(5px);
