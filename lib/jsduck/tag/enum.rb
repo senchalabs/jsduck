@@ -7,6 +7,14 @@ module JsDuck::Tag
       @tagname = :enum
       @merge_context = :class
       @html_position = POS_ENUM
+      # Green box
+      @css = <<-EOCSS
+        .enum-box {
+          color: #060;
+          background-color: #efe;
+          text-align: center;
+        }
+      EOCSS
     end
 
     # @enum {Type} [name=default] ...
@@ -40,16 +48,20 @@ module JsDuck::Tag
       if cls[:enum][:doc_only]
         first = cls[:members][:property][0] || {:name => 'foo', :default => '"foo"'}
         [
-          "<p class='enum'><strong>ENUM:</strong> ",
+          "<div class='rounded-box enum-box'>",
+          "<p><strong>ENUM:</strong> ",
           "This enumeration defines a set of String values. ",
           "It exists primarily for documentation purposes - ",
           "in code use the actual string values like #{first[:default]}, ",
           "don't reference them through this class like #{cls[:name]}.#{first[:name]}.</p>",
+          "</div>",
         ]
       else
         [
-          "<p class='enum'><strong>ENUM:</strong> ",
+          "<div class='rounded-box enum-box'>",
+          "<p><strong>ENUM:</strong> ",
           "This enumeration defines a set of #{cls[:enum][:type]} values.</p>",
+          "</div>",
         ]
       end
     end

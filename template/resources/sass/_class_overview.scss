@@ -60,13 +60,6 @@
     @include guides-h3-heading; } }
 
 .class-overview {
-  p.enum {
-    border: 1px solid #999;
-    @include border-radius(5px);
-    color: #060;
-    background-color: #efe;
-    padding: 10px 50px;
-    text-align: center; }
   .signature span {
     font-weight: bold;
     text-transform: uppercase;
