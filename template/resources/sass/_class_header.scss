@@ -27,8 +27,8 @@
     &.singleton .class-source-link {
       background: url(../images/singleton-m.png) no-repeat 0 -5px; }
 
-    // gray style for xtypes listing
-    .xtype {
+    // gray style for xtypes, enum and singleton summary
+    .xtype, .enum, .singleton {
       color: #929292;
       letter-spacing: 0;
       margin-left: 10px;
