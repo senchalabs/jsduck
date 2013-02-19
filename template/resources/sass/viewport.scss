@@ -67,10 +67,10 @@
   // Style only the body area, or the toolbar will get styled too
   .x-panel-body {
     min-height: 100px;
+    color: $docs-text-color;
     .clr {
       clear: both; }
     p, ul, ol {
-      color: $docs-text-color;
       max-width: 900px; }
     p {
       padding: 0;
