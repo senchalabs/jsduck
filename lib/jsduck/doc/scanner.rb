@@ -42,8 +42,9 @@ module JsDuck
         @input.scan(@ident_pattern)
       end
 
-      # Looks for the existance of pattern.  Returns true on success.
-      # Doesn't advance the scan pointer.
+      # Looks for the existance of pattern.  Returns the matching
+      # string on success, nil on failure, but doesn't advance the
+      # scan pointer.
       def look(re)
         @input.check(re)
       end
