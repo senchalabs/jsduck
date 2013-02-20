@@ -112,9 +112,7 @@ directories:
 Note that the resulting documentation will only contain the API
 documentation.  Guides, videos and examples will not be present.
 These can be added using more command line options as explained in the
-[Advanced Usage][adv] section of wiki.
-
-[adv]: https://github.com/senchalabs/jsduck/wiki/Advanced-Usage
+[documentation][].
 
 
 Documenting your code
