@@ -11,8 +11,8 @@ the old [ext-doc][] was. It is used by Sencha to document [Ext JS
 products.
 
 The highlights of JSDuck are [Markdown][] support and keeping you DRY
-by inferring a lot of information from code.  Read the [Guide][] for
-full overview.
+by inferring a lot of information from code.  Read the
+[documentation][] for full overview.
 
 **New to JSDuck?** Watch [introductory talk by Nick Poulden][video]:
 
@@ -24,7 +24,7 @@ full overview.
 [ext4-docs]: http://docs.sencha.com/ext-js/4-0/
 [touch2-docs]: http://docs.sencha.com/touch/2-0/
 [other-docs]: http://docs.sencha.com/ext-js/4-0/
-[Guide]: https://github.com/senchalabs/jsduck/wiki/Guide
+[documentation]: https://github.com/senchalabs/jsduck/wiki
 [video]: http://vimeo.com/33465319
 
 Getting it
@@ -120,13 +120,9 @@ These can be added using more command line options as explained in the
 Documenting your code
 ---------------------
 
-For quick overview read the [Guide][] and take a look at [example.js][example].
-Follow links in the guide to digg into the details.
-
-Looking for specific @tag? Take a look at the [whole list of supported tags][tags].
+Read the [documentation][] and take a look at [example.js][example].
 
 [example]: https://github.com/senchalabs/jsduck/blob/master/opt/example.js
-[tags]: https://github.com/senchalabs/jsduck/wiki/Tags
 
 
 Hacking it
