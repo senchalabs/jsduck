@@ -23,7 +23,7 @@ by inferring a lot of information from code.  Read the
 [Markdown]: http://daringfireball.net/projects/markdown/
 [ext4-docs]: http://docs.sencha.com/ext-js/4-0/
 [touch2-docs]: http://docs.sencha.com/touch/2-0/
-[other-docs]: http://docs.sencha.com/ext-js/4-0/
+[other-docs]: http://docs.sencha.com/
 [documentation]: https://github.com/senchalabs/jsduck/wiki
 [video]: http://vimeo.com/33465319
 
