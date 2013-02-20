@@ -19,7 +19,7 @@ module JsDuck::Tag
     # Parses the name after @ftype, @xtype or @ptype
     # and returns it with the given namespace prefix.
     def parse_alias_shorthand(p, namespace)
-      namespace + "." + (p.hw.ident_chain || "")
+      namespace + "." + (p.ident_chain || "")
     end
 
     def parse_ext_define(cls, ast)

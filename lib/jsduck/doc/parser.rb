@@ -84,6 +84,7 @@ module JsDuck
           # ignore
         elsif tag = TagRegistry.get_by_pattern(name)
           match(/\w+/)
+          hw # Skip the whitespace right after the tag.
 
           tags = tag.parse_doc(self)
           if tags.is_a?(Hash)

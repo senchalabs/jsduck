@@ -22,7 +22,7 @@ module JsDuck::Tag
     def parse_as_inheritdoc(p)
       tag = {
         :tagname => :inheritdoc,
-        :cls => p.hw.ident_chain,
+        :cls => p.ident_chain,
       }
 
       if p.look(/#\w/)

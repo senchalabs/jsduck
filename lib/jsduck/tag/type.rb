@@ -25,7 +25,7 @@ module JsDuck::Tag
     end
 
     def curlyless_type(p)
-      p.hw.match(/\S+/)
+      p.match(/\S+/)
     end
 
     def process_doc(h, tags, pos)

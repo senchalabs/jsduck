@@ -13,7 +13,7 @@ module JsDuck::Tag
     def parse_doc(p)
       {
         :tagname => :owner,
-        :owner => p.hw.ident_chain,
+        :owner => p.ident_chain,
       }
     end
 

@@ -15,7 +15,7 @@ module JsDuck::Tag
     # as @inheritdoc (@alias used to have the meaning of @inheritdoc
     # before) or as a real Ext4 style alias definition.
     def parse_doc(p)
-      if p.look(/\s+([\w.]+)?#\w+/)
+      if p.look(/([\w.]+)?#\w+/)
         parse_as_inheritdoc(p)
       else
         parse_as_alias(p)
@@ -26,7 +26,7 @@ module JsDuck::Tag
     def parse_as_alias(p)
       {
         :tagname => :aliases,
-        :name => p.hw.ident_chain,
+        :name => p.ident_chain,
       }
     end
 

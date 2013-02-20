@@ -12,7 +12,7 @@ module JsDuck::Tag
     def parse_doc(p)
       {
         :tagname => :since,
-        :version => p.hw.match(/.*$/).strip,
+        :version => p.match(/.*$/).strip,
       }
     end
 

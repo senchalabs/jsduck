@@ -28,7 +28,7 @@ module JsDuck::Tag
     def parse_doc(p)
       {
         :tagname => @tagname,
-        :version => p.hw.match(/[0-9.]+/),
+        :version => p.match(/[0-9.]+/),
         :doc => :multiline,
       }
     end

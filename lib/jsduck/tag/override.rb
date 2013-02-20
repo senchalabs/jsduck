@@ -11,7 +11,7 @@ module JsDuck::Tag
 
     # @override nameOfOverride
     def parse_doc(p)
-      if classname = p.hw.ident_chain
+      if classname = p.ident_chain
         {
           :tagname => :override,
           :override => classname,

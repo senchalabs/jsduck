@@ -17,7 +17,7 @@ module JsDuck::Tag
     def parse_doc(p)
       {
         :tagname => :event,
-        :name => p.hw.ident,
+        :name => p.ident,
       }
     end
 
