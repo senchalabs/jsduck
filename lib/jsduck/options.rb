@@ -91,7 +91,7 @@ module JsDuck
       ]
       @ext4_events = nil
 
-      @version = "4.6.2"
+      @version = "5.0.0.beta
 
       # Customizing output
       @title = "Documentation - JSDuck"
