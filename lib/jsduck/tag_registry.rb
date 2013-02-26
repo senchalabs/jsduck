@@ -1,13 +1,28 @@
 require "jsduck/tag_loader"
-require "jsduck/util/singleton"
 
 module JsDuck
 
   # Access to builtin @tags
   class TagRegistry
-    include Util::Singleton
+    # Access to the singleton instance (only used internally)
+    def self.instance
+      @instance = TagRegistry.new unless @instance
+      @instance
+    end
 
-    def initialize
+    # Reconfigures the registry with additional load paths.
+    # Used in Options class.
+    def self.reconfigure(load_paths)
+      @instance = TagRegistry.new(load_paths)
+    end
+
+    # Redirect calls from TagRegistry.method to TagRegistry.instance.method,
+    # making it behave like other Singleton classes.
+    def self.method_missing(meth, *args, &block)
+      self.instance.send(meth, *args, &block)
+    end
+
+    def initialize(load_paths=[])
       @patterns = {}
       @ext_define_patterns = {}
       @ext_define_defaults = {}
@@ -19,13 +34,7 @@ module JsDuck
       @member_types = []
       @css = []
 
-      @loader = TagLoader.new
-      load_from(File.dirname(__FILE__) + "/tag")
-    end
-
-    # Loads and instantiates tags from the given file or dir.
-    def load_from(path)
-      instantiate_tags(@loader.load_from(path))
+      instantiate_tags(TagLoader.new(load_paths).load_all)
     end
 
     # Instantiates all descendants of JsDuck::Tag::Tag

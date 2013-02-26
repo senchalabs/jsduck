@@ -155,7 +155,9 @@ module JsDuck
       end
       validate
 
-      @custom_tag_paths.each {|path| TagRegistry.load_from(path) }
+      if @custom_tag_paths.length > 0
+        TagRegistry.reconfigure(@custom_tag_paths)
+      end
     end
 
     def create_option_parser
