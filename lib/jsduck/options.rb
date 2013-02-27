@@ -627,6 +627,14 @@ module JsDuck
           @template_links = true
         end
 
+        opts.on('-d', '--debug',
+          "Same as --template=template --template-links.",
+          "",
+          "Useful shorthand during development.") do
+          @template_dir = canonical("template")
+          @template_links = true
+        end
+
         opts.on('--extjs-path=PATH',
           "Path for main ExtJS JavaScript file.",
           "",
