@@ -23,6 +23,7 @@ module JsDuck
     attr_accessor :footer
     attr_accessor :head_html
     attr_accessor :body_html
+    attr_accessor :message
     attr_accessor :welcome
     attr_accessor :guides
     attr_accessor :videos
@@ -99,6 +100,7 @@ module JsDuck
       @footer = "Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> #{@version}."
       @head_html = ""
       @body_html = ""
+      @message = ""
       @welcome = nil
       @guides = nil
       @videos = nil
@@ -289,6 +291,15 @@ module JsDuck
           "This option can be used repeatedly to append several",
           "things to the body.") do |html|
           @body_html += html
+        end
+
+        opts.on('--message=HTML',
+          "(Warning) message to show prominently.",
+          "",
+          "Useful for warning users that they are viewing an old",
+          "version of the docs, and prividing a link to the new",
+          "version.") do |html|
+          @message += html
         end
 
         opts.on('--welcome=PATH',
