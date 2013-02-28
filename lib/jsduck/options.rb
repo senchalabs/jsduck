@@ -281,9 +281,12 @@ module JsDuck
           "",
           "Useful for adding extra <style> and other tags.",
           "",
+          "Also a name of an HTML file can be passed.",
+          "Then the contents of that file will be read in.",
+          "",
           "This option can be used repeatedly to append several",
           "things to the header.") do |html|
-          @head_html += html
+          @head_html += maybe_file(html)
         end
 
         opts.on('--body-html=HTML',
@@ -291,17 +294,23 @@ module JsDuck
           "",
           "Useful for adding extra markup to the page.",
           "",
+          "Also a name of an HTML file can be passed.",
+          "Then the contents of that file will be read in.",
+          "",
           "This option can be used repeatedly to append several",
           "things to the body.") do |html|
-          @body_html += html
+          @body_html += maybe_file(html)
         end
 
         opts.on('--css=CSS',
           "Extra CSS rules to include to the page.",
           "",
+          "Also a name of a CSS file can be passed.",
+          "Then the contents of that file will be read in.",
+          "",
           "This option can be used repeatedly to append multiple",
           "chunks of CSS.") do |css|
-          @css += css
+          @css += maybe_file(css)
         end
 
         opts.on('--message=HTML',
@@ -751,6 +760,17 @@ module JsDuck
           File.expand_path(basedir + "/" + file["path"] + file["name"])
         end
       end.flatten
+    end
+
+    # When given string is a file, returns the contents of the file.
+    # Otherwise returns the string unchanged.
+    def maybe_file(str)
+      path = canonical(str)
+      if File.exists?(path)
+        Util::IO.read(path)
+      else
+        str
+      end
     end
 
     # Converts relative path to full path
