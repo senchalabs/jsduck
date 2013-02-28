@@ -24,6 +24,7 @@ module JsDuck
     attr_accessor :footer
     attr_accessor :head_html
     attr_accessor :body_html
+    attr_accessor :css
     attr_accessor :message
     attr_accessor :welcome
     attr_accessor :guides
@@ -99,6 +100,7 @@ module JsDuck
       @footer = "Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> #{@version}."
       @head_html = ""
       @body_html = ""
+      @css = ""
       @message = ""
       @welcome = nil
       @guides = nil
@@ -292,6 +294,14 @@ module JsDuck
           "This option can be used repeatedly to append several",
           "things to the body.") do |html|
           @body_html += html
+        end
+
+        opts.on('--css=CSS',
+          "Extra CSS rules to include to the page.",
+          "",
+          "This option can be used repeatedly to append multiple",
+          "chunks of CSS.") do |css|
+          @css += css
         end
 
         opts.on('--message=HTML',

@@ -51,7 +51,7 @@ module JsDuck
         # Remember the MD5-fingerprinted filenames
         paths = {
           :data => Web::Data.new(@relations, @assets, @opts).write(@opts.output_dir+"/data.js"),
-          :css => Web::Css.new.write(@opts.output_dir+"/styles.css"),
+          :css => Web::Css.new(@opts).write(@opts.output_dir+"/styles.css"),
         }
 
         Web::IndexHtml.new(@assets, @opts, paths).write
