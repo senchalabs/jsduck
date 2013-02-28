@@ -3,7 +3,7 @@ require 'jsduck/batch_processor'
 require 'jsduck/assets'
 require 'jsduck/tag_registry'
 require 'jsduck/export_writer'
-require 'jsduck/web_writer'
+require 'jsduck/web/writer'
 
 module JsDuck
 
@@ -47,7 +47,7 @@ module JsDuck
     end
 
     def generate_web_page
-      WebWriter.new(@relations, @assets, @parsed_files, @opts).write
+      Web::Writer.new(@relations, @assets, @parsed_files, @opts).write
     end
 
   end

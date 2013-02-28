@@ -3,10 +3,10 @@ require 'jsduck/util/parallel'
 require 'fileutils'
 
 module JsDuck
-  module Source
+  module Web
 
     # Writes HTML JavaScript/CSS source into HTML files.
-    class Writer
+    class Source
       def initialize(source_files)
         @source_files = source_files
       end
