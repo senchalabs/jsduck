@@ -1,4 +1,5 @@
 require 'jsduck/util/json'
+require 'jsduck/util/md5'
 require 'jsduck/web/icons'
 require 'jsduck/web/search'
 require 'jsduck/tag_registry'
@@ -14,7 +15,9 @@ module JsDuck
         @opts = opts
       end
 
-      # Writes classes, guides, videos, and search data to one big .js file
+      # Writes classes, guides, videos, and search data to one big .js file.
+      # Then Renames the file so it contains an MD5 hash inside it,
+      # returning the resulting fingerprinted name.
       def write(filename)
         js = "Docs = " + Util::Json.generate({
           :data => {
@@ -34,7 +37,10 @@ module JsDuck
             :commentsDomain => @opts.comments_domain,
           }
         }) + ";\n"
+
         File.open(filename, 'w') {|f| f.write(js) }
+
+        Util::MD5.rename(filename)
       end
 
     end

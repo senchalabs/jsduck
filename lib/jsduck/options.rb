@@ -46,7 +46,6 @@ module JsDuck
     attr_accessor :template_dir
     attr_accessor :template_links
     attr_accessor :extjs_path
-    attr_accessor :data_path
     attr_accessor :local_storage_db
     attr_accessor :touch_examples_ui
     attr_accessor :ext_namespaces
@@ -125,7 +124,6 @@ module JsDuck
       @template_dir = @root_dir + "/template-min"
       @template_links = false
       @extjs_path = "extjs/ext-all.js"
-      @data_path = nil # This gets assigned in JsDuck::WebWriter after writing the data file.
       @local_storage_db = "docs"
       @touch_examples_ui = false
       @imports = []

@@ -8,9 +8,10 @@ module JsDuck
 
     # Deals with creation of main HTML or PHP files.
     class IndexHtml
-      def initialize(assets, opts)
+      def initialize(assets, opts, paths={})
         @assets = assets
         @opts = opts
+        @paths = paths
       end
 
       # In normal mode creates index.html.
@@ -36,13 +37,13 @@ module JsDuck
           "{header}" => @opts.header,
           "{footer}" => "<div id='footer-content' style='display: none'>#{@opts.footer}</div>",
           "{extjs_path}" => @opts.extjs_path,
-          "{data_path}" => File.basename(@opts.data_path),
+          "{data_path}" => File.basename(@paths[:data]),
+          "{css_path}" => File.basename(@paths[:css]),
           "{welcome}" => @assets.welcome.to_html("display:none"),
           "{categories}" => @assets.categories.to_html("display:none"),
           "{guides}" => @assets.guides.to_html("display:none"),
           "{head_html}" => @opts.head_html,
           "{body_html}" => @opts.body_html,
-          "{head_css}" => TagRegistry.css,
         })
       end
 
@@ -50,7 +51,7 @@ module JsDuck
         write_template(in_file, out_file, {
           "{title}" => @opts.title,
           "{header}" => @opts.header,
-          "{head_css}" => TagRegistry.css,
+          "{css_path}" => File.basename(@paths[:css]),
         })
       end
 
@@ -63,7 +64,7 @@ module JsDuck
           "{header}" => @opts.header,
           "{categories}" => categories ? "<h1>API Documentation</h1> #{categories}" : "",
           "{guides}" => guides ? "<h1>Guides</h1> #{guides}" : "",
-          "{head_css}" => TagRegistry.css,
+          "{css_path}" => File.basename(@paths[:css]),
         })
       end
 
