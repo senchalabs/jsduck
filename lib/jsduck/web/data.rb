@@ -35,6 +35,7 @@ module JsDuck
             :source => @opts.source,
             :commentsUrl => @opts.comments_url,
             :commentsDomain => @opts.comments_domain,
+            :message => @opts.message,
           }
         }) + ";\n"
 

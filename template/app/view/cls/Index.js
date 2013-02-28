@@ -22,7 +22,7 @@ Ext.define('Docs.view.cls.Index', {
             '{categories}'
         );
         this.data = {
-            notice: Docs.ContentGrabber.get("notice-text"),
+            notice: Docs.data.message || Docs.ContentGrabber.get("notice-text"),
             categories: Docs.ContentGrabber.get("categories-content")
         };
 
