@@ -50,7 +50,9 @@ module JsDuck::Tag
       im_len = implicit.length
 
       if ex_len == 0 || im_len == 0
-        # Skip
+        # Skip when either no implicit or explicit params
+      elsif ex_len != im_len && explicit.last[:type] =~ /\.\.\.$/
+        # Skip when vararg params are in play.
       elsif ex_len < im_len
         # Warn when less parameters documented than found from code.
         JsDuck::Logger.warn(:param_count, "Detected #{im_len} params, but only #{ex_len} documented.", file[:filename], file[:linenr])
