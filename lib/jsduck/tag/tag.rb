@@ -23,7 +23,10 @@ module JsDuck::Tag
     # the documentation following this tag will get added to the :doc
     # field of the tag and will later be accessible in #process_doc
     # method.
-    def parse_doc(p)
+    #
+    # Also a hash with position information {:filename, :linenr} is
+    # passed in.
+    def parse_doc(scanner, position)
     end
 
     # Defines the symbol under which the tag data is stored in final

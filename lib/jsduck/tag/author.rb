@@ -11,7 +11,7 @@ module JsDuck::Tag
     end
 
     # @author Name of Author <email@example.com> ...
-    def parse_doc(p)
+    def parse_doc(p, pos)
       name = p.match(/[^<\n]*/).strip
       if p.look(/</)
         p.match(/</)

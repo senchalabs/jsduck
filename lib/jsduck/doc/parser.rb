@@ -85,7 +85,7 @@ module JsDuck
           match(/\w+/)
           hw # Skip the whitespace right after the tag.
 
-          tags = tag.parse_doc(self)
+          tags = tag.parse_doc(self, @position)
           if tags.is_a?(Hash)
             add_tag(tags)
           elsif tags.is_a?(Array)

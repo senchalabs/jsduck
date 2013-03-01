@@ -14,7 +14,7 @@ module JsDuck::Tag
     # @extends classname
     # or
     # @extends {classname}
-    def parse_doc(p)
+    def parse_doc(p, pos)
       if p.match(/\{/)
         cls = p.ident_chain
         p.match(/\}/)

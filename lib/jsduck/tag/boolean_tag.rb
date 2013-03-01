@@ -12,7 +12,7 @@ module JsDuck::Tag
     end
 
     # Parses just the name of the tag.
-    def parse_doc(p)
+    def parse_doc(p, pos)
       {:tagname => @tagname}
     end
 

@@ -13,7 +13,7 @@ module JsDuck::Tag
   # #parse_ext_define to work.
   #
   class ClassListTag < Tag
-    def parse_doc(p)
+    def parse_doc(p, pos)
       {
         :tagname => @tagname,
         :classes => classname_list(p),

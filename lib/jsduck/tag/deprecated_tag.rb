@@ -25,7 +25,7 @@ module JsDuck::Tag
       end
     end
 
-    def parse_doc(p)
+    def parse_doc(p, pos)
       {
         :tagname => @tagname,
         :version => p.match(/[0-9.]+/),

@@ -10,7 +10,7 @@ module JsDuck::Tag
     end
 
     # Parses: @aside [ guide | video| example ] name
-    def parse_doc(p)
+    def parse_doc(p, pos)
       {
         :tagname => :aside,
         :type => aside_type(p),

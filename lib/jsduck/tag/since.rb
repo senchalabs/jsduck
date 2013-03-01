@@ -9,7 +9,7 @@ module JsDuck::Tag
       @html_position = POS_SINCE
     end
 
-    def parse_doc(p)
+    def parse_doc(p, pos)
       {
         :tagname => :since,
         :version => p.match(/.*$/).strip,

@@ -15,7 +15,7 @@ module JsDuck::Tag
     end
 
     # @var {Type} [name=default] ...
-    def parse_doc(p)
+    def parse_doc(p, pos)
       p.standard_tag({:tagname => :css_var, :type => true, :name => true})
     end
 
