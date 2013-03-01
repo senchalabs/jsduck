@@ -38,7 +38,7 @@ module JsDuck
       def apply_tpl(url, alt_text)
         img = @images.get(url)
         if !img
-          Logger.warn(:image, "Image #{url} not found.", @doc_context[:filename], @doc_context[:linenr])
+          Logger.warn(:image, "Image #{url} not found.", @doc_context)
           img = {}
         end
 

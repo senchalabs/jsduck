@@ -78,9 +78,8 @@ module JsDuck
       end
 
       def warn(msg, tags)
-        ctx = @doc_context
         tag_list = tags.map {|tag| "<#{tag}>" }.join(", ")
-        Logger.warn(:html, "#{msg}: #{tag_list}", ctx[:filename], ctx[:linenr])
+        Logger.warn(:html, "#{msg}: #{tag_list}", @doc_context)
       end
 
       def void?(tag)

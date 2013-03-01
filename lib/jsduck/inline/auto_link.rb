@@ -97,7 +97,7 @@ module JsDuck
       end
 
       def warn_magic_link(msg)
-        Logger.warn(:link_auto, msg, @doc_context[:filename], @doc_context[:linenr])
+        Logger.warn(:link_auto, msg, @doc_context)
       end
 
     end

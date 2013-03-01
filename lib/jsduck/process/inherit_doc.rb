@@ -182,11 +182,10 @@ module JsDuck
       end
 
       def warn(msg, item)
-        context = item[:files][0]
         i_member = item[:inheritdoc][:member]
 
         msg = "@inheritdoc #{item[:inheritdoc][:cls]}"+ (i_member ? "#" + i_member : "") + " - " + msg
-        Logger.warn(:inheritdoc, msg, context[:filename], context[:linenr])
+        Logger.warn(:inheritdoc, msg, item[:files][0])
 
         return nil
       end

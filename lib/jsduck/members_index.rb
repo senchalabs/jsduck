@@ -97,9 +97,8 @@ module JsDuck
           if hash1[name]
             hash1.delete(name)
           else
-            ctx = m[:files][0]
             msg = "@hide used but #{m[:tagname]} #{m[:name]} not found in parent class"
-            Logger.warn(:hide, msg, ctx[:filename], ctx[:linenr])
+            Logger.warn(:hide, msg, m[:files][0])
           end
         else
           if hash1[name]

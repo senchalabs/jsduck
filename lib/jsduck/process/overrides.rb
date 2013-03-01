@@ -37,8 +37,7 @@ module JsDuck
       def process(override)
         target = @classes_hash[override[:override]]
         unless target
-          ctx = override[:files][0]
-          return Logger.warn(:extend, "Class #{override[:override]} not found", ctx[:filename], ctx[:linenr])
+          return Logger.warn(:extend, "Class #{override[:override]} not found", override[:files][0])
         end
 
         # Combine comments of classes

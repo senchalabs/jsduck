@@ -60,8 +60,7 @@ module JsDuck
           if m[:tagname] == :property
             false
           else
-            f = m[:files][0]
-            Logger.warn(:enum, "Enums can only contain properties, #{m[:tagname]} found instead.", f[:filename], f[:linenr])
+            Logger.warn(:enum, "Enums can only contain properties, #{m[:tagname]} found instead.", m[:files][0])
             true
           end
         end

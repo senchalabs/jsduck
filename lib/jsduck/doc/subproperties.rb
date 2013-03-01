@@ -48,7 +48,7 @@ module JsDuck
               parent[:properties] << it
             else
               msg = "Ignoring subproperty #{$1}.#{$2}, no parent found with name '#{$1}'."
-              Logger.warn(:subproperty, msg, pos[:filename], pos[:linenr])
+              Logger.warn(:subproperty, msg, pos)
             end
           else
             items << it

@@ -93,7 +93,16 @@ module JsDuck
     # warnings greatly also when run multiple processes.
     #
     # Optionally filename and line number will be inserted to message.
+    # These two last arguments can also be supplied as one hash of:
+    #
+    #     {:filename => "foo.js", :linenr => 17}
+    #
     def warn(type, msg, filename=nil, line=nil)
+      if filename.is_a?(Hash)
+        line = filename[:linenr]
+        filename = filename[:filename]
+      end
+
       msg = paint(:yellow, "Warning: ") + format(filename, line) + " " + msg
 
       if type == nil || @warnings[type]

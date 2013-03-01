@@ -21,8 +21,7 @@ module JsDuck
         @classes_hash["global"][:members].each do |m|
           type = m[:tagname].to_s
           name = m[:name]
-          file = m[:files][0]
-          Logger.warn(:global, "Global #{type}: #{name}", file[:filename], file[:linenr])
+          Logger.warn(:global, "Global #{type}: #{name}", m[:files][0])
         end
 
         # Throw away the "global" class when --ignore-global option used

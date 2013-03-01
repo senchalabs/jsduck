@@ -115,8 +115,7 @@ module JsDuck
         # simplest thing and ignore it.
         Class.new({:name => classname}, false)
       else
-        context = @doc[:files][0]
-        Logger.warn(:extend, "Class #{classname} not found", context[:filename], context[:linenr])
+        Logger.warn(:extend, "Class #{classname} not found", @doc[:files][0])
         # Create placeholder class
         Class.new({:name => classname}, false)
       end

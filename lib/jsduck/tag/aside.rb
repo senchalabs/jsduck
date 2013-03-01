@@ -62,8 +62,7 @@ module JsDuck::Tag
     end
 
     def warn(msg, context)
-      file = context[:files][0]
-      JsDuck::Logger.warn(:aside, msg, file[:filename], file[:linenr])
+      JsDuck::Logger.warn(:aside, msg, context[:files][0])
       nil
     end
 
