@@ -305,6 +305,17 @@ module JsDuck
         name = @cls[:name]
       end
 
+      if m[:tagname] == :method && @opts.rest
+          httpMethod = "ERROR "
+          if m[:httpMethod]
+              httpMethod = m[:httpMethod]
+          else 
+             print "HTTP method not set for " + m[:name] + " in " + m[:files] + "\n"
+          end
+          before = "<strong class='http-method'>" + httpMethod + " </strong>"
+          name = m[:url]
+      end
+          
       if m[:tagname] == :cfg || m[:tagname] == :property || m[:tagname] == :css_var
         params = "<span> : #{m[:html_type]}</span>"
       # For REST docs, skip the params in the signature

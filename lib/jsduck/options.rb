@@ -458,8 +458,6 @@ module JsDuck
 
     # scans directory for .js files or simply adds file to input files list
     def read_filenames(fname)
-      print "In read_filenames, fname is: " + fname.to_s + "\n"
-      print "@rest is: " + @rest.to_s + "\n"
       if @rest
         fname_pattern = "/**/*.{yml}"
       else
@@ -476,7 +474,6 @@ module JsDuck
       else
         Logger.instance.warn(nil, "File #{fname} not found")
       end
-      print "Read filenames, list is: " + @input_files.to_s + "\n"
     end
 
     # Extracts files of first build in jsb file

@@ -48,7 +48,6 @@ module JsDuck
 
     # Parses the YAML file
     def parse
-      print "Parsing: " + @filename + "\n"
       begin 
         data = YAML.load(@contents)
       rescue Exception => e
@@ -76,6 +75,10 @@ module JsDuck
             objects << @currentObject
         elsif item[0] == "description"
             @currentObject[:doc] = item[1]
+        elsif item[0] == "private"
+            @currentObject[:private] = item[1]
+        elsif item[0] == "mixin"
+            @currentObject[:mixins] << item[1]
         elsif item[0] == "methods"
             item[1].each do |method|
                objects << parse_method(method)
@@ -89,7 +92,7 @@ module JsDuck
                objects << parse_example(ex)
             end
         else
-            print "Skipping tag: " + item[0] + "\n"
+            print "Warning: Skipping tag " + item[0] + "\n"
         end
       end
       objects
@@ -103,16 +106,21 @@ module JsDuck
             :doc => method["description"],
             :files => [ @fakefile ],
             :meta => {
-                [:hide] => false
+                :hide => false,
+                :loginRequired => false
             },
+            :url => "Error: No URL set for this method.",
+            :httpMethod => "GET",
             :return => { 
                 :type => "undefined"
             },
             :examples => []
         }
+        if not methodHash.has_key?(:url)
+            print "Error: method " + method["name"] + " in " + @fakefile + " missing URL\n"
+        end
         method.each do |tag|
             if tag[0] == "parameters"
-                print "Found " + tag[1].length.to_s + " parameters. \n"
                 tag[1].each do |param|
                     if not methodHash.has_key?(:params)
                         methodHash[:params] = []
@@ -134,9 +142,15 @@ module JsDuck
                     methodHash[:examples] << parse_example(ex)
                 end
             elsif tag[0] == "http-method"
-                methodHash[:httpMethod] = tag[1]
+                httpmethod = tag[1]
+                if not httpmethod
+                    print "Error, bad HTTP method in "+ method["name"] + " in " + @fakefile + " \n"
+                end
+                methodHash[:httpMethod] = httpmethod.upcase
+            elsif tag[0] == "url"
+                methodHash[:url] = tag[1]
             elsif tag[0] == "login-required"
-                methodHash[:loginRequired] = tag[1]
+                methodHash[:meta][:loginRequired] = tag[1]
             end
         end
         methodHash
