@@ -37,7 +37,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
     // Also sort top level packages as determined by the topLevelNames dict.
     compare: function(a, b) {
         var aa, bb;
-        var topLevelNames = { "Global": 0,  "Alloy": 1, "Titanium": 2 };
+        var topLevelNames = { "Global": 0,  "Alloy": 1, "Modules": 2, "Titanium": 3 };
         if (a.text in topLevelNames && b.text in topLevelNames) {
             aa = topLevelNames[a.text];
             bb = topLevelNames[b.text];
