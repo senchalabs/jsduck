@@ -27,9 +27,8 @@ module JsDuck
     # JsDuck::DocFormatter.
     #
     class Parser < Doc::Scanner
-      def parse(input, filename="", linenr=0)
-        @filename = filename
-        @linenr = linenr
+      def parse(input, filename="", linenr = 0)
+        @position = {:filename => filename, :linenr => linenr}
         @tags = []
         @input = StringScanner.new(Doc::Comment.purify(input))
 
@@ -95,7 +94,7 @@ module JsDuck
 
           skip_white
         else
-          Logger.warn(:tag, "Unsupported tag: @#{name}", @filename, @linenr)
+          Logger.warn(:tag, "Unsupported tag: @#{name}", @position)
           @multiline_tag[:doc] += "@"
         end
       end
