@@ -18,6 +18,7 @@ module JsDuck
         [:extend, "@extend/mixin/requires/uses referring to unknown class"],
         [:tag, "Use of unsupported @tag"],
         [:tag_repeated, "An @tag used multiple times, but only once allowed"],
+        [:tag_syntax, "@tag syntax error"],
         [:link, "{@link} to unknown class or member"],
         [:link_ambiguous, "{@link} is ambiguous"],
         [:link_auto, "Auto-detected link to unknown class or member"],

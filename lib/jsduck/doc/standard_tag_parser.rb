@@ -30,6 +30,7 @@ module JsDuck
       # were specified and how their matching succeeded.
       #
       def parse(cfg)
+        @tagname = cfg[:tagname]
         tag = {:tagname => cfg[:tagname]}
         add_type(tag) if cfg[:type]
         add_name_with_default(tag) if cfg[:name]
@@ -61,7 +62,7 @@ module JsDuck
           optional = nil
         end
 
-        match(/\}/)
+        match(/\}/) or warn("@#{tagname} tag syntax: '}' expected")
 
         return {:type => name, :optional => optional}
       end
@@ -71,10 +72,10 @@ module JsDuck
         if hw.match(/\[/)
           tag[:name] = hw.ident_chain
           if hw.match(/=/)
-          hw
-          tag[:default] = default_value
-        end
-        hw.match(/\]/)
+            hw
+            tag[:default] = default_value
+          end
+          hw.match(/\]/) or warn("@#{tagname} tag syntax: ']' expected")
           tag[:optional] = true
         else
           tag[:name] = hw.ident_chain
@@ -147,6 +148,10 @@ module JsDuck
 
       def hw
         @ds.hw
+      end
+
+      def warn(msg)
+        @ds.warn(:tag_syntax, msg)
       end
     end
 

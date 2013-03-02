@@ -16,6 +16,7 @@ module JsDuck
         @ident_chain_pattern = /[$\w-]+(\.[$\w-]+)*/
 
         @input = nil # set to StringScanner in subclass
+        @position = {} # set in subclass
       end
 
       # Provides access to StringScanner
@@ -68,6 +69,11 @@ module JsDuck
       def hw
         @input.scan(/[ \t]+/)
         self
+      end
+
+      # Prints a warning message
+      def warn(type, msg)
+        Logger.warn(type, msg, @position)
       end
 
     end

@@ -95,14 +95,14 @@ module JsDuck
 
           if !tag.repeatable
             if @non_repeatable_tags[name]
-              Logger.warn(:tag_repeated, "@#{name} tag can occur only once per doc-comment", @position)
+              warn(:tag_repeated, "@#{name} tag can occur only once per doc-comment")
             end
             @non_repeatable_tags[name] = true
           end
 
           skip_white
         else
-          Logger.warn(:tag, "Unsupported tag: @#{name}", @position)
+          warn(:tag, "Unsupported tag: @#{name}")
           @multiline_tag[:doc] += "@"
         end
       end
