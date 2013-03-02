@@ -15,12 +15,6 @@ module JsDuck
       def generate
         @categories = Util::Json.read(@filename)
 
-        # Don't crash if old syntax is used.
-        if @categories.is_a?(Hash) && @categories["categories"]
-          Logger.warn(nil, 'Update categories file to contain just the array inside {"categories": [...]}', @filename)
-          @categories = @categories["categories"]
-        end
-
         # Perform expansion on all class names containing * wildcard
         @categories.each do |cat|
           cat["groups"].each do |group|
