@@ -6,6 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "cfg"
       @tagname = :cfg
+      @repeatable = true
       @member_type = {
         :name => :cfg,
         :category => :property_like,

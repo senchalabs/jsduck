@@ -4,6 +4,7 @@ module JsDuck::Tag
   class Ftype < Xtype
     def initialize
       @pattern = "ftype"
+      @repeatable = true
     end
 
     # @ftype name

@@ -5,6 +5,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "uses"
       @tagname = :uses
+      @repeatable = true
       @ext_define_pattern = "uses"
       @ext_define_default = {:uses => []}
     end

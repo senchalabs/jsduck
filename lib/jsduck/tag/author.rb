@@ -8,6 +8,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "author"
       @tagname = :author
+      @repeatable = true
     end
 
     # @author Name of Author <email@example.com> ...

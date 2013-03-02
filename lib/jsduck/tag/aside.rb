@@ -6,6 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "aside"
       @tagname = :aside
+      @repeatable = true
       @html_position = POS_ASIDE
     end
 

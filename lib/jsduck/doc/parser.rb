@@ -30,6 +30,7 @@ module JsDuck
       def parse(input, filename="", linenr = 0)
         @position = {:filename => filename, :linenr => linenr}
         @tags = []
+        @non_repeatable_tags = {}
         @input = StringScanner.new(Doc::Comment.purify(input))
 
         parse_loop
@@ -90,6 +91,13 @@ module JsDuck
             add_tag(tags)
           elsif tags.is_a?(Array)
             tags.each {|t| add_tag(t) }
+          end
+
+          if !tag.repeatable
+            if @non_repeatable_tags[name]
+              Logger.warn(:tag_repeated, "@#{name} tag can occur only once per doc-comment", @position)
+            end
+            @non_repeatable_tags[name] = true
           end
 
           skip_white

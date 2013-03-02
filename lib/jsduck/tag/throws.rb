@@ -6,6 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "throws"
       @tagname = :throws
+      @repeatable = true
       @html_position = POS_THROWS
     end
 

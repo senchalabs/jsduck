@@ -6,6 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "xtype"
       @ext_define_pattern = "xtype"
+      @repeatable = true
     end
 
     # @xtype name

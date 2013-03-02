@@ -6,6 +6,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "alias"
       @tagname = :aliases
+      @repeatable = true
       @ext_define_pattern = "alias"
       @ext_define_default = {:aliases => []}
       @merge_context = :class

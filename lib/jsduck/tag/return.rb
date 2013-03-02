@@ -7,6 +7,7 @@ module JsDuck::Tag
     def initialize
       @pattern = ["return", "returns"]
       @tagname = :return
+      @repeatable = true
       @html_position = POS_RETURN
     end
 

@@ -9,6 +9,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "param"
       @tagname = :params
+      @repeatable = true
       @merge_context = :method_like
       @html_position = POS_PARAM
     end

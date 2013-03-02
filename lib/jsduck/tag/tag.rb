@@ -6,6 +6,11 @@ module JsDuck::Tag
     # For example: "cfg"
     attr_reader :pattern
 
+    # Set to true to allow the tag to occour multiple times within one
+    # doc-comment.  By default a tag can only appear once and when
+    # it's detected several times a warning will be generated.
+    attr_reader :repeatable
+
     # Called by DocParser when the @tag is reached to do the parsing
     # from that point forward.  Gets passed an instance of DocScanner.
     #

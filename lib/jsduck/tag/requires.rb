@@ -5,6 +5,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "requires"
       @tagname = :requires
+      @repeatable = true
       @ext_define_pattern = "requires"
       @ext_define_default = {:requires => []}
     end
