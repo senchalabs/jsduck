@@ -62,7 +62,7 @@ module JsDuck
           optional = nil
         end
 
-        match(/\}/) or warn("@#{tagname} tag syntax: '}' expected")
+        match(/\}/) or warn("@#{@tagname} tag syntax: '}' expected")
 
         return {:type => name, :optional => optional}
       end
@@ -75,7 +75,7 @@ module JsDuck
             hw
             tag[:default] = default_value
           end
-          hw.match(/\]/) or warn("@#{tagname} tag syntax: ']' expected")
+          hw.match(/\]/) or warn("@#{@tagname} tag syntax: ']' expected")
           tag[:optional] = true
         else
           tag[:name] = hw.ident_chain
