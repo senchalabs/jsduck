@@ -40,14 +40,26 @@ module JsDuck
       # print warning for each class or public member with no name
       def warn_no_doc
         @relations.each do |cls|
-          if cls[:doc] == ""
+
+          if cls[:doc] == "" && !cls[:private]
             warn(:no_doc, "No documentation for #{cls[:name]}", cls)
           end
-        end
-        each_member do |member|
-          if member[:doc] == "" && !member[:private] && !member[:hide] && !JsDuck::Class.constructor?(member)
-            warn(:no_doc, "No documentation for #{member[:owner]}##{member[:name]}", member)
+
+          cls.all_local_members.each do |member|
+            if !member[:private] && !member[:hide] && !JsDuck::Class.constructor?(member)
+              if member[:doc] == ""
+                warn(:no_doc, "No documentation for #{member[:owner]}##{member[:name]}", member)
+              end
+
+              (member[:params] || []).each do |p|
+                if p[:doc] == ""
+                  warn(:no_doc, "No documentation for parameter #{p[:name]} of #{member[:owner]}##{member[:name]}", member)
+                end
+              end
+
+            end
           end
+
         end
       end
 

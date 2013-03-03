@@ -26,7 +26,7 @@ module JsDuck
 
         [:alt_name, "Name used as both classname and alternate classname"],
         [:name_missing, "Member or parameter has no name"],
-        [:no_doc, "Member or class without documentation"],
+        [:no_doc, "Public class or member without documentation"],
         [:dup_param, "Method has two parameters with the same name"],
         [:dup_member, "Class has two members with the same name"],
         [:req_after_opt, "Required parameter comes after optional"],
