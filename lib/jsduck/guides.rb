@@ -165,6 +165,7 @@ module JsDuck
     # Creates table of contents at the top of guide by looking for <h2> elements in HTML.
     def add_toc(guide, html)
       toc = [
+        "<div class='toc'>\n",
         "<p><strong>Contents</strong></p>\n",
         "<ul class='toc'>\n",
       ]
@@ -179,10 +180,15 @@ module JsDuck
           new_html << line
         end
       end
-      toc << "</ul>\n"
-      # Inject TOC at below first heading
-      new_html.insert(1, toc)
-      new_html.flatten.join
+      toc << "</ul></div>\n"
+      # Don't insert TOC if it's empty
+      if i > 0
+        # Inject TOC at below first heading
+        new_html.insert(1, toc)
+        new_html.flatten.join
+      else
+        html
+      end
     end
 
     # Returns all guides as array
