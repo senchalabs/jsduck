@@ -52,7 +52,7 @@ module JsDuck
       # When running JSDuck app, the Options class enables most warnings.
       @warnings = {}
       @warning_docs.each do |w|
-        @warnings[w[0]] = false
+        @warnings[w[0]] = {:enabled => false, :patterns => []}
       end
 
       @shown_warnings = {}
@@ -65,15 +65,26 @@ module JsDuck
       end
     end
 
-    # Enabled or disables a particular warning
-    # or all warnings when type == :all
-    def set_warning(type, enabled)
+    # Enables or disables a particular warning
+    # or all warnings when type == :all.
+    # Additionally a filename pattern can be specified.
+    def set_warning(type, enabled, pattern=nil)
       if type == :all
+        # When used with a pattern, only add the pattern to the rules
+        # where it can have an effect - otherwise we get a warning.
         @warnings.each_key do |key|
-          @warnings[key] = enabled
+          set_warning(key, enabled, pattern) unless pattern && @warnings[key][:enabled] == enabled
         end
       elsif @warnings.has_key?(type)
-        @warnings[type] = enabled
+        if pattern
+          if @warnings[type][:enabled] == enabled
+            warn(nil, "Warning rule '#{enabled ? '+' : '-'}#{type}:#{pattern}' has no effect")
+          else
+            @warnings[type][:patterns] << Regexp.new(Regexp.escape(pattern))
+          end
+        else
+          @warnings[type] = {:enabled => enabled, :patterns => []}
+        end
       else
         warn(nil, "Warning of type '#{type}' doesn't exist")
       end
@@ -81,7 +92,7 @@ module JsDuck
 
     # get documentation for all warnings
     def doc_warnings
-      @warning_docs.map {|w| " #{@warnings[w[0]] ? '+' : '-'}#{w[0]} - #{w[1]}" }
+      @warning_docs.map {|w| " #{@warnings[w[0]][:enabled] ? '+' : '-'}#{w[0]} - #{w[1]}" }
     end
 
     # Prints warning message.
@@ -107,16 +118,32 @@ module JsDuck
 
       msg = paint(:yellow, "Warning: ") + format(filename, line) + " " + msg
 
-      if type == nil || @warnings[type]
+      if warning_enabled?(type, filename)
         if !@shown_warnings[msg]
           $stderr.puts msg
           @shown_warnings[msg] = true
         end
-      elsif !@warnings.has_key?(type)
-        warn(nil, "Unknown warning type #{type}")
       end
 
       return false
+    end
+
+    # True when the warning is enabled for the given type and filename
+    # combination.
+    def warning_enabled?(type, filename)
+      if type == nil
+        true
+      elsif !@warnings.has_key?(type)
+        warn(nil, "Unknown warning type #{type}")
+        false
+      else
+        rule = @warnings[type]
+        if rule[:patterns].any? {|re| filename =~ re }
+          !rule[:enabled]
+        else
+          rule[:enabled]
+        end
+      end
     end
 
     # Formats filename and line number for output

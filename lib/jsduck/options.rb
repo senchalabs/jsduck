@@ -605,17 +605,33 @@ module JsDuck
         opts.on('--warnings=+A,-B,+C', Array,
           "Turns warnings selectively on/off.",
           "",
-          " +all - to turn on all warnings",
+          " +all - to turn on all warnings.",
+          " -all - to turn off all warnings.",
+          "",
+          "Additionally a pattern can be specified to only apply the",
+          "setting for a particular set of files.  For example to turn",
+          "off all warnings related to chart classes:",
+          "",
+          " -all:extjs/src/chart",
+          "",
+          "Note, that the order of the rules matters.  When you first",
+          "say +link and then -all, the result will be that all warnings",
+          "get disabled.",
+          "",
+          "Currently one can't mix disabling and enabling file patterns.",
+          "For example  --warnings=-link,+link:/src,-link:/src/ux  will",
+          "ignore the last rule about /src/ux.",
           "",
           "List of all available warning types:",
           "(Those with '+' in front of them default to on)",
           "",
           *Logger.doc_warnings) do |warnings|
           warnings.each do |op|
-            if op =~ /^([-+]?)(.*)$/
+            if op =~ /^([-+]?)(\w+)(?::(.*))?$/
               enable = !($1 == "-")
               name = $2.to_sym
-              Logger.set_warning(name, enable)
+              path = $3
+              Logger.set_warning(name, enable, path)
             end
           end
         end
