@@ -576,7 +576,7 @@ module JsDuck
           @touch_examples_ui = true
         end
 
-        opts.on('--ignore-html=TAG',
+        opts.on('--ignore-html=TAG1,TAG2', Array,
           "Ignore a particular unclosed HTML tag.",
           "",
           "Normally all tags like <foo> that aren't followed at some",
@@ -587,8 +587,10 @@ module JsDuck
           "",
           "Useful for ignoring the ExtJS preprocessor directives",
           "<locale> and <debug> which would otherwise be reported",
-          "as unclosed tags.") do |tag|
-          @ignore_html[tag] = true
+          "as unclosed tags.") do |tags|
+          tags.each do |tag|
+            @ignore_html[tag] = true
+          end
         end
 
         opts.separator ""
