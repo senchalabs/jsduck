@@ -57,16 +57,16 @@
 
   .guide-container {
     table {
-      width: 900px;
+      max-width: 900px;
       font-size: 0.9em;
       th {
         background-color: #eee;
         font-weight: bold;
-        text-align: center;
+        text-align: left;
         color: #333;
-        padding: 1px 2px; }
+        padding: 3px 5px; }
       td {
-        padding: 3px; } } }
+        padding: 3px 5px; } } }
 
   // The print button
   .print {

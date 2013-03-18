@@ -182,13 +182,14 @@ $appc-red: #9B1C1F;
 
 .doc-table {
     table,th,td {
-        border-style: solid;
-        border-width: 1px;
+        border: 1px solid #ccc;
     }
     th { 
         font-weight: bold;
+        text-align: left;
+        padding: 3px 5px 3px 5px;
     }
     th, td {
-        padding: 3px 5px 3px 5px !important;
+        padding: 3px 5px 3px 5px;
     }
 }
