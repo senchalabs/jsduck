@@ -45,7 +45,7 @@ module JsDuck
       end
 
       def render_section(sec)
-        members = @cls[:members][sec[:name]] + @cls[:statics][sec[:name]]
+        members = @cls[:members].find_all {|m| m[:tagname] == sec[:name] }
 
         # Skip rendering empty sections
         return [] if members.length == 0

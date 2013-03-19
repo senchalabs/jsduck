@@ -25,19 +25,10 @@ module JsDuck
       # removes extra data from export
       def compact(cls)
         cls.delete(:doc)
-        cls[:members] = compact_members_group(cls[:members])
-        cls[:statics] = compact_members_group(cls[:statics])
+        cls[:members] = cls[:members].map {|m| compact_member(m) }
         cls[:files] = compact_files(cls[:files])
         cls[:meta] = combine_meta(cls)
         cls
-      end
-
-      def compact_members_group(group)
-        c_group = {}
-        group.each_pair do |type, members|
-          c_group[type] = members.map {|m| compact_member(m) }
-        end
-        c_group
       end
 
       def compact_member(m)

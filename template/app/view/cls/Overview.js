@@ -283,10 +283,12 @@ Ext.define('Docs.view.cls.Overview', {
 
     buildAccessorsMap: function(name) {
         var accessors = {};
-        Ext.Array.forEach(this.docClass.members.cfg, function(m) {
-            var capName = Ext.String.capitalize(m.name);
-            accessors["get"+capName] = true;
-            accessors["set"+capName] = true;
+        Ext.Array.forEach(this.docClass.members, function(m) {
+            if (m.tagname === "cfg") {
+                var capName = Ext.String.capitalize(m.name);
+                accessors["get"+capName] = true;
+                accessors["set"+capName] = true;
+            }
         });
         return accessors;
     },
@@ -302,11 +304,7 @@ Ext.define('Docs.view.cls.Overview', {
 
     // Loops through each member of class
     eachMember: function(callback, scope) {
-        Ext.Array.forEach(['members', 'statics'], function(group) {
-            Ext.Object.each(this.docClass[group], function(type, members) {
-                Ext.Array.forEach(members, callback, scope);
-            }, this);
-        }, this);
+        Ext.Array.forEach(this.docClass.members, callback, scope);
     }
 
 });

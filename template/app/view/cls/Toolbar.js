@@ -63,13 +63,16 @@ Ext.define('Docs.view.cls.Toolbar', {
 
         Ext.Array.forEach(Docs.data.memberTypes, function(type) {
             // combine both static and instance members into one alphabetically sorted array
-            var members = this.docClass.members[type.name].concat(this.docClass.statics[type.name]);
+            var members = Ext.Array.filter(this.docClass.members, function(m) {
+                return m.tagname === type.name;
+            });
             members.sort(function(a, b) {
                 if (a.name === "constructor" && a.tagname === "method") {
                     return -1;
                 }
                 return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
             });
+
             if (members.length > 0) {
                 var btn = this.createMemberButton({
                     text: type.toolbar_title || type.title,

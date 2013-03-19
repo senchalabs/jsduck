@@ -46,7 +46,7 @@ module JsDuck::Tag
 
     def to_html(cls)
       if cls[:enum][:doc_only]
-        first = cls[:members][:property][0] || {:name => 'foo', :default => '"foo"'}
+        first = cls[:members][0] || {:name => 'foo', :default => '"foo"'}
         [
           "<div class='rounded-box enum-box'>",
           "<p><strong>ENUM:</strong> ",
