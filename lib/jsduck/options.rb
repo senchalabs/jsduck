@@ -35,6 +35,7 @@ module JsDuck
     attr_accessor :eg_iframe
     attr_accessor :examples_base_url
     attr_accessor :tests
+    attr_accessor :rest
 
     # Debugging
     attr_accessor :processes
@@ -293,6 +294,12 @@ module JsDuck
           @tests = true
         end
 
+        opts.on('--rest', "Creates REST docs from YML input.", " ") do
+          @rest = true
+          # automatically disable source for YML input -- no source files to link to.
+          @source = false
+        end
+
         opts.on('--stats',
           "Creates page with all kinds of statistics. Experimental!", " ") do
           @stats = true
@@ -451,9 +458,14 @@ module JsDuck
 
     # scans directory for .js files or simply adds file to input files list
     def read_filenames(fname)
+      if @rest
+        fname_pattern = "/**/*.{yml}"
+      else
+        fname_pattern = "/**/*.{js,css,scss}"
+      end
       if File.exists?(fname)
         if File.directory?(fname)
-          Dir[fname+"/**/*.{js,css,scss}"].each {|f| @input_files << f }
+          Dir[fname+fname_pattern].each {|f| @input_files << f }
         elsif fname =~ /\.jsb3$/
           extract_jsb_files(fname).each {|fn| read_filenames(fn) }
         else

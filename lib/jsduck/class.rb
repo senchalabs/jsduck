@@ -122,7 +122,11 @@ module JsDuck
     # See members_hash for details.
     def members(type, context=:members)
       ms = members_hash(type, context).values #.find_all {|m| !m[:private] }
-      ms.sort! {|a,b| a[:name] <=> b[:name] }
+      begin
+        ms.sort! {|a,b| a[:name] <=> b[:name] }
+      rescue
+        print "Error sorting mebers hash for " + @doc[:name] 
+      end
       type == :method ? constructor_first(ms) : ms
     end
 
@@ -347,6 +351,7 @@ module JsDuck
         :event => [],
         :css_var => [],
         :css_mixin => [],
+        :example => []
       }
     end
   end

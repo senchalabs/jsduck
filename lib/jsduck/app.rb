@@ -24,6 +24,7 @@ require 'jsduck/examples_exporter'
 require 'jsduck/inline_examples'
 require 'jsduck/guide_writer'
 require 'jsduck/stdout'
+require 'jsduck/rest_file'
 require 'fileutils'
 
 module JsDuck
@@ -42,11 +43,17 @@ module JsDuck
 
     # Call this after input parameters set
     def run
+    if @opts.rest
+      rest_docs = parallel_parse_rest(@opts.input_files)
+      rest_objs = aggregate(rest_docs)
+      @relations = filter_classes(rest_objs)
+    else
       parsed_files = parallel_parse(@opts.input_files)
       result = aggregate(parsed_files)
       @relations = filter_classes(result)
       InheritDoc.new(@relations).resolve_all
       Lint.new(@relations).run
+    end
 
       # Initialize guides, videos, examples, ...
       @assets = Assets.new(@relations, @opts)
@@ -113,6 +120,17 @@ module JsDuck
       end
     end
 
+    def parallel_parse_rest(filenames)
+      @parallel.map(filenames) do |fname|
+        Logger.instance.log("Parsing", fname)
+        begin
+          RestFile.new(JsDuck::IO.read(fname), fname, @opts)
+        rescue
+          Logger.instance.fatal("Error while parsing #{fname}", $!)
+          exit(1)
+        end
+      end
+    end
     # Aggregates parsing results sequencially
     def aggregate(parsed_files)
       agr = Aggregator.new
@@ -121,10 +139,12 @@ module JsDuck
         agr.aggregate(file)
       end
       agr.classify_orphans
-      agr.create_global_class
-      agr.remove_ignored_classes
-      agr.create_accessors
-      agr.append_ext4_event_options
+      if ! @opts.rest
+        agr.create_global_class
+        agr.remove_ignored_classes
+        agr.create_accessors
+        agr.append_ext4_event_options
+      end
       agr.result
     end
 

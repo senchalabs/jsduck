@@ -99,7 +99,10 @@ module JsDuck
 
 
     def load_guide(guide)
-      in_dir = @path + "/guides/" + guide["name"]
+      if not guide.has_key?("url")
+         guide["url"] = "guides/" + guide["name"]
+      end
+      in_dir = @path + "/" + guide["url"]
 
       return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
       html_guide_file = in_dir + "/README.html"
@@ -132,7 +135,7 @@ module JsDuck
     def write_guide(guide, dir)
       return unless guide[:html]
 
-      in_dir = @path + "/guides/" + guide["name"]
+      in_dir = @path + "/" + guide["url"]
       out_dir = dir + "/" + guide["name"]
 
       Logger.instance.log("Writing guide", out_dir)
@@ -162,6 +165,7 @@ module JsDuck
     # Creates table of contents at the top of guide by looking for <h2> elements in HTML.
     def add_toc(guide, html)
       toc = [
+        "<div class='toc'>\n",
         "<p><strong>Contents</strong></p>\n",
         "<ul class='toc'>\n",
       ]
@@ -176,10 +180,15 @@ module JsDuck
           new_html << line
         end
       end
-      toc << "</ul>\n"
-      # Inject TOC at below first heading
-      new_html.insert(1, toc)
-      new_html.flatten.join
+      toc << "</ul></div>\n"
+      # Don't insert TOC if it's empty
+      if i > 0
+        # Inject TOC at below first heading
+        new_html.insert(1, toc)
+        new_html.flatten.join
+      else
+        html
+      end
     end
 
     # Returns all guides as array
@@ -225,7 +234,7 @@ module JsDuck
 
     # Extracts guide icon URL from guide hash
     def icon_url(guide)
-      "guides/" + guide["name"] + "/icon.png"
+      guide["name"] + "/icon.png"
     end
 
   end

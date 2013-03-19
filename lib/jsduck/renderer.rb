@@ -199,15 +199,16 @@ module JsDuck
     end
 
     def render_all_sections
+      properties = (@opts.rest && "Fields") || "Properties"
       sections = [
-        {:type => :property, :title => "Properties"},
+        {:type => :property, :title => properties },
         {:type => :method, :title => "Methods"},
         {:type => :event, :title => "Events"},
         {:type => :css_var, :title => "CSS Variables"},
-        {:type => :css_mixin, :title => "CSS Mixins"},
+        {:type => :css_mixin, :title => "CSS Mixins"}
       ]
 
-      render_configs_section + sections.map {|sec| render_section(sec) }
+      render_configs_section + sections.map {|sec| render_section(sec) } 
     end
 
     def render_configs_section
@@ -304,9 +305,21 @@ module JsDuck
         name = @cls[:name]
       end
 
+      if m[:tagname] == :method && @opts.rest
+          httpMethod = "ERROR "
+          if m[:httpMethod]
+              httpMethod = m[:httpMethod]
+          else 
+             print "HTTP method not set for " + m[:name] + " in " + m[:files] + "\n"
+          end
+          before = "<strong class='http-method'>" + httpMethod + " </strong>"
+          name = m[:url]
+      end
+          
       if m[:tagname] == :cfg || m[:tagname] == :property || m[:tagname] == :css_var
         params = "<span> : #{m[:html_type]}</span>"
-      elsif m[:tagname] != :event
+      # For REST docs, skip the params in the signature
+      elsif m[:tagname] != :event && ! @opts.rest
         ps = m[:params].map {|p| render_short_param(p) }.join(", ")
         params = "( <span class='pre'>#{ps}</span> )"
         if m[:tagname] == :method && m[:return][:type] != "undefined"
@@ -351,6 +364,10 @@ module JsDuck
 
       doc << render_params_and_return(m)
 
+      if @opts.rest
+          doc << render_examples(m)
+      end
+
       if m[:overrides]
         overrides = m[:overrides].map {|o| render_link(o[:owner], o) }.join(", ")
         doc << "<p>Overrides: #{overrides}</p>"
@@ -391,10 +408,22 @@ module JsDuck
         ]
       end
 
-      if item[:return]
-        doc << render_return(item[:return])
-      elsif ret
-        doc << render_return(ret)
+      if @opts.rest
+        if item[:response] && item[:response].length > 0
+          doc << '<h3 class="pa">Response Parameters</h3>'
+          doc << [
+              "<ul>",
+              item[:response].map {|p| render_long_param(p) },
+              "</ul>"
+          ]
+        end
+
+      else
+        if item[:return]
+          doc << render_return(item[:return])
+        elsif ret
+          doc << render_return(ret)
+        end
       end
 
       if item[:throws]
@@ -405,11 +434,19 @@ module JsDuck
     end
 
     def render_long_param(p)
+      # for REST, default to optional parameters
+      if @opts.rest
+        optional = ""
+        required = ' <strong class="required signature">required</strong>'
+      else
+        optional = " (optional)"
+        required = ""
+      end
       return [
         "<li>",
           "<span class='pre'>#{p[:name]}</span> : ",
           p[:html_type],
-          p[:optional] ? " (optional)" : "",
+          p[:optional] ? optional : required,
           p[:deprecated] ? '<strong class="deprecated signature">deprecated</strong>' : "",
           "<div class='sub-desc'>",
             p[:doc],
@@ -419,6 +456,34 @@ module JsDuck
             p[:properties] && p[:properties].length > 0 ? render_params_and_return(p) : "",
           "</div>",
         "</li>",
+      ]
+    end
+
+    def render_examples(member)
+      if ! member.has_key?(:examples)
+          return []
+      end
+      examples = member[:examples]
+      # Skip rendering empty sections
+      if examples.length > 0 
+        ex_section = [ 
+            "<div class='examples-section'>",
+            "<h3 class='examples-title icon-examples'>Examples</h3>" ]
+        examples.each do |ex|
+          ex_section << render_example(ex)
+        end
+        ex_section <<  "</div>"
+        return ex_section
+      else
+        return []
+      end
+    end
+
+    def render_example(example)
+      return [ 
+      "<div class='example example-#{example[:platform]}'>",
+      example[:doc],
+      "</div>"
       ]
     end
 
