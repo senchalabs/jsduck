@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'strscan'
 require 'rdiscount'
 require 'jsduck/format/html_stack'

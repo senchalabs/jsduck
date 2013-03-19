@@ -46,6 +46,15 @@ Ext.define('Docs.controller.Examples', {
                     this.loadExample(url);
                 }
             },
+            'touchexamplecontainer, examplecontainer': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('click', function(e, el) {
+                        this.openInNewWindow();
+                    }, this, {
+                        delegate: 'button.new-window'
+                    });
+                }
+            },
             'touchexamplecontainer': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(e, el) {
@@ -67,11 +76,6 @@ Ext.define('Docs.controller.Examples', {
                         this.changeOrientation('landscape');
                     }, this, {
                         delegate: 'button.landscape'
-                    });
-                    cmp.el.addListener('click', function(e, el) {
-                        this.openInNewWindow();
-                    }, this, {
-                        delegate: 'button.new-window'
                     });
                 }
             }
