@@ -42,12 +42,8 @@ module JsDuck
       # creates index of all class members
       def members_id_index(json)
         index = {}
-        ["members", "statics"].each do |group_name|
-          json[group_name].each_pair do |tagname, members|
-            members.each do |m|
-              index[m["id"]] = true
-            end
-          end
+        json["members"].each do |m|
+          index[m["id"]] = true
         end
         index
       end
