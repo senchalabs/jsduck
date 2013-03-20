@@ -6,17 +6,31 @@ module JsDuck
   module Exporter
 
     # Exports data for Docs app.
-    class App < Full
+    class App
       def initialize(relations, opts)
-        super(relations, opts)
+        @full_exporter = Exporter::Full.new(relations, opts)
+        @relations = relations
         @renderer = Render::Class.new(opts)
       end
 
       # Returns compacted class data hash which contains an additional
       # :html field with full HTML to show on class overview page.
       def export(cls)
-        data = super(cls)
+        data = @full_exporter.export(cls)
+
+        data[:component] = cls.inherits_from?("Ext.Component")
+        data[:superclasses] = cls.superclasses.collect {|c| c[:name] }
+        data[:subclasses] = @relations.subclasses(cls).collect {|c| c[:name] }.sort
+        data[:mixedInto] = @relations.mixed_into(cls).collect {|c| c[:name] }.sort
+        data[:alternateClassNames] = cls[:alternateClassNames].sort if cls[:alternateClassNames]
+
+        data[:mixins] = cls.deps(:mixins).collect {|c| c[:name] }.sort
+        data[:parentMixins] = cls.parent_deps(:mixins).collect {|c| c[:name] }.sort
+        data[:requires] = cls.deps(:requires).collect {|c| c[:name] }.sort
+        data[:uses] = cls.deps(:uses).collect {|c| c[:name] }.sort
+
         data[:html] = @renderer.render(data)
+
         return compact(data)
       end
 

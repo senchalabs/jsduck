@@ -6,28 +6,18 @@ module JsDuck
     # Exporter for all the class docs.
     class Full
       def initialize(relations, opts={})
-        @relations = relations
-        # opts parameter is here just for compatibility with other exporters
+        # parameters are just for compatibility with other exporters
       end
 
-      # Returns all data in Class object as hash.
+      # Returns a hash of class data, with :members field expanded
+      # into list of all members (including those inherited from
+      # parents and mixins).
       def export(cls)
         # Make copy of the internal data structure of a class
         # so our modifications on it will be safe.
         h = cls.internal_doc.clone
 
         h[:members] = export_members(cls)
-
-        h[:component] = cls.inherits_from?("Ext.Component")
-        h[:superclasses] = cls.superclasses.collect {|c| c[:name] }
-        h[:subclasses] = @relations.subclasses(cls).collect {|c| c[:name] }.sort
-        h[:mixedInto] = @relations.mixed_into(cls).collect {|c| c[:name] }.sort
-        h[:alternateClassNames] = cls[:alternateClassNames].sort if cls[:alternateClassNames]
-
-        h[:mixins] = cls.deps(:mixins).collect {|c| c[:name] }.sort
-        h[:parentMixins] = cls.parent_deps(:mixins).collect {|c| c[:name] }.sort
-        h[:requires] = cls.deps(:requires).collect {|c| c[:name] }.sort
-        h[:uses] = cls.deps(:uses).collect {|c| c[:name] }.sort
 
         h
       end
