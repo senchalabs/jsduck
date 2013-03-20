@@ -30,12 +30,16 @@ module JsDuck
       # Copy over doc/params/return from parent member.
       def resolve(m, new_cfgs)
         parent = find_parent(m)
+        if parent && parent[:inheritdoc]
+          resolve(parent, new_cfgs)
+        end
 
         if m[:inheritdoc] && parent
-          m[:doc] = (m[:doc] + "\n\n" + parent[:doc]).strip
-          m[:params] = parent[:params] if parent[:params]
-          m[:return] = parent[:return] if parent[:return]
-          m[:type] = parent[:type] if parent[:type]
+          m[:doc] = parent[:doc] if m[:doc].empty?
+          m[:params] = parent[:params] unless m[:params] && m[:params].length > 0
+          m[:return] = parent[:return] unless m[:return]
+          m[:throws] = parent[:throws] unless m[:throws] && m[:throws].length > 0
+          m[:type] = parent[:type] unless m[:type] && m[:type] != "Object"
 
           if m[:autodetected]
             m[:deprecated] = parent[:deprecated] if parent[:deprecated] && !m[:deprecated]
@@ -48,6 +52,8 @@ module JsDuck
         end
 
         resolve_visibility(m, parent)
+
+        m[:inheritdoc] = nil
       end
 
       # Changes given properties into configs within class
@@ -122,7 +128,7 @@ module JsDuck
           end
         end
 
-        return parent[:inheritdoc] ? find_parent(parent) : parent
+        return parent
       end
 
       def lookup_member(cls, m)
@@ -161,10 +167,15 @@ module JsDuck
       # Copy over doc from parent class.
       def resolve_class(cls)
         parent = find_class_parent(cls)
+        if parent && parent[:inheritdoc]
+          resolve_class(parent)
+        end
 
         if parent
-          cls[:doc] = (cls[:doc] + "\n\n" + parent[:doc]).strip
+          cls[:doc] = parent[:doc] if cls[:doc].empty?
         end
+
+        cls[:inheritdoc] = nil
       end
 
       def find_class_parent(cls)
@@ -178,7 +189,7 @@ module JsDuck
           return warn("parent class not found", cls) unless parent
         end
 
-        return parent[:inheritdoc] ? find_class_parent(parent) : parent
+        return parent
       end
 
       def warn(msg, item)
