@@ -223,7 +223,7 @@ describe JsDuck::Aggregator do
     end
 
     it "flags property as :autodetected" do
-      property[:autodetected].should == true
+      property[:autodetected][:tagname].should == :property
     end
   end
 

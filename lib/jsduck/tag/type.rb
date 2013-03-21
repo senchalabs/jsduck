@@ -34,7 +34,7 @@ module JsDuck::Tag
 
     # Do the merging of :type field
     def merge(h, docs, code)
-      h[:type] = JsDuck::DocsCodeComparer.merge_if_matches(:type, docs, code)
+      JsDuck::DocsCodeComparer.merge_if_matches(h, :type, docs, code)
       if h[:type] == nil
         h[:type] = code[:tagname] == :method ? "Function" : "Object"
       end

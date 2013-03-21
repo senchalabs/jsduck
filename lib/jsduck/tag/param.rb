@@ -32,6 +32,10 @@ module JsDuck::Tag
 
     def merge(h, docs, code)
       h[:params] = merge_params(docs, code, h[:files].first)
+
+      if only_autodetected_params?(docs, code)
+        JsDuck::DocsCodeComparer.mark_autodetected(h, :params)
+      end
     end
 
     def format(m, formatter)
@@ -43,6 +47,10 @@ module JsDuck::Tag
     end
 
     private
+
+    def only_autodetected_params?(docs, code)
+      (docs[:params] || []).length == 0 && (code[:params] || []).length > 0
+    end
 
     def merge_params(docs, code, file)
       explicit = docs[:params] || []

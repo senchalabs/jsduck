@@ -19,7 +19,7 @@ module JsDuck::Tag
     end
 
     def merge(h, docs, code)
-      h[:default] = JsDuck::DocsCodeComparer.merge_if_matches(:default, docs, code)
+      JsDuck::DocsCodeComparer.merge_if_matches(h, :default, docs, code)
     end
 
     def to_html(m)

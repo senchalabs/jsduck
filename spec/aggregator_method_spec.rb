@@ -181,7 +181,7 @@ describe JsDuck::Aggregator do
     end
 
     it "flags method as :autodetected" do
-      method[:autodetected].should == true
+      method[:autodetected][:tagname].should == :method
     end
   end
 

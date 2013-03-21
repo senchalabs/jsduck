@@ -286,7 +286,7 @@ module JsDuck
           else
             m[:private] = true
           end
-          m[:autodetected] = true
+          m[:autodetected] = {:tagname => m[:tagname]}
         end
 
         if docset

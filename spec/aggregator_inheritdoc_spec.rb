@@ -69,9 +69,17 @@ describe JsDuck::Aggregator do
            * @return {Number}
            * @throws {String}
            */
+
+        /** @class Inh3 */
+          /**
+           * @inheritdoc Foo#foo
+           */
+          function foo(a,b,c,d,e) {
+          }
       EOF
       @inh1 = @docs["Inh1"][:members][0]
       @inh2 = @docs["Inh2"][:members][0]
+      @inh3 = @docs["Inh3"][:members][0]
     end
 
     it_should_behave_like "docs inheritance"
@@ -99,6 +107,10 @@ describe JsDuck::Aggregator do
     it "doesn't inherit throws when @throws tag present" do
       @inh2[:throws][0][:type].should == "String"
     end
+
+    it "inherits parameters when auto-detected parameters present" do
+      @inh3[:params].length.should == 2
+    end
   end
 
   describe "@inheritdoc in cfg" do
@@ -122,9 +134,19 @@ describe JsDuck::Aggregator do
            * Some docs of its own.
            * @inheritdoc Foo#foo
            */
+
+        /** @class Inh3 */
+        Inh3 = {
+          /**
+           * @cfg
+           * @inheritdoc Foo#foo
+           */
+          foo: 42
+        }
       EOF
       @inh1 = @docs["Inh1"][:members][0]
       @inh2 = @docs["Inh2"][:members][0]
+      @inh3 = @docs["Inh3"][:members][0]
     end
 
     it_should_behave_like "docs inheritance"
@@ -135,6 +157,10 @@ describe JsDuck::Aggregator do
 
     it "doesn't inherit type when type specified in cfg itself" do
       @inh2[:type].should == "Number"
+    end
+
+    it "inherits type when auto-detected type present" do
+      @inh3[:type].should == "String"
     end
   end
 

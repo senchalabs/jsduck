@@ -98,7 +98,7 @@ describe JsDuck::Aggregator do
       end
 
       it "with :autodetected flag" do
-        member[:autodetected].should == true
+        member[:autodetected][:tagname].should == :property
       end
 
       it "with owner" do
@@ -218,7 +218,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects the method with :autodetected flag" do
-      member[:autodetected].should == true
+      member[:autodetected][:tagname].should == :method
     end
   end
 

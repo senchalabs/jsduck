@@ -167,7 +167,7 @@ describe JsDuck::Aggregator do
       end
 
       it "with :autodetected flag" do
-        cfg[0][:autodetected].should == true
+        cfg[0][:autodetected][:tagname].should == :cfg
       end
 
       it "with :linenr field" do
@@ -274,7 +274,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects the config with :autodetected flag" do
-      cfg[0][:autodetected].should == true
+      cfg[0][:autodetected][:tagname].should == :cfg
     end
   end
 

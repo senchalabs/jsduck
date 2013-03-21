@@ -35,18 +35,14 @@ module JsDuck
         end
 
         if m[:inheritdoc] && parent
-          m[:doc] = parent[:doc] if m[:doc].empty?
-          m[:params] = parent[:params] unless m[:params] && m[:params].length > 0
-          m[:return] = parent[:return] unless m[:return]
-          m[:throws] = parent[:throws] unless m[:throws] && m[:throws].length > 0
-          m[:type] = parent[:type] unless m[:type] && m[:type] != "Object"
+          inherit(m, parent)
 
-          if m[:autodetected]
+          if autodetected?(m)
             m[:deprecated] = parent[:deprecated] if parent[:deprecated] && !m[:deprecated]
           end
 
           # remember properties that have changed to configs
-          if m[:autodetected] && m[:tagname] != parent[:tagname]
+          if autodetected?(m) && m[:tagname] != parent[:tagname]
             new_cfgs << m
           end
         end
@@ -54,6 +50,32 @@ module JsDuck
         resolve_visibility(m, parent)
 
         m[:inheritdoc] = nil
+      end
+
+      def inherit(m, parent)
+        m[:doc] = parent[:doc] if m[:doc].empty?
+
+        # Don't inherit params from parent when:
+        # - member itself has params and these are not auto-detected
+        # - or the params in parent are auto-detected.
+        unless m[:params] && m[:params].length > 0 && !auto?(m, :params) || auto?(parent, :params)
+          m[:params] = parent[:params]
+        end
+
+        m[:return] = parent[:return] unless m[:return]
+        m[:throws] = parent[:throws] unless m[:throws] && m[:throws].length > 0
+
+        # Don't inherit type from parent when:
+        # - member itself has type and it's not auto-detected
+        # - or the type in parent is auto-detected.
+        unless m[:type] && m[:type] != "Object" && !auto?(m, :type) || auto?(parent, :type)
+          m[:type] = parent[:type]
+        end
+      end
+
+      # True when specific field of member has been auto-detected
+      def auto?(m, key)
+        m[:autodetected] && m[:autodetected][key]
       end
 
       # Changes given properties into configs within class
@@ -68,7 +90,7 @@ module JsDuck
       # For auto-detected members/classes (which have @private == :inherit)
       # Use the visibility from parent class (defaulting to private when no parent).
       def resolve_visibility(m, parent)
-        if m[:autodetected] && !JsDuck::Class.constructor?(m)
+        if autodetected?(m) && !JsDuck::Class.constructor?(m)
           if !parent || parent[:private]
             m[:private] = true
           end
@@ -104,7 +126,7 @@ module JsDuck
 
           # Warn when no parent or mixins at all
           if !parent_cls && mixins.length == 0
-            warn("parent class not found", m) unless m[:autodetected]
+            warn("parent class not found", m) unless autodetected?(m)
             return nil
           end
 
@@ -123,7 +145,7 @@ module JsDuck
 
           # Only when both parent and mixins fail, throw warning
           if !parent
-            warn("parent member not found", m) unless m[:autodetected]
+            warn("parent member not found", m) unless autodetected?(m)
             return nil
           end
         end
@@ -137,7 +159,7 @@ module JsDuck
         tagname = inherit[:type] || m[:tagname]
         static = inherit[:static] || m[:static]
 
-        if m[:autodetected]
+        if autodetected?(m)
           # Auto-detected properties can override either a property or a
           # config. So look for both types.
           if tagname == :property
@@ -190,6 +212,11 @@ module JsDuck
         end
 
         return parent
+      end
+
+      # True when the entire member was auto-detected
+      def autodetected?(m)
+        m[:autodetected] && m[:autodetected][:tagname]
       end
 
       def warn(msg, item)

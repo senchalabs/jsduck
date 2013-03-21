@@ -70,7 +70,7 @@ module JsDuck
       # values default to being public.
       def strip_inheritdoc(cls)
         cls[:members].each do |p|
-          p[:inheritdoc] = nil if p[:autodetected]
+          p[:inheritdoc] = nil if p[:autodetected] && p[:autodetected][:tagname]
         end
       end
 
