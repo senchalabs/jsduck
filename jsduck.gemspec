@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rdiscount'
   s.add_dependency 'json'
   s.add_dependency 'parallel'
+  s.add_dependency 'execjs'
   s.add_dependency 'therubyracer', '>= 0.10.0', '< 0.11.0'
   s.add_dependency 'dimensions'
 
