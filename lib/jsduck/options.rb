@@ -139,6 +139,8 @@ module JsDuck
       # enable all warnings except :link_auto
       Logger.set_warning(:all, true)
       Logger.set_warning(:link_auto, false)
+
+      @optparser = create_option_parser
     end
 
     # Make options object behave like hash.
@@ -148,9 +150,8 @@ module JsDuck
     end
 
     def parse!(argv)
-      create_option_parser.parse!(argv).each do |fname|
-        read_filenames(canonical(fname))
-      end
+      parse_options(argv)
+      auto_detect_config_file
       validate
 
       reg = MetaTagRegistry.new
@@ -159,8 +160,10 @@ module JsDuck
       MetaTagRegistry.instance = reg
     end
 
+    private
+
     def create_option_parser
-      optparser = JsDuck::OptionParser.new do | opts |
+      return JsDuck::OptionParser.new do | opts |
         opts.banner = "Usage: jsduck [options] files/dirs..."
         opts.separator ""
         opts.separator "For example:"
@@ -228,6 +231,9 @@ module JsDuck
           "",
           "An alternative to listing all options on command line.",
           "",
+          "When the current directory contains jsduck.json file",
+          "then options are automatically read from there.",
+          "",
           "See also: https://github.com/senchalabs/jsduck/wiki/Config-file") do |path|
           path = canonical(path)
           if File.exists?(path)
@@ -239,7 +245,7 @@ module JsDuck
           # treat paths inside JSON config relative to the location of
           # config file.  When done, switch back to current working dir.
           @working_dir = File.dirname(path)
-          optparser.parse!(config).each {|fname| read_filenames(canonical(fname)) }
+          parse_options(config)
           @working_dir = nil
         end
 
@@ -687,8 +693,20 @@ module JsDuck
           exit
         end
       end
+    end
 
-      return optparser
+    # Parses the given command line options
+    # (could have also been read from config file)
+    def parse_options(options)
+      @optparser.parse!(options).each {|fname| read_filenames(canonical(fname)) }
+    end
+
+    # Reads jsduck.json file in current directory
+    def auto_detect_config_file
+      fname = Dir.pwd + "/jsduck.json"
+      if File.exists?(fname)
+        parse_options(read_json_config(fname))
+      end
     end
 
     # Reads JSON configuration from file and returns an array of
