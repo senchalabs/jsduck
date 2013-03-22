@@ -587,7 +587,7 @@ module JsDuck
         opts.on('-v', '--verbose',
           "Turns on excessive logging.",
           "",
-          "Log messages are writted to STDERR.") do
+          "Log messages are written to STDERR.") do
           Logger.verbose = true
         end
 
