@@ -1,3 +1,35 @@
+// Temporary fix for IE10 before we upgrade to ExtJS 4.2.
+// Without this clicking on the icons of ThumbList will show blank
+// page as the code won't be able to extract the value of ext:url
+// attribute.
+//
+// Patch taken from forum:
+// http://www.sencha.com/forum/showthread.php?250267-Ext.Element.getAttribute-not-working-in-IE10
+Ext.override(Ext.dom.Element, {
+    getAttribute: (Ext.isIE6 || Ext.isIE7 || Ext.isIE8) ?
+        function (name, ns) {
+            var d = this.dom,
+                    type;
+            if (ns) {
+                type = typeof d[ns + ":" + name];
+                if (type != 'undefined' && type != 'unknown') {
+                    return d[ns + ":" + name] || null;
+                }
+                return null;
+            }
+            if (name === "for") {
+                name = "htmlFor";
+            }
+            return d[name] || null;
+        } : function (name, ns) {
+            var d = this.dom;
+            if (ns) {
+                return d.getAttributeNS(ns, name) || d.getAttribute(ns + ":" + name);
+            }
+            return d.getAttribute(name) || d[name] || null;
+        }
+});
+
 /**
  * View showing a list of clickable items with thumbnails.
  */
