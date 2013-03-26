@@ -8,6 +8,14 @@ module JsDuck
   class Renderer
     def initialize(opts)
       @opts = opts
+      @pretty_platform_name = {
+        'android' => 'Android',
+        'blackberry' => 'BlackBerry',
+        'iphone' => 'iPhone',
+        'ipad' => 'iPad',
+        'mobileweb' => 'Mobile Web',
+        'tizen' => 'Tizen'
+      }
     end
 
     def render(cls)
@@ -52,13 +60,6 @@ module JsDuck
     end
 
     def render_platforms(platforms, sidebar)
-      mapping = {
-		'android' => 'Android',
-		'iphone' => 'iPhone',
-		'ipad' => 'iPad',
-		'mobileweb' => 'Mobile Web'
-	  }
-
       return [
         '<ul class="',
         sidebar ? 'sidebar-platforms' : 'platforms',
@@ -66,7 +67,7 @@ module JsDuck
         platforms.map do |platform| 
         	begin
                 name, version = platform.split()
-	        	"<li class='platform-" + name + "' title='" + mapping[name] + " since Titanium SDK "+version+"'>" + (sidebar ? (mapping[name] + " "+ version)  : '&nbsp;') + "</li>" 
+	        	"<li class='platform-" + name + "' title='" + @pretty_platform_name[name] + " since Titanium SDK "+version+"'>" + (sidebar ? (@pretty_platform_name[name] + " "+ version)  : '&nbsp;') + "</li>" 
 	        rescue
 	    	    puts "[ERROR] Unknown platform: '" + platform + "'"
     	    end
@@ -76,20 +77,13 @@ module JsDuck
     end
 
     def render_inline_platforms(platforms, sidebar)
-      mapping = {
-		'android' => 'Android',
-		'iphone' => 'iPhone',
-		'ipad' => 'iPad',
-		'mobileweb' => 'Mobile Web'
-	  }
-
       return [
         '<ul class="',
         sidebar ? 'sidebar-platforms' : 'platforms',
         '">',
         platforms.map do |platform| 
         	begin
-	        	"<li class='platform-" + platform + "' title='" + mapping[platform]+"' >" + (sidebar ? (mapping[platform])  : '&nbsp;') + "</li>" 
+	        	"<li class='platform-" + platform + "' title='" + @pretty_platform_name[platform]+"' >" + (sidebar ? (@pretty_platform_name[platform])  : '&nbsp;') + "</li>" 
 	        rescue
 	    	    puts "[ERROR] Unknown platform: '" + platform + "'"
     	    end
