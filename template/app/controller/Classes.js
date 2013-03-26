@@ -109,6 +109,9 @@ Ext.define('Docs.controller.Classes', {
                             this.fireEvent('showMember', clsName, memberName);
                         }
                         member.toggleCls('open');
+
+                        // Ti displaying inline examples in tabs when member is expanded
+                        this.showExamplesInTabs(member);
                     }, this, {
                         preventDefault: true,
                         delegate: '.expandable'
@@ -143,6 +146,50 @@ Ext.define('Docs.controller.Classes', {
                 }
             }
         });
+    },
+
+    // Ti this function is used change examples to display in tabs rather than in line
+    showExamplesInTabs: function(member) {
+        var tabs = [],
+            currentIndex = 0,
+            currentPlatform,
+            activeTab = 0,
+            lastSelectedPlatfrom = Docs.Settings.get("last_selected_platform");
+            
+        Ext.Array.each(member.query('.example'), function(div) {
+            // Removing examples and adding them back as tabs
+            Ext.removeNode(div);
+            currentPlatform = div.getAttribute("platform");
+
+            if ( !activeTab && currentPlatform == lastSelectedPlatfrom) {
+                // The last selected platform will determine the active tab
+                activeTab = currentIndex;
+            }
+            currentIndex++;
+
+            tabs.push({
+                title: div.getAttribute("platform_name"),
+                platform: currentPlatform,
+                html: div.innerHTML
+            });
+        }, this);
+
+        if (tabs.length) {
+            Ext.create('Ext.tab.Panel', {
+                // If deferredRender is true (the default if not set), inactive tabs will not exist in the dom.
+                // prettyPrint() will not find them, and the code in them will not be pretty.
+                deferredRender: false, 
+                activeTab: activeTab,
+                items: tabs,
+                renderTo: Ext.get(member).down('.examples-section'),
+                listeners: {
+                    tabchange: function(tabPanel, newTab, oldTab, eOpts) {
+                        // Save the platform of the selected example
+                        Docs.Settings.set("last_selected_platform", newTab.platform);
+                    }
+                }
+            });       
+        }
     },
 
     // Remembers the expanded state of a member of current class
@@ -265,6 +312,15 @@ Ext.define('Docs.controller.Classes', {
 
         this.getTree().selectUrl("#!/api/"+cls.name);
         this.fireEvent('showClass', cls.name, {reRendered: reRendered});
+
+        // Ti show examples in tabs for every expanded member
+        var that = this;
+        Ext.Array.each(this.getOverview().el.query('.member.open'), function(div) {
+            that.showExamplesInTabs(Ext.get(div));
+        });
+        // Ti prettyPrint() called in overview.load() may not finish before the divs are removed
+        // call it here to ensure the code is all pretty.
+        prettyPrint();
     }
 
 });

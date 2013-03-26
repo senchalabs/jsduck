@@ -480,8 +480,15 @@ module JsDuck
     end
 
     def render_example(example)
+      # Ti adding platform and platform_name attributes to example div, needed for naming and history
+      platform_name = example[:platform]
+      # Hash with platform_names contains capitalized platform names
+      if @opts.platform_names.has_key?(example[:platform])
+        platform_name = @opts.platform_names[example[:platform]]
+      end
+      
       return [ 
-      "<div class='example example-#{example[:platform]}'>",
+      "<div class='example example-#{example[:platform]}' platform='#{example[:platform]}' platform_name='#{platform_name}'>",
       example[:doc],
       "</div>"
       ]
