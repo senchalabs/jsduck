@@ -105,12 +105,14 @@ module JsDuck
       @examples_base_url = "extjs-build/examples/"
       @tests = false
       # Ti platform_names mapping to be used with cloud examples
+      # NOTE: platforms not found in this hash will not be displayed
       @platform_names = {
+        "titanium" => "Titanium SDK",
         "ios" => "iOS SDK",
         "android" => "Android SDK",
         "rest" => "REST API",
-        "actionscript" => "AS3 SDK",
-        "javascript" => "JS SDK"
+        # "actionscript" => "AS3 SDK",
+        # "javascript" => "JS SDK"
       }
 
       # Debugging

@@ -89,6 +89,8 @@ Ext.define('Docs.controller.Classes', {
                     Ext.Array.forEach(Ext.query('.side.expandable'), function(el) {
                         Ext.get(el).parent()[expanded ? "addCls" : "removeCls"]('open');
                     });
+                    // Ti show examples in tabs
+                    this.showAllExpandedExamplesInTabs();
                 }
             },
 
@@ -190,6 +192,17 @@ Ext.define('Docs.controller.Classes', {
                 }
             });       
         }
+    },
+
+    // Ti show examples in tabs for every expanded member
+    showAllExpandedExamplesInTabs: function() {
+        var that = this;
+        Ext.Array.each(this.getOverview().el.query('.member.open'), function(div) {
+            that.showExamplesInTabs(Ext.get(div));
+        });
+        // Ti prettyPrint() called in overview.load() may not finish before the divs are removed
+        // call it here to ensure the code is all pretty.
+        prettyPrint();
     },
 
     // Remembers the expanded state of a member of current class
@@ -312,15 +325,8 @@ Ext.define('Docs.controller.Classes', {
 
         this.getTree().selectUrl("#!/api/"+cls.name);
         this.fireEvent('showClass', cls.name, {reRendered: reRendered});
-
-        // Ti show examples in tabs for every expanded member
-        var that = this;
-        Ext.Array.each(this.getOverview().el.query('.member.open'), function(div) {
-            that.showExamplesInTabs(Ext.get(div));
-        });
-        // Ti prettyPrint() called in overview.load() may not finish before the divs are removed
-        // call it here to ensure the code is all pretty.
-        prettyPrint();
+        // Ti show examples in tabs
+        this.showAllExpandedExamplesInTabs();
     }
 
 });
