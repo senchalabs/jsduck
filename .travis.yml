@@ -6,6 +6,7 @@ install:
   - gem install rdiscount
   - gem install json
   - gem install parallel
+  - gem install execjs
   - gem install therubyracer -v 0.10.1
   - gem install rspec
   - gem install rake

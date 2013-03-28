@@ -97,7 +97,7 @@ module JsDuck
       # Customizing output
       @title = "Documentation - JSDuck"
       @header = "<strong>Documentation</strong> JSDuck"
-      @footer = "Generated with <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> #{@version}."
+      @footer = format_footer("Generated on {DATE} by {JSDUCK} {VERSION}.")
       @head_html = ""
       @body_html = ""
       @css = ""
@@ -140,6 +140,8 @@ module JsDuck
       Logger.set_warning(:all, true)
       Logger.set_warning(:link_auto, false)
       Logger.set_warning(:param_count, false)
+
+      @optparser = create_option_parser
     end
 
     # Make options object behave like hash.
@@ -152,9 +154,8 @@ module JsDuck
     end
 
     def parse!(argv)
-      create_option_parser.parse!(argv).each do |fname|
-        read_filenames(canonical(fname))
-      end
+      parse_options(argv)
+      auto_detect_config_file
       validate
 
       if @custom_tag_paths.length > 0
@@ -162,8 +163,10 @@ module JsDuck
       end
     end
 
+    private
+
     def create_option_parser
-      optparser = JsDuck::OptionParser.new do | opts |
+      return JsDuck::OptionParser.new do | opts |
         opts.banner = "Usage: jsduck [options] files/dirs..."
         opts.separator ""
         opts.separator "For example:"
@@ -231,6 +234,9 @@ module JsDuck
           "",
           "An alternative to listing all options on command line.",
           "",
+          "When the current directory contains jsduck.json file",
+          "then options are automatically read from there.",
+          "",
           "See also: https://github.com/senchalabs/jsduck/wiki/Config-file") do |path|
           path = canonical(path)
           if File.exists?(path)
@@ -242,7 +248,7 @@ module JsDuck
           # treat paths inside JSON config relative to the location of
           # config file.  When done, switch back to current working dir.
           @working_dir = File.dirname(path)
-          optparser.parse!(config).each {|fname| read_filenames(canonical(fname)) }
+          parse_options(config)
           @working_dir = nil
         end
 
@@ -269,11 +275,14 @@ module JsDuck
         opts.on('--footer=TEXT',
           "Custom footer text for the documentation.",
           "",
-          "Defaults to: 'Generated with JSDuck {VERSION}.'",
+          "The text can contain various placeholders:",
           "",
-          "'{VERSION}' is a placeholder that will get substituted",
-          "with the current version of JSDuck.  See --version.") do |text|
-          @footer = text.gsub(/\{VERSION\}/, @version)
+          "  {DATE} - current date and time.",
+          "  {JSDUCK} - link to JSDuck homepage.",
+          "  {VERSION} - JSDuck version number.",
+          "",
+          "Defaults to: 'Generated on {DATE} by {JSDUCK} {VERSION}.'") do |text|
+          @footer = format_footer(text)
         end
 
         opts.on('--head-html=HTML',
@@ -600,7 +609,7 @@ module JsDuck
         opts.on('-v', '--verbose',
           "Turns on excessive logging.",
           "",
-          "Log messages are writted to STDERR.") do
+          "Log messages are written to STDERR.") do
           Logger.verbose = true
         end
 
@@ -725,8 +734,20 @@ module JsDuck
           exit
         end
       end
+    end
 
-      return optparser
+    # Parses the given command line options
+    # (could have also been read from config file)
+    def parse_options(options)
+      @optparser.parse!(options).each {|fname| read_filenames(canonical(fname)) }
+    end
+
+    # Reads jsduck.json file in current directory
+    def auto_detect_config_file
+      fname = Dir.pwd + "/jsduck.json"
+      if File.exists?(fname)
+        parse_options(read_json_config(fname))
+      end
     end
 
     # Reads JSON configuration from file and returns an array of
@@ -798,6 +819,13 @@ module JsDuck
     # more easily.
     def canonical(path)
       File.expand_path(path, @working_dir)
+    end
+
+    # Replace special placeholders in footer text
+    def format_footer(text)
+      jsduck = "<a href='https://github.com/senchalabs/jsduck'>JSDuck</a>"
+      date = Time.new.strftime('%a %d %b %Y %H:%M:%S')
+      text.gsub(/\{VERSION\}/, @version).gsub(/\{JSDUCK\}/, jsduck).gsub(/\{DATE\}/, date)
     end
 
     # Runs checks on the options
