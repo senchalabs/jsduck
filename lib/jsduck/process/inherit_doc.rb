@@ -35,10 +35,10 @@ module JsDuck
         end
 
         if m[:inheritdoc] && parent
-          inherit(m, parent)
-
-          if autodetected?(m)
-            m[:deprecated] = parent[:deprecated] if parent[:deprecated] && !m[:deprecated]
+          if autodetected?(m) && !parent[:private]
+            auto_inherit(m, parent)
+          else
+            inherit(m, parent)
           end
 
           # remember properties that have changed to configs
@@ -70,6 +70,16 @@ module JsDuck
         # - or the type in parent is auto-detected.
         unless m[:type] && m[:type] != "Object" && !auto?(m, :type) || auto?(parent, :type)
           m[:type] = parent[:type]
+        end
+      end
+
+      def auto_inherit(m, parent)
+        m[:doc] = parent[:doc] if m[:doc].empty?
+
+        parent.each_pair do |key, value|
+          if key == :type || !m[key]
+            m[key] = value
+          end
         end
       end
 

@@ -106,6 +106,7 @@ describe JsDuck::Aggregator do
              * My property.
              * @protected
              * @deprecated 4.0 Use something else.
+             * @readonly
              */
             foo: 5
         });
@@ -126,6 +127,10 @@ describe JsDuck::Aggregator do
     it "inherits @deprecated" do
       @property[:deprecated][:version].should == "4.0"
       @property[:deprecated][:text].should == "Use something else."
+    end
+
+    it "inherits @readonly" do
+      @property[:readonly].should == true
     end
   end
 
@@ -159,6 +164,10 @@ describe JsDuck::Aggregator do
 
     it "keeps @readonly" do
       @property[:readonly].should == true
+    end
+
+    it "keeps default value" do
+      @property[:default].should == "10"
     end
 
     it "overrides @deprecated of parent with its own @deprecated" do
