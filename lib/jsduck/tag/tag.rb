@@ -171,17 +171,18 @@ module JsDuck::Tag
     POS_ASIDE = 1
     POS_PRIVATE = 2
     POS_DOC = 3
-    POS_DEFAULT = 4
-    POS_SINCE = 5
-    POS_DEPRECATED = 6
-    POS_ENUM = 7
-    POS_TEMPLATE = 8
-    POS_PREVENTABLE = 9
-    POS_PARAM = 10
-    POS_SUBPROPERTIES = 11
-    POS_RETURN = 12
-    POS_THROWS = 13
-    POS_OVERRIDES = 14
+    POS_LOCALDOC = 4
+    POS_DEFAULT = 5
+    POS_SINCE = 6
+    POS_DEPRECATED = 7
+    POS_ENUM = 8
+    POS_TEMPLATE = 9
+    POS_PREVENTABLE = 10
+    POS_PARAM = 11
+    POS_SUBPROPERTIES = 12
+    POS_RETURN = 13
+    POS_THROWS = 14
+    POS_OVERRIDES = 15
 
     # Called before #to_html to allow rendering of Markdown content.
     # For this an instance of DocFormatter is passed in, on which one
