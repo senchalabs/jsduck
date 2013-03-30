@@ -45,12 +45,30 @@ module JsDuck
     def general_merge(h, docs, code)
       # Merge in all items in docs that don't occour already in result.
       docs.each_pair do |key, value|
-        h[key] = value unless h.has_key?(key)
+        h[key] = value unless h.has_key?(key) || Merger::explicit?(key)
       end
       # Then add all in the items from code not already in result.
       code.each_pair do |key, value|
-        h[key] = value unless h.has_key?(key)
+        h[key] = value unless h.has_key?(key) || Merger::explicit?(key)
       end
+    end
+
+    # True when given key gets merged explicitly and should therefore
+    # be skipped when auto-merging.
+    def self.explicit?(key)
+      @explicit = explictly_merged_fields unless @explicit
+      @explicit[key]
+    end
+
+    # Generates a lookup-hash of tagnames which are explicitly merged.
+    def self.explictly_merged_fields
+      mergers = {}
+      member_types = TagRegistry.member_type_names + [:class]
+      tags = member_types.map {|type| TagRegistry.mergers(type) }.flatten.uniq
+      tags.each do |tag|
+        mergers[tag.tagname] = true
+      end
+      mergers
     end
 
   end

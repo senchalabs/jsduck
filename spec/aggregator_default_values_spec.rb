@@ -495,4 +495,22 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "auto-detected property turned into @method" do
+    before do
+      @doc = parse_member(<<-EOS)
+      ({/**
+         * @method
+         * My method.
+         */
+        bar: true })
+      EOS
+    end
+    it "loses the auto-detected default value" do
+      @doc[:default].should == nil
+    end
+    it "loses the auto-detected type" do
+      @doc[:type].should == nil
+    end
+  end
+
 end

@@ -180,7 +180,7 @@ module JsDuck
       expand_merger(:member)
       expand_merger(:method_like)
       expand_merger(:property_like)
-      @mergers_expanded
+      @mergers_expanded = true
     end
 
     def expand_merger(type_name)
