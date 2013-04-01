@@ -5,9 +5,20 @@ describe JsDuck::Aggregator do
     Helper::MiniParser.parse(string, {:accessors => true})
   end
 
+  def parse_to_members_hash(string)
+    docs = parse(string)
+
+    members = {}
+    docs["MyClass"][:members].each do |m|
+      members[m[:name]] = m
+    end
+
+    return members
+  end
+
   describe "@cfg foo with @accessor" do
     before do
-      @docs = parse(<<-EOF)
+      @members = parse_to_members_hash(<<-EOF)
         /** @class MyClass */
           /**
            * @cfg {String} foo
@@ -15,10 +26,6 @@ describe JsDuck::Aggregator do
            * @accessor
            */
       EOF
-      @members = {}
-      @docs["MyClass"][:members].each do |m|
-        @members[m[:name]] = m
-      end
     end
 
     it "creates getFoo method" do
@@ -69,7 +76,7 @@ describe JsDuck::Aggregator do
 
   describe "@accessor config" do
     before do
-      @docs = parse(<<-EOF)
+      @members = parse_to_members_hash(<<-EOF)
         /** @class MyClass */
           /**
            * @cfg {String} foo
@@ -90,10 +97,6 @@ describe JsDuck::Aggregator do
            * Custom comment.
            */
       EOF
-      @members = {}
-      @docs["MyClass"][:members].each do |m|
-        @members[m[:name]] = m
-      end
     end
 
     it "doesn't create getter when method already present" do
@@ -116,7 +119,7 @@ describe JsDuck::Aggregator do
 
   describe "@accessor with other tags" do
     before do
-      @docs = parse(<<-EOF)
+      @members = parse_to_members_hash(<<-EOF)
         /** @class MyClass */
           /**
            * @cfg {String} foo
@@ -127,10 +130,6 @@ describe JsDuck::Aggregator do
            * @deprecated 2.0 Don't use it any more
            */
       EOF
-      @members = {}
-      @docs["MyClass"][:members].each do |m|
-        @members[m[:name]] = m
-      end
     end
 
     it "adds @protected to getter" do
@@ -221,7 +220,7 @@ describe JsDuck::Aggregator do
 
   describe "@cfg foo with @evented @accessor" do
     before do
-      @docs = parse(<<-EOF)
+      @members = parse_to_members_hash(<<-EOF)
         /** @class MyClass */
           /**
            * @cfg {String} foo
@@ -230,25 +229,24 @@ describe JsDuck::Aggregator do
            * @evented
            */
       EOF
-      @events = @docs["MyClass"][:members].find_all {|m| m[:tagname] == :event }
     end
 
     it "creates foochange event" do
-      @events[0][:name].should == "foochange"
+      @members["foochange"][:name].should == "foochange"
     end
 
     it "creates documentation for foochange event" do
-      @events[0][:doc].should ==
+      @members["foochange"][:doc].should ==
         "Fires when the {@link #cfg-foo} configuration is changed by {@link #method-setFoo}."
     end
 
     it "has 3 params" do
-      @events[0][:params].length.should == 3
+      @members["foochange"][:params].length.should == 3
     end
 
     describe "1st param" do
       before do
-        @param = @events[0][:params][0]
+        @param = @members["foochange"][:params][0]
       end
 
       it "is this" do
@@ -266,7 +264,7 @@ describe JsDuck::Aggregator do
 
     describe "2nd param" do
       before do
-        @param = @events[0][:params][1]
+        @param = @members["foochange"][:params][1]
       end
 
       it "is value" do
@@ -284,7 +282,7 @@ describe JsDuck::Aggregator do
 
     describe "3rd param" do
       before do
-        @param = @events[0][:params][2]
+        @param = @members["foochange"][:params][2]
       end
 
       it "is oldValue" do
