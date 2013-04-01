@@ -18,7 +18,7 @@ module JsDuck
           new_cfgs = []
           cls.all_local_members.each do |member|
             if member[:inheritdoc]
-              resolve(member, new_cfgs)
+              resolve(cls, member, new_cfgs)
             end
           end
           move_cfgs(cls, new_cfgs) if new_cfgs.length > 0
@@ -28,10 +28,10 @@ module JsDuck
       private
 
       # Copy over doc/params/return from parent member.
-      def resolve(m, new_cfgs)
+      def resolve(cls, m, new_cfgs)
         parent = find_parent(m)
         if parent && parent[:inheritdoc]
-          resolve(parent, new_cfgs)
+          resolve_parent(cls, parent)
         end
 
         if m[:inheritdoc] && parent
@@ -50,6 +50,12 @@ module JsDuck
         resolve_visibility(m, parent)
 
         m[:inheritdoc] = nil
+      end
+
+      def resolve_parent(cls, parent)
+        new_cfgs = []
+        resolve(cls, parent, new_cfgs)
+        move_cfgs(cls, new_cfgs) if new_cfgs.length > 0
       end
 
       def inherit(m, parent)
