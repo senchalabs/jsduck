@@ -251,6 +251,30 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "@inheritdoc without staticality info inheriting from parent with only a static member" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @method foo
+           * Static method comment.
+           * @static
+           */
+
+        /** @class Inh1 */
+          /**
+           * @method foo
+           * @inheritdoc Foo#foo
+           */
+      EOF
+      @inh1 = @docs["Inh1"][:members][0]
+    end
+
+    it "inherits from the static member" do
+      @inh1[:doc].should == "Static method comment."
+    end
+  end
+
   describe "recursive @inheritdocs" do
     before do
       @docs = parse(<<-EOF)

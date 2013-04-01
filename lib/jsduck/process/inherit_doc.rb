@@ -173,14 +173,17 @@ module JsDuck
         inherit = m[:inheritdoc] || {}
         name = inherit[:member] || m[:name]
         tagname = inherit[:type] || m[:tagname]
-        static = inherit[:static] || m[:static]
+        # When not explicitly inheriting from static member
+        # and the member itself is not static,
+        # inherit from instance member.
+        static = inherit[:static] || m[:static] || false
 
         if autodetected?(m)
           # Auto-detected properties can override either a property or a
           # config. So look for both types.
           if tagname == :property
-            cfg = cls.find_members(:name => name, :tagname => :cfg, :static => static || false)[0]
-            prop = cls.find_members(:name => name, :tagname => :property, :static => static || false)[0]
+            cfg = cls.find_members(:name => name, :tagname => :cfg, :static => static)[0]
+            prop = cls.find_members(:name => name, :tagname => :property, :static => static)[0]
 
             if cfg && prop
               prop
@@ -193,12 +196,17 @@ module JsDuck
             end
 
           else
-            # Unless the auto-detected member is detected as static,
-            # look only at instance members.
-            cls.find_members(:name => name, :tagname => tagname, :static => static || false)[0]
+            cls.find_members(:name => name, :tagname => tagname, :static => static)[0]
           end
         else
-          cls.find_members(:name => name, :tagname => tagname, :static => static)[0]
+          m = cls.find_members(:name => name, :tagname => tagname, :static => static)[0]
+          # When member was not found with explicit staticality and
+          # the @inheritdoc tag contained no explicit "static", then
+          # look for both static and instance members.
+          if !m && !inherit[:static]
+            m = cls.find_members(:name => name, :tagname => tagname, :static => nil)[0]
+          end
+          m
         end
       end
 
