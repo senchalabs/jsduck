@@ -160,6 +160,12 @@ module JsDuck
 
       if @custom_tag_paths.length > 0
         TagRegistry.reconfigure(@custom_tag_paths)
+      else
+        # Ensure the TagRegistry get instantiated just once.
+        # Otherwise the parallel processing causes multiple requests
+        # to initialize the TagRegistry, resulting in loading the Tag
+        # definitions multiple times.
+        TagRegistry.instance
       end
     end
 
