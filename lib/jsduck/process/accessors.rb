@@ -3,6 +3,17 @@ require 'jsduck/logger'
 module JsDuck
   module Process
 
+    # Expands accessors.
+    #
+    # Looks up configs with @accessor tag (or configs defined inside
+    # config: {} or eventedConfig: {} block).
+    #
+    # For such config "foo" it generates:
+    #
+    # - getter "getFoo"
+    # - setter "setFoo"
+    # - event "foochange" (when tagged with @evented)
+    #
     class Accessors
       def initialize(classes)
         @classes = classes
@@ -12,6 +23,8 @@ module JsDuck
       def process_all!
         @classes.each_value {|cls| process(cls) }
       end
+
+      private
 
       # Given a class, generates accessor methods to configs with
       # @accessor tag.  Modifies the class by adding these methods.
@@ -113,15 +126,15 @@ module JsDuck
           }, cfg)
       end
 
+      # Copy over from @cfg all the fields that aren't already present.
+      # Except :type and :default which don't make sense for methods and events.
       def add_shared(hash, cfg)
-        hash.merge!({
-            :owner => cfg[:owner],
-            :files => cfg[:files],
-            :private => cfg[:private],
-            :protected => cfg[:protected],
-            :autodetected => cfg[:autodetected],
-            :hide => cfg[:hide],
-          })
+        ignored_fields = [:type, :default, :accessor, :evented]
+
+        cfg.each_pair do |key, value|
+          hash[key] = value unless ignored_fields.include?(key) || hash[key]
+        end
+        hash
       end
 
       def upcase_first(str)

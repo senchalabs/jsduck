@@ -114,6 +114,53 @@ describe JsDuck::Aggregator do
 
   end
 
+  describe "@accessor with other tags" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class MyClass */
+          /**
+           * @cfg {String} foo
+           * Original comment.
+           * @accessor
+           * @evented
+           * @protected
+           * @deprecated 2.0 Don't use it any more
+           */
+      EOF
+      @members = {}
+      @docs["MyClass"][:members].each do |m|
+        @members[m[:name]] = m
+      end
+    end
+
+    it "adds @protected to getter" do
+      @members["getFoo"][:protected].should == true
+    end
+
+    it "adds @deprecated to getter" do
+      @members["getFoo"][:deprecated].should_not == nil
+    end
+
+    it "doesn't add @accessor to getter" do
+      @members["getFoo"][:accessor].should == nil
+    end
+
+    it "doesn't add @evented to getter" do
+      @members["getFoo"][:evented].should == nil
+    end
+
+    # Lighter tests for setter and event.
+    # The same method takes care of inheriting in all cases.
+
+    it "adds @protected to setter" do
+      @members["setFoo"][:protected].should == true
+    end
+
+    it "adds @protected to event" do
+      @members["foochange"][:protected].should == true
+    end
+  end
+
   describe "@accessor tag on private cfg" do
     before do
       @docs = parse(<<-EOF)
