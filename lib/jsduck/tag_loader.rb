@@ -24,7 +24,14 @@ module JsDuck
     # Loads tag classes from given dir or single file.
     def load(path)
       if File.directory?(path)
-        Dir[path+"/**/*.rb"].each {|file| require(file) }
+        Dir[path+"/**/*.rb"].each do |file|
+          # Ruby 1.8 doesn't understand that "jsduck/tag/tag" and
+          # "./lib/jsduck/tag/tag.rb" refer to the same file.  So
+          # explicitly avoid loading this file (as it's required on
+          # top already) to prevent warnings of constants getting
+          # defined multiple times.
+          require(file) unless file =~ /jsduck\/tag\/tag\.rb$/
+        end
       else
         require(path)
       end
