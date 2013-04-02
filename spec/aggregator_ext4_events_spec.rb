@@ -34,6 +34,10 @@ describe JsDuck::Aggregator do
     it "with standard description" do
       event[:params][2][:doc].should =~ /The options object passed to.*addListener/
     end
+
+    it "with special :ext4event flag" do
+      event[:params][2][:ext4_auto_param].should == true
+    end
   end
 
   describe "When some class defined with Ext.define" do

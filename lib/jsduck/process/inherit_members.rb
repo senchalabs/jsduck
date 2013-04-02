@@ -92,8 +92,8 @@ module JsDuck
       end
 
       def inherit_params?(m, parent)
-        # ignore the eOpts auto-inserted param of Ext4-style events
-        params = (m[:params] || []).reject {|p| p[:name] == "eOpts" }
+        # ignore the auto-inserted param of Ext4-style events
+        params = (m[:params] || []).reject {|p| p[:ext4_auto_param] }
 
         if params.length > 0 && !auto?(m, :params)
           # member itself has params and these are not auto-detected

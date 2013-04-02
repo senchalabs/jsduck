@@ -34,7 +34,8 @@ module JsDuck
         :tagname => :params,
         :name => "eOpts",
         :type => "Object",
-        :doc => "The options object passed to {@link Ext.util.Observable#addListener}."
+        :doc => "The options object passed to {@link Ext.util.Observable#addListener}.",
+        :ext4_auto_param => true,
       }
 
     end
