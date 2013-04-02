@@ -28,6 +28,8 @@ module JsDuck
       def nest(raw_items, pos)
         # First item can't be namespaced, if it is ignore the rest.
         if raw_items[0] && raw_items[0][:name] =~ /\./
+          warn(raw_items[0][:name], pos)
+          raw_items[0][:name].sub!(/\..*$/, '')
           return [raw_items[0]]
         end
 
@@ -47,8 +49,7 @@ module JsDuck
               parent[:properties] = [] unless parent[:properties]
               parent[:properties] << it
             else
-              msg = "Ignoring subproperty #{$1}.#{$2}, no parent found with name '#{$1}'."
-              Logger.warn(:subproperty, msg, pos)
+              warn("#{$1}.#{$2}", pos)
             end
           else
             items << it
@@ -56,6 +57,12 @@ module JsDuck
         end
 
         return items
+      end
+
+      def warn(name, pos)
+        parent = name.sub(/\.[^.]*$/, '')
+        msg = "Ignoring subproperty '#{name}' not parent found with name '#{parent}'."
+        Logger.warn(:subproperty, msg, pos)
       end
 
     end

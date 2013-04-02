@@ -28,13 +28,16 @@ module JsDuck::Tag
 
     def process_doc(h, tags, pos)
       p = tags[0]
-      h[:name] = p[:name]
       # Type might also come from @type, don't overwrite it with nil.
       h[:type] = p[:type] if p[:type]
       h[:default] = p[:default]
-      h[:properties] = JsDuck::Doc::Subproperties.nest(tags, pos)[0][:properties]
+
       # Documentation after the first @property is part of the top-level docs.
       h[:doc] += p[:doc]
+
+      nested = JsDuck::Doc::Subproperties.nest(tags, pos)[0]
+      h[:properties] = nested[:properties]
+      h[:name] = nested[:name]
     end
   end
 end
