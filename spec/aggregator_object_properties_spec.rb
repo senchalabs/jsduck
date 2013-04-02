@@ -242,7 +242,7 @@ describe JsDuck::Aggregator do
     end
 
     it "interpreted as just one config" do
-      @doc[:name].should == "coord.lat"
+      @doc[:name].should == "coord"
     end
   end
 
