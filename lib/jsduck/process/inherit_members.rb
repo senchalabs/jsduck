@@ -79,13 +79,7 @@ module JsDuck
       def inherit(m, parent)
         m[:doc] = parent[:doc] if m[:doc].empty?
 
-        # Don't inherit params from parent when:
-        # - member itself has params and these are not auto-detected
-        # - or the params in parent are auto-detected.
-        unless m[:params] && m[:params].length > 0 && !auto?(m, :params) || auto?(parent, :params)
-          m[:params] = parent[:params]
-        end
-
+        m[:params] = parent[:params] if inherit_params?(m, parent)
         m[:return] = parent[:return] unless m[:return]
         m[:throws] = parent[:throws] unless m[:throws] && m[:throws].length > 0
 
@@ -94,6 +88,21 @@ module JsDuck
         # - or the type in parent is auto-detected.
         unless m[:type] && m[:type] != "Object" && !auto?(m, :type) || auto?(parent, :type)
           m[:type] = parent[:type]
+        end
+      end
+
+      def inherit_params?(m, parent)
+        # ignore the eOpts auto-inserted param of Ext4-style events
+        params = (m[:params] || []).reject {|p| p[:name] == "eOpts" }
+
+        if params.length > 0 && !auto?(m, :params)
+          # member itself has params and these are not auto-detected
+          false
+        elsif auto?(parent, :params)
+          # Params in parent are auto-detected.
+          false
+        else
+          true
         end
       end
 
