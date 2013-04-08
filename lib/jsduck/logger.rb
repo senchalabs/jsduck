@@ -140,6 +140,11 @@ module JsDuck
       $stderr.puts error.backtrace
     end
 
+    # True when at least one warning was logged.
+    def warnings_logged?
+      @shown_warnings.length > 0
+    end
+
     private
 
     COLORS = {

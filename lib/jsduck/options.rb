@@ -43,6 +43,7 @@ module JsDuck
     attr_accessor :ignore_html
 
     # Debugging
+    attr_accessor :warnings_exit_nonzero
     attr_accessor :template_dir
     attr_accessor :template_links
     attr_accessor :extjs_path
@@ -122,6 +123,7 @@ module JsDuck
       @ignore_html = {}
 
       # Debugging
+      @warnings_exit_nonzero = false
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
       @template_dir = @root_dir + "/template-min"
       @template_links = false
@@ -607,6 +609,17 @@ module JsDuck
               Logger.set_warning(name, enable)
             end
           end
+        end
+
+        opts.on('--warnings-exit-nonzero',
+          "Exits with non-zero exit code on warnings.",
+          "",
+          "By default JSDuck only exits with non-zero exit code",
+          "when a fatal error is encountered (code 1).",
+          "",
+          "With this option the exit code will be 2 when any warning",
+          "gets printed.") do
+          @warnings_exit_nonzero = true
         end
 
         opts.on('--[no-]color',
