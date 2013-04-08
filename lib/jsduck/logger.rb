@@ -10,8 +10,14 @@ module JsDuck
     # Set to true to enable verbose logging
     attr_accessor :verbose
 
+    # Set true to force colored output.
+    # Set false to force no colors.
+    attr_accessor :colors
+
     def initialize
       @verbose = false
+      @colors = nil
+
       @warning_docs = [
         [:global, "Member doesn't belong to any class"],
         [:inheritdoc, "@inheritdoc referring to unknown class or member"],
@@ -154,7 +160,7 @@ module JsDuck
     # Only does color output when STDERR is attached to TTY
     # i.e. is not piped/redirected.
     def paint(color_name, msg)
-      if Util::OS.windows? || !$stderr.tty?
+      if @colors == false || @colors == nil && (Util::OS.windows? || !$stderr.tty?)
         msg
       else
         COLORS[color_name] + msg + CLEAR

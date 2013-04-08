@@ -609,6 +609,15 @@ module JsDuck
           end
         end
 
+        opts.on('--[no-]color',
+          "Turn on/off colorized terminal output.",
+          "",
+          "By default the colored output is on, but gets disabled",
+          "automatically when output is not an interactive terminal",
+          "(or when running on Windows system).") do |on|
+          Logger.colors = on
+        end
+
         opts.on('-p', '--processes=COUNT',
           "The number of parallel processes to use.",
           "",
