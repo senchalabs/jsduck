@@ -36,7 +36,7 @@ Ext.define('Docs.view.Viewport', {
                 region: 'north',
                 id: 'north-region',
 				// Ti changed height
-                height: 73,
+                height: 78,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
@@ -45,9 +45,16 @@ Ext.define('Docs.view.Viewport', {
 					// Ti change -- removed login container, adjusted height
 					{
 						xtype: 'container',
-						height: 45,
+						height: 50,
 						layout: 'hbox',
 						items: [
+                            { 
+                                xtype: 'component',
+                                id: 'doc-logo',
+                                html: '<span>Documentation</span>',
+                                width: 160,
+                                height: 30,
+                            },
 							{
 								xtype: 'docheader'
 							},
@@ -56,7 +63,7 @@ Ext.define('Docs.view.Viewport', {
 							   xtype: 'searchcontainer',
 							   id: 'search-container',
 							   width: 224,
-							   margin: '5 0 0 0'
+							   margin: '10 0 0 0'
 						   }
 						]
 					},
