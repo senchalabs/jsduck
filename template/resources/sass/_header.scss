@@ -10,8 +10,9 @@
     padding-right: 15px;
     padding-left: 8px; 
     text-align: left;
-    height: 35px; 
-    margin: 10px     10px; } 
+    margin: 12px     10px; 
+    border-radius: 30px;
+    border-color: #fff; } 
     
   .x-btn-default-small {
     background-image: none !important;
@@ -24,7 +25,7 @@
     color: #aaa; }
 
   .x-btn-inner {
-    font: bold 14px "Helvetica Neue",helvetica,arial,clean,sans-serif; 
+    font: bold 16px "Helvetica Neue",helvetica,arial,clean,sans-serif; 
     color: #fff; }
 
   .x-btn-arrow {
@@ -43,7 +44,7 @@
   background: transparent url('../images/appc_logo.png') no-repeat;
   margin: 8px 10px;
   color: #fff;
-  font: bold 16px "Helvetica Neue",helvetica,arial,clean,sans-serif;
+  font: 16px "Helvetica Neue",helvetica,arial,clean,sans-serif;
 
   span {
     line-height: 30px;
@@ -58,6 +59,10 @@
 
 #header-content-menu {
       display: none; }
+
+// Add rule between title and doc tabs 
+#doc-topnav-container { 
+    background: url("../images/top-border.png") repeat-x 0px 42px; }
 
 // Title
 #header-content {

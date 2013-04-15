@@ -10,8 +10,8 @@ Ext.define('Docs.view.Header', {
 
     contentEl: 'header-content-menu',
 
-    width: 120,
-    height: 30,
+    width: 150,
+    height: 23,
     textAlign: 'left',
 
     initComponent: function() {
@@ -35,7 +35,7 @@ Ext.define('Docs.view.Header', {
         afterrender: function(cmp) {
             if (this.menu) {
                 cmp.el.addListener('mouseover', function(cmp, el) {
-                    this.menu.showBy(this.el, 'bl', [0, 0]);
+                    this.menu.showBy(this.el, 't-b');
                 }, this);
                 this.menu.addListener('mouseleave', function(cmp, el) {
                     this.menu.hide();

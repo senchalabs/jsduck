@@ -45,6 +45,7 @@ Ext.define('Docs.view.Viewport', {
 					// Ti change -- removed login container, adjusted height
 					{
 						xtype: 'container',
+                        id: 'doc-topnav-container',
 						height: 50,
 						layout: 'hbox',
 						items: [
@@ -52,18 +53,19 @@ Ext.define('Docs.view.Viewport', {
                                 xtype: 'component',
                                 id: 'doc-logo',
                                 html: '<span>Documentation</span>',
-                                width: 160,
+                                width: 170,
                                 height: 30,
                             },
 							{
-								xtype: 'docheader'
+								xtype: 'docheader',
+                                margin: '12 0 0 0'
 							},
 							{   xtype: 'container', flex: 1 },
 						   {
 							   xtype: 'searchcontainer',
 							   id: 'search-container',
 							   width: 224,
-							   margin: '10 0 0 0'
+							   margin: '12 0 0 0'
 						   }
 						]
 					},
