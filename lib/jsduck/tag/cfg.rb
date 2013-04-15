@@ -1,5 +1,6 @@
 require "jsduck/tag/tag"
 require "jsduck/doc/subproperties"
+require "jsduck/render/property_signature"
 
 module JsDuck::Tag
   class Cfg < Tag
@@ -44,6 +45,10 @@ module JsDuck::Tag
       nested = JsDuck::Doc::Subproperties.nest(tags, pos)[0]
       h[:properties] = nested[:properties]
       h[:name] = nested[:name]
+    end
+
+    def to_html(cfg, cls)
+      JsDuck::Render::PropertySignature.render(cfg)
     end
   end
 end

@@ -1,4 +1,5 @@
 require "jsduck/tag/tag"
+require "jsduck/render/property_signature"
 
 module JsDuck::Tag
   class CssVar < Tag
@@ -24,6 +25,10 @@ module JsDuck::Tag
       h[:name] = p[:name]
       h[:type] = p[:type]
       h[:default] = p[:default]
+    end
+
+    def to_html(var, cls)
+      JsDuck::Render::PropertySignature.render(var)
     end
   end
 end

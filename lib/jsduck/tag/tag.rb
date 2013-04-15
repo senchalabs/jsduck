@@ -195,6 +195,13 @@ module JsDuck::Tag
     #
     # It gets passed the full class/member hash. It should return an
     # HTML string to inject into document.
+    #
+    # NOTE: In member tags, this method gets called with two
+    # arguments: context and class_context. It should return the
+    # signature-line of the member. For example:
+    #
+    #     "apply(source, target) : Object"
+    #
     def to_html(context)
     end
 

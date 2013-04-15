@@ -1,4 +1,5 @@
 require "jsduck/tag/tag"
+require "jsduck/render/method_signature"
 
 module JsDuck::Tag
   # Implementation of @method tag.
@@ -30,6 +31,10 @@ module JsDuck::Tag
     # Otherwise we might overwrite name coming from @constructor.
     def process_doc(h, tags, pos)
       h[:name] = tags[0][:name] if tags[0][:name]
+    end
+
+    def to_html(method, cls)
+      JsDuck::Render::MethodSignature.render(method, cls)
     end
   end
 end

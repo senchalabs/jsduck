@@ -1,6 +1,6 @@
-require 'jsduck/render/signature'
 require 'jsduck/render/tags'
 require 'jsduck/render/sidebar'
+require 'jsduck/tag_registry'
 
 module JsDuck
   module Render
@@ -13,7 +13,6 @@ module JsDuck
 
       def render(cls)
         @cls = cls
-        @signature = Render::Signature.new(cls)
 
         return [
           "<div>",
@@ -122,8 +121,8 @@ module JsDuck
                 "<br/>",
                 @opts.source ? "<a href='source/#{m[:files][0][:href]}' target='_blank' class='view-source'>view source</a>" : "",
               "</div>",
-              # method params signature or property type signature
-              @signature.render(m),
+              render_member_signature(m),
+              render_tag_signature(m),
             "</div>",
             # short and long descriptions
             "<div class='description'>",
@@ -136,6 +135,14 @@ module JsDuck
             "</div>",
           "</div>",
         ]
+      end
+
+      def render_member_signature(m)
+        TagRegistry.get_by_name(m[:tagname]).to_html(m, @cls)
+      end
+
+      def render_tag_signature(m)
+        Render::Tags.render_signature(m)
       end
 
     end

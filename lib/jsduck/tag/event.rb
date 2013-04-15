@@ -1,4 +1,5 @@
 require "jsduck/tag/tag"
+require "jsduck/render/method_signature"
 
 module JsDuck::Tag
   class Event < Tag
@@ -23,6 +24,10 @@ module JsDuck::Tag
 
     def process_doc(h, tags, pos)
       h[:name] = tags[0][:name]
+    end
+
+    def to_html(event, cls)
+      JsDuck::Render::MethodSignature.render(event, cls)
     end
   end
 end
