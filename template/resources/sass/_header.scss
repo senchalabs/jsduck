@@ -8,7 +8,61 @@
   //@include vertical-gradient(#074e7c, #095f93);
   .dropdown {
     padding-right: 15px;
-    background: url(../images/down-arr.png) no-repeat 98% 80%; } }
+    padding-left: 8px; 
+    text-align: left;
+    margin: 12px     10px; 
+    border-radius: 30px;
+    border-color: #fff; } 
+    
+  .x-btn-default-small {
+    background-image: none !important;
+    background-color: transparent;
+    color: #fff; }
+  
+  .x-btn-default-small-focus {
+    background-image: none !important;
+    background-color: transparent;
+    color: #aaa; }
+
+  .x-btn-inner {
+    font: bold 16px "Helvetica Neue",helvetica,arial,clean,sans-serif; 
+    color: #fff; }
+
+  .x-btn-arrow {
+    background-image: url('../images/down-arrow.png'); }
+  
+  .x-btn-arrow-right {
+    padding-right: 20px; }
+
+  .x-btn-default-small-menu-active .x-btn-inner {
+    color: #aaa !important; }
+
+  .x-btn-menu-active .x-btn-arrow {
+    background-image: url('../images/down-arrow-hover.png'); } }
+
+#doc-logo {
+  background: transparent url('../images/appc_logo.png') no-repeat;
+  margin: 8px 10px;
+  color: #fff;
+  font: 16px "Helvetica Neue",helvetica,arial,clean,sans-serif;
+
+  span {
+    line-height: 30px;
+    margin-left: 45px; } }
+
+#doc-site-menu {
+  .x-menu-item-link {
+    padding: 6px 2px 3px 8px; }
+
+  .x-menu-item-text {
+    font: 14px "Helvetica Neue",helvetica,arial,clean,sans-serif; }}
+
+#header-content-menu {
+      display: none; }
+
+// Add rule between title and doc tabs 
+#doc-topnav-container { 
+    background: url("../images/top-border.png") repeat-x 0px 42px; }
 
 // Title
 #header-content {
@@ -25,11 +79,6 @@
   white-space: nowrap;
   #header-content-logo {
       float: left;
-  }
-  #header-content-menu {
-      float: left;
-      margin-left: 10px;
-      margin-top: 7px;
   }
   a {
     color: #fff; }
