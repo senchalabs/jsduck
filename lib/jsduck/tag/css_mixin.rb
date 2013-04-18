@@ -1,11 +1,11 @@
-require "jsduck/tag/tag"
+require "jsduck/tag/member_tag"
 require "jsduck/render/method_signature"
 
 module JsDuck::Tag
   # As of now there is no @css_mixin tag available in CSS files.  This
   # class just exists to define that we have a member type called
   # :css_mixin.
-  class CssMixin < Tag
+  class CssMixin < MemberTag
     def initialize
       @member_type = {
         :name => :css_mixin,

@@ -1,8 +1,8 @@
-require "jsduck/tag/tag"
+require "jsduck/tag/member_tag"
 require "jsduck/render/property_signature"
 
 module JsDuck::Tag
-  class CssVar < Tag
+  class CssVar < MemberTag
     def initialize
       @pattern = "var"
       @tagname = :css_var

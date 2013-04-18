@@ -1,9 +1,9 @@
-require "jsduck/tag/tag"
+require "jsduck/tag/member_tag"
 require "jsduck/doc/subproperties"
 require "jsduck/render/property_signature"
 
 module JsDuck::Tag
-  class Cfg < Tag
+  class Cfg < MemberTag
     def initialize
       @pattern = "cfg"
       @tagname = :cfg

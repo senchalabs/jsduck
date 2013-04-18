@@ -63,7 +63,7 @@ module JsDuck
           @mergers[context] << tag
         end
 
-        if tag.member_type
+        if tag.respond_to?(:member_type) && tag.member_type
           @member_types << tag.member_type
         end
 

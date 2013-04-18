@@ -1,8 +1,8 @@
-require "jsduck/tag/tag"
+require "jsduck/tag/member_tag"
 require "jsduck/render/method_signature"
 
 module JsDuck::Tag
-  class Event < Tag
+  class Event < MemberTag
     def initialize
       @pattern = "event"
       @tagname = :event

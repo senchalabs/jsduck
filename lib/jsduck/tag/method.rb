@@ -1,9 +1,9 @@
-require "jsduck/tag/tag"
+require "jsduck/tag/member_tag"
 require "jsduck/render/method_signature"
 
 module JsDuck::Tag
   # Implementation of @method tag.
-  class Method < Tag
+  class Method < MemberTag
     def initialize
       @pattern = "method"
       @tagname = :method
