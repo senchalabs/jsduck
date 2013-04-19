@@ -12,6 +12,7 @@
     text-align: left;
     margin: 12px     10px; 
     border-radius: 30px;
+    border-width: 2px;
     border-color: #fff; } 
     
   .x-btn-default-small {
@@ -25,7 +26,7 @@
     color: #aaa; }
 
   .x-btn-inner {
-    font: bold 16px "Helvetica Neue",helvetica,arial,clean,sans-serif; 
+    font: bold 15px "Helvetica Neue",helvetica,arial,clean,sans-serif; 
     color: #fff; }
 
   .x-btn-arrow {
@@ -35,7 +36,7 @@
     padding-right: 20px; }
 
   .x-btn-default-small-menu-active .x-btn-inner {
-    color: #aaa !important; }
+    color: #ccc !important; }
 
   .x-btn-menu-active .x-btn-arrow {
     background-image: url('../images/down-arrow-hover.png'); } }
