@@ -13,6 +13,7 @@ Ext.define('Docs.view.Header', {
     width: 150,
     height: 23,
     textAlign: 'left',
+    border: 2,
 
     initComponent: function() {
         this.text = Ext.getDom('header-content-menu').textContent;
