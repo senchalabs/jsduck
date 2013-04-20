@@ -14,7 +14,7 @@ module JsDuck
     # producing hash as a result.
     def merge(docset, filename="", linenr=0)
       docs = docset[:comment]
-      code = docset[:code]
+      code = process_code(docset[:tagname], docset[:code])
 
       h = {
         :tagname => docset[:tagname],
@@ -32,6 +32,20 @@ module JsDuck
     end
 
     private
+
+    # When code was detected with the correct member type, leaves it
+    # as is, otherwise applies processing to extract fields relevant
+    # to the member type
+    def process_code(tagname, code)
+      if code[:tagname] == tagname
+        code
+      else
+        result = TagRegistry.get_by_name(tagname).process_code(code)
+        result[:tagname] = code[:tagname]
+        result[:autodetected] = code[:autodetected]
+        result
+      end
+    end
 
     # Invokes the #merge methods of tags registered for the given
     # merge context.

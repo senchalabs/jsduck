@@ -27,6 +27,14 @@ module JsDuck::Tag
       h[:default] = p[:default]
     end
 
+    def process_code(code)
+      return {
+        :name => code[:name],
+        :type => code[:type],
+        :default => code[:default],
+      }
+    end
+
     def to_html(var, cls)
       JsDuck::Render::PropertySignature.render(var)
     end

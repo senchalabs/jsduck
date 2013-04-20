@@ -47,6 +47,14 @@ module JsDuck::Tag
       h[:name] = nested[:name]
     end
 
+    def process_code(code)
+      return {
+        :name => code[:name],
+        :type => code[:type],
+        :default => code[:default],
+      }
+    end
+
     def to_html(cfg, cls)
       JsDuck::Render::PropertySignature.render(cfg)
     end

@@ -33,6 +33,14 @@ module JsDuck::Tag
       h[:name] = tags[0][:name] if tags[0][:name]
     end
 
+    def process_code(code)
+      return {
+        :name => code[:name],
+        :params => code[:params],
+        :chainable => code[:chainable],
+      }
+    end
+
     def to_html(method, cls)
       JsDuck::Render::MethodSignature.render(method, cls)
     end

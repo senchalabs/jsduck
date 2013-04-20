@@ -56,6 +56,30 @@ module JsDuck::Tag
     MEMBER_POS_CSS_VAR = 5
     MEMBER_POS_CSS_MIXIN = 6
 
+    # Called when the member type detected from code doesn't match
+    # with the final member type determined from code + doc-comment.
+    #
+    # The job of this method is then to extract the fields relevant to
+    # the member type.
+    #
+    # The input is a hash of auto-detected data. For example:
+    #
+    #     {:name => "foo", :type => "String", :default => "hello"}
+    #
+    # In the context of method :type and :default don't make any
+    # sense, so we should return just the name:
+    #
+    #    {:name => "foo"}
+    #
+    # Extracting just the :name field is also the default behavior of
+    # this method.
+    #
+    # Note: The special :tagname and :autodetected fields are filtered
+    # out automatically, no need to worry about these.
+    def process_code(code)
+      {:name => code[:name]}
+    end
+
     # This method defines the signature-line of the member.
     # For example it might return something like this:
     #
