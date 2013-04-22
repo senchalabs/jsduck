@@ -9,17 +9,12 @@ module JsDuck::Tag
   #
   #     @cfg [blah=somedefault]
   #
-  # This tag class exists to take care of the merging of :default
-  # fields and to generate the "Defaults to:" text in final HTML.
+  # This tag class exists to generate the "Defaults to:" text in final
+  # HTML.
   class Default < Tag
     def initialize
       @tagname = :default
-      @merge_context = :property_like
       @html_position = POS_DEFAULT
-    end
-
-    def merge(h, docs, code)
-      JsDuck::DocsCodeComparer.merge_if_matches(h, :default, docs, code)
     end
 
     def to_html(m)

@@ -52,7 +52,7 @@ module JsDuck
     def general_merge(h, docs, code)
       # Add all items in docs not already in result.
       docs.each_pair do |key, value|
-        h[key] = value unless h.has_key?(key) || Merger::explicit?(key)
+        h[key] = value unless h[key] || Merger::explicit?(key)
       end
 
       # Add all items in code not already in result and mark them as
@@ -60,7 +60,7 @@ module JsDuck
       # names don't conflict.
       if DocsCodeComparer.matches?(docs, code)
         code.each_pair do |key, value|
-          unless h.has_key?(key) || Merger::explicit?(key)
+          unless h[key] || Merger::explicit?(key)
             h[key] = value
             DocsCodeComparer.mark_autodetected(h, key)
           end
