@@ -197,6 +197,10 @@ describe JsDuck::Aggregator do
       cls[:members][0][:chainable].should == true
     end
 
+    it "marks :chainable field as autodetected" do
+      cls[:members][0][:autodetected][:chainable].should == true
+    end
+
     it "adds @return {MyClass} this" do
       cls[:members][0][:return][:type].should == "MyClass"
       cls[:members][0][:return][:doc].should == "this"

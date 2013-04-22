@@ -55,11 +55,15 @@ module JsDuck
         h[key] = value unless h.has_key?(key) || Merger::explicit?(key)
       end
 
-      # Add all items in code not already in result.
-      # But only if the explicit and auto-detected names don't conflict.
+      # Add all items in code not already in result and mark them as
+      # auto-detected.  But only if the explicit and auto-detected
+      # names don't conflict.
       if DocsCodeComparer.matches?(docs, code)
         code.each_pair do |key, value|
-          h[key] = value unless h.has_key?(key) || Merger::explicit?(key)
+          unless h.has_key?(key) || Merger::explicit?(key)
+            h[key] = value
+            DocsCodeComparer.mark_autodetected(h, key)
+          end
         end
       end
     end
