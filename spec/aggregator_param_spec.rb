@@ -133,7 +133,12 @@ describe JsDuck::Aggregator do
         function foo(x, y) {}
       EOS
     end
-    it_should_behave_like "two parameters"
+
     it_should_behave_like "parameter types"
+
+    it "detects no parameter names" do
+      @doc[0][:name].should == nil
+      @doc[1][:name].should == nil
+    end
   end
 end

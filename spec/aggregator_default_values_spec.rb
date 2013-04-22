@@ -62,7 +62,7 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "doesn't make parameter optional" do
-      @param[:optional].should == false
+      @param[:optional].should_not == true
     end
   end
 
@@ -76,7 +76,7 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "doesn't make parameter optional" do
-      @param[:optional].should == false
+      @param[:optional].should_not == true
     end
   end
 

@@ -32,7 +32,14 @@ module JsDuck::Tag
     end
 
     def merge(h, docs, code)
-      h[:params] = merge_params(docs, code, h[:files].first)
+      # Ensure the existance of params array.
+      h[:params] = [] unless h[:params]
+      # Default type of each parameter to "Object"
+      h[:params].each do |p|
+        p[:type] = "Object" unless p[:type]
+      end
+
+      print_warnings(docs, code, h[:files].first)
     end
 
     def format(m, formatter)
@@ -45,30 +52,9 @@ module JsDuck::Tag
 
     private
 
-    def merge_params(docs, code, file)
+    def print_warnings(docs, code, file)
       explicit = docs[:params] || []
       implicit = JsDuck::DocsCodeComparer.matches?(docs, code) ? (code[:params] || []) : []
-      print_warnings(explicit, implicit, file)
-
-      # Override implicit parameters with explicit ones
-      # But if explicit ones exist, don't append the implicit ones.
-      params = []
-      (explicit.length > 0 ? explicit.length : implicit.length).times do |i|
-        im = implicit[i] || {}
-        ex = explicit[i] || {}
-        params << {
-          :type => ex[:type] || im[:type] || "Object",
-          :name => ex[:name] || im[:name] || "",
-          :doc => ex[:doc] || im[:doc] || "",
-          :optional => ex[:optional] || false,
-          :default => ex[:default],
-          :properties => ex[:properties] || [],
-        }
-      end
-      params
-    end
-
-    def print_warnings(explicit, implicit, file)
       ex_len = explicit.length
       im_len = implicit.length
 
