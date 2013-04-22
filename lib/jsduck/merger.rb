@@ -57,7 +57,7 @@ module JsDuck
       # Add all items in code not already in result and mark them as
       # auto-detected.  But only if the explicit and auto-detected
       # names don't conflict.
-      if can_be_autodetected?(docs, code)
+      if Merger.can_be_autodetected?(docs, code)
         code.each_pair do |key, value|
           unless h[key]
             h[key] = value
@@ -69,7 +69,7 @@ module JsDuck
 
     # True if the name detected from code matches with explicitly
     # documented name.  Also true when no explicit name documented.
-    def can_be_autodetected?(docs, code)
+    def self.can_be_autodetected?(docs, code)
       docs[:name] == nil || docs[:name] == code[:name]
     end
 
