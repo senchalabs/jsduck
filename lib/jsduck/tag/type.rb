@@ -1,5 +1,4 @@
 require "jsduck/tag/tag"
-require "jsduck/docs_code_comparer"
 
 module JsDuck::Tag
   class Type < Tag
@@ -34,7 +33,6 @@ module JsDuck::Tag
 
     # Do the merging of :type field
     def merge(h, docs, code)
-      JsDuck::DocsCodeComparer.merge_if_matches(h, :type, docs, code)
       if h[:type] == nil
         h[:type] = code[:tagname] == :method ? "Function" : "Object"
       end

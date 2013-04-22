@@ -40,7 +40,7 @@ module JsDuck::Tag
     end
 
     def merge(h, docs, code)
-      h[:aliases] = build_aliases_hash(docs[:aliases] || code[:aliases] || [])
+      h[:aliases] = build_aliases_hash(h[:aliases] || [])
     end
 
     # Given array of full alias names like "foo.bar", "foo.baz"

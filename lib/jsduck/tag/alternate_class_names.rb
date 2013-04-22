@@ -12,7 +12,7 @@ module JsDuck::Tag
     end
 
     def merge(h, docs, code)
-      h[@tagname] = docs[@tagname] || code[@tagname] || []
+      h[@tagname] = [] unless h[@tagname]
     end
   end
 end

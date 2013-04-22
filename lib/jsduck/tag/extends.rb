@@ -38,7 +38,6 @@ module JsDuck::Tag
 
     # Ignore extending of the Object class
     def merge(h, docs, code)
-      h[:extends] = docs[:extends] || code[:extends]
       h[:extends] = nil if h[:extends] == "Object"
     end
   end
