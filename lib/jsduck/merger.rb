@@ -1,5 +1,6 @@
 require 'jsduck/class'
 require 'jsduck/tag_registry'
+require 'jsduck/docs_code_comparer'
 
 module JsDuck
 
@@ -18,6 +19,7 @@ module JsDuck
 
       h = {
         :tagname => docset[:tagname],
+        :name => docs[:name] || code[:name] || "",
         :files => [{:filename => filename, :linenr => linenr}],
       }
 
@@ -48,13 +50,17 @@ module JsDuck
 
     # Applies default merge algorithm to the rest of the data.
     def general_merge(h, docs, code)
-      # Merge in all items in docs that don't occour already in result.
+      # Add all items in docs not already in result.
       docs.each_pair do |key, value|
         h[key] = value unless h.has_key?(key) || Merger::explicit?(key)
       end
-      # Then add all in the items from code not already in result.
-      code.each_pair do |key, value|
-        h[key] = value unless h.has_key?(key) || Merger::explicit?(key)
+
+      # Add all items in code not already in result.
+      # But only if the explicit and auto-detected names don't conflict.
+      if DocsCodeComparer.matches?(docs, code)
+        code.each_pair do |key, value|
+          h[key] = value unless h.has_key?(key) || Merger::explicit?(key)
+        end
       end
     end
 

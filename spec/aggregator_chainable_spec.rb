@@ -286,4 +286,20 @@ describe JsDuck::Aggregator do
       cls[:members][0][:return][:type].should == "OtherClass"
     end
   end
+
+  describe "different implicit and explicit method names" do
+    let(:cls) do
+      parse(<<-EOS)["MyClass"]
+        /** @class MyClass */
+        /** @method foo */
+        function bar() {
+            return this;
+        }
+      EOS
+    end
+
+    it "doesn't detect chainable from code" do
+      cls[:members][0][:chainable].should_not == true
+    end
+  end
 end
