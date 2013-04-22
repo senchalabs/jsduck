@@ -27,12 +27,10 @@ module JsDuck::Tag
       h[:default] = p[:default]
     end
 
-    def process_code(code)
-      return {
-        :name => code[:name],
-        :type => code[:type],
-        :default => code[:default],
-      }
+    def process_code(h, code)
+      super(h, code)
+      h[:type] = code[:type]
+      h[:default] = code[:default]
     end
 
     def to_html(var, cls)

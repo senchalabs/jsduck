@@ -13,21 +13,13 @@ module JsDuck::Tag
     end
 
     # When docs contains :name, it's taken from there.
-    #
-    # When code contains :name, we only take the full name when
-    # dealing with a class, otherwise we just take the last part of
-    # the dot.separate.name.
-    #
-    # :name defaults to empty string.
+    # When code contains :name, it's taken from there.
+    # When neither, defaults to empty string.
     def merge(h, docs, code)
       if docs[:name]
         h[:name] = docs[:name]
       elsif code[:name]
-        if h[:tagname] == :class
-          h[:name] = code[:name]
-        else
-          h[:name] = code[:name].split(/\./).last
-        end
+        h[:name] = code[:name]
       else
         h[:name] = ""
       end

@@ -56,28 +56,35 @@ module JsDuck::Tag
     MEMBER_POS_CSS_VAR = 5
     MEMBER_POS_CSS_MIXIN = 6
 
-    # Called when the member type detected from code doesn't match
-    # with the final member type determined from code + doc-comment.
+    # Extracts the fields auto-detected from code that are relevant to
+    # the member type and saves them to the context hash.
     #
-    # The job of this method is then to extract the fields relevant to
-    # the member type.
+    # The implementation here extracts fields applicable to all member
+    # types.  When additional member-specific fields are to be
+    # extracted, override this method, but be sure to call the
+    # superclass method too.
     #
-    # The input is a hash of auto-detected data. For example:
+    # For example inside Method tag we might additionally want to
+    # extract :type and :default:
     #
-    #     {:name => "foo", :type => "String", :default => "hello"}
+    #     def process_code(context, code)
+    #       super(context, code)
+    #       context[:type] = code[:type]
+    #       context[:default] = code[:default]
+    #     end
     #
-    # In the context of method :type and :default don't make any
-    # sense, so we should return just the name:
-    #
-    #    {:name => "foo"}
-    #
-    # Extracting just the :name field is also the default behavior of
-    # this method.
-    #
-    # Note: The special :tagname and :autodetected fields are filtered
-    # out automatically, no need to worry about these.
-    def process_code(code)
-      {:name => code[:name]}
+    def process_code(context, code)
+      context[:tagname] = code[:tagname]
+      # An auto-detected name might be "MyClass.prototype.myMethod" -
+      # for member name we only want the last "myMethod" part.
+      context[:name] = code[:name] ? code[:name].split(/\./).last : nil
+
+      context[:autodetected] = code[:autodetected]
+      context[:inheritdoc] = code[:inheritdoc]
+      context[:static] = code[:static]
+      context[:private] = code[:private]
+      context[:inheritable] = code[:inheritable]
+      context[:linenr] = code[:linenr]
     end
 
     # This method defines the signature-line of the member.

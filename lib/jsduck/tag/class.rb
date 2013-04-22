@@ -21,10 +21,16 @@ module JsDuck::Tag
     end
 
     # Although class is not a member, it also has the auto-detected
-    # part from code.  So we need this method to say that when we
-    # didn't detect code as a class, we only take the name from code.
-    def process_code(code)
-      {:name => code[:name]}
+    # part from code. So this method gets called by Merger.
+    #
+    # If we did detect code as a class use all the auto-detected
+    # fields, otherwise use only the name field.
+    def process_code(h, code)
+      if code[:tagname] == :class
+        h.merge!(code)
+      else
+        h[:name] = code[:name]
+      end
     end
 
     # Ensure the empty members array.

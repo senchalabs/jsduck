@@ -599,4 +599,27 @@ describe JsDuck::Aggregator do
     end
     it_should_behave_like "extending Object"
   end
+
+  describe "explicit class followed by normal function" do
+    before do
+      @doc = parse(<<-EOS)["foo"]
+        /** @class */
+        function foo(a, b, c) {
+            return this;
+        }
+      EOS
+    end
+
+    it "detects class name" do
+      @doc[:name].should == "foo"
+    end
+
+    it "doesn't detect parameters" do
+      @doc[:params].should == nil
+    end
+
+    it "doesn't detect chainable" do
+      @doc[:chainable].should == nil
+    end
+  end
 end

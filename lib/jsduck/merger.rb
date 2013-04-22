@@ -33,18 +33,11 @@ module JsDuck
 
     private
 
-    # When code was detected with the correct member type, leaves it
-    # as is, otherwise applies processing to extract fields relevant
-    # to the member type
+    # Applies processing to extract fields relevant to the member type.
     def process_code(tagname, code)
-      if code[:tagname] == tagname
-        code
-      else
-        result = TagRegistry.get_by_name(tagname).process_code(code)
-        result[:tagname] = code[:tagname]
-        result[:autodetected] = code[:autodetected]
-        result
-      end
+      result = {}
+      TagRegistry.get_by_name(tagname).process_code(result, code)
+      result
     end
 
     # Invokes the #merge methods of tags registered for the given
