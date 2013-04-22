@@ -6,6 +6,7 @@ require 'jsduck/videos'
 require 'jsduck/examples'
 require 'jsduck/categories'
 require 'jsduck/doc_formatter'
+require 'jsduck/news'
 
 module JsDuck
 
@@ -22,6 +23,7 @@ module JsDuck
     attr_reader :videos
     attr_reader :examples
     attr_reader :categories
+    attr_reader :news
 
     def initialize(relations, opts)
       @relations = relations
@@ -35,6 +37,7 @@ module JsDuck
       @videos = Videos.create(@opts.videos)
       @examples = Examples.create(@opts.examples, @opts)
       @categories = Categories.create(@opts.categories_path, doc_formatter, @relations)
+      @news = News.create(@relations, doc_formatter, @opts)
     end
 
     # Writes out the assets that can be written out separately:
