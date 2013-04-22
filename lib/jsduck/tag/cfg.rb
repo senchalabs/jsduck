@@ -47,12 +47,13 @@ module JsDuck::Tag
       h[:name] = nested[:name]
     end
 
-    def process_code(h, code)
-      super(h, code)
+    def process_code(code)
+      h = super(code)
       h[:type] = code[:type]
       h[:default] = code[:default]
       h[:accessor] = code[:accessor]
       h[:evented] = code[:evented]
+      h
     end
 
     def to_html(cfg, cls)

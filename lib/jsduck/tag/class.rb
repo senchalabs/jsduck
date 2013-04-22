@@ -25,11 +25,11 @@ module JsDuck::Tag
     #
     # If we did detect code as a class use all the auto-detected
     # fields, otherwise use only the name field.
-    def process_code(h, code)
+    def process_code(code)
       if code[:tagname] == :class
-        h.merge!(code)
+        code
       else
-        h[:name] = code[:name]
+        {:name => code[:name] }
       end
     end
 

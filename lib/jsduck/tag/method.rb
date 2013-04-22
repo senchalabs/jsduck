@@ -33,10 +33,11 @@ module JsDuck::Tag
       h[:name] = tags[0][:name] if tags[0][:name]
     end
 
-    def process_code(h, code)
-      super(h, code)
+    def process_code(code)
+      h = super(code)
       h[:params] = code[:params]
       h[:chainable] = code[:chainable]
+      h
     end
 
     def to_html(method, cls)

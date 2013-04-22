@@ -35,9 +35,7 @@ module JsDuck
 
     # Applies processing to extract fields relevant to the member type.
     def process_code(tagname, code)
-      result = {}
-      TagRegistry.get_by_name(tagname).process_code(result, code)
-      result
+      TagRegistry.get_by_name(tagname).process_code(code)
     end
 
     # Invokes the #merge methods of tags registered for the given

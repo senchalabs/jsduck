@@ -57,7 +57,7 @@ module JsDuck::Tag
     MEMBER_POS_CSS_MIXIN = 6
 
     # Extracts the fields auto-detected from code that are relevant to
-    # the member type and saves them to the context hash.
+    # the member type and returns a hash with them.
     #
     # The implementation here extracts fields applicable to all member
     # types.  When additional member-specific fields are to be
@@ -67,24 +67,27 @@ module JsDuck::Tag
     # For example inside Method tag we might additionally want to
     # extract :type and :default:
     #
-    #     def process_code(context, code)
-    #       super(context, code)
-    #       context[:type] = code[:type]
-    #       context[:default] = code[:default]
+    #     def process_code(code)
+    #       h = super(code)
+    #       h[:type] = code[:type]
+    #       h[:default] = code[:default]
+    #       h
     #     end
     #
-    def process_code(context, code)
-      context[:tagname] = code[:tagname]
-      # An auto-detected name might be "MyClass.prototype.myMethod" -
-      # for member name we only want the last "myMethod" part.
-      context[:name] = code[:name] ? code[:name].split(/\./).last : nil
+    def process_code(code)
+      return {
+        :tagname => code[:tagname],
+        # An auto-detected name might be "MyClass.prototype.myMethod" -
+        # for member name we only want the last "myMethod" part.
+        :name => code[:name] ? code[:name].split(/\./).last : nil,
 
-      context[:autodetected] = code[:autodetected]
-      context[:inheritdoc] = code[:inheritdoc]
-      context[:static] = code[:static]
-      context[:private] = code[:private]
-      context[:inheritable] = code[:inheritable]
-      context[:linenr] = code[:linenr]
+        :autodetected => code[:autodetected],
+        :inheritdoc => code[:inheritdoc],
+        :static => code[:static],
+        :private => code[:private],
+        :inheritable => code[:inheritable],
+        :linenr => code[:linenr],
+      }
     end
 
     # This method defines the signature-line of the member.
