@@ -19,6 +19,7 @@ module JsDuck
       h = {
         :tagname => docset[:tagname],
         :name => docs[:name] || code[:name] || "",
+        :autodetected => code[:autodetected] || {},
         :files => [{:filename => filename, :linenr => linenr}],
       }
 
@@ -75,7 +76,6 @@ module JsDuck
 
     # Stores the key as flag into h[:autodetcted]
     def mark_autodetected(h, key)
-      h[:autodetected] = {} unless h[:autodetected]
       h[:autodetected][key] = true
     end
 
