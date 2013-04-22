@@ -1,7 +1,6 @@
 require "jsduck/tag/tag"
 require "jsduck/doc/subproperties"
 require "jsduck/render/subproperties"
-require "jsduck/docs_code_comparer"
 require "jsduck/logger"
 
 module JsDuck::Tag
@@ -39,7 +38,7 @@ module JsDuck::Tag
         p[:type] = "Object" unless p[:type]
       end
 
-      print_warnings(docs, code, h[:files].first)
+      check_consistency(docs, code, h[:files].first)
     end
 
     def format(m, formatter)
@@ -52,9 +51,9 @@ module JsDuck::Tag
 
     private
 
-    def print_warnings(docs, code, file)
+    def check_consistency(docs, code, file)
       explicit = docs[:params] || []
-      implicit = JsDuck::DocsCodeComparer.matches?(docs, code) ? (code[:params] || []) : []
+      implicit = can_be_autodetected?(docs, code) ? (code[:params] || []) : []
       ex_len = explicit.length
       im_len = implicit.length
 
@@ -75,6 +74,12 @@ module JsDuck::Tag
         str = ex_names.zip(im_names).map {|p| ex, im = p; ex == im ? ex : (ex||"")+"/"+(im||"") }.join(", ")
         JsDuck::Logger.warn(:param_count, "Documented and auto-detected params don't match: #{str}", file)
       end
+    end
+
+    # True if the name detected from code matches with explicitly
+    # documented name.  Also true when no explicit name documented.
+    def can_be_autodetected?(docs, code)
+      docs[:name] == nil || docs[:name] == code[:name]
     end
 
   end

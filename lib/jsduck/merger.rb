@@ -1,6 +1,5 @@
 require 'jsduck/class'
 require 'jsduck/tag_registry'
-require 'jsduck/docs_code_comparer'
 
 module JsDuck
 
@@ -58,14 +57,26 @@ module JsDuck
       # Add all items in code not already in result and mark them as
       # auto-detected.  But only if the explicit and auto-detected
       # names don't conflict.
-      if DocsCodeComparer.matches?(docs, code)
+      if can_be_autodetected?(docs, code)
         code.each_pair do |key, value|
           unless h[key]
             h[key] = value
-            DocsCodeComparer.mark_autodetected(h, key)
+            mark_autodetected(h, key)
           end
         end
       end
+    end
+
+    # True if the name detected from code matches with explicitly
+    # documented name.  Also true when no explicit name documented.
+    def can_be_autodetected?(docs, code)
+      docs[:name] == nil || docs[:name] == code[:name]
+    end
+
+    # Stores the key as flag into h[:autodetcted]
+    def mark_autodetected(h, key)
+      h[:autodetected] = {} unless h[:autodetected]
+      h[:autodetected][key] = true
     end
 
   end

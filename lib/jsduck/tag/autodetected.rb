@@ -1,5 +1,4 @@
 require "jsduck/tag/tag"
-require "jsduck/docs_code_comparer"
 
 module JsDuck::Tag
   # There is no @autodetected tag.

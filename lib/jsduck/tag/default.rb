@@ -1,5 +1,4 @@
 require "jsduck/tag/tag"
-require "jsduck/docs_code_comparer"
 require "jsduck/util/html"
 
 module JsDuck::Tag
