@@ -28,14 +28,11 @@ module JsDuck::Tag
 
     def process_doc(h, tags, pos)
       h[:params] = JsDuck::Doc::Subproperties.nest(tags, pos)
+      h[:params] = nil if h[:params].length == 0
     end
 
     def merge(h, docs, code)
       h[:params] = merge_params(docs, code, h[:files].first)
-
-      if only_autodetected_params?(docs, code)
-        JsDuck::DocsCodeComparer.mark_autodetected(h, :params)
-      end
     end
 
     def format(m, formatter)
@@ -48,13 +45,30 @@ module JsDuck::Tag
 
     private
 
-    def only_autodetected_params?(docs, code)
-      (docs[:params] || []).length == 0 && (code[:params] || []).length > 0
-    end
-
     def merge_params(docs, code, file)
       explicit = docs[:params] || []
       implicit = JsDuck::DocsCodeComparer.matches?(docs, code) ? (code[:params] || []) : []
+      print_warnings(explicit, implicit, file)
+
+      # Override implicit parameters with explicit ones
+      # But if explicit ones exist, don't append the implicit ones.
+      params = []
+      (explicit.length > 0 ? explicit.length : implicit.length).times do |i|
+        im = implicit[i] || {}
+        ex = explicit[i] || {}
+        params << {
+          :type => ex[:type] || im[:type] || "Object",
+          :name => ex[:name] || im[:name] || "",
+          :doc => ex[:doc] || im[:doc] || "",
+          :optional => ex[:optional] || false,
+          :default => ex[:default],
+          :properties => ex[:properties] || [],
+        }
+      end
+      params
+    end
+
+    def print_warnings(explicit, implicit, file)
       ex_len = explicit.length
       im_len = implicit.length
 
@@ -75,23 +89,6 @@ module JsDuck::Tag
         str = ex_names.zip(im_names).map {|p| ex, im = p; ex == im ? ex : (ex||"")+"/"+(im||"") }.join(", ")
         JsDuck::Logger.warn(:param_count, "Documented and auto-detected params don't match: #{str}", file)
       end
-
-      # Override implicit parameters with explicit ones
-      # But if explicit ones exist, don't append the implicit ones.
-      params = []
-      (ex_len > 0 ? ex_len : im_len).times do |i|
-        im = implicit[i] || {}
-        ex = explicit[i] || {}
-        params << {
-          :type => ex[:type] || im[:type] || "Object",
-          :name => ex[:name] || im[:name] || "",
-          :doc => ex[:doc] || im[:doc] || "",
-          :optional => ex[:optional] || false,
-          :default => ex[:default],
-          :properties => ex[:properties] || [],
-        }
-      end
-      params
     end
 
   end

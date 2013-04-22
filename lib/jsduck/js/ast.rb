@@ -314,7 +314,7 @@ module JsDuck
         return {
           :tagname => :method,
           :name => name,
-          :params => make_params(ast),
+          :params => empty_array_to_nil(make_params(ast)),
           :chainable => chainable?(ast) && name != "constructor",
         }
       end
@@ -325,6 +325,10 @@ module JsDuck
         else
           []
         end
+      end
+
+      def empty_array_to_nil(arr)
+        arr.length == 0 ? nil : arr
       end
 
       def chainable?(ast)
