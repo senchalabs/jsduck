@@ -33,10 +33,13 @@ module JsDuck
             cls.all_local_members.each do |m|
               group[:members] << m if m[:meta][:new] && !m[:meta][:private] && !m[:meta][:hide]
             end
+            group[:members] = discard_accessors(group[:members])
             new_items << group if group[:members].length > 0
           end
         end
       end
+
+      new_items.sort! {|a, b| a[:name] <=> b[:name] }
 
       # Place the new classes section at the beginning
       if classes.length > 0
@@ -44,6 +47,21 @@ module JsDuck
       end
 
       new_items
+    end
+
+    def discard_accessors(members)
+      accessors = {}
+      members.find_all {|m| m[:accessor] }.each do |cfg|
+        accessors["set" + upcase_first(cfg[:name])] = true
+        accessors["get" + upcase_first(cfg[:name])] = true
+        accessors[cfg[:name].downcase + "change"] = true if cfg[:evented]
+      end
+
+      members.reject {|m| accessors[m[:name]] }
+    end
+
+    def upcase_first(str)
+      str[0,1].upcase + str[1..-1]
     end
 
     # Returns the HTML
