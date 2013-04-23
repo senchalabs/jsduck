@@ -18,17 +18,32 @@ module JsDuck
     def initialize(relations, doc_formatter)
       @doc_formatter = doc_formatter
       @columns = Columns.new(:members)
+      @new_items = filter_new_items(relations)
+    end
 
-      @classes = []
+    def filter_new_items(relations)
+      classes = []
+      new_items = []
       relations.each do |cls|
         if !cls[:meta][:private]
-          group = {:name => cls[:name], :members => [], :new => cls[:meta][:new]}
-          cls.all_local_members.each do |m|
-            group[:members] << m if m[:meta][:new] && !m[:meta][:private] && !m[:meta][:hide]
+          if cls[:meta][:new]
+            classes << cls
+          else
+            group = {:name => cls[:name], :members => [], :new => cls[:meta][:new]}
+            cls.all_local_members.each do |m|
+              group[:members] << m if m[:meta][:new] && !m[:meta][:private] && !m[:meta][:hide]
+            end
+            new_items << group if group[:members].length > 0
           end
-          @classes << group if group[:members].length > 0
         end
       end
+
+      # Place the new classes section at the beginning
+      if classes.length > 0
+        new_items.unshift({:name => "New classes", :members => classes})
+      end
+
+      new_items
     end
 
     # Returns the HTML
@@ -37,7 +52,7 @@ module JsDuck
         "<div id='news-content' style='#{style}'>",
           "<div class='section'>",
             "<h1>New in this version</h1>",
-            render_columns(@classes),
+            render_columns(@new_items),
             "<div style='clear:both'></div>",
           "</div>",
         "</div>",
@@ -46,40 +61,36 @@ module JsDuck
 
     private
 
-    def render_columns(classes)
+    def render_columns(new_items)
       align = ["left-column", "middle-column", "right-column"]
       i = -1
-      return @columns.split(classes, 3).map do |col|
+      return @columns.split(new_items, 3).map do |col|
         i += 1
         [
           "<div class='#{align[i]}'>",
-          render_classes(col),
+          render_col(col),
           "</div>",
         ]
       end
     end
 
-    def render_classes(classes)
-      return classes.map do |cls|
+    def render_col(col)
+      return col.map do |item|
         [
-          "<h3>#{link_class(cls)}</h3>",
+          "<h3>#{item[:name]}</h3>",
           "<ul class='links'>",
-          cls[:members].map {|m| "<li>" + link_member(m) + "</li>" },
+          item[:members].map {|m| "<li>" + link(m) + "</li>" },
           "</ul>",
         ]
       end
     end
 
-    def link_class(cls)
-      if cls[:new]
-        @doc_formatter.link(cls[:name], nil, cls[:name])
+    def link(m)
+      if m[:tagname] == :class
+        @doc_formatter.link(m[:name], nil, m[:name])
       else
-        cls[:name]
+        @doc_formatter.link(m[:owner], m[:name], m[:name], m[:tagname], m[:meta][:static])
       end
-    end
-
-    def link_member(m)
-      @doc_formatter.link(m[:owner], m[:name], m[:name], m[:tagname], m[:meta][:static])
     end
 
   end
