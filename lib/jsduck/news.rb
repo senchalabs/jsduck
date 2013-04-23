@@ -1,4 +1,5 @@
 require 'jsduck/util/null_object'
+require 'jsduck/columns'
 
 module JsDuck
 
@@ -16,6 +17,7 @@ module JsDuck
     # Generates list of new classes & members in this version.
     def initialize(relations, doc_formatter)
       @doc_formatter = doc_formatter
+      @columns = Columns.new(:members)
 
       @classes = []
       relations.each do |cls|
@@ -31,26 +33,42 @@ module JsDuck
 
     # Returns the HTML
     def to_html(style="")
-      html = @classes.map {|c| render_class(c) }.flatten.join("\n")
-
-      return <<-EOHTML
-      <div id='news-content' style='#{style}'>
-        <h1>New in this version</h1>
-        <div class='section'>
-          <h1>Members</h1>
-          #{html}
-        </div>
-      </div>
-      EOHTML
+      return [
+        "<div id='news-content' style='#{style}'>",
+          "<h1>New in this version</h1>",
+          "<div class='section'>",
+            "<h1>New members</h1>",
+            render_columns(@classes),
+            "<div style='clear:both'></div>",
+          "</div>",
+        "</div>",
+      ].flatten.join("\n")
     end
 
-    def render_class(cls)
-      [
-        "<h3>#{cls[:name]}</h3>",
-        "<ul class='links'>",
-        cls[:members].map {|m| "<li>" + link(m) + "</li>" },
-        "</ul>",
-      ]
+    private
+
+    def render_columns(classes)
+      align = ["left-column", "middle-column", "right-column"]
+      i = -1
+      return @columns.split(classes, 3).map do |col|
+        i += 1
+        [
+          "<div class='#{align[i]}'>",
+          render_classes(col),
+          "</div>",
+        ]
+      end
+    end
+
+    def render_classes(classes)
+      return classes.map do |cls|
+        [
+          "<h3>#{cls[:name]}</h3>",
+          "<ul class='links'>",
+          cls[:members].map {|m| "<li>" + link(m) + "</li>" },
+          "</ul>",
+        ]
+      end
     end
 
     def link(m)
