@@ -66,10 +66,14 @@ module JsDuck
     def filter_new_members(cls)
       members = []
       cls.all_local_members.each do |m|
-        members << m if m[:meta][:new] && !m[:meta][:private] && !m[:meta][:hide]
+        members << m if m[:meta][:new] && visible?(m)
       end
       members = discard_accessors(members)
       members.sort! {|a, b| a[:name] <=> b[:name] }
+    end
+
+    def visible?(member)
+      !member[:meta][:private] && !member[:meta][:hide]
     end
 
     def discard_accessors(members)
