@@ -127,9 +127,15 @@ module JsDuck
       end
 
       # Copy over from @cfg all the fields that aren't already present.
-      # Except :type and :default which don't make sense for methods and events.
       def add_shared(hash, cfg)
-        ignored_fields = [:type, :default, :accessor, :evented]
+        ignored_fields = [
+          # These don't make sense for methods and events.
+          :type, :default,
+          # It's the config that's tagged with these, don't propagate them to methods/events.
+          :accessor, :evented,
+          # The :doc field get auto-created and we don't want any other docs.
+          :inheritdoc, :localdoc,
+        ]
 
         cfg.each_pair do |key, value|
           hash[key] = value unless ignored_fields.include?(key) || hash[key]
