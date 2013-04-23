@@ -22,7 +22,7 @@ module JsDuck
       @classes = []
       relations.each do |cls|
         if !cls[:meta][:private]
-          group = {:name => cls[:name], :members => []}
+          group = {:name => cls[:name], :members => [], :new => cls[:meta][:new]}
           cls.all_local_members.each do |m|
             group[:members] << m if m[:meta][:new] && !m[:meta][:private] && !m[:meta][:hide]
           end
@@ -35,9 +35,8 @@ module JsDuck
     def to_html(style="")
       return [
         "<div id='news-content' style='#{style}'>",
-          "<h1>New in this version</h1>",
           "<div class='section'>",
-            "<h1>New members</h1>",
+            "<h1>New in this version</h1>",
             render_columns(@classes),
             "<div style='clear:both'></div>",
           "</div>",
@@ -63,15 +62,23 @@ module JsDuck
     def render_classes(classes)
       return classes.map do |cls|
         [
-          "<h3>#{cls[:name]}</h3>",
+          "<h3>#{link_class(cls)}</h3>",
           "<ul class='links'>",
-          cls[:members].map {|m| "<li>" + link(m) + "</li>" },
+          cls[:members].map {|m| "<li>" + link_member(m) + "</li>" },
           "</ul>",
         ]
       end
     end
 
-    def link(m)
+    def link_class(cls)
+      if cls[:new]
+        @doc_formatter.link(cls[:name], nil, cls[:name])
+      else
+        cls[:name]
+      end
+    end
+
+    def link_member(m)
       @doc_formatter.link(m[:owner], m[:name], m[:name], m[:tagname], m[:meta][:static])
     end
 
