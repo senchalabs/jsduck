@@ -4,6 +4,7 @@ require 'jsduck/assets'
 require 'jsduck/tag_registry'
 require 'jsduck/export_writer'
 require 'jsduck/web/writer'
+require 'jsduck/logger'
 
 module JsDuck
 
@@ -15,6 +16,7 @@ module JsDuck
     end
 
     # Main App logic.
+    # Returns application exit code.
     def run
       parse
 
@@ -24,6 +26,12 @@ module JsDuck
         generate_export
       else
         generate_web_page
+      end
+
+      if @opts.warnings_exit_nonzero && Logger.warnings_logged?
+        return 2
+      else
+        return 0
       end
     end
 

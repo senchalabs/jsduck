@@ -41,6 +41,7 @@ module JsDuck
           "{css_path}" => File.basename(@paths[:css]),
           "{welcome}" => @assets.welcome.to_html("display:none"),
           "{categories}" => @assets.categories.to_html("display:none"),
+          "{news}" => @assets.news.to_html("display:none"),
           "{guides}" => @assets.guides.to_html("display:none"),
           "{head_html}" => @opts.head_html,
           "{body_html}" => @opts.body_html,

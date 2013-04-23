@@ -16,14 +16,8 @@ module JsDuck
         @templates = {
           "html5" => '<video src="%u">%a</video>',
           "vimeo" => [
-            '<p><object width="640" height="360">',
-            '<param name="allowfullscreen" value="true" />',
-            '<param name="allowscriptaccess" value="always" />',
-            '<param name="flashvars" value="api=1" />',
-            '<param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=%u&amp;server=vimeo.com&amp;color=4CC208&amp;fullscreen=1" />',
-            '<embed src="http://vimeo.com/moogaloop.swf?clip_id=%u&amp;server=vimeo.com&amp;color=4CC208&amp;fullscreen=1" ',
-            'type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="640" height="360"></embed>',
-            '</object></p>',
+            '<p><iframe src="http://player.vimeo.com/video/%u" width="640" height="360" frameborder="0" ',
+                'webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></p>'
           ].join
         }
 

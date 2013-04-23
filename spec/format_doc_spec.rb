@@ -135,7 +135,7 @@ describe JsDuck::Format::Doc do
 
     it "replaces {@video vimeo 123456 Alt text} with Vimeo video markup" do
       @formatter.replace("{@video vimeo 123456 Alt text}").should =~
-        /<object.*123456.*object>/
+        /<iframe.*123456.*iframe>/
     end
   end
 
