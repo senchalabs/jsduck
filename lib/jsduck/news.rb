@@ -49,6 +49,7 @@ module JsDuck
               group[:members] << m if m[:meta][:new] && !m[:meta][:private] && !m[:meta][:hide]
             end
             group[:members] = discard_accessors(group[:members])
+            group[:members].sort! {|a, b| a[:name] <=> b[:name] }
             new_items << group if group[:members].length > 0
           end
         end
