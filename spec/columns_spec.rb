@@ -1,6 +1,6 @@
-require "jsduck/categories"
+require "jsduck/columns"
 
-describe JsDuck::Categories do
+describe JsDuck::Columns do
 
   # Small helper to check the sums
   def sum(arr)
@@ -9,7 +9,7 @@ describe JsDuck::Categories do
 
   # Replace the sum method with the one that simply sums the numbers,
   # so we can use simpler test-data.
-  class JsDuck::Categories
+  class JsDuck::Columns
     def sum(arr)
       arr.reduce(0) {|sum,x| sum + x }
     end
@@ -17,30 +17,30 @@ describe JsDuck::Categories do
 
   describe "#split" do
     before do
-      @categories = JsDuck::Categories.new([], {}, {})
+      @columns = JsDuck::Columns.new("classes")
     end
 
     it "split(1 item by 1)" do
-      @cols = @categories.split([2], 1)
+      @cols = @columns.split([2], 1)
       @cols.length.should == 1
       sum(@cols[0]).should == 2
     end
 
     it "split(3 items by 1)" do
-      @cols = @categories.split([1, 2, 3], 1)
+      @cols = @columns.split([1, 2, 3], 1)
       @cols.length.should == 1
       sum(@cols[0]).should == 6
     end
 
     it "split(3 items to two equal-height columns)" do
-      @cols = @categories.split([1, 2, 3], 2)
+      @cols = @columns.split([1, 2, 3], 2)
       @cols.length.should == 2
       sum(@cols[0]).should == 3
       sum(@cols[1]).should == 3
     end
 
     it "split(1 item by 3)" do
-      @cols = @categories.split([2], 3)
+      @cols = @columns.split([2], 3)
       @cols.length.should == 3
       sum(@cols[0]).should == 2
       sum(@cols[1]).should == 0
@@ -48,7 +48,7 @@ describe JsDuck::Categories do
     end
 
     it "split(3 items by 3)" do
-      @cols = @categories.split([1, 2, 3], 3)
+      @cols = @columns.split([1, 2, 3], 3)
       @cols.length.should == 3
       sum(@cols[0]).should == 1
       sum(@cols[1]).should == 2
@@ -56,7 +56,7 @@ describe JsDuck::Categories do
     end
 
     it "split(6 items by 3)" do
-      @cols = @categories.split([5, 8, 4, 2, 1, 3], 3)
+      @cols = @columns.split([5, 8, 4, 2, 1, 3], 3)
       @cols.length.should == 3
       sum(@cols[0]).should <= 10
       sum(@cols[1]).should <= 10
@@ -64,7 +64,7 @@ describe JsDuck::Categories do
     end
 
     it "split(8 items by 3)" do
-      @cols = @categories.split([1, 3, 5, 2, 1, 4, 2, 3], 3)
+      @cols = @columns.split([1, 3, 5, 2, 1, 4, 2, 3], 3)
       @cols.length.should == 3
       sum(@cols[0]).should <= 9
       sum(@cols[1]).should <= 9
