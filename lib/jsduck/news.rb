@@ -39,17 +39,16 @@ module JsDuck
     def filter_new_items(relations)
       classes = []
       new_items = []
+
       relations.each do |cls|
         if !cls[:private]
           if cls[:new]
             classes << cls
           else
-            group = {:name => cls[:name], :members => [], :new => cls[:new]}
-            cls.all_local_members.each do |m|
-              group[:members] << m if m[:new] && !m[:private] && !m[:hide]
+            members = filter_new_members(cls)
+            if members.length > 0
+              new_items << {:name => cls[:name], :members => members}
             end
-            group[:members] = discard_accessors(group[:members])
-            new_items << group if group[:members].length > 0
           end
         end
       end
@@ -62,6 +61,19 @@ module JsDuck
       end
 
       new_items
+    end
+
+    def filter_new_members(cls)
+      members = []
+      cls.all_local_members.each do |m|
+        members << m if m[:new] && visible?(m)
+      end
+      members = discard_accessors(members)
+      members.sort! {|a, b| a[:name] <=> b[:name] }
+    end
+
+    def visible?(member)
+      !member[:private] && !member[:hide]
     end
 
     def discard_accessors(members)
