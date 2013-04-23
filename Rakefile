@@ -278,9 +278,9 @@ task :touch2 => :sass do
     # "--import", "2.0.0:../docs.sencha.com/exports/touch-2.0.0",
     # "--import", "2.0.1:../docs.sencha.com/exports/touch-2.0.1",
     # "--import", "2.1.0:../docs.sencha.com/exports/touch-2.1.0",
-    "--import", "2.1.1:../docs.sencha.com/exports/touch-2.1.1",
+    # "--import", "2.1.1:../docs.sencha.com/exports/touch-2.1.1",
     # "--import", "2.2.0:../docs.sencha.com/exports/touch-2.2.0",
-    "--import", "2.2.1",
+    # "--import", "2.2.1",
     "--seo"
   )
 
