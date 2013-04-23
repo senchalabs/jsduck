@@ -21,6 +21,21 @@ module JsDuck
       @new_items = filter_new_items(relations)
     end
 
+    # Returns the HTML
+    def to_html(style="")
+      return [
+        "<div id='news-content' style='#{style}'>",
+          "<div class='section'>",
+            "<h1>New in this version</h1>",
+            render_columns(@new_items),
+            "<div style='clear:both'></div>",
+          "</div>",
+        "</div>",
+      ].flatten.join("\n")
+    end
+
+    private
+
     def filter_new_items(relations)
       classes = []
       new_items = []
@@ -63,21 +78,6 @@ module JsDuck
     def upcase_first(str)
       str[0,1].upcase + str[1..-1]
     end
-
-    # Returns the HTML
-    def to_html(style="")
-      return [
-        "<div id='news-content' style='#{style}'>",
-          "<div class='section'>",
-            "<h1>New in this version</h1>",
-            render_columns(@new_items),
-            "<div style='clear:both'></div>",
-          "</div>",
-        "</div>",
-      ].flatten.join("\n")
-    end
-
-    private
 
     def render_columns(new_items)
       align = ["left-column", "middle-column", "right-column"]
