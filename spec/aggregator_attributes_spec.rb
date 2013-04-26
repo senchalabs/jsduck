@@ -47,6 +47,16 @@ describe JsDuck::Aggregator do
       @doc[:meta][:readonly].should == true
     end
   end
+  
+  describe "Property with @writeonly" do
+    before do
+      @doc = parse("/** @writeonly */")[0]
+    end
+
+    it "gets writeonly attribute" do
+      @doc[:meta][:writeonly].should == true
+    end
+  end
 
   describe "method with @template" do
     before do
