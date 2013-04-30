@@ -26,7 +26,7 @@ module JsDuck
 
       # Adds small star to new classes in the current version.
       def render_new_label(cls)
-        if cls[:meta][:new]
+        if cls[:new]
           "&nbsp;<span class='new-class' title='New class'>&#9733;</span>"
         else
           ""
