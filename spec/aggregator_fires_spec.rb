@@ -5,13 +5,13 @@ describe JsDuck::Aggregator do
     Helper::MiniParser.parse(string)
   end
 
-  def parse_member(string)
-    parse(string)["global"][:members][0]
+  def parse_fires(string)
+    parse(string)["global"][:members][0][:fires].map {|e| e[:name] }
   end
 
   describe "@fires with single event" do
     before do
-      @doc = parse_member(<<-EOS)
+      @fires = parse_fires(<<-EOS)
         /**
          * Some function
          * @fires click
@@ -21,17 +21,17 @@ describe JsDuck::Aggregator do
     end
 
     it "detects one fired event" do
-      @doc[:fires].length.should == 1
+      @fires.length.should == 1
     end
 
     it "detects event name that's fired" do
-      @doc[:fires][0].should == "click"
+      @fires[0].should == "click"
     end
   end
 
   describe "@fires with multiple events" do
     before do
-      @doc = parse_member(<<-EOS)
+      @fires = parse_fires(<<-EOS)
         /**
          * @fires click dblclick
          */
@@ -40,18 +40,18 @@ describe JsDuck::Aggregator do
     end
 
     it "detects two events" do
-      @doc[:fires].length.should == 2
+      @fires.length.should == 2
     end
 
     it "detects event names" do
-      @doc[:fires][0].should == "click"
-      @doc[:fires][1].should == "dblclick"
+      @fires[0].should == "click"
+      @fires[1].should == "dblclick"
     end
   end
 
   describe "multiple @fires tags" do
     before do
-      @doc = parse_member(<<-EOS)
+      @fires = parse_fires(<<-EOS)
         /**
          * @fires click
          * @fires dblclick
@@ -61,12 +61,12 @@ describe JsDuck::Aggregator do
     end
 
     it "detects two events" do
-      @doc[:fires].length.should == 2
+      @fires.length.should == 2
     end
 
     it "detects event names" do
-      @doc[:fires][0].should == "click"
-      @doc[:fires][1].should == "dblclick"
+      @fires[0].should == "click"
+      @fires[1].should == "dblclick"
     end
   end
 

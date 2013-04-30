@@ -42,6 +42,7 @@ module JsDuck
         [:type_syntax, "Syntax error in {type definition}"],
         [:type_name, "Unknown type referenced in {type definition}"],
         [:enum, "Enum with invalid values or no values at all"],
+        [:fires, "@fires references unknown event"],
 
         [:image, "{@img} referring to missing file"],
         [:image_unused, "An image exists in --images dir that's not used"],

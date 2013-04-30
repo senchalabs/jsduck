@@ -1,4 +1,5 @@
 require "jsduck/tag/tag"
+require "jsduck/logger"
 
 module JsDuck::Tag
   class Fires < Tag
@@ -24,14 +25,27 @@ module JsDuck::Tag
     end
 
     def process_doc(h, tags, pos)
-      h[:fires] = tags.map {|t| t[:events] }.flatten
+      h[:fires] = tags.map {|t| t[:events] }.flatten.map {|name| {:name => name} }
+    end
+
+    def format(m, formatter)
+      cls = formatter.relations[m[:owner]]
+
+      m[:fires].each do |e|
+        if cls.find_members({:tagname => :event, :name => e[:name]}).length > 0
+          e[:link] = formatter.link(m[:owner], e[:name], e[:name], :event)
+        else
+          JsDuck::Logger.warn(:fires, "@fires references unknown event: #{e[:name]}", m[:files][0])
+          e[:link] = e[:name]
+        end
+      end
     end
 
     def to_html(m)
       return [
         "<h3 class='pa'>Fires</h3>",
         "<ul>",
-          m[:fires].map {|f| "<li>#{f}</li>" },
+          m[:fires].map {|e| "<li>#{e[:link]}</li>" },
         "</ul>",
       ]
     end
