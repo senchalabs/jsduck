@@ -80,6 +80,11 @@ module JsDuck
         end
       end
 
+      # Returns the type of node.
+      def type
+        @node["type"]
+      end
+
       # Iterates over keys and values in ObjectExpression.  The keys
       # are turned into strings, but values are left as is for further
       # processing.
