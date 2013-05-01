@@ -37,6 +37,7 @@ module JsDuck::Tag
       h = super(code)
       h[:params] = code[:params]
       h[:chainable] = code[:chainable]
+      h[:fires] = code[:fires]
       h
     end
 

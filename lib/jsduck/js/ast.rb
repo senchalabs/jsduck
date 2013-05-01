@@ -1,4 +1,5 @@
 require "jsduck/js/function"
+require "jsduck/js/fires"
 require "jsduck/js/node"
 require "jsduck/tag_registry"
 
@@ -316,6 +317,7 @@ module JsDuck
           :name => name,
           :params => empty_array_to_nil(make_params(ast)),
           :chainable => chainable?(ast) && name != "constructor",
+          :fires => empty_array_to_nil(detect_fires(ast)),
         }
       end
 
@@ -336,6 +338,14 @@ module JsDuck
           Js::Function.return_types(ast.raw) == [:this]
         else
           false
+        end
+      end
+
+      def detect_fires(ast)
+        if ast.function? && !ast.ext_empty_fn?
+          Js::Fires.detect(ast).map {|e| {:name => e} }
+        else
+          []
         end
       end
 

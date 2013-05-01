@@ -70,4 +70,19 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "this.fireEvent() in code" do
+    before do
+      @fires = parse_fires(<<-EOS)
+        /** */
+        function bar() {
+            this.fireEvent("click");
+        }
+      EOS
+    end
+
+    it "detects event from code" do
+      @fires[0].should == "click"
+    end
+  end
+
 end
