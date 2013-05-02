@@ -46,6 +46,28 @@ describe "JsDuck::Js::Fires" do
       EOJS
     end
 
+    it "has this.fireEvent() inside IF condition" do
+      fires(<<-EOJS).should == ["click"]
+        /** */
+        function f() {
+            if (this.fireEvent('click') === false) {
+                this.doSomething();
+            }
+        }
+      EOJS
+    end
+
+    it "has this.fireEvent() inside inner function" do
+      fires(<<-EOJS).should == ["click"]
+        /** */
+        function f() {
+            return (function () {
+                this.fireEvent('click');
+            })();
+        }
+      EOJS
+    end
+
     it "has var me=this and me.fireEvent()" do
       fires(<<-EOJS).should == ["click"]
         /** */
@@ -59,7 +81,7 @@ describe "JsDuck::Js::Fires" do
 
   describe "detects only unique events when function body" do
     it "has the same event fired multiple times" do
-      fires(<<-EOJS).should == ["click", "blah"]
+      fires(<<-EOJS).should == ["blah", "click"]
         /** */
         function f() {
             this.fireEvent('click');

@@ -16,7 +16,7 @@ module JsDuck
           "this" => true
         }
 
-        detect_body(node["body"]["body"]).uniq
+        detect_body(node["body"]["body"]).sort.uniq
       end
 
       private
@@ -26,13 +26,12 @@ module JsDuck
 
         body_nodes.each do |node|
           if fire_event?(node)
-            events << extract_event_name(node)
-          elsif control_flow?(node)
+            events << node["arguments"][0].to_value
+          elsif this_var?(node)
+            var_name = node["id"].to_s
+            @this_map[var_name] = true
+          else
             events.concat(detect_body(extract_body(node)))
-          elsif node.variable_declaration?
-            extract_this_vars(node).each do |var_name|
-              @this_map[var_name] = true
-            end
           end
         end
 
@@ -42,61 +41,43 @@ module JsDuck
       # True when node is this.fireEvent("name") call.
       # Also true for me.fireEvent() when me == this.
       def fire_event?(node)
-        node.expression_statement? &&
-          node["expression"].call_expression? &&
-          node["expression"]["callee"].member_expression? &&
-          @this_map[node["expression"]["callee"]["object"].to_s] &&
-          node["expression"]["callee"]["property"].to_s == "fireEvent" &&
-          node["expression"]["arguments"].length > 0 &&
-          node["expression"]["arguments"][0].value_type == "String"
+        node.call_expression? &&
+          node["callee"].member_expression? &&
+          @this_map[node["callee"]["object"].to_s] &&
+          node["callee"]["property"].to_s == "fireEvent" &&
+          node["arguments"].length > 0 &&
+          node["arguments"][0].value_type == "String"
       end
 
-      def extract_event_name(node)
-        node["expression"]["arguments"][0].to_value
+      # True when initialization of variable with `this`
+      def this_var?(node)
+        node.type == "VariableDeclarator" && node["init"].type == "ThisExpression"
       end
 
-      # Extracts variable names assigned with `this`.
-      def extract_this_vars(var)
-        mappings = []
-        var["declarations"].each do |v|
-          if v["init"].type == "ThisExpression"
-            mappings << v["id"].to_s
-          end
-        end
-        mappings
-      end
-
-      def control_flow?(ast)
-        CONTROL_FLOW[ast.type]
-      end
-
-      def extract_body(ast)
+      # Extracts all sub-statements and sub-expressions from AST node.
+      # Without looking at the type of node, we just take all the
+      # sub-hashes and -arrays.
+      #
+      # A downside of this simple algorithm is that the statements can
+      # end up in different order than they are in source code.  For
+      # example the IfStatement has three parts in the following
+      # order: "test", "consequent", "alternate": But because we're
+      # looping over a hash, they might end up in a totally different
+      # order.
+      def extract_body(node)
         body = []
-        CONTROL_FLOW[ast.type].each do |name|
-          statements = ast[name]
-          if statements.is_a?(NodeArray)
-            statements.each {|s| body << s }
-          else
-            body << statements
+        node.raw.each_pair do |key, value|
+          if key == "type" || key == "range"
+            # ignore
+          elsif value.is_a?(Array)
+            node[key].each {|n| body << n }
+          elsif value.is_a?(Hash)
+            body << node[key]
           end
         end
         body
       end
 
-      CONTROL_FLOW = {
-        "IfStatement" => ["consequent", "alternate"],
-        "SwitchStatement" => ["cases"],
-        "SwitchCase" => ["consequent"],
-        "ForStatement" => ["body"],
-        "ForInStatement" => ["body"],
-        "WhileStatement" => ["body"],
-        "DoWhileStatement" => ["body"],
-        "TryStatement" => ["block", "handlers", "finalizer"],
-        "CatchClause" => ["body"],
-        "WithStatement" => ["body"],
-        "LabeledStatement" => ["body"],
-        "BlockStatement" => ["body"],
-      }
     end
   end
 end
