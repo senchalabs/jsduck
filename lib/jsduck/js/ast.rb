@@ -345,7 +345,7 @@ module JsDuck
 
       def detect_fires(ast)
         if ast.function? && !ast.ext_empty_fn?
-          Js::Fires.detect(ast).map {|e| {:name => e} }
+          Js::Fires.detect(ast)
         else
           []
         end

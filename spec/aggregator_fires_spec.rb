@@ -2,11 +2,11 @@ require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    Helper::MiniParser.parse(string)
+    Helper::MiniParser.parse(string, :fires => true)
   end
 
-  def parse_fires(string)
-    parse(string)["global"][:members][0][:fires].map {|e| e[:name] }
+  def parse_fires(string, cls_name = "global")
+    parse(string)[cls_name][:members][0][:fires]
   end
 
   describe "@fires with single event" do
@@ -82,6 +82,99 @@ describe JsDuck::Aggregator do
 
     it "detects event from code" do
       @fires[0].should == "click"
+    end
+  end
+
+  describe "method calling another method which fires an event" do
+    let(:fires) do
+      parse_fires(<<-EOS, "Foo")
+        /** @class Foo */
+
+        /** */
+        function foo() {
+            this.bar();
+            this.fireEvent("click")
+        }
+
+        /** */
+        function bar() {
+            this.fireEvent("dblclick");
+        }
+      EOS
+    end
+
+    it "lists events fired by both methods" do
+      fires.should == ["click", "dblclick"]
+    end
+  end
+
+  describe "method calling itself" do
+    let(:fires) do
+      parse_fires(<<-EOS, "Foo")
+        /** @class Foo */
+
+        /** */
+        function foo() {
+            this.foo();
+            this.fireEvent("click")
+        }
+      EOS
+    end
+
+    it "lists just the event fired by himself" do
+      fires.should == ["click"]
+    end
+  end
+
+  describe "method calling another method that calls yet another method" do
+    let(:fires) do
+      parse_fires(<<-EOS, "Foo")
+        /** @class Foo */
+
+        /** */
+        function foo() {
+            this.bar();
+            this.fireEvent("click")
+        }
+
+        /** */
+        function bar() {
+            this.baz();
+            this.fireEvent("dblclick");
+        }
+
+        /** */
+        function baz() {
+            this.fireEvent("exit");
+        }
+      EOS
+    end
+
+    it "lists events fired by all the methods" do
+      fires.should == ["click", "dblclick", "exit"]
+    end
+  end
+
+  describe "method with explicit @fires" do
+    let(:fires) do
+      parse_fires(<<-EOS, "Foo")
+        /** @class Foo */
+
+        /** @fires huh */
+        function foo() {
+            this.bar();
+            this.fireEvent("click")
+        }
+
+        /** */
+        function bar() {
+            this.fireEvent("dblclick");
+        }
+      EOS
+    end
+
+    it "blocks lookup of events fired by called methods" do
+      fires.should == ["huh"]
     end
   end
 

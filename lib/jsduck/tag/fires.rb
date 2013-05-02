@@ -25,18 +25,18 @@ module JsDuck::Tag
     end
 
     def process_doc(h, tags, pos)
-      h[:fires] = tags.map {|t| t[:events] }.flatten.map {|name| {:name => name} }
+      h[:fires] = tags.map {|t| t[:events] }.flatten
     end
 
     def format(m, formatter)
       cls = formatter.relations[m[:owner]]
 
-      m[:fires].each do |e|
-        if cls.find_members({:tagname => :event, :name => e[:name]}).length > 0
-          e[:link] = formatter.link(m[:owner], e[:name], e[:name], :event)
+      m[:fires] = m[:fires].map do |name|
+        if cls.find_members({:tagname => :event, :name => name}).length > 0
+          formatter.link(m[:owner], name, name, :event)
         else
-          JsDuck::Logger.warn(:fires, "@fires references unknown event: #{e[:name]}", m[:files][0])
-          e[:link] = e[:name]
+          JsDuck::Logger.warn(:fires, "@fires references unknown event: #{name}", m[:files][0])
+          name
         end
       end
     end
@@ -45,7 +45,7 @@ module JsDuck::Tag
       return [
         "<h3 class='pa'>Fires</h3>",
         "<ul>",
-          m[:fires].map {|e| "<li>#{e[:link]}</li>" },
+          m[:fires].map {|e| "<li>#{e}</li>" },
         "</ul>",
       ]
     end

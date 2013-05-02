@@ -10,6 +10,7 @@ require "jsduck/process/enums"
 require "jsduck/process/overrides"
 require "jsduck/process/inherit_doc"
 require "jsduck/process/return_values"
+require "jsduck/process/fires"
 
 module Helper
   # Helper class for testing documentation parsing.
@@ -39,6 +40,7 @@ module Helper
 
       JsDuck::Process::InheritDoc.new(relations).process_all! if opts[:inherit_doc]
       JsDuck::Process::ReturnValues.new(relations).process_all! if opts[:return_values]
+      JsDuck::Process::Fires.new(relations).process_all! if opts[:fires]
 
       relations
     end
