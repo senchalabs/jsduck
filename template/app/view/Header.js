@@ -10,7 +10,7 @@ Ext.define('Docs.view.Header', {
 
     contentEl: 'header-content-menu',
 
-    width: 150,
+    width: 200,
     height: 23,
     textAlign: 'left',
     border: 2,
@@ -23,7 +23,7 @@ Ext.define('Docs.view.Header', {
             this.menu = Ext.create('Ext.menu.Menu', {
                 renderTo: Ext.getBody(),
                 id: 'doc-site-menu',
-                width: 120,
+                width: 180,
                 plain: true, 
                 items: Docs.otherProducts
             });
