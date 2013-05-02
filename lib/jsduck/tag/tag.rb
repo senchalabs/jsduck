@@ -129,7 +129,8 @@ module JsDuck::Tag
     POS_SUBPROPERTIES = 12
     POS_RETURN = 13
     POS_THROWS = 14
-    POS_OVERRIDES = 15
+    POS_FIRES = 15
+    POS_OVERRIDES = 16
 
     # Called before #to_html to allow rendering of Markdown content.
     # For this an instance of DocFormatter is passed in, on which one

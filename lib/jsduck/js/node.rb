@@ -80,6 +80,35 @@ module JsDuck
         end
       end
 
+      # Returns the type of node.
+      def type
+        @node["type"]
+      end
+
+      # Extracts all sub-statements and sub-expressions from AST node.
+      # Without looking at the type of node, we just take all the
+      # sub-hashes and -arrays.
+      #
+      # A downside of this simple algorithm is that the statements can
+      # end up in different order than they are in source code.  For
+      # example the IfStatement has three parts in the following
+      # order: "test", "consequent", "alternate": But because we're
+      # looping over a hash, they might end up in a totally different
+      # order.
+      def body
+        body = []
+        @node.each_pair do |key, value|
+          if key == "type" || key == "range"
+            # ignore
+          elsif value.is_a?(Array)
+            body.concat(value.map {|v| Js::Node.create(v) })
+          elsif value.is_a?(Hash)
+            body << Js::Node.create(value)
+          end
+        end
+        body
+      end
+
       # Iterates over keys and values in ObjectExpression.  The keys
       # are turned into strings, but values are left as is for further
       # processing.
