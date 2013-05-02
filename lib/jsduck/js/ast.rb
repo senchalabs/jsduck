@@ -1,5 +1,6 @@
 require "jsduck/js/function"
 require "jsduck/js/fires"
+require "jsduck/js/method_calls"
 require "jsduck/js/node"
 require "jsduck/tag_registry"
 
@@ -318,6 +319,7 @@ module JsDuck
           :params => empty_array_to_nil(make_params(ast)),
           :chainable => chainable?(ast) && name != "constructor",
           :fires => empty_array_to_nil(detect_fires(ast)),
+          :method_calls => empty_array_to_nil(detect_method_calls(ast)),
         }
       end
 
@@ -344,6 +346,14 @@ module JsDuck
       def detect_fires(ast)
         if ast.function? && !ast.ext_empty_fn?
           Js::Fires.detect(ast).map {|e| {:name => e} }
+        else
+          []
+        end
+      end
+
+      def detect_method_calls(ast)
+        if ast.function? && !ast.ext_empty_fn?
+          Js::MethodCalls.detect(ast)
         else
           []
         end
