@@ -6,6 +6,7 @@ Ext.define('Docs.controller.Search', {
 
     requires: [
         'Docs.ClassRegistry',
+        'Docs.GuideSearch',
         'Docs.store.Search',
         'Docs.History'
     ],
@@ -129,10 +130,16 @@ Ext.define('Docs.controller.Search', {
         this.getDropdown().hide();
     },
 
+    // First performs guides search, then combines the results with
+    // API search.
     search: function(term) {
-        // perform search and load results to store
-        var results = Docs.ClassRegistry.search(term);
+        Docs.GuideSearch.search(term, function(guideResults) {
+            this.displayResults(Docs.ClassRegistry.search(term, guideResults));
+        }, this);
+    },
 
+    // Loads results to store and shows the dropdown.
+    displayResults: function(results) {
         // Don't allow paging before first or after the last page.
         if (this.pageIndex < 0) {
             this.pageIndex = 0;
@@ -154,5 +161,4 @@ Ext.define('Docs.controller.Search', {
             this.getDropdown().getSelectionModel().select(0);
         }
     }
-
 });
