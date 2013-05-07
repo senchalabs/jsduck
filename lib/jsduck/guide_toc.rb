@@ -8,36 +8,40 @@ module JsDuck
     # Inserts table of contents at the top of guide HTML by looking
     # for <h2> elements.
     def self.inject(html, guide_name)
-      toc = [
-        "<div class='toc'>\n",
-        "<p><strong>Contents</strong></p>\n",
-        "<ol>\n",
-      ]
-
+      toc = []
       new_html = []
-      i = 0
 
       html.each_line do |line|
-        if line =~ /^<h2>(.*)<\/h2>$/
-          i += 1
-          text = Util::HTML.strip_tags($1)
-          toc << "<li><a href='#!/guide/#{guide_name}-section-#{i}'>#{text}</a></li>\n"
-          new_html << "<h2 id='#{guide_name}-section-#{i}'>#{text}</h2>\n"
+        if line =~ /^\s*<(h[1-6])>(.*?)<\/h[1-6]>$/
+          tag = $1
+          text = Util::HTML.strip_tags($2)
+          id = guide_name + "-section-" + title_to_id(text)
+          if tag == "h2"
+            toc << "<li><a href='#!/guide/#{id}'>#{text}</a></li>\n"
+          end
+          new_html << "<#{tag} id='#{id}'>#{text}</#{tag}>\n"
         else
           new_html << line
         end
       end
 
-      toc << "</ol>\n"
-      toc << "</div>\n"
-
       # Inject TOC below first heading if at least 2 items in TOC
-      if i >= 2
-        new_html.insert(1, toc)
-        new_html.flatten.join
-      else
-        html
+      if toc.length >= 2
+        new_html.insert(1, [
+            "<div class='toc'>\n",
+            "<p><strong>Contents</strong></p>\n",
+            "<ol>\n",
+            toc,
+            "</ol>\n",
+            "</div>\n",
+        ])
       end
+
+      new_html.flatten.join
+    end
+
+    def self.title_to_id(title)
+      title.downcase.gsub(/[^\w]+/, "-")
     end
 
   end
