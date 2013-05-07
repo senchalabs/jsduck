@@ -4,7 +4,7 @@ require 'jsduck/util/io'
 require 'jsduck/util/null_object'
 require 'jsduck/logger'
 require 'jsduck/grouped_asset'
-require 'jsduck/util/html'
+require 'jsduck/guide_toc'
 require 'jsduck/img/dir'
 require 'fileutils'
 
@@ -67,7 +67,8 @@ module JsDuck
     def format_guide(guide)
       @formatter.doc_context = {:filename => guide[:filename], :linenr => 0}
       @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
-      html = add_toc(guide, @formatter.format(Util::IO.read(guide[:filename])))
+      html = @formatter.format(Util::IO.read(guide[:filename]))
+      html = GuideToc.inject(html, guide['name'])
 
       # Report unused images (but ignore the icon files)
       @formatter.images.get("icon.png")
@@ -112,36 +113,6 @@ module JsDuck
         FileUtils.mv(dir+"/icon-lg.png", dir+"/icon.png")
       else
         FileUtils.cp(@opts.template_dir+"/resources/images/default-guide.png", dir+"/icon.png")
-      end
-    end
-
-    # Creates table of contents at the top of guide by looking for <h2> elements in HTML.
-    def add_toc(guide, html)
-      toc = [
-        "<div class='toc'>\n",
-        "<p><strong>Contents</strong></p>\n",
-        "<ol>\n",
-      ]
-      new_html = []
-      i = 0
-      html.each_line do |line|
-        if line =~ /^<h2>(.*)<\/h2>$/
-          i += 1
-          text = Util::HTML.strip_tags($1)
-          toc << "<li><a href='#!/guide/#{guide['name']}-section-#{i}'>#{text}</a></li>\n"
-          new_html << "<h2 id='#{guide['name']}-section-#{i}'>#{text}</h2>\n"
-        else
-          new_html << line
-        end
-      end
-      toc << "</ol>\n"
-      toc << "</div>\n"
-      # Inject TOC at below first heading if at least 2 items in TOC
-      if i >= 2
-        new_html.insert(1, toc)
-        new_html.flatten.join
-      else
-        html
       end
     end
 
