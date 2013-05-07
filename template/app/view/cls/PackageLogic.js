@@ -3,6 +3,7 @@
  */
 Ext.define('Docs.view.cls.PackageLogic', {
     extend: 'Docs.view.cls.Logic',
+    requires: "Docs.ClassRegistry",
 
     /**
      * Creates the tree.
@@ -60,7 +61,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
             pkg.url = node.url;
         }
         else {
-            var parentName = this.packageName(cls.name);
+            var parentName = Docs.ClassRegistry.packageName(cls.name);
             var parent = this.packages[parentName] || this.addPackage(parentName);
             var node = this.classNode(cls);
             this.addChild(parent, node);
@@ -75,7 +76,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
     // Note that the root package always exists, so we can safely
     // recurse knowing we will eventually stop.
     addPackage: function(name) {
-        var parentName = this.packageName(name);
+        var parentName = Docs.ClassRegistry.packageName(name);
         var parent = this.packages[parentName] || this.addPackage(parentName);
         var pkg = this.packageNode(name);
         this.addChild(parent, pkg);
@@ -94,7 +95,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
     // Given full doc object for class creates class node
     classNode: function(cls) {
       return {
-        text: this.shortName(cls.name),
+        text: Docs.ClassRegistry.shortName(cls.name),
         url: "#!/api/"+cls.name,
         iconCls: cls.icon,
         cls: cls["private"] ? "private" : "",
@@ -106,24 +107,11 @@ Ext.define('Docs.view.cls.PackageLogic', {
     // Given full package name like my.package creates package node
     packageNode: function(name) {
       return {
-        text: this.shortName(name),
+        text: Docs.ClassRegistry.shortName(name),
         iconCls: "icon-pkg",
         leaf: false,
         children: []
       };
-    },
-
-    // Utility method that given a package or class name finds the name
-    // of its parent package.
-    packageName: function(name) {
-      return name.slice(0, -this.shortName(name).length - 1) || "";
-    },
-
-    // Utility method that given full package or class name extracts
-    // the "class"-part of the name.
-    shortName: function(name) {
-      var parts = name.split(/\./);
-      return parts.pop();
     }
 
 });

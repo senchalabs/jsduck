@@ -10,7 +10,7 @@ module JsDuck
     class Search
       # Given list of classes and other assets, returns an array of
       # hashes describing the search data.
-      def create(classes, assets)
+      def create(classes, assets, opts)
         list = []
 
         classes.each do |cls|
@@ -32,7 +32,8 @@ module JsDuck
           end
         end
 
-        assets.guides.each_item {|g| list << guide_node(g) }
+        # Don't include guides data when separate guides search engine is provided
+        assets.guides.each_item {|g| list << guide_node(g) } unless opts.search[:url]
 
         assets.videos.each_item {|v| list << video_node(v) }
 

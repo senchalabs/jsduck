@@ -9,6 +9,7 @@ Ext.define('Docs.view.Tabs', {
     componentCls: 'doctabs',
     requires: [
         'Docs.History',
+        'Docs.ClassRegistry',
         'Docs.view.TabMenu'
     ],
 
@@ -174,6 +175,8 @@ Ext.define('Docs.view.Tabs', {
      * @param {Boolean} opts.activate True to activate the tab
      */
     addTab: function(tab, opts) {
+        tab = this.formatTabTexts(tab);
+
         this.tabCache[tab.href] = tab;
 
         if (!this.hasTab(tab.href)) {
@@ -189,6 +192,22 @@ Ext.define('Docs.view.Tabs', {
         }
 
         this.saveTabs();
+    },
+
+    // For API tabs always use the full class name as tooltip and
+    // short name as the tab title.  For other tabs, make the tooltip
+    // text be the same as tab title - useful for seeing the full
+    // title for tabs with long titles.
+    formatTabTexts: function(tab) {
+        if (/#!?\/api\//.test(tab.href)) {
+            var fullClsName = tab.href.replace(/^.*#!?\/api\//, "");
+            tab.text = Docs.ClassRegistry.shortName(fullClsName);
+            tab.tooltip = fullClsName;
+        }
+        else {
+            tab.tooltip = tab.text;
+        }
+        return tab;
     },
 
     /**
@@ -355,6 +374,8 @@ Ext.define('Docs.view.Tabs', {
 
         var docTab = Ext.get(this.tabTpl.append(this.el.dom, tab));
 
+        this.addMainTabTooltip(docTab, tab);
+
         if (opts.animate && !Ext.isIE) {
             // Effect to 'slide' the tab out when it is created.
             docTab.setStyle('width', '10px');
@@ -427,6 +448,8 @@ Ext.define('Docs.view.Tabs', {
             lastTab.dom.parentNode.replaceChild(newTab, lastTab.dom);
             this.tabsInBar[this.tabsInBar.length - 1] = url;
             Ext.get(newTab).setStyle({ visibility: 'visible', width: String(this.tabWidth()) + 'px' });
+
+            this.addMainTabTooltip(newTab, this.tabCache[url]);
         }
     },
 
@@ -556,6 +579,23 @@ Ext.define('Docs.view.Tabs', {
                 });
             }
         });
+
+        Ext.Array.each(this.tabsInBar, function(url) {
+            var el = Ext.get(Ext.query('a.main-tab[href="' + url + '"]')[0]);
+            var tab = this.tabCache[url];
+            if (el) {
+                this.addMainTabTooltip(el.up(".doctab"), tab);
+            }
+        }, this);
+    },
+
+    addMainTabTooltip: function(tabEl, tab) {
+        if (tab.tooltip) {
+            Ext.create('Ext.tip.ToolTip', {
+                target: tabEl,
+                html: tab.tooltip
+            });
+        }
     },
 
     saveTabs: function() {

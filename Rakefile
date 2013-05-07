@@ -159,6 +159,11 @@ class JsDuckRunner
     add_options("--comments-domain", db_name+"/"+version)
   end
 
+  def add_search(product, version)
+    add_options("--search-url", "http://support-test.sencha.com:8080/docsearch/search")
+    add_options("--search-domain", product+"/"+version)
+  end
+
   def add_ext4
     @options += [
       "--title", "Sencha Docs - Ext JS 4.0",
@@ -263,6 +268,7 @@ task :sdk => :sass do
   )
   runner.add_debug
   runner.add_comments('ext-js', '4')
+  runner.add_search('Ext JS', '4.2.0')
   runner.run
 
   system("ln -s #{EXT_BUILD} #{OUT_DIR}/extjs-build")
