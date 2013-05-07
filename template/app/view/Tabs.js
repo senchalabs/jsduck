@@ -174,6 +174,11 @@ Ext.define('Docs.view.Tabs', {
      * @param {Boolean} opts.activate True to activate the tab
      */
     addTab: function(tab, opts) {
+        // For API tabs always use the full class name as title.
+        if (/#!?\/api\//.test(tab.href)) {
+            tab.text = tab.href.replace(/^.*#!?\/api\//, "");
+        }
+
         this.tabCache[tab.href] = tab;
 
         if (!this.hasTab(tab.href)) {
