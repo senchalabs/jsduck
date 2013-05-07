@@ -122,11 +122,6 @@ Ext.define("Docs.ClassRegistry", {
         for (var i=0, len=searchData.length; i<len; i++) {
             var r = searchData[i];
 
-            // Skip guides when guides search results already provided
-            if (guides && r.icon === "icon-guide") {
-                continue;
-            }
-
             // when search text has "." or ":" in it, search from the full name
             // (e.g. "Ext.Component.focus" or "xtype: grid")
             // Otherwise search from just the short name (e.g. "focus" or "Component")

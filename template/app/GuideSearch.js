@@ -5,6 +5,15 @@ Ext.define("Docs.GuideSearch", {
     singleton: true,
 
     /**
+     * True when guides search is enabled
+     * (jsduck was run with --search-url option).
+     * @return {Boolean}
+     */
+    isEnabled: function() {
+        return !!Docs.data.guideSearch.url;
+    },
+
+    /**
      * Peforms the search remotely, then calls the given function.
      *
      * @param {String} term  The query string to search for
@@ -13,11 +22,11 @@ Ext.define("Docs.GuideSearch", {
      */
     search: function(term, callback, scope) {
         var request = this.currentRequest = Ext.data.JsonP.request({
-            url: "http://support-test.sencha.com:8080/docsearch/search",
+            url: Docs.data.guideSearch.url,
             params: {
                 q: term,
-                product: null,
-                version: null,
+                product: Docs.data.guideSearch.product,
+                version: Docs.data.guideSearch.version,
                 start: 0,
                 limit: 100 // get all guides, there aren't so many.
             },

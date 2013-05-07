@@ -133,9 +133,14 @@ Ext.define('Docs.controller.Search', {
     // First performs guides search, then combines the results with
     // API search.
     search: function(term) {
-        Docs.GuideSearch.search(term, function(guideResults) {
-            this.displayResults(Docs.ClassRegistry.search(term, guideResults));
-        }, this);
+        if (Docs.GuideSearch.isEnabled()) {
+            Docs.GuideSearch.search(term, function(guideResults) {
+                this.displayResults(Docs.ClassRegistry.search(term, guideResults));
+            }, this);
+        }
+        else {
+            this.displayResults(Docs.ClassRegistry.search(term));
+        }
     },
 
     // Loads results to store and shows the dropdown.
