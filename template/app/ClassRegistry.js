@@ -25,6 +25,24 @@ Ext.define("Docs.ClassRegistry", {
     },
 
     /**
+     * Given a full package or class name extracts the "class"-part of the name.
+     * @param {String} name
+     * @return {String}
+     */
+    shortName: function(name) {
+        return name.split(/\./).pop();
+    },
+
+    /**
+     * Given a package or class name finds the name of its parent package.
+     * @param {String} name
+     * @return {String}
+     */
+    packageName: function(name) {
+        return name.slice(0, -this.shortName(name).length - 1) || "";
+    },
+
+    /**
      * Searches class and member names including given search string.
      *
      * Sorting the results works by dividing the results into sections
