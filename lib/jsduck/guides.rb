@@ -5,6 +5,7 @@ require 'jsduck/util/null_object'
 require 'jsduck/logger'
 require 'jsduck/grouped_asset'
 require 'jsduck/guide_toc'
+require 'jsduck/guide_anchors'
 require 'jsduck/img/dir'
 require 'fileutils'
 
@@ -69,6 +70,7 @@ module JsDuck
       @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
       html = @formatter.format(Util::IO.read(guide[:filename]))
       html = GuideToc.inject(html, guide['name'])
+      html = GuideAnchors.transform(html, guide['name'])
 
       # Report unused images (but ignore the icon files)
       @formatter.images.get("icon.png")
