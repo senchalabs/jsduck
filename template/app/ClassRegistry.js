@@ -66,10 +66,12 @@ Ext.define("Docs.ClassRegistry", {
      *     59  middle removed   guide
      *
      * @param {String} text  The query string to search for
+     * @param {Object[]} [guides] Results of guides search, to be
+     * combined with the results of API search.
      * @return {Object[]} array of the matching items from Docs.search.data
      * ordered by best matches first.
      */
-    search: function(text) {
+    search: function(text, guides) {
         // Each record has 1 of 5 possible sorting orders,
         var nSort = 5;
         // which is *4 by it being public/deprecated/private/removed,
@@ -92,6 +94,23 @@ Ext.define("Docs.ClassRegistry", {
         var adjDep = nSort * 1;
         var adjPri = nSort * 2;
         var adjRem = nSort * 3;
+
+        // When guides given, populate the result fields with them
+        if (guides) {
+            var guidePos = 4;
+            for (var i=0; i<guides.length; i++) {
+                var g = guides[i];
+                if (g.score > 5) {
+                    results[guidePos + adjPub + adjFul].push(g);
+                }
+                else if (g.score > 1) {
+                    results[guidePos + adjPub + adjBeg].push(g);
+                }
+                else {
+                    results[guidePos + adjPub + adjMid].push(g);
+                }
+            }
+        }
 
         var searchFull = /[.:]/.test(text);
         var safeText = Ext.escapeRe(text);

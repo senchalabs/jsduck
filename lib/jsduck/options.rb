@@ -40,6 +40,7 @@ module JsDuck
     attr_accessor :tests
     attr_accessor :comments_url
     attr_accessor :comments_domain
+    attr_accessor :search
     attr_accessor :ignore_html
 
     # Debugging
@@ -120,6 +121,7 @@ module JsDuck
       @tests = false
       @comments_url = nil
       @comments_domain = nil
+      @search = {}
       @ignore_html = {}
 
       # Debugging
@@ -432,6 +434,35 @@ module JsDuck
           "",
           "Must be used together with --comments-url option.") do |domain|
           @comments_domain = domain
+        end
+
+        opts.on('--search-url=URL',
+          "Address of guides search server server.",
+          "",
+          "When supplied, the search for guides is performed through this",
+          "external service and the results merged together with API search.",
+          "The search server must respond to JSONP requests.",
+          "",
+          "For example: http://sencha.com/docsearch",
+          "",
+          "Must be used together with --search-domain option.",
+          "",
+          "This option is EXPERIMENTAL.") do |url|
+          @search[:url] = url
+        end
+
+        opts.on('--search-domain=STRING',
+          "A string consisting of <name>/<version>.",
+          "",
+          "Tells the search engine which product and version",
+          "to include into search.",
+          "",
+          "For example: Ext JS/4.2.0",
+          "",
+          "Must be used together with --search-url option.",
+          "",
+          "This option is EXPERIMENTAL.") do |domain|
+          @search[:product], @search[:version] = domain.slice(/\//)
         end
 
         opts.separator ""
