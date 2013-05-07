@@ -53,13 +53,11 @@ Ext.define("Docs.GuideSearch", {
     },
 
     // Extracts string from Array if needed
-    // Escapes HTML (not escaped in JSON)
     // Gets rid of newlines (search results view doesn't like them)
     // Replaces supplied highlighting with our highlighting tags.
     format: function(data) {
         var s = Ext.isArray(data) ? data[0] : data;
-        var s = Ext.String.htmlEncode(s).replace(/\n/g, " ");
-        return s.replace(/&lt;em class=&quot;match&quot;&gt;(.*?)&lt;\/em&gt;/g, "<strong>$1</strong>");
+        return s.replace(/\n/g, " ").replace(/<em class="match">(.*?)<\/em>/g, "<strong>$1</strong>");
     },
 
     // Removes search context before the matching text.
