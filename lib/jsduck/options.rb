@@ -462,7 +462,7 @@ module JsDuck
           "Must be used together with --search-url option.",
           "",
           "This option is EXPERIMENTAL.") do |domain|
-          @search[:product], @search[:version] = domain.slice(/\//)
+          @search[:product], @search[:version] = domain.split(/\//)
         end
 
         opts.separator ""
