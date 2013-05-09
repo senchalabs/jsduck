@@ -24,6 +24,11 @@ Ext.define('Docs.controller.Search', {
     pageIndex: 0,
     pageSize: 10,
 
+    // Delay constants
+    basicSearchDelay: 50,
+    guideSearchDelay: 500,
+    dropdownHideDelay: 500,
+
     init: function() {
         this.control({
             '#search-dropdown': {
@@ -91,7 +96,7 @@ Ext.define('Docs.controller.Search', {
                         clearTimeout(this.searchTimeout);
                         this.searchTimeout = Ext.Function.defer(function() {
                             this.search(el.value);
-                        }, 50, this);
+                        }, this.basicSearchDelay, this);
                     }
                 },
                 focus: function(el) {
@@ -108,7 +113,7 @@ Ext.define('Docs.controller.Search', {
                     // badly when you make a long mouse press on
                     // dropdown item.
                     var dropdown = this.getDropdown();
-                    this.hideTimeout = Ext.Function.defer(dropdown.hide, 500, dropdown);
+                    this.hideTimeout = Ext.Function.defer(dropdown.hide, this.dropdownHideDelay, dropdown);
                 }
             }
         });
@@ -158,7 +163,7 @@ Ext.define('Docs.controller.Search', {
                     this.basicSearch(term, guideResults);
                 }
             }, this);
-        }, 500, this);
+        }, this.guideSearchDelay, this);
     },
 
     basicSearch: function(term, guideResults) {
