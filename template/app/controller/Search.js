@@ -130,17 +130,39 @@ Ext.define('Docs.controller.Search', {
         this.getDropdown().hide();
     },
 
-    // First performs guides search, then combines the results with
-    // API search.
+    // First performs the basic search.
+    // Then launches guides search in the background - when that finishes,
+    // re-runs the basic search with guides results included.
     search: function(term) {
+        // skip search when query hasn't changed.
+        if (term === this.previousTerm) {
+            return;
+        }
+        this.previousTerm = term;
+
+        this.basicSearch(term);
         if (Docs.GuideSearch.isEnabled()) {
+            this.guideSearch(term);
+        }
+    },
+
+    // Wait a bit before launching guides search.
+    // When new search term comes in, cancel the previous delayed search.
+    // When the search had already started, don't show the results when it finishes.
+    guideSearch: function(term) {
+        clearTimeout(this.guideSearchTimeout);
+
+        var timeout = this.guideSearchTimeout = Ext.Function.defer(function() {
             Docs.GuideSearch.search(term, function(guideResults) {
-                this.displayResults(Docs.ClassRegistry.search(term, guideResults));
+                if (timeout === this.guideSearchTimeout) {
+                    this.basicSearch(term, guideResults);
+                }
             }, this);
-        }
-        else {
-            this.displayResults(Docs.ClassRegistry.search(term));
-        }
+        }, 500, this);
+    },
+
+    basicSearch: function(term, guideResults) {
+        this.displayResults(Docs.ClassRegistry.search(term, guideResults));
     },
 
     // Loads results to store and shows the dropdown.
