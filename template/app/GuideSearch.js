@@ -24,6 +24,8 @@ Ext.define("Docs.GuideSearch", {
         var request = this.currentRequest = Ext.data.JsonP.request({
             url: Docs.data.guideSearch.url,
             params: {
+                fragsize: 32,
+                max_fragments: 1,
                 q: term,
                 product: Docs.data.guideSearch.product,
                 version: Docs.data.guideSearch.version,
@@ -45,27 +47,22 @@ Ext.define("Docs.GuideSearch", {
         return {
             icon: "icon-guide",
             name: this.format(guide.title),
-            fullName: this.shortenContext(this.format(guide.body)),
-            url: this.shortenUrl(guide.url),
+            fullName: this.format(guide.body),
+            url: this.formatUrl(guide.url),
             meta: {},
             score: guide.score
         };
     },
 
-    // Extracts string from Array if needed
     // Gets rid of newlines (search results view doesn't like them)
+    // Collapses continuos whitespace into one space.
     // Replaces supplied highlighting with our highlighting tags.
     format: function(data) {
-        var s = Ext.isArray(data) ? data[0] : data;
-        return s.replace(/\n/g, " ").replace(/<em class="match">(.*?)<\/em>/g, "<strong>$1</strong>");
+        var s = data.replace(/\s+/g, " ");
+        return s.replace(/<em class="match">(.*?)<\/em>/g, "<strong>$1</strong>");
     },
 
-    // Removes search context before the matching text.
-    shortenContext: function(s) {
-        return s.replace(/^[^<]*/, '');
-    },
-
-    shortenUrl: function(url) {
-        return url.replace(/^.*#!/, "#!");
+    formatUrl: function(url) {
+        return "#!" + url;
     }
 });
