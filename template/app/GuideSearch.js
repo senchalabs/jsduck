@@ -14,6 +14,29 @@ Ext.define("Docs.GuideSearch", {
     },
 
     /**
+     * Invokes #search after a specified delay.
+     *
+     * @param {String} term  The query string to search for
+     * @param {Function} callback Function to call with an array of search results.
+     * @param {Object} scope Scope for the function.
+     * @param {Number} delay Milliseconds to wait before starting.
+     */
+    deferredSearch: function(term, callback, scope, delay) {
+        // When new search term comes in, cancel the previous delayed search.
+        clearTimeout(this.timeout);
+
+        var timeout = this.timeout = Ext.Function.defer(function() {
+            this.search(term, function(results) {
+                // When new search is already started, don't show the
+                // results of old search.
+                if (timeout === this.timeout) {
+                    callback.call(scope, results);
+                }
+            }, this);
+        }, delay, this);
+    },
+
+    /**
      * Peforms the search remotely, then calls the given function.
      *
      * @param {String} term  The query string to search for

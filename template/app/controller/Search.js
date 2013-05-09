@@ -151,19 +151,10 @@ Ext.define('Docs.controller.Search', {
         }
     },
 
-    // Wait a bit before launching guides search.
-    // When new search term comes in, cancel the previous delayed search.
-    // When the search had already started, don't show the results when it finishes.
     guideSearch: function(term) {
-        clearTimeout(this.guideSearchTimeout);
-
-        var timeout = this.guideSearchTimeout = Ext.Function.defer(function() {
-            Docs.GuideSearch.search(term, function(guideResults) {
-                if (timeout === this.guideSearchTimeout) {
-                    this.basicSearch(term, guideResults);
-                }
-            }, this);
-        }, this.guideSearchDelay, this);
+        Docs.GuideSearch.deferredSearch(term, function(guideResults) {
+            this.basicSearch(term, guideResults);
+        }, this, this.guideSearchDelay);
     },
 
     basicSearch: function(term, guideResults) {
