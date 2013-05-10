@@ -71,7 +71,7 @@ Ext.define("Docs.GuideSearch", {
             icon: "icon-guide",
             name: this.format(guide.title),
             fullName: this.format(guide.body),
-            url: this.formatUrl(guide.url),
+            url: guide.url,
             meta: {},
             score: guide.score
         };
@@ -83,9 +83,5 @@ Ext.define("Docs.GuideSearch", {
     format: function(data) {
         var s = data.replace(/\s+/g, " ");
         return s.replace(/<em class="match">(.*?)<\/em>/g, "<strong>$1</strong>");
-    },
-
-    formatUrl: function(url) {
-        return "#!" + url;
     }
 });
