@@ -48,7 +48,12 @@
     ol {
       margin: 0 0 1em 2em;
       li {
-        list-style: decimal outside; } }
+        margin: 0 0 1em;
+        list-style: decimal outside; 
+        ol {
+            margin: 0 0 1em 1em;
+            li {
+                list-style: lower-alpha inside; } } } }
     em {
       font-style: italic; }
     strong {
