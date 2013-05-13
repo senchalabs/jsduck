@@ -6,12 +6,42 @@ require "jsduck/js/method_calls"
 module JsDuck
   module Js
 
+    # Auto-detection of methods.
     class Method
       include Util::Singleton
 
-      # Detects various properties of a method from AST node and
-      # returns a documentation hash with these and method name.
-      def detect(name, ast)
+      # Checks if AST node is a method, and if so, returns doc-hash
+      # with method name and various auto-detected properties.
+      # When not a method returns nil.
+      def detect(ast, exp, var)
+        # function foo() {}
+        if ast.function?
+          make(ast["id"].to_s || "", ast)
+
+          # foo = function() {}
+        elsif exp && exp.assignment_expression? && exp["right"].function?
+          make(exp["left"].to_s, exp["right"])
+
+          # var foo = function() {}
+        elsif var && var["init"] && var["init"].function?
+          make(var["id"].to_s, var["init"])
+
+          # (function() {})
+        elsif exp && exp.function?
+          make(exp["id"].to_s || "", exp)
+
+          # foo: function() {}
+        elsif ast.property? && ast["value"].function?
+          make(ast["key"].key_value, ast["value"])
+
+        else
+          nil
+        end
+      end
+
+      # Performs the auto-detection on function AST node and produces
+      # a doc-hash.
+      def make(name, ast)
         if proper_function?(ast)
           return {
             :tagname => :method,

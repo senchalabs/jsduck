@@ -105,29 +105,7 @@ module JsDuck
       end
 
       def detect_method(ast, exp, var)
-        # function foo() {}
-        if ast.function?
-          make_method(ast["id"].to_s || "", ast)
-
-          # foo = function() {}
-        elsif exp && exp.assignment_expression? && exp["right"].function?
-          make_method(exp["left"].to_s, exp["right"])
-
-          # var foo = function() {}
-        elsif var && var["init"] && var["init"].function?
-          make_method(var["id"].to_s, var["init"])
-
-          # (function() {})
-        elsif exp && exp.function?
-          make_method(exp["id"].to_s || "", exp)
-
-          # foo: function() {}
-        elsif ast.property? && ast["value"].function?
-          make_method(ast["key"].key_value, ast["value"])
-
-        else
-          nil
-        end
+        Js::Method.detect(ast, exp, var)
       end
 
       # this.fireEvent("foo", ...)
@@ -342,7 +320,7 @@ module JsDuck
       end
 
       def make_method(name, ast)
-        Js::Method.detect(name, ast)
+        Js::Method.make(name, ast)
       end
 
       def make_event(name)
