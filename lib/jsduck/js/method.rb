@@ -12,56 +12,48 @@ module JsDuck
       # Detects various properties of a method from AST node and
       # returns a documentation hash with these and method name.
       def detect(name, ast)
-        return {
-          :tagname => :method,
-          :name => name,
-          :params => empty_array_to_nil(make_params(ast)),
-          :chainable => chainable?(ast) && name != "constructor",
-          :fires => empty_array_to_nil(detect_fires(ast)),
-          :method_calls => empty_array_to_nil(detect_method_calls(ast)),
-        }
+        if proper_function?(ast)
+          return {
+            :tagname => :method,
+            :name => name,
+            :params => arr_to_nil(params(ast)),
+            :chainable => chainable?(ast) && name != "constructor",
+            :fires => arr_to_nil(fires(ast)),
+            :method_calls => arr_to_nil(method_calls(ast)),
+          }
+        else
+          return {
+            :tagname => :method,
+            :name => name,
+          }
+        end
       end
 
       private
 
-      def empty_array_to_nil(arr)
+      def proper_function?(ast)
+        ast.function? && !ast.ext_empty_fn?
+      end
+
+      # replaces empty array with nil
+      def arr_to_nil(arr)
         arr.length == 0 ? nil : arr
       end
 
-      def make_params(ast)
-        if proper_function?(ast)
-          ast["params"].map {|p| {:name => p.to_s} }
-        else
-          []
-        end
+      def params(ast)
+        ast["params"].map {|p| {:name => p.to_s} }
       end
 
       def chainable?(ast)
-        if proper_function?(ast)
-          Js::Returns.chainable?(ast.raw)
-        else
-          false
-        end
+        Js::Returns.chainable?(ast.raw)
       end
 
-      def detect_fires(ast)
-        if proper_function?(ast)
-          Js::Fires.detect(ast)
-        else
-          []
-        end
+      def fires(ast)
+        Js::Fires.detect(ast)
       end
 
-      def detect_method_calls(ast)
-        if proper_function?(ast)
-          Js::MethodCalls.detect(ast)
-        else
-          []
-        end
-      end
-
-      def proper_function?(ast)
-        ast.function? && !ast.ext_empty_fn?
+      def method_calls(ast)
+        Js::MethodCalls.detect(ast)
       end
 
     end
