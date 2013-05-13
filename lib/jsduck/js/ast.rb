@@ -53,35 +53,17 @@ module JsDuck
         exp = ast.expression_statement? ? ast["expression"] : nil
         var = ast.variable_declaration? ? ast["declarations"][0] : nil
 
-        if doc = detect_class(ast, exp, var)
+        if doc = Js::Class.detect(ast, exp, var, @docs)
           doc
-        elsif doc = detect_method(ast, exp, var)
+        elsif doc = Js::Method.detect(ast, exp, var)
           doc
-        elsif doc = detect_event(ast, exp, var)
+        elsif doc = Js::Event.detect(ast, exp, var)
           doc
-        elsif doc = detect_property(ast, exp, var)
+        elsif doc = Js::Property.detect(ast, exp, var)
           doc
         else
           Js::Property.make()
         end
-      end
-
-      private
-
-      def detect_class(ast, exp, var)
-        Js::Class.detect(ast, exp, var, @docs)
-      end
-
-      def detect_method(ast, exp, var)
-        Js::Method.detect(ast, exp, var)
-      end
-
-      def detect_event(ast, exp, var)
-        Js::Event.detect(ast, exp, var)
-      end
-
-      def detect_property(ast, exp, var)
-        Js::Property.detect(ast, exp, var)
       end
 
     end
