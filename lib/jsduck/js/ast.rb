@@ -1,6 +1,4 @@
-require "jsduck/js/returns"
-require "jsduck/js/fires"
-require "jsduck/js/method_calls"
+require "jsduck/js/method"
 require "jsduck/js/node"
 require "jsduck/tag_registry"
 
@@ -344,50 +342,7 @@ module JsDuck
       end
 
       def make_method(name, ast)
-        return {
-          :tagname => :method,
-          :name => name,
-          :params => empty_array_to_nil(make_params(ast)),
-          :chainable => chainable?(ast) && name != "constructor",
-          :fires => empty_array_to_nil(detect_fires(ast)),
-          :method_calls => empty_array_to_nil(detect_method_calls(ast)),
-        }
-      end
-
-      def make_params(ast)
-        if ast.function? && !ast.ext_empty_fn?
-          ast["params"].map {|p| {:name => p.to_s} }
-        else
-          []
-        end
-      end
-
-      def empty_array_to_nil(arr)
-        arr.length == 0 ? nil : arr
-      end
-
-      def chainable?(ast)
-        if ast.function? && !ast.ext_empty_fn?
-          Js::Returns.chainable?(ast.raw)
-        else
-          false
-        end
-      end
-
-      def detect_fires(ast)
-        if ast.function? && !ast.ext_empty_fn?
-          Js::Fires.detect(ast)
-        else
-          []
-        end
-      end
-
-      def detect_method_calls(ast)
-        if ast.function? && !ast.ext_empty_fn?
-          Js::MethodCalls.detect(ast)
-        else
-          []
-        end
+        Js::Method.detect(name, ast)
       end
 
       def make_event(name)
