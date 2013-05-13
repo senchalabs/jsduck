@@ -53,6 +53,22 @@ module JsDuck
         exp = ast.expression_statement? ? ast["expression"] : nil
         var = ast.variable_declaration? ? ast["declarations"][0] : nil
 
+        if doc = detect_class(ast, exp, var)
+          doc
+        elsif doc = detect_method(ast, exp, var)
+          doc
+        elsif doc = detect_event(ast, exp, var)
+          doc
+        elsif doc = detect_property(ast, exp, var)
+          doc
+        else
+          make_property()
+        end
+      end
+
+      private
+
+      def detect_class(ast, exp, var)
         # Ext.define("Class", {})
         if exp && exp.ext_define?
           make_class(exp["arguments"][0].to_value, exp)
@@ -85,8 +101,14 @@ module JsDuck
         elsif ast.object_expression?
           make_class("", ast)
 
-          # function foo() {}
-        elsif ast.function?
+        else
+          nil
+        end
+      end
+
+      def detect_method(ast, exp, var)
+        # function foo() {}
+        if ast.function?
           make_method(ast["id"].to_s || "", ast)
 
           # foo = function() {}
@@ -105,12 +127,23 @@ module JsDuck
         elsif ast.property? && ast["value"].function?
           make_method(ast["key"].key_value, ast["value"])
 
-          # this.fireEvent("foo", ...)
-        elsif exp && exp.fire_event?
-          make_event(exp["arguments"][0].to_value)
+        else
+          nil
+        end
+      end
 
-          # foo = ...
-        elsif exp && exp.assignment_expression?
+      # this.fireEvent("foo", ...)
+      def detect_event(ast, exp, var)
+        if exp && exp.fire_event?
+          make_event(exp["arguments"][0].to_value)
+        else
+          nil
+        end
+      end
+
+      def detect_property(ast, exp, var)
+        # foo = ...
+        if exp && exp.assignment_expression?
           make_property(exp["left"].to_s, exp["right"])
 
           # var foo = ...
@@ -134,11 +167,9 @@ module JsDuck
           make_property(exp.to_value)
 
         else
-          make_property()
+          nil
         end
       end
-
-      private
 
       # Class name begins with upcase char
       def class_name?(name)
