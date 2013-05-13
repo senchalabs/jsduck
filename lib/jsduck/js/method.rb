@@ -13,7 +13,10 @@ module JsDuck
       # Checks if AST node is a method, and if so, returns doc-hash
       # with method name and various auto-detected properties.
       # When not a method returns nil.
-      def detect(ast, exp, var)
+      def detect(ast)
+        exp = ast.expression_statement? ? ast["expression"] : nil
+        var = ast.variable_declaration? ? ast["declarations"][0] : nil
+
         # function foo() {}
         if ast.function?
           make(ast["id"].to_s || "", ast)

@@ -13,8 +13,11 @@ module JsDuck
       # Checks if AST node is a class, and if so, returns doc-hash
       # with clas name and various auto-detected attributes.
       # When not a class returns nil.
-      def detect(ast, exp, var, docs)
+      def detect(ast, docs)
         @docs = docs
+
+        exp = ast.expression_statement? ? ast["expression"] : nil
+        var = ast.variable_declaration? ? ast["declarations"][0] : nil
 
         # Ext.define("Class", {})
         if exp && exp.ext_define?

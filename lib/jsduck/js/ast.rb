@@ -50,16 +50,13 @@ module JsDuck
       def detect(node)
         ast = Js::Node.create(node)
 
-        exp = ast.expression_statement? ? ast["expression"] : nil
-        var = ast.variable_declaration? ? ast["declarations"][0] : nil
-
-        if doc = Js::Class.detect(ast, exp, var, @docs)
+        if doc = Js::Class.detect(ast, @docs)
           doc
-        elsif doc = Js::Method.detect(ast, exp, var)
+        elsif doc = Js::Method.detect(ast)
           doc
-        elsif doc = Js::Event.detect(ast, exp, var)
+        elsif doc = Js::Event.detect(ast)
           doc
-        elsif doc = Js::Property.detect(ast, exp, var)
+        elsif doc = Js::Property.detect(ast)
           doc
         else
           Js::Property.make()

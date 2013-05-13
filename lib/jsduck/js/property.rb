@@ -10,7 +10,10 @@ module JsDuck
       # Checks if AST node is a property, and if so, returns doc-hash
       # with property name and various auto-detected attributes.
       # When not a property returns nil.
-      def detect(ast, exp, var)
+      def detect(ast)
+        exp = ast.expression_statement? ? ast["expression"] : nil
+        var = ast.variable_declaration? ? ast["declarations"][0] : nil
+
         # foo = ...
         if exp && exp.assignment_expression?
           make(exp["left"].to_s, exp["right"])
