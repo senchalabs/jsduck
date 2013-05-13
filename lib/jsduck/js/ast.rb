@@ -1,4 +1,5 @@
 require "jsduck/js/method"
+require "jsduck/js/event"
 require "jsduck/js/node"
 require "jsduck/tag_registry"
 
@@ -108,13 +109,8 @@ module JsDuck
         Js::Method.detect(ast, exp, var)
       end
 
-      # this.fireEvent("foo", ...)
       def detect_event(ast, exp, var)
-        if exp && exp.fire_event?
-          make_event(exp["arguments"][0].to_value)
-        else
-          nil
-        end
+        Js::Event.detect(ast, exp, var)
       end
 
       def detect_property(ast, exp, var)
@@ -321,13 +317,6 @@ module JsDuck
 
       def make_method(name, ast)
         Js::Method.make(name, ast)
-      end
-
-      def make_event(name)
-        return {
-          :tagname => :event,
-          :name => name,
-        }
       end
 
       def make_property(name=nil, ast=nil, tagname=:property)
