@@ -1,4 +1,4 @@
-require "jsduck/js/function"
+require "jsduck/js/returns"
 require "jsduck/js/fires"
 require "jsduck/js/method_calls"
 require "jsduck/js/node"
@@ -337,7 +337,7 @@ module JsDuck
 
       def chainable?(ast)
         if ast.function? && !ast.ext_empty_fn?
-          Js::Function.return_types(ast.raw) == [:this]
+          Js::Returns.chainable?(ast.raw)
         else
           false
         end

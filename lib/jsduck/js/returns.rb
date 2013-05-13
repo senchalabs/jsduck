@@ -3,9 +3,14 @@ require "jsduck/util/singleton"
 module JsDuck
   module Js
 
-    # Analyzes the AST of a FunctionDeclaration or FunctionExpression.
-    class Function
+    # Analyzes the AST of a Function for possible return values.
+    class Returns
       include Util::Singleton
+
+      # True when function always finishes with returning this.
+      def chainable?(ast)
+        detect(ast) == [:this]
+      end
 
       # Detects possible return types of the given function.
       #
@@ -18,7 +23,7 @@ module JsDuck
       #
       # * :other - some other value is returned.
       #
-      def return_types(ast)
+      def detect(ast)
         h = return_types_hash(ast["body"]["body"])
 
         # Replace the special :void value that signifies possibility of
