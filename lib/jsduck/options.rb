@@ -95,7 +95,6 @@ module JsDuck
       @ext4_events = nil
 
       @version = "5.0.0.beta2"
-
       # Customizing output
       @title = "Documentation - JSDuck"
       @header = "<strong>Documentation</strong> JSDuck"
@@ -454,6 +453,8 @@ module JsDuck
         end
 
         opts.on('--comments-domain=STRING',
+          "A name identifying the subset of comments.",
+          "",
           "A string consisting of <name>/<version>.",
           "",
           "For example: ext-js/4",
@@ -463,7 +464,7 @@ module JsDuck
         end
 
         opts.on('--search-url=URL',
-          "Address of guides search server server.",
+          "Address of guides search server.",
           "",
           "When supplied, the search for guides is performed through this",
           "external service and the results merged together with API search.",
@@ -478,6 +479,8 @@ module JsDuck
         end
 
         opts.on('--search-domain=STRING',
+          "A name identifying the subset to search from.",
+          "",
           "A string consisting of <name>/<version>.",
           "",
           "Tells the search engine which product and version",
@@ -488,7 +491,7 @@ module JsDuck
           "Must be used together with --search-url option.",
           "",
           "This option is EXPERIMENTAL.") do |domain|
-          @search[:product], @search[:version] = domain.slice(/\//)
+          @search[:product], @search[:version] = domain.split(/\//)
         end
 
         opts.separator ""

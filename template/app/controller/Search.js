@@ -24,6 +24,11 @@ Ext.define('Docs.controller.Search', {
     pageIndex: 0,
     pageSize: 10,
 
+    // Delay constants
+    basicSearchDelay: 50,
+    guideSearchDelay: 500,
+    dropdownHideDelay: 500,
+
     init: function() {
         this.control({
             '#search-dropdown': {
@@ -33,7 +38,7 @@ Ext.define('Docs.controller.Search', {
                 changePage: function(dropdown, delta) {
                     // increment page number and update search results display
                     this.pageIndex += delta;
-                    this.search(this.getField().getValue());
+                    this.displayResults();
                     // footerClick doesn't fire in IE9,
                     // so keep the dropdown visible explicitly.
                     this.keepDropdown();
@@ -91,7 +96,7 @@ Ext.define('Docs.controller.Search', {
                         clearTimeout(this.searchTimeout);
                         this.searchTimeout = Ext.Function.defer(function() {
                             this.search(el.value);
-                        }, 50, this);
+                        }, this.basicSearchDelay, this);
                     }
                 },
                 focus: function(el) {
@@ -108,7 +113,7 @@ Ext.define('Docs.controller.Search', {
                     // badly when you make a long mouse press on
                     // dropdown item.
                     var dropdown = this.getDropdown();
-                    this.hideTimeout = Ext.Function.defer(dropdown.hide, 500, dropdown);
+                    this.hideTimeout = Ext.Function.defer(dropdown.hide, this.dropdownHideDelay, dropdown);
                 }
             }
         });
@@ -130,21 +135,38 @@ Ext.define('Docs.controller.Search', {
         this.getDropdown().hide();
     },
 
-    // First performs guides search, then combines the results with
-    // API search.
+    // First performs the basic search.
+    // Then launches guides search in the background - when that finishes,
+    // re-runs the basic search with guides results included.
     search: function(term) {
-        if (Docs.GuideSearch.isEnabled()) {
-            Docs.GuideSearch.search(term, function(guideResults) {
-                this.displayResults(Docs.ClassRegistry.search(term, guideResults));
-            }, this);
+        // skip search when query hasn't changed.
+        if (term === this.previousTerm) {
+            return;
         }
-        else {
-            this.displayResults(Docs.ClassRegistry.search(term));
+        this.previousTerm = term;
+
+        this.basicSearch(term);
+        if (Docs.GuideSearch.isEnabled()) {
+            this.guideSearch(term);
         }
     },
 
+    guideSearch: function(term) {
+        Docs.GuideSearch.deferredSearch(term, function(guideResults) {
+            this.basicSearch(term, guideResults);
+        }, this, this.guideSearchDelay);
+    },
+
+    basicSearch: function(term, guideResults) {
+        this.displayResults(Docs.ClassRegistry.search(term, guideResults));
+    },
+
     // Loads results to store and shows the dropdown.
+    // When no results provided, displays the results from previous
+    // run - this is used for paging.
     displayResults: function(results) {
+        results = results || this.previousResults;
+
         // Don't allow paging before first or after the last page.
         if (this.pageIndex < 0) {
             this.pageIndex = 0;
@@ -165,5 +187,7 @@ Ext.define('Docs.controller.Search', {
             // auto-select first result
             this.getDropdown().getSelectionModel().select(0);
         }
+
+        this.previousResults = results;
     }
 });

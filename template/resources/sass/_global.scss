@@ -11,7 +11,7 @@ body {
   background: $docs-bg-color;
   min-height: 100%; }
 
-a {
+a:link {
   color: $docs-link-color;
   text-decoration: none;
   &:hover {
