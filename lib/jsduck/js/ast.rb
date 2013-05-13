@@ -1,5 +1,6 @@
 require "jsduck/js/method"
 require "jsduck/js/event"
+require "jsduck/js/property"
 require "jsduck/js/node"
 require "jsduck/tag_registry"
 
@@ -114,33 +115,7 @@ module JsDuck
       end
 
       def detect_property(ast, exp, var)
-        # foo = ...
-        if exp && exp.assignment_expression?
-          make_property(exp["left"].to_s, exp["right"])
-
-          # var foo = ...
-        elsif var
-          make_property(var["id"].to_s, var["init"])
-
-          # foo: ...
-        elsif ast.property?
-          make_property(ast["key"].key_value, ast["value"])
-
-          # foo;
-        elsif exp && exp.identifier?
-          make_property(exp.to_s)
-
-          # "foo"  (inside some expression)
-        elsif ast.string?
-          make_property(ast.to_value)
-
-          # "foo";  (as a statement of it's own)
-        elsif exp && exp.string?
-          make_property(exp.to_value)
-
-        else
-          nil
-        end
+        Js::Property.detect(ast, exp, var)
       end
 
       # Class name begins with upcase char
@@ -248,7 +223,8 @@ module JsDuck
         configs = []
 
         ast.each_property do |name, value, pair|
-          cfg = make_property(name, value, :cfg)
+          cfg = make_property(name, value)
+          cfg[:tagname] = :cfg
           cfg.merge!(defaults)
           configs << cfg if apply_autodetected(cfg, pair)
         end
@@ -319,17 +295,8 @@ module JsDuck
         Js::Method.make(name, ast)
       end
 
-      def make_property(name=nil, ast=nil, tagname=:property)
-        return {
-          :tagname => tagname,
-          :name => name,
-          :type => ast && ast.value_type,
-          :default => ast && make_default(ast),
-        }
-      end
-
-      def make_default(ast)
-        ast.to_value != nil ? ast.to_s : nil
+      def make_property(name=nil, ast=nil)
+        Js::Property.make(name, ast)
       end
 
     end
