@@ -22,7 +22,13 @@ module JsDuck::Tag
 
     # @property {Type} [name=default] ...
     def parse_doc(p, pos)
-      tag = p.standard_tag({:tagname => :property, :type => true, :name => true})
+      tag = p.standard_tag({
+          :tagname => :property,
+          :type => true,
+          :name => true,
+          :default => true,
+          :optional => true
+        })
       tag[:doc] = :multiline
       tag
     end

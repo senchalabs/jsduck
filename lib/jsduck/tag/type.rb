@@ -18,7 +18,7 @@ module JsDuck::Tag
     # ext-doc allows type name to be either inside curly braces or
     # without them at all.
     def parse_doc(p, pos)
-      tag = p.standard_tag({:tagname => :type, :type => true})
+      tag = p.standard_tag({:tagname => :type, :type => true, :optional => true})
       tag[:type] = curlyless_type(p) unless tag[:type]
       tag
     end

@@ -1,4 +1,5 @@
 require 'jsduck/doc/standard_tag_parser'
+require 'jsduck/logger'
 
 module JsDuck
   module Doc
@@ -20,7 +21,7 @@ module JsDuck
       end
 
       # Provides access to StringScanner
-      attr_reader :input
+      attr_accessor :input
 
       # Parses standard pattern common in several builtin tags, which
       # goes like this:

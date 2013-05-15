@@ -23,7 +23,13 @@ module JsDuck::Tag
 
     # @cfg {Type} [name=default] (required) ...
     def parse_doc(p, pos)
-      tag = p.standard_tag({:tagname => :cfg, :type => true, :name => true})
+      tag = p.standard_tag({
+          :tagname => :cfg,
+          :type => true,
+          :name => true,
+          :default => true,
+          :optional => true
+        })
       tag[:optional] = false if parse_required(p)
       tag[:doc] = :multiline
       tag

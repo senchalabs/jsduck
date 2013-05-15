@@ -1,3 +1,5 @@
+require 'jsduck/doc/delimited_parser'
+
 module JsDuck
   module Doc
 
@@ -10,6 +12,7 @@ module JsDuck
       # Initialized with Doc::Scanner instance
       def initialize(doc_scanner)
         @ds = doc_scanner
+        @delimited_parser = Doc::DelimitedParser.new(doc_scanner)
       end
 
       # Parses the standard tag pattern.
@@ -19,21 +22,25 @@ module JsDuck
       #
       # - :tagname => The :tagname of the hash to return.
       #
-      # - :type => True to parse {Type} section.
-      #            Produces :type and :optional keys.
+      # - :type => True to parse `{Type}` section.
       #
-      # - :name => Trye to parse [some.name=default] section.
-      #            Produces :name, :default and :optional keys.
+      # - :name => True to parse `some.name` section.
       #
-      # Returns tag definition hash containing the given :tagname and a
-      # set of other fields depending on whether :type and :name configs
-      # were specified and how their matching succeeded.
+      # - :default => True to parse `=<default-value>` after name.
+      #
+      # - :optional => True to allow placing name and default value
+      #       inside [ and ] brackets to denote optionality.
+      #       Also returns :optional=>true when {SomType=} syntax used.
+      #
+      # Returns tag definition hash containing the fields specified by
+      # config.
       #
       def parse(cfg)
         @tagname = cfg[:tagname]
-        tag = {:tagname => cfg[:tagname]}
-        add_type(tag) if cfg[:type]
-        add_name_with_default(tag) if cfg[:name]
+        tag = {}
+        tag[:tagname] = cfg[:tagname] if cfg[:tagname]
+        add_type(tag, cfg) if cfg[:type]
+        add_name_with_default(tag, cfg) if cfg[:name]
         tag
       end
 
@@ -41,11 +48,11 @@ module JsDuck
 
       # matches {type} if possible and sets it on given tag hash.
       # Also checks for {optionality=} in type definition.
-      def add_type(tag)
+      def add_type(tag, cfg)
         if hw.look(/\{/)
           tdf = typedef
           tag[:type] = tdf[:type]
-          tag[:optional] = true if tdf[:optional]
+          tag[:optional] = true if tdf[:optional] && cfg[:optional]
         end
       end
 
@@ -53,7 +60,11 @@ module JsDuck
       def typedef
         match(/\{/)
 
-        name = parse_balanced(/\{/, /\}/, /[^{}'"]*/)
+        name = @delimited_parser.parse_until_close_curly
+
+        unless match(/\}/)
+          warn("@#{@tagname} tag syntax: '}' expected")
+        end
 
         if name =~ /=$/
           name = name.chop
@@ -62,74 +73,29 @@ module JsDuck
           optional = nil
         end
 
-        match(/\}/) or warn("@#{@tagname} tag syntax: '}' expected")
-
         return {:type => name, :optional => optional}
       end
 
-      # matches: <ident-chain> | "[" <ident-chain> [ "=" <default-value> ] "]"
-      def add_name_with_default(tag)
-        if hw.match(/\[/)
+      # matches:   <ident-chain>
+      #          | <ident-chain> [ "=" <default-value>
+      #          | "[" <ident-chain> [ "=" <default-value> ] "]"
+      def add_name_with_default(tag, cfg)
+        if hw.look(/\[/) && cfg[:optional]
+          match(/\[/)
           tag[:name] = hw.ident_chain
           if hw.match(/=/)
             hw
-            tag[:default] = default_value
+            tag[:default] = @delimited_parser.parse_until_close_square
           end
           hw.match(/\]/) or warn("@#{@tagname} tag syntax: ']' expected")
           tag[:optional] = true
-        else
-          tag[:name] = hw.ident_chain
+        elsif name = ident_chain
+          tag[:name] = name
+          if cfg[:default] && hw.match(/=/)
+            hw
+            tag[:default] = @delimited_parser.parse_until_space
+          end
         end
-      end
-
-      # Attempts to allow balanced braces in default value.
-      # When the nested parsing doesn't finish at closing "]",
-      # roll back to beginning and simply grab anything up to closing "]".
-      def default_value
-        start_pos = @ds.input.pos
-        value = parse_balanced(/\[/, /\]/, /[^\[\]'"]*/)
-        if look(/\]/)
-          value
-        else
-          @ds.input.pos = start_pos
-          match(/[^\]]*/)
-        end
-      end
-
-      # Helper method to parse a string up to a closing brace,
-      # balancing opening-closing braces in between.
-      #
-      # @param re_open  The beginning brace regex
-      # @param re_close The closing brace regex
-      # @param re_rest  Regex to match text without any braces and strings
-      def parse_balanced(re_open, re_close, re_rest)
-        result = parse_with_strings(re_rest)
-        while look(re_open)
-          result += match(re_open)
-          result += parse_balanced(re_open, re_close, re_rest)
-          result += match(re_close)
-          result += parse_with_strings(re_rest)
-        end
-        result
-      end
-
-      # Helper for parse_balanced to parse rest of the text between
-      # braces, taking account the strings which might occur there.
-      def parse_with_strings(re_rest)
-        result = match(re_rest)
-        while look(/['"]/)
-          result += parse_string('"') if look(/"/)
-          result += parse_string("'") if look(/'/)
-          result += match(re_rest)
-        end
-        result
-      end
-
-      # Parses "..." or '...' including the escape sequence \' or '\"
-      def parse_string(quote)
-        re_quote = Regexp.new(quote)
-        re_rest = Regexp.new("(?:[^"+quote+"\\\\]|\\\\.)*")
-        match(re_quote) + match(re_rest) + (match(re_quote) || "")
       end
 
       ### Forward these calls to Doc::Scanner
