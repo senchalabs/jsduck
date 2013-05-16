@@ -6,10 +6,12 @@ module JsDuck
   class GuideToc
 
     # Inserts table of contents at the top of guide HTML by looking
-    # for <h2> elements.
+    # for <h2> or <h3> elements.
     def self.inject(html, guide_name)
       toc = []
       new_html = []
+      i = 0
+      j = 0
 
       html.each_line do |line|
         if line =~ /^\s*<(h[1-6])>(.*?)<\/h[1-6]>$/
@@ -17,7 +19,12 @@ module JsDuck
           text = Util::HTML.strip_tags($2)
           id = guide_name + "-section-" + title_to_id(text)
           if tag == "h2"
-            toc << "<li><a href='#!/guide/#{id}'>#{text}</a></li>\n"
+            i += 1
+            j = 0
+            toc << "#{i}. <a href='#!/guide/#{id}'>#{text}</a><br/>\n"
+          elsif tag == "h3"
+            j += 1
+            toc << "#{i}.#{j}. <a href='#!/guide/#{id}'>#{text}</a><br/>\n"
           end
           new_html << "<#{tag} id='#{id}'>#{text}</#{tag}>\n"
         else
@@ -30,9 +37,7 @@ module JsDuck
         new_html.insert(1, [
             "<div class='toc'>\n",
             "<p><strong>Contents</strong></p>\n",
-            "<ol>\n",
             toc,
-            "</ol>\n",
             "</div>\n",
         ])
       end
