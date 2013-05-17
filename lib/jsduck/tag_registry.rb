@@ -94,26 +94,19 @@ module JsDuck
     attr_reader :signatures
 
     # Same as #member_types, but returns just the names of member types.
-    def member_type_names(category=:member)
-      member_types(category).map {|mt| mt[:name] }
+    def member_type_names
+      member_types.map {|mt| mt[:name] }
     end
 
     # Returns array of available member types.
     # Sorted in the order defined by :position.
-    #
-    # An optional category argument can be given to limit the returned
-    # members to just :method_like or :property_like.
     def member_types(category=:member)
       if !@member_types_sorted
         @member_types.sort! {|a, b| a[:position] <=> b[:position] }
         @member_types_sorted = true
       end
 
-      if category == :member
-        @member_types
-      else
-        @member_types.find_all {|mt| mt[:category] == category }
-      end
+      @member_types
     end
 
     # Regex for matching member type name in member reference.
@@ -173,24 +166,21 @@ module JsDuck
 
     private
 
-    # Takes mergers registered under :member, :method_like or
-    # :property_like context and adds them to the contexts all of the
-    # detected suitable member types.
+    # Takes mergers registered under :member context and adds them to
+    # the contexts all of the detected suitable member types.
     def expand_merge_contexts
-      expand_merger(:member)
-      expand_merger(:method_like)
-      expand_merger(:property_like)
+      expand_member_mergers
       @mergers_expanded = true
     end
 
-    def expand_merger(type_name)
-      Array(@mergers[type_name]).each do |tag|
-        member_type_names(type_name).each do |tagname|
+    def expand_member_mergers
+      Array(@mergers[:member]).each do |tag|
+        member_type_names.each do |tagname|
           @mergers[tagname] = [] unless @mergers[tagname]
           @mergers[tagname] << tag
         end
       end
-      @mergers.delete(type_name)
+      @mergers.delete(:member)
     end
 
   end

@@ -74,15 +74,11 @@ module JsDuck::Tag
     end
 
     # In the context of which members or classes invoke the #merge
-    # method.  This can be either a single tagname like :class,
-    # :method, :cfg or an array of these.
+    # method.  This is either a tagname like :class or an array of
+    # tagnames.
     #
-    # Additionally a few special symbols can be used to register a
-    # merger for a set of member types:
-    #
-    #   - :member - all members.
-    #   - :method_like - members like :method, :event, :css_mixin
-    #   - :property_like - members like :cfg, :property, :css_var
+    # Additionally a special :member symbols can be used to register a
+    # merger for all member types.
     #
     # For example to register a merger for everyting:
     #

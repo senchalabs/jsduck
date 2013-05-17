@@ -8,7 +8,6 @@ module JsDuck::Tag
     #
     #     {
     #       :name => :event,
-    #       :category => :method_like,
     #       :title => "Events",
     #       :position => MEMBER_POS_EVENT,
     #       # The following are optional
@@ -21,8 +20,6 @@ module JsDuck::Tag
     #          :filter => {:static => true}},
     #       ]
     #     }
-    #
-    # The category must be either :property_like or :method_like.
     #
     # Position defines the ordering of member section in final HTML
     # output.

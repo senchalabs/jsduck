@@ -10,7 +10,6 @@ module JsDuck::Tag
       @repeatable = true
       @member_type = {
         :name => :cfg,
-        :category => :property_like,
         :title => "Config options",
         :toolbar_title => "Configs",
         :position => MEMBER_POS_CFG,

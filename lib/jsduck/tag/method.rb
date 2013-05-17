@@ -9,7 +9,6 @@ module JsDuck::Tag
       @tagname = :method
       @member_type = {
         :name => :method,
-        :category => :method_like,
         :title => "Methods",
         :position => MEMBER_POS_METHOD,
         :subsections => [

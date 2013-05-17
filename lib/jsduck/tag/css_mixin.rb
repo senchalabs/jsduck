@@ -10,7 +10,6 @@ module JsDuck::Tag
       @tagname = :css_mixin
       @member_type = {
         :name => :css_mixin,
-        :category => :method_like,
         :title => "CSS Mixins",
         :position => MEMBER_POS_CSS_MIXIN,
       }
