@@ -61,6 +61,13 @@ module JsDuck::Tag
       h
     end
 
+    # Do the merging of :type field
+    def merge(h, docs, code)
+      if h[:type] == nil
+        h[:type] = code[:tagname] == :method ? "Function" : "Object"
+      end
+    end
+
     def to_html(cfg, cls)
       JsDuck::Render::PropertySignature.render(cfg)
     end

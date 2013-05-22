@@ -5,7 +5,6 @@ module JsDuck::Tag
     def initialize
       @pattern = "type"
       @tagname = :type
-      @merge_context = :member
 
       # We don't really care about the position as we don't output any
       # HTML. We just need to set this up to do the formatting.
@@ -29,13 +28,6 @@ module JsDuck::Tag
 
     def process_doc(h, tags, pos)
       h[:type] = tags[0][:type] unless h[:type]
-    end
-
-    # Do the merging of :type field
-    def merge(h, docs, code)
-      if h[:type] == nil && ([:property, :cfg, :css_var].include?(h[:tagname]))
-        h[:type] = code[:tagname] == :method ? "Function" : "Object"
-      end
     end
 
     def format(m, formatter)

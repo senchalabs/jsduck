@@ -39,6 +39,11 @@ module JsDuck::Tag
       h
     end
 
+    # Set default value for :type field
+    def merge(h, docs, code)
+      h[:type] = "Object" unless h[:type]
+    end
+
     def to_html(var, cls)
       JsDuck::Render::PropertySignature.render(var)
     end

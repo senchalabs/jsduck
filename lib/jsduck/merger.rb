@@ -25,6 +25,7 @@ module JsDuck
 
       general_merge(h, docs, code)
       invoke_merge_in_tags(h, docs, code)
+      invoke_merge_in_member_tag(h, docs, code)
 
       # Needs to be calculated last, as it relies on the existance of
       # :name, :static and :tagname fields.
@@ -46,6 +47,11 @@ module JsDuck
       TagRegistry.mergers(h[:tagname]).each do |tag|
         tag.merge(h, docs, code)
       end
+    end
+
+    # Invokes the #merge method in corresponding member or :class tag.
+    def invoke_merge_in_member_tag(h, docs, code)
+      TagRegistry.get_by_name(h[:tagname]).merge(h, docs, code)
     end
 
     # Applies default merge algorithm to the rest of the data.
