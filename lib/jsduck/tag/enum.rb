@@ -41,14 +41,6 @@ module JsDuck::Tag
       }
     end
 
-    # Takes the :enum always from docs, but the :doc_only can come
-    # from either code or docs.
-    def merge(h, docs, code)
-      return unless docs[:enum]
-      h[:enum] = docs[:enum]
-      h[:enum][:doc_only] = docs[:enum][:doc_only] || (code[:enum] && code[:enum][:doc_only])
-    end
-
     def to_html(cls)
       if cls[:enum][:doc_only]
         first = cls[:members][0] || {:name => 'foo', :default => '"foo"'}
