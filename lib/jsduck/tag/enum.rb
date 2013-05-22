@@ -5,7 +5,6 @@ module JsDuck::Tag
     def initialize
       @pattern = "enum"
       @tagname = :enum
-      @merge_context = :class
       @html_position = POS_ENUM
       # Green box
       @css = <<-EOCSS

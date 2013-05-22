@@ -27,7 +27,6 @@ module JsDuck
       @ext_define_patterns = {}
       @ext_define_defaults = {}
       @tagnames = {}
-      @mergers = {}
       @signatures = []
       @html_renderers = []
       @html_renderers_sorted = false
@@ -56,11 +55,6 @@ module JsDuck
 
         if tag.tagname
           @tagnames[tag.tagname] = tag
-        end
-
-        Array(tag.merge_context).each do |context|
-          @mergers[context] = [] unless @mergers[context]
-          @mergers[context] << tag
         end
 
         if tag.respond_to?(:member_type) && tag.member_type
@@ -119,14 +113,6 @@ module JsDuck
       @member_type_regex = Regexp.new("(?:(" + member_type_names.join("|") + ")-)")
     end
 
-    # Returns tags for doing the merging in a particular context.
-    # See Tag::Tag#merge_context for details.
-    def mergers(context)
-      expand_merge_contexts unless @mergers_expanded
-
-      @mergers[context] || []
-    end
-
     # Returns tags for rendering HTML, sorted in the order they should
     # appear in final output. Sorting order is determined by the
     # numeric :html_position field.
@@ -162,25 +148,6 @@ module JsDuck
     # is stored in final hash.
     def get_by_name(name)
       @tagnames[name]
-    end
-
-    private
-
-    # Takes mergers registered under :member context and adds them to
-    # the contexts all of the detected suitable member types.
-    def expand_merge_contexts
-      expand_member_mergers
-      @mergers_expanded = true
-    end
-
-    def expand_member_mergers
-      Array(@mergers[:member]).each do |tag|
-        member_type_names.each do |tagname|
-          @mergers[tagname] = [] unless @mergers[tagname]
-          @mergers[tagname] << tag
-        end
-      end
-      @mergers.delete(:member)
     end
 
   end

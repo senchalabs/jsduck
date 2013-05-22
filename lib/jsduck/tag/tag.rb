@@ -73,23 +73,6 @@ module JsDuck::Tag
     def parse_ext_define(cls, ast)
     end
 
-    # In the context of which members or classes invoke the #merge
-    # method.  This is either a tagname like :class or an array of
-    # tagnames.
-    #
-    # Additionally a special :member symbols can be used to register a
-    # merger for all member types.
-    #
-    # For example to register a merger for everyting:
-    #
-    #     @merge_context = [:class, :member]
-    #
-    attr_reader :merge_context
-
-    # Merges documentation and code hashes into the result hash.
-    def merge(hash, docs, code)
-    end
-
     # The position for outputting the HTML for the tag in final
     # documentation.
     #

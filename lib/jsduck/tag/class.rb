@@ -5,7 +5,6 @@ module JsDuck::Tag
     def initialize
       @pattern = "class"
       @tagname = :class
-      @merge_context = :class
     end
 
     # @class name
@@ -33,9 +32,40 @@ module JsDuck::Tag
       end
     end
 
-    # Ensure the empty members array.
     def merge(h, docs, code)
+      # Ensure the empty members array.
       h[:members] = []
+      # Ignore extending of the Object class
+      h[:extends] = nil if h[:extends] == "Object"
+      # Default alternateClassNames list to empty array
+      h[:alternateClassNames] = [] unless h[:alternateClassNames]
+      # Turn :aliases field into hash
+      h[:aliases] = build_aliases_hash(h[:aliases] || [])
+
+      # Takes the :enum always from docs, but the :doc_only can come
+      # from either code or docs.
+      if docs[:enum]
+        h[:enum] = docs[:enum]
+        h[:enum][:doc_only] = docs[:enum][:doc_only] || (code[:enum] && code[:enum][:doc_only])
+      end
+    end
+
+    private
+
+    # Given array of full alias names like "foo.bar", "foo.baz"
+    # build hash like {"foo" => ["bar", "baz"]}
+    def build_aliases_hash(aliases)
+      hash={}
+      aliases.each do |a|
+        if a =~ /^([^.]+)\.(.+)$/
+          if hash[$1]
+            hash[$1] << $2
+          else
+            hash[$1] = [$2]
+          end
+        end
+      end
+      hash
     end
   end
 end

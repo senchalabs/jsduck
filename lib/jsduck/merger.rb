@@ -24,7 +24,6 @@ module JsDuck
       }
 
       general_merge(h, docs, code)
-      invoke_merge_in_tags(h, docs, code)
       invoke_merge_in_member_tag(h, docs, code)
 
       # Needs to be calculated last, as it relies on the existance of
@@ -39,14 +38,6 @@ module JsDuck
     # Applies processing to extract fields relevant to the member type.
     def process_code(tagname, code)
       TagRegistry.get_by_name(tagname).process_code(code)
-    end
-
-    # Invokes the #merge methods of tags registered for the given
-    # merge context.
-    def invoke_merge_in_tags(h, docs, code)
-      TagRegistry.mergers(h[:tagname]).each do |tag|
-        tag.merge(h, docs, code)
-      end
     end
 
     # Invokes the #merge method in corresponding member or :class tag.

@@ -9,7 +9,6 @@ module JsDuck::Tag
       @repeatable = true
       @ext_define_pattern = "alias"
       @ext_define_default = {:aliases => []}
-      @merge_context = :class
     end
 
     # For backwards compatibility decide whether the @alias was used
@@ -39,24 +38,5 @@ module JsDuck::Tag
       cls[:aliases] += JsDuck::Js::Utils.make_string_list(ast)
     end
 
-    def merge(h, docs, code)
-      h[:aliases] = build_aliases_hash(h[:aliases] || [])
-    end
-
-    # Given array of full alias names like "foo.bar", "foo.baz"
-    # build hash like {"foo" => ["bar", "baz"]}
-    def build_aliases_hash(aliases)
-      hash={}
-      aliases.each do |a|
-        if a =~ /^([^.]+)\.(.+)$/
-          if hash[$1]
-            hash[$1] << $2
-          else
-            hash[$1] = [$2]
-          end
-        end
-      end
-      hash
-    end
   end
 end

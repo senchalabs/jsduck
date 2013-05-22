@@ -87,6 +87,10 @@ module JsDuck::Tag
       }
     end
 
+    # Merges documentation and code hashes into the result hash.
+    def merge(hash, docs, code)
+    end
+
     # This method defines the signature-line of the member.
     # For example it might return something like this:
     #
