@@ -41,7 +41,7 @@ module JsDuck
       end
 
       def render_params
-        ps = @m[:params].map {|p| render_single_param(p) }.join(", ")
+        ps = Array(@m[:params]).map {|p| render_single_param(p) }.join(", ")
         "( <span class='pre'>#{ps}</span> )"
       end
 
