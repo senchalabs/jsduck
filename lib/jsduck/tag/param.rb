@@ -1,7 +1,6 @@
 require "jsduck/tag/tag"
 require "jsduck/doc/subproperties"
 require "jsduck/render/subproperties"
-require "jsduck/params_merger"
 
 module JsDuck::Tag
   class Param < Tag
@@ -9,7 +8,6 @@ module JsDuck::Tag
       @pattern = "param"
       @tagname = :params
       @repeatable = true
-      @merge_context = :member
       @html_position = POS_PARAM
     end
 
@@ -34,10 +32,6 @@ module JsDuck::Tag
     def process_doc(h, tags, pos)
       h[:params] = JsDuck::Doc::Subproperties.nest(tags, pos)
       h[:params] = nil if h[:params].length == 0
-    end
-
-    def merge(h, docs, code)
-      JsDuck::ParamsMerger.merge(h, docs, code)
     end
 
     def format(m, formatter)

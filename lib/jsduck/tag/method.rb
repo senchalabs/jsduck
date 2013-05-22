@@ -1,5 +1,6 @@
 require "jsduck/tag/member_tag"
 require "jsduck/render/method_signature"
+require "jsduck/params_merger"
 
 module JsDuck::Tag
   # Implementation of @method tag.
@@ -39,6 +40,10 @@ module JsDuck::Tag
       h[:fires] = code[:fires]
       h[:method_calls] = code[:method_calls]
       h
+    end
+
+    def merge(h, docs, code)
+      JsDuck::ParamsMerger.merge(h, docs, code)
     end
 
     def to_html(method, cls)

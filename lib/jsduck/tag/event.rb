@@ -1,5 +1,6 @@
 require "jsduck/tag/member_tag"
 require "jsduck/render/method_signature"
+require "jsduck/params_merger"
 
 module JsDuck::Tag
   class Event < MemberTag
@@ -23,6 +24,10 @@ module JsDuck::Tag
 
     def process_doc(h, tags, pos)
       h[:name] = tags[0][:name]
+    end
+
+    def merge(h, docs, code)
+      JsDuck::ParamsMerger.merge(h, docs, code)
     end
 
     def to_html(event, cls)
