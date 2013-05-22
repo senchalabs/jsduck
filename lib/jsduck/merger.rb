@@ -67,11 +67,13 @@ module JsDuck
 
     # True if the name detected from code matches with explicitly
     # documented name.  Also true when no explicit name documented.
+    #
+    # Note: This method is also called from ParamsMerger.
     def self.can_be_autodetected?(docs, code)
       docs[:name] == nil || docs[:name] == code[:name]
     end
 
-    # Stores the key as flag into h[:autodetcted]
+    # Stores the key as flag into h[:autodetected]
     def mark_autodetected(h, key)
       h[:autodetected][key] = true
     end
