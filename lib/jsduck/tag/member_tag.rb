@@ -3,11 +3,10 @@ require 'jsduck/tag/tag'
 module JsDuck::Tag
   # Base class for all builtin members.
   class MemberTag < Tag
-    # Defines a class member type and specifies a name and several
-    # other settings.  For example:
+    # Defines a class member type and specifies various settings.  For
+    # example:
     #
     #     {
-    #       :name => :event,
     #       :title => "Events",
     #       :position => MEMBER_POS_EVENT,
     #       # The following are optional

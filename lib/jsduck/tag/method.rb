@@ -9,7 +9,6 @@ module JsDuck::Tag
       @pattern = "method"
       @tagname = :method
       @member_type = {
-        :name => :method,
         :title => "Methods",
         :position => MEMBER_POS_METHOD,
         :subsections => [

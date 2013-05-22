@@ -7,7 +7,6 @@ module JsDuck::Tag
       @pattern = "var"
       @tagname = :css_var
       @member_type = {
-        :name => :css_var,
         :title => "CSS Variables",
         :toolbar_title => "CSS Vars",
         :position => MEMBER_POS_CSS_VAR,

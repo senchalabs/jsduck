@@ -9,7 +9,6 @@ module JsDuck::Tag
     def initialize
       @tagname = :css_mixin
       @member_type = {
-        :name => :css_mixin,
         :title => "CSS Mixins",
         :position => MEMBER_POS_CSS_MIXIN,
       }

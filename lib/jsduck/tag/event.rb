@@ -8,7 +8,6 @@ module JsDuck::Tag
       @pattern = "event"
       @tagname = :event
       @member_type = {
-        :name => :event,
         :title => "Events",
         :position => MEMBER_POS_EVENT,
       }

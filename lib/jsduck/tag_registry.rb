@@ -58,6 +58,7 @@ module JsDuck
         end
 
         if tag.respond_to?(:member_type) && tag.member_type
+          tag.member_type[:name] = tag.tagname
           @member_types << tag.member_type
         end
 

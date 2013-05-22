@@ -9,7 +9,6 @@ module JsDuck::Tag
       @tagname = :property
       @repeatable = true
       @member_type = {
-        :name => :property,
         :title => "Properties",
         :position => MEMBER_POS_PROPERTY,
         :subsections => [
