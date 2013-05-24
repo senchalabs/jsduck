@@ -59,7 +59,7 @@ Ext.define('Docs.controller.Videos', {
 
         var video = this.getVideo(name);
         if (!video) {
-            this.getController('Failure').show404("Video <b>"+name+"</b> was not found.");
+            this.getController('Failure').show404("Video <b>"+Ext.String.htmlEncode(name)+"</b> was not found.");
             return;
         }
         this.getViewport().setPageTitle(video.title);
