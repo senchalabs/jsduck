@@ -94,7 +94,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.10.2"
+      @version = "4.10.3"
 
       # Customizing output
       @title = "Documentation - JSDuck"
