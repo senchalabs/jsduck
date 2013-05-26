@@ -45,12 +45,15 @@ module JsDuck::Tag
     #
     attr_reader :member_type
 
-    MEMBER_POS_CFG = 1
-    MEMBER_POS_PROPERTY = 2
-    MEMBER_POS_METHOD = 3
-    MEMBER_POS_EVENT = 4
-    MEMBER_POS_CSS_VAR = 5
-    MEMBER_POS_CSS_MIXIN = 6
+    # Avoid already-defined-constant warnings in Ruby 1.8
+    unless defined?(MEMBER_POS_CFG)
+      MEMBER_POS_CFG = 1
+      MEMBER_POS_PROPERTY = 2
+      MEMBER_POS_METHOD = 3
+      MEMBER_POS_EVENT = 4
+      MEMBER_POS_CSS_VAR = 5
+      MEMBER_POS_CSS_MIXIN = 6
+    end
 
     # Extracts the fields auto-detected from code that are relevant to
     # the member type and returns a hash with them.
