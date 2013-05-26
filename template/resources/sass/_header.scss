@@ -120,7 +120,9 @@
     left: 4px;
     width: 18px;
     height: 18px; }
+
   @include icons;
+  @include member-icons;
 
   .meta {
     position: absolute;

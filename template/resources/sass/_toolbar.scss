@@ -9,7 +9,7 @@
   // ExtJS styles hide the border using !important.
   // So to override it we need to use !important too.
   border-width: 1px !important;
-  @include icons; }
+  @include member-icons; }
 
 
 // The reset (X) button in filter-class-members text box
