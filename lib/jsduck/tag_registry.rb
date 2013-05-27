@@ -95,7 +95,7 @@ module JsDuck
 
     # Returns array of available member types.
     # Sorted in the order defined by :position.
-    def member_types(category=:member)
+    def member_types
       if !@member_types_sorted
         @member_types.sort! {|a, b| a[:position] <=> b[:position] }
         @member_types_sorted = true
