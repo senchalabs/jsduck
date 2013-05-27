@@ -10,6 +10,7 @@ module JsDuck::Tag
       @member_type = {
         :title => "Events",
         :position => MEMBER_POS_EVENT,
+        :icon => File.dirname(__FILE__) + "/icons/event.png"
       }
     end
 

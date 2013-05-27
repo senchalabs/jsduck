@@ -11,6 +11,7 @@ module JsDuck::Tag
       @member_type = {
         :title => "CSS Mixins",
         :position => MEMBER_POS_CSS_MIXIN,
+        :icon => File.dirname(__FILE__) + "/icons/css_mixin.png"
       }
     end
 

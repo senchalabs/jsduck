@@ -10,6 +10,7 @@ module JsDuck::Tag
         :title => "CSS Variables",
         :toolbar_title => "CSS Vars",
         :position => MEMBER_POS_CSS_VAR,
+        :icon => File.dirname(__FILE__) + "/icons/css_var.png"
       }
     end
 

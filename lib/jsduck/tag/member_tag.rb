@@ -11,6 +11,7 @@ module JsDuck::Tag
     #       :position => MEMBER_POS_EVENT,
     #       # The following are optional
     #       :toolbar_title => "Events",
+    #       :icon => File.dirname(__FILE__) + "/icons/event.png",
     #       :subsections => [
     #         {:title => "Static events",
     #          :filter => {:static => false},
@@ -26,6 +27,9 @@ module JsDuck::Tag
     # Title is shown at the top of each such section and also as a
     # label on Docs app toolbar button unless :toolbar_title is
     # specified.
+    #
+    # Icon defines a file to be used as member icon in various places
+    # of the docs app.
     #
     # Subsections allows splitting the list of members to several
     # subgroups.  For example methods get split into static and

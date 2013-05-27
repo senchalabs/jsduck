@@ -11,6 +11,7 @@ module JsDuck::Tag
       @member_type = {
         :title => "Properties",
         :position => MEMBER_POS_PROPERTY,
+        :icon => File.dirname(__FILE__) + "/icons/property.png",
         :subsections => [
           {:title => "Instance properties", :filter => {:static => false}, :default => true},
           {:title => "Static properties", :filter => {:static => true}},

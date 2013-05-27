@@ -12,6 +12,7 @@ module JsDuck::Tag
         :title => "Config options",
         :toolbar_title => "Configs",
         :position => MEMBER_POS_CFG,
+        :icon => File.dirname(__FILE__) + "/icons/cfg.png",
         :subsections => [
           {:title => "Required config options", :filter => {:required => true}},
           {:title => "Optional config options", :filter => {:required => false}, :default => true},

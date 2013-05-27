@@ -11,6 +11,7 @@ module JsDuck::Tag
       @member_type = {
         :title => "Methods",
         :position => MEMBER_POS_METHOD,
+        :icon => File.dirname(__FILE__) + "/icons/method.png",
         :subsections => [
           {:title => "Instance methods", :filter => {:static => false}, :default => true},
           {:title => "Static methods", :filter => {:static => true}},

@@ -1,5 +1,6 @@
 require 'jsduck/tag_registry'
 require 'jsduck/util/md5'
+require 'jsduck/web/member_icons'
 
 module JsDuck
   module Web
@@ -13,8 +14,14 @@ module JsDuck
       end
 
       def write(filename)
-        File.open(filename, 'w') {|f| f.write(TagRegistry.css + @opts.css) }
+        File.open(filename, 'w') {|f| f.write(all_css) }
         Util::MD5.rename(filename)
+      end
+
+      private
+
+      def all_css
+        TagRegistry.css + Web::MemberIcons.css + @opts.css
       end
     end
 

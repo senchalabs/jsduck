@@ -7,6 +7,7 @@ require 'jsduck/web/index_html'
 require 'jsduck/web/data'
 require 'jsduck/web/css'
 require 'jsduck/web/source'
+require 'jsduck/web/member_icons'
 require 'fileutils'
 
 module JsDuck
@@ -23,6 +24,8 @@ module JsDuck
 
       def write
         write_template_files
+
+        write_member_icons
 
         write_html_files
 
@@ -43,6 +46,11 @@ module JsDuck
       def write_template_files
         FileUtils.rm_rf(@opts.output_dir)
         Web::Template.new(@opts).write
+      end
+
+      # Copy over member icons
+      def write_member_icons
+        Web::MemberIcons.write(@opts.output_dir+"/member-icons")
       end
 
       # Generate data.js and styles.css.

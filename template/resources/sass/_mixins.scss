@@ -40,20 +40,6 @@
   .icon-component-redirect {
     background: url(../images/icons.png) no-repeat 0 -640px; } }
 
-@mixin member-icons {
-  .icon-cfg {
-    background: url(../images/members/cfg.png) no-repeat; }
-  .icon-property {
-    background: url(../images/members/property.png) no-repeat; }
-  .icon-method {
-    background: url(../images/members/method.png) no-repeat; }
-  .icon-event {
-    background: url(../images/members/event.png) no-repeat; }
-  .icon-css_var {
-    background: url(../images/members/css_var.png) no-repeat; }
-  .icon-css_mixin {
-    background: url(../images/members/css_mixin.png) no-repeat; } }
-
 @mixin green-button {
   @include box-shadow(#b3f33d 0 1px 0 0 inset);
   color: #fff;
