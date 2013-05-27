@@ -5,9 +5,14 @@
   border-radius: 2px;
   border-color: #e4e4e4;
   padding: 5px;
+
   // ExtJS styles hide the border using !important.
   // So to override it we need to use !important too.
-  border-width: 1px !important; }
+  border-width: 1px !important;
+
+  // move the icons up a bit
+  .hover-menu-button {
+    background-position: 0 -1px; } }
 
 
 // The reset (X) button in filter-class-members text box

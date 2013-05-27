@@ -12,7 +12,7 @@ module JsDuck
         css = []
         members_with_icons.each do |m|
           name = m[:name]
-          rule = ".icon-#{name} { background: url(member-icons/#{name}.png) no-repeat; }"
+          rule = ".icon-#{name} { background-image: url(member-icons/#{name}.png); background-repeat: no-repeat; }"
           css << "#search-dropdown #{rule}"
           css << ".members .members-section #{rule}"
           css << ".members .comments-section #{rule}"
