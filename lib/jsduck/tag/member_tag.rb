@@ -1,4 +1,5 @@
 require 'jsduck/tag/tag'
+require 'jsduck/render/signature_util'
 
 module JsDuck::Tag
   # Base class for all builtin members.
@@ -102,7 +103,27 @@ module JsDuck::Tag
     #
     #     "apply(source, target) : Object"
     #
+    # Use #member_link method to render the member name as link in a
+    # standard way.  Similarly there's helper method #member_params
+    # for rendering the parameter list.
     def to_html(context, cls)
+    end
+
+    # Creates HTML link to the given member.
+    # A helper method for use in #to_html.
+    def member_link(member)
+      JsDuck::Render::SignatureUtil::link(member[:owner], member[:id], member[:name])
+    end
+
+    # Creates HTML listing of parameters.
+    # When called with nil, creates empty params list.
+    # A helper method for use in #to_html.
+    def member_params(params)
+      ps = Array(params).map do |p|
+        p[:optional] ? "["+p[:name]+"]" : p[:name]
+      end.join(", ")
+
+      "( <span class='pre'>#{ps}</span> )"
     end
 
   end

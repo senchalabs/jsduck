@@ -1,6 +1,5 @@
 require "jsduck/tag/member_tag"
 require "jsduck/doc/subproperties"
-require "jsduck/render/property_signature"
 
 module JsDuck::Tag
   class Property < MemberTag
@@ -61,7 +60,7 @@ module JsDuck::Tag
     end
 
     def to_html(property, cls)
-      JsDuck::Render::PropertySignature.render(property)
+      member_link(property) + " : " + property[:html_type]
     end
   end
 end

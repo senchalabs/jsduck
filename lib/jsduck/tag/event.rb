@@ -1,5 +1,4 @@
 require "jsduck/tag/member_tag"
-require "jsduck/render/method_signature"
 require "jsduck/params_merger"
 
 module JsDuck::Tag
@@ -31,7 +30,7 @@ module JsDuck::Tag
     end
 
     def to_html(event, cls)
-      JsDuck::Render::MethodSignature.render(event, cls)
+      member_link(event) + member_params(event[:params])
     end
   end
 end

@@ -1,5 +1,4 @@
 require "jsduck/tag/member_tag"
-require "jsduck/render/method_signature"
 
 module JsDuck::Tag
   # As of now there is no @css_mixin tag available in CSS files.  This
@@ -16,7 +15,7 @@ module JsDuck::Tag
     end
 
     def to_html(mixin, cls)
-      JsDuck::Render::MethodSignature.render(mixin, cls)
+      member_link(mixin) + member_params(mixin[:params])
     end
   end
 end

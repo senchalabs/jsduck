@@ -1,5 +1,4 @@
 require "jsduck/tag/member_tag"
-require "jsduck/render/property_signature"
 
 module JsDuck::Tag
   class CssVar < MemberTag
@@ -45,7 +44,7 @@ module JsDuck::Tag
     end
 
     def to_html(var, cls)
-      JsDuck::Render::PropertySignature.render(var)
+      member_link(var) + " : " + var[:html_type]
     end
   end
 end

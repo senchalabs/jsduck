@@ -1,5 +1,4 @@
 require "jsduck/tag/member_tag"
-require "jsduck/render/method_signature"
 require "jsduck/params_merger"
 
 module JsDuck::Tag
@@ -46,8 +45,31 @@ module JsDuck::Tag
       JsDuck::ParamsMerger.merge(h, docs, code)
     end
 
-    def to_html(method, cls)
-      JsDuck::Render::MethodSignature.render(method, cls)
+    def to_html(m, cls)
+      new_kw(m) + method_link(m, cls) + member_params(m[:params]) + return_value(m)
     end
+
+    private
+
+    def new_kw(m)
+      constructor?(m) ? "<strong class='new-keyword'>new</strong>" : ""
+    end
+
+    def method_link(m, cls)
+      if constructor?(m)
+        member_link(:owner => m[:owner], :id => m[:id], :name => cls[:name])
+      else
+        member_link(m)
+      end
+    end
+
+    def constructor?(m)
+      m[:name] == "constructor"
+    end
+
+    def return_value(m)
+      m[:return] ? (" : " + m[:return][:html_type]) : ""
+    end
+
   end
 end
