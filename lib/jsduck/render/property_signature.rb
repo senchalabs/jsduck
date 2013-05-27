@@ -25,7 +25,7 @@ module JsDuck
       end
 
       def render_type
-        "<span> : #{@m[:html_type]}</span>"
+        " : " + @m[:html_type]
       end
 
     end
