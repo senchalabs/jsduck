@@ -143,6 +143,7 @@ module JsDuck
       Logger.set_warning(:all, true)
       Logger.set_warning(:link_auto, false)
       Logger.set_warning(:param_count, false)
+      Logger.set_warning(:fires, false)
 
       @optparser = create_option_parser
     end
