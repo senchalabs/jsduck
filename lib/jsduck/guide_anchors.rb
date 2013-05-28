@@ -8,7 +8,7 @@ module JsDuck
   class GuideAnchors
 
     def self.transform(html, guide_name)
-      html.gsub(/(<a\s+(?:[^<>]*\s+)?href=['"]#)([^!].*?)(['"])/i) do |m|
+      html.gsub(/(<a\s+(?:[^<>]*\s+)?href=['"]#)([^!\/].*?)(['"])/i) do |m|
         "#{$1}!/guide/#{guide_name}-section-#{$2}#{$3}"
 
       end.gsub(/(<a\s+(?:[^<>]*\s+)?name=['"])(.*?)(['"])/i) do |m|

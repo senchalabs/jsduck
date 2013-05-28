@@ -26,9 +26,14 @@ describe JsDuck::GuideAnchors do
       "<a href='http://example.com'>label</a>"
   end
 
-  it "doesn't transform docs-app #! links " do
+  it "doesn't transform docs-app #! links" do
     transform("<a href='#!/api/Ext.Base'>Ext.Base</a>").should ==
       "<a href='#!/api/Ext.Base'>Ext.Base</a>"
+  end
+
+  it "doesn't transform docs-app (backwards-compatible) # links" do
+    transform("<a href='#/api/Ext.Base'>Ext.Base</a>").should ==
+      "<a href='#/api/Ext.Base'>Ext.Base</a>"
   end
 
   it "transforms anchors" do
