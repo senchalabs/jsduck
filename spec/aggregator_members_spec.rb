@@ -49,4 +49,20 @@ describe JsDuck::Aggregator do
     end
   end
 
+  it "creates classes for all orphans with @member defined" do
+    classes = parse(<<-EOS)
+      /**
+       * @cfg foo
+       * @member FooCls
+       */
+      /**
+       * @cfg bar
+       * @member BarCls
+       */
+    EOS
+
+    classes["FooCls"][:members].length.should == 1
+    classes["BarCls"][:members].length.should == 1
+  end
+
 end
