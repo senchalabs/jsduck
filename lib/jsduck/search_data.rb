@@ -24,9 +24,9 @@ module JsDuck
           end
         end
 
-        # add all local members, but skip constructors
+        # add all local members, but skip hidden members and constructors
         cls[:members].each do |m|
-          list << member_node(m, cls) unless constructor?(m)
+          list << member_node(m, cls) unless m[:meta][:hide] || constructor?(m)
         end
       end
 
