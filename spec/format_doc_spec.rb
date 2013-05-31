@@ -494,6 +494,26 @@ describe JsDuck::Format::Doc do
       end
     end
 
+    describe "quoted `<pre>`" do
+      before do
+        @html = @formatter.format("Some `<pre>` in here.")
+      end
+
+      it "is correctly escaped" do
+        @html.should == "<p>Some <code>&lt;pre&gt;</code> in here.</p>\n"
+      end
+    end
+
+    describe "quoted `<pre><code>`" do
+      before do
+        @html = @formatter.format("Some `<pre><code>` in here.")
+      end
+
+      it "is correctly escaped" do
+        @html.should == "<p>Some <code>&lt;pre&gt;&lt;code&gt;</code> in here.</p>\n"
+      end
+    end
+
     shared_examples_for "example" do
       it "creates <pre> with inline-example class" do
         @html.should =~ /<pre class='inline-example *'>/m

@@ -75,7 +75,7 @@ module JsDuck
         # normal Markdown, which often causes nested <pre>-blocks.
         #
         # To prevent this, we always add extra newline before <pre>.
-        input.gsub!(/([^\n])<pre>/, "\\1\n<pre>")
+        input.gsub!(/([^\n])<pre>((<code>)?$)/, "\\1\n<pre>\\2")
 
         # But we remove trailing newline after <pre> to prevent
         # code-blocks beginning with empty line.
