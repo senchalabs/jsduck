@@ -1,8 +1,11 @@
+require 'rkelly'
+
 module JsDuck
   module Js
 
     # Converts RKelly AST into Esprima AST.
     class RKellyAdapter
+
       def adapt(node)
         case
         # Empty node
