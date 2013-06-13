@@ -56,10 +56,10 @@ module JsDuck
         prev_line_comment_nr = nil
         raw_comments.each do |c|
           if c.value =~ /\A\/\// && prev_line_comment_nr == c.line - 1
-            comments.last[:comment] += "\n" + c.value
+            comments.last[:comment] += "\n" + comment_content(c.value)
           else
             comments << {
-              :comment => c.value,
+              :comment => comment_content(c.value),
               :linenr => c.line,
               :type => c.value =~ /\A\/\*\*/ ? :doc_comment : :plain_comment,
             }
@@ -67,6 +67,16 @@ module JsDuck
           prev_line_comment_nr = c.value =~ /\A\/\// ? c.line : nil
         end
         comments
+      end
+
+      def comment_content(comment)
+        if comment =~ /\A\/\*\*/
+          comment.sub(/\A\/\*\*/, "").sub(/\*\/\z/, "")
+        elsif comment =~ /\A\/\*/
+          comment.sub(/\A\/\*/, "").sub(/\*\/\z/, "")
+        else
+          comment.sub(/\A\/\//, "")
+        end
       end
     end
 
