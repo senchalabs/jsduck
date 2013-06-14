@@ -5,8 +5,38 @@ module JsDuck
 
     # Converts RKelly AST into Esprima AST.
     class RKellyAdapter
-
       def adapt(node)
+        ast = adapt_root(node)
+        ast["comments"] = node.comments.map {|c| adapt_comment(c) }
+        ast
+      end
+
+      private
+
+      def adapt_comment(comment)
+        if comment.value =~ /\A\/\*/
+          {
+            "type" => "Block",
+            "value" => comment.value.sub(/\A\/\*/, "").sub(/\*\/\z/, ""),
+            "range" => [comment.range.from.index, comment.range.to.index+1],
+          }
+        else
+          {
+            "type" => "Line",
+            "value" => comment.value.sub(/\A\/\//, ""),
+            "range" => [comment.range.from.index, comment.range.to.index+1],
+          }
+        end
+      end
+
+      def adapt_root(node)
+        make(node, {
+          "type" => "Program",
+          "body" => adapt_node(node),
+        })
+      end
+
+      def adapt_node(node)
         case
         # Empty node
         when node.nil?
@@ -14,9 +44,9 @@ module JsDuck
 
         # Fall-through nodes
         when FALL_THROUGH_NODES[node.class]
-          adapt(node.value)
+          adapt_node(node.value)
         when FALL_THROUGH_ARRAY_NODES[node.class]
-          node.value.map {|v| adapt(v) }
+          node.value.map {|v| adapt_node(v) }
 
         # Identifiers
         when RKelly::Nodes::ResolveNode == node.class
@@ -35,7 +65,7 @@ module JsDuck
         when RKelly::Nodes::StringNode == node.class
           make(node, {
             "type" => "Literal",
-            "value" => node.value,
+            "value" => eval(node.value),
             "raw" => node.value,
           })
         when RKelly::Nodes::RegexpNode == node.class
@@ -68,28 +98,28 @@ module JsDuck
           make(node, {
             "type" => "BinaryExpression",
             "operator" => BINARY_NODES[node.class],
-            "left" => adapt(node.left),
-            "right" => adapt(node.value),
+            "left" => adapt_node(node.left),
+            "right" => adapt_node(node.value),
           })
         when UNARY_NODES[node.class]
           make(node, {
             "type" => "UnaryExpression",
             "operator" => UNARY_NODES[node.class],
-            "argument" => adapt(node.value),
+            "argument" => adapt_node(node.value),
           })
         when ASSIGNMENT_NODES[node.class]
           make(node, {
             "type" => "AssignmentExpression",
             "operator" => ASSIGNMENT_NODES[node.class],
-            "left" => adapt(node.left),
-            "right" => adapt(node.value),
+            "left" => adapt_node(node.left),
+            "right" => adapt_node(node.value),
           })
         when RKelly::Nodes::FunctionExprNode == node.class
           make(node, {
             "type" => "FunctionExpression",
             "id" => node.value == "function" ? nil : {"type" => "Identifier", "name" => node.value},
-            "params" => node.arguments.map {|a| adapt(a) },
-            "body" => adapt(node.function_body),
+            "params" => node.arguments.map {|a| adapt_node(a) },
+            "body" => adapt_node(node.function_body),
           })
         when RKelly::Nodes::ThisNode == node.class
           make(node, {
@@ -99,40 +129,40 @@ module JsDuck
           make(node, {
             "type" => "MemberExpression",
             "computed" => false,
-            "object" => adapt(node.value),
+            "object" => adapt_node(node.value),
             "property" => {"type" => "Identifier", "name" => node.accessor},
           })
         when RKelly::Nodes::BracketAccessorNode == node.class
           make(node, {
             "type" => "MemberExpression",
             "computed" => true,
-            "object" => adapt(node.value),
-            "property" => adapt(node.accessor),
+            "object" => adapt_node(node.value),
+            "property" => adapt_node(node.accessor),
           })
         when RKelly::Nodes::FunctionCallNode == node.class
           make(node, {
             "type" => "CallExpression",
-            "callee" => adapt(node.value),
-            "arguments" => adapt(node.arguments),
+            "callee" => adapt_node(node.value),
+            "arguments" => adapt_node(node.arguments),
           })
         when RKelly::Nodes::NewExprNode == node.class
           make(node, {
             "type" => "NewExpression",
-            "callee" => adapt(node.value),
-            "arguments" => adapt(node.arguments),
+            "callee" => adapt_node(node.value),
+            "arguments" => adapt_node(node.arguments),
           })
         when RKelly::Nodes::PrefixNode == node.class
           make(node, {
             "type" => "UpdateExpression",
             "operator" => node.value,
-            "argument" => adapt(node.operand),
+            "argument" => adapt_node(node.operand),
             "prefix" => true,
           })
         when RKelly::Nodes::PostfixNode == node.class
           make(node, {
             "type" => "UpdateExpression",
             "operator" => node.value,
-            "argument" => adapt(node.operand),
+            "argument" => adapt_node(node.operand),
             "prefix" => false,
           })
         when RKelly::Nodes::ParameterNode == node.class
@@ -143,36 +173,36 @@ module JsDuck
         when RKelly::Nodes::ConditionalNode == node.class
           make(node, {
             "type" => "ConditionalExpression",
-            "test" => adapt(node.conditions),
-            "consequent" => adapt(node.value),
-            "alternate" => adapt(node.else),
+            "test" => adapt_node(node.conditions),
+            "consequent" => adapt_node(node.value),
+            "alternate" => adapt_node(node.else),
           })
         when RKelly::Nodes::CaseClauseNode == node.class
           make(node, {
             "type" => "SwitchCase",
-            "test" => adapt(node.left),
-            "consequent" => adapt(node.value),
+            "test" => adapt_node(node.left),
+            "consequent" => adapt_node(node.value),
           })
         when RKelly::Nodes::CommaNode == node.class
           make(node, {
             "type" => "SequenceExpression",
-            "expressions" => flatten_sequence(node).map {|v| adapt(v) },
+            "expressions" => flatten_sequence(node).map {|v| adapt_node(v) },
           })
         when RKelly::Nodes::ArrayNode == node.class
           make(node, {
             "type" => "ArrayExpression",
-            "elements" => node.value.map {|v| adapt(v) },
+            "elements" => node.value.map {|v| adapt_node(v) },
           })
         when RKelly::Nodes::ObjectLiteralNode == node.class
           make(node, {
             "type" => "ObjectExpression",
-            "properties" => node.value.map {|v| adapt(v) },
+            "properties" => node.value.map {|v| adapt_node(v) },
           })
         when RKelly::Nodes::PropertyNode == node.class
           make(node, {
             "type" => "Property",
             "key" => {"type" => "Identifier", "name" => node.name},
-            "value" => adapt(node.value),
+            "value" => adapt_node(node.value),
             "kind" => "init",
           })
 
@@ -180,59 +210,59 @@ module JsDuck
         when RKelly::Nodes::ExpressionStatementNode == node.class
           make(node, {
             "type" => "ExpressionStatement",
-            "expression" => adapt(node.value),
+            "expression" => adapt_node(node.value),
           })
         when RKelly::Nodes::IfNode == node.class
           make(node, {
             "type" => "IfStatement",
-            "test" => adapt(node.conditions),
-            "consequent" => adapt(node.value),
-            "alternate" => adapt(node.else),
+            "test" => adapt_node(node.conditions),
+            "consequent" => adapt_node(node.value),
+            "alternate" => adapt_node(node.else),
           })
         when RKelly::Nodes::WhileNode == node.class
           make(node, {
             "type" => "WhileStatement",
-            "test" => adapt(node.left),
-            "body" => adapt(node.value),
+            "test" => adapt_node(node.left),
+            "body" => adapt_node(node.value),
           })
         when RKelly::Nodes::DoWhileNode == node.class
           make(node, {
             "type" => "DoWhileStatement",
-            "test" => adapt(node.left),
-            "body" => adapt(node.value),
+            "test" => adapt_node(node.left),
+            "body" => adapt_node(node.value),
           })
         when RKelly::Nodes::ForNode == node.class
           make(node, {
             "type" => "ForStatement",
-            "init" => adapt(node.init),
-            "test" => adapt(node.test),
-            "update" => adapt(node.counter),
-            "body" => adapt(node.value),
+            "init" => adapt_node(node.init),
+            "test" => adapt_node(node.test),
+            "update" => adapt_node(node.counter),
+            "body" => adapt_node(node.value),
           })
         when RKelly::Nodes::ForInNode == node.class
           make(node, {
             "type" => "ForInStatement",
-            "left" => adapt(node.left),
-            "right" => adapt(node.right),
-            "body" => adapt(node.value),
+            "left" => adapt_node(node.left),
+            "right" => adapt_node(node.right),
+            "body" => adapt_node(node.value),
             "each" => false,
           })
         when RKelly::Nodes::WithNode == node.class
           make(node, {
             "type" => "WithStatement",
-            "object" => adapt(node.left),
-            "body" => adapt(node.value),
+            "object" => adapt_node(node.left),
+            "body" => adapt_node(node.value),
           })
         when RKelly::Nodes::SwitchNode == node.class
           make(node, {
             "type" => "SwitchStatement",
-            "discriminant" => adapt(node.left),
-            "cases" => adapt(node.value),
+            "discriminant" => adapt_node(node.left),
+            "cases" => adapt_node(node.value),
           })
         when RKelly::Nodes::ReturnNode == node.class
           make(node, {
             "type" => "ReturnStatement",
-            "argument" => adapt(node.value),
+            "argument" => adapt_node(node.value),
           })
         when RKelly::Nodes::BreakNode == node.class
           make(node, {
@@ -247,31 +277,31 @@ module JsDuck
         when RKelly::Nodes::TryNode == node.class
           make(node, {
             "type" => "TryStatement",
-            "block" => adapt(node.value),
+            "block" => adapt_node(node.value),
             "guardedHandlers" => [],
             "handlers" => node.catch_block ? [catch_clause(node)] : [],
-            "finalizer" => adapt(node.finally_block),
+            "finalizer" => adapt_node(node.finally_block),
           })
         when RKelly::Nodes::ThrowNode == node.class
           make(node, {
             "type" => "ThrowStatement",
-            "argument" => adapt(node.value),
+            "argument" => adapt_node(node.value),
           })
         when RKelly::Nodes::LabelNode == node.class
           make(node, {
             "type" => "LabeledStatement",
             "label" => {"type" => "Identifier", "name" => node.name},
-            "body" => adapt(node.value),
+            "body" => adapt_node(node.value),
           })
         when RKelly::Nodes::BlockNode == node.class
           make(node, {
             "type" => "BlockStatement",
-            "body" => adapt(node.value),
+            "body" => adapt_node(node.value),
           })
         when RKelly::Nodes::FunctionBodyNode == node.class
           make(node, {
             "type" => "BlockStatement",
-            "body" => adapt(node.value),
+            "body" => adapt_node(node.value),
           })
         when RKelly::Nodes::EmptyStatementNode == node.class
           if node.value == "debugger"
@@ -289,26 +319,26 @@ module JsDuck
           make(node, {
             "type" => "VariableDeclaration",
             "kind" => "var",
-            "declarations" => node.value.map {|v| adapt(v) },
+            "declarations" => node.value.map {|v| adapt_node(v) },
           })
         when RKelly::Nodes::ConstStatementNode == node.class
           make(node, {
             "type" => "VariableDeclaration",
             "kind" => "const",
-            "declarations" => node.value.map {|v| adapt(v) },
+            "declarations" => node.value.map {|v| adapt_node(v) },
           })
         when RKelly::Nodes::VarDeclNode == node.class
           make(node, {
             "type" => "VariableDeclarator",
             "id" => {"type" => "Identifier", "name" => node.name},
-            "init" => adapt(node.value),
+            "init" => adapt_node(node.value),
           })
         when RKelly::Nodes::FunctionDeclNode == node.class
           make(node, {
             "type" => "FunctionDeclaration",
             "id" => {"type" => "Identifier", "name" => node.value},
-            "params" => node.arguments.map {|a| adapt(a) },
-            "body" => adapt(node.function_body),
+            "params" => node.arguments.map {|a| adapt_node(a) },
+            "body" => adapt_node(node.function_body),
           })
 
         else
@@ -317,11 +347,9 @@ module JsDuck
         end
       end
 
-      private
-
       # augments node data with range info.
       def make(node, config)
-        config["range"] = [node.range.from.index, node.range.to.index]
+        config["range"] = [node.range.from.index, node.range.to.index+1, node.range.from.line]
         config
       end
 
@@ -334,11 +362,11 @@ module JsDuck
       end
 
       def catch_clause(node)
-        {
+        make(node, {
           "type" => "CatchClause",
           "param" => {"type" => "Identifier", "name" => node.catch_var},
-          "body" => adapt(node.catch_block),
-        }
+          "body" => adapt_node(node.catch_block),
+        })
       end
 
       BINARY_NODES = {
