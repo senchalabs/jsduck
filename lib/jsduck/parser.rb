@@ -1,4 +1,4 @@
-require 'jsduck/js/parser'
+require 'jsduck/js/rkelly_parser'
 require 'jsduck/js/ast'
 require 'jsduck/css/parser'
 require 'jsduck/doc/parser'
@@ -41,7 +41,7 @@ module JsDuck
       if filename =~ /\.s?css$/
         docs = Css::Parser.new(contents, options).parse
       else
-        docs = Js::Parser.new(contents, options).parse
+        docs = Js::RKellyParser.new(contents, options).parse
         docs = Js::Ast.new(docs).detect_all!
       end
     end
