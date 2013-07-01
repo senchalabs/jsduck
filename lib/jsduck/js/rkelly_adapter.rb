@@ -117,7 +117,11 @@ module JsDuck
         when RKelly::Nodes::FunctionExprNode == node.class
           make(node, {
             "type" => "FunctionExpression",
-            "id" => node.value == "function" ? nil : {"type" => "Identifier", "name" => node.value},
+            "id" => node.value == "function" ? nil : {
+                "type" => "Identifier",
+                "name" => node.value,
+                "range" => offset_range(node, :value, "function "),
+              },
             "params" => node.arguments.map {|a| adapt_node(a) },
             "body" => adapt_node(node.function_body),
           })
@@ -130,7 +134,11 @@ module JsDuck
             "type" => "MemberExpression",
             "computed" => false,
             "object" => adapt_node(node.value),
-            "property" => {"type" => "Identifier", "name" => node.accessor},
+            "property" => {
+                "type" => "Identifier",
+                "name" => node.accessor,
+                "range" => offset_range(node, :accessor),
+              },
           })
         when RKelly::Nodes::BracketAccessorNode == node.class
           make(node, {
@@ -201,7 +209,11 @@ module JsDuck
         when RKelly::Nodes::PropertyNode == node.class
           make(node, {
             "type" => "Property",
-            "key" => {"type" => "Identifier", "name" => node.name},
+            "key" => {
+                "type" => "Identifier",
+                "name" => node.name,
+                "range" => offset_range(node, :name),
+              },
             "value" => adapt_node(node.value),
             "kind" => "init",
           })
@@ -267,12 +279,20 @@ module JsDuck
         when RKelly::Nodes::BreakNode == node.class
           make(node, {
             "type" => "BreakStatement",
-            "label" => node.value ? {"type" => "Identifier", "name" => node.value} : nil,
+            "label" => node.value ? {
+                "type" => "Identifier",
+                "name" => node.value,
+                "range" => offset_range(node, :value, "break "),
+              } : nil,
           })
         when RKelly::Nodes::ContinueNode == node.class
           make(node, {
             "type" => "ContinueStatement",
-            "label" => node.value ? {"type" => "Identifier", "name" => node.value} : nil,
+            "label" => node.value ? {
+                "type" => "Identifier",
+                "name" => node.value,
+                "range" => offset_range(node, :value),
+              } : nil,
           })
         when RKelly::Nodes::TryNode == node.class
           make(node, {
@@ -290,7 +310,11 @@ module JsDuck
         when RKelly::Nodes::LabelNode == node.class
           make(node, {
             "type" => "LabeledStatement",
-            "label" => {"type" => "Identifier", "name" => node.name},
+            "label" => {
+                "type" => "Identifier",
+                "name" => node.name,
+                "range" => offset_range(node, :name),
+              },
             "body" => adapt_node(node.value),
           })
         when RKelly::Nodes::BlockNode == node.class
@@ -330,13 +354,21 @@ module JsDuck
         when RKelly::Nodes::VarDeclNode == node.class
           make(node, {
             "type" => "VariableDeclarator",
-            "id" => {"type" => "Identifier", "name" => node.name},
+            "id" => {
+                "type" => "Identifier",
+                "name" => node.name,
+                "range" => offset_range(node, :name),
+              },
             "init" => adapt_node(node.value),
           })
         when RKelly::Nodes::FunctionDeclNode == node.class
           make(node, {
             "type" => "FunctionDeclaration",
-            "id" => {"type" => "Identifier", "name" => node.value},
+            "id" => {
+                "type" => "Identifier",
+                "name" => node.value,
+                "range" => offset_range(node, :value, "function "),
+              },
             "params" => node.arguments.map {|a| adapt_node(a) },
             "body" => adapt_node(node.function_body),
           })
@@ -351,6 +383,17 @@ module JsDuck
       def make(node, config)
         config["range"] = [node.range.from.index, node.range.to.index+1, node.range.from.line]
         config
+      end
+
+      # Calculates "range" array from the start position of the node,
+      # its field and given offset prefix (amount of characters to
+      # discard from the beginning).
+      def offset_range(node, field, prefix="")
+        line = node.range.from.line
+        i = node.range.from.index
+        offset = prefix.length
+        length = node.send(field).length
+        return [i + offset, i + offset + length, line]
       end
 
       def flatten_sequence(node)
