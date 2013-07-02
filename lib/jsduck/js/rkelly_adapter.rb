@@ -209,11 +209,28 @@ module JsDuck
         when RKelly::Nodes::PropertyNode == node.class
           make(node, {
             "type" => "Property",
-            "key" => {
-                "type" => "Identifier",
-                "name" => node.name,
-                "range" => offset_range(node, :name),
-              },
+            "key" =>
+              if node.name.is_a?(Numeric)
+                {
+                  "type" => "Literal",
+                  "value" => node.name,
+                  "raw" => node.name.to_s,
+                  "range" => offset_range(node, :name),
+                }
+              elsif node.name =~ /['"]/
+                {
+                  "type" => "Literal",
+                  "value" => eval(node.name),
+                  "raw" => node.name,
+                  "range" => offset_range(node, :name),
+                }
+              else
+                {
+                  "type" => "Identifier",
+                  "name" => node.name,
+                  "range" => offset_range(node, :name),
+                }
+              end,
             "value" => adapt_node(node.value),
             "kind" => "init",
           })
@@ -392,7 +409,7 @@ module JsDuck
         line = node.range.from.line
         i = node.range.from.index
         offset = prefix.length
-        length = node.send(field).length
+        length = node.send(field).to_s.length
         return [i + offset, i + offset + length, line]
       end
 
