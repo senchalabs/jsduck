@@ -422,11 +422,24 @@ module JsDuck
       end
 
       def catch_clause(node)
-        make(node, {
+        {
           "type" => "CatchClause",
-          "param" => {"type" => "Identifier", "name" => node.catch_var},
+          "param" => {
+              "type" => "Identifier",
+              "name" => node.catch_var,
+              "range" => [
+                node.catch_block.range.from.index - (") ".length + node.catch_var.length),
+                node.catch_block.range.from.index - (") ".length),
+                node.catch_block.range.from.line,
+              ]
+            },
           "body" => adapt_node(node.catch_block),
-        })
+          "range" => [
+            node.catch_block.range.from.index - ("catch () ".length + node.catch_var.length),
+            node.catch_block.range.to.index+1,
+            node.catch_block.range.from.line,
+          ]
+        }
       end
 
       BINARY_NODES = {
