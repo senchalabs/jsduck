@@ -6,11 +6,11 @@ require 'jsduck/js/esprima'
 require 'pp'
 
 code = <<-EOS
-var x = {
-    foo: 5,
-    // Some docs
-    bar: 5
-};
+function x() {
+    // Function A
+    function a() {
+    }
+}
 EOS
 
 pp JsDuck::Js::Esprima.parse(code)
