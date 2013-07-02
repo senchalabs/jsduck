@@ -48,6 +48,7 @@ module JsDuck
       write_template(in_file, out_file, {
         "{title}" => @opts.title,
         "{header}" => @opts.header,
+        "{head_html}" => @opts.head_html,
       })
     end
 
