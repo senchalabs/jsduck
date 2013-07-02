@@ -120,7 +120,7 @@ module JsDuck::Tag
     # A helper method for use in #to_html.
     def member_params(params)
       ps = Array(params).map do |p|
-        p[:optional] ? "["+p[:name]+"]" : p[:name]
+        p[:optional] ? "[#{p[:name]}]" : p[:name]
       end.join(", ")
 
       "( <span class='pre'>#{ps}</span> )"
