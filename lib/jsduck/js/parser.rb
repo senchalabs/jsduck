@@ -5,10 +5,10 @@ require 'rkelly'
 module JsDuck
   module Js
 
-    # An alternative JsDuck::Js::Parser implementation that uses
-    # RKelly instead of Esprima.
-    class RKellyParser
-      RKELLY = RKelly::Parser.new
+    # A JavaScript parser implementation that uses RKelly and adapts
+    # its output to be the same as the old Esprima parser used to
+    # produce.
+    class Parser
       ADAPTER = Js::RKellyAdapter.new
 
       def initialize(input, options={})

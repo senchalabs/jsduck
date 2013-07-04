@@ -1,9 +1,9 @@
-require "jsduck/js/rkelly_parser"
+require "jsduck/js/parser"
 
-describe JsDuck::Js::RKellyParser do
+describe JsDuck::Js::Parser do
 
   def parse(input)
-    JsDuck::Js::RKellyParser.new(input).parse
+    JsDuck::Js::Parser.new(input).parse
   end
 
   describe "parsing two comments" do
