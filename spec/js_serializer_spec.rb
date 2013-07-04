@@ -50,10 +50,6 @@ describe JsDuck::Js::Serializer do
       test("var foo, bar = 5;")
     end
 
-    it "variable declaration with let" do
-      test("let foo = true;")
-    end
-
     it "assignment of function expression" do
       test("foo = function (a) {};")
     end
