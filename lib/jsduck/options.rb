@@ -139,11 +139,12 @@ module JsDuck
       # Turn multiprocessing off by default in Windows
       Util::Parallel.in_processes = Util::OS::windows? ? 0 : nil
 
-      # enable all warnings except :link_auto
+      # Enable all warnings except the following:
       Logger.set_warning(:all, true)
       Logger.set_warning(:link_auto, false)
       Logger.set_warning(:param_count, false)
       Logger.set_warning(:fires, false)
+      Logger.set_warning(:no_doc_param, false)
 
       @optparser = create_option_parser
     end

@@ -48,12 +48,12 @@ module JsDuck
           cls.all_local_members.each do |member|
             if !member[:private] && !member[:hide] && !JsDuck::Class.constructor?(member)
               if member[:doc] == ""
-                warn(:no_doc, "No documentation for #{member[:owner]}##{member[:name]}", member)
+                warn(:no_doc_member, "No documentation for #{member[:owner]}##{member[:name]}", member)
               end
 
               (member[:params] || []).each do |p|
                 if p[:doc] == ""
-                  warn(:no_doc, "No documentation for parameter #{p[:name]} of #{member[:owner]}##{member[:name]}", member)
+                  warn(:no_doc_param, "No documentation for parameter #{p[:name]} of #{member[:owner]}##{member[:name]}", member)
                 end
               end
 
