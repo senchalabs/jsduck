@@ -159,7 +159,7 @@ module JsDuck
 
     def parse!(argv)
       parse_options(argv)
-      auto_detect_config_file
+      auto_detect_config_file unless @config_option_specified
       validate
 
       if @custom_tag_paths.length > 0
@@ -260,6 +260,7 @@ module JsDuck
           @working_dir = File.dirname(path)
           parse_options(config)
           @working_dir = nil
+          @config_option_specified = true
         end
 
         opts.on('--encoding=NAME', "Input encoding (defaults to UTF-8).") do |encoding|
@@ -809,6 +810,7 @@ module JsDuck
     def auto_detect_config_file
       fname = Dir.pwd + "/jsduck.json"
       if File.exists?(fname)
+        Logger.log("Auto-detected config file", fname)
         parse_options(read_json_config(fname))
       end
     end
