@@ -257,8 +257,8 @@ module JsDuck
         when RKelly::Nodes::DoWhileNode == node.class
           make(node, {
             "type" => "DoWhileStatement",
-            "test" => adapt_node(node.left),
-            "body" => adapt_node(node.value),
+            "test" => adapt_node(node.value),
+            "body" => adapt_node(node.left),
           })
         when RKelly::Nodes::ForNode == node.class
           make(node, {
