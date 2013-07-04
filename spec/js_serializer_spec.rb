@@ -1,9 +1,11 @@
-require "jsduck/js/esprima"
+require "rkelly"
+require "jsduck/js/rkelly_adapter"
 require "jsduck/js/serializer"
 
 describe JsDuck::Js::Serializer do
   def to_s(string)
-    ast = JsDuck::Js::Esprima.instance.parse(string)
+    ast = RKelly::Parser.new.parse(string)
+    ast = JsDuck::Js::RKellyAdapter.new.adapt(ast)
     return JsDuck::Js::Serializer.new.to_s(ast)
   end
 
