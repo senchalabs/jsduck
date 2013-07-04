@@ -101,6 +101,13 @@ module JsDuck
             "left" => adapt_node(node.left),
             "right" => adapt_node(node.value),
           })
+        when LOGICAL_NODES[node.class]
+          make(node, {
+            "type" => "LogicalExpression",
+            "operator" => LOGICAL_NODES[node.class],
+            "left" => adapt_node(node.left),
+            "right" => adapt_node(node.value),
+          })
         when UNARY_NODES[node.class]
           make(node, {
             "type" => "UnaryExpression",
@@ -449,7 +456,6 @@ module JsDuck
         RKelly::Nodes::AddNode => "+",
         RKelly::Nodes::MultiplyNode => "*",
         RKelly::Nodes::NotEqualNode => "!=",
-        RKelly::Nodes::LogicalAndNode => "&&",
         RKelly::Nodes::UnsignedRightShiftNode => ">>>",
         RKelly::Nodes::ModulusNode => "%",
         RKelly::Nodes::NotStrictEqualNode => "!==",
@@ -458,7 +464,6 @@ module JsDuck
         RKelly::Nodes::GreaterNode => ">",
         RKelly::Nodes::BitOrNode => "|",
         RKelly::Nodes::StrictEqualNode => "===",
-        RKelly::Nodes::LogicalOrNode => "||",
         RKelly::Nodes::BitXOrNode => "^",
         RKelly::Nodes::LeftShiftNode => "<"+"<",
         RKelly::Nodes::EqualNode => "==",
@@ -466,6 +471,11 @@ module JsDuck
         RKelly::Nodes::InstanceOfNode => "instanceof",
         RKelly::Nodes::DivideNode => "/",
         RKelly::Nodes::RightShiftNode => ">>",
+      }
+
+      LOGICAL_NODES = {
+        RKelly::Nodes::LogicalAndNode => "&&",
+        RKelly::Nodes::LogicalOrNode => "||",
       }
 
       UNARY_NODES = {
