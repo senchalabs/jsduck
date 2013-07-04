@@ -79,10 +79,10 @@ module JsDuck
           :this
         elsif boolean?(ast)
           "Boolean"
-        elsif string?(ast)
-          "String"
         elsif regexp?(ast)
           "RegExp"
+        elsif string?(ast)
+          "String"
         else
           :other
         end
