@@ -147,7 +147,7 @@ describe JsDuck::Js::Serializer do
     end
 
     it "try catch statement with empty catch" do
-      test("try {} catch () {}")
+      test("try {} catch (e) {}")
     end
 
     it "try finally statement" do
