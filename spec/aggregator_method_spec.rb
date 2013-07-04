@@ -100,7 +100,7 @@ describe JsDuck::Aggregator do
 
   describe "function-literal in prototype-chain" do
     before do
-      @doc = parse_method("/** Some function */ Some.long.prototype.foo = function() {}")
+      @doc = parse_method("/** Some function */ Some.verylong.prototype.foo = function() {}")
     end
     it_should_behave_like "method"
   end

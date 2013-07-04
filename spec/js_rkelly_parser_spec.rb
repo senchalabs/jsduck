@@ -1,9 +1,9 @@
-require "jsduck/js/parser"
+require "jsduck/js/rkelly_parser"
 
-describe JsDuck::Js::Parser do
+describe JsDuck::Js::RKellyParser do
 
   def parse(input)
-    JsDuck::Js::Parser.new(input).parse
+    JsDuck::Js::RKellyParser.new(input).parse
   end
 
   describe "parsing two comments" do
@@ -213,6 +213,10 @@ describe JsDuck::Js::Parser do
     it "detects comment as belonging to the inner function" do
       @docs[0][:code]["type"].should == "FunctionDeclaration"
       @docs[0][:code]["id"]["name"].should == "a"
+    end
+
+    it "detects range" do
+      @docs[0][:code]["range"].should == [61, 89, 3]
     end
   end
 

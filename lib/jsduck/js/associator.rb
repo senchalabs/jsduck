@@ -1,14 +1,12 @@
-require 'jsduck/js/esprima'
 require 'jsduck/logger'
 
 module JsDuck
   module Js
 
-    # JavaScript parser that internally uses Esprima.js
-    class Parser
+    # Associates comments with syntax nodes.
+    class Associator
 
-      # Initializes the parser with JavaScript source code to be parsed.
-      def initialize(input, options = {})
+      def initialize(input)
         @input = input
 
         # Initialize line number counting
@@ -16,7 +14,8 @@ module JsDuck
         @start_linenr = 1
       end
 
-      # Parses JavaScript source code and returns array of hashes like this:
+      # Analyzes the comments and AST nodes and returns array of
+      # hashes like this:
       #
       #     {
       #         :comment => "The contents of the comment",
@@ -25,8 +24,8 @@ module JsDuck
       #         :type => :doc_comment, // or :plain_comment
       #     }
       #
-      def parse
-        @ast = Js::Esprima.parse(@input)
+      def associate(ast)
+        @ast = ast
 
         @ast["comments"] = merge_comments(@ast["comments"])
         locate_comments
