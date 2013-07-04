@@ -38,7 +38,7 @@
   h2 { @include guides-h2-heading; }
   h3 { @include guides-h3-heading; }
   h3 { font-weight: bold; font-size: 1.1em; }
-  h4 { font-weight: bold; }
+  h4,h5,h6 { font-weight: bold; }
   ul {
     margin: 0 0 1em 2em;
     li {
@@ -92,7 +92,7 @@
     h3 {
       font-weight: bold;
       font-size: 1.1em; }
-    h4 {
+    h4,h5,h6 {
       font-weight: bold; }
     table {
       margin-bottom: 10px;
@@ -192,4 +192,3 @@ p.screenshot {
 
 // Styling helpers
 @import "tags";
-
