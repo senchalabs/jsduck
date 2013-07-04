@@ -278,7 +278,16 @@ module JsDuck
         when RKelly::Nodes::ForInNode == node.class
           make(node, {
             "type" => "ForInStatement",
-            "left" => adapt_node(node.left),
+            "left" =>
+              if node.left.class == RKelly::Nodes::VarDeclNode
+                make(node.left, {
+                    "type" => "VariableDeclaration",
+                    "kind" => "var",
+                    "declarations" => [adapt_node(node.left)]
+                  })
+              else
+                adapt_node(node.left)
+              end,
             "right" => adapt_node(node.right),
             "body" => adapt_node(node.value),
             "each" => false,
