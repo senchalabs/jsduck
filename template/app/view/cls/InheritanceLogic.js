@@ -58,9 +58,11 @@ Ext.define('Docs.view.cls.InheritanceLogic', {
 
     // Given full doc object for class creates class node
     classNode: function(cls) {
+      url = '#!/api/'
+      url += cls.url || cls.name;
       return {
         text: cls.name,
-        url: "#!/api/"+cls.name,
+        url: url,
         iconCls: cls.icon,
         cls: cls["private"] ? "private" : ""
       };

@@ -106,9 +106,11 @@ Ext.define('Docs.view.cls.PackageLogic', {
 
     // Given full doc object for class creates class node
     classNode: function(cls) {
+      url = '#!/api/'
+      url += cls.url || cls.name;
       return {
         text: this.shortName(cls.name),
-        url: "#!/api/"+cls.name,
+        url: url,
         iconCls: cls.icon,
         cls: cls["private"] ? "private" : "",
         leaf: true,
