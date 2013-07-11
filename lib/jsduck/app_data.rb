@@ -18,7 +18,7 @@ module JsDuck
     def write(filename)
       js = "Docs = " + JsonDuck.generate({
         :data => {
-          :classes => Icons.new.create(@relations.classes),
+          :classes => Icons.new.create(@relations.classes, @opts),
           :guides => @assets.guides.to_array,
           :videos => @assets.videos.to_array,
           :examples => @assets.examples.to_array,
