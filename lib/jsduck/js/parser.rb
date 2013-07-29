@@ -18,15 +18,28 @@ module JsDuck
       # Parses JavaScript source code with RKelly, turns RKelly AST
       # into Esprima AST, and associate comments with syntax nodes.
       def parse
-        ast = RKelly::Parser.new.parse(@input)
+        parser = RKelly::Parser.new
+        ast = parser.parse(@input)
         unless ast
-          raise "Invalid JavaScript syntax"
+          raise syntax_error(parser)
         end
 
         ast = ADAPTER.adapt(ast)
         # Adjust Program node range
         ast["range"] = [0, @input.length-1]
         return Js::Associator.new(@input).associate(ast)
+      end
+
+      def syntax_error(parser)
+        tokens = parser.instance_variable_get(:@tokens)
+        position = parser.instance_variable_get(:@position)
+
+        if position < tokens.length
+          token = tokens[position-1]
+          "Invalid JavaScript syntax: Unexpected '#{token.value}' on line #{token.range.from.line}"
+        else
+          "Invalid JavaScript syntax: Unexpected end of file"
+        end
       end
     end
 

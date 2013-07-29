@@ -7,11 +7,19 @@ describe JsDuck::Js::Parser do
   end
 
   describe "parsing invalid JavaScript" do
-    it "causes JS syntax error to be raised" do
+    it "causes JS syntax error with line number to be raised" do
       begin
-        parse("if ( x } alert('Hello');")
+        parse("if ( x \n } alert('Hello');")
       rescue
-        $!.to_s.should == "Invalid JavaScript syntax"
+        $!.to_s.should == "Invalid JavaScript syntax: Unexpected '}' on line 2"
+      end
+    end
+
+    it "causes JS syntax error for unexpected end of file to be raised" do
+      begin
+        parse("if ( x ) alert( ")
+      rescue
+        $!.to_s.should == "Invalid JavaScript syntax: Unexpected end of file"
       end
     end
   end
