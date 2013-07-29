@@ -12,10 +12,9 @@ Gem::Specification.new do |s|
   s.rubyforge_project = s.name
   s.license = "GPL-3"
 
-  s.files = `git ls-files`.split("\n").find_all do |file|
-    file !~ /spec\// && file !~ /template\// && file !~ /opt\//
-  end
-  # Add files not in git
+  s.files = ['bin/jsduck', 'COPYING', 'README.md']
+  s.files += Dir['lib/**/*']
+  s.files += Dir['js-classes/**/*']
   s.files += Dir['template-min/**/*']
 
   s.executables = ["jsduck"]
