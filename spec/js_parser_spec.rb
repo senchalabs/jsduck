@@ -6,6 +6,16 @@ describe JsDuck::Js::Parser do
     JsDuck::Js::Parser.new(input).parse
   end
 
+  describe "parsing invalid JavaScript" do
+    it "causes JS syntax error to be raised" do
+      begin
+        parse("if ( x } alert('Hello');")
+      rescue
+        $!.to_s.should == "Invalid JavaScript syntax"
+      end
+    end
+  end
+
   describe "parsing two comments" do
     before do
       @docs = parse(<<-EOS)

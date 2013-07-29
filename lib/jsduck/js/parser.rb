@@ -19,6 +19,10 @@ module JsDuck
       # into Esprima AST, and associate comments with syntax nodes.
       def parse
         ast = RKelly::Parser.new.parse(@input)
+        unless ast
+          raise "Invalid JavaScript syntax"
+        end
+
         ast = ADAPTER.adapt(ast)
         # Adjust Program node range
         ast["range"] = [0, @input.length-1]
