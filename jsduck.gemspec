@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.authors = ["Rene Saarsoo", "Nick Poulden"]
   s.email = "rene.saarsoo@sencha.com"
   s.rubyforge_project = s.name
+  s.license = "GPL-3"
 
   s.files = `git ls-files`.split("\n").find_all do |file|
     file !~ /spec\// && file !~ /template\// && file !~ /opt\//
