@@ -31,11 +31,8 @@ module JsDuck
       end
 
       def syntax_error(parser)
-        tokens = parser.instance_variable_get(:@tokens)
-        position = parser.instance_variable_get(:@position)
-
-        if position < tokens.length
-          token = tokens[position-1]
+        token = parser.stopped_at
+        if token
           "Invalid JavaScript syntax: Unexpected '#{token.value}' on line #{token.range.from.line}"
         else
           "Invalid JavaScript syntax: Unexpected end of file"
