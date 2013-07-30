@@ -161,7 +161,9 @@ module JsDuck
           exit(1)
         end
 
-        properties.map {|p| node[p] }.compact.flatten
+        # First flatten, then get rid of all nils, because the inner
+        # arrays may also contain nils.
+        properties.map {|p| node[p] }.flatten.compact
       end
 
       # All possible node types in Esprima-created abstract syntax tree

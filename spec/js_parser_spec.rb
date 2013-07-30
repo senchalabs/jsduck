@@ -291,4 +291,19 @@ describe JsDuck::Js::Parser do
     end
   end
 
+  # Sparse arrays are perfectly valid in JavaScript.
+  # Omitted array members are initialized to undefined.
+  describe "parsing comment before a missing array member" do
+    before do
+      @docs = parse(<<-EOS)
+          x = [5, /* Blah */, 6];
+      EOS
+    end
+
+    it "associates comment with the next array member after that" do
+      @docs[0][:comment].should == " Blah "
+      @docs[0][:code]["value"].should == 6
+    end
+  end
+
 end
