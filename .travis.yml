@@ -6,7 +6,7 @@ install:
   - gem install rdiscount
   - gem install json
   - gem install parallel
-  - gem install rkelly-remix -v 0.0.1
+  - gem install rkelly-remix
   - gem install rspec
   - gem install rake
   - gem install dimensions
