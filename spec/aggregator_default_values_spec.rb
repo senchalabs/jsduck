@@ -495,6 +495,20 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "cfg defined with Object.defineProperty" do
+    before do
+      @doc = parse_member(<<-EOS)
+        /**
+         * @cfg
+         */
+        Object.defineProperty(this, 'myCfg', { value: 5 });
+      EOS
+    end
+    it "gets default value from code" do
+      @doc[:default].should == "5"
+    end
+  end
+
   describe "auto-detected property turned into @method" do
     before do
       @doc = parse_member(<<-EOS)
