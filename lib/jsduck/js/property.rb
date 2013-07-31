@@ -41,7 +41,9 @@ module JsDuck
           # Object.defineProperty(obj, "prop", {value: x})
         elsif exp && exp.define_property?
           name = exp["arguments"][1].to_value
-          make(name, exp.value_of_define_property)
+          writable = exp.object_descriptor("writable")
+          readonly = writable ? !writable.to_value : true
+          make(name, exp.object_descriptor("value"), readonly)
 
         else
           nil
@@ -49,12 +51,13 @@ module JsDuck
       end
 
       # Produces a doc-hash for a property.
-      def make(name=nil, ast=nil)
+      def make(name=nil, ast=nil, readonly=nil)
         return {
           :tagname => :property,
           :name => name,
           :type => ast && ast.value_type,
           :default => ast && default(ast),
+          :readonly => readonly,
         }
       end
 
@@ -62,12 +65,6 @@ module JsDuck
 
       def default(ast)
         ast.to_value != nil ? ast.to_s : nil
-      end
-
-      def value_from_descriptor(descriptor)
-        descriptor.each_property do |key, value, prop|
-          return value if key == "value"
-        end
       end
 
     end

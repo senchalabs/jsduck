@@ -49,6 +49,7 @@ module JsDuck::Tag
       h = super(code)
       h[:type] = code[:type]
       h[:default] = code[:default]
+      h[:readonly] = code[:readonly]
       h
     end
 

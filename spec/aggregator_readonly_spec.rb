@@ -19,4 +19,51 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "Object.defineProperty with writable:true" do
+    let(:doc) do
+      parse_member(<<-EOS)
+        /**  */
+        Object.defineProperty(this, 'myCfg', {
+            value: 5,
+            writable: true
+        });
+      EOS
+    end
+
+    it "doesn't get readonly attribute" do
+      doc[:readonly].should_not == true
+    end
+  end
+
+  describe "Object.defineProperty with writable:false" do
+    let(:doc) do
+      parse_member(<<-EOS)
+        /**  */
+        Object.defineProperty(this, 'myCfg', {
+            value: 5,
+            writable: false
+        });
+      EOS
+    end
+
+    it "gets readonly attribute" do
+      doc[:readonly].should == true
+    end
+  end
+
+  describe "Object.defineProperty without writable:" do
+    let(:doc) do
+      parse_member(<<-EOS)
+        /**  */
+        Object.defineProperty(this, 'myCfg', {
+            value: 5
+        });
+      EOS
+    end
+
+    it "gets readonly attribute" do
+      doc[:readonly].should == true
+    end
+  end
+
 end
