@@ -65,7 +65,7 @@ module JsDuck
         when RKelly::Nodes::StringNode == node.class
           make(node, {
             "type" => "Literal",
-            "value" => eval(node.value),
+            "value" => string_value(node.value),
             "raw" => node.value,
           })
         when RKelly::Nodes::RegexpNode == node.class
@@ -227,7 +227,7 @@ module JsDuck
               elsif node.name =~ /['"]/
                 {
                   "type" => "Literal",
-                  "value" => eval(node.name),
+                  "value" => string_value(node.name),
                   "raw" => node.name,
                   "range" => offset_range(node, :name),
                 }
@@ -457,6 +457,33 @@ module JsDuck
           ]
         }
       end
+
+      # Evaluates the actual value of a JavaScript string.
+      # Importantly we avoid using Ruby's eval().
+      def string_value(string)
+        string[1..-2].gsub(/\\([0-9]{1,3}|x[0-9A-F]{1,2}|u[0-9A-F]{4}|.)/) do |s|
+          if STRING_ESCAPES[s]
+            STRING_ESCAPES[s]
+          elsif s =~ /^\\[0-9]/
+            s[1..-1].oct.chr
+          elsif s =~ /^\\x[0-9A-F]/
+            s[2..-1].hex.chr
+          elsif s =~ /^\\u[0-9A-F]/
+            [s[2..-1].hex].pack("U")
+          else
+            s[1, 1]
+          end
+        end
+      end
+
+      STRING_ESCAPES = {
+        '\b' => "\b",
+        '\f' => "\f",
+        '\n' => "\n",
+        '\r' => "\r",
+        '\t' => "\t",
+        '\v' => "\v",
+      }
 
       BINARY_NODES = {
         RKelly::Nodes::SubtractNode => "-",
