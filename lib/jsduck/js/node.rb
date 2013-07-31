@@ -139,6 +139,10 @@ module JsDuck
         call_expression? && child("callee").to_s == "this.fireEvent"
       end
 
+      def define_property?
+        call_expression? && child("callee").to_s == "Object.defineProperty"
+      end
+
       def string?
         literal? && @node["value"].is_a?(String)
       end

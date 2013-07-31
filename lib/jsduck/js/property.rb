@@ -38,6 +38,12 @@ module JsDuck
         elsif exp && exp.string?
           make(exp.to_value)
 
+          # Object.defineProperty(obj, "prop", {value: x})
+        elsif exp && exp.define_property?
+          name = exp["arguments"][1].to_value
+          descriptor = exp["arguments"][2]
+          make(name, value_from_descriptor(descriptor))
+
         else
           nil
         end
@@ -57,6 +63,12 @@ module JsDuck
 
       def default(ast)
         ast.to_value != nil ? ast.to_s : nil
+      end
+
+      def value_from_descriptor(descriptor)
+        descriptor.each_property do |key, value, prop|
+          return value if key == "value"
+        end
       end
 
     end

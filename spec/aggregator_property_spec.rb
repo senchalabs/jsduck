@@ -155,6 +155,21 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "doc-comment before Object.defineProperty" do
+    before do
+      @doc = parse_member(<<-EOS)
+        /**
+         * Some documentation.
+         */
+        Object.defineProperty(this, 'foo', {
+            value: "asdf",
+            enumerable: true
+        });
+      EOS
+    end
+    it_should_behave_like "example property"
+  end
+
   shared_examples_for "auto type" do
     it "should imply correct type" do
       @doc[:type].should == @type
