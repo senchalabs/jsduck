@@ -39,16 +39,6 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "Property with @readonly" do
-    before do
-      @doc = parse_member("/** @readonly */")
-    end
-
-    it "gets readonly attribute" do
-      @doc[:readonly].should == true
-    end
-  end
-
   describe "method with @template" do
     before do
       @doc = parse_member(<<-EOS)
