@@ -37,6 +37,11 @@ module JsDuck
         elsif ast.property? && ast["value"].function?
           make(ast["key"].key_value, ast["value"])
 
+          # Object.defineProperty(obj, "prop", {value: function() {} })
+        elsif exp && (value = exp.value_of_define_property) && detect(value)
+          name = exp["arguments"][1].to_value
+          make(name, value)
+
         else
           nil
         end

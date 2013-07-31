@@ -119,6 +119,19 @@ describe JsDuck::Aggregator do
     it_should_behave_like "method"
   end
 
+  describe "Object.defineProperty with function value" do
+    before do
+      @doc = parse_method(<<-EOS)
+        /** Some function */
+        Object.defineProperty(this, 'foo', {
+          writable: false,
+          value: function() { return true; }
+        });
+      EOS
+    end
+    it_should_behave_like "method"
+  end
+
   describe "doc-comment followed by 'function'" do
     before do
       @doc = parse_method("/** Some function */ 'function';")

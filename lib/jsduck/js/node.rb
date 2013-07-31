@@ -120,6 +120,17 @@ module JsDuck
         end
       end
 
+      # Returns the value field from Object.defineProperty call
+      # descriptor object.
+      def value_of_define_property
+        return unless define_property?
+
+        descriptor = child("arguments")[2]
+        descriptor.each_property do |key, value, prop|
+          return value if key == "value"
+        end
+      end
+
       # Returns line number in parsed source where the Node resides.
       def linenr
         # Get line number from third place at range array.

@@ -41,8 +41,7 @@ module JsDuck
           # Object.defineProperty(obj, "prop", {value: x})
         elsif exp && exp.define_property?
           name = exp["arguments"][1].to_value
-          descriptor = exp["arguments"][2]
-          make(name, value_from_descriptor(descriptor))
+          make(name, exp.value_of_define_property)
 
         else
           nil
