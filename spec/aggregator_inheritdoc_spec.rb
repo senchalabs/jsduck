@@ -442,4 +442,43 @@ describe JsDuck::Aggregator do
     end
   end
 
+  # Bug 345, which was caused by only some member indexes being
+  # invalidated after InheritDoc process resulted in properties turned
+  # into configs.
+  describe "parent class with property changed to config" do
+    before do
+      @docs = parse(<<-EOF)
+          /** */
+          Ext.define('Ext.Blah', {
+              /**
+               * @inheritdoc Ext.View#blabla
+               */
+              something: true
+          });
+
+          /** */
+          Ext.define('Ext.AbstractView', {
+              /** @cfg */
+              itemSelector: "foo"
+          });
+
+          /** */
+          Ext.define('Ext.Table', {
+              extend: 'Ext.AbstractView',
+              itemSelector: 'bar'
+          });
+
+          /** */
+          Ext.define('Ext.View', {
+              extend: 'Ext.Table'
+          });
+      EOF
+      @view = @docs["Ext.View"]
+    end
+
+    it "returns correctly just one member when calling #find_members on child" do
+      @view.find_members({:name => "itemSelector"}).length.should == 1
+    end
+  end
+
 end

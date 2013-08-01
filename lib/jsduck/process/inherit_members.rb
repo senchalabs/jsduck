@@ -126,8 +126,6 @@ module JsDuck
         members.each do |m|
           m[:tagname] = :cfg
         end
-        # Ask class to update its internal caches for these members
-        cls.update_members!(members)
       end
 
       # For auto-detected members/classes (which have @private == :inherit)

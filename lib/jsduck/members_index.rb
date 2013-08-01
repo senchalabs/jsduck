@@ -42,15 +42,14 @@ module JsDuck
     end
 
     # Clears the search cache.
-    # Using this is REALLY BAD - try to get rid of it.
+    #
+    # Using this degrades performance. It's currently triggered just
+    # once after InheritDoc process is run. Avoid using it in other
+    # places.
     def invalidate!
       @map_by_id = nil
       @global_map_by_id = nil
       @global_map_by_name = nil
-
-      @cls.parent.members_index.invalidate! if @cls.parent
-
-      @cls.mixins.each {|mix| mix.members_index.invalidate! }
     end
 
     protected

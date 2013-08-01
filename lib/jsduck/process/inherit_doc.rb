@@ -20,6 +20,10 @@ module JsDuck
           @inherit_class.resolve(cls)
           @inherit_members.resolve(cls)
         end
+
+        @relations.each do |cls|
+          cls.refresh_member_ids!
+        end
       end
 
     end

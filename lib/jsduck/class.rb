@@ -171,8 +171,8 @@ module JsDuck
 
     # This must be called whenever member hashes are changed.
     # It updates the :id fields of members and clears the caches.
-    def update_members!(members)
-      members.each do |m|
+    def refresh_member_ids!
+      @doc[:members].each do |m|
         m[:id] = Class.member_id(m)
       end
       @members_index.invalidate!
