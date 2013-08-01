@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require "jsduck/guide_toc"
 
 describe JsDuck::GuideToc do
@@ -30,10 +31,23 @@ describe JsDuck::GuideToc do
     EOHTML
   end
 
+  it "URL-encodes unicode in heading ID-s" do
+    inject(<<-EOHTML).should =~ /<h2 id='myguide-section-my-f%C3%A4pter'>My Fäpter/
+      <h2>My Fäpter</h2>
+    EOHTML
+  end
+
   it "links to headings from TOC" do
     inject(<<-EOHTML).should =~ /<a href='#!\/guide\/myguide-section-my-chapter'>/
       <h2>My Chapter</h2>
       <h2>Another Chapter</h2>
+    EOHTML
+  end
+
+  it "links to unicode headings from TOC" do
+    inject(<<-EOHTML).should =~ /<a href='#!\/guide\/myguide-section-my-f%C3%A4pter'>/
+      <h2>My Fäpter</h2>
+      <h2>Another Fäpter</h2>
     EOHTML
   end
 

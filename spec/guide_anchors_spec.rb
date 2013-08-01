@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require "jsduck/guide_anchors"
 
 describe JsDuck::GuideAnchors do
@@ -21,6 +22,11 @@ describe JsDuck::GuideAnchors do
       "Some\nlong\ntext\nhere...\n\n <a href='#!/guide/myguide-section-blah'>label</a>"
   end
 
+  it "URL-encodes unicode anchors links" do
+    transform("<a href='#fäg'>label</a>").should ==
+      "<a href='#!/guide/myguide-section-f%C3%A4g'>label</a>"
+  end
+
   it "doesn't transform normal links" do
     transform("<a href='http://example.com'>label</a>").should ==
       "<a href='http://example.com'>label</a>"
@@ -41,6 +47,11 @@ describe JsDuck::GuideAnchors do
       "<a name='myguide-section-blah'>target</a>"
   end
 
+  it "URL-encodes unicode in anchors" do
+    transform("<a name='fäg'>target</a>").should ==
+      "<a name='myguide-section-f%C3%A4g'>target</a>"
+  end
+
   it "doesn't transform anchors already in target format" do
     transform("<a name='myguide-section-blah'>target</a>").should ==
       "<a name='myguide-section-blah'>target</a>"
@@ -49,6 +60,11 @@ describe JsDuck::GuideAnchors do
   it "transforms ID-s" do
     transform("<h1 id='blah'>target</h1>").should ==
       "<h1 id='myguide-section-blah'>target</h1>"
+  end
+
+  it "URL-encodes unicode in ID-s" do
+    transform("<h1 id='fäg'>target</h1>").should ==
+      "<h1 id='myguide-section-f%C3%A4g'>target</h1>"
   end
 
   it "doesn't transform ID-s already in target format" do

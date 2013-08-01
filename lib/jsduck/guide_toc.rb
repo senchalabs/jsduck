@@ -41,7 +41,7 @@ module JsDuck
     end
 
     def self.title_to_id(title)
-      title.downcase.gsub(/[^\w]+/, "-")
+      CGI::escape(title.downcase.gsub(/ /, "-"))
     end
 
   end
