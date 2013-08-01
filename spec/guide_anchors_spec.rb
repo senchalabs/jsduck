@@ -41,7 +41,7 @@ describe JsDuck::GuideAnchors do
       "<a name='myguide-section-blah'>target</a>"
   end
 
-  it "doesn't transforms anchors already in target format" do
+  it "doesn't transform anchors already in target format" do
     transform("<a name='myguide-section-blah'>target</a>").should ==
       "<a name='myguide-section-blah'>target</a>"
   end
@@ -51,7 +51,7 @@ describe JsDuck::GuideAnchors do
       "<h1 id='myguide-section-blah'>target</h1>"
   end
 
-  it "doesn't ID-s already in target format" do
+  it "doesn't transform ID-s already in target format" do
     transform("<h1 id='myguide-section-blah'>target</h1>").should ==
       "<h1 id='myguide-section-blah'>target</h1>"
   end
