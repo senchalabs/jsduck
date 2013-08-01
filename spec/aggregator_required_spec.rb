@@ -52,4 +52,27 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "a config subproperty labeled with (required)" do
+    before do
+      @doc = parse_member(<<-EOS)
+        /**
+         * @cfg foo Something
+         * @cfg foo.bar (required) Subproperty
+         */
+      EOS
+    end
+
+    it "doesn't have the config marked as required" do
+      @doc[:required].should_not == true
+    end
+
+    it "doesn't have the subproperty marked as required" do
+      @doc[:properties][0][:required].should_not == true
+    end
+
+    it "contains the (required) inside subproperty description" do
+      @doc[:properties][0][:doc].should == "(required) Subproperty"
+    end
+  end
+
 end

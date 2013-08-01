@@ -28,7 +28,12 @@ module JsDuck::Tag
           :default => true,
           :optional => true
         })
-      tag[:optional] = false if parse_required(p)
+
+      # don't parse (required) after subproperties
+      unless tag[:name] =~ /\./
+        tag[:optional] = false if parse_required(p)
+      end
+
       tag[:doc] = :multiline
       tag
     end
