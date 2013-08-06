@@ -49,7 +49,7 @@ module JsDuck
             :tagname => :css_var,
             :name => "$" + node.name,
             :default => node.expr.to_s,
-            :type => "*",
+            :type => detect_type(node.expr),
           }
         elsif node.class == Sass::Tree::MixinDefNode
           return {
@@ -68,10 +68,53 @@ module JsDuck
           {
             :name => "$" + arg[0].name,
             :default => arg[1] ? arg[1].to_s : nil,
-            :type => "*",
+            :type => arg[1] ? detect_type(arg[1]) : nil,
           }
         end
       end
+
+      def detect_type(node)
+        if LITERAL_TYPES[node.class]
+          LITERAL_TYPES[node.class]
+        elsif node.class == Sass::Script::Funcall && COLOR_FUNCTIONS[node.name]
+          "color"
+        else
+          nil
+        end
+      end
+
+      LITERAL_TYPES = {
+        Sass::Script::Number => "number",
+        Sass::Script::String => "string",
+        Sass::Script::Color => "color",
+        Sass::Script::Bool => "boolean",
+        Sass::Script::List => "list",
+      }
+
+      COLOR_FUNCTIONS = {
+        # CSS3 builtins
+        "rgb" => true,
+        "rgba" => true,
+        "hsl" => true,
+        "hsla" => true,
+        # SASS builtins
+        "mix" => true,
+        "adjust-hue" => true,
+        "lighten" => true,
+        "darken" => true,
+        "saturate" => true,
+        "desaturate" => true,
+        "grayscale" => true,
+        "complement" => true,
+        "invert" => true,
+        "opacify" => true,
+        "fade-in" => true,
+        "transparentize" => true,
+        "fade-out" => true,
+        "adjust-color" => true,
+        "scale-color" => true,
+        "change-color" => true,
+      }
 
     end
 
