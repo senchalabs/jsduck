@@ -179,7 +179,19 @@ describe JsDuck::Css::SassParser do
     it "detects two docsets" do
       docs.length.should == 2
     end
+  end
 
+  describe "parsing SCSS variable followed by unknown function" do
+    let(:var) do
+      parse(<<-EOCSS)[0]
+        /** My docs */
+        $foo: myfunc(1, 2);
+      EOCSS
+    end
+
+    it "detects the function call as default value" do
+      var[:code][:default].should == "myfunc(1, 2)"
+    end
   end
 
 end

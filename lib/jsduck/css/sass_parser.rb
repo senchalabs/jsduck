@@ -59,7 +59,7 @@ module JsDuck
           return {
             :tagname => :css_var,
             :name => "$" + node.name,
-            :default => node.expr.to_s,
+            :default => node.expr.to_sass,
             :type => TYPE.detect(node.expr),
           }
         elsif node.class == Sass::Tree::MixinDefNode
