@@ -26,33 +26,32 @@ module JsDuck
         prev_comment = nil
 
         nodes.each do |node|
+          if prev_comment
+            @docs << make_docset(prev_comment, node)
+            prev_comment = nil
+          end
+
           if node.class == Sass::Tree::CommentNode
             if node.type == :normal && node.value[0] =~ /\A\/\*\*/
               prev_comment = node
-            else
-              prev_comment = nil
             end
-          elsif prev_comment
-            @docs << {
-              :comment => prev_comment.value[0],
-              :linenr => prev_comment.line,
-              :code => analyze_code(node),
-              :type => :doc_comment,
-            }
-            prev_comment = nil
           end
 
           find_doc_comments(node.children)
         end
 
         if prev_comment
-          @docs << {
-            :comment => prev_comment.value[0],
-            :linenr => prev_comment.line,
-            :code => {:tagname => :property},
-            :type => :doc_comment,
-          }
+          @docs << make_docset(prev_comment)
         end
+      end
+
+      def make_docset(prev_comment, node=nil)
+        return {
+          :comment => prev_comment.value[0],
+          :linenr => prev_comment.line,
+          :code => analyze_code(node),
+          :type => :doc_comment,
+        }
       end
 
       def analyze_code(node)

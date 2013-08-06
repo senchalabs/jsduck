@@ -168,4 +168,18 @@ describe JsDuck::Css::SassParser do
     end
   end
 
+  describe "parsing doc-comments without any SCSS code afterwards" do
+    let(:docs) do
+      parse(<<-EOCSS)
+        /** My docs #1 */
+        /** My docs #2 */
+      EOCSS
+    end
+
+    it "detects two docsets" do
+      docs.length.should == 2
+    end
+
+  end
+
 end
