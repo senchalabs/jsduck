@@ -1,9 +1,9 @@
-require 'jsduck/css/sass_parser'
+require 'jsduck/css/parser'
 
-describe JsDuck::Css::SassParser do
+describe JsDuck::Css::Parser do
 
   def parse(string)
-    JsDuck::Css::SassParser.new(string).parse
+    JsDuck::Css::Parser.new(string).parse
   end
 
   describe "parsing empty string" do

@@ -1,11 +1,11 @@
-require 'jsduck/css/sass_parser'
+require 'jsduck/css/parser'
 
-# We test the Css::Type through Css::SassParser to avoid the whole
+# We test the Css::Type through Css::Parser to avoid the whole
 # setup of Sass::Engine.
 describe JsDuck::Css::Type do
 
   def detect(expr)
-    ast = JsDuck::Css::SassParser.new("/** */ $foo: #{expr};").parse
+    ast = JsDuck::Css::Parser.new("/** */ $foo: #{expr};").parse
     ast[0][:code][:type]
   end
 

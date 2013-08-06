@@ -5,7 +5,7 @@ module JsDuck
   module Css
 
     # Parses SCSS using the official SASS parser.
-    class SassParser
+    class Parser
       TYPE = Css::Type.new
 
       def initialize(input, options = {})
