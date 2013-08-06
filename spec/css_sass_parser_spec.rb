@@ -65,6 +65,10 @@ describe JsDuck::Css::SassParser do
       var[:comment].should == "/** My variable */"
     end
 
+    it "detects line number" do
+      var[:linenr].should == 1
+    end
+
     it "detects :css_var type" do
       var[:code][:tagname].should == :css_var
     end

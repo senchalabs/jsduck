@@ -28,14 +28,14 @@ module JsDuck
         nodes.each do |node|
           if node.class == Sass::Tree::CommentNode
             if node.type == :normal && node.value[0] =~ /\A\/\*\*/
-              prev_comment = node.value[0]
+              prev_comment = node
             else
               prev_comment = nil
             end
           elsif prev_comment
             @docs << {
-              :comment => prev_comment,
-              :linenr => 0,
+              :comment => prev_comment.value[0],
+              :linenr => prev_comment.line,
               :code => analyze_code(node),
               :type => :doc_comment,
             }
