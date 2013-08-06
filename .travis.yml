@@ -10,3 +10,4 @@ install:
   - gem install rspec
   - gem install rake
   - gem install dimensions
+  - gem install sass
