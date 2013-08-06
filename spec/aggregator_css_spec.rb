@@ -123,4 +123,32 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "CSS doc-comment followed by @mixin with parameters" do
+    before do
+      @doc = parse_member(<<-EOCSS)
+        /**
+         * Creates an awesome button.
+         */
+        @mixin my-button($foo, $bar: 2px) {
+        }
+      EOCSS
+    end
+
+    it "detects parameters" do
+      @doc[:params].length.should == 2
+    end
+    it "detects first param name" do
+      @doc[:params][0][:name].should == "$foo"
+    end
+    it "detects second param name" do
+      @doc[:params][1][:name].should == "$bar"
+    end
+    it "detects second param type" do
+      @doc[:params][1][:type].should == "number"
+    end
+    it "detects second param default value" do
+      @doc[:params][1][:default].should == "2px"
+    end
+  end
+
 end
