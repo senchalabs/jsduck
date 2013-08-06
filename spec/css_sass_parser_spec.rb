@@ -152,4 +152,20 @@ describe JsDuck::Css::SassParser do
     end
   end
 
+  describe "parsing doc-comment without any SCSS code afterwards" do
+    let(:docs) do
+      parse(<<-EOCSS)
+        /** My docs */
+      EOCSS
+    end
+
+    it "detects one docset" do
+      docs.length.should == 1
+    end
+
+    it "detects code as :property" do
+      docs[0][:code][:tagname].should == :property
+    end
+  end
+
 end

@@ -44,6 +44,15 @@ module JsDuck
 
           find_doc_comments(node.children)
         end
+
+        if prev_comment
+          @docs << {
+            :comment => prev_comment.value[0],
+            :linenr => prev_comment.line,
+            :code => {:tagname => :property},
+            :type => :doc_comment,
+          }
+        end
       end
 
       def analyze_code(node)
