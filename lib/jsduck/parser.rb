@@ -1,6 +1,6 @@
 require 'jsduck/js/parser'
 require 'jsduck/js/ast'
-require 'jsduck/css/parser'
+require 'jsduck/css/sass_parser'
 require 'jsduck/doc/parser'
 require 'jsduck/doc/processor'
 require 'jsduck/doc/map'
@@ -39,7 +39,7 @@ module JsDuck
     # Parses the file depending on filename as JS or CSS
     def parse_js_or_css(contents, filename, options)
       if filename =~ /\.s?css$/
-        docs = Css::Parser.new(contents, options).parse
+        docs = Css::SassParser.new(contents, options).parse
       else
         docs = Js::Parser.new(contents, options).parse
         docs = Js::Ast.new(docs).detect_all!
