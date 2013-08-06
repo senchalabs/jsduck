@@ -62,7 +62,7 @@ describe JsDuck::Css::SassParser do
     end
 
     it "detects comment" do
-      var[:comment].should == "/** My variable */"
+      var[:comment].should == " My variable "
     end
 
     it "detects line number" do
@@ -97,7 +97,7 @@ describe JsDuck::Css::SassParser do
     end
 
     it "detects comment" do
-      var[:comment].should == "/** My mixin */"
+      var[:comment].should == " My mixin "
     end
 
     it "detects :css_mixin type" do
@@ -144,7 +144,7 @@ describe JsDuck::Css::SassParser do
     end
 
     it "detects comment" do
-      var[:comment].should == "/** My docs */"
+      var[:comment].should == " My docs "
     end
 
     it "detects code as :property" do

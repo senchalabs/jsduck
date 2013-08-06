@@ -47,7 +47,7 @@ module JsDuck
 
       def make_docset(prev_comment, node=nil)
         return {
-          :comment => prev_comment.value[0],
+          :comment => prev_comment.value[0].sub(/\A\/\*\*/, "").sub(/\*\/\z/, ""),
           :linenr => prev_comment.line,
           :code => analyze_code(node),
           :type => :doc_comment,
