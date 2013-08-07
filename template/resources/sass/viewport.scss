@@ -89,6 +89,13 @@
       font-style: italic; }
     strong {
       font-weight: bold; }
+    kbd {
+        border: 1px solid #aaa;
+        @include border-radius(2px);
+        @include box-shadow(1px 2px 2px #ddd);
+        background-color: #f9f9f9;
+        padding: 1px 3px;
+        font-size: 0.85em; }
     h3 {
       font-weight: bold;
       font-size: 1.1em; }
