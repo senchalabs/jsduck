@@ -151,13 +151,8 @@ module JsDuck
 
       # Detects item in object literal either as method or property
       def detect_method_or_property(cls, key, value, pair)
-        if value.function?
-          m = make_method(key, value)
-          cls[:members] << m if apply_autodetected(m, pair)
-        else
-          p = make_property(key, value)
-          cls[:members] << p if apply_autodetected(p, pair)
-        end
+        member = value.function? ? make_method(key, value) : make_property(key, value)
+        cls[:members] << member if apply_autodetected(member, pair)
       end
 
       def make_configs(ast, defaults={})
