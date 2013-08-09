@@ -58,6 +58,7 @@ module JsDuck
 
     def initialize
       @input_files = []
+      @exclude = []
 
       @output_dir = nil
       @ignore_global = false
@@ -161,6 +162,7 @@ module JsDuck
     def parse!(argv)
       parse_options(argv)
       auto_detect_config_file unless @config_option_specified
+      exclude_input_files
       validate
 
       if @custom_tag_paths.length > 0
@@ -266,6 +268,15 @@ module JsDuck
 
         opts.on('--encoding=NAME', "Input encoding (defaults to UTF-8).") do |encoding|
           JsDuck::Util::IO.encoding = encoding
+        end
+
+        opts.on('--exclude=PATH', "Exclude input file or directory.",
+          "",
+          "For example to include all the subdirs of",
+          "/app/js except /app/js/new, run JSDuck with:",
+          "",
+          "  jsduck /app/js --exclude /app/js/new") do |path|
+          @exclude << path
         end
 
         opts.separator ""
@@ -851,6 +862,15 @@ module JsDuck
         end
       else
         Logger.warn(nil, "File not found", fname)
+      end
+    end
+
+    # When --exclude option used, removes the files matching the
+    # exclude path from @input_files
+    def exclude_input_files
+      @exclude.each do |exclude_path|
+        exclude_re = Regexp.new('\A' + Regexp.escape(canonical(exclude_path)))
+        @input_files.reject! {|f| f =~ exclude_re }
       end
     end
 
