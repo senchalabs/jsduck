@@ -111,7 +111,7 @@ Who's using JSDuck?
 - Bryntum [Siesta unit testing framework](http://www.bryntum.com/products/siesta/docs/)
 - [CKEditor](http://docs.ckeditor.com)
 - [GeoExt 2](https://github.com/geoext/geoext2)
-- Rally Software [Rally App SDK](https://rally1.rallydev.com/apps/2.0p/doc/)
+- Rally Software [Rally App SDK](https://prod.help.rallydev.com/apps/2.0rc1/doc/)
 - [Sencha](http://docs.sencha.com) - obviously :)
 
 These are some that we know of. Want your project listed here? Drop us a line.
