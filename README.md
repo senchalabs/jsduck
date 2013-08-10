@@ -1,5 +1,5 @@
-JSDuck
-======
+![JSDuck](https://raw.github.com/senchalabs/jsduck/master/opt/jsduck-logo-dark.png)
+===================================================================================
 
 [![Build Status](https://travis-ci.org/senchalabs/jsduck.png)](https://travis-ci.org/senchalabs/jsduck)
 
