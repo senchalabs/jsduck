@@ -19,10 +19,10 @@ by inferring a lot of information from code.  Read the
 [<img src="http://b.vimeocdn.com/ts/227/178/227178682_200.jpg" alt="SenchaCon 2011 JSDuck talk" />][video]
 
 [Ext JS]: http://www.sencha.com/products/js/
-[ext-doc]: http://ext-doc.org/
+[ext-doc]: http://code.google.com/p/ext-doc/
 [Markdown]: http://daringfireball.net/projects/markdown/
-[ext4-docs]: http://docs.sencha.com/ext-js/4-0/
-[touch2-docs]: http://docs.sencha.com/touch/2-0/
+[ext4-docs]: http://docs.sencha.com/extjs/
+[touch2-docs]: http://docs.sencha.com/touch/
 [other-docs]: http://docs.sencha.com/
 [documentation]: https://github.com/senchalabs/jsduck/wiki
 [video]: http://vimeo.com/33465319
@@ -34,9 +34,8 @@ Standard rubygems install should do:
 
     $ [sudo] gem install jsduck
 
-Windows users probably want to [download a binary release][winbin].
-
-See the [installation guide][] for help when you run into problems.
+Or download the [Windows binary][winbin]. When you run into problems,
+see the [installation guide][].
 
 [winbin]: https://sourceforge.net/projects/jsduck/files/
 [installation guide]: https://github.com/senchalabs/jsduck/wiki/Installation
@@ -45,48 +44,35 @@ Usage
 -----
 
 For the simplest test-run just use the `--builtin-classes` option to
-automatically produce documentation for JavaScript builtin classes
-like Array, String and Object:
+write documentation for JavaScript builtin classes like Array, String
+and Object into `docs` directory:
 
-    $ jsduck --builtin-classes --output your/docs
+    $ jsduck --builtin-classes --output docs
 
-You can also use `--verbose` option to see what's actually happening.
+To generate docs for [Ext JS 4][] add path to the corresponding src/ dir:
 
-To generate docs for Ext JS 4 add path to the corresponding src/ dir:
+    $ jsduck ext-4.2.1/src --output docs
 
-    $ jsduck ext-4.1.1/src \
-             --builtin-classes \
-             --images ext-4.1.1/docs/images \
-             --warnings=-no_doc,-dup_member,-link_ambiguous \
-             --external XMLHttpRequest \
-             --output your/docs
+And to create docs for your own Ext JS project, list the directory
+with your files in addition to the Ext JS source files (this way the
+docs of your classes will list all the properties and methods they
+inherit from Ext JS classes):
 
-The `--images` option specifies a path for images included with
-`{@img}` tags inside the source code.
+    $ jsduck ext-4.2.1/src my-project/js --output docs
 
-The `--warnings` option disables some of the warnings which you would
-otherwise be overwhelmed with. That's because Ext JS 4.1.1 was
-released when JSDuck 4 wasn't out yet.  Sorry for that, JSDuck just
-wants to be helpful. Similarly the `--external` option defines
-`XMLHttpRequest` as an external class, otherwise a warning would be
-thrown.
+Unfortunately the above will throw lots of warnings at you, as
+building the full Ext JS docs requires lots of additional settings.
+For start you might want to simply ignore all these warnings
+originating from Ext JS source:
 
-Another thing that often happens is that JSDuck is unable to determine
-into which class a member belongs and will place all such items into a
-global class - you can disable this using the `--ignore-global`
-switch.  For full list of all command line options type
-`jsduck --help`.  For help on a specific option use
-`--help=--some-option`.
+    $ jsduck ext-4.2.1/src my-project/js --output docs \
+             --warnings=-all:ext-4.2.1/src
 
-To generate docs for your own project, simply name additional input
-directories:
+But see the [Usage guide][] for more information on building Ext JS 4
+docs.
 
-    $ jsduck ext-4.1.1/src project1/js project2/js ...
-
-Note that the resulting documentation will only contain the API
-documentation.  Guides, videos and examples will not be present.
-These can be added using more command line options as explained in the
-[documentation][].
+[Ext JS 4]: http://www.sencha.com/products/extjs/
+[Usage guide]: https://github.com/senchalabs/jsduck/wiki/Usage
 
 
 Documenting your code
