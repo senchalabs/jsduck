@@ -90,6 +90,9 @@ module JsDuck
         "CSSStyleSheet",
         "CSSStyleRule",
         "Event",
+        # Other browser-environment classes
+        "Window",
+        "XMLHttpRequest",
         # Special anything-goes type
         "Mixed",
       ]
