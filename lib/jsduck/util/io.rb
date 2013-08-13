@@ -25,7 +25,13 @@ module JsDuck
 
       # Reads given filename into string
       def self.read(filename)
-        File.open(filename, "r:"+@@encoding) {|f| f.read }
+        File.open(filename, "r:"+@@encoding) {|f| self.strip_utf8_bom(f.read) }
+      end
+
+      # Takes care of removing UTF-8 byte order mark in Ruby 1.8 which
+      # doesn't have built-in encodings support.
+      def self.strip_utf8_bom(string)
+        string.sub(/\A\xEF\xBB\xBF/, "")
       end
 
     end
