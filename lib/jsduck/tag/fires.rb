@@ -42,6 +42,8 @@ module JsDuck::Tag
     end
 
     def to_html(m)
+      return unless m[:fires] && m[:fires].length > 0
+
       return [
         "<h3 class='pa'>Fires</h3>",
         "<ul>",
