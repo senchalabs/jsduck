@@ -28,10 +28,14 @@ module JsDuck
         File.open(filename, "r:"+@@encoding) {|f| self.strip_utf8_bom(f.read) }
       end
 
-      # Takes care of removing UTF-8 byte order mark in Ruby 1.8 which
+      # Takes care of removing UTF-8 byte order mark in Ruby <= 1.8 which
       # doesn't have built-in encodings support.
       def self.strip_utf8_bom(string)
-        string.sub(/\A\xEF\xBB\xBF/, "")
+        if "".respond_to?(:encoding)
+          string
+        else
+          string.sub(/\A\xEF\xBB\xBF/, "")
+        end
       end
 
     end
