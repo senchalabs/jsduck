@@ -27,7 +27,7 @@ module JsDuck
         "<div id='news-content' style='#{style}'>",
           "<div class='section'>",
             "<h1>New in this version</h1>",
-            render_columns(@new_items),
+              render_news(@new_items),
             "<div style='clear:both'></div>",
           "</div>",
         "</div>",
@@ -89,6 +89,14 @@ module JsDuck
 
     def upcase_first(str)
       str[0,1].upcase + str[1..-1]
+    end
+
+    def render_news(new_items)
+      if new_items.length > 0
+        render_columns(new_items)
+      else
+        "<h3>Nothing new.</h3>"
+      end
     end
 
     def render_columns(new_items)
