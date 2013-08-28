@@ -1,12 +1,9 @@
-require 'jsduck/util/singleton'
 require 'jsduck/util/os'
 
 module JsDuck
 
   # Central logging of JsDuck
-  class Logger
-    include Util::Singleton
-
+  class LoggerCls
     # Set to true to enable verbose logging
     attr_accessor :verbose
 
@@ -214,5 +211,8 @@ module JsDuck
       end
     end
   end
+
+  # The actual global Logger instance
+  Logger = LoggerCls.new
 
 end
