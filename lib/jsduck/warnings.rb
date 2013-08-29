@@ -1,3 +1,5 @@
+require 'jsduck/no_doc_warning'
+
 module JsDuck
 
   # Warnings management
@@ -18,9 +20,6 @@ module JsDuck
 
         [:alt_name, "Name used as both classname and alternate classname"],
         [:name_missing, "Member or parameter has no name"],
-        [:no_doc, "Public class without documentation"],
-        [:no_doc_member, "Public member without documentation"],
-        [:no_doc_param, "Parameter of public member without documentation"],
         [:dup_param, "Method has two parameters with the same name"],
         [:dup_member, "Class has two members with the same name"],
         [:req_after_opt, "Required parameter comes after optional"],
@@ -41,7 +40,18 @@ module JsDuck
 
         [:aside, "Problem with @aside tag"],
         [:hide, "Problem with @hide tag"],
+
+        [:nodoc, "Missing documentation"],
       ]
+
+      @deprecated = {
+        :no_doc => {:msg => "Alias for +nodoc(class,public)", :params => [:class, :public]},
+        :no_doc_member => {:msg => "Alias for +nodoc(member,public)", :params => [:member, :public]},
+        :no_doc_param => {:msg => "Alias for +nodoc(param,public)", :params => [:param, :public]},
+      }
+
+      @nodoc = NoDocWarning.new
+
       # Turn off all warnings by default.
       # This is good for testing.
       # When running JSDuck app, the Options class enables most warnings.
@@ -54,13 +64,18 @@ module JsDuck
     # Enables or disables a particular warning
     # or all warnings when type == :all.
     # Additionally a filename pattern can be specified.
-    def set(type, enabled, pattern=nil)
+    def set(type, enabled, pattern=nil, params=[])
       if type == :all
         # When used with a pattern, only add the pattern to the rules
         # where it can have an effect - otherwise we get a warning.
         @warnings.each_key do |key|
           set(key, enabled, pattern) unless pattern && @warnings[key][:enabled] == enabled
         end
+      elsif type == :nodoc
+        @nodoc.set(enabled, params[0], params[1], pattern)
+      elsif @deprecated[type]
+        params = @deprecated[type][:params]
+        @nodoc.set(enabled, params[0], params[1], pattern)
       elsif @warnings.has_key?(type)
         if pattern
           if @warnings[type][:enabled] == enabled
@@ -83,7 +98,11 @@ module JsDuck
 
     # True when the warning is enabled for the given type and filename
     # combination.
-    def enabled?(type, filename)
+    def enabled?(type, filename, params=[])
+      if type == :nodoc
+        return @nodoc.enabled?(params[0], params[1], filename)
+      end
+
       rule = @warnings[type]
       if rule[:patterns].any? {|re| filename =~ re }
         !rule[:enabled]

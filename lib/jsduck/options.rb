@@ -148,7 +148,7 @@ module JsDuck
       Logger.set_warning(:link_auto, false)
       Logger.set_warning(:param_count, false)
       Logger.set_warning(:fires, false)
-      Logger.set_warning(:no_doc_param, false)
+      Logger.set_warning(:nodoc, false)
 
       @optparser = create_option_parser
     end
@@ -697,11 +697,13 @@ module JsDuck
           "",
           *Logger.doc_warnings) do |warnings|
           warnings.each do |op|
-            if op =~ /^([-+]?)(\w+)(?::(.*))?$/
+            # XXX: Can't rely any more on the Array type of OptionParser
+            if op =~ /^([-+]?)(\w+)(?:\(([^)]*)\))?(?::(.*))?$/
               enable = !($1 == "-")
               name = $2.to_sym
-              path = $3
-              Logger.set_warning(name, enable, path)
+              params = ($3 || "").split(/,/).map {|p| p.strip }.map {|p| (p == "") ? nil : p.to_sym }
+              path = $4
+              Logger.set_warning(name, enable, path, params)
             end
           end
         end

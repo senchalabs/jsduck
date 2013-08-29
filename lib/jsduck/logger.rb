@@ -34,9 +34,9 @@ module JsDuck
     # Enables or disables a particular warning
     # or all warnings when type == :all.
     # Additionally a filename pattern can be specified.
-    def set_warning(type, enabled, pattern=nil)
+    def set_warning(type, enabled, pattern=nil, params=[])
       begin
-        @warnings.set(type, enabled, pattern)
+        @warnings.set(type, enabled, pattern, params)
       rescue Exception => e
         warn(nil, e.message)
       end
@@ -68,38 +68,24 @@ module JsDuck
         filename = filename[:filename]
       end
 
-      msg = paint(:yellow, "Warning: ") + format(filename, line) + " " + msg
-
       if warning_enabled?(type, filename)
-        if !@shown_warnings[msg]
-          $stderr.puts msg
-          @shown_warnings[msg] = true
-        end
+        print_warning(msg, filename, line)
       end
 
       return false
     end
 
-    def warning_enabled?(type, filename)
-      if type == nil
-        true
-      elsif !@warnings.has?(type)
-        warn(nil, "Unknown warning type #{type}")
-      else
-        @warnings.enabled?(type, filename)
-      end
-    end
+    # Prints :nodoc warning message.
+    #
+    # Because the :nodoc warning needs different parameters, for now
+    # we're using a separate method specially for these.
+    def warn_nodoc(type, visibility, msg, file)
+      filename = file[:filename]
+      line = file[:linenr]
 
-    # Formats filename and line number for output
-    def format(filename=nil, line=nil)
-      out = ""
-      if filename
-        out = Util::OS.windows? ? filename.gsub('/', '\\') : filename
-        if line
-          out += ":#{line}:"
-        end
+      if @warnings.enabled?(:nodoc, filename, [type, visibility])
+        print_warning(msg, filename, line)
       end
-      paint(:magenta, out)
     end
 
     # Prints fatal error message with backtrace.
@@ -136,6 +122,37 @@ module JsDuck
     }
 
     CLEAR = "\e[0m"
+
+    def warning_enabled?(type, filename)
+      if type == nil
+        true
+      elsif !@warnings.has?(type)
+        warn(nil, "Unknown warning type #{type}")
+      else
+        @warnings.enabled?(type, filename)
+      end
+    end
+
+    def print_warning(msg, filename, line)
+      warning = paint(:yellow, "Warning: ") + format(filename, line) + " " + msg
+
+      if !@shown_warnings[warning]
+        $stderr.puts warning
+        @shown_warnings[warning] = true
+      end
+    end
+
+    # Formats filename and line number for output
+    def format(filename=nil, line=nil)
+      out = ""
+      if filename
+        out = Util::OS.windows? ? filename.gsub('/', '\\') : filename
+        if line
+          out += ":#{line}:"
+        end
+      end
+      paint(:magenta, out)
+    end
 
     # Helper for doing colored output in UNIX terminal
     #
