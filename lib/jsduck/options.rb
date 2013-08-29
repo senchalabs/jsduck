@@ -6,6 +6,7 @@ require 'jsduck/util/io'
 require 'jsduck/util/parallel'
 require 'jsduck/tag_registry'
 require 'jsduck/js/ext_patterns'
+require 'jsduck/log/warnings_parser'
 
 module JsDuck
 
@@ -672,7 +673,7 @@ module JsDuck
           Logger.verbose = true
         end
 
-        opts.on('--warnings=+A,-B,+C', Array,
+        opts.on('--warnings=+A,-B,+C',
           "Turns warnings selectively on/off.",
           "",
           " +all - to turn on all warnings.",
@@ -696,15 +697,12 @@ module JsDuck
           "(Those with '+' in front of them default to on)",
           "",
           *Logger.doc_warnings) do |warnings|
-          warnings.each do |op|
-            # XXX: Can't rely any more on the Array type of OptionParser
-            if op =~ /^([-+]?)(\w+)(?:\(([^)]*)\))?(?::(.*))?$/
-              enable = !($1 == "-")
-              name = $2.to_sym
-              params = ($3 || "").split(/,/).map {|p| p.strip }.map {|p| (p == "") ? nil : p.to_sym }
-              path = $4
-              Logger.set_warning(name, enable, path, params)
+          begin
+            Log::WarningsParser.new(warnings).parse.each do |w|
+              Logger.set_warning(w[:type], w[:enabled], w[:path], w[:params])
             end
+          rescue Exception => e
+            Logger.warn(nil, e.message)
           end
         end
 
