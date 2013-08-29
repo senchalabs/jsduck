@@ -1,6 +1,6 @@
 require 'jsduck/util/singleton'
 require 'jsduck/util/os'
-require 'jsduck/warnings'
+require 'jsduck/log/warnings'
 
 module JsDuck
 
@@ -19,7 +19,7 @@ module JsDuck
       @verbose = false
       @colors = nil
 
-      @warnings = Warnings.new
+      @warnings = Log::Warnings.new
 
       @shown_warnings = {}
     end
