@@ -1,3 +1,5 @@
+require 'jsduck/warning/warn_exception'
+
 module JsDuck
   module Warning
 
@@ -18,7 +20,7 @@ module JsDuck
       def set(enabled, path_pattern=nil, params=[])
         if path_pattern
           if @enabled == enabled
-            raise "Warning rule '#{enabled ? '+' : '-'}#{@type}:#{path_pattern}' has no effect"
+            raise WarnException, "Warning rule '#{enabled ? '+' : '-'}#{@type}:#{path_pattern}' has no effect"
           else
             @patterns << Regexp.new(Regexp.escape(path_pattern))
           end

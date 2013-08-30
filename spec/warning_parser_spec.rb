@@ -1,4 +1,5 @@
 require "jsduck/warning/parser"
+require 'jsduck/warning/warn_exception'
 
 describe JsDuck::Warning::Parser do
   def parse(s)
@@ -91,7 +92,7 @@ describe JsDuck::Warning::Parser do
     it "raises an exception" do
       begin
         parse("?123")
-      rescue Exception => e
+      rescue JsDuck::Warning::WarnException => e
         e.message.should == "Unexpected '?' at --warnings='<HERE>?123'"
       end
     end
@@ -101,7 +102,7 @@ describe JsDuck::Warning::Parser do
     it "raises an exception" do
       begin
         parse("tag?123")
-      rescue Exception => e
+      rescue JsDuck::Warning::WarnException => e
         e.message.should == "Unexpected '?' at --warnings='tag<HERE>?123'"
       end
     end
@@ -111,7 +112,7 @@ describe JsDuck::Warning::Parser do
     it "raises an exception" do
       begin
         parse("nodoc(?)")
-      rescue Exception => e
+      rescue JsDuck::Warning::WarnException => e
         e.message.should == "Unexpected '?' at --warnings='nodoc(<HERE>?)'"
       end
     end
@@ -121,7 +122,7 @@ describe JsDuck::Warning::Parser do
     it "raises an exception" do
       begin
         parse("nodoc(foo?)")
-      rescue Exception => e
+      rescue JsDuck::Warning::WarnException => e
         e.message.should == "Unexpected '?' at --warnings='nodoc(foo<HERE>?)'"
       end
     end

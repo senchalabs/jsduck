@@ -2,6 +2,7 @@ require 'jsduck/warning/basic'
 require 'jsduck/warning/nodoc'
 require 'jsduck/warning/deprecated'
 require 'jsduck/warning/all'
+require 'jsduck/warning/warn_exception'
 
 module JsDuck
   module Warning
@@ -80,7 +81,7 @@ module JsDuck
         if @warnings_map[type]
           @warnings_map[type].set(enabled, path_pattern, params)
         else
-          raise "Warning of type '#{type}' doesn't exist"
+          raise WarnException, "Warning of type '#{type}' doesn't exist"
         end
       end
 

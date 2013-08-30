@@ -1,3 +1,4 @@
+require 'jsduck/warning/warn_exception'
 require 'set'
 
 module JsDuck
@@ -22,7 +23,7 @@ module JsDuck
         visibility = params[1]
 
         unless TYPES.include?(type) && VISIBILITIES.include?(visibility)
-          raise "Invalid warning parameters: nodoc(#{type},#{visibility})"
+          raise WarnException, "Invalid warning parameters: nodoc(#{type},#{visibility})"
         end
 
         @rules << {

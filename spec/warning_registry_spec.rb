@@ -1,4 +1,5 @@
 require "jsduck/warning/registry"
+require 'jsduck/warning/warn_exception'
 
 describe JsDuck::Warning::Registry do
   let(:warnings) do
@@ -128,7 +129,7 @@ describe JsDuck::Warning::Registry do
       before do
         begin
           warnings.set(:no_doc, true)
-        rescue Exception => e
+        rescue JsDuck::Warning::WarnException => e
           # Warning message for a deprecated warning is to be expected.
         end
       end
@@ -145,7 +146,7 @@ describe JsDuck::Warning::Registry do
       before do
         begin
           warnings.set(:no_doc_member, true)
-        rescue Exception => e
+        rescue JsDuck::Warning::WarnException => e
           # Warning message for a deprecated warning is to be expected.
         end
       end
@@ -162,7 +163,7 @@ describe JsDuck::Warning::Registry do
       before do
         begin
           warnings.set(:no_doc_param, true)
-        rescue Exception => e
+        rescue JsDuck::Warning::WarnException => e
           # Warning message for a deprecated warning is to be expected.
         end
       end

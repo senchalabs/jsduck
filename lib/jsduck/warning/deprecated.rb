@@ -1,3 +1,5 @@
+require 'jsduck/warning/warn_exception'
+
 module JsDuck
   module Warning
 
@@ -19,7 +21,7 @@ module JsDuck
       # Enables or disables the mapped :nodoc warning.
       def set(enabled, path_pattern=nil, params=[])
         @nodoc.set(enabled, path_pattern, @params)
-        raise "Warning type #{@type} is deprecated, use nodoc(#{@params.join(',')}) instead"
+        raise WarnException, "Warning type #{@type} is deprecated, use nodoc(#{@params.join(',')}) instead"
       end
 
       # This method shouldn't be called.

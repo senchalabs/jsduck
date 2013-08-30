@@ -701,7 +701,7 @@ module JsDuck
             Warning::Parser.new(warnings).parse.each do |w|
               Logger.set_warning(w[:type], w[:enabled], w[:path], w[:params])
             end
-          rescue Exception => e
+          rescue Warning::WarnException => e
             Logger.warn(nil, e.message)
           end
         end

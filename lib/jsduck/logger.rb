@@ -1,6 +1,7 @@
 require 'jsduck/util/singleton'
 require 'jsduck/util/os'
 require 'jsduck/warning/registry'
+require 'jsduck/warning/warn_exception'
 
 module JsDuck
 
@@ -37,7 +38,7 @@ module JsDuck
     def set_warning(type, enabled, pattern=nil, params=[])
       begin
         @warnings.set(type, enabled, pattern, params)
-      rescue Exception => e
+      rescue Warning::WarnException => e
         warn(nil, e.message)
       end
     end

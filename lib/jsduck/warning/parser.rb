@@ -1,4 +1,5 @@
 require 'strscan'
+require 'jsduck/warning/warn_exception'
 
 module JsDuck
   module Warning
@@ -137,7 +138,8 @@ module JsDuck
       def unexpected_char
         # do successful empty scan, so we can use #pre_match and #post_match
         @scanner.scan(//)
-        raise "Unexpected '#{@scanner.peek(1)}' at --warnings='#{@scanner.pre_match}<HERE>#{@scanner.post_match}'"
+        raise WarnException, "Unexpected '#{@scanner.peek(1)}' at " +
+          "--warnings='#{@scanner.pre_match}<HERE>#{@scanner.post_match}'"
       end
 
       # scans a pattern, ignoring the optional whitespace before it
