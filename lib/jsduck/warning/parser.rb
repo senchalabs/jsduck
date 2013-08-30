@@ -1,7 +1,7 @@
 require 'strscan'
 
 module JsDuck
-  module Log
+  module Warning
 
     # Parses the warnings passed in from command line
     #
@@ -23,7 +23,7 @@ module JsDuck
     #
     # <path>         := .*
     #
-    class WarningsParser
+    class Parser
       def initialize(string)
         @scanner = StringScanner.new(string)
       end

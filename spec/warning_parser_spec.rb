@@ -1,8 +1,8 @@
-require "jsduck/log/warnings_parser"
+require "jsduck/warning/parser"
 
-describe JsDuck::Log::WarningsParser do
+describe JsDuck::Warning::Parser do
   def parse(s)
-    JsDuck::Log::WarningsParser.new(s).parse
+    JsDuck::Warning::Parser.new(s).parse
   end
 
   describe "parsing empty string" do

@@ -1,8 +1,8 @@
-require "jsduck/log/warnings"
+require "jsduck/warning/registry"
 
-describe JsDuck::Log::Warnings do
+describe JsDuck::Warning::Registry do
   let(:warnings) do
-    JsDuck::Log::Warnings.new
+    JsDuck::Warning::Registry.new
   end
 
   let(:usual_warnings) do

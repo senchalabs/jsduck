@@ -1,10 +1,10 @@
-require 'jsduck/log/no_doc_warning'
+require 'jsduck/warning/nodoc'
 
 module JsDuck
-  module Log
+  module Warning
 
     # Warnings management
-    class Warnings
+    class Registry
 
       def initialize
         @docs = [
@@ -51,7 +51,7 @@ module JsDuck
           :no_doc_param => {:msg => "Alias for +nodoc(param,public)", :params => [:param, :public]},
         }
 
-        @nodoc = Log::NoDocWarning.new
+        @nodoc = Warning::Nodoc.new
 
         # Turn off all warnings by default.
         # This is good for testing.

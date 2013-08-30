@@ -6,7 +6,7 @@ require 'jsduck/util/io'
 require 'jsduck/util/parallel'
 require 'jsduck/tag_registry'
 require 'jsduck/js/ext_patterns'
-require 'jsduck/log/warnings_parser'
+require 'jsduck/warning/parser'
 
 module JsDuck
 
@@ -698,7 +698,7 @@ module JsDuck
           "",
           *Logger.doc_warnings) do |warnings|
           begin
-            Log::WarningsParser.new(warnings).parse.each do |w|
+            Warning::Parser.new(warnings).parse.each do |w|
               Logger.set_warning(w[:type], w[:enabled], w[:path], w[:params])
             end
           rescue Exception => e

@@ -1,10 +1,10 @@
 require 'set'
 
 module JsDuck
-  module Log
+  module Warning
 
     # Missing documentation warnings management
-    class NoDocWarning
+    class Nodoc
 
       TYPES = Set[nil, :class, :member, :param]
       VISIBILITIES = Set[nil, :public, :protected, :private]
