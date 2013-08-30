@@ -126,7 +126,11 @@ describe JsDuck::Warning::Registry do
   describe "for backwards compatibility" do
     describe ":no_doc warning" do
       before do
-        warnings.set(:no_doc, true)
+        begin
+          warnings.set(:no_doc, true)
+        rescue Exception => e
+          # Warning message for a deprecated warning is to be expected.
+        end
       end
 
       it "enables :nodoc warnings for public classes" do
@@ -139,7 +143,11 @@ describe JsDuck::Warning::Registry do
 
     describe ":no_doc_member warning" do
       before do
-        warnings.set(:no_doc_member, true)
+        begin
+          warnings.set(:no_doc_member, true)
+        rescue Exception => e
+          # Warning message for a deprecated warning is to be expected.
+        end
       end
 
       it "enables :nodoc warnings for public members" do
@@ -152,7 +160,11 @@ describe JsDuck::Warning::Registry do
 
     describe ":no_doc_param warning" do
       before do
-        warnings.set(:no_doc_param, true)
+        begin
+          warnings.set(:no_doc_param, true)
+        rescue Exception => e
+          # Warning message for a deprecated warning is to be expected.
+        end
       end
 
       it "enables :nodoc warnings public params" do

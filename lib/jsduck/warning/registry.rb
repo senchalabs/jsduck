@@ -1,4 +1,7 @@
+require 'jsduck/warning/basic'
 require 'jsduck/warning/nodoc'
+require 'jsduck/warning/deprecated'
+require 'jsduck/warning/all'
 
 module JsDuck
   module Warning
@@ -7,7 +10,11 @@ module JsDuck
     class Registry
 
       def initialize
-        @docs = [
+        @warnings = []
+        @warnings_map = {}
+
+        # Basic warnings
+        [
           [:global, "Member doesn't belong to any class"],
           [:inheritdoc, "@inheritdoc referring to unknown class or member"],
           [:extend, "@extend/mixin/requires/uses referring to unknown class"],
@@ -41,52 +48,37 @@ module JsDuck
 
           [:aside, "Problem with @aside tag"],
           [:hide, "Problem with @hide tag"],
-
-          [:nodoc, "Missing documentation"],
-        ]
-
-        @deprecated = {
-          :no_doc => {:msg => "Alias for +nodoc(class,public)", :params => [:class, :public]},
-          :no_doc_member => {:msg => "Alias for +nodoc(member,public)", :params => [:member, :public]},
-          :no_doc_param => {:msg => "Alias for +nodoc(param,public)", :params => [:param, :public]},
-        }
-
-        @nodoc = Warning::Nodoc.new
-
-        # Turn off all warnings by default.
-        # This is good for testing.
-        # When running JSDuck app, the Options class enables most warnings.
-        @warnings = {}
-        @docs.each do |w|
-          @warnings[w[0]] = {:enabled => false, :patterns => []}
+        ].each do |w|
+          register(w[0], Warning::Basic.new(w[0], w[1]))
         end
+
+        # :nodoc warning
+        register(:nodoc, Warning::Nodoc.new)
+
+        # :all warning (encompasses all other warning types)
+        register(:all, Warning::All.new(@warnings.clone))
+
+        # :deprecated warnings (linking to :nodoc warning)
+        [
+          {:type => :no_doc, :msg => "Alias for nodoc(class,public)", :params => [:class, :public]},
+          {:type => :no_doc_member, :msg => "Alias for nodoc(member,public)", :params => [:member, :public]},
+          {:type => :no_doc_param, :msg => "Alias for nodoc(param,public)", :params => [:param, :public]},
+        ].each do |w|
+          register(w[:type], Warning::Deprecated.new(w[:type], w[:msg], @warnings_map[:nodoc], w[:params]))
+        end
+
       end
 
-      # Enables or disables a particular warning
-      # or all warnings when type == :all.
-      # Additionally a filename pattern can be specified.
-      def set(type, enabled, pattern=nil, params=[])
-        if type == :all
-          # When used with a pattern, only add the pattern to the rules
-          # where it can have an effect - otherwise we get a warning.
-          @warnings.each_key do |key|
-            set(key, enabled, pattern) unless pattern && @warnings[key][:enabled] == enabled
-          end
-        elsif type == :nodoc
-          @nodoc.set(enabled, params[0], params[1], pattern)
-        elsif @deprecated[type]
-          params = @deprecated[type][:params]
-          @nodoc.set(enabled, params[0], params[1], pattern)
-        elsif @warnings.has_key?(type)
-          if pattern
-            if @warnings[type][:enabled] == enabled
-              raise "Warning rule '#{enabled ? '+' : '-'}#{type}:#{pattern}' has no effect"
-            else
-              @warnings[type][:patterns] << Regexp.new(Regexp.escape(pattern))
-            end
-          else
-            @warnings[type] = {:enabled => enabled, :patterns => []}
-          end
+      def register(type, warning)
+        @warnings << warning
+        @warnings_map[type] = warning
+      end
+
+      # Enables or disables a particular warning type.
+      # Additionally a filename pattern and params for the warning can be specified.
+      def set(type, enabled, path_pattern=nil, params=[])
+        if @warnings_map[type]
+          @warnings_map[type].set(enabled, path_pattern, params)
         else
           raise "Warning of type '#{type}' doesn't exist"
         end
@@ -94,26 +86,17 @@ module JsDuck
 
       # get documentation for all warnings
       def doc
-        @docs.map {|w| " #{@warnings[w[0]][:enabled] ? '+' : '-'}#{w[0]} - #{w[1]}" }
+        @warnings.map {|w| w.doc }.compact.flatten
       end
 
-      # True when the warning is enabled for the given type and filename
-      # combination.
+      # True when the warning is enabled for the given type and
+      # filename combination.
       def enabled?(type, filename, params=[])
-        if type == :nodoc
-          return @nodoc.enabled?(params[0], params[1], filename)
-        end
-
-        rule = @warnings[type]
-        if rule[:patterns].any? {|re| filename =~ re }
-          !rule[:enabled]
-        else
-          rule[:enabled]
-        end
+        @warnings_map[type].enabled?(filename, params)
       end
 
       def has?(type)
-        @warnings.has_key?(type)
+        @warnings_map.has_key?(type)
       end
 
     end
