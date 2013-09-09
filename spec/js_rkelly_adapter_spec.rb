@@ -93,9 +93,35 @@ describe JsDuck::Js::RKellyAdapter do
     end
   end
 
+  def adapt_property(string)
+    adapt(string)["expression"]["properties"][0]
+  end
+
   describe "string properties" do
     it "don't use Ruby's eval()" do
-      adapt('({"foo#$%": 5})')["expression"]["properties"][0]["key"]["value"].should == 'foo#$%'
+      adapt_property('({"foo#$%": 5})')["key"]["value"].should == 'foo#$%'
+    end
+  end
+
+  describe "getter property" do
+    let(:property) { adapt_property('({get foo() { return this.x; } })') }
+
+    it "gets parsed into get-kind" do
+      property["kind"].should == 'get'
+    end
+    it "gets a function as its value" do
+      property["value"]["type"].should == 'FunctionExpression'
+    end
+  end
+
+  describe "setter property" do
+    let(:property) { adapt_property('({set foo(x) { this.x = x; } })') }
+
+    it "gets parsed into set-kind" do
+      property["kind"].should == 'set'
+    end
+    it "gets a function as its value" do
+      property["value"]["type"].should == 'FunctionExpression'
     end
   end
 

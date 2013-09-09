@@ -216,32 +216,24 @@ module JsDuck
         when RKelly::Nodes::PropertyNode == node.class
           make(node, {
             "type" => "Property",
-            "key" =>
-              if node.name.is_a?(Numeric)
-                {
-                  "type" => "Literal",
-                  "value" => node.name,
-                  "raw" => node.name.to_s,
-                  "range" => offset_range(node, :name),
-                }
-              elsif node.name =~ /['"]/
-                {
-                  "type" => "Literal",
-                  "value" => string_value(node.name),
-                  "raw" => node.name,
-                  "range" => offset_range(node, :name),
-                }
-              else
-                {
-                  "type" => "Identifier",
-                  "name" => node.name,
-                  "range" => offset_range(node, :name),
-                }
-              end,
+            "key" => property_key(node),
             "value" => adapt_node(node.value),
             "kind" => "init",
           })
-
+        when RKelly::Nodes::GetterPropertyNode == node.class
+          make(node, {
+            "type" => "Property",
+            "key" => property_key(node),
+            "value" => adapt_node(node.value),
+            "kind" => "get",
+          })
+        when RKelly::Nodes::SetterPropertyNode == node.class
+          make(node, {
+            "type" => "Property",
+            "key" => property_key(node),
+            "value" => adapt_node(node.value),
+            "kind" => "set",
+          })
         # Statements
         when RKelly::Nodes::ExpressionStatementNode == node.class
           make(node, {
@@ -456,6 +448,30 @@ module JsDuck
             node.catch_block.range.from.line,
           ]
         }
+      end
+
+      def property_key(node)
+        if node.name.is_a?(Numeric)
+          {
+            "type" => "Literal",
+            "value" => node.name,
+            "raw" => node.name.to_s,
+            "range" => offset_range(node, :name),
+          }
+        elsif node.name =~ /['"]/
+          {
+            "type" => "Literal",
+            "value" => string_value(node.name),
+            "raw" => node.name,
+            "range" => offset_range(node, :name),
+          }
+        else
+          {
+            "type" => "Identifier",
+            "name" => node.name,
+            "range" => offset_range(node, :name),
+          }
+        end
       end
 
       # Evaluates the actual value of a JavaScript string.
