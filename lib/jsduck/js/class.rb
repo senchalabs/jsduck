@@ -122,7 +122,7 @@ module JsDuck
             when "inheritableStatics"
               cls[:members] += make_statics(value, {:inheritable => true})
             else
-              detect_method_or_property(cls, key, value, pair)
+              detect_method_or_property(cls, key, value, pair) if pair.raw["kind"] == "init"
             end
           end
         end
@@ -132,7 +132,7 @@ module JsDuck
       def detect_class_members_from_object(cls, ast)
         cls[:members] = []
         ast.each_property do |key, value, pair|
-          detect_method_or_property(cls, key, value, pair)
+          detect_method_or_property(cls, key, value, pair) if pair.raw["kind"] == "init"
         end
       end
 

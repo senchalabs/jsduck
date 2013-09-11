@@ -170,6 +170,52 @@ describe JsDuck::Aggregator do
     it_should_behave_like "example property"
   end
 
+  shared_examples_for "accessor property" do
+    it "creates property" do
+      @doc[:tagname].should == :property
+    end
+
+    it "detects name" do
+      @doc[:name].should == "foo"
+    end
+
+    it "detects type as default" do
+      @doc[:type].should == "Object"
+    end
+  end
+
+  describe "doc-comment before a setter function" do
+    before do
+      @doc = parse_member(<<-EOS)
+        ({
+            /**
+             * Some documentation.
+             */
+            set foo(x) {
+                this.x = x;
+            }
+        });
+      EOS
+    end
+    it_should_behave_like "accessor property"
+  end
+
+  describe "doc-comment before a getter function" do
+    before do
+      @doc = parse_member(<<-EOS)
+        ({
+            /**
+             * Some documentation.
+             */
+            get foo() {
+                return this.x;
+            }
+        });
+      EOS
+    end
+    it_should_behave_like "accessor property"
+  end
+
   shared_examples_for "auto type" do
     it "should imply correct type" do
       @doc[:type].should == @type
@@ -332,6 +378,26 @@ describe JsDuck::Aggregator do
 
     it "detects property documentation" do
       property[:doc].should == 'My docs'
+    end
+  end
+
+  describe "getter and setter properties inside object literal" do
+    let(:members) do
+      parse(<<-EOS)["MyClass"][:members]
+        /** Some documentation. */
+        MyClass = {
+            get foo() {
+                return this.x;
+            },
+            set foo(x) {
+                this.x = x;
+            }
+        };
+      EOS
+    end
+
+    it "are all ignored" do
+      members.length.should == 0
     end
   end
 
