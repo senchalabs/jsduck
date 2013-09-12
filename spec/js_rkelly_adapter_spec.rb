@@ -1,3 +1,4 @@
+# encoding: ASCII-8BIT
 require "rkelly"
 require "jsduck/js/rkelly_adapter"
 
