@@ -66,4 +66,34 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "Object.defineProperty with getter" do
+    let(:doc) do
+      parse_member(<<-EOS)
+        /**  */
+        Object.defineProperty(this, 'myCfg', {
+            get: function() { return 1; }
+        });
+      EOS
+    end
+
+    it "gets no readonly attribute" do
+      doc[:readonly].should_not == true
+    end
+  end
+
+  describe "Object.defineProperty with setter" do
+    let(:doc) do
+      parse_member(<<-EOS)
+        /**  */
+        Object.defineProperty(this, 'myCfg', {
+            set: function(x) { this.x = x; }
+        });
+      EOS
+    end
+
+    it "gets no readonly attribute" do
+      doc[:readonly].should_not == true
+    end
+  end
+
 end
