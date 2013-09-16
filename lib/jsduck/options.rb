@@ -206,13 +206,14 @@ module JsDuck
           @output_dir = path == "-" ? :stdout : canonical(path)
         end
 
-        opts.on('--export=TYPE',
+        opts.on('--export=full/examples',
           "Exports docs in JSON.",
           "",
-          "TYPE is one of:",
+          "For each JavaScript class a JSON file gets written,",
+          "the contents of which are as follows:",
           "",
-          "- full     - full class docs.",
-          "- examples - extracts inline examples from classes.") do |format|
+          "- full     - docs and metadata for class and its members.",
+          "- examples - inline examples from classes and guides.") do |format|
           export_type = format.to_sym
           if [:full, :examples].include?(export_type)
             @export = export_type
