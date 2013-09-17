@@ -21,9 +21,9 @@ module JsDuck
           source = Util::IO.read(fname)
           docs = nil
 
-          unless docs = cache.read(source)
+          unless docs = cache.read(fname, source)
             docs = Parser.new.parse(source, fname, opts)
-            cache.write(source, docs)
+            cache.write(fname, source, docs)
           end
 
           {
