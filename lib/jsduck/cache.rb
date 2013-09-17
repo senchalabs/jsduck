@@ -6,6 +6,34 @@ require 'set'
 module JsDuck
 
   # Reads/writes parsed files in cache.
+  #
+  # When writing to cache:
+  #
+  # - makes MD5 hash of <file name> + <file contents>
+  # - Dumps the the parsed data structure using Marshal into <md5>.dat
+  #
+  # When reading from cache:
+  #
+  # - makes MD5 hash of <file name> + <file contents>
+  # - Reads the parsed data structure using Marshal from <md5>.dat
+  #
+  # Additionally a manifest.txt file is saved into the cache
+  # directory, the contents of which is a string like the following:
+  #
+  #     Ruby: 1.9.3, JSDuck: 5.2.0
+  #
+  # This file is consulted before all other cache operations.  When
+  # the version numbers in there don't match with current Ruby and
+  # JSDuck versions, the whole cache gets invalidated - all cached
+  # files get deleted.  This is to avoid problems with the Marshal
+  # file format changes between Ruby versions and parsed data
+  # structure changes between JSDuck versions.
+  #
+  # After all files have been checked into cache, the files that
+  # weren't touched get deleted (using the #cleanup method).  This
+  # ensures that the number of files in cache only grows when more
+  # files are added to the documentation.
+  #
   class Cache
 
     # Factory method to produce a cache object.  When caching is
