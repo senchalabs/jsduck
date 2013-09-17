@@ -14,21 +14,31 @@ module JsDuck
     def self.parse(opts)
       cache = Cache.create(opts)
 
-      Util::Parallel.map(opts.input_files) do |fname|
+      results = Util::Parallel.map(opts.input_files) do |fname|
         Logger.log("Parsing", fname)
+
         begin
           source = Util::IO.read(fname)
           docs = nil
+
           unless docs = cache.read(source)
             docs = Parser.new.parse(source, fname, opts)
             cache.write(source, docs)
           end
-          Source::File.new(source, docs, fname)
+
+          {
+            :file => Source::File.new(source, docs, fname),
+            :cache => cache.previous_entry,
+          }
         rescue
           Logger.fatal_backtrace("Error while parsing #{fname}", $!)
           exit(1)
         end
       end
+
+      cache.cleanup( results.map {|r| r[:cache] }.compact )
+
+      return results.map {|r| r[:file] }
     end
 
   end
