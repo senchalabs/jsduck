@@ -29,7 +29,8 @@ module JsDuck
     end
 
     def write_dir(dir, extension)
-      FileUtils.mkdir(dir)
+      FileUtils.mkdir(dir) unless File.exists?(dir)
+
       Util::Parallel.each(@relations.classes) do |cls|
         filename = dir + "/" + cls[:name] + extension
         Logger.log("Writing docs", filename)

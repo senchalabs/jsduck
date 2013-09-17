@@ -2,6 +2,7 @@ require 'jsduck/exporter/app'
 require 'jsduck/format/batch'
 require 'jsduck/class_writer'
 require 'jsduck/inline_examples'
+require 'jsduck/output_dir'
 require 'jsduck/web/template'
 require 'jsduck/web/index_html'
 require 'jsduck/web/data'
@@ -23,6 +24,8 @@ module JsDuck
       end
 
       def write
+        clean_output_dir
+
         write_template_files
 
         write_member_icons
@@ -42,9 +45,12 @@ module JsDuck
         @assets.write
       end
 
-      # Clean output dir and copy over template files
+      def clean_output_dir
+        OutputDir.clean(@opts)
+      end
+
+      # Copy over template files
       def write_template_files
-        FileUtils.rm_rf(@opts.output_dir)
         Web::Template.new(@opts).write
       end
 
