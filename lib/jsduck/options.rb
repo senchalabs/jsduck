@@ -674,6 +674,63 @@ module JsDuck
         end
 
         opts.separator ""
+        opts.separator "Performance:"
+        opts.separator ""
+
+        opts.on('-p', '--processes=COUNT',
+          "The number of parallel processes to use.",
+          "",
+          "Defaults to the number of processors/cores.",
+          "",
+          "Set to 0 to disable parallel processing completely.",
+          "This is often useful in debugging to get deterministic",
+          "results.",
+          "",
+          "In Windows this option is disabled.") do |count|
+          Util::Parallel.in_processes = count.to_i
+        end
+
+        opts.on('--[no-]cache',
+          "Turns parser cache on/off (EXPERIMENTAL).",
+          "",
+          "Defaults to off.",
+          "",
+          "When enabled, the results of parsing source files is saved",
+          "inside the JSDuck output directory. Next time JSDuck runs,",
+          "only the files that have changed are parsed again, others",
+          "are read from the cache.",
+          "",
+          "Note that switching between Ruby and/or JSDuck versions",
+          "invalidates the whole cache.  But changes in custom tags",
+          "don't invalidate the cache, so avoid caching when developing",
+          "your custom tags.",
+          "",
+          "To change the cache directory location, use --cache-dir.") do |enabled|
+          @cache = enabled
+        end
+
+        opts.on('--cache-dir=PATH',
+          "Directory where to cache the parsed source.",
+          "",
+          "Defaults to: <output-dir>/.cache",
+          "",
+          "Each project needs to have a separate cache directory.",
+          "Instead of writing the cache into the output directory,",
+          "one might consider keeping it together with the source",
+          "files.",
+          "",
+          "Note that JSDuck ensures that the <output-dir>/.cache",
+          "dir is preserved when the rest of the <output-dir> gets",
+          "wiped clean during the docs generation.  If you specify",
+          "cache dir like <output-dir>/.mycache, then this will also",
+          "be cleaned up during docs generation, and the caching",
+          "won't work.",
+          "",
+          "This option only has an effect when --cache is also used.",) do |path|
+          @cache_dir = path
+        end
+
+        opts.separator ""
         opts.separator "Debugging:"
         opts.separator ""
 
@@ -735,59 +792,6 @@ module JsDuck
           "automatically when output is not an interactive terminal",
           "(or when running on Windows system).") do |on|
           Logger.colors = on
-        end
-
-        opts.on('-p', '--processes=COUNT',
-          "The number of parallel processes to use.",
-          "",
-          "Defaults to the number of processors/cores.",
-          "",
-          "Set to 0 to disable parallel processing completely.",
-          "This is often useful in debugging to get deterministic",
-          "results.",
-          "",
-          "In Windows this option is disabled.") do |count|
-          Util::Parallel.in_processes = count.to_i
-        end
-
-        opts.on('--[no-]cache',
-          "Turns parser cache on/off (EXPERIMENTAL).",
-          "",
-          "Defaults to off.",
-          "",
-          "When enabled, the results of parsing source files is saved",
-          "inside the JSDuck output directory. Next time JSDuck runs,",
-          "only the files that have changed are parsed again, others",
-          "are read from the cache.",
-          "",
-          "Note that switching between Ruby and/or JSDuck versions",
-          "invalidates the whole cache.  But changes in custom tags",
-          "don't invalidate the cache, so avoid caching when developing",
-          "your custom tags.",
-          "",
-          "To change the cache directory location, use --cache-dir.") do |enabled|
-          @cache = enabled
-        end
-
-        opts.on('--cache-dir=PATH',
-          "Directory where to cache the parsed source.",
-          "",
-          "Defaults to: <output-dir>/.cache",
-          "",
-          "Each project needs to have a separate cache directory.",
-          "Instead of writing the cache into the output directory,",
-          "one might consider keeping it together with the source",
-          "files.",
-          "",
-          "Note that JSDuck ensures that the <output-dir>/.cache",
-          "dir is preserved when the rest of the <output-dir> gets",
-          "wiped clean during the docs generation.  If you specify",
-          "cache dir like <output-dir>/.mycache, then this will also",
-          "be cleaned up during docs generation, and the caching",
-          "won't work.",
-          "",
-          "This option only has an effect when --cache is also used.",) do |path|
-          @cache_dir = path
         end
 
         opts.on('--pretty-json',
