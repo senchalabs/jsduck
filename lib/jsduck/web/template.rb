@@ -20,7 +20,6 @@ module JsDuck
       end
 
       def write
-        FileUtils.mkdir(@opts.output_dir)
         if @opts.template_links
           Logger.log("Linking template files to", @opts.output_dir)
           move_files(:symlink)

@@ -12,7 +12,7 @@ module JsDuck
   class BatchParser
 
     def self.parse(opts)
-      cache = Cache.new(Dir.getwd + "/.cache")
+      cache = Cache.create(opts)
 
       Util::Parallel.map(opts.input_files) do |fname|
         Logger.log("Parsing", fname)

@@ -48,6 +48,8 @@ module JsDuck
 
     # Debugging
     attr_accessor :warnings_exit_nonzero
+    attr_accessor :cache
+    attr_accessor :cache_dir
     attr_accessor :template_dir
     attr_accessor :template_links
     attr_accessor :extjs_path
@@ -132,6 +134,8 @@ module JsDuck
 
       # Debugging
       @warnings_exit_nonzero = false
+      @cache = false
+      @cache_dir = nil
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
       @template_dir = @root_dir + "/template-min"
       @template_links = false
@@ -203,7 +207,12 @@ module JsDuck
           "This option is REQUIRED.  When the directory exists,",
           "it will be overwritten.  Give dash '-' as argument",
           "to write docs to STDOUT (works only with --export).") do |path|
-          @output_dir = path == "-" ? :stdout : canonical(path)
+          if path == "-"
+            @output_dir = :stdout
+          else
+            @output_dir = canonical(path)
+            @cache_dir = @output_dir + "/.cache" unless @cache_dir
+          end
         end
 
         opts.on('--export=TYPE',
@@ -737,6 +746,20 @@ module JsDuck
           "",
           "In Windows this option is disabled.") do |count|
           Util::Parallel.in_processes = count.to_i
+        end
+
+        opts.on('--[no-]cache',
+          "Turn parser cache on/off (EXPERIMENTAL).",
+          "",
+          "Off by default.") do |enabled|
+          @cache = enabled
+        end
+
+        opts.on('--cache-dir=PATH',
+          "Directory where to cache the parsed source.",
+          "",
+          "Defaults to: <output-dir>/.cache") do |path|
+          @cache_dir = path
         end
 
         opts.on('--pretty-json',

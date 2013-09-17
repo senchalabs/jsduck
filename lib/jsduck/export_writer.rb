@@ -4,6 +4,7 @@ require 'jsduck/exporter/examples'
 require 'jsduck/format/batch'
 require 'jsduck/class_writer'
 require 'jsduck/guide_writer'
+require 'jsduck/output_dir'
 require 'fileutils'
 
 module JsDuck
@@ -50,7 +51,7 @@ module JsDuck
     # -- util routines --
 
     def clean_output_dir
-      FileUtils.rm_rf(@opts.output_dir)
+      OutputDir.clean(@opts)
     end
 
     def format_classes
