@@ -14,7 +14,7 @@ module JsDuck
     def self.create(opts)
       # Check also for cache_dir, which will be nil when output_dir is :stdout
       if opts.cache && opts.cache_dir
-        Cache.new(opts.cache_dir)
+        Cache.new(opts)
       else
         Util::NullObject.new(
           :read => nil,
@@ -30,10 +30,17 @@ module JsDuck
     # But it will always be available after the #write call.
     attr_reader :previous_entry
 
-    def initialize(cache_dir)
-      @cache_dir = cache_dir
+    def initialize(opts)
+      @jsduck_version = opts.version
+      @cache_dir = opts.cache_dir
+      @manifest_file = @cache_dir + "/manifest.txt"
       @previous_entry = nil
-      FileUtils.mkdir_p(cache_dir) unless File.exists?(cache_dir)
+
+      FileUtils.mkdir_p(@cache_dir) unless File.exists?(@cache_dir)
+
+      # Invalidate the whole cache when it was generated with a
+      # different Ruby and/or JSDuck version.
+      invalidate_all! unless valid_manifest?
     end
 
     # Given the name and contents of a source file, reads the already
@@ -76,6 +83,25 @@ module JsDuck
 
     def md5(string)
       Digest::MD5.hexdigest(string)
+    end
+
+    def valid_manifest?
+      manifest = File.exists?(@manifest_file) ? Util::IO.read(@manifest_file) : ""
+      return manifest == current_manifest
+    end
+
+    def invalidate_all!
+      FileUtils.rm_rf(@cache_dir)
+      FileUtils.mkdir(@cache_dir)
+      save_manifest
+    end
+
+    def save_manifest
+      File.open(@manifest_file, "w") {|f| f.write(current_manifest) }
+    end
+
+    def current_manifest
+      "Ruby: #{RUBY_VERSION}, JSDuck: #{@jsduck_version}\n"
     end
 
   end

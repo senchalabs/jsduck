@@ -18,6 +18,7 @@ module JsDuck
     attr_accessor :ignore_global
     attr_accessor :external_classes
     attr_accessor :ext4_events
+    attr_accessor :version
 
     # Customizing output
     attr_accessor :title
