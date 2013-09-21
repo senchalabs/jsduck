@@ -2,14 +2,15 @@ require "jsduck/tag/tag"
 
 module JsDuck::Tag
   # Base class for both @deprecated and @removed.  Child classes only
-  # need to define the @tagname attribute and call #super - all the
-  # correct behavior will the fall out automatically.
+  # need to define the @tagname and @msg attributes and call #super -
+  # all the correct behavior will the fall out automatically.
   class DeprecatedTag < Tag
     def initialize
       if @tagname
         @pattern = @tagname.to_s
         @signature = {:long => @tagname.to_s, :short => @tagname.to_s[0..2].upcase}
         @html_position = POS_DEPRECATED
+        @since = "since" unless @since
         @css += <<-EOCSS
           .deprecated-tag-box {
             text-align: center;
@@ -45,10 +46,11 @@ module JsDuck::Tag
 
     def to_html(context)
       depr = context[@tagname]
-      v = depr[:version] ? "since " + depr[:version] : ""
+      msg = @msg.sub(/\{TAGNAME\}/, context[:tagname].to_s)
+      v = depr[:version] ? "#{@since} " + depr[:version] : ""
       <<-EOHTML
         <div class='rounded-box #{@tagname}-box deprecated-tag-box'>
-        <p>This #{context[:tagname]} has been <strong>#{@tagname}</strong> #{v}</p>
+        <p>#{msg} #{v}</p>
         #{depr[:text]}
         </div>
       EOHTML
