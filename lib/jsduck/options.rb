@@ -726,7 +726,7 @@ module JsDuck
           "be cleaned up during docs generation, and the caching",
           "won't work.",
           "",
-          "This option only has an effect when --cache is also used.",) do |path|
+          "This option only has an effect when --cache is also used.") do |path|
           @cache_dir = path
         end
 
