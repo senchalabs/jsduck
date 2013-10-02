@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'parallel'
 
 module JsDuck
