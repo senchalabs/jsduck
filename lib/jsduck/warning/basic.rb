@@ -11,34 +11,37 @@ module JsDuck
       def initialize(type, msg)
         @type = type
         @msg = msg
-        @enabled = false
-        @patterns = []
+
+        @rules = []
+        # disable by default
+        set(false)
       end
 
       # Enables or disables the warning.
       # Optionally enables/disables it for files matching a path_pattern.
+      # params array is not used for the basic warning type.
       def set(enabled, path_pattern=nil, params=[])
         if path_pattern
-          # When warning is already enabled, enabling a path will have no effect.
-          # Similarly when it's disabled, disabling a path has also no effect.
-          # Therefore we'll just ignore a setting like that.
-          if @enabled != enabled
-            @patterns << Regexp.new(Regexp.escape(path_pattern))
-          end
+          @rules << {
+            :enabled => enabled,
+            :path_re => Regexp.new(Regexp.escape(path_pattern))
+          }
         else
-          @enabled = enabled
-          @patterns = []
+          # When no path specified, the warning is turned on/off
+          # globally, so we can discard all the existing rules and
+          # start over with just one.
+          @rules = [{
+            :enabled => enabled,
+            :path_re => nil
+          }]
         end
       end
 
       # True when warning is enabled for the given filename.
       # (The params parameter is ignored).
       def enabled?(filename="", params=[])
-        if @patterns.any? {|re| filename =~ re }
-          !@enabled
-        else
-          @enabled
-        end
+        # Filter out rules that apply to our current item
+        @rules.find_all {|r| r[:path_re].nil? || r[:path_re] =~ filename }.last[:enabled]
       end
 
       # Documentation for the warning.

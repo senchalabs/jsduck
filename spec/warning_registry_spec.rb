@@ -80,6 +80,20 @@ describe JsDuck::Warning::Registry do
         warnings.enabled?(:tag, "/other/path/file.js").should == true
       end
     end
+
+    describe "and disabling it in /some/path/sub/path" do
+      before do
+        warnings.set(:tag, false, "/some/path/sub/path")
+      end
+
+      it "has the :tag warning enabled for /some/path/file.js" do
+        warnings.enabled?(:tag, "/some/path/file.js").should == true
+      end
+
+      it "has the :tag warning disabled for /some/path/sub/path/file.js" do
+        warnings.enabled?(:tag, "/some/path/sub/path/file.js").should == false
+      end
+    end
   end
 
   describe "after enabling :nodoc warning" do
