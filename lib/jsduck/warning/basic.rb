@@ -22,10 +22,12 @@ module JsDuck
       # params array is not used for the basic warning type.
       def set(enabled, path_pattern=nil, params=[])
         if path_pattern
-          @rules << {
+          # Prepend to the front of array, so we can use #find to
+          # search for the latest rule.
+          @rules.unshift({
             :enabled => enabled,
             :path_re => Regexp.new(Regexp.escape(path_pattern))
-          }
+          })
         else
           # When no path specified, the warning is turned on/off
           # globally, so we can discard all the existing rules and
@@ -40,8 +42,8 @@ module JsDuck
       # True when warning is enabled for the given filename.
       # (The params parameter is ignored).
       def enabled?(filename="", params=[])
-        # Filter out rules that apply to our current item
-        @rules.find_all {|r| r[:path_re].nil? || r[:path_re] =~ filename }.last[:enabled]
+        # Find the most recently added rule that has an effect to our current item
+        @rules.find {|r| r[:path_re].nil? || r[:path_re] =~ filename }[:enabled]
       end
 
       # Documentation for the warning.

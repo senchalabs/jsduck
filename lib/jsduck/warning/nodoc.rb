@@ -26,12 +26,12 @@ module JsDuck
           raise WarnException, "Invalid warning parameters: nodoc(#{type},#{visibility})"
         end
 
-        @rules << {
+        @rules.unshift({
           :enabled => enabled,
           :type => type,
           :visibility => visibility,
           :path_re => path_pattern ? Regexp.new(Regexp.escape(path_pattern)) : nil
-        }
+        })
       end
 
       # True when the warning is enabled for the given filename and
@@ -41,14 +41,14 @@ module JsDuck
         type = params[0]
         visibility = params[1]
 
-        # Filter out rules that apply to our current item
-        matches = @rules.find_all do |r|
+        # Filter out the most recently added rule that applies to our current item
+        match = @rules.find do |r|
           (r[:type].nil? || r[:type] == type) &&
             (r[:visibility].nil? || r[:visibility] == visibility) &&
             (r[:path_re].nil? || r[:path_re] =~ filename)
         end
 
-        return matches.last[:enabled]
+        return match[:enabled]
       end
 
       # Extensive documentation for :nodoc warning
