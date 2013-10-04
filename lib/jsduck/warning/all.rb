@@ -16,7 +16,7 @@ module JsDuck
         # When used with a path_pattern, only add the pattern to the rules
         # where it can have an effect - otherwise we get a warning.
         @warnings.each do |w|
-          w.set(enabled, path_pattern, params) unless path_pattern && w.enabled? == enabled
+          w.set(enabled, path_pattern, params)
         end
       end
 

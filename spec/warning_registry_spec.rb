@@ -124,6 +124,18 @@ describe JsDuck::Warning::Registry do
     end
   end
 
+  describe "after +nodoc(class,public) and -all:blah/" do
+    before do
+      warnings.set(:nodoc, true, nil, [:class, :public])
+      warnings.set(:all, false, "blah/")
+    end
+
+    it "has the :nodoc warning disabled for a public class in blah/" do
+      warnings.enabled?(:nodoc, "blah/foo.js", [:class, :public]).should == false
+    end
+  end
+
+
   describe "for backwards compatibility" do
     describe ":no_doc warning" do
       before do
