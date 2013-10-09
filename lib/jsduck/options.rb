@@ -860,7 +860,7 @@ module JsDuck
         end
 
         opts.on('--version', "Prints JSDuck version") do
-          puts "JSDuck " + @version
+          puts "JSDuck " + @version + " (Ruby #{RUBY_VERSION})"
           exit
         end
       end
