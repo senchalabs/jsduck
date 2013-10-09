@@ -2,7 +2,11 @@ require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    Helper::MiniParser.parse(string, {:overrides => true, :filename => "blah.js"})
+    Helper::MiniParser.parse(string, {
+        :overrides => true,
+        :inherit_doc => true,
+        :filename => "blah.js"
+      })
   end
 
   shared_examples_for "override" do
@@ -75,5 +79,71 @@ describe JsDuck::Aggregator do
       @method[:overrides].length.should == 2
     end
   end
+
+  # Test for bug #465
+  describe "overriding with multiple auto-detected members" do
+    before do
+      @docs = parse(<<-EOF)
+          /** */
+          Ext.define('Base', {
+              /** */
+              foo: 1
+          });
+
+          /** */
+          Ext.define('Child', {
+              extend: 'Base',
+
+              foo: 2
+          });
+
+          /** */
+          Ext.define('GrandChild', {
+              extend: 'Child',
+
+              foo: 3
+          });
+
+          /** */
+          Ext.define('GrandGrandChild', {
+              extend: 'GrandChild',
+
+              foo: 4
+          });
+      EOF
+    end
+
+    def get_overrides(cls)
+      @docs[cls].find_members(:name => "foo")[0][:overrides]
+    end
+
+
+    it "lists just one override in Child class" do
+      get_overrides("Child").length.should == 1
+    end
+
+    it "lists just one override in GrandChild class" do
+      get_overrides("GrandChild").length.should == 1
+    end
+
+    it "lists just one override in GrandGrandChild class" do
+      get_overrides("GrandGrandChild").length.should == 1
+    end
+
+
+    it "lists Base as overridden in Child class" do
+      get_overrides("Child")[0][:owner].should == "Base"
+    end
+
+    it "lists Child as overridden in GrandChild class" do
+      get_overrides("GrandChild")[0][:owner].should == "Child"
+    end
+
+    it "lists GrandChild as overridden in GrandGrandChild class" do
+      get_overrides("GrandGrandChild")[0][:owner].should == "GrandChild"
+    end
+
+  end
+
 
 end

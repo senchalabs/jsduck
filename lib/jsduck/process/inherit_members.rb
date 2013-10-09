@@ -110,7 +110,9 @@ module JsDuck
         m[:doc] = parent[:doc] if m[:doc].empty?
 
         parent.each_pair do |key, value|
-          if key == :type || !m[key]
+          if key == :overrides
+            # overrides can't be inherited.
+          elsif key == :type || !m[key]
             m[key] = value
           end
         end
