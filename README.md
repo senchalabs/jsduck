@@ -112,26 +112,37 @@ JSDuck is distributed under the terms of the GNU General Public
 License version 3.
 
 JSDuck was developed by [Rene Saarsoo](http://triin.net),
-with many contributions from [Nick Poulden](https://github.com/nick).
-
-Thanks to [Ondřej Jirman](https://github.com/megous),
+with contributions from
+[Nick Poulden](https://github.com/nick),
+[Ondřej Jirman](https://github.com/megous),
 [Thomas Aylott](https://github.com/subtleGradient),
-[johnnywengluu](https://github.com/johnnywengluu),
-[gevik](https://github.com/gevik),
-[ligaard](https://github.com/ligaard),
-[Bill Hubbard](http://www.sencha.com/forum/member.php?272458-BillHubbard),
-[Ed Spencer](https://github.com/edspencer),
-[atian25](https://github.com/atian25),
-Katherine Chu,
-[Rob Dougan](https://github.com/rdougan),
 [Dave Thompson](https://github.com/limscoder),
-[burnnat](https://github.com/burnnat),
-[vjetteam](https://github.com/vjetteam),
-[Chris Westbrook](https://github.com/cnstaging),
+[Ed Spencer](https://github.com/edspencer),
+[Rob Dougan](https://github.com/rdougan),
 [Scott Whittaker](https://github.com/scottrobertwhittaker),
 [Timo Tijhof](https://github.com/Krinkle),
-and many-many others who reported bugs, submitted patches, and
-provided a lot of useful input.
+[Brian Moeskau](https://github.com/bmoeskau),
+[Garry Yao](https://github.com/garryyao),
+[Yasin Okumus](https://github.com/lacivert),
+[Nicholas Boll](https://github.com/NicholasBoll) and
+Katherine Chu.
+
+Many thanks goes also to those who have most eagerly reported bugs:
+[Ryan Nauman](https://github.com/ryan-nauman),
+[Raphael Franchet](https://github.com/raphdulaf),
+[atian25](https://github.com/atian25),
+[burnnat](https://github.com/burnnat),
+[Raphael Pigulla](https://github.com/pigulla),
+[Dmitry Bakaleinik](https://github.com/demongloom),
+[Alan Lindsay](https://github.com/alindsay55661),
+[Corey Butler](https://github.com/coreybutler),
+[Nickolay Platonov](https://github.com/SamuraiJack),
+[Matt Greer](https://github.com/city41),
+[Richard](https://github.com/ritcoder) and
+[Dmitry Pashkevich](https://github.com/dpashkevich).
+
+There are lots of others I haven't named here, who have provided their
+input.
 
 
 Changelog
