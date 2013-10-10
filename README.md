@@ -37,7 +37,7 @@ Standard rubygems install should do:
 Or download the [Windows binary][winbin]. When you run into problems,
 see the [installation guide][].
 
-[winbin]: https://sourceforge.net/projects/jsduck/files/
+[winbin]: https://github.com/senchalabs/jsduck/releases
 [installation guide]: https://github.com/senchalabs/jsduck/wiki/Installation
 
 Usage
@@ -137,7 +137,7 @@ provided a lot of useful input.
 Changelog
 ---------
 
-See [Changelog](https://github.com/senchalabs/jsduck/wiki/Changelog) page in wiki.
+See [the Releases page](https://github.com/senchalabs/jsduck/Releases).
 
 
 More questions?
