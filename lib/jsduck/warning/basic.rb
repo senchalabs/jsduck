@@ -48,7 +48,7 @@ module JsDuck
 
       # Documentation for the warning.
       def doc
-        " #{@enabled ? '+' : '-'}#{@type} - #{@msg}"
+        " #{@rules[0][:enabled] ? '+' : '-'}#{@type} - #{@msg}"
       end
 
     end
