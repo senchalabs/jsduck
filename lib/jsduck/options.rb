@@ -7,6 +7,7 @@ require 'jsduck/util/parallel'
 require 'jsduck/tag_registry'
 require 'jsduck/js/ext_patterns'
 require 'jsduck/warning/parser'
+require 'jsduck/version'
 
 module JsDuck
 
@@ -18,7 +19,6 @@ module JsDuck
     attr_accessor :ignore_global
     attr_accessor :external_classes
     attr_accessor :ext4_events
-    attr_accessor :version
 
     # Customizing output
     attr_accessor :title
@@ -102,7 +102,6 @@ module JsDuck
       ]
       @ext4_events = nil
 
-      @version = "5.3.3"
       # Customizing output
       @title = "Documentation - JSDuck"
       @header = "<strong>Documentation</strong> JSDuck"
@@ -860,7 +859,7 @@ module JsDuck
         end
 
         opts.on('--version', "Prints JSDuck version") do
-          puts "JSDuck " + @version + " (Ruby #{RUBY_VERSION})"
+          puts "JSDuck " + JsDuck::VERSION + " (Ruby #{RUBY_VERSION})"
           exit
         end
       end
@@ -965,7 +964,7 @@ module JsDuck
     def format_footer(text)
       jsduck = "<a href='https://github.com/senchalabs/jsduck'>JSDuck</a>"
       date = Time.new.strftime('%a %d %b %Y %H:%M:%S')
-      text.gsub(/\{VERSION\}/, @version).gsub(/\{JSDUCK\}/, jsduck).gsub(/\{DATE\}/, date)
+      text.gsub(/\{VERSION\}/, JsDuck::VERSION).gsub(/\{JSDUCK\}/, jsduck).gsub(/\{DATE\}/, date)
     end
 
     # Runs checks on the options

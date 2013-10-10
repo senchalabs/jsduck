@@ -1,6 +1,7 @@
 require 'digest/md5'
 require 'fileutils'
 require 'jsduck/util/null_object'
+require 'jsduck/version'
 require 'set'
 
 module JsDuck
@@ -59,7 +60,6 @@ module JsDuck
     attr_reader :previous_entry
 
     def initialize(opts)
-      @jsduck_version = opts.version
       @cache_dir = opts.cache_dir
       @manifest_file = @cache_dir + "/manifest.txt"
       @previous_entry = nil
@@ -129,7 +129,7 @@ module JsDuck
     end
 
     def current_manifest
-      "Ruby: #{RUBY_VERSION}, JSDuck: #{@jsduck_version}\n"
+      "Ruby: #{RUBY_VERSION}, JSDuck: #{JsDuck::VERSION}\n"
     end
 
   end
