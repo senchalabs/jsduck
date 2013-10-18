@@ -323,6 +323,22 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "class with parentless sub-cfg" do
+    before do
+      @doc = parse(<<-EOS)["MyClass"]
+        /**
+         * @class MyClass
+         * Comment here.
+         * @cfg {String} foo.one
+         */
+      EOS
+    end
+
+    it "detects the one bogus config" do
+      @doc[:members].length.should == 1
+    end
+  end
+
   describe "implicit class with more than one cfg" do
     before do
       @doc = parse(<<-EOS)["MyClass"]
