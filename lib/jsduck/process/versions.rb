@@ -23,6 +23,8 @@ module JsDuck
 
       private
 
+      # classes...
+
       # Using the imported versions data, adds @since tags to all
       # classes/members/params.
       def add_since_tags
@@ -34,6 +36,18 @@ module JsDuck
           add_members_since_tags(cls)
         end
       end
+
+      # Returns name of the version since which the class is available
+      def class_since(cls)
+        @versions.each do |ver|
+          return ver[:version] if ver[:classes][cls[:name]]
+          cls[:alternateClassNames].each do |name|
+            return ver[:version] if ver[:classes][name]
+          end
+        end
+      end
+
+      # members...
 
       def add_members_since_tags(cls)
         cls.all_local_members.each do |m|
@@ -49,6 +63,19 @@ module JsDuck
         end
       end
 
+      def member_since(cls, m)
+        @versions.each do |ver|
+          c = ver[:classes][cls[:name]]
+          return ver[:version] if c && c[m[:id]]
+          cls[:alternateClassNames].each do |name|
+            c = ver[:classes][name]
+            return ver[:version] if c && c[m[:id]]
+          end
+        end
+      end
+
+      # params...
+
       def add_params_since_tags(cls, member, member_version)
         Array(member[:params]).each_with_index do |p, i|
           v = param_since(cls, member, i)
@@ -58,6 +85,25 @@ module JsDuck
           end
         end
       end
+
+      def param_since(cls, m, i)
+        @versions.each do |ver|
+          c = ver[:classes][cls[:name]]
+          return ver[:version] if c && has_param?(c[m[:id]], i)
+          cls[:alternateClassNames].each do |name|
+            c = ver[:classes][name]
+            return ver[:version] if c && has_param?(c[m[:id]], i)
+          end
+        end
+      end
+
+      # Because parameters can be renamed between versions, only
+      # consider parameter count.
+      def has_param?(member, param_index)
+        member && member.respond_to?(:length) && member.length > param_index
+      end
+
+      # helpers...
 
       # Should items introduced in given version be marked as new?
       def is_new?(version_nr)
@@ -82,44 +128,6 @@ module JsDuck
         end
 
         new_versions
-      end
-
-      def param_since(cls, m, i)
-        @versions.each do |ver|
-          c = ver[:classes][cls[:name]]
-          return ver[:version] if c && has_param?(c[m[:id]], i)
-          cls[:alternateClassNames].each do |name|
-            c = ver[:classes][name]
-            return ver[:version] if c && has_param?(c[m[:id]], i)
-          end
-        end
-      end
-
-      # Because parameters can be renamed between versions, only
-      # consider parameter count.
-      def has_param?(member, param_index)
-        member && member.respond_to?(:length) && member.length > param_index
-      end
-
-      def member_since(cls, m)
-        @versions.each do |ver|
-          c = ver[:classes][cls[:name]]
-          return ver[:version] if c && c[m[:id]]
-          cls[:alternateClassNames].each do |name|
-            c = ver[:classes][name]
-            return ver[:version] if c && c[m[:id]]
-          end
-        end
-      end
-
-      # Returns name of the version since which the class is available
-      def class_since(cls)
-        @versions.each do |ver|
-          return ver[:version] if ver[:classes][cls[:name]]
-          cls[:alternateClassNames].each do |name|
-            return ver[:version] if ver[:classes][name]
-          end
-        end
       end
 
     end
