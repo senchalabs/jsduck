@@ -148,7 +148,7 @@ input.
 Changelog
 ---------
 
-See [the Releases page](https://github.com/senchalabs/jsduck/Releases).
+See [the Releases page](https://github.com/senchalabs/jsduck/releases).
 
 
 More questions?
