@@ -17,7 +17,7 @@ module JsDuck
       def process_all!
         if @opts[:imports].length > 0
           @versions = @importer.import(@opts[:imports])
-          generate_since_tags
+          add_since_tags
         end
       end
 
@@ -25,27 +25,36 @@ module JsDuck
 
       # Using the imported versions data, adds @since tags to all
       # classes/members/params.
-      def generate_since_tags
+      def add_since_tags
         @relations.each do |cls|
           v = cls[:since] || class_since(cls)
           cls[:since] = v
           cls[:new] = true if is_new?(v)
 
-          cls.all_local_members.each do |m|
-            member_version = m[:since] || member_since(cls, m)
+          add_members_since_tags(cls)
+        end
+      end
 
-            if !m[:since]
-              Array(m[:params]).each_with_index do |p, i|
-                v = param_since(cls, m, i)
-                if v != member_version
-                  p[:since] = v
-                  p[:new] = true if is_new?(v)
-                end
-              end
-            end
+      def add_members_since_tags(cls)
+        cls.all_local_members.each do |m|
+          # Remember the initial explicit @since tag value
+          # to disable params processing when it's present.
+          explicit_since = m[:since]
 
-            m[:since] = member_version
-            m[:new] = true if is_new?(member_version)
+          v = m[:since] || member_since(cls, m)
+          m[:since] = v
+          m[:new] = true if is_new?(v)
+
+          add_params_since_tags(cls, m, v) unless explicit_since
+        end
+      end
+
+      def add_params_since_tags(cls, member, member_version)
+        Array(member[:params]).each_with_index do |p, i|
+          v = param_since(cls, member, i)
+          if v != member_version
+            p[:since] = v
+            p[:new] = true if is_new?(v)
           end
         end
       end
