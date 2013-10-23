@@ -7,11 +7,10 @@ module JsDuck
     # older versions of the same project and looking in which version
     # a class or method first appeared.
     class Versions
-      def initialize(relations, opts={}, importer=nil)
+      def initialize(relations, opts={}, importer=Process::Importer.new)
         @relations = relations
         @opts = opts
-        # Allow different importer to be injected for testing
-        @importer = importer || Process::Importer.new
+        @importer = importer
       end
 
       # Loads in exported docs and generates @since and @new tags.
