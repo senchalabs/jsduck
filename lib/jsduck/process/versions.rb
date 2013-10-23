@@ -1,5 +1,4 @@
 require 'jsduck/process/importer'
-require 'jsduck/tag_registry'
 
 module JsDuck
   module Process
@@ -7,8 +6,6 @@ module JsDuck
     # Generates @since and @new tags by importing JSDuck exports of
     # older versions of the same project and looking in which version
     # a class or method first appeared.
-    #
-    # Additionally here the tooltip text for @new tag gets injected.
     class Versions
       def initialize(relations, opts={}, importer=nil)
         @relations = relations
@@ -19,24 +16,12 @@ module JsDuck
 
       # Loads in exported docs and generates @since and @new tags.
       def process_all!
-        init_new_tag_tooltip!
-
         if @opts[:imports].length > 0
           generate_since_tags(@importer.import(@opts[:imports]))
         end
       end
 
       private
-
-      # Initializes the tooltip text for the signature of @new tag.
-      def init_new_tag_tooltip!
-        signature = TagRegistry.get_by_name(:new).signature
-        if @opts[:new_since]
-          signature[:tooltip] = "New since #{@opts[:new_since]}"
-        elsif @opts[:imports].length > 0
-          signature[:tooltip] = "New since #{@opts[:imports].last[:version]}"
-        end
-      end
 
       # Using the imported versions data, adds @since tags to all
       # classes/members/params.

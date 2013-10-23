@@ -182,6 +182,9 @@ module JsDuck
         # definitions multiple times.
         TagRegistry.instance
       end
+
+      # The tooltip of @new can now be configured.
+      TagRegistry.get_by_name(:new).init_tooltip!(self)
     end
 
     private
