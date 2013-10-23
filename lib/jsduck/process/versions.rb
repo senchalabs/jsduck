@@ -39,7 +39,7 @@ module JsDuck
       end
 
       # Using the imported versions data, adds @since tags to all
-      # classes/members.
+      # classes/members/params.
       def generate_since_tags(versions)
         new_versions = build_new_versions_map(versions)
 
@@ -49,9 +49,20 @@ module JsDuck
           cls[:new] = true if new_versions[v]
 
           cls.all_local_members.each do |m|
-            v = m[:since] || member_since(versions, cls, m)
-            m[:since] = v
-            m[:new] = true if new_versions[v]
+            member_version = m[:since] || member_since(versions, cls, m)
+
+            if !m[:since]
+              Array(m[:params]).each_with_index do |p, i|
+                v = param_since(versions, cls, m, i)
+                if v != member_version
+                  p[:since] = v
+                  p[:new] = true if new_versions[v]
+                end
+              end
+            end
+
+            m[:since] = member_version
+            m[:new] = true if new_versions[member_version]
           end
         end
       end
@@ -73,6 +84,23 @@ module JsDuck
         end
 
         new_versions
+      end
+
+      def param_since(versions, cls, m, i)
+        versions.each do |ver|
+          c = ver[:classes][cls[:name]]
+          return ver[:version] if c && has_param?(c[m[:id]], i)
+          cls[:alternateClassNames].each do |name|
+            c = ver[:classes][name]
+            return ver[:version] if c && has_param?(c[m[:id]], i)
+          end
+        end
+      end
+
+      # Because parameters can be renamed between versions, only
+      # consider parameter count.
+      def has_param?(member, param_index)
+        member && member.respond_to?(:length) && member.length > param_index
       end
 
       def member_since(versions, cls, m)

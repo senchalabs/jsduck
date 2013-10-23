@@ -17,6 +17,10 @@ module JsDuck
       def method_missing(meth, *args, &block)
         @methods.has_key?(meth) ? @methods[meth] : self
       end
+
+      def respond_to?(meth)
+        @methods.has_key?(meth)
+      end
     end
 
   end

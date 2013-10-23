@@ -57,6 +57,7 @@ module JsDuck
             "<div class='sub-desc'>",
               p[:doc],
               p[:default] ? "<p>Defaults to: <code>#{Util::HTML.escape(p[:default])}</code></p>" : "",
+              p[:since] ? "<p>Available since: <b>#{Util::HTML.escape(p[:since])}</b></p>" : "",
               p[:properties] && p[:properties].length > 0 ? render(p) : "",
             "</div>",
           "</li>",
