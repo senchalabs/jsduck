@@ -63,10 +63,11 @@ module JsDuck
       new_items
     end
 
+    # Returns all members of a class that have been marked as new, or
+    # have parameters marked as new.
     def filter_new_members(cls)
-      members = []
-      cls.all_local_members.each do |m|
-        members << m if m[:new] && visible?(m)
+      members = cls.all_local_members.find_all do |m|
+        visible?(m) && (m[:new] || new_params?(m))
       end
       members = discard_accessors(members)
       members.sort! {|a, b| a[:name] <=> b[:name] }
@@ -74,6 +75,10 @@ module JsDuck
 
     def visible?(member)
       !member[:private] && !member[:hide]
+    end
+
+    def new_params?(member)
+      Array(member[:params]).any? {|p| p[:new] }
     end
 
     def discard_accessors(members)
@@ -127,7 +132,15 @@ module JsDuck
       if m[:tagname] == :class
         @doc_formatter.link(m[:name], nil, m[:name])
       else
-        @doc_formatter.link(m[:owner], m[:name], m[:name], m[:tagname], m[:static])
+        @doc_formatter.link(m[:owner], m[:name], m[:name], m[:tagname], m[:static]) + params_note(m)
+      end
+    end
+
+    def params_note(m)
+      if !m[:new] && new_params?(m)
+        " <small>+parameters</small>"
+      else
+        ""
       end
     end
 
