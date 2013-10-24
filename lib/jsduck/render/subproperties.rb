@@ -1,5 +1,6 @@
 require 'jsduck/util/html'
 require 'jsduck/util/singleton'
+require 'jsduck/tag_registry'
 
 module JsDuck
   module Render
@@ -57,11 +58,15 @@ module JsDuck
             "<div class='sub-desc'>",
               p[:doc],
               p[:default] ? "<p>Defaults to: <code>#{Util::HTML.escape(p[:default])}</code></p>" : "",
-              p[:since] ? "<p>Available since: <b>#{Util::HTML.escape(p[:since])}</b></p>" : "",
+              p[:since] ? render_since(p) : "",
               p[:properties] && p[:properties].length > 0 ? render(p) : "",
             "</div>",
           "</li>",
         ]
+      end
+
+      def render_since(param)
+        TagRegistry.get_by_name(:since).to_html(param)
       end
 
       def render_return(ret)
