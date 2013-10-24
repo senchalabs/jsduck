@@ -55,6 +55,7 @@ module JsDuck
             "<span class='pre'>#{p[:name]}</span> : ",
             p[:html_type],
             p[:optional] ? " (optional)" : "",
+            p[:new] ? render_new : "",
             "<div class='sub-desc'>",
               p[:doc],
               p[:default] ? "<p>Defaults to: <code>#{Util::HTML.escape(p[:default])}</code></p>" : "",
@@ -62,6 +63,17 @@ module JsDuck
               p[:properties] && p[:properties].length > 0 ? render(p) : "",
             "</div>",
           "</li>",
+        ]
+      end
+
+      def render_new
+        signature = TagRegistry.get_by_name(:new).signature
+        return [
+          "<span class='signature'>",
+            "<span class='new' title='#{signature[:tooltip]}'>",
+              signature[:long],
+            "</span>",
+          "</span>",
         ]
       end
 
