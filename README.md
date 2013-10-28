@@ -98,7 +98,7 @@ Who's using JSDuck?
 - [CKEditor](http://docs.ckeditor.com)
 - [GeoExt 2](https://github.com/geoext/geoext2)
 - Rally Software [Rally App SDK](https://prod.help.rallydev.com/apps/2.0rc1/doc/)
-- Wikimedia Foundation [Mediawiki](https://doc.wikimedia.org/mediawiki-core/master/js/)
+- Wikimedia Foundation [MediaWiki](https://doc.wikimedia.org/mediawiki-core/master/js/)
   and [VisualEditor](https://doc.wikimedia.org/VisualEditor/master/)
 - [Sencha](http://docs.sencha.com) - obviously :)
 
