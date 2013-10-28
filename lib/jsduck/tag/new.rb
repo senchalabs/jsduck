@@ -15,5 +15,18 @@ module JsDuck::Tag
       EOCSS
       super
     end
+
+    # Initializes the tooltip text based on the --new-since and
+    # --import options passed from command line.
+    #
+    # NOTE: This method is explicitly called from JsDuck::Options class.
+    def init_tooltip!(opts)
+      if opts[:new_since]
+        @signature[:tooltip] = "New since #{opts[:new_since]}"
+      elsif opts[:imports].length > 0
+        @signature[:tooltip] = "New since #{opts[:imports].last[:version]}"
+      end
+    end
+
   end
 end
