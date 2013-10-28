@@ -4,7 +4,7 @@ module JsDuck::Tag
   class Deprecated < DeprecatedTag
     def initialize
       @tagname = :deprecated
-      @msg = "This {TAGNAME} has been <strong>deprected</strong>"
+      @msg = "This {TAGNAME} has been <strong>deprecated</strong>"
       @css = <<-EOCSS
         .signature .deprecated {
           background-color: #aa0000;
