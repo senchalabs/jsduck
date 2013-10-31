@@ -209,7 +209,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     createLinkRecord: function(cls, member) {
         return {
             id: member.id,
-            url: cls + "-" + member.id,
+            url: cls + "~" + member.id,
             label: (member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name,
             inherited: member.owner !== cls,
             accessor: member.tagname === "method" && this.accessors.hasOwnProperty(member.name),

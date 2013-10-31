@@ -205,7 +205,7 @@ Ext.define('Docs.controller.Classes', {
         noHistory || Docs.History.push(url);
 
         // separate class and member name
-        var matches = url.match(/^#!\/api\/(.*?)(?:-(.*))?$/);
+        var matches = url.match(/^#!\/api\/(.*?)(?:~(.*))?$/);
         var cls = Docs.ClassRegistry.canonicalName(matches[1]);
         var member = matches[2];
 
