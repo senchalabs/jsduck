@@ -60,10 +60,6 @@ module JsDuck
       unless File.exists?(guide[:filename])
         return Logger.warn(:guide, "Guide not found", {:filename => guide[:filename]})
       end
-      unless js_ident?(guide["name"])
-        # Guide name is also used as JSONP callback method name.
-        return Logger.warn(:guide, "Guide name is not valid JS identifier: #{guide["name"]}", {:filename => guide[:filename]})
-      end
 
       begin
         return format_guide(guide)
@@ -111,11 +107,6 @@ module JsDuck
       else
         @path + "/guides/" + guide["name"]
       end
-    end
-
-    # True when string is valid JavaScript identifier
-    def js_ident?(str)
-      /\A[$\w]+\z/ =~ str
     end
 
     # Ensures the guide dir contains icon.png.
