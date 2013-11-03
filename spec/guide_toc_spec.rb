@@ -4,7 +4,7 @@ require "jsduck/guide_toc"
 describe JsDuck::GuideToc do
 
   def inject(html)
-    JsDuck::GuideToc.inject(html, "myguide")
+    JsDuck::GuideToc.inject(html, "myguide", 2)
   end
 
   it "adds no toc section when no headings" do
