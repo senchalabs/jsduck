@@ -4,7 +4,7 @@ require "jsduck/guide_toc"
 describe JsDuck::GuideToc do
 
   def inject(html)
-    JsDuck::GuideToc.inject(html, "myguide", max_level)
+    JsDuck::GuideToc.new(html, "myguide", max_level).inject!
   end
 
   describe "With max_level=1" do
