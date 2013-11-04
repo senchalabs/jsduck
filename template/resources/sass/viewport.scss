@@ -143,7 +143,13 @@
     border: solid 1px #e8e8e8;
     padding: 10px 20px;
     margin: 0 14px;
-    @include border-radius(5px); }
+    @include border-radius(5px);
+    // no bullets and smaller indent
+    ul {
+      margin-left: 0.5em;
+      margin-bottom: 0;
+      li {
+        list-style-type: none; } } }
   h1 {
     background: url(../images/doc-m.png) no-repeat -5px -5px;
     padding: 10px 0 10px 55px;

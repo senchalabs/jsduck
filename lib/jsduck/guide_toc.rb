@@ -21,6 +21,8 @@ module JsDuck
     # Inserts table of contents at the top of guide HTML by looking
     # for headings at or below the specified maximum level.
     def inject!
+      prev_level = @min_level-1
+
       @html.each_line do |line|
         if line =~ /^\s*<h([1-6])>(.*?)<\/h[1-6]>$/
           level = $1.to_i
@@ -29,13 +31,25 @@ module JsDuck
 
           if include_to_toc?(level)
             increment_heading_count!(level)
-            @toc << toc_entry(level, id, text)
+            if level > prev_level
+              list_tags = "<ul><li>" * (level - prev_level)
+            elsif prev_level > level
+              list_tags = "</li></ul></li><li>" * (prev_level - level)
+            else
+              list_tags = "</li><li>"
+            end
+            @toc << list_tags + toc_entry(level, id, text)
+            prev_level = level
           end
 
           @new_html << "<h#{level} id='#{id}'>#{text}</h#{level}>\n"
         else
           @new_html << line
         end
+      end
+
+      if @toc.length > 0
+        @toc[@toc.length-1] += "</li></ul>" * (prev_level - @min_level + 1)
       end
 
       inject_toc!
@@ -57,7 +71,7 @@ module JsDuck
     end
 
     def toc_entry(level, id, text)
-      "#{toc_prefix(level)}. <a href='#!/guide/#{id}'>#{text}</a><br/>\n"
+      "#{toc_prefix(level)}. <a href='#!/guide/#{id}'>#{text}</a>\n"
     end
 
     def toc_prefix(level)
