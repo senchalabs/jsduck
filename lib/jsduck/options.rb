@@ -30,6 +30,7 @@ module JsDuck
     attr_accessor :message
     attr_accessor :welcome
     attr_accessor :guides
+    attr_accessor :guide_toc_level
     attr_accessor :videos
     attr_accessor :examples
     attr_accessor :categories_path
@@ -112,6 +113,7 @@ module JsDuck
       @message = ""
       @welcome = nil
       @guides = nil
+      @guide_toc_level = 2
       @videos = nil
       @examples = nil
       @categories_path = nil
@@ -391,6 +393,21 @@ module JsDuck
           "",
           "See also: https://github.com/senchalabs/jsduck/wiki/Guides") do |path|
           @guides = canonical(path)
+        end
+
+        opts.on('--guide-toc-level=LEVEL',
+          "The maximum heading level to include in guides' tables of contents.",
+          "",
+          "Values between 1 and 6 are allowed. Choosing 1 hides the table of ",
+          "contents.",
+          "",
+          "The default is 2, indicating that only <h2>-level headings will ",
+          "be included in the table of contents.") do |level|
+          @guide_toc_level = level.to_i
+          if !(1..6).include? @guide_toc_level
+            Logger.fatal("Unsupported guide-toc-level: '#{level}'")
+            exit(1)
+          end
         end
 
         opts.on('--videos=PATH',
