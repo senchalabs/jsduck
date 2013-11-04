@@ -18,7 +18,7 @@ module JsDuck
         # %c - full class name (e.g. "Ext.Panel")
         # %m - class member name prefixed with member type (e.g. "method-urlEncode")
         # %# - inserts "#" if member name present
-        # %- - inserts "-" if member name present
+        # %~ - inserts "~" if member name present
         # %a - anchor text for link
         @tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
       end
@@ -31,7 +31,7 @@ module JsDuck
         # prepend type name to member name
         member = member && get_matching_member(cls, {:name => member, :tagname => type, :static => static})
 
-        @tpl.gsub(/(%[\w#-])/) do
+        @tpl.gsub(/(%[\w#~])/) do
           case $1
           when '%c'
             cls
@@ -39,8 +39,8 @@ module JsDuck
             member ? member[:id] : ""
           when '%#'
             member ? "#" : ""
-          when '%-'
-            member ? "-" : ""
+          when '%~'
+            member ? "~" : ""
           when '%a'
             Util::HTML.escape(anchor_text||"")
           else

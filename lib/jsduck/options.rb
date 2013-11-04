@@ -120,7 +120,7 @@ module JsDuck
       @source = true
       @images = []
       @custom_tag_paths = []
-      @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
+      @link_tpl = '<a href="#!/api/%c%~%m" rel="%c%~%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
       # appears inline within text, but that just looks ugly in HTML
       @img_tpl = '<p><img src="%u" alt="%a" width="%w" height="%h"></p>'
@@ -624,10 +624,10 @@ module JsDuck
           "%m - class member name prefixed with member type",
           "     (e.g. 'method-urlEncode')",
           "%# - inserts '#' if member name present",
-          "%- - inserts '-' if member name present",
+          "%~ - inserts '~' if member name present",
           "%a - anchor text for link",
           "",
-          "Defaults to: '<a href=\"#!/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'") do |tpl|
+          "Defaults to: '<a href=\"#!/api/%c%~%m\" rel=\"%c%~%m\" class=\"docClass\">%a</a>'") do |tpl|
           @link_tpl = tpl
         end
 
