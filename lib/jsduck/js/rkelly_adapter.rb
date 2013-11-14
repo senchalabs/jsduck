@@ -481,14 +481,28 @@ module JsDuck
           if STRING_ESCAPES[s]
             STRING_ESCAPES[s]
           elsif s =~ /^\\[0-9]/
-            s[1..-1].oct.chr
+            nr_to_str(s[1..-1].oct, s)
           elsif s =~ /^\\x[0-9A-F]/
-            s[2..-1].hex.chr
+            nr_to_str(s[2..-1].hex, s)
           elsif s =~ /^\\u[0-9A-F]/
             [s[2..-1].hex].pack("U")
           else
             s[1, 1]
           end
+        end
+      end
+
+      # Converts a latin1 character code to UTF-8 string.
+      # When running in Ruby <= 1.8, only converts ASCII chars,
+      # others are left as escape sequences.
+      def nr_to_str(nr, original)
+        str = nr.chr
+        if str.respond_to?(:encode)
+          str.encode('UTF-8', 'ISO-8859-1')
+        elsif nr < 127
+          str
+        else
+          original
         end
       end
 
