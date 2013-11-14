@@ -192,7 +192,7 @@ $appc-red: #9B1C1F;
     table,th,td {
         border: 1px solid #ccc;
     }
-    th { 
+    th {
         font-weight: bold;
         text-align: left;
         padding: 3px 5px 3px 5px;
@@ -200,4 +200,23 @@ $appc-red: #9B1C1F;
     th, td {
         padding: 3px 5px 3px 5px;
     }
+}
+
+// Class to apply to notes/highlights to paragraphs.
+.note {
+	background-color: #FFFFDD;
+	border-color: #F7DF92;
+	padding: 1em 1em 1em 3em !important;
+	border-radius: 5px;
+	padding-top: 1em !important;
+	padding-bottom: 1em !important;
+	padding-left: 1em !important;
+	width: 95%;
+}
+
+.note:before {
+	content: "Note: ";
+	padding-left: 0px;
+	color: red;
+	font-weight: bold;
 }
