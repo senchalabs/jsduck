@@ -19,6 +19,7 @@ module JsDuck
       # - :params
       # - :return
       # - :throws
+      # - :properties
       #
       # In case of auto-detected members that inherit from a public
       # member in parent class, we inherit all fields that aren't
