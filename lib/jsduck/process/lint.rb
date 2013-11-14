@@ -27,7 +27,7 @@ module JsDuck
           if !member[:name] || member[:name] == ""
             warn(:name_missing, "Unnamed #{member[:tagname]}", member)
           end
-          (member[:params] || []).each do |p|
+          Array(member[:params]).each do |p|
             if !p[:name] || p[:name] == ""
               warn(:name_missing, "Unnamed parameter", member)
             end
@@ -54,7 +54,7 @@ module JsDuck
       def warn_duplicate_params
         each_member do |member|
           params = {}
-          (member[:params] || []).each do |p|
+          Array(member[:params]).each do |p|
             if params[p[:name]]
               warn(:dup_param, "Duplicate parameter name #{p[:name]}", member)
             end

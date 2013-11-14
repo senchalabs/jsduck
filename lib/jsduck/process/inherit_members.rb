@@ -82,6 +82,7 @@ module JsDuck
         m[:params] = parent[:params] if inherit_params?(m, parent)
         m[:return] = parent[:return] unless m[:return]
         m[:throws] = parent[:throws] unless m[:throws] && m[:throws].length > 0
+        m[:properties] = parent[:properties] unless m[:properties] && m[:properties].length > 0
 
         # Don't inherit type from parent when:
         # - member itself has type and it's not auto-detected
