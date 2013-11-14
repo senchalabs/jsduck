@@ -40,7 +40,7 @@ module JsDuck
         each_member do |member|
           if member[:tagname] == :method
             optional_found = false
-            member[:params].each do |p|
+            Array(member[:params]).each do |p|
               if optional_found && !p[:optional]
                 warn(:req_after_opt, "Optional param followed by regular param #{p[:name]}", member)
               end
