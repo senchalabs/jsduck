@@ -7,7 +7,11 @@ module JsDuck::Tag
   class Component < BooleanTag
     def initialize
       @pattern = "component"
-      @class_icon = File.dirname(__FILE__) + "/icons/component.png"
+      @class_icon = {
+        :small => File.dirname(__FILE__) + "/icons/component.png",
+        :large => File.dirname(__FILE__) + "/icons/component-large.png",
+        :redirect => File.dirname(__FILE__) + "/icons/component-redirect.png",
+      }
       super
     end
   end

@@ -19,6 +19,7 @@
     font-size: 13px;
     position: relative;
     @include transition(background-color, 0.15s, linear);
+    // Here also the auto-generated class icons apply
     @include icons; }
   // Use gray for private classes
   .private {
@@ -106,4 +107,3 @@
       @include box-shadow(#5b6167 0 0 1px 0 inset);
       @include border-radius(10px);
       text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35); } } }
-
