@@ -19,7 +19,7 @@ module JsDuck
       def self.class_icon(cls)
         if cls[:singleton]
           "icon-singleton"
-        elsif cls.inherits_from?("Ext.Component")
+        elsif cls[:component]
           "icon-component"
         else
           "icon-class"

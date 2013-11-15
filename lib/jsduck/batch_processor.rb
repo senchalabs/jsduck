@@ -13,6 +13,7 @@ require 'jsduck/process/inherit_doc'
 require 'jsduck/process/versions'
 require 'jsduck/process/return_values'
 require 'jsduck/process/fires'
+require 'jsduck/process/components'
 require 'jsduck/process/lint'
 require 'jsduck/process/no_doc'
 require 'jsduck/process/circular_deps'
@@ -71,6 +72,7 @@ module JsDuck
       Process::Versions.new(relations, opts).process_all!
       Process::ReturnValues.new(relations).process_all!
       Process::Fires.new(relations).process_all!
+      Process::Components.new(relations).process_all!
       Process::Lint.new(relations).process_all!
       Process::NoDoc.new(relations).process_all!
       relations
