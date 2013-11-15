@@ -18,7 +18,7 @@ module JsDuck
       def export(cls)
         data = @full_exporter.export(cls)
 
-        data[:component] = cls.inherits_from?("Ext.Component")
+        data[:classIcon] = Web::Icons.class_icon(cls)
         data[:superclasses] = cls.superclasses.collect {|c| c[:name] }
         data[:subclasses] = @relations.subclasses(cls).collect {|c| c[:name] }.sort
         data[:mixedInto] = @relations.mixed_into(cls).collect {|c| c[:name] }.sort

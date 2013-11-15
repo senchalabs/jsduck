@@ -133,6 +133,11 @@ module JsDuck::Tag
     #
     attr_reader :css
 
+    # Changes the icon CSS class name when the tag is used with in
+    # @class doc-comment.  Used by @singleton and @component tags to
+    # display a different icon that the default.
+    attr_reader :class_icon
+
     # Returns all descendants of JsDuck::Tag::Tag class.
     def self.descendants
       result = []

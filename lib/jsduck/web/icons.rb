@@ -1,3 +1,5 @@
+require 'jsduck/tag_registry'
+
 module JsDuck
   module Web
 
@@ -17,13 +19,13 @@ module JsDuck
 
       # Returns CSS class name for an icon of class
       def self.class_icon(cls)
-        if cls[:singleton]
-          "icon-singleton"
-        elsif cls[:component]
-          "icon-component"
-        else
-          "icon-class"
+        TagRegistry.class_icon_providers.each do |tagname|
+          if cls[tagname]
+            return TagRegistry.get_by_name(tagname).class_icon
+          end
         end
+
+        return "icon-class"
       end
     end
 

@@ -15,7 +15,7 @@ Ext.define('Docs.view.cls.Header', {
 
     initComponent: function() {
         this.tpl = Ext.create('Ext.XTemplate',
-            '<h1 class="{[this.getClass(values)]}">',
+            '<h1 class="{classIcon}">',
                 '<tpl if="Docs.data.source">',
                     '<a href="#" class="class-source-link">{name}',
                         '<span class="class-source-tip">View source...</span>',
@@ -36,17 +36,6 @@ Ext.define('Docs.view.cls.Header', {
                 '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>',
             '</tpl>',
             {
-                getClass: function(cls) {
-                    if (cls.singleton) {
-                        return "singleton";
-                    }
-                    else if (cls.component) {
-                        return "component";
-                    }
-                    else {
-                        return "class";
-                    }
-                },
                 renderAliases: function(aliases) {
                     var titles = {
                         widget: "xtype",

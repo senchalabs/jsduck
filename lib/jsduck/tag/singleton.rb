@@ -5,6 +5,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "singleton"
       @ext_define_pattern = "singleton"
+      @class_icon = "icon-singleton"
       super
     end
 

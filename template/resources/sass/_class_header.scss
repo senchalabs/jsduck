@@ -20,11 +20,11 @@
       color: $docs-heading-color;
       margin-left: -3px;
       padding: 0.1em 0 0.4em 2.3em; }
-    &.class .class-source-link {
+    &.icon-class .class-source-link {
       background: url(../images/class-m.png) no-repeat 0 -5px; }
-    &.component .class-source-link {
+    &.icon-component .class-source-link {
       background: url(../images/component-m.png) no-repeat 0 -5px; }
-    &.singleton .class-source-link {
+    &.icon-singleton .class-source-link {
       background: url(../images/singleton-m.png) no-repeat 0 -5px; }
 
     // gray style for xtypes, enum and singleton summary

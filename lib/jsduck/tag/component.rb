@@ -7,6 +7,7 @@ module JsDuck::Tag
   class Component < BooleanTag
     def initialize
       @pattern = "component"
+      @class_icon = "icon-component"
       super
     end
   end
