@@ -15,17 +15,12 @@
     font-size: 2em;
     color: $docs-heading-color;
 
-    // Icons for different class types
     .class-source-link {
       color: $docs-heading-color;
       margin-left: -3px;
       padding: 0.1em 0 0.4em 2.3em; }
-    &.icon-class .class-source-link {
-      background: url(../images/class-m.png) no-repeat 0 -5px; }
-    &.icon-component .class-source-link {
-      background: url(../images/component-m.png) no-repeat 0 -5px; }
-    &.icon-singleton .class-source-link {
-      background: url(../images/singleton-m.png) no-repeat 0 -5px; }
+
+    // The auto-generated CSS for class icons also applies here.
 
     // gray style for xtypes, enum and singleton summary
     .xtype, .enum, .singleton {

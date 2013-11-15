@@ -133,9 +133,9 @@ module JsDuck::Tag
     #
     attr_reader :css
 
-    # Changes the icon CSS class name when the tag is used with in
-    # @class doc-comment.  Used by @singleton and @component tags to
-    # display a different icon that the default.
+    # Path to custom class icon file.
+    # Used by @class tag to define the default icon.
+    # Used by @singleton and @component tags for a different icon.
     attr_reader :class_icon
 
     # Returns all descendants of JsDuck::Tag::Tag class.

@@ -1,5 +1,6 @@
 require 'jsduck/tag_registry'
 require 'jsduck/util/md5'
+require 'jsduck/web/class_icons'
 require 'jsduck/web/member_icons'
 
 module JsDuck
@@ -21,7 +22,12 @@ module JsDuck
       private
 
       def all_css
-        TagRegistry.css + Web::MemberIcons.css + @opts.css
+        [
+          TagRegistry.css,
+          Web::ClassIcons.css,
+          Web::MemberIcons.css,
+          @opts.css,
+        ].join
       end
     end
 

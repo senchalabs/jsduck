@@ -5,7 +5,7 @@ module JsDuck::Tag
     def initialize
       @pattern = "singleton"
       @ext_define_pattern = "singleton"
-      @class_icon = "icon-singleton"
+      @class_icon = File.dirname(__FILE__) + "/icons/singleton.png"
       super
     end
 

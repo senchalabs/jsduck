@@ -77,7 +77,7 @@ module JsDuck
         end
 
         if tag.class_icon
-          @class_icon_providers << tag.tagname
+          @class_icon_providers << tag
         end
       end
     end
@@ -93,7 +93,7 @@ module JsDuck
     # (and in order they should be shown in).
     attr_reader :signatures
 
-    # Array of tagnames which provide an icon tag.
+    # Array of tags which provide icons for classes.
     attr_reader :class_icon_providers
 
     # Same as #member_types, but returns just the names of member types.
