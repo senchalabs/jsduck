@@ -11,7 +11,7 @@ module JsDuck
       include Util::Singleton
 
       # Checks if AST node is a class, and if so, returns doc-hash
-      # with clas name and various auto-detected attributes.
+      # with class name and various auto-detected attributes.
       # When not a class returns nil.
       def detect(ast, docs)
         @docs = docs
