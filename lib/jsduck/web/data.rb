@@ -1,6 +1,6 @@
 require 'jsduck/util/json'
 require 'jsduck/util/md5'
-require 'jsduck/web/icons'
+require 'jsduck/web/tree'
 require 'jsduck/web/search'
 require 'jsduck/tag_registry'
 
@@ -21,7 +21,7 @@ module JsDuck
       def write(filename)
         js = "Docs = " + Util::Json.generate({
           :data => {
-            :classes => Web::Icons.new.create(@relations.classes),
+            :classes => Web::Tree.create(@relations.classes),
             :guides => @assets.guides.to_array,
             :videos => @assets.videos.to_array,
             :examples => @assets.examples.to_array,

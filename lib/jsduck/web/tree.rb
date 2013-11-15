@@ -4,9 +4,9 @@ module JsDuck
   module Web
 
     # Creates an array of small hashes documenting name, parent class
-    # and icon of a class.
-    class Icons
-      def create(classes)
+    # and icon of a class.  Used to generate the class tree in Web UI.
+    class Tree
+      def self.create(classes)
         classes.map do |cls|
           {
             :name => cls[:name],
