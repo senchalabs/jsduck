@@ -1,6 +1,7 @@
 require 'jsduck/render/class'
 require 'jsduck/exporter/full'
 require 'jsduck/tag_registry'
+require 'jsduck/web/class_icons'
 
 module JsDuck
   module Exporter
@@ -18,7 +19,7 @@ module JsDuck
       def export(cls)
         data = @full_exporter.export(cls)
 
-        data[:classIcon] = Web::Icons.class_icon(cls)
+        data[:classIcon] = Web::ClassIcons.get(cls)
         data[:superclasses] = cls.superclasses.collect {|c| c[:name] }
         data[:subclasses] = @relations.subclasses(cls).collect {|c| c[:name] }.sort
         data[:mixedInto] = @relations.mixed_into(cls).collect {|c| c[:name] }.sort
