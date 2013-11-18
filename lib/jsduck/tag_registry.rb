@@ -32,7 +32,7 @@ module JsDuck
       @html_renderers_sorted = false
       @member_types = []
       @css = []
-      @class_icon_providers = []
+      @tags = []
 
       instantiate_tags(TagLoader.new(load_paths).load_all)
     end
@@ -76,9 +76,7 @@ module JsDuck
           @css << tag.css
         end
 
-        if tag.class_icon
-          @class_icon_providers << tag
-        end
+        @tags << tag
       end
     end
 
@@ -93,8 +91,8 @@ module JsDuck
     # (and in order they should be shown in).
     attr_reader :signatures
 
-    # Array of tags which provide icons for classes.
-    attr_reader :class_icon_providers
+    # Array of all available tags
+    attr_reader :tags
 
     # Same as #member_types, but returns just the names of member types.
     def member_type_names

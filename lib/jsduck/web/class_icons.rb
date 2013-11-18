@@ -57,7 +57,12 @@ module JsDuck
       end
 
       def self.class_icon_providers
-        @providers ||= TagRegistry.class_icon_providers.sort do |a, b|
+        @providers ||= generate_class_icon_providers
+      end
+
+      # Find tags with #class_icon and sort them from highest priority to lowest
+      def self.generate_class_icon_providers
+        TagRegistry.tags.find_all {|t| t.class_icon }.sort do |a, b|
           a.class_icon[:priority] <=> b.class_icon[:priority]
         end.reverse
       end
