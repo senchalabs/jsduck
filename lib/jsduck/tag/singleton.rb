@@ -10,6 +10,13 @@ module JsDuck::Tag
         :large => File.dirname(__FILE__) + "/icons/singleton-large.png",
         :redirect => File.dirname(__FILE__) + "/icons/singleton-redirect.png",
       }
+      @signature = {:long => "singleton", :short => "single"}
+      @css = <<-EOCSS
+        .signature .singleton {
+          background-color: transparent;
+          color: #929292;
+        }
+      EOCSS
       super
     end
 
