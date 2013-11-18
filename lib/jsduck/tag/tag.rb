@@ -135,12 +135,22 @@ module JsDuck::Tag
 
     # Defines custom class icon files.
     #
-    # It must be a hash with keys :small, :large, :redirect -
-    # each referencing an icon file.
+    # It must be a hash with the following keys:
+    #
+    # - :large - the large icon used in class header
+    # - :small - small icon used in class tree and search
+    # - :redirect - redirect icon for alternateClassNames in search.
+    # - :priority - a number to determine which icon gets used when
+    #      a class has several tags that set a custom icon.  An icon
+    #      with a larger priority wins.
     #
     # Used by @class tag to define the default icon.
     # Used by @singleton and @component tags for a different icon.
     attr_reader :class_icon
+
+    PRIORITY_SINGLETON = 2
+    PRIORITY_COMPONENT = 1
+    PRIORITY_CLASS = 0
 
     # Returns all descendants of JsDuck::Tag::Tag class.
     def self.descendants

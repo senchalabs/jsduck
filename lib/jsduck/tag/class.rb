@@ -9,6 +9,7 @@ module JsDuck::Tag
         :small => File.dirname(__FILE__) + "/icons/class.png",
         :large => File.dirname(__FILE__) + "/icons/class-large.png",
         :redirect => File.dirname(__FILE__) + "/icons/class-redirect.png",
+        :priority => PRIORITY_CLASS,
       }
     end
 

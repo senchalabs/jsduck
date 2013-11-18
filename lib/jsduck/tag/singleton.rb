@@ -9,6 +9,7 @@ module JsDuck::Tag
         :small => File.dirname(__FILE__) + "/icons/singleton.png",
         :large => File.dirname(__FILE__) + "/icons/singleton-large.png",
         :redirect => File.dirname(__FILE__) + "/icons/singleton-redirect.png",
+        :priority => PRIORITY_SINGLETON,
       }
       @signature = {:long => "singleton", :short => "single"}
       @css = <<-EOCSS

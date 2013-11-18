@@ -57,7 +57,9 @@ module JsDuck
       end
 
       def self.class_icon_providers
-        TagRegistry.class_icon_providers
+        @providers ||= TagRegistry.class_icon_providers.sort do |a, b|
+          a.class_icon[:priority] <=> b.class_icon[:priority]
+        end.reverse
       end
     end
 
