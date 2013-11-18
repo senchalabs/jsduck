@@ -133,6 +133,15 @@ module JsDuck::Tag
     #
     attr_reader :css
 
+    # Defines custom class icon files.
+    #
+    # It must be a hash with keys :small, :large, :redirect -
+    # each referencing an icon file.
+    #
+    # Used by @class tag to define the default icon.
+    # Used by @singleton and @component tags for a different icon.
+    attr_reader :class_icon
+
     # Returns all descendants of JsDuck::Tag::Tag class.
     def self.descendants
       result = []

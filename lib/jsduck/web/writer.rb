@@ -8,6 +8,7 @@ require 'jsduck/web/index_html'
 require 'jsduck/web/data'
 require 'jsduck/web/css'
 require 'jsduck/web/source'
+require 'jsduck/web/class_icons'
 require 'jsduck/web/member_icons'
 require 'fileutils'
 
@@ -28,7 +29,7 @@ module JsDuck
 
         write_template_files
 
-        write_member_icons
+        write_icons
 
         write_html_files
 
@@ -54,8 +55,9 @@ module JsDuck
         Web::Template.new(@opts).write
       end
 
-      # Copy over member icons
-      def write_member_icons
+      # Copy over class and member icons
+      def write_icons
+        Web::ClassIcons.write(@opts.output_dir+"/class-icons")
         Web::MemberIcons.write(@opts.output_dir+"/member-icons")
       end
 
