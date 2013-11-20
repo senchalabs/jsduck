@@ -24,8 +24,6 @@ module JsDuck
 
     def initialize(load_paths=[])
       @patterns = {}
-      @ext_define_patterns = {}
-      @ext_define_defaults = {}
       @tagnames = {}
       @signatures = []
       @html_renderers = []
@@ -44,14 +42,6 @@ module JsDuck
 
         Array(tag.pattern).each do |pattern|
           @patterns[pattern] = tag
-        end
-
-        Array(tag.ext_define_pattern).each do |pattern|
-          @ext_define_patterns[pattern] = tag
-        end
-
-        if tag.ext_define_default
-          @ext_define_defaults.merge!(tag.ext_define_default)
         end
 
         if tag.tagname
@@ -83,9 +73,6 @@ module JsDuck
     #
     # Accessors for lists of tags
     #
-
-    # Default values for class config when Ext.define is encountered.
-    attr_reader :ext_define_defaults
 
     # Array of attributes to be shown in member signatures
     # (and in order they should be shown in).
@@ -144,11 +131,6 @@ module JsDuck
     # Accesses tag by @name pattern
     def get_by_pattern(name)
       @patterns[name]
-    end
-
-    # Accesses tag by Ext.define pattern
-    def get_by_ext_define_pattern(name)
-      @ext_define_patterns[name]
     end
 
     # Accesses tag by name - the symbol under which the tag data

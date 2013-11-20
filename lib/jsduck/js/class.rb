@@ -1,5 +1,5 @@
 require "jsduck/util/singleton"
-require "jsduck/tag_registry"
+require "jsduck/js/ext_define"
 require "jsduck/js/method"
 require "jsduck/js/property"
 
@@ -102,12 +102,12 @@ module JsDuck
       # given cls Hash
       def detect_ext_define(cls, ast)
         # defaults
-        cls.merge!(TagRegistry.ext_define_defaults)
+        cls.merge!(Js::ExtDefine.defaults)
         cls[:members] = []
         cls[:code_type] = :ext_define
 
         ast["arguments"][1].each_property do |key, value, pair|
-          if tag = TagRegistry.get_by_ext_define_pattern(key)
+          if tag = Js::ExtDefine.get_tag_by_pattern(key)
             tag.parse_ext_define(cls, value)
           else
             case key
