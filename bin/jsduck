@@ -21,7 +21,6 @@ require 'jsduck/app'
 require 'jsduck/options'
 
 opts = JsDuck::Options.new
-opts.parse!(ARGV)
-exit_code = JsDuck::App.new(opts).run
+exit_code = JsDuck::App.new(opts.parse(ARGV)).run
 
 exit exit_code
