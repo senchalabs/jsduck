@@ -289,13 +289,13 @@ module JsDuck
           JsDuck::Util::IO.encoding = encoding
         end
 
-        opts.on('--exclude=PATH', "Exclude input file or directory.",
+        opts.on('--exclude=PATH1,PATH2', Array, "Exclude input file or directory.",
           "",
           "For example to include all the subdirs of",
           "/app/js except /app/js/new, run JSDuck with:",
           "",
-          "  jsduck /app/js --exclude /app/js/new") do |path|
-          @exclude << path
+          "  jsduck /app/js --exclude /app/js/new") do |paths|
+          @exclude += paths
         end
 
         opts.separator ""
