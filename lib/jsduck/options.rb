@@ -549,16 +549,14 @@ module JsDuck
         opts.separator "Tweaking:"
         opts.separator ""
 
-        opts.on('--tags=PATH',
-          "Path to custom tag implementations.",
+        opts.on('--tags=PATH1,PATH2', Array,
+          "Paths to custom tag implementations.",
           "",
-          "Can be a path to single Ruby file or a directory.",
+          "Paths can point to specific Ruby files or to a directory,",
+          "in which case all ruby files in that directory are loaded.",
           "",
-          "This option can be used repeatedly to include multiple",
-          "tags from different places.",
-          "",
-          "See also: https://github.com/senchalabs/jsduck/wiki/Custom-tags") do |path|
-          @custom_tag_paths << canonical(path)
+          "See also: https://github.com/senchalabs/jsduck/wiki/Custom-tags") do |paths|
+          @custom_tag_paths += paths.map {|p| canonical(p) }
         end
 
         opts.on('--ignore-global',
