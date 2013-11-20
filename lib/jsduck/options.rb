@@ -13,139 +13,10 @@ module JsDuck
 
   # Keeps command line options
   class Options
-    attr_accessor :input_files
-
-    attr_accessor :output_dir
-    attr_accessor :ignore_global
-    attr_accessor :external_classes
-    attr_accessor :ext4_events
-
-    # Customizing output
-    attr_accessor :title
-    attr_accessor :header
-    attr_accessor :footer
-    attr_accessor :head_html
-    attr_accessor :body_html
-    attr_accessor :css
-    attr_accessor :message
-    attr_accessor :welcome
-    attr_accessor :guides
-    attr_accessor :guides_toc_level
-    attr_accessor :videos
-    attr_accessor :examples
-    attr_accessor :categories_path
-    attr_accessor :source
-    attr_accessor :images
-    attr_accessor :link_tpl
-    attr_accessor :img_tpl
-    attr_accessor :export
-    attr_accessor :seo
-    attr_accessor :eg_iframe
-    attr_accessor :examples_base_url
-    attr_accessor :tests
-    attr_accessor :comments_url
-    attr_accessor :comments_domain
-    attr_accessor :search
-    attr_accessor :ignore_html
-
-    # Debugging
-    attr_accessor :warnings_exit_nonzero
-    attr_accessor :cache
-    attr_accessor :cache_dir
-    attr_accessor :template_dir
-    attr_accessor :template_links
-    attr_accessor :extjs_path
-    attr_accessor :local_storage_db
-    attr_accessor :touch_examples_ui
-    attr_accessor :ext_namespaces
-    attr_accessor :imports
-    attr_accessor :new_since
 
     def initialize
-      @input_files = []
-      @exclude = []
-
-      @output_dir = nil
-      @ignore_global = false
-      @external_classes = [
-        # JavaScript builtins
-        "Object",
-        "String",
-        "Number",
-        "Boolean",
-        "RegExp",
-        "Function",
-        "Array",
-        "Arguments",
-        "Date",
-        # JavaScript builtin error classes
-        # https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Error
-        "Error",
-        "EvalError",
-        "RangeError",
-        "ReferenceError",
-        "SyntaxError",
-        "TypeError",
-        "URIError",
-        # DOM
-        "HTMLElement",
-        "XMLElement",
-        "NodeList",
-        "TextNode",
-        "CSSStyleSheet",
-        "CSSStyleRule",
-        "Event",
-        # Other browser-environment classes
-        "Window",
-        "XMLHttpRequest",
-        # Special anything-goes type
-        "Mixed",
-      ]
-      @ext4_events = nil
-
-      # Customizing output
-      @title = "Documentation - JSDuck"
-      @header = "<strong>Documentation</strong> JSDuck"
-      @footer = format_footer("Generated on {DATE} by {JSDUCK} {VERSION}.")
-      @head_html = ""
-      @body_html = ""
-      @css = ""
-      @message = ""
-      @welcome = nil
-      @guides = nil
-      @guides_toc_level = 2
-      @videos = nil
-      @examples = nil
-      @categories_path = nil
-      @source = true
-      @images = []
       @custom_tag_paths = []
-      @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
-      # Note that we wrap image template inside <p> because {@img} often
-      # appears inline within text, but that just looks ugly in HTML
-      @img_tpl = '<p><img src="%u" alt="%a" width="%w" height="%h"></p>'
-      @export = nil
-      @seo = false
-      @eg_iframe = nil
-      @examples_base_url = "extjs-build/examples/"
-      @tests = false
-      @comments_url = nil
-      @comments_domain = nil
-      @search = {}
-      @ignore_html = {}
-
-      # Debugging
-      @warnings_exit_nonzero = false
-      @cache = false
-      @cache_dir = nil
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
-      @template_dir = @root_dir + "/template-min"
-      @template_links = false
-      @extjs_path = "extjs/ext-all.js"
-      @local_storage_db = "docs"
-      @touch_examples_ui = false
-      @imports = []
-      @new_since = nil
 
       # Turn multiprocessing off by default in Windows
       Util::Parallel.in_processes = Util::OS::windows? ? 0 : nil
@@ -206,6 +77,9 @@ module JsDuck
         opts.separator "The main options:"
         opts.separator ""
 
+        def_attribute(:input_files, [])
+
+        def_attribute(:output_dir)
         opts.on('-o', '--output=PATH',
           "Directory to write all this documentation.",
           "",
@@ -220,6 +94,7 @@ module JsDuck
           end
         end
 
+        def_attribute(:export)
         opts.on('--export=full/examples',
           "Exports docs in JSON.",
           "",
@@ -253,6 +128,7 @@ module JsDuck
           read_filenames(@root_dir + "/js-classes")
         end
 
+        def_attribute(:seo, false)
         opts.on('--seo', "Enables SEO-friendly print version.",
           "",
           "Instead of index.html creates index.php that will serve",
@@ -289,6 +165,7 @@ module JsDuck
           JsDuck::Util::IO.encoding = encoding
         end
 
+        def_attribute(:exclude, [])
         opts.on('--exclude=PATH1,PATH2', Array, "Exclude input file or directory.",
           "",
           "For example to include all the subdirs of",
@@ -302,6 +179,8 @@ module JsDuck
         opts.separator "Customizing output:"
         opts.separator ""
 
+        def_attribute(:title, "Documentation - JSDuck")
+        def_attribute(:header, "<strong>Documentation</strong> JSDuck")
         opts.on('--title=TEXT',
           "Custom title text for the documentation.",
           "",
@@ -314,6 +193,7 @@ module JsDuck
           @header = text.sub(/^(.*?) +- +/, "<strong>\\1 </strong>")
         end
 
+        def_attribute(:footer, format_footer("Generated on {DATE} by {JSDUCK} {VERSION}."))
         opts.on('--footer=TEXT',
           "Custom footer text for the documentation.",
           "",
@@ -327,6 +207,7 @@ module JsDuck
           @footer = format_footer(text)
         end
 
+        def_attribute(:head_html, "")
         opts.on('--head-html=HTML',
           "HTML for the <head> section of index.html.",
           "",
@@ -340,6 +221,7 @@ module JsDuck
           @head_html += maybe_file(html)
         end
 
+        def_attribute(:body_html, "")
         opts.on('--body-html=HTML',
           "HTML for the <body> section of index.html.",
           "",
@@ -353,6 +235,7 @@ module JsDuck
           @body_html += maybe_file(html)
         end
 
+        def_attribute(:css, "")
         opts.on('--css=CSS',
           "Extra CSS rules to include to the page.",
           "",
@@ -364,6 +247,7 @@ module JsDuck
           @css += maybe_file(css)
         end
 
+        def_attribute(:message, "")
         opts.on('--message=HTML',
           "(Warning) message to show prominently.",
           "",
@@ -373,6 +257,7 @@ module JsDuck
           @message += html
         end
 
+        def_attribute(:welcome)
         opts.on('--welcome=PATH',
           "File with content for welcome page.",
           "",
@@ -384,6 +269,7 @@ module JsDuck
           @welcome = canonical(path)
         end
 
+        def_attribute(:guides)
         opts.on('--guides=PATH',
           "JSON file describing the guides.",
           "",
@@ -395,6 +281,7 @@ module JsDuck
           @guides = canonical(path)
         end
 
+        def_attribute(:guides_toc_level, 2)
         opts.on('--guides-toc-level=LEVEL',
           "Max heading level for guides' tables of contents.",
           "",
@@ -414,6 +301,7 @@ module JsDuck
           end
         end
 
+        def_attribute(:videos)
         opts.on('--videos=PATH',
           "JSON file describing the videos.",
           "",
@@ -421,6 +309,7 @@ module JsDuck
           @videos = canonical(path)
         end
 
+        def_attribute(:examples)
         opts.on('--examples=PATH',
           "JSON file describing the examples.",
           "",
@@ -428,6 +317,7 @@ module JsDuck
           @examples = canonical(path)
         end
 
+        def_attribute(:categories_path)
         opts.on('--categories=PATH',
           "JSON file defining categories for classes.",
           "",
@@ -438,11 +328,13 @@ module JsDuck
           @categories_path = canonical(path)
         end
 
+        def_attribute(:source, true)
         opts.on('--no-source',
           "Turns off the output of source files.") do
           @source = false
         end
 
+        def_attribute(:images, [])
         opts.on('--images=PATH1,PATH2', Array,
           "Paths for images referenced by {@img} tag.",
           "",
@@ -453,11 +345,13 @@ module JsDuck
           @images += paths.map {|p| canonical(p) }
         end
 
+        def_attribute(:tests, false)
         opts.on('--tests',
           "Creates page for testing inline examples.") do
           @tests = true
         end
 
+        def_attribute(:imports, [])
         opts.on('--import=VERSION:PATH',
           "Imports docs generating @since & @new.",
           "",
@@ -484,6 +378,7 @@ module JsDuck
           end
         end
 
+        def_attribute(:new_since)
         opts.on('--new-since=VERSION',
           "Since when to label items with @new tag.",
           "",
@@ -494,6 +389,7 @@ module JsDuck
           @new_since = v
         end
 
+        def_attribute(:comments_url)
         opts.on('--comments-url=URL',
           "Address of comments server.",
           "",
@@ -503,6 +399,7 @@ module JsDuck
           @comments_url = url
         end
 
+        def_attribute(:comments_domain)
         opts.on('--comments-domain=STRING',
           "A name identifying the subset of comments.",
           "",
@@ -514,6 +411,7 @@ module JsDuck
           @comments_domain = domain
         end
 
+        def_attribute(:search, {})
         opts.on('--search-url=URL',
           "Address of guides search server.",
           "",
@@ -559,6 +457,7 @@ module JsDuck
           @custom_tag_paths += paths.map {|p| canonical(p) }
         end
 
+        def_attribute(:ignore_global, false)
         opts.on('--ignore-global',
           "Turns off the creation of 'global' class.",
           "",
@@ -572,6 +471,40 @@ module JsDuck
           @ignore_global = true
         end
 
+        def_attribute(:external_classes, [
+            # JavaScript builtins
+            "Object",
+            "String",
+            "Number",
+            "Boolean",
+            "RegExp",
+            "Function",
+            "Array",
+            "Arguments",
+            "Date",
+            # JavaScript builtin error classes
+            # https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Error
+            "Error",
+            "EvalError",
+            "RangeError",
+            "ReferenceError",
+            "SyntaxError",
+            "TypeError",
+            "URIError",
+            # DOM
+            "HTMLElement",
+            "XMLElement",
+            "NodeList",
+            "TextNode",
+            "CSSStyleSheet",
+            "CSSStyleRule",
+            "Event",
+            # Other browser-environment classes
+            "Window",
+            "XMLHttpRequest",
+            # Special anything-goes type
+            "Mixed",
+          ])
         opts.on('--external=Foo,Bar,Baz', Array,
           "Declares list of external classes.",
           "",
@@ -587,6 +520,7 @@ module JsDuck
           @external_classes += classes
         end
 
+        def_attribute(:ext4_events)
         opts.on('--[no-]ext4-events',
           "Forces Ext4 options param on events.",
           "",
@@ -605,6 +539,7 @@ module JsDuck
           @ext4_events = e
         end
 
+        def_attribute(:examples_base_url)
         opts.on('--examples-base-url=URL',
           "Base URL for examples with relative URL-s.",
           " ",
@@ -612,6 +547,7 @@ module JsDuck
           @examples_base_url = path
         end
 
+        def_attribute(:link_tpl, '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>')
         opts.on('--link=TPL',
           "HTML template for replacing {@link}.",
           "",
@@ -628,6 +564,7 @@ module JsDuck
           @link_tpl = tpl
         end
 
+        def_attribute(:img_tpl, '<p><img src="%u" alt="%a" width="%w" height="%h"></p>')
         opts.on('--img=TPL',
           "HTML template for replacing {@img}.",
           "",
@@ -642,6 +579,7 @@ module JsDuck
           @img_tpl = tpl
         end
 
+        def_attribute(:eg_iframe)
         opts.on('--eg-iframe=PATH',
           "HTML file used to display inline examples.",
           "",
@@ -668,6 +606,7 @@ module JsDuck
           Js::ExtPatterns.set(namespaces)
         end
 
+        def_attribute(:touch_examples_ui, false)
         opts.on('--touch-examples-ui',
           "Turns on phone/tablet UI for examples.",
           "",
@@ -676,6 +615,7 @@ module JsDuck
           @touch_examples_ui = true
         end
 
+        def_attribute(:ignore_html, {})
         opts.on('--ignore-html=TAG1,TAG2', Array,
           "Ignore a particular unclosed HTML tag.",
           "",
@@ -710,6 +650,7 @@ module JsDuck
           Util::Parallel.in_processes = count.to_i
         end
 
+        def_attribute(:cache, false)
         opts.on('--[no-]cache',
           "Turns parser cache on/off (EXPERIMENTAL).",
           "",
@@ -729,6 +670,7 @@ module JsDuck
           @cache = enabled
         end
 
+        def_attribute(:cache_dir)
         opts.on('--cache-dir=PATH',
           "Directory where to cache the parsed source.",
           "",
@@ -793,6 +735,7 @@ module JsDuck
           end
         end
 
+        def_attribute(:warnings_exit_nonzero, false)
         opts.on('--warnings-exit-nonzero',
           "Exits with non-zero exit code on warnings.",
           "",
@@ -823,6 +766,7 @@ module JsDuck
           Util::Json.pretty = true
         end
 
+        def_attribute(:template_dir, @root_dir + "/template-min")
         opts.on('--template=PATH',
           "Dir containing the UI template files.",
           "",
@@ -830,6 +774,7 @@ module JsDuck
           @template_dir = canonical(path)
         end
 
+        def_attribute(:template_links, false)
         opts.on('--template-links',
           "Creates symlinks to UI template files.",
           "",
@@ -846,6 +791,7 @@ module JsDuck
           @template_links = true
         end
 
+        def_attribute(:extjs_path, "extjs/ext-all.js")
         opts.on('--extjs-path=PATH',
           "Path for main ExtJS JavaScript file.",
           "",
@@ -857,6 +803,7 @@ module JsDuck
           @extjs_path = path # NB! must be relative path
         end
 
+        def_attribute(:local_storage_db, "docs")
         opts.on('--local-storage-db=NAME',
           "Prefix for LocalStorage database names.",
           "",
@@ -887,6 +834,14 @@ module JsDuck
           exit
         end
       end
+    end
+
+    # Defines accessor for an option,
+    # and assigns a default value for it.
+    def def_attribute(name, default=nil)
+      instance_variable_set("@#{name}", default)
+      # Use `send` to invoke private attr_accessor method.
+      self.class.send(:attr_accessor, name)
     end
 
     # Parses the given command line options
