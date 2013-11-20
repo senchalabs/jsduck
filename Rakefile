@@ -11,6 +11,8 @@ end
 
 require 'rspec'
 require 'rspec/core/rake_task'
+
+desc "Runs RSpec testsuite (DEFAULT)"
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.rspec_opts = ["--color"] unless os_is_windows?
   spec.pattern = "spec/**/*_spec.rb"
@@ -246,8 +248,10 @@ def commit_version(version)
 end
 
 desc <<-EOTEXT
-Bumps JSDuck minor version number up by one.
-Or sets the specified version number, when invoked like:
+Bumps JSDuck patch version number up by one.
+When old version was 1.2.2, new will be 1.2.3.
+
+Alternatively sets the specified version, when invoked like:
 
     rake bump['1.2.3']
 
