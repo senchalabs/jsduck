@@ -23,11 +23,16 @@ module JsDuck
 
       def all_css
         [
-          TagRegistry.css,
+          css_from_tags,
           Web::ClassIcons.css,
           Web::MemberIcons.css,
           @opts.css,
         ].join
+      end
+
+      # Returns all the CSS gathered from @css attributes of tags.
+      def css_from_tags
+        TagRegistry.tags.map(&:css).compact.join("\n")
       end
     end
 

@@ -29,7 +29,6 @@ module JsDuck
       @html_renderers = []
       @html_renderers_sorted = false
       @member_types = []
-      @css = []
       @tags = []
 
       instantiate_tags(TagLoader.new(load_paths).load_all)
@@ -60,10 +59,6 @@ module JsDuck
 
         if tag.html_position
           @html_renderers << tag
-        end
-
-        if tag.css
-          @css << tag.css
         end
 
         @tags << tag
@@ -117,11 +112,6 @@ module JsDuck
       end
 
       @html_renderers
-    end
-
-    # Returns all the CSS gathered from @css attributes of tags.
-    def css
-      @css.join("\n")
     end
 
     #
