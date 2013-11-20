@@ -443,15 +443,14 @@ module JsDuck
           @source = false
         end
 
-        opts.on('--images=PATH',
-          "Path for images referenced by {@img} tag.",
+        opts.on('--images=PATH1,PATH2', Array,
+          "Paths for images referenced by {@img} tag.",
           "",
-          "Several paths can be specified by using the option",
-          "multiple times.  This option only applies to {@img}",
-          "tags used in API (classes/members) documentation.",
-          "Images used in guides must be located inside the",
-          "directory of the specific guide.") do |path|
-          @images << canonical(path)
+          "This option only applies to {@img} tags used in",
+          "API (classes/members) documentation.  Images used",
+          "in guides must be located inside the directory of",
+          "the specific guide.") do |paths|
+          @images += paths.map {|p| canonical(p) }
         end
 
         opts.on('--tests',
