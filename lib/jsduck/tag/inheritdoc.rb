@@ -1,5 +1,5 @@
 require "jsduck/tag/tag"
-require "jsduck/tag_registry"
+require "jsduck/member_registry"
 
 module JsDuck::Tag
   class Inheritdoc < Tag
@@ -31,7 +31,7 @@ module JsDuck::Tag
           tag[:static] = true
           p.match(/static-/)
         end
-        if p.look(JsDuck::TagRegistry.member_type_regex)
+        if p.look(JsDuck::MemberRegistry.regex)
           tag[:type] = p.match(/\w+/).to_sym
           p.match(/-/)
         end

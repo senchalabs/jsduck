@@ -2,7 +2,7 @@ require "jsduck/tag_loader"
 
 module JsDuck
 
-  # Access to builtin @tags
+  # Access to all @tag definitions.
   class TagRegistry
     # Access to the singleton instance (only used internally)
     def self.instance
@@ -26,7 +26,6 @@ module JsDuck
       @patterns = {}
       @tagnames = {}
       @signatures = []
-      @member_types = []
       @tags = []
 
       instantiate_tags(TagLoader.new(load_paths).load_all)
@@ -43,11 +42,6 @@ module JsDuck
 
         if tag.tagname
           @tagnames[tag.tagname] = tag
-        end
-
-        if tag.respond_to?(:member_type) && tag.member_type
-          tag.member_type[:name] = tag.tagname
-          @member_types << tag.member_type
         end
 
         if tag.signature
@@ -69,32 +63,6 @@ module JsDuck
 
     # Array of all available tags
     attr_reader :tags
-
-    # Same as #member_types, but returns just the names of member types.
-    def member_type_names
-      member_types.map {|mt| mt[:name] }
-    end
-
-    # Returns array of available member types.
-    # Sorted in the order defined by :position.
-    def member_types
-      if !@member_types_sorted
-        @member_types.sort! {|a, b| a[:position] <=> b[:position] }
-        @member_types_sorted = true
-      end
-
-      @member_types
-    end
-
-    # Regex for matching member type name in member reference.
-    #
-    # The regex matches strings like: "method-" or "event-".  It
-    # contains a capture group to capture the actual name of the
-    # member, leaving out the dash "-".
-    def member_type_regex
-      @member_type_regex if @member_type_regex
-      @member_type_regex = Regexp.new("(?:(" + member_type_names.join("|") + ")-)")
-    end
 
     #
     # Accessors for a single tag

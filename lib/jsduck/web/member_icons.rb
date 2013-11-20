@@ -1,4 +1,4 @@
-require 'jsduck/tag_registry'
+require 'jsduck/member_registry'
 require 'fileutils'
 
 module JsDuck
@@ -35,7 +35,7 @@ module JsDuck
       end
 
       def self.members_with_icons
-        TagRegistry.member_types.find_all {|m| m[:icon] }
+        MemberRegistry.definitions.find_all {|m| m[:icon] }
       end
     end
 

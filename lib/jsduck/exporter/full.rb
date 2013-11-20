@@ -1,4 +1,5 @@
-require 'jsduck/tag_registry'
+require 'jsduck/class'
+require 'jsduck/member_registry'
 
 module JsDuck
   module Exporter
@@ -27,7 +28,7 @@ module JsDuck
       # Generates flat list of all members
       def export_members(cls)
         groups = []
-        TagRegistry.member_type_names.each do |tagname|
+        MemberRegistry.names.each do |tagname|
           groups << export_members_group(cls, {:tagname => tagname, :static => false})
           groups << export_members_group(cls, {:tagname => tagname, :static => true})
         end

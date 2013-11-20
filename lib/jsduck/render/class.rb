@@ -1,6 +1,7 @@
 require 'jsduck/render/tags'
 require 'jsduck/render/sidebar'
 require 'jsduck/tag_registry'
+require 'jsduck/member_registry'
 
 module JsDuck
   module Render
@@ -38,8 +39,8 @@ module JsDuck
       end
 
       def render_all_sections
-        TagRegistry.member_types.map do |member_type|
-          render_section(member_type)
+        MemberRegistry.definitions.map do |member_def|
+          render_section(member_def)
         end
       end
 

@@ -3,6 +3,7 @@ require 'jsduck/util/md5'
 require 'jsduck/web/tree'
 require 'jsduck/web/search'
 require 'jsduck/tag_registry'
+require 'jsduck/member_registry'
 
 module JsDuck
   module Web
@@ -29,7 +30,7 @@ module JsDuck
             :guideSearch => @opts.search,
             :tests => @opts.tests,
             :signatures => TagRegistry.signatures,
-            :memberTypes => TagRegistry.member_types,
+            :memberTypes => MemberRegistry.definitions,
             :localStorageDb => @opts.local_storage_db,
             :showPrintButton => @opts.seo,
             :touchExamplesUi => @opts.touch_examples_ui,
