@@ -1,4 +1,4 @@
-require 'jsduck/tag_registry'
+require 'jsduck/render/tags'
 
 module JsDuck
   module Format
@@ -49,7 +49,7 @@ module JsDuck
       end
 
       def format_tags(context)
-        TagRegistry.html_renderers.each do |tag|
+        Render::Tags.renderers.each do |tag|
           if context[tag.tagname]
             tag.format(context, @formatter)
           end

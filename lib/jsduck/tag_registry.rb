@@ -26,8 +26,6 @@ module JsDuck
       @patterns = {}
       @tagnames = {}
       @signatures = []
-      @html_renderers = []
-      @html_renderers_sorted = false
       @member_types = []
       @tags = []
 
@@ -55,10 +53,6 @@ module JsDuck
         if tag.signature
           tag.signature[:tagname] = tag.tagname
           @signatures << tag.signature
-        end
-
-        if tag.html_position
-          @html_renderers << tag
         end
 
         @tags << tag
@@ -100,18 +94,6 @@ module JsDuck
     def member_type_regex
       @member_type_regex if @member_type_regex
       @member_type_regex = Regexp.new("(?:(" + member_type_names.join("|") + ")-)")
-    end
-
-    # Returns tags for rendering HTML, sorted in the order they should
-    # appear in final output. Sorting order is determined by the
-    # numeric :html_position field.
-    def html_renderers
-      if !@html_renderers_sorted
-        @html_renderers.sort! {|a, b| a.html_position <=> b.html_position }
-        @html_renderers_sorted = true
-      end
-
-      @html_renderers
     end
 
     #

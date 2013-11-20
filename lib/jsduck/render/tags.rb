@@ -10,13 +10,25 @@ module JsDuck
       # Takes member or class hash.
       # Returns array of rendered HTML.
       def self.render(member)
-        TagRegistry.html_renderers.map do |tag|
+        renderers.map do |tag|
           if member[tag.tagname]
             tag.to_html(member)
           else
             nil
           end
         end
+      end
+
+      # Returns tags for rendering HTML, sorted in the order they should
+      # appear in final output. Sorting order is determined by the
+      # numeric :html_position field.
+      def self.renderers
+        if !@renderers
+          @renderers = TagRegistry.tags.find_all(&:html_position)
+          @renderers.sort! {|a, b| a.html_position <=> b.html_position }
+        end
+
+        @renderers
       end
 
       # Renders the signatures for a class member.
