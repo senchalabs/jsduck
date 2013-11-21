@@ -26,10 +26,10 @@ module JsDuck
         Logger.configure(@opts)
         Util::Parallel.configure(@opts)
         TagRegistry.configure(@opts)
+        Js::ExtPatterns.configure(@opts)
 
         Util::Json.pretty = true if @opts.pretty_json
         JsDuck::Util::IO.encoding = @opts.encoding if @opts.encoding
-        Js::ExtPatterns.set(@opts.ext_namespaces) if @opts.ext_namespaces
 
         validate
 
