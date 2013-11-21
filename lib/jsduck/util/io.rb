@@ -13,6 +13,11 @@ module JsDuck
     class IO
       @@encoding = "BOM|UTF-8"
 
+      # Configures the encoding from command line options.
+      def self.configure(opts)
+        encoding = opts.encoding if opts.encoding
+      end
+
       # Sets the external encoding to be used for reading files.
       # When it's different from UTF-8, the input will be converted to UTF-8.
       def self.encoding=(e)

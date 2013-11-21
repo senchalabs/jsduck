@@ -28,8 +28,7 @@ module JsDuck
         TagRegistry.configure(@opts)
         Js::ExtPatterns.configure(@opts)
         Util::Json.configure(@opts)
-
-        JsDuck::Util::IO.encoding = @opts.encoding if @opts.encoding
+        JsDuck::Util::IO.configure(@opts)
 
         validate
 
