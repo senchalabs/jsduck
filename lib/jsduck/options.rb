@@ -18,7 +18,6 @@ module JsDuck
     def initialize
       @opts = OptionsRecord.new
 
-      @custom_tag_paths = []
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
 
       # Turn multiprocessing off by default in Windows
@@ -38,12 +37,36 @@ module JsDuck
     # object containing all the options.
     def parse(argv)
       parse_options(argv)
-      auto_detect_config_file unless @config_option_specified
+      auto_detect_config_file unless @opts.config
       exclude_input_files
       validate
 
-      if @custom_tag_paths.length > 0
-        TagRegistry.reconfigure(@custom_tag_paths)
+      # post-process
+
+      JsDuck::Util::IO.encoding = @opts.encoding if @opts.encoding
+
+      Js::ExtPatterns.set(@opts.ext_namespaces) if @opts.ext_namespaces
+
+      Util::Parallel.in_processes = @opts.processes if @opts.processes
+
+      Logger.verbose = true if @opts.verbose
+
+      Logger.colors = @opts.color unless @opts.color.nil?
+
+      Util::Json.pretty = true if @opts.pretty_json
+
+      begin
+        @opts.warnings.each do |warning|
+          Warning::Parser.new(warning).parse.each do |w|
+            Logger.set_warning(w[:type], w[:enabled], w[:path], w[:params])
+          end
+        end
+      rescue Warning::WarnException => e
+        Logger.warn(nil, e.message)
+      end
+
+      if @opts.tags.length > 0
+        TagRegistry.reconfigure(@opts.tags)
       else
         # Ensure the TagRegistry get instantiated just once.
         # Otherwise the parallel processing causes multiple requests
@@ -135,6 +158,7 @@ module JsDuck
           @opts.seo = true
         end
 
+        @opts.attribute(:config)
         optparser.on('--config=PATH',
           "Loads config options from JSON file.",
           "",
@@ -156,11 +180,12 @@ module JsDuck
           @working_dir = File.dirname(path)
           parse_options(config)
           @working_dir = nil
-          @config_option_specified = true
+          @opts.config = path
         end
 
+        @opts.attribute(:encoding)
         optparser.on('--encoding=NAME', "Input encoding (defaults to UTF-8).") do |encoding|
-          JsDuck::Util::IO.encoding = encoding
+          @opts.encoding = encoding
         end
 
         @opts.attribute(:exclude, [])
@@ -329,7 +354,7 @@ module JsDuck
         @opts.attribute(:source, true)
         optparser.on('--no-source',
           "Turns off the output of source files.") do
-          @source = false
+          @opts.source = false
         end
 
         @opts.attribute(:images, [])
@@ -445,6 +470,7 @@ module JsDuck
         optparser.separator "Tweaking:"
         optparser.separator ""
 
+        @opts.attribute(:tags, [])
         optparser.on('--tags=PATH1,PATH2', Array,
           "Paths to custom tag implementations.",
           "",
@@ -452,7 +478,7 @@ module JsDuck
           "in which case all ruby files in that directory are loaded.",
           "",
           "See also: https://github.com/senchalabs/jsduck/wiki/Custom-tags") do |paths|
-          @custom_tag_paths += paths.map {|p| canonical(p) }
+          @opts.tags += paths.map {|p| canonical(p) }
         end
 
         @opts.attribute(:ignore_global, false)
@@ -590,6 +616,7 @@ module JsDuck
           @opts.eg_iframe = canonical(path)
         end
 
+        @opts.attribute(:ext_namespaces)
         optparser.on('--ext-namespaces=Ext,Foo', Array,
           "Additional Ext JS namespaces to recognize.",
           "",
@@ -601,7 +628,7 @@ module JsDuck
           "and JSDuck will recognize both Ext.define() and",
           "YourNs.define() plus few other things that depend on",
           "Ext namespace like Ext.emptyFn.") do |namespaces|
-          Js::ExtPatterns.set(namespaces)
+          @opts.ext_namespaces = namespaces
         end
 
         @opts.attribute(:touch_examples_ui, false)
@@ -635,6 +662,7 @@ module JsDuck
         optparser.separator "Performance:"
         optparser.separator ""
 
+        @opts.attribute(:processes)
         optparser.on('-p', '--processes=COUNT',
           "The number of parallel processes to use.",
           "",
@@ -645,7 +673,7 @@ module JsDuck
           "results.",
           "",
           "In Windows this option is disabled.") do |count|
-          Util::Parallel.in_processes = count.to_i
+          @opts.processes = count.to_i
         end
 
         @opts.attribute(:cache, false)
@@ -694,13 +722,15 @@ module JsDuck
         optparser.separator "Debugging:"
         optparser.separator ""
 
+        @opts.attribute(:verbose, false)
         optparser.on('-v', '--verbose',
           "Turns on excessive logging.",
           "",
           "Log messages are written to STDERR.") do
-          Logger.verbose = true
+          @opts.verbose = true
         end
 
+        @opts.attribute(:warnings, [])
         optparser.on('--warnings=+A,-B,+C',
           "Turns warnings selectively on/off.",
           "",
@@ -724,13 +754,7 @@ module JsDuck
           "(Those with '+' in front of them default to on)",
           "",
           *Logger.doc_warnings) do |warnings|
-          begin
-            Warning::Parser.new(warnings).parse.each do |w|
-              Logger.set_warning(w[:type], w[:enabled], w[:path], w[:params])
-            end
-          rescue Warning::WarnException => e
-            Logger.warn(nil, e.message)
-          end
+          @opts.warnings << warnings
         end
 
         @opts.attribute(:warnings_exit_nonzero, false)
@@ -745,15 +769,17 @@ module JsDuck
           @opts.warnings_exit_nonzero = true
         end
 
+        @opts.attribute(:color)
         optparser.on('--[no-]color',
           "Turn on/off colorized terminal output.",
           "",
           "By default the colored output is on, but gets disabled",
           "automatically when output is not an interactive terminal",
           "(or when running on Windows system).") do |on|
-          Logger.colors = on
+          @opts.color = on
         end
 
+        @opts.attribute(:pretty_json)
         optparser.on('--pretty-json',
           "Turns on pretty-printing of JSON.",
           "",
@@ -761,7 +787,7 @@ module JsDuck
           "by --export option.  But the option effects any JSON",
           "that gets generated, so it's also useful when debugging",
           "the resource files generated for the docs app.") do
-          Util::Json.pretty = true
+          @opts.pretty_json = true
         end
 
         @opts.attribute(:template_dir, @root_dir + "/template-min")
