@@ -19,14 +19,17 @@ module JsDuck
       def process!(opts)
         @opts = opts
 
-        # Apply the various options.
+        # Expand list of input files
         configure_input_files
-        configure_logger
-        configure_parallel
-        configure_tags
-        configure_json
-        configure_encoding
-        configure_ext_patterns
+
+        # Configure various objects with these options
+        Logger.configure(@opts)
+        Util::Parallel.configure(@opts)
+        TagRegistry.configure(@opts)
+
+        Util::Json.pretty = true if @opts.pretty_json
+        JsDuck::Util::IO.encoding = @opts.encoding if @opts.encoding
+        Js::ExtPatterns.set(@opts.ext_namespaces) if @opts.ext_namespaces
 
         validate
 
@@ -72,30 +75,6 @@ module JsDuck
           exclude_re = Regexp.new('\A' + Regexp.escape(exclude_path))
           files.reject! {|f| f =~ exclude_re }
         end
-      end
-
-      def configure_logger
-        Logger.configure(@opts)
-      end
-
-      def configure_parallel
-        Util::Parallel.configure(@opts)
-      end
-
-      def configure_tags
-        TagRegistry.configure(@opts)
-      end
-
-      def configure_json
-        Util::Json.pretty = true if @opts.pretty_json
-      end
-
-      def configure_encoding
-        JsDuck::Util::IO.encoding = @opts.encoding if @opts.encoding
-      end
-
-      def configure_ext_patterns
-        Js::ExtPatterns.set(@opts.ext_namespaces) if @opts.ext_namespaces
       end
 
       # Runs checks on the options
