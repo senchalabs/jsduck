@@ -1,6 +1,8 @@
 require 'jsduck/options/helpful_parser'
 require 'jsduck/options/record'
 require 'jsduck/options/config'
+require 'jsduck/warning/parser'
+require 'jsduck/warning/warn_exception'
 require 'jsduck/logger'
 require 'jsduck/util/io'
 require 'jsduck/version'
@@ -700,7 +702,11 @@ module JsDuck
             "(Those with '+' in front of them default to on)",
             "",
             *Logger.doc_warnings) do |warnings|
-            @opts.warnings << warnings
+            begin
+              @opts.warnings += Warning::Parser.new(warnings).parse
+            rescue Warning::WarnException => e
+              Logger.warn(nil, e.message)
+            end
           end
 
           @opts.attribute(:warnings_exit_nonzero, false)

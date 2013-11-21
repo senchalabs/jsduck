@@ -25,6 +25,27 @@ module JsDuck
       @shown_warnings = {}
     end
 
+    # Configures the logger with command line options.
+    def configure(opts)
+      self.verbose = true if opts.verbose
+
+      self.colors = opts.color unless opts.color.nil?
+
+      # Enable all warnings except the following:
+      set_warning(:all, true)
+      set_warning(:link_auto, false)
+      set_warning(:param_count, false)
+      set_warning(:fires, false)
+      set_warning(:nodoc, false)
+      begin
+        opts.warnings.each do |w|
+          set_warning(w[:type], w[:enabled], w[:path], w[:params])
+        end
+      rescue Warning::WarnException => e
+        warn(nil, e.message)
+      end
+    end
+
     # Prints log message with optional filename appended
     def log(msg, filename=nil)
       if @verbose

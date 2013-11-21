@@ -77,25 +77,7 @@ module JsDuck
       end
 
       def configure_logger
-        Logger.verbose = true if @opts.verbose
-
-        Logger.colors = @opts.color unless @opts.color.nil?
-
-        # Enable all warnings except the following:
-        Logger.set_warning(:all, true)
-        Logger.set_warning(:link_auto, false)
-        Logger.set_warning(:param_count, false)
-        Logger.set_warning(:fires, false)
-        Logger.set_warning(:nodoc, false)
-        begin
-          @opts.warnings.each do |warning|
-            Warning::Parser.new(warning).parse.each do |w|
-              Logger.set_warning(w[:type], w[:enabled], w[:path], w[:params])
-            end
-          end
-        rescue Warning::WarnException => e
-          Logger.warn(nil, e.message)
-        end
+        Logger.configure(@opts)
       end
 
       # Turns multiprocessing off by default in Windows.
