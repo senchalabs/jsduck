@@ -27,8 +27,8 @@ module JsDuck
         Util::Parallel.configure(@opts)
         TagRegistry.configure(@opts)
         Js::ExtPatterns.configure(@opts)
+        Util::Json.configure(@opts)
 
-        Util::Json.pretty = true if @opts.pretty_json
         JsDuck::Util::IO.encoding = @opts.encoding if @opts.encoding
 
         validate
