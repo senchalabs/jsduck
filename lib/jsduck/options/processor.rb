@@ -1,3 +1,4 @@
+require 'jsduck/options/jsb'
 require 'jsduck/logger'
 require 'jsduck/util/json'
 require 'jsduck/util/os'
@@ -58,7 +59,7 @@ module JsDuck
           if File.directory?(fname)
             Dir[fname+"/**/*.{js,css,scss}"].each {|f| files << f }
           elsif fname =~ /\.jsb3$/
-            extract_jsb_files(fname).each {|fn| read_filenames(fn) }
+            Options::Jsb.read(fname).each {|fn| read_filenames(fn) }
           else
             files << fname
           end
@@ -67,19 +68,6 @@ module JsDuck
         end
 
         files
-      end
-
-      # Extracts files of first build in jsb file
-      def extract_jsb_files(jsb_file)
-        json = Util::Json.read(jsb_file)
-        basedir = File.dirname(jsb_file)
-
-        return json["builds"][0]["packages"].map do |package_id|
-          package = json["packages"].find {|p| p["id"] == package_id }
-          (package ? package["files"] : []).map do |file|
-            File.expand_path(basedir + "/" + file["path"] + file["name"])
-          end
-        end.flatten
       end
 
       # Removes the files matching exclude_paths from list of files
