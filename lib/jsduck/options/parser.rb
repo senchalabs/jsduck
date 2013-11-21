@@ -1,7 +1,7 @@
 require 'jsduck/options/helpful_parser'
 require 'jsduck/options/record'
+require 'jsduck/options/config'
 require 'jsduck/logger'
-require 'jsduck/util/json'
 require 'jsduck/util/io'
 require 'jsduck/version'
 
@@ -825,25 +825,8 @@ module JsDuck
 
       # Reads JSON configuration from file and returns an array of
       # config options that can be feeded into optparser.
-      def read_json_config(fname)
-        config = []
-        json = Util::Json.read(fname)
-        json.each_pair do |key, value|
-          if key == "--"
-            # filenames
-            config += Array(value).map(&:to_s)
-          elsif value == true
-            # simple switch
-            config += [key.to_s]
-          else
-            # An option with value or with multiple values.
-            # In the latter case, add the option multiple times.
-            Array(value).each do |v|
-              config += [key.to_s, v.to_s]
-            end
-          end
-        end
-        config
+      def read_json_config(filename)
+        Options::Config.read(filename)
       end
 
       # When given string is a file, returns the contents of the file.
