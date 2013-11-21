@@ -18,9 +18,12 @@
 $:.unshift File.dirname(File.dirname(__FILE__)) + "/lib"
 
 require 'jsduck/app'
-require 'jsduck/options/manager'
+require 'jsduck/options/parser'
+require 'jsduck/options/processor'
 
-opts = JsDuck::Options::Manager.new
-exit_code = JsDuck::App.new(opts.parse(ARGV)).run
+opts = JsDuck::Options::Parser.new.parse(ARGV)
+JsDuck::Options::Processor.new.process!(opts)
+
+exit_code = JsDuck::App.new(opts).run
 
 exit exit_code
