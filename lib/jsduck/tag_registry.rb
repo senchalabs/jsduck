@@ -10,10 +10,21 @@ module JsDuck
       @instance
     end
 
-    # Reconfigures the registry with additional load paths.
-    # Used in Options class.
-    def self.reconfigure(load_paths)
-      @instance = TagRegistry.new(load_paths)
+    # Configures TagRegistry according to the command line options.
+    def self.configure(opts)
+      if opts.tags.length > 0
+        # Reconfigures the registry with additional load paths.
+        @instance = TagRegistry.new(opts.tags)
+      else
+        # Ensure the TagRegistry get instantiated just once.
+        # Otherwise the parallel processing causes multiple requests
+        # to initialize the TagRegistry, resulting in loading the Tag
+        # definitions multiple times.
+        instance
+      end
+
+      # The tooltip of @new can now be configured.
+      get_by_name(:new).init_tooltip!(opts)
     end
 
     # Redirect calls from TagRegistry.method to TagRegistry.instance.method,

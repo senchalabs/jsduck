@@ -5,7 +5,6 @@ require 'jsduck/util/io'
 require 'jsduck/util/parallel'
 require 'jsduck/tag_registry'
 require 'jsduck/js/ext_patterns'
-require 'jsduck/warning/parser'
 
 module JsDuck
   module Options
@@ -84,18 +83,7 @@ module JsDuck
       end
 
       def configure_tags
-        if @opts.tags.length > 0
-          TagRegistry.reconfigure(@opts.tags)
-        else
-          # Ensure the TagRegistry get instantiated just once.
-          # Otherwise the parallel processing causes multiple requests
-          # to initialize the TagRegistry, resulting in loading the Tag
-          # definitions multiple times.
-          TagRegistry.instance
-        end
-
-        # The tooltip of @new can now be configured.
-        TagRegistry.get_by_name(:new).init_tooltip!(@opts)
+        TagRegistry.configure(@opts)
       end
 
       def configure_json
