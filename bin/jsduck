@@ -22,7 +22,7 @@ require 'jsduck/options/parser'
 require 'jsduck/options/processor'
 
 opts = JsDuck::Options::Parser.new.parse(ARGV)
-JsDuck::Options::Processor.new.process!(opts)
+JsDuck::Options::Processor.process!(opts)
 
 exit_code = JsDuck::App.new(opts).run
 
