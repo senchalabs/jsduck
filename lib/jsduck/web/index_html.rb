@@ -1,6 +1,7 @@
 require 'jsduck/logger'
 require 'jsduck/util/io'
 require 'jsduck/tag_registry'
+require 'jsduck/version'
 require 'fileutils'
 
 module JsDuck
@@ -35,7 +36,7 @@ module JsDuck
           "{title}" => @opts.title,
           "{mobile_redirect}" => @opts.seo ? include_script(@opts.template_dir+"/mobile-redirect.js") : "",
           "{header}" => @opts.header,
-          "{footer}" => "<div id='footer-content' style='display: none'>#{@opts.footer}</div>",
+          "{footer}" => footer,
           "{extjs_path}" => @opts.extjs_path,
           "{data_path}" => File.basename(@paths[:data]),
           "{css_path}" => File.basename(@paths[:css]),
@@ -71,6 +72,17 @@ module JsDuck
 
       def include_script(filename)
         "<script type='text/javascript'>\n" + Util::IO.read(filename) + "\n</script>"
+      end
+
+      def footer
+        jsduck = "<a href='https://github.com/senchalabs/jsduck'>JSDuck</a>"
+        date = Time.new.strftime('%a %d %b %Y %H:%M:%S')
+
+        footer_text = @opts.footer.gsub(/\{VERSION\}/, JsDuck::VERSION)
+          .gsub(/\{JSDUCK\}/, jsduck)
+          .gsub(/\{DATE\}/, date)
+
+        return "<div id='footer-content' style='display: none'>#{footer_text}</div>"
       end
 
       # Opens in_file, replaces {keys} inside it, writes to out_file

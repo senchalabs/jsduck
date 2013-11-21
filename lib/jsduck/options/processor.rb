@@ -7,24 +7,22 @@ require 'jsduck/util/parallel'
 require 'jsduck/tag_registry'
 require 'jsduck/js/ext_patterns'
 require 'jsduck/warning/parser'
-require 'jsduck/version'
 
 module JsDuck
   module Options
 
     # Handles setting different settings based on the commend line
-    # options and also processes some of the options (like #footer and
-    # #input_files). Finally it also validates them.
+    # options and also processes some of the options (like #input_files).
+    # Finally it also validates them.
     class Processor
 
       # Processes and applies the parsed command line options.
-      # It modifies the values of #footer and #input_files options.
+      # It modifies the values of#input_files option.
       def process!(opts)
         @opts = opts
 
         # Apply the various options.
         configure_input_files
-        configure_footer
         configure_logger
         configure_parallel
         configure_tags
@@ -76,17 +74,6 @@ module JsDuck
           exclude_re = Regexp.new('\A' + Regexp.escape(exclude_path))
           files.reject! {|f| f =~ exclude_re }
         end
-      end
-
-      def configure_footer
-        @opts.footer = format_footer(@opts.footer)
-      end
-
-      # Replace special placeholders in footer text
-      def format_footer(text)
-        jsduck = "<a href='https://github.com/senchalabs/jsduck'>JSDuck</a>"
-        date = Time.new.strftime('%a %d %b %Y %H:%M:%S')
-        text.gsub(/\{VERSION\}/, JsDuck::VERSION).gsub(/\{JSDUCK\}/, jsduck).gsub(/\{DATE\}/, date)
       end
 
       def configure_logger
