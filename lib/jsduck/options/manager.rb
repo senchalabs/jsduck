@@ -21,16 +21,6 @@ module JsDuck
 
         @root_dir = File.dirname(File.dirname(File.dirname(File.dirname(__FILE__))))
 
-        # Turn multiprocessing off by default in Windows
-        Util::Parallel.in_processes = Util::OS::windows? ? 0 : nil
-
-        # Enable all warnings except the following:
-        Logger.set_warning(:all, true)
-        Logger.set_warning(:link_auto, false)
-        Logger.set_warning(:param_count, false)
-        Logger.set_warning(:fires, false)
-        Logger.set_warning(:nodoc, false)
-
         @optparser = create_option_parser
       end
 
@@ -48,6 +38,8 @@ module JsDuck
 
         Js::ExtPatterns.set(@opts.ext_namespaces) if @opts.ext_namespaces
 
+        # Turn multiprocessing off by default in Windows
+        Util::Parallel.in_processes = 0 if Util::OS::windows?
         Util::Parallel.in_processes = @opts.processes if @opts.processes
 
         Logger.verbose = true if @opts.verbose
@@ -56,6 +48,12 @@ module JsDuck
 
         Util::Json.pretty = true if @opts.pretty_json
 
+        # Enable all warnings except the following:
+        Logger.set_warning(:all, true)
+        Logger.set_warning(:link_auto, false)
+        Logger.set_warning(:param_count, false)
+        Logger.set_warning(:fires, false)
+        Logger.set_warning(:nodoc, false)
         begin
           @opts.warnings.each do |warning|
             Warning::Parser.new(warning).parse.each do |w|
