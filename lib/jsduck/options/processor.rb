@@ -1,7 +1,6 @@
 require 'jsduck/options/jsb'
 require 'jsduck/logger'
 require 'jsduck/util/json'
-require 'jsduck/util/os'
 require 'jsduck/util/io'
 require 'jsduck/util/parallel'
 require 'jsduck/tag_registry'
@@ -80,11 +79,8 @@ module JsDuck
         Logger.configure(@opts)
       end
 
-      # Turns multiprocessing off by default in Windows.
-      # When --processes option used, sets the number of processes.
       def configure_parallel
-        Util::Parallel.in_processes = 0 if Util::OS::windows?
-        Util::Parallel.in_processes = @opts.processes if @opts.processes
+        Util::Parallel.configure(@opts)
       end
 
       def configure_tags

@@ -1,3 +1,4 @@
+require 'jsduck/util/os'
 require 'parallel'
 
 module JsDuck
@@ -8,9 +9,12 @@ module JsDuck
     class Parallel
       @@in_processes = nil
 
-      # Sets globally the nr of processes to use.
-      def self.in_processes=(n)
-        @@in_processes = n
+      # Configures the logger to use as many processes as set in
+      # command line options.  When in Windows, turns the parallel
+      # processing off by default.
+      def self.configure(opts)
+        @@in_processes = 0 if Util::OS::windows?
+        @@in_processes = opts.processes if opts.processes
       end
 
       def self.each(arr, &block)
