@@ -104,9 +104,6 @@ module JsDuck
 
       def configure_json
         Util::Json.pretty = true if @opts.pretty_json
-        JsDuck::Util::IO.encoding = @opts.encoding if @opts.encoding
-
-        Js::ExtPatterns.set(@opts.ext_namespaces) if @opts.ext_namespaces
       end
 
       def configure_encoding
