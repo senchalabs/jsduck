@@ -72,13 +72,7 @@ module JsDuck
             "",
             "- full     - docs and metadata for class and its members.",
             "- examples - inline examples from classes and guides.") do |format|
-            export_type = format.to_sym
-            if [:full, :examples].include?(export_type)
-              @opts.export = export_type
-            else
-              Logger.fatal("Unsupported export type: '#{export_type}'")
-              exit(1)
-            end
+            @opts.export = format.to_sym
           end
 
           optparser.on('--builtin-classes',

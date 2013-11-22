@@ -42,7 +42,7 @@ module JsDuck
       end
 
       def valid_export_format
-        if ![nil, :full, :api, :examples].include?(@opts.export)
+        if ![nil, :full, :examples].include?(@opts.export)
           fatal("Unknown export format: #{@export}")
         end
       end
