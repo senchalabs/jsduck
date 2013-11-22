@@ -47,6 +47,11 @@ module JsDuck
           optparser.separator ""
 
           @opts.attribute(:input_files, [])
+          @opts.validator do
+            if @opts.input_files.empty? && !@opts.welcome && !@opts.guides && !@opts.videos && !@opts.examples
+              "Please specify some input files, otherwise there's nothing I can do :("
+            end
+          end
 
           @opts.attribute(:output_dir)
           optparser.on('-o', '--output=PATH',
@@ -62,6 +67,20 @@ module JsDuck
               @opts.cache_dir = @opts.output_dir + "/.cache" unless @opts.cache_dir
             end
           end
+          @opts.validator do
+            if @opts.output_dir == :stdout
+              # No output dir needed for export
+              if !@opts.export
+                "Output to STDOUT only works when using --export option"
+              end
+            elsif !@opts.output_dir
+              "Please specify an output directory, where to write all this amazing documentation"
+            elsif File.exists?(@opts.output_dir) && !File.directory?(@opts.output_dir)
+              "The output directory is not really a directory at all :("
+            elsif !File.exists?(File.dirname(@opts.output_dir))
+              "The parent directory for #{@opts.output_dir} doesn't exist"
+            end
+          end
 
           @opts.attribute(:export)
           optparser.on('--export=full/examples',
@@ -73,6 +92,11 @@ module JsDuck
             "- full     - docs and metadata for class and its members.",
             "- examples - inline examples from classes and guides.") do |format|
             @opts.export = format.to_sym
+          end
+          @opts.validator do
+            if ![nil, :full, :examples].include?(@opts.export)
+              "Unknown export format: #{@opts.export}"
+            end
           end
 
           optparser.on('--builtin-classes',
@@ -260,6 +284,11 @@ module JsDuck
             "5 - <H2>,<H3>,<H4>,<H5> headings are included.",
             "6 - <H2>,<H3>,<H4>,<H5>,<H6> headings are included.") do |level|
             @opts.guides_toc_level = level.to_i
+          end
+          @opts.validator do
+            if !(1..6).include?(@opts.guides_toc_level)
+              "Unsupported --guides-toc-level: '#{@opts.guides_toc_level}'"
+            end
           end
 
           @opts.attribute(:videos)
@@ -738,6 +767,25 @@ module JsDuck
             "",
             "Useful when developing the template files.") do |path|
             @opts.template_dir = canonical(path)
+          end
+          @opts.validator do
+            if @opts.export
+              # Don't check these things when exporting
+            elsif !File.exists?(@opts.template_dir + "/extjs")
+              [
+                "Oh noes!  The template directory does not contain extjs/ directory :(",
+                "Please copy ExtJS over to template/extjs or create symlink.",
+                "For example:",
+                "    $ cp -r /path/to/ext-4.0.0 " + @opts.template_dir + "/extjs",
+              ]
+            elsif !File.exists?(@opts.template_dir + "/resources/css")
+              [
+                "Oh noes!  CSS files for custom ExtJS theme missing :(",
+                "Please compile SASS files in template/resources/sass with compass.",
+                "For example:",
+                "    $ compass compile " + @opts.template_dir + "/resources/sass",
+              ]
+            end
           end
 
           @opts.attribute(:template_links, false)

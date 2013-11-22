@@ -1,6 +1,5 @@
 require 'jsduck/options/parser'
 require 'jsduck/options/input_files'
-require 'jsduck/options/validator'
 require 'jsduck/logger'
 require 'jsduck/util/json'
 require 'jsduck/util/io'
@@ -22,8 +21,12 @@ module JsDuck
         # Expand list of input files
         Options::InputFiles.new(opts).expand!
 
-        # Check for fatal problems (possibly exit the program).
-        Options::Validator.new(opts).validate!
+        # Validate the options.
+        # Exit program when there's an error.
+        if err = opts.validate!
+          Array(err).each {|line| Logger.fatal(line) }
+          exit(1)
+        end
 
         # Configure various objects with these options
         Logger.configure(opts)

@@ -10,6 +10,9 @@ module JsDuck
     # ensures that accessing an unexisting option will result in an
     # error.
     class Record
+      def initialize
+        @validators = []
+      end
 
       # Defines accessor for an option,
       # and assigns a default value for it.
@@ -28,6 +31,26 @@ module JsDuck
       end
       def []=(key, value)
         instance_variable_set("@#{key}", value)
+      end
+
+      # Defines a validator function that gets run after all the
+      # options have been parsed.  When validation fails, the function
+      # should return an error message string (or an array of string
+      # for multi-line error message) otherwise nil, to signify
+      # success.
+      def validator(&block)
+        @validators << block
+      end
+
+      # Runs all the validators.  Returns an error message string from
+      # the first failed validation or nil when everything is OK.
+      def validate!
+        @validators.each do |block|
+          if err = block.call()
+            return err
+          end
+        end
+        return nil
       end
 
     end
