@@ -12,39 +12,60 @@ module JsDuck
       # Checks for fatal problems in command line options.
       # Exits with error message when such problem found.
       def validate!
-        if @opts.input_files.length == 0 && !@opts.welcome && !@opts.guides && !@opts.videos && !@opts.examples
-          Logger.fatal("You should specify some input files, otherwise there's nothing I can do :(")
-          exit(1)
-        elsif @opts.output_dir == :stdout && !@opts.export
-          Logger.fatal("Output to STDOUT only works when using --export option")
-          exit(1)
-        elsif ![nil, :full, :api, :examples].include?(@opts.export)
-          Logger.fatal("Unknown export format: #{@export}")
-          exit(1)
-        elsif @opts.output_dir != :stdout
-          if !@opts.output_dir
-            Logger.fatal("You should also specify an output directory, where I could write all this amazing documentation")
-            exit(1)
-          elsif File.exists?(@opts.output_dir) && !File.directory?(@opts.output_dir)
-            Logger.fatal("The output directory is not really a directory at all :(")
-            exit(1)
-          elsif !File.exists?(File.dirname(@opts.output_dir))
-            Logger.fatal("The parent directory for #{@opts.output_dir} doesn't exist")
-            exit(1)
-          elsif !@opts.export && !File.exists?(@opts.template_dir + "/extjs")
-            Logger.fatal("Oh noes!  The template directory does not contain extjs/ directory :(")
-            Logger.fatal("Please copy ExtJS over to template/extjs or create symlink.")
-            Logger.fatal("For example:")
-            Logger.fatal("    $ cp -r /path/to/ext-4.0.0 " + @opts.template_dir + "/extjs")
-            exit(1)
-          elsif !@opts.export && !File.exists?(@opts.template_dir + "/resources/css")
-            Logger.fatal("Oh noes!  CSS files for custom ExtJS theme missing :(")
-            Logger.fatal("Please compile SASS files in template/resources/sass with compass.")
-            Logger.fatal("For example:")
-            Logger.fatal("    $ compass compile " + @opts.template_dir + "/resources/sass")
-            exit(1)
-          end
+        input_files_present
+        output_dir_present
+        valid_export_format
+        template_files_present
+      end
+
+      private
+
+      def input_files_present
+        if @opts.input_files.empty? && !@opts.welcome && !@opts.guides && !@opts.videos && !@opts.examples
+          fatal("Please specify some input files, otherwise there's nothing I can do :(")
         end
+      end
+
+      def output_dir_present
+        if @opts.output_dir == :stdout
+          # No output dir needed for export
+          if !@opts.export
+            fatal("Output to STDOUT only works when using --export option")
+          end
+        elsif !@opts.output_dir
+          fatal("Please specify an output directory, where to write all this amazing documentation")
+        elsif File.exists?(@opts.output_dir) && !File.directory?(@opts.output_dir)
+          fatal("The output directory is not really a directory at all :(")
+        elsif !File.exists?(File.dirname(@opts.output_dir))
+          fatal("The parent directory for #{@opts.output_dir} doesn't exist")
+        end
+      end
+
+      def valid_export_format
+        if ![nil, :full, :api, :examples].include?(@opts.export)
+          fatal("Unknown export format: #{@export}")
+        end
+      end
+
+      def template_files_present
+        if @opts.export
+          # Don't check these things when exporting
+        elsif !File.exists?(@opts.template_dir + "/extjs")
+          fatal("Oh noes!  The template directory does not contain extjs/ directory :(")
+          fatal("Please copy ExtJS over to template/extjs or create symlink.")
+          fatal("For example:")
+          fatal("    $ cp -r /path/to/ext-4.0.0 " + @opts.template_dir + "/extjs")
+        elsif !File.exists?(@opts.template_dir + "/resources/css")
+          fatal("Oh noes!  CSS files for custom ExtJS theme missing :(")
+          fatal("Please compile SASS files in template/resources/sass with compass.")
+          fatal("For example:")
+          fatal("    $ compass compile " + @opts.template_dir + "/resources/sass")
+        end
+      end
+
+      def fatal(smg)
+        Logger.fatal(msg)
+        exit(1)
       end
 
     end
