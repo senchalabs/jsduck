@@ -260,10 +260,6 @@ module JsDuck
             "5 - <H2>,<H3>,<H4>,<H5> headings are included.",
             "6 - <H2>,<H3>,<H4>,<H5>,<H6> headings are included.") do |level|
             @opts.guides_toc_level = level.to_i
-            if !(1..6).include? @opts.guides_toc_level
-              Logger.fatal("Unsupported --guides-toc-level: '#{level}'")
-              exit(1)
-            end
           end
 
           @opts.attribute(:videos)

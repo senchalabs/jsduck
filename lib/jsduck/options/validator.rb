@@ -16,6 +16,7 @@ module JsDuck
         output_dir_present
         valid_export_format
         template_files_present
+        valid_guides_toc_level
       end
 
       private
@@ -60,6 +61,12 @@ module JsDuck
           fatal("Please compile SASS files in template/resources/sass with compass.")
           fatal("For example:")
           fatal("    $ compass compile " + @opts.template_dir + "/resources/sass")
+        end
+      end
+
+      def valid_guides_toc_level
+        if !(1..6).include?(@opts.guides_toc_level)
+          fatal("Unsupported --guides-toc-level: '#{@opts.guides_toc_level}'")
         end
       end
 
