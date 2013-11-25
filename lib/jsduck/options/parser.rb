@@ -18,6 +18,7 @@ module JsDuck
         @config = config_class
 
         @opts = Options::Record.new
+        @defaults = {}
 
         @root_dir = @file.dirname(@file.dirname(@file.dirname(@file.dirname(__FILE__))))
 
@@ -28,6 +29,7 @@ module JsDuck
       # Parses array of command line options, returning
       # Options::Record object containing all the options.
       def parse(argv)
+        init_defaults
         parse_options(argv)
         auto_detect_config_file unless @opts.config
         @opts
@@ -885,10 +887,25 @@ module JsDuck
 
       def attribute(name, value=nil)
         @opts.attribute(name, value)
+        @defaults[name] = value
       end
 
       def validator(name, &block)
         @opts.validator(name, &block)
+      end
+
+      # Initializes attributes with default values.  This is needed to
+      # be able to run the most tests without re-instantiating this
+      # class every time.
+      def init_defaults
+        @defaults.each_pair do |name, value|
+          @opts[name] = clone(value)
+        end
+      end
+
+      # clones hashes and arrays.
+      def clone(obj)
+        (obj.is_a?(Array) || obj.is_a?(Hash)) ? obj.clone : obj
       end
 
       # Parses the given command line options
