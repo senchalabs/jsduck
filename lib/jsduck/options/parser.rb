@@ -120,12 +120,14 @@ module JsDuck
         end
 
         attribute :seo, false
-        option('--seo', "Enables SEO-friendly print version.",
+        option('--[no-]seo', "Enables SEO-friendly print version. (OFF)",
           "",
           "Instead of index.html creates index.php that will serve",
           "the regular docs, print-friendly docs, and search-engine-",
-          "friendly docs (the latter two are pretty much the same).") do
-          @opts.seo = true
+          "friendly docs (the latter two are pretty much the same).",
+          "",
+          "Disabled by default.") do |on|
+          @opts.seo = on
         end
 
         attribute :config
@@ -323,9 +325,11 @@ module JsDuck
         end
 
         attribute :source, true
-        option('--no-source',
-          "Turns off the output of source files.") do
-          @opts.source = false
+        option('--[no-]source',
+          "Enables output of source files. (ON)",
+          "",
+          "Enabled by default.") do |on|
+          @opts.source = on
         end
 
         attribute :images, []
@@ -340,9 +344,11 @@ module JsDuck
         end
 
         attribute :tests, false
-        option('--tests',
-          "Creates page for testing inline examples.") do
-          @opts.tests = true
+        option('--[no-]tests',
+          "Creates page for testing inline examples. (OFF)",
+          "",
+          "Disabled by default.") do |on|
+          @opts.tests = on
         end
 
         attribute :imports, []
@@ -453,8 +459,8 @@ module JsDuck
         end
 
         attribute :ignore_global, false
-        option('--ignore-global',
-          "Turns off the creation of 'global' class.",
+        option('--[no-]ignore-global',
+          "Turns off the creation of 'global' class. (OFF)",
           "",
           "The 'global' class gets created when members that",
           "don't belong to any class are found - all these",
@@ -462,8 +468,10 @@ module JsDuck
           "",
           "Using this option won't suppress the warning that's",
           "given when global members are found.  For that you",
-          "need to additionally use --warnings=-global") do
-          @opts.ignore_global = true
+          "need to additionally use --warnings=-global",
+          "",
+          "Disabled by default.") do |on|
+          @opts.ignore_global = on
         end
 
         attribute :external_classes, [
@@ -517,7 +525,7 @@ module JsDuck
 
         attribute :ext4_events
         option('--[no-]ext4-events',
-          "Forces Ext4 options param on events.",
+          "Forces Ext4 options param on events. (AUTO)",
           "",
           "In Ext JS 4 and Sencha Touch 2 all event handlers are",
           "passed an additional options object at the end of the",
@@ -530,8 +538,8 @@ module JsDuck
           "classes using Ext.define(), and only then append the",
           "options parameter.  This should work most of the time.",
           "",
-          "Use this option to override the auto-detection.") do |e|
-          @opts.ext4_events = e
+          "Use this option to override the auto-detection.") do |on|
+          @opts.ext4_events = on
         end
 
         attribute :examples_base_url
@@ -603,12 +611,14 @@ module JsDuck
         end
 
         attribute :touch_examples_ui, false
-        option('--touch-examples-ui',
-          "Turns on phone/tablet UI for examples.",
+        option('--[no-]touch-examples-ui',
+          "Turns on phone/tablet UI for examples. (OFF)",
           "",
           "This is a very Sencha Touch 2 docs specific option.",
-          "Effects both normal- and inline-examples.") do
-          @opts.touch_examples_ui = true
+          "Effects both normal- and inline-examples.",
+          "",
+          "Disabled by default") do |on|
+          @opts.touch_examples_ui = on
         end
 
         attribute :ignore_html, {}
@@ -654,9 +664,7 @@ module JsDuck
 
         attribute :cache, false
         option('--[no-]cache',
-          "Turns parser cache on/off (EXPERIMENTAL).",
-          "",
-          "Defaults to off.",
+          "Turns parser cache on/off. (OFF)",
           "",
           "When enabled, the results of parsing source files is saved",
           "inside the JSDuck output directory. Next time JSDuck runs,",
@@ -668,8 +676,10 @@ module JsDuck
           "don't invalidate the cache, so avoid caching when developing",
           "your custom tags.",
           "",
-          "To change the cache directory location, use --cache-dir.") do |enabled|
-          @opts.cache = enabled
+          "To change the cache directory location, use --cache-dir.",
+          "",
+          "Disabled by default.") do |on|
+          @opts.cache = on
         end
 
         attribute :cache_dir
@@ -738,20 +748,20 @@ module JsDuck
         end
 
         attribute :warnings_exit_nonzero, false
-        option('--warnings-exit-nonzero',
-          "Exits with non-zero exit code on warnings.",
+        option('--[no-]warnings-exit-nonzero',
+          "Exits with non-zero exit code on warnings. (OFF)",
           "",
           "By default JSDuck only exits with non-zero exit code",
           "when a fatal error is encountered (code 1).",
           "",
           "With this option the exit code will be 2 when any warning",
-          "gets printed.") do
-          @opts.warnings_exit_nonzero = true
+          "gets printed.") do |on|
+          @opts.warnings_exit_nonzero = on
         end
 
         attribute :color
         option('--[no-]color',
-          "Turn on/off colorized terminal output.",
+          "Turn on/off colorized terminal output. (AUTO)",
           "",
           "By default the colored output is on, but gets disabled",
           "automatically when output is not an interactive terminal",
@@ -760,14 +770,14 @@ module JsDuck
         end
 
         attribute :pretty_json
-        option('--pretty-json',
-          "Turns on pretty-printing of JSON.",
+        option('--[no-]pretty-json',
+          "Turns on pretty-printing of JSON. (OFF)",
           "",
           "This is useful when studying the JSON files generated",
           "by --export option.  But the option effects any JSON",
           "that gets generated, so it's also useful when debugging",
-          "the resource files generated for the docs app.") do
-          @opts.pretty_json = true
+          "the resource files generated for the docs app.") do |on|
+          @opts.pretty_json = on
         end
 
         attribute :template_dir, @root_dir + "/template-min"
@@ -798,12 +808,12 @@ module JsDuck
         end
 
         attribute :template_links, false
-        option('--template-links',
-          "Creates symlinks to UI template files.",
+        option('--[no-]template-links',
+          "Creates symlinks to UI template files. (OFF)",
           "",
           "Useful for template files development.",
-          "Only works on platforms supporting symbolic links.") do
-          @opts.template_links = true
+          "Only works on platforms supporting symbolic links.") do |on|
+          @opts.template_links = on
         end
 
         option('-d', '--debug',

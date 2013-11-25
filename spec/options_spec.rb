@@ -360,28 +360,45 @@ describe JsDuck::Options::Parser do
     end
   end
 
+  describe :verbose do
+    it "defaults to false" do
+      parse().verbose.should == false
+    end
+
+    it "set to true when --verbose used" do
+      parse("--verbose").verbose.should == true
+    end
+
+    it "set to true when -v used" do
+      parse("-v").verbose.should == true
+    end
+  end
+
   # Boolean options
   {
     :seo => false,
     :tests => false,
-    # :source => true, # TODO
+    :source => true, # TODO
     :ignore_global => false,
     :ext4_events => nil, # TODO
     :touch_examples_ui => false,
     :cache => false,
-    :verbose => false,
     :warnings_exit_nonzero => false,
     :color => nil, # TODO
     :pretty_json => nil,
     :template_links => false,
   }.each do |attr, default|
     describe attr do
-      it "defaults to false" do
+      it "defaults to #{default.inspect}" do
         parse().send(attr).should == default
       end
 
       it "set to true when --#{attr} used" do
         parse("--#{attr.to_s.gsub(/_/, '-')}").send(attr).should == true
+      end
+
+      it "set to false when --no-#{attr} used" do
+        parse("--no-#{attr.to_s.gsub(/_/, '-')}").send(attr).should == false
       end
     end
   end
