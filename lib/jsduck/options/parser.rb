@@ -13,10 +13,13 @@ module JsDuck
     # Performs parsing of JSDuck options.
     class Parser
 
-      def initialize
+      def initialize(file_class=File, config_class=Options::Config)
+        @file = file_class
+        @config = config_class
+
         @opts = Options::Record.new
 
-        @root_dir = File.dirname(File.dirname(File.dirname(File.dirname(__FILE__))))
+        @root_dir = @file.dirname(@file.dirname(@file.dirname(@file.dirname(__FILE__))))
 
         @optparser = Options::HelpfulParser.new
         init_parser
@@ -48,7 +51,7 @@ module JsDuck
         separator ""
 
         attribute :input_files, []
-        validator do
+        validator :input_files do
           if @opts.input_files.empty? && !@opts.welcome && !@opts.guides && !@opts.videos && !@opts.examples
             "Please specify some input files, otherwise there's nothing I can do :("
           end
@@ -68,7 +71,7 @@ module JsDuck
             @opts.cache_dir = @opts.output_dir + "/.cache" unless @opts.cache_dir
           end
         end
-        validator do
+        validator :output_dir do
           if @opts.output_dir == :stdout
             # No output dir needed for export
             if !@opts.export
@@ -76,9 +79,9 @@ module JsDuck
             end
           elsif !@opts.output_dir
             "Please specify an output directory, where to write all this amazing documentation"
-          elsif File.exists?(@opts.output_dir) && !File.directory?(@opts.output_dir)
+          elsif @file.exists?(@opts.output_dir) && !@file.directory?(@opts.output_dir)
             "The output directory is not really a directory at all :("
-          elsif !File.exists?(File.dirname(@opts.output_dir))
+          elsif !@file.exists?(@file.dirname(@opts.output_dir))
             "The parent directory for #{@opts.output_dir} doesn't exist"
           end
         end
@@ -94,7 +97,7 @@ module JsDuck
           "- examples - inline examples from classes and guides.") do |format|
           @opts.export = format.to_sym
         end
-        validator do
+        validator :export do
           if ![nil, :full, :examples].include?(@opts.export)
             "Unknown export format: #{@opts.export}"
           end
@@ -136,7 +139,7 @@ module JsDuck
           "",
           "See also: https://github.com/senchalabs/jsduck/wiki/Config-file") do |path|
           path = canonical(path)
-          if File.exists?(path)
+          if @file.exists?(path)
             config = read_json_config(path)
           else
             Logger.fatal("The config file #{path} doesn't exist")
@@ -144,7 +147,7 @@ module JsDuck
           end
           # treat paths inside JSON config relative to the location of
           # config file.  When done, switch back to current working dir.
-          @working_dir = File.dirname(path)
+          @working_dir = @file.dirname(path)
           parse_options(config)
           @working_dir = nil
           @opts.config = path
@@ -180,7 +183,7 @@ module JsDuck
           "the header of the page.  Inside page header the left",
           "part (from ' - ' separator) will be shown in bold.") do |text|
           @opts.title = text
-          @opts.header = text.sub(/^(.*?) +- +/, "<strong>\\1 </strong>")
+          @opts.header = text.sub(/^(.*?) +- +/, "<strong>\\1</strong> ")
         end
 
         attribute :footer, "Generated on {DATE} by {JSDUCK} {VERSION}."
@@ -286,7 +289,7 @@ module JsDuck
           "6 - <H2>,<H3>,<H4>,<H5>,<H6> headings are included.") do |level|
           @opts.guides_toc_level = level.to_i
         end
-        validator do
+        validator :guides_toc_level do
           if !(1..6).include?(@opts.guides_toc_level)
             "Unsupported --guides-toc-level: '#{@opts.guides_toc_level}'"
           end
@@ -643,6 +646,11 @@ module JsDuck
           "In Windows this option is disabled.") do |count|
           @opts.processes = count.to_i
         end
+        validator :processes do
+          if @opts.processes.to_i < 0
+            "Number of processes must be a positive number."
+          end
+        end
 
         attribute :cache, false
         option('--[no-]cache',
@@ -769,17 +777,17 @@ module JsDuck
           "Useful when developing the template files.") do |path|
           @opts.template_dir = canonical(path)
         end
-        validator do
+        validator :template_dir do
           if @opts.export
             # Don't check these things when exporting
-          elsif !File.exists?(@opts.template_dir + "/extjs")
+          elsif !@file.exists?(@opts.template_dir + "/extjs")
             [
               "Oh noes!  The template directory does not contain extjs/ directory :(",
               "Please copy ExtJS over to template/extjs or create symlink.",
               "For example:",
               "    $ cp -r /path/to/ext-4.0.0 " + @opts.template_dir + "/extjs",
             ]
-          elsif !File.exists?(@opts.template_dir + "/resources/css")
+          elsif !@file.exists?(@opts.template_dir + "/resources/css")
             [
               "Oh noes!  CSS files for custom ExtJS theme missing :(",
               "Please compile SASS files in template/resources/sass with compass.",
@@ -869,8 +877,8 @@ module JsDuck
         @opts.attribute(name, value)
       end
 
-      def validator(&block)
-        @opts.validator(&block)
+      def validator(name, &block)
+        @opts.validator(name, &block)
       end
 
       # Parses the given command line options
@@ -884,7 +892,7 @@ module JsDuck
       # Reads jsduck.json file in current directory
       def auto_detect_config_file
         fname = Dir.pwd + "/jsduck.json"
-        if File.exists?(fname)
+        if @file.exists?(fname)
           Logger.log("Auto-detected config file", fname)
           parse_options(read_json_config(fname))
         end
@@ -893,14 +901,14 @@ module JsDuck
       # Reads JSON configuration from file and returns an array of
       # config options that can be feeded into optparser.
       def read_json_config(filename)
-        Options::Config.read(filename)
+        @config.read(filename)
       end
 
       # When given string is a file, returns the contents of the file.
       # Otherwise returns the string unchanged.
       def maybe_file(str)
         path = canonical(str)
-        if File.exists?(path)
+        if @file.exists?(path)
           Util::IO.read(path)
         else
           str
@@ -913,7 +921,7 @@ module JsDuck
       # pathnames are converted to C:/foo/bar which ruby can work on
       # more easily.
       def canonical(path)
-        File.expand_path(path, @working_dir)
+        @file.expand_path(path, @working_dir)
       end
 
     end

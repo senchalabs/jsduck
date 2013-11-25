@@ -11,7 +11,7 @@ module JsDuck
     # error.
     class Record
       def initialize
-        @validators = []
+        @validators = {}
       end
 
       # Defines accessor for an option,
@@ -38,14 +38,18 @@ module JsDuck
       # should return an error message string (or an array of string
       # for multi-line error message) otherwise nil, to signify
       # success.
-      def validator(&block)
-        @validators << block
+      def validator(name, &block)
+        @validators[name] = block
       end
 
       # Runs all the validators.  Returns an error message string from
       # the first failed validation or nil when everything is OK.
-      def validate!
-        @validators.each do |block|
+      #
+      # Alternatively runs just one validator by name. Used in testing.
+      def validate!(name=nil)
+        validators = name ? [@validators[name]] : @validators
+
+        validators.each do |block|
           if err = block.call()
             return err
           end
