@@ -23,8 +23,8 @@ module JsDuck::Tag
     def init_tooltip!(opts)
       if opts[:new_since]
         @signature[:tooltip] = "New since #{opts[:new_since]}"
-      elsif opts[:imports].length > 0
-        @signature[:tooltip] = "New since #{opts[:imports].last[:version]}"
+      elsif opts[:import].length > 0
+        @signature[:tooltip] = "New since #{opts[:import].last[:version]}"
       end
     end
 

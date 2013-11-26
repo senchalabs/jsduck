@@ -125,20 +125,20 @@ describe JsDuck::Options::Parser do
     end
   end
 
-  describe :imports do
+  describe :import do
     it "defaults to empty array" do
-      parse().imports.should == []
+      parse().import.should == []
     end
 
     it "expands into version and path components" do
-      parse("--import", "1.0:/vers/1", "--import", "2.0:/vers/2").imports.should == [
+      parse("--import", "1.0:/vers/1", "--import", "2.0:/vers/2").import.should == [
         {:version => "1.0", :path => "/vers/1"},
         {:version => "2.0", :path => "/vers/2"},
       ]
     end
 
     it "expands pathless version number into just :version" do
-      parse("--import", "3.0").imports.should == [
+      parse("--import", "3.0").import.should == [
         {:version => "3.0"},
       ]
     end
@@ -179,13 +179,13 @@ describe JsDuck::Options::Parser do
   describe "--debug" do
     it "is equivalent of --template=template --template-links" do
       opts = parse("--debug")
-      opts.template_dir.should == "template"
+      opts.template.should == "template"
       opts.template_links.should == true
     end
 
     it "has a shorthand -d" do
       opts = parse("-d")
-      opts.template_dir.should == "template"
+      opts.template.should == "template"
       opts.template_links.should == true
     end
   end
@@ -256,13 +256,13 @@ describe JsDuck::Options::Parser do
     :guides => "--guides",
     :videos => "--videos",
     :examples => "--examples",
-    :categories_path => "--categories",
+    :categories => "--categories",
     :new_since => "--new-since",
     :comments_url => "--comments-url",
     :comments_domain => "--comments-domain",
     :examples_base_url => "--examples-base-url",
-    :link_tpl => ["--link", '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'],
-    :img_tpl => ["--img", '<p><img src="%u" alt="%a" width="%w" height="%h"></p>'],
+    :link => ["--link", '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'],
+    :img => ["--img", '<p><img src="%u" alt="%a" width="%w" height="%h"></p>'],
     :eg_iframe => "--eg-iframe",
     :cache_dir => "--cache-dir",
     :extjs_path => ["--extjs-path", "extjs/ext-all.js"],

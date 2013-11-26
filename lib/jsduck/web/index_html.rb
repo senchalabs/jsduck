@@ -20,12 +20,12 @@ module JsDuck
       # When --seo enabled, creates index.php, template.html and print-template.html.
       def write
         if @opts.seo
-          FileUtils.cp(@opts.template_dir+"/index.php", @opts.output_dir+"/index.php")
-          create_template_html(@opts.template_dir+"/template.html", @opts.output_dir+"/template.html")
-          create_print_template_html(@opts.template_dir+"/print-template.html", @opts.output_dir+"/print-template.html")
-          create_index_template_html(@opts.template_dir+"/index-template.html", @opts.output_dir+"/index-template.html")
+          FileUtils.cp(@opts.template+"/index.php", @opts.output+"/index.php")
+          create_template_html(@opts.template+"/template.html", @opts.output+"/template.html")
+          create_print_template_html(@opts.template+"/print-template.html", @opts.output+"/print-template.html")
+          create_index_template_html(@opts.template+"/index-template.html", @opts.output+"/index-template.html")
         else
-          create_template_html(@opts.template_dir+"/template.html", @opts.output_dir+"/index.html")
+          create_template_html(@opts.template+"/template.html", @opts.output+"/index.html")
         end
       end
 
@@ -34,7 +34,7 @@ module JsDuck
       def create_template_html(in_file, out_file)
         write_template(in_file, out_file, {
           "{title}" => @opts.title,
-          "{mobile_redirect}" => @opts.seo ? include_script(@opts.template_dir+"/mobile-redirect.js") : "",
+          "{mobile_redirect}" => @opts.seo ? include_script(@opts.template+"/mobile-redirect.js") : "",
           "{header}" => @opts.header,
           "{footer}" => footer,
           "{extjs_path}" => @opts.extjs_path,

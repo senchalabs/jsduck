@@ -88,9 +88,9 @@ module JsDuck
       # recognized classnames.
       #
       # Replaces {@link Class#member link text} in given string with
-      # HTML from @link_tpl.
+      # HTML from --link.
       #
-      # Replaces {@img path/to/image.jpg Alt text} with HTML from @img_tpl.
+      # Replaces {@img path/to/image.jpg Alt text} with HTML from --img.
       #
       # Adds 'inline-example' class to code examples beginning with @example.
       #

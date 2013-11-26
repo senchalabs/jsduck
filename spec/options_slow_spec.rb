@@ -19,39 +19,39 @@ describe JsDuck::Options::Parser do
     mock_parse({}, *argv)
   end
 
-  describe :output_dir do
+  describe :output do
     it "is set with --output option" do
-      parse("--output", "foo/").output_dir.should == "foo/"
+      parse("--output", "foo/").output.should == "foo/"
     end
 
     it "is set with -o option" do
-      parse("-o", "foo/").output_dir.should == "foo/"
+      parse("-o", "foo/").output.should == "foo/"
     end
 
     it "is set to :stdout with -" do
-      parse("--output", "-").output_dir.should == :stdout
+      parse("--output", "-").output.should == :stdout
     end
 
     it "is invalid when :stdout but not export" do
-      parse("--output", "-").validate!(:output_dir).should_not == nil
+      parse("--output", "-").validate!(:output).should_not == nil
     end
 
     it "is valid when :stdout and export" do
-      parse("--output", "-", "--export", "full").validate!(:output_dir).should == nil
+      parse("--output", "-", "--export", "full").validate!(:output).should == nil
     end
 
     it "is invalid when no output dir specified" do
-      parse().validate!(:output_dir).should_not == nil
+      parse().validate!(:output).should_not == nil
     end
 
     it "is valid when output dir exists and is a directory" do
       m = {:exists? => Proc.new {|f| f == "foo/"}, :directory? => true}
-      mock_parse(m, "-o", "foo/").validate!(:output_dir).should == nil
+      mock_parse(m, "-o", "foo/").validate!(:output).should == nil
     end
 
     it "is invalid when output dir is not a directory" do
       m = {:exists? => Proc.new {|f| f == "foo/"}, :directory? => false}
-      mock_parse(m, "-o", "foo/").validate!(:output_dir).should_not == nil
+      mock_parse(m, "-o", "foo/").validate!(:output).should_not == nil
     end
 
     it "is valid when parent dir of output dir exists" do
@@ -75,23 +75,23 @@ describe JsDuck::Options::Parser do
           end
         end
       }
-      mock_parse(m, "-o", "foo/").validate!(:output_dir).should == nil
+      mock_parse(m, "-o", "foo/").validate!(:output).should == nil
     end
 
     it "is invalid when parent dir of output dir is missing" do
       m = {:exists? => false}
-      mock_parse(m, "-o", "foo/").validate!(:output_dir).should_not == nil
+      mock_parse(m, "-o", "foo/").validate!(:output).should_not == nil
     end
   end
 
-  describe :template_dir do
+  describe :template do
     it "defaults to /template-min" do
-      parse().template_dir.should =~ /template-min$/
+      parse().template.should =~ /template-min$/
     end
 
     it "is not validated when --export set" do
       opts = parse("--template", "foo", "--export", "full")
-      opts.validate!(:template_dir).should == nil
+      opts.validate!(:template).should == nil
     end
 
     it "is invalid when template dir has no /extjs dir" do
@@ -99,7 +99,7 @@ describe JsDuck::Options::Parser do
         :exists? => false,
       }
       opts = mock_parse(m, "--template", "foo")
-      opts.validate!(:template_dir).should_not == nil
+      opts.validate!(:template).should_not == nil
     end
 
     it "is invalid when template dir has no /resources/css dir" do
@@ -107,7 +107,7 @@ describe JsDuck::Options::Parser do
         :exists? => Proc.new {|fname| fname == "foo/extjs"},
       }
       opts = mock_parse(m, "--template", "foo")
-      opts.validate!(:template_dir).should_not == nil
+      opts.validate!(:template).should_not == nil
     end
 
     it "is valid when template dir contains both /extjs and /resouces/css dirs" do
@@ -115,7 +115,7 @@ describe JsDuck::Options::Parser do
         :exists? => Proc.new {|fname| fname == "foo/extjs" || fname == "foo/resources/css" },
       }
       opts = mock_parse(m, "--template", "foo")
-      opts.validate!(:template_dir).should == nil
+      opts.validate!(:template).should == nil
     end
   end
 
@@ -131,7 +131,7 @@ describe JsDuck::Options::Parser do
         })
 
       opts = JsDuck::Options::Parser.new(file, cfg).parse(["--config", "conf.json"])
-      opts.output_dir.should == "foo"
+      opts.output.should == "foo"
       opts.input_files.should == ["file.js"]
     end
   end

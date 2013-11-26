@@ -11,18 +11,18 @@ module JsDuck
     def self.clean(opts)
       if opts.cache && cache_dir_needs_preserving(opts)
         # Remove all files inside <output-dir> except .cache/
-        Dir[opts.output_dir + "/*"].each do |file|
+        Dir[opts.output + "/*"].each do |file|
           FileUtils.rm_rf(file) unless file =~ /\/.cache\z/
         end
       else
         # Remove and recreate the entire <output-dir>
-        FileUtils.rm_rf(opts.output_dir)
-        FileUtils.mkdir(opts.output_dir)
+        FileUtils.rm_rf(opts.output)
+        FileUtils.mkdir(opts.output)
       end
     end
 
     def self.cache_dir_needs_preserving(opts)
-      opts.cache_dir == opts.output_dir + "/.cache" && File.exists?(opts.cache_dir)
+      opts.cache_dir == opts.output + "/.cache" && File.exists?(opts.cache_dir)
     end
 
   end

@@ -57,8 +57,8 @@ module JsDuck
 
       # Copy over class and member icons
       def write_icons
-        Web::ClassIcons.write(@opts.output_dir+"/class-icons")
-        Web::MemberIcons.write(@opts.output_dir+"/member-icons")
+        Web::ClassIcons.write(@opts.output+"/class-icons")
+        Web::MemberIcons.write(@opts.output+"/member-icons")
       end
 
       # Generate data.js and styles.css.
@@ -66,8 +66,8 @@ module JsDuck
       def write_html_files
         # Remember the MD5-fingerprinted filenames
         paths = {
-          :data => Web::Data.new(@relations, @assets, @opts).write(@opts.output_dir+"/data.js"),
-          :css => Web::Css.new(@opts).write(@opts.output_dir+"/styles.css"),
+          :data => Web::Data.new(@relations, @assets, @opts).write(@opts.output+"/data.js"),
+          :css => Web::Css.new(@opts).write(@opts.output+"/styles.css"),
         }
 
         Web::IndexHtml.new(@assets, @opts, paths).write
@@ -75,7 +75,7 @@ module JsDuck
 
       def write_source
         source_writer = Web::Source.new(@parsed_files)
-        source_writer.write(@opts.output_dir + "/source")
+        source_writer.write(@opts.output + "/source")
       end
 
       def format_classes
@@ -86,12 +86,12 @@ module JsDuck
         examples = InlineExamples.new
         examples.add_classes(@relations)
         examples.add_guides(@assets.guides)
-        examples.write(@opts.output_dir+"/inline-examples.js")
+        examples.write(@opts.output+"/inline-examples.js")
       end
 
       def write_classes
         class_writer = ClassWriter.new(Exporter::App, @relations, @opts)
-        class_writer.write(@opts.output_dir+"/output", ".js")
+        class_writer.write(@opts.output+"/output", ".js")
       end
 
     end

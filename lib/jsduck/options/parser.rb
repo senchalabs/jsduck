@@ -59,7 +59,7 @@ module JsDuck
           end
         end
 
-        attribute :output_dir
+        attribute :output
         option('-o', '--output=PATH',
           "Directory to write all this documentation.",
           "",
@@ -67,24 +67,24 @@ module JsDuck
           "it will be overwritten.  Give dash '-' as argument",
           "to write docs to STDOUT (works only with --export).") do |path|
           if path == "-"
-            @opts.output_dir = :stdout
+            @opts.output = :stdout
           else
-            @opts.output_dir = canonical(path)
-            @opts.cache_dir = @opts.output_dir + "/.cache" unless @opts.cache_dir
+            @opts.output = canonical(path)
+            @opts.cache_dir = @opts.output + "/.cache" unless @opts.cache_dir
           end
         end
-        validator :output_dir do
-          if @opts.output_dir == :stdout
+        validator :output do
+          if @opts.output == :stdout
             # No output dir needed for export
             if !@opts.export
               "Output to STDOUT only works when using --export option"
             end
-          elsif !@opts.output_dir
+          elsif !@opts.output
             "Please specify an output directory, where to write all this amazing documentation"
-          elsif @file.exists?(@opts.output_dir) && !@file.directory?(@opts.output_dir)
+          elsif @file.exists?(@opts.output) && !@file.directory?(@opts.output)
             "The output directory is not really a directory at all :("
-          elsif !@file.exists?(@file.dirname(@opts.output_dir))
-            "The parent directory for #{@opts.output_dir} doesn't exist"
+          elsif !@file.exists?(@file.dirname(@opts.output))
+            "The parent directory for #{@opts.output} doesn't exist"
           end
         end
 
@@ -315,7 +315,7 @@ module JsDuck
           @opts.examples = canonical(path)
         end
 
-        attribute :categories_path
+        attribute :categories
         option('--categories=PATH',
           "JSON file defining categories for classes.",
           "",
@@ -323,7 +323,7 @@ module JsDuck
           "based on how they are namespaced.",
           "",
           "See also: https://github.com/senchalabs/jsduck/wiki/Categories") do |path|
-          @opts.categories_path = canonical(path)
+          @opts.categories = canonical(path)
         end
 
         attribute :source, true
@@ -353,7 +353,7 @@ module JsDuck
           @opts.tests = on
         end
 
-        attribute :imports, []
+        attribute :import, []
         option('--import=VERSION:PATH',
           "Imports docs generating @since & @new.",
           "",
@@ -374,9 +374,9 @@ module JsDuck
           "",
           "See also: https://github.com/senchalabs/jsduck/wiki/@since") do |v|
           if v =~ /\A(.*?):(.*)\z/
-            @opts.imports << {:version => $1, :path => canonical($2)}
+            @opts.import << {:version => $1, :path => canonical($2)}
           else
-            @opts.imports << {:version => v}
+            @opts.import << {:version => v}
           end
         end
 
@@ -552,7 +552,7 @@ module JsDuck
           @opts.examples_base_url = path
         end
 
-        attribute :link_tpl, '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
+        attribute :link, '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
         option('--link=TPL',
           "HTML template for replacing {@link}.",
           "",
@@ -566,10 +566,10 @@ module JsDuck
           "%a - anchor text for link",
           "",
           "Defaults to: '<a href=\"#!/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'") do |tpl|
-          @opts.link_tpl = tpl
+          @opts.link = tpl
         end
 
-        attribute :img_tpl, '<p><img src="%u" alt="%a" width="%w" height="%h"></p>'
+        attribute :img, '<p><img src="%u" alt="%a" width="%w" height="%h"></p>'
         option('--img=TPL',
           "HTML template for replacing {@img}.",
           "",
@@ -581,7 +581,7 @@ module JsDuck
           "%h - height of image",
           "",
           "Defaults to: '<p><img src=\"%u\" alt=\"%a\" width=\"%w\" height=\"%h\"></p>'") do |tpl|
-          @opts.img_tpl = tpl
+          @opts.img = tpl
         end
 
         attribute :eg_iframe
@@ -782,29 +782,29 @@ module JsDuck
           @opts.pretty_json = on
         end
 
-        attribute :template_dir, @root_dir + "/template-min"
+        attribute :template, @root_dir + "/template-min"
         option('--template=PATH',
           "Dir containing the UI template files.",
           "",
           "Useful when developing the template files.") do |path|
-          @opts.template_dir = canonical(path)
+          @opts.template = canonical(path)
         end
-        validator :template_dir do
+        validator :template do
           if @opts.export
             # Don't check these things when exporting
-          elsif !@file.exists?(@opts.template_dir + "/extjs")
+          elsif !@file.exists?(@opts.template + "/extjs")
             [
               "Oh noes!  The template directory does not contain extjs/ directory :(",
               "Please copy ExtJS over to template/extjs or create symlink.",
               "For example:",
-              "    $ cp -r /path/to/ext-4.0.0 " + @opts.template_dir + "/extjs",
+              "    $ cp -r /path/to/ext-4.0.0 " + @opts.template + "/extjs",
             ]
-          elsif !@file.exists?(@opts.template_dir + "/resources/css")
+          elsif !@file.exists?(@opts.template + "/resources/css")
             [
               "Oh noes!  CSS files for custom ExtJS theme missing :(",
               "Please compile SASS files in template/resources/sass with compass.",
               "For example:",
-              "    $ compass compile " + @opts.template_dir + "/resources/sass",
+              "    $ compass compile " + @opts.template + "/resources/sass",
             ]
           end
         end
@@ -822,7 +822,7 @@ module JsDuck
           "Same as --template=template --template-links.",
           "",
           "Useful shorthand during development.") do
-          @opts.template_dir = canonical("template")
+          @opts.template = canonical("template")
           @opts.template_links = true
         end
 

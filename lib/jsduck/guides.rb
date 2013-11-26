@@ -123,7 +123,7 @@ module JsDuck
       elsif File.exists?(dir+"/icon-lg.png")
         FileUtils.mv(dir+"/icon-lg.png", dir+"/icon.png")
       else
-        FileUtils.cp(@opts.template_dir+"/resources/images/default-guide.png", dir+"/icon.png")
+        FileUtils.cp(@opts.template+"/resources/images/default-guide.png", dir+"/icon.png")
       end
     end
 

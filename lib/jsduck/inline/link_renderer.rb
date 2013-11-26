@@ -20,7 +20,7 @@ module JsDuck
         # %# - inserts "#" if member name present
         # %- - inserts "-" if member name present
         # %a - anchor text for link
-        @tpl = opts[:link_tpl] || '<a href="%c%#%m">%a</a>'
+        @tpl = opts[:link] || '<a href="%c%#%m">%a</a>'
       end
 
       # Generates HTML link to class or member applying the link

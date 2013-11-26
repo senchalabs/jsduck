@@ -16,7 +16,7 @@ module JsDuck
       attr_accessor :doc_context
 
       def initialize(opts={})
-        @tpl = opts[:img_tpl] || '<img src="%u" alt="%a" width="%w" height="%h"/>'
+        @tpl = opts[:img] || '<img src="%u" alt="%a" width="%w" height="%h"/>'
 
         @re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
       end

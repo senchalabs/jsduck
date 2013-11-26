@@ -15,8 +15,8 @@ module JsDuck
 
       # Loads in exported docs and generates @since and @new tags.
       def process_all!
-        if @opts[:imports].length > 0
-          @versions = @importer.import(@opts[:imports])
+        if @opts[:import].length > 0
+          @versions = @importer.import(@opts[:import])
           add_since_tags
         end
       end
