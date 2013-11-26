@@ -1,5 +1,6 @@
 require 'jsduck/warning/basic'
 require 'jsduck/warning/nodoc'
+require 'jsduck/warning/tag'
 require 'jsduck/warning/deprecated'
 require 'jsduck/warning/all'
 require 'jsduck/warning/warn_exception'
@@ -19,7 +20,6 @@ module JsDuck
           [:global, "Member doesn't belong to any class"],
           [:inheritdoc, "@inheritdoc referring to unknown class or member"],
           [:extend, "@extend/mixin/requires/uses referring to unknown class"],
-          [:tag, "Use of unsupported @tag"],
           [:tag_repeated, "An @tag used multiple times, but only once allowed"],
           [:tag_syntax, "@tag syntax error"],
           [:link, "{@link} to unknown class or member"],
@@ -51,6 +51,9 @@ module JsDuck
         ].each do |w|
           register(w[0], Warning::Basic.new(w[0], w[1]))
         end
+
+        # :tag warning
+        register(:tag, Warning::Tag.new)
 
         # :nodoc warning
         register(:nodoc, Warning::Nodoc.new)

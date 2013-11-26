@@ -96,6 +96,48 @@ describe JsDuck::Warning::Registry do
     end
   end
 
+  describe "after enabling :tag warning" do
+    before do
+      warnings.set(:tag, true)
+    end
+
+    it "has the :tag warning enabled for a @footag" do
+      warnings.enabled?(:tag, "foo.js", [:footag]).should == true
+    end
+
+    describe "and disabling it for @footag and @bartag" do
+      before do
+        warnings.set(:tag, false, nil, [:footag, :bartag])
+      end
+
+      it "has the :tag warning disabled for a @footag" do
+        warnings.enabled?(:tag, "bar.js", [:footag]).should == false
+      end
+
+      it "has the :tag warning disabled for a @bartag" do
+        warnings.enabled?(:tag, "bar.js", [:bartag]).should == false
+      end
+
+      it "has the :tag warning still enabled for a @mytag" do
+        warnings.enabled?(:tag, "bar.js", [:mytag]).should == true
+      end
+
+      describe "and enabling it for files in /foo/" do
+        before do
+          warnings.set(:tag, true, "/foo/")
+        end
+
+        it "has the :tag warning enabled for a @footag in /foo/" do
+          warnings.enabled?(:tag, "/foo/bar.js", [:footag]).should == true
+        end
+
+        it "still has the :tag warning disabled for a @footag outside of /foo/" do
+          warnings.enabled?(:tag, "bar.js", [:footag]).should == false
+        end
+      end
+    end
+  end
+
   describe "after enabling :nodoc warning" do
     before do
       warnings.set(:nodoc, true)

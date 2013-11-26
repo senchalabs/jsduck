@@ -102,7 +102,7 @@ module JsDuck
 
           skip_white
         else
-          warn(:tag, "Unsupported tag: @#{name}")
+          warn(:tag, "Unsupported tag: @#{name}", [name.to_sym])
           @multiline_tag[:doc] += "@"
         end
       end

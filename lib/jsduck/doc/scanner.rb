@@ -73,8 +73,8 @@ module JsDuck
       end
 
       # Prints a warning message
-      def warn(type, msg)
-        Logger.warn(type, msg, @position)
+      def warn(type, msg, params=[])
+        Logger.warn(type, msg, @position, params)
       end
 
     end
