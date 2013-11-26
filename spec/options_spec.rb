@@ -205,6 +205,11 @@ describe JsDuck::Options::Parser do
     end
   end
 
+  # Turns :attribute_name into "--option-name" or "--no-option-name"
+  def opt(attr, negate=false)
+    (negate ? "--no-" : "--") + attr.to_s.gsub(/_/, '-')
+  end
+
   # Boolean options
   {
     :seo => false,
@@ -225,81 +230,81 @@ describe JsDuck::Options::Parser do
       end
 
       it "set to true when --#{attr} used" do
-        parse("--#{attr.to_s.gsub(/_/, '-')}").send(attr).should == true
+        parse(opt(attr)).send(attr).should == true
       end
 
       it "set to false when --no-#{attr} used" do
-        parse("--no-#{attr.to_s.gsub(/_/, '-')}").send(attr).should == false
+        parse(opt(attr, true)).send(attr).should == false
       end
     end
   end
 
   # Simple setters
   {
-    :encoding => "--encoding",
-    :title => ["--title", "Documentation - JSDuck"],
-    :footer => ["--footer", "Generated on {DATE} by {JSDUCK} {VERSION}."],
-    :welcome => "--welcome",
-    :guides => "--guides",
-    :videos => "--videos",
-    :examples => "--examples",
-    :categories => "--categories",
-    :new_since => "--new-since",
-    :comments_url => "--comments-url",
-    :comments_domain => "--comments-domain",
-    :examples_base_url => "--examples-base-url",
-    :link => ["--link", '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'],
-    :img => ["--img", '<p><img src="%u" alt="%a" width="%w" height="%h"></p>'],
-    :eg_iframe => "--eg-iframe",
-    :cache_dir => "--cache-dir",
-    :extjs_path => ["--extjs-path", "extjs/ext-all.js"],
-    :local_storage_db => ["--local-storage-db", "docs"],
-  }.each do |attr, (option, default)|
+    :encoding => nil,
+    :title => "Documentation - JSDuck",
+    :footer => "Generated on {DATE} by {JSDUCK} {VERSION}.",
+    :welcome => nil,
+    :guides => nil,
+    :videos => nil,
+    :examples => nil,
+    :categories => nil,
+    :new_since => nil,
+    :comments_url => nil,
+    :comments_domain => nil,
+    :examples_base_url => nil,
+    :link => '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>',
+    :img => '<p><img src="%u" alt="%a" width="%w" height="%h"></p>',
+    :eg_iframe => nil,
+    :cache_dir => nil,
+    :extjs_path => "extjs/ext-all.js",
+    :local_storage_db => "docs",
+  }.each do |attr, default|
     describe attr do
       it "defaults to #{default.inspect}" do
         parse().send(attr).should == default
       end
       it "is set to given string value" do
-        parse(option, "some string").send(attr).should == "some string"
+        parse(opt(attr), "some string").send(attr).should == "some string"
       end
     end
   end
 
   # HTML and CSS options that get concatenated
-  {
-    :head_html => "--head-html",
-    :body_html => "--body-html",
-    :css => "--css",
-    :message => "--message",
-  }.each do |attr, option|
+  [
+    :head_html,
+    :body_html,
+    :css,
+    :message,
+  ].each do |attr|
     describe attr do
       it "defaults to empty string" do
         parse().send(attr).should == ""
       end
 
       it "can be used multiple times" do
-        parse(option, "Some ", option, "text").send(attr).should == "Some text"
+        parse(opt(attr), "Some ", opt(attr), "text").send(attr).should == "Some text"
       end
     end
   end
 
   # Multiple paths
-  {
-    :exclude => "--exclude",
-    :images => "--images",
-    :tags => "--tags",
-  }.each do |attr, option|
+  [
+    :exclude,
+    :images,
+    :tags,
+  ].each do |attr|
     describe attr do
       it "defaults to empty array" do
         parse().send(attr).should == []
       end
 
       it "can be used multiple times" do
-        parse(option, "foo", option, "bar").send(attr).should == ["foo", "bar"]
+        parse(opt(attr), "foo", opt(attr), "bar").send(attr).should == ["foo", "bar"]
       end
 
       it "can be used with comma-separated list" do
-        parse(option, "foo,bar").send(attr).should == ["foo", "bar"]
+        parse(opt(attr), "foo,bar").send(attr).should == ["foo", "bar"]
       end
     end
   end
