@@ -1,12 +1,13 @@
 require 'jsduck/class'
 require 'jsduck/member_registry'
+require 'ostruct'
 
 module JsDuck
   module Exporter
 
     # Exporter for all the class docs.
     class Full
-      def initialize(relations, opts={})
+      def initialize(relations, opts=OpenStruct.new)
         # parameters are just for compatibility with other exporters
       end
 

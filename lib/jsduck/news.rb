@@ -7,7 +7,7 @@ module JsDuck
     # Creates News object from relations data when --import option
     # specified.
     def self.create(relations, doc_formatter, opts)
-      if opts[:import].length > 0
+      if opts.import.length > 0
         News.new(relations, doc_formatter)
       else
         Util::NullObject.new(:to_html => "")

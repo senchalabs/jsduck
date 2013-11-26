@@ -899,7 +899,7 @@ module JsDuck
       # class every time.
       def init_defaults
         @defaults.each_pair do |name, value|
-          @opts[name] = clone(value)
+          @opts.send(:"#{name}=", clone(value))
         end
       end
 

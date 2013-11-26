@@ -1,6 +1,7 @@
 require "jsduck/process/versions"
 require "jsduck/util/null_object"
 require "jsduck/class"
+require "ostruct"
 
 describe JsDuck::Process::Versions do
 
@@ -49,7 +50,8 @@ describe JsDuck::Process::Versions do
         {:name => "ExplicitNewClass", :new => true, :alternateClassNames => []},
       ].map {|cfg| JsDuck::Class.new(cfg) }
 
-      JsDuck::Process::Versions.new(@relations, {:import => @versions}, importer).process_all!
+      opts = OpenStruct.new(:import => @versions)
+      JsDuck::Process::Versions.new(@relations, opts, importer).process_all!
 
       # build className/member index for easy lookup in specs
       @stuff = {}
@@ -175,7 +177,8 @@ describe JsDuck::Process::Versions do
         {:name => "NewClass", :alternateClassNames => []},
       ].map {|cfg| JsDuck::Class.new(cfg) }
 
-      JsDuck::Process::Versions.new(@relations, {:import => @versions, :new_since => "2.0"}, importer).process_all!
+      opts = OpenStruct.new(:import => @versions, :new_since => "2.0")
+      JsDuck::Process::Versions.new(@relations, opts, importer).process_all!
     end
 
     # @since
@@ -225,7 +228,7 @@ describe JsDuck::Process::Versions do
           ]},
       ].map {|cfg| JsDuck::Class.new(cfg) }
 
-      opts = {:import => versions, :new_since => "3.0"}
+      opts = OpenStruct.new(:import => versions, :new_since => "3.0")
       JsDuck::Process::Versions.new(relations, opts, importer).process_all!
 
       relations

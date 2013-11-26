@@ -1,4 +1,5 @@
 require 'jsduck/process/importer'
+require 'ostruct'
 
 module JsDuck
   module Process
@@ -7,7 +8,7 @@ module JsDuck
     # older versions of the same project and looking in which version
     # a class or method first appeared.
     class Versions
-      def initialize(relations, opts={}, importer=Process::Importer.new)
+      def initialize(relations, opts=OpenStruct.new, importer=Process::Importer.new)
         @relations = relations
         @opts = opts
         @importer = importer
@@ -15,8 +16,8 @@ module JsDuck
 
       # Loads in exported docs and generates @since and @new tags.
       def process_all!
-        if @opts[:import].length > 0
-          @versions = @importer.import(@opts[:import])
+        if @opts.import.length > 0
+          @versions = @importer.import(@opts.import)
           add_since_tags
         end
       end
@@ -117,9 +118,9 @@ module JsDuck
       def new_versions_map
         new_versions = {}
 
-        if @opts[:new_since]
+        if @opts.new_since
           @versions.map {|v| v[:version] }.each do |v|
-            if v == @opts[:new_since] || !new_versions.empty?
+            if v == @opts.new_since || !new_versions.empty?
               new_versions[v] = true
             end
           end

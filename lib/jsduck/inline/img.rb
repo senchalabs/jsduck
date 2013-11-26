@@ -1,6 +1,6 @@
 require 'jsduck/util/html'
 require 'jsduck/logger'
-require 'pp'
+require 'ostruct'
 
 module JsDuck
   module Inline
@@ -15,8 +15,8 @@ module JsDuck
       # Used for error reporting.
       attr_accessor :doc_context
 
-      def initialize(opts={})
-        @tpl = opts[:img] || '<img src="%u" alt="%a" width="%w" height="%h"/>'
+      def initialize(opts=OpenStruct.new)
+        @tpl = opts.img || '<img src="%u" alt="%a" width="%w" height="%h"/>'
 
         @re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
       end

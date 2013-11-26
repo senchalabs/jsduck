@@ -8,6 +8,7 @@ require 'jsduck/inline/link_renderer'
 require 'jsduck/inline/img'
 require 'jsduck/inline/video'
 require 'jsduck/inline/example'
+require 'ostruct'
 
 module JsDuck
   module Format
@@ -18,7 +19,7 @@ module JsDuck
       # Creates a formatter configured with options originating from
       # command line.  For the actual effect of the options see
       # Inline::* classes.
-      def initialize(relations={}, opts={})
+      def initialize(relations={}, opts=OpenStruct.new)
         @relations = relations
         @opts = opts
         @subproperties = Format::Subproperties.new(self)
@@ -104,7 +105,7 @@ module JsDuck
         # Keep track of open HTML tags. We're not auto-detecting class
         # names when inside <a>. Also we want to close down the unclosed
         # tags.
-        tags = Format::HtmlStack.new(@opts[:ignore_html] || {}, @doc_context)
+        tags = Format::HtmlStack.new(@opts.ignore_html || {}, @doc_context)
 
         while !s.eos? do
           if substitute = @inline_link.replace(s)

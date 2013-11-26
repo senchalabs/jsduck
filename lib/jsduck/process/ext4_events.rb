@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module JsDuck
   module Process
 
@@ -7,13 +9,13 @@ module JsDuck
     # But only does so when :ext4_events option is set to true or the
     # code itself is detected as being writted in Ext4 style.
     class Ext4Events
-      def initialize(classes, opts={})
+      def initialize(classes, opts=OpenStruct.new)
         @classes = classes
         @opts = opts
       end
 
       def process_all!
-        if @opts[:ext4_events] == true || (@opts[:ext4_events] == nil && ext4_style_code?)
+        if @opts.ext4_events == true || (@opts.ext4_events == nil && ext4_style_code?)
           @classes.each_value {|cls| process(cls) }
         end
       end

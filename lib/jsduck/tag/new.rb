@@ -21,10 +21,10 @@ module JsDuck::Tag
     #
     # NOTE: This method is explicitly called from JsDuck::Options class.
     def init_tooltip!(opts)
-      if opts[:new_since]
-        @signature[:tooltip] = "New since #{opts[:new_since]}"
-      elsif opts[:import].length > 0
-        @signature[:tooltip] = "New since #{opts[:import].last[:version]}"
+      if opts.new_since
+        @signature[:tooltip] = "New since #{opts.new_since}"
+      elsif opts.import.length > 0
+        @signature[:tooltip] = "New since #{opts.import.last[:version]}"
       end
     end
 

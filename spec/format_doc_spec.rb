@@ -2,6 +2,7 @@
 require "jsduck/format/doc"
 require "jsduck/relations"
 require "jsduck/class"
+require "ostruct"
 
 describe JsDuck::Format::Doc do
 
@@ -37,7 +38,7 @@ describe JsDuck::Format::Doc do
           :alternateClassNames => ["FooBar"]
         }),
       ])
-      @formatter = JsDuck::Format::Doc.new(relations, :img => '<img src="%u" alt="%a"/>')
+      @formatter = JsDuck::Format::Doc.new(relations, OpenStruct.new(:img => '<img src="%u" alt="%a"/>'))
       @formatter.class_context = "Context"
       @formatter.images = ImageDirMock.new
     end
@@ -187,7 +188,7 @@ describe JsDuck::Format::Doc do
           ]
         }),
       ])
-      @formatter = JsDuck::Format::Doc.new(relations, :img => '<img src="%u" alt="%a"/>')
+      @formatter = JsDuck::Format::Doc.new(relations, OpenStruct.new(:img => '<img src="%u" alt="%a"/>'))
       @formatter.class_context = "Context"
       @formatter.images = ImageDirMock.new
     end

@@ -1,4 +1,5 @@
 require 'jsduck/util/html'
+require 'ostruct'
 
 module JsDuck
   module Inline
@@ -9,7 +10,7 @@ module JsDuck
       # Inline::AutoLink.
       attr_reader :relations
 
-      def initialize(relations={}, opts={})
+      def initialize(relations={}, opts=OpenStruct.new)
         @relations = relations
 
         # Template HTML that replaces {@link Class#member anchor text}.
@@ -20,7 +21,7 @@ module JsDuck
         # %# - inserts "#" if member name present
         # %- - inserts "-" if member name present
         # %a - anchor text for link
-        @tpl = opts[:link] || '<a href="%c%#%m">%a</a>'
+        @tpl = opts.link || '<a href="%c%#%m">%a</a>'
       end
 
       # Generates HTML link to class or member applying the link
