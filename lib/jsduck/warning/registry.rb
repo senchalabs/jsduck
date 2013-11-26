@@ -42,7 +42,6 @@ module JsDuck
 
           [:image, "{@img} referring to missing file"],
           [:image_unused, "An image exists in --images dir that's not used"],
-          [:cat_old_format, "Categories file uses old deprecated format"],
           [:cat_no_match, "Class pattern in categories file matches nothing"],
           [:cat_class_missing, "Class is missing from categories file"],
           [:guide, "Guide is missing from --guides dir"],
