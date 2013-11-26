@@ -111,20 +111,6 @@ describe JsDuck::Options::Parser do
     end
   end
 
-  describe :title do
-    it "defaults to 'Documentation - JSDuck'" do
-      opts = parse()
-      opts.title.should == 'Documentation - JSDuck'
-      opts.header.should == "<strong>Documentation</strong> JSDuck"
-    end
-
-    it "sets both title and header" do
-      opts = parse("--title", "Docs - MyApp")
-      opts.title.should == "Docs - MyApp"
-      opts.header.should == "<strong>Docs</strong> MyApp"
-    end
-  end
-
   describe :import do
     it "defaults to empty array" do
       parse().import.should == []
@@ -251,6 +237,7 @@ describe JsDuck::Options::Parser do
   # Simple setters
   {
     :encoding => "--encoding",
+    :title => ["--title", "Documentation - JSDuck"],
     :footer => ["--footer", "Generated on {DATE} by {JSDUCK} {VERSION}."],
     :welcome => "--welcome",
     :guides => "--guides",

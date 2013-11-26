@@ -177,7 +177,6 @@ module JsDuck
         separator ""
 
         attribute :title, "Documentation - JSDuck"
-        attribute :header, "<strong>Documentation</strong> JSDuck"
         option('--title=TEXT',
           "Custom title text for the documentation.",
           "",
@@ -187,7 +186,6 @@ module JsDuck
           "the header of the page.  Inside page header the left",
           "part (from ' - ' separator) will be shown in bold.") do |text|
           @opts.title = text
-          @opts.header = text.sub(/^(.*?) +- +/, "<strong>\\1</strong> ")
         end
 
         attribute :footer, "Generated on {DATE} by {JSDUCK} {VERSION}."

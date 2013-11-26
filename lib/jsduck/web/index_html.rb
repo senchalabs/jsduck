@@ -35,7 +35,7 @@ module JsDuck
         write_template(in_file, out_file, {
           "{title}" => @opts.title,
           "{mobile_redirect}" => @opts.seo ? include_script(@opts.template+"/mobile-redirect.js") : "",
-          "{header}" => @opts.header,
+          "{header}" => header,
           "{footer}" => footer,
           "{extjs_path}" => @opts.extjs_path,
           "{data_path}" => File.basename(@paths[:data]),
@@ -52,7 +52,7 @@ module JsDuck
       def create_print_template_html(in_file, out_file)
         write_template(in_file, out_file, {
           "{title}" => @opts.title,
-          "{header}" => @opts.header,
+          "{header}" => header,
           "{css_path}" => File.basename(@paths[:css]),
         })
       end
@@ -63,7 +63,7 @@ module JsDuck
 
         write_template(in_file, out_file, {
           "{title}" => @opts.title,
-          "{header}" => @opts.header,
+          "{header}" => header,
           "{categories}" => categories ? "<h1>API Documentation</h1> #{categories}" : "",
           "{guides}" => guides ? "<h1>Guides</h1> #{guides}" : "",
           "{css_path}" => File.basename(@paths[:css]),
@@ -72,6 +72,10 @@ module JsDuck
 
       def include_script(filename)
         "<script type='text/javascript'>\n" + Util::IO.read(filename) + "\n</script>"
+      end
+
+      def header
+        @opts.title.sub(/^(.*?) +- +/, "<strong>\\1</strong> ")
       end
 
       def footer
