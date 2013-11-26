@@ -12,7 +12,7 @@ module JsDuck
 
       # Expands opts.input_files (modifying its contents):
       #
-      # - When file is a directory, scans all JS, CSS, SCSS files in there.
+      # - When file is a directory, scans all JS, SCSS files in there.
       # - When file is a .jsb3 file, extracts list of files from it.
       # - Otherwise returns array with this same input filename.
       #
@@ -33,7 +33,7 @@ module JsDuck
 
         if File.exists?(fname)
           if File.directory?(fname)
-            Dir[fname+"/**/*.{js,css,scss}"].each {|f| files << f }
+            Dir[fname+"/**/*.{js,scss}"].each {|f| files << f }
           elsif fname =~ /\.jsb3$/
             Options::Jsb.read(fname).each {|fn| read_filenames(fn) }
           else

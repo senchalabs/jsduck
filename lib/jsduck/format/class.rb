@@ -42,7 +42,7 @@ module JsDuck
       def format_member(m)
         @formatter.doc_context = m[:files][0]
 
-        # Turn off type parsing for CSS vars and mixins
+        # Turn off type parsing for SCSS vars and mixins
         @formatter.skip_type_parsing = [:css_var, :css_mixin].include?(m[:tagname])
 
         format_tags(m)

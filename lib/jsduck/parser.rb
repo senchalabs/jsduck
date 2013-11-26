@@ -9,7 +9,7 @@ require 'jsduck/base_type'
 require 'jsduck/class_doc_expander'
 
 module JsDuck
-  # Performs the actual parsing of CSS or JS source.
+  # Performs the actual parsing of SCSS or JS source.
   #
   # This is the class that brings together all the different steps of
   # parsing the source.
@@ -27,7 +27,7 @@ module JsDuck
     def parse(contents, filename="", options={})
       @doc_processor.filename = @filename = filename
 
-      parse_js_or_css(contents, filename, options).map do |docset|
+      parse_js_or_scss(contents, filename, options).map do |docset|
         expand(docset)
       end.flatten.map do |docset|
         merge(docset)
@@ -36,9 +36,9 @@ module JsDuck
 
     private
 
-    # Parses the file depending on filename as JS or CSS
-    def parse_js_or_css(contents, filename, options)
-      if filename =~ /\.s?css$/
+    # Parses the file depending on filename as JS or SCSS
+    def parse_js_or_scss(contents, filename, options)
+      if filename =~ /\.scss$/
         docs = Css::Parser.new(contents, options).parse
       else
         docs = Js::Parser.new(contents, options).parse

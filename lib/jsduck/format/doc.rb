@@ -148,7 +148,7 @@ module JsDuck
 
       # Turns type parsing on or off.
       #
-      # Used to skipping parsing of CSS var and mixin types.
+      # Used to skipping parsing of SCSS var and mixin types.
       def skip_type_parsing=(skip)
         @subproperties.skip_type_parsing = skip
       end
