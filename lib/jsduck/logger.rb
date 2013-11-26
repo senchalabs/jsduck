@@ -79,35 +79,22 @@ module JsDuck
     # Works best when --processes=0, but it reduces the amount of
     # warnings greatly also when run multiple processes.
     #
-    # Optionally filename and line number will be inserted to message.
-    # These two last arguments can also be supplied as one hash of:
+    # The `file` parameter must be a hash like:
     #
     #     {:filename => "foo.js", :linenr => 17}
     #
-    def warn(type, msg, filename=nil, line=nil)
-      if filename.is_a?(Hash)
-        line = filename[:linenr]
-        filename = filename[:filename]
-      end
-
-      if warning_enabled?(type, filename)
-        print_warning(msg, filename, line)
+    # When supplied, it the filename and line number will be appended
+    # to the message, to convey where the warning was triggered.
+    #
+    # The optional `args` parameter must be an array of arguments and
+    # only applies to some warning types like :nodoc.
+    #
+    def warn(type, msg, file={}, args=[])
+      if warning_enabled?(type, file[:filename], args)
+        print_warning(msg, file[:filename], file[:linenr])
       end
 
       return false
-    end
-
-    # Prints :nodoc warning message.
-    #
-    # Because the :nodoc warning needs different parameters, for now
-    # we're using a separate method specially for these.
-    def warn_nodoc(type, visibility, msg, file)
-      filename = file[:filename]
-      line = file[:linenr]
-
-      if @warnings.enabled?(:nodoc, filename, [type, visibility])
-        print_warning(msg, filename, line)
-      end
     end
 
     # Prints fatal error message with backtrace.
@@ -145,13 +132,13 @@ module JsDuck
 
     CLEAR = "\e[0m"
 
-    def warning_enabled?(type, filename)
+    def warning_enabled?(type, filename, args)
       if type == nil
         true
       elsif !@warnings.has?(type)
         warn(nil, "Unknown warning type #{type}")
       else
-        @warnings.enabled?(type, filename)
+        @warnings.enabled?(type, filename, args)
       end
     end
 

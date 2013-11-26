@@ -52,7 +52,7 @@ module JsDuck
             if File.exists?(source)
               FileUtils.cp(source, target)
             else
-              Logger.warn(nil, "Class icon file not found", source)
+              Logger.warn(nil, "Class icon file not found", {:filename => source})
             end
           end
         end

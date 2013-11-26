@@ -40,7 +40,7 @@ module JsDuck
             files << fname
           end
         else
-          Logger.warn(nil, "File not found", fname)
+          Logger.warn(nil, "File not found", {:filename => fname})
         end
 
         files

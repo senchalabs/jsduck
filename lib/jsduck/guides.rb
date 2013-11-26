@@ -54,11 +54,15 @@ module JsDuck
     end
 
     def load_guide(guide)
-      return Logger.warn(:guide, "Guide not found", guide["url"]) unless File.exists?(guide["url"])
-      return Logger.warn(:guide, "Guide not found", guide[:filename]) unless File.exists?(guide[:filename])
+      unless File.exists?(guide["url"])
+        return Logger.warn(:guide, "Guide not found", {:filename => guide["url"]})
+      end
+      unless File.exists?(guide[:filename])
+        return Logger.warn(:guide, "Guide not found", {:filename => guide[:filename]})
+      end
       unless js_ident?(guide["name"])
         # Guide name is also used as JSONP callback method name.
-        return Logger.warn(:guide, "Guide name is not valid JS identifier: #{guide["name"]}", guide[:filename])
+        return Logger.warn(:guide, "Guide name is not valid JS identifier: #{guide["name"]}", {:filename => guide[:filename]})
       end
 
       begin

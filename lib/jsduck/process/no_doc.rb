@@ -41,7 +41,7 @@ module JsDuck
       def warn(type, msg, owner)
         visibility = owner[:private] ? :private : (owner[:protected] ? :protected : :public)
 
-        Logger.warn_nodoc(type, visibility, msg, owner[:files][0])
+        Logger.warn(:nodoc, msg, owner[:files][0], [type, visibility])
       end
 
     end
