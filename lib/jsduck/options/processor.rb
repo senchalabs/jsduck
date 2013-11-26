@@ -16,6 +16,9 @@ module JsDuck
       # Options::Record object, validates the options, applies it to
       # various singleton classes and returns the Options::Record.
       def self.process(args)
+        # HACK! First establish warnings defaults.
+        Logger.configure_defaults
+
         opts = Options::Parser.new.parse(args)
 
         # Expand list of input files

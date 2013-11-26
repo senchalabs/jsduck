@@ -25,18 +25,25 @@ module JsDuck
       @shown_warnings = {}
     end
 
+    # Configures warnings to default settings.
+    #
+    # NB! Needs to be called before retrieving the documentation with
+    # #doc_warnings (otherwise the +/- signs will be wrong).
+    def configure_defaults
+      # Enable all warnings except some.
+      set_warning(:all, true)
+      set_warning(:link_auto, false)
+      set_warning(:param_count, false)
+      set_warning(:fires, false)
+      set_warning(:nodoc, false)
+    end
+
     # Configures the logger with command line options.
     def configure(opts)
       self.verbose = true if opts.verbose
 
       self.colors = opts.color unless opts.color.nil?
 
-      # Enable all warnings except the following:
-      set_warning(:all, true)
-      set_warning(:link_auto, false)
-      set_warning(:param_count, false)
-      set_warning(:fires, false)
-      set_warning(:nodoc, false)
       begin
         opts.warnings.each do |w|
           set_warning(w[:type], w[:enabled], w[:path], w[:params])
