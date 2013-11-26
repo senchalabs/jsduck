@@ -35,7 +35,7 @@ module JsDuck
       #
       # Alternatively runs just one validator by name. Used in testing.
       def validate!(name=nil)
-        validators = name ? [@validators[name]] : @validators
+        validators = name ? [@validators[name]] : @validators.values
 
         validators.each do |block|
           if err = block.call()
