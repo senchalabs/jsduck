@@ -55,6 +55,10 @@ describe JsDuck::Aggregator do
       classes["FooOverride"].should == nil
     end
 
+    it "places the override into ignored classes list" do
+      classes.ignore?("FooOverride").should == true
+    end
+
     it "combines class doc with doc from override" do
       classes["Foo"][:doc].should == "Foo comment.\n\n**From override FooOverride:** FooOverride comment."
     end

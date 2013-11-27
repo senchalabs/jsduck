@@ -12,6 +12,7 @@ require "jsduck/process/inherit_doc"
 require "jsduck/process/return_values"
 require "jsduck/process/fires"
 require "jsduck/process/components"
+require "ostruct"
 
 module Helper
   # Helper class for testing documentation parsing.
@@ -27,6 +28,8 @@ module Helper
       fname = opts[:filename] || ""
       file = JsDuck::Source::File.new(string, JsDuck::Parser.new.parse(string, fname), fname)
 
+      cmd_opts = OpenStruct.new(:external => [])
+
       agr = JsDuck::Aggregator.new
       agr.aggregate(file)
       classes_hash = agr.result
@@ -35,9 +38,12 @@ module Helper
       JsDuck::Process::Accessors.new(classes_hash).process_all! if opts[:accessors]
       JsDuck::Process::Ext4Events.new(classes_hash).process_all! if opts[:ext4_events]
       JsDuck::Process::Enums.new(classes_hash).process_all! if opts[:enums]
-      JsDuck::Process::Overrides.new(classes_hash).process_all! if opts[:overrides]
+      JsDuck::Process::Overrides.new(classes_hash, cmd_opts).process_all! if opts[:overrides]
 
-      relations = JsDuck::Relations.new(classes_hash.values.map {|cls| JsDuck::Class.new(cls) })
+      relations = JsDuck::Relations.new(
+        classes_hash.values.map {|cls| JsDuck::Class.new(cls) },
+        cmd_opts.external
+        )
 
       JsDuck::Process::InheritDoc.new(relations).process_all! if opts[:inherit_doc]
       JsDuck::Process::ReturnValues.new(relations).process_all! if opts[:return_values]
