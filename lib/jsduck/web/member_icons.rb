@@ -1,4 +1,4 @@
-require 'jsduck/tag_registry'
+require 'jsduck/member_registry'
 require 'fileutils'
 
 module JsDuck
@@ -29,13 +29,13 @@ module JsDuck
           if File.exists?(m[:icon])
             FileUtils.cp(m[:icon], "#{dir}/#{m[:name]}.png")
           else
-            Logger.warn(nil, "Member icon file not found", m[:icon])
+            Logger.warn(nil, "Member icon file not found", {:filename => m[:icon]})
           end
         end
       end
 
       def self.members_with_icons
-        TagRegistry.member_types.find_all {|m| m[:icon] }
+        MemberRegistry.definitions.find_all {|m| m[:icon] }
       end
     end
 

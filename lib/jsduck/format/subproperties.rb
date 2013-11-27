@@ -14,7 +14,7 @@ module JsDuck
       end
 
       # Set to true to skip parsing and formatting of types.
-      # Used to skip parsing of CSS typesdefs.
+      # Used to skip parsing of SCSS typesdefs.
       attr_accessor :skip_type_parsing
 
       # Takes a hash of param, return value, throws value or subproperty.

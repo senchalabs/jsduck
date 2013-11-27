@@ -1,5 +1,5 @@
 require 'jsduck/process/importer'
-require 'jsduck/tag_registry'
+require 'ostruct'
 
 module JsDuck
   module Process
@@ -7,76 +7,65 @@ module JsDuck
     # Generates @since and @new tags by importing JSDuck exports of
     # older versions of the same project and looking in which version
     # a class or method first appeared.
-    #
-    # Additionally here the tooltip text for @new tag gets injected.
     class Versions
-      def initialize(relations, opts={}, importer=nil)
+      def initialize(relations, opts=OpenStruct.new, importer=Process::Importer.new)
         @relations = relations
         @opts = opts
-        # Allow different importer to be injected for testing
-        @importer = importer || Process::Importer.new
+        @importer = importer
       end
 
       # Loads in exported docs and generates @since and @new tags.
       def process_all!
-        init_new_tag_tooltip!
-
-        if @opts[:imports].length > 0
-          generate_since_tags(@importer.import(@opts[:imports]))
+        if @opts.import.length > 0
+          @versions = @importer.import(@opts.import)
+          add_since_tags
         end
       end
 
       private
 
-      # Initializes the tooltip text for the signature of @new tag.
-      def init_new_tag_tooltip!
-        signature = TagRegistry.get_by_name(:new).signature
-        if @opts[:new_since]
-          signature[:tooltip] = "New since #{@opts[:new_since]}"
-        elsif @opts[:imports].length > 0
-          signature[:tooltip] = "New since #{@opts[:imports].last[:version]}"
-        end
-      end
+      # classes...
 
       # Using the imported versions data, adds @since tags to all
-      # classes/members.
-      def generate_since_tags(versions)
-        new_versions = build_new_versions_map(versions)
-
+      # classes/members/params.
+      def add_since_tags
         @relations.each do |cls|
-          v = cls[:since] || class_since(versions, cls)
+          v = cls[:since] || class_since(cls)
           cls[:since] = v
-          cls[:new] = true if new_versions[v]
+          cls[:new] = true if is_new?(v)
 
-          cls.all_local_members.each do |m|
-            v = m[:since] || member_since(versions, cls, m)
-            m[:since] = v
-            m[:new] = true if new_versions[v]
+          add_members_since_tags(cls)
+        end
+      end
+
+      # Returns name of the version since which the class is available
+      def class_since(cls)
+        @versions.each do |ver|
+          return ver[:version] if ver[:classes][cls[:name]]
+          cls[:alternateClassNames].each do |name|
+            return ver[:version] if ver[:classes][name]
           end
         end
       end
 
-      # Generates a lookup table of versions that we are going to label
-      # with @new tags.  By default we use the latest version, otherwise
-      # use all versions since the latest.
-      def build_new_versions_map(versions)
-        new_versions = {}
+      # members...
 
-        if @opts[:new_since]
-          versions.map {|v| v[:version] }.each do |v|
-            if v == @opts[:new_since] || !new_versions.empty?
-              new_versions[v] = true
-            end
-          end
-        else
-          new_versions[versions.last[:version]] = true
+      def add_members_since_tags(cls)
+        cls.all_local_members.each do |m|
+          # Remember the initial explicit @since tag value
+          # to disable params processing when it's present.
+          explicit_since = m[:since]
+
+          v = m[:since] || member_since(cls, m)
+          m[:since] = v
+          m[:new] = true if is_new?(v)
+
+          add_params_since_tags(cls, m, v) unless explicit_since
         end
-
-        new_versions
       end
 
-      def member_since(versions, cls, m)
-        versions.each do |ver|
+      def member_since(cls, m)
+        @versions.each do |ver|
           c = ver[:classes][cls[:name]]
           return ver[:version] if c && c[m[:id]]
           cls[:alternateClassNames].each do |name|
@@ -86,14 +75,60 @@ module JsDuck
         end
       end
 
-      # Returns name of the version since which the class is available
-      def class_since(versions, cls)
-        versions.each do |ver|
-          return ver[:version] if ver[:classes][cls[:name]]
-          cls[:alternateClassNames].each do |name|
-            return ver[:version] if ver[:classes][name]
+      # params...
+
+      def add_params_since_tags(cls, member, member_version)
+        Array(member[:params]).each_with_index do |p, i|
+          v = param_since(cls, member, i)
+          if v != member_version
+            p[:since] = v
+            p[:new] = true if is_new?(v)
           end
         end
+      end
+
+      def param_since(cls, m, i)
+        @versions.each do |ver|
+          c = ver[:classes][cls[:name]]
+          return ver[:version] if c && has_param?(c[m[:id]], i)
+          cls[:alternateClassNames].each do |name|
+            c = ver[:classes][name]
+            return ver[:version] if c && has_param?(c[m[:id]], i)
+          end
+        end
+      end
+
+      # Because parameters can be renamed between versions, only
+      # consider parameter count.
+      def has_param?(member, param_index)
+        member && member.respond_to?(:length) && member.length > param_index
+      end
+
+      # helpers...
+
+      # Should items introduced in given version be marked as new?
+      def is_new?(version_nr)
+        @new_versions = new_versions_map unless @new_versions
+        @new_versions[version_nr]
+      end
+
+      # Generates a lookup table of versions that we are going to label
+      # with @new tags.  By default we use the latest version, otherwise
+      # use all versions since the latest.
+      def new_versions_map
+        new_versions = {}
+
+        if @opts.new_since
+          @versions.map {|v| v[:version] }.each do |v|
+            if v == @opts.new_since || !new_versions.empty?
+              new_versions[v] = true
+            end
+          end
+        else
+          new_versions[@versions.last[:version]] = true
+        end
+
+        new_versions
       end
 
     end

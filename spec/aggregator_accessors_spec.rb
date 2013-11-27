@@ -64,6 +64,10 @@ describe JsDuck::Aggregator do
       @members["setFoo"][:params][0][:name].should == "foo"
     end
 
+    it "generates dummy docs for setFoo parameter" do
+      @members["setFoo"][:params][0][:doc].should == "The new value."
+    end
+
     it "sets setFoo owner @cfg owner" do
       @members["setFoo"][:owner].should == "MyClass"
     end

@@ -61,7 +61,7 @@ module JsDuck
 
       def warn(name, pos)
         parent = name.sub(/\.[^.]*$/, '')
-        msg = "Ignoring subproperty '#{name}' not parent found with name '#{parent}'."
+        msg = "Ignoring subproperty '#{name}' no parent found with name '#{parent}'."
         Logger.warn(:subproperty, msg, pos)
       end
 

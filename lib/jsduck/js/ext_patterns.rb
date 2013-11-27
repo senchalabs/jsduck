@@ -36,8 +36,13 @@ module JsDuck
         @patterns[pattern].include?(string)
       end
 
-      # Reconfigures ExtPatterns with different set of namespaces.
-      # Called when --ext-namespaces option is passed to JSDuck.
+      # Reconfigures ExtPatterns with different set of namespaces from
+      # command line options.
+      def configure(opts)
+        set(opts.ext_namespaces) if opts.ext_namespaces
+      end
+
+      # Reconfigures patterns with given set of namespaces.
       def set(namespaces)
         @patterns = {
           "Ext.define" => build_patterns(namespaces, [".define", ".ClassManager.create"]),

@@ -1,5 +1,4 @@
 require 'jsduck/logger'
-require 'jsduck/class'
 
 module JsDuck
   module Process
@@ -14,7 +13,6 @@ module JsDuck
 
       # Runs the linter
       def process_all!
-        warn_no_doc
         warn_unnamed
         warn_optional_params
         warn_duplicate_params
@@ -29,37 +27,11 @@ module JsDuck
           if !member[:name] || member[:name] == ""
             warn(:name_missing, "Unnamed #{member[:tagname]}", member)
           end
-          (member[:params] || []).each do |p|
+          Array(member[:params]).each do |p|
             if !p[:name] || p[:name] == ""
               warn(:name_missing, "Unnamed parameter", member)
             end
           end
-        end
-      end
-
-      # print warning for each class or public member with no name
-      def warn_no_doc
-        @relations.each do |cls|
-
-          if cls[:doc] == "" && !cls[:private]
-            warn(:no_doc, "No documentation for #{cls[:name]}", cls)
-          end
-
-          cls.all_local_members.each do |member|
-            if !member[:private] && !member[:hide] && !JsDuck::Class.constructor?(member)
-              if member[:doc] == ""
-                warn(:no_doc_member, "No documentation for #{member[:owner]}##{member[:name]}", member)
-              end
-
-              (member[:params] || []).each do |p|
-                if p[:doc] == ""
-                  warn(:no_doc_param, "No documentation for parameter #{p[:name]} of #{member[:owner]}##{member[:name]}", member)
-                end
-              end
-
-            end
-          end
-
         end
       end
 
@@ -68,7 +40,7 @@ module JsDuck
         each_member do |member|
           if member[:tagname] == :method
             optional_found = false
-            member[:params].each do |p|
+            Array(member[:params]).each do |p|
               if optional_found && !p[:optional]
                 warn(:req_after_opt, "Optional param followed by regular param #{p[:name]}", member)
               end
@@ -82,7 +54,7 @@ module JsDuck
       def warn_duplicate_params
         each_member do |member|
           params = {}
-          (member[:params] || []).each do |p|
+          Array(member[:params]).each do |p|
             if params[p[:name]]
               warn(:dup_param, "Duplicate parameter name #{p[:name]}", member)
             end

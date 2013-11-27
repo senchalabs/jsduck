@@ -4,9 +4,13 @@ module JsDuck::Tag
   class Deprecated < DeprecatedTag
     def initialize
       @tagname = :deprecated
+      @msg = "This {TAGNAME} has been <strong>deprecated</strong>"
       @css = <<-EOCSS
         .signature .deprecated {
           background-color: #aa0000;
+        }
+        .deprecated-box {
+          border: 2px solid #aa0000;
         }
         .deprecated-box strong {
           color: white;

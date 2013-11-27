@@ -54,11 +54,15 @@ module JsDuck
     end
 
     def load_guide(guide)
-      return Logger.warn(:guide, "Guide not found", guide["url"]) unless File.exists?(guide["url"])
-      return Logger.warn(:guide, "Guide not found", guide[:filename]) unless File.exists?(guide[:filename])
+      unless File.exists?(guide["url"])
+        return Logger.warn(:guide, "Guide not found", {:filename => guide["url"]})
+      end
+      unless File.exists?(guide[:filename])
+        return Logger.warn(:guide, "Guide not found", {:filename => guide[:filename]})
+      end
       unless js_ident?(guide["name"])
         # Guide name is also used as JSONP callback method name.
-        return Logger.warn(:guide, "Guide name is not valid JS identifier: #{guide["name"]}", guide[:filename])
+        return Logger.warn(:guide, "Guide name is not valid JS identifier: #{guide["name"]}", {:filename => guide[:filename]})
       end
 
       begin
@@ -73,7 +77,7 @@ module JsDuck
       @formatter.doc_context = {:filename => guide[:filename], :linenr => 0}
       @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
       html = @formatter.format(Util::IO.read(guide[:filename]))
-      html = GuideToc.inject(html, guide['name'])
+      html = GuideToc.new(html, guide['name'], @opts.guides_toc_level).inject!
       html = GuideAnchors.transform(html, guide['name'])
 
       # Report unused images (but ignore the icon files)
@@ -123,7 +127,7 @@ module JsDuck
       elsif File.exists?(dir+"/icon-lg.png")
         FileUtils.mv(dir+"/icon-lg.png", dir+"/icon.png")
       else
-        FileUtils.cp(@opts.template_dir+"/resources/images/default-guide.png", dir+"/icon.png")
+        FileUtils.cp(@opts.template+"/resources/images/default-guide.png", dir+"/icon.png")
       end
     end
 

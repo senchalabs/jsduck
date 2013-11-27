@@ -92,7 +92,7 @@ module JsDuck
             :params => [{
                 :type => cfg[:type],
                 :name => cfg[:name],
-                :doc => "",
+                :doc => "The new value.",
               }],
             :id => "method-" + name,
           }, cfg)

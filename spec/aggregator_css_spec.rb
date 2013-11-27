@@ -3,7 +3,7 @@ require "mini_parser"
 describe JsDuck::Aggregator do
 
   def parse(string)
-    Helper::MiniParser.parse(string, {:filename => ".css"})
+    Helper::MiniParser.parse(string, {:filename => ".scss"})
   end
 
   def parse_member(string)

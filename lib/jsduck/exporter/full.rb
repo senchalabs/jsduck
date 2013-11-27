@@ -1,11 +1,13 @@
-require 'jsduck/tag_registry'
+require 'jsduck/class'
+require 'jsduck/member_registry'
+require 'ostruct'
 
 module JsDuck
   module Exporter
 
     # Exporter for all the class docs.
     class Full
-      def initialize(relations, opts={})
+      def initialize(relations, opts=OpenStruct.new)
         # parameters are just for compatibility with other exporters
       end
 
@@ -27,7 +29,7 @@ module JsDuck
       # Generates flat list of all members
       def export_members(cls)
         groups = []
-        TagRegistry.member_type_names.each do |tagname|
+        MemberRegistry.names.each do |tagname|
           groups << export_members_group(cls, {:tagname => tagname, :static => false})
           groups << export_members_group(cls, {:tagname => tagname, :static => true})
         end

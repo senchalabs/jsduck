@@ -1,4 +1,4 @@
-require 'jsduck/tag_registry'
+require 'jsduck/render/tags'
 
 module JsDuck
   module Format
@@ -42,14 +42,14 @@ module JsDuck
       def format_member(m)
         @formatter.doc_context = m[:files][0]
 
-        # Turn off type parsing for CSS vars and mixins
+        # Turn off type parsing for SCSS vars and mixins
         @formatter.skip_type_parsing = [:css_var, :css_mixin].include?(m[:tagname])
 
         format_tags(m)
       end
 
       def format_tags(context)
-        TagRegistry.html_renderers.each do |tag|
+        Render::Tags.renderers.each do |tag|
           if context[tag.tagname]
             tag.format(context, @formatter)
           end

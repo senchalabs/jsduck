@@ -23,7 +23,10 @@ module JsDuck
       private
 
       def current_version
-        Util::NullObject.new(:[] => Util::NullObject.new(:[] => true))
+        JsDuck::Util::NullObject.new(
+          :[] => JsDuck::Util::NullObject.new( # class
+            :[] => JsDuck::Util::NullObject.new( # member
+              :length => 1.0 / 0))) # params count == Infinity
       end
 
       # Reads in data from all .json files in directory
@@ -61,7 +64,7 @@ module JsDuck
       def members_id_index(json)
         index = {}
         json["members"].each do |m|
-          index[m["id"]] = true
+          index[m["id"]] = m["params"] ? m["params"].map {|p| p["name"] } : true
         end
         index
       end

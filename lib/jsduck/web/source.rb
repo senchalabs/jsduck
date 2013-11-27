@@ -5,7 +5,7 @@ require 'fileutils'
 module JsDuck
   module Web
 
-    # Writes HTML JavaScript/CSS source into HTML files.
+    # Writes HTML JavaScript/SCSS source into HTML files.
     class Source
       def initialize(source_files)
         @source_files = source_files

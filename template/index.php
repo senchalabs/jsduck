@@ -26,7 +26,7 @@ function decode_file($filename) {
     return jsonp_decode(file_get_contents($filename));
   }
   else {
-    throw new Exception("File $filename not found");
+    throw new Exception("File ".htmlspecialchars($filename)." not found");
   }
 }
 
@@ -40,6 +40,7 @@ function fix_links($html) {
     $param = isset($_GET["print"]) ? "print" : "mobile";
     $patterns = array(
       '/<a href=([\'"])#!?\/(api\/[^-\'"]+)-([^\'"]+)/' => '<a href=$1?'.$param.'=/$2#$3',
+      '/<a href=([\'"])#!?\/guide\/([^-\'"]+)-section-([^\'"]+)/' => '<a href=$1?'.$param.'=/guide/$2#$2-section-$3',
       '/<a href=([\'"])#!?\//' => '<a href=$1?'.$param.'=/',
     );
     return preg_replace(array_keys($patterns), array_values($patterns), $html);
@@ -72,7 +73,7 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"]) || isset($_GET["
     elseif (preg_match('/^\/api\/?$/', $fragment, $m)) {
       print_index_page();
     }
-    elseif (preg_match('/^\/guide\/(.+?)(-section-[0-9]+)?$/', $fragment, $m)) {
+    elseif (preg_match('/^\/guide\/(.+?)(-section-.+)?$/', $fragment, $m)) {
       $json = decode_file("guides/".$m[1]."/README.js");
       print_page($json["title"], '<div class="guide-container" style="padding: 1px">' . $json["guide"] . '</div>', $fragment);
     }

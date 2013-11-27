@@ -38,7 +38,7 @@ module JsDuck
         end.map {|cls| cls[:name] }.sort
 
         if classes.length == 0
-          Logger.warn(:cat_no_match, "No class found matching a pattern '#{name}' in categories file", @filename)
+          Logger.warn(:cat_no_match, "No class found matching a pattern '#{name}' in categories file", {:filename => @filename})
         end
         classes
       end
@@ -58,7 +58,7 @@ module JsDuck
         # Check that each existing non-private & non-deprecated class is listed
         @relations.each do |cls|
           unless listed_classes[cls[:name]] || cls[:private] || cls[:deprecated]
-            Logger.warn(:cat_class_missing, "Class '#{cls[:name]}' not found in categories file", @filename)
+            Logger.warn(:cat_class_missing, "Class '#{cls[:name]}' not found in categories file", {:filename => @filename})
           end
         end
       end

@@ -1,6 +1,7 @@
 require 'jsduck/logger'
 require 'jsduck/util/io'
 require 'jsduck/tag_registry'
+require 'jsduck/version'
 require 'fileutils'
 
 module JsDuck
@@ -19,12 +20,12 @@ module JsDuck
       # When --seo enabled, creates index.php, template.html and print-template.html.
       def write
         if @opts.seo
-          FileUtils.cp(@opts.template_dir+"/index.php", @opts.output_dir+"/index.php")
-          create_template_html(@opts.template_dir+"/template.html", @opts.output_dir+"/template.html")
-          create_print_template_html(@opts.template_dir+"/print-template.html", @opts.output_dir+"/print-template.html")
-          create_index_template_html(@opts.template_dir+"/index-template.html", @opts.output_dir+"/index-template.html")
+          FileUtils.cp(@opts.template+"/index.php", @opts.output+"/index.php")
+          create_template_html(@opts.template+"/template.html", @opts.output+"/template.html")
+          create_print_template_html(@opts.template+"/print-template.html", @opts.output+"/print-template.html")
+          create_index_template_html(@opts.template+"/index-template.html", @opts.output+"/index-template.html")
         else
-          create_template_html(@opts.template_dir+"/template.html", @opts.output_dir+"/index.html")
+          create_template_html(@opts.template+"/template.html", @opts.output+"/index.html")
         end
       end
 
@@ -33,9 +34,9 @@ module JsDuck
       def create_template_html(in_file, out_file)
         write_template(in_file, out_file, {
           "{title}" => @opts.title,
-          "{mobile_redirect}" => @opts.seo ? include_script(@opts.template_dir+"/mobile-redirect.js") : "",
-          "{header}" => @opts.header,
-          "{footer}" => "<div id='footer-content' style='display: none'>#{@opts.footer}</div>",
+          "{mobile_redirect}" => @opts.seo ? include_script(@opts.template+"/mobile-redirect.js") : "",
+          "{header}" => header,
+          "{footer}" => footer,
           "{extjs_path}" => @opts.extjs_path,
           "{data_path}" => File.basename(@paths[:data]),
           "{css_path}" => File.basename(@paths[:css]),
@@ -51,7 +52,7 @@ module JsDuck
       def create_print_template_html(in_file, out_file)
         write_template(in_file, out_file, {
           "{title}" => @opts.title,
-          "{header}" => @opts.header,
+          "{header}" => header,
           "{css_path}" => File.basename(@paths[:css]),
         })
       end
@@ -62,7 +63,7 @@ module JsDuck
 
         write_template(in_file, out_file, {
           "{title}" => @opts.title,
-          "{header}" => @opts.header,
+          "{header}" => header,
           "{categories}" => categories ? "<h1>API Documentation</h1> #{categories}" : "",
           "{guides}" => guides ? "<h1>Guides</h1> #{guides}" : "",
           "{css_path}" => File.basename(@paths[:css]),
@@ -71,6 +72,21 @@ module JsDuck
 
       def include_script(filename)
         "<script type='text/javascript'>\n" + Util::IO.read(filename) + "\n</script>"
+      end
+
+      def header
+        @opts.title.sub(/^(.*?) +- +/, "<strong>\\1</strong> ")
+      end
+
+      def footer
+        jsduck = "<a href='https://github.com/senchalabs/jsduck'>JSDuck</a>"
+        date = Time.new.strftime('%a %d %b %Y %H:%M:%S')
+
+        footer_text = @opts.footer.gsub(/\{VERSION\}/, JsDuck::VERSION)
+          .gsub(/\{JSDUCK\}/, jsduck)
+          .gsub(/\{DATE\}/, date)
+
+        return "<div id='footer-content' style='display: none'>#{footer_text}</div>"
       end
 
       # Opens in_file, replaces {keys} inside it, writes to out_file

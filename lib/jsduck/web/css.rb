@@ -1,5 +1,6 @@
 require 'jsduck/tag_registry'
 require 'jsduck/util/md5'
+require 'jsduck/web/class_icons'
 require 'jsduck/web/member_icons'
 
 module JsDuck
@@ -21,7 +22,17 @@ module JsDuck
       private
 
       def all_css
-        TagRegistry.css + Web::MemberIcons.css + @opts.css
+        [
+          css_from_tags,
+          Web::ClassIcons.css,
+          Web::MemberIcons.css,
+          @opts.css,
+        ].join
+      end
+
+      # Returns all the CSS gathered from @css attributes of tags.
+      def css_from_tags
+        TagRegistry.tags.map(&:css).compact.join("\n")
       end
     end
 

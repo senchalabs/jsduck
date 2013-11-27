@@ -50,7 +50,7 @@ module JsDuck
 
         if tagname == :cfg || tagname == :constructor
           group_name = tagname
-          if tagname == :cfg && tag[:name] !~ /\./
+          if tagname == :cfg && (tag[:name] !~ /\./ || groups[:cfg].length == 0)
             groups[:cfg] << []
           end
         end

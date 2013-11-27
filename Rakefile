@@ -11,6 +11,8 @@ end
 
 require 'rspec'
 require 'rspec/core/rake_task'
+
+desc "Runs RSpec testsuite (DEFAULT)"
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.rspec_opts = ["--color"] unless os_is_windows?
   spec.pattern = "spec/**/*_spec.rb"
@@ -225,6 +227,55 @@ task :configure => [:get_extjs, :config_file]
 # Run compass to generate CSS files
 task :sass do
   system "compass compile --quiet template/resources/sass"
+end
+
+def write_version_file(version)
+  File.open('./lib/jsduck/version.rb', 'w') do |f|
+    f.write(<<-EORUBY)
+# This file is updated by rake bump task.
+# Do not edit by hand.
+module JsDuck
+  VERSION = "#{version}"
+end
+EORUBY
+  end
+end
+
+def commit_version(version)
+  system "git commit lib/jsduck/version.rb -m 'Up version to #{version}.'"
+  puts "Creating tag v#{version}"
+  system "git tag -a v#{version} -m 'Tagging #{version} release.'"
+end
+
+desc <<-EOTEXT
+Bumps JSDuck patch version number up by one.
+When old version was 1.2.2, new will be 1.2.3.
+
+Alternatively sets the specified version, when invoked like:
+
+    rake bump['1.2.3']
+
+Also commits and tags the change in git.
+EOTEXT
+task :bump, :new_version do |t, args|
+  require "./lib/jsduck/version.rb"
+
+  if args[:new_version]
+    new = args[:new_version]
+    puts "Bumping version from #{JsDuck::VERSION} to #{new}"
+    write_version_file(new)
+    commit_version(new)
+  else
+    if JsDuck::VERSION =~ /\A([0-9]+)\.([0-9]+)\.([0-9]+)\z/
+      new = "#{$1}.#{$2}.#{$3.to_i+1}"
+      puts "Bumping version from #{JsDuck::VERSION} to #{new}"
+      write_version_file(new)
+      commit_version(new)
+    else
+      puts "Unable to automatically bump the version: #{JsDuck::VERSION}"
+      exit 1
+    end
+  end
 end
 
 desc "Build JSDuck gem"

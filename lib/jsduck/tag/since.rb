@@ -1,5 +1,5 @@
 require "jsduck/tag/tag"
-require "jsduck/logger"
+require 'jsduck/util/html'
 
 module JsDuck::Tag
   class Since < Tag
@@ -22,7 +22,7 @@ module JsDuck::Tag
 
     def to_html(context)
       <<-EOHTML
-        <p>Available since: <b>#{context[:since]}</b></p>
+        <p>Available since: <b>#{JsDuck::Util::HTML.escape(context[:since])}</b></p>
       EOHTML
     end
 

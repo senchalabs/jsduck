@@ -41,9 +41,18 @@ module JsDuck
           # Object.defineProperty(obj, "prop", {value: x})
         elsif exp && exp.define_property?
           name = exp["arguments"][1].to_value
-          writable = exp.object_descriptor("writable")
-          readonly = writable ? !writable.to_value : true
-          make(name, exp.object_descriptor("value"), readonly)
+
+          if exp.object_descriptor("set")
+            # Object with a setter is not readonly
+            make(name)
+          elsif exp.object_descriptor("get")
+            # Object with a getter and no setter is readonly
+            make(name, nil, true)
+          else
+            writable = exp.object_descriptor("writable")
+            readonly = writable ? !writable.to_value : true
+            make(name, exp.object_descriptor("value"), readonly)
+          end
 
         else
           nil

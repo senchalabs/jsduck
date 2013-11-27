@@ -3,10 +3,10 @@ require 'jsduck/util/html'
 module JsDuck
   module Source
 
-    # Represents one JavaScript or CSS source file.
+    # Represents one JavaScript or SCSS source file.
     #
     # The filename parameter determines whether it's parsed as
-    # JavaScript (the default) or CSS.
+    # JavaScript (the default) or SCSS.
     class File
       attr_reader :filename
       attr_reader :contents

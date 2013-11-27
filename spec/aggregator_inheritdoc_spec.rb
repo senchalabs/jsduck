@@ -164,6 +164,30 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "@inheritdoc in @cfg with subproperties" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @cfg {Object} foo Original comment.
+           * @cfg {String} foo.name Some name
+           * @cfg {Number} foo.value Some value
+           */
+
+        /** @class Inh1 */
+          /**
+           * @cfg foo
+           * @inheritdoc Foo#foo
+           */
+      EOF
+      @inh1 = @docs["Inh1"][:members][0]
+    end
+
+    it "inherits subproperties" do
+      @inh1[:properties].length.should == 2
+    end
+  end
+
   describe "@inheritdoc with type info" do
     before do
       @docs = parse(<<-EOF)

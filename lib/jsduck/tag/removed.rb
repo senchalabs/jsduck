@@ -7,6 +7,7 @@ module JsDuck::Tag
   class Removed < DeprecatedTag
     def initialize
       @tagname = :removed
+      @msg = "This {TAGNAME} has been <strong>removed</strong>"
       # striked-through text with red border.
       @css = <<-EOCSS
         .signature .removed {
@@ -15,9 +16,12 @@ module JsDuck::Tag
           border: 1px solid #aa0000;
           text-decoration: line-through;
         }
+        .removed-box {
+          border: 2px solid #aa0000;
+        }
         .removed-box strong {
           color: #aa0000;
-          border: 1px solid #aa0000;
+          border: 2px solid #aa0000;
           background-color: transparent;
           text-decoration: line-through;
         }

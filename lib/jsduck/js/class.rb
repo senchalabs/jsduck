@@ -1,5 +1,5 @@
 require "jsduck/util/singleton"
-require "jsduck/tag_registry"
+require "jsduck/js/ext_define"
 require "jsduck/js/method"
 require "jsduck/js/property"
 
@@ -11,7 +11,7 @@ module JsDuck
       include Util::Singleton
 
       # Checks if AST node is a class, and if so, returns doc-hash
-      # with clas name and various auto-detected attributes.
+      # with class name and various auto-detected attributes.
       # When not a class returns nil.
       def detect(ast, docs)
         @docs = docs
@@ -102,12 +102,12 @@ module JsDuck
       # given cls Hash
       def detect_ext_define(cls, ast)
         # defaults
-        cls.merge!(TagRegistry.ext_define_defaults)
+        cls.merge!(Js::ExtDefine.defaults)
         cls[:members] = []
         cls[:code_type] = :ext_define
 
         ast["arguments"][1].each_property do |key, value, pair|
-          if tag = TagRegistry.get_by_ext_define_pattern(key)
+          if tag = Js::ExtDefine.get_tag_by_pattern(key)
             tag.parse_ext_define(cls, value)
           else
             case key
@@ -122,7 +122,7 @@ module JsDuck
             when "inheritableStatics"
               cls[:members] += make_statics(value, {:inheritable => true})
             else
-              detect_method_or_property(cls, key, value, pair)
+              detect_method_or_property(cls, key, value, pair) if pair.raw["kind"] == "init"
             end
           end
         end
@@ -132,7 +132,7 @@ module JsDuck
       def detect_class_members_from_object(cls, ast)
         cls[:members] = []
         ast.each_property do |key, value, pair|
-          detect_method_or_property(cls, key, value, pair)
+          detect_method_or_property(cls, key, value, pair) if pair.raw["kind"] == "init"
         end
       end
 

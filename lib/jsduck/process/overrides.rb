@@ -1,10 +1,11 @@
 require 'jsduck/logger'
+require 'ostruct'
 
 module JsDuck
   module Process
 
     class Overrides
-      def initialize(classes_hash, opts = {:external_classes => []})
+      def initialize(classes_hash, opts = OpenStruct.new(:external_classes => []))
         @classes_hash = classes_hash
         @opts = opts
       end
@@ -28,7 +29,7 @@ module JsDuck
           @classes_hash.delete(cls[:name])
         end
 
-        @opts[:external_classes] += overrides.map {|c| c[:name] }
+        @opts.external_classes += overrides.map {|c| c[:name] }
       end
 
       private

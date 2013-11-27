@@ -216,32 +216,24 @@ module JsDuck
         when RKelly::Nodes::PropertyNode == node.class
           make(node, {
             "type" => "Property",
-            "key" =>
-              if node.name.is_a?(Numeric)
-                {
-                  "type" => "Literal",
-                  "value" => node.name,
-                  "raw" => node.name.to_s,
-                  "range" => offset_range(node, :name),
-                }
-              elsif node.name =~ /['"]/
-                {
-                  "type" => "Literal",
-                  "value" => string_value(node.name),
-                  "raw" => node.name,
-                  "range" => offset_range(node, :name),
-                }
-              else
-                {
-                  "type" => "Identifier",
-                  "name" => node.name,
-                  "range" => offset_range(node, :name),
-                }
-              end,
+            "key" => property_key(node),
             "value" => adapt_node(node.value),
             "kind" => "init",
           })
-
+        when RKelly::Nodes::GetterPropertyNode == node.class
+          make(node, {
+            "type" => "Property",
+            "key" => property_key(node),
+            "value" => adapt_node(node.value),
+            "kind" => "get",
+          })
+        when RKelly::Nodes::SetterPropertyNode == node.class
+          make(node, {
+            "type" => "Property",
+            "key" => property_key(node),
+            "value" => adapt_node(node.value),
+            "kind" => "set",
+          })
         # Statements
         when RKelly::Nodes::ExpressionStatementNode == node.class
           make(node, {
@@ -458,6 +450,30 @@ module JsDuck
         }
       end
 
+      def property_key(node)
+        if node.name.is_a?(Numeric)
+          {
+            "type" => "Literal",
+            "value" => node.name,
+            "raw" => node.name.to_s,
+            "range" => offset_range(node, :name),
+          }
+        elsif node.name =~ /['"]/
+          {
+            "type" => "Literal",
+            "value" => string_value(node.name),
+            "raw" => node.name,
+            "range" => offset_range(node, :name),
+          }
+        else
+          {
+            "type" => "Identifier",
+            "name" => node.name,
+            "range" => offset_range(node, :name),
+          }
+        end
+      end
+
       # Evaluates the actual value of a JavaScript string.
       # Importantly we avoid using Ruby's eval().
       def string_value(string)
@@ -465,14 +481,28 @@ module JsDuck
           if STRING_ESCAPES[s]
             STRING_ESCAPES[s]
           elsif s =~ /^\\[0-9]/
-            s[1..-1].oct.chr
+            nr_to_str(s[1..-1].oct, s)
           elsif s =~ /^\\x[0-9A-F]/
-            s[2..-1].hex.chr
+            nr_to_str(s[2..-1].hex, s)
           elsif s =~ /^\\u[0-9A-F]/
             [s[2..-1].hex].pack("U")
           else
             s[1, 1]
           end
+        end
+      end
+
+      # Converts a latin1 character code to UTF-8 string.
+      # When running in Ruby <= 1.8, only converts ASCII chars,
+      # others are left as escape sequences.
+      def nr_to_str(nr, original)
+        str = nr.chr
+        if str.respond_to?(:encode)
+          str.encode('UTF-8', 'ISO-8859-1')
+        elsif nr < 127
+          str
+        else
+          original
         end
       end
 

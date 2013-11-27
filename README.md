@@ -1,5 +1,5 @@
-JSDuck
-======
+![JSDuck](https://raw.github.com/senchalabs/jsduck/master/opt/jsduck-logo-dark.png)
+===================================================================================
 
 [![Build Status](https://travis-ci.org/senchalabs/jsduck.png)](https://travis-ci.org/senchalabs/jsduck)
 
@@ -19,10 +19,10 @@ by inferring a lot of information from code.  Read the
 [<img src="http://b.vimeocdn.com/ts/227/178/227178682_200.jpg" alt="SenchaCon 2011 JSDuck talk" />][video]
 
 [Ext JS]: http://www.sencha.com/products/js/
-[ext-doc]: http://ext-doc.org/
+[ext-doc]: http://code.google.com/p/ext-doc/
 [Markdown]: http://daringfireball.net/projects/markdown/
-[ext4-docs]: http://docs.sencha.com/ext-js/4-0/
-[touch2-docs]: http://docs.sencha.com/touch/2-0/
+[ext4-docs]: http://docs.sencha.com/extjs/
+[touch2-docs]: http://docs.sencha.com/touch/
 [other-docs]: http://docs.sencha.com/
 [documentation]: https://github.com/senchalabs/jsduck/wiki
 [video]: http://vimeo.com/33465319
@@ -34,59 +34,45 @@ Standard rubygems install should do:
 
     $ [sudo] gem install jsduck
 
-Windows users probably want to [download a binary release][winbin].
+Or download the [Windows binary][winbin]. When you run into problems,
+see the [installation guide][].
 
-See the [installation guide][] for help when you run into problems.
-
-[winbin]: https://sourceforge.net/projects/jsduck/files/
+[winbin]: https://github.com/senchalabs/jsduck/releases
 [installation guide]: https://github.com/senchalabs/jsduck/wiki/Installation
 
 Usage
 -----
 
 For the simplest test-run just use the `--builtin-classes` option to
-automatically produce documentation for JavaScript builtin classes
-like Array, String and Object:
+write documentation for JavaScript builtin classes like Array, String
+and Object into `docs` directory:
 
-    $ jsduck --builtin-classes --output your/docs
+    $ jsduck --builtin-classes --output docs
 
-You can also use `--verbose` option to see what's actually happening.
+To generate docs for [Ext JS 4][] add path to the corresponding src/ dir:
 
-To generate docs for Ext JS 4 add path to the corresponding src/ dir:
+    $ jsduck ext-4.2.1/src --output docs
 
-    $ jsduck ext-4.1.1/src \
-             --builtin-classes \
-             --images ext-4.1.1/docs/images \
-             --warnings=-no_doc,-dup_member,-link_ambiguous \
-             --external XMLHttpRequest \
-             --output your/docs
+And to create docs for your own Ext JS project, list the directory
+with your files in addition to the Ext JS source files (this way the
+docs of your classes will list all the properties and methods they
+inherit from Ext JS classes):
 
-The `--images` option specifies a path for images included with
-`{@img}` tags inside the source code.
+    $ jsduck ext-4.2.1/src my-project/js --output docs
 
-The `--warnings` option disables some of the warnings which you would
-otherwise be overwhelmed with. That's because Ext JS 4.1.1 was
-released when JSDuck 4 wasn't out yet.  Sorry for that, JSDuck just
-wants to be helpful. Similarly the `--external` option defines
-`XMLHttpRequest` as an external class, otherwise a warning would be
-thrown.
+Unfortunately the above will throw lots of warnings at you, as
+building the full Ext JS docs requires lots of additional settings.
+For start you might want to simply ignore all these warnings
+originating from Ext JS source:
 
-Another thing that often happens is that JSDuck is unable to determine
-into which class a member belongs and will place all such items into a
-global class - you can disable this using the `--ignore-global`
-switch.  For full list of all command line options type
-`jsduck --help`.  For help on a specific option use
-`--help=--some-option`.
+    $ jsduck ext-4.2.1/src my-project/js --output docs \
+             --warnings=-all:ext-4.2.1/src
 
-To generate docs for your own project, simply name additional input
-directories:
+But see the [Usage guide][] for more information on building Ext JS 4
+docs.
 
-    $ jsduck ext-4.1.1/src project1/js project2/js ...
-
-Note that the resulting documentation will only contain the API
-documentation.  Guides, videos and examples will not be present.
-These can be added using more command line options as explained in the
-[documentation][].
+[Ext JS 4]: http://www.sencha.com/products/extjs/
+[Usage guide]: https://github.com/senchalabs/jsduck/wiki/Usage
 
 
 Documenting your code
@@ -111,7 +97,9 @@ Who's using JSDuck?
 - Bryntum [Siesta unit testing framework](http://www.bryntum.com/products/siesta/docs/)
 - [CKEditor](http://docs.ckeditor.com)
 - [GeoExt 2](https://github.com/geoext/geoext2)
-- Rally Software [Rally App SDK](https://rally1.rallydev.com/apps/2.0p/doc/)
+- Rally Software [Rally App SDK](https://prod.help.rallydev.com/apps/2.0rc1/doc/)
+- Wikimedia Foundation [MediaWiki](https://doc.wikimedia.org/mediawiki-core/master/js/)
+  and [VisualEditor](https://doc.wikimedia.org/VisualEditor/master/)
 - [Sencha](http://docs.sencha.com) - obviously :)
 
 These are some that we know of. Want your project listed here? Drop us a line.
@@ -124,32 +112,43 @@ JSDuck is distributed under the terms of the GNU General Public
 License version 3.
 
 JSDuck was developed by [Rene Saarsoo](http://triin.net),
-with many contributions from [Nick Poulden](https://github.com/nick).
-
-Thanks to [Ondřej Jirman](https://github.com/megous),
+with contributions from
+[Nick Poulden](https://github.com/nick),
+[Ondřej Jirman](https://github.com/megous),
 [Thomas Aylott](https://github.com/subtleGradient),
-[johnnywengluu](https://github.com/johnnywengluu),
-[gevik](https://github.com/gevik),
-[ligaard](https://github.com/ligaard),
-[Bill Hubbard](http://www.sencha.com/forum/member.php?272458-BillHubbard),
-[Ed Spencer](https://github.com/edspencer),
-[atian25](https://github.com/atian25),
-Katherine Chu,
-[Rob Dougan](https://github.com/rdougan),
 [Dave Thompson](https://github.com/limscoder),
-[burnnat](https://github.com/burnnat),
-[vjetteam](https://github.com/vjetteam),
-[Chris Westbrook](https://github.com/cnstaging),
+[Ed Spencer](https://github.com/edspencer),
+[Rob Dougan](https://github.com/rdougan),
 [Scott Whittaker](https://github.com/scottrobertwhittaker),
 [Timo Tijhof](https://github.com/Krinkle),
-and many-many others who reported bugs, submitted patches, and
-provided a lot of useful input.
+[Brian Moeskau](https://github.com/bmoeskau),
+[Garry Yao](https://github.com/garryyao),
+[Yasin Okumus](https://github.com/lacivert),
+[Nicholas Boll](https://github.com/NicholasBoll) and
+Katherine Chu.
+
+Many thanks goes also to those who have most eagerly reported bugs:
+[Ryan Nauman](https://github.com/ryan-nauman),
+[Raphael Franchet](https://github.com/raphdulaf),
+[atian25](https://github.com/atian25),
+[burnnat](https://github.com/burnnat),
+[Raphael Pigulla](https://github.com/pigulla),
+[Dmitry Bakaleinik](https://github.com/demongloom),
+[Alan Lindsay](https://github.com/alindsay55661),
+[Corey Butler](https://github.com/coreybutler),
+[Nickolay Platonov](https://github.com/SamuraiJack),
+[Matt Greer](https://github.com/city41),
+[Richard](https://github.com/ritcoder) and
+[Dmitry Pashkevich](https://github.com/dpashkevich).
+
+There are lots of others I haven't named here, who have provided their
+input.
 
 
 Changelog
 ---------
 
-See [Changelog](https://github.com/senchalabs/jsduck/wiki/Changelog) page in wiki.
+See [the Releases page](https://github.com/senchalabs/jsduck/releases).
 
 
 More questions?

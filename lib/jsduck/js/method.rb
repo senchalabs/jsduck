@@ -34,7 +34,7 @@ module JsDuck
           make(exp["id"].to_s || "", exp)
 
           # foo: function() {}
-        elsif ast.property? && ast["value"].function?
+        elsif ast.property? && ast.raw["kind"] == "init" && ast["value"].function?
           make(ast["key"].key_value, ast["value"])
 
           # Object.defineProperty(obj, "prop", {value: function() {} })

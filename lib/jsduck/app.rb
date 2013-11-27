@@ -10,7 +10,7 @@ module JsDuck
 
   # The main application logic of jsduck
   class App
-    # Initializes app with JsDuck::Options object
+    # Initializes app with JsDuck::OptionsRecord object
     def initialize(opts)
       @opts = opts
     end

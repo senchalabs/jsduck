@@ -1,3 +1,4 @@
+# encoding: ASCII
 require "rkelly"
 require "jsduck/js/rkelly_adapter"
 
@@ -39,6 +40,17 @@ describe JsDuck::Js::RKellyAdapter do
   end
 
   describe "values of strings" do
+    def nr_to_str(nr, original)
+      str = nr.chr
+      if str.respond_to?(:encode)
+        str.encode('UTF-8', 'ISO-8859-1')
+      elsif nr < 127
+        str
+      else
+        original
+      end
+    end
+
     it "single-quoted" do
       adapt_value("'foo'").should == 'foo'
     end
@@ -56,15 +68,19 @@ describe JsDuck::Js::RKellyAdapter do
     end
 
     it "with latin1 octal escape" do
-      adapt_value('"\101 \251"').should == "A \251"
+      adapt_value('"\101 \251"').should == "A " + nr_to_str(0251, '\251')
     end
 
     it "with latin1 hex escape" do
-      adapt_value('"\x41 \xA9"').should == "A \xA9"
+      adapt_value('"\x41 \xA9"').should == "A " + nr_to_str(0xA9, '\xA9')
     end
 
     it "with unicode escape" do
       adapt_value('"\u00A9"').should == [0x00A9].pack("U")
+    end
+
+    it "with multiple escapes together" do
+      adapt_value('"\xA0\u1680"').should == nr_to_str(0xA0, '\xA0') + [0x1680].pack("U")
     end
 
     it "with Ruby-like variable interpolation" do
@@ -93,9 +109,35 @@ describe JsDuck::Js::RKellyAdapter do
     end
   end
 
+  def adapt_property(string)
+    adapt(string)["expression"]["properties"][0]
+  end
+
   describe "string properties" do
     it "don't use Ruby's eval()" do
-      adapt('({"foo#$%": 5})')["expression"]["properties"][0]["key"]["value"].should == 'foo#$%'
+      adapt_property('({"foo#$%": 5})')["key"]["value"].should == 'foo#$%'
+    end
+  end
+
+  describe "getter property" do
+    let(:property) { adapt_property('({get foo() { return this.x; } })') }
+
+    it "gets parsed into get-kind" do
+      property["kind"].should == 'get'
+    end
+    it "gets a function as its value" do
+      property["value"]["type"].should == 'FunctionExpression'
+    end
+  end
+
+  describe "setter property" do
+    let(:property) { adapt_property('({set foo(x) { this.x = x; } })') }
+
+    it "gets parsed into set-kind" do
+      property["kind"].should == 'set'
+    end
+    it "gets a function as its value" do
+      property["value"]["type"].should == 'FunctionExpression'
     end
   end
 

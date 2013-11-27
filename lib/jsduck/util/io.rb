@@ -13,6 +13,11 @@ module JsDuck
     class IO
       @@encoding = "BOM|UTF-8"
 
+      # Configures the encoding from command line options.
+      def self.configure(opts)
+        encoding = opts.encoding if opts.encoding
+      end
+
       # Sets the external encoding to be used for reading files.
       # When it's different from UTF-8, the input will be converted to UTF-8.
       def self.encoding=(e)
@@ -25,7 +30,17 @@ module JsDuck
 
       # Reads given filename into string
       def self.read(filename)
-        File.open(filename, "r:"+@@encoding) {|f| f.read }
+        File.open(filename, "r:"+@@encoding) {|f| self.strip_utf8_bom(f.read) }
+      end
+
+      # Takes care of removing UTF-8 byte order mark in Ruby <= 1.8 which
+      # doesn't have built-in encodings support.
+      def self.strip_utf8_bom(string)
+        if "".respond_to?(:encoding)
+          string
+        else
+          string.sub(/\A\xEF\xBB\xBF/, "")
+        end
       end
 
     end

@@ -1,11 +1,15 @@
 require "jsduck/process/versions"
 require "jsduck/util/null_object"
 require "jsduck/class"
+require "ostruct"
 
 describe JsDuck::Process::Versions do
 
   def current_version
-    JsDuck::Util::NullObject.new(:[] => JsDuck::Util::NullObject.new(:[] => true))
+    JsDuck::Util::NullObject.new(
+      :[] => JsDuck::Util::NullObject.new( # class
+        :[] => JsDuck::Util::NullObject.new( # member
+          :length => 1.0 / 0))) # params count == Infinity
   end
 
   describe "without :new_since option" do
@@ -46,7 +50,8 @@ describe JsDuck::Process::Versions do
         {:name => "ExplicitNewClass", :new => true, :alternateClassNames => []},
       ].map {|cfg| JsDuck::Class.new(cfg) }
 
-      JsDuck::Process::Versions.new(@relations, {:imports => @versions}, importer).process_all!
+      opts = OpenStruct.new(:import => @versions)
+      JsDuck::Process::Versions.new(@relations, opts, importer).process_all!
 
       # build className/member index for easy lookup in specs
       @stuff = {}
@@ -172,7 +177,8 @@ describe JsDuck::Process::Versions do
         {:name => "NewClass", :alternateClassNames => []},
       ].map {|cfg| JsDuck::Class.new(cfg) }
 
-      JsDuck::Process::Versions.new(@relations, {:imports => @versions, :new_since => "2.0"}, importer).process_all!
+      opts = OpenStruct.new(:import => @versions, :new_since => "2.0")
+      JsDuck::Process::Versions.new(@relations, opts, importer).process_all!
     end
 
     # @since
@@ -188,6 +194,86 @@ describe JsDuck::Process::Versions do
     it "gives no @new to NewClass" do
       @relations[2][:new].should == true
     end
+  end
+
+  describe "method parameters" do
+    let(:relations) do
+      versions = [
+        {
+          :version => "1.0", :classes => {
+            "MyClass" => {"method-foo" => ["x"]},
+          },
+        },
+        {
+          :version => "2.0", :classes => {
+            "MyClass" => {"method-foo" => ["x", "oldY"]},
+          },
+        },
+        {
+          :version => "3.0", :classes => current_version
+        }
+      ]
+      importer = JsDuck::Util::NullObject.new(:import => versions)
+
+      relations = [
+        {:name => "MyClass", :alternateClassNames => [], :members => [
+            {:tagname => :method, :id => "method-foo", :params => [
+                {:name => "x"},
+                {:name => "y"},
+                {:name => "z"},
+              ]},
+            {:tagname => :method, :id => "method-bar", :since => "0.1", :params => [
+                {:name => "x"},
+              ]},
+          ]},
+      ].map {|cfg| JsDuck::Class.new(cfg) }
+
+      opts = OpenStruct.new(:import => versions, :new_since => "3.0")
+      JsDuck::Process::Versions.new(relations, opts, importer).process_all!
+
+      relations
+    end
+
+    describe "method #foo" do
+      let(:method) do
+        relations[0][:members][0]
+      end
+
+      it "adds @since 1.0 to our method" do
+        method[:since].should == "1.0"
+      end
+
+      it "adds no @since to 1st param, because it's also from 1.0" do
+        method[:params][0][:since].should == nil
+      end
+
+      it "adds @since 2.0 to 2nd param (although it was named differently in 2.0)" do
+        method[:params][1][:since].should == "2.0"
+      end
+
+      it "adds @since 3.0 to 3rd param" do
+        method[:params][2][:since].should == "3.0"
+      end
+
+      it "adds @new to 3rd param" do
+        method[:params][2][:new].should == true
+      end
+    end
+
+    describe "method with explicit @since 0.1" do
+      let(:method) do
+        relations[0][:members][1]
+      end
+
+      it "adds @since 0.1 to our method" do
+        method[:since].should == "0.1"
+      end
+
+      it "doesn't add a @since to parameter" do
+        method[:params][0][:since].should == nil
+      end
+    end
+
   end
 
 end

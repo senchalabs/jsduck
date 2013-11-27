@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module JsDuck
   module Inline
 
@@ -14,7 +16,7 @@ module JsDuck
     class Example
       # Constructor takes opts parameter for consistency with other
       # JsDuck::Inline::* classes.
-      def initialize(opts={})
+      def initialize(opts=OpenStruct.new)
         @re = /<pre><code>\s*@example( +[^\n]*)?\s+/m
       end
 

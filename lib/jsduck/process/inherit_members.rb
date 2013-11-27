@@ -19,6 +19,7 @@ module JsDuck
       # - :params
       # - :return
       # - :throws
+      # - :properties
       #
       # In case of auto-detected members that inherit from a public
       # member in parent class, we inherit all fields that aren't
@@ -82,6 +83,7 @@ module JsDuck
         m[:params] = parent[:params] if inherit_params?(m, parent)
         m[:return] = parent[:return] unless m[:return]
         m[:throws] = parent[:throws] unless m[:throws] && m[:throws].length > 0
+        m[:properties] = parent[:properties] unless m[:properties] && m[:properties].length > 0
 
         # Don't inherit type from parent when:
         # - member itself has type and it's not auto-detected
@@ -110,7 +112,9 @@ module JsDuck
         m[:doc] = parent[:doc] if m[:doc].empty?
 
         parent.each_pair do |key, value|
-          if key == :type || !m[key]
+          if key == :overrides
+            # overrides can't be inherited.
+          elsif key == :type || !m[key]
             m[key] = value
           end
         end

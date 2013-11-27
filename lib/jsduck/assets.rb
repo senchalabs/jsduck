@@ -36,7 +36,7 @@ module JsDuck
       @guides = Guides.create(@opts.guides, doc_formatter, @opts)
       @videos = Videos.create(@opts.videos)
       @examples = Examples.create(@opts.examples, @opts)
-      @categories = Categories::Factory.create(@opts.categories_path, doc_formatter, @relations)
+      @categories = Categories::Factory.create(@opts.categories, doc_formatter, @relations)
       @news = News.create(@relations, doc_formatter, @opts)
     end
 
@@ -45,8 +45,8 @@ module JsDuck
     #
     # Welcome page and categories are written in JsDuck::IndexHtml
     def write
-      @guides.write(@opts.output_dir+"/guides")
-      Img::Writer.copy(@images.all_used, @opts.output_dir+"/images")
+      @guides.write(@opts.output+"/guides")
+      Img::Writer.copy(@images.all_used, @opts.output+"/images")
     end
 
   end

@@ -1,5 +1,6 @@
 require 'jsduck/util/html'
 require 'jsduck/logger'
+require 'ostruct'
 
 module JsDuck
   module Inline
@@ -10,7 +11,7 @@ module JsDuck
       # Used for error reporting.
       attr_accessor :doc_context
 
-      def initialize(opts={})
+      def initialize(opts=OpenStruct.new)
         @doc_context = {}
 
         @templates = {

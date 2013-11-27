@@ -1,4 +1,4 @@
-require 'jsduck/tag_registry'
+require 'jsduck/member_registry'
 
 module JsDuck
 
@@ -38,7 +38,7 @@ module JsDuck
     # Returns the detected member type on success.
     # Otherwise nil.
     def self.detect_member(doc_map)
-      type = TagRegistry.member_type_names.find {|type| doc_map[type] }
+      type = MemberRegistry.names.find {|type| doc_map[type] }
 
       if type == :cfg
         # Only detect a single @cfg as a :cfg.

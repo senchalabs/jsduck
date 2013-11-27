@@ -20,18 +20,17 @@ module JsDuck
       end
 
       def write
-        FileUtils.mkdir(@opts.output_dir)
         if @opts.template_links
-          Logger.log("Linking template files to", @opts.output_dir)
+          Logger.log("Linking template files to", @opts.output)
           move_files(:symlink)
         else
-          Logger.log("Copying template files to", @opts.output_dir)
+          Logger.log("Copying template files to", @opts.output)
           move_files(:cp_r)
         end
 
         # always copy the eg-iframe file.
-        eg_iframe = @opts.eg_iframe || @opts.template_dir+"/eg-iframe.html"
-        FileUtils.cp(eg_iframe, @opts.output_dir+"/eg-iframe.html")
+        eg_iframe = @opts.eg_iframe || @opts.template+"/eg-iframe.html"
+        FileUtils.cp(eg_iframe, @opts.output+"/eg-iframe.html")
       end
 
       private
@@ -39,8 +38,8 @@ module JsDuck
       # moves files from one dir to another using a method of FileUtils module.
       def move_files(method)
         @files.each do |file|
-          target = File.expand_path(@opts.output_dir)
-          Dir.glob(File.expand_path(@opts.template_dir+"/"+file)).each do |source|
+          target = File.expand_path(@opts.output)
+          Dir.glob(File.expand_path(@opts.template+"/"+file)).each do |source|
             FileUtils.send(method, source, target)
           end
         end

@@ -272,71 +272,6 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "class with cfgs" do
-    before do
-      @doc = parse(<<-EOS)["MyClass"]
-        /**
-         * @class MyClass
-         * @extends Bar
-         * Comment here.
-         * @cfg {String} foo Hahaha
-         * @private
-         * @cfg {Boolean} bar Hihihi
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "has needed number of members" do
-      @doc[:members].length.should == 2
-    end
-    it "detects members as configs" do
-      @doc[:members][0][:tagname].should == :cfg
-      @doc[:members][1][:tagname].should == :cfg
-    end
-    it "picks up names of all configs" do
-      @doc[:members][0][:name].should == "foo"
-      @doc[:members][1][:name].should == "bar"
-    end
-    it "marks first @cfg as private" do
-      @doc[:members][0][:private].should == true
-    end
-  end
-
-  describe "class with cfgs with subproperties" do
-    before do
-      @doc = parse(<<-EOS)["MyClass"]
-        /**
-         * @class MyClass
-         * Comment here.
-         * @cfg {Object} foo
-         * @cfg {String} foo.one
-         * @cfg {String} foo.two
-         * @cfg {Function} bar
-         * @cfg {Boolean} bar.arg
-         */
-      EOS
-    end
-
-    it "detects the configs taking account the subproperties" do
-      @doc[:members].length.should == 2
-    end
-  end
-
-  describe "implicit class with more than one cfg" do
-    before do
-      @doc = parse(<<-EOS)["MyClass"]
-        /**
-         * Comment here.
-         * @cfg {String} foo
-         * @cfg {String} bar
-         */
-        MyClass = function() {}
-      EOS
-    end
-    it_should_behave_like "class"
-  end
-
   describe "member docs after class doc" do
     before do
       @classes = parse(<<-EOS)
@@ -422,8 +357,8 @@ describe JsDuck::Aggregator do
       @classes = parse(<<-EOS)
         /**
          * @class Foo
-         * @cfg c1
          */
+          /** @cfg c1 */
           /** @method fun1 */
           /** @event eve1 */
           /** @property prop1 */
@@ -434,8 +369,8 @@ describe JsDuck::Aggregator do
          * @alternateClassNames AltClassic
          * Second description.
          * @private
-         * @cfg c2
          */
+          /** @cfg c2 */
           /** @method fun2 */
           /** @event eve3 */
           /** @property prop2 */
@@ -445,8 +380,8 @@ describe JsDuck::Aggregator do
          * @mixins Mix2
          * @singleton
          * Third description.
-         * @cfg c3
          */
+          /** @cfg c3 */
           /** @method fun3 */
           /** @event eve3 */
           /** @property prop3 */
