@@ -1,120 +1,89 @@
-require 'jsduck/css/lexer'
+require 'sass'
+require 'jsduck/css/type'
 
 module JsDuck
   module Css
 
+    # Parses SCSS using the official SASS parser.
     class Parser
+      TYPE = Css::Type.new
+
       def initialize(input, options = {})
-        @lex = Css::Lexer.new(input)
+        @input = input
         @docs = []
       end
 
-      # Parses the whole CSS block and returns same kind of structure
-      # that JavaScript parser does.
+      # Returns an array of docsets like the Js::Parser does.
       def parse
-        while !@lex.empty? do
-          if look(:doc_comment)
-            comment = @lex.next(true)
-            @docs << {
-              :comment => comment[:value],
-              :linenr => comment[:linenr],
-              :code => code_block,
-              :type => :doc_comment,
-            }
-          else
-            @lex.next
-          end
-        end
+        root = Sass::Engine.new(@input, :syntax => :scss).to_tree
+        find_doc_comments(root.children)
         @docs
       end
 
-      # <code-block> := <mixin-declaration> | <var-declaration> | <property>
-      def code_block
-        if look("@mixin")
-          mixin_declaration
-        elsif look(:var, ":")
-          var_declaration
+      private
+
+      def find_doc_comments(nodes)
+        prev_comment = nil
+
+        nodes.each do |node|
+          if prev_comment
+            @docs << make_docset(prev_comment, node)
+            prev_comment = nil
+          end
+
+          if node.class == Sass::Tree::CommentNode
+            if node.type == :normal && node.value[0] =~ /\A\/\*\*/
+              prev_comment = node
+            end
+          end
+
+          find_doc_comments(node.children)
+        end
+
+        if prev_comment
+          @docs << make_docset(prev_comment)
+        end
+      end
+
+      def make_docset(prev_comment, node=nil)
+        return {
+          :comment => prev_comment.value[0].sub(/\A\/\*\*/, "").sub(/\*\/\z/, ""),
+          :linenr => prev_comment.line,
+          :code => analyze_code(node),
+          :type => :doc_comment,
+        }
+      end
+
+      def analyze_code(node)
+        if node.class == Sass::Tree::VariableNode
+          return {
+            :tagname => :css_var,
+            :name => "$" + node.name,
+            :default => node.expr.to_sass,
+            :type => TYPE.detect(node.expr),
+          }
+        elsif node.class == Sass::Tree::MixinDefNode
+          return {
+            :tagname => :css_mixin,
+            :name => node.name,
+            :params => build_params(node.args),
+          }
         else
           # Default to property like in Js::Parser.
-          {:tagname => :property}
+          return {:tagname => :property}
         end
       end
 
-      # <mixin-declaration> := "@mixin" <ident>
-      def mixin_declaration
-        match("@mixin")
-        return {
-          :tagname => :css_mixin,
-          :name => look(:ident) ? match(:ident) : nil,
-        }
-      end
-
-      # <var-declaration> := <var> ":" <css-value>
-      def var_declaration
-        name = match(:var)
-        match(":")
-        value_list = css_value
-        return {
-          :tagname => :css_var,
-          :name => name,
-          :default => value_list.map {|v| v[:value] }.join(" "),
-          :type => value_type(value_list),
-        }
-      end
-
-      # <css-value> := ...anything up to... [ ";" | "}" | "!default" ]
-      def css_value
-        val = []
-        while !look(";") && !look("}") && !look("!", "default")
-          val << @lex.next(true)
-        end
-        val
-      end
-
-      # Determines type of CSS value
-      def value_type(val)
-        case val[0][:type]
-        when :number
-          "number"
-        when :dimension
-          "length"
-        when :percentage
-          "percentage"
-        when :string
-          "string"
-        when :hash
-          "color"
-        when :ident
-          case val[0][:value]
-          when "true", "false"
-            return "boolean"
-          when "rgb", "rgba", "hsl", "hsla"
-            return "color"
-          when "black", "silver", "gray", "white", "maroon",
-            "red", "purple", "fuchsia", "green", "lime", "olive",
-            "yellow", "navy", "blue", "teal", "aqua", "orange"
-            return "color"
-          when "transparent"
-            return "color"
-          end
+      def build_params(mixin_args)
+        mixin_args.map do |arg|
+          {
+            :name => "$" + arg[0].name,
+            :default => arg[1] ? arg[1].to_s : nil,
+            :type => arg[1] ? TYPE.detect(arg[1]) : nil,
+          }
         end
       end
 
-      # Matches all arguments, returns the value of last match
-      # When the whole sequence doesn't match, throws exception
-      def match(*args)
-        if look(*args)
-          last = nil
-          args.length.times { last = @lex.next }
-          last
-        else
-          throw "Expected: " + args.join(", ")
-        end
-      end
-
-      def look(*args)
-        @lex.look(*args)
-      end
     end
 
   end
