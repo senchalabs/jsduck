@@ -474,7 +474,7 @@ module JsDuck
           @opts.ignore_global = on
         end
 
-        attribute :external_classes, [
+        attribute :external, [
           # JavaScript builtins
           "Object",
           "String",
@@ -520,7 +520,7 @@ module JsDuck
           "The wildcard '*' can be used to match a set of classes",
           "e.g. to ignore all classes of a particular namespace:",
           "--external='Foo.*'") do |classes|
-          @opts.external_classes += classes
+          @opts.external += classes
         end
 
         attribute :ext4_events

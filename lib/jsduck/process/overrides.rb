@@ -5,14 +5,14 @@ module JsDuck
   module Process
 
     class Overrides
-      def initialize(classes_hash, opts = OpenStruct.new(:external_classes => []))
+      def initialize(classes_hash, opts = OpenStruct.new(:external => []))
         @classes_hash = classes_hash
         @opts = opts
       end
 
       # Applies all override classes to target classes, then deletes
       # the overrides themselves from classes hash and adds the names
-      # of all the processed overrides to external_classes list in
+      # of all the processed overrides to external classes list in
       # options object.
       def process_all!
         overrides = []
@@ -29,7 +29,7 @@ module JsDuck
           @classes_hash.delete(cls[:name])
         end
 
-        @opts.external_classes += overrides.map {|c| c[:name] }
+        @opts.external += overrides.map {|c| c[:name] }
       end
 
       private

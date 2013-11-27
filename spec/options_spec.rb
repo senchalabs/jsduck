@@ -205,16 +205,16 @@ describe JsDuck::Options::Parser do
     end
   end
 
-  describe :external_classes do
+  describe :external do
     it "contains JavaScript builtins by default" do
-      exts = parse().external_classes
+      exts = parse().external
       %w(Object String Number Boolean RegExp Function Array Arguments Date).each do |name|
         exts.should include(name)
       end
     end
 
     it "contains JavaScript builtin error classes by default" do
-      exts = parse().external_classes
+      exts = parse().external
       exts.should include("Error")
       %w(Eval Range Reference Syntax Type URI).each do |name|
         exts.should include("#{name}Error")
@@ -222,17 +222,17 @@ describe JsDuck::Options::Parser do
     end
 
     it "contains the special anything-goes Mixed type" do
-      parse().external_classes.should include("Mixed")
+      parse().external.should include("Mixed")
     end
 
     it "can be used multiple times" do
-      exts = parse("--external", "MyClass", "--external", "YourClass").external_classes
+      exts = parse("--external", "MyClass", "--external", "YourClass").external
       exts.should include("MyClass")
       exts.should include("YourClass")
     end
 
     it "can be used with comma-separated list" do
-      exts = parse("--external", "MyClass,YourClass").external_classes
+      exts = parse("--external", "MyClass,YourClass").external
       exts.should include("MyClass")
       exts.should include("YourClass")
     end
