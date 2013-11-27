@@ -494,17 +494,6 @@ module JsDuck
           "SyntaxError",
           "TypeError",
           "URIError",
-          # DOM
-          "HTMLElement",
-          "XMLElement",
-          "NodeList",
-          "TextNode",
-          "CSSStyleSheet",
-          "CSSStyleRule",
-          "Event",
-          # Other browser-environment classes
-          "Window",
-          "XMLHttpRequest",
           # Special anything-goes type
           "Mixed",
         ]
@@ -519,7 +508,24 @@ module JsDuck
           "",
           "The wildcard '*' can be used to match a set of classes",
           "e.g. to ignore all classes of a particular namespace:",
-          "--external='Foo.*'") do |classes|
+          "",
+          "  --external='Foo.*'",
+          "",
+          "The special keyword '@browser' includes a slew of standard",
+          "browser API classes like HTMLElement and XMLHttpRequest:",
+          "",
+          "  --external='@browser'",
+          "",
+          "The list of these classes comes from Mozilla docs, not",
+          "including experimental, non-standard or obsolete APIs:",
+          "https://developer.mozilla.org/en-US/docs/Web/API",
+          "",
+          "NB! If you only need to reference a few of these classes",
+          "in your docs, it's better to define these explicitly, as",
+          "using '@browser' will bring along a slew of names like",
+          "Node, Attr, Blob, CSS, Range, Element, which you might",
+          "mistakenly use in your docs by writing Node instead of",
+          "MyNamespace.Node and JSDuck won't warn you about it.") do |classes|
           @opts.external += classes
         end
 
