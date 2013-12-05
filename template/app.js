@@ -7,6 +7,9 @@ Ext.Loader.setConfig({
     }
 });
 
+// Hack to avoid IE8- trying download s.gif on sencha.com in LAN
+Ext.BLANK_IMAGE_URL = 'resources/images/blank.gif';
+
 Ext.require('Ext.form.field.Trigger');
 Ext.require('Ext.tab.Panel');
 Ext.require('Ext.grid.column.Action');
