@@ -22,14 +22,15 @@ module JsDuck
       @html.each_line do |line|
         if line =~ /^\s*<h([1-6])>(.*?)<\/h[1-6]>$/
           level = $1.to_i
-          text = Util::HTML.strip_tags($2)
+          original_text = $2
+          text = Util::HTML.strip_tags(original_text)
           id = title_to_id(text)
 
           if include_to_toc?(level)
             @toc.add(level, id, text)
           end
 
-          @new_html << "<h#{level} id='#{id}'>#{text}</h#{level}>\n"
+          @new_html << "<h#{level} id='#{id}'>#{original_text}</h#{level}>\n"
         else
           @new_html << line
         end
