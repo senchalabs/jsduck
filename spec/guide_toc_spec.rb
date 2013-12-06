@@ -72,9 +72,16 @@ describe JsDuck::GuideToc do
       EOHTML
     end
 
-    it "ignores HTML in headings" do
-      inject(<<-EOHTML).should =~ /<h2 id='myguide-section-my-chapter'>My Chapter/
+    it "keeps HTML in headings" do
+      inject(<<-EOHTML).should =~ /<h2 id='myguide-section-my-chapter'>My <span>Chapter<\/span>/
         <h2>My <span>Chapter</span></h2>
+      EOHTML
+    end
+
+    it "strips HTML from TOC entries" do
+      inject(<<-EOHTML).should =~ /<a href='#!\/guide\/myguide-section-my-chapter-1'>My Chapter/
+        <h2>My <span>Chapter</span> 1</h2>
+        <h2>My <span>Chapter</span> 2</h2>
       EOHTML
     end
 
