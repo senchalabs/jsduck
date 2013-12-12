@@ -2,18 +2,27 @@ require "jsduck/merger"
 
 describe JsDuck::Merger do
 
-  def merge(doc, code)
-    return JsDuck::Merger.new.merge(doc, code)
+  def merge(docset)
+    return JsDuck::Merger.new.merge(docset)
   end
 
   describe "only name in code" do
     before do
-      @doc = merge(
-        [{:tagname => :cfg, :type => "String", :doc => "My Config"}],
-        {
-          :type => :assignment,
-          :left => ["option"]
-        })
+      @doc = merge({
+        :tagname => :cfg,
+        :comment => {
+          :tagname => :cfg,
+          :name => nil,
+          :meta => {},
+          :type => "String",
+          :doc => "My Config"
+        },
+        :code => {
+          :tagname => :property,
+          :name => "option",
+        },
+        :linenr => 15,
+      })
     end
 
     it "gets tagname from doc" do
@@ -28,17 +37,28 @@ describe JsDuck::Merger do
     it "gets name from code" do
       @doc[:name].should == "option"
     end
+    it "keeps line number data" do
+      @doc[:linenr].should == 15
+    end
   end
 
   describe "most stuff in code" do
     before do
-      @doc = merge(
-        [{:tagname => :default, :doc => "Hello world"}],
-        {
-          :type => :assignment,
-          :left => ["some", "prop"],
-          :right => {:type => :literal, :class => "Boolean"}
-        })
+      @doc = merge({
+        :tagname => :property,
+        :comment => {
+          :tagname => :property,
+          :name => nil,
+          :meta => {},
+          :type => nil,
+          :doc => "Hello world"
+        },
+        :code => {
+          :tagname => :property,
+          :name => "some.prop",
+          :type => "Boolean",
+        }
+      })
     end
 
     it "gets tagname from code" do

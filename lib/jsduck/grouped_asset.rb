@@ -13,14 +13,14 @@ module JsDuck
     #
     # Prints warning when there is a duplicate item within a group.
     # The warning message should say something like "duplicate <asset type>"
-    def build_map_by_name(warning_msg)
+    def build_map_by_name(warning_msg, filename)
       @map_by_name = {}
       @groups.each do |group|
         group_map = {}
         group["items"].each do |item|
           # Ti has some ungrouped guides (for example, the Quick Start)
           if group_map[item["name"]]
-            Logger.instance.warn(:dup_asset, "#{warning_msg} '#{item['name']}'")
+            Logger.instance.warn(:dup_asset, "#{warning_msg} '#{item['name']}'", filename)
           end
           @map_by_name[item["name"]] = item
           group_map[item["name"]] = item

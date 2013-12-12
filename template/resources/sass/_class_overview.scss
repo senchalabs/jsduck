@@ -123,6 +123,13 @@
     background-color: #fee;
     padding: 10px 50px;
     text-align: center; }
+  p.enum {
+    border: 1px solid #999;
+    @include border-radius(5px);
+    color: #060;
+    background-color: #efe;
+    padding: 10px 50px;
+    text-align: center; }
   .signature {
     font-weight: bold;
     text-transform: uppercase;

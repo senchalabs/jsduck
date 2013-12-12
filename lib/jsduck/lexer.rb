@@ -145,7 +145,7 @@ module JsDuck
               :type => :doc_comment,
               # Calculate current line number, starting with 1
               :linenr => @input.string[0...@input.pos].count("\n") + 1,
-              :value => @input.scan_until(/\*\/|\Z/)
+              :value => @input.scan_until(/\*\/|\Z/).sub(/\A\/\*\*/, "").sub(/\*\/\Z/, "")
             }
           elsif @input.check(/\/\*/)
             # skip multiline comment

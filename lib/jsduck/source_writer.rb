@@ -1,13 +1,13 @@
 require 'jsduck/logger'
+require 'jsduck/parallel_wrap'
 require 'fileutils'
 
 module JsDuck
 
   # Writes HTML JavaScript/CSS source into HTML files.
   class SourceWriter
-    def initialize(source_files, parallel)
+    def initialize(source_files)
       @source_files = source_files
-      @parallel = parallel
     end
 
     # Writes all source files as HTML files into destination dir.
@@ -15,7 +15,7 @@ module JsDuck
       generate_html_filenames
 
       FileUtils.mkdir(destination)
-      @parallel.each(@source_files) do |file|
+      ParallelWrap.each(@source_files) do |file|
         Logger.instance.log("Writing source", file.html_filename)
         write_single(destination + "/" + file.html_filename, file.to_html)
       end

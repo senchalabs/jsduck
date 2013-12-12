@@ -1,6 +1,4 @@
-require 'jsduck/js_parser'
-require 'jsduck/css_parser'
-require 'jsduck/merger'
+require 'jsduck/source_file_parser'
 require 'jsduck/html'
 
 module JsDuck
@@ -18,15 +16,13 @@ module JsDuck
     def initialize(contents, filename="", options={})
       @contents = contents
       @filename = filename
-      @options = options
       @html_filename = ""
       @links = {}
 
-      merger = Merger.new
-      merger.filename = @filename
-      @docs = parse.map do |docset|
-        merger.linenr = docset[:linenr]
-        link(docset[:linenr], merger.merge(docset[:comment], docset[:code]))
+      @docs = SourceFileParser.new.parse(@contents, @filename, options)
+
+      @docs.map do |docset|
+        link(docset[:linenr], docset)
       end
     end
 
@@ -77,15 +73,6 @@ module JsDuck
     end
 
     private
-
-    # Parses the file depending on filename as JS or CSS
-    def parse
-      if @filename =~ /\.s?css$/
-        CssParser.new(@contents, @options).parse
-      else
-        JsParser.new(@contents, @options).parse
-      end
-    end
 
     # Creates two-way link between sourcefile and doc-object.
     # If doc-object is class, links also the contained cfgs and constructor.

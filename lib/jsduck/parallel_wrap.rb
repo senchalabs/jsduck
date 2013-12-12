@@ -5,25 +5,26 @@ module JsDuck
   # Wrapper around the parallel gem that falls back to simple
   # Array#map and Array#each when :in_processes => 0 specified.
   class ParallelWrap
+    @@in_processes = nil
 
-    # Takes config object for parallel
-    def initialize(cfg = {})
-      @cfg = cfg
+    # Sets globally the nr of processes to use.
+    def self.in_processes=(n)
+      @@in_processes = n
     end
 
-    def each(arr, &block)
-      if @cfg[:in_processes] == 0
+    def self.each(arr, &block)
+      if @@in_processes == 0
         arr.each &block
       else
-        Parallel.each(arr, @cfg, &block)
+        Parallel.each(arr, {:in_processes => @@in_processes}, &block)
       end
     end
 
-    def map(arr, &block)
-      if @cfg[:in_processes] == 0
+    def self.map(arr, &block)
+      if @@in_processes == 0
         arr.map &block
       else
-        Parallel.map(arr, @cfg, &block)
+        Parallel.map(arr, {:in_processes => @@in_processes}, &block)
       end
     end
   end

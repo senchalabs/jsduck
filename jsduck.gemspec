@@ -2,8 +2,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.5"
 
   s.name = 'jsduck'
-  s.version = '3.11.2'
-  s.date = '2012-08-07'
+  s.version = '4.0.0'
+  s.date = '2012-08-09'
   s.summary = "Simple JavaScript Duckumentation generator"
   s.description = "Documentation generator for Sencha JS frameworks"
   s.homepage = "https://github.com/senchalabs/jsduck"
@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rdiscount'
   s.add_dependency 'json'
   s.add_dependency 'parallel'
+  s.add_dependency 'therubyracer'
 
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rake'

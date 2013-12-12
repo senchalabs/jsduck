@@ -24,7 +24,7 @@ module JsDuck
     def initialize(filename, formatter, opts)
       @path = File.dirname(filename)
       @groups = JsonDuck.read(filename)
-      build_map_by_name("Two guides have the same name")
+      build_map_by_name("Two guides have the same name: " +  filename)
       @formatter = formatter
       @opts = opts
     end
@@ -104,7 +104,7 @@ module JsDuck
       end
       in_dir = @path + "/" + guide["url"]
 
-      return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
+      return Logger.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
       html_guide_file = in_dir + "/README.html"
       guide_file = in_dir + "/README.md"
 
@@ -113,7 +113,7 @@ module JsDuck
           # Ti guides already have a TOC, so don't add one.
           return JsDuck::IO.read(html_guide_file)
         rescue
-          Logger.instance.fatal("Error while reading/formatting HTML guide #{in_dir}", $!)
+          Logger.fatal_backtrace("Error while reading/formatting HTML guide #{in_dir}", $!)
           exit(1)
         end
       elsif File.exists?(guide_file)
@@ -124,11 +124,11 @@ module JsDuck
 
           return add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
         rescue
-          Logger.instance.fatal("Error while reading/formatting guide #{in_dir}", $!)
+          Logger.fatal_backtrace("Error while reading/formatting guide #{in_dir}", $!)
           exit(1)
         end
       else
-        return Logger.instance.warn(:guide, "No README.html or README.md in #{in_dir}")
+        return Logger.warn(:guide, "No README.html or README.md in #{in_dir}")
       end    
     end
 

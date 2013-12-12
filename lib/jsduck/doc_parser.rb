@@ -1,6 +1,4 @@
 require 'strscan'
-require 'jsduck/js_literal_parser'
-require 'jsduck/js_literal_builder'
 require 'jsduck/meta_tag_registry'
 
 module JsDuck
@@ -50,9 +48,7 @@ module JsDuck
     # Extracts content inside /** ... */
     def purify(input)
       result = []
-      # Remove the beginning /** and end */
-      input = input.sub(/\A\/\*\* ?/, "").sub(/ ?\*\/\Z/, "")
-      # Now we are left with only two types of lines:
+      # We can have two types of lines:
       # - those beginning with *
       # - and those without it
       indent = nil
@@ -134,6 +130,10 @@ module JsDuck
           at_var
         elsif look(/@throws\b/)
           at_throws
+        elsif look(/@enum\b/)
+          at_enum
+        elsif look(/@override\b/)
+          at_override
         elsif look(/@inheritable\b/)
           boolean_at_tag(/@inheritable/, :inheritable)
         elsif look(/@accessor\b/)
@@ -141,7 +141,7 @@ module JsDuck
         elsif look(/@evented\b/)
           boolean_at_tag(/@evented/, :evented)
         elsif look(/@/)
-          @input.scan(/@/)
+          match(/@/)
           tag = @meta_tags[look(/\w+/)]
           if tag
             meta_at_tag(tag)
@@ -149,7 +149,7 @@ module JsDuck
             @current_tag[:doc] += "@"
           end
         elsif look(/[^@]/)
-          @current_tag[:doc] += @input.scan(/[^@]+/)
+          @current_tag[:doc] += match(/[^@]+/)
         end
       end
     end
@@ -174,7 +174,7 @@ module JsDuck
       else
         # Fors singleline tags, scan to the end of line and finish the
         # tag.
-        @current_tag[:doc] = @input.scan(/.*$/).strip
+        @current_tag[:doc] = match(/.*$/).strip
         skip_white
         @current_tag = prev_tag
       end
@@ -288,6 +288,24 @@ module JsDuck
       skip_white
     end
 
+    # matches @enum {type} name ...
+    def at_enum
+      match(/@enum/)
+      add_tag(:class)
+      @current_tag[:enum] = true
+      maybe_type
+      maybe_name_with_default
+      skip_white
+    end
+
+    # matches @override name ...
+    def at_override
+      match(/@override/)
+      add_tag(:override)
+      maybe_ident_chain(:class)
+      skip_white
+    end
+
     # matches @type {type}  or  @type type
     #
     # The presence of @type implies that we are dealing with property.
@@ -302,7 +320,7 @@ module JsDuck
         @current_tag[:type] = tdf[:type]
         @current_tag[:optional] = true if tdf[:optional]
       elsif look(/\S/)
-        @current_tag[:type] = @input.scan(/\S+/)
+        @current_tag[:type] = match(/\S+/)
       end
       skip_white
     end
@@ -345,14 +363,14 @@ module JsDuck
       end
 
       if look(/#\w/)
-        @input.scan(/#/)
+        match(/#/)
         if look(/static-/)
           @current_tag[:static] = true
-          @input.scan(/static-/)
+          match(/static-/)
         end
         if look(/(cfg|property|method|event|css_var|css_mixin)-/)
           @current_tag[:type] = ident.to_sym
-          @input.scan(/-/)
+          match(/-/)
         end
         @current_tag[:member] = ident
       end
@@ -440,7 +458,7 @@ module JsDuck
     def maybe_name
       skip_horiz_white
       if look(@ident_pattern)
-        @current_tag[:name] = @input.scan(@ident_pattern)
+        @current_tag[:name] = match(@ident_pattern)
       end
     end
 
@@ -452,17 +470,15 @@ module JsDuck
       end
     end
 
-    # attempts to match javascript literal,
-    # when it fails grabs anything up to closing "]"
+    # Attempts to allow balanced braces in default value.
+    # When the nested parsing doesn't finish at closing "]",
+    # roll back to beginning and simply grab anything up to closing "]".
     def default_value
       start_pos = @input.pos
-      lit = JsLiteralParser.new(@input).literal
-      if lit && look(/ *\]/)
-        # When lital matched and there's nothing after it up to the closing "]"
-        JsLiteralBuilder.new.to_s(lit)
+      value = parse_balanced(/\[/, /\]/, /[^\[\]]*/)
+      if look(/\]/)
+        value
       else
-        # Otherwise reset parsing position to where we started
-        # and rescan up to "]" using simple regex.
         @input.pos = start_pos
         match(/[^\]]*/)
       end
@@ -471,14 +487,8 @@ module JsDuck
     # matches {...=} and returns text inside brackets
     def typedef
       match(/\{/)
-      name = @input.scan(/[^{}]*/)
 
-      # Type definition can contain nested braces: {{foo:Number}}
-      # In such case we parse the definition so that the braces are balanced.
-      while @input.check(/[{]/)
-        name += "{" + typedef[:type] +"}"
-        name += @input.scan(/[^{}]*/)
-      end
+      name = parse_balanced(/\{/, /\}/, /[^{}]*/)
 
       if name =~ /=$/
         name = name.chop
@@ -490,6 +500,23 @@ module JsDuck
       match(/\}/)
 
       return {:type => name, :optional => optional}
+    end
+
+    # Helper method to parse a string up to a closing brace,
+    # balancing opening-closing braces in between.
+    #
+    # @param re_open  The beginning brace regex
+    # @param re_close The closing brace regex
+    # @param re_rest  Regex to match text without any braces
+    def parse_balanced(re_open, re_close, re_rest)
+      result = match(re_rest)
+      while look(re_open)
+        result += match(re_open)
+        result += parse_balanced(re_open, re_close, re_rest)
+        result += match(re_close)
+        result += match(re_rest)
+      end
+      result
     end
 
     # matches <ident_chain> <ident_chain> ... until line end

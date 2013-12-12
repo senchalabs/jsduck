@@ -259,5 +259,36 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "CSS doc-comment followed by CSS selector" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /**
+         * Some comment.
+         */
+        .highlight {
+            font-weight: bold;
+        }
+      EOCSS
+    end
+
+    it "gets detected as property" do
+      @doc[:tagname].should == :property
+    end
+  end
+
+  describe "CSS doc-comment followed by nothing" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /**
+         * Some comment.
+         */
+      EOCSS
+    end
+
+    it "gets detected as property" do
+      @doc[:tagname].should == :property
+    end
+  end
+
 end
 

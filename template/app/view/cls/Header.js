@@ -26,9 +26,13 @@ Ext.define('Docs.view.cls.Header', {
 //                '<tpl if="singleton">',
 //                    '<span>singleton</span>',
 //                '</tpl>',
+                '<tpl if="enum">',
+                    '<span>enum of <b>{enum.type}</b></span>',
+                '</tpl>',
                 '<a>{name}</a>',
                 '<small class="typestr">{[this.renderTypestr(values.meta)]}</small>',
                 '{[this.renderAliases(values.aliases)]}',
+                '{[this.renderMetaTags(values.meta)]}',
             '</h1>',
             '<tpl if="Docs.data.showPrintButton">',
                 '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>',
@@ -70,6 +74,11 @@ Ext.define('Docs.view.cls.Header', {
                     else {
                         return "";
                     }
+                },
+                renderMetaTags: function(metaTags) {
+                    return ' ' + Ext.Array.map(Docs.data.signatures, function(s) {
+                        return metaTags[s.key] ? '<span class="signature '+s.key+'">'+(s["long"])+'</span>' : '';
+                    }).join(' ');
                 }
             }
         );

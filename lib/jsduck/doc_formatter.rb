@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'rubygems'
-require 'rdiscount'
 require 'strscan'
+require 'rdiscount'
 require 'jsduck/logger'
 require 'jsduck/inline_img'
 require 'jsduck/inline_video'
@@ -95,7 +95,7 @@ module JsDuck
           out += replace_link_tag(s.scan(@link_re))
         elsif substitute = @inline_img.replace(s)
           out += substitute
-        elsif substitute = @inline_video.replace(s)
+        elsif substitute = @inline_video.replace(s, @doc_context)
           out += substitute
         elsif s.check(/[{]/)
           # There might still be "{" that doesn't begin {@link} or {@img} - ignore it
@@ -133,12 +133,12 @@ module JsDuck
         text = $2
         if target =~ /^(.*)#(static-)?(?:(cfg|property|method|event|css_var|css_mixin)-)?(.*)$/
           cls = $1.empty? ? @class_context : $1
-          static = !!$2
+          static = $2 ? true : nil
           type = $3 ? $3.intern : nil
           member = $4
         else
           cls = target
-          static = false
+          static = nil
           type = false
           member = false
         end
@@ -257,7 +257,7 @@ module JsDuck
     end
 
     # applies the link template
-    def link(cls, member, anchor_text, type=nil, static=false)
+    def link(cls, member, anchor_text, type=nil, static=nil)
       # Use the canonical class name for link (not some alternateClassName)
       cls = @relations[cls].full_name
       # prepend type name to member name
@@ -281,7 +281,7 @@ module JsDuck
       end
     end
 
-    def get_matching_member(cls, member, type=nil, static=false)
+    def get_matching_member(cls, member, type=nil, static=nil)
       ms = get_members(cls, member, type, static).find_all {|m| !m[:private] }
       if ms.length > 1
         instance_ms = ms.find_all {|m| !m[:meta][:static] }
@@ -291,7 +291,7 @@ module JsDuck
       end
     end
 
-    def get_members(cls, member, type=nil, static=false)
+    def get_members(cls, member, type=nil, static=nil)
       @relations[cls] ? @relations[cls].get_members(member, type, static) : []
     end
 
