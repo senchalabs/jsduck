@@ -143,6 +143,8 @@ module JsDuck
         agr.create_global_class
         agr.remove_ignored_classes
         agr.create_accessors
+      end
+      if @opts.ext4_events == true || (@opts.ext4_events == nil && agr.ext4?)
         agr.append_ext4_event_options
       end
       agr.result
@@ -183,14 +185,15 @@ module JsDuck
       class_formatter.include_types = !@opts.export
       # Format all doc-objects in parallel
       formatted_classes = @parallel.map(@relations.classes) do |cls|
-        Logger.instance.log("Markdown formatting #{cls[:name]}")
+        files = cls[:files].map {|f| f[:filename] }.join(" ")
+        Logger.instance.log("Markdown formatting #{cls[:name]}", files)
         begin
           {
             :doc => class_formatter.format(cls.internal_doc),
             :images => doc_formatter.images
           }
         rescue
-          Logger.instance.fatal("Error while formatting #{cls[:name]}", $!)
+          Logger.instance.fatal("Error while formatting #{cls[:name]} #{files}", $!)
           exit(1)
         end
       end

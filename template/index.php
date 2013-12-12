@@ -9,7 +9,7 @@ function print_page($subtitle, $body, $fragment) {
   $uri = 'http://' . $_SERVER["HTTP_HOST"] . preg_replace('/(index.php)?\?.*$/', '', $_SERVER["REQUEST_URI"]);
   $canonical = $uri."#!".$fragment;
   $html = file_get_contents('print-template.html');
-  echo preg_replace(array('/\{subtitle}/', '/\{body}/', '/\{canonical}/'), array($subtitle, $body, $canonical), $html);
+  echo preg_replace(array('/\{subtitle}/', '/\{body}/', '/\{canonical}/'), array($subtitle, fix_links($body), $canonical), $html);
 }
 
 function print_index_page() {
@@ -28,6 +28,24 @@ function decode_file($filename) {
   }
   else {
     throw new Exception("File $filename not found");
+  }
+}
+
+// Turns #! links into ?print= links when in print mode.
+//
+// <a href="#!/api/Ext.Element">  -->  <a href="?print=/api/Ext.Element">
+// <a href="#!/api/Ext.Element-cfg-id">  -->  <a href="?print=/api/Ext.Element#cfg-id">
+//
+function fix_links($html) {
+  if (isset($_GET["print"])) {
+    $patterns = array(
+      '/<a href=([\'"])#!?\/(api\/[^-\'"]+)-([^\'"]+)/' => '<a href=$1?print=/$2#$3',
+      '/<a href=([\'"])#!?\//' => '<a href=$1?print=/',
+    );
+    return preg_replace(array_keys($patterns), array_values($patterns), $html);
+  }
+  else {
+    return $html;
   }
 }
 

@@ -949,7 +949,7 @@
  *
  * The following example displays the string "sencha":
  *
- *     var upperText="sencha";
+ *     var upperText="SENCHA";
  *     document.write(upperText.toLocaleLowerCase());
  *
  * @return {String} Returns value of the string in lowercase.
