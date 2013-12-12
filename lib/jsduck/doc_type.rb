@@ -33,6 +33,8 @@ module JsDuck
         :cfg
       elsif doc_map[:constructor]
         :method
+      elsif doc_map[:param] || doc_map[:return]
+        :method
       else
         code[:tagname]
       end

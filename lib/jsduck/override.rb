@@ -1,27 +1,23 @@
 module JsDuck
 
   class Override
-    def initialize(classes_hash, classes_array)
+    def initialize(classes_hash)
       @classes_hash = classes_hash
-      @classes_array = classes_array
     end
 
     # Applies all override classes to target classes
+    # Returns all the processed override classes.
     def process_all!
       overrides = []
 
-      @classes_array.each do |cls|
+      @classes_hash.each_value do |cls|
         if cls[:override]
           process(cls)
           overrides << cls
         end
       end
 
-      # Discard override classes
-      overrides.each do |cls|
-        @classes_hash.delete(cls[:name])
-        @classes_array.delete(cls)
-      end
+      overrides
     end
 
     private

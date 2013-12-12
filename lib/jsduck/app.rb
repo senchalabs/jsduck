@@ -150,7 +150,8 @@ module JsDuck
         agr.append_ext4_event_options
       end
       agr.process_enums
-      agr.process_overrides
+      # Ignore override classes after applying them to actual classes
+      @opts.external_classes += agr.process_overrides.map {|o| o[:name] }
       agr.result
     end
 

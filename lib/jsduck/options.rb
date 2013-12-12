@@ -82,7 +82,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.0.0"
+      @version = "4.0.1"
 
       # Customizing output
       @title = "Titanium Mobile"
@@ -151,6 +151,7 @@ module JsDuck
 
       reg = MetaTagRegistry.new
       reg.load([:builtins] + @meta_tag_paths)
+      reg[:new].create_tooltip!(@imports, @new_since)
       MetaTagRegistry.instance = reg
     end
 

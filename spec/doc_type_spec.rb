@@ -45,6 +45,14 @@ describe JsDuck::DocType do
       detect("/** @constructor */").should == :method
     end
 
+    it "@param tag" do
+      detect("/** @param {Number} x */").should == :method
+    end
+
+    it "@return tag" do
+      detect("/** @return {Boolean} */").should == :method
+    end
+
     it "function declaration" do
       detect("/** */ function foo() {}").should == :method
     end
@@ -53,6 +61,10 @@ describe JsDuck::DocType do
   describe "detects as event" do
     it "@event tag" do
       detect("/** @event */").should == :event
+    end
+
+    it "@event and @param tags" do
+      detect("/** @event @param {Number} x */").should == :event
     end
   end
 
@@ -85,6 +97,10 @@ describe JsDuck::DocType do
   describe "detects as css mixin" do
     it "@mixin in code" do
       detect("/** */ @mixin foo-bar {}", :css).should == :css_mixin
+    end
+
+    it "@param in doc and @mixin in code" do
+      detect("/** @param {number} $foo */ @mixin foo-bar {}", :css).should == :css_mixin
     end
   end
 
