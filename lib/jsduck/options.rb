@@ -82,7 +82,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.3.0"
+      @version = "4.3.1"
 
       # Customizing output
       @title = "Titanium Mobile"
