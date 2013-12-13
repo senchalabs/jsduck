@@ -6,6 +6,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     requires: [
         'Docs.view.HoverMenuButton',
         'Docs.Settings',
+        'Docs.Comments',
         'Ext.form.field.Checkbox'
     ],
 
@@ -206,7 +207,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     // creates store tha holds link records
     createStore: function(records) {
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'url', 'label', 'inherited', 'accessor', 'meta']
+            fields: ['id', 'url', 'label', 'inherited', 'accessor', 'meta', 'commentCount']
         });
         store.add(records);
         return store;
@@ -215,11 +216,13 @@ Ext.define('Docs.view.cls.Toolbar', {
     // Creates link object referencing a class member
     createLinkRecord: function(cls, member) {
         return {
+            id: member.id,
             url: cls + "-" + member.id,
             label: (member.tagname === "method" && member.name === "constructor") ? "new "+cls : member.name,
             inherited: member.owner !== cls,
             accessor: member.tagname === "method" && this.accessors.hasOwnProperty(member.name),
-            meta: member.meta
+            meta: member.meta,
+            commentCount: Docs.Comments.getCount(["class", cls, member.id])
         };
     },
 
@@ -298,6 +301,15 @@ Ext.define('Docs.view.cls.Toolbar', {
      * @param {Number} n
      */
     setCommentCount: function(n) {
-        this.commentCount.update(""+n);
+        this.commentCount.update(""+(n||0));
+        this.refreshMenuCommentCounts();
+    },
+
+    refreshMenuCommentCounts: function() {
+        Ext.Object.each(this.memberButtons, function(key, btn) {
+            btn.getStore().each(function(r) {
+                r.set("commentCount", Docs.Comments.getCount(["class", this.docClass.name, r.get("id")]));
+            }, this);
+        }, this);
     }
 });

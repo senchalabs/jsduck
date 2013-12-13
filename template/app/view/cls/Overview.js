@@ -8,8 +8,11 @@ Ext.define('Docs.view.cls.Overview', {
     requires: [
         'Docs.view.cls.Toolbar',
         'Docs.view.examples.Inline',
+        'Docs.view.comments.LargeExpander',
+        'Docs.view.comments.MemberWrap',
         'Docs.Syntax',
-        'Docs.Settings'
+        'Docs.Settings',
+        'Docs.Comments'
     ],
     mixins: ['Docs.view.Scrolling'],
 
@@ -101,6 +104,7 @@ Ext.define('Docs.view.cls.Overview', {
                 menubuttonclick: function(type) {
                     this.scrollToEl("h3.members-title.icon-"+type, -20);
                 },
+                commentcountclick: this.expandClassComments,
                 scope: this
             }
         });
@@ -112,7 +116,58 @@ Ext.define('Docs.view.cls.Overview', {
 
         this.filterMembers("", Docs.Settings.get("show"));
 
+        if (Docs.Comments.isEnabled()) {
+            this.initComments();
+        }
+
         this.fireEvent('afterload');
+    },
+
+    initComments: function() {
+        // Add comment button to toolbar
+        this.toolbar.showCommentCount();
+        this.toolbar.setCommentCount(Docs.Comments.getCount(["class", this.docClass.name, ""]));
+
+        // Insert class level comment container under class intro docs
+        this.clsExpander = new Docs.view.comments.LargeExpander({
+            name: this.docClass.name,
+            el: Ext.query('.doc-contents')[0]
+        });
+
+        // Add a comment container to each class member
+        this.memberWrappers = Ext.Array.map(Ext.query('.member'), function(memberDoc) {
+            return new Docs.view.comments.MemberWrap({
+                parent: this,
+                className: this.docClass.name,
+                el: memberDoc
+            });
+        }, this);
+    },
+
+    /**
+     * Updates comment counts of the class itself and of all its members.
+     */
+    updateCommentCounts: function() {
+        // do nothing when no class loaded
+        if (!this.docClass) {
+            return;
+        }
+
+        var clsCount = Docs.Comments.getCount(["class", this.docClass.name, ""]);
+        this.toolbar.setCommentCount(clsCount);
+
+        this.clsExpander.getExpander().setCount(clsCount);
+
+        Ext.Array.forEach(this.memberWrappers, function(wrap) {
+            wrap.setCount(Docs.Comments.getCount(wrap.getTarget()));
+        }, this);
+    },
+
+    expandClassComments: function() {
+        var expaned = this.clsExpander.getExpander();
+        expander.expand();
+        // add a small arbitrary -40 offset to make the header visible.
+        this.scrollToEl(expander.getEl(), -40);
     },
 
     /**

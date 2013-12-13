@@ -72,6 +72,15 @@ Request.prototype = {
     },
 
     /**
+     * Retrieves most used tags.
+     */
+    getTopTags: function(callback) {
+        this.db.comments().getTopTags(function(err, tags) {
+            callback(tags);
+        });
+    },
+
+    /**
      * Provides the comments_meta request data.
      */
     getCommentCountsPerTarget: function(callback) {
@@ -124,11 +133,12 @@ Request.prototype = {
         this.db.comments().add(comment, function(err, comment_id) {
             if (this.isModerator()) {
                 this.markRead(comment_id, function() {
-                    callback(comment_id);
-                });
+                    this.setCommentsTableOptions();
+                    this.getComment(comment_id, callback);
+                }.bind(this));
             }
             else {
-                callback(comment_id);
+                this.getComment(comment_id, callback);
             }
 
             this.sendEmailUpdates(comment_id, threadUrl);
@@ -195,6 +205,27 @@ Request.prototype = {
             var direction = voteDir === 1 ? "up" : (voteDir === -1 ? "down" : null);
             callback(direction, total);
         });
+    },
+
+    /**
+     * Adds tag to comment.
+     */
+    addTag: function(comment_id, tagname, callback) {
+        this.db.comments().addTag({
+            user_id: this.getUserId(),
+            comment_id: comment_id,
+            tagname: tagname
+        }, callback);
+    },
+
+    /**
+     * Removes tag from comment.
+     */
+    removeTag: function(comment_id, tagname, callback) {
+        this.db.comments().removeTag({
+            comment_id: comment_id,
+            tagname: tagname
+        }, callback);
     },
 
     /**

@@ -7,12 +7,31 @@ Ext.define('Docs.view.videos.Container', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.videocontainer',
     componentCls: 'video-container',
+    requires: [
+        "Docs.Comments",
+        "Docs.view.comments.LargeExpander"
+    ],
+
+    initComponent: function() {
+        this.callParent(arguments);
+
+        this.on("hide", this.pauseVideo, this);
+    },
+
+    pauseVideo: function() {
+        var videoPlayer = document.getElementById('video_player');
+        if (videoPlayer && videoPlayer.api_pause) {
+            videoPlayer.api_pause();
+        }
+    },
 
     /**
      * Loads video into the page.
      * @param {Object} video
      */
     load: function(video) {
+        this.video = video;
+
         this.tpl = this.tpl || new Ext.XTemplate(
 			// Ti change -- move title/description before object
             '<h1>{title}</h1>',
@@ -34,14 +53,27 @@ Ext.define('Docs.view.videos.Container', {
         );
 
         this.update(this.tpl.apply(video));
+
+        if (Docs.Comments.isEnabled()) {
+            this.initComments();
+        }
     },
 
-    listeners: {
-        hide: function() {
-            var videoPlayer = document.getElementById('video_player');
-            if (videoPlayer && videoPlayer.api_pause) {
-                videoPlayer.api_pause();
-            }
+    initComments: function() {
+        this.expander = new Docs.view.comments.LargeExpander({
+            type: "video",
+            name: this.video.name,
+            el: this.getEl().down(".x-panel-body")
+        });
+    },
+
+    /**
+     * Updates the comments counter.
+     */
+    updateCommentCounts: function() {
+        if (!this.expander) {
+            return;
         }
+        this.expander.getExpander().setCount(Docs.Comments.getCount(["video", this.video.name, ""]));
     }
 });

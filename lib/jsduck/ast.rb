@@ -274,6 +274,11 @@ module JsDuck
     # Detects class members from array literal
     def detect_class_members_from_array(cls, ast)
       cls[:members] = []
+
+      # This will most likely be an @enum class, in which case the
+      # enum will be for documentation purposes only.
+      cls[:enum] = {:doc_only => true}
+
       ast["elements"].each do |el|
         detect_method_or_property(cls, key_value(el), el, el)
       end
@@ -484,4 +489,3 @@ module JsDuck
   end
 
 end
-

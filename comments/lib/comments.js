@@ -1,5 +1,7 @@
+var regexpQuote = require("regexp-quote");
 var Targets = require("./targets");
 var Formatter = require("./formatter");
+var Tags = require("./tags");
 
 /**
  * Represents a Comments table.
@@ -17,6 +19,7 @@ function Comments(db, domain) {
     this.db = db;
     this.domain = domain;
     this.targets = new Targets(db, domain);
+    this.tags = new Tags(db, domain);
     this.view = "full_visible_comments AS comments";
     this.fields = ["*"];
 }
@@ -116,6 +119,7 @@ Comments.prototype = {
      * @param {Number} [opts.hideRead=false] True to hide comments marked as read.
      * @param {Number} [opts.username=undefined] The name of the user who's comments to show.
      * @param {Number} [opts.targetId=undefined] The ID of the target to show.
+     * @param {Number} [opts.tagname=undefined] A tagname the comment is tagged with.
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
@@ -173,6 +177,10 @@ Comments.prototype = {
         }
         if (opts.targetId) {
             where.push(this.db.format("target_id = ?", [opts.targetId]));
+        }
+        if (opts.tagname) {
+            var t = regexpQuote(opts.tagname);
+            where.push(this.db.format("tags REGEXP ?", ['(^|\t)'+t+'(\t|$)']));
         }
         return where.join(" AND ");
     },
@@ -368,6 +376,27 @@ Comments.prototype = {
                 callback(err);
             }
         });
+    },
+
+    /**
+     * @inheritdoc Tags#add
+     */
+    addTag: function(tag, callback) {
+        this.tags.add(tag, callback);
+    },
+
+    /**
+     * @inheritdoc Tags#remove
+     */
+    removeTag: function(tag, callback) {
+        this.tags.remove(tag, callback);
+    },
+
+    /**
+     * @inheritdoc Tags#getTop
+     */
+    getTopTags: function(callback) {
+        this.tags.getTop(callback);
     },
 
     /**

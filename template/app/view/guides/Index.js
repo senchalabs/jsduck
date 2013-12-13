@@ -4,9 +4,7 @@
 Ext.define('Docs.view.guides.Index', {
     extend: 'Ext.container.Container',
     alias: 'widget.guideindex',
-    requires: [
-        'Docs.view.ThumbList'
-    ],
+    requires: ['Docs.view.ThumbList'],
     mixins: ['Docs.view.Scrolling'],
 
     cls: 'iScroll',
@@ -28,6 +26,7 @@ Ext.define('Docs.view.guides.Index', {
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Guides</h1>' },
             Ext.create('Docs.view.ThumbList', {
+                commentType: "guide",
                 itemTpl: [
 				// Ti change -- icon change next line
                     '<dd ext:url="#!/guide/{name}"><div class="thumb"><img src="resources/images/icon-lg.png"/></div>',
@@ -49,5 +48,12 @@ Ext.define('Docs.view.guides.Index', {
     getTab: function() {
         var enabled = (Docs.data.guides|| []).length > 0;
         return enabled ? {cls: 'guides', href: '#!/guide', tooltip: 'Guides'} : false;
+    },
+
+    /**
+     * Refreshes the comment counters.
+     */
+    updateCommentCounts: function() {
+        this.down("thumblist").updateCommentCounts();
     }
 });

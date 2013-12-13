@@ -1,4 +1,5 @@
 require 'jsduck/logger'
+require 'jsduck/class'
 
 module JsDuck
 
@@ -43,7 +44,7 @@ module JsDuck
         end
       end
       each_member do |member|
-        if member[:doc] == "" && !member[:private] && !member[:meta][:hide]
+        if member[:doc] == "" && !member[:private] && !member[:meta][:hide] && !JsDuck::Class.constructor?(member)
           warn(:no_doc, "No documentation for #{member[:owner]}##{member[:name]}", member)
         end
       end

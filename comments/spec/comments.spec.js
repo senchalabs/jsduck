@@ -177,6 +177,14 @@ describe("Comments", function() {
         });
     });
 
+    it("#findRecent with tagname:feature includes only comments with that tag", function(done) {
+        comments.findRecent({tagname: 'feature'}, function(err, rows) {
+            expect(rows.length).toEqual(2);
+            expect(rows.every(function(r){return /\bfeature\b/.test(r.tags);})).toEqual(true);
+            done();
+        });
+    });
+
     it("#count gets total number of comments in current domain", function(done) {
         comments.count({}, function(err, cnt) {
             expect(cnt).toEqual(24);

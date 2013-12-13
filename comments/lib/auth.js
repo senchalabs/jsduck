@@ -47,6 +47,18 @@ var Auth = {
     },
 
     /**
+     * Throws error when logged in user isn't moderator.
+     */
+    isModerator: function(req, res, next) {
+        if (new Request(req).isModerator()) {
+            next();
+        }
+        else {
+            res.json({ success: false, reason: 'Forbidden' }, 403);
+        }
+    },
+
+    /**
      * Throws error when logged in user can't vote on the comment in
      * question.
      */

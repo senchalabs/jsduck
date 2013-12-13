@@ -82,7 +82,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.2.1"
+      @version = "4.3.0"
 
       # Customizing output
       @title = "Titanium Mobile"
@@ -360,7 +360,7 @@ module JsDuck
           "",
           "    --import='1.0:/path/to/first/version'",
           "    --import='2.0:/path/to/second/version'",
-          "    --import='3.0",
+          "    --import='3.0'",
           "",
           "Several versions can be imported using the option multiple",
           "times.  The last version must always be the current one",

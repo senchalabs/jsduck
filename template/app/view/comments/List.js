@@ -1,130 +1,162 @@
 /**
- * Container for recent comments listing.
+ * Shows the listing of comments.
  */
 Ext.define('Docs.view.comments.List', {
-    extend: 'Ext.panel.Panel',
-    alias: "widget.commentsList",
-    requires: ['Docs.Settings'],
-    componentCls: 'comment-index-container',
-
-    dockedItems: [
-        {
-            xtype: 'container',
-            dock: 'top',
-            height: 35,
-            html: [
-                '<h1 style="float:left;">Comments</h1>',
-                '<p style="float:left; margin: 5px 0 0 25px">',
-                '<label style="padding-right: 10px;"><input type="checkbox" name="hideRead" id="hideRead" /> Hide read</label>',
-                '</p>'
-            ].join(" ")
-        }
+    extend: 'Ext.view.View',
+    alias: 'widget.commentsList',
+    requires: [
+        'Docs.Auth',
+        'Docs.Syntax',
+        'Docs.Comments',
+        'Docs.view.comments.Template',
+        'Docs.view.comments.Form',
+        'Docs.view.comments.TagEditor',
+        'Docs.model.Comment',
+        'Docs.Tip'
     ],
+    componentCls: 'comments-list',
 
-    layout: "border",
-    items: [
-        {
-            xtype: 'tabpanel',
-            cls: "comments-tabpanel",
-            plain: true,
-            region: "north",
-            height: 25,
-            items: [
-                {
-                    title: "Recent"
-                },
-                {
-                    title: "Votes"
-                }
-            ]
-        },
-        {
-            region: "center",
-            xtype: 'container',
-            id: 'recentcomments',
-            cls: "iScroll",
-            autoScroll: true
-        }
-    ],
+    itemSelector: "div.comment",
+
+    emptyText: '<div class="loading">Loading...</div>',
+    deferEmptyText: false,
 
     /**
-     * @event hideReadChange
-     * Fired when the hideRead checkbox is checked/unchecked.
+     * @cfg {Boolean} showTarget
+     * True to show a link to the target in each comment.
+     * Used in Docs.view.comments.FullList.
      */
 
-    /**
-     * @event sortOrderChange
-     * Fired when the tab is switched.
-     * @param {String} sortBy Either "recent" or "votes".
-     */
+    initComponent: function() {
+        this.store = Ext.create('Ext.data.Store', {
+            model: "Docs.model.Comment"
+        });
 
-    afterRender: function() {
+        this.tpl = Docs.view.comments.Template.create({showTarget: this.showTarget});
+
         this.callParent(arguments);
 
-        this.initCheckboxes();
-        this.initTabs();
-
-        this.setMasked(true);
-    },
-
-    /**
-     * Masks or unmasks the container
-     * @param {Boolean} masked True to show mask.
-     */
-    setMasked: function(masked) {
-        var container = this.getEl();
-        if (container) {
-            container[masked ? "mask" : "unmask"]();
-        }
-    },
-
-    // Initializes the hideRead checkbox from settings.
-    initCheckboxes: function() {
-        var settings = Docs.Settings.get("comments");
-        var cb = Ext.get('hideRead');
-        if (cb) {
-            cb.dom.checked = settings.hideRead;
-            cb.on("change", function() {
-                this.saveSetting('hideRead', cb.dom.checked);
-                this.fireEvent("hideReadChange");
-            }, this);
-        }
-
-        // Hide the hideRead checkbox if user is not moderator
-        this.setHideReadVisibility();
-        var Auth = Docs.App.getController("Auth");
-        Auth.on("available", this.setHideReadVisibility, this);
-        Auth.on("loggedIn", this.setHideReadVisibility, this);
-        Auth.on("loggedOut", this.setHideReadVisibility, this);
-    },
-
-    setHideReadVisibility: function() {
-        var mod = Docs.App.getController("Auth").isModerator();
-        Ext.get("hideRead").up("label").setStyle("display", mod ? "inline" : "none");
-    },
-
-    initTabs: function() {
-        this.down("tabpanel[cls=comments-tabpanel]").on("tabchange", function(panel, newTab) {
-            if (newTab.title === "Recent") {
-                this.fireEvent("sortOrderChange", "recent");
-            }
-            else {
-                this.fireEvent("sortOrderChange", "votes");
-            }
+        this.on("refresh", function() {
+            Docs.Syntax.highlight(this.getEl());
+        }, this);
+        this.on("itemupdate", function(record, index, node) {
+            Docs.Syntax.highlight(node);
         }, this);
     },
 
-    saveSetting: function(name, enabled) {
-        var settings = Docs.Settings.get('comments');
-        settings[name] = enabled;
-        Docs.Settings.set('comments', settings);
+    afterRender: function() {
+        this.callParent(arguments);
+        // Remove the keydown handler set up in Ext.view.View#afterRender
+        // which prevents CodeMirror from receiving the event when the SPACE key is pressed.
+        this.mun(this.getTargetEl(), "keydown");
+
+        this.delegateClick("a.voteCommentUp", function(el, r) {
+            this.vote(el, r, "up");
+        }, this);
+        this.delegateClick("a.voteCommentDown", function(el, r) {
+            this.vote(el, r, "down");
+        }, this);
+
+        this.delegateClick("a.editComment", function(el, r) {
+            this.edit(el, r);
+        }, this);
+        this.delegateClick("a.deleteComment", function(el, r) {
+            this.setDeleted(el, r, true);
+        }, this);
+        this.delegateClick("a.undoDeleteComment", function(el, r) {
+            this.setDeleted(el, r, false);
+        }, this);
+
+        this.delegateClick("a.readComment", this.markRead, this);
+
+        this.delegateClick("a.add-tag", this.addTag, this);
+        this.delegateClick("a.remove-tag", this.removeTag, this);
+    },
+
+    delegateClick: function(selector, callback, scope) {
+        this.getEl().on("click", function(event, el) {
+            callback.call(scope, el, this.getRecord(this.findItemByChild(el)));
+        }, this, {preventDefault: true, delegate: selector});
+    },
+
+    vote: function(el, comment, direction) {
+        if (!Docs.Auth.isLoggedIn()) {
+            Docs.Tip.show('Please login to vote on this comment', el);
+            return;
+        }
+        if (comment.get("upVote") && direction === "up" || comment.get("downVote") && direction === "down") {
+            Docs.Tip.show('You have already voted on this comment', el);
+            return;
+        }
+
+        comment.vote(direction, {failure: function(msg) {
+            Docs.Tip.show(msg, el);
+        }});
+    },
+
+    // starts an editor on the comment
+    edit: function(el, comment) {
+        comment.loadContent(function(content) {
+            // empty the content of comment.
+            var contentEl = Ext.get(el).up(".comment").down(".content");
+            contentEl.update("");
+
+            new Docs.view.comments.Form({
+                renderTo: contentEl,
+                title: '<b>Edit comment</b>',
+                user: Docs.Auth.getUser(),
+                content: content,
+                listeners: {
+                    submit: function(newContent) {
+                        comment.saveContent(newContent);
+                    },
+                    cancel: function() {
+                        this.refreshComment(comment);
+                    },
+                    scope: this
+                }
+            });
+        }, this);
+    },
+
+    // re-renders the comment, discarding the form.
+    refreshComment: function(comment) {
+        this.refreshNode(this.getStore().findExact("id", comment.get("id")));
+    },
+
+    // marks the comment as deleted or undoes the delete
+    setDeleted: function(el, comment, deleted) {
+        comment.setDeleted(deleted);
+    },
+
+    markRead: function(el, comment) {
+        comment.markRead();
+    },
+
+    addTag: function(el, comment) {
+        var editor = new Docs.view.comments.TagEditor();
+        editor.on("select", comment.addTag, comment);
+        editor.popup(el);
+    },
+
+    removeTag: function(el, comment) {
+        var tagname = Ext.get(el).up(".tag").down("b").getHTML();
+        comment.removeTag(tagname);
     },
 
     /**
-     * Returns tab config for comments page.
-     * @return {Object}
+     * Loads array of comments into the view.
+     * @param {Object[]} comments
+     * @param {Boolean} append True to append the comments to existing ones.
      */
-    getTab: function() {
-        return Docs.enableComments ? {cls: 'comments', href: '#!/comment', tooltip: 'Comments'} : false;
+    load: function(comments, append) {
+        // hide the spinning loader when no comments.
+        if (comments.length === 0) {
+            this.emptyText = "";
+        }
+
+        var processedComments = this.store.getProxy().getReader().readRecords(comments).records;
+        this.store.loadData(processedComments, append);
     }
+
 });

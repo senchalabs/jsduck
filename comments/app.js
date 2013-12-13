@@ -114,7 +114,8 @@ app.get('/auth/:sdk/:version/comments_recent', function(req, res) {
         hideCurrentUser: req.query.hideCurrentUser,
         hideRead: req.query.hideRead,
         username: req.query.username,
-        targetId: req.query.targetId
+        targetId: req.query.targetId,
+        tagname: req.query.tagname
     };
     new Request(req).getRecentComments(query, function(comments) {
         res.json(comments);
@@ -124,14 +125,21 @@ app.get('/auth/:sdk/:version/comments_recent', function(req, res) {
 // Returns top users (with most upvotes or with most comments).
 app.get('/auth/:sdk/:version/users', function(req, res) {
     new Request(req).getTopUsers(req.query.sortBy, function(users) {
-        res.json(users);
+        res.json({ success: true, data: users });
     });
 });
 
 // Returns the most commented targets.
 app.get('/auth/:sdk/:version/targets', function(req, res) {
-    new Request(req).getTopTargets(function(users) {
-        res.json(users);
+    new Request(req).getTopTargets(function(targets) {
+        res.json({ success: true, data: targets });
+    });
+});
+
+// Returns the most used tags.
+app.get('/auth/:sdk/:version/tags', function(req, res) {
+    new Request(req).getTopTags(function(tags) {
+        res.send({ success: true, data: tags });
     });
 });
 
@@ -155,8 +163,8 @@ app.get('/auth/:sdk/:version/comments', Auth.hasStartKey, function(req, res) {
 
 // Adds new comment
 app.post('/auth/:sdk/:version/comments', Auth.isLoggedIn, function(req, res) {
-    new Request(req).addComment(req.body.target, req.body.comment, req.body.url, function(comment_id) {
-        res.json({ id: comment_id, success: true });
+    new Request(req).addComment(req.body.target, req.body.comment, req.body.url, function(comment) {
+        res.json({ id: comment._id, comment: comment, success: true });
     });
 });
 
@@ -203,6 +211,20 @@ app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', Auth.isLoggedIn,
         r.getComment(req.params.commentId, function(comment) {
             res.send({ success: true, comment: comment });
         });
+    });
+});
+
+// Tags a comment
+app.post('/auth/:sdk/:version/comments/:commentId/add_tag', Auth.isLoggedIn, Auth.isModerator, function(req, res) {
+    new Request(req).addTag(req.params.commentId, req.body.tagname, function() {
+        res.send({ success: true });
+    });
+});
+
+// Removes tag from a comment
+app.post('/auth/:sdk/:version/comments/:commentId/remove_tag', Auth.isLoggedIn, Auth.isModerator, function(req, res) {
+    new Request(req).removeTag(req.params.commentId, req.body.tagname, function() {
+        res.send({ success: true });
     });
 });
 

@@ -6,20 +6,21 @@ Ext.define('Docs.view.comments.Index', {
     alias: 'widget.commentindex',
     mixins: ['Docs.view.Scrolling'],
     requires: [
-        'Docs.view.comments.List',
+        'Docs.view.comments.FullList',
         'Docs.view.comments.HeaderMenu',
         'Docs.view.comments.Users',
-        'Docs.view.comments.Targets'
+        'Docs.view.comments.Targets',
+        'Docs.view.comments.Tags'
     ],
+    componentCls: 'comments-index',
 
-    cls: 'comment-index',
     margin: '10 0 0 0',
     layout: 'border',
 
     items: [
         {
             region: "center",
-            xtype: "commentsList"
+            xtype: "commentsFullList"
         },
         {
             region: "east",
@@ -41,6 +42,9 @@ Ext.define('Docs.view.comments.Index', {
                 },
                 {
                     xtype: "commentsTargets"
+                },
+                {
+                    xtype: "commentsTags"
                 }
             ]
         }
@@ -50,17 +54,23 @@ Ext.define('Docs.view.comments.Index', {
         this.callParent(arguments);
 
         var cardPanel = this.down("#cardPanel");
-        var users = this.down("commentsUsers");
-        var targets = this.down("commentsTargets");
-        this.down("commentsHeaderMenu").on("select", function(item) {
-            if (item === "users") {
-                targets.deselectAll();
-                cardPanel.getLayout().setActiveItem(users);
-            }
-            else {
-                users.deselectAll();
-                cardPanel.getLayout().setActiveItem(targets);
-            }
+
+        var cards = {
+            users: this.down("commentsUsers"),
+            targets: this.down("commentsTargets"),
+            tags: this.down("commentsTags")
+        };
+
+        this.down("commentsHeaderMenu").on("select", function(selectedName) {
+            // deselect items in the unselected cards
+            Ext.Object.each(cards, function(name, card) {
+                if (name !== selectedName) {
+                    card.deselectAll();
+                }
+            });
+
+            // activate the selected card
+            cardPanel.getLayout().setActiveItem(cards[selectedName]);
         }, this);
     },
 

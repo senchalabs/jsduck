@@ -80,6 +80,7 @@ module JsDuck
     def each_item
       get_all_items().each  do |guide|
         # Load the guide if not loaded
+        guide["url"] = resolve_url(guide)
         guide[:html] = load_guide(guide) if guide[:html] == nil
         # Pass guide to block if it was successfully loaded.
         yield guide if guide[:html]
@@ -88,6 +89,7 @@ module JsDuck
 
     def load_all_guides
       each_item do |guide|
+        guide["url"] = resolve_url(guide)
         guide[:html] = load_guide(guide)
       end
     end
@@ -104,65 +106,58 @@ module JsDuck
       end
     end
 
-=begin
-## Merge Conflict - New Code
-    def to_array
-      map_items do |item|
-        Hash[item.select {|k, v| k != :html }]
-      end
-    end
-=end
-
     def load_guide(guide)
-      if not guide.has_key?("url")
-         guide["url"] = "guides/" + guide["name"]
-      end
-      in_dir = @path + "/" + guide["url"]
-
-      return Logger.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
-      html_guide_file = in_dir + "/README.html"
-      guide_file = in_dir + "/README.md"
+      return Logger.warn(:guide, "Guide not found", guide["url"]) unless File.exists?(guide["url"])
+      html_guide_file = guide["url"] + "/README.html"
+      guide_file = guide["url"] + "/README.md"
 
       if File.exists?(html_guide_file)
         begin
           # Ti guides already have a TOC, so don't add one.
           return Util::IO.read(html_guide_file)
         rescue
-          Logger.fatal_backtrace("Error while reading/formatting HTML guide #{in_dir}", $!)
+          Logger.fatal_backtrace("Error while reading/formatting HTML guide #{guide["url"]}", $!)
           exit(1)
         end
       elsif File.exists?(guide_file)
         begin
           @formatter.doc_context = {:filename => guide_file, :linenr => 0}
-          name = File.basename(in_dir)
+          name = File.basename(guide["url"])
           @formatter.img_path = "guides/#{name}"
 
           return add_toc(guide, @formatter.format(Util::IO.read(guide_file)))
         rescue
-          Logger.fatal_backtrace("Error while reading/formatting guide #{in_dir}", $!)
+          Logger.fatal_backtrace("Error while reading/formatting guide #{guide["url"]}", $!)
           exit(1)
         end
       else
-        return Logger.warn(:guide, "No README.html or README.md in #{in_dir}")
+        return Logger.warn(:guide, "No README.html or README.md in #{guide["url"]}")
       end    
     end
 
     def write_guide(guide, dir)
       return unless guide[:html]
 
-      in_dir = @path + "/" + guide["url"]
       out_dir = dir + "/" + guide["name"]
 
       Logger.log("Writing guide", out_dir)
-      # Copy the whole guide dir over
-      FileUtils.cp_r(in_dir, out_dir)
-  
+      FileUtils.cp_r(guide["url"], out_dir)
+
       # Ensure the guide has an icon
       fix_icon(out_dir)
 
       Util::Json.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => guide[:html], :title => guide["title"]})
     end
 
+    # Turns guide URL into full path.
+    # If no URL given at all, creates it from guide name.
+    def resolve_url(guide)
+      if guide["url"]
+        File.expand_path(guide["url"], @path)
+      else
+        @path + "/guides/" + guide["name"]
+      end
+    end
 
     # Ensures the guide dir contains icon.png.
     # When there isn't looks for icon-lg.png and renames it to icon.png.

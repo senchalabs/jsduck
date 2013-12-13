@@ -339,9 +339,8 @@ diff_data.each do |cls|
               html << " (#{c[:what]} changed from #{CGI.escapeHTML(c[:a])} to #{CGI.escapeHTML(c[:b])})"
             end
           end
-          html << "</li>"
         end
-        html << "</ul>"
+        html << "</li>"
       end
       html << "</li>"
     end
@@ -354,6 +353,7 @@ diff_data.each do |cls|
     html << "<h2>" + cls[:name] + " <b class='new'>New class</b></h2>"
     html << "</li>"
   end
+  html << "</li>"
 end
 html << "</ul>"
 

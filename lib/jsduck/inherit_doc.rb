@@ -1,5 +1,5 @@
 require 'jsduck/logger'
-require 'pp'
+require 'jsduck/class'
 
 module JsDuck
 
@@ -34,10 +34,10 @@ module JsDuck
         m[:doc] = (m[:doc] + "\n\n" + parent[:doc]).strip
         m[:params] = parent[:params] if parent[:params]
         m[:return] = parent[:return] if parent[:return]
+        m[:type] = parent[:type] if parent[:type]
 
         if m[:autodetected]
           m[:meta] = parent[:meta].merge(m[:meta])
-          m[:type] = parent[:type] if parent[:type]
         end
 
         # remember properties that have changed to configs
@@ -61,7 +61,7 @@ module JsDuck
     # For auto-detected members/classes (which have @private == :inherit)
     # Use the visibility from parent class (defaulting to private when no parent).
     def resolve_visibility(m, parent)
-      if m[:autodetected]
+      if m[:autodetected] && !JsDuck::Class.constructor?(m)
         if !parent || parent[:private]
           m[:meta][:private] = m[:private] = true
         end

@@ -90,6 +90,13 @@
 #loginContainer {
   text-align: right;
   color: #fff;
+  span {
+    position: relative;
+    img.avatar {
+      @include border-radius(2px);
+      position: absolute;
+      top: -5px;
+      left: -35px; } }
   .register {
     font-weight: bold; }
   a {

@@ -68,8 +68,7 @@ Ext.define('Docs.view.comments.Users', {
                     '<tpl for=".">',
                         '<li>',
                             '<span class="score">{score}</span>',
-                            '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/{emailHash}',
-                                  '?s=25&amp;r=PG&amp;d=http://www.sencha.com/img/avatar.png">',
+                            '{[Docs.Comments.avatar(values.emailHash)]}',
                             '<span class="username <tpl if="mod">moderator</tpl>">{userName}</span>',
                         '</li>',
                     '</tpl>',
@@ -138,7 +137,7 @@ Ext.define('Docs.view.comments.Users', {
     },
 
     loadUsers: function(users) {
-        this.list.getStore().loadData(users);
+        this.list.getStore().loadData(users.data);
         if (this.selectedUser) {
             var index = this.list.getStore().findExact("userName", this.selectedUser.get("userName"));
             this.list.getSelectionModel().select(index, false, true);
