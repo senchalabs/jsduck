@@ -180,61 +180,6 @@ Ext.define('Docs.view.Comments', {
             commentTplHtml.join(''),
             commentTplMethods
         );
-/* merge conflict -- remove
-        var commentMetaAndGuide = [
-            '<div class="com-meta">',
-                '<img class="avatar" width="25" height="25"',
-                    ' src="http://www.gravatar.com/avatar/{emailHash}?s=25&amp;r=PG">',
-                '<div class="author">Logged in as {userName}</div>',
-                '<label class="subscribe">',
-                    'Email updates? <input type="checkbox" class="subscriptionCheckbox" <tpl if="userSubscribed">checked="checked"</tpl> /><span class="sep"> | </span>',
-                '</label>',
-                '<a href="#" class="toggleCommentGuide">Help</a>',
-                '<input type="submit" class="sub {[values.updateComment ? "update" : "post"]}Comment" value="{[values.updateComment ? "Update" : "Post"]} comment" />',
-                '<tpl if="updateComment">',
-                    ' or <a href="#" class="cancelUpdateComment">cancel</a>',
-                '</tpl>',
-            '</div>',
-            '<div class="commentGuideTxt" style="display: none">',
-                '<ul>',
-                    '<li>Comments should be an <strong>extension</strong> of the documentation.<br>',
-                    ' Inform us about bugs in documentation.',
-                    ' Give useful tips to other developers.',
-                    ' Warn about bugs and problems that might bite.',
-                    '</li>',
-                    "<li>Don't post comments for:",
-                    '<ul>',
-                        '<li><strong>Questions about code or usage</strong>',
-                        ' - use the <a href="http://developer.appcelerator.com/questions" target="_blank">Appcelerator Q&A</a>.</li>',
-                        '<li><strong>SDK or documentation bugs</strong>',
-                        ' - use the <a href="http://jira.appcelerator.com" target="_blank">JIRA bug tracker</a>.</li>',
-                    '</ul></li>',
-            '</div>'
-        ];
-
-        this.loggedInCommentTpl = Ext.create('Ext.XTemplate',
-            '<div class="new-comment{[values.hide ? "" : " open"]}">',
-                '<form class="newCommentForm">',
-                    '<div class="postCommentWrap">',
-                        '<tpl if="definedIn">',
-                            "<p><b>Be aware.</b> This comment will be posted to <b>{definedIn}</b> class, ",
-                            "from where this member is inherited from.</p>",
-                        '</tpl>',
-                        '<textarea></textarea>',
-                        commentMetaAndGuide.join(''),
-                    '</div>',
-                '</form>',
-            '</div>'
-        );
-
-        this.editCommentTpl = Ext.create('Ext.XTemplate',
-            '<form class="editCommentForm">',
-                '<span class="action">Edit comment</span>',
-                '<textarea>{content}</textarea>',
-                commentMetaAndGuide.join(''),
-            '</form>'
-        );
-*/
     },
 
     /**
