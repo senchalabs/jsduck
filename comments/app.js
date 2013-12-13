@@ -198,7 +198,8 @@ app.post('/auth/:sdk/:version/comments/:commentId/delete', Auth.isLoggedIn, Auth
 
 // Restores a deleted comment
 app.post('/auth/:sdk/:version/comments/:commentId/undo_delete', Auth.isLoggedIn, Auth.canModify, function(req, res) {
-    new Request(req).setDeleted(req.params.commentId, false, function() {
+    var r = new Request(req);
+    r.setDeleted(req.params.commentId, false, function() {
         r.getComment(req.params.commentId, function(comment) {
             res.send({ success: true, comment: comment });
         });

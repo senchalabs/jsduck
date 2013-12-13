@@ -3,6 +3,7 @@ require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
 require 'jsduck/util/json'
 require 'jsduck/util/os'
+require 'jsduck/util/io'
 require 'jsduck/util/parallel'
 
 module JsDuck
@@ -81,7 +82,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.2.0"
+      @version = "4.2.1"
 
       # Customizing output
       @title = "Titanium Mobile"
@@ -238,7 +239,7 @@ module JsDuck
         end
 
         opts.on('--encoding=NAME', "Input encoding (defaults to UTF-8).") do |encoding|
-          JsDuck::IO.encoding = encoding
+          JsDuck::Util::IO.encoding = encoding
         end
 
         opts.separator ""
