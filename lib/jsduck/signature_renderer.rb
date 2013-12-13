@@ -19,6 +19,7 @@ module JsDuck
         return [
           render_new,
           render_link,
+          render_type
         ]
       else
         return [
@@ -59,7 +60,7 @@ module JsDuck
     def render_type
       if like_property?
         render_property_type
-      else
+      elsif ! @opts.rest
         render_params + render_return
       end
     end
