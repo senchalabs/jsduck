@@ -18,6 +18,7 @@ Ext.define('Docs.controller.Auth', {
 
     init: function() {
         this.sid = Ext.util.Cookies.get('sid');
+        this.currentUser = {};
 
         this.addEvents(
             /**
@@ -73,19 +74,26 @@ Ext.define('Docs.controller.Auth', {
      */
     retrieveSession: function() {
         Ext.Ajax.request({
-            url: Docs.baseUrl + '/session',
+            url: Docs.baseUrl + '/session_new',
             params: { sid: this.sid },
             method: 'GET',
             cors: true,
             callback: function(options, success, response) {
                 if (response && response.responseText) {
-                    this.currentUser = JSON.parse(response.responseText);
-                    this.fireEvent('available');
-                    if (this.currentUser) {
+                    var data = Ext.JSON.decode(response.responseText);
+
+                    if (data && data.sessionID) {
+                        this.setSid(data.sessionID);
+                    }
+
+                    if (data && data.userName) {
+                        this.currentUser = data;
                         this.setLoggedIn();
                     } else {
                         this.setLoggedOut();
                     }
+
+                    this.fireEvent('available');
                 }
             },
             scope: this
@@ -109,7 +117,7 @@ Ext.define('Docs.controller.Auth', {
                 password: password
             },
             callback: function(options, success, response) {
-                var data = JSON.parse(response.responseText);
+                var data = Ext.JSON.decode(response.responseText);
                 if (data.success) {
                     this.currentUser = data;
                     this.setSid(data.sessionID, { remember: remember });
@@ -155,7 +163,6 @@ Ext.define('Docs.controller.Auth', {
      */
     setLoggedOut: function(user) {
         this.currentUser = {};
-        this.setSid(null);
         this.getAuth().showLoggedOut();
         this.fireEvent('loggedOut');
     },
@@ -165,7 +172,15 @@ Ext.define('Docs.controller.Auth', {
      * @return {Boolean} true if the user is logged in
      */
     isLoggedIn: function() {
-        return Boolean(this.sid);
+        return !!this.currentUser.userName;
+    },
+
+    /**
+     * True when current user is moderator.
+     * @return {Boolean}
+     */
+    isModerator: function() {
+        return this.currentUser.mod;
     },
 
     /**

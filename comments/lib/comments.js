@@ -114,6 +114,8 @@ Comments.prototype = {
      * Two possible options here: "created_at" and "vote".
      * @param {Number} [opts.hideUser=undefined] A user_id to hide.
      * @param {Number} [opts.hideRead=false] True to hide comments marked as read.
+     * @param {Number} [opts.username=undefined] The name of the user who's comments to show.
+     * @param {Number} [opts.targetId=undefined] The ID of the target to show.
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
@@ -138,6 +140,8 @@ Comments.prototype = {
      *
      * @param {Object} opts Options for the query:
      * @param {Number} [opts.hideUser=undefined] A user_id to hide.
+     * @param {Number} [opts.username=undefined] The name of the user who's comments to show.
+     * @param {Number} [opts.targetId=undefined] The ID of the target to show.
      *
      * @param {Function} callback Called with the result.
      * @param {Error} callback.err The error object.
@@ -163,6 +167,12 @@ Comments.prototype = {
         }
         if (opts.hideRead) {
             where.push(this.getReadExpression() + " = 0");
+        }
+        if (opts.username) {
+            where.push(this.db.format("username = ?", [opts.username]));
+        }
+        if (opts.targetId) {
+            where.push(this.db.format("target_id = ?", [opts.targetId]));
         }
         return where.join(" AND ");
     },
@@ -358,6 +368,58 @@ Comments.prototype = {
                 callback(err);
             }
         });
+    },
+
+    /**
+     * Retrieves users ordered by number of upvotes or number of comments.
+     * @param {String} sortBy Either "votes" or "comments"
+     * @param {Function} callback Called when done.
+     * @param {String} callback.err Error message when query failed.
+     * @param {Object} callback.users The top users.
+     */
+    getTopUsers: function(sortBy, callback) {
+        if (sortBy === "votes") {
+            var score = "COALESCE(SUM(vote), 0) AS score";
+        }
+        else {
+            var score = "COUNT(*) AS score";
+        }
+
+        var sql = [
+            "SELECT",
+                "user_id AS id,",
+                "username,",
+                "email,",
+                "moderator,",
+                score,
+            "FROM ", this.view,
+            "WHERE domain = ?",
+            "GROUP BY user_id",
+            "ORDER BY score DESC"
+        ];
+        this.db.query(sql, [this.domain], callback);
+    },
+
+    /**
+     * Retrieves targets ordered by number of comments.
+     * @param {Function} callback Called when done.
+     * @param {String} callback.err Error message when query failed.
+     * @param {Object} callback.targets The top targets.
+     */
+    getTopTargets: function(callback) {
+        var sql = [
+            "SELECT",
+                "target_id AS id,",
+                "type,",
+                "cls,",
+                "member,",
+                "COUNT(*) AS score",
+            "FROM ", this.view,
+            "WHERE domain = ?",
+            "GROUP BY target_id",
+            "ORDER BY score DESC"
+        ];
+        this.db.query(sql, [this.domain], callback);
     },
 
     // Helper that converts all `vote_dir` and `read` fields into

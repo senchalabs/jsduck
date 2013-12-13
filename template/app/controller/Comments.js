@@ -12,6 +12,7 @@ Ext.define('Docs.controller.Comments', {
 
     requires: [
         "Docs.view.auth.LoginHelper",
+        "Docs.view.comments.Form",
         "Docs.Settings",
         "Docs.Syntax",
         "Docs.Tip"
@@ -29,8 +30,15 @@ Ext.define('Docs.controller.Comments', {
         {
             ref: 'index',
             selector: '#commentindex'
+        },
+        {
+            ref: 'commentsList',
+            selector: 'commentsList'
         }
     ],
+
+    // Recent comments query parameters that aren't saved into cookies.
+    recentCommentsSettings: {},
 
     init: function() {
         this.addEvents(
@@ -67,7 +75,7 @@ Ext.define('Docs.controller.Comments', {
             },
             loggedIn:  function() {
                 Docs.view.Comments.renderNewCommentForms();
-                this.isMod() && this.getController("Tabs").showCommentsTab();
+                this.getController("Tabs").showCommentsTab();
             },
             loggedOut: function() {
                 Docs.view.Comments.renderNewCommentForms();
@@ -135,8 +143,26 @@ Ext.define('Docs.controller.Comments', {
                 }
             },
 
-            'commentindex': {
-                settingChange: function() {
+            'commentsList': {
+                hideReadChange: function() {
+                    this.fetchRecentComments();
+                },
+                sortOrderChange: function(orderBy) {
+                    this.recentCommentsSettings.sortByScore = (orderBy === "votes");
+                    this.fetchRecentComments();
+                }
+            },
+
+            'commentsUsers': {
+                select: function(username) {
+                    this.recentCommentsSettings.username = username;
+                    this.fetchRecentComments();
+                }
+            },
+
+            'commentsTargets': {
+                select: function(target) {
+                    this.recentCommentsSettings.targetId = target && target.get("id");
                     this.fetchRecentComments();
                 }
             },
@@ -152,7 +178,7 @@ Ext.define('Docs.controller.Comments', {
     },
 
     isMod: function() {
-        return this.getController('Auth').currentUser.mod;
+        return this.getController('Auth').isModerator();
     },
 
     enableComments: function() {
@@ -282,18 +308,19 @@ Ext.define('Docs.controller.Comments', {
             offset: offset || 0,
             limit: 100,
             hideRead: settings.hideRead ? 1 : undefined,
-            hideCurrentUser: settings.hideCurrentUser ? 1 : undefined,
-            sortByScore: settings.sortByScore ? 1 : undefined
+            sortByScore: this.recentCommentsSettings.sortByScore ? 1 : undefined,
+            username: this.recentCommentsSettings.username,
+            targetId: this.recentCommentsSettings.targetId
         };
 
-        this.getIndex().setMasked(true);
+        this.getCommentsList().setMasked(true);
 
         this.request("jsonp", {
             url: '/comments_recent',
             method: 'GET',
             params: params,
             success: function(response) {
-                this.getIndex().setMasked(false);
+                this.getCommentsList().setMasked(false);
 
                 this.renderComments(response, 'recentcomments', {
                     hideCommentForm: true,
@@ -423,15 +450,12 @@ Ext.define('Docs.controller.Comments', {
                 if (data.success) {
                     contentEl.dom.origContent = contentEl.dom.innerHTML;
 
-                    var commentData = Ext.merge(Ext.clone(currentUser), {
+                    new Docs.view.comments.Form({
+                        renderTo: contentEl,
+                        user: currentUser,
                         content: data.content,
                         updateComment: true
                     });
-
-                    var editForm = Docs.view.Comments.editCommentTpl.overwrite(contentEl, commentData, true);
-
-                    var textarea = editForm.down('textarea').dom;
-                    Docs.view.Comments.makeCodeMirror(textarea, editForm);
                 }
             },
             scope: this
@@ -679,20 +703,14 @@ Ext.define('Docs.controller.Comments', {
             var commentWrap = comments.down('.new-comment-wrap');
             if (this.isLoggedIn()) {
 
-                var formData = Ext.apply(this.getController('Auth').currentUser, {
-                    userSubscribed: Docs.commentSubscriptions[id]
-                });
-
                 var memInfo = Docs.view.Comments.extractMemberInfo(commentWrap);
 
-                var wrap = Docs.view.Comments.loggedInCommentTpl.overwrite(commentWrap, Ext.apply(memInfo, formData), true);
-
-                if (wrap) {
-                    var textareaEl = wrap.down('textarea');
-                    if (textareaEl) {
-                        Docs.view.Comments.makeCodeMirror(textareaEl.dom, wrap);
-                    }
-                }
+                new Docs.view.comments.Form({
+                    renderTo: commentWrap,
+                    definedIn: memInfo.definedIn,
+                    user: this.getController('Auth').currentUser,
+                    userSubscribed: Docs.commentSubscriptions[id]
+                });
             } else {
                 Docs.view.auth.LoginHelper.renderToComments(commentWrap);
             }

@@ -69,5 +69,11 @@ Meta = mongoose.model('Meta', new mongoose.Schema({
 }));
 
 mongoose.connect(config.mongoDb, function(err, ok) {
-    console.log("Connected to DB")
+    if (err) {
+        console.warn("Unable to connect to MongoDB");
+        console.warn(err);
+    }
+    else {
+        console.warn("Connected to MongoDB");
+    }
 });

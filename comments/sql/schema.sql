@@ -1,3 +1,11 @@
+DROP TABLE IF EXISTS readings;
+DROP TABLE IF EXISTS subscriptions;
+DROP TABLE IF EXISTS updates;
+DROP TABLE IF EXISTS votes;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS targets;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
@@ -104,3 +112,20 @@ CREATE OR REPLACE VIEW full_comments AS SELECT
 FROM comments AS c
     LEFT JOIN users ON c.user_id = users.id
     LEFT JOIN targets ON c.target_id = targets.id;
+
+
+-- set up triggers to recalculate the votes column automatically
+
+DROP TRIGGER IF EXISTS on_vote_added;
+CREATE TRIGGER on_vote_added AFTER INSERT ON votes
+FOR EACH ROW
+    UPDATE comments
+    SET vote = (SELECT SUM(value) FROM votes WHERE votes.comment_id = comments.id)
+    WHERE id = NEW.comment_id;
+
+DROP TRIGGER IF EXISTS on_vote_deleted;
+CREATE TRIGGER on_vote_deleted AFTER DELETE ON votes
+FOR EACH ROW
+    UPDATE comments
+    SET vote = (SELECT SUM(value) FROM votes WHERE votes.comment_id = comments.id)
+    WHERE id = OLD.comment_id;

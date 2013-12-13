@@ -407,7 +407,11 @@ module JsDuck
     end
 
     def chainable?(ast)
-      FunctionAst.chainable?(ast)
+      if function?(ast) && !empty_fn?(ast)
+        FunctionAst.return_types(ast) == [:this]
+      else
+        false
+      end
     end
 
     def make_property(name=nil, ast=nil, tagname=:property)

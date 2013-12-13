@@ -26,6 +26,10 @@
       }
     &.component a {
       background: url(../images/component-m.png) no-repeat 0 -5px; }
+    &.class .class-source-link {
+      background: url(../images/class-m.png) no-repeat 0 -5px; }
+    &.component .class-source-link {
+      background: url(../images/component-m.png) no-repeat 0 -5px; }
     &.singleton .class-source-link {
       background: url(../images/singleton-m.png) no-repeat 0 -5px; }
 

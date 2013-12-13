@@ -462,7 +462,7 @@ function addIds(objects) {
 
 function asyncPrint(msg) {
     return function(data, next) {
-        console.log(msg);
+        console.warn(msg);
         next();
     };
 }
@@ -514,13 +514,13 @@ sequence({}, [
     ReadingsTable.extract,
 
     function(data, next) {
-        console.log(data.users.length + " users");
-        console.log(data.targets.length + " targets");
-        console.log(data.comments.length + " comments");
-        console.log(data.votes.length + " votes");
-        console.log(data.updates.length + " updates");
-        console.log(data.subscriptions.length + " subscriptions");
-        console.log(data.readings.length + " readings");
+        console.warn(data.users.length + " users");
+        console.warn(data.targets.length + " targets");
+        console.warn(data.comments.length + " comments");
+        console.warn(data.votes.length + " votes");
+        console.warn(data.updates.length + " updates");
+        console.warn(data.subscriptions.length + " subscriptions");
+        console.warn(data.readings.length + " readings");
         next();
     },
 

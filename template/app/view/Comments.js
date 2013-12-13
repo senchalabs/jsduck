@@ -11,7 +11,8 @@ Ext.define('Docs.view.Comments', {
         // and indeed, when running in browser, the app will work just
         // fine, but when doing e.g. "rake gem" something goes wrong
         // and the "sencha create jsb" command just hangs.
-        'Docs.view.auth.Login'
+        'Docs.view.auth.Login',
+        'Docs.view.comments.Form'
     ],
 
     constructor: function() {
@@ -132,7 +133,12 @@ Ext.define('Docs.view.Comments', {
                     urlPrefix = '#!/guide/';
                 } else if (target[2] != '') {
                     url += '-' + target[2];
-                    title += ' ' + target[2];
+                    if (target[0] == "class") {
+                        title += '#' + target[2].replace(/^.*-/, "");
+                    }
+                    else {
+                        title += ' ' + target[2];
+                    }
                 }
 
                 return '<a href="' + urlPrefix + url + '">' + title + '</a>';
@@ -174,7 +180,7 @@ Ext.define('Docs.view.Comments', {
             commentTplHtml.join(''),
             commentTplMethods
         );
-
+/* merge conflict -- remove
         var commentMetaAndGuide = [
             '<div class="com-meta">',
                 '<img class="avatar" width="25" height="25"',
@@ -228,6 +234,7 @@ Ext.define('Docs.view.Comments', {
                 commentMetaAndGuide.join(''),
             '</form>'
         );
+*/
     },
 
     /**
@@ -406,10 +413,11 @@ Ext.define('Docs.view.Comments', {
             if (hideCommentForm) {
                 // Do nothing
             } else if (Docs.App.getController('Auth').isLoggedIn()) {
-                var wrap = this.loggedInCommentTpl.overwrite(newComment, Ext.apply(memInfo, currentUser), true),
-                    textarea = wrap.down('textarea').dom;
-
-                this.makeCodeMirror(textarea, wrap);
+                new Docs.view.comments.Form({
+                    renderTo: newComment,
+                    definedIn: memInfo.definedIn,
+                    user: currentUser
+                });
             } else {
                 Docs.view.auth.LoginHelper.renderToComments(newComment);
             }
@@ -430,14 +438,6 @@ Ext.define('Docs.view.Comments', {
             info.definedIn = member.down(".defined-in").getHTML();
         }
         return info;
-    },
-
-    makeCodeMirror: function(textarea, form) {
-        textarea.editor = CodeMirror.fromTextArea(textarea, {
-            mode: 'markdown',
-            lineWrapping: true,
-            indentUnit: 4
-        });
     },
 
     showMember: function(cls, member) {

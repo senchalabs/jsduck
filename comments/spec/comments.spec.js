@@ -2,16 +2,12 @@ describe("Comments", function() {
     var mysql = require("mysql");
     var Comments = require("../lib/comments");
     var DbFacade = require('../lib/db_facade');
+    var config = require('../config');
     var connection;
     var comments;
 
     beforeEach(function() {
-        connection = mysql.createConnection({
-            host: 'localhost',
-            user: '',
-            password: '',
-            database: 'comments_test'
-        });
+        connection = mysql.createConnection(config.testDb);
 
         comments = new Comments(new DbFacade(connection), "ext-js-4");
     });
@@ -167,6 +163,20 @@ describe("Comments", function() {
         });
     });
 
+    it("#findRecent with username:renku includes only comments by that user", function(done) {
+        comments.findRecent({username: "renku"}, function(err, rows) {
+            expect(rows.every(function(r){return r.username === "renku";})).toEqual(true);
+            done();
+        });
+    });
+
+    it("#findRecent with targetId:1 includes only comments for that target", function(done) {
+        comments.findRecent({targetId: 1}, function(err, rows) {
+            expect(rows.every(function(r){return r.target_id === 1;})).toEqual(true);
+            done();
+        });
+    });
+
     it("#count gets total number of comments in current domain", function(done) {
         comments.count({}, function(err, cnt) {
             expect(cnt).toEqual(24);
@@ -210,10 +220,59 @@ describe("Comments", function() {
         });
     });
 
+    it("#count with username:renku includes only comments of that user", function(done) {
+        comments.count({username: "renku"}, function(err, cnt) {
+            expect(cnt).toEqual(5);
+            done();
+        });
+    });
+
+    it("#count with targetId:1 includes only comments of that target", function(done) {
+        comments.count({targetId: 1}, function(err, cnt) {
+            expect(cnt).toEqual(5);
+            done();
+        });
+    });
+
     it("#countPerTarget gets number of comments for each target", function(done) {
         comments.countsPerTarget(function(err, counts) {
             var line = counts.filter(function(row) { return row._id === "class__Ext__"; })[0];
             expect(line.value).toEqual(5);
+            done();
+        });
+    });
+
+    it("#getTopUsers gives all users who have posted to this domain", function(done) {
+        comments.getTopUsers("votes", function(err, users) {
+            expect(users.length).toEqual(5);
+            done();
+        });
+    });
+
+    it("#getTopUsers('votes') gives users sorted by votes", function(done) {
+        comments.getTopUsers("votes", function(err, users) {
+            expect(users[0].score).toBeGreaterThan(users[1].score);
+            done();
+        });
+    });
+
+    it("#getTopUsers('comments') gives users sorted by comment counts", function(done) {
+        comments.getTopUsers("comments", function(err, users) {
+            expect(users[0].score).toBeGreaterThan(users[1].score);
+            done();
+        });
+    });
+
+    it("#getTopTargets gives all targets that have received posts in this domain", function(done) {
+        comments.getTopTargets(function(err, targets) {
+            expect(targets.length).toEqual(11);
+            done();
+        });
+    });
+
+    it("#getTopTargets sorts targets by number of comments", function(done) {
+        comments.getTopTargets(function(err, targets) {
+            expect(targets[0].score).toBeGreaterThan(targets[1].score);
             done();
         });
     });

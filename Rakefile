@@ -17,12 +17,7 @@ end
 desc "Run Jasmine specs for comments backend"
 task :jasmine do
   # Initialize database with test data
-  test_db = "comments_test"
-  system("echo 'DROP DATABASE IF EXISTS #{test_db};' | mysql")
-  system("echo 'CREATE DATABASE #{test_db};' | mysql")
-  system("mysql #{test_db} < comments/sql/schema.sql")
-  system("mysql #{test_db} < comments/sql/test_data.sql")
-  system("mysql #{test_db} < comments/sql/update_votes.sql")
+  system("cd comments/; node load_test_db.js")
 
   # run jasmine tests against that database
   system("node comments/node_modules/jasmine-node/lib/jasmine-node/cli.js comments/spec/")
@@ -99,6 +94,14 @@ def combine_js(html, dir)
   html.sub(js_section_re, '<script type="text/javascript" src="app.js"></script>')
 end
 
+# Modifies HTML to link app.css.
+# Doesn't modify the linked CSS files.
+def rewrite_css_links(dir, filename)
+  html = IO.read(dir + "/" + filename);
+  html = combine_css(html, dir, :replace_html_only)
+  File.open(dir + "/" + filename, 'w') {|f| f.write(html) }
+end
+
 # Compress JavaScript and CSS files of JSDuck
 def compress
   load_sdk_vars
@@ -123,12 +126,9 @@ def compress
   # Remove the entire app/ dir
   system("rm", "-r", "#{dir}/app")
 
-  # Concatenate CSS in print-template.html file
-  print_template = "#{dir}/print-template.html";
-  html = IO.read(print_template);
-  # Just modify HTML to link app.css, don't write files.
-  html = combine_css(html, dir, :replace_html_only)
-  File.open(print_template, 'w') {|f| f.write(html) }
+  # Change CSS links in print-template.html and index-template.html files
+  rewrite_css_links(dir, "print-template.html")
+  rewrite_css_links(dir, "index-template.html")
 
   # Concatenate CSS and JS files referenced in template.html file
   template_html = "#{dir}/template.html"

@@ -3,6 +3,7 @@ var MySQLStore = require('connect-mysql-session')(express);
 var config = require('./config');
 var Request = require('./lib/request');
 var Auth = require('./lib/auth');
+var ApiAdapter = require('./lib/api_adapter');
 
 var app = express();
 
@@ -59,6 +60,7 @@ app.configure(function() {
 
 // Authentication
 
+// Old version for backwards compat.
 app.get('/auth/session', function(req, res) {
     new Request(req).getUser(function(user) {
         if (user) {
@@ -73,14 +75,26 @@ app.get('/auth/session', function(req, res) {
     });
 });
 
+// New version.
+app.get('/auth/session_new', function(req, res) {
+    new Request(req).getUser(function(user) {
+        if (user) {
+            var json = ApiAdapter.userToJson(user);
+            json.sessionID = req.sessionID;
+            res.json(json);
+        }
+        else {
+            res.json({sessionID: req.sessionID});
+        }
+    });
+});
+
 app.post('/auth/login', Auth.attemptLogin, function(req, res) {
     new Request(req).getUser(function(user) {
-        res.json({
-            userName: user.username,
-            mod: user.moderator,
-            sessionID: req.sessionID,
-            success: true
-        });
+        var json = ApiAdapter.userToJson(user);
+        json.sessionID = req.sessionID;
+        json.success = true;
+        res.json(json);
     });
 });
 
@@ -98,10 +112,26 @@ app.get('/auth/:sdk/:version/comments_recent', function(req, res) {
         limit: parseInt(req.query.limit, 10),
         orderBy: req.query.sortByScore ? "vote" : "created_at",
         hideCurrentUser: req.query.hideCurrentUser,
-        hideRead: req.query.hideRead
+        hideRead: req.query.hideRead,
+        username: req.query.username,
+        targetId: req.query.targetId
     };
     new Request(req).getRecentComments(query, function(comments) {
         res.json(comments);
+    });
+});
+
+// Returns top users (with most upvotes or with most comments).
+app.get('/auth/:sdk/:version/users', function(req, res) {
+    new Request(req).getTopUsers(req.query.sortBy, function(users) {
+        res.json(users);
+    });
+});
+
+// Returns the most commented targets.
+app.get('/auth/:sdk/:version/targets', function(req, res) {
+    new Request(req).getTopTargets(function(users) {
+        res.json(users);
     });
 });
 

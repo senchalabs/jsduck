@@ -12,6 +12,7 @@ module.exports = {
     commentToJson: function(comment) {
         return {
             _id: comment.id,
+            user_id: comment.user_id,
             author: comment.username,
             target: this.targetToJson(comment),
             content: comment.content,
@@ -23,6 +24,19 @@ module.exports = {
             read: comment.read,
             moderator: comment.moderator,
             emailHash: crypto.createHash('md5').update(comment.email).digest("hex")
+        };
+    },
+
+    /**
+     * Turns user row into JSON response.
+     */
+    userToJson: function(user) {
+        return {
+            id: user.id,
+            userName: user.username,
+            score: user.score,
+            mod: user.moderator,
+            emailHash: crypto.createHash('md5').update(user.email).digest("hex")
         };
     },
 

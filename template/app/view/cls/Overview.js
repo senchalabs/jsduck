@@ -65,6 +65,7 @@ Ext.define('Docs.view.cls.Overview', {
                 el.addCls('open');
             }
 
+            var top = this.body.getBox().y;
             this.scrollToView(el, {
                 highlight: true,
                 // Ti changed offset correction
