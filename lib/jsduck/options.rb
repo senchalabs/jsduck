@@ -40,6 +40,8 @@ module JsDuck
     attr_accessor :rest
     # Ti adding accessor(s)
     attr_accessor :platform_names
+    attr_accessor :comments_url
+    attr_accessor :comments_domain
 
     # Debugging
     attr_accessor :template_dir
@@ -82,7 +84,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.3.1"
+      @version = "4.3.2"
 
       # Customizing output
       @title = "Titanium Mobile"
@@ -116,6 +118,8 @@ module JsDuck
         # "actionscript" => "AS3 SDK",
         # "javascript" => "JS SDK"
       }
+      @comments_url = nil
+      @comments_domain = nil
 
       # Debugging
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
@@ -387,6 +391,24 @@ module JsDuck
           "",
           "Defaults to the last version listed by --import.") do |v|
           @new_since = v
+        end
+
+        opts.on('--comments-url=URL',
+          "Address of comments server.",
+          "",
+          "For example: http://projects.sencha.com/auth",
+          "",
+          "Must be used together with --comments-domain option.") do |url|
+          @comments_url = url
+        end
+
+        opts.on('--comments-domain=STRING',
+          "A string consisting of <name>/<version>.",
+          "",
+          "For example: ext-js/4",
+          "",
+          "Must be used together with --comments-url option.") do |domain|
+          @comments_domain = domain
         end
 
         opts.separator ""

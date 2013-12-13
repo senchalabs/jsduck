@@ -8,6 +8,7 @@ Ext.define('Docs.view.comments.FullList', {
     requires: [
         'Docs.Settings',
         'Docs.Auth',
+        'Docs.Comments',
         'Docs.view.comments.List',
         'Docs.view.comments.Pager'
     ],
@@ -150,6 +151,6 @@ Ext.define('Docs.view.comments.FullList', {
      * @return {Object}
      */
     getTab: function() {
-        return Docs.enableComments ? {cls: 'comments', href: '#!/comment', tooltip: 'Comments'} : false;
+        return Docs.Comments.isEnabled() ? {cls: 'comments', href: '#!/comment', tooltip: 'Comments'} : false;
     }
 });

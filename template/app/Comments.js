@@ -22,7 +22,7 @@ Ext.define('Docs.Comments', {
      * @param {Object} scope
      */
     init: function(callback, scope) {
-        if (!Docs.enableComments) {
+        if (!(Docs.data.commentsUrl && Docs.data.commentsDomain && this.isBrowserSupported())) {
             callback.call(scope);
             return;
         }
@@ -40,6 +40,14 @@ Ext.define('Docs.Comments', {
                 callback.call(scope);
             }
         }, this);
+    },
+
+    // Comments only get enabled when CORS is supported by browser.
+    // This excludes older Opera and IE < 8.
+    // We check explicitly for IE version to make sure the code works the
+    // same way in both real IE7 and IE7-mode of IE8/9.
+    isBrowserSupported: function() {
+        return ("withCredentials" in new XMLHttpRequest()) || (Ext.ieVersion >= 8);
     },
 
     // Fetches comment counts and subscriptions.
@@ -243,7 +251,7 @@ Ext.define('Docs.Comments', {
     },
 
     buildRequestUrl: function(url) {
-        url = Docs.baseUrl + '/' + Docs.commentsDb + '/' + Docs.commentsVersion + url;
+        url = Docs.data.commentsUrl + "/" + Docs.data.commentsDomain + url;
         return url + (url.match(/\?/) ? '&' : '?') + 'sid=' + Docs.Auth.getSid();
     },
 

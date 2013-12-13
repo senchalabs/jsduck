@@ -1,6 +1,4 @@
 <?php
-include("Mobile_Detect.php");
-
 header("Access-Control-Allow-Origin: http://localhost");
 header("Access-Control-Allow-Credentials: true ");
 header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
@@ -32,21 +30,17 @@ function decode_file($filename) {
   }
 }
 
-function is_mobile() {
-  $detect = new Mobile_Detect();
-  return $detect->isMobile();
-}
-
 // Turns #! links into ?print= links when in print mode.
 //
 // <a href="#!/api/Ext.Element">  -->  <a href="?print=/api/Ext.Element">
 // <a href="#!/api/Ext.Element-cfg-id">  -->  <a href="?print=/api/Ext.Element#cfg-id">
 //
 function fix_links($html) {
-  if (isset($_GET["print"]) || is_mobile()) {
+  if (isset($_GET["print"]) || isset($_GET["mobile"])) {
+    $param = isset($_GET["print"]) ? "print" : "mobile";
     $patterns = array(
-      '/<a href=([\'"])#!?\/(api\/[^-\'"]+)-([^\'"]+)/' => '<a href=$1?print=/$2#$3',
-      '/<a href=([\'"])#!?\//' => '<a href=$1?print=/',
+      '/<a href=([\'"])#!?\/(api\/[^-\'"]+)-([^\'"]+)/' => '<a href=$1?'.$param.'=/$2#$3',
+      '/<a href=([\'"])#!?\//' => '<a href=$1?'.$param.'=/',
     );
     return preg_replace(array_keys($patterns), array_values($patterns), $html);
   }
@@ -55,12 +49,15 @@ function fix_links($html) {
   }
 }
 
-if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"]) || is_mobile()) {
+if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"]) || isset($_GET["mobile"])) {
   if (isset($_GET["_escaped_fragment_"])) {
     $fragment = $_GET["_escaped_fragment_"];
   }
   elseif (isset($_GET["print"])) {
     $fragment = $_GET["print"];
+  }
+  elseif (isset($_GET["mobile"])) {
+    $fragment = $_GET["mobile"];
   }
   else {
     $fragment = "";
