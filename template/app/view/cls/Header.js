@@ -27,7 +27,7 @@ Ext.define('Docs.view.cls.Header', {
 //                    '<span>singleton</span>',
 //                '</tpl>',
                 '<tpl if="enum">',
-                    '<span>enum of <b>{enum.type}</b></span>',
+                    '<span>enum of <b>{[values["enum"].type]}</b></span>',
                 '</tpl>',
                 '<a>{name}</a>',
                 '<small class="typestr">{[this.renderTypestr(values.meta)]}</small>',

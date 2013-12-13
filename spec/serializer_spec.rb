@@ -162,10 +162,6 @@ describe JsDuck::Serializer do
   end
 
   describe "adds parenthesis correctly on" do
-    it "assignment expression" do
-      test("(foo, bar) = [1, 2];")
-    end
-
     it "conditional expression" do
       test("(foo = true) ? 1 : 2;")
     end
@@ -180,10 +176,6 @@ describe JsDuck::Serializer do
 
     it "unary expression" do
       test("!(bar || baz);")
-    end
-
-    it "update expression" do
-      test("++(5 + 5);")
     end
 
     it "call expression" do

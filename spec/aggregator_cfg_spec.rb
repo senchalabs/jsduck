@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     agr.result
   end
 
@@ -131,7 +131,7 @@ describe JsDuck::Aggregator do
   end
 
   def parse_config_code(propertyName)
-    parse(<<-EOS)[0][:members][:cfg]
+    parse(<<-EOS)[0][:members]
       /**
        * Some documentation.
        */
@@ -149,7 +149,7 @@ describe JsDuck::Aggregator do
     # Generic tests
 
     it "finds configs" do
-      cfg.should be_kind_of(Array)
+      cfg.all? {|m| m[:tagname] == :cfg }.should == true
     end
 
     it "finds two configs" do
@@ -221,7 +221,7 @@ describe JsDuck::Aggregator do
 
   describe "detecting Ext.define() with all kind of configs" do
     let(:cfg) do
-      parse(<<-EOS)[0][:members][:cfg]
+      parse(<<-EOS)[0][:members]
         /**
          * Some documentation.
          */
@@ -247,7 +247,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with line-comment before config:" do
     let(:cfg) do
-      parse(<<-EOS)[0][:members][:cfg]
+      parse(<<-EOS)[0][:members]
         /**
          * Some documentation.
          */

@@ -1,10 +1,10 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     agr.result
   end
 
@@ -112,7 +112,7 @@ describe JsDuck::Aggregator do
       @doc[:meta][:required].should_not == true
     end
     it "contains required config" do
-      @doc[:members][:cfg][0][:meta][:required].should == true
+      @doc[:members][0][:meta][:required].should == true
     end
   end
 

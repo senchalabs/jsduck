@@ -1,5 +1,6 @@
 require "jsduck/serializer"
 require "jsduck/evaluator"
+require "jsduck/function_ast"
 
 module JsDuck
 
@@ -224,7 +225,6 @@ module JsDuck
       cls[:mixins] = []
       cls[:aliases] = []
       cls[:members] = []
-      cls[:statics] = []
       cls[:code_type] = :ext_define
 
       each_pair_in_object_expression(ast["arguments"][1]) do |key, value, pair|
@@ -254,9 +254,9 @@ module JsDuck
         when "eventedConfig"
           cls[:members] += make_configs(value, {:accessor => true, :evented => true})
         when "statics"
-          cls[:statics] += make_statics(value)
+          cls[:members] += make_statics(value)
         when "inheritableStatics"
-          cls[:statics] += make_statics(value, {:inheritable => true})
+          cls[:members] += make_statics(value, {:inheritable => true})
         else
           detect_method_or_property(cls, key, value, pair)
         end
@@ -393,7 +393,8 @@ module JsDuck
       return {
         :tagname => :method,
         :name => name,
-        :params => make_params(ast)
+        :params => make_params(ast),
+        :chainable => chainable?(ast) && name != "constructor",
       }
     end
 
@@ -403,6 +404,10 @@ module JsDuck
       else
         []
       end
+    end
+
+    def chainable?(ast)
+      FunctionAst.chainable?(ast)
     end
 
     def make_property(name=nil, ast=nil, tagname=:property)

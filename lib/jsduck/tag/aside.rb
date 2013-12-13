@@ -65,7 +65,7 @@ module JsDuck::Tag
 
     def warn(msg)
       ctx = @context ? @context[:files][0] : {}
-      JsDuck::Logger.instance.warn(:aside, msg, ctx[:filename], ctx[:linenr])
+      JsDuck::Logger.warn(:aside, msg, ctx[:filename], ctx[:linenr])
       nil
     end
 

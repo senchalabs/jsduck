@@ -14,6 +14,20 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = "spec/**/*_spec.rb"
 end
 
+desc "Run Jasmine specs for comments backend"
+task :jasmine do
+  # Initialize database with test data
+  test_db = "comments_test"
+  system("echo 'DROP DATABASE IF EXISTS #{test_db};' | mysql")
+  system("echo 'CREATE DATABASE #{test_db};' | mysql")
+  system("mysql #{test_db} < comments/sql/schema.sql")
+  system("mysql #{test_db} < comments/sql/test_data.sql")
+  system("mysql #{test_db} < comments/sql/update_votes.sql")
+
+  # run jasmine tests against that database
+  system("node comments/node_modules/jasmine-node/lib/jasmine-node/cli.js comments/spec/")
+end
+
 def load_sdk_vars
   if File.exists?("sdk-vars.rb")
     require "./sdk-vars.rb"

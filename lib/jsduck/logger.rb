@@ -1,11 +1,11 @@
-require 'singleton'
-require 'jsduck/os'
+require 'jsduck/util/singleton'
+require 'jsduck/util/os'
 
 module JsDuck
 
   # Central logging of JsDuck
   class Logger
-    include Singleton
+    include Util::Singleton
 
     # Set to true to enable verbose logging
     attr_accessor :verbose
@@ -25,7 +25,6 @@ module JsDuck
         [:no_doc, "Member or class without documentation"],
         [:dup_param, "Method has two parameters with the same name"],
         [:dup_member, "Class has two members with the same name"],
-        [:dup_asset, "Duplicate guide/video/example"],
         [:req_after_opt, "Required parameter comes after optional"],
         [:subproperty, "@param foo.bar where foo param doesn't exist"],
         [:sing_static, "Singleton class member marked as @static"],
@@ -110,7 +109,7 @@ module JsDuck
     def format(filename=nil, line=nil)
       out = ""
       if filename
-        out = OS::windows? ? filename.gsub('/', '\\') : filename
+        out = Util::OS.windows? ? filename.gsub('/', '\\') : filename
         if line
           out += ":#{line}:"
         end
@@ -153,7 +152,7 @@ module JsDuck
     # Only does color output when STDERR is attached to TTY
     # i.e. is not piped/redirected.
     def paint(color_name, msg)
-      if OS.windows? || !$stderr.tty?
+      if Util::OS.windows? || !$stderr.tty?
         msg
       else
         COLORS[color_name] + msg + CLEAR

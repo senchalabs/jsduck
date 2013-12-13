@@ -17,6 +17,7 @@ module JsDuck
       warn_optional_params
       warn_duplicate_params
       warn_duplicate_members
+      warn_singleton_statics
       warn_empty_enums
     end
 
@@ -95,10 +96,21 @@ module JsDuck
       end
     end
 
+    # Print warnings for static members in singleton classes
+    def warn_singleton_statics
+      @relations.each do |cls|
+        if cls[:singleton]
+          cls.find_members({:local => true, :static => true}).each do |m|
+            warn(:sing_static, "Static members don't make sense in singleton class #{cls[:name]}", m)
+          end
+        end
+      end
+    end
+
     # print warnings for enums with no values
     def warn_empty_enums
       @relations.each do |cls|
-        if cls[:enum] && cls[:members][:property].length == 0
+        if cls[:enum] && cls[:members].length == 0
           warn(:enum, "Enum #{cls[:name]} defined without values in it", cls)
         end
       end
@@ -112,7 +124,7 @@ module JsDuck
     # Prints warning + filename and linenumber from doc-context
     def warn(type, msg, member)
       context = member[:files][0]
-      Logger.instance.warn(type, msg, context[:filename], context[:linenr])
+      Logger.warn(type, msg, context[:filename], context[:linenr])
     end
 
   end

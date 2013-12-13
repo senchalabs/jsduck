@@ -1,7 +1,9 @@
 require 'jsduck/option_parser'
 require 'jsduck/meta_tag_registry'
 require 'jsduck/logger'
-require 'jsduck/json_duck'
+require 'jsduck/util/json'
+require 'jsduck/util/os'
+require 'jsduck/util/parallel'
 
 module JsDuck
 
@@ -24,10 +26,8 @@ module JsDuck
     attr_accessor :guides
     attr_accessor :videos
     attr_accessor :examples
-    attr_accessor :stats
     attr_accessor :categories_path
     attr_accessor :source
-    attr_accessor :pretty_json
     attr_accessor :images
     attr_accessor :link_tpl
     attr_accessor :img_tpl
@@ -41,7 +41,6 @@ module JsDuck
     attr_accessor :platform_names
 
     # Debugging
-    attr_accessor :processes
     attr_accessor :template_dir
     attr_accessor :template_links
     attr_accessor :extjs_path
@@ -82,7 +81,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.0.1"
+      @version = "4.1.1"
 
       # Customizing output
       @title = "Titanium Mobile"
@@ -94,10 +93,8 @@ module JsDuck
       @guides = nil
       @videos = nil
       @examples = nil
-      @stats = false
       @categories_path = nil
       @source = true
-      @pretty_json = false
       @images = []
       @link_tpl = '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
       # Note that we wrap image template inside <p> because {@img} often
@@ -120,8 +117,6 @@ module JsDuck
       }
 
       # Debugging
-      # Turn multiprocessing off by default in Windows
-      @processes = OS::windows? ? 0 : nil
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
       @template_dir = @root_dir + "/template-min"
       @template_links = false
@@ -132,9 +127,12 @@ module JsDuck
       @imports = []
       @new_since = nil
 
+      # Turn multiprocessing off by default in Windows
+      Util::Parallel.in_processes = Util::OS::windows? ? 0 : nil
+
       # enable all warnings except :link_auto
-      Logger.instance.set_warning(:all, true)
-      Logger.instance.set_warning(:link_auto, false)
+      Logger.set_warning(:all, true)
+      Logger.set_warning(:link_auto, false)
     end
 
     # Make options object behave like hash.
@@ -185,9 +183,14 @@ module JsDuck
           "TYPE is one of:",
           "",
           "- full     - full class docs.",
-          "- api      - only class- and member names.",
           "- examples - extracts inline examples from classes.") do |format|
-          @export = format.to_sym
+          export_type = format.to_sym
+          if [:full, :examples].include?(export_type)
+            @export = export_type
+          else
+            Logger.fatal("Unsupported export type: '#{export_type}'")
+            exit(1)
+          end
         end
 
         opts.on('--builtin-classes',
@@ -224,7 +227,7 @@ module JsDuck
           if File.exists?(path)
             config = read_json_config(path)
           else
-            Logger.instance.fatal("The config file #{path} doesn't exist")
+            Logger.fatal("The config file #{path} doesn't exist")
             exit(1)
           end
           # treat paths inside JSON config relative to the location of
@@ -347,11 +350,6 @@ module JsDuck
         opts.on('--tests',
           "Creates page for testing inline examples.") do
           @tests = true
-        end
-
-        opts.on('--stats',
-          "Creates page with all kinds of statistics.") do
-          @stats = true
         end
 
         opts.on('--import=VERSION:PATH',
@@ -536,7 +534,7 @@ module JsDuck
           "Turns on excessive logging.",
           "",
           "Log messages are writted to STDERR.") do
-          Logger.instance.verbose = true
+          Logger.verbose = true
         end
 
         opts.on('--warnings=+A,-B,+C', Array,
@@ -547,12 +545,12 @@ module JsDuck
           "List of all available warning types:",
           "(Those with '+' in front of them default to on)",
           "",
-          *Logger.instance.doc_warnings) do |warnings|
+          *Logger.doc_warnings) do |warnings|
           warnings.each do |op|
             if op =~ /^([-+]?)(.*)$/
               enable = !($1 == "-")
               name = $2.to_sym
-              Logger.instance.set_warning(name, enable)
+              Logger.set_warning(name, enable)
             end
           end
         end
@@ -567,7 +565,7 @@ module JsDuck
           "results.",
           "",
           "In Windows this option is disabled.") do |count|
-          @processes = count.to_i
+          Util::Parallel.in_processes = count.to_i
         end
 
         opts.on('--pretty-json',
@@ -577,7 +575,7 @@ module JsDuck
           "by --export option.  But the option effects any JSON",
           "that gets generated, so it's also useful when debugging",
           "the resource files generated for the docs app.") do
-          @pretty_json = true
+          Util::Json.pretty = true
         end
 
         opts.on('--template=PATH',
@@ -644,7 +642,7 @@ module JsDuck
     # config options that can be feeded into optparser.
     def read_json_config(fname)
       config = []
-      json = JsonDuck.read(fname)
+      json = Util::Json.read(fname)
       json.each_pair do |key, value|
         if key == "--"
           # filenames
@@ -679,13 +677,13 @@ module JsDuck
           @input_files << fname
         end
       else
-        Logger.instance.warn(nil, "File not found", fname)
+        Logger.warn(nil, "File not found", fname)
       end
     end
 
     # Extracts files of first build in jsb file
     def extract_jsb_files(jsb_file)
-      json = JsonDuck::read(jsb_file)
+      json = Util::Json.read(jsb_file)
       basedir = File.dirname(jsb_file)
 
       return json["builds"][0]["packages"].map do |package_id|
@@ -708,35 +706,35 @@ module JsDuck
     # Runs checks on the options
     def validate
       if @input_files.length == 0 && !@welcome && !@guides && !@videos && !@examples
-        Logger.instance.fatal("You should specify some input files, otherwise there's nothing I can do :(")
+        Logger.fatal("You should specify some input files, otherwise there's nothing I can do :(")
         exit(1)
       elsif @output_dir == :stdout && !@export
-        Logger.instance.fatal("Output to STDOUT only works when using --export option")
+        Logger.fatal("Output to STDOUT only works when using --export option")
         exit(1)
       elsif ![nil, :full, :api, :examples].include?(@export)
-        Logger.instance.fatal("Unknown export format: #{@export}")
+        Logger.fatal("Unknown export format: #{@export}")
         exit(1)
       elsif @output_dir != :stdout
         if !@output_dir
-          Logger.instance.fatal("You should also specify an output directory, where I could write all this amazing documentation")
+          Logger.fatal("You should also specify an output directory, where I could write all this amazing documentation")
           exit(1)
         elsif File.exists?(@output_dir) && !File.directory?(@output_dir)
-          Logger.instance.fatal("The output directory is not really a directory at all :(")
+          Logger.fatal("The output directory is not really a directory at all :(")
           exit(1)
         elsif !File.exists?(File.dirname(@output_dir))
-          Logger.instance.fatal("The parent directory for #{@output_dir} doesn't exist")
+          Logger.fatal("The parent directory for #{@output_dir} doesn't exist")
           exit(1)
         elsif !@export && !File.exists?(@template_dir + "/extjs")
-          Logger.instance.fatal("Oh noes!  The template directory does not contain extjs/ directory :(")
-          Logger.instance.fatal("Please copy ExtJS over to template/extjs or create symlink.")
-          Logger.instance.fatal("For example:")
-          Logger.instance.fatal("    $ cp -r /path/to/ext-4.0.0 " + @template_dir + "/extjs")
+          Logger.fatal("Oh noes!  The template directory does not contain extjs/ directory :(")
+          Logger.fatal("Please copy ExtJS over to template/extjs or create symlink.")
+          Logger.fatal("For example:")
+          Logger.fatal("    $ cp -r /path/to/ext-4.0.0 " + @template_dir + "/extjs")
           exit(1)
         elsif !@export && !File.exists?(@template_dir + "/resources/css")
-          Logger.instance.fatal("Oh noes!  CSS files for custom ExtJS theme missing :(")
-          Logger.instance.fatal("Please compile SASS files in template/resources/sass with compass.")
-          Logger.instance.fatal("For example:")
-          Logger.instance.fatal("    $ compass compile " + @template_dir + "/resources/sass")
+          Logger.fatal("Oh noes!  CSS files for custom ExtJS theme missing :(")
+          Logger.fatal("Please compile SASS files in template/resources/sass with compass.")
+          Logger.fatal("For example:")
+          Logger.fatal("    $ compass compile " + @template_dir + "/resources/sass")
           exit(1)
         end
       end

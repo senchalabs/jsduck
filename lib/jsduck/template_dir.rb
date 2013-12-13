@@ -21,10 +21,10 @@ module JsDuck
     def write
       FileUtils.mkdir(@opts.output_dir)
       if @opts.template_links
-        Logger.instance.log("Linking template files to", @opts.output_dir)
+        Logger.log("Linking template files to", @opts.output_dir)
         move_files(:symlink)
       else
-        Logger.instance.log("Copying template files to", @opts.output_dir)
+        Logger.log("Copying template files to", @opts.output_dir)
         move_files(:cp_r)
       end
 

@@ -11,7 +11,7 @@ module JsDuck::Tag
 
     def to_value(contents)
       if contents.length > 1
-        JsDuck::Logger.instance.warn(nil, "Only one @since tag allowed per class/member.")
+        JsDuck::Logger.warn(nil, "Only one @since tag allowed per class/member.")
       end
       contents[0]
     end

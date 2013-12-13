@@ -1,10 +1,10 @@
 require 'jsduck/logger'
-require 'jsduck/json_duck'
-require 'jsduck/io'
-require 'jsduck/null_object'
+require 'jsduck/util/json'
+require 'jsduck/util/io'
+require 'jsduck/util/null_object'
 require 'jsduck/logger'
 require 'jsduck/grouped_asset'
-require 'jsduck/html'
+require 'jsduck/util/html'
 require 'fileutils'
 
 module JsDuck
@@ -16,17 +16,19 @@ module JsDuck
       if filename
         Guides.new(filename, formatter, opts)
       else
-        NullObject.new(:to_array => [], :to_html => "", :[] => nil)
+        Util::NullObject.new(:to_array => [], :to_html => "", :[] => nil)
       end
     end
 
     # Parses guides config file
     def initialize(filename, formatter, opts)
       @path = File.dirname(filename)
-      @groups = JsonDuck.read(filename)
+      @groups = Util::Json.read(filename)
       build_map_by_name("Two guides have the same name: " +  filename)
       @formatter = formatter
       @opts = opts
+      build_map_by_name("")
+      load_all_guides
     end
 
     # Writes all guides to given dir in JsonP format
@@ -84,6 +86,12 @@ module JsDuck
       end
     end
 
+    def load_all_guides
+      each_item do |guide|
+        guide[:html] = load_guide(guide)
+      end
+    end
+
 
     # Overrides GroupedAsset
     # Modified to_array that excludes the :html from guide nodes
@@ -96,7 +104,14 @@ module JsDuck
       end
     end
 
-
+=begin
+## Merge Conflict - New Code
+    def to_array
+      map_items do |item|
+        Hash[item.select {|k, v| k != :html }]
+      end
+    end
+=end
 
     def load_guide(guide)
       if not guide.has_key?("url")
@@ -111,7 +126,7 @@ module JsDuck
       if File.exists?(html_guide_file)
         begin
           # Ti guides already have a TOC, so don't add one.
-          return JsDuck::IO.read(html_guide_file)
+          return Util::IO.read(html_guide_file)
         rescue
           Logger.fatal_backtrace("Error while reading/formatting HTML guide #{in_dir}", $!)
           exit(1)
@@ -122,7 +137,7 @@ module JsDuck
           name = File.basename(in_dir)
           @formatter.img_path = "guides/#{name}"
 
-          return add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
+          return add_toc(guide, @formatter.format(Util::IO.read(guide_file)))
         rescue
           Logger.fatal_backtrace("Error while reading/formatting guide #{in_dir}", $!)
           exit(1)
@@ -138,14 +153,14 @@ module JsDuck
       in_dir = @path + "/" + guide["url"]
       out_dir = dir + "/" + guide["name"]
 
-      Logger.instance.log("Writing guide", out_dir)
+      Logger.log("Writing guide", out_dir)
       # Copy the whole guide dir over
       FileUtils.cp_r(in_dir, out_dir)
   
       # Ensure the guide has an icon
       fix_icon(out_dir)
 
-      JsonDuck.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => guide[:html], :title => guide["title"]})
+      Util::Json.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => guide[:html], :title => guide["title"]})
     end
 
 
@@ -174,8 +189,13 @@ module JsDuck
       html.each_line do |line|
         if line =~ /^<h2>(.*)<\/h2>$/
           i += 1
+          # Merge Conflict - old code
           toc << "<li><a href='#!/guide/#{guide['name']}-section-#{i}'>#{$1}</a></li>\n"
           new_html << "<h2 id='#{guide['name']}-section-#{i}'>#{$1}</h2>\n"
+          # Merge Conflict - new code
+          #text = Util::HTML.strip_tags($1)
+          #toc << "<li><a href='#!/guide/#{guide['name']}-section-#{i}'>#{text}</a></li>\n"
+          #new_html << "<h2 id='#{guide['name']}-section-#{i}'>#{text}</h2>\n"
         else
           new_html << line
         end
@@ -211,7 +231,7 @@ module JsDuck
     end
 
     # Returns HTML listing of guides
-    def to_html
+    def to_html(style="")
       html = @groups.map { |topic| topic2html(topic, 1)}.flatten.join("\n") 
 
 #      html = @guides.map do |group|
@@ -230,6 +250,14 @@ module JsDuck
             </ul>
         </div>
       EOHTML
+    end
+
+    def flatten_subgroups(items)
+      result = []
+      each_item(items) do |item|
+        result << item
+      end
+      result
     end
 
     # Extracts guide icon URL from guide hash

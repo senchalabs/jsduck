@@ -1,5 +1,4 @@
 require 'jsduck/logger'
-require 'jsduck/json_duck'
 require 'jsduck/file_categories'
 require 'jsduck/auto_categories'
 
@@ -23,7 +22,7 @@ module JsDuck
     end
 
     # Returns HTML listing of classes divided into categories
-    def to_html
+    def to_html(style="")
       html = @categories.map do |category|
         [
           "<div class='section'>",
@@ -35,7 +34,7 @@ module JsDuck
       end.flatten.join("\n")
 
       return <<-EOHTML
-        <div id='categories-content' style='display:none'>
+        <div id='categories-content' style='#{style}'>
             #{html}
         </div>
       EOHTML

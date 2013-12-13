@@ -1,4 +1,4 @@
-require 'jsduck/html'
+require 'jsduck/util/html'
 require 'jsduck/meta_tag_renderer'
 require 'jsduck/signature_renderer'
 

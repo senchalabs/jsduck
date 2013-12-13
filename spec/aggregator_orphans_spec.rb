@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     agr.classify_orphans
     agr.create_global_class
     agr.result
@@ -17,13 +17,13 @@ describe JsDuck::Aggregator do
     end
 
     it "combines members into itself" do
-      @classes[0][:members][:method].length.should == 2
+      @classes[0][:members].length.should == 2
     end
 
     it "preserves the order of members" do
-      methods = @classes[0][:members][:method]
-      methods[0][:name].should == "foo"
-      methods[1][:name].should == "bar"
+      ms = @classes[0][:members]
+      ms[0][:name].should == "foo"
+      ms[1][:name].should == "bar"
     end
   end
 

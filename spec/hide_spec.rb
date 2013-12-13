@@ -1,45 +1,42 @@
 require "jsduck/class"
+require "class_factory"
 
 # Test for the behavior of @hide tag
 
 describe JsDuck::Class do
 
-  def members_as_hash(cls, type, context=:members)
+  def members_as_hash(cls)
     h = {}
-    cls.members(type, context).each {|m| h[m[:name]] = m }
+    cls.find_members().each {|m| h[m[:name]] = m }
     h
   end
 
   before do
     @classes = {}
-    @parent = JsDuck::Class.new({
+    @parent = Helper::ClassFactory.create({
         :name => "ParentClass",
-        :members => {
-          :method => [
-            {:name => "foo", :owner => "ParentClass"},
-            {:name => "bar", :owner => "ParentClass"},
-            {:name => "zappa", :owner => "ParentClass"},
-          ]
-        }
+        :members => [
+          {:name => "foo"},
+          {:name => "bar"},
+          {:name => "zappa"},
+        ]
       });
     @classes["ParentClass"] = @parent
     @parent.relations = @classes
 
-    @child = JsDuck::Class.new({
+    @child = Helper::ClassFactory.create({
         :name => "ChildClass",
         :extends => "ParentClass",
-        :members => {
-          :method => [
-            {:name => "bar", :owner => "ChildClass"},
-            {:name => "baz", :owner => "ChildClass"},
-            {:name => "zappa", :owner => "ChildClass", :meta => {:hide => true}},
-          ]
-        }
+        :members => [
+          {:name => "bar"},
+          {:name => "baz"},
+          {:name => "zappa", :meta => {:hide => true}},
+        ]
       });
     @classes["ChildClass"] = @child
     @child.relations = @classes
 
-    @members = members_as_hash(@child, :method)
+    @members = members_as_hash(@child)
   end
 
   it "has member that's inherited from parent" do

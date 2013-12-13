@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     agr.result
   end
 
@@ -228,7 +228,7 @@ describe JsDuck::Aggregator do
 
   describe "property without comment inside Ext.define" do
     let(:property) do
-      parse(<<-EOS)[0][:members][:property][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         Ext.define("MyClass", {
             foo: 15
@@ -241,7 +241,7 @@ describe JsDuck::Aggregator do
 
   describe "property with line comment inside Ext.define" do
     let(:property) do
-      parse(<<-EOS)[0][:members][:property][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         Ext.define("MyClass", {
             // My docs
@@ -259,7 +259,7 @@ describe JsDuck::Aggregator do
 
   describe "property without comment inside Ext.extend" do
     let(:property) do
-      parse(<<-EOS)[0][:members][:property][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         MyClass = Ext.extend(Object, {
             foo: 15
@@ -272,7 +272,7 @@ describe JsDuck::Aggregator do
 
   describe "property with line comment inside Ext.extend" do
     let(:property) do
-      parse(<<-EOS)[0][:members][:property][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         MyClass = Ext.extend(Object, {
             // My docs
@@ -290,7 +290,7 @@ describe JsDuck::Aggregator do
 
   describe "property without comment inside object literal" do
     let(:property) do
-      parse(<<-EOS)[0][:members][:property][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         MyClass = {
             foo: 15
@@ -303,7 +303,7 @@ describe JsDuck::Aggregator do
 
   describe "property with line comment inside object literal" do
     let(:property) do
-      parse(<<-EOS)[0][:members][:property][0]
+      parse(<<-EOS)[0][:members][0]
         /** Some documentation. */
         MyClass = {
             // My docs

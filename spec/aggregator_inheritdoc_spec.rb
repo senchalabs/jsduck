@@ -1,5 +1,5 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 require "jsduck/class"
 require "jsduck/relations"
 require "jsduck/inherit_doc"
@@ -7,7 +7,7 @@ require "jsduck/inherit_doc"
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
     JsDuck::InheritDoc.new(relations).resolve_all
     relations
@@ -46,8 +46,8 @@ describe JsDuck::Aggregator do
            * @inheritdoc Foo#bar
            */
       EOF
-      @orig = @docs["Foo"][:members][:method][0]
-      @inheritdoc = @docs["Core"][:members][:method][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
     it_behaves_like "@inheritdoc"
@@ -78,8 +78,8 @@ describe JsDuck::Aggregator do
            * #{at_tag} Foo#bar
            */
       EOF
-      @orig = @docs["Foo"][:members][:method][0]
-      @inheritdoc = @docs["Core"][:members][:method][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
   end
 
   describe "@inheritDoc" do
@@ -116,8 +116,8 @@ describe JsDuck::Aggregator do
            * @inheritdoc Foo#bar
            */
       EOF
-      @orig = @docs["Foo"][:members][:event][0]
-      @inheritdoc = @docs["Core"][:members][:event][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
     it_behaves_like "@inheritdoc"
@@ -147,8 +147,8 @@ describe JsDuck::Aggregator do
            * @inheritdoc Foo#bar
            */
       EOF
-      @orig = @docs["Foo"][:members][:cfg][0]
-      @inheritdoc = @docs["Core"][:members][:cfg][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
     it_behaves_like "@inheritdoc"
@@ -180,8 +180,8 @@ describe JsDuck::Aggregator do
            * @static
            */
       EOF
-      @orig = @docs["Foo"][:statics][:method][0]
-      @inheritdoc = @docs["Core"][:statics][:method][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
     it_behaves_like "@inheritdoc"
@@ -211,8 +211,8 @@ describe JsDuck::Aggregator do
            * @inheritdoc Foo#cfg-bar
            */
       EOF
-      @orig = @docs["Foo"][:members][:cfg][0]
-      @inheritdoc = @docs["Core"][:members][:cfg][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
     it_behaves_like "@inheritdoc"
@@ -242,8 +242,8 @@ describe JsDuck::Aggregator do
            * @inheritdoc Foo#bar
            */
       EOF
-      @orig = @docs["Foo"][:members][:cfg][0]
-      @inheritdoc = @docs["Core"][:members][:cfg][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
     it_behaves_like "@inheritdoc"
@@ -270,8 +270,8 @@ describe JsDuck::Aggregator do
            * @inheritdoc Foo#static-bar
            */
       EOF
-      @orig = @docs["Foo"][:statics][:method][0]
-      @inheritdoc = @docs["Core"][:members][:method][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
     it_behaves_like "@inheritdoc"
@@ -299,8 +299,8 @@ describe JsDuck::Aggregator do
            * @inheritdoc Foo#bar
            */
       EOF
-      @orig = @docs["Foo"][:statics][:method][0]
-      @inheritdoc = @docs["Core"][:statics][:method][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
     it_behaves_like "@inheritdoc"
@@ -332,9 +332,9 @@ describe JsDuck::Aggregator do
            * @inheritdoc Foo#bar
            */
       EOF
-      @orig = @docs["Foo"][:members][:method][0]
-      @inheritdoc = @docs["Core"][:members][:method][0]
-      @inheritdoc2 = @docs["HyperCore"][:members][:method][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
+      @inheritdoc2 = @docs["HyperCore"][:members][0]
     end
 
     it_behaves_like "@inheritdoc"
@@ -360,7 +360,7 @@ describe JsDuck::Aggregator do
            * New comment.
            */
       EOF
-      @inheritdoc = @docs["Child"][:members][:method][1]
+      @inheritdoc = @docs["Child"][:members][1]
     end
 
     it "merges comment from referenced member" do
@@ -405,7 +405,7 @@ describe JsDuck::Aggregator do
            * @inheritdoc
            */
       EOF
-      @method = @docs["Child"][:members][:method][0]
+      @method = @docs["Child"][:members][0]
     end
 
     it "inherits docs from parent class method" do
@@ -424,7 +424,7 @@ describe JsDuck::Aggregator do
            * @inheritdoc
            */
       EOF
-      @method = @docs["Child"][:members][:method][0]
+      @method = @docs["Child"][:members][0]
     end
 
     it "inherits nothing" do
@@ -447,7 +447,7 @@ describe JsDuck::Aggregator do
            * @inheritdoc
            */
       EOF
-      @method = @docs["Child"][:members][:method][0]
+      @method = @docs["Child"][:members][0]
     end
 
     it "inherits nothing" do
@@ -474,7 +474,7 @@ describe JsDuck::Aggregator do
            * @inheritdoc
            */
       EOF
-      @method = @docs["Child"][:members][:method][0]
+      @method = @docs["Child"][:members][0]
     end
 
     it "inherits docs from mixin" do
@@ -546,7 +546,7 @@ describe JsDuck::Aggregator do
         });
       EOF
       @cls = @docs["Child"]
-      @cfg = @cls[:members][:cfg][0]
+      @cfg = @cls[:members][0]
     end
 
     it "inherits docs from parent" do
@@ -590,7 +590,7 @@ describe JsDuck::Aggregator do
         });
       EOF
       @cls = @docs["Child"]
-      @cfg = @cls[:members][:cfg][0]
+      @cfg = @cls[:members][0]
     end
 
     it "inherits docs from parent" do
@@ -617,7 +617,7 @@ describe JsDuck::Aggregator do
         });
       EOF
       @cls = @docs["Child"]
-      @cfg = @cls[:members][:cfg][0]
+      @cfg = @cls[:members][0]
     end
 
     it "becomes private" do
@@ -648,16 +648,16 @@ describe JsDuck::Aggregator do
         });
       EOF
       @cls = @docs["Child"]
-      @cfg = @cls[:members][:property][0]
+      @property = @cls[:members][0]
     end
 
     it "inherits @protected" do
-      @cfg[:meta][:protected].should == true
+      @property[:meta][:protected].should == true
     end
 
     it "inherits @deprecated" do
-      @cfg[:meta][:deprecated][:version].should == "4.0"
-      @cfg[:meta][:deprecated][:text].should == "Use something else."
+      @property[:meta][:deprecated][:version].should == "4.0"
+      @property[:meta][:deprecated][:text].should == "Use something else."
     end
   end
 
@@ -682,19 +682,19 @@ describe JsDuck::Aggregator do
         });
       EOF
       @cls = @docs["Child"]
-      @cfg = @cls[:members][:property][0]
+      @property = @cls[:members][0]
     end
 
     it "inherits @protected" do
-      @cfg[:meta][:protected].should == true
+      @property[:meta][:protected].should == true
     end
 
     it "keeps @readonly" do
-      @cfg[:meta][:readonly].should == true
+      @property[:meta][:readonly].should == true
     end
 
     it "overrides @deprecated of parent with its own @deprecated" do
-      @cfg[:meta][:deprecated][:version].should == "4.0"
+      @property[:meta][:deprecated][:version].should == "4.0"
     end
   end
 
@@ -718,15 +718,14 @@ describe JsDuck::Aggregator do
         });
       EOF
       @cls = @docs["Child"]
-      @cfg = @cls[:members][:property][0]
     end
 
     it "doesn't inherit from parent static method" do
-      @cls[:members][:method][0][:doc].should_not == "My method."
+      @cls[:members][0][:doc].should_not == "My method."
     end
 
     it "doesn't inherit from parent static property" do
-      @cls[:members][:property][0][:doc].should_not == "My property."
+      @cls[:members][1][:doc].should_not == "My property."
     end
   end
 
@@ -752,15 +751,14 @@ describe JsDuck::Aggregator do
         });
       EOF
       @cls = @docs["Child"]
-      @cfg = @cls[:members][:property][0]
     end
 
     it "inherits from parent static method" do
-      @cls[:statics][:method][0][:doc].should == "My method."
+      @cls[:members][0][:doc].should == "My method."
     end
 
     it "inherits from parent static property" do
-      @cls[:statics][:property][0][:doc].should == "My property."
+      @cls[:members][1][:doc].should == "My property."
     end
   end
 end

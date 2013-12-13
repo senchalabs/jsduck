@@ -47,13 +47,14 @@ Ext.define('Docs.view.ThumbList', {
             fields: ['id', 'title', 'items']
         });
 
+
         // Can't just pass the #data config to store as in Ext 4.1 the
         // value of data config gets modified - each array element
         // gets replaced with a Model record.
         //
         // But we don't want to modify the items in the global
         // Docs.data...
-        this.store.loadData(this.data);
+        this.store.loadData(this.flattenSubgroups(this.data));
 
         // Place itemTpl inside main template
         this.tpl = new Ext.XTemplate(Ext.Array.flatten([
@@ -88,6 +89,55 @@ Ext.define('Docs.view.ThumbList', {
         });
 
         this.callParent(arguments);
+    },
+
+    // Given groups data with subgroups like this:
+    //
+    // - group A
+    //   - subgroup AA
+    //     - item 1
+    //     - item 2
+    //   - subgroup AB
+    //     - item 3
+    //     - item 4
+    // - group B
+    //   - item 5
+    //
+    // Eliminates the subgroups so we're left with just the first item
+    // each subgroup:
+    //
+    // - group A
+    //   - item 1 (titled as: subgroup AA)
+    //   - item 3 (titled as: subgroup AB)
+    // - group B
+    //   - item 5
+    //
+    flattenSubgroups: function(data) {
+        function expand(item) {
+            if (item.items) {
+                return Ext.Array.map(item.items, expand);
+            }
+            else {
+                return item;
+            }
+        }
+
+        return Ext.Array.map(data, function(group) {
+            return {
+                id: group.id,
+                title: group.title,
+                items: Ext.Array.map(group.items, function(item) {
+                    if (item.items) {
+                        var groupItem = Ext.apply({}, expand(item)[0]);
+                        groupItem.title = item.title;
+                        return groupItem;
+                    }
+                    else {
+                        return item;
+                    }
+                })
+            };
+        });
     },
 
     onContainerClick: function(e) {

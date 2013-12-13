@@ -1,5 +1,5 @@
-require 'jsduck/null_object'
-require 'jsduck/io'
+require 'jsduck/util/null_object'
+require 'jsduck/util/io'
 
 module JsDuck
 
@@ -9,18 +9,18 @@ module JsDuck
       if filename
         Welcome.new(filename)
       else
-        NullObject.new(:to_html => "")
+        Util::NullObject.new(:to_html => "")
       end
     end
 
     # Parses welcome HTML file with content for welcome page.
     def initialize(filename)
-      @html = JsDuck::IO.read(filename)
+      @html = Util::IO.read(filename)
     end
 
     # Returns the HTML
-    def to_html
-      "<div id='welcome-content' style='display:none'>#{@html}</div>"
+    def to_html(style="")
+      "<div id='welcome-content' style='#{style}'>#{@html}</div>"
     end
 
   end

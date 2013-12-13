@@ -1,32 +1,8 @@
-require 'rubygems'
-require 'jsduck/aggregator'
-require 'jsduck/source_file'
-require 'jsduck/doc_formatter'
-require 'jsduck/class_formatter'
-require 'jsduck/class'
-require 'jsduck/relations'
-require 'jsduck/inherit_doc'
-require 'jsduck/parallel_wrap'
-require 'jsduck/logger'
+require 'jsduck/batch_parser'
 require 'jsduck/assets'
-require 'jsduck/json_duck'
-require 'jsduck/io'
-require 'jsduck/importer'
-require 'jsduck/lint'
-require 'jsduck/template_dir'
-require 'jsduck/class_writer'
-require 'jsduck/source_writer'
-require 'jsduck/app_data'
-require 'jsduck/index_html'
-require 'jsduck/api_exporter'
-require 'jsduck/full_exporter'
-require 'jsduck/app_exporter'
-require 'jsduck/examples_exporter'
-require 'jsduck/inline_examples'
-require 'jsduck/guide_writer'
-require 'jsduck/stdout'
-require 'jsduck/rest_file'
-require 'fileutils'
+require 'jsduck/meta_tag_registry'
+require 'jsduck/export_writer'
+require 'jsduck/web_writer'
 
 module JsDuck
 
@@ -35,15 +11,11 @@ module JsDuck
     # Initializes app with JsDuck::Options object
     def initialize(opts)
       @opts = opts
-      # Sets the nr of parallel processes to use.
-      # Set to 0 to disable parallelization completely.
-      ParallelWrap.in_processes = @opts.processes
-      # Turn JSON pretty-printing on/off
-      JsonDuck.pretty = @opts.pretty_json
     end
 
-    # Call this after input parameters set
+    # Main App logic.
     def run
+=begin
     if @opts.rest
       rest_docs = parallel_parse_rest(@opts.input_files)
       rest_objs = aggregate(rest_docs)
@@ -56,72 +28,21 @@ module JsDuck
       Importer.import(@opts.imports, @relations, @opts.new_since)
       Lint.new(@relations).run
     end
+=end
+      parse
 
-      # Initialize guides, videos, examples, ...
-      @assets = Assets.new(@relations, @opts)
-
-      # Give access to assets from all meta-tags
-      MetaTagRegistry.instance.assets = @assets
+      init_assets
 
       if @opts.export
-        format_classes
-        FileUtils.rm_rf(@opts.output_dir) unless @opts.output_dir == :stdout
-        exporters = {
-          :full => FullExporter,
-          :api => ApiExporter,
-          :examples => ExamplesExporter,
-        }
-        cw = ClassWriter.new(exporters[@opts.export], @relations, @opts)
-        cw.write(@opts.output_dir, ".json")
-        if @opts.export == :examples
-          gw = GuideWriter.new(exporters[@opts.export], @assets.guides, @opts)
-          gw.write(@opts.output_dir, ".json")
-        end
-        Stdout.instance.flush
+        generate_export
       else
-        FileUtils.rm_rf(@opts.output_dir)
-        TemplateDir.new(@opts).write
-
-        IndexHtml.new(@assets, @opts).write
-
-        AppData.new(@relations, @assets, @opts).write(@opts.output_dir+"/data.js")
-
-        # class-formatting is done in parallel which breaks the links
-        # between source files and classes. Therefore it MUST to be done
-        # after writing sources which needs the links to work.
-        if @opts.source
-          source_writer = SourceWriter.new(parsed_files)
-          source_writer.write(@opts.output_dir + "/source")
-        end
-        format_classes
-
-        if @opts.tests
-          examples = InlineExamples.new
-          examples.add_classes(@relations)
-          examples.add_guides(@assets.guides)
-          examples.write(@opts.output_dir+"/inline-examples.js")
-        end
-
-        cw = ClassWriter.new(AppExporter, @relations, @opts)
-        cw.write(@opts.output_dir+"/output", ".js")
-
-        @assets.write
+        generate_web_page
       end
     end
 
-    # Parses the files in parallel using as many processes as available CPU-s
-    def parallel_parse(filenames)
-      ParallelWrap.map(filenames) do |fname|
-        Logger.instance.log("Parsing", fname)
-        begin
-          SourceFile.new(JsDuck::IO.read(fname), fname, @opts)
-        rescue
-          Logger.instance.fatal_backtrace("Error while parsing #{fname}", $!)
-          exit(1)
-        end
-      end
-    end
+    private
 
+=begin
     def parallel_parse_rest(filenames)
       ParallelWrap.map(filenames) do |fname|
         Logger.instance.log("Parsing", fname)
@@ -153,60 +74,26 @@ module JsDuck
       # Ignore override classes after applying them to actual classes
       @opts.external_classes += agr.process_overrides.map {|o| o[:name] }
       agr.result
+=end
+    def parse
+      @batch_parser = BatchParser.new(@opts)
+      @relations = @batch_parser.run
     end
 
-    # Turns all aggregated data into Class objects.
-    # Depending on --ignore-global either keeps or discards the global class.
-    # Warnings for global members are printed regardless of that setting,
-    # but of course can be turned off using --warnings=-global
-    def filter_classes(docs)
-      classes = []
-      docs.each do |d|
-        cls = Class.new(d)
-        if d[:name] != "global"
-          classes << cls
-        else
-          # add global class only if --ignore-global not specified
-          classes << cls unless @opts.ignore_global
+    def init_assets
+      # Initialize guides, videos, examples, ...
+      @assets = Assets.new(@relations, @opts)
 
-          # Print warning for each global member
-          cls.all_local_members.each do |m|
-            type = m[:tagname].to_s
-            name = m[:name]
-            file = m[:files][0]
-            Logger.instance.warn(:global, "Global #{type}: #{name}", file[:filename], file[:linenr])
-          end
-        end
-      end
-      Relations.new(classes, @opts.external_classes)
+      # Give access to assets from all meta-tags
+      MetaTagRegistry.instance.assets = @assets
     end
 
-    # Formats each class
-    def format_classes
-      doc_formatter = DocFormatter.new(@relations, @opts)
-      doc_formatter.img_path = "images"
-      class_formatter = ClassFormatter.new(@relations, doc_formatter)
-      # Don't format types when exporting
-      class_formatter.include_types = !@opts.export
-      # Format all doc-objects in parallel
-      formatted_classes = ParallelWrap.map(@relations.classes) do |cls|
-        files = cls[:files].map {|f| f[:filename] }.join(" ")
-        Logger.instance.log("Markdown formatting #{cls[:name]}", files)
-        begin
-          {
-            :doc => class_formatter.format(cls.internal_doc),
-            :images => doc_formatter.images
-          }
-        rescue
-          Logger.instance.fatal_backtrace("Error while formatting #{cls[:name]} #{files}", $!)
-          exit(1)
-        end
-      end
-      # Then merge the data back to classes sequentially
-      formatted_classes.each do |cls|
-        @relations[cls[:doc][:name]].internal_doc = cls[:doc]
-        cls[:images].each {|img| @assets.images.add(img) }
-      end
+    def generate_export
+      ExportWriter.new(@relations, @assets, @opts).write
+    end
+
+    def generate_web_page
+      WebWriter.new(@relations, @assets, @batch_parser.parsed_files, @opts).write
     end
 
   end

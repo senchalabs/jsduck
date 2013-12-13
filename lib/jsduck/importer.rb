@@ -1,7 +1,7 @@
-require 'jsduck/json_duck'
-require 'jsduck/null_object'
+require 'jsduck/util/json'
+require 'jsduck/util/null_object'
 require 'jsduck/logger'
-require 'jsduck/parallel_wrap'
+require 'jsduck/util/parallel'
 
 module JsDuck
 
@@ -29,15 +29,15 @@ module JsDuck
     end
 
     def current_version
-      NullObject.new(:[] => NullObject.new(:[] => true))
+      Util::NullObject.new(:[] => Util::NullObject.new(:[] => true))
     end
 
     # Reads in data from all .json files in directory
     def read(ver)
       # Map list of files into pairs of (classname, members-hash)
-      pairs = ParallelWrap.map(Dir[ver[:path] + "/*.json"]) do |filename|
-        JsDuck::Logger.instance.log("Importing #{ver[:version]}", filename)
-        json = JsonDuck.read(filename)
+      pairs = Util::Parallel.map(Dir[ver[:path] + "/*.json"]) do |filename|
+        JsDuck::Logger.log("Importing #{ver[:version]}", filename)
+        json = Util::Json.read(filename)
         [json["name"],  members_id_index(json)]
       end
 

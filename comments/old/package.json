@@ -1,0 +1,10 @@
+{
+    "name": "old_jsduck_comments_exporter",
+    "version": "0.0.0",
+    "description": "Exports comments from MongoDB",
+    "author": "Rene Saarsoo <nene@triin.net>",
+    "dependencies": {
+        "mysql": "2.0.0-alpha3",
+        "mongoose": "~3.0"
+    }
+}

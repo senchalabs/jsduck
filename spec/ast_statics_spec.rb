@@ -8,8 +8,8 @@ describe "JsDuck::Ast detecting" do
   end
 
   describe "Ext.define()" do
-    let (:statics) do
-      detect(<<-EOS)[:statics]
+    let (:members) do
+      detect(<<-EOS)[:members]
         /** */
         Ext.define('MyClass', {
             statics: {
@@ -20,31 +20,31 @@ describe "JsDuck::Ast detecting" do
       EOS
     end
 
-    it "adds :statics as array" do
-      statics.should be_kind_of(Array)
+    it "finds two members" do
+      members.length.should == 2
     end
 
-    describe "finds static property" do
+    describe "finds property" do
       it "with :property tagname" do
-        statics[0][:tagname].should == :property
+        members[0][:tagname].should == :property
       end
       it "with name" do
-        statics[0][:name].should == "foo"
+        members[0][:name].should == "foo"
       end
       it "with :static flag" do
-        statics[0][:meta][:static].should == true
+        members[0][:meta][:static].should == true
       end
     end
 
-    describe "finds static method" do
+    describe "finds method" do
       it "with :property tagname" do
-        statics[1][:tagname].should == :method
+        members[1][:tagname].should == :method
       end
       it "with name" do
-        statics[1][:name].should == "bar"
+        members[1][:name].should == "bar"
       end
       it "with :static flag" do
-        statics[1][:meta][:static].should == true
+        members[1][:meta][:static].should == true
       end
     end
 

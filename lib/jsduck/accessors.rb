@@ -9,40 +9,38 @@ module JsDuck
     # not added.
     def create(cls)
       # Grab all configs tagged as @accessor
-      accessors = cls[:members][:cfg].find_all {|cfg| cfg[:accessor] }
+      accessors = cls[:members].find_all {|m| m[:tagname] == :cfg && m[:accessor] }
 
       # Build lookup tables of method and event names
-      methods = build_lookup_table(cls[:members][:method])
-      events = build_lookup_table(cls[:members][:event])
+      methods = build_lookup_table(cls[:members], :method)
+      events = build_lookup_table(cls[:members], :event)
 
       accessors.each do |cfg|
         # add getter if no method with same name exists
         get = create_getter(cfg)
         if !methods[get[:name]]
-          cls[:members][:method] << get
+          cls[:members] << get
         end
         # add setter if no method with same name exists
         set = create_setter(cfg)
         if !methods[set[:name]]
-          cls[:members][:method] << set
+          cls[:members] << set
         end
         # for evented accessors
         if cfg[:evented]
           # add event if no event with same name exists
           ev = create_event(cfg)
           if !events[ev[:name]]
-            cls[:members][:event] << ev
+            cls[:members] << ev
           end
         end
       end
     end
 
-    def build_lookup_table(members)
+    def build_lookup_table(members, tagname)
       map = {}
-
       members.each do |m|
-        next if m[:meta][:hide]
-        map[m[:name]] = m
+        map[m[:name]] = m if m[:tagname] == tagname
       end
       map
     end

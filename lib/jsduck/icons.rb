@@ -10,21 +10,22 @@ module JsDuck
           :name => cls[:name],
           :extends => cls[:extends],
           :private => cls[:private] || cls[:meta][:pseudo],
-          :icon => icon(cls),
+          :icon => Icons::class_icon(cls),
           :isObject => isObject(cls)
         })
         # TIDOC-1071 Modifications to support Cloud DocTree
         if opts.rest
-          methods = cls[:members][:method]
-          methods.map do |method|
-            json.push({
-              :name => cls[:name] + "." + method[:name],
-              :url => cls[:name] + "-method-" + method[:name],
-              :extends => cls[:extends],
-              :private => cls[:private] || cls[:meta][:pseudo],
-              :icon => "icon-component",
-              :isObject => "false"
-            })
+          cls[:members].each do |member|
+            if member[:tagname].eql? :method
+              json.push({
+                :name => cls[:name] + "." + member[:name],
+                :url => cls[:name] + "-method-" + member[:name],
+                :extends => cls[:extends],
+                :private => cls[:private] || cls[:meta][:pseudo],
+                :icon => "icon-component",
+                :isObject => "false"
+              })
+            end
           end
         end
       end
@@ -42,6 +43,17 @@ module JsDuck
         "icon-component"
       elsif isObject(cls)
         "icon-object"
+      else
+        "icon-class"
+      end
+    end
+
+    # Returns CSS class name for an icon of class
+    def self.class_icon(cls)
+      if cls[:singleton]
+        "icon-singleton"
+      elsif cls.inherits_from?("Ext.Component")
+        "icon-component"
       else
         "icon-class"
       end

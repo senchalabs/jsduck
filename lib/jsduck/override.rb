@@ -27,7 +27,7 @@ module JsDuck
       target = @classes_hash[override[:override]]
       unless target
         ctx = override[:files][0]
-        return Logger.instance.warn(:extend, "Class #{override[:override]} not found", ctx[:filename], ctx[:linenr])
+        return Logger.warn(:extend, "Class #{override[:override]} not found", ctx[:filename], ctx[:linenr])
       end
 
       # Combine comments of classes
@@ -64,15 +64,11 @@ module JsDuck
     # helpers
 
     def each_member(cls)
-      [:members, :statics].each do |category|
-        cls[category].each_pair do |key, members|
-          members.each {|m| yield m }
-        end
-      end
+      cls[:members].each {|m| yield m }
     end
 
     def add_member(cls, m)
-      cls[m[:static] ? :statics : :members][m[:tagname]] << m
+      cls[:members] << m
     end
 
     def add_doc(m, doc)
