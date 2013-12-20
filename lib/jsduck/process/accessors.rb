@@ -1,4 +1,5 @@
 require 'jsduck/logger'
+require 'jsduck/locale'
 
 module JsDuck
   module Process
@@ -70,10 +71,12 @@ module JsDuck
 
       def create_getter(cfg)
         name = "get" + upcase_first(cfg[:name])
+        doc  = Locale.get('Returns the value of {@link #cfg-#{cfg[:name]}}.')
+        doc  = doc.gsub(/\#\{cfg\[\:name\]\}/, cfg[:name])
         return add_shared({
             :tagname => :method,
             :name => name,
-            :doc => "Returns the value of {@link #cfg-#{cfg[:name]}}.",
+            :doc => doc,
             :params => [],
             :return => {
               :type => cfg[:type],
@@ -85,10 +88,12 @@ module JsDuck
 
       def create_setter(cfg)
         name = "set" + upcase_first(cfg[:name]);
+        doc  = Locale.get('Sets the value of {@link #cfg-#{cfg[:name]}}.')
+        doc  = doc.gsub(/\#\{cfg\[\:name\]\}/, cfg[:name])
         return add_shared({
             :tagname => :method,
             :name => name,
-            :doc => "Sets the value of {@link #cfg-#{cfg[:name]}}.",
+            :doc => doc,
             :params => [{
                 :type => cfg[:type],
                 :name => cfg[:name],
@@ -101,10 +106,12 @@ module JsDuck
       def create_event(cfg)
         name = cfg[:name].downcase + "change"
         setter_name = "set" + upcase_first(cfg[:name]);
+        doc  = Locale.get('Fires when the {@link ##{cfg[:id]}} configuration is changed by {@link #method-#{setter_name}}.')
+        doc  = doc.gsub(/\#\{cfg\[\:id\]\}/, cfg[:id]).gsub(/\#\{setter_name\}/, setter_name)
         return add_shared({
             :tagname => :event,
             :name => name,
-            :doc => "Fires when the {@link ##{cfg[:id]}} configuration is changed by {@link #method-#{setter_name}}.",
+            :doc => doc,
             :params => [
               {
                 :name => "this",
