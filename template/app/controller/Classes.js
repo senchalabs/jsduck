@@ -204,8 +204,22 @@ Ext.define('Docs.controller.Classes', {
 
         noHistory || Docs.History.push(url);
 
+        // If the URL contains `-<type>-` for any of the available member
+        // types, parse this as an old-style URL (in which the hyphen
+        // character separates the class name from the member ID). Otherwise,
+        // use the tilde character as the separator to allow class names to
+        // include hyphens.
+        var oldStyleURL = Docs.data.memberTypes.reduce(
+            function(previous, type) {
+              return previous || url.match(new RegExp('-' + type.name + '-'))
+            },
+            false);
+        var separator = oldStyleURL ? '-' : '~';
+
         // separate class and member name
-        var matches = url.match(/^#!\/api\/(.*?)(?:~(.*))?$/);
+        var matches = url.match(
+            new RegExp('^#!\\/api\\/(.*?)(?:' + separator + '(.*))?$')
+        );
         var cls = Docs.ClassRegistry.canonicalName(matches[1]);
         var member = matches[2];
 
