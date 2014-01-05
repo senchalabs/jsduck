@@ -19,8 +19,18 @@ module JsDuck
     def initialize(doc, class_exists=true)
       @doc = doc
 
+      # Disallow class names containing a hyphen followed by a member type,
+      # avoiding URL-parsing ambiguity.
+      invalid_name = MemberRegistry.definitions.reduce(false) do |previous, type|
+          previous || @doc[:name].match(/-#{type[:name]}/)
+      end
+      if invalid_name
+          Logger.fatal("Class #{@doc[:name]} must not contain a hyphen and a tag name")
+          exit(1)
+      end
+
       # Wrap classname into custom string class that allows
-      # differenciating between existing and missing classes.
+      # differentiating between existing and missing classes.
       @doc[:name] = ClassNameString.new(@doc[:name], class_exists)
 
       @doc[:members] = [] if !@doc[:members]

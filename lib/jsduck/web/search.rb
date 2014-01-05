@@ -87,7 +87,7 @@ module JsDuck
           :name => member[:name],
           :fullName => cls[:name] + "." + member[:name],
           :icon => "icon-" + member[:tagname].to_s,
-          :url => "#!/api/" + cls[:name] + "-" + member[:id],
+          :url => "#!/api/" + cls[:name] + "~" + member[:id],
           :meta => combine_meta(member),
           :sort => 3,
         }

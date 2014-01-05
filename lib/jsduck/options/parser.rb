@@ -563,7 +563,7 @@ module JsDuck
           @opts.examples_base_url = path
         end
 
-        attribute :link, '<a href="#!/api/%c%-%m" rel="%c%-%m" class="docClass">%a</a>'
+        attribute :link, '<a href="#!/api/%c%~%m" rel="%c%~%m" class="docClass">%a</a>'
         option('--link=TPL',
           "HTML template for replacing {@link}.",
           "",
@@ -573,10 +573,10 @@ module JsDuck
           "%m - class member name prefixed with member type",
           "     (e.g. 'method-urlEncode')",
           "%# - inserts '#' if member name present",
-          "%- - inserts '-' if member name present",
+          "%~ - inserts '~' if member name present",
           "%a - anchor text for link",
           "",
-          "Defaults to: '<a href=\"#!/api/%c%-%m\" rel=\"%c%-%m\" class=\"docClass\">%a</a>'") do |tpl|
+          "Defaults to: '<a href=\"#!/api/%c%~%m\" rel=\"%c%~%m\" class=\"docClass\">%a</a>'") do |tpl|
           @opts.link = tpl
         end
 

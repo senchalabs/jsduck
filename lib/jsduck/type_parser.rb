@@ -325,7 +325,7 @@ module JsDuck
     #     <ident> ::= [a-zA-Z0-9_]+
     #
     def type_name
-      name = @input.scan(/[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*|\*/)
+      name = @input.scan(/[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*|\*/)
 
       if !name
         return false
