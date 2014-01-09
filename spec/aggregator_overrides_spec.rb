@@ -6,7 +6,7 @@ require "jsduck/relations"
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string, "blah.js"))
     agr.process_overrides
     JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
   end
@@ -229,5 +229,78 @@ describe JsDuck::Aggregator do
       methods["foobar"][:doc].should == "**Overridden in FooOverride.**"
     end
   end
-end
 
+  describe "use of @override tag without @class" do
+    let(:classes) do
+      parse(<<-EOF)
+        /** */
+        Ext.define("Foo", {
+            foobar: function(){}
+        });
+
+        /** @override Foo */
+        Ext.apply(Foo.prototype, {
+            /** */
+            bar: function(){ },
+            /** */
+            foobar: function(){ return true; }
+        });
+      EOF
+    end
+
+    let(:methods) { create_members_map(classes["Foo"]) }
+
+    it "adds member to overridden class" do
+      methods["bar"].should_not == nil
+    end
+
+    it "adds note to docs about member being overridden" do
+      methods["foobar"][:doc].should == "**Overridden in blah.js.**"
+    end
+  end
+
+  describe "override created with Ext.override" do
+    let(:classes) do
+      parse(<<-EOF)
+        /** */
+        Ext.define("Foo", {
+            foobar: function(){}
+        });
+
+        /** */
+        Ext.override(Foo, {
+            bar: function(){ },
+            foobar: function(){ return true; }
+        });
+      EOF
+    end
+
+    let(:methods) { create_members_map(classes["Foo"]) }
+
+    it "adds member to overridden class" do
+      methods["bar"].should_not == nil
+    end
+
+    it "adds note to docs about member being overridden" do
+      methods["foobar"][:doc].should == "**Overridden in blah.js.**"
+    end
+  end
+
+  describe "@override without classname" do
+    let(:classes) do
+      parse(<<-EOF)
+        /** */
+        Ext.define("Foo", {
+            /** @override */
+            foo: function() { }
+        });
+      EOF
+    end
+
+    let(:methods) { create_members_map(classes["Foo"]) }
+
+    it "gets ignored" do
+      methods["foo"].should_not == nil
+    end
+  end
+end

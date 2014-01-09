@@ -70,7 +70,15 @@ module JsDuck
         "Array",
         "Arguments",
         "Date",
+        # JavaScript builtin error classes
+        # https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Error
         "Error",
+        "EvalError",
+        "RangeError",
+        "ReferenceError",
+        "SyntaxError",
+        "TypeError",
+        "URIError",
         # DOM
         "HTMLElement",
         "XMLElement",
@@ -85,7 +93,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.4.1"
+      @version = "4.5.0"
 
       # Customizing output
       @title = "Titanium Mobile"

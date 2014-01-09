@@ -124,5 +124,76 @@ describe JsDuck::DocParser do
     end
   end
 
-end
+  describe "e-mail address containing a valid @tag" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+         * john@method.com
+      EOS
+    end
+    it "is treated as plain text" do
+      @tag[:doc].should == "john@method.com"
+    end
+  end
 
+  describe "{@inline} tag" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+         * {@inline Some#method}
+      EOS
+    end
+    it "is treated as plain text, to be processed later" do
+      @tag[:doc].should == "{@inline Some#method}"
+    end
+  end
+
+  describe "@example tag" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+         * Code:
+         *
+         *     @example blah
+      EOS
+    end
+    it "is treated as plain text, to be processed later" do
+      @tag[:doc].should == "Code:\n\n    @example blah"
+    end
+  end
+
+  describe "@tag indented by 4+ spaces" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+         * Code example:
+         *
+         *     @method
+      EOS
+    end
+    it "is treated as plain text within code example" do
+      @tag[:doc].should == "Code example:\n\n    @method"
+    end
+  end
+
+  describe "@tag indented by 4+ spaces and preceded by additional code" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[0]
+         * Code example:
+         *
+         *     if @method then
+      EOS
+    end
+    it "is treated as plain text within code example" do
+      @tag[:doc].should == "Code example:\n\n    if @method then"
+    end
+  end
+
+  describe "@tag simply separated by 4+ spaces" do
+    before do
+      @tag = parse_single(<<-EOS.strip)[1]
+         * Foo:    @method
+      EOS
+    end
+    it "is parsed as normal tag" do
+      @tag[:tagname].should == :method
+    end
+  end
+
+end

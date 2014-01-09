@@ -12,7 +12,7 @@ module JsDuck
     def detect(docs, code)
       doc_map = build_doc_map(docs)
 
-      if doc_map[:class]
+      if doc_map[:class] || doc_map[:override]
         :class
       elsif doc_map[:event]
         :event
@@ -57,4 +57,3 @@ module JsDuck
   end
 
 end
-

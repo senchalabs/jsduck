@@ -75,4 +75,35 @@ describe JsDuck::Aggregator do
     it_should_behave_like "event"
   end
 
+  describe "implicit event name inside this.fireEvent()" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Fires when needed.
+         */
+        this.fireEvent("mousedown", foo, 7);
+      EOS
+    end
+    it_should_behave_like "event"
+  end
+
+  describe "doc-comment followed by this.fireEvent without event name" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Fires when needed.
+         */
+        this.fireEvent(foo, 7);
+      EOS
+    end
+
+    it "creates event" do
+      @doc[:tagname].should == :event
+    end
+
+    it "leaves the name of event empty" do
+      @doc[:name].should == ""
+    end
+  end
+
 end

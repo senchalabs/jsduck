@@ -32,7 +32,7 @@ module JsDuck
 
       # Combine comments of classes
       if override[:doc].length > 0
-        add_doc(target, "**From override #{override[:name]}:** " + override[:doc])
+        add_doc(target, "**From override #{get_name(override)}:** " + override[:doc])
       end
       target[:files] += override[:files]
 
@@ -48,20 +48,28 @@ module JsDuck
         ex = existing[m[:id]]
         if ex
           if m[:doc].length > 0
-            add_doc(ex, "**From override #{override[:name]}:** " + m[:doc])
+            add_doc(ex, "**From override #{get_name(override)}:** " + m[:doc])
           else
-            add_doc(ex, "**Overridden in #{override[:name]}.**")
+            add_doc(ex, "**Overridden in #{get_name(override)}.**")
           end
           ex[:files] += m[:files]
         else
           add_member(target, m)
-          add_doc(m, "**Defined in override #{override[:name]}.**")
+          add_doc(m, "**Defined in override #{get_name(override)}.**")
           m[:owner] = target[:name]
         end
       end
     end
 
     # helpers
+
+    def get_name(override)
+      if override[:name] != ""
+        override[:name]
+      else
+        override[:files][0][:filename]
+      end
+    end
 
     def each_member(cls)
       cls[:members].each {|m| yield m }

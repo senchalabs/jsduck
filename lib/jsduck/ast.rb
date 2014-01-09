@@ -1,6 +1,7 @@
 require "jsduck/serializer"
 require "jsduck/evaluator"
 require "jsduck/function_ast"
+require "jsduck/ext_patterns"
 
 module JsDuck
 
@@ -10,19 +11,8 @@ module JsDuck
     def initialize(docs = [], options = {})
       @serializer = JsDuck::Serializer.new
       @evaluator = JsDuck::Evaluator.new
-      @ext_define_patterns = build_ext_define_patterns(options[:ext_namespaces] || ["Ext"])
+      @ext_patterns = JsDuck::ExtPatterns.new(options[:ext_namespaces] || ["Ext"])
       @docs = docs
-    end
-
-    # Given Array of alternate Ext namespaces builds list of patterns
-    # for detecting Ext.define:
-    #
-    # ["Ext","Foo"] --> ["Ext.define", "Ext.ClassManager.create", "Foo.define", "Foo.ClassManager.create"]
-    #
-    def build_ext_define_patterns(namespaces)
-      namespaces.map do |ns|
-        [ns + ".define", ns + ".ClassManager.create"]
-      end.flatten
     end
 
     # Performs the detection of code in all docsets.
@@ -68,7 +58,11 @@ module JsDuck
       if exp && ext_define?(exp)
         make_class(to_value(exp["arguments"][0]), exp)
 
-      # foo = Ext.extend("Parent", {})
+      # Ext.override(Class, {})
+      elsif exp && ext_override?(exp)
+        make_class("", exp)
+
+      # foo = Ext.extend(Parent, {})
       elsif exp && assignment?(exp) && ext_extend?(exp["right"])
         make_class(to_s(exp["left"]), exp["right"])
 
@@ -76,7 +70,7 @@ module JsDuck
       elsif exp && assignment?(exp) && class_name?(to_s(exp["left"]))
         make_class(to_s(exp["left"]), exp["right"])
 
-      # var foo = Ext.extend("Parent", {})
+      # var foo = Ext.extend(Parent, {})
       elsif var && var["init"] && ext_extend?(var["init"])
         make_class(to_s(var["id"]), var["init"])
 
@@ -87,6 +81,10 @@ module JsDuck
       # function Foo() {}
       elsif function?(ast) && class_name?(to_s(ast["id"]))
         make_class(to_s(ast["id"]))
+
+      # { ... }
+      elsif object?(ast)
+        make_class("", ast)
 
       # function foo() {}
       elsif function?(ast)
@@ -107,6 +105,10 @@ module JsDuck
       # foo: function() {}
       elsif property?(ast) && function?(ast["value"])
         make_method(key_value(ast["key"]), ast["value"])
+
+      # this.fireEvent("foo", ...)
+      elsif exp && fire_event?(exp)
+        make_event(to_value(exp["arguments"][0]))
 
       # foo = ...
       elsif exp && assignment?(exp)
@@ -152,11 +154,15 @@ module JsDuck
     end
 
     def ext_define?(ast)
-      call?(ast) && @ext_define_patterns.include?(to_s(ast["callee"]))
+      call?(ast) && ext_pattern?("Ext.define", ast["callee"])
     end
 
     def ext_extend?(ast)
-      call?(ast) && to_s(ast["callee"]) == "Ext.extend"
+      call?(ast) && ext_pattern?("Ext.extend", ast["callee"])
+    end
+
+    def ext_override?(ast)
+      call?(ast) && ext_pattern?("Ext.override", ast["callee"])
     end
 
     def function?(ast)
@@ -164,7 +170,15 @@ module JsDuck
     end
 
     def empty_fn?(ast)
-      ast["type"] == "MemberExpression" && to_s(ast) == "Ext.emptyFn"
+      ast["type"] == "MemberExpression" && ext_pattern?("Ext.emptyFn", ast)
+    end
+
+    def ext_pattern?(pattern, ast)
+      @ext_patterns.matches?(pattern, to_s(ast))
+    end
+
+    def fire_event?(ast)
+      call?(ast) && to_s(ast["callee"]) == "this.fireEvent"
     end
 
     def var?(ast)
@@ -183,6 +197,10 @@ module JsDuck
       ast["type"] == "Literal" && ast["value"].is_a?(String)
     end
 
+    def object?(ast)
+      ast["type"] == "ObjectExpression"
+    end
+
     # Class name begins with upcase char
     def class_name?(name)
       return name.split(/\./).last =~ /\A[A-Z]/
@@ -196,15 +214,13 @@ module JsDuck
 
       # apply information from Ext.extend, Ext.define, or {}
       if ast
-        if ext_extend?(ast)
-          args = ast["arguments"]
-          cls[:extends] = to_s(args[0])
-          if args.length == 2 && args[1]["type"] == "ObjectExpression"
-            detect_class_members_from_object(cls, args[1])
-          end
-        elsif ext_define?(ast)
+        if ext_define?(ast)
           detect_ext_define(cls, ast)
-        elsif ast["type"] == "ObjectExpression"
+        elsif ext_extend?(ast)
+          detect_ext_something(:extends, cls, ast)
+        elsif ext_override?(ast)
+          detect_ext_something(:override, cls, ast)
+        elsif object?(ast)
           detect_class_members_from_object(cls, ast)
         elsif ast["type"] == "ArrayExpression"
           detect_class_members_from_array(cls, ast)
@@ -212,6 +228,16 @@ module JsDuck
       end
 
       return cls
+    end
+
+    # Detection of Ext.extend() or Ext.override().
+    # The type parameter must be correspondingly either :extend or :override.
+    def detect_ext_something(type, cls, ast)
+      args = ast["arguments"]
+      cls[type] = to_s(args[0])
+      if args.length == 2 && object?(args[1])
+        detect_class_members_from_object(cls, args[1])
+      end
     end
 
     # Inspects Ext.define() and copies detected properties over to the
@@ -419,6 +445,13 @@ module JsDuck
       end
     end
 
+    def make_event(name)
+      return {
+        :tagname => :event,
+        :name => name,
+      }
+    end
+
     def make_property(name=nil, ast=nil, tagname=:property)
       return {
         :tagname => tagname,
@@ -461,7 +494,7 @@ module JsDuck
     # are turned into strings, but values are left as is for further
     # processing.
     def each_pair_in_object_expression(ast)
-      return unless ast && ast["type"] == "ObjectExpression"
+      return unless ast && object?(ast)
 
       ast["properties"].each do |p|
         yield(key_value(p["key"]), p["value"], p)
