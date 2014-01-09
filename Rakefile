@@ -3,6 +3,8 @@ require 'rake'
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
+require 'jsduck/util/md5'
+
 def os_is_windows?
   RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
 end
@@ -44,23 +46,22 @@ end
 # Deletes those input CSS files and writes out concatenated CSS to
 # resources/css/app.css
 # Finally replaces the CSS section with <link> to that one CSS file.
-def combine_css(html, dir, opts = :write)
+def combine_css(html, dir)
   css_section_re = /<!-- BEGIN CSS -->.*<!-- END CSS -->/m
   css = []
   css_section_re.match(html)[0].each_line do |line|
     if line =~ /<link rel="stylesheet" href="(.*?)"/
       file = $1
       css << IO.read(dir + "/" + file)
-      system("rm", dir + "/" + file) if opts == :write
     end
   end
 
-  if opts == :write
-    fname = "#{dir}/resources/css/app.css"
-    File.open(fname, 'w') {|f| f.write(css.join("\n")) }
-    yui_compress(fname)
-  end
-  html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/app.css" type="text/css" />')
+  fname = "#{dir}/resources/css/app.css"
+  File.open(fname, 'w') {|f| f.write(css.join("\n")) }
+  yui_compress(fname)
+  fname = JsDuck::Util::MD5.rename(fname)
+
+  html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/' + File.basename(fname) + '" type="text/css" />')
 end
 
 # Same thing for JavaScript, result is written to: app.js
@@ -71,25 +72,23 @@ def combine_js(html, dir)
     if line =~ /<script .* src="(.*)">/
       file = $1
       js << IO.read(dir + "/" + file)
-      if file !~ /ext\.js/
-        system("rm", dir + "/" + file)
-      end
     elsif line =~ /<script .*>(.*)<\/script>/
       js << $1
     end
   end
 
   fname = "#{dir}/app.js"
+
   File.open(fname, 'w') {|f| f.write(js.join("\n")) }
   yui_compress(fname)
-  html.sub(js_section_re, '<script type="text/javascript" src="app.js"></script>')
+  fname = JsDuck::Util::MD5.rename(fname)
+  html.sub(js_section_re, '<script type="text/javascript" src="' + File.basename(fname) + '"></script>')
 end
 
 # Modifies HTML to link app.css.
-# Doesn't modify the linked CSS files.
 def rewrite_css_links(dir, filename)
   html = IO.read(dir + "/" + filename);
-  html = combine_css(html, dir, :replace_html_only)
+  html = combine_css(html, dir)
   File.open(dir + "/" + filename, 'w') {|f| f.write(html) }
 end
 
@@ -130,6 +129,8 @@ def compress
 
   # Clean up SASS files
   # (But keep prettify lib, which is needed for source files)
+  system "rm -rf #{dir}/resources/css/docs-ext.css"
+  system "rm -rf #{dir}/resources/css/viewport.css"
   system "rm -rf #{dir}/resources/sass"
   # system "rm -rf #{dir}/resources/codemirror"
   system "rm -rf #{dir}/resources/.sass-cache"

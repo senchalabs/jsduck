@@ -90,7 +90,14 @@ Ext.define('Docs.view.comments.FullList', {
      */
     load: function(comments, append) {
         this.down("commentsList").load(comments, append);
-        this.down("commentsPager").configure(comments[comments.length-1]);
+
+        var last = comments[comments.length-1];
+        if (last) {
+            this.down("commentsPager").configure(last);
+        }
+        else {
+            this.down("commentsPager").reset();
+        }
     },
 
     /**

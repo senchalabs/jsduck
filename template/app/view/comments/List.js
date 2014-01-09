@@ -67,6 +67,11 @@ Ext.define('Docs.view.comments.List', {
         }
 
         Ext.Array.forEach(comments, function(comment) {
+            // add no expanders for deleted comments.
+            if (comment.get("deleted")) {
+                return;
+            }
+
             new Docs.view.comments.RepliesExpander({
                 count: comment.get("replyCount"),
                 target: comment.get("target"),
