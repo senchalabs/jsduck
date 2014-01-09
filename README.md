@@ -13,4 +13,3 @@ the JSDuck project.
 
 Thanks to [Rene Saarsoo](http://triin.net), [Nick Poulden](https://github.com/nick),
 and everyone else who has contributed to JSDuck.
-

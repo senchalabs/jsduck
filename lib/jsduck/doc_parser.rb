@@ -528,7 +528,7 @@ module JsDuck
     # roll back to beginning and simply grab anything up to closing "]".
     def default_value
       start_pos = @input.pos
-      value = parse_balanced(/\[/, /\]/, /[^\[\]]*/)
+      value = parse_balanced(/\[/, /\]/, /[^\[\]'"]*/)
       if look(/\]/)
         value
       else
@@ -541,7 +541,7 @@ module JsDuck
     def typedef
       match(/\{/)
 
-      name = parse_balanced(/\{/, /\}/, /[^{}]*/)
+      name = parse_balanced(/\{/, /\}/, /[^{}'"]*/)
 
       if name =~ /=$/
         name = name.chop
@@ -560,16 +560,35 @@ module JsDuck
     #
     # @param re_open  The beginning brace regex
     # @param re_close The closing brace regex
-    # @param re_rest  Regex to match text without any braces
+    # @param re_rest  Regex to match text without any braces and strings
     def parse_balanced(re_open, re_close, re_rest)
-      result = match(re_rest)
+      result = parse_with_strings(re_rest)
       while look(re_open)
         result += match(re_open)
         result += parse_balanced(re_open, re_close, re_rest)
         result += match(re_close)
+        result += parse_with_strings(re_rest)
+      end
+      result
+    end
+
+    # Helper for parse_balanced to parse rest of the text between
+    # braces, taking account the strings which might occur there.
+    def parse_with_strings(re_rest)
+      result = match(re_rest)
+      while look(/['"]/)
+        result += parse_string('"') if look(/"/)
+        result += parse_string("'") if look(/'/)
         result += match(re_rest)
       end
       result
+    end
+
+    # Parses "..." or '...' including the escape sequence \' or '\"
+    def parse_string(quote)
+      re_quote = Regexp.new(quote)
+      re_rest = Regexp.new("(?:[^"+quote+"\\\\]|\\\\.)*")
+      match(re_quote) + match(re_rest) + (match(re_quote) || "")
     end
 
     # matches <ident_chain> <ident_chain> ... until line end

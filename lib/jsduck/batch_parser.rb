@@ -10,6 +10,7 @@ require 'jsduck/importer'
 require 'jsduck/return_values'
 require 'jsduck/lint'
 require 'jsduck/rest_file'
+require 'jsduck/circular_deps'
 
 module JsDuck
 
@@ -104,6 +105,7 @@ module JsDuck
 
     # Do all kinds of post-processing on relations.
     def apply_extra_processing
+      CircularDeps.new(@relations).check_all
       InheritDoc.new(@relations).resolve_all
       Importer.import(@opts.imports, @relations, @opts.new_since)
       ReturnValues.auto_detect(@relations)

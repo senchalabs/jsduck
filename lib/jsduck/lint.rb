@@ -1,6 +1,5 @@
 require 'jsduck/logger'
 require 'jsduck/class'
-require 'jsduck/circular_deps'
 
 module JsDuck
 
@@ -21,7 +20,6 @@ module JsDuck
       warn_duplicate_members
       warn_singleton_statics
       warn_empty_enums
-      fail_on_circular_dependencies
     end
 
     # print warning for each member or parameter with no name
@@ -115,17 +113,6 @@ module JsDuck
       @relations.each do |cls|
         if cls[:enum] && cls[:members].length == 0
           warn(:enum, "Enum #{cls[:name]} defined without values in it", cls)
-        end
-      end
-    end
-
-    # Print fatal error message for circular dependency.
-    def fail_on_circular_dependencies
-      circular_deps = CircularDeps.new
-      @relations.each do |cls|
-        if chain = circular_deps.check(cls)
-          Logger.fatal("Class #{cls[:name]} has a circular dependency: #{chain}")
-          exit 1
         end
       end
     end

@@ -42,6 +42,7 @@ module JsDuck
     attr_accessor :platform_names
     attr_accessor :comments_url
     attr_accessor :comments_domain
+    attr_accessor :ignore_html
 
     # Debugging
     attr_accessor :template_dir
@@ -93,7 +94,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.5.1"
+      @version = "4.6.0"
 
       # Customizing output
       @title = "Titanium Mobile"
@@ -129,6 +130,7 @@ module JsDuck
       }
       @comments_url = nil
       @comments_domain = nil
+      @ignore_html = {}
 
       # Debugging
       @root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
@@ -561,6 +563,21 @@ module JsDuck
           "This is a very Sencha Touch 2 docs specific option.",
           "Effects both normal- and inline-examples.") do
           @touch_examples_ui = true
+        end
+
+        opts.on('--ignore-html=TAG',
+          "Ignore a particular unclosed HTML tag.",
+          "",
+          "Normally all tags like <foo> that aren't followed at some",
+          "point with </foo> will get automatically closed by JSDuck",
+          "and a warning will be generated.  Except standard void tags",
+          "like <img> and <br>.  Use this option to specify additional",
+          "tags not requirering a closing tag.",
+          "",
+          "Useful for ignoring the ExtJS preprocessor directives",
+          "<locale> and <debug> which would otherwise be reported",
+          "as unclosed tags.") do |tag|
+          @ignore_html[tag] = true
         end
 
         opts.separator ""

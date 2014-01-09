@@ -124,7 +124,6 @@ module JsDuck
           @formatter.doc_context = {:filename => guide_file, :linenr => 0}
           name = File.basename(guide["url"])
           @formatter.img_path = "guides/#{name}"
-
           return add_toc(guide, @formatter.format(Util::IO.read(guide_file)))
         rescue
           Logger.fatal_backtrace("Error while reading/formatting guide #{guide["url"]}", $!)

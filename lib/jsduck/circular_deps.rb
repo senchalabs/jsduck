@@ -1,7 +1,24 @@
+require 'jsduck/logger'
+
 module JsDuck
 
   # Checks for circular dependencies
   class CircularDeps
+    def initialize(classes)
+      @classes = classes
+    end
+
+    # Checks all classes for circular dependencies.
+    #
+    # When found, exits with a fatal error message.
+    def check_all
+      @classes.each do |cls|
+        if chain = check(cls)
+          Logger.fatal("Class #{cls[:name]} has a circular dependency: #{chain}")
+          exit 1
+        end
+      end
+    end
 
     # Checks class for circular dependencies.
     #

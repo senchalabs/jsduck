@@ -2,6 +2,7 @@ require 'jsduck/type_parser'
 require 'jsduck/logger'
 require 'jsduck/meta_tag_registry'
 require 'jsduck/shortener'
+require 'jsduck/util/html'
 
 module JsDuck
 
@@ -84,7 +85,7 @@ module JsDuck
         else
           Logger.warn(:type_name, "Unknown type #{type}", context[:filename], context[:linenr])
         end
-        type
+        Util::HTML.escape(type)
       end
     end
 
