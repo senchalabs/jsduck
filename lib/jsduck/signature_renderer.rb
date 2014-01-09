@@ -17,7 +17,7 @@ module JsDuck
       @m = member
       if @opts.rest
         return [
-          render_new,
+          render_rest,
           render_link,
           render_type
         ]
@@ -32,6 +32,13 @@ module JsDuck
     end
 
     private
+
+    def render_rest
+      if @m[:tagname] == :method
+        @m[:name] = @m[:url]
+        "<strong class='http-method'>" + @m[:httpMethod] + " </strong>"
+      end
+    end
 
     def render_new
       constructor? ? "<strong class='new-keyword'>new</strong>" : ""
