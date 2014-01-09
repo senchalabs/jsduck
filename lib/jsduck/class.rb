@@ -152,9 +152,9 @@ module JsDuck
         ms = @members_index.global_by_name[query[:name]] || []
         ms = ms.find_all {|m| m[:owner] == @doc[:name]} if query[:local]
       elsif query[:local]
-        ms = @members_index.local_by_id.values
+        ms = @members_index.all_local
       else
-        ms = @members_index.global_by_id.values
+        ms = @members_index.all_global
       end
 
       if query[:tagname]

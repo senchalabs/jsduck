@@ -148,11 +148,8 @@ Ext.define('Docs.controller.Search', {
         this.getDropdown().getStore().loadData(results.slice(start, end));
         // position dropdown below search box
         this.getDropdown().alignTo('search-field', 'bl', [-12, -2]);
-        // hide dropdown when nothing found
-        if (results.length === 0) {
-            this.getDropdown().hide();
-        }
-        else {
+
+        if (results.length > 0) {
             // auto-select first result
             this.getDropdown().getSelectionModel().select(0);
         }

@@ -25,6 +25,44 @@
     padding: 1em 0 0.4em 0;
     font-weight: normal; } }
 
+// When welcome text rendered from Markdown.
+#welcomeindex .markdown {
+  margin: 2em;
+  color: $docs-text-color;
+  p {
+    margin-bottom: 1em; }
+  h1 {
+    color: $docs-heading-color;
+    font-family: $docs-heading-font;
+    font-size: 2em; }
+  h2 { @include guides-h2-heading; }
+  h3 { @include guides-h3-heading; }
+  h3 { font-weight: bold; font-size: 1.1em; }
+  h4 { font-weight: bold; }
+  ul {
+    margin: 0 0 1em 2em;
+    li {
+      list-style: disc outside; } }
+  ol {
+    margin: 0 0 1em 2em;
+    li {
+      list-style: decimal outside; } }
+  em {
+    font-style: italic; }
+  strong {
+    font-weight: bold; }
+  pre {
+    background-color: #f7f7f7;
+    border: solid 1px #e8e8e8;
+    @include border-radius(5px);
+    color: #314e64;
+    font-family: $docs-monospace-font;
+    padding: 10px 12px;
+    margin: 10px 0 14px 0;
+    overflow-x: auto;
+    overflow-y: hidden; } }
+
+
 .class-overview, .guide-container, .comments-index {
   // Style only the body area, or the toolbar will get styled too
   .x-panel-body {
@@ -32,7 +70,7 @@
     .clr {
       clear: both; }
     p, ul, ol {
-      color: #484848;
+      color: $docs-text-color;
       max-width: 900px; }
     p {
       padding: 0;

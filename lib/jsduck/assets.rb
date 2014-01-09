@@ -30,7 +30,7 @@ module JsDuck
       doc_formatter.relations = @relations
 
       @images = Images.new(@opts.images)
-      @welcome = Welcome.create(@opts.welcome)
+      @welcome = Welcome.create(@opts.welcome, doc_formatter)
       @guides = Guides.create(@opts.guides, doc_formatter, @opts)
       @videos = Videos.create(@opts.videos)
       @examples = Examples.create(@opts.examples, @opts)
