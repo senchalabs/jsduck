@@ -31,6 +31,10 @@ describe JsDuck::Aggregator do
     it "detects description" do
       @doc[:throws][0][:doc].should == "Some text\non multiple lines."
     end
+
+    it "leaves documentation after @throws out of the main documentation" do
+      @doc[:doc].should == "Some function"
+    end
   end
 
   describe "@throws without type" do
