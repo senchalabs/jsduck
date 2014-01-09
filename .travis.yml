@@ -1,7 +1,7 @@
 language: ruby
 rvm:
   - "1.8.7"
-  - "1.9.2"
+  - "1.9.3"
 install:
   - gem install rdiscount
   - gem install json
@@ -9,3 +9,4 @@ install:
   - gem install therubyracer -v 0.10.1
   - gem install rspec
   - gem install rake
+  - gem install dimensions

@@ -5,6 +5,7 @@ require 'jsduck/util/null_object'
 require 'jsduck/logger'
 require 'jsduck/grouped_asset'
 require 'jsduck/util/html'
+require 'jsduck/img/dir'
 require 'fileutils'
 
 module JsDuck
@@ -90,6 +91,7 @@ module JsDuck
     def load_all_guides
       each_item do |guide|
         guide["url"] = resolve_url(guide)
+        guide[:filename] = guide["url"] + "/README.md"
         guide[:html] = load_guide(guide)
       end
     end
@@ -123,7 +125,7 @@ module JsDuck
         begin
           @formatter.doc_context = {:filename => guide_file, :linenr => 0}
           name = File.basename(guide["url"])
-          @formatter.img_path = "guides/#{name}"
+          @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
           return add_toc(guide, @formatter.format(Util::IO.read(guide_file)))
         rescue
           Logger.fatal_backtrace("Error while reading/formatting guide #{guide["url"]}", $!)
@@ -132,6 +134,19 @@ module JsDuck
       else
         return Logger.warn(:guide, "No README.html or README.md in #{guide["url"]}")
       end    
+    end
+
+    def format_guide(guide)
+      @formatter.doc_context = {:filename => guide[:filename], :linenr => 0}
+      @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
+      html = add_toc(guide, @formatter.format(Util::IO.read(guide[:filename])))
+
+      # Report unused images (but ignore the icon files)
+      @formatter.images.get("icon.png")
+      @formatter.images.get("icon-lg.png")
+      @formatter.images.report_unused
+
+      return html
     end
 
     def write_guide(guide, dir)

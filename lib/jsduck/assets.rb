@@ -1,4 +1,5 @@
-require 'jsduck/images'
+require 'jsduck/img/dir_set'
+require 'jsduck/img/writer'
 require 'jsduck/welcome'
 require 'jsduck/guides'
 require 'jsduck/videos'
@@ -26,10 +27,9 @@ module JsDuck
       @relations = relations
       @opts = opts
 
-      doc_formatter = DocFormatter.new(@opts)
-      doc_formatter.relations = @relations
+      doc_formatter = DocFormatter.new(@relations, @opts)
 
-      @images = Images.new(@opts.images)
+      @images = Img::DirSet.new(@opts.images, "images")
       @welcome = Welcome.create(@opts.welcome, doc_formatter)
       @guides = Guides.create(@opts.guides, doc_formatter, @opts)
       @videos = Videos.create(@opts.videos)
@@ -43,7 +43,7 @@ module JsDuck
     # Welcome page and categories are written in JsDuck::IndexHtml
     def write
       @guides.write(@opts.output_dir+"/guides")
-      @images.copy(@opts.output_dir+"/images")
+      Img::Writer.copy(@images.all_used, @opts.output_dir+"/images")
     end
 
   end

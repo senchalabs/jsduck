@@ -3,6 +3,8 @@ require 'strscan'
 require 'rdiscount'
 require 'jsduck/html_stack'
 require 'jsduck/inline/link'
+require 'jsduck/inline/auto_link'
+require 'jsduck/inline/link_renderer'
 require 'jsduck/inline/img'
 require 'jsduck/inline/video'
 require 'jsduck/inline/example'
@@ -15,21 +17,21 @@ module JsDuck
     # Creates a formatter configured with options originating from
     # command line.  For the actual effect of the options see
     # Inline::* classes.
-    def initialize(opts={})
+    def initialize(relations={}, opts={})
       @opts = opts
-      @inline_link = Inline::Link.new(opts)
+      @link_renderer = Inline::LinkRenderer.new(relations, opts)
+      @inline_link = Inline::Link.new(@link_renderer)
+      @auto_link = Inline::AutoLink.new(@link_renderer)
       @inline_img = Inline::Img.new(opts)
       @inline_video = Inline::Video.new(opts)
       @inline_example = Inline::Example.new(opts)
       @doc_context = {}
     end
 
-    # Sets base path to prefix images from {@img} tags.
-    def img_path=(path)
-      @inline_img.base_path = path
+    # Accessors to the images attribute of Inline::Img
+    def images=(images)
+      @inline_img.images = images
     end
-
-    # Returns list of all image paths gathered from {@img} tags.
     def images
       @inline_img.images
     end
@@ -39,6 +41,7 @@ module JsDuck
     # Context#blah is meant.
     def class_context=(cls)
       @inline_link.class_context = cls
+      @auto_link.class_context = cls
     end
 
     # Sets up instance to work in context of particular doc object.
@@ -47,20 +50,13 @@ module JsDuck
       @doc_context = doc
       @inline_video.doc_context = doc
       @inline_link.doc_context = doc
+      @auto_link.doc_context = doc
+      @inline_img.doc_context = doc
     end
 
     # Returns the current documentation context
     def doc_context
       @doc_context
-    end
-
-    # JsDuck::Relations for looking up class names.
-    #
-    # When auto-creating class links from CamelCased names found from
-    # text, we check the relations object to see if a class with that
-    # name actually exists.
-    def relations=(relations)
-      @inline_link.relations = relations
     end
 
     # Formats doc-comment for placement into HTML.
@@ -114,13 +110,15 @@ module JsDuck
           # There might still be "{" that doesn't begin {@link} or {@img} - ignore it
           out += s.scan(/[{]/)
         elsif substitute = @inline_example.replace(s)
+          tags.push_tag("pre")
+          tags.push_tag("code")
           out += substitute
         elsif s.check(/<\w/)
           # Open HTML tag
-          out += s.scan(/</) + tags.open(s.scan(/\w+/)) + s.scan_until(/>|\Z/)
+          out += tags.open(s)
         elsif s.check(/<\/\w+>/)
           # Close HTML tag
-          out += s.scan(/<\//) + tags.close(s.scan(/\w+/)) + s.scan(/>/)
+          out += tags.close(s)
         elsif s.check(/</)
           # Ignore plain '<' char.
           out += s.scan(/</)
@@ -128,16 +126,16 @@ module JsDuck
           # Replace class names in the following text up to next "<" or "{"
           # but only when we're not inside <a>...</a>
           text = s.scan(/[^{<]+/)
-          out += tags.open?("a") ? text : @inline_link.create_magic_links(text)
+          out += tags.open?("a") ? text : @auto_link.replace(text)
         end
       end
 
-      out + tags.close_unfinished
+      out
     end
 
     # Creates a link based on the link template.
     def link(cls, member, anchor_text, type=nil, static=nil)
-      @inline_link.link(cls, member, anchor_text, type, static)
+      @link_renderer.link(cls, member, anchor_text, type, static)
     end
 
   end

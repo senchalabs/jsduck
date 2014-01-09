@@ -196,4 +196,18 @@ describe JsDuck::DocParser do
     end
   end
 
+  describe "indented code on previous line" do
+    before do
+      @params = parse_single(<<-EOS.strip).find_all {|t| t[:tagname] == :param }
+         * @param x
+         *     Foo
+         *     Bar
+         * @param y
+      EOS
+    end
+    it "doesn't cause the tag to be skipped" do
+      @params.length.should == 2
+    end
+  end
+
 end

@@ -176,7 +176,7 @@ module JsDuck
     end
 
     def indented_as_code?
-      @current_tag[:doc] =~ /^ {4,}[^\n]*\Z/
+      @current_tag[:doc] =~ /^ {4,}[^\n]*\z/
     end
 
     # Processes anything else beginning with @-sign.
