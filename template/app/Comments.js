@@ -157,27 +157,49 @@ Ext.define('Docs.Comments', {
     },
 
     /**
-     * Posts a new comments to a particular target.
-     * @param {String[]} target An array of `[type, cls, member]`
-     * @param {String} content The new content
+     * Loads the replies of a particular comment.
+     * @param {String[]} parentId ID of parent comment.
      * @param {Function} callback Called when finished.
-     * @param {Object} callback.comment The newly posted comment.
+     * @param {Object[]} callback.comments An array of comments.
      * @param {Object} scope
      */
-    post: function(target, content, callback, scope) {
+    loadReplies: function(parentId, callback, scope) {
+        this.request("jsonp", {
+            url: '/replies',
+            method: 'GET',
+            params: {
+                parentId: parentId
+            },
+            success: callback,
+            scope: scope
+        });
+    },
+
+    /**
+     * Posts a new comments to a particular target.
+     * @param {Object} cfg A config for posting new comment:
+     * @param {String[]} cfg.target An array of `[type, cls, member]`
+     * @param {Number}   cfg.parentId ID of parent comment.
+     * @param {String}   cfg.content The new content
+     * @param {Function} cfg.callback Called when finished.
+     * @param {Object}   cfg.callback.comment The newly posted comment.
+     * @param {Object}   cfg.scope
+     */
+    post: function(cfg) {
         this.request("ajax", {
             url: '/comments',
             method: 'POST',
             params: {
-                target: Ext.JSON.encode(target),
-                comment: content,
-                url: this.buildPostUrl(target)
+                target: Ext.JSON.encode(cfg.target),
+                parentId: cfg.parentId,
+                comment: cfg.content,
+                url: this.buildPostUrl(cfg.target)
             },
             callback: function(options, success, response) {
                 var data = Ext.JSON.decode(response.responseText);
                 if (success && data.success) {
-                    this.changeCount(target, +1);
-                    callback && callback.call(scope, data.comment);
+                    this.changeCount(cfg.target, +1);
+                    cfg.callback && cfg.callback.call(cfg.scope, data.comment);
                 }
             },
             scope: this
@@ -258,11 +280,12 @@ Ext.define('Docs.Comments', {
     /**
      * Generates an `<img>` tag for loading the avatar.
      * @param {String} emailHash MD5 hash of users e-mail address.
+     * @param {String} [cls] Additional CSS class or classes to add to the image.
      * @return {String}
      */
-    avatar: function(emailHash) {
-        return '<img class="avatar" width="25" height="25" src="http://www.gravatar.com/avatar/' +
-               emailHash + '?s=25&amp;r=PG&amp;d=identicon">';
+    avatar: function(emailHash, cls) {
+        return '<img class="avatar ' + (cls || "") + '" width="25" height="25" ' +
+               'src="http://www.gravatar.com/avatar/' + emailHash + '?s=25&amp;r=PG&amp;d=identicon">';
     },
 
     /**

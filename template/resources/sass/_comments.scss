@@ -26,10 +26,16 @@ $comment-date-color: #999;
   font-size: 11px; }
 
 
+@mixin comments-expander-drop-target {
+   &.open > a.side.toggleComments.drop-target-hover {
+      background: $moderator-color-light; } }
+
+
 // Large comments expander (Class/Guide/Video)
 #center-container .comments-large-expander {
   .comments-expander {
-    @include member-expander; }
+    @include member-expander;
+    @include comments-expander-drop-target; }
   // Header icon in large comments expander
   h3.icon-comment {
     padding: 0 0 5px 25px;
@@ -45,6 +51,7 @@ $comment-date-color: #999;
   border-color: #e0e0e0;
   position: relative;
   padding: 0 0 10px 25px;
+  @include comments-expander-drop-target;
   &.open {
     min-height: 40px; }
   .loading {
@@ -163,12 +170,16 @@ form.commentForm {
 .comment {
   padding-top: 10px;
   padding-left: 2px;
+  &.drop-target-hover {
+    background: $moderator-color-light; }
   &:hover {
-    .com-meta .top-right {
-      .command,
-      .vote {
+    // Use child > selector to ensure the hover also
+    // happens for the list of comment replies.
+    > .com-meta > .top-right > .command,
+    > .com-meta > .top-right > .vote,
+    > .comments-replies-expander > .replies-button {
         @include transition(opacity, 0.2s, linear);
-        @include opacity(1); } } }
+        @include opacity(1); } }
   .target {
     color: #666;
     font-size: 90%;
@@ -177,7 +188,9 @@ form.commentForm {
     position: relative;
     text-size: 13px;
     img {
-      @include border-radius(2px); }
+      @include border-radius(2px);
+      &.drag-handle {
+        cursor: all-scroll; } }
     .author {
       position: absolute;
       left: 40px;
@@ -227,6 +240,7 @@ form.commentForm {
         border: 2px solid $comment-date-color;
         @include border-radius(7px);
         @include opacity(0);
+        @include transition(opacity, 0.2s, linear);
         &:hover {
           border-color: $moderator-color;
           color: $moderator-color; } }
@@ -284,8 +298,27 @@ form.commentForm {
         font-size: 16px; } } }
   .content {
     min-height: 65px;
-    padding: 0 0 15px 40px;
+    padding: 0 0 30px 40px;
     border-bottom: 1px solid #eee; }
+  .comments-replies-expander {
+    .replies-button {
+      position: relative;
+      top: -20px;
+      height: 0;
+      display: block;
+      padding-left: 40px;
+      font-weight: bold;
+      @include opacity(0);
+      @include transition(opacity, 0.2s, linear);
+      color: $moderator-color-light;
+      &.with-replies {
+        @include opacity(1); }
+      &:hover {
+        color: $moderator-color; } }
+    .comments-list-with-form {
+      padding-left: 1em;
+      border-left: 1em solid #EBF3FE; } }
+
   .deleted-comment {
     text-align: center;
     background: #ffd76e;

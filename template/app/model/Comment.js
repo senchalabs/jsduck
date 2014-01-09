@@ -19,7 +19,9 @@ Ext.define('Docs.model.Comment', {
         "contentHtml",
         "read",
         "tags",
-        "deleted"
+        "deleted",
+        "parentId",
+        "replyCount"
     ],
     proxy: {
         type: "ajax",
@@ -113,6 +115,23 @@ Ext.define('Docs.model.Comment', {
                 this.commit();
             },
             scope: this
+        });
+    },
+
+    /**
+     * Sets new parent for the comment.
+     * @param {Docs.model.Comment} parent The parent comment
+     * (pass undefined to remove the parent from comment).
+     * @param {Function} callback
+     * @param {Object} scope
+     */
+    setParent: function(parent, callback, scope) {
+        this.request({
+            url: '/comments/' + this.get("id") + '/set_parent',
+            method: 'POST',
+            params: parent ? {parentId: parent.get("id")} : undefined,
+            success: callback,
+            scope: scope
         });
     },
 

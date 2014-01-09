@@ -1,38 +1,37 @@
 /**
- * The comments expander, showing the number of comments.
+ * The comment replies expander, showing the number of replies.
  */
-Ext.define('Docs.view.comments.Expander', {
-    alias: "widget.commentsExpander",
+Ext.define('Docs.view.comments.RepliesExpander', {
+    alias: "widget.commentsRepliesExpander",
     extend: 'Ext.Component',
     requires: [
-        'Docs.Comments',
-        'Docs.view.comments.TopLevelDropZone'
+        'Docs.Comments'
     ],
     uses: [
         'Docs.view.comments.ListWithForm'
     ],
-    componentCls: "comments-expander",
+    componentCls: "comments-replies-expander",
 
     /**
      * @cfg {String[]} target
      * The target specification array `[type, cls, member]`.
      */
     /**
-     * @cfg {Number} count
+     * @cfg {String[]} parentId
+     * ID of the parent comment, if any.
      */
     /**
-     * @cfg {String} newCommentTitle
-     * A custom title for the new comment form.
+     * @cfg {Number} count
      */
 
     initComponent: function() {
         this.tpl = new Ext.XTemplate(
-            '<a href="#" class="side toggleComments"><span></span></a>',
-            '<a href="#" class="name toggleComments">',
+            '<a href="#" class="replies-button {[this.getCountCls(values.count)]}">',
                 '{[this.renderCount(values.count)]}',
             '</a>',
             {
-                renderCount: this.renderCount
+                renderCount: this.renderCount,
+                getCountCls: this.getCountCls
             }
         );
 
@@ -45,32 +44,25 @@ Ext.define('Docs.view.comments.Expander', {
 
     renderCount: function(count) {
         if (count === 1) {
-            return 'View 1 comment.';
+            return '1 reply...';
         }
         else if (count > 1) {
-            return 'View ' + count + ' comments.';
+            return count + ' replies...';
         }
         else {
-            return 'No comments. Click to add.';
+            return 'Write reply...';
         }
+    },
+
+    getCountCls: function(count) {
+        return (count > 0) ? 'with-replies' : '';
     },
 
     afterRender: function() {
         this.callParent(arguments);
-
-        this.getEl().select(".toggleComments").each(function(el) {
-            el.on("click", this.toggle, this, {
-                preventDefault: true
-            });
-        }, this);
-
-        new Docs.view.comments.TopLevelDropZone(this.getEl().down(".side.toggleComments"), {
-            onValidDrop: Ext.Function.bind(this.setParent, this)
+        this.getEl().down(".replies-button").on("click", this.toggle, this, {
+            preventDefault: true
         });
-    },
-
-    setParent: function(comment, parent) {
-        comment.setParent(parent, this.reload, this);
     },
 
     toggle: function() {
@@ -82,8 +74,7 @@ Ext.define('Docs.view.comments.Expander', {
      */
     expand: function() {
         this.expanded = true;
-        this.getEl().addCls('open');
-        this.getEl().down('.name').setStyle("display", "none");
+        this.getEl().down('.replies-button').update("Hide replies.");
 
         if (this.list) {
             this.list.show();
@@ -98,31 +89,33 @@ Ext.define('Docs.view.comments.Expander', {
      */
     collapse: function() {
         this.expanded = false;
-        this.getEl().removeCls('open');
-        this.getEl().down('.name').setStyle("display", "block");
+        this.refreshRepliesButton();
 
         if (this.list) {
             this.list.hide();
         }
     },
 
+    refreshRepliesButton: function() {
+        var btn = this.getEl().down('.replies-button');
+        btn.update(this.renderCount(this.count));
+        btn.removeCls("with-replies");
+        btn.addCls(this.getCountCls(this.count));
+    },
+
     loadComments: function() {
         this.list = new Docs.view.comments.ListWithForm({
             target: this.target,
-            newCommentTitle: this.newCommentTitle,
+            parentId: this.parentId,
+            newCommentTitle: "<b>Reply to comment</b>",
             renderTo: this.getEl(),
             listeners: {
-                reorder: this.reload,
+                countChange: this.setCount,
                 scope: this
             }
         });
 
-        this.reload();
-    },
-
-    // Reloads the comments list from backend.
-    reload: function() {
-        Docs.Comments.load(this.target, function(comments) {
+        Docs.Comments.loadReplies(this.parentId, function(comments) {
             this.list.load(comments);
         }, this);
     },
@@ -132,7 +125,10 @@ Ext.define('Docs.view.comments.Expander', {
      * @param {Number} count
      */
     setCount: function(count) {
-        this.getEl().down(".name").update(this.renderCount(count));
+        this.count = count;
+        if (!this.expanded) {
+            this.refreshRepliesButton();
+        }
     }
 
 });

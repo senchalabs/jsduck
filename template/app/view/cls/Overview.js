@@ -164,7 +164,7 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     expandClassComments: function() {
-        var expaned = this.clsExpander.getExpander();
+        var expander = this.clsExpander.getExpander();
         expander.expand();
         // add a small arbitrary -40 offset to make the header visible.
         this.scrollToEl(expander.getEl(), -40);

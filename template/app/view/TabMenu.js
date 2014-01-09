@@ -22,7 +22,7 @@ Ext.define('Docs.view.TabMenu', {
         );
 
         this.items = [{
-            text: 'Close all tabs',
+            text: 'Close other tabs',
             iconCls: 'close',
             cls: 'close-all',
             handler: function() {

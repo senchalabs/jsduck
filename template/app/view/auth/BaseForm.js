@@ -4,7 +4,8 @@
 Ext.define('Docs.view.auth.BaseForm', {
     extend: 'Ext.Component',
     requires: [
-        'Docs.Tip'
+        'Docs.Tip',
+        'Docs.Auth'
     ],
 
     /**
@@ -30,7 +31,7 @@ Ext.define('Docs.view.auth.BaseForm', {
                 '<label><input type="checkbox" name="remember" /> Remember Me</label>',
                 '<input class="submit" type="submit" value="Sign in" />',
                 ' or ',
-                '<a class="register" href="http://www.sencha.com/forum/register.php" target="_blank">Register</a>',
+                '<a class="register" href="' + Docs.Auth.getRegistrationUrl() + '" target="_blank">Register</a>',
             '</form>'
         ].join("");
     },

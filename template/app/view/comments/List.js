@@ -11,6 +11,9 @@ Ext.define('Docs.view.comments.List', {
         'Docs.view.comments.Template',
         'Docs.view.comments.Form',
         'Docs.view.comments.TagEditor',
+        'Docs.view.comments.RepliesExpander',
+        'Docs.view.comments.DragZone',
+        'Docs.view.comments.DropZone',
         'Docs.model.Comment',
         'Docs.Tip'
     ],
@@ -27,20 +30,49 @@ Ext.define('Docs.view.comments.List', {
      * Used in Docs.view.comments.FullList.
      */
 
+    /**
+     * @cfg {Boolean} enableDragDrop
+     * True to allow drag-drop reorganization of comments.
+     */
+
     initComponent: function() {
         this.store = Ext.create('Ext.data.Store', {
-            model: "Docs.model.Comment"
+            model: "Docs.model.Comment",
+            listeners: {
+                update: this.fireChangeEvent,
+                scope: this
+            }
         });
 
-        this.tpl = Docs.view.comments.Template.create({showTarget: this.showTarget});
+        this.tpl = Docs.view.comments.Template.create({
+            showTarget: this.showTarget,
+            enableDragDrop: this.enableDragDrop
+        });
 
         this.callParent(arguments);
 
         this.on("refresh", function() {
             Docs.Syntax.highlight(this.getEl());
+            this.renderExpanders(this.store.getRange());
         }, this);
-        this.on("itemupdate", function(record, index, node) {
+        this.on("itemupdate", function(comment, index, node) {
             Docs.Syntax.highlight(node);
+            this.renderExpanders([comment]);
+        }, this);
+    },
+
+    renderExpanders: function(comments) {
+        if (comments[0] && comments[0].get("parentId")) {
+            return;
+        }
+
+        Ext.Array.forEach(comments, function(comment) {
+            new Docs.view.comments.RepliesExpander({
+                count: comment.get("replyCount"),
+                target: comment.get("target"),
+                parentId: comment.get("id"),
+                renderTo: this.getNode(comment)
+            });
         }, this);
     },
 
@@ -71,11 +103,27 @@ Ext.define('Docs.view.comments.List', {
 
         this.delegateClick("a.add-tag", this.addTag, this);
         this.delegateClick("a.remove-tag", this.removeTag, this);
+
+        // initialize drag-drop
+        if (this.enableDragDrop) {
+            new Docs.view.comments.DragZone(this);
+            new Docs.view.comments.DropZone(this, {
+                onValidDrop: Ext.Function.bind(this.setParent, this)
+            });
+        }
     },
 
     delegateClick: function(selector, callback, scope) {
         this.getEl().on("click", function(event, el) {
-            callback.call(scope, el, this.getRecord(this.findItemByChild(el)));
+            var comment = this.getRecord(this.findItemByChild(el));
+            // In case of replies to comments, this handler will also
+            // pick up events really targeted for the sublist, but we
+            // don't want to act on these.  But in such case the view
+            // is unable to find the corresponding record - so we stop
+            // here.
+            if (comment) {
+                callback.call(scope, el, comment);
+            }
         }, this, {preventDefault: true, delegate: selector});
     },
 
@@ -144,6 +192,16 @@ Ext.define('Docs.view.comments.List', {
         comment.removeTag(tagname);
     },
 
+    setParent: function(comment, parent) {
+        comment.setParent(parent, function() {
+            /**
+             * @event reorder
+             * Fired when comments reordered with drag-drop.
+             */
+            this.fireEvent("reorder");
+        }, this);
+    },
+
     /**
      * Loads array of comments into the view.
      * @param {Object[]} comments
@@ -157,6 +215,19 @@ Ext.define('Docs.view.comments.List', {
 
         var processedComments = this.store.getProxy().getReader().readRecords(comments).records;
         this.store.loadData(processedComments, append);
+        this.fireChangeEvent();
+    },
+
+    fireChangeEvent: function() {
+        /**
+         * @event countChange
+         * Fired when nr of comments in list changes.
+         * @param {Number} count
+         */
+        var isNotDeleted = function(c) {
+            return !c.get("deleted");
+        };
+        this.fireEvent("countChange", this.getStore().queryBy(isNotDeleted).getCount());
     }
 
 });
