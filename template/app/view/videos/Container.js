@@ -36,6 +36,10 @@ Ext.define('Docs.view.videos.Container', {
 			// Ti change -- move title/description before object
             '<h1>{title}</h1>',
             '<p>{[this.linkify(values.description)]}</p>',
+            '<iframe src="http://player.vimeo.com/video/{id}" width="640" height="360" frameborder="0" ',
+                'webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>',
+/*
+// Merge conflict
             '<object width="640" height="360" id="video_player">',
                 '<param name="allowfullscreen" value="true" />',
                 '<param name="allowscriptaccess" value="always" />',
@@ -44,6 +48,7 @@ Ext.define('Docs.view.videos.Container', {
                 '<embed src="http://vimeo.com/moogaloop.swf?clip_id={id}&amp;server=vimeo.com&amp;color=4CC208&amp;fullscreen=1" ',
                     'type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="640" height="360"></embed>',
             '</object>',
+*/
             {
                 // Detects URL-s in text and converts them to links
                 linkify: function(text) {

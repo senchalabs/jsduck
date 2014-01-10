@@ -93,8 +93,8 @@ Ext.define('Docs.view.comments.MemberWrap', {
     getNewCommentTitle: function() {
         if (this.getDefinedIn() !== this.className) {
             return [
-                "<b>Be aware.</b> This comment will be posted to <b>" + this.getDefinedIn() + "</b> class, ",
-                "from where this member is inherited from."
+                "<b>Be aware.</b> This member is inherited from <b>" + this.getDefinedIn() + "</b>; ",
+                "comments posted here will also be posted to that page."
             ].join("");
         }
         else {
