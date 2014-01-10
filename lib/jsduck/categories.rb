@@ -2,6 +2,7 @@ require 'jsduck/logger'
 require 'jsduck/file_categories'
 require 'jsduck/auto_categories'
 require 'jsduck/categories_class_name'
+require 'jsduck/columns'
 
 module JsDuck
 
@@ -19,6 +20,7 @@ module JsDuck
     def initialize(categories, doc_formatter, relations={})
       @categories = categories
       @class_name = CategoriesClassName.new(doc_formatter, relations)
+      @columns = Columns.new("classes")
     end
 
     # Returns HTML listing of classes divided into categories
@@ -40,10 +42,12 @@ module JsDuck
       EOHTML
     end
 
+    private
+
     def render_columns(groups)
       align = ["left-column", "middle-column", "right-column"]
       i = -1
-      return split(groups, 3).map do |col|
+      return @columns.split(groups, 3).map do |col|
         i += 1
         [
           "<div class='#{align[i]}'>",
@@ -62,62 +66,6 @@ module JsDuck
           "</ul>",
         ]
       end
-    end
-
-    # formats a link, expanding any we previously shortened to Ti.
-    def format_class_link(cls)
-      if @relations[cls]
-        return @doc_formatter.link(cls, nil, cls)
-      elsif
-        expanded_cls = cls.sub(/^Ti\./, "Titanium.")
-        if @relations[expanded_cls]
-          return @doc_formatter.link(expanded_cls, nil, cls)
-        else
-          return cls
-        end
-      end
-    end
-
-    # Splits the array of items into n chunks so that the sum of
-    # largest chunk is as small as possible.
-    #
-    # This is a brute-force implementation - we just try all the
-    # combinations and choose the best one.
-    def split(items, n)
-      if n == 1
-        [items]
-      elsif items.length <= n
-        Array.new(n) {|i| items[i] ? [items[i]] : [] }
-      else
-        min_max = nil
-        min_arr = nil
-        i = 0
-        while i <= items.length-n
-          i += 1
-          # Try placing 1, 2, 3, ... items to first chunk.
-          # Calculate the remaining chunks recursively.
-          cols = [items[0,i]] + split(items[i, items.length], n-1)
-          max = max_sum(cols)
-          # Is this the optimal solution so far? Remember it.
-          if !min_max || max < min_max
-            min_max = max
-            min_arr = cols
-          end
-        end
-        min_arr
-      end
-    end
-
-    def max_sum(cols)
-      cols.map {|col| sum(col) }.max
-    end
-
-    # Finds the total size of items in array
-    #
-    # The size of one item is it's number of classes + the space for header
-    def sum(arr)
-      header_size = 3
-      arr.reduce(0) {|sum, item| sum + item["classes"].length + header_size }
     end
 
   end

@@ -34,12 +34,10 @@
     // A list of links
     .links {
       margin-left: 1.5em;
-      .new-class, .new-members {
+      .new-class {
         @include border-radius(2px);
         padding: 0 0.5em;
-        background: #F5D833; }
-      .new-members {
+        background: #F5D833;
         position: relative;
-        top: -3px;
-        font-size: 5px; } } } }
-
+        top: -2px;
+        font-size: 7px; } } } }

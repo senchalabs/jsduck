@@ -19,11 +19,13 @@ Ext.define('Docs.view.cls.Index', {
             '<tpl if="notice">',
                 '<div class="notice">{notice}</div>',
             '</tpl>',
-            '{categories}'
+            '{categories}',
+            '{news}'
         );
         this.data = {
             notice: Docs.data.message || Docs.ContentGrabber.get("notice-text"),
-            categories: Docs.ContentGrabber.get("categories-content")
+            categories: Docs.ContentGrabber.get("categories-content"),
+            news: Docs.ContentGrabber.get("news-content")
         };
 
         this.callParent(arguments);
