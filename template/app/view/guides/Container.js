@@ -28,9 +28,16 @@ Ext.define('Docs.view.guides.Container', {
     /**
      * Scrolls the specified element into view
      *
-     * @param {String} el  The element to scroll to.
+     * @param {String} id  The element to scroll to.
+     * Either ID of the element of anchor name.
      */
-    scrollToEl: function(el) {
+    scrollToEl: function(id) {
+        var el = Ext.get(id);
+
+        if (!el) {
+            el = Ext.get(Ext.query("a[name='"+id+"']")[0]);
+        }
+
         this.scrollToView(el, {
             highlight: true,
             offset: -100

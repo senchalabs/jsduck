@@ -43,6 +43,7 @@ module JsDuck
     attr_accessor :platform_names
     attr_accessor :comments_url
     attr_accessor :comments_domain
+    attr_accessor :search
     attr_accessor :ignore_html
 
     # Debugging
@@ -96,7 +97,7 @@ module JsDuck
       @ext4_events = nil
       @meta_tag_paths = []
 
-      @version = "4.9.0"
+      @version = "4.10.0"
 
       # Customizing output
       @title = "Titanium Mobile"
@@ -133,6 +134,7 @@ module JsDuck
       }
       @comments_url = nil
       @comments_domain = nil
+      @search = {}
       @ignore_html = {}
 
       # Debugging
@@ -439,12 +441,45 @@ module JsDuck
         end
 
         opts.on('--comments-domain=STRING',
+          "A name identifying the subset of comments.",
+          "",
           "A string consisting of <name>/<version>.",
           "",
           "For example: ext-js/4",
           "",
           "Must be used together with --comments-url option.") do |domain|
           @comments_domain = domain
+        end
+
+        opts.on('--search-url=URL',
+          "Address of guides search server.",
+          "",
+          "When supplied, the search for guides is performed through this",
+          "external service and the results merged together with API search.",
+          "The search server must respond to JSONP requests.",
+          "",
+          "For example: http://sencha.com/docsearch",
+          "",
+          "Must be used together with --search-domain option.",
+          "",
+          "This option is EXPERIMENTAL.") do |url|
+          @search[:url] = url
+        end
+
+        opts.on('--search-domain=STRING',
+          "A name identifying the subset to search from.",
+          "",
+          "A string consisting of <name>/<version>.",
+          "",
+          "Tells the search engine which product and version",
+          "to include into search.",
+          "",
+          "For example: Ext JS/4.2.0",
+          "",
+          "Must be used together with --search-url option.",
+          "",
+          "This option is EXPERIMENTAL.") do |domain|
+          @search[:product], @search[:version] = domain.split(/\//)
         end
 
         opts.separator ""
