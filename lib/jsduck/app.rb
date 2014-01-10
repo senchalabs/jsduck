@@ -15,20 +15,6 @@ module JsDuck
 
     # Main App logic.
     def run
-=begin
-    if @opts.rest
-      rest_docs = parallel_parse_rest(@opts.input_files)
-      rest_objs = aggregate(rest_docs)
-      @relations = filter_classes(rest_objs)
-    else
-      parsed_files = parallel_parse(@opts.input_files)
-      result = aggregate(parsed_files)
-      @relations = filter_classes(result)
-      InheritDoc.new(@relations).resolve_all
-      Importer.import(@opts.imports, @relations, @opts.new_since)
-      Lint.new(@relations).run
-    end
-=end
       parse
 
       init_assets
@@ -42,39 +28,6 @@ module JsDuck
 
     private
 
-=begin
-    def parallel_parse_rest(filenames)
-      ParallelWrap.map(filenames) do |fname|
-        Logger.instance.log("Parsing", fname)
-        begin
-          RestFile.new(JsDuck::IO.read(fname), fname, @opts)
-        rescue
-          Logger.instance.fatal("Error while parsing #{fname}", $!)
-          exit(1)
-        end
-      end
-    end
-    # Aggregates parsing results sequencially
-    def aggregate(parsed_files)
-      agr = Aggregator.new
-      parsed_files.each do |file|
-        Logger.instance.log("Aggregating", file.filename)
-        agr.aggregate(file)
-      end
-      agr.classify_orphans
-      if ! @opts.rest
-        agr.create_global_class
-        agr.remove_ignored_classes
-        agr.create_accessors
-      end
-      if @opts.ext4_events == true || (@opts.ext4_events == nil && agr.ext4?)
-        agr.append_ext4_event_options
-      end
-      agr.process_enums
-      # Ignore override classes after applying them to actual classes
-      @opts.external_classes += agr.process_overrides.map {|o| o[:name] }
-      agr.result
-=end
     def parse
       @batch_parser = BatchParser.new(@opts)
       @relations = @batch_parser.run

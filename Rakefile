@@ -253,7 +253,7 @@ task :ext4 => :sass do
   runner.add_debug
   runner.run
 
-  system("cp -r #{EXT_BUILD} #{OUT_DIR}/extjs-build")
+  system("ln -s #{EXT_BUILD} #{OUT_DIR}/extjs-build")
 end
 
 desc "Run JSDuck on Ext JS from SDK repo (for internal use at Sencha)"
@@ -269,7 +269,7 @@ task :sdk => :sass do
   runner.add_comments('ext-js', '4')
   runner.run
 
-  system("cp -r #{EXT_BUILD} #{OUT_DIR}/extjs-build")
+  system("ln -s #{EXT_BUILD} #{OUT_DIR}/extjs-build")
 end
 
 desc "Run JSDuck on Sencha Touch 2 repo (for internal use at Sencha)"
@@ -290,7 +290,7 @@ task :touch2 => :sass do
   runner.add_comments('touch', '2')
   runner.run
 
-  system("cp -r #{TOUCH_BUILD} #{OUT_DIR}/touch-build")
+  system("ln -s #{TOUCH_BUILD} #{OUT_DIR}/touch-build")
 end
 
 desc "Run JSDuck on Titanium Mobile repo (for internal use at Appcelerator)"

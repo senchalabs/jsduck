@@ -31,7 +31,6 @@ Ext.define('Docs.view.examples.TouchContainer', {
                         '<button class="landscape selected">Landscape</button>',
                         '<button class="portrait">Portrait</button>',
                     '</div>',
-                    '<span class="separator">&nbsp;</span>',
                     '<div>',
                         '<button class="new-window">Open in new window</button>',
                     '</div>',

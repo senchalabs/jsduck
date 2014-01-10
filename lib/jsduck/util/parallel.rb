@@ -10,7 +10,8 @@ module JsDuck
 
       # Sets globally the nr of processes to use.
       def self.in_processes=(n)
-        @@in_processes = n
+        # Hard code to zero to work around gem crashing
+        @@in_processes = 0
       end
 
       def self.each(arr, &block)
