@@ -52,4 +52,27 @@ describe JsDuck::Aggregator do
     end
   end
 
+  def parse_to_classes(string)
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.classify_orphans
+    agr.result
+  end
+
+  it "creates classes for all orphans with @member defined" do
+    classes = parse_to_classes(<<-EOS)
+      /**
+       * @cfg foo
+       * @member FooCls
+       */
+      /**
+       * @cfg bar
+       * @member BarCls
+       */
+    EOS
+
+    classes[0][:name].should == "FooCls"
+    classes[1][:name].should == "BarCls"
+  end
+
 end

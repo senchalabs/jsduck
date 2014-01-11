@@ -156,7 +156,9 @@ module JsDuck
     # Creates classes for orphans that have :owner property defined,
     # and then inserts orphans to these classes.
     def classify_orphans
-      @orphans.each do |orph|
+      # Clone the orphans array first to avoid problems with
+      # #inster_orphan method deleting items from @orphans array.
+      @orphans.clone.each do |orph|
         if orph[:owner]
           class_name = orph[:owner]
           if !@classes[class_name]

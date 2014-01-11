@@ -24,9 +24,9 @@ module JsDuck
           end
         end
 
-        # add all local members, but skip constructors
+        # add all local members, but skip hidden members and constructors
         cls[:members].each do |m|
-          list << member_node(m, cls) unless m[:name] == ClassName.short(cls[:name])
+          list << member_node(m, cls) unless m[:meta][:hide] || constructor?(m)
         end
       end
 
@@ -41,6 +41,10 @@ module JsDuck
     end
 
     private
+
+    def constructor?(m)
+      m[:tagname] == :method && m[:name] == "constructor"
+    end
 
     def alias_node(key, name, cls)
       return {
