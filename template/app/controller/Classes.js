@@ -288,7 +288,7 @@ Ext.define('Docs.controller.Classes', {
                 failure: function(response, opts) {
                     this.cache[cls] = false;
                     this.getOverview().setLoading(false);
-                    this.getController('Failure').show404("Class <b>"+cls+"</b> was not found.");
+                    this.getController('Failure').show404("Class <b>"+Ext.String.htmlEncode(cls)+"</b> was not found.");
                 },
                 scope: this
             });
