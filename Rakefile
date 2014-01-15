@@ -104,7 +104,10 @@ def compress
   dir = "template-min"
 
   # Create JSB3 file for Docs app
-  system("sencha", "create", "jsb", "-a", "http://localhost/docs/", "-p", "#{dir}/app.jsb3")
+  # Ti Change - use our own JSB file at template/app.jsb3
+  # To update, build docs in debug mode, the run this command:
+  # sencha create jsb -a http://localhost/~username/docs/latest/index.html -p template/app.jsb3
+  #system("sencha", "create", "jsb", "-a", "http://localhost/docs/", "-p", "#{dir}/app.jsb3")
   # Concatenate files listed in JSB3 file
   system("sencha", "build", "-p", "#{dir}/app.jsb3", "-d", dir)
 
