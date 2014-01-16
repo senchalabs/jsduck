@@ -1,6 +1,7 @@
-require 'jsduck/parallel_wrap'
+require 'jsduck/util/parallel'
 require 'jsduck/logger'
-require 'jsduck/stdout'
+require 'jsduck/util/json'
+require 'jsduck/util/stdout'
 require 'fileutils'
 
 module JsDuck
@@ -10,7 +11,6 @@ module JsDuck
     def initialize(exporter_class, relations, opts)
       @relations = relations
       @exporter = exporter_class.new(relations, opts)
-      @parallel = ParallelWrap.new(:in_processes => opts.processes)
     end
 
     # Writes class data into given directory or STDOUT when dir == :stdout.
@@ -24,22 +24,22 @@ module JsDuck
     private
 
     def write_stdout
-      json = @parallel.map(@relations.classes) {|cls| @exporter.export(cls) }.compact
-      Stdout.instance.add(json)
+      json = Util::Parallel.map(@relations.classes) {|cls| @exporter.export(cls) }.compact
+      Util::Stdout.add(json)
     end
 
     def write_dir(dir, extension)
       FileUtils.mkdir(dir)
-      @parallel.each(@relations.classes) do |cls|
+      Util::Parallel.each(@relations.classes) do |cls|
         filename = dir + "/" + cls[:name] + extension
-        Logger.instance.log("Writing docs", filename)
+        Logger.log("Writing docs", filename)
         json = @exporter.export(cls)
         # skip file if exporter returned nil
         if json
           if extension == ".json"
-            JsonDuck.write_json(filename, json)
+            Util::Json.write_json(filename, json)
           elsif extension == ".js"
-            JsonDuck.write_jsonp(filename, cls[:name].gsub(/\./, "_"), json)
+            Util::Json.write_jsonp(filename, cls[:name].gsub(/\./, "_"), json)
           else
             throw "Unexpected file extension: #{extension}"
           end

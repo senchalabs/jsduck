@@ -45,13 +45,14 @@ Ext.define('Ext.master.Switch', {
 
     config: {
         /**
-         * @cfg
          * A config option with type, name, and default value
          * auto-detected.  Additionally docs for getIcon and setIcon
          * accessor methods are generated.
-         * @accessor
          */
-        icon: "some/file.png"
+        icon: "some/file.png",
+
+        // A private config option of boolean type.
+        open: true
     },
 
     /**
@@ -71,6 +72,9 @@ Ext.define('Ext.master.Switch', {
      * A property with auto-detected type and name.
      */
     disabled: false,
+
+    // A private property
+    cache: {},
 
     /**
      * Constructor documentation.
@@ -112,7 +116,7 @@ Ext.define('Ext.master.Switch', {
 
     statics: {
         /**
-         * Filters out subcomponents.
+         * A method documented as static.
          * @param {Function} fn Callback function.
          * @param {Ext.Component} fn.cmp The component parameter.
          * @param {Number} fn.index Component index parameter.
@@ -120,7 +124,6 @@ Ext.define('Ext.master.Switch', {
          * must be true to include the component, false to exclude.
          * @param {Object} scope Scope for the callback.
          * @return {Ext.Component[]} Array of components.
-         * @static
          */
         filter: function(fn, scope) {
             return this.items.filter(fn, scope);
@@ -129,12 +132,18 @@ Ext.define('Ext.master.Switch', {
 
     inheritableStatics: {
         /**
-         * Achieves something.
-         * @static
-         * @inheritable
+         * A static method that gets inherited by subclasses.
          */
         doSomething: function() {
         }
+    },
+
+    // A private method
+    // One can also use tags inside here.
+    // @return {Ext.master.Switch} this
+    // @chainable
+    highlight: function() {
+        return this;
     }
 });
 

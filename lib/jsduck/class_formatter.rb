@@ -1,6 +1,8 @@
 require 'jsduck/type_parser'
 require 'jsduck/logger'
 require 'jsduck/meta_tag_registry'
+require 'jsduck/shortener'
+require 'jsduck/util/html'
 
 module JsDuck
 
@@ -25,21 +27,24 @@ module JsDuck
       @formatter.class_context = cls[:name]
       @formatter.doc_context = cls[:files][0]
       cls[:doc] = @formatter.format(cls[:doc]) if cls[:doc]
-      [:members, :statics].each do |group|
-        cls[group].each_pair do |type, members|
-          # format all members (except hidden ones)
-          cls[group][type] = members.map {|m| m[:meta][:hide] ? m : format_member(m)  }
-        end
-      end
+      # format all members (except hidden ones)
+      cls[:members] = cls[:members].map {|m| m[:meta][:hide] ? m : format_member(m)  }
       cls[:html_meta] = format_meta_data(cls)
       cls
     end
 
+    # Access to the Img::DirSet object inside doc-formatter
+    def images
+      @formatter.images
+    end
+
+    private
+
     def format_member(m)
       @formatter.doc_context = m[:files][0]
       m[:doc] = @formatter.format(m[:doc]) if m[:doc]
-      if expandable?(m) || @formatter.too_long?(m[:doc])
-        m[:shortDoc] = @formatter.shorten(m[:doc])
+      if expandable?(m) || Shortener.too_long?(m[:doc])
+        m[:shortDoc] = Shortener.shorten(m[:doc])
       end
 
       # We don't validate and format CSS var and mixin type definitions
@@ -76,11 +81,11 @@ module JsDuck
       else
         context = @formatter.doc_context
         if tp.error == :syntax
-          Logger.instance.warn(:type_syntax, "Incorrect type syntax #{type}", context[:filename], context[:linenr])
+          Logger.warn(:type_syntax, "Incorrect type syntax #{type}", context[:filename], context[:linenr])
         else
-          Logger.instance.warn(:type_name, "Unknown type #{type}", context[:filename], context[:linenr])
+          Logger.warn(:type_name, "Unknown type #{type}", context[:filename], context[:linenr])
         end
-        type
+        Util::HTML.escape(type)
       end
     end
 

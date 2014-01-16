@@ -90,6 +90,12 @@
 #loginContainer {
   text-align: right;
   color: #fff;
+  line-height: 25px;
+  div {
+    padding-left: 10px;
+    float: right; }
+  img.avatar {
+    @include border-radius(2px); }
   .register {
     font-weight: bold; }
   a {

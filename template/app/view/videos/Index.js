@@ -17,6 +17,7 @@ Ext.define('Docs.view.videos.Index', {
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Videos</h1>' },
             Ext.create('Docs.view.ThumbList', {
+                commentType: "video",
                 itemTpl: [
                     '<dd ext:url="#!/video/{name}"><div class="thumb"><img src="{thumb}"/></div>',
                         '<div><h4>{title}',
@@ -37,5 +38,12 @@ Ext.define('Docs.view.videos.Index', {
     getTab: function() {
         var enabled = (Docs.data.videos || []).length > 0;
         return enabled ? {cls: 'videos', href: '#!/video', tooltip: 'Videos'} : false;
+    },
+
+    /**
+     * Refreshes the comment counters.
+     */
+    updateCommentCounts: function() {
+        this.down("thumblist").updateCommentCounts();
     }
 });

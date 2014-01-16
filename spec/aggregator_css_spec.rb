@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string, ".css"))
+    agr.aggregate(JsDuck::Source::File.new(string, ".css"))
     agr.result
   end
 
@@ -256,6 +256,37 @@ describe JsDuck::Aggregator do
     end
     it "detects mixin param description" do
       @doc[:params][0][:doc].should == "The name of the UI being created."
+    end
+  end
+
+  describe "CSS doc-comment followed by CSS selector" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /**
+         * Some comment.
+         */
+        .highlight {
+            font-weight: bold;
+        }
+      EOCSS
+    end
+
+    it "gets detected as property" do
+      @doc[:tagname].should == :property
+    end
+  end
+
+  describe "CSS doc-comment followed by nothing" do
+    before do
+      @doc = parse(<<-EOCSS)[0]
+        /**
+         * Some comment.
+         */
+      EOCSS
+    end
+
+    it "gets detected as property" do
+      @doc[:tagname].should == :property
     end
   end
 

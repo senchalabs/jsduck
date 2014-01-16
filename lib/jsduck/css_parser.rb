@@ -1,12 +1,10 @@
 require 'jsduck/css_lexer'
-require 'jsduck/doc_parser'
 
 module JsDuck
 
   class CssParser
     def initialize(input, options = {})
       @lex = CssLexer.new(input)
-      @doc_parser = DocParser.new
       @docs = []
     end
 
@@ -17,9 +15,10 @@ module JsDuck
         if look(:doc_comment)
           comment = @lex.next(true)
           @docs << {
-            :comment => @doc_parser.parse(comment[:value]),
+            :comment => comment[:value],
             :linenr => comment[:linenr],
-            :code => code_block
+            :code => code_block,
+            :type => :doc_comment,
           }
         else
           @lex.next
@@ -28,14 +27,15 @@ module JsDuck
       @docs
     end
 
-    # <code-block> := <mixin-declaration> | <var-declaration> | <nop>
+    # <code-block> := <mixin-declaration> | <var-declaration> | <property>
     def code_block
       if look("@mixin")
         mixin_declaration
       elsif look(:var, ":")
         var_declaration
       else
-        {:type => :nop}
+        # Default to property like in JsParser.
+        {:tagname => :property}
       end
     end
 
@@ -43,7 +43,7 @@ module JsDuck
     def mixin_declaration
       match("@mixin")
       return {
-        :type => :css_mixin,
+        :tagname => :css_mixin,
         :name => look(:ident) ? match(:ident) : nil,
       }
     end
@@ -54,12 +54,10 @@ module JsDuck
       match(":")
       value_list = css_value
       return {
-        :type => :css_var,
+        :tagname => :css_var,
         :name => name,
-        :value => {
-          :default => value_list.map {|v| v[:value] }.join(" "),
-          :type => value_type(value_list),
-        }
+        :default => value_list.map {|v| v[:value] }.join(" "),
+        :type => value_type(value_list),
       }
     end
 

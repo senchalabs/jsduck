@@ -234,7 +234,7 @@
 
 /**
  * @method getDate
- * Returns the numeric value corresponding to the current time.
+ * Returns the day of the month for the specified date according to local time.
  *
  * The second statement below assigns the value 25 to the variable `day`, based on the value of the
  * `Date` object `Xmas95`.
@@ -247,7 +247,7 @@
 
 /**
  * @method getDay
- * Returns the numeric value corresponding to the current time.
+ * Returns the day of the week for the specified date according to local time.
  *
  * The value returned by `getDay` is an integer corresponding to the day of the week: 0 for Sunday, 1
  * for Monday, 2 for Tuesday, and so on.
@@ -264,7 +264,7 @@
 
 /**
  * @method getFullYear
- * Returns the numeric value corresponding to the current time.
+ * Returns the year of the specified date according to local time.
  *
  * The value returned by `getFullYear` is an absolute number. For dates between the years 1000 and
  * 9999, `getFullYear` returns a four-digit number, for example, 1995. Use this function to make sure
@@ -282,7 +282,7 @@
 
 /**
  * @method getHours
- * Returns the numeric value corresponding to the current time.
+ * Returns the hour for the specified date according to local time.
  *
  * The second statement below assigns the value 23 to the variable `hours`, based on the value of the
  * `Date` object `Xmas95`.
@@ -295,7 +295,7 @@
 
 /**
  * @method getMilliseconds
- * Returns the numeric value corresponding to the current time.
+ * Returns the milliseconds in the specified date according to local time.
  *
  * The following example assigns the milliseconds portion of the current time to the variable ms.
  *
@@ -308,7 +308,7 @@
 
 /**
  * @method getMinutes
- * Returns the numeric value corresponding to the current time.
+ * Returns the minutes in the specified date according to local time.
  *
  * The second statement below assigns the value 15 to the variable `minutes`, based on the value of
  * the `Date` object `Xmas95`.
@@ -321,7 +321,7 @@
 
 /**
  * @method getMonth
- * Returns the numeric value corresponding to the current time.
+ * Returns the month in the specified date according to local time.
  *
  * The second statement below assigns the value 11 to the variable `month`, based on the value of the
  * `Date` object `Xmas95`.
@@ -334,7 +334,7 @@
 
 /**
  * @method getSeconds
- * Returns the numeric value corresponding to the current time.
+ * Returns the seconds in the specified date according to local time.
  *
  * The second statement below assigns the value 30 to the variable `secs`, based on the value of the
  * `Date` object `Xmas95`.
@@ -347,7 +347,8 @@
 
 /**
  * @method getTime
- * Returns the numeric value corresponding to the current time.
+ * Returns the numeric value corresponding to the time for the specified date according to
+ * universal time.
  *
  * The value returned by the `getTime` method is the number of milliseconds since 1 January 1970
  * 00:00:00 UTC. You can use this method to help assign a date and time to another `Date` object.
@@ -381,7 +382,7 @@
 
 /**
  * @method getTimezoneOffset
- * Returns the numeric value corresponding to the current time.
+ * Returns the time-zone offset from UTC, in minutes, for the current locale.
  *
  * The time-zone offset is the difference, in minutes, between UTC and local time. Note that this
  * means that the offset is positive if the local timezone is behind UTC and negative if it is ahead.
@@ -396,7 +397,7 @@
 
 /**
  * @method getUTCDate
- * Returns the numeric value corresponding to the current time.
+ * Returns the day (date) of the month in the specified date according to universal time.
  *
  * The following example assigns the day portion of the current date to the variable `d`.
  *
@@ -409,7 +410,7 @@
 
 /**
  * @method getUTCDay
- * Returns the numeric value corresponding to the current time.
+ * Returns the day of the week in the specified date according to universal time.
  *
  * The following example assigns the weekday portion of the current date to the variable `weekday`.
  *
@@ -423,7 +424,7 @@
 
 /**
  * @method getUTCFullYear
- * Returns the numeric value corresponding to the current time.
+ * Returns the year in the specified date according to universal time.
  *
  * The following example assigns the four-digit value of the current year to the variable `yr`.
  *
@@ -436,7 +437,7 @@
 
 /**
  * @method getUTCHours
- * Returns the numeric value corresponding to the current time.
+ * Returns the hours in the specified date according to universal time.
  *
  * The following example assigns the hours portion of the current time to the variable `hrs`.
  *
@@ -449,7 +450,7 @@
 
 /**
  * @method getUTCMilliseconds
- * Returns the numeric value corresponding to the current time.
+ * Returns the milliseconds in the specified date according to universal time.
  *
  * The following example assigns the milliseconds portion of the current time to the variable `ms`.
  *
@@ -462,7 +463,7 @@
 
 /**
  * @method getUTCMinutes
- * Returns the numeric value corresponding to the current time.
+ * Returns the minutes in the specified date according to universal time.
  *
  * The following example assigns the minutes portion of the current time to the variable `min`.
  *
@@ -475,7 +476,7 @@
 
 /**
  * @method getUTCMonth
- * Returns the numeric value corresponding to the current time.
+ * Returns the month of the specified date according to universal time.
  *
  * The following example assigns the month portion of the current date to the variable `mon`.
  *
@@ -488,7 +489,7 @@
 
 /**
  * @method getUTCSeconds
- * Returns the numeric value corresponding to the current time.
+ * Returns the seconds in the specified date according to universal time.
  *
  * The following example assigns the seconds portion of the current time to the variable `sec`.
  *
@@ -996,4 +997,26 @@
  *     myVar = x.valueOf();      //assigns -424713600000 to myVar
  *
  * @return {Number} Date represented as milliseconds.
+ */
+
+// ECMAScript 5 methods
+
+/**
+ * @method toJSON
+ * Returns a JSON representation of the Date object.
+ *
+ * Date instances refer to a specific point in time. Calling `toJSON()`
+ * returns a JSON formatted string representing the Date object's
+ * value.  This method is generally intended to, by default, usefully
+ * serialize Date objects during JSON serialization.
+ *
+ *     var jsonDate = (new Date()).toJSON();
+ *     var backToDate = new Date(jsonDate);
+ *
+ *     console.log("Serialized date object: " + jsonDate);
+ *     // Serialized date object: 2013-01-17T12:59:08.449Z
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @return {String} Date value in `YYYY-MM-DDTHH-MM-SS.MMMZ` format.
  */

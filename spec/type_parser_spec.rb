@@ -18,6 +18,30 @@ describe JsDuck::TypeParser do
     JsDuck::TypeParser.new(relations).parse(str)
   end
 
+  it "matches single-quoted string literal" do
+    parse("'foo'").should == true
+  end
+
+  it "matches double-quoted string literal" do
+    parse('"blah blah"').should == true
+  end
+
+  it "matches string literal with escape quote inside" do
+    parse('"blah \\"blah"').should == true
+  end
+
+  it "matches integer number literal" do
+    parse('42').should == true
+  end
+
+  it "matches negative number literal" do
+    parse('-6').should == true
+  end
+
+  it "matches float number literal" do
+    parse('3.14').should == true
+  end
+
   it "matches simple type" do
     parse("String").should == true
   end
@@ -49,6 +73,10 @@ describe JsDuck::TypeParser do
   describe "matches alteration of" do
     it "simple types" do
       parse("Number/String").should == true
+    end
+
+    it "literals" do
+      parse("'foo'/'bar'/32/4").should == true
     end
 
     it "simple- and namespaced- and array types" do
@@ -331,4 +359,3 @@ describe JsDuck::TypeParser do
   end
 
 end
-

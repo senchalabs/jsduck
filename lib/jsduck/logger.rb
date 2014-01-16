@@ -1,36 +1,44 @@
-require 'singleton'
-require 'jsduck/os'
+require 'jsduck/util/singleton'
+require 'jsduck/util/os'
 
 module JsDuck
 
   # Central logging of JsDuck
   class Logger
-    include Singleton
+    include Util::Singleton
 
     # Set to true to enable verbose logging
     attr_accessor :verbose
 
+    # Set true to force colored output.
+    # Set false to force no colors.
+    attr_accessor :colors
+
     def initialize
       @verbose = false
+      @colors = nil
+
       @warning_docs = [
         [:global, "Member doesn't belong to any class"],
         [:inheritdoc, "@inheritdoc referring to unknown class or member"],
         [:extend, "@extend/mixin/requires/uses referring to unknown class"],
+        [:tag, "Use of unsupported @tag"],
         [:link, "{@link} to unknown class or member"],
         [:link_ambiguous, "{@link} is ambiguous"],
         [:link_auto, "Auto-detected link to unknown class or member"],
+        [:html, "Unclosed HTML tag."],
 
         [:alt_name, "Name used as both classname and alternate classname"],
         [:name_missing, "Member or parameter has no name"],
         [:no_doc, "Member or class without documentation"],
         [:dup_param, "Method has two parameters with the same name"],
         [:dup_member, "Class has two members with the same name"],
-        [:dup_asset, "Duplicate guide/video/example"],
         [:req_after_opt, "Required parameter comes after optional"],
         [:subproperty, "@param foo.bar where foo param doesn't exist"],
         [:sing_static, "Singleton class member marked as @static"],
         [:type_syntax, "Syntax error in {type definition}"],
         [:type_name, "Unknown type referenced in {type definition}"],
+        [:enum, "Enum defined without any values in it"],
 
         [:image, "{@img} referring to missing file"],
         [:image_unused, "An image exists in --images dir that's not used"],
@@ -56,7 +64,7 @@ module JsDuck
     # Prints log message with optional filename appended
     def log(msg, filename=nil)
       if @verbose
-        puts msg + " " + format(filename) + "..."
+        $stderr.puts paint(:green, msg) + " " + format(filename) + " ..."
       end
     end
 
@@ -76,7 +84,7 @@ module JsDuck
 
     # get documentation for all warnings
     def doc_warnings
-      @warning_docs.map {|w| " #{@warnings[w[0]] ? '+' : '-'}#{w[0]} - #{w[1]}" } + [" "]
+      @warning_docs.map {|w| " #{@warnings[w[0]] ? '+' : '-'}#{w[0]} - #{w[1]}" }
     end
 
     # Prints warning message.
@@ -91,7 +99,7 @@ module JsDuck
     #
     # Optionally filename and line number will be inserted to message.
     def warn(type, msg, filename=nil, line=nil)
-      msg = "Warning: " + format(filename, line) + " " + msg
+      msg = paint(:yellow, "Warning: ") + format(filename, line) + " " + msg
 
       if type == nil || @warnings[type]
         if !@shown_warnings[msg]
@@ -109,21 +117,59 @@ module JsDuck
     def format(filename=nil, line=nil)
       out = ""
       if filename
-        out = OS::windows? ? filename.gsub('/', '\\') : filename
+        out = Util::OS.windows? ? filename.gsub('/', '\\') : filename
         if line
           out += ":#{line}:"
         end
       end
-      out
+      paint(:magenta, out)
     end
 
     # Prints fatal error message with backtrace.
     # The error param should be $! from resque block.
-    def fatal(msg, error)
-      puts "#{msg}: #{error}"
-      puts
-      puts "Here's a full backtrace:"
-      puts error.backtrace
+    def fatal(msg)
+      $stderr.puts paint(:red, "Error: ") + msg
+    end
+
+    # Prints fatal error message with backtrace.
+    # The error param should be $! from resque block.
+    def fatal_backtrace(msg, error)
+      $stderr.puts paint(:red, "Error: ") + "#{msg}: #{error}"
+      $stderr.puts
+      $stderr.puts "Here's a full backtrace:"
+      $stderr.puts error.backtrace
+    end
+
+    # True when at least one warning was logged.
+    def warnings_logged?
+      @shown_warnings.length > 0
+    end
+
+    private
+
+    COLORS = {
+      :black   => "\e[30m",
+      :red     => "\e[31m",
+      :green   => "\e[32m",
+      :yellow  => "\e[33m",
+      :blue    => "\e[34m",
+      :magenta => "\e[35m",
+      :cyan    => "\e[36m",
+      :white   => "\e[37m",
+    }
+
+    CLEAR = "\e[0m"
+
+    # Helper for doing colored output in UNIX terminal
+    #
+    # Only does color output when STDERR is attached to TTY
+    # i.e. is not piped/redirected.
+    def paint(color_name, msg)
+      if @colors == false || @colors == nil && (Util::OS.windows? || !$stderr.tty?)
+        msg
+      else
+        COLORS[color_name] + msg + CLEAR
+      end
     end
   end
 

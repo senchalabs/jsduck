@@ -1,5 +1,5 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 require "jsduck/meta_tag"
 require "jsduck/meta_tag_registry"
 
@@ -43,7 +43,7 @@ describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     agr.result
   end
 

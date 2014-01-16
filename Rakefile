@@ -3,6 +3,8 @@ require 'rake'
 
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
+require 'jsduck/util/md5'
+
 def os_is_windows?
   RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
 end
@@ -26,7 +28,7 @@ def load_sdk_vars
     puts "    OUT_DIR='/path/to/ouput/dir'"
     puts "    # path to Ext JS 4 build"
     puts "    EXT_BUILD='/path/to/ext-4'"
-    puts "    # path to Touch 2 build"
+    puts "    # path to Touch 2 build (for building Sencha Touch)"
     puts "    TOUCH_BUILD='/path/to/touch-2'"
     puts "    # path to SDK (for developers at Sencha)"
     puts "    SDK_DIR='/path/to/SDK'"
@@ -44,23 +46,22 @@ end
 # Deletes those input CSS files and writes out concatenated CSS to
 # resources/css/app.css
 # Finally replaces the CSS section with <link> to that one CSS file.
-def combine_css(html, dir, opts = :write)
+def combine_css(html, dir)
   css_section_re = /<!-- BEGIN CSS -->.*<!-- END CSS -->/m
   css = []
   css_section_re.match(html)[0].each_line do |line|
     if line =~ /<link rel="stylesheet" href="(.*?)"/
       file = $1
       css << IO.read(dir + "/" + file)
-      system("rm", dir + "/" + file) if opts == :write
     end
   end
 
-  if opts == :write
-    fname = "#{dir}/resources/css/app.css"
-    File.open(fname, 'w') {|f| f.write(css.join("\n")) }
-    yui_compress(fname)
-  end
-  html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/app.css" type="text/css" />')
+  fname = "#{dir}/resources/css/app.css"
+  File.open(fname, 'w') {|f| f.write(css.join("\n")) }
+  yui_compress(fname)
+  fname = JsDuck::Util::MD5.rename(fname)
+
+  html.sub(css_section_re, '<link rel="stylesheet" href="resources/css/' + File.basename(fname) + '" type="text/css" />')
 end
 
 # Same thing for JavaScript, result is written to: app.js
@@ -71,18 +72,24 @@ def combine_js(html, dir)
     if line =~ /<script .* src="(.*)">/
       file = $1
       js << IO.read(dir + "/" + file)
-      if file !~ /ext\.js/
-        system("rm", dir + "/" + file)
-      end
     elsif line =~ /<script .*>(.*)<\/script>/
       js << $1
     end
   end
 
   fname = "#{dir}/app.js"
+
   File.open(fname, 'w') {|f| f.write(js.join("\n")) }
   yui_compress(fname)
-  html.sub(js_section_re, '<script type="text/javascript" src="app.js"></script>')
+  fname = JsDuck::Util::MD5.rename(fname)
+  html.sub(js_section_re, '<script type="text/javascript" src="' + File.basename(fname) + '"></script>')
+end
+
+# Modifies HTML to link app.css.
+def rewrite_css_links(dir, filename)
+  html = IO.read(dir + "/" + filename);
+  html = combine_css(html, dir)
+  File.open(dir + "/" + filename, 'w') {|f| f.write(html) }
 end
 
 # Compress JavaScript and CSS files of JSDuck
@@ -97,7 +104,10 @@ def compress
   dir = "template-min"
 
   # Create JSB3 file for Docs app
-  system("sencha", "create", "jsb", "-a", "#{dir}/build-js.html", "-p", "#{dir}/app.jsb3")
+  # Ti Change - use our own JSB file at template/app.jsb3
+  # To update, build docs in debug mode, the run this command:
+  # sencha create jsb -a http://localhost/~username/docs/latest/index.html -p template/app.jsb3
+  #system("sencha", "create", "jsb", "-a", "http://localhost/docs/", "-p", "#{dir}/app.jsb3")
   # Concatenate files listed in JSB3 file
   system("sencha", "build", "-p", "#{dir}/app.jsb3", "-d", dir)
 
@@ -109,12 +119,9 @@ def compress
   # Remove the entire app/ dir
   system("rm", "-r", "#{dir}/app")
 
-  # Concatenate CSS in print-template.html file
-  print_template = "#{dir}/print-template.html";
-  html = IO.read(print_template);
-  # Just modify HTML to link app.css, don't write files.
-  html = combine_css(html, dir, :replace_html_only)
-  File.open(print_template, 'w') {|f| f.write(html) }
+  # Change CSS links in print-template.html and index-template.html files
+  rewrite_css_links(dir, "print-template.html")
+  rewrite_css_links(dir, "index-template.html")
 
   # Concatenate CSS and JS files referenced in template.html file
   template_html = "#{dir}/template.html"
@@ -125,6 +132,8 @@ def compress
 
   # Clean up SASS files
   # (But keep prettify lib, which is needed for source files)
+  system "rm -rf #{dir}/resources/css/docs-ext.css"
+  system "rm -rf #{dir}/resources/css/viewport.css"
   system "rm -rf #{dir}/resources/sass"
   # system "rm -rf #{dir}/resources/codemirror"
   system "rm -rf #{dir}/resources/.sass-cache"
@@ -149,20 +158,14 @@ class JsDuckRunner
     @options += options
   end
 
-  # Enables comments when CORS is supported by browser.
-  # This excludes Opera and IE < 8.
-  # We check explicitly for IE version to make sure the code works the
-  # same way in both real IE7 and IE7-mode of IE8/9.
   def add_comments(db_name, version)
-    comments_base_url = "http://projects.sencha.com/auth"
-    @options += ["--head-html", <<-EOHTML]
-      <script type="text/javascript">
-        Docs.enableComments = ("withCredentials" in new XMLHttpRequest()) || (Ext.ieVersion >= 8);
-        Docs.baseUrl = "#{comments_base_url}";
-        Docs.commentsDb = "#{db_name}";
-        Docs.commentsVersion = "#{version}";
-      </script>
-    EOHTML
+    add_options("--comments-url", "http://localhost:3000/auth")
+    add_options("--comments-domain", db_name+"/"+version)
+  end
+
+  def add_search(product, version)
+    add_options("--search-url", "http://support-test.sencha.com:8080/docsearch/search")
+    add_options("--search-domain", product+"/"+version)
   end
 
   def add_ext4
@@ -172,7 +175,7 @@ class JsDuckRunner
                   " <a href='http://www.sencha.com/legal/terms-of-use/'>Terms of Use</a>",
       "--ignore-global",
       "--warnings", "-all",
-      "--images", "#{EXT_BUILD}/docs/doc-resources",
+      "--images", "#{EXT_BUILD}/docs/images",
       "--local-storage-db", "ext-4",
       "--output", "#{OUT_DIR}",
       "#{EXT_BUILD}/src",
@@ -192,6 +195,36 @@ class JsDuckRunner
     system(*["ruby", "bin/jsduck"].concat(@options))
   end
 end
+
+# Download ExtJS into template/extjs
+task :get_extjs do
+  system "curl -o template/extjs.zip http://cdn.sencha.com/ext-4.1.1a-gpl.zip"
+  system "unzip template/extjs.zip -d template/"
+  system "rm -rf template/extjs"
+  system "mv template/ext-4.1.1a template/extjs"
+  system "rm template/extjs.zip"
+end
+
+# Auto-generate sdk-vars.rb config file
+task :config_file do
+  if File.exists?("sdk-vars.rb")
+    puts "sdk-vars.rb already exists. Keeping it."
+  else
+    puts "Generating sdk-vars.rb with the following content:"
+    config = <<-EORUBY
+# where to output the docs
+OUT_DIR='#{Dir.pwd}/output'
+# path to Ext JS 4 build
+EXT_BUILD='#{Dir.pwd}/template/extjs'
+    EORUBY
+    puts
+    puts config
+    File.open("sdk-vars.rb", "w") {|h| h.write(config) }
+  end
+end
+
+desc "Download ExtJS and initialize sdk-vars.rb config file"
+task :configure => [:get_extjs, :config_file]
 
 # Run compass to generate CSS files
 task :sass do
@@ -226,10 +259,9 @@ task :ext4 => :sass do
   runner = JsDuckRunner.new
   runner.add_ext4
   runner.add_debug
-  runner.add_options("--tests")
   runner.run
 
-  system("cp -r #{EXT_BUILD} #{OUT_DIR}/extjs-build")
+  system("ln -s #{EXT_BUILD} #{OUT_DIR}/extjs-build")
 end
 
 desc "Run JSDuck on Ext JS from SDK repo (for internal use at Sencha)"
@@ -239,14 +271,14 @@ task :sdk => :sass do
     "--output", OUT_DIR,
     "--config", "#{SDK_DIR}/extjs/docs/config.json",
     "--examples-base-url", "extjs-build/examples/",
-    "--seo",
-    "--tests"
+    "--seo"
   )
   runner.add_debug
   runner.add_comments('ext-js', '4')
+  runner.add_search('Ext JS', '4.2.0')
   runner.run
 
-  system("cp -r #{EXT_BUILD} #{OUT_DIR}/extjs-build")
+  system("ln -s #{EXT_BUILD} #{OUT_DIR}/extjs-build")
 end
 
 desc "Run JSDuck on Sencha Touch 2 repo (for internal use at Sencha)"
@@ -256,15 +288,22 @@ task :touch2 => :sass do
     "--output", OUT_DIR,
     "--config", "#{SDK_DIR}/touch/docs/config.json",
     "--examples-base-url", "touch-build/examples/production/",
-    "--seo",
-    "--tests"
+    # "--import", "1.1.0:../docs.sencha.com/exports/touch-1.1.0",
+    # "--import", "1.1.1:../docs.sencha.com/exports/touch-1.1.1",
+    # "--import", "2.0.0:../docs.sencha.com/exports/touch-2.0.0",
+    # "--import", "2.0.1:../docs.sencha.com/exports/touch-2.0.1",
+    # "--import", "2.1.0:../docs.sencha.com/exports/touch-2.1.0",
+    # "--import", "2.1.1:../docs.sencha.com/exports/touch-2.1.1",
+    # "--import", "2.2.0:../docs.sencha.com/exports/touch-2.2.0",
+    # "--import", "2.2.1",
+    "--seo"
   )
 
   runner.add_debug
   runner.add_comments('touch', '2')
   runner.run
 
-  system("cp -r #{TOUCH_BUILD} #{OUT_DIR}/touch-build")
+  system("ln -s #{TOUCH_BUILD} #{OUT_DIR}/touch-build")
 end
 
 desc "Run JSDuck on Titanium Mobile repo (for internal use at Appcelerator)"

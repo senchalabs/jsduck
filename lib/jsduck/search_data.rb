@@ -1,3 +1,5 @@
+require 'jsduck/icons'
+require 'jsduck/class_name'
 
 module JsDuck
 
@@ -6,7 +8,7 @@ module JsDuck
   class SearchData
     # Given list of classes and other assets, returns an array of
     # hashes describing the search data.
-    def create(classes, assets)
+    def create(classes, assets, opts)
       list = []
 
       classes.each do |cls|
@@ -22,19 +24,14 @@ module JsDuck
           end
         end
 
-        [:members, :statics].each do |group|
-          cls[group].each_key do |type|
-            cls.members(type, group).each do |m|
-              # skip inherited items and constructors
-              if m[:owner] == cls.full_name && m[:name] != cls.short_name
-                list << member_node(m, cls)
-              end
-            end
-          end
+        # add all local members, but skip hidden members and constructors
+        cls[:members].each do |m|
+          list << member_node(m, cls) unless m[:meta][:hide] || constructor?(m)
         end
       end
 
-      assets.guides.each_item {|g| list << guide_node(g) }
+      # Don't include guides data when separate guides search engine is provided
+      assets.guides.each_item {|g| list << guide_node(g) } unless opts.search[:url]
 
       assets.videos.each_item {|v| list << video_node(v) }
 
@@ -45,12 +42,16 @@ module JsDuck
 
     private
 
+    def constructor?(m)
+      m[:tagname] == :method && m[:name] == "constructor"
+    end
+
     def alias_node(key, name, cls)
       return {
         :name => name,
         :fullName => alias_display_name(key)+": "+name,
-        :icon => cls.icon + "-redirect",
-        :url => "#!/api/" + cls.full_name,
+        :icon => Icons::class_icon(cls) + "-redirect",
+        :url => "#!/api/" + cls[:name],
         :meta => cls[:meta],
         :sort => 0,
       }
@@ -58,10 +59,10 @@ module JsDuck
 
     def class_node(cls)
       return {
-        :name => cls.short_name,
-        :fullName => cls.full_name,
-        :icon => cls.icon,
-        :url => "#!/api/" + cls.full_name,
+        :name => ClassName.short(cls[:name]),
+        :fullName => cls[:name],
+        :icon => Icons::class_icon(cls),
+        :url => "#!/api/" + cls[:name],
         :meta => cls[:meta],
         :sort => 1,
       }
@@ -69,11 +70,11 @@ module JsDuck
 
     def alt_node(name, cls)
       return {
-        :name => Class.short_name(name),
+        :name => ClassName.short(name),
         :fullName => name,
         :type => :class,
-        :icon => cls.icon + "-redirect",
-        :url => "#!/api/" + cls.full_name,
+        :icon => Icons::class_icon(cls) + "-redirect",
+        :url => "#!/api/" + cls[:name],
         :meta => cls[:meta],
         :sort => 2,
       }
@@ -82,9 +83,9 @@ module JsDuck
     def member_node(member, cls)
       return {
         :name => member[:name],
-        :fullName => cls.full_name + "." + member[:name],
+        :fullName => cls[:name] + "." + member[:name],
         :icon => "icon-" + member[:tagname].to_s,
-        :url => "#!/api/" + cls.full_name + "-" + member[:id],
+        :url => "#!/api/" + cls[:name] + "-" + member[:id],
         :meta => member[:meta],
         :sort => 3,
       }

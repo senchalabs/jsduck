@@ -1,10 +1,10 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     agr.result
   end
 
@@ -36,7 +36,7 @@ describe JsDuck::Aggregator do
       @doc[:extends].should == "Your.Class"
     end
     it "detects mixins" do
-      @doc[:mixins].should == ["Foo.Mixin", "Bar.Mixin"]
+      Set.new(@doc[:mixins]).should == Set.new(["Foo.Mixin", "Bar.Mixin"])
     end
     it "detects alternate class names" do
       @doc[:alternateClassNames].should == ["AltClass"]
@@ -88,7 +88,7 @@ describe JsDuck::Aggregator do
 
     it_should_behave_like "class"
     it "collects all mixins together" do
-      @doc[:mixins].should == ["My.Mixin", "Your.Mixin", "Other.Mixin"]
+      Set.new(@doc[:mixins]).should == Set.new(["My.Mixin", "Your.Mixin", "Other.Mixin"])
     end
   end
 
@@ -167,7 +167,7 @@ describe JsDuck::Aggregator do
       @doc[:extends].should == "Your.Class"
     end
     it "detects implied mixins" do
-      @doc[:mixins].should == ["Ext.util.Observable", "Foo.Bar"]
+      Set.new(@doc[:mixins]).should == Set.new(["Ext.util.Observable", "Foo.Bar"])
     end
     it "detects implied alternateClassNames" do
       @doc[:alternateClassNames].should == ["JustClass"]
@@ -292,15 +292,39 @@ describe JsDuck::Aggregator do
     end
 
     it_should_behave_like "class"
-    it "has needed number of configs" do
-      @doc[:members][:cfg].length.should == 2
+    it "has needed number of members" do
+      @doc[:members].length.should == 2
+    end
+    it "detects members as configs" do
+      @doc[:members][0][:tagname].should == :cfg
+      @doc[:members][1][:tagname].should == :cfg
     end
     it "picks up names of all configs" do
-      @doc[:members][:cfg][0][:name].should == "foo"
-      @doc[:members][:cfg][1][:name].should == "bar"
+      @doc[:members][0][:name].should == "foo"
+      @doc[:members][1][:name].should == "bar"
     end
     it "marks first @cfg as private" do
-      @doc[:members][:cfg][0][:private].should == true
+      @doc[:members][0][:private].should == true
+    end
+  end
+
+  describe "class with cfgs with subproperties" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * Comment here.
+         * @cfg {Object} foo
+         * @cfg {String} foo.one
+         * @cfg {String} foo.two
+         * @cfg {Function} bar
+         * @cfg {Boolean} bar.arg
+         */
+      EOS
+    end
+
+    it "detects the configs taking account the subproperties" do
+      @doc[:members].length.should == 2
     end
   end
 
@@ -316,34 +340,6 @@ describe JsDuck::Aggregator do
       EOS
     end
     it_should_behave_like "class"
-  end
-
-  describe "class with constructor" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * Comment here.
-         * @constructor
-         * This constructs the class
-         * @param {Number} nr
-         */
-      EOS
-    end
-
-    it_should_behave_like "class"
-    it "has one method" do
-      @doc[:members][:method].length.should == 1
-    end
-    it "has method with name 'constructor'" do
-      @doc[:members][:method][0][:name].should == "constructor"
-    end
-    it "has method with needed parameters" do
-      @doc[:members][:method][0][:params].length.should == 1
-    end
-    it "has method with default return type Object" do
-      @doc[:members][:method][0][:return][:type].should == "Object"
-    end
   end
 
   describe "member docs after class doc" do
@@ -379,17 +375,21 @@ describe JsDuck::Aggregator do
       @classes.length.should == 1
     end
     it_should_behave_like "class"
-    it "should have configs" do
-      @doc[:members][:cfg].length.should == 1
+
+    it "should have 4 members" do
+      @doc[:members].length.should == 4
     end
-    it "should have properties" do
-      @doc[:members][:property].length.should == 1
+    it "should have a config" do
+      @doc[:members][0][:tagname].should == :cfg
+    end
+    it "should have propertiesy" do
+      @doc[:members][1][:tagname].should == :property
     end
     it "should have method" do
-      @doc[:members][:method].length.should == 1
+      @doc[:members][2][:tagname].should == :method
     end
-    it "should have events" do
-      @doc[:members][:event].length.should == 1
+    it "should have event" do
+      @doc[:members][3][:tagname].should == :event
     end
   end
 
@@ -478,10 +478,6 @@ describe JsDuck::Aggregator do
       @classes[0][:private].should == true
     end
 
-    it "combines all configs" do
-      @classes[0][:members][:cfg].length.should == 3
-    end
-
     it "combines all mixins" do
       @classes[0][:mixins].length.should == 2
     end
@@ -490,10 +486,8 @@ describe JsDuck::Aggregator do
       @classes[0][:alternateClassNames].length.should == 1
     end
 
-    it "combines all methods, events, properties" do
-      @classes[0][:members][:method].length.should == 3
-      @classes[0][:members][:event].length.should == 3
-      @classes[0][:members][:property].length.should == 3
+    it "combines all members" do
+      @classes[0][:members].length.should == 3 * 4
     end
   end
 

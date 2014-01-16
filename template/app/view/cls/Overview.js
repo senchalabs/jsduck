@@ -8,8 +8,12 @@ Ext.define('Docs.view.cls.Overview', {
     requires: [
         'Docs.view.cls.Toolbar',
         'Docs.view.examples.Inline',
+        'Docs.view.comments.LargeExpander',
+        'Docs.view.cls.MemberWrap',
+        'Docs.view.comments.MemberWrap',
         'Docs.Syntax',
-        'Docs.Settings'
+        'Docs.Settings',
+        'Docs.Comments'
     ],
     mixins: ['Docs.view.Scrolling'],
 
@@ -62,9 +66,10 @@ Ext.define('Docs.view.cls.Overview', {
 
             // expand the element
             if (isMember && el.down(".expandable")) {
-                el.addCls('open');
+                this.setMemberExpanded(query.replace(/#/, ''), true);
             }
 
+            var top = this.body.getBox().y;
             this.scrollToView(el, {
                 highlight: true,
                 // Ti changed offset correction
@@ -100,6 +105,7 @@ Ext.define('Docs.view.cls.Overview', {
                 menubuttonclick: function(type) {
                     this.scrollToEl("h3.members-title.icon-"+type, -20);
                 },
+                commentcountclick: this.expandClassComments,
                 scope: this
             }
         });
@@ -111,7 +117,109 @@ Ext.define('Docs.view.cls.Overview', {
 
         this.filterMembers("", Docs.Settings.get("show"));
 
+        if (Docs.Comments.isEnabled()) {
+            this.initComments();
+        }
+        else {
+            this.initBasicMemberWrappers();
+        }
+
         this.fireEvent('afterload');
+    },
+
+    initComments: function() {
+        // Add comment button to toolbar
+        this.toolbar.showCommentCount();
+        this.toolbar.setCommentCount(Docs.Comments.getCount(["class", this.docClass.name, ""]));
+
+        // Insert class level comment container under class intro docs
+        this.clsExpander = new Docs.view.comments.LargeExpander({
+            name: this.docClass.name,
+            el: Ext.query('.doc-contents')[0]
+        });
+
+        // Add a comment container to each class member
+        this.memberWrappers = {};
+        Ext.Array.forEach(Ext.query('.member'), function(memberEl) {
+            var wrap = new Docs.view.comments.MemberWrap({
+                parent: this,
+                className: this.docClass.name,
+                el: memberEl
+            });
+            this.memberWrappers[wrap.getMemberId()] = wrap;
+        }, this);
+    },
+
+    initBasicMemberWrappers: function() {
+        this.memberWrappers = {};
+        Ext.Array.forEach(Ext.query('.member'), function(memberEl) {
+            var wrap = new Docs.view.cls.MemberWrap({
+                el: memberEl
+            });
+            this.memberWrappers[wrap.getMemberId()] = wrap;
+        }, this);
+    },
+
+    /**
+     * Updates comment counts of the class itself and of all its members.
+     */
+    updateCommentCounts: function() {
+        // do nothing when no class loaded
+        if (!this.docClass) {
+            return;
+        }
+
+        var clsCount = Docs.Comments.getCount(["class", this.docClass.name, ""]);
+        this.toolbar.setCommentCount(clsCount);
+
+        this.clsExpander.getExpander().setCount(clsCount);
+
+        Ext.Object.each(this.memberWrappers, function(name, wrap) {
+            wrap.setCount(Docs.Comments.getCount(wrap.getTarget()));
+        }, this);
+    },
+
+    expandClassComments: function() {
+        var expander = this.clsExpander.getExpander();
+        expander.expand();
+        // add a small arbitrary -40 offset to make the header visible.
+        this.scrollToEl(expander.getEl(), -40);
+    },
+
+    /**
+     * Expands or collapses the given member.
+     * @param {String} memberName
+     * @param {Boolean} expanded
+     */
+    setMemberExpanded: function(memberName, expanded) {
+        this.memberWrappers[memberName].setExpanded(expanded);
+    },
+
+    /**
+     * True when the given member is expanded.
+     * @param {String} memberName
+     * @return {Boolean}
+     */
+    isMemberExpanded: function(memberName) {
+        return this.memberWrappers[memberName].isExpanded();
+    },
+
+    /**
+     * Expands/collapses all members.
+     */
+    setAllMembersExpanded: function(expanded) {
+        // When comments enabled, then first initialize all the
+        // expanders to make the next actual expanding phase much
+        // faster.
+        if (Docs.Comments.isEnabled()) {
+            Ext.Object.each(this.memberWrappers, function(name, wrap) {
+                wrap.getExpander().show();
+            }, this);
+        }
+
+        Ext.Object.each(this.memberWrappers, function(name, wrap) {
+            wrap.setExpanded(expanded);
+        }, this);
     },
 
     /**

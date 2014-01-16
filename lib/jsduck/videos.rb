@@ -1,5 +1,5 @@
-require 'jsduck/json_duck'
-require 'jsduck/null_object'
+require 'jsduck/util/json'
+require 'jsduck/util/null_object'
 require 'jsduck/grouped_asset'
 
 module JsDuck
@@ -11,14 +11,14 @@ module JsDuck
       if filename
         Videos.new(filename)
       else
-        NullObject.new(:to_array => [], :[] => nil)
+        Util::NullObject.new(:to_array => [], :[] => nil)
       end
     end
 
     def initialize(filename)
-      @groups = JsonDuck.read(filename)
+      @groups = Util::Json.read(filename)
       add_names_if_missing
-      build_map_by_name("Two videos have the same name")
+      build_map_by_name
     end
 
     # Each video should have a name, which is used in URL to reference the video.

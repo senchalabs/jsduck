@@ -46,6 +46,15 @@ Ext.define('Docs.controller.Examples', {
                     this.loadExample(url);
                 }
             },
+            'touchexamplecontainer, examplecontainer': {
+                afterrender: function(cmp) {
+                    cmp.el.addListener('click', function(e, el) {
+                        this.openInNewWindow();
+                    }, this, {
+                        delegate: 'button.new-window'
+                    });
+                }
+            },
             'touchexamplecontainer': {
                 afterrender: function(cmp) {
                     cmp.el.addListener('click', function(e, el) {
@@ -68,11 +77,6 @@ Ext.define('Docs.controller.Examples', {
                     }, this, {
                         delegate: 'button.landscape'
                     });
-                    cmp.el.addListener('click', function(e, el) {
-                        this.openInNewWindow();
-                    }, this, {
-                        delegate: 'button.new-window'
-                    });
                 }
             }
         });
@@ -86,7 +90,7 @@ Ext.define('Docs.controller.Examples', {
     loadExample: function(url, noHistory) {
         var example = this.getExample(url);
         if (!example) {
-            this.getController('Failure').show404("Example <b>"+url+"</b> was not found.");
+            this.getController('Failure').show404("Example <b>"+Ext.String.htmlEncode(url)+"</b> was not found.");
             return;
         }
         this.getViewport().setPageTitle(example.text);

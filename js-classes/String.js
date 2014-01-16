@@ -949,7 +949,7 @@
  *
  * The following example displays the string "sencha":
  *
- *     var upperText="sencha";
+ *     var upperText="SENCHA";
  *     document.write(upperText.toLocaleLowerCase());
  *
  * @return {String} Returns value of the string in lowercase.
@@ -1033,4 +1033,22 @@
  *     alert(x.valueOf())          // Displays "Hello world"
  *
  * @return {String} Returns value of string.
+ */
+
+// ECMAScript 5 methods
+
+/**
+ * @method trim
+ * Removes whitespace from both ends of the string.
+ *
+ * Does not affect the value of the string itself.
+ *
+ * The following example displays the lowercase string `"foo"`:
+ *
+ *     var orig = "   foo  ";
+ *     alert(orig.trim());
+ *
+ * **NOTE:** This method is part of the ECMAScript 5 standard.
+ *
+ * @return {String} A string stripped of whitespace on both ends.
  */

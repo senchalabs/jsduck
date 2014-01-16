@@ -9,9 +9,8 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.Tabs',
         'Docs.view.TreeContainer',
         'Docs.view.welcome.Index',
-        'Docs.view.auth.Login',
+        'Docs.view.auth.HeaderForm',
         'Docs.view.comments.Index',
-        'Docs.view.Comments',
         'Docs.view.cls.Index',
         'Docs.view.cls.Container',
         'Docs.view.guides.Index',
@@ -21,7 +20,6 @@ Ext.define('Docs.view.Viewport', {
         'Docs.view.examples.Index',
         'Docs.view.examples.Container',
         'Docs.view.examples.TouchContainer',
-        'Docs.view.stats.Index',
         'Docs.view.tests.Index'
     ],
 
@@ -92,7 +90,6 @@ Ext.define('Docs.view.Viewport', {
                         region: 'center',
                         id: 'center-container',
                         layout: 'fit',
-                        minWidth: 800,
                         border: false,
                         padding: '5 10',
                         items: {
@@ -150,10 +147,6 @@ Ext.define('Docs.view.Viewport', {
                                 {
                                     xtype: Docs.data.touchExamplesUi ? 'touchexamplecontainer' : 'examplecontainer',
                                     id: 'example'
-                                },
-                                {
-                                    xtype: 'statsindex',
-                                    id: 'statsindex'
                                 },
                                 {
                                     xtype: 'testsindex',

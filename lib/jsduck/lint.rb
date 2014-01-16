@@ -1,4 +1,5 @@
 require 'jsduck/logger'
+require 'jsduck/class'
 
 module JsDuck
 
@@ -17,6 +18,8 @@ module JsDuck
       warn_optional_params
       warn_duplicate_params
       warn_duplicate_members
+      warn_singleton_statics
+      warn_empty_enums
     end
 
     # print warning for each member or parameter with no name
@@ -41,7 +44,7 @@ module JsDuck
         end
       end
       each_member do |member|
-        if member[:doc] == "" && !member[:private] && !member[:meta][:hide]
+        if member[:doc] == "" && !member[:private] && !member[:meta][:hide] && !JsDuck::Class.constructor?(member)
           warn(:no_doc, "No documentation for #{member[:owner]}##{member[:name]}", member)
         end
       end
@@ -94,6 +97,26 @@ module JsDuck
       end
     end
 
+    # Print warnings for static members in singleton classes
+    def warn_singleton_statics
+      @relations.each do |cls|
+        if cls[:singleton]
+          cls.find_members({:local => true, :static => true}).each do |m|
+            warn(:sing_static, "Static members don't make sense in singleton class #{cls[:name]}", m)
+          end
+        end
+      end
+    end
+
+    # print warnings for enums with no values
+    def warn_empty_enums
+      @relations.each do |cls|
+        if cls[:enum] && cls[:members].length == 0
+          warn(:enum, "Enum #{cls[:name]} defined without values in it", cls)
+        end
+      end
+    end
+
     # Loops through all members of all classes
     def each_member(&block)
       @relations.each {|cls| cls.all_local_members.each(&block) }
@@ -102,7 +125,7 @@ module JsDuck
     # Prints warning + filename and linenumber from doc-context
     def warn(type, msg, member)
       context = member[:files][0]
-      Logger.instance.warn(type, msg, context[:filename], context[:linenr])
+      Logger.warn(type, msg, context[:filename], context[:linenr])
     end
 
   end

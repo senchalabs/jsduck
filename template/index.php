@@ -1,5 +1,4 @@
 <?php
-
 header("Access-Control-Allow-Origin: http://localhost");
 header("Access-Control-Allow-Credentials: true ");
 header("Access-Control-Allow-Methods: OPTIONS, GET, POST");
@@ -9,11 +8,11 @@ function print_page($subtitle, $body, $fragment) {
   $uri = 'http://' . $_SERVER["HTTP_HOST"] . preg_replace('/(index.php)?\?.*$/', '', $_SERVER["REQUEST_URI"]);
   $canonical = $uri."#!".$fragment;
   $html = file_get_contents('print-template.html');
-  echo preg_replace(array('/\{subtitle}/', '/\{body}/', '/\{canonical}/'), array($subtitle, $body, $canonical), $html);
+  echo preg_replace(array('/\{subtitle}/', '/\{body}/', '/\{canonical}/'), array($subtitle, fix_links($body), $canonical), $html);
 }
 
 function print_index_page() {
-  echo file_get_contents("template.html");
+  echo fix_links(file_get_contents("index-template.html"));
 }
 
 function jsonp_decode($jsonp) {
@@ -31,8 +30,39 @@ function decode_file($filename) {
   }
 }
 
-if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
-  $fragment = isset($_GET["_escaped_fragment_"]) ? $_GET["_escaped_fragment_"] : $_GET["print"];
+// Turns #! links into ?print= links when in print mode.
+//
+// <a href="#!/api/Ext.Element">  -->  <a href="?print=/api/Ext.Element">
+// <a href="#!/api/Ext.Element-cfg-id">  -->  <a href="?print=/api/Ext.Element#cfg-id">
+//
+function fix_links($html) {
+  if (isset($_GET["print"]) || isset($_GET["mobile"])) {
+    $param = isset($_GET["print"]) ? "print" : "mobile";
+    $patterns = array(
+      '/<a href=([\'"])#!?\/(api\/[^-\'"]+)-([^\'"]+)/' => '<a href=$1?'.$param.'=/$2#$3',
+      '/<a href=([\'"])#!?\//' => '<a href=$1?'.$param.'=/',
+    );
+    return preg_replace(array_keys($patterns), array_values($patterns), $html);
+  }
+  else {
+    return $html;
+  }
+}
+
+if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"]) || isset($_GET["mobile"])) {
+  if (isset($_GET["_escaped_fragment_"])) {
+    $fragment = $_GET["_escaped_fragment_"];
+  }
+  elseif (isset($_GET["print"])) {
+    $fragment = $_GET["print"];
+  }
+  elseif (isset($_GET["mobile"])) {
+    $fragment = $_GET["mobile"];
+  }
+  else {
+    $fragment = "";
+  }
+
   try {
     if (isset($_GET["_escaped_fragment_"]) && preg_match('/^\/api\/([^-]+)-([^-]+)-(.+)/', $fragment, $m)) {
       $className = $m[1];
@@ -79,7 +109,7 @@ if (isset($_GET["_escaped_fragment_"]) || isset($_GET["print"])) {
   }
 }
 else {
-  print_index_page();
+  echo file_get_contents("template.html");
 }
 
 ?>

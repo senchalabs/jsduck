@@ -2,8 +2,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.5"
 
   s.name = 'jsduck'
-  s.version = '3.11.1'
-  s.date = '2012-07-26'
+  s.version = '4.10.4'
+  s.date = Time.new.strftime('%Y-%m-%d')
   s.summary = "Simple JavaScript Duckumentation generator"
   s.description = "Documentation generator for Sencha JS frameworks"
   s.homepage = "https://github.com/senchalabs/jsduck"
@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project = s.name
 
   s.files = `git ls-files`.split("\n").find_all do |file|
-    file !~ /spec.rb$/ && file !~ /benchmark/ && file !~ /template\// && file !~ /opt\//
+    file !~ /spec\// && file !~ /template\// && file !~ /opt\//
   end
   # Add files not in git
   s.files += Dir['template-min/**/*']
@@ -22,6 +22,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'rdiscount'
   s.add_dependency 'json'
   s.add_dependency 'parallel'
+  s.add_dependency 'execjs'
+  s.add_dependency 'therubyracer', '>= 0.10.0'
+  s.add_dependency 'dimensions'
 
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rake'

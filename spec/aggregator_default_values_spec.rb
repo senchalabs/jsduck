@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     agr.result
   end
 
@@ -174,7 +174,7 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "cfg with explicit boolean default value" do
+  describe "cfg with explicit boolean true default value" do
     before do
       @doc = parse(<<-EOS)[0]
         /**
@@ -184,6 +184,19 @@ describe JsDuck::Aggregator do
     end
     it "has default value" do
       @doc[:default].should == "true"
+    end
+  end
+
+  describe "cfg with explicit boolean false default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=false] Something
+         */
+      EOS
+    end
+    it "has default value" do
+      @doc[:default].should == "false"
     end
   end
 
@@ -252,7 +265,7 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "cfg with bogus array literal as default value" do
+  describe "cfg with array literal of idents as default value" do
     before do
       @doc = parse(<<-EOS)[0]
         /**
@@ -260,8 +273,21 @@ describe JsDuck::Aggregator do
          */
       EOS
     end
-    it "has everything up to ] as default value" do
-      @doc[:default].should == '[ho, ho'
+    it "has the full literal as default value" do
+      @doc[:default].should == '[ho, ho]'
+    end
+  end
+
+  describe "cfg with unfinished array literal as default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=[...] Something
+         */
+      EOS
+    end
+    it "has default value up to first ]" do
+      @doc[:default].should == '[...'
     end
   end
 
@@ -288,6 +314,33 @@ describe JsDuck::Aggregator do
     end
     it "has the unfinish object literal as default value" do
       @doc[:default].should == '{ho:5'
+    end
+  end
+
+  describe "cfg with string ']' inside default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo="]"] Something
+         */
+      EOS
+    end
+    it "includes the ] inside default value" do
+      @doc[:default].should == '"]"'
+    end
+  end
+
+  describe "cfg with escaped quote inside default value" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg {Number} [foo=" \\"] "] Something
+         */
+      EOS
+    end
+    it "includes the \" inside default value" do
+      @doc[:default].should == '" \\"] "'
+      @doc[:doc].should == 'Something'
     end
   end
 
@@ -371,7 +424,7 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "replaces Ext.baseCSSPrefix with 'x-'" do
-      @doc[:default].should == '"x-foo"'
+      @doc[:default].should == 'Ext.baseCSSPrefix + "foo"'
     end
   end
 
@@ -384,8 +437,8 @@ describe JsDuck::Aggregator do
         foo: 5 + 5 })
       EOS
     end
-    it "doesn't get the default value from code" do
-      @doc[:default].should == nil
+    it "detects the literal expression from code" do
+      @doc[:default].should == "5 + 5"
     end
   end
 

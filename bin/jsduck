@@ -17,10 +17,11 @@
 # For running when gem not installed
 $:.unshift File.dirname(File.dirname(__FILE__)) + "/lib"
 
-require 'rubygems'
 require 'jsduck/app'
 require 'jsduck/options'
 
 opts = JsDuck::Options.new
 opts.parse!(ARGV)
-JsDuck::App.new(opts).run
+exit_code = JsDuck::App.new(opts).run
+
+exit exit_code

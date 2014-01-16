@@ -7,35 +7,34 @@
   <meta name="fragment" content="!">
   <meta name="viewport" content="width=1024">
 
+  {mobile_redirect}
+
   <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
   <!-- BEGIN CSS -->
   <link rel="stylesheet" href="resources/css/docs-ext.css" type="text/css" />
   <link rel="stylesheet" href="resources/css/viewport.css" type="text/css" />
   <link rel="stylesheet" href="resources/codemirror/codemirror.css" type="text/css" />
-  <!-- END CSS -->
   <link rel="stylesheet" href="resources/prettify/prettify.css" type="text/css" />
-  <!--[if IE]>
-    <link rel="stylesheet" href="resources/css/ie.css" type="text/css" />
-    <link rel="stylesheet" href="resources/css/welcome_ie6.css" type="text/css" />
-  <![endif]-->
+  <!-- END CSS -->
 
   <script type="text/javascript" src="{extjs_path}"></script>
-  <script type="text/javascript" src="data.js"></script>
+  <script type="text/javascript" src="{data_path}"></script>
+
   <!-- BEGIN JS -->
   <script type="text/javascript" src="resources/codemirror/codemirror.js"></script>
   <script type="text/javascript" src="resources/codemirror/javascript.js"></script>
   <script type="text/javascript" src="resources/codemirror/xml.js"></script>
   <script type="text/javascript" src="resources/codemirror/markdown.js"></script>
   <script type="text/javascript" src="app.js"></script>
-  <!-- END JS -->
   <script type="text/javascript" src="resources/prettify/prettify.js"></script>
+  <!-- END JS -->
 
   {head_html}
 
 </head>
 <body id="ext-body">
 
-  <div id="loading"><span class="title"></span><span class="logo"></span></div>
+  <div id="loading"><span class="title">{title}</span><span class="logo"></span></div>
 
 	<div id="header-content">
         <div id="header-content-logo">
@@ -47,6 +46,7 @@
 	</div>
   {welcome}
   {categories}
+  {news}
   {guides}
   <div id='footer-content' style='display: none'>
 	  <a class="logo" href="http://www.appcelerator.com">
@@ -105,5 +105,13 @@ window._gaToMarketo=function(){var gaCookie=cc(document.cookie,'__utmz=',';');re
 })(document);
 </script>
 <noscript><img src="http://pixel.quantserve.com/pixel/p-4aHbaizUurMCQ.gif" style="border:0;display:none;" height="1" width="1" alt="Quantcast"/></noscript>
+
+  <script type="text/javascript">
+  (function(){
+    var protocol = (document.location.protocol === "https:") ? "https:" : "http:";
+    document.write("<link href='"+protocol+"//fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />");
+  })();
+  </script>
+
 </body>
 </html>

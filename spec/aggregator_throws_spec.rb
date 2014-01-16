@@ -1,10 +1,10 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     agr.result
   end
 
@@ -30,6 +30,10 @@ describe JsDuck::Aggregator do
 
     it "detects description" do
       @doc[:throws][0][:doc].should == "Some text\non multiple lines."
+    end
+
+    it "leaves documentation after @throws out of the main documentation" do
+      @doc[:doc].should == "Some function"
     end
   end
 

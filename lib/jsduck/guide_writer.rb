@@ -1,6 +1,7 @@
-require 'jsduck/parallel_wrap'
+require 'jsduck/util/parallel'
+require 'jsduck/util/stdout'
+require 'jsduck/util/json'
 require 'jsduck/logger'
-require 'jsduck/stdout'
 require 'fileutils'
 
 module JsDuck
@@ -10,7 +11,6 @@ module JsDuck
     def initialize(exporter_class, guides, opts)
       @guides = guides
       @exporter = exporter_class.new(guides, opts)
-      @parallel = ParallelWrap.new(:in_processes => opts.processes)
     end
 
     # Writes guide data into given directory or STDOUT when dir == :stdout.
@@ -24,22 +24,22 @@ module JsDuck
     private
 
     def write_stdout
-      json = @parallel.map(all_guides) {|guide| @exporter.export_guide(guide) }.compact
-      Stdout.instance.add(json)
+      json = ParallelWrap.map(all_guides) {|guide| @exporter.export_guide(guide) }.compact
+      Util::Stdout.add(json)
     end
 
     def write_dir(dir, extension)
       FileUtils.mkdir(dir) unless File.exists?(dir)
-      @parallel.each(all_guides) do |guide|
+      Util::Parallel.each(all_guides) do |guide|
         filename = dir + "/" + guide["name"] + extension
-        Logger.instance.log("Writing guide", filename)
+        Logger.log("Writing guide", filename)
         json = @exporter.export_guide(guide)
         # skip file if exporter returned nil
         if json
           if extension == ".json"
-            JsonDuck.write_json(filename, json)
+            Util::Json.write_json(filename, json)
           elsif extension == ".js"
-            JsonDuck.write_jsonp(filename, guide["name"], json)
+            Util::Json.write_jsonp(filename, guide["name"], json)
           else
             throw "Unexpected file extension: #{extension}"
           end

@@ -90,7 +90,7 @@
  * |                  |
  * |                  | `/\d+(?!\.)/.exec("3.141")` matches 141 but not 3.141.
  * |                  |
- * | `x|y`            | Matches either `x` or `y`.
+ * |<code>x&#124;y</code>| Matches either `x` or `y`.
  * |                  |
  * |                  | For example, `/green|red/` matches 'green' in "green apple" and 'red' in "red apple."
  * |                  |

@@ -1,10 +1,12 @@
 require 'jsduck/logger'
-require 'jsduck/json_duck'
-require 'jsduck/io'
-require 'jsduck/null_object'
+require 'jsduck/util/json'
+require 'jsduck/util/io'
+require 'jsduck/util/null_object'
 require 'jsduck/logger'
 require 'jsduck/grouped_asset'
-require 'jsduck/html'
+require 'jsduck/guide_toc'
+require 'jsduck/guide_anchors'
+require 'jsduck/img/dir'
 require 'fileutils'
 
 module JsDuck
@@ -16,17 +18,18 @@ module JsDuck
       if filename
         Guides.new(filename, formatter, opts)
       else
-        NullObject.new(:to_array => [], :to_html => "", :[] => nil)
+        Util::NullObject.new(:to_array => [], :to_html => "", :[] => nil)
       end
     end
 
     # Parses guides config file
     def initialize(filename, formatter, opts)
       @path = File.dirname(filename)
-      @groups = JsonDuck.read(filename)
-      build_map_by_name("Two guides have the same name")
+      @groups = Util::Json.read(filename)
       @formatter = formatter
       @opts = opts
+      build_map_by_name("Two guides have the same name: " +  filename)
+      load_all_guides
     end
 
     # Writes all guides to given dir in JsonP format
@@ -78,9 +81,18 @@ module JsDuck
     def each_item
       get_all_items().each  do |guide|
         # Load the guide if not loaded
+        guide["url"] = resolve_url(guide)
         guide[:html] = load_guide(guide) if guide[:html] == nil
         # Pass guide to block if it was successfully loaded.
         yield guide if guide[:html]
+      end
+    end
+
+    def load_all_guides
+      each_item do |guide|
+        guide["url"] = resolve_url(guide)
+        guide[:filename] = guide["url"] + "/README.md"
+        guide[:html] = load_guide(guide)
       end
     end
 
@@ -96,58 +108,78 @@ module JsDuck
       end
     end
 
-
-
     def load_guide(guide)
-      if not guide.has_key?("url")
-         guide["url"] = "guides/" + guide["name"]
+      return Logger.warn(:guide, "Guide not found", guide["url"]) unless File.exists?(guide["url"])
+      unless js_ident?(guide["name"])
+        # Guide name is also used as JSONP callback method name.
+        Logger.warn(:guide, "Guide name is not valid JS identifier: #{guide["name"]}")
       end
-      in_dir = @path + "/" + guide["url"]
-
-      return Logger.instance.warn(:guide, "Guide #{in_dir} not found") unless File.exists?(in_dir)
-      html_guide_file = in_dir + "/README.html"
-      guide_file = in_dir + "/README.md"
+      html_guide_file = guide["url"] + "/README.html"
+      guide_file = guide["url"] + "/README.md"
 
       if File.exists?(html_guide_file)
         begin
           # Ti guides already have a TOC, so don't add one.
-          return JsDuck::IO.read(html_guide_file)
+          return Util::IO.read(html_guide_file)
         rescue
-          Logger.instance.fatal("Error while reading/formatting HTML guide #{in_dir}", $!)
+          Logger.fatal_backtrace("Error while reading/formatting HTML guide #{guide["url"]}", $!)
           exit(1)
         end
       elsif File.exists?(guide_file)
         begin
-          @formatter.doc_context = {:filename => guide_file, :linenr => 0}
-          name = File.basename(in_dir)
-          @formatter.img_path = "guides/#{name}"
-
-          return add_toc(guide, @formatter.format(JsDuck::IO.read(guide_file)))
+          return format_guide(guide, guide_file)
         rescue
-          Logger.instance.fatal("Error while reading/formatting guide #{in_dir}", $!)
+          Logger.fatal_backtrace("Error while reading/formatting guide #{guide["url"]}", $!)
           exit(1)
         end
       else
-        return Logger.instance.warn(:guide, "No README.html or README.md in #{in_dir}")
+        return Logger.warn(:guide, "No README.html or README.md in #{guide["url"]}")
       end    
+    end
+
+    def format_guide(guide, guide_file)
+      @formatter.doc_context = {:filename => guide_file, :linenr => 0}
+      @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
+      html = @formatter.format(Util::IO.read(guide_file))
+      html = GuideToc.inject(html, guide['name'])
+      html = GuideAnchors.transform(html, guide['name'])
+
+      # Report unused images (but ignore the icon files)
+      @formatter.images.get("icon.png")
+      @formatter.images.get("icon-lg.png")
+      @formatter.images.report_unused
+
+      return html
     end
 
     def write_guide(guide, dir)
       return unless guide[:html]
 
-      in_dir = @path + "/" + guide["url"]
       out_dir = dir + "/" + guide["name"]
 
-      Logger.instance.log("Writing guide", out_dir)
-      # Copy the whole guide dir over
-      FileUtils.cp_r(in_dir, out_dir)
-  
+      Logger.log("Writing guide", out_dir)
+      FileUtils.cp_r(guide["url"], out_dir)
+
       # Ensure the guide has an icon
       fix_icon(out_dir)
 
-      JsonDuck.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => guide[:html], :title => guide["title"]})
+      Util::Json.write_jsonp(out_dir+"/README.js", guide["name"], {:guide => guide[:html], :title => guide["title"]})
     end
 
+    # Turns guide URL into full path.
+    # If no URL given at all, creates it from guide name.
+    def resolve_url(guide)
+      if guide["url"]
+        File.expand_path(guide["url"], @path)
+      else
+        @path + "/guides/" + guide["name"]
+      end
+    end
+
+    # True when string is valid JavaScript identifier
+    def js_ident?(str)
+      /\A[$\w]+\z/ =~ str
+    end
 
     # Ensures the guide dir contains icon.png.
     # When there isn't looks for icon-lg.png and renames it to icon.png.
@@ -159,35 +191,6 @@ module JsDuck
         FileUtils.mv(dir+"/icon-lg.png", dir+"/icon.png")
       else
         FileUtils.cp(@opts.template_dir+"/resources/images/default-guide.png", dir+"/icon.png")
-      end
-    end
-
-    # Creates table of contents at the top of guide by looking for <h2> elements in HTML.
-    def add_toc(guide, html)
-      toc = [
-        "<div class='toc'>\n",
-        "<p><strong>Contents</strong></p>\n",
-        "<ul class='toc'>\n",
-      ]
-      new_html = []
-      i = 0
-      html.each_line do |line|
-        if line =~ /^<h2>(.*)<\/h2>$/
-          i += 1
-          toc << "<li><a href='#!/guide/#{guide['name']}-section-#{i}'>#{$1}</a></li>\n"
-          new_html << "<h2 id='#{guide['name']}-section-#{i}'>#{$1}</h2>\n"
-        else
-          new_html << line
-        end
-      end
-      toc << "</ul></div>\n"
-      # Don't insert TOC if it's empty
-      if i > 0
-        # Inject TOC at below first heading
-        new_html.insert(1, toc)
-        new_html.flatten.join
-      else
-        html
       end
     end
 
@@ -211,7 +214,7 @@ module JsDuck
     end
 
     # Returns HTML listing of guides
-    def to_html
+    def to_html(style="")
       html = @groups.map { |topic| topic2html(topic, 1)}.flatten.join("\n") 
 
 #      html = @guides.map do |group|
@@ -230,6 +233,14 @@ module JsDuck
             </ul>
         </div>
       EOHTML
+    end
+
+    def flatten_subgroups(items)
+      result = []
+      each_item(items) do |item|
+        result << item
+      end
+      result
     end
 
     # Extracts guide icon URL from guide hash

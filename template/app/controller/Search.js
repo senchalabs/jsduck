@@ -6,6 +6,8 @@ Ext.define('Docs.controller.Search', {
 
     requires: [
         'Docs.ClassRegistry',
+        'Docs.GuideSearch',
+        'Docs.store.Search',
         'Docs.History'
     ],
 
@@ -22,6 +24,11 @@ Ext.define('Docs.controller.Search', {
     pageIndex: 0,
     pageSize: 10,
 
+    // Delay constants
+    basicSearchDelay: 50,
+    guideSearchDelay: 500,
+    dropdownHideDelay: 500,
+
     init: function() {
         this.control({
             '#search-dropdown': {
@@ -31,7 +38,7 @@ Ext.define('Docs.controller.Search', {
                 changePage: function(dropdown, delta) {
                     // increment page number and update search results display
                     this.pageIndex += delta;
-                    this.search(this.getField().getValue());
+                    this.displayResults();
                     // footerClick doesn't fire in IE9,
                     // so keep the dropdown visible explicitly.
                     this.keepDropdown();
@@ -89,7 +96,7 @@ Ext.define('Docs.controller.Search', {
                         clearTimeout(this.searchTimeout);
                         this.searchTimeout = Ext.Function.defer(function() {
                             this.search(el.value);
-                        }, 50, this);
+                        }, this.basicSearchDelay, this);
                     }
                 },
                 focus: function(el) {
@@ -106,7 +113,7 @@ Ext.define('Docs.controller.Search', {
                     // badly when you make a long mouse press on
                     // dropdown item.
                     var dropdown = this.getDropdown();
-                    this.hideTimeout = Ext.Function.defer(dropdown.hide, 500, dropdown);
+                    this.hideTimeout = Ext.Function.defer(dropdown.hide, this.dropdownHideDelay, dropdown);
                 }
             }
         });
@@ -128,9 +135,37 @@ Ext.define('Docs.controller.Search', {
         this.getDropdown().hide();
     },
 
+    // First performs the basic search.
+    // Then launches guides search in the background - when that finishes,
+    // re-runs the basic search with guides results included.
     search: function(term) {
-        // perform search and load results to store
-        var results = Docs.ClassRegistry.search(term);
+        // skip search when query hasn't changed.
+        if (term === this.previousTerm) {
+            return;
+        }
+        this.previousTerm = term;
+
+        this.basicSearch(term);
+        if (Docs.GuideSearch.isEnabled()) {
+            this.guideSearch(term);
+        }
+    },
+
+    guideSearch: function(term) {
+        Docs.GuideSearch.deferredSearch(term, function(guideResults) {
+            this.basicSearch(term, guideResults);
+        }, this, this.guideSearchDelay);
+    },
+
+    basicSearch: function(term, guideResults) {
+        this.displayResults(Docs.ClassRegistry.search(term, guideResults));
+    },
+
+    // Loads results to store and shows the dropdown.
+    // When no results provided, displays the results from previous
+    // run - this is used for paging.
+    displayResults: function(results) {
+        results = results || this.previousResults;
 
         // Don't allow paging before first or after the last page.
         if (this.pageIndex < 0) {
@@ -147,14 +182,12 @@ Ext.define('Docs.controller.Search', {
         this.getDropdown().getStore().loadData(results.slice(start, end));
         // position dropdown below search box
         this.getDropdown().alignTo('search-field', 'bl', [-12, -2]);
-        // hide dropdown when nothing found
-        if (results.length === 0) {
-            this.getDropdown().hide();
-        }
-        else {
+
+        if (results.length > 0) {
             // auto-select first result
             this.getDropdown().getSelectionModel().select(0);
         }
-    }
 
+        this.previousResults = results;
+    }
 });

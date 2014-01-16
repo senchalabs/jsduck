@@ -119,7 +119,7 @@ Ext.define('Docs.controller.Guides', {
                 },
                 failure: function(response, opts) {
                     this.cache[name] = false;
-                    this.getController('Failure').show404("Guide <b>"+name+"</b> was not found.");
+                    this.getController('Failure').show404("Guide <b>"+Ext.String.htmlEncode(name)+"</b> was not found.");
                 },
                 scope: this
             });

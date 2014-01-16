@@ -11,7 +11,7 @@ module JsDuck
       @opts = opts
       @files = [
         "app",
-        "app.js",
+        "app*.js",
         "favicon.ico",
         "extjs",
         "resources",
@@ -21,10 +21,10 @@ module JsDuck
     def write
       FileUtils.mkdir(@opts.output_dir)
       if @opts.template_links
-        Logger.instance.log("Linking template files to", @opts.output_dir)
+        Logger.log("Linking template files to", @opts.output_dir)
         move_files(:symlink)
       else
-        Logger.instance.log("Copying template files to", @opts.output_dir)
+        Logger.log("Copying template files to", @opts.output_dir)
         move_files(:cp_r)
       end
 
@@ -38,9 +38,8 @@ module JsDuck
     # moves files from one dir to another using a method of FileUtils module.
     def move_files(method)
       @files.each do |file|
-        source = File.expand_path(@opts.template_dir+"/"+file)
-        target = File.expand_path(@opts.output_dir+"/"+file)
-        if File.exists?(source)
+        target = File.expand_path(@opts.output_dir)
+        Dir.glob(File.expand_path(@opts.template_dir+"/"+file)).each do |source|
           FileUtils.send(method, source, target)
         end
       end

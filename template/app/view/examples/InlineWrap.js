@@ -4,7 +4,6 @@
  * into editor or live preview.
  */
 Ext.define('Docs.view.examples.InlineWrap', {
-    alias: 'widget.inlineexample',
     requires: [
         'Docs.view.examples.Inline',
         'Docs.view.examples.InlineToolbar'

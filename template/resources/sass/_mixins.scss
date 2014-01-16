@@ -74,7 +74,6 @@
     @include box-shadow(#d7d7d7 0 1px 0 0 inset); } }
 
 @mixin member-expander {
-
   &.open > a.side.toggleComments,
   &.open > a.side.expandable {
     background: #EBF3FE;
@@ -133,10 +132,15 @@
     background-color: transparent;
     border: 1px solid #aa0000;
     text-decoration: line-through; }
+  &.chainable {
+    background-color: #00aa00; }
   &.static {
     background-color: $docs-text-color; }
   &.required {
     background-color: $docs-text-color; }
+  &.new {
+    color: $docs-text-color;
+    background-color: #F5D833; }
   &.private {
     background-color: #FD6B1B; }
   &.protected {

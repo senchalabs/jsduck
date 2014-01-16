@@ -1,11 +1,11 @@
 require "jsduck/aggregator"
-require "jsduck/source_file"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
     agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::SourceFile.new(string))
+    agr.aggregate(JsDuck::Source::File.new(string))
     agr.result
   end
 
@@ -280,8 +280,8 @@ describe JsDuck::Aggregator do
       @doc = parse(<<-EOS)[0]
         /** */
         Ext.define('MyClass', {
-          xtype: 'foo',
-          alias: 'widget.bar'
+          alias: 'widget.foo',
+          xtype: 'bar'
         });
       EOS
     end

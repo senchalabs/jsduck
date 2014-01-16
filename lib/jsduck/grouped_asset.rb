@@ -10,17 +10,14 @@ module JsDuck
   class GroupedAsset
     # Should be called from constructor after @groups have been read in,
     # and after it's been ensured that all items in groupes have names.
-    #
-    # Prints warning when there is a duplicate item within a group.
-    # The warning message should say something like "duplicate <asset type>"
-    def build_map_by_name(warning_msg)
+    def build_map_by_name
       @map_by_name = {}
       @groups.each do |group|
         group_map = {}
         group["items"].each do |item|
           # Ti has some ungrouped guides (for example, the Quick Start)
           if group_map[item["name"]]
-            Logger.instance.warn(:dup_asset, "#{warning_msg} '#{item['name']}'")
+            Logger.instance.warn(:dup_asset, "#{warning_msg} '#{item['name']}'", filename)
           end
           @map_by_name[item["name"]] = item
           group_map[item["name"]] = item
@@ -34,9 +31,30 @@ module JsDuck
     end
 
     # Iterates over all items in all groups
-    def each_item
-      @groups.each do |group|
-        group["items"].each {|item| yield item }
+    def each_item(group=nil, &block)
+      group = group || @groups
+
+      group.each do |item|
+        if item["items"]
+          each_item(item["items"], &block)
+        else
+          block.call(item)
+        end
+      end
+    end
+
+    def map_items(group=nil, &block)
+      group = group || @groups
+
+      group.map do |item|
+        if item["items"]
+          {
+            "title" => item["title"],
+            "items" => map_items(item["items"], &block)
+          }
+        else
+          block.call(item)
+        end
       end
     end
 

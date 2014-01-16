@@ -30,6 +30,10 @@ Ext.define('Docs.view.examples.InlineEditor', {
                 mode:  "javascript",
                 indentUnit: 4,
                 value: this.value,
+                extraKeys: {
+                    "Tab": "indentMore",
+                    "Shift-Tab": "indentLess"
+                },
                 onChange: Ext.Function.bind(function(e) {
                     this.fireEvent("change");
                 }, this)
