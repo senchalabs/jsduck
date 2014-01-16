@@ -34,7 +34,7 @@ Ext.define('Docs.view.Viewport', {
                 region: 'north',
                 id: 'north-region',
 				// Ti changed height
-                height: 78,
+                height: 90,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
@@ -44,7 +44,7 @@ Ext.define('Docs.view.Viewport', {
 					{
 						xtype: 'container',
                         id: 'doc-topnav-container',
-						height: 50,
+						height: 62,
 						layout: 'hbox',
 						items: [
                             { 
@@ -59,12 +59,31 @@ Ext.define('Docs.view.Viewport', {
                                 margin: '12 0 0 0'
 							},
 							{   xtype: 'container', flex: 1 },
-						   {
-							   xtype: 'searchcontainer',
-							   id: 'search-container',
-							   width: 224,
-							   margin: '12 0 0 0'
-						   }
+							{
+								xtype: 'container',
+								layout: 'vbox',
+								items: [
+								{
+								   xtype: 'searchcontainer',
+								   id: 'search-container',
+								   width: 224,
+								   margin: '6 0 0 0'
+								},
+								{
+									xtype: 'container',
+									layout: 'hbox',
+									items: [
+										{ xtype: 'checkbox', id: 'search-checkbox', margin: '-2 0 0 8' },
+										{
+											xtype: 'label',
+											text: 'Disable full-text search',
+											margin: '0 0 0 4',
+											style: "color:white"
+										}
+									]
+								}
+								]
+							}
 						]
 					},
                     {
@@ -109,6 +128,12 @@ Ext.define('Docs.view.Viewport', {
                                 {
                                     xtype: 'container',
                                     id: 'failure'
+                                },
+                                {
+                                    autoScroll: true,
+                                    xtype: 'container',
+                                    id: 'searchresults',
+                                    cls: 'iScroll'
                                 },
                                 {
                                     autoScroll: true,

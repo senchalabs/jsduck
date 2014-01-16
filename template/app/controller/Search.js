@@ -49,6 +49,7 @@ Ext.define('Docs.controller.Search', {
             },
             '#search-field': {
                 keyup: function(el, ev) {
+					var fulltext = !Ext.getCmp('search-checkbox').getValue();
                     var dropdown = this.getDropdown();
 
                     el.setHideTrigger(el.getValue().length === 0);
@@ -58,7 +59,7 @@ Ext.define('Docs.controller.Search', {
                         el.setValue("");
                         return;
                     }
-                    else {
+                    else if (!fulltext) {
                         dropdown.show();
                     }
 
@@ -82,10 +83,21 @@ Ext.define('Docs.controller.Search', {
                         }
                     }
                     else if (ev.keyCode === Ext.EventObject.ENTER) {
-                        ev.preventDefault();
-                        record && this.loadRecord(record);
+						if (fulltext) {
+							Ext.Ajax.request({
+   								url: 'http://localhost/~bhatfield/solr.php',
+								method: 'GET',
+								params: {
+									query:encodeURIComponent(el.getValue())
+								},
+								callback: this.renderResults
+							});
+						} else {
+	                        ev.preventDefault();
+    	                    record && this.loadRecord(record);
+						}
                     }
-                    else {
+                    else if (!fulltext) {
                         // A new search - reset paging back to first page
                         this.pageIndex = 0;
                         // Wait a bit before actually performing the search.
@@ -100,7 +112,7 @@ Ext.define('Docs.controller.Search', {
                     }
                 },
                 focus: function(el) {
-                    if (el.value && this.getDropdown().store.getCount() > 0) {
+                    if (el.value && this.getDropdown().store.getCount() > 0 && !fulltext) {
                         this.getDropdown().show();
                     }
                 },
@@ -187,7 +199,34 @@ Ext.define('Docs.controller.Search', {
             // auto-select first result
             this.getDropdown().getSelectionModel().select(0);
         }
-
         this.previousResults = results;
-    }
+    },
+
+	renderResults: function(options, success, response) {
+		if (!success) {
+			return;
+		}
+		var results = JSON.parse(response.responseText);
+		var html = "<h1>Search Results</h1>";
+		if (results.response.docs.length <= 0) {
+			html += "<p>Query did not return any search results</p>";
+		} else {
+			var guides = ""
+			var apidoc = ""
+
+			results.response.docs.forEach(function(doc) {
+				if ("title" in doc) {
+					guides += "<a href='#!/guide/" + doc.id + "'>" + doc.title + "</a><br/>"
+				}
+				else if ("name" in doc) {
+					apidoc += "<a href='#!/api/" + doc.id + "'>" + doc.name + "</a><br/>"
+				}
+			});
+			html += "<table>\n<tr><th><b>API Documentation</b></th><th><b>Guides</b></th></tr>\n"
+			html += "<tr><td valign='top'>" + apidoc + "</td><td valign='top'>" + guides + "</td></tr>\n</table>"
+		}
+        Ext.getCmp("searchresults").update(html);
+        Ext.getCmp('card-panel').layout.setActiveItem("searchresults");
+	}
+
 });
