@@ -84,11 +84,20 @@ Ext.define('Docs.controller.Search', {
                     }
                     else if (ev.keyCode === Ext.EventObject.ENTER) {
 						if (fulltext) {
+							var url = window.location.href;
+							var type = 'titanium';
+							if (url.match(/platform/g)) {
+								type = 'platform';
+							}
+							else if (url.match(/cloud/g)) {
+								type = 'cloud';
+							}
 							Ext.Ajax.request({
    								url: 'http://localhost/~bhatfield/solr.php',
 								method: 'GET',
 								params: {
-									query:encodeURIComponent(el.getValue())
+									query:encodeURIComponent(el.getValue()),
+									type:type
 								},
 								callback: this.renderResults
 							});
@@ -112,6 +121,7 @@ Ext.define('Docs.controller.Search', {
                     }
                 },
                 focus: function(el) {
+					var fulltext = !Ext.getCmp('search-checkbox').getValue();
                     if (el.value && this.getDropdown().store.getCount() > 0 && !fulltext) {
                         this.getDropdown().show();
                     }
@@ -216,10 +226,10 @@ Ext.define('Docs.controller.Search', {
 
 			results.response.docs.forEach(function(doc) {
 				if ("title" in doc) {
-					guides += "<a href='#!/guide/" + doc.id + "'>" + doc.title + "</a><br/>"
+					guides += "<a href='#!/guide/" + doc.url + "'>" + doc.title + "</a><br/>"
 				}
 				else if ("name" in doc) {
-					apidoc += "<a href='#!/api/" + doc.id + "'>" + doc.name + "</a><br/>"
+					apidoc += "<a href='#!/api/" + doc.url + "'>" + doc.name + "</a><br/>"
 				}
 			});
 			html += "<table>\n<tr><th><b>API Documentation</b></th><th><b>Guides</b></th></tr>\n"
