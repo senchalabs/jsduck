@@ -232,7 +232,7 @@ Ext.define('Docs.controller.Search', {
 					apidoc += "<a href='#!/api/" + doc.url + "'>" + doc.name + "</a><br/>"
 				}
 			});
-			html += "<table>\n<tr><th><b>API Documentation</b></th><th><b>Guides</b></th></tr>\n"
+			html += "<table class='doc-table'>\n<tr><th><b>API Documentation</b></th><th><b>Guides</b></th></tr>\n"
 			html += "<tr><td valign='top'>" + apidoc + "</td><td valign='top'>" + guides + "</td></tr>\n</table>"
 		}
         Ext.getCmp("searchresults").update(html);
