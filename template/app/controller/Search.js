@@ -154,7 +154,6 @@ Ext.define('Docs.controller.Search', {
             type = 'cloud';
         }
         eso = this;
-        term = term.replace(".", " ");
         Ext.Ajax.request({
             url: 'http://localhost/~bhatfield/solr.php',
             method: 'GET',
