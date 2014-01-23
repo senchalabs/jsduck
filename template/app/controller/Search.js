@@ -154,15 +154,29 @@ Ext.define('Docs.controller.Search', {
             type = 'cloud';
         }
         eso = this;
+
+        var suffix = '*';
+        var match = term.match(/\"/g)
+        if (match && match.length % 2 == 1) {
+            suffix = '*"';
+        }
+        else if (match && match.length % 2 == 0 && term.match(/\"$/)) {
+            suffix = "";
+        }
+        else if (term.match(/ $/)) {
+            suffix = "";
+        }
+
         Ext.Ajax.request({
             url: 'http://localhost/~bhatfield/solr.php',
             method: 'GET',
             params: {
-                query:encodeURIComponent(term),
+                query:encodeURIComponent(term + suffix),
                 type:type
             },
             callback: function(options, success, response) {
                 var rv = [];
+                var api_match = []
                 if (success) {
                     var results = JSON.parse(response.responseText);
                     results.response.docs.forEach(function(doc) {
@@ -190,15 +204,24 @@ Ext.define('Docs.controller.Search', {
 
                             var tokens = doc.name.split('.');
                             api_name = tokens[tokens.length - 1];
-                            rv.push({
+                            var elem = {
                                 fullName: doc.name,
                                 name: api_name,
                                 url: '#!/api/' + doc.url,
                                 icon: 'icon-' + api_type,
                                 meta: {}
-                            });
+                            };
+
+                            var re = new RegExp(term, 'gi');
+                            if (doc.name.match(re)) {
+                                api_match.push(elem);
+                            } else {
+                                rv.push(elem);
+                            }
                         }
                     });
+
+                    rv = api_match.concat(rv);
                 }
                 eso.displayResults(rv);
             }
