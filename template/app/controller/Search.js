@@ -49,7 +49,6 @@ Ext.define('Docs.controller.Search', {
             },
             '#search-field': {
                 keyup: function(el, ev) {
-					var fulltext = !Ext.getCmp('search-checkbox').getValue();
                     var dropdown = this.getDropdown();
 
                     el.setHideTrigger(el.getValue().length === 0);
@@ -59,7 +58,7 @@ Ext.define('Docs.controller.Search', {
                         el.setValue("");
                         return;
                     }
-                    else if (!fulltext) {
+                    else {
                         dropdown.show();
                     }
 
@@ -83,30 +82,10 @@ Ext.define('Docs.controller.Search', {
                         }
                     }
                     else if (ev.keyCode === Ext.EventObject.ENTER) {
-						if (fulltext) {
-							var url = window.location.href;
-							var type = 'titanium';
-							if (url.match(/platform/g)) {
-								type = 'platform';
-							}
-							else if (url.match(/cloud/g)) {
-								type = 'cloud';
-							}
-							Ext.Ajax.request({
-   								url: 'http://localhost/~bhatfield/solr.php',
-								method: 'GET',
-								params: {
-									query:encodeURIComponent(el.getValue()),
-									type:type
-								},
-								callback: this.renderResults
-							});
-						} else {
-	                        ev.preventDefault();
-    	                    record && this.loadRecord(record);
-						}
+                        ev.preventDefault();
+                        record && this.loadRecord(record);
                     }
-                    else if (!fulltext) {
+                    else {
                         // A new search - reset paging back to first page
                         this.pageIndex = 0;
                         // Wait a bit before actually performing the search.
@@ -121,8 +100,7 @@ Ext.define('Docs.controller.Search', {
                     }
                 },
                 focus: function(el) {
-					var fulltext = !Ext.getCmp('search-checkbox').getValue();
-                    if (el.value && this.getDropdown().store.getCount() > 0 && !fulltext) {
+                    if (el.value && this.getDropdown().store.getCount() > 0) {
                         this.getDropdown().show();
                     }
                 },
@@ -167,10 +145,70 @@ Ext.define('Docs.controller.Search', {
         }
         this.previousTerm = term;
 
-        this.basicSearch(term);
-        if (Docs.GuideSearch.isEnabled()) {
-            this.guideSearch(term);
+        var url = window.location.href;
+        var type = 'titanium';
+        if (url.match(/platform/g)) {
+            type = 'platform';
         }
+        else if (url.match(/cloud/g)) {
+            type = 'cloud';
+        }
+        eso = this;
+        term = term.replace(".", " ");
+        Ext.Ajax.request({
+            url: 'http://localhost/~bhatfield/solr.php',
+            method: 'GET',
+            params: {
+                query:encodeURIComponent(term),
+                type:type
+            },
+            callback: function(options, success, response) {
+                var rv = [];
+                if (success) {
+                    var results = JSON.parse(response.responseText);
+                    results.response.docs.forEach(function(doc) {
+                        if ("title" in doc) {
+                            rv.push({
+                                fullName: doc.title,
+                                name: doc.title,
+                                url: '#!/guide/' + doc.url,
+                                icon: 'icon-guide',
+                                meta: {}
+                            });
+                        }
+                        else if ("name" in doc) {
+
+                            var api_type = 'class';
+                            if (doc.url.match(/\-method\-/g)) {
+                                api_type = 'method';
+                            }
+                            else if (doc.url.match(/\-event\-/g)) {
+                                api_type = 'event';
+                            }
+                            else if (doc.url.match(/\-property\-/g)) {
+                                api_type = 'property';
+                            }
+
+                            var tokens = doc.name.split('.');
+                            api_name = tokens[tokens.length - 1];
+                            rv.push({
+                                fullName: doc.name,
+                                name: api_name,
+                                url: '#!/api/' + doc.url,
+                                icon: 'icon-' + api_type,
+                                meta: {}
+                            });
+                        }
+                    });
+                }
+                eso.displayResults(rv);
+            }
+        });
+
+        //this.basicSearch(term);
+        //if (Docs.GuideSearch.isEnabled()) {
+        //    this.guideSearch(term);
+        //}
     },
 
     guideSearch: function(term) {
@@ -210,33 +248,6 @@ Ext.define('Docs.controller.Search', {
             this.getDropdown().getSelectionModel().select(0);
         }
         this.previousResults = results;
-    },
-
-	renderResults: function(options, success, response) {
-		if (!success) {
-			return;
-		}
-		var results = JSON.parse(response.responseText);
-		var html = "<h1>Search Results</h1>";
-		if (results.response.docs.length <= 0) {
-			html += "<p>Query did not return any search results</p>";
-		} else {
-			var guides = ""
-			var apidoc = ""
-
-			results.response.docs.forEach(function(doc) {
-				if ("title" in doc) {
-					guides += "<a href='#!/guide/" + doc.url + "'>" + doc.title + "</a><br/>"
-				}
-				else if ("name" in doc) {
-					apidoc += "<a href='#!/api/" + doc.url + "'>" + doc.name + "</a><br/>"
-				}
-			});
-			html += "<table class='doc-table'>\n<tr><th><b>API Documentation</b></th><th><b>Guides</b></th></tr>\n"
-			html += "<tr><td valign='top'>" + apidoc + "</td><td valign='top'>" + guides + "</td></tr>\n</table>"
-		}
-        Ext.getCmp("searchresults").update(html);
-        Ext.getCmp('card-panel').layout.setActiveItem("searchresults");
-	}
+    }
 
 });

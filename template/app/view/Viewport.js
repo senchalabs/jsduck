@@ -34,7 +34,7 @@ Ext.define('Docs.view.Viewport', {
                 region: 'north',
                 id: 'north-region',
 				// Ti changed height
-                height: 90,
+                height: 78,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
@@ -44,7 +44,7 @@ Ext.define('Docs.view.Viewport', {
 					{
 						xtype: 'container',
                         id: 'doc-topnav-container',
-						height: 62,
+						height: 50,
 						layout: 'hbox',
 						items: [
                             { 
@@ -60,29 +60,10 @@ Ext.define('Docs.view.Viewport', {
 							},
 							{   xtype: 'container', flex: 1 },
 							{
-								xtype: 'container',
-								layout: 'vbox',
-								items: [
-								{
-								   xtype: 'searchcontainer',
-								   id: 'search-container',
-								   width: 224,
-								   margin: '6 0 0 0'
-								},
-								{
-									xtype: 'container',
-									layout: 'hbox',
-									items: [
-										{ xtype: 'checkbox', id: 'search-checkbox', margin: '-2 0 0 8' },
-										{
-											xtype: 'label',
-											text: 'Disable full-text search',
-											margin: '0 0 0 4',
-											style: "color:white"
-										}
-									]
-								}
-								]
+							   xtype: 'searchcontainer',
+							   id: 'search-container',
+							   width: 224,
+							   margin: '12 0 0 0'
 							}
 						]
 					},
@@ -128,12 +109,6 @@ Ext.define('Docs.view.Viewport', {
                                 {
                                     xtype: 'container',
                                     id: 'failure'
-                                },
-                                {
-                                    autoScroll: true,
-                                    xtype: 'container',
-                                    id: 'searchresults',
-                                    cls: 'iScroll'
                                 },
                                 {
                                     autoScroll: true,
