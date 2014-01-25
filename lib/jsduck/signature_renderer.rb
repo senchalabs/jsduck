@@ -67,7 +67,7 @@ module JsDuck
     def render_type
       if like_property?
         render_property_type
-      elsif ! @opts.rest
+      elsif ! @opts.rest && @m[:tagname] != :event
         render_params + render_return
       end
     end
