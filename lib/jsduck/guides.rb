@@ -227,7 +227,7 @@ module JsDuck
 #      end.flatten.join("\n")
 
       return <<-EOHTML
-        <div id='guides-content'>
+        <div id='guides-content' style='display:none'>
         	<ul>
 	            #{html}
             </ul>
