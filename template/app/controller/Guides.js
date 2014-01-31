@@ -96,6 +96,12 @@ Ext.define('Docs.controller.Guides', {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     loadGuide: function(url, noHistory) {
+        // TIDOC-1507 - Redirect
+        if (url.match(/Open_Source_Attribution_Notice/)) {
+			window.location = 'http://www.appcelerator.com/legal/open-source-attribution';
+			return;
+        }
+
         Ext.getCmp('card-panel').layout.setActiveItem('guide');
         Ext.getCmp('treecontainer').showTree('guidetree');
 		var m = url.match(/^#!\/guide\/(.*?)(?:-section-(.+))?$/);
