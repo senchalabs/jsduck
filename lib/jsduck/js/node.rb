@@ -133,6 +133,33 @@ module JsDuck
         return nil
       end
 
+      # Returns the return statement's expression for the current function
+      # expression.
+      def return_statement_expression
+        return unless function_expression?
+
+        node = child("body")
+        if node.block_statement?
+          node["body"].each do |node|
+            if node.return_statement?
+              node = node["argument"]
+              return node.object_expression? ? node : nil
+            end
+          end
+        end 
+
+        return nil
+      end
+
+
+      def block_statement?
+        @node["type"] == "BlockStatement"
+      end
+
+      def return_statement?
+        @node["type"] == "ReturnStatement"
+      end
+
       # Returns line number in parsed source where the Node resides.
       def linenr
         # Get line number from third place at range array.

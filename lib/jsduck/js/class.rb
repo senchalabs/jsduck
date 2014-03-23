@@ -106,7 +106,15 @@ module JsDuck
         cls[:members] = []
         cls[:code_type] = :ext_define
 
-        ast["arguments"][1].each_property do |key, value, pair|
+        definition_node = ast["arguments"][1]
+
+        # Support both function and object notation
+        if definition_node.function_expression?
+          definition_node = definition_node.return_statement_expression
+          return if definition_node.nil?
+        end
+
+        definition_node.each_property do |key, value, pair|
           if tag = Js::ExtDefine.get_tag_by_pattern(key)
             tag.parse_ext_define(cls, value)
           else
