@@ -61,6 +61,13 @@ module JsDuck
         categories = @assets.categories.to_html
         guides = @assets.guides.to_html
 
+        # Updates hash fragment to `_escaped_fragment_=`
+        [categories, guides].each do |html|
+          html.gsub!(/\#\!/) do |key|
+            '?_escaped_fragment_='
+          end
+        end
+
         write_template(in_file, out_file, {
           "{title}" => @opts.title,
           "{header}" => header,
