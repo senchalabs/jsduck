@@ -332,6 +332,14 @@ module JsDuck
           @opts.source = on
         end
 
+        attribute :private, true
+        option('--[no-]private',
+          "Enables output of private classes and members. (ON)",
+          "",
+          "Enabled by default.") do |on|
+          @opts.private = on
+        end
+
         attribute :images, []
         option('--images=PATH1,PATH2', Array,
           "Paths for images referenced by {@img} tag.",
