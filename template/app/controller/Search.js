@@ -168,7 +168,7 @@ Ext.define('Docs.controller.Search', {
         }
 
         Ext.Ajax.request({
-            url: 'http://localhost/~bhatfield/solr.php',
+            url: 'http://docs.appcelerator.com/solrsearch.php',
             method: 'GET',
             params: {
                 query:encodeURIComponent(term + suffix),
