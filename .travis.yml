@@ -11,4 +11,4 @@ install:
   - gem install rspec
   - gem install rake
   - gem install dimensions
-  - gem install sass
+  - gem install sass --version '~> 3.2.0'
