@@ -59,12 +59,12 @@ Ext.define('Docs.view.Viewport', {
                                 margin: '12 0 0 0'
 							},
 							{   xtype: 'container', flex: 1 },
-						   {
+							{
 							   xtype: 'searchcontainer',
 							   id: 'search-container',
 							   width: 224,
 							   margin: '12 0 0 0'
-						   }
+							}
 						]
 					},
                     {
