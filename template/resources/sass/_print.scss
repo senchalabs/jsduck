@@ -12,6 +12,10 @@
   .members h3.members-title {
     padding: 5px; }}
 
+.guide-container img{
+   max-width: 100%;
+}
+
 .platforms {
     @include clearfix;
     li {
