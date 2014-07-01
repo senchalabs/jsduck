@@ -145,92 +145,113 @@ Ext.define('Docs.controller.Search', {
         }
         this.previousTerm = term;
 
-        var url = window.location.href;
-        var type = 'titanium';
-        if (url.match(/platform/g)) {
-            type = 'platform';
-        }
-        else if (url.match(/cloud/g)) {
-            type = 'cloud';
-        }
-        eso = this;
+        if (Docs.otherProducts) {
+            // Use SOLR for production version
+            var url = window.location.href,
+                type = 'titanium',
+                suffix = '*',
+                match = term.match(/\"/g);
+               eso = this;
 
-        var suffix = '*';
-        var match = term.match(/\"/g)
-        if (match && match.length % 2 == 1) {
-            suffix = '*"';
-        }
-        else if (match && match.length % 2 == 0 && term.match(/\"$/)) {
-            suffix = "";
-        }
-        else if (term.match(/ $/)) {
-            suffix = "";
-        }
-
-        Ext.Ajax.request({
-            url: 'http://docs.appcelerator.com/solrsearch.php',
-            method: 'GET',
-            params: {
-                query:encodeURIComponent(term + suffix),
-                type:type
-            },
-            callback: function(options, success, response) {
-                var rv = [];
-                var api_match = []
-                if (success) {
-                    var results = JSON.parse(response.responseText);
-                    results.response.docs.forEach(function(doc) {
-                        if ("title" in doc) {
-                            rv.push({
-                                fullName: doc.title,
-                                name: doc.title,
-                                url: '#!/guide/' + doc.url,
-                                icon: 'icon-guide',
-                                meta: {}
-                            });
-                        }
-                        else if ("name" in doc) {
-
-                            var api_type = 'class';
-                            if (doc.url.match(/\-method\-/g)) {
-                                api_type = 'method';
-                            }
-                            else if (doc.url.match(/\-event\-/g)) {
-                                api_type = 'event';
-                            }
-                            else if (doc.url.match(/\-property\-/g)) {
-                                api_type = 'property';
-                            }
-
-                            var tokens = doc.name.split('.');
-                            api_name = tokens[tokens.length - 1];
-                            var elem = {
-                                fullName: doc.name,
-                                name: api_name,
-                                url: '#!/api/' + doc.url,
-                                icon: 'icon-' + api_type,
-                                meta: {}
-                            };
-
-                            var re = new RegExp(term, 'gi');
-                            if (doc.name.match(re)) {
-                                api_match.push(elem);
-                            } else {
-                                rv.push(elem);
-                            }
-                        }
-                    });
-
-                    rv = api_match.concat(rv);
-                }
-                eso.displayResults(rv);
+            // Switch to correct product
+            if (url.match(/platform/g)) {
+                type = 'platform';
             }
-        });
+            else if (url.match(/cloud/g)) {
+                type = 'cloud';
+            }
 
-        //this.basicSearch(term);
-        //if (Docs.GuideSearch.isEnabled()) {
-        //    this.guideSearch(term);
-        //}
+            // Do a wildcard search unless we are doing so already
+            if (match && match.length % 2 == 1) {
+                suffix = '*"';
+            }
+            else if (term.match(/\*$/)) {
+                suffix = "";
+            }
+            else if (match && match.length % 2 == 0 && term.match(/\"$/)) {
+                suffix = "";
+            }
+            else if (term.match(/ $/)) {
+                suffix = "";
+            }
+
+            // Do the search
+            Ext.Ajax.request({
+                url: 'http://docs.appcelerator.com/solrsearch.php',
+                method: 'GET',
+                params: {
+                    query:encodeURIComponent(term + suffix),
+                    type:type
+                },
+                callback: function(options, success, response) {
+                    var rv = [],
+                        api_match = [];
+                    if (success) {
+                        // If successful, retrieve and prepare results
+                        var results = JSON.parse(response.responseText);
+                        results.response.docs.forEach(function(doc) {
+                            if ("title" in doc) {
+                                // If guide, add item to result set
+                                rv.push({
+                                    fullName: doc.title,
+                                    name: doc.title,
+                                    url: '#!/guide/' + doc.url,
+                                    icon: 'icon-guide',
+                                    meta: {}
+                                });
+                            }
+                            else if ("name" in doc) {
+                                var api_type = 'class',
+                                    tokens = doc.name.split('.'),
+                                    api_name,
+                                    elem = {},
+                                    re;
+
+                                // Determine API type
+                                if (doc.url.match(/\-method\-/g)) {
+                                    api_type = 'method';
+                                }
+                                else if (doc.url.match(/\-event\-/g)) {
+                                    api_type = 'event';
+                                }
+                                else if (doc.url.match(/\-property\-/g)) {
+                                    api_type = 'property';
+                                }
+
+                                api_name = tokens[tokens.length - 1];
+                                elem = {
+                                    fullName: doc.name,
+                                    name: api_name,
+                                    url: '#!/api/' + doc.url,
+                                    icon: 'icon-' + api_type,
+                                    meta: {}
+                                };
+
+                                // If result matches API name, store in separate array
+                                // to be pushed at beginning of results
+                                re = new RegExp(term, 'gi');
+                                if (doc.name.match(re)) {
+                                    api_match.push(elem);
+                                } else {
+                                    rv.push(elem);
+                                }
+                            }
+                        });
+
+                        // Place API name matches ahead of others
+                        rv = api_match.concat(rv);
+                    }
+                    eso.displayResults(rv);
+                    eso = null;
+                }
+            });
+        } else {
+            // Use old search for offline version
+            this.basicSearch(term);
+            if (Docs.GuideSearch.isEnabled()) {
+                this.guideSearch(term);
+            }
+        }
     },
 
     guideSearch: function(term) {
