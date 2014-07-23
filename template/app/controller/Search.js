@@ -185,20 +185,28 @@ Ext.define('Docs.controller.Search', {
                 },
                 callback: function(options, success, response) {
                     var rv = [],
-                        api_match = [];
+                        keyword_match = [];
                     if (success) {
                         // If successful, retrieve and prepare results
                         var results = JSON.parse(response.responseText);
                         results.response.docs.forEach(function(doc) {
                             if ("title" in doc) {
-                                // If guide, add item to result set
-                                rv.push({
+                                var elem, re;
+                                elem = {
                                     fullName: doc.title,
                                     name: doc.title,
                                     url: '#!/guide/' + doc.url,
                                     icon: 'icon-guide',
                                     meta: {}
-                                });
+                                };
+                                // If result matches title name, store in separate array
+                                // to be pushed at beginning of results
+                                re = new RegExp(term, 'gi');
+                                if (doc.title.match(re)) {
+                                    keyword_match.push(elem);
+                                } else {
+                                    rv.push(elem);
+                                }
                             }
                             else if ("name" in doc) {
                                 var api_type = 'class',
@@ -231,7 +239,7 @@ Ext.define('Docs.controller.Search', {
                                 // to be pushed at beginning of results
                                 re = new RegExp(term, 'gi');
                                 if (doc.name.match(re)) {
-                                    api_match.push(elem);
+                                    keyword_match.push(elem);
                                 } else {
                                     rv.push(elem);
                                 }
@@ -239,7 +247,7 @@ Ext.define('Docs.controller.Search', {
                         });
 
                         // Place API name matches ahead of others
-                        rv = api_match.concat(rv);
+                        rv = keyword_match.concat(rv);
                     }
                     eso.displayResults(rv);
                     eso = null;
