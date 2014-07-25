@@ -92,6 +92,19 @@
             margin: 0 0 1em 1em;
             li {
                 list-style: lower-alpha inside; } } } }
+    ol {
+      margin: 0 0 1em 2em;
+      ul {
+        li {
+          margin: 0 0 1em;
+          list-style: disc outside;
+      li {
+        margin: 0 0 1em;
+        list-style: decimal outside; 
+        ol {
+            margin: 0 0 1em 1em;
+            li {
+                list-style: lower-alpha inside; } } } } } }
     em {
       font-style: italic; }
     strong {
