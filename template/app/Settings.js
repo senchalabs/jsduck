@@ -16,7 +16,12 @@ Ext.define("Docs.Settings", {
             "deprecated": false,
             "removed": false,
             "inherited": true,
-            "accessor": true
+            "accessor": true,
+            "android": true,
+            "ios": true,
+            "blackberry": true,
+            "mobileweb": true,
+            "tizen": true
         },
         comments: {
             hideRead: false

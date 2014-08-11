@@ -98,7 +98,12 @@ Ext.define('Docs.view.cls.Toolbar', {
             "inherited": this.createCb("Inherited", "inherited"),
             "accessor": this.createCb("Accessor", "accessor"),
             "deprecated": this.createCb("Deprecated", "deprecated"),
-            "removed": this.createCb("Removed", "removed")
+            "removed": this.createCb("Removed", "removed"),
+            "android": this.createCb("Android", "android"),
+            "ios": this.createCb("iOS", "ios"),
+            "blackberry": this.createCb("Blackberry", "blackberry"),
+            "mobileweb": this.createCb("Mobile web", "mobileweb"),
+            "tizen": this.createCb("Tizen", "tizen")
         };
 
         var self = this;
@@ -135,13 +140,19 @@ Ext.define('Docs.view.cls.Toolbar', {
             this.commentCount = this.createCommentCount(),
             {
                 xtype: 'button',
-                text: 'Show',
+                text: 'Filter',
+                iconCls: 'fa fa-filter fa-lg',
                 menu: [
 //	Ti change -- hide public, protected, private checkboxes
 //                    this.checkItems['public'],
 //                    this.checkItems['protected'],
 //                    this.checkItems['private'],
-//                    '-',
+                    this.checkItems['android'],
+                    this.checkItems['ios'],                    
+                    this.checkItems['blackberry'],                    
+                    this.checkItems['mobileweb'],
+                    this.checkItems['tizen'],                    
+                    '-',
                     this.checkItems['inherited'],
                     this.checkItems['accessor'],
                     this.checkItems['deprecated'],
