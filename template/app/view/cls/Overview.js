@@ -243,9 +243,9 @@ Ext.define('Docs.view.cls.Overview', {
         this.eachMember(function(m) {
             var el = Ext.get(m.id);
             var visible = !(
-                // !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
-                // !show['protected'] && m.meta['protected'] ||
-                // !show['private']   && m.meta['private'] ||
+                !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
+                !show['protected'] && m.meta['protected'] ||
+                !show['private']   && m.meta['private'] ||
                 !show['inherited'] && (m.owner !== this.docClass.name) ||
                 !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
                 !show['deprecated'] && m.meta['deprecated'] ||
