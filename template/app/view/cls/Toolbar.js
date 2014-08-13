@@ -100,9 +100,10 @@ Ext.define('Docs.view.cls.Toolbar', {
             "deprecated": this.createCb("Deprecated", "deprecated"),
             "removed": this.createCb("Removed", "removed"),
             "android": this.createCb("Android", "android"),
-            "ios": this.createCb("iOS", "ios"),
             "blackberry": this.createCb("Blackberry", "blackberry"),
-            "mobileweb": this.createCb("Mobile web", "mobileweb"),
+            "iphone": this.createCb("iPhone", "iphone"),
+            "ipad": this.createCb("iPad", "ipad"),
+            "mobileweb": this.createCb("Mobile Web", "mobileweb"),
             "tizen": this.createCb("Tizen", "tizen")
         };
 
@@ -142,22 +143,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                 xtype: 'button',
                 text: 'Filter',
                 iconCls: 'fa fa-filter fa-lg',
-                menu: [
-//	Ti change -- hide public, protected, private checkboxes
-//                    this.checkItems['public'],
-//                    this.checkItems['protected'],
-//                    this.checkItems['private'],
-                    this.checkItems['android'],
-                    this.checkItems['ios'],                    
-                    this.checkItems['blackberry'],                    
-                    this.checkItems['mobileweb'],
-                    this.checkItems['tizen'],                    
-                    '-',
-                    this.checkItems['inherited'],
-                    this.checkItems['accessor'],
-                    this.checkItems['deprecated'],
-                    this.checkItems['removed']
-                ]
+                menu: self.getMenuItems()
             },
             {
                 xtype: 'button',
@@ -322,5 +308,29 @@ Ext.define('Docs.view.cls.Toolbar', {
                 r.set("commentCount", Docs.Comments.getCount(["class", this.docClass.name, r.get("id")]));
             }, this);
         }, this);
+    },
+
+    // Returns menu items to display based in Filter menu. 
+    getMenuItems: function() {
+        if(!Docs.isRESTDoc) {
+            return [
+                this.checkItems['android'],
+                this.checkItems['blackberry'],                    
+                this.checkItems['ipad'],                    
+                this.checkItems['iphone'],                    
+                this.checkItems['mobileweb'],
+                this.checkItems['tizen'],                    
+                '-',
+                this.checkItems['inherited'],
+                this.checkItems['accessor'],
+                this.checkItems['deprecated'],
+                this.checkItems['removed']
+            ]
+        } else {
+            return [
+                this.checkItems['deprecated'],
+                this.checkItems['removed']            
+            ]
+        }
     }
 });
