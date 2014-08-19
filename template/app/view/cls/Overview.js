@@ -86,6 +86,7 @@ Ext.define('Docs.view.cls.Overview', {
     load: function(docClass) {
         this.docClass = docClass;
         this.accessors = this.buildAccessorsMap();
+        this.platforms = this.buildPlatformsMap();
 
         if (this.toolbar) {
             // Workaround for bug in ExtJS.
@@ -223,16 +224,15 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     /**
-     * Filters members by search string and inheritance.
+     * Filters members by search string and inheritance and platform.
      * @param {String} search
      * @param {Object} show
      * @private
      */
-    filterMembers: function(search, show) {
+filterMembers: function(search, show) {
         Docs.Settings.set("show", show);
         var isSearch = search.length > 0;
-
-        // Hide the class documentation when filtering
+        // Hide the class documentation when filteritng
         Ext.Array.forEach(Ext.query('.doc-contents, .hierarchy'), function(el) {
             Ext.get(el).setStyle({display: isSearch ? 'none' : 'block'});
         });
@@ -240,16 +240,21 @@ Ext.define('Docs.view.cls.Overview', {
         // Only show members who's name matches with the search string
         // and its type is currently visible
         var re = new RegExp(Ext.String.escapeRegex(search), "i");
-        this.eachMember(function(m) {
+        this.eachMember(function(m) {            
+
             var el = Ext.get(m.id);
+
             var visible = !(
-                !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
-                !show['protected'] && m.meta['protected'] ||
-                !show['private']   && m.meta['private'] ||
                 !show['inherited'] && (m.owner !== this.docClass.name) ||
                 !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
                 !show['deprecated'] && m.meta['deprecated'] ||
                 !show['removed']   && m.meta['removed'] ||
+                !show['android'] && this.platforms.hasOwnProperty('android') ||
+                !show['ipad'] && this.platforms.hasOwnProperty('ipad') ||
+                !show['iphone'] && this.platforms.hasOwnProperty('iphone') ||
+                !show['mobileweb'] && this.platforms.hasOwnProperty('mobileweb') ||
+                !show['tizen'] && this.platforms.hasOwnProperty('tizen') ||
+                !show['blackberry'] && this.platforms.hasOwnProperty('blackberry') ||
                 isSearch           && !re.test(m.name)
             );
 
@@ -299,6 +304,31 @@ Ext.define('Docs.view.cls.Overview', {
             accessors["set"+capName] = true;
         });
         return accessors;
+    },
+
+    buildPlatformsMap: function(name) {
+        var platforms = {};
+        var availablePlatforms = ["android", "ios", "iphone", "mobileweb", "blackberry", "tizen"];
+        this.eachMember(function(m) {
+            var platformsArray = m.meta.platform;
+            if(platformsArray) {
+                Ext.Array.forEach(platformsArray, function(platformName) {
+                    Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
+                        // Trim off "since" (version) part of platform string.
+                        var trimmedName = platformName.substr(0,platformName.indexOf(' '));
+                        if(trimmedName == availablePlatform) {
+                            platforms[availablePlatform] = true;
+                            return false;
+                        }
+                    })
+                });
+            } else {
+                // console.log("No platforms specified for " + m.name);
+            }
+            
+        }, this.docClass);
+        
+        return platforms;
     },
 
     getVisibleElements: function(selector, root) {
