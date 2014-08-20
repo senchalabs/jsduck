@@ -86,7 +86,6 @@ Ext.define('Docs.view.cls.Overview', {
     load: function(docClass) {
         this.docClass = docClass;
         this.accessors = this.buildAccessorsMap();
-        this.platforms = this.buildPlatformsMap();
 
         if (this.toolbar) {
             // Workaround for bug in ExtJS.
@@ -229,10 +228,10 @@ Ext.define('Docs.view.cls.Overview', {
      * @param {Object} show
      * @private
      */
-filterMembers: function(search, show) {
+    filterMembers: function(search, show) {
         Docs.Settings.set("show", show);
         var isSearch = search.length > 0;
-        // Hide the class documentation when filteritng
+        // Hide the class documentation when filtering
         Ext.Array.forEach(Ext.query('.doc-contents, .hierarchy'), function(el) {
             Ext.get(el).setStyle({display: isSearch ? 'none' : 'block'});
         });
@@ -240,21 +239,68 @@ filterMembers: function(search, show) {
         // Only show members who's name matches with the search string
         // and its type is currently visible
         var re = new RegExp(Ext.String.escapeRegex(search), "i");
-        this.eachMember(function(m) {            
+        this.eachMember(function(m) {
 
+            var name = m.name;
+
+            // List of all supported platforms
+            var availablePlatforms = ["android", "ipad", "iphone", "mobileweb", "blackberry", "tizen"];
+
+            // Hash that whose keys are normalized platform names, without "since" modifier
+            var platforms = {};
+            // Decorate current member's meta property with this hash. 
+            m.meta.platforms = platforms;
+            // Save reference to platforms array
+            var platformsArray = m.meta.platform; // Note that 'platform' (singular) is added by JSDuck
+
+            // If platformsArray is not undefined, create hash of supported platforms
+            // {
+            //      "android": true,
+            //      "iphone": false,
+            //       etc..
+            // }
+             
+            if(platformsArray != undefined) {                
+                // For each possible supported platform...               
+                Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
+                    // Loop thru each list of actual supported platforms
+                    Ext.Array.forEach(platformsArray, function(platformName) {
+                        // Trim off "since" part of platform string (everything after first space (" ")
+                        // i.e, "android 3.3" > "android"
+                        var trimmedName = platformName.substr(0,platformName.indexOf(' '));
+                        // If names match, set property to true
+                        if(trimmedName == availablePlatform) {
+                            m.meta.platforms[availablePlatform] = true;
+                        }
+                    });
+                });
+            } 
+            // ELSE...if class member doesn't specify supported platforms, assume that it supports ALL of them
+            // and set each object in the hash to 'true'.
+            // Maybe we can do better here, if the owner class only supports a single platform...?
+            else {
+                Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
+                    m.meta.platforms[availablePlatform] = true;
+                });
+            }
+       
             var el = Ext.get(m.id);
 
+            // If class member supports any of the selected/checked platforms, show it. 
             var visible = !(
+                !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
+                !show['protected'] && m.meta['protected'] ||
+                !show['private']   && m.meta['private'] ||                
                 !show['inherited'] && (m.owner !== this.docClass.name) ||
                 !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
                 !show['deprecated'] && m.meta['deprecated'] ||
                 !show['removed']   && m.meta['removed'] ||
-                !show['android'] && this.platforms.hasOwnProperty('android') ||
-                !show['ipad'] && this.platforms.hasOwnProperty('ipad') ||
-                !show['iphone'] && this.platforms.hasOwnProperty('iphone') ||
-                !show['mobileweb'] && this.platforms.hasOwnProperty('mobileweb') ||
-                !show['tizen'] && this.platforms.hasOwnProperty('tizen') ||
-                !show['blackberry'] && this.platforms.hasOwnProperty('blackberry') ||
+                !(show['android'] && m.meta.platforms["android"]  || 
+                show['ipad'] && m.meta.platforms["ipad"] ||
+                show['iphone'] && m.meta.platforms["iphone"] ||
+                show['mobileweb'] && m.meta.platforms["mobileweb"] ||
+                show['tizen'] && m.meta.platforms["tizen"] ||
+                show['blackberry'] && m.meta.platforms["blackberry"]) ||
                 isSearch           && !re.test(m.name)
             );
 
@@ -304,31 +350,6 @@ filterMembers: function(search, show) {
             accessors["set"+capName] = true;
         });
         return accessors;
-    },
-
-    buildPlatformsMap: function(name) {
-        var platforms = {};
-        var availablePlatforms = ["android", "ios", "iphone", "mobileweb", "blackberry", "tizen"];
-        this.eachMember(function(m) {
-            var platformsArray = m.meta.platform;
-            if(platformsArray) {
-                Ext.Array.forEach(platformsArray, function(platformName) {
-                    Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
-                        // Trim off "since" (version) part of platform string.
-                        var trimmedName = platformName.substr(0,platformName.indexOf(' '));
-                        if(trimmedName == availablePlatform) {
-                            platforms[availablePlatform] = true;
-                            return false;
-                        }
-                    })
-                });
-            } else {
-                // console.log("No platforms specified for " + m.name);
-            }
-            
-        }, this.docClass);
-        
-        return platforms;
     },
 
     getVisibleElements: function(selector, root) {
