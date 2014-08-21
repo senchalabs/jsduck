@@ -246,7 +246,7 @@ Ext.define('Docs.view.cls.Overview', {
             // List of all supported platforms
             var availablePlatforms = ["android", "ipad", "iphone", "mobileweb", "blackberry", "tizen"];
 
-            // Hash that whose keys are normalized platform names, without "since" modifier
+            // Hash whose keys are normalized platform names, without "since" modifier
             var platforms = {};
             // Decorate current member's meta property with this hash. 
             m.meta.platforms = platforms;
