@@ -143,8 +143,12 @@ Ext.define('Docs.view.cls.Toolbar', {
                 xtype: 'button',
                 text: 'Filter',
                 iconCls: 'fa fa-filter fa-lg',
-                menu: self.getMenuItems()
-            },
+                menu: self.getMenuItems(),
+                width: 100,
+                style: {
+                    borderColor: '#D1D1D1',
+                    borderStyle: 'solid'
+                }            },
             {
                 xtype: 'button',
                 iconCls: 'expand-all-members',
@@ -223,7 +227,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             commentCount: Docs.Comments.getCount(["class", cls, member.id])
         };
     },
-    
+
     /**
      * Show or hides members in dropdown menus.
      * @param {Object} show
@@ -317,7 +321,7 @@ Ext.define('Docs.view.cls.Toolbar', {
         }, this);
     },
 
-    // Returns menu items to display based in Filter menu. 
+    // Returns menu items to display in Filter menu based. If showing REST APIs, only show deprecated and removed.
     getMenuItems: function() {
         if(!Docs.isRESTDoc) {
             return [
