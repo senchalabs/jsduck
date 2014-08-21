@@ -250,20 +250,18 @@ Ext.define('Docs.view.cls.Overview', {
             var platforms = {};
             // Decorate current member's meta property with this hash. 
             m.meta.platforms = platforms;
-            // Save reference to platforms array
-            var platformsArray = m.meta.platform; // Note that 'platform' (singular) is added by JSDuck
-
-            // If platformsArray is not undefined, create hash of supported platforms
-            // {
-            //      "android": true,
-            //      "iphone": false,
-            //       etc..
-            // }
+            // Save reference to platforms array.
+            // If member data doesn't specify a platform array, then use the class platform array
+            var platformsArray = (m.meta.platform != undefined) ? m.meta.platform : this.docClass.meta.platform; 
              
-            if(platformsArray != undefined) {                
-                // For each possible supported platform...               
-                Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
-                    // Loop thru each list of actual supported platforms
+            Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
+                if(platformsArray != undefined) {                
+                    // If platformsArray is !undefined, create hash of supported platforms
+                    // {
+                    //      "android": true,
+                    //      "iphone": false,
+                    //       etc..
+                    // }                    
                     Ext.Array.forEach(platformsArray, function(platformName) {
                         // Trim off "since" part of platform string (everything after first space (" ")
                         // i.e, "android 3.3" > "android"
@@ -273,17 +271,13 @@ Ext.define('Docs.view.cls.Overview', {
                             m.meta.platforms[availablePlatform] = true;
                         }
                     });
-                });
-            } 
-            // ELSE...if class member doesn't specify supported platforms, assume that it supports ALL of them
-            // and set each object in the hash to 'true'.
-            // Maybe we can do better here, if the owner class only supports a single platform...?
-            else {
-                Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
-                    m.meta.platforms[availablePlatform] = true;
-                });
-            }
-       
+                } else {
+                    // If we get here, it means we can't know the supported platforms from either
+                    // the member or class data. Assume that it supports all platforms...?
+                    m.meta.platforms[availablePlatform] = true;                    
+                }
+            });
+
             var el = Ext.get(m.id);
 
             // If class member supports any of the selected/checked platforms, show it. 
