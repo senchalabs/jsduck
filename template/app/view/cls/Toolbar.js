@@ -208,7 +208,7 @@ Ext.define('Docs.view.cls.Toolbar', {
     // creates store tha holds link records
     createStore: function(records) {
         var store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'url', 'label', 'inherited', 'accessor', 'meta', 'commentCount', 'platforms']
+            fields: ['id', 'url', 'label', 'inherited', 'accessor', 'meta', 'commentCount']
         });
         store.add(records);
         return store;
@@ -223,7 +223,6 @@ Ext.define('Docs.view.cls.Toolbar', {
             inherited: member.owner !== cls,
             accessor: member.tagname === "method" && this.accessors.hasOwnProperty(member.name),
             meta: member.meta,
-            platforms: member.meta.platforms,
             commentCount: Docs.Comments.getCount(["class", cls, member.id])
         };
     },
@@ -247,12 +246,12 @@ Ext.define('Docs.view.cls.Toolbar', {
                         !show['accessor']  && m.get("accessor") ||
                         !show['deprecated']   && m.get("meta")["deprecated"] ||
                         !show['removed']   && m.get("meta")["removed"] ||
-                        !(show['android'] && m.data.meta.platforms["android"]  || 
-                        show['ipad'] && m.data.meta.platforms["ipad"] ||
-                        show['iphone'] && m.data.meta.platforms["iphone"] ||
-                        show['mobileweb'] && m.data.meta.platforms["mobileweb"] ||
-                        show['tizen'] && m.data.meta.platforms["tizen"] ||
-                        show['blackberry'] &&  m.data.meta.platforms["blackberry"]) ||
+                        !(show['android'] && m.data.meta.platforms["android"] && m.data.meta.classPlatforms["android"]  || 
+                        show['ipad'] && m.data.meta.platforms["ipad"] && m.data.meta.classPlatforms["ipad"] ||
+                        show['iphone'] && m.data.meta.platforms["iphone"] && m.data.meta.classPlatforms["iphone"] ||
+                        show['mobileweb'] && m.data.meta.platforms["mobileweb"] && m.data.meta.classPlatforms["mobileweb"] ||
+                        show['tizen'] && m.data.meta.platforms["tizen"] && m.data.meta.classPlatforms["tizen"] ||
+                        show['blackberry'] &&  m.data.meta.platforms["blackberry"] && m.data.meta.classPlatforms["blackberry"]) ||
                         isSearch           && !re.test(m.get("label"))
                     );
                 });

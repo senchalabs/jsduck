@@ -246,14 +246,13 @@ Ext.define('Docs.view.cls.Overview', {
             // List of all supported platforms
             var availablePlatforms = ["android", "ipad", "iphone", "mobileweb", "blackberry", "tizen"];
 
-            // Hash whose keys are normalized platform names, without "since" modifier
-            var platforms = {};
-            // Decorate current member's meta property with this hash. 
-            m.meta.platforms = platforms;
-            // Save reference to platforms array.
-            // If member data doesn't specify a platform array, then use the class platform array
-            var platformsArray = (m.meta.platform != undefined) ? m.meta.platform : this.docClass.meta.platform; 
-             
+            m.meta.platforms = {};
+            m.meta.classPlatforms = {};
+            var memberPlatforms = m.meta.platform;
+            var classPlatforms = this.docClass.meta.platform;
+
+            var platformsArray = (memberPlatforms != undefined) ? memberPlatforms : classPlatforms;         
+
             Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
                 if(platformsArray != undefined) {                
                     // If platformsArray is !undefined, create hash of supported platforms
@@ -271,16 +270,28 @@ Ext.define('Docs.view.cls.Overview', {
                             m.meta.platforms[availablePlatform] = true;
                         }
                     });
+
+                    // Do the same for the specified class platforms.
+                    Ext.Array.forEach(classPlatforms, function(platformName) {
+                        // Trim off "since" part of platform string (everything after first space (" ")
+                        // i.e, "android 3.3" > "android"
+                        var trimmedName = platformName.substr(0,platformName.indexOf(' '));
+                        // If names match, set property to true
+                        if(trimmedName == availablePlatform) {
+                            m.meta.classPlatforms[availablePlatform] = true;
+                        }
+                    });                    
                 } else {
                     // If we get here, it means we can't know the supported platforms from either
                     // the member or class data. Assume that it supports all platforms...?
                     m.meta.platforms[availablePlatform] = true;                    
                 }
+
             });
 
             var el = Ext.get(m.id);
 
-            // If class member supports any of the selected/checked platforms, show it. 
+            // Only show if the member- and class-specified platforms intersects with the platform filter selection.
             var visible = !(
                 !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
                 !show['protected'] && m.meta['protected'] ||
@@ -289,12 +300,12 @@ Ext.define('Docs.view.cls.Overview', {
                 !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
                 !show['deprecated'] && m.meta['deprecated'] ||
                 !show['removed']   && m.meta['removed'] ||
-                !(show['android'] && m.meta.platforms["android"]  || 
-                show['ipad'] && m.meta.platforms["ipad"] ||
-                show['iphone'] && m.meta.platforms["iphone"] ||
-                show['mobileweb'] && m.meta.platforms["mobileweb"] ||
-                show['tizen'] && m.meta.platforms["tizen"] ||
-                show['blackberry'] && m.meta.platforms["blackberry"]) ||
+                !(show['android'] && m.meta.platforms["android"] && m.meta.classPlatforms["android"]  || 
+                show['ipad'] && m.meta.platforms["ipad"] && m.meta.classPlatforms["ipad"] ||
+                show['iphone'] && m.meta.platforms["iphone"] && m.meta.classPlatforms["iphone"] ||
+                show['mobileweb'] && m.meta.platforms["mobileweb"] && m.meta.classPlatforms["mobileweb"] ||
+                show['tizen'] && m.meta.platforms["tizen"] && m.meta.classPlatforms["tizen"] ||
+                show['blackberry'] && m.meta.platforms["blackberry"] && m.meta.classPlatforms["blackberry"]) ||
                 isSearch           && !re.test(m.name)
             );
 
