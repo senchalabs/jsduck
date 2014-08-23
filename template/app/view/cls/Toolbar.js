@@ -238,22 +238,35 @@ Ext.define('Docs.view.cls.Toolbar', {
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();
                 store.filterBy(function(m) {
-                    return !(
-                        !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
-                        !show['protected'] && m.get("meta")["protected"] ||
-                        !show['private']   && m.get("meta")["private"] ||
-                        !show['inherited'] && m.get("inherited") ||
-                        !show['accessor']  && m.get("accessor") ||
-                        !show['deprecated']   && m.get("meta")["deprecated"] ||
-                        !show['removed']   && m.get("meta")["removed"] ||
-                        !(show['android'] && m.data.meta.platforms["android"] && m.data.meta.classPlatforms["android"]  || 
-                        show['ipad'] && m.data.meta.platforms["ipad"] && m.data.meta.classPlatforms["ipad"] ||
-                        show['iphone'] && m.data.meta.platforms["iphone"] && m.data.meta.classPlatforms["iphone"] ||
-                        show['mobileweb'] && m.data.meta.platforms["mobileweb"] && m.data.meta.classPlatforms["mobileweb"] ||
-                        show['tizen'] && m.data.meta.platforms["tizen"] && m.data.meta.classPlatforms["tizen"] ||
-                        show['blackberry'] &&  m.data.meta.platforms["blackberry"] && m.data.meta.classPlatforms["blackberry"]) ||
-                        isSearch           && !re.test(m.get("label"))
-                    );
+                    if(!Docs.isRESTDoc) {
+                        return !(
+                            !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
+                            !show['protected'] && m.get("meta")["protected"] ||
+                            !show['private']   && m.get("meta")["private"] ||
+                            !show['inherited'] && m.get("inherited") ||
+                            !show['accessor']  && m.get("accessor") ||
+                            !show['deprecated']   && m.get("meta")["deprecated"] ||
+                            !show['removed']   && m.get("meta")["removed"] ||
+                            !(show['android'] && m.data.meta.platforms["android"] && m.data.meta.classPlatforms["android"]  || 
+                            show['ipad'] && m.data.meta.platforms["ipad"] && m.data.meta.classPlatforms["ipad"] ||
+                            show['iphone'] && m.data.meta.platforms["iphone"] && m.data.meta.classPlatforms["iphone"] ||
+                            show['mobileweb'] && m.data.meta.platforms["mobileweb"] && m.data.meta.classPlatforms["mobileweb"] ||
+                            show['tizen'] && m.data.meta.platforms["tizen"] && m.data.meta.classPlatforms["tizen"] ||
+                            show['blackberry'] &&  m.data.meta.platforms["blackberry"] && m.data.meta.classPlatforms["blackberry"]) ||
+                            isSearch           && !re.test(m.get("label"))
+                        );
+                    } else {
+                        return !(
+                            !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
+                            !show['protected'] && m.get("meta")["protected"] ||
+                            !show['private']   && m.get("meta")["private"] ||
+                            !show['inherited'] && m.get("inherited") ||
+                            !show['accessor']  && m.get("accessor") ||
+                            !show['deprecated']   && m.get("meta")["deprecated"] ||
+                            !show['removed']   && m.get("meta")["removed"] ||
+                            isSearch           && !re.test(m.get("label"))                        
+                        )
+                    } 
                 });
                 // HACK!!!
                 // In Ext JS 4.1 filtering the stores causes the menus

@@ -291,23 +291,33 @@ Ext.define('Docs.view.cls.Overview', {
 
             var el = Ext.get(m.id);
 
-            // Only show if the member- and class-specified platforms intersects with the platform filter selection.
-            var visible = !(
-                !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
-                !show['protected'] && m.meta['protected'] ||
-                !show['private']   && m.meta['private'] ||                
-                !show['inherited'] && (m.owner !== this.docClass.name) ||
-                !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
-                !show['deprecated'] && m.meta['deprecated'] ||
-                !show['removed']   && m.meta['removed'] ||
-                !(show['android'] && m.meta.platforms["android"] && m.meta.classPlatforms["android"]  || 
-                show['ipad'] && m.meta.platforms["ipad"] && m.meta.classPlatforms["ipad"] ||
-                show['iphone'] && m.meta.platforms["iphone"] && m.meta.classPlatforms["iphone"] ||
-                show['mobileweb'] && m.meta.platforms["mobileweb"] && m.meta.classPlatforms["mobileweb"] ||
-                show['tizen'] && m.meta.platforms["tizen"] && m.meta.classPlatforms["tizen"] ||
-                show['blackberry'] && m.meta.platforms["blackberry"] && m.meta.classPlatforms["blackberry"]) ||
-                isSearch           && !re.test(m.name)
-            );
+            if (!Docs.isRESTDoc) {
+                // Only show if the member- and class-specified platforms intersects with the platform filter selection.
+                var visible = !(
+                    !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
+                    !show['protected'] && m.meta['protected'] ||
+                    !show['private']   && m.meta['private'] ||                
+                    !show['inherited'] && (m.owner !== this.docClass.name) ||
+                    !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
+                    !show['deprecated'] && m.meta['deprecated'] ||
+                    !show['removed']   && m.meta['removed'] ||
+                    !(show['android'] && m.meta.platforms["android"] && m.meta.classPlatforms["android"]  || 
+                    show['ipad'] && m.meta.platforms["ipad"] && m.meta.classPlatforms["ipad"] ||
+                    show['iphone'] && m.meta.platforms["iphone"] && m.meta.classPlatforms["iphone"] ||
+                    show['mobileweb'] && m.meta.platforms["mobileweb"] && m.meta.classPlatforms["mobileweb"] ||
+                    show['tizen'] && m.meta.platforms["tizen"] && m.meta.classPlatforms["tizen"] ||
+                    show['blackberry'] && m.meta.platforms["blackberry"] && m.meta.classPlatforms["blackberry"]) ||
+                    isSearch           && !re.test(m.name)
+                );                
+            } else {
+                var visible = !(
+                    !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
+                    !show['protected'] && m.meta['protected'] ||
+                    !show['private']   && m.meta['private'] ||                
+                    !show['deprecated'] && m.meta['deprecated'] ||
+                    !show['removed']   && m.meta['removed'] ||                
+                    isSearch           && !re.test(m.name));
+            }
 
             if (visible) {
                 el.setStyle({display: 'block'});
