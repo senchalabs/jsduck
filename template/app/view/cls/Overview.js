@@ -251,7 +251,7 @@ Ext.define('Docs.view.cls.Overview', {
             var memberPlatforms = m.meta.platform;
             var classPlatforms = this.docClass.meta.platform;
 
-            var platformsArray = (memberPlatforms != undefined) ? memberPlatforms : classPlatforms;         
+            var platformsArray = (memberPlatforms != undefined) ? memberPlatforms : classPlatforms;
 
             Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
                 if(platformsArray != undefined) {                
@@ -271,27 +271,31 @@ Ext.define('Docs.view.cls.Overview', {
                         }
                     });
 
-                    // Do the same for the specified class platforms.
-                    Ext.Array.forEach(classPlatforms, function(platformName) {
-                        // Trim off "since" part of platform string (everything after first space (" ")
-                        // i.e, "android 3.3" > "android"
-                        var trimmedName = platformName.substr(0,platformName.indexOf(' '));
-                        // If names match, set property to true
-                        if(trimmedName == availablePlatform) {
-                            m.meta.classPlatforms[availablePlatform] = true;
-                        }
-                    });                    
+                    if(classPlatforms != undefined) {
+                        // Do the same for the specified class platforms.
+                        Ext.Array.forEach(classPlatforms, function(platformName) {
+                            // Trim off "since" part of platform string (everything after first space (" ")
+                            // i.e, "android 3.3" > "android"
+                            var trimmedName = platformName.substr(0,platformName.indexOf(' '));
+                            // If names match, set property to true
+                            if(trimmedName == availablePlatform) {
+                                m.meta.classPlatforms[availablePlatform] = true;
+                            }
+                        });                                            
+                    }
                 } else {
                     // If we get here, it means we can't know the supported platforms from either
-                    // the member or class data. Assume that it supports all platforms...?
+                    // the member or class data. Assume that it supports all platforms
+                    // This includes members of the top-level Global object and the Global.JSON object
                     m.meta.platforms[availablePlatform] = true;                    
+                    m.meta.classPlatforms[availablePlatform] = true;                    
                 }
 
             });
 
             var el = Ext.get(m.id);
 
-            if (!Docs.isRESTDoc) {
+            if (!Docs.isRESTDoc && (m.owner.indexOf("Alloy") == -1)) {
                 // Only show if the member- and class-specified platforms intersects with the platform filter selection.
                 var visible = !(
                     !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
