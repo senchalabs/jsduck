@@ -252,27 +252,28 @@ Ext.define('Docs.view.cls.Overview', {
             var classPlatforms = this.docClass.meta.platform;
 
             var platformsArray = (memberPlatforms != undefined) ? memberPlatforms : classPlatforms;
-
+ 
             Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
-                if(platformsArray != undefined) {                
                     // If platformsArray is !undefined, create hash of supported platforms
                     // {
                     //      "android": true,
                     //      "iphone": false,
                     //       etc..
                     // }                    
-                    Ext.Array.forEach(platformsArray, function(platformName) {
-                        // Trim off "since" part of platform string (everything after first space (" ")
-                        // i.e, "android 3.3" > "android"
-                        var trimmedName = platformName.substr(0,platformName.indexOf(' '));
-                        // If names match, set property to true
-                        if(trimmedName == availablePlatform) {
-                            m.meta.platforms[availablePlatform] = true;
-                        }
-                    });
-
+                    if(platformsArray != undefined) {
+                        Ext.Array.forEach(platformsArray, function(platformName) {
+                            // Trim off "since" part of platform string (everything after first space (" ")
+                            // i.e, "android 3.3" > "android"
+                            var trimmedName = platformName.substr(0,platformName.indexOf(' '));
+                            // If names match, set property to true
+                            if(trimmedName == availablePlatform) {
+                                m.meta.platforms[availablePlatform] = true;
+                            }
+                        });                        
+                    } else {
+                        m.meta.platforms[availablePlatform] = true;
+                    }
                     if(classPlatforms != undefined) {
-                        // Do the same for the specified class platforms.
                         Ext.Array.forEach(classPlatforms, function(platformName) {
                             // Trim off "since" part of platform string (everything after first space (" ")
                             // i.e, "android 3.3" > "android"
@@ -281,17 +282,11 @@ Ext.define('Docs.view.cls.Overview', {
                             if(trimmedName == availablePlatform) {
                                 m.meta.classPlatforms[availablePlatform] = true;
                             }
-                        });                                            
-                    }
-                } else {
-                    // If we get here, it means we can't know the supported platforms from either
-                    // the member or class data. Assume that it supports all platforms
-                    // This includes members of the top-level Global object and the Global.JSON object
-                    m.meta.platforms[availablePlatform] = true;                    
-                    m.meta.classPlatforms[availablePlatform] = true;                    
-                }
-
-            });
+                        });
+                    } else {
+                        m.meta.classPlatforms[availablePlatform] = true;
+                    }                       
+                });
 
             var el = Ext.get(m.id);
 
