@@ -223,7 +223,7 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     /**
-     * Filters members by search string and inheritance.
+     * Filters members by search string and inheritance and platform.
      * @param {String} search
      * @param {Object} show
      * @private
@@ -231,7 +231,6 @@ Ext.define('Docs.view.cls.Overview', {
     filterMembers: function(search, show) {
         Docs.Settings.set("show", show);
         var isSearch = search.length > 0;
-
         // Hide the class documentation when filtering
         Ext.Array.forEach(Ext.query('.doc-contents, .hierarchy'), function(el) {
             Ext.get(el).setStyle({display: isSearch ? 'none' : 'block'});
@@ -241,17 +240,83 @@ Ext.define('Docs.view.cls.Overview', {
         // and its type is currently visible
         var re = new RegExp(Ext.String.escapeRegex(search), "i");
         this.eachMember(function(m) {
+
+            var name = m.name;
+
+            // List of all supported platforms
+            var availablePlatforms = ["android", "ipad", "iphone", "mobileweb", "blackberry", "tizen"];
+
+            m.meta.platforms = {};
+            m.meta.classPlatforms = {};
+            var memberPlatforms = m.meta.platform;
+            var classPlatforms = this.docClass.meta.platform;
+
+            var platformsArray = (memberPlatforms != undefined) ? memberPlatforms : classPlatforms;
+ 
+            Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
+                    // If platformsArray is !undefined, create hash of supported platforms
+                    // {
+                    //      "android": true,
+                    //      "iphone": false,
+                    //       etc..
+                    // }                    
+                    if(platformsArray != undefined) {
+                        Ext.Array.forEach(platformsArray, function(platformName) {
+                            // Trim off "since" part of platform string (everything after first space (" ")
+                            // i.e, "android 3.3" > "android"
+                            var trimmedName = platformName.substr(0,platformName.indexOf(' '));
+                            // If names match, set property to true
+                            if(trimmedName == availablePlatform) {
+                                m.meta.platforms[availablePlatform] = true;
+                            }
+                        });                        
+                    } else {
+                        m.meta.platforms[availablePlatform] = true;
+                    }
+                    if(classPlatforms != undefined) {
+                        Ext.Array.forEach(classPlatforms, function(platformName) {
+                            // Trim off "since" part of platform string (everything after first space (" ")
+                            // i.e, "android 3.3" > "android"
+                            var trimmedName = platformName.substr(0,platformName.indexOf(' '));
+                            // If names match, set property to true
+                            if(trimmedName == availablePlatform) {
+                                m.meta.classPlatforms[availablePlatform] = true;
+                            }
+                        });
+                    } else {
+                        m.meta.classPlatforms[availablePlatform] = true;
+                    }                       
+                });
+
             var el = Ext.get(m.id);
-            var visible = !(
-                !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
-                !show['protected'] && m.meta['protected'] ||
-                !show['private']   && m.meta['private'] ||
-                !show['inherited'] && (m.owner !== this.docClass.name) ||
-                !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
-                !show['deprecated'] && m.meta['deprecated'] ||
-                !show['removed']   && m.meta['removed'] ||
-                isSearch           && !re.test(m.name)
-            );
+
+            if (!Docs.isRESTDoc && (m.owner.indexOf("Alloy") == -1)) {
+                // Only show if the member- and class-specified platforms intersects with the platform filter selection.
+                var visible = !(
+                    !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
+                    !show['protected'] && m.meta['protected'] ||
+                    !show['private']   && m.meta['private'] ||                
+                    !show['inherited'] && (m.owner !== this.docClass.name) ||
+                    !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
+                    !show['deprecated'] && m.meta['deprecated'] ||
+                    !show['removed']   && m.meta['removed'] ||
+                    !(show['android'] && m.meta.platforms["android"] && m.meta.classPlatforms["android"]  || 
+                    show['ipad'] && m.meta.platforms["ipad"] && m.meta.classPlatforms["ipad"] ||
+                    show['iphone'] && m.meta.platforms["iphone"] && m.meta.classPlatforms["iphone"] ||
+                    show['mobileweb'] && m.meta.platforms["mobileweb"] && m.meta.classPlatforms["mobileweb"] ||
+                    show['tizen'] && m.meta.platforms["tizen"] && m.meta.classPlatforms["tizen"] ||
+                    show['blackberry'] && m.meta.platforms["blackberry"] && m.meta.classPlatforms["blackberry"]) ||
+                    isSearch           && !re.test(m.name)
+                );                
+            } else {
+                var visible = !(
+                    !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
+                    !show['protected'] && m.meta['protected'] ||
+                    !show['private']   && m.meta['private'] ||                
+                    !show['deprecated'] && m.meta['deprecated'] ||
+                    !show['removed']   && m.meta['removed'] ||                
+                    isSearch           && !re.test(m.name));
+            }
 
             if (visible) {
                 el.setStyle({display: 'block'});

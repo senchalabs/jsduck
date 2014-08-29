@@ -98,7 +98,13 @@ Ext.define('Docs.view.cls.Toolbar', {
             "inherited": this.createCb("Inherited", "inherited"),
             "accessor": this.createCb("Accessor", "accessor"),
             "deprecated": this.createCb("Deprecated", "deprecated"),
-            "removed": this.createCb("Removed", "removed")
+            "removed": this.createCb("Removed", "removed"),
+            "android": this.createCb("Android", "android"),
+            "blackberry": this.createCb("Blackberry", "blackberry"),
+            "iphone": this.createCb("iPhone", "iphone"),
+            "ipad": this.createCb("iPad", "ipad"),
+            "mobileweb": this.createCb("Mobile Web", "mobileweb"),
+            "tizen": this.createCb("Tizen", "tizen")
         };
 
         var self = this;
@@ -135,19 +141,14 @@ Ext.define('Docs.view.cls.Toolbar', {
             this.commentCount = this.createCommentCount(),
             {
                 xtype: 'button',
-                text: 'Show',
-                menu: [
-//	Ti change -- hide public, protected, private checkboxes
-//                    this.checkItems['public'],
-//                    this.checkItems['protected'],
-//                    this.checkItems['private'],
-//                    '-',
-                    this.checkItems['inherited'],
-                    this.checkItems['accessor'],
-                    this.checkItems['deprecated'],
-                    this.checkItems['removed']
-                ]
-            },
+                text: 'Filter',
+                iconCls: 'fa fa-filter fa-lg',
+                menu: self.getMenuItems(),
+                width: 100,
+                style: {
+                    borderColor: '#D1D1D1',
+                    borderStyle: 'solid'
+                }            },
             {
                 xtype: 'button',
                 iconCls: 'expand-all-members',
@@ -237,16 +238,35 @@ Ext.define('Docs.view.cls.Toolbar', {
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();
                 store.filterBy(function(m) {
-                    return !(
-                        !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
-                        !show['protected'] && m.get("meta")["protected"] ||
-                        !show['private']   && m.get("meta")["private"] ||
-                        !show['inherited'] && m.get("inherited") ||
-                        !show['accessor']  && m.get("accessor") ||
-                        !show['deprecated']   && m.get("meta")["deprecated"] ||
-                        !show['removed']   && m.get("meta")["removed"] ||
-                        isSearch           && !re.test(m.get("label"))
-                    );
+                    if(!Docs.isRESTDoc) {
+                        return !(
+                            !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
+                            !show['protected'] && m.get("meta")["protected"] ||
+                            !show['private']   && m.get("meta")["private"] ||
+                            !show['inherited'] && m.get("inherited") ||
+                            !show['accessor']  && m.get("accessor") ||
+                            !show['deprecated']   && m.get("meta")["deprecated"] ||
+                            !show['removed']   && m.get("meta")["removed"] ||
+                            !(show['android'] && m.data.meta.platforms["android"] && m.data.meta.classPlatforms["android"]  || 
+                            show['ipad'] && m.data.meta.platforms["ipad"] && m.data.meta.classPlatforms["ipad"] ||
+                            show['iphone'] && m.data.meta.platforms["iphone"] && m.data.meta.classPlatforms["iphone"] ||
+                            show['mobileweb'] && m.data.meta.platforms["mobileweb"] && m.data.meta.classPlatforms["mobileweb"] ||
+                            show['tizen'] && m.data.meta.platforms["tizen"] && m.data.meta.classPlatforms["tizen"] ||
+                            show['blackberry'] &&  m.data.meta.platforms["blackberry"] && m.data.meta.classPlatforms["blackberry"]) ||
+                            isSearch           && !re.test(m.get("label"))
+                        );
+                    } else {
+                        return !(
+                            !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
+                            !show['protected'] && m.get("meta")["protected"] ||
+                            !show['private']   && m.get("meta")["private"] ||
+                            !show['inherited'] && m.get("inherited") ||
+                            !show['accessor']  && m.get("accessor") ||
+                            !show['deprecated']   && m.get("meta")["deprecated"] ||
+                            !show['removed']   && m.get("meta")["removed"] ||
+                            isSearch           && !re.test(m.get("label"))                        
+                        )
+                    } 
                 });
                 // HACK!!!
                 // In Ext JS 4.1 filtering the stores causes the menus
@@ -311,5 +331,29 @@ Ext.define('Docs.view.cls.Toolbar', {
                 r.set("commentCount", Docs.Comments.getCount(["class", this.docClass.name, r.get("id")]));
             }, this);
         }, this);
+    },
+
+    // Returns menu items to display in Filter menu based. If showing REST APIs, only show deprecated and removed.
+    getMenuItems: function() {
+        if(!Docs.isRESTDoc) {
+            return [
+                this.checkItems['android'],
+                this.checkItems['blackberry'],                    
+                this.checkItems['ipad'],                    
+                this.checkItems['iphone'],                    
+                this.checkItems['mobileweb'],
+                this.checkItems['tizen'],                    
+                '-',
+                this.checkItems['inherited'],
+                this.checkItems['accessor'],
+                this.checkItems['deprecated'],
+                this.checkItems['removed']
+            ]
+        } else {
+            return [
+                this.checkItems['deprecated'],
+                this.checkItems['removed']            
+            ]
+        }
     }
 });
