@@ -290,7 +290,9 @@ Ext.define('Docs.view.cls.Overview', {
 
             var el = Ext.get(m.id);
 
-            if (!Docs.isRESTDoc && (m.owner.indexOf("Alloy") == -1)) {
+            // For ACS REST and Alloy APIs, don't apply platform filtering, or if the platform filters are undefined.
+            // Assuming if any one of the platform filters is undefined ('android' in this case), they're all undefined.
+            if (!Docs.isRESTDoc && (m.owner.indexOf("Alloy") == -1) && (show['android'] != undefined)) {
                 // Only show if the member- and class-specified platforms intersects with the platform filter selection.
                 var visible = !(
                     !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
