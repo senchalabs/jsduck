@@ -173,10 +173,11 @@ Ext.define('Docs.view.cls.Toolbar', {
         return flags;
     },
 
+    // TiDuck: If platform 'show' setting is undefined, set checked to 'true'
     createCb: function(text, type) {
         return Ext.widget('menucheckitem', {
             text: text,
-            checked: Docs.Settings.get("show")[type],
+            checked: (Docs.Settings.get("show")[type] == undefined) ? true : Docs.Settings.get("show")[type],
             listeners: {
                 checkchange: function() {
                     this.fireEvent("filter", this.filterField.getValue(), this.getShowFlags());
@@ -238,7 +239,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();
                 store.filterBy(function(m) {
-                    if(!Docs.isRESTDoc) {
+                    if(!Docs.isRESTDoc && (show['android'] != undefined)) {
                         return !(
                             !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
                             !show['protected'] && m.get("meta")["protected"] ||
