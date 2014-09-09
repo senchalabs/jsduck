@@ -26,7 +26,7 @@ function decode_file($filename) {
     return jsonp_decode(file_get_contents($filename));
   }
   else {
-    throw new Exception("File $filename not found");
+    throw new Exception("File ".htmlspecialchars($filename)." not found");
   }
 }
 
