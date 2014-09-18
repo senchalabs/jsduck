@@ -86,6 +86,8 @@ module JsDuck
             item[1].each do |ex|
                objects << parse_example(ex)
             end
+        elsif item[0] == "pseudo"
+            @currentObject[:meta][:pseudo] = item[1]
         else
             print "Warning: Skipping tag " + item[0] + "\n"
         end
