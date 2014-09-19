@@ -7,10 +7,9 @@ module JsDuck
 
     # Inserts table of contents at the top of guide HTML by looking
     # for <h2> elements.
-    def self.inject(html, guide_name)
+    def self.inject(html, guide_name, max_level)
       toc = []
       new_html = []
-      max_level = 4
 
       # Count the number of heading increments we've seen so far; use one fewer
       # than max_level, since <h1> tags don't go in the TOC.
