@@ -11,9 +11,7 @@ module JsDuck
       toc = []
       new_html = []
 
-      # Count the number of heading increments we've seen so far; use one fewer
-      # than max_level, since <h1> tags don't go in the TOC.
-      heading_counts = Array.new(max_level - 1) { 0 }      
+      previous_level = 1
 
       html.each_line do |line|
         if line =~ /^\s*<(h([1-6]))>(.*?)<\/h[1-6]>$/
@@ -21,12 +19,26 @@ module JsDuck
           tag = $1
            level = $2.to_i - 1 # ignore <h1>
            text = Util::HTML.strip_tags($3)
-          id = guide_name + "-section-" + title_to_id(text)
-          if (1...max_level).include? level
-             heading_counts[level - 1] += 1
-             (level...heading_counts.length).each { |i| heading_counts[i] = 0 }
-             prefix = heading_counts.slice(0...level).join('.')
-             toc << "#{prefix}. <a href='#!/guide/#{id}'>#{text}</a><br/>\n"
+           id = guide_name + "-section-" + title_to_id(text)
+           if (1...max_level).include? level            
+            if level == previous_level
+              # Add new list item to current ul
+              toc << "<li><a href='#!/guide/#{id}'>#{text}</a>"
+            end
+            if level > previous_level
+              # Create new ul for this list item
+              toc << "<ul><li><a href='#!/guide/#{id}'>#{text}</a>"
+            end
+            if level < previous_level
+              # Close all previously opened <ul>s between the previous and current heading levels
+              # then add the list item
+              uls_to_close = previous_level - level                
+              for i in 1..uls_to_close
+                toc << "</ul>"
+              end
+              toc << "<li><a href='#!/guide/#{id}'>#{text}</a>"
+            end
+            previous_level = level
           end
           new_html << "<#{tag} id='#{id}'>#{text}</#{tag}>\n"
         else
@@ -37,13 +49,13 @@ module JsDuck
       # Inject TOC below first heading if at least 2 items in TOC
       if toc.length >= 2
         new_html.insert(1, [
-            "<div class='toc'>\n",
-            "<p><strong>Contents</strong></p>\n",
-            "<ul>\n",
-            toc,
-            "</ul>\n",
-            "</div>\n",
-        ])
+          "<div class='toc'>\n",
+          "<p><strong>Contents</strong></p>\n",
+          "<ul>\n",
+          toc,
+          "</ul>\n",
+          "</div>\n",
+          ])
       end
 
       new_html.flatten.join
