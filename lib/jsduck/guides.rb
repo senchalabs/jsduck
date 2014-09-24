@@ -141,7 +141,7 @@ module JsDuck
       @formatter.doc_context = {:filename => guide_file, :linenr => 0}
       @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
       html = @formatter.format(Util::IO.read(guide_file))
-      html = GuideToc.inject(html, guide['name'])
+      html = GuideToc.inject(html, guide['name'], @opts.guide_toc_level)
       html = GuideAnchors.transform(html, guide['name'])
 
       # Report unused images (but ignore the icon files)
