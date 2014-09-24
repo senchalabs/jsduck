@@ -12,7 +12,8 @@ module JsDuck
       new_html = []
 
       previous_level = 1
-
+      uls_to_close = 0
+      uls_to_open = 0
       html.each_line do |line|
         if line =~ /^\s*<(h([1-6]))>(.*?)<\/h[1-6]>$/
 
@@ -26,13 +27,18 @@ module JsDuck
               toc << "<li><a href='#!/guide/#{id}'>#{text}</a>"
             end
             if level > previous_level
-              # Create new ul for this list item
-              toc << "<ul><li><a href='#!/guide/#{id}'>#{text}</a>"
+              # Open a new ul for each additional level
+              # then add the list item
+              uls_to_open = level - previous_level                     
+              for i in 1..uls_to_open
+                toc << "<ul>"
+              end
+              toc << "<li><a href='#!/guide/#{id}'>#{text}</a>"
             end
             if level < previous_level
               # Close all previously opened <ul>s between the previous and current heading levels
               # then add the list item
-              uls_to_close = previous_level - level                
+              uls_to_close = previous_level - level       
               for i in 1..uls_to_close
                 toc << "</ul>"
               end
