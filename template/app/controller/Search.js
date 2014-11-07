@@ -238,7 +238,10 @@ Ext.define('Docs.controller.Search', {
                                 // If result matches API name, store in separate array
                                 // to be pushed at beginning of results
                                 re = new RegExp(term, 'gi');
-                                if (doc.name.match(re)) {
+                                if (api_name === term || api_name.indexOf(term) == 0) {
+                                    keyword_match.unshift(elem);
+                                }
+                                else if (doc.name.match(re)) {
                                     keyword_match.push(elem);
                                 } else {
                                     rv.push(elem);
