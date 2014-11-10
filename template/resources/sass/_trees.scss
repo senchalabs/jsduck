@@ -11,12 +11,13 @@
   background: -o-linear-gradient(top, #ffffff 0%,#f8f8f8  5px);
   background: -ms-linear-gradient(top, #ffffff 0%,#f8f8f8 5px);
   background: linear-gradient(top, #ffffff 0%,#f8f8f8  5px);
-  a { color: #000; }
+  a { color: #222; }
+  a:hover { color: #7aa1b0; }
   .x-grid-cell {
     background: none; }
   .x-grid-cell-inner {
     font-family: $docs-font;
-    font-size: 13px;
+    font-size: 14px;
     position: relative;
     @include transition(background-color, 0.15s, linear);
     @include icons; }
@@ -26,7 +27,9 @@
       color: #666; } }
   .x-grid-row-over {
     .x-grid-cell-inner {
-      @include transition(background-color, 0.15s, linear); } }
+      color: #7aa1b0;
+      // @include transition(background-color, 0.15s, linear); 
+    } }
   .x-panel-body {
     border-color: #d4d4d4;
     background: $docs-bg-color; } }

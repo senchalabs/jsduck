@@ -122,7 +122,7 @@
       //    color: #000;
       //    font-weight: bold; } }
       td {
-        color: #484848;
+        color: #222;
         padding: 2px 20px 2px 0; } }
     blockquote {
       padding-left: 1em;
@@ -133,6 +133,7 @@
       @include border-radius(5px);
       color: #314e64;
       font-family: $docs-monospace-font;
+      font-size: 13px;
       padding: 10px 12px;
       line-height: 1.3em;
       margin: 10px 0 14px 0;
@@ -207,8 +208,11 @@ p.screenshot {
 
 .x-panel-body-default {
   border-width: 0; 
-  font-size: 13px; }
+  font-size: 14px; }
 
+p > code {
+  font-size: 13px;
+}
 
 // Examples
 @import "examples";
