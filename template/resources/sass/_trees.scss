@@ -27,7 +27,9 @@
       color: #666; } }
   .x-grid-row-over {
     .x-grid-cell-inner {
-      @include transition(background-color, 0.15s, linear); } }
+      color: #7aa1b0;
+      // @include transition(background-color, 0.15s, linear); 
+    } }
   .x-panel-body {
     border-color: #d4d4d4;
     background: $docs-bg-color; } }
