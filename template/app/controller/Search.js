@@ -237,6 +237,9 @@ Ext.define('Docs.controller.Search', {
                                 };
                                 // If result matches API name, store in separate arrays
                                 // to be pushed at beginning of results
+                                api_name = api_name.toLowerCase();
+                                doc.name = doc.name.toLowerCase();
+                                term = term.toLowerCase();
                                 re = new RegExp(term.replace(/\./g, '\\.'), 'gi');
                                 if (api_name === term || doc.name === term) {
                                     name_match.unshift(elem);
