@@ -25,7 +25,7 @@ Ext.define('Docs.controller.Search', {
     pageSize: 10,
 
     // Delay constants
-    basicSearchDelay: 50,
+    basicSearchDelay: 250,
     guideSearchDelay: 500,
     dropdownHideDelay: 500,
 
@@ -151,7 +151,8 @@ Ext.define('Docs.controller.Search', {
                 type = 'titanium',
                 suffix = '*',
                 match = term.match(/\"/g);
-               eso = this;
+            eso = this;
+            requestId = 0;
 
             // Switch to correct product
             if (url.match(/platform/g)) {
@@ -185,10 +186,12 @@ Ext.define('Docs.controller.Search', {
                 },
                 callback: function(options, success, response) {
                     var rv = [],
-                        keyword_match = [];
-                    if (success) {
+                        keyword_match = [],
+                        name_match = [];
+                    if (success && response && response.requestId > requestId) {
                         // If successful, retrieve and prepare results
                         var results = JSON.parse(response.responseText);
+                        requestId = response.requestId;
                         results.response.docs.forEach(function(doc) {
                             if ("title" in doc) {
                                 var elem, re;
@@ -203,7 +206,7 @@ Ext.define('Docs.controller.Search', {
                                 // to be pushed at beginning of results
                                 re = new RegExp(term, 'gi');
                                 if (doc.title.match(re)) {
-                                    keyword_match.push(elem);
+                                    name_match.push(elem);
                                 } else {
                                     rv.push(elem);
                                 }
@@ -234,11 +237,19 @@ Ext.define('Docs.controller.Search', {
                                     icon: 'icon-' + api_type,
                                     meta: {}
                                 };
-
-                                // If result matches API name, store in separate array
+                                // If result matches API name, store in separate arrays
                                 // to be pushed at beginning of results
-                                re = new RegExp(term, 'gi');
-                                if (doc.name.match(re)) {
+                                api_name = api_name.toLowerCase();
+                                doc.name = doc.name.toLowerCase();
+                                term = term.toLowerCase();
+                                re = new RegExp(term.replace(/\./g, '\\.'), 'gi');
+                                if (api_name === term || doc.name === term) {
+                                    name_match.unshift(elem);
+                                }
+                                else if (api_name.indexOf(term) == 0 || doc.name.indexOf(term) == 0) {
+                                    name_match.push(elem);
+                                }
+                                else if (doc.name.match(re)) {
                                     keyword_match.push(elem);
                                 } else {
                                     rv.push(elem);
@@ -247,10 +258,9 @@ Ext.define('Docs.controller.Search', {
                         });
 
                         // Place API name matches ahead of others
-                        rv = keyword_match.concat(rv);
+                        rv = name_match.concat(keyword_match.concat(rv));
                     }
                     eso.displayResults(rv);
-                    eso = null;
                 }
             });
         } else {
