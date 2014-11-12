@@ -25,7 +25,7 @@ Ext.define('Docs.controller.Search', {
     pageSize: 10,
 
     // Delay constants
-    basicSearchDelay: 500,
+    basicSearchDelay: 250,
     guideSearchDelay: 500,
     dropdownHideDelay: 500,
 
@@ -152,6 +152,7 @@ Ext.define('Docs.controller.Search', {
                 suffix = '*',
                 match = term.match(/\"/g);
             eso = this;
+            requestId = 0;
 
             // Switch to correct product
             if (url.match(/platform/g)) {
@@ -187,9 +188,10 @@ Ext.define('Docs.controller.Search', {
                     var rv = [],
                         keyword_match = [],
                         name_match = [];
-                    if (success && response) {
+                    if (success && response && response.requestId > requestId) {
                         // If successful, retrieve and prepare results
                         var results = JSON.parse(response.responseText);
+                        requestId = response.requestId;
                         results.response.docs.forEach(function(doc) {
                             if ("title" in doc) {
                                 var elem, re;
