@@ -222,7 +222,7 @@ $appc-red: #9B1C1F;
 }
 
 #editButton {
-    background: url(../images/pencil.png);
+    background-image: url(../images/pencil.png);
     background-position: 10px;
     background-repeat: no-repeat;
     background-size: 20px 20px;
@@ -230,9 +230,9 @@ $appc-red: #9B1C1F;
     color: #555555;
     height: 30px;
     position: absolute;
-    right: 20px;
+    right: 50px;
     text-align: center;
-    top: 10px;
+    top: 18px;
     width: 75px;
 }
 
@@ -243,11 +243,11 @@ $appc-red: #9B1C1F;
     right: 15px;
     position: absolute;
     text-align: center;
-    top: 5px;
+    top: 5.5px;
 }
 
 #editButton:hover {
-    background-color: #a7000b;
+    background-color: #555555;
     color: #ffffff;
 }
 
