@@ -220,3 +220,34 @@ $appc-red: #9B1C1F;
 	color: red;
 	font-weight: bold;
 }
+
+#editButton {
+    background: url(../images/pencil.png);
+    background-position: 10px;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    border-radius: 5px;
+    color: #555555;
+    height: 30px;
+    position: absolute;
+    right: 20px;
+    text-align: center;
+    top: 10px;
+    width: 75px;
+}
+
+#editButton span {
+    font-family: Arial, Helvetica, FreeSans, sans-serif;
+    font-size: 15px;
+    font-weight: normal;
+    right: 15px;
+    position: absolute;
+    text-align: center;
+    top: 5px;
+}
+
+#editButton:hover {
+    background-color: #a7000b;
+    color: #ffffff;
+}
+
