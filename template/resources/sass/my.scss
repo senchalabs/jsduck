@@ -228,6 +228,7 @@ $appc-red: #9B1C1F;
     background-size: 20px 20px;
     border-radius: 5px;
     color: #555555;
+    display: block;
     height: 30px;
     position: absolute;
     right: 50px;
@@ -243,7 +244,7 @@ $appc-red: #9B1C1F;
     right: 15px;
     position: absolute;
     text-align: center;
-    top: 5.5px;
+    top: 5px;
 }
 
 #editButton:hover {
