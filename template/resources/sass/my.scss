@@ -251,3 +251,20 @@ $appc-red: #9B1C1F;
     color: #ffffff;
 }
 
+#platformComparison caption {
+    font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+    font-size: 13px;
+    padding:  0 0 5px 0 ;
+    text-align:center;
+    font-weight: bold;    
+}
+
+#platformComparison th, #platformComparison td {
+   text-align:center;
+   font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+   font-size: 13px;
+   font-weight: bold;
+   border-width: 0;
+   color: #555;
+   padding: 5px;    
+}
