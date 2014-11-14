@@ -251,12 +251,8 @@ $appc-red: #9B1C1F;
     color: #ffffff;
 }
 
-#platformComparison caption {
-    font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
-    font-size: 13px;
-    padding:  0 0 5px 0 ;
-    text-align:center;
-    font-weight: bold;    
+#platformComparison {
+    margin: 0 0 0 25px;
 }
 
 #platformComparison th, #platformComparison td {
