@@ -41,6 +41,12 @@ module JsDuck
     def load_all_guides
       each_item do |guide|
         guide["url"] = resolve_url(guide)
+        if File.file?(guide["url"])
+          guide[:filename] = guide["url"]
+          guide["url"] = File.expand_path("..", guide["url"])
+        else
+          guide[:filename] = guide["url"] + "/README.md"
+        end
         guide[:filename] = guide["url"] + "/README.md"
         guide[:html] = load_guide(guide)
       end
