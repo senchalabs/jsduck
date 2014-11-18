@@ -41,7 +41,8 @@ module JsDuck
     def load_all_guides
       each_item do |guide|
         guide["url"] = resolve_url(guide)
-        guide[:filename] = guide["url"] + "/README.md"
+        guide[:dir] = resolve_dir(guide)
+        guide[:filename] = resolve_filename(guide)
         guide[:html] = load_guide(guide)
       end
     end
@@ -54,8 +55,8 @@ module JsDuck
     end
 
     def load_guide(guide)
-      unless File.exists?(guide["url"])
-        return Logger.warn(:guide, "Guide not found", {:filename => guide["url"]})
+      unless File.exists?(guide[:dir])
+        return Logger.warn(:guide, "Guide not found", {:filename => guide[:dir]})
       end
       unless File.exists?(guide[:filename])
         return Logger.warn(:guide, "Guide not found", {:filename => guide[:filename]})
@@ -68,14 +69,14 @@ module JsDuck
       begin
         return format_guide(guide)
       rescue
-        Logger.fatal_backtrace("Error while reading/formatting guide #{guide['url']}", $!)
+        Logger.fatal_backtrace("Error while reading/formatting guide #{guide[:filename]}", $!)
         exit(1)
       end
     end
 
     def format_guide(guide)
       @formatter.doc_context = {:filename => guide[:filename], :linenr => 0}
-      @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
+      @formatter.images = Img::Dir.new(guide[:dir], "guides/#{guide["name"]}")
       html = @formatter.format(Util::IO.read(guide[:filename]))
       html = GuideToc.new(html, guide['name'], @opts.guides_toc_level).inject!
       html = GuideAnchors.transform(html, guide['name'])
@@ -95,7 +96,7 @@ module JsDuck
 
       Logger.log("Writing guide", out_dir)
       # Copy the whole guide dir over
-      FileUtils.cp_r(guide["url"], out_dir)
+      FileUtils.cp_r(guide[:dir], out_dir)
 
       # Ensure the guide has an icon
       fix_icon(out_dir)
@@ -110,6 +111,26 @@ module JsDuck
         File.expand_path(guide["url"], @path)
       else
         @path + "/guides/" + guide["name"]
+      end
+    end
+
+    # Detects guide directory.
+    # The URL either points to a file or directory.
+    def resolve_dir(guide)
+      if File.file?(guide["url"])
+        File.expand_path("..", guide["url"])
+      else
+        guide["url"]
+      end
+    end
+
+    # Detects guide filename.
+    # Either use URL pointing to a file or look up README.md from directory.
+    def resolve_filename(guide)
+      if File.file?(guide["url"])
+        guide["url"]
+      else
+        guide[:dir] + "/README.md"
       end
     end
 
