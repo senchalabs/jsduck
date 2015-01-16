@@ -34,10 +34,19 @@ Ext.define('Docs.view.cls.Header', {
                 '{[this.renderAliases(values.aliases)]}',
                 '{[this.renderMetaTags(values.meta)]}',
             '</h1>',
+            '{[this.renderEditButton(values)]}',
             '<tpl if="Docs.data.showPrintButton">',
                 '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>',
-            '</tpl>',
+            '</tpl>',            
             {
+                renderEditButton: function (cls) {
+                    var url = cls.meta.editurl;
+                    if(url !== undefined) {
+                        return "<a id='editButton' href='" + url + "' target='_blank'><span>Edit</span></a>";                        
+                    } else {
+                        return "";
+                    }
+                },
                 getClass: function(cls) {
                     if (cls.singleton) {
                         return "singleton";
