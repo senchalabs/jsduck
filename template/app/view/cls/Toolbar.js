@@ -154,7 +154,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             }
         ]);
 
-        this.callParent(arguments);
+        this.callParent();
     },
 
     getShowFlags: function() {
