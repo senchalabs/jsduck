@@ -106,9 +106,10 @@ Ext.define('Docs.view.cls.Toolbar', {
                 width: 150,
                 listeners: {
                     buffer: 256,
-                    keyup: function(cmp) {
-                        this.fireEvent("filter", cmp.getValue(), this.getShowFlags());
-                        cmp.setHideTrigger(cmp.getValue().length === 0);
+                    change: function() {
+                        var value = self.filterField.getValue();
+                        self.fireEvent("filter", value, self.getShowFlags());
+                        self.filterField.setHideTrigger(value.length === 0);
                     },
                     specialkey: function(cmp, event) {
                         if (event.keyCode === Ext.EventObject.ESC) {
