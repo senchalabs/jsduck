@@ -105,6 +105,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                 enableKeyEvents: true,
                 width: 150,
                 listeners: {
+                    buffer: 256,
                     keyup: function(cmp) {
                         this.fireEvent("filter", cmp.getValue(), this.getShowFlags());
                         cmp.setHideTrigger(cmp.getValue().length === 0);
