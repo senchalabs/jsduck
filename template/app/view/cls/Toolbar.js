@@ -95,7 +95,7 @@ Ext.define('Docs.view.cls.Toolbar', {
         };
 
         var self = this;
-        this.items = this.items.concat([
+        self.items = self.items.concat([
             { xtype: 'tbfill' },
             this.filterField = Ext.widget("triggerfield", {
                 triggerCls: 'reset',
@@ -113,10 +113,9 @@ Ext.define('Docs.view.cls.Toolbar', {
                     specialkey: function(cmp, event) {
                         if (event.keyCode === Ext.EventObject.ESC) {
                             cmp.reset();
-                            this.fireEvent("filter", "", this.getShowFlags());
+                            self.fireEvent("filter", "", self.getShowFlags());
                         }
-                    },
-                    scope: this
+                    }
                 },
                 onTriggerClick: function() {
                     this.reset();
@@ -126,7 +125,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                 }
             }),
             { xtype: 'tbspacer', width: 10 },
-            this.commentCount = this.createCommentCount(),
+            self.commentCount = self.createCommentCount(),
             {
                 xtype: 'button',
                 text: 'Show',
