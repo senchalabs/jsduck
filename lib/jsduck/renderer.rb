@@ -281,6 +281,7 @@ module JsDuck
       owner = m[:owner]
       # is this method inherited from parent?
       inherited = (owner != @cls[:name])
+      adminRequired = m[:meta][:adminRequired]
 
       return [
         "<div id='#{m[:id]}' class='member #{first_child} #{inherited ? 'inherited' : 'not-inherited'}'>",
@@ -296,6 +297,7 @@ module JsDuck
             "</div>",
             # method params signature or property type signature
             render_signature(m),
+            adminRequired ? "<strong class='signature'>admin only</strong>" : "",
           "</div>",
           # short and long descriptions
           "<div class='description'>",
@@ -405,6 +407,7 @@ module JsDuck
       if @opts.rest
         optional = ""
         required = ' <strong class="required signature">required</strong>'
+        adminRequired = ' <strong class="signature">admin only</strong>'
       else
         optional = " (optional)"
         required = ""
@@ -414,6 +417,7 @@ module JsDuck
           "<span class='pre'>#{p[:name]}</span> : ",
           p[:html_type],
           p[:optional] ? optional : required,
+          p[:adminRequired] ? adminRequired : optional,
           p[:deprecated] ? '<strong class="deprecated signature">deprecated</strong>' : "",
           "<div class='sub-desc'>",
             p[:doc],
