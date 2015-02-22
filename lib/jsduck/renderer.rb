@@ -297,7 +297,7 @@ module JsDuck
             "</div>",
             # method params signature or property type signature
             render_signature(m),
-            adminRequired ? "<strong class='signature'>admin only</strong>" : "",
+            adminRequired ? "<strong class='signature'>admin-only</strong>" : "",
           "</div>",
           # short and long descriptions
           "<div class='description'>",
@@ -407,7 +407,7 @@ module JsDuck
       if @opts.rest
         optional = ""
         required = ' <strong class="required signature">required</strong>'
-        adminRequired = ' <strong class="signature">admin only</strong>'
+        adminRequired = ' <strong class="signature">admin-only</strong>'
       else
         optional = " (optional)"
         required = ""
