@@ -104,7 +104,8 @@ module JsDuck
             :files => [ @fakefile ],
             :meta => {
                 :hide => false,
-                :loginRequired => false
+                :loginRequired => false,
+                :adminRequired => false
             },
             :url => "Error: No URL set for this method.",
             :httpMethod => "GET",
@@ -148,6 +149,8 @@ module JsDuck
                 methodHash[:url] = tag[1]
             elsif tag[0] == "login-required"
                 methodHash[:meta][:loginRequired] = tag[1]
+            elsif tag[0] == "admin-required"
+                methodHash[:meta][:adminRequired] = tag[1]
             end
         end
         methodHash
@@ -200,6 +203,9 @@ module JsDuck
             paramHash[:optional] = ! param["required"]
         else
             paramHash[:optional] = true
+        end
+        if param.has_key?("admin-required")
+            paramHash[:adminRequired] = param["admin-required"]
         end
         if param.has_key?("type")
             paramHash[:type] = convert_type(param["type"])
