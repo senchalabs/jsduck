@@ -274,3 +274,138 @@ $appc-red: #9B1C1F;
 .x-toolbar .x-toolbar-text {
     color: #222;
 }
+
+.icon-search-1 {
+  -webkit-font-smoothing: subpixel-antialiased;
+  color: rgb(140, 140, 140);
+  display: block;
+  height: 45px;
+  line-height: 45px;
+  opacity: 0.80;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  width: 28px;
+}
+
+#appc-docs-search-form {
+  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  padding: 5px 5px;
+  width: 200px;
+}
+
+#appc-docs-search-form:focus{
+  border-color:#66afe9;
+  outline:0;
+  -webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(102,175,233,0.6);
+  box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(102,175,233,0.6);
+}
+
+#appc-docs-products {
+	position: relative;
+	display: inline-block;
+}
+#appc-docs-products-menu {
+	z-index: 4000 !important;
+	display: none;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	float: left;
+	min-width: 160px;
+	margin: 0;
+	padding: 5px 0 0 0;
+	font-size: 14px;
+	text-align: left;
+	border-top-right-radius: 0;
+	border-top-left-radius: 0;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+	background-color: #484850;
+}
+#appc-docs-products-menu a {
+	padding-left: 10px;
+	display: block;
+	color: white;
+}
+#appc-docs-products-menu a:hover {
+	background-color: #343438 !important;
+	box-sizing: border-box;
+}
+
+#appc-docs-search {
+	position: relative;
+	display: inline-block;
+}
+#appc-docs-search-results {
+	z-index: 4000 !important;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	float: left;
+	width: 250px;
+	margin: 0;
+	padding: 5px 0 0 0;
+	font-size: 14px;
+	text-align: left;
+	border-top-right-radius: 0;
+	border-top-left-radius: 0;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+	background-color: #484850;
+}
+#appc-docs-search-results a {
+	padding-left: 10px;
+	display: block;
+	color: white;
+
+}
+#appc-docs-search-results a:hover {
+	background-color: #343438 !important;
+	box-sizing: border-box;
+}
+
+#appc-docs-results-last {
+	color: #888;
+	background-color: #343438;
+	height: 48px;
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	vertical-align: baseline;
+}
+
+#appc-docs-results-prev {
+	padding: 5px 5px 5px 5px !important;
+	border-width: 1px !important;
+	border-style: solid;
+	border-color: #888;
+}
+#appc-docs-results-prev:hover, #appc-docs-results-next:hover {
+	background-color: #484850;
+	cursor: pointer;
+}
+
+#appc-docs-results-next {
+	padding: 5px 5px 5px 5px !important;
+	border-width: 1px !important;
+	border-style: solid;
+	border-color: #888;
+	box-sizing: border-box;
+}
+
+#appc-docs-results-stats {
+	padding: 0 50px;
+}
+
+.appc-docs-results-name {
+	font-size: 14px !important;
+	line-height: 150%;
+}
+
+.appc-docs-results-fullname {
+	font-size: 12px;
+	line-height: 150%;
+	color: #888;
+}

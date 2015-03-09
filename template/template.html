@@ -19,10 +19,10 @@
 
   <!-- Keep this outside of BEGIN/END CSS comments, otherwise rake task <fails class=""></fails> -->
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">  
+
   <!-- Unified nav additions -->
   <script type="text/javascript" src="https://360-preprod.cloud.appctest.com/unified-nav.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="unified-nav-addon.js"></script>
 
   <script type="text/javascript" src="{extjs_path}"></script>
   <script type="text/javascript" src="{data_path}"></script>
@@ -34,6 +34,7 @@
   <script type="text/javascript" src="resources/codemirror/markdown.js"></script>
   <script type="text/javascript" src="app.js"></script>
   <script type="text/javascript" src="resources/prettify/prettify.js"></script>
+  <script type="text/javascript" src="resources/codemirror/unified-nav-extras.js"></script>
   <!-- END JS -->
 
   {head_html}
@@ -81,14 +82,6 @@ window._gaToMarketo=function(){var gaCookie=cc(document.cookie,'__utmz=',';');re
     document.write("<link href='"+protocol+"//fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />");
   })();
   </script>
-
-<!-- Modify the Unified Nav -->
-<script type="text/javascript">
-function doLoad () {
-  $('<span><div>Appcelerator Cloud Docs<b class="caret"></b></div></span><span><div>Search Docs<b class="caret"></b></div></span>').insertAfter('#appc-unified-header-toggle');
-};
-$(document).ready(doLoad);
-</script>
 
 </body>
 </html>
