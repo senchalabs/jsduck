@@ -100,11 +100,11 @@ Ext.define('Docs.controller.Search', {
                         }, this.basicSearchDelay, this);
                     }
                 },
-                change: function(tf, newValue, oldValue){
-                    if(newValue && !oldValue){
+                change: function(tf, newValue, oldValue) {
+                    if (newValue && !oldValue) {
                         this.getDropdown().show();
                         this.search(newValue);
-                    } else if(!this.searchTimeout && this.getDropdown().isVisible()){
+                    } else if (!this.searchTimeout && this.getDropdown().isVisible()) {
                         this.search(newValue);
                     }
                 },
