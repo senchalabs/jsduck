@@ -230,7 +230,7 @@ AppcDocsSite.search = function () {
 						}
 						else if (doc.url.match(/\-event\-/g)) {
 							api_type = 'event';
-							icon = 'icon-flash-1';
+							icon = 'icon-flash';
 						}
 						else if (doc.url.match(/\-property\-/g)) {
 							api_type = 'property';
