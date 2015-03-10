@@ -7,7 +7,12 @@ var AppcDocsSite = {
 	currentIndex: 0,
 	prev: 0,
 	next: 0,
-	cancelDismiss: false
+	cancelDismiss: false,
+	timer: 0,
+	KEYUP_DELAY_MS: 250,
+	DISMISS_DELAY_MS: 500,
+	NAME_CHAR_LIMIT: 25,
+	FULLNAME_CHAR_LIMIT: 35
 };
 
 /*
@@ -56,15 +61,15 @@ AppcDocsSite.dismissResults = function () {
 		if (!AppcDocsSite.cancelDismiss) {
 			AppcDocsSite.hideResults();
 		}
-	}, 500);	
+	}, AppcDocsSite.DISMISS_DELAY_MS);
 };
 
 /*
  * Truncate string to fit in results box
  */
 AppcDocsSite.truncateName = function (name) {
-	if (name.length > 25) {
-		return name.substring(0, 25) + '...';
+	if (name.length > AppcDocsSite.NAME_CHAR_LIMIT) {
+		return name.substring(0, AppcDocsSite.NAME_CHAR_LIMIT) + '...';
 	} else {
 		return name;
 	}
@@ -74,8 +79,8 @@ AppcDocsSite.truncateName = function (name) {
  * Truncate string to fit in results box
  */
 AppcDocsSite.truncateFullName = function (name) {
-	if (name.length > 35) {
-		return name.substring(0, 35) + '...';
+	if (name.length > AppcDocsSite.FULLNAME_CHAR_LIMIT) {
+		return name.substring(0, AppcDocsSite.FULLNAME_CHAR_LIMIT) + '...';
 	} else {
 		return name;
 	}
@@ -149,6 +154,8 @@ AppcDocsSite.search = function () {
 		return;
 	} else if (term === '' || term.length === 0) {
 		AppcDocsSite.hideResults();
+		AppcDocsSite.currentResults = [];
+		AppcDocsSite.currentIndex = 0;
 		return;
 	} 
 	AppcDocsSite.previousTerm = term;
@@ -274,6 +281,17 @@ AppcDocsSite.search = function () {
 };
 
 /*
+ * Delay search operation
+ */
+AppcDocsSite.delayedSearch = function () {
+    if (AppcDocsSite.timer)
+        window.clearTimeout(AppcDocsSite.timer);
+    AppcDocsSite.timer = window.setTimeout(function() {
+        AppcDocsSite.search();
+    }, AppcDocsSite.KEYUP_DELAY_MS);
+}
+
+/*
  * Add products drop-down and search field
  */
 AppcDocsSite.doLoad = function() {
@@ -287,7 +305,7 @@ AppcDocsSite.doLoad = function() {
 	rightside[0].insertAdjacentHTML('afterbegin', '<span><div id="appc-docs-search"><input type="text" id="appc-docs-search-form" placeholder="Search Docs"><i class="icon-search-1 icon-l"></i></div><div id="appc-docs-search-results"/></span>');
 
 	searchForm = document.getElementById('appc-docs-search-form');
-	searchForm.onkeyup = AppcDocsSite.search;
+	searchForm.onkeyup = AppcDocsSite.delayedSearch;
 	searchForm.onblur = AppcDocsSite.dismissResults;
 	searchForm.onfocus = AppcDocsSite.redisplayResults;
 };
