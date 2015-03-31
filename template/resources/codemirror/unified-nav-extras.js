@@ -161,16 +161,19 @@ AppcDocsSite.search = function () {
 	AppcDocsSite.previousTerm = term;
 
 	var url = window.location.href,
-		type = 'titanium',
+		type = 'platform',
 		suffix = '*',
 		match = term.match(/\"/g);
 
 	// Switch to correct product
-	if (url.match(/platform/g)) {
-		type = 'platform';
+	if (url.match(/titanium/g)) {
+		type = 'titanium';
 	}
 	else if (url.match(/cloud/g)) {
 		type = 'cloud';
+	}
+	else if (url.match(/arrowdb/g)) {
+		type = 'arrowdb';
 	}
 
 	// Do a wildcard search unless we are doing so already
