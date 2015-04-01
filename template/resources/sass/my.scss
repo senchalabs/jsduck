@@ -302,6 +302,13 @@ $appc-red: #9B1C1F;
   box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(102,175,233,0.6);
 }
 
+#appc-docs-products {
+  position: relative;
+  display: inline-block;
+  line-height: 45px;
+  padding: 0 25px;
+}
+
 #appc-docs-products-menu {
 	z-index: 4000 !important;
 	display: none;
