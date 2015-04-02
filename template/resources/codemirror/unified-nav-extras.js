@@ -193,7 +193,7 @@ AppcDocsSite.search = function () {
 
 	// Do the search
 	Ext.Ajax.request({
-		url: 'http://docs.appcelerator.com/solrsearch.php',
+		url: '//docs.appcelerator.com/solrsearch.php',
 		method: 'GET',
 		params: {
 			query:encodeURIComponent(term + suffix),
