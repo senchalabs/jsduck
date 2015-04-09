@@ -48,7 +48,7 @@ Ext.define('Docs.view.HoverMenuButton', {
     },
 
     getColumnHeight: function() {
-        var compensation = 200;
+        var compensation = 250;
         var lineHeight = 18;
         return Math.floor((Ext.Element.getViewportHeight() - compensation) / lineHeight);
     },
