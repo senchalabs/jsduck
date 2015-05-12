@@ -34,14 +34,15 @@ Ext.define('Docs.view.Viewport', {
                 region: 'north',
                 id: 'north-region',
 				// Ti changed height
-                height: 78,
+                height: 38,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
                 },
                 items: [
 					// Ti change -- removed login container, adjusted height
-					{
+                    // Ti change -- remove logo, drop-down and search for unified nav
+					/* {
 						xtype: 'container',
                         id: 'doc-topnav-container',
 						height: 50,
@@ -66,7 +67,7 @@ Ext.define('Docs.view.Viewport', {
 							   margin: '12 0 0 0'
 							}
 						]
-					},
+					},*/
                     {
                         xtype: 'doctabs'
                     }
@@ -165,7 +166,8 @@ Ext.define('Docs.view.Viewport', {
                 region: 'south',
                 id: 'footer',
 				// Ti changed height. 
-                height: 76,
+                // Hide for unified nav
+                height: 0,
                 contentEl: 'footer-content'
             }
         ];

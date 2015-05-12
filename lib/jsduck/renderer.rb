@@ -417,7 +417,7 @@ module JsDuck
           "<span class='pre'>#{p[:name]}</span> : ",
           p[:html_type],
           p[:optional] ? optional : required,
-          p[:adminRequired] ? adminRequired : optional,
+          p[:adminRequired] ? adminRequired : "",
           p[:deprecated] ? '<strong class="deprecated signature">deprecated</strong>' : "",
           "<div class='sub-desc'>",
             p[:doc],

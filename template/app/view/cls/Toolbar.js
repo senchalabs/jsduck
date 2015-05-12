@@ -100,11 +100,9 @@ Ext.define('Docs.view.cls.Toolbar', {
             "deprecated": this.createCb("Deprecated", "deprecated"),
             "removed": this.createCb("Removed", "removed"),
             "android": this.createCb("Android", "android"),
-            "blackberry": this.createCb("Blackberry", "blackberry"),
             "iphone": this.createCb("iPhone", "iphone"),
             "ipad": this.createCb("iPad", "ipad"),
-            "mobileweb": this.createCb("Mobile Web", "mobileweb"),
-            "tizen": this.createCb("Tizen", "tizen")
+            "mobileweb": this.createCb("Mobile Web", "mobileweb")
         };
 
         var self = this;
@@ -251,9 +249,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                             !(show['android'] && m.data.meta.platforms["android"] && m.data.meta.classPlatforms["android"]  || 
                             show['ipad'] && m.data.meta.platforms["ipad"] && m.data.meta.classPlatforms["ipad"] ||
                             show['iphone'] && m.data.meta.platforms["iphone"] && m.data.meta.classPlatforms["iphone"] ||
-                            show['mobileweb'] && m.data.meta.platforms["mobileweb"] && m.data.meta.classPlatforms["mobileweb"] ||
-                            show['tizen'] && m.data.meta.platforms["tizen"] && m.data.meta.classPlatforms["tizen"] ||
-                            show['blackberry'] &&  m.data.meta.platforms["blackberry"] && m.data.meta.classPlatforms["blackberry"]) ||
+                            show['mobileweb'] && m.data.meta.platforms["mobileweb"] && m.data.meta.classPlatforms["mobileweb"]) ||
                             isSearch           && !re.test(m.get("label"))
                         );
                     } else {
@@ -339,11 +335,9 @@ Ext.define('Docs.view.cls.Toolbar', {
         if(!Docs.isRESTDoc) {
             return [
                 this.checkItems['android'],
-                this.checkItems['blackberry'],                    
                 this.checkItems['ipad'],                    
                 this.checkItems['iphone'],                    
                 this.checkItems['mobileweb'],
-                this.checkItems['tizen'],                    
                 '-',
                 this.checkItems['inherited'],
                 this.checkItems['accessor'],

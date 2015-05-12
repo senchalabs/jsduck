@@ -131,6 +131,7 @@ module JsDuck
         "ios" => "iOS SDK",
         "android" => "Android SDK",
         "rest" => "REST API",
+        "nodejs" => "Node.js SDK"
         # "actionscript" => "AS3 SDK",
         # "javascript" => "JS SDK"
       }

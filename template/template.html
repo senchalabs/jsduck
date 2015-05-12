@@ -19,7 +19,11 @@
 
   <!-- Keep this outside of BEGIN/END CSS comments, otherwise rake task <fails class=""></fails> -->
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">  
- 
+
+  <!-- Unified nav additions -->
+  <script type="text/javascript" src="//platform.appcelerator.com/unified-nav.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
   <script type="text/javascript" src="{extjs_path}"></script>
   <script type="text/javascript" src="{data_path}"></script>
 
@@ -30,6 +34,7 @@
   <script type="text/javascript" src="resources/codemirror/markdown.js"></script>
   <script type="text/javascript" src="app.js"></script>
   <script type="text/javascript" src="resources/prettify/prettify.js"></script>
+  <script type="text/javascript" src="resources/codemirror/unified-nav-extras.js"></script>
   <!-- END JS -->
 
   {head_html}
@@ -40,9 +45,6 @@
   <div id="loading"><span class="title">{title}</span><span class="logo"></span></div>
 
 	<div id="header-content">
-        <div id="header-content-logo">
-		<a href="http://www.appcelerator.com"> <img src="resources/images/appc_header.png" alt=""> </a>
-        </div>
         <div id="header-content-menu">
         {header}
         </div>
@@ -51,45 +53,10 @@
   {categories}
   {news}
   {guides}
-  <div id='footer-content' style='display: none'>
-	  <a class="logo" href="http://www.appcelerator.com">
-		<img src="resources/images/appc_header.png" alt="">
-	</a>
-	  <div class="links">
-	  	 	<a href="http://www.facebook.com/appcelerator" class="facebook"></a>
-	 		<a href="https://twitter.com/#!/appcelerator" class="twitter"></a>
-	 		<a href="http://developer.appcelerator.com/blog/feed" class="rss"></a>
-	 		<a href="mailto:info@appcelerator.com" class="mail"></a>
-	 	</div>
-	<div class="inner-container">
-		<div>
-			<div class="first-row">
-				<a href="http://www.appcelerator.com/platform" class="br">platform</a>
-				<a href="http://www.appcelerator.com/cloud" class="br">cloud services</a>
-				<a href="http://marketplace.appcelerator.com" class="br">marketplace</a>
-				<a href="http://www.appcelerator.com/thinkmobile" class="br">think mobile</a>
-				<a href="http://www.appcelerator.com/help" class="br">get help</a>
-				<a href="http://www.appcelerator.com/partners" class="br">partners</a>
-				<a href="http://www.appcelerator.com/company" class="br">company</a>
-				<a href="http://www.appcelerator.com/developers">developers</a>
-			</div>
-			<div class="second-row">
-				<a href="http://www.appcelerator.com/company/privacy" class="u br">Privacy Policy</a>
-				<a href="http://www.appcelerator.com/legal" class="u">Legal Information</a>
-				<span id="copyright_notice">&copy; 2008&mdash;2015 Appcelerator Inc. All rights reserved. Appcelerator is a registered trademark</span>
-			</div>
-			<div class="third-row">
-			<span id="ducktype1">We believe in the power of open source.</span>
-			<span id="ducktype2">This site is generated using the Simple JavaScript Duckumentation generator &mdash; <a href="https://github.com/senchalabs/jsduck">JSDuck</a>
-			</span>
-			</div>
-		</div>
-	</div>
-  </div>
-
+  <div id='footer-content' style='display: none'/>
   {body_html}
 
-<script src="http://munchkin.marketo.net/munchkin.js"></script>
+<script src="//munchkin.marketo.net/munchkin.js"></script>
 <script>try { mktoMunchkin("636-NHJ-871"); } catch (err) {}</script>
 <script>
 var _qoptions={qacct:"p-4aHbaizUurMCQ"},
@@ -98,10 +65,10 @@ var _qoptions={qacct:"p-4aHbaizUurMCQ"},
 (function(d) {
 function load(u){var s=d.getElementsByTagName('script')[0],sc=d.createElement('script');sc.async=true;sc.src=u;s.parentNode.insertBefore(sc,s);}
 
-load('http://www.google-analytics.com/ga.js');
-load('http://api.appcelerator.net/p/beacon.js');
-load('http://api.appcelerator.net/p/analytics.js');
-load('http://edge.quantserve.com/quant.js');
+load('//www.google-analytics.com/ga.js');
+load('//api.appcelerator.net/p/beacon.js');
+load('//api.appcelerator.net/p/analytics.js');
+load('//edge.quantserve.com/quant.js');
 
 function cc(l,n,s){if(!l||!n||!s||l==''||n==''||s==''){return'-'}var i,i2,i3,c='1';i=l.indexOf(n);i3=n.indexOf('=')+1;if(i>-1){i2=l.indexOf(s,i);if(i2<0){i2=l.length}c=l.substring((i+i3),i2)}return c};
 window._gaToMarketo=function(){var gaCookie=cc(document.cookie,'__utmz=',';');return {cf_campaign:cc(gaCookie,'utmccn=','|'),cf_source:cc(gaCookie,'utmsrc=','|'),cf_medium:cc(gaCookie,'utmcmd=','|'),cf_content:cc(gaCookie,'utmcct=','|'),cf_keyword:cc(gaCookie,'utmctr=','|'),cf_visits:cc(document.cookie,'__utma=',';').split('.')[5]}};
