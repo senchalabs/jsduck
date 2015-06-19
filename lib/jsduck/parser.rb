@@ -7,6 +7,7 @@ require 'jsduck/doc/map'
 require 'jsduck/merger'
 require 'jsduck/base_type'
 require 'jsduck/class_doc_expander'
+require 'jsx'
 
 module JsDuck
   # Performs the actual parsing of SCSS or JS source.
@@ -40,6 +41,10 @@ module JsDuck
     def parse_js_or_scss(contents, filename, options)
       if filename =~ /\.scss$/
         docs = Css::Parser.new(contents, options).parse
+      elsif filename =~ /\.jsx$/ || filename =~ /\.rjsx$/
+        docs = JSX.transform(contents)
+        docs = Js::Parser.new(docs, options).parse
+        docs = Js::Ast.new(docs).detect_all!
       else
         docs = Js::Parser.new(contents, options).parse
         docs = Js::Ast.new(docs).detect_all!
