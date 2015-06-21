@@ -15,7 +15,10 @@ require 'rspec/core/rake_task'
 desc "Runs RSpec testsuite (DEFAULT)"
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.rspec_opts = ["--color"] unless os_is_windows?
-  spec.pattern = "spec/**/*_spec.rb"
+  spec.pattern = [
+    "spec/spec_helper.rb",
+    "spec/**/*_spec.rb",
+  ]
 end
 
 def load_sdk_vars
