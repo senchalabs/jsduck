@@ -11,6 +11,8 @@ module JsDuck
           LITERAL_TYPES[node.value.class]
         elsif node.class == Sass::Script::Funcall && COLOR_FUNCTIONS[node.name]
           "color"
+        elsif node.class == Sass::Script::Tree::ListLiteral
+          "list"
         else
           nil
         end
