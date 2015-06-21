@@ -78,7 +78,7 @@ module JsDuck
         mixin_args.map do |arg|
           {
             :name => "$" + arg[0].name,
-            :default => arg[1] ? arg[1].to_s : nil,
+            :default => arg[1] ? arg[1].to_sass : nil,
             :type => arg[1] ? TYPE.detect(arg[1]) : nil,
           }
         end
