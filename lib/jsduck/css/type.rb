@@ -7,8 +7,8 @@ module JsDuck
       # Given SASS expression node, determines its type.
       # When unknown, return nil.
       def detect(node)
-        if LITERAL_TYPES[node.class]
-          LITERAL_TYPES[node.class]
+        if node.class == Sass::Script::Tree::Literal && LITERAL_TYPES[node.value.class]
+          LITERAL_TYPES[node.value.class]
         elsif node.class == Sass::Script::Funcall && COLOR_FUNCTIONS[node.name]
           "color"
         else
@@ -17,11 +17,11 @@ module JsDuck
       end
 
       LITERAL_TYPES = {
-        Sass::Script::Number => "number",
-        Sass::Script::String => "string",
-        Sass::Script::Color => "color",
-        Sass::Script::Bool => "boolean",
-        Sass::Script::List => "list",
+        Sass::Script::Value::Number => "number",
+        Sass::Script::Value::String => "string",
+        Sass::Script::Value::Color => "color",
+        Sass::Script::Value::Bool => "boolean",
+        Sass::Script::Value::List => "list",
       }
 
       COLOR_FUNCTIONS = {
