@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'parallel', '~> 0.7.1'
   s.add_dependency 'rkelly-remix', '~> 0.0.7'
   s.add_dependency 'dimensions', '~> 1.2.0'
-  s.add_dependency 'sass', '~> 3.2.0'
+  s.add_dependency 'sass', '~> 3.4.14'
 
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rake'
