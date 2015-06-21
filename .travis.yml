@@ -1,14 +1,5 @@
-language: ruby
+sudo: false
 rvm:
-  - "1.8.7"
   - "1.9.3"
   - "2.0.0"
-install:
-  - gem install rdiscount
-  - gem install json
-  - gem install parallel
-  - gem install rkelly-remix
-  - gem install rspec
-  - gem install rake
-  - gem install dimensions
-  - gem install sass --version '~> 3.2.0'
+  - "2.1.5"
