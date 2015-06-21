@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rdiscount', '~> 2.1.6'
   s.add_dependency 'json', '~> 1.8.0'
   s.add_dependency 'parallel', '~> 0.7.1'
-  s.add_dependency 'rkelly-remix', '~> 0.0.4'
+  s.add_dependency 'rkelly-remix', '~> 0.0.7'
   s.add_dependency 'dimensions', '~> 1.2.0'
   s.add_dependency 'sass', '~> 3.2.0'
 
