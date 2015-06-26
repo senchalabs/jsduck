@@ -491,7 +491,7 @@ module JsDuck
     # ToDo: add support for since-versions here
     def maybe_platforms
       skip_horiz_white
-      if look(/\(((iphone|ipad|android|mobileweb|tizen|blackberry) ?)+\)/i)
+      if look(/\(((iphone|ipad|android|mobileweb|tizen|blackberry|windowsphone) ?)+\)/i)
         match(/\(/i)
         @current_tag[:inline_platforms] = class_list
         match(/\)/i)

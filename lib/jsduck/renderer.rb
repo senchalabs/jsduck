@@ -15,7 +15,8 @@ module JsDuck
         'iphone' => 'iPhone',
         'ipad' => 'iPad',
         'mobileweb' => 'Mobile Web',
-        'tizen' => 'Tizen'
+        'tizen' => 'Tizen',
+        'windowsphone' => 'Windows Phone'
       }
     end
 
