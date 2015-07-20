@@ -99,6 +99,7 @@ module JsDuck
         methodHash = { 
             :tagname => :method,
             :name => method["name"],
+            :deprecated => false,
             :id => "method-"+method["name"],
             :doc => method["description"],
             :files => [ @fakefile ],
@@ -151,6 +152,15 @@ module JsDuck
                 methodHash[:meta][:loginRequired] = tag[1]
             elsif tag[0] == "admin-required"
                 methodHash[:meta][:adminRequired] = tag[1]
+            elsif tag[0] == "deprecated"
+                methodHash[:deprecated] = true
+                methodHash[:meta][:deprecated] = {}
+                if tag[1]["since"]
+                    methodHash[:meta][:deprecated][:version] = tag[1]["since"]
+                end
+                if tag[1]["notes"]
+                    methodHash[:meta][:deprecated][:text] = tag[1]["notes"]
+                end
             end
         end
         methodHash

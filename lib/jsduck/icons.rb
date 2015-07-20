@@ -16,7 +16,7 @@ module JsDuck
         # TIDOC-1071 Modifications to support Cloud DocTree
         if opts.rest
           cls[:members].each do |member|
-            if member[:tagname].eql? :method
+            if member[:tagname].eql? :method and not(member[:deprecated])
               json.push({
                 :name => cls[:name] + "." + member[:name],
                 :url => cls[:name] + "-method-" + member[:name],
