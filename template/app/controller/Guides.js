@@ -102,6 +102,10 @@ Ext.define('Docs.controller.Guides', {
 			return;
         }
 
+        if (url.match(/Getting_Started_with_the_Windows_8_SDK/) || url.match(/Getting_Started_with_the_Windows_Phone_SDK/)) {
+			url = '#!/guide/Installing_the_Windows_Phone_SDK';
+        }
+
         Ext.getCmp('card-panel').layout.setActiveItem('guide');
         Ext.getCmp('treecontainer').showTree('guidetree');
 		var m = url.match(/^#!\/guide\/(.*?)(?:-section-(.+))?$/);
