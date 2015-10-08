@@ -193,6 +193,11 @@ Ext.define('Docs.controller.Search', {
                         var results = JSON.parse(response.responseText);
                         requestId = response.requestId;
                         results.response.docs.forEach(function(doc) {
+                            Object.keys(doc).forEach(function(k) {
+                                if (Array.isArray(doc[k])) {
+                                    doc[k] = doc[k][0];
+                                }
+                            });
                             if ("title" in doc) {
                                 var elem, re;
                                 elem = {
@@ -212,6 +217,11 @@ Ext.define('Docs.controller.Search', {
                                 }
                             }
                             else if ("name" in doc) {
+                                Object.keys(doc).forEach(function(k) {
+                                    if (Array.isArray(doc[k])) {
+                                        doc[k] = doc[k][0];
+                                    }
+                                });
                                 var api_type = 'class',
                                     tokens = doc.name.split('.'),
                                     api_name,
