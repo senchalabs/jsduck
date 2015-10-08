@@ -209,6 +209,11 @@ AppcDocsSite.search = function () {
 				AppcDocsSite.requestId = response.requestId;
 				results.response.docs.forEach(function(doc) {
 					if ("title" in doc) {
+						Object.keys(doc).forEach(function(k) {
+							if (Array.isArray(doc[k])) {
+								doc[k] = doc[k][0];
+							}
+						});
 						var elem, re;
 						elem = {
 							fullName: doc.title,
@@ -227,6 +232,11 @@ AppcDocsSite.search = function () {
 						}
 					}
 					else if ("name" in doc) {
+						Object.keys(doc).forEach(function(k) {
+							if (Array.isArray(doc[k])) {
+								doc[k] = doc[k][0];
+							}
+						});
 						var api_type = 'class',
 							tokens = doc.name.split('.'),
 							api_name,
