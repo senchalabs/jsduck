@@ -34,7 +34,7 @@ Ext.define('Docs.view.Viewport', {
                 region: 'north',
                 id: 'north-region',
 				// Ti changed height
-                height: 38,
+                height: 45,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'

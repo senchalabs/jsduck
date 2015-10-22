@@ -14,7 +14,7 @@ Ext.define('Docs.view.Tabs', {
     ],
 
     minTabWidth: 80,
-    maxTabWidth: 160,
+    maxTabWidth: 180,
     animDuration: 150,
 
     tabs: [],
@@ -41,19 +41,19 @@ Ext.define('Docs.view.Tabs', {
 
         this.tpl = Ext.create('Ext.XTemplate',
             '<tpl for=".">',
-                '<div class="doctab overview {cls}{active}">',
+                '<div class="doctab overview {active}">',
                     '<div class="l"></div>',
                     '<div class="m">',
                         '<tpl if="text">',
-                            '<a class="tabUrl ov-tab-text" href="{href}">{text}</a>',
+                            '<a class="tabUrl ov-tab-text {iconClass}" href="{href}">{text}</a>',
                         '<tpl else>',
-                            '<a class="tabUrl ov-tab" href="{href}">&nbsp;</a>',
+                            '<a class="tabUrl ov-tab {iconClass}" href="{href}">&nbsp;</a>',
                         '</tpl>',
                     '</div>',
                     '<div class="r"></div>',
                 '</div>',
             '</tpl>',
-            '<div style="float: left; width: 8px">&nbsp;</div>',
+            '<div style="float: left; width: 8px;">&nbsp;</div>',
             '<div class="tab-overflow"></div>'
         );
 
@@ -70,7 +70,7 @@ Ext.define('Docs.view.Tabs', {
                     '<span class="icn {iconCls}">&nbsp;</span>',
                     '<a class="tabUrl main-tab" href="{href}">{text}</a>',
                 '</div>',
-            '<div class="r"><a class="close" href="#">&nbsp;</a></div>',
+            '<div class="r"><a class="icon-cancel-1 close" href="#">&nbsp;</a></div>',
             '</div>'
         );
 
@@ -176,8 +176,18 @@ Ext.define('Docs.view.Tabs', {
      */
     addTab: function(tab, opts) {
         tab = this.formatTabTexts(tab);
-
         this.tabCache[tab.href] = tab;
+
+        switch(tab.iconCls) {
+            case "icon-class":
+                tab.iconCls = 'icon-link';
+                break;
+            case "icon-guide":
+                tab.iconCls = 'icon-doc-text';
+                break;
+            case "icon-video":
+                tab.iconCls = 'fa-video-camera';
+        }
 
         if (!this.hasTab(tab.href)) {
             this.tabs.push(tab.href);
@@ -203,6 +213,7 @@ Ext.define('Docs.view.Tabs', {
             var fullClsName = tab.href.replace(/^.*#!?\/api\//, "");
             tab.text = Docs.ClassRegistry.shortName(fullClsName);
             tab.tooltip = fullClsName;
+            tab.iconClass = 'icon-link';
         }
         else {
             tab.tooltip = tab.text;
@@ -496,7 +507,7 @@ Ext.define('Docs.view.Tabs', {
      */
     tabBarWidth: function() {
         //  Ti change -- adjustment from -15 to -50 
-        return this.getWidth() - (this.staticTabs.length * 50) - 50;
+        return this.getWidth() - ((this.staticTabs.length + 1) * 50) - 50;
     },
 
     /**
@@ -533,7 +544,8 @@ Ext.define('Docs.view.Tabs', {
         }
 
         this.overflowButton = Ext.create('Ext.button.Button', {
-            baseCls: "",
+            baseCls: "taboverflow",
+            iconCls: 'icon-down-open',
             renderTo: this.getEl().down('.tab-overflow'),
             menu: this.createMenu()
         });
