@@ -1,9 +1,9 @@
-require "jsduck/meta_tag"
+require "jsduck/tag/deprecated_tag"
 
 module JsDuck::Tag
-  # Implementation of @deprecated tag
-  class Deprecated < JsDuck::MetaTag
+  class Deprecated < DeprecatedTag
     def initialize
+<<<<<<< HEAD
       @name = "deprecated"
       @key = :deprecated
       @signature = {:long => "deprecated", :short => "DEP"}
@@ -27,7 +27,23 @@ module JsDuck::Tag
         <p><strong>deprecated</strong>#{v} #{format(depr[:text])}</p>
         </div>
       EOHTML
+=======
+      @tagname = :deprecated
+      @msg = "This {TAGNAME} has been <strong>deprecated</strong>"
+      @css = <<-EOCSS
+        .signature .deprecated {
+          background-color: #aa0000;
+        }
+        .deprecated-box {
+          border: 2px solid #aa0000;
+        }
+        .deprecated-box strong {
+          color: white;
+          background-color: #aa0000;
+        }
+      EOCSS
+      super
+>>>>>>> senchalabs/master
     end
   end
 end
-

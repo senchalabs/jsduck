@@ -1,5 +1,6 @@
 require 'jsduck/util/html'
 require 'jsduck/logger'
+require 'ostruct'
 
 module JsDuck
   module Inline
@@ -10,7 +11,7 @@ module JsDuck
       # Used for error reporting.
       attr_accessor :doc_context
 
-      def initialize(opts={})
+      def initialize(opts=OpenStruct.new)
         @doc_context = {}
 
         @templates = {
@@ -40,8 +41,7 @@ module JsDuck
       # applies the video template of the specified type
       def apply_tpl(type, url, alt_text)
         unless @templates.has_key?(type)
-          ctx = @doc_context
-          Logger.warn(nil, "Unknown video type #{type}", ctx[:filename], ctx[:linenr])
+          Logger.warn(nil, "Unknown video type #{type}", @doc_context)
         end
 
         @templates[type].gsub(/(%\w)/) do

@@ -1,12 +1,13 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    agr.result
+    Helper::MiniParser.parse(string)
+  end
+
+  def parse_member(string)
+    parse(string)["global"][:members][0]
   end
 
   shared_examples_for "example property" do
@@ -29,7 +30,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit @property" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @property {String} foo
          * Some documentation.
@@ -41,7 +42,7 @@ describe JsDuck::Aggregator do
 
   describe "implicit @property" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * Some documentation.
          */
@@ -53,7 +54,7 @@ describe JsDuck::Aggregator do
 
   describe "typeless @property" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @property
          * Some documentation.
@@ -69,7 +70,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with @type" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @property foo
          * @type String
@@ -82,7 +83,7 @@ describe JsDuck::Aggregator do
 
   describe "@type without @property" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @type String
          * Some documentation.
@@ -101,7 +102,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with 'this' in ident chain" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @property
          * Some documentation.
@@ -114,7 +115,7 @@ describe JsDuck::Aggregator do
 
   describe "doc-comment before variable without assignment" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some documentation.
          */
@@ -128,7 +129,7 @@ describe JsDuck::Aggregator do
 
   describe "doc-comment before multiple variables" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some documentation.
          */
@@ -142,7 +143,7 @@ describe JsDuck::Aggregator do
 
   describe "doc-comment before function call" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some documentation.
          */
@@ -154,6 +155,67 @@ describe JsDuck::Aggregator do
     end
   end
 
+  describe "doc-comment before Object.defineProperty" do
+    before do
+      @doc = parse_member(<<-EOS)
+        /**
+         * Some documentation.
+         */
+        Object.defineProperty(this, 'foo', {
+            value: "asdf",
+            enumerable: true
+        });
+      EOS
+    end
+    it_should_behave_like "example property"
+  end
+
+  shared_examples_for "accessor property" do
+    it "creates property" do
+      @doc[:tagname].should == :property
+    end
+
+    it "detects name" do
+      @doc[:name].should == "foo"
+    end
+
+    it "detects type as default" do
+      @doc[:type].should == "Object"
+    end
+  end
+
+  describe "doc-comment before a setter function" do
+    before do
+      @doc = parse_member(<<-EOS)
+        ({
+            /**
+             * Some documentation.
+             */
+            set foo(x) {
+                this.x = x;
+            }
+        });
+      EOS
+    end
+    it_should_behave_like "accessor property"
+  end
+
+  describe "doc-comment before a getter function" do
+    before do
+      @doc = parse_member(<<-EOS)
+        ({
+            /**
+             * Some documentation.
+             */
+            get foo() {
+                return this.x;
+            }
+        });
+      EOS
+    end
+    it_should_behave_like "accessor property"
+  end
+
   shared_examples_for "auto type" do
     it "should imply correct type" do
       @doc[:type].should == @type
@@ -162,7 +224,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with number in code" do
     before do
-      @doc = parse("({ /** @property */ foo: 123 })")[0]
+      @doc = parse_member("({ /** @property */ foo: 123 })")
       @type = "Number"
     end
     it_should_behave_like "auto type"
@@ -170,7 +232,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with regex in code" do
     before do
-      @doc = parse("({ /** @property */ foo: /foo/i })")[0]
+      @doc = parse_member("({ /** @property */ foo: /foo/i })")
       @type = "RegExp"
     end
     it_should_behave_like "auto type"
@@ -178,7 +240,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with true in code" do
     before do
-      @doc = parse("({ /** @property */ foo: true })")[0]
+      @doc = parse_member("({ /** @property */ foo: true })")
       @type = "Boolean"
     end
     it_should_behave_like "auto type"
@@ -186,7 +248,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with false in code" do
     before do
-      @doc = parse("({ /** @property */ foo: false })")[0]
+      @doc = parse_member("({ /** @property */ foo: false })")
       @type = "Boolean"
     end
     it_should_behave_like "auto type"
@@ -194,7 +256,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with function in code" do
     before do
-      @doc = parse("/** @property */ function foo() {}")[0]
+      @doc = parse_member("/** @property */ function foo() {}")
       @type = "Function"
     end
     it_should_behave_like "auto type"
@@ -202,7 +264,7 @@ describe JsDuck::Aggregator do
 
   describe "@property with lambda in code" do
     before do
-      @doc = parse("/** @property */ foo = function() {}")[0]
+      @doc = parse_member("/** @property */ foo = function() {}")
       @type = "Function"
     end
     it_should_behave_like "auto type"
@@ -222,13 +284,13 @@ describe JsDuck::Aggregator do
     end
 
     it "flags property as :autodetected" do
-      property[:autodetected].should == true
+      property[:autodetected][:tagname].should == :property
     end
   end
 
   describe "property without comment inside Ext.define" do
     let(:property) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         Ext.define("MyClass", {
             foo: 15
@@ -241,7 +303,7 @@ describe JsDuck::Aggregator do
 
   describe "property with line comment inside Ext.define" do
     let(:property) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         Ext.define("MyClass", {
             // My docs
@@ -259,7 +321,7 @@ describe JsDuck::Aggregator do
 
   describe "property without comment inside Ext.extend" do
     let(:property) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         MyClass = Ext.extend(Object, {
             foo: 15
@@ -272,7 +334,7 @@ describe JsDuck::Aggregator do
 
   describe "property with line comment inside Ext.extend" do
     let(:property) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         MyClass = Ext.extend(Object, {
             // My docs
@@ -290,7 +352,7 @@ describe JsDuck::Aggregator do
 
   describe "property without comment inside object literal" do
     let(:property) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         MyClass = {
             foo: 15
@@ -303,7 +365,7 @@ describe JsDuck::Aggregator do
 
   describe "property with line comment inside object literal" do
     let(:property) do
-      parse(<<-EOS)[0][:members][0]
+      parse(<<-EOS)["MyClass"][:members][0]
         /** Some documentation. */
         MyClass = {
             // My docs
@@ -316,6 +378,26 @@ describe JsDuck::Aggregator do
 
     it "detects property documentation" do
       property[:doc].should == 'My docs'
+    end
+  end
+
+  describe "getter and setter properties inside object literal" do
+    let(:members) do
+      parse(<<-EOS)["MyClass"][:members]
+        /** Some documentation. */
+        MyClass = {
+            get foo() {
+                return this.x;
+            },
+            set foo(x) {
+                this.x = x;
+            }
+        };
+      EOS
+    end
+
+    it "are all ignored" do
+      members.length.should == 0
     end
   end
 

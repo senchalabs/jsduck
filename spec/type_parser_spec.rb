@@ -1,7 +1,8 @@
 require "jsduck/relations"
 require "jsduck/type_parser"
-require "jsduck/doc_formatter"
+require "jsduck/format/doc"
 require "jsduck/class"
+require "ostruct"
 
 describe JsDuck::TypeParser do
 
@@ -15,7 +16,8 @@ describe JsDuck::TypeParser do
       "Ext.Element",
       "Ext.fx2.Anim",
     ])
-    JsDuck::TypeParser.new(relations).parse(str)
+    formatter = OpenStruct.new(:relations => relations)
+    JsDuck::TypeParser.new(formatter).parse(str)
   end
 
   it "matches single-quoted string literal" do
@@ -325,15 +327,16 @@ describe JsDuck::TypeParser do
 
     it "links primitive types to classes" do
       relations = JsDuck::Relations.new([JsDuck::Class.new({:name => "String"})])
-      doc_formatter = JsDuck::DocFormatter.new(relations)
-      p = JsDuck::TypeParser.new(relations, doc_formatter)
+      doc_formatter = JsDuck::Format::Doc.new(relations)
+      p = JsDuck::TypeParser.new(doc_formatter)
       p.parse("string")
       p.out.should == '<a href="String">string</a>'
     end
 
     def parse_to_output(input)
       relations = JsDuck::Relations.new([])
-      p = JsDuck::TypeParser.new(relations)
+      formatter = OpenStruct.new(:relations => relations)
+      p = JsDuck::TypeParser.new(formatter)
       p.parse(input)
       return p.out
     end

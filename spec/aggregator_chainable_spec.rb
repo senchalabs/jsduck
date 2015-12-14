@@ -1,16 +1,8 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
-require "jsduck/class"
-require "jsduck/relations"
-require "jsduck/return_values"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    relations = JsDuck::Relations.new(agr.result.map {|doc| JsDuck::Class.new(doc) })
-    JsDuck::ReturnValues.auto_detect(relations)
-    relations
+    Helper::MiniParser.parse(string, {:return_values => true})
   end
 
   describe "both @return this and @chainable in method doc" do
@@ -28,7 +20,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects method as chainable" do
-      cls[:members][0][:meta][:chainable].should == true
+      cls[:members][0][:chainable].should == true
     end
 
     it "keeps the original @return docs" do
@@ -50,7 +42,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects method as chainable" do
-      cls[:members][0][:meta][:chainable].should == true
+      cls[:members][0][:chainable].should == true
     end
 
     it "adds @return {MyClass} this" do
@@ -78,7 +70,7 @@ describe JsDuck::Aggregator do
     end
 
     it "adds @chainable tag" do
-      cls[:members][0][:meta][:chainable].should == true
+      cls[:members][0][:chainable].should == true
     end
   end
 
@@ -101,7 +93,7 @@ describe JsDuck::Aggregator do
     end
 
     it "adds @chainable tag" do
-      cls[:members][0][:meta][:chainable].should == true
+      cls[:members][0][:chainable].should == true
     end
   end
 
@@ -119,7 +111,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't add @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -137,7 +129,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't add @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -155,7 +147,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't add @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -170,7 +162,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't add @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -186,7 +178,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't add @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -202,7 +194,11 @@ describe JsDuck::Aggregator do
     end
 
     it "adds @chainable tag" do
-      cls[:members][0][:meta][:chainable].should == true
+      cls[:members][0][:chainable].should == true
+    end
+
+    it "marks :chainable field as autodetected" do
+      cls[:members][0][:autodetected][:chainable].should == true
     end
 
     it "adds @return {MyClass} this" do
@@ -275,7 +271,7 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't get @chainable tag" do
-      cls[:members][0][:meta][:chainable].should_not == true
+      cls[:members][0][:chainable].should_not == true
     end
   end
 
@@ -292,6 +288,22 @@ describe JsDuck::Aggregator do
 
     it "keeps the explicit return type" do
       cls[:members][0][:return][:type].should == "OtherClass"
+    end
+  end
+
+  describe "different implicit and explicit method names" do
+    let(:cls) do
+      parse(<<-EOS)["MyClass"]
+        /** @class MyClass */
+        /** @method foo */
+        function bar() {
+            return this;
+        }
+      EOS
+    end
+
+    it "doesn't detect chainable from code" do
+      cls[:members][0][:chainable].should_not == true
     end
   end
 end

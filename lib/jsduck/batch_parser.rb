@@ -1,30 +1,26 @@
 require 'jsduck/util/parallel'
 require 'jsduck/util/io'
+require 'jsduck/parser'
 require 'jsduck/source/file'
-require 'jsduck/aggregator'
-require 'jsduck/class'
-require 'jsduck/relations'
 require 'jsduck/logger'
+<<<<<<< HEAD
 require 'jsduck/inherit_doc'
 require 'jsduck/importer'
 require 'jsduck/return_values'
 require 'jsduck/lint'
 require 'jsduck/rest_file'
 require 'jsduck/circular_deps'
+=======
+require 'jsduck/cache'
+>>>>>>> senchalabs/master
 
 module JsDuck
 
-  # Performs the parsing of all input files.  Input files are read
-  # from options object (originating from command line).
+  # Parses of all input files.  Input files are read from options
+  # object (originating from command line).
   class BatchParser
-    def initialize(opts)
-      @opts = opts
-    end
 
-    # Array of Source::File objects.
-    # Available after calling the #run method.
-    attr_reader :parsed_files
-
+<<<<<<< HEAD
     # Parses the files and returns instance of Relations class.
     def run
       @parsed_files = parallel_parse(@opts.input_files)
@@ -35,24 +31,41 @@ module JsDuck
       end
       return @relations
     end
+=======
+    def self.parse(opts)
+      cache = Cache.create(opts)
+>>>>>>> senchalabs/master
 
-    private
-
-    # Parses the files in parallel using as many processes as available CPU-s
-    def parallel_parse(filenames)
-      Util::Parallel.map(filenames) do |fname|
+      results = Util::Parallel.map(opts.input_files) do |fname|
         Logger.log("Parsing", fname)
+
         begin
+<<<<<<< HEAD
           if @opts.rest
             RestFile.new(Util::IO.read(fname), fname, @opts)
           else
             Source::File.new(Util::IO.read(fname), fname, @opts)
           end
+=======
+          source = Util::IO.read(fname)
+          docs = nil
+
+          unless docs = cache.read(fname, source)
+            docs = Parser.new.parse(source, fname, opts)
+            cache.write(fname, source, docs)
+          end
+
+          {
+            :file => Source::File.new(source, docs, fname),
+            :cache => cache.previous_entry,
+          }
+>>>>>>> senchalabs/master
         rescue
           Logger.fatal_backtrace("Error while parsing #{fname}", $!)
           exit(1)
         end
       end
+<<<<<<< HEAD
     end
 
     # Aggregates parsing results sequencially
@@ -90,26 +103,12 @@ module JsDuck
         else
           # add global class only if --ignore-global not specified
           classes << cls unless @opts.ignore_global
+=======
+>>>>>>> senchalabs/master
 
-          # Print warning for each global member
-          cls.all_local_members.each do |m|
-            type = m[:tagname].to_s
-            name = m[:name]
-            file = m[:files][0]
-            Logger.warn(:global, "Global #{type}: #{name}", file[:filename], file[:linenr])
-          end
-        end
-      end
-      Relations.new(classes, @opts.external_classes)
-    end
+      cache.cleanup( results.map {|r| r[:cache] }.compact )
 
-    # Do all kinds of post-processing on relations.
-    def apply_extra_processing
-      CircularDeps.new(@relations).check_all
-      InheritDoc.new(@relations).resolve_all
-      Importer.import(@opts.imports, @relations, @opts.new_since)
-      ReturnValues.auto_detect(@relations)
-      Lint.new(@relations).run
+      return results.map {|r| r[:file] }
     end
 
   end

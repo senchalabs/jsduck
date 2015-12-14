@@ -3,7 +3,8 @@
 @import "mixins";
 
 .doctabs {
-  @include icons;
+  // Here also the auto-generated class icons apply.
+
   padding-left: 10px;
   height: 45px;
   margin-top: 10px;
@@ -181,4 +182,3 @@
       color: #666; } }
   .x-menu-item-icon.close {
     background: url(../images/x12.png) no-repeat 4px 4px; } }
-

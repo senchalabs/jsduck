@@ -3,15 +3,19 @@
  */
 Ext.define('Docs.view.cls.Header', {
     extend: 'Ext.container.Container',
+    requires: [
+        'Docs.view.Signature'
+    ],
+    alias: 'widget.classheader',
+    cls: 'classheader',
     padding: '10 0 17 0',
     // Initially the component will be empty and so the initial height
     // will not be correct if not set explicitly
     height: 55,
-    alias: 'widget.classheader',
-    cls: 'classheader',
 
     initComponent: function() {
         this.tpl = Ext.create('Ext.XTemplate',
+<<<<<<< HEAD
             '<h1 class="{[this.getClass(values)]}">',
                 '<tpl if="private">',
                     '<span class="private">Private</span>',
@@ -28,6 +32,18 @@ Ext.define('Docs.view.cls.Header', {
 //                '</tpl>',
                 '<tpl if="enum">',
                     '<span>enum of <b>{[values["enum"].type]}</b></span>',
+=======
+            '<h1 class="{classIcon}">',
+                '<tpl if="Docs.data.source">',
+                    '<a href="#" class="class-source-link">{name}',
+                        '<span class="class-source-tip">View source...</span>',
+                    '</a>',
+                '<tpl else>',
+                    '<strong class="class-source-link">{name}</strong>',
+                '</tpl>',
+                '<tpl if="values[\'enum\']">',
+                    '<span class="enum">enum of <b>{[values["enum"].type]}</b></span>',
+>>>>>>> senchalabs/master
                 '</tpl>',
                 '<a>{name}</a>',
                 '<small class="typestr">{[this.renderTypestr(values.meta)]}</small>',
@@ -39,6 +55,7 @@ Ext.define('Docs.view.cls.Header', {
                 '<a class="print" href="?print=/api/{name}" target="_blank">Print</a>',
             '</tpl>',            
             {
+<<<<<<< HEAD
                 renderEditButton: function (cls) {
                     var url = cls.meta.editurl;
                     if(url !== undefined) {
@@ -66,6 +83,8 @@ Ext.define('Docs.view.cls.Header', {
 
                 	return "<span>{ " + meta.typestr[0] + " }</span>";
                 },
+=======
+>>>>>>> senchalabs/master
                 renderAliases: function(aliases) {
                     var titles = {
                         widget: "xtype",
@@ -78,16 +97,14 @@ Ext.define('Docs.view.cls.Header', {
                     });
 
                     if (r.length > 0) {
-                        return "<span>" + r.join(", ") + "</span>";
+                        return "<span class='xtype'>" + r.join(", ") + "</span>";
                     }
                     else {
                         return "";
                     }
                 },
                 renderMetaTags: function(metaTags) {
-                    return ' ' + Ext.Array.map(Docs.data.signatures, function(s) {
-                        return metaTags[s.key] ? '<span class="signature '+s.key+'">'+(s["long"])+'</span>' : '';
-                    }).join(' ');
+                    return ' ' + Docs.view.Signature.render(metaTags, "long");
                 }
             }
         );

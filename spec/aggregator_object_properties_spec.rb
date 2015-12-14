@@ -1,12 +1,13 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    agr.result
+    Helper::MiniParser.parse(string)
+  end
+
+  def parse_member(string)
+    parse(string)["global"][:members][0]
   end
 
   shared_examples_for "object with properties" do
@@ -81,7 +82,7 @@ describe JsDuck::Aggregator do
 
   describe "method parameter with properties" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Some function
          * @param {Object} coord Geographical coordinates
@@ -110,7 +111,7 @@ describe JsDuck::Aggregator do
 
   describe "event parameter with properties" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @event
          * Some event
@@ -152,12 +153,12 @@ describe JsDuck::Aggregator do
     end
 
     it "is interpreted as single config" do
-      @doc.length.should == 1
+      @doc["global"][:members].length.should == 1
     end
 
     describe "the config" do
       before do
-        @obj = @doc[0]
+        @obj = @doc["global"][:members][0]
         @name = "coord"
       end
 
@@ -179,12 +180,12 @@ describe JsDuck::Aggregator do
     end
 
     it "is interpreted as single property" do
-      @doc.length.should == 1
+      @doc["global"][:members].length.should == 1
     end
 
     describe "the property" do
       before do
-        @obj = @doc[0]
+        @obj = @doc["global"][:members][0]
         @name = "coord"
       end
 
@@ -194,7 +195,7 @@ describe JsDuck::Aggregator do
 
   describe "method return value with properties" do
     before do
-      @obj = parse(<<-EOS)[0][:return]
+      @obj = parse_member(<<-EOS)[:return]
         /**
          * Some function
          * @return {Object} Geographical coordinates
@@ -215,7 +216,7 @@ describe JsDuck::Aggregator do
 
   describe "config option with properties in wrong order" do
     before do
-      @obj = parse(<<-EOS)[0]
+      @obj = parse_member(<<-EOS)
         /**
          * @cfg {Object} coord Geographical coordinates
          * @cfg {Number} coord.lat.numerator Numerator part of a fraction
@@ -232,7 +233,7 @@ describe JsDuck::Aggregator do
 
   describe "only namespaced config options" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} coord.lat Latitude
          * @cfg {Number} coord.lng Latitude
@@ -241,13 +242,13 @@ describe JsDuck::Aggregator do
     end
 
     it "interpreted as just one config" do
-      @doc[:name].should == "coord.lat"
+      @doc[:name].should == "coord"
     end
   end
 
   describe "normal config option name with dot after it" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} coord. Coordinate
          */
@@ -265,7 +266,7 @@ describe JsDuck::Aggregator do
 
   describe "normal config option name with dot before it" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} .coord Coordinate
          */

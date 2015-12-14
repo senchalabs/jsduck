@@ -220,9 +220,10 @@ describe JsDuck::Class do
         child.find_members(:name => "changedName").length.should == 0
       end
 
-      describe "and after calling #update_members!" do
+      describe "and after calling #refresh_member_ids! on both" do
         before do
-          child.update_members!(child[:members])
+          parent.refresh_member_ids!
+          child.refresh_member_ids!
         end
 
         it "the new member is now findable" do
@@ -240,9 +241,10 @@ describe JsDuck::Class do
         child.find_members(:tagname => :method).length.should == 0
       end
 
-      describe "and after calling #update_members!" do
+      describe "and after calling #refresh_member_ids! on both" do
         before do
-          child.update_members!(parent[:members])
+          parent.refresh_member_ids!
+          child.refresh_member_ids!
         end
 
         it "the new member is now findable" do

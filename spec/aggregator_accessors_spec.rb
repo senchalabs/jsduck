@@ -1,17 +1,24 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    agr.create_accessors
-    agr.result
+    Helper::MiniParser.parse(string, {:accessors => true})
+  end
+
+  def parse_to_members_hash(string)
+    docs = parse(string)
+
+    members = {}
+    docs["MyClass"][:members].each do |m|
+      members[m[:name]] = m
+    end
+
+    return members
   end
 
   describe "@cfg foo with @accessor" do
     before do
-      @docs = parse(<<-EOF)
+      @members = parse_to_members_hash(<<-EOF)
         /** @class MyClass */
           /**
            * @cfg {String} foo
@@ -19,10 +26,6 @@ describe JsDuck::Aggregator do
            * @accessor
            */
       EOF
-      @members = {}
-      @docs[0][:members].each do |m|
-        @members[m[:name]] = m
-      end
     end
 
     it "creates getFoo method" do
@@ -49,8 +52,8 @@ describe JsDuck::Aggregator do
       @members.should have_key("setFoo")
     end
 
-    it "sets setFoo return type to undefined" do
-      @members["setFoo"][:return][:type].should == "undefined"
+    it "sets setFoo return type to nil" do
+      @members["setFoo"][:return].should == nil
     end
 
     it "sets setFoo parameter type to @cfg type" do
@@ -59,6 +62,10 @@ describe JsDuck::Aggregator do
 
     it "sets setFoo parameter name to @cfg name" do
       @members["setFoo"][:params][0][:name].should == "foo"
+    end
+
+    it "generates dummy docs for setFoo parameter" do
+      @members["setFoo"][:params][0][:doc].should == "The new value."
     end
 
     it "sets setFoo owner @cfg owner" do
@@ -73,7 +80,7 @@ describe JsDuck::Aggregator do
 
   describe "@accessor config" do
     before do
-      @docs = parse(<<-EOF)
+      @members = parse_to_members_hash(<<-EOF)
         /** @class MyClass */
           /**
            * @cfg {String} foo
@@ -94,10 +101,6 @@ describe JsDuck::Aggregator do
            * Custom comment.
            */
       EOF
-      @members = {}
-      @docs[0][:members].each do |m|
-        @members[m[:name]] = m
-      end
     end
 
     it "doesn't create getter when method already present" do
@@ -118,6 +121,49 @@ describe JsDuck::Aggregator do
 
   end
 
+  describe "@accessor with other tags" do
+    before do
+      @members = parse_to_members_hash(<<-EOF)
+        /** @class MyClass */
+          /**
+           * @cfg {String} foo
+           * Original comment.
+           * @accessor
+           * @evented
+           * @protected
+           * @deprecated 2.0 Don't use it any more
+           */
+      EOF
+    end
+
+    it "adds @protected to getter" do
+      @members["getFoo"][:protected].should == true
+    end
+
+    it "adds @deprecated to getter" do
+      @members["getFoo"][:deprecated].should_not == nil
+    end
+
+    it "doesn't add @accessor to getter" do
+      @members["getFoo"][:accessor].should == nil
+    end
+
+    it "doesn't add @evented to getter" do
+      @members["getFoo"][:evented].should == nil
+    end
+
+    # Lighter tests for setter and event.
+    # The same method takes care of inheriting in all cases.
+
+    it "adds @protected to setter" do
+      @members["setFoo"][:protected].should == true
+    end
+
+    it "adds @protected to event" do
+      @members["foochange"][:protected].should == true
+    end
+  end
+
   describe "@accessor tag on private cfg" do
     before do
       @docs = parse(<<-EOF)
@@ -129,8 +175,8 @@ describe JsDuck::Aggregator do
            * @evented
            */
       EOF
-      @accessors = @docs[0][:members].find_all {|m| m[:tagname] == :method }
-      @events = @docs[0][:members].find_all {|m| m[:tagname] == :event }
+      @accessors = @docs["MyClass"][:members].find_all {|m| m[:tagname] == :method }
+      @events = @docs["MyClass"][:members].find_all {|m| m[:tagname] == :event }
     end
 
     it "creates accessors" do
@@ -150,9 +196,35 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "@cfg foo with @evented @accessor" do
+  describe "@accessor tag on hidden cfg" do
     before do
       @docs = parse(<<-EOF)
+        /** @class MyClass */
+          /**
+           * @cfg {String} foo
+           * @hide
+           * @accessor
+           */
+      EOF
+      @accessors = @docs["MyClass"][:members].find_all {|m| m[:tagname] == :method }
+    end
+
+    it "creates accessors" do
+      @accessors.length.should == 2
+    end
+
+    it "creates hidden getter" do
+      @accessors[0][:hide].should == true
+    end
+
+    it "creates hidden setter" do
+      @accessors[1][:hide].should == true
+    end
+  end
+
+  describe "@cfg foo with @evented @accessor" do
+    before do
+      @members = parse_to_members_hash(<<-EOF)
         /** @class MyClass */
           /**
            * @cfg {String} foo
@@ -161,25 +233,24 @@ describe JsDuck::Aggregator do
            * @evented
            */
       EOF
-      @events = @docs[0][:members].find_all {|m| m[:tagname] == :event }
     end
 
     it "creates foochange event" do
-      @events[0][:name].should == "foochange"
+      @members["foochange"][:name].should == "foochange"
     end
 
     it "creates documentation for foochange event" do
-      @events[0][:doc].should ==
+      @members["foochange"][:doc].should ==
         "Fires when the {@link #cfg-foo} configuration is changed by {@link #method-setFoo}."
     end
 
     it "has 3 params" do
-      @events[0][:params].length.should == 3
+      @members["foochange"][:params].length.should == 3
     end
 
     describe "1st param" do
       before do
-        @param = @events[0][:params][0]
+        @param = @members["foochange"][:params][0]
       end
 
       it "is this" do
@@ -197,7 +268,7 @@ describe JsDuck::Aggregator do
 
     describe "2nd param" do
       before do
-        @param = @events[0][:params][1]
+        @param = @members["foochange"][:params][1]
       end
 
       it "is value" do
@@ -215,7 +286,7 @@ describe JsDuck::Aggregator do
 
     describe "3rd param" do
       before do
-        @param = @events[0][:params][2]
+        @param = @members["foochange"][:params][2]
       end
 
       it "is oldValue" do
@@ -247,7 +318,7 @@ describe JsDuck::Aggregator do
            * Event comment.
            */
       EOF
-      @events = @docs[0][:members].find_all {|m| m[:tagname] == :event }
+      @events = @docs["MyClass"][:members].find_all {|m| m[:tagname] == :event }
     end
 
     it "doesn't create any additional events" do
@@ -260,4 +331,3 @@ describe JsDuck::Aggregator do
   end
 
 end
-

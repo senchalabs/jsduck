@@ -1,14 +1,21 @@
 // Styles for class documentation toolbar
-@import "mixins";
 
 // softer rounded corners on the toolbar
 .class-overview .x-toolbar.member-links {
   border-radius: 2px;
   border-color: #e4e4e4;
+<<<<<<< HEAD
+=======
+  padding: 5px;
+
+>>>>>>> senchalabs/master
   // ExtJS styles hide the border using !important.
   // So to override it we need to use !important too.
   border-width: 1px !important;
-  @include icons; }
+
+  // move the icons up a bit
+  .hover-menu-button {
+    background-position: 0 -1px; } }
 
 
 // The reset (X) button in filter-class-members text box

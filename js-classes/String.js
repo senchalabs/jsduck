@@ -125,7 +125,7 @@
  *
  *     String.fromCharCode(65,66,67)
  *
- * @param {Number} num1, ..., numN A sequence of numbers that are Unicode values.
+ * @param {Number...} numbers A sequence of numbers that are Unicode values.
  * @return {String} String containing characters from encoding.
  */
 
@@ -359,9 +359,7 @@
 
 /**
  * @method concat
- * Combines the text of two strings and returns a new string.
- *
- * `concat` combines the text from one or more strings and returns a new string. Changes to the text in
+ * Combines combines the text from one or more strings and returns a new string. Changes to the text in
  * one string do not affect the other string.
  *
  * The following example combines strings into a new string.
@@ -369,7 +367,7 @@
  *     var hello = "Hello, ";
  *     console.log(hello.concat("Kevin", " have a nice day.")); // Hello, Kevin have a nice day.
  *
- * @param {String} string2...stringN
+ * @param {String...} strings The strings to concatenate.
  * @return {String} Result of both strings.
  */
 

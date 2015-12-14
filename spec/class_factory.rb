@@ -9,8 +9,6 @@ module Helper
       cfg[:members].each do |m|
         m[:tagname] = :property unless m[:tagname]
         m[:owner] = cfg[:name]
-        m[:meta] = {} unless m[:meta]
-        m[:meta][:static] = true if m[:static]
         m[:id] = JsDuck::Class.member_id(m)
       end
 

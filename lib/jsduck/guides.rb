@@ -91,7 +91,8 @@ module JsDuck
     def load_all_guides
       each_item do |guide|
         guide["url"] = resolve_url(guide)
-        guide[:filename] = guide["url"] + "/README.md"
+        guide[:dir] = resolve_dir(guide)
+        guide[:filename] = resolve_filename(guide)
         guide[:html] = load_guide(guide)
       end
     end
@@ -109,10 +110,29 @@ module JsDuck
     end
 
     def load_guide(guide)
+<<<<<<< HEAD
       return Logger.warn(:guide, "Guide not found", guide["url"]) unless File.exists?(guide["url"])
       unless js_ident?(guide["name"])
         # Guide name is also used as JSONP callback method name.
         Logger.warn(:guide, "Guide name is not valid JS identifier: #{guide["name"]}")
+=======
+      unless File.exists?(guide[:dir])
+        return Logger.warn(:guide, "Guide not found", {:filename => guide[:dir]})
+      end
+      unless File.exists?(guide[:filename])
+        return Logger.warn(:guide, "Guide not found", {:filename => guide[:filename]})
+      end
+      unless js_ident?(guide["name"])
+        # Guide name is also used as JSONP callback method name.
+        return Logger.warn(:guide, "Guide name is not valid JS identifier: #{guide["name"]}", {:filename => guide[:filename]})
+      end
+
+      begin
+        return format_guide(guide)
+      rescue
+        Logger.fatal_backtrace("Error while reading/formatting guide #{guide[:filename]}", $!)
+        exit(1)
+>>>>>>> senchalabs/master
       end
       html_guide_file = guide["url"] + "/README.html"
       guide_file = guide["url"] + "/README.md"
@@ -137,11 +157,19 @@ module JsDuck
       end    
     end
 
+<<<<<<< HEAD
     def format_guide(guide, guide_file)
       @formatter.doc_context = {:filename => guide_file, :linenr => 0}
       @formatter.images = Img::Dir.new(guide["url"], "guides/#{guide["name"]}")
       html = @formatter.format(Util::IO.read(guide_file))
       html = GuideToc.inject(html, guide['name'], @opts.guide_toc_level)
+=======
+    def format_guide(guide)
+      @formatter.doc_context = {:filename => guide[:filename], :linenr => 0}
+      @formatter.images = Img::Dir.new(guide[:dir], "guides/#{guide["name"]}")
+      html = @formatter.format(Util::IO.read(guide[:filename]))
+      html = GuideToc.new(html, guide['name'], @opts.guides_toc_level).inject!
+>>>>>>> senchalabs/master
       html = GuideAnchors.transform(html, guide['name'])
 
       # Report unused images (but ignore the icon files)
@@ -158,7 +186,12 @@ module JsDuck
       out_dir = dir + "/" + guide["name"]
 
       Logger.log("Writing guide", out_dir)
+<<<<<<< HEAD
       FileUtils.cp_r(guide["url"], out_dir)
+=======
+      # Copy the whole guide dir over
+      FileUtils.cp_r(guide[:dir], out_dir)
+>>>>>>> senchalabs/master
 
       # Ensure the guide has an icon
       fix_icon(out_dir)
@@ -176,6 +209,26 @@ module JsDuck
       end
     end
 
+    # Detects guide directory.
+    # The URL either points to a file or directory.
+    def resolve_dir(guide)
+      if File.file?(guide["url"])
+        File.expand_path("..", guide["url"])
+      else
+        guide["url"]
+      end
+    end
+
+    # Detects guide filename.
+    # Either use URL pointing to a file or look up README.md from directory.
+    def resolve_filename(guide)
+      if File.file?(guide["url"])
+        guide["url"]
+      else
+        guide[:dir] + "/README.md"
+      end
+    end
+
     # True when string is valid JavaScript identifier
     def js_ident?(str)
       /\A[$\w]+\z/ =~ str
@@ -190,7 +243,7 @@ module JsDuck
       elsif File.exists?(dir+"/icon-lg.png")
         FileUtils.mv(dir+"/icon-lg.png", dir+"/icon.png")
       else
-        FileUtils.cp(@opts.template_dir+"/resources/images/default-guide.png", dir+"/icon.png")
+        FileUtils.cp(@opts.template+"/resources/images/default-guide.png", dir+"/icon.png")
       end
     end
 

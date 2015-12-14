@@ -1,9 +1,9 @@
-require "jsduck/doc_parser"
+require "jsduck/doc/parser"
 
-describe JsDuck::DocParser do
+describe JsDuck::Doc::Parser do
 
   def parse_single(doc)
-    return JsDuck::DocParser.new.parse(doc)
+    return JsDuck::Doc::Parser.new.parse(doc)
   end
 
   describe "simple method doc-comment" do
@@ -17,12 +17,24 @@ describe JsDuck::DocParser do
     end
 
     it "produces 3 @tags" do
-      @doc.length.should == 3
+      @doc.length.should == 4
+    end
+
+    describe "special :doc tag" do
+      before do
+        @tag = @doc[0]
+      end
+      it "gets special :doc tagname" do
+        @tag[:tagname].should == :doc
+      end
+      it "detects doc" do
+        @tag[:doc].should == "Some docs."
+      end
     end
 
     describe "@method" do
       before do
-        @tag = @doc[0]
+        @tag = @doc[1]
       end
       it "detects tagname" do
         @tag[:tagname].should == :method
@@ -30,17 +42,17 @@ describe JsDuck::DocParser do
       it "detects name" do
         @tag[:name].should == "foo"
       end
-      it "detects doc" do
-        @tag[:doc].should == "Some docs."
+      it "doesn't detects doc" do
+        @tag[:doc].should == nil
       end
     end
 
     describe "@param" do
       before do
-        @tag = @doc[1]
+        @tag = @doc[2]
       end
       it "detects tagname" do
-        @tag[:tagname].should == :param
+        @tag[:tagname].should == :params
       end
       it "detects name" do
         @tag[:name].should == "x"
@@ -55,7 +67,7 @@ describe JsDuck::DocParser do
 
     describe "@return" do
       before do
-        @tag = @doc[2]
+        @tag = @doc[3]
       end
       it "detects tagname" do
         @tag[:tagname].should == :return
@@ -71,7 +83,7 @@ describe JsDuck::DocParser do
 
   describe "@type without curlies" do
     before do
-      @tag = parse_single(<<-EOS.strip)[0]
+      @tag = parse_single(<<-EOS.strip)[1]
          * @type Boolean|String
       EOS
     end
@@ -85,7 +97,7 @@ describe JsDuck::DocParser do
 
   describe "single-line doc-comment" do
     before do
-      @tag = parse_single("@event blah")[0]
+      @tag = parse_single("@event blah")[1]
     end
     it "detects tagname" do
       @tag[:tagname].should == :event
@@ -97,25 +109,25 @@ describe JsDuck::DocParser do
 
   describe "doc-comment without *-s on left side" do
     before do
-      @tag = parse_single("
+      @tags = parse_single("
         @event blah
         Some comment.
         More text.
 
             code sample
-        ")[0]
+        ")
     end
     it "detects the @event tag" do
-      @tag[:tagname].should == :event
+      @tags[1][:tagname].should == :event
     end
     it "trims whitespace at beginning of lines up to first line" do
-      @tag[:doc].should == "Some comment.\nMore text.\n\n    code sample"
+      @tags[0][:doc].should == "Some comment.\nMore text.\n\n    code sample"
     end
   end
 
   describe "type definition with nested {braces}" do
     before do
-      @tag = parse_single(<<-EOS.strip)[0]
+      @tag = parse_single(<<-EOS.strip)[1]
          * @param {{foo:{bar:Number}}} x
       EOS
     end
@@ -198,7 +210,7 @@ describe JsDuck::DocParser do
 
   describe "indented code on previous line" do
     before do
-      @params = parse_single(<<-EOS.strip).find_all {|t| t[:tagname] == :param }
+      @params = parse_single(<<-EOS.strip).find_all {|t| t[:tagname] == :params }
          * @param x
          *     Foo
          *     Bar

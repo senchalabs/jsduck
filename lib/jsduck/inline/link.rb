@@ -1,4 +1,5 @@
 require 'jsduck/logger'
+require 'jsduck/member_registry'
 
 module JsDuck
   module Inline
@@ -40,7 +41,7 @@ module JsDuck
 
       # applies the link template
       def apply_tpl(target, text, full_link)
-        if target =~ /^(.*)#(static-)?(?:(cfg|property|method|event|css_var|css_mixin)-)?(.*)$/
+        if target =~ /^(.*)#(static-)?#{MemberRegistry.regex}?(.*)$/
           cls = $1.empty? ? @class_context : $1
           static = $2 ? true : nil
           type = $3 ? $3.intern : nil
@@ -61,15 +62,13 @@ module JsDuck
           text = cls
         end
 
-        file = @doc_context[:filename]
-        line = @doc_context[:linenr]
         if !@relations[cls]
-          Logger.warn(:link, "#{full_link} links to non-existing class", file, line)
+          Logger.warn(:link, "#{full_link} links to non-existing class", @doc_context)
           return text
         elsif member
           ms = @renderer.find_members(cls, {:name => member, :tagname => type, :static => static})
           if ms.length == 0
-            Logger.warn(:link, "#{full_link} links to non-existing member", file, line)
+            Logger.warn(:link, "#{full_link} links to non-existing member", @doc_context)
             return text
           end
 
@@ -78,14 +77,14 @@ module JsDuck
             # one when we ignore the static members. If there's more,
             # report ambiguity. If there's only static members, also
             # report ambiguity.
-            instance_ms = ms.find_all {|m| !m[:meta][:static] }
+            instance_ms = ms.find_all {|m| !m[:static] }
             if instance_ms.length > 1
               alternatives = instance_ms.map {|m| "#{m[:tagname]} in #{m[:owner]}" }.join(", ")
-              Logger.warn(:link_ambiguous, "#{full_link} is ambiguous: "+alternatives, file, line)
+              Logger.warn(:link_ambiguous, "#{full_link} is ambiguous: "+alternatives, @doc_context)
             elsif instance_ms.length == 0
-              static_ms = ms.find_all {|m| m[:meta][:static] }
+              static_ms = ms.find_all {|m| m[:static] }
               alternatives = static_ms.map {|m| "static " + m[:tagname].to_s }.join(", ")
-              Logger.warn(:link_ambiguous, "#{full_link} is ambiguous: "+alternatives, file, line)
+              Logger.warn(:link_ambiguous, "#{full_link} is ambiguous: "+alternatives, @doc_context)
             end
           end
 

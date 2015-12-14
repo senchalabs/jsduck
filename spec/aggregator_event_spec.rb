@@ -1,12 +1,13 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    agr.result
+    Helper::MiniParser.parse(string)
+  end
+
+  def parse_member(string)
+    parse(string)["global"][:members][0]
   end
 
   shared_examples_for "event" do
@@ -25,7 +26,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit event" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @event mousedown
          * Fires when needed.
@@ -37,7 +38,7 @@ describe JsDuck::Aggregator do
 
   describe "event with @event after @params" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Fires when needed.
          * @param {String} x First parameter
@@ -51,7 +52,7 @@ describe JsDuck::Aggregator do
 
   describe "implicit event name as string" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @event
          * Fires when needed.
@@ -64,7 +65,7 @@ describe JsDuck::Aggregator do
 
   describe "implicit event name as object property" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @event
          * Fires when needed.
@@ -77,7 +78,7 @@ describe JsDuck::Aggregator do
 
   describe "implicit event name inside this.fireEvent()" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Fires when needed.
          */
@@ -89,7 +90,7 @@ describe JsDuck::Aggregator do
 
   describe "doc-comment followed by this.fireEvent without event name" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * Fires when needed.
          */

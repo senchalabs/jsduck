@@ -61,6 +61,7 @@ Ext.define('Docs.view.cls.Toolbar', {
         this.items = [];
         this.memberButtons = {};
 
+<<<<<<< HEAD
         var memberTitles = {
             cfg: "Configs",
             property: (Docs.isRESTDoc ? "Fields" : "Properties"),
@@ -70,24 +71,30 @@ Ext.define('Docs.view.cls.Toolbar', {
             css_mixin: "CSS Mixins"
         };
         for (var type in memberTitles) {
+=======
+        Ext.Array.forEach(Docs.data.memberTypes, function(type) {
+>>>>>>> senchalabs/master
             // combine both static and instance members into one alphabetically sorted array
-            var members = this.docClass.members[type].concat(this.docClass.statics[type]);
+            var members = Ext.Array.filter(this.docClass.members, function(m) {
+                return m.tagname === type.name;
+            });
             members.sort(function(a, b) {
                 if (a.name === "constructor" && a.tagname === "method") {
                     return -1;
                 }
                 return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
             });
+
             if (members.length > 0) {
                 var btn = this.createMemberButton({
-                    text: memberTitles[type],
-                    type: type,
+                    text: type.toolbar_title || type.title,
+                    type: type.name,
                     members: members
                 });
-                this.memberButtons[type] = btn;
+                this.memberButtons[type.name] = btn;
                 this.items.push(btn);
             }
-        }
+        }, this);
 
         // For Ti, public/protected/private are not used currently. Set them to true and 
 		// don't show them.
@@ -234,6 +241,7 @@ Ext.define('Docs.view.cls.Toolbar', {
      * @param {RegExp} re
      */
     showMenuItems: function(show, isSearch, re) {
+<<<<<<< HEAD
         Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();
@@ -266,13 +274,29 @@ Ext.define('Docs.view.cls.Toolbar', {
                             isSearch           && !re.test(m.get("label"))                        
                         )
                     } 
+=======
+        Ext.Array.forEach(Docs.data.memberTypes, function(type) {
+            var btn = this.memberButtons[type.name];
+            if (btn) {
+                btn.getStore().filterBy(function(m) {
+                    return !(
+                        !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
+                        !show['protected'] && m.get("meta")["protected"] ||
+                        !show['private']   && m.get("meta")["private"] ||
+                        !show['inherited'] && m.get("inherited") ||
+                        !show['accessor']  && m.get("accessor") ||
+                        !show['deprecated']   && m.get("meta")["deprecated"] ||
+                        !show['removed']   && m.get("meta")["removed"] ||
+                        isSearch           && !re.test(m.get("label"))
+                    );
+>>>>>>> senchalabs/master
                 });
                 // HACK!!!
                 // In Ext JS 4.1 filtering the stores causes the menus
                 // to become visible. But the visibility behaves badly
                 // - one has to call #show first or #hide won't have
                 // an effect.
-                var menu = this.memberButtons[type].menu;
+                var menu = btn.menu;
                 if (menu && Ext.getVersion().version >= "4.1.0") {
                     menu.show();
                     menu.hide();

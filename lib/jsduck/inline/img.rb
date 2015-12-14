@@ -1,6 +1,6 @@
 require 'jsduck/util/html'
 require 'jsduck/logger'
-require 'pp'
+require 'ostruct'
 
 module JsDuck
   module Inline
@@ -15,8 +15,8 @@ module JsDuck
       # Used for error reporting.
       attr_accessor :doc_context
 
-      def initialize(opts={})
-        @tpl = opts[:img_tpl] || '<img src="%u" alt="%a" width="%w" height="%h"/>'
+      def initialize(opts=OpenStruct.new)
+        @tpl = opts.img || '<img src="%u" alt="%a" width="%w" height="%h"/>'
 
         @re = /\{@img\s+(\S*?)(?:\s+(.+?))?\}/m
       end
@@ -38,7 +38,7 @@ module JsDuck
       def apply_tpl(url, alt_text)
         img = @images.get(url)
         if !img
-          Logger.warn(:image, "Image #{url} not found.", @doc_context[:filename], @doc_context[:linenr])
+          Logger.warn(:image, "Image #{url} not found.", @doc_context)
           img = {}
         end
 

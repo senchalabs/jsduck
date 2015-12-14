@@ -1,26 +1,30 @@
-require "jsduck/meta_tag"
-require "jsduck/logger"
+require "jsduck/tag/tag"
+require 'jsduck/util/html'
 
 module JsDuck::Tag
-  # Implementation of @since tag.
-  class Since < JsDuck::MetaTag
+  class Since < Tag
     def initialize
-      @name = "since"
-      @key = :since
+      @pattern = "since"
+      @tagname = :since
+      @html_position = POS_SINCE
     end
 
-    def to_value(contents)
-      if contents.length > 1
-        JsDuck::Logger.warn(nil, "Only one @since tag allowed per class/member.")
-      end
-      contents[0]
+    def parse_doc(p, pos)
+      {
+        :tagname => :since,
+        :version => p.match(/.*$/).strip,
+      }
     end
 
-    def to_html(version)
+    def process_doc(h, tags, pos)
+      h[:since] = tags[0][:version]
+    end
+
+    def to_html(context)
       <<-EOHTML
-        <p>Available since: <b>#{version}</b></p>
+        <p>Available since: <b>#{JsDuck::Util::HTML.escape(context[:since])}</b></p>
       EOHTML
     end
+
   end
 end
-

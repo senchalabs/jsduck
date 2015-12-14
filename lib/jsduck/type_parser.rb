@@ -56,9 +56,9 @@ module JsDuck
     # input type-definition with types themselves replaced with links.
     attr_reader :out
 
-    # Initializes the parser with hash of valid type names and doc_formatter.
-    def initialize(relations={}, formatter={})
-      @relations = relations
+    # Initializes the parser with a Format::Doc instance.
+    def initialize(formatter)
+      @relations = formatter.relations
       @formatter = formatter
       @primitives = {
         "boolean" => "Boolean",

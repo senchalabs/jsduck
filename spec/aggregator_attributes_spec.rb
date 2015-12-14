@@ -1,50 +1,41 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    agr.result
+    Helper::MiniParser.parse(string)
+  end
+
+  def parse_member(string)
+    parse(string)["global"][:members][0]
   end
 
   describe "member with @protected" do
     before do
-      @doc = parse("/** @protected */")[0]
+      @doc = parse_member("/** @protected */")
     end
 
     it "gets protected attribute" do
-      @doc[:meta][:protected].should == true
+      @doc[:protected].should == true
     end
   end
 
   describe "member with @abstract" do
     before do
-      @doc = parse("/** @abstract */")[0]
+      @doc = parse_member("/** @abstract */")
     end
 
     it "gets abstract attribute" do
-      @doc[:meta][:abstract].should == true
+      @doc[:abstract].should == true
     end
   end
 
   describe "member with @static" do
     before do
-      @doc = parse("/** @static */")[0]
+      @doc = parse_member("/** @static */")
     end
 
     it "gets static attribute" do
-      @doc[:meta][:static].should == true
-    end
-  end
-
-  describe "Property with @readonly" do
-    before do
-      @doc = parse("/** @readonly */")[0]
-    end
-
-    it "gets readonly attribute" do
-      @doc[:meta][:readonly].should == true
+      @doc[:static].should == true
     end
   end
   
@@ -60,7 +51,7 @@ describe JsDuck::Aggregator do
 
   describe "method with @template" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @method foo
          * Some function
@@ -69,56 +60,31 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "gets template attribute" do
-      @doc[:meta][:template].should == true
+      @doc[:template].should == true
     end
   end
 
-  describe "a normal config option" do
+  describe "event with @preventable" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
-         * @cfg foo Something
+         * @event foo
+         * @preventable bla blah
+         * Some event
          */
       EOS
     end
-    it "is not required by default" do
-      @doc[:meta][:required].should_not == true
+    it "gets preventable attribute" do
+      @doc[:preventable].should == true
     end
-  end
-
-  describe "a config option labeled as required" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @cfg foo (required) Something
-         */
-      EOS
-    end
-    it "has required flag set to true" do
-      @doc[:meta][:required].should == true
-    end
-  end
-
-  describe "a class with @cfg (required)" do
-    before do
-      @doc = parse(<<-EOS)[0]
-        /**
-         * @class MyClass
-         * @cfg foo (required)
-         */
-      EOS
-    end
-    it "doesn't become a required class" do
-      @doc[:meta][:required].should_not == true
-    end
-    it "contains required config" do
-      @doc[:members][0][:meta][:required].should == true
+    it "ignores text right after @preventable" do
+      @doc[:doc].should == "Some event"
     end
   end
 
   describe "member with @deprecated" do
     before do
-      @deprecated = parse(<<-EOS)[0][:meta][:deprecated]
+      @deprecated = parse_member(<<-EOS)[:deprecated]
         /**
          * @deprecated 4.0 Use escapeRegex instead.
          */
@@ -140,7 +106,7 @@ describe JsDuck::Aggregator do
 
   describe "member with @deprecated without version number" do
     before do
-      @deprecated = parse(<<-EOS)[0][:meta][:deprecated]
+      @deprecated = parse_member(<<-EOS)[:deprecated]
         /**
          * @deprecated Use escapeRegex instead.
          */
@@ -158,7 +124,7 @@ describe JsDuck::Aggregator do
 
   describe "class with @markdown" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse(<<-EOS)["MyClass"]
         /**
          * @class MyClass
          * @markdown

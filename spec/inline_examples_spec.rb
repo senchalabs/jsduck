@@ -1,10 +1,10 @@
 require "jsduck/inline_examples"
-require "jsduck/doc_formatter"
+require "jsduck/format/doc"
 
 describe JsDuck::InlineExamples do
 
   def extract(doc, opts=nil)
-    html = (opts == :html) ? doc : JsDuck::DocFormatter.new.format(doc)
+    html = (opts == :html) ? doc : JsDuck::Format::Doc.new.format(doc)
     result = JsDuck::InlineExamples.new.extract(html)
     (opts == :raw) ? result : result.map {|ex| ex[:code] }
   end

@@ -45,5 +45,18 @@ Ext.define('Docs.view.Header', {
             this.items = [label];
         }
         this.callParent();
+<<<<<<< HEAD
+=======
+    },
+
+    listeners: {
+        afterrender: function(cmp) {
+            if (this.menu) {
+                cmp.el.addListener('click', function(cmp, el) {
+                    this.menu.showBy(this.el, 'tr-br?');
+                }, this);
+            }
+        }
+>>>>>>> senchalabs/master
     }
 });

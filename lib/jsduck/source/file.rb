@@ -1,29 +1,27 @@
-require 'jsduck/source/file_parser'
 require 'jsduck/util/html'
 
 module JsDuck
   module Source
 
-    # Represents one JavaScript or CSS source file.
+    # Represents one JavaScript or SCSS source file.
     #
     # The filename parameter determines whether it's parsed as
-    # JavaScript (the default) or CSS.
+    # JavaScript (the default) or SCSS.
     class File
       attr_reader :filename
       attr_reader :contents
       attr_reader :docs
       attr_reader :html_filename
 
-      def initialize(contents, filename="", options={})
+      def initialize(contents, docs, filename="")
         @contents = contents
+        @docs = docs
         @filename = filename
         @html_filename = ""
         @links = {}
 
-        @docs = Source::FileParser.new.parse(@contents, @filename, options)
-
         @docs.map do |docset|
-          link(docset[:linenr], docset)
+          link(docset)
         end
       end
 
@@ -76,20 +74,13 @@ module JsDuck
       private
 
       # Creates two-way link between sourcefile and doc-object.
-      # If doc-object is class, links also the contained cfgs and constructor.
       # Returns the modified doc-object after done.
-      def link(linenr, doc)
+      def link(docset)
+        file = docset[:files].first
+        linenr = file[:linenr]
         @links[linenr] = [] unless @links[linenr]
-        file = {
-          :filename => @filename,
-          :linenr => linenr,
-        }
-        @links[linenr] << {:doc => doc, :file => file}
-        doc[:files] = [file]
-        if doc[:tagname] == :class
-          doc[:members].each {|m| link(linenr, m) }
-        end
-        doc
+        @links[linenr] << {:doc => docset, :file => file}
+        docset
       end
 
     end

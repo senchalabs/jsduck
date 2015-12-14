@@ -1,116 +1,69 @@
 require 'jsduck/class'
+require 'jsduck/tag_registry'
 
 module JsDuck
 
   # Takes data from comment and code that follows it and combines
   # these two pieces of information into one.  The code comes from
-  # JsDuck::Ast and comment from JsDuck::DocAst.
+  # JsDuck::JS::Ast and comment from JsDuck::Doc::Processor.
   #
   # The main method merge() produces a hash as a result.
   class Merger
 
     # Takes a docset and merges the :comment and :code inside it,
     # producing hash as a result.
-    def merge(docset)
+    def merge(docset, filename="", linenr=0)
       docs = docset[:comment]
-      code = docset[:code]
+      code = process_code(docset[:tagname], docset[:code])
 
-      case docset[:tagname]
-      when :class
-        result = merge_class(docs, code)
-      when :method, :event, :css_mixin
-        result = merge_like_method(docs, code)
-      when :cfg, :property, :css_var
-        result = merge_like_property(docs, code)
-      end
+      h = {
+        :tagname => docset[:tagname],
+        :name => docs[:name] || code[:name] || "",
+        :autodetected => code[:autodetected] || {},
+        :files => [{:filename => filename, :linenr => linenr}],
+      }
 
-      result[:linenr] = docset[:linenr]
+      general_merge(h, docs, code)
+      invoke_merge_in_member_tag(h, docs, code)
 
-      result
+      # Needs to be calculated last, as it relies on the existance of
+      # :name, :static and :tagname fields.
+      h[:id] = JsDuck::Class.member_id(h)
+
+      h
     end
 
     private
 
-    def merge_class(docs, code)
-      h = do_merge(docs, code, {
-        :mixins => [],
-        :alternateClassNames => [],
-        :requires => [],
-        :uses => [],
-        :singleton => false,
-      })
-
-      # Ignore extending of the Object class
-      h[:extends] = nil if h[:extends] == "Object"
-
-      h[:aliases] = build_aliases_hash(h[:aliases] || [])
-
-      # Used by Aggregator to determine if we're dealing with Ext4 code
-      h[:code_type] = code[:code_type] if code[:code_type]
-
-      h[:enum] = merge_enum(docs, code) if docs[:enum]
-
-      h[:members] = []
-
-      h
+    # Applies processing to extract fields relevant to the member type.
+    def process_code(tagname, code)
+      TagRegistry.get_by_name(tagname).process_code(code)
     end
 
-    def merge_like_method(docs, code)
-      h = do_merge(docs, code)
-      h[:params] = merge_params(docs, code)
-      h[:meta][:chainable] = code[:chainable] if code[:chainable]
-      h
+    # Invokes the #merge method in corresponding member or :class tag.
+    def invoke_merge_in_member_tag(h, docs, code)
+      TagRegistry.get_by_name(h[:tagname]).merge(h, docs, code)
     end
 
-    def merge_like_property(docs, code)
-      h = do_merge(docs, code)
-
-      h[:type] = merge_if_code_matches(:type, docs, code)
-      if h[:type] == nil
-        h[:type] = code[:tagname] == :method ? "Function" : "Object"
-      end
-
-      h[:default] = merge_if_code_matches(:default, docs, code)
-      h
-    end
-
-    # --- helpers ---
-
-    def do_merge(docs, code, defaults={})
-      h = {}
+    # Applies default merge algorithm to the rest of the data.
+    def general_merge(h, docs, code)
+      # Add all items in docs not already in result.
       docs.each_pair do |key, value|
-        h[key] = docs[key] || code[key] || defaults[key]
+        h[key] = value unless h[key]
       end
 
-      h[:name] = merge_name(docs, code)
-      h[:id] = JsDuck::Class.member_id(h)
-
-      # Copy private to meta
-      h[:meta][:private] = h[:private] if h[:private]
-
-      # Copy :static and :inheritable flags from code if present
-      h[:meta][:static] = true if code[:meta] && code[:meta][:static]
-      h[:inheritable] = true if code[:inheritable]
-
-      # Remember auto-detection info
-      h[:autodetected] = code[:autodetected] if code[:autodetected]
-
-      h
-    end
-
-    # Given array of full alias names like "foo.bar", "foo.baz"
-    # build hash like {"foo" => ["bar", "baz"]}
-    def build_aliases_hash(aliases)
-      hash={}
-      aliases.each do |a|
-        if a =~ /^([^.]+)\.(.+)$/
-          if hash[$1]
-            hash[$1] << $2
-          else
-            hash[$1] = [$2]
+      # Add all items in code not already in result and mark them as
+      # auto-detected.  But only if the explicit and auto-detected
+      # names don't conflict.
+      if Merger.can_be_autodetected?(docs, code)
+        code.each_pair do |key, value|
+          unless h[key]
+            h[key] = value
+            mark_autodetected(h, key)
           end
         end
       end
+<<<<<<< HEAD
       hash
     end
 
@@ -162,20 +115,21 @@ module JsDuck
       else
         default
       end
+=======
+>>>>>>> senchalabs/master
     end
 
-    # True if the name detected from code matches with explicitly documented name.
-    # Also true when no explicit name documented.
-    def code_matches_doc?(docs, code)
-      return docs[:name] == nil || docs[:name] == code[:name]
+    # True if the name detected from code matches with explicitly
+    # documented name.  Also true when no explicit name documented.
+    #
+    # Note: This method is also called from ParamsMerger.
+    def self.can_be_autodetected?(docs, code)
+      docs[:name] == nil || docs[:name] == code[:name]
     end
 
-    # Takes the :enum always from docs, but the :doc_only can come
-    # from either code or docs.
-    def merge_enum(docs, code)
-      enum = docs[:enum]
-      enum[:doc_only] = docs[:enum][:doc_only] || (code[:enum] && code[:enum][:doc_only])
-      enum
+    # Stores the key as flag into h[:autodetected]
+    def mark_autodetected(h, key)
+      h[:autodetected][key] = true
     end
 
   end

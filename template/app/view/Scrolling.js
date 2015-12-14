@@ -68,6 +68,7 @@ Ext.define('Docs.view.Scrolling', {
         opts = opts || {};
         if (el) {
             this.setScrollTop(this.getScrollTop() + el.getY() + (opts.offset || 0));
+            this.setScrollLeft(0);
             opts.highlight && el.highlight();
         }
     },
@@ -86,6 +87,14 @@ Ext.define('Docs.view.Scrolling', {
      */
     setScrollTop: function(offset) {
         return this.getScrollEl().scrollTo('top', offset);
+    },
+
+    /**
+     * Scrolls vertically to given offset.
+     * @param {Number} offset
+     */
+    setScrollLeft: function(offset) {
+        return this.getScrollEl().scrollTo('left', offset);
     },
 
     /**

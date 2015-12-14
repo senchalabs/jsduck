@@ -1,16 +1,8 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
-require "jsduck/relations"
-require "jsduck/class"
-require "jsduck/inherit_doc"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
-    JsDuck::InheritDoc.new(relations).resolve_all
-    relations
+    Helper::MiniParser.parse(string, {:inherit_doc => true})
   end
 
   shared_examples_for "constructor" do
@@ -20,6 +12,10 @@ describe JsDuck::Aggregator do
 
     it "has method with name 'constructor'" do
       methods[0][:name].should == "constructor"
+    end
+
+    it "has method with constructor docs" do
+      methods[0][:doc].should == "This constructs the class"
     end
 
     it "has method with needed parameters" do

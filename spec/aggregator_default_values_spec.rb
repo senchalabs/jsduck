@@ -1,12 +1,17 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    agr.result
+    Helper::MiniParser.parse(string)
+  end
+
+  def parse_member(string)
+    parse(string)["global"][:members][0]
+  end
+
+  def parse_param(string)
+    parse_member(string)[:params][0]
   end
 
   shared_examples_for "optional parameter" do
@@ -25,7 +30,7 @@ describe JsDuck::Aggregator do
 
   describe "parameter name followed with (optional)" do
     before do
-      @param = parse(<<-EOS)[0][:params][0]
+      @param = parse_param(<<-EOS)
         /**
          * @param {Number} foo (optional) Something
          */
@@ -37,7 +42,7 @@ describe JsDuck::Aggregator do
 
   describe "parameter name followed with mixed-case (Optional)" do
     before do
-      @param = parse(<<-EOS)[0][:params][0]
+      @param = parse_param(<<-EOS)
         /**
          * @param {Number} foo (Optional) Something
          */
@@ -49,7 +54,7 @@ describe JsDuck::Aggregator do
 
   describe "parameter name followed with 'optional'" do
     before do
-      @param = parse(<<-EOS)[0][:params][0]
+      @param = parse_param(<<-EOS)
         /**
          * @param {Number} foo optional Something
          */
@@ -57,13 +62,13 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "doesn't make parameter optional" do
-      @param[:optional].should == false
+      @param[:optional].should_not == true
     end
   end
 
   describe "parameter description containing (optional)" do
     before do
-      @param = parse(<<-EOS)[0][:params][0]
+      @param = parse_param(<<-EOS)
         /**
          * @param {Number} foo Something (optional)
          */
@@ -71,13 +76,13 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "doesn't make parameter optional" do
-      @param[:optional].should == false
+      @param[:optional].should_not == true
     end
   end
 
   describe "parameter name in [brackets]" do
     before do
-      @param = parse(<<-EOS)[0][:params][0]
+      @param = parse_param(<<-EOS)
         /**
          * @param {Number} [foo] Something
          */
@@ -89,7 +94,7 @@ describe JsDuck::Aggregator do
 
   describe "parameter with optional param type annotation {Foo=}" do
     before do
-      @param = parse(<<-EOS)[0][:params][0]
+      @param = parse_param(<<-EOS)
         /**
          * @param {Number=} foo Something
          */
@@ -106,7 +111,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg without optionality type annotation {Foo=}" do
     before do
-      @cfg = parse(<<-EOS)[0]
+      @cfg = parse_member(<<-EOS)
         /**
          * @cfg {Number} foo Something
          */
@@ -114,13 +119,13 @@ describe JsDuck::Aggregator do
     end
 
     it "doesn't default to required" do
-      @cfg[:meta][:required].should_not == true
+      @cfg[:required].should_not == true
     end
   end
 
   describe "parameter with explicit default value" do
     before do
-      @param = parse(<<-EOS)[0][:params][0]
+      @param = parse_param(<<-EOS)
         /**
          * @param {Number} [foo=42] Something
          */
@@ -135,7 +140,7 @@ describe JsDuck::Aggregator do
 
   describe "parameter with explicit string default value" do
     before do
-      @param = parse(<<-EOS)[0][:params][0]
+      @param = parse_param(<<-EOS)
         /**
          * @param {Number} [foo="Hello, my [dear]!"] Something
          */
@@ -150,7 +155,7 @@ describe JsDuck::Aggregator do
 
   describe "property with default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @property {Number} [foo=3] Something
          */
@@ -163,7 +168,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with explicit regex default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo=/[0-9]+/] Something
          */
@@ -176,7 +181,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with explicit boolean true default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo=true] Something
          */
@@ -189,7 +194,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with explicit boolean false default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo=false] Something
          */
@@ -202,7 +207,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with explicit array default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo=["foo", 5, /[a-z]/]] Something
          */
@@ -215,7 +220,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with explicit object default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo={"foo": 5, bar: [1, 2, 3]}] Something
          */
@@ -228,7 +233,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with this as default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo=this] Something
          */
@@ -241,7 +246,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with rubbish as default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo=!haa] Something
          */
@@ -254,7 +259,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with rubbish after default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo=7 and me too] Something
          */
@@ -267,7 +272,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with array literal of idents as default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo=[ho, ho]] Something
          */
@@ -280,7 +285,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with unfinished array literal as default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo=[...] Something
          */
@@ -293,7 +298,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with bogus object literal as default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo={ho:5, ho}] Something
          */
@@ -306,7 +311,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with unfinished object literal as default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo={ho:5] Something
          */
@@ -319,7 +324,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with string ']' inside default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo="]"] Something
          */
@@ -332,7 +337,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with escaped quote inside default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
         /**
          * @cfg {Number} [foo=" \\"] "] Something
          */
@@ -346,7 +351,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with implicit default value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg foo Something
          */
@@ -360,7 +365,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with implicit default string value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg foo Something
          */
@@ -374,7 +379,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with implicit default regex value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg foo Something
          */
@@ -388,7 +393,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with implicit default array value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg foo Something
          */
@@ -402,7 +407,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with implicit default object value" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg foo Something
          */
@@ -416,7 +421,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with implicit string value starting with Ext.baseCSSPrefix" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg foo Something
          */
@@ -430,7 +435,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with implicit number value given as expression" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg {Number} foo
          */
@@ -444,7 +449,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with implicit array value with chained method" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg {Array} foo
          */
@@ -458,7 +463,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg with implicit name followed by code field with another name" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg foo
          */
@@ -475,7 +480,7 @@ describe JsDuck::Aggregator do
 
   describe "cfg without implicit name followed by code" do
     before do
-      @doc = parse(<<-EOS)[0]
+      @doc = parse_member(<<-EOS)
       ({/**
          * @cfg
          */
@@ -487,6 +492,38 @@ describe JsDuck::Aggregator do
     end
     it "gets the type from code" do
       @doc[:type].should == "Boolean"
+    end
+  end
+
+  describe "cfg defined with Object.defineProperty" do
+    before do
+      @doc = parse_member(<<-EOS)
+        /**
+         * @cfg
+         */
+        Object.defineProperty(this, 'myCfg', { value: 5 });
+      EOS
+    end
+    it "gets default value from code" do
+      @doc[:default].should == "5"
+    end
+  end
+
+  describe "auto-detected property turned into @method" do
+    before do
+      @doc = parse_member(<<-EOS)
+      ({/**
+         * @method
+         * My method.
+         */
+        bar: true })
+      EOS
+    end
+    it "loses the auto-detected default value" do
+      @doc[:default].should == nil
+    end
+    it "loses the auto-detected type" do
+      @doc[:type].should == nil
     end
   end
 

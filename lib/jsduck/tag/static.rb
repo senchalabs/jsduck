@@ -1,14 +1,12 @@
-require "jsduck/meta_tag"
+require "jsduck/tag/boolean_tag"
 
 module JsDuck::Tag
-  # Implementation of @static tag
-  class Static < JsDuck::MetaTag
+  class Static < BooleanTag
     def initialize
-      @name = "static"
-      @key = :static
+      @pattern = "static"
       @signature = {:long => "static", :short => "STA"}
-      @boolean = true
+      @css = ".signature .static { background-color: #484848 }" # Docs text color
+      super
     end
   end
 end
-

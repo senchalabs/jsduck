@@ -1,16 +1,14 @@
-require 'jsduck/class'
-require 'jsduck/accessors'
 require 'jsduck/logger'
-require 'jsduck/enum'
-require 'jsduck/override'
 
 module JsDuck
 
-  # Combines JavaScript Parser, DocParser and Merger.
-  # Produces array of classes as result.
+  # Groups parsed documentation data from source files into classes.
+  #
+  # Produces Hash of classes as result.  When a member is found that
+  # doesn't belong to any class, it's placed into special "global"
+  # class.
   class Aggregator
     def initialize
-      @documentation = []
       @classes = {}
       @alt_names = {}
       @orphans = []
@@ -27,6 +25,18 @@ module JsDuck
       @current_class = nil
       file.each {|doc| register(doc) }
     end
+
+    # Returns the final result which is a Hash of all classes indexed
+    # by name.  It's a hash because some processors applied to this
+    # returned classes list need a random-access look up classes by
+    # name.
+    def result
+      classify_orphans
+      create_global_class
+      @classes
+    end
+
+    private
 
     # Registers documentation node either as class or as member of
     # some class.
@@ -52,7 +62,6 @@ module JsDuck
         @current_class = old_cls
       else
         @current_class = cls
-        @documentation << cls
         @classes[cls[:name]] = cls
 
         # Register all alternate names of class for lookup too
@@ -67,7 +76,6 @@ module JsDuck
             # it by merging the class with alt-name into this class.
             if @classes[altname]
               merge_classes(cls, @classes[altname])
-              @documentation.delete(@classes[altname])
               @classes.delete(altname)
               warn_alt_name(cls)
             end
@@ -79,9 +87,7 @@ module JsDuck
     end
 
     def warn_alt_name(cls)
-      file = cls[:files][0][:filename]
-      line = cls[:files][0][:linenr]
-      Logger.warn(:alt_name, "Name #{cls[:name]} used as both classname and alternate classname", file, line)
+      Logger.warn(:alt_name, "Name #{cls[:name]} used as both classname and alternate classname", cls[:files][0])
     end
 
     # Merges new class-doc into old one.
@@ -91,12 +97,8 @@ module JsDuck
         old[tag] = old[tag] || new[tag]
       end
       # Merge arrays
-      [:mixins, :alternateClassNames, :files].each do |tag|
-        old[tag] = old[tag] + new[tag]
-      end
-      # Merge meta hashes
-      new[:meta].each_pair do |name, value|
-        old[:meta][name] = old[:meta][name] || value
+      [:mixins, :alternateClassNames, :requires, :uses, :files].each do |tag|
+        old[tag] = (old[tag] || []) + (new[tag] || [])
       end
       # Merge hashes of arrays
       [:aliases].each do |tag|
@@ -120,7 +122,7 @@ module JsDuck
     # When no class precedes them - they too are orphaned.
     def add_member(node)
       # Completely ignore member if @ignore used
-      return if node[:meta][:ignore]
+      return if node[:ignore]
 
       if node[:owner]
         if @classes[node[:owner]]
@@ -187,72 +189,11 @@ module JsDuck
         :tagname => :class,
         :name => name,
         :doc => doc,
-        :mixins => [],
         :alternateClassNames => [],
         :members => [],
         :aliases => {},
-        :meta => {},
         :files => [{:filename => "", :linenr => 0, :href => ""}],
       })
-    end
-
-    # Gets rid of classes marked with @ignore
-    def remove_ignored_classes
-      @documentation.delete_if do |cls|
-        if cls[:meta][:ignore]
-          @classes.delete(cls["name"])
-          true
-        end
-      end
-    end
-
-    # Appends Ext4 options parameter to each event parameter list.
-    def append_ext4_event_options
-      options = {
-        :tagname => :param,
-        :name => "eOpts",
-        :type => "Object",
-        :doc => "The options object passed to {@link Ext.util.Observable#addListener}."
-      }
-      @classes.each_value do |cls|
-        cls[:members].each do |m|
-          m[:params] << options if m[:tagname] == :event
-        end
-      end
-    end
-
-    # Creates accessor method for configs marked with @accessor
-    def create_accessors
-      accessors = Accessors.new
-      @classes.each_value do |cls|
-        accessors.create(cls)
-      end
-    end
-
-    # Loops through all enums and auto-detects their types if needed.
-    def process_enums
-      Enum.new(@classes).process_all!
-    end
-
-    # Processes all overrides.
-    # Returns list of override classes.
-    def process_overrides
-      Override.new(@classes).process_all!.map do |cls|
-        # discard each override class
-        @classes.delete(cls[:name])
-        @documentation.delete(cls)
-        cls
-      end
-    end
-
-    # Are we dealing with ExtJS 4?
-    # True if any of the classes is defined with Ext.define()
-    def ext4?
-      @documentation.any? {|cls| cls[:code_type] == :ext_define }
-    end
-
-    def result
-      @documentation + @orphans
     end
   end
 

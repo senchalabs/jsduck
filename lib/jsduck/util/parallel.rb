@@ -1,3 +1,4 @@
+require 'jsduck/util/os'
 require 'parallel'
 
 module JsDuck
@@ -8,10 +9,19 @@ module JsDuck
     class Parallel
       @@in_processes = nil
 
+<<<<<<< HEAD
       # Sets globally the nr of processes to use.
       def self.in_processes=(n)
         # Hard code to zero to work around gem crashing
         @@in_processes = 0
+=======
+      # Configures the logger to use as many processes as set in
+      # command line options.  When in Windows, turns the parallel
+      # processing off by default.
+      def self.configure(opts)
+        @@in_processes = 0 if Util::OS::windows?
+        @@in_processes = opts.processes if opts.processes
+>>>>>>> senchalabs/master
       end
 
       def self.each(arr, &block)

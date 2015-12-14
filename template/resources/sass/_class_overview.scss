@@ -116,28 +116,13 @@
     @include guides-h3-heading; } }
 
 .class-overview {
-  p.private {
-    border: 1px solid #999;
-    @include border-radius(5px);
-    color: #600;
-    background-color: #fee;
-    padding: 10px 50px;
-    text-align: center; }
-  p.enum {
-    border: 1px solid #999;
-    @include border-radius(5px);
-    color: #060;
-    background-color: #efe;
-    padding: 10px 50px;
-    text-align: center; }
-  .signature {
+  .signature span {
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.7em;
     @include border-radius(2px);
     margin-left: 5px;
-    padding: 0 3px;
-    @include signature-colors; }
+    padding: 0 3px; }
   .new-keyword {
     margin-left: 0;
     margin-right: 3px;
@@ -175,7 +160,6 @@
       padding: 0 0 0 25px;
       font-size: 1.3em;
       font-weight: bold; }
-    @include icons;
   h4.members-subtitle {
     padding-left: 25px;
     margin: 10px 0 7px 0; }
@@ -236,6 +220,7 @@
       font-weight: bold; }
     .title {
       padding-bottom: 3px; } } }
+<<<<<<< HEAD
 
 .signature-box {
   border: 1px solid #999;
@@ -261,3 +246,5 @@
     border: 1px solid #aa0000;
     background-color: transparent;
     text-decoration: line-through; } }
+=======
+>>>>>>> senchalabs/master

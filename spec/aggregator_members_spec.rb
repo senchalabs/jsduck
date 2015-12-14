@@ -1,28 +1,25 @@
-require "jsduck/aggregator"
-require "jsduck/source/file"
+require "mini_parser"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    agr.result
+    Helper::MiniParser.parse(string)
   end
 
   describe "@member defines the class of member" do
 
     it "when inside a lonely doc-comment" do
-      items = parse(<<-EOS)
+      classes = parse(<<-EOS)
         /**
          * @cfg foo
          * @member Bar
          */
       EOS
-      items[0][:owner].should == "Bar"
+      classes["Bar"][:members][0][:owner].should == "Bar"
     end
 
     it "when used after the corresponding @class" do
-      items = parse(<<-EOS)
+      classes = parse(<<-EOS)
         /**
          * @class Bar
          */
@@ -34,12 +31,12 @@ describe JsDuck::Aggregator do
          * @member Bar
          */
       EOS
-      items[0][:members].length.should == 1
-      items[1][:members].length.should == 0
+      classes["Bar"][:members].length.should == 1
+      classes["Baz"][:members].length.should == 0
     end
 
     it "when used before the corresponding @class" do
-      items = parse(<<-EOS)
+      classes = parse(<<-EOS)
         /**
          * @cfg foo
          * @member Bar
@@ -48,19 +45,12 @@ describe JsDuck::Aggregator do
          * @class Bar
          */
       EOS
-      items[0][:members].length.should == 1
+      classes["Bar"][:members].length.should == 1
     end
   end
 
-  def parse_to_classes(string)
-    agr = JsDuck::Aggregator.new
-    agr.aggregate(JsDuck::Source::File.new(string))
-    agr.classify_orphans
-    agr.result
-  end
-
   it "creates classes for all orphans with @member defined" do
-    classes = parse_to_classes(<<-EOS)
+    classes = parse(<<-EOS)
       /**
        * @cfg foo
        * @member FooCls
@@ -71,8 +61,8 @@ describe JsDuck::Aggregator do
        */
     EOS
 
-    classes[0][:name].should == "FooCls"
-    classes[1][:name].should == "BarCls"
+    classes["FooCls"][:members].length.should == 1
+    classes["BarCls"][:members].length.should == 1
   end
 
 end

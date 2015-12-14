@@ -7,6 +7,11 @@ Ext.Loader.setConfig({
     }
 });
 
+// Avoid downloading spacer gif from sencha.com in older IE-s.
+if (Ext.isIE6 || Ext.isIE7) {
+    Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
+}
+
 Ext.require('Ext.form.field.Trigger');
 Ext.require('Ext.tab.Panel');
 Ext.require('Ext.grid.column.Action');

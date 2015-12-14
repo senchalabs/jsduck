@@ -1,13 +1,6 @@
-language: ruby
+sudo: false
 rvm:
-  - "1.8.7"
   - "1.9.3"
-install:
-  - gem install rdiscount
-  - gem install json
-  - gem install parallel
-  - gem install execjs
-  - gem install therubyracer -v 0.10.1
-  - gem install rspec
-  - gem install rake
-  - gem install dimensions
+  - "2.0.0"
+  - "2.1.6"
+  - "2.2.2"
