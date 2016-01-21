@@ -460,3 +460,8 @@ $appc-red: #9B1C1F;
     background-color: white;
     cursor: pointer;
 }
+
+// fix for missing confluence float right
+.confluence-embedded-image.image-right {
+	float: right;
+}
