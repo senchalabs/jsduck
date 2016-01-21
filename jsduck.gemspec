@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.authors = ["Rene Saarsoo", "Nick Poulden"]
   s.email = "rene.saarsoo@sencha.com"
   s.rubyforge_project = s.name
-  s.license = "GPL-3"
+  s.license = "GPL-3.0"
 
   s.files = ['bin/jsduck', 'COPYING', 'README.md']
   s.files += Dir['lib/**/*']
