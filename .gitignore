@@ -3,5 +3,6 @@ Gemfile*
 template/extjs*
 template/resources/css
 template/resources/sass/.sass-cache
+.sass-cache/
 template-min/
 sdk-vars.rb
