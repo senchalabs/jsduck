@@ -33,7 +33,7 @@ module JsDuck
 
         if File.exists?(fname)
           if File.directory?(fname)
-            Dir[fname+"/**/*.{js,scss}"].each {|f| files << f }
+            Dir.glob([fname+"/**{,/*/**}/*.{js,scss}"],0).each {|f| files << f }
           elsif fname =~ /\.jsb3$/
             Options::Jsb.read(fname).each {|fn| read_filenames(fn) }
           else
