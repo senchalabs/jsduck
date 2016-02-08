@@ -46,6 +46,13 @@ describe "JsDuck::Js::Ast detects class with" do
         Ext.define('MyClass', function() {});
       EOS
     end
+
+    it "Ext.define() with function call" do
+      detect(<<-EOS)[:name].should == "MyClass"
+        /** */
+        Ext.define('MyClass', (function() {}()));
+      EOS
+    end
   end
 
   describe "extends in" do
@@ -106,6 +113,15 @@ describe "JsDuck::Js::Ast detects class with" do
     #     });
     #   EOS
     # end
+
+    it "Ext.define() with function call returning object" do
+      detect(<<-EOS)[:extends].should == "Your.Class"
+        /** */
+        Ext.define('MyClass', (function() {
+            return {extend: "Your.Class"};
+        }()));
+      EOS
+    end
 
     it "Ext.define() with no extend: in config object" do
       detect(<<-EOS)[:extends].should == "Ext.Base"

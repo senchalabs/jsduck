@@ -112,6 +112,10 @@ module JsDuck
         if definition_node.function_expression?
           definition_node = definition_node.return_statement_expression
           return if definition_node.nil?
+        elsif definition_node.call_expression?
+          #Convert IIFE used in define to return object
+          definition_node = definition_node["callee"].return_statement_expression
+          return if definition_node.nil?
         end
 
         definition_node.each_property do |key, value, pair|
