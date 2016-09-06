@@ -58,6 +58,7 @@ module JsDuck::Tag
       MEMBER_POS_EVENT = 4
       MEMBER_POS_CSS_VAR = 5
       MEMBER_POS_CSS_MIXIN = 6
+	  MEMBER_POS_LISTENER = 7
     end
 
     # Extracts the fields auto-detected from code that are relevant to
