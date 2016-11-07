@@ -38,7 +38,6 @@ function fix_links($html) {
   if (isset($_GET["print"]) || isset($_GET["mobile"])) {
     $param = isset($_GET["print"]) ? "print" : "mobile";
     $patterns = array(
-<<<<<<< HEAD
       // regex for apidoc w/ sections
       '/<a (?:class=".+" )href=([\'"])#!?\/(api\/[^-\'"]+?)-([^\'"]+?)/' => '<a href=$1?'.$param.'=/$2#$3',
       // regex for apidocs w/o sections
@@ -49,10 +48,6 @@ function fix_links($html) {
       '/<a class=".+" href=([\'"])#!?\/(guide\/[^-\'"]+?)-section-([^\'"]+?)/' => '<a href=$1?'.$param.'=/$2#$3',
       // regex for guides w/o sections
       '/<a (?:class=".+" )href=([\'"])#!?\/(guide\/[^-\'"]+?)/' => '<a href=$1?'.$param.'=/$2',
-=======
-      '/<a href=([\'"])#!?\/(api\/[^-\'"]+)-([^\'"]+)/' => '<a href=$1?'.$param.'=/$2#$3',
-      '/<a href=([\'"])#!?\/guide\/([^-\'"]+)-section-([^\'"]+)/' => '<a href=$1?'.$param.'=/guide/$2#$2-section-$3',
->>>>>>> senchalabs/master
       '/<a href=([\'"])#!?\//' => '<a href=$1?'.$param.'=/',
       // workaround for guides not displaying in print toc
       '/display:none/' => ''
