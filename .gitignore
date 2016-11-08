@@ -6,3 +6,6 @@ template/resources/sass/.sass-cache
 .sass-cache/
 template-min/
 sdk-vars.rb
+
+node_modules/*
+differences.txt
