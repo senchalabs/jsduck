@@ -109,10 +109,7 @@ def compress
   dir = "template-min"
 
   # Create JSB3 file for Docs app
-  # Ti Change - use our own JSB file at template/app.jsb3
-  # To update, build docs in debug mode, the run this command:
-  # sencha create jsb -a http://localhost/~username/docs/latest/index.html -p template/app.jsb3
-  #system("sencha", "create", "jsb", "-a", "http://localhost/docs/", "-p", "#{dir}/app.jsb3")
+  system("sencha", "create", "jsb", "-a", "http://localhost/docs/", "-p", "#{dir}/app.jsb3")
   # Concatenate files listed in JSB3 file
   system("sencha", "build", "-p", "#{dir}/app.jsb3", "-d", dir)
 
@@ -140,7 +137,7 @@ def compress
   system "rm -rf #{dir}/resources/css/docs-ext.css"
   system "rm -rf #{dir}/resources/css/viewport.css"
   system "rm -rf #{dir}/resources/sass"
-  # system "rm -rf #{dir}/resources/codemirror"
+  system "rm -rf #{dir}/resources/codemirror"
   system "rm -rf #{dir}/resources/.sass-cache"
 
   # Empty the extjs dir, leave only the main JS file and images
@@ -149,7 +146,6 @@ def compress
   system "cp template/extjs/ext-all.js #{dir}/extjs"
   system "mkdir -p #{dir}/extjs/resources/themes/images"
   system "cp -r template/extjs/resources/themes/images/default #{dir}/extjs/resources/themes/images"
-  system "cp -r template/extjs/resources/css #{dir}/extjs/resources/css"
 end
 
 
@@ -236,11 +232,6 @@ task :sass do
   system "compass compile --quiet template/resources/sass"
 end
 
-<<<<<<< HEAD
-desc "Compress output"
-task :compress => :sass do
-  compress
-=======
 def write_version_file(version)
   File.open('./lib/jsduck/version.rb', 'w') do |f|
     f.write(<<-EORUBY)
@@ -288,7 +279,6 @@ task :bump, :new_version do |t, args|
       exit 1
     end
   end
->>>>>>> senchalabs/master
 end
 
 desc "Build JSDuck gem"
@@ -363,15 +353,4 @@ task :touch2 => :sass do
   system("ln -s #{TOUCH_BUILD} #{OUT_DIR}/touch-build")
 end
 
-desc "Run JSDuck on Titanium Mobile repo (for internal use at Appcelerator)"
-task :timobile => :sass do
-  runner = JsDuckRunner.new
-  runner.add_options(
-    "--config", "#{DOCTOOLS_DIR}/jsduck.config"
-  )
-
-  # runner.add_debug
-  # runner.add_comments('touch', '2')
-  runner.run
-end
 task :default => :spec

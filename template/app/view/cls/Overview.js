@@ -252,14 +252,14 @@ Ext.define('Docs.view.cls.Overview', {
             var classPlatforms = this.docClass.meta.platform;
 
             var platformsArray = (memberPlatforms != undefined) ? memberPlatforms : classPlatforms;
- 
+
             Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
                     // If platformsArray is !undefined, create hash of supported platforms
                     // {
                     //      "android": true,
                     //      "iphone": false,
                     //       etc..
-                    // }                    
+                    // }
                     if(platformsArray != undefined) {
                         Ext.Array.forEach(platformsArray, function(platformName) {
                             // Trim off "since" part of platform string (everything after first space (" ")
@@ -269,7 +269,7 @@ Ext.define('Docs.view.cls.Overview', {
                             if(trimmedName == availablePlatform) {
                                 m.meta.platforms[availablePlatform] = true;
                             }
-                        });                        
+                        });
                     } else {
                         m.meta.platforms[availablePlatform] = true;
                     }
@@ -285,7 +285,7 @@ Ext.define('Docs.view.cls.Overview', {
                         });
                     } else {
                         m.meta.classPlatforms[availablePlatform] = true;
-                    }                       
+                    }
                 });
 
             var el = Ext.get(m.id);
@@ -297,25 +297,25 @@ Ext.define('Docs.view.cls.Overview', {
                 var visible = !(
                     !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
                     !show['protected'] && m.meta['protected'] ||
-                    !show['private']   && m.meta['private'] ||                
+                    !show['private']   && m.meta['private'] ||
                     !show['inherited'] && (m.owner !== this.docClass.name) ||
                     !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
                     !show['deprecated'] && m.meta['deprecated'] ||
                     !show['removed']   && m.meta['removed'] ||
-                    !(show['android'] && m.meta.platforms["android"] && m.meta.classPlatforms["android"]  || 
+                    !(show['android'] && m.meta.platforms["android"] && m.meta.classPlatforms["android"]  ||
                     show['ipad'] && m.meta.platforms["ipad"] && m.meta.classPlatforms["ipad"] ||
                     show['iphone'] && m.meta.platforms["iphone"] && m.meta.classPlatforms["iphone"] ||
                     show['mobileweb'] && m.meta.platforms["mobileweb"] && m.meta.classPlatforms["mobileweb"] ||
                     show['windowsphone'] && m.meta.platforms["windowsphone"] && m.meta.classPlatforms["windowsphone"]) ||
                     isSearch           && !re.test(m.name)
-                );                
+                );
             } else {
                 var visible = !(
                     !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
                     !show['protected'] && m.meta['protected'] ||
-                    !show['private']   && m.meta['private'] ||                
+                    !show['private']   && m.meta['private'] ||
                     !show['deprecated'] && m.meta['deprecated'] ||
-                    !show['removed']   && m.meta['removed'] ||                
+                    !show['removed']   && m.meta['removed'] ||
                     isSearch           && !re.test(m.name));
             }
 
@@ -358,20 +358,11 @@ Ext.define('Docs.view.cls.Overview', {
 
     buildAccessorsMap: function(name) {
         var accessors = {};
-<<<<<<< HEAD
 		// Ti change -- properties instead of cfgs
         Ext.Array.forEach(this.docClass.members.property, function(m) {
             var capName = Ext.String.capitalize(m.name);
             accessors["get"+capName] = true;
             accessors["set"+capName] = true;
-=======
-        Ext.Array.forEach(this.docClass.members, function(m) {
-            if (m.tagname === "cfg") {
-                var capName = Ext.String.capitalize(m.name);
-                accessors["get"+capName] = true;
-                accessors["set"+capName] = true;
-            }
->>>>>>> senchalabs/master
         });
         return accessors;
     },
@@ -387,7 +378,11 @@ Ext.define('Docs.view.cls.Overview', {
 
     // Loops through each member of class
     eachMember: function(callback, scope) {
-        Ext.Array.forEach(this.docClass.members, callback, scope);
+        Ext.Array.forEach(['members', 'statics'], function(group) {
+            Ext.Object.each(this.docClass[group], function(type, members) {
+                Ext.Array.forEach(members, callback, scope);
+            }, this);
+        }, this);
     }
 
 });

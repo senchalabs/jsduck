@@ -61,7 +61,6 @@ Ext.define('Docs.view.cls.Toolbar', {
         this.items = [];
         this.memberButtons = {};
 
-<<<<<<< HEAD
         var memberTitles = {
             cfg: "Configs",
             property: (Docs.isRESTDoc ? "Fields" : "Properties"),
@@ -71,32 +70,26 @@ Ext.define('Docs.view.cls.Toolbar', {
             css_mixin: "CSS Mixins"
         };
         for (var type in memberTitles) {
-=======
-        Ext.Array.forEach(Docs.data.memberTypes, function(type) {
->>>>>>> senchalabs/master
             // combine both static and instance members into one alphabetically sorted array
-            var members = Ext.Array.filter(this.docClass.members, function(m) {
-                return m.tagname === type.name;
-            });
+            var members = this.docClass.members[type].concat(this.docClass.statics[type]);
             members.sort(function(a, b) {
                 if (a.name === "constructor" && a.tagname === "method") {
                     return -1;
                 }
                 return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
             });
-
             if (members.length > 0) {
                 var btn = this.createMemberButton({
-                    text: type.toolbar_title || type.title,
-                    type: type.name,
+                    text: memberTitles[type],
+                    type: type,
                     members: members
                 });
-                this.memberButtons[type.name] = btn;
+                this.memberButtons[type] = btn;
                 this.items.push(btn);
             }
-        }, this);
+        }
 
-        // For Ti, public/protected/private are not used currently. Set them to true and 
+        // For Ti, public/protected/private are not used currently. Set them to true and
 		// don't show them.
         this.checkItems = {
             "public": {checked: true}, //this.createCb("Public", "public"),
@@ -241,7 +234,6 @@ Ext.define('Docs.view.cls.Toolbar', {
      * @param {RegExp} re
      */
     showMenuItems: function(show, isSearch, re) {
-<<<<<<< HEAD
         Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
             if (this.memberButtons[type]) {
                 var store = this.memberButtons[type].getStore();
@@ -255,7 +247,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                             !show['accessor']  && m.get("accessor") ||
                             !show['deprecated']   && m.get("meta")["deprecated"] ||
                             !show['removed']   && m.get("meta")["removed"] ||
-                            !(show['android'] && m.data.meta.platforms["android"] && m.data.meta.classPlatforms["android"]  || 
+                            !(show['android'] && m.data.meta.platforms["android"] && m.data.meta.classPlatforms["android"]  ||
                             show['ipad'] && m.data.meta.platforms["ipad"] && m.data.meta.classPlatforms["ipad"] ||
                             show['iphone'] && m.data.meta.platforms["iphone"] && m.data.meta.classPlatforms["iphone"] ||
                             show['mobileweb'] && m.data.meta.platforms["mobileweb"] && m.data.meta.classPlatforms["mobileweb"] ||
@@ -271,32 +263,16 @@ Ext.define('Docs.view.cls.Toolbar', {
                             !show['accessor']  && m.get("accessor") ||
                             !show['deprecated']   && m.get("meta")["deprecated"] ||
                             !show['removed']   && m.get("meta")["removed"] ||
-                            isSearch           && !re.test(m.get("label"))                        
+                            isSearch           && !re.test(m.get("label"))
                         )
-                    } 
-=======
-        Ext.Array.forEach(Docs.data.memberTypes, function(type) {
-            var btn = this.memberButtons[type.name];
-            if (btn) {
-                btn.getStore().filterBy(function(m) {
-                    return !(
-                        !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
-                        !show['protected'] && m.get("meta")["protected"] ||
-                        !show['private']   && m.get("meta")["private"] ||
-                        !show['inherited'] && m.get("inherited") ||
-                        !show['accessor']  && m.get("accessor") ||
-                        !show['deprecated']   && m.get("meta")["deprecated"] ||
-                        !show['removed']   && m.get("meta")["removed"] ||
-                        isSearch           && !re.test(m.get("label"))
-                    );
->>>>>>> senchalabs/master
+                    }
                 });
                 // HACK!!!
                 // In Ext JS 4.1 filtering the stores causes the menus
                 // to become visible. But the visibility behaves badly
                 // - one has to call #show first or #hide won't have
                 // an effect.
-                var menu = btn.menu;
+                var menu = this.memberButtons[type].menu;
                 if (menu && Ext.getVersion().version >= "4.1.0") {
                     menu.show();
                     menu.hide();
@@ -361,8 +337,8 @@ Ext.define('Docs.view.cls.Toolbar', {
         if(!Docs.isRESTDoc) {
             return [
                 this.checkItems['android'],
-                this.checkItems['ipad'],                    
-                this.checkItems['iphone'],                    
+                this.checkItems['ipad'],
+                this.checkItems['iphone'],
                 this.checkItems['mobileweb'],
                 this.checkItems['windowsphone'],
                 '-',
@@ -374,7 +350,7 @@ Ext.define('Docs.view.cls.Toolbar', {
         } else {
             return [
                 this.checkItems['deprecated'],
-                this.checkItems['removed']            
+                this.checkItems['removed']
             ]
         }
     }
