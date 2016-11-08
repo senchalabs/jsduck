@@ -4,22 +4,82 @@
 
 // The header container itself
 #north-region {
-  @include vertical-gradient(#074e7c, #095f93);
+  // Ti remove gradient
+  //@include vertical-gradient(#074e7c, #095f93);
   .dropdown {
     padding-right: 15px;
-    background: url(../images/down-arr.png) no-repeat bottom right; } }
+    padding-left: 8px; 
+    text-align: left;
+    border-radius: 30px;
+    border-width: 2px;
+    border-color: #fff; } 
+    
+  .x-btn-default-small {
+    background-image: none !important;
+    background-color: transparent;
+    color: #fff; }
+  
+  .x-btn-default-small-focus {
+    background-image: none !important;
+    background-color: transparent;
+    color: #aaa; }
+
+  .x-btn-inner {
+    font: 15px "Helvetica Neue",helvetica,arial,clean,sans-serif; 
+    color: #fff; }
+
+  .x-btn-arrow {
+    background-image: url('../images/down-arrow.png'); }
+  
+  .x-btn-arrow-right {
+    padding-right: 20px; }
+
+  .x-btn-default-small-menu-active .x-btn-inner {
+    color: #ccc !important; }
+
+  .x-btn-menu-active .x-btn-arrow {
+    background-image: url('../images/down-arrow-hover.png'); } }
+
+#doc-logo {
+  background: transparent url('../images/appc_logo.png') no-repeat;
+  margin: 8px 10px;
+  color: #fff;
+  font: 16px "Helvetica Neue",helvetica,arial,clean,sans-serif;
+
+  span {
+    line-height: 30px;
+    margin-left: 45px; } }
+
+#doc-site-menu {
+  .x-menu-item-link {
+    padding: 6px 2px 3px 8px; }
+
+  .x-menu-item-text {
+    font: 14px "Helvetica Neue",helvetica,arial,clean,sans-serif; }}
+
+#header-content-menu {
+      display: none; }
+
+// Add rule between title and doc tabs 
+#doc-topnav-container { 
+    background: url("../images/top-border.png") repeat-x 0px 42px; }
 
 // Title
 #header-content {
-  background: url(../images/logo.png) 0 0 no-repeat;
+  // Ti change remove background
+  // background: url(../images/logo.png) 0 0 no-repeat;
   color: #fff;
   font-family: $docs-font;
   line-height: 20px;
-  margin: 10px 0 0 8px;
-  padding-left: 21px;
+  // Ti change margin and padding.
+  // margin: 10px 0 0 8px;
+  // padding-left: 21px;
   font-size: 1.1em;
   // Make it all appear in one line in IE7
   white-space: nowrap;
+  #header-content-logo {
+      float: left;
+  }
   a {
     color: #fff; }
   strong {

@@ -15,11 +15,13 @@ Ext.define("Docs.Syntax", {
         Ext.Array.forEach(Ext.query("pre", root.dom || root), function(pre) {
             pre = Ext.get(pre);
 
-            if (pre.child("code")) {
-                // Don't prettify inline examples that have preview enabled.
-                if (!(pre.hasCls("inline-example") && pre.hasCls("preview"))) {
-                    pre.addCls("prettyprint");
-                }
+            // TiDuck change: Removed condition/requirement that pre tags need to be 
+            // nested in code element to get prettyprinted. Our code samples aren't generated
+            // that way.
+
+            // Don't prettify inline examples that have preview enabled.
+            if (!(pre.hasCls("inline-example") && pre.hasCls("preview"))) {
+                pre.addCls("prettyprint");
             }
             else if (!pre.parent(".CodeMirror") && !pre.hasCls("hierarchy")) {
                 // For normal pre-s add "notpretty" class so they can be

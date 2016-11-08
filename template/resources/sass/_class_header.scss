@@ -12,25 +12,36 @@
     padding-bottom: 5px;
     padding-top: 2px;
     border-bottom: 1px #f1f1f1;
-    font-size: 2em;
-    color: $docs-heading-color;
+	// Ti change. ToDo: Check color.
+    /*font-size: 16pt;*/
+    color: #66ab16;
 
+    // Icons for different class types
     .class-source-link {
-      color: $docs-heading-color;
-      margin-left: -3px;
-      padding: 0.1em 0 0.4em 2.3em; }
+      color: #66ab16; // Same color as h1 itself
+        // Ti changes
+		padding-top: 7px;	}
+    &.class a {
+      //background: url(../images/class-m.png) no-repeat 0 8px;
+      }
+    &.component a {
+      background: url(../images/component-m.png) no-repeat 0 -5px; }
+    &.class .class-source-link {
+      background: url(../images/class-m.png) no-repeat 0 -5px; }
+    &.component .class-source-link {
+      background: url(../images/component-m.png) no-repeat 0 -5px; }
+    &.singleton .class-source-link {
+      background: url(../images/singleton-m.png) no-repeat 0 -5px; }
 
-    // The auto-generated CSS for class icons also applies here.
-
-    // gray style for xtypes and enum summary
-    .xtype, .enum {
+    // gray style for xtypes listing
+    span {
       color: #929292;
       letter-spacing: 0;
       margin-left: 10px;
       font-size: 0.5em; }
 
     // View source... tooltip when hovering class name
-    .class-source-tip {
+    span.class-source-tip {
       font-size: 0.5em;
       position: absolute;
       top: 35px;
@@ -40,7 +51,7 @@
       &.hover {
         color: #929292; } }
 
-    .signature span {
+    .signature {
       font-weight: bold;
       text-transform: uppercase;
       font-size: 0.4em;
@@ -48,19 +59,21 @@
       @include border-radius(3px);
       margin-left: 2px;
       margin-right: 0;
-      padding: 0 5px; } }
+      padding: 0 5px;
+      @include signature-colors; } }
 
   .guide-container {
     table {
-      font-size: 0.9em;
+      max-width: 900px;
+      font-size: 1.0em;
       th {
         background-color: #eee;
         font-weight: bold;
-        text-align: center;
+        text-align: left;
         color: #333;
-        padding: 1px 2px; }
+        padding: 3px 5px; }
       td {
-        padding: 3px; } } }
+        padding: 3px 5px; } } }
 
   // The print button
   .print {

@@ -33,34 +33,41 @@ Ext.define('Docs.view.Viewport', {
             {
                 region: 'north',
                 id: 'north-region',
-                height: 65,
+				// Ti changed height
+                height: 45,
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
                 },
                 items: [
-                    {
-                        height: 37,
-                        xtype: 'container',
-                        layout: 'hbox',
-                        items: [
-                            {
-                                xtype: 'docheader'
+					// Ti change -- removed login container, adjusted height
+                    // Ti change -- remove logo, drop-down and search for unified nav
+					/* {
+						xtype: 'container',
+                        id: 'doc-topnav-container',
+						height: 50,
+						layout: 'hbox',
+						items: [
+                            { 
+                                xtype: 'component',
+                                id: 'doc-logo',
+                                html: '<span>Documentation</span>',
+                                width: 170,
+                                height: 30,
                             },
-                            {   xtype: 'container', flex: 1 },
-                            {
-                                id: 'loginContainer',
-                                xtype: 'authHeaderForm',
-                                padding: '10 20 0 0'
-                            },
-                            {
-                                xtype: 'searchcontainer',
-                                id: 'search-container',
-                                width: 230,
-                                margin: '4 0 0 0'
-                            }
-                        ]
-                    },
+							{
+								xtype: 'docheader',
+                                margin: '12 0 0 0'
+							},
+							{   xtype: 'container', flex: 1 },
+							{
+							   xtype: 'searchcontainer',
+							   id: 'search-container',
+							   width: 224,
+							   margin: '12 0 0 0'
+							}
+						]
+					},*/
                     {
                         xtype: 'doctabs'
                     }
@@ -68,7 +75,8 @@ Ext.define('Docs.view.Viewport', {
             },
             {
                 region: 'center',
-                layout: 'border',
+				layout: 'border',
+                minWidth: 800,
                 items: [
                     {
                         region: 'west',
@@ -76,7 +84,8 @@ Ext.define('Docs.view.Viewport', {
                         id: 'treecontainer',
                         border: 1,
                         bodyPadding: '10 9 4 9',
-                        width: 240
+						// Ti changed width
+                        width: 224
                     },
                     {
                         region: 'center',
@@ -156,7 +165,9 @@ Ext.define('Docs.view.Viewport', {
             {
                 region: 'south',
                 id: 'footer',
-                height: 20,
+				// Ti changed height. 
+                // Hide for unified nav
+                height: 0,
                 contentEl: 'footer-content'
             }
         ];

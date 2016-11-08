@@ -1,0 +1,467 @@
+@import "mixins";
+$appc-gray: #666666;
+$appc-gray-bg: #6E6D71;
+$appc-red: #9B1C1F;
+
+#north-region {
+    background-image: url(../images/bkgd.png);
+    background-repeat: repeat-x;
+
+    #search-field input {
+        font-family: "Helvetica Neue" !important;
+    }
+}
+
+#header-content {
+    padding:  10px 0 0 15px;
+}
+
+.x-border-layout-ct{
+    background-color: #FFF !important;
+}
+
+#welcomeindex {
+    overflow: hidden !important;
+}
+
+// hide expand-collapse for guides
+.thumb-list h2{
+    cursor: auto !important;
+    div {
+        background: none !important;
+        padding: 4px !important;
+    }
+}
+
+#center-container{
+    h1 {
+        color: $appc-red !important;
+        font-size: 16pt !important;
+        a {
+            color: $appc-red !important;
+        }
+
+        .typestr {
+            font-weight: bold;
+        }
+    }
+
+    .thumb-list {
+        h2 {
+            border-bottom: 2px solid $appc-gray !important;
+
+            div {
+                color: #314e64 !important;
+                font-size: 14pt !important;
+            }
+        }
+
+        dd h4 {
+            font-size: 10pt !important;
+            padding: 5px 0 !important;
+        }
+    }
+
+    .class-categories {
+        .section {
+            background: none;
+            border: none;
+
+            h1 {
+                color: $appc-gray !important;
+            }
+
+            h3 {
+                color: black;
+                font-size: 14pt;
+            }
+
+            .links a {
+                //color: #a7a9ac;
+            }
+        }
+    }
+}
+
+
+.class-overview .x-toolbar-default {
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    border-bottom-style: solid;
+    border-bottom-color: #cccccc;
+    padding-bottom: 6px;
+    .hover-menu-button {
+        background: none;
+    }
+}
+.hover-menu {
+    background-color: #f1f1f1 !important;
+}
+
+.x-grid-row-selected .x-grid-cell, .x-grid-row-selected .x-grid-rowwrap-div {
+    border-style: none !important;
+    border-color: transparent !important;
+    background-color: transparent !important;
+    div, a {
+        color: $appc-red !important;
+        font-weight: bold;
+    }
+}
+
+.platform-android {
+    background-image: url(../images/icon_android.png);
+}
+
+.platform-iphone {
+    background-image: url(../images/icon_iphone.png);
+}
+
+.platform-ipad {
+    background-image: url(../images/icon_ipad.png);
+}
+
+.platform-mobileweb {
+    background-image: url(../images/icon_mobileweb.png);
+}
+
+.platform-tizen {
+    background-image: url(../images/icon_tizen.png);
+}
+
+.platform-blackberry {
+    background-image: url(../images/icon_blackberry.png);
+}
+
+.platform-windowsphone {
+    background-image: url(../images/icon_windowsphone.png);
+}
+
+.sidebar {
+    width: 20%;
+    float: right;
+    .sidebar-platforms {
+        clear: right;
+        float: right;
+        color: $appc-gray !important;
+
+        li    {
+            list-style: none !important;
+            height: 40px;
+            background-position: 100% 50%;
+            background-repeat: no-repeat;
+            padding: 12px 40px 0 0;
+            text-align: right;
+            font-size: 12pt;
+        }
+
+    }
+}
+.hierarchy {
+    width: 80%;
+    clear: none;
+}
+
+.doc-contents, .members{
+    .platforms {
+        @include clearfix;
+
+        li {
+            width: 40px;
+            height: 40px;
+            background-repeat: no-repeat;
+            float: left;
+            list-style: none !important;
+            padding-left: 26px;
+            padding-right: 34px;
+            padding-top: 6px;
+        }
+    }
+}
+
+.doc-contents {
+    // hide platforms in class description
+    .platforms {
+        display: none;
+    }
+}
+
+.container ol, .container ul {
+    padding-left: 1em !important;
+}
+#videoindex .thumb-list dd .thumb img {
+    border: none !important;
+}
+
+.doc-table {
+    table,th,td {
+        border: 1px solid #ccc;
+    }
+    th {
+        font-weight: bold;
+        text-align: left;
+        padding: 3px 5px 3px 5px;
+    }
+    th, td {
+        padding: 3px 5px 3px 5px;
+    }
+}
+
+// Class to apply to notes/highlights to paragraphs.
+.note {
+    background-color: #FFFFDD;
+    border-color: #F7DF92;
+    padding: 1em 1em 1em 3em !important;
+    border-radius: 5px;
+    padding-top: 1em !important;
+    padding-bottom: 1em !important;
+    padding-left: 1em !important;
+    width: 95%;
+}
+
+.note:before {
+    content: "Note: ";
+    padding-left: 0px;
+    color: red;
+    font-weight: bold;
+}
+
+#editButton {
+    background-image: url(../images/pencil.png);
+    background-position: 10px;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    border-radius: 5px;
+    color: #555555;
+    display: block;
+    height: 30px;
+    position: absolute;
+    right: 50px;
+    text-align: center;
+    top: 18px;
+    width: 75px;
+}
+
+#editButton span {
+    font-family: 'Open Sans', Helvetica, FreeSans, sans-serif;
+    font-size: 15px;
+    font-weight: normal;
+    right: 15px;
+    position: absolute;
+    text-align: center;
+    top: 5px;
+}
+
+#editButton:hover {
+    background-color: #555555;
+    color: #ffffff;
+}
+
+.classheader #editButton {
+    top: 8px;
+    right: 35px;
+}
+
+#platformComparison {
+    margin: 0 0 0 25px;
+}
+
+#platformComparison th, #platformComparison td {
+   text-align:center;
+   font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+   font-size: 13px;
+   font-weight: bold;
+   border-width: 0;
+   color: #555;
+   padding: 5px;    
+}
+
+.x-toolbar .x-toolbar-text {
+    color: #222;
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+.x-btn-default-toolbar-small .x-btn-inner {
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+.x-form-field, .x-form-display-field {
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+.icon-search-1 {
+    -webkit-font-smoothing: subpixel-antialiased;
+    color: #888888;
+    display: block;
+    height: 45px;
+    line-height: 45px;
+    opacity: 0.80;
+    position: absolute;
+    font-size: 16px;
+    left: 7px;
+}
+
+#appc-docs-search-cancel{
+    color: #888888;
+    position: absolute;
+    right: 7px;
+    font-size: 16px;
+}
+#appc-docs-search-cancel:hover{
+    color: #484850;
+    cursor: pointer;
+}
+
+#appc-docs-search-form {
+  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif !important;
+  font-size: 14px;
+  padding: 5px 25px;
+  width: 200px;
+  border-radius: 16px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #888888;
+}
+
+#appc-docs-search-form:focus{
+  border-color:#66afe9;
+  outline:0;
+  -webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(102,175,233,0.6);
+  box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(102,175,233,0.6);
+}
+
+#appc-docs-products {
+  position: relative;
+  display: inline-block;
+  line-height: 45px;
+  padding: 0 25px;
+}
+
+#appc-docs-products-menu {
+    z-index: 4000 !important;
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    float: left;
+    min-width: 160px;
+    margin: 0;
+    padding: 5px 0 0 0;
+    font-size: 14px;
+    text-align: left;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    background-color: #484850;
+}
+#appc-docs-products-menu a {
+    padding-left: 10px;
+    display: block;
+    color: white;
+}
+#appc-docs-products-menu a:hover {
+    background-color: #343438 !important;
+    box-sizing: border-box;
+}
+
+#appc-docs-search {
+    position: relative;
+    display: inline-block;
+}
+#appc-docs-search-results {
+    z-index: 4000 !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    float: left;
+    width: 250px;
+    margin: 0;
+    padding: 5px 0 0 0;
+    font-size: 14px;
+    text-align: left;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    background-color: #484850;
+    display: none;
+}
+#appc-docs-search-results a {
+    padding-left: 10px;
+    display: block;
+    color: white;
+    overflow: hidden;
+}
+#appc-docs-search-results a:hover {
+    background-color: #343438 !important;
+    box-sizing: border-box;
+}
+
+#appc-docs-results-last {
+    color: #888;
+    background-color: #343438;
+    height: 48px;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    vertical-align: baseline;
+}
+
+#appc-docs-results-prev {
+    font-size: 20px;
+}
+#appc-docs-results-prev:hover, #appc-docs-results-next:hover {
+    color: white;
+    cursor: pointer;
+}
+
+#appc-docs-results-next {
+    font-size: 20px;
+}
+
+#appc-docs-results-stats {
+    padding: 0 50px;
+}
+
+.appc-docs-results-name {
+    font-size: 14px !important;
+    line-height: 150%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.appc-docs-results-fullname {
+    font-size: 12px;
+    line-height: 150%;
+    color: #888;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.taboverflow-center {
+    width: 40px;
+    height: 30px;
+    border-style: solid;
+    text-align: center;
+    vertical-align: middle;
+    border-width: 1px;
+    top: -8px;
+    position: relative;
+    border-color: #cccccc;
+    border-radius: 4px;
+    background-color: #e7e7e7;
+    padding: 5px;
+}
+
+.taboverflow-center:hover {
+    background-color: white;
+    cursor: pointer;
+}
+
+// fix for missing confluence float right
+.confluence-embedded-image.image-right {
+	float: right;
+}

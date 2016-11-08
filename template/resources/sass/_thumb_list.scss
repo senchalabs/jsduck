@@ -11,15 +11,16 @@
     height: 100px;
     margin: 10px;
     width: 300px;
+	  overflow: hidden;
     zoom: 1;
     line-height: 1em;
     &.over {
-      background: #F5FDE3 url(../images/sample-over.gif) no-repeat; }
+      background: #F5FDE3 url(../images/sample-over.png) no-repeat; }
     .thumb {
       float: left;
       height: 90px;
       margin: 5px 0 0 5px;
-      width: 120px;
+      width: 100px;
       img {
         border: 1px solid #ddd;
         max-height: 88px;

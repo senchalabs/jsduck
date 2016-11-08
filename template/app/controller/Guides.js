@@ -96,9 +96,19 @@ Ext.define('Docs.controller.Guides', {
      * @param {Boolean} noHistory  true to disable adding entry to browser history
      */
     loadGuide: function(url, noHistory) {
+        // TIDOC-1507 - Redirect
+        if (url.match(/Open_Source_Attribution_Notice/)) {
+			window.location = 'http://www.appcelerator.com/legal/open-source-attribution';
+			return;
+        }
+
+        if (url.match(/Getting_Started_with_the_Windows_8_SDK/) || url.match(/Getting_Started_with_the_Windows_Phone_SDK/)) {
+			url = '#!/guide/Installing_the_Windows_Phone_SDK';
+        }
+
         Ext.getCmp('card-panel').layout.setActiveItem('guide');
         Ext.getCmp('treecontainer').showTree('guidetree');
-        var m = url.match(/^#!\/guide\/(.*?)(-section-.*)?$/);
+		var m = url.match(/^#!\/guide\/(.*?)(?:-section-(.+))?$/);
         var name = m[1];
         var section = m[2];
         url = "#!/guide/"+name; // ignore section in URL
@@ -152,7 +162,12 @@ Ext.define('Docs.controller.Guides', {
         this.getGuide().setScrollContext(this.activeUrl);
 
         if (section) {
-            this.getGuide().scrollToEl(name+section);
+            if (Docs.isRESTDoc) {
+                this.getGuide().scrollToEl(name+"-section-"+section);
+            } 
+            else {
+                this.getGuide().scrollToEl(decodeURIComponent(section));
+            }
         }
         else {
             this.getGuide().restoreScrollState();

@@ -78,13 +78,33 @@
     p:last-child {
       margin: 0; }
     ul {
-      margin: 0 0 1em 2em;
+      margin: 0 0 1em 1em;
+      p { 
+          margin-bottom: 0.5em; }
       li {
         list-style: disc outside; } }
     ol {
       margin: 0 0 1em 2em;
       li {
-        list-style: decimal outside; } }
+        margin: 0 0 1em;
+        list-style: decimal outside; 
+        ol {
+            margin: 0 0 1em 1em;
+            li {
+                list-style: lower-alpha inside; } } } }
+    ol {
+      margin: 0 0 1em 2em;
+      ul {
+        li {
+          margin: 0 0 1em;
+          list-style: disc outside;
+      li {
+        margin: 0 0 1em;
+        list-style: decimal outside; 
+        ol {
+            margin: 0 0 1em 1em;
+            li {
+                list-style: lower-alpha inside; } } } } } }
     em {
       font-style: italic; }
     strong {
@@ -103,12 +123,13 @@
       font-weight: bold; }
     table {
       margin-bottom: 10px;
-      tr:first-child {
-        td {
-          color: #000;
-          font-weight: bold; } }
+      // Assume rationally constructed tables and don't attempt to override their styling
+      // tr:first-child {
+      //  td {
+      //    color: #000;
+      //    font-weight: bold; } }
       td {
-        color: #484848;
+        color: #222;
         padding: 2px 20px 2px 0; } }
     blockquote {
       padding-left: 1em;
@@ -119,6 +140,7 @@
       @include border-radius(5px);
       color: #314e64;
       font-family: $docs-monospace-font;
+      font-size: 13px;
       padding: 10px 12px;
       line-height: 1.3em;
       margin: 10px 0 14px 0;
@@ -129,6 +151,16 @@
         font-family: $docs-monospace-font; }
       i, em {
         font-style: normal; } } } }
+
+// Work around ugly TOC spacing in exported guides.
+.guide-container .x-panel-body {
+    ul {
+        ul {
+            margin: 0 0 0 1em;
+        }
+    }
+}
+
 
 @import "class_overview";
 
@@ -151,12 +183,12 @@
       li {
         list-style-type: none; } } }
   h1 {
-    background: url(../images/doc-m.png) no-repeat -5px -5px;
-    padding: 10px 0 10px 55px;
+    padding-top: 7px;
     font-family: $docs-heading-font;
     margin-bottom: 16px;
-    font-size: 2em;
-    color: $docs-heading-color; }
+    font-size: 16pt;
+    color: #66ab16;
+  }
   h2 {
     @include guides-h2-heading; }
   h3 {
@@ -188,8 +220,12 @@ p.screenshot {
 
 
 .x-panel-body-default {
-  border-width: 0; }
+  border-width: 0; 
+  font-size: 14px; }
 
+p > code {
+  font-size: 13px;
+}
 
 // Examples
 @import "examples";

@@ -33,19 +33,30 @@ Ext.define('Docs.view.cls.PackageLogic', {
     },
 
     // Comparson method that sorts package nodes before class nodes.
+    // Note changes for Ti, where isObject takes the place of .leaf
+    // because our object models differ... Can this be abstracted?
+    // Also sort top level packages as determined by the topLevelNames dict.
     compare: function(a, b) {
-        if (a.leaf === b.leaf) {
-            var aa = a.text.toLowerCase();
-            var bb = b.text.toLowerCase();
+        var aa, bb;
+        var topLevelNames = { "Global": 0,  "Alloy": 1, "Modules": 2, "Titanium": 3 };
+        if (a.text in topLevelNames && b.text in topLevelNames) {
+            aa = topLevelNames[a.text];
+            bb = topLevelNames[b.text];
+            return aa > bb ? 1 : (aa < bb ? -1 : 0)
+        }
+        if (a.isObject === b.isObject) {
+            aa = a.text.toLowerCase();
+            bb = b.text.toLowerCase();
             return aa > bb ? 1 : (aa < bb ? -1 : 0);
         }
         else {
-            return a.leaf ? 1 : -1;
+            return a.isObject ? 1 : -1;
         }
     },
 
     // When package for the class exists, add class node to that
     // package; otherwise create the package first.
+    // For Ti, add isObject flag.
     addClass: function(cls) {
         if (cls["private"] && !this.showPrivateClasses) {
             this.privates.push(this.classNode(cls));
@@ -57,6 +68,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
             // Just add icon and URL to the node.
             var pkg = this.packages[cls.name];
             var node = this.classNode(cls);
+			pkg.isObject = cls.isObject;
             pkg.iconCls = node.iconCls;
             pkg.url = node.url;
         }
@@ -64,6 +76,7 @@ Ext.define('Docs.view.cls.PackageLogic', {
             var parentName = Docs.ClassRegistry.packageName(cls.name);
             var parent = this.packages[parentName] || this.addPackage(parentName);
             var node = this.classNode(cls);
+			node.isObject = cls.isObject;
             this.addChild(parent, node);
             this.packages[cls.name] = node;
         }
@@ -94,9 +107,11 @@ Ext.define('Docs.view.cls.PackageLogic', {
 
     // Given full doc object for class creates class node
     classNode: function(cls) {
+      url = '#!/api/'
+      url += cls.url || cls.name;
       return {
         text: Docs.ClassRegistry.shortName(cls.name),
-        url: "#!/api/"+cls.name,
+        url: url,
         iconCls: cls.icon,
         cls: cls["private"] ? "private" : "",
         leaf: true,
@@ -108,7 +123,8 @@ Ext.define('Docs.view.cls.PackageLogic', {
     packageNode: function(name) {
       return {
         text: Docs.ClassRegistry.shortName(name),
-        iconCls: "icon-pkg",
+		// Ti change -- class name from 'icon-pkg' to 'icon-class' ... seems kind of arbitrary
+        iconCls: "icon-class",
         leaf: false,
         children: []
       };
