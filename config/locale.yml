@@ -1,0 +1,7 @@
+# -*- encoding: utf-8 -*-
+
+ja:
+    'Returns the value of {@link #cfg-#{cfg[:name]}}.' : '{@link #cfg-#{cfg[:name]}}の値を返します。'
+    'Sets the value of {@link #cfg-#{cfg[:name]}}.'    : '{@link #cfg-#{cfg[:name]}}の値を設定します.'
+    'Fires when the {@link ##{cfg[:id]}} configuration is changed by {@link #method-#{setter_name}}.' : '{@link ##{cfg[:id]}}コンフィグの値が{@link #method-#{setter_name}}で変更された時に発火します。'
+
