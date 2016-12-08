@@ -67,6 +67,8 @@ module JsDuck
 
     # Do all kinds of post-processing on Relations object.
     def post_process(relations, opts)
+      remove_private relations unless opts.private
+
       Process::CircularDeps.new(relations).process_all!
       Process::InheritDoc.new(relations).process_all!
       Process::Versions.new(relations, opts).process_all!
@@ -76,6 +78,14 @@ module JsDuck
       Process::Lint.new(relations).process_all!
       Process::NoDoc.new(relations).process_all!
       relations
+    end
+
+    # Remove classes and members marked as private
+    def remove_private(relations)
+      relations.classes.reject! { |cls| cls.internal_doc[:private] }
+      relations.classes.each do |cls|
+        cls.internal_doc[:members].reject! { |member| member[:private] }
+      end
     end
 
   end
