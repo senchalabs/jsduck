@@ -12,6 +12,11 @@ module JsDuck
       ADAPTER = Js::RKellyAdapter.new
 
       def initialize(input, options={})
+        
+        # Fix for generators
+        input = input.gsub(%r{function *\*}, 'function')
+        input = input.gsub(%r{yield}, '')
+        
         @input = input
       end
 
