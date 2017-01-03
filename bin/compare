@@ -1,0 +1,374 @@
+#!/usr/bin/env ruby
+# Produces diff of two JSDuck exports.
+
+# For running when gem not installed
+$:.unshift File.dirname(File.dirname(__FILE__)) + "/lib"
+
+require "rubygems"
+require "cgi"
+require "optparse"
+require "jsduck/util/json"
+
+options = {
+  :title => "Comparison of Ext 4.0.7 and Ext 4.1.1",
+  :remap => {},
+}
+
+input_files = OptionParser.new do |opts|
+  opts.banner = "Produces diff of two JSDuck exports.\n\n" +
+    "Usage: compare [options] old/classes/ new/classes/ output.html\n\n"
+
+  opts.on("--ignore=FILE", "A file listing members to be ignored") do |file|
+    options[:ignore] = file
+  end
+
+  opts.on("--type=NAME", "Only produce diff of cfg, property, method or event.") do |name|
+    options[:type] = name
+  end
+
+  opts.on("--title=TEXT", "Title for the generated HTML page.",
+    "Defaults to: 'Comparison of Ext 4.0.7 and Ext 4.1.1'") do |text|
+    options[:title] = text
+  end
+
+  opts.on("--show-unchanged", "To list classes that have not changed.",
+    "By default only classes with changes are listed.") do
+    options[:show_unchanged] = true
+  end
+
+  opts.on("--map=A:B", "Maps class A in old/classes/ to class B",
+    "in new/classes/. For example --map Ext.Foo:Ext.NewFoo") do |pair|
+    (a, b) = pair.split(/:/)
+    options[:remap][a] = b
+  end
+
+  opts.on("-h", "--help", "Show this help message") do
+    puts opts
+    exit
+  end
+end.parse!
+
+if input_files.length == 3
+  options[:old_classes] = input_files[0]
+  options[:new_classes] = input_files[1]
+  options[:out_file] = input_files[2]
+else
+  puts "You must specify exactly 3 filenames: old/classes/ new/classes/ output.html"
+  exit 1
+end
+
+
+def read_class(filename)
+  JsDuck::Util::Json.read(filename)
+end
+
+# loops through all members of class
+def each_member(cls)
+  ["members", "statics"].each do |category|
+    cls[category].each_pair do |k, members|
+      members.each do |m|
+        yield m
+      end
+    end
+  end
+end
+
+def discard_docs(cls)
+  each_member(cls) do |m|
+    m["doc"] = nil
+    m["params"] = nil
+  end
+  cls
+end
+
+def read_all_classes(dir)
+  map = {}
+  Dir[dir+"/*.json"].each do |filename|
+    print "."
+    STDOUT.flush
+    cls = discard_docs(read_class(filename))
+    map[cls["name"]] = cls
+    cls["alternateClassNames"].each do |name|
+      map[name] = cls
+    end
+  end
+  puts "OK"
+  map
+end
+
+def read_ignored_members(filename)
+  map = {}
+  IO.read(filename).each_line do |line|
+    map[line.chomp] = true
+  end
+  map
+end
+
+def normal_public_member?(m)
+  !m["private"] && !m["meta"]["protected"] && !m["meta"]["deprecated"] && !m["meta"]["removed"]
+end
+
+def unify_default(v)
+  (v || "undefined").gsub(/"/, "'").sub(/^Ext\.baseCSSPrefix \+ '/, "'x-")
+end
+
+def visibility(m)
+  if m["private"]
+    "private"
+  elsif m["meta"]["protected"]
+    "protected"
+  else
+    "public"
+  end
+end
+
+# Finds equivalent member to given member from class.
+# Returns the member found or nil.
+def find_member(cls, member)
+  cls[member["meta"]["static"] ? "statics" : "members"][member["tagname"]].find do |m|
+    member["name"] == m["name"]
+  end
+end
+
+
+# Compares members of cls1 to cls2.
+# Returns diff array of added, removed and changed members.
+def compare_classes(cls1, cls2)
+  diff = []
+
+  checked_members = {}
+
+  each_member(cls1) do |m1|
+    next unless normal_public_member?(m1) && m1["owner"] == cls1["name"]
+
+    checked_members[m1["id"]] = true
+
+    m2 = find_member(cls2, m1)
+
+    if m2
+      changes = []
+      if m1["type"] != m2["type"]
+        changes << {
+          :what => "type",
+          :a => m1["type"],
+          :b => m2["type"],
+        }
+      end
+      if unify_default(m1["default"]) != unify_default(m2["default"])
+        changes << {
+          :what => "default",
+          :a => unify_default(m1["default"]),
+          :b => unify_default(m2["default"]),
+        }
+      end
+      if visibility(m1) != visibility(m2)
+        changes << {
+          :what => "visibility",
+          :a => visibility(m1),
+          :b => visibility(m2),
+        }
+      end
+
+      if changes.length > 0
+        diff << {
+          :type => m1["tagname"],
+          :name => m1["name"],
+          :what => "changed",
+          :changes => changes,
+        }
+      end
+
+    elsif !m2 && m1["name"] != "constructor" && m1["name"] != ""
+      other = nil
+      ["cfg", "property", "method", "event"].each do |g|
+        other = other || cls2["members"][g].find {|m2| m2["name"] == m1["name"] }
+        other = other || cls2["statics"][g].find {|m2| m2["name"] == m1["name"] }
+      end
+      diff << {
+        :type => m1["tagname"],
+        :name => m1["name"],
+        :what => "removed",
+        :other => other ? {
+          :type => other["tagname"],
+          :static => other["meta"]["static"],
+          :private => other["private"],
+          :protected => other["meta"]["protected"],
+        } : nil
+      }
+    end
+  end
+
+  each_member(cls2) do |m2|
+    next unless normal_public_member?(m2) && m2["owner"] == cls2["name"] && !checked_members[m2["id"]]
+
+    m1 = find_member(cls1, m2)
+
+    if m1
+      changes = []
+      if visibility(m1) != visibility(m2)
+        changes << {
+          :what => "visibility",
+          :a => visibility(m1),
+          :b => visibility(m2),
+        }
+      end
+
+      if changes.length > 0
+        diff << {
+          :type => m2["tagname"],
+          :name => m2["name"],
+          :what => "changed",
+          :changes => changes,
+        }
+      end
+
+    elsif !m1 && m2["name"] != "constructor" && m2["name"] != ""
+      diff << {
+        :type => m2["tagname"],
+        :name => m2["name"],
+        :what => "added",
+      }
+    end
+  end
+
+  diff
+end
+
+
+old_classes = read_all_classes(options[:old_classes])
+new_classes = read_all_classes(options[:new_classes])
+ignored_members = options[:ignore] ? read_ignored_members(options[:ignore]) : {}
+
+diff_data = []
+old_classes.each_pair do |name, cls|
+  # only go through classes, not alternate names
+  if name == cls["name"] && !cls["private"]
+    if options[:remap][name]
+      new_cls = new_classes[options[:remap][name]]
+    else
+      new_cls = new_classes[name]
+    end
+
+    diff_data << {
+      :name => cls["name"],
+      :found => (new_cls || ignored_members[name]) ? :both : :old,
+      :new_name => new_cls && new_cls["name"],
+      :diff => new_cls ? compare_classes(cls, new_cls) : [],
+    }
+  end
+end
+
+new_classes.each_pair do |name, cls|
+  if name == cls["name"] && !cls["private"]
+    unless old_classes[name]
+      diff_data << {
+        :name => cls["name"],
+        :found => :new,
+        :diff => [],
+      }
+    end
+  end
+end
+
+# Throw away ignored members and everything except configs
+diff_data.each do |cls|
+  cls[:diff] = cls[:diff].find_all do |m|
+    !ignored_members[cls[:name]+"#"+m[:name]] && (!options[:type] || m[:type] == options[:type])
+  end
+end
+
+# Choose title based on filename
+if options[:out_file] =~ /touch/
+  title = "Comparison of Touch 1.1.1 and Touch 2.0.0"
+else
+  title = "Comparison of Ext 4.0.7 and Ext 4.1.1"
+end
+
+# do HTML output
+html = []
+html << <<-EOHTML
+<!DOCTYPE html>
+<html>
+<head>
+<title>#{options[:title]}</title>
+<style type="text/css">
+body { font-family: Georgia, serif; }
+li h2 { font-size: medium; font-weight: normal; }
+li ul { display: none; }
+b.unchanged { color: green; }
+b.removed { color: red; }
+b.new { color: black; }
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
+<script>
+$(function() {
+    $("h2 > a").live("click", function() {
+        $("ul", $(this).parent().parent()).toggle();
+        return false;
+    });
+});
+</script>
+</head>
+<body>
+<h1>#{options[:title]}</h1>
+EOHTML
+
+html << "<ul>"
+diff_data.sort! {|a, b| a[:name] <=> b[:name] }
+diff_data.each do |cls|
+  if cls[:found] == :both
+    if cls[:diff].length > 0 || options[:show_unchanged]
+      html << "<li>"
+      new_name = (cls[:new_name] == cls[:name] ? "" : " --> " + cls[:new_name])
+      diff_count = cls[:diff].length > 0 ? "(#{cls[:diff].length} changes)" : ""
+      link = cls[:diff].length > 0 ? "<a href='#expand'>#{cls[:name]}</a>" : cls[:name]+" <b class='unchanged'>Unchanged</b>"
+      html << "<h2>#{link} #{new_name} #{diff_count}</h2>"
+      if cls[:diff].length > 0
+        html << "<ul>"
+        cls[:diff].each do |m|
+          html << "<li>"
+          html << m[:what] + " " + m[:type] + " " + m[:name]
+          if m[:other]
+            o = m[:other]
+            stat = o[:static] ? 'static' : ''
+            priv = o[:private] ? 'private' : ''
+            prot = o[:protected] ? 'protected' : ''
+            html << " (found #{stat} #{priv} #{prot} #{o[:type]} with the same name)"
+          elsif m[:changes]
+            m[:changes].each do |c|
+              html << " (#{c[:what]} changed from #{CGI.escapeHTML(c[:a])} to #{CGI.escapeHTML(c[:b])})"
+            end
+          end
+        end
+        html << "</li>"
+      end
+      html << "</li>"
+    end
+  elsif cls[:found] == :old
+    html << "<li>"
+    html << "<h2>" + cls[:name] + " <b class='removed'>Removed</b></h2>"
+    html << "</li>"
+  elsif cls[:found] == :new
+    html << "<li>"
+    html << "<h2>" + cls[:name] + " <b class='new'>New class</b></h2>"
+    html << "</li>"
+  end
+  html << "</li>"
+end
+html << "</ul>"
+
+html << "<h2>Summary</h2>"
+dd = diff_data
+html << "<p>" + dd.find_all {|c| c[:found] == :old }.length.to_s + " classes removed</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :new }.length.to_s + " new classes added</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :both && c[:diff].length == 0 }.length.to_s + " classes exactly the same</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :both && c[:name] == c[:new_name] }.length.to_s + " classes with same name</p>"
+html << "<p>" + dd.find_all {|c| c[:found] == :both && c[:name] != c[:new_name] }.length.to_s + " renamed classes</p>"
+html << "<p>" + dd.find_all {|c| c[:diff].length > 0 }.length.to_s + " classes with changed members</p>"
+html << "<p>" + dd.map {|c| c[:diff].length }.inject {|sum,x| sum + x }.to_s + " changed members</p>"
+
+
+html << "</body>"
+html << "</html>"
+
+File.open(options[:out_file], 'w') {|f| f.write(html.join("\n")) }
