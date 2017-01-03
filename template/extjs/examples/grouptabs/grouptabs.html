@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GroupTabs Example</title>
+    <!-- Ext -->
+    <link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="../shared/example.css" />
+    <link rel="stylesheet" type="text/css" href="../portal/portal.css" />
+    <link rel="stylesheet" type="text/css" href="../ux/css/GroupTabPanel.css" />
+
+    <!-- GC -->
+
+    <script type="text/javascript" src="../../ext.js"></script>
+    <script type="text/javascript" src="all-classes.js"></script>
+
+    <!-- shared example code -->
+    <script type="text/javascript" src="../shared/examples.js"></script>
+    <script type="text/javascript">
+        Ext.Loader.setPath({
+            'Ext.ux': '../ux/',
+            'Ext.app': '../portal/classes/'
+        });
+
+        Ext.require([
+            'Ext.Viewport',
+            'Ext.data.JsonStore',
+            'Ext.tip.QuickTipManager',
+            'Ext.tab.Panel',
+            'Ext.ux.GroupTabPanel',
+            'Ext.grid.*',
+            'Ext.app.PortalColumn',
+            'Ext.app.PortalDropZone',
+            'Ext.app.Portlet',
+            'Ext.app.GridPortlet',
+            'Ext.app.PortalPanel',
+            'Ext.app.ChartPortlet'
+        ]);
+    </script>
+    <script type="text/javascript" src="grouptabs.js"></script>
+
+    <!-- page specific -->
+    <style type="text/css">
+        /* styles for iconCls */
+        .x-icon-tickets {
+            background-image: url('images/tickets.png');
+        }
+        .x-icon-subscriptions {
+            background-image: url('images/subscriptions.png');
+        }
+        .x-icon-users {
+            background-image: url('images/group.png');
+        }
+        .x-icon-templates {
+            background-image: url('images/templates.png');
+        }
+    </style>
+</head>
+<body></body>
+</html>
