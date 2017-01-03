@@ -1,0 +1,107 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+
+    <!-- GC -->
+
+<script type="text/javascript" src="../../ext-all.js"></script>
+<script type="text/javascript">
+Ext.require(['*']);
+
+Ext.onReady(function() {
+    if (window.location.search.toLowerCase().indexOf('nocss3') >= 0) {
+        Ext.supports.CSS3BorderRadius = false;
+        Ext.getBody().addCls('x-nbr x-nlg');
+    }
+
+    p = Ext.create('Ext.panel.Panel', {
+        style: {
+            "float": 'left'
+        },
+        id: 'panel1',
+        frame: true,
+        layout: {
+            type: 'table',
+            columns: 2,
+            tdAttrs: {
+                style: 'padding:2px'
+            }
+        },
+        defaultType: 'button',
+        items: [
+            { text: 'Button 1'},
+            { text: 'Button 2'},
+            { text: 'Button 3'},
+            { text: 'Button 4'}
+        ],
+        renderTo: document.body,
+        title: 'Table layout Panel'
+    });
+
+    p = Ext.create('Ext.window.Window', {
+        closable: false,
+        hidden: false,
+        floating: false,
+        resizable: false,
+        draggable: false,
+        style: {
+            "margin-left": '10px',
+            "float": 'left',
+            position: 'relative'
+        },
+        id: 'panel2',
+        layout: {
+            type: 'table',
+            columns: 2,
+            tdAttrs: {
+                style: 'padding:2px'
+            }
+        },
+        defaultType: 'button',
+        items: [
+            { text: 'Button 1'},
+            { text: 'Button 2'},
+            { text: 'Button 3'},
+            { text: 'Button 4'}
+        ],
+        renderTo: document.body,
+        header: false,
+        fbar: {
+            items: {
+                text: 'Button'
+            }
+        },
+        headerPosition: "bottom"
+    });
+
+    p = Ext.create('Ext.panel.Panel', {
+        style: {
+            "margin-left": '10px',
+            "float": 'left'
+        },
+        id: 'panel3',
+        frame: true,
+        layout: {
+            type: 'table',
+            columns: 2,
+            tdAttrs: {
+                style: 'padding:2px'
+            }
+        },
+        defaultType: 'button',
+        items: [
+            { text: 'Button 1'},
+            { text: 'Button 2'},
+            { text: 'Button 3'},
+            { text: 'Button 4'}
+        ],
+        renderTo: document.body,
+        header: false
+    });
+
+});
+</script>
+</head>
+<body style="padding:10px">
+</body>
+</html>

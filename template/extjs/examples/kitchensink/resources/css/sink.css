@@ -1,0 +1,75 @@
+/* line 71, ../sass/accessories/scss/_pictos.scss */
+.base-pictos {
+  font-family: Pictos;
+  color: transparent;
+  -moz-background-clip: text;
+  -webkit-background-clip: text;
+  -o-background-clip: text;
+  -ms-background-clip: text;
+  -khtml-background-clip: text;
+  background-clip: text;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+@import url("//fonts.googleapis.com/css?family=false:false");
+/* line 3, ../sass/accessories/scss/_shapes.scss */
+.base-shape {
+  display: block;
+  content: '';
+}
+
+/* line 7, ../sass/sink.scss */
+.x-toolbar-sencha {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8fc33a), color-stop(100%, #739b2e));
+  background-image: -webkit-linear-gradient(top, #8fc33a, #739b2e);
+  background-image: -moz-linear-gradient(top, #8fc33a, #739b2e);
+  background-image: -o-linear-gradient(top, #8fc33a, #739b2e);
+  background-image: -ms-linear-gradient(top, #8fc33a, #739b2e);
+  background-image: linear-gradient(top, #8fc33a, #739b2e);
+  border-bottom: 1px solid #567422;
+}
+/* line 11, ../sass/sink.scss */
+.x-toolbar-sencha .x-logo {
+  padding: 10px 10px 10px 31px;
+  background: url(../images/logo.png) no-repeat 10px 11px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 1px 0 #4e691f;
+}
+
+/* line 23, ../sass/sink.scss */
+body > .x-panel > .x-panel-body {
+  background: #E4EAED;
+}
+
+/* line 27, ../sass/sink.scss */
+.x-grid-body {
+  border-bottom: 0 !important;
+}
+
+/* line 32, ../sass/sink.scss */
+#examplePanel-body {
+  background-color: #e4eaed;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 1, color-stop(100%, #f3f6f7), color-stop(100%, rgba(243, 246, 247, 0))), -webkit-gradient(linear, 0% 50%, 1 50%, color-stop(100%, #f3f6f7), color-stop(100%, rgba(243, 246, 247, 0))), -webkit-gradient(linear, 50% 0%, 50% 1, color-stop(100%, rgba(255, 255, 255, 0.3)), color-stop(100%, rgba(243, 246, 247, 0))), -webkit-gradient(linear, 0% 50%, 1 50%, color-stop(100%, rgba(255, 255, 255, 0.3)), color-stop(100%, rgba(243, 246, 247, 0)));
+  background-image: -webkit-linear-gradient(top, #f3f6f7 1px, rgba(243, 246, 247, 0) 1px), -webkit-linear-gradient(left, #f3f6f7 1px, rgba(243, 246, 247, 0) 1px), -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3) 1px, rgba(243, 246, 247, 0) 1px), -webkit-linear-gradient(left, rgba(255, 255, 255, 0.3) 1px, rgba(243, 246, 247, 0) 1px);
+  background-image: -moz-linear-gradient(top, #f3f6f7 1px, rgba(243, 246, 247, 0) 1px), -moz-linear-gradient(left, #f3f6f7 1px, rgba(243, 246, 247, 0) 1px), -moz-linear-gradient(top, rgba(255, 255, 255, 0.3) 1px, rgba(243, 246, 247, 0) 1px), -moz-linear-gradient(left, rgba(255, 255, 255, 0.3) 1px, rgba(243, 246, 247, 0) 1px);
+  background-image: -o-linear-gradient(top, #f3f6f7 1px, rgba(243, 246, 247, 0) 1px), -o-linear-gradient(left, #f3f6f7 1px, rgba(243, 246, 247, 0) 1px), -o-linear-gradient(top, rgba(255, 255, 255, 0.3) 1px, rgba(243, 246, 247, 0) 1px), -o-linear-gradient(left, rgba(255, 255, 255, 0.3) 1px, rgba(243, 246, 247, 0) 1px);
+  background-image: -ms-linear-gradient(top, #f3f6f7 1px, rgba(243, 246, 247, 0) 1px), -ms-linear-gradient(left, #f3f6f7 1px, rgba(243, 246, 247, 0) 1px), -ms-linear-gradient(top, rgba(255, 255, 255, 0.3) 1px, rgba(243, 246, 247, 0) 1px), -ms-linear-gradient(left, rgba(255, 255, 255, 0.3) 1px, rgba(243, 246, 247, 0) 1px);
+  background-image: linear-gradient(top, #f3f6f7 1px, rgba(243, 246, 247, 0) 1px), linear-gradient(left, #f3f6f7 1px, rgba(243, 246, 247, 0) 1px), linear-gradient(top, rgba(255, 255, 255, 0.3) 1px, rgba(243, 246, 247, 0) 1px), linear-gradient(left, rgba(255, 255, 255, 0.3) 1px, rgba(243, 246, 247, 0) 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  background-position: -2px, -2px, -2px, -2px;
+}
+
+/* line 43, ../sass/sink.scss */
+.examples-list .x-grid-cell,
+.examples-list .x-grid-rowwrap-div {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+}

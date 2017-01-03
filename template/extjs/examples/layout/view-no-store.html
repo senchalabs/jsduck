@@ -1,0 +1,31 @@
+<html>
+<head>
+<title>Complex Layout</title>
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+
+    <!-- GC -->
+
+<script type="text/javascript" src="../../ext.js"></script>
+<script type="text/javascript">
+    Ext.require(['*']);
+    Ext.onReady(function() {
+        v = Ext.create('Ext.grid.Panel', {
+            columns: [{
+                dataIndex: 'fieldName'
+            }],
+            height: 100,
+            width: 200,
+            style: {
+                border: '1px solid black'
+            },
+            tpl: '<tpl for="."><div class="itemCls">{fieldName}</div></tpl>',
+            itemSelector: '.itemCls',
+            renderTo: document.body
+        });
+        console.log(v);
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>
