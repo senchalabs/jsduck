@@ -1,0 +1,172 @@
+<project name="extjs" default="build" basedir=".">
+
+    <target name="init-antcontrib">
+        <taskdef resource="net/sf/antcontrib/antlib.xml">
+            <classpath>
+                <pathelement location="${cmd.dir}/lib/ant-contrib-1.0b3.jar"/>
+                <pathelement
+                        location="${cmd..dir}/lib/commons-httpclient-3.0.1.jar"/>
+                <pathelement
+                        location="${cmd.dir}/lib/commons-logging-1.0.4.jar"/>
+                <pathelement location="${cmd.dir}/lib/commons-codec-1.3.jar"/>
+            </classpath>
+        </taskdef>
+    </target>
+
+
+    <target name="init-sencha-cmd" depends="init-antcontrib">
+        <taskdef resource="com/sencha/ant/antlib.xml" classpath="${cmd.dir}/sencha.jar"/>
+    </target>
+
+    <target name="build" depends="init-sencha-cmd">
+        <property name="build.dir" location="${basedir}"/>
+
+        <!--
+            Produce base concatenation for standard distribution files
+        -->
+        <x-sencha-command>
+            compile
+                --ignore=diag
+                --options=debug:true
+                    concatenate
+                        -out=${build.dir}/ext-all-dev.js
+                    and
+                    concatenate
+                        -sandbox=Ext4:x4-
+                        -out=${build.dir}/builds/ext-all-sandbox-dev.js
+                    and
+                    union
+                        -tag=core
+                    and
+                    concatenate
+                        -out=${build.dir}/ext-dev.js
+                    and
+                    concatenate
+                        -out=${build.dir}/builds/ext-core-dev.js
+                    and
+                    union
+                        -tag=foundation
+                    and
+                    concatenate
+                        -out=${build.dir}/builds/ext-foundation-dev.js
+                    and
+                    include
+                        -all
+                    and
+                --options=debug:false
+                    concatenate
+                        -out=${build.dir}/ext-all-debug-w-comments.js
+                    and
+                    concatenate
+                        -sandbox=Ext4:x4-
+                        -out=${build.dir}/builds/ext-all-sandbox-debug-w-comments.js
+                    and
+                    union
+                        -tag=core
+                    and
+                    concatenate
+                        -out=${build.dir}/ext-debug-w-comments.js
+                    and
+                    concatenate
+                        -out=${build.dir}/builds/ext-core-debug-w-comments.js
+                    and
+                    union
+                        -tag=foundation
+                    and
+                    concatenate
+                        -out=${build.dir}/builds/ext-foundation-debug-w-comments.js
+                    and
+                    union
+                        -not
+                        -tag=${build.dir}/core
+                    and
+                    metadata
+                        +append
+                        +alternates
+                        -base-path=${build.dir}
+                        -output-file=${build.dir}/ext-debug-w-comments.js
+                    and
+                    metadata
+                        +append
+                        +alternates
+                        -base-path=${build.dir}
+                        -output-file=${build.dir}/ext-dev.js
+                    and
+                    metadata
+                        +append
+                        +alias
+                        --base-path=${build.dir}
+                        --output-file=${build.dir}/ext-debug-w-comments.js
+                    and
+                    metadata
+                        +append
+                        +alias
+                        --base-path=${build.dir}
+                        --output-file=${build.dir}/ext-dev.js
+        </x-sencha-command>
+
+        <loadfile property="header.text" srcfile="${build.dir}/license.txt"/>
+        <property name="header.comment" value="/*&#10;${header.text}&#10;*/&#10;"/>
+
+        <!--
+            Strip comments from uncompressed builds
+        -->
+
+        <x-strip-js srcfile="${build.dir}/ext-all-debug-w-comments.js"
+                    outfile="${build.dir}/ext-all-debug.js"/>
+
+        <x-strip-js srcfile="${build.dir}/ext-debug-w-comments.js"
+                    outfile="${build.dir}/ext-debug.js"/>
+
+        <x-strip-js srcfile="${build.dir}/builds/ext-core-debug-w-comments.js"
+                    outfile="${build.dir}/builds/ext-core-debug.js"/>
+
+        <x-strip-js srcfile="${build.dir}/builds/ext-foundation-debug-w-comments.js"
+                    outfile="${build.dir}/builds/ext-foundation-debug.js"/>
+
+        <x-strip-js srcfile="${build.dir}/builds/ext-all-sandbox-debug-w-comments.js"
+                    outfile="${build.dir}/builds/ext-all-sandbox-debug.js"/>
+        <!--
+            Apply yui compressor
+        -->
+        <x-compress-js
+                srcfile="${build.dir}/ext-all-debug.js"
+                outfile="${build.dir}/ext-all.js"/>
+
+        <x-compress-js
+                srcfile="${build.dir}/ext-debug.js"
+                outfile="${build.dir}/ext.js"/>
+
+        <x-compress-js
+                srcfile="${build.dir}/builds/ext-core-debug.js"
+                outfile="${build.dir}/builds/ext-core.js"/>
+
+        <x-compress-js
+                srcfile="${build.dir}/builds/ext-foundation-debug.js"
+                outfile="${build.dir}/builds/ext-foundation.js"/>
+
+        <x-compress-js
+                srcfile="${build.dir}/builds/ext-all-sandbox-debug.js"
+                outfile="${build.dir}/builds/ext-all-sandbox.js"/>
+
+        <!--
+            Add license headers
+        -->
+
+        <for param="file">
+            <path>
+                <fileset dir="${build.dir}" includes="*.js"/>
+                <fileset dir="${build.dir}/builds" includes="*.js"/>
+            </path>
+            <sequential>
+                <move file="@{file}" tofile="@{file}.tmp"/>
+                <concat destfile="@{file}">
+                    <header>${header.comment}</header>
+                    <fileset file="@{file}.tmp"/>
+                </concat>
+                <delete file="@{file}.tmp"/>
+            </sequential>
+        </for>
+    </target>
+
+</project>
