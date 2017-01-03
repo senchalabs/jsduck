@@ -1,0 +1,200 @@
+<html>
+	<head>
+		<title>Jasmine - Unit Testing</title>
+		<link href="http://alexgorbatchev.com/pub/sh/current/styles/shCore.css" rel="stylesheet" type="text/css" />
+		<link href="http://alexgorbatchev.com/pub/sh/current/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js" type="text/javascript"></script>
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js" type="text/javascript"></script>
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushXml.js" type="text/javascript"></script>
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushBash.js" type="text/javascript"></script>
+		<style type="text/css">
+			.new-page {page-break-before: always;}
+		</style>
+	</head>
+	<body>
+
+	<h2>I. Introduction:</h2>
+	<p>In this tutorial we will take an existing Ext application and introduce the Jasmine assertion library for unit
+		testing. Readers must be familiar with JavaScript, ExtJS 4, the MVC architecture as well as the fundamentals of
+		HTML, CSS, and using resources.</p>
+		<p><b>Why Test?</b>
+		There are many reasons to test applications. Tests can verify an application's functionality to eliminate the
+			need to enumerate all the use cases manually. Also, if the application were to be refactored, or updated,
+			the tests could verify that the changes did not introduce new bugs into the system</p>
+
+	<h2>II. Getting started.</h2>
+	<p>For this tutorial, use the &quot;simple&quot; example of the MVC in the ExtJS bundle — found under
+		&lt;ext&gt;/examples/app/simple. Copy the simple folder to your workspace or desktop.</p>
+	<p>Add these folders:</p>
+	<pre class="brush: bash shell; toolbar: false; gutter: false">
+		&lt;simple dir>/app-test
+		&lt;simple dir>/app-test/specs</pre>
+	<p>Download and extract the Jasmine standalone library into the app-test folder.
+		<a href="http://pivotal.github.com/jasmine/download.html">Link</a></p>
+	<p>Create these files (leave them empty for now, you will fill them in next)</p>
+	<pre class="brush: bash shell; toolbar: false; gutter: false">
+		&lt;simple dir>/app-test.js
+		&lt;simple dir>/run-tests.html</pre>
+	<p>Your project should look like this now:</p>
+	<img src="folder.jpg"/>
+
+	<p class="new-page">Now that you have the files and folders setup, fill in the test-running environment. Open the run-tests.html
+		and put the following markup into it:</p>
+	<pre class="brush: xml; toolbar: false; gutter: false;">
+&lt;html>
+&lt;head>
+	&lt;title id="page-title">Tester&lt;/title>
+
+	&lt;link rel="stylesheet" type="text/css" href="app-test/lib/jasmine-1.1.0/jasmine.css">
+	
+	&lt;script type="text/javascript" src="extjs/ext-debug.js">&lt;/script>
+
+	&lt;script type="text/javascript" src="app-test/lib/jasmine-1.1.0/jasmine.js">&lt;/script>
+	&lt;script type="text/javascript" src="app-test/lib/jasmine-1.1.0/jasmine-html.js">&lt;/script>
+
+	&lt;!-- include specs here -->
+
+	&lt;!-- test launcher -->
+	&lt;script type="text/javascript" src="app-test.js">&lt;/script>
+
+&lt;/head>
+&lt;body>
+&lt;/body>
+&lt;/html></pre>
+	<p>There are a few key things to remember here: the jasmine resources, the ext framework resource and app-test.js.
+		These will need to be included with your tests (this order is important). You will include the specs
+		(jasmine assertion js files) above the app-test.js and below the rest of the files.</p>
+	<p>Next, open app-test.js and copy this code into it:</p>
+	<pre class="brush: js; toolbar: false; gutter: false;">
+Ext.require('Ext.app.Application');
+
+var APPLICATION = null;
+
+Ext.onReady(function() {
+	APPLICATION = Ext.create('Ext.app.Application', {
+		name: 'AM',
+
+		controllers: [
+			'Users'
+		],
+
+		launch: function() {
+			//include the tests in the test.html head
+			jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+			jasmine.getEnv().execute();
+		}
+	});
+});</pre>
+	<p>The effect of the above code is a global reference to the <i>Application</i> instance and bootstrap for the 
+		jasmine assertion library. This is accomplished by directly constructing the <i>Application</i> object and 
+		storing the reference when the document is ready, bypassing the Ext.application() method.</p>
+	<p><b>Note:</b> this <i>Application</i> definition is not a copy and paste of your regular <i>Application</i>
+		definition in your app.js. This version will only include the controllers, stores, models, etc and when
+		<i>launch</i> is called it will invoke the Jasmine tests.</p>
+	<p>Now should you have a working test environment.</p>
+
+	<h2>III. Writing Tests.</h2>
+	<p>Under the specs folder (&lt;simple&gt;/app-test/specs) create two empty text files named:</p>
+	<pre class="brush: bash shell; toolbar: false; gutter: false;">
+		example.spec.js
+		users.spec.js</pre>
+	<p>Then go back to the <i>run-tests.html</i> file and add these two lines under the comment <i>&quot;&lt;!-- include
+		specs here --&gt;&quot;</i></p>
+	<pre class="brush: xml; first-line: 12; toolbar: false; gutter: false">&lt;!-- include specs here -->
+&lt;script type="text/javascript" src="app-test/specs/example.spec.js">&lt;/script>
+&lt;script type="text/javascript" src="app-test/specs/users.spec.js">&lt;/script></pre>
+	<p><b>Note:</b> You may have noticed a pattern in the file names. Although, not required, its nice to indicate what
+		the file is for. (in this case the double extension of *.spec.js)</p>
+	<p>Start by filling in example.spec.js.  Jasmine's specification syntax is very descriptive. Each suite of tests is
+		contained in a describe function, and each test is defined by an &quot;it&quot; function.</p>
+	<p>Example:</p>
+	<pre class="brush: js; toolbar: false; gutter: false">
+describe("Basic Assumptions", function() {
+
+	it("has ExtJS4 loaded", function() {
+		expect(Ext).toBeDefined();
+		expect(Ext.getVersion()).toBeTruthy();
+		expect(Ext.getVersion().major).toEqual(4);
+	});
+
+
+	it("has loaded AM code",function(){
+		expect(AM).toBeDefined();
+	});
+});</pre>
+	<p>To pass a test (each &quot;it&quot; block) simply call <i>expect(someValue).toBe&lt;something>()</i></p>
+	<p class="new-page">Next a more complicated example. Testing a store, which is asynchronous, and retrieved from a Controller. (This
+		is where that global application reference will come in handy)</p>
+	<pre class="brush: js; toolbar: false; gutter: false">
+describe("Users", function() {
+	var store = null, ctlr = null;
+
+	beforeEach(function(){
+		if(!ctlr) ctlr = APPLICATION.getController('Users');
+		if(!store) store = ctlr.getStore('Users');
+
+		expect(store).toBeTruthy();
+
+		waitsFor(
+			function(){ return !store.isLoading(); },
+			"load never completed",
+			4000
+		);
+	});
+
+	it("should have users",function(){
+		expect(store.getCount()).toBeGreaterThan(1);
+	});
+
+	it("should add and be able to get", function(){
+		store.add(Ext.create('AM.model.User', {
+			name: "John Doe",
+			email: "john.doe@anon.net"
+		}));
+
+		var user = store.findRecord('name', 'John Doe');
+
+		expect(user).toBeTruthy();
+		expect(user.get('email')).toBe('john.doe@anon.net');
+	});
+
+	it("should open the editor window", function(){
+		var grid = Ext.ComponentQuery.query('userlist')[0];
+
+		ctlr.editUser(grid,store.getAt(0));
+
+		var edit = Ext.ComponentQuery.query('useredit')[0];
+
+		expect(edit).toBeTruthy();
+		if(edit)edit.destroy();
+	});
+
+});</pre>
+	<p class="new-page">Notice the &quot;beforeEach&quot; function (this will be called before each &quot;it&quot;). This function sets
+		up the stage for each test, and this example:
+		<ol>
+			<li>gets a <i>Store</i> from a <i>Controller</i></li>
+			<li>asserts that the store was successfully retrieved (not null or undefined)</li>
+			<li>waits for the store to complete loading &mdash; see the &quot;waitFor&quot; function &mdash; This store
+				auto loads data when its constructed: do not run tests before its ready.</li>
+		</ol>
+	</p>
+
+
+	<h2>IV. Automatting.</h2>
+	<p>Combining this with PhantomJS allows us to run these tests from the command line or from a cron job. The provided
+		<i>run-jasmine.js</i> in the PhantomJS distribution is all that is needed. (you can tweak it to make the output suit
+		your needs, <a href="run-jasmine.js">here</a> is an example tweaked version )</p>
+	<p>Example command line:</p>
+	<pre class="brush: bash shell; toolbar: false; gutter: false">phantomjs run-jasmine.js http://localhost/app/run-tests.html</pre>
+	<p>You will need to run the tests from a web server because XHR's cannot be made from the file:// protocol</p>
+
+	<p><b>About the Author:</b>
+	<a href="http://jonathangrimes.com">Jonathan Grimes</a> (<a href="http://www.facebook.com/jonathan.grimes">FB</a>,<a href="http://twitter.com/jsg2021">Tw</a>,<a href="https://plus.google.com/u/0/102578638400305127370/about">G+</a>) is a software engineer at <a href="http://nextthought.com">NextThought</a>, a technology start-up company that is currently building an integrated platform for online education. </p>
+		
+	<script type="text/javascript"> SyntaxHighlighter.all() </script>
+</body>
+
+</html>
+
+
