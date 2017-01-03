@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-ux-grid-menu-ListMenu'>/**
+</span> * @class Ext.ux.grid.menu.ListMenu
+ * @extends Ext.menu.Menu
+ * This is a supporting class for {@link Ext.ux.grid.filter.ListFilter}.
+ * Although not listed as configuration options for this class, this class
+ * also accepts all configuration options from {@link Ext.ux.grid.filter.ListFilter}.
+ */
+Ext.define('Ext.ux.grid.menu.ListMenu', {
+    extend: 'Ext.menu.Menu',
+
+<span id='Ext-ux-grid-menu-ListMenu-cfg-labelField'>    /**
+</span>     * @cfg {String} labelField
+     * Defaults to 'text'.
+     */
+    labelField :  'text',
+<span id='Ext-ux-grid-menu-ListMenu-cfg-paramPrefix'>    /**
+</span>     * @cfg {String} paramPrefix
+     * Defaults to 'Loading...'.
+     */
+    loadingText : 'Loading...',
+<span id='Ext-ux-grid-menu-ListMenu-cfg-loadOnShow'>    /**
+</span>     * @cfg {Boolean} loadOnShow
+     * Defaults to true.
+     */
+    loadOnShow : true,
+<span id='Ext-ux-grid-menu-ListMenu-cfg-single'>    /**
+</span>     * @cfg {Boolean} single
+     * Specify true to group all items in this list into a single-select
+     * radio button group. Defaults to false.
+     */
+    single : false,
+
+    constructor : function (cfg) {
+        var me = this,
+            options,
+            i,
+            len,
+            value;
+            
+        me.selected = [];
+        me.addEvents(
+<span id='Ext-ux-grid-menu-ListMenu-event-checkchange'>            /**
+</span>             * @event checkchange
+             * Fires when there is a change in checked items from this list
+             * @param {Object} item Ext.menu.CheckItem
+             * @param {Object} checked The checked value that was set
+             */
+            'checkchange'
+        );
+
+        me.callParent([cfg = cfg || {}]);
+
+        if(!cfg.store &amp;&amp; cfg.options) {
+            options = [];
+            for(i = 0, len = cfg.options.length; i &lt; len; i++){
+                value = cfg.options[i];
+                switch(Ext.type(value)){
+                    case 'array':  options.push(value); break;
+                    case 'object': options.push([value.id, value[me.labelField]]); break;
+                    case 'string': options.push([value, value]); break;
+                }
+            }
+
+            me.store = Ext.create('Ext.data.ArrayStore', {
+                fields: ['id', me.labelField],
+                data:   options,
+                listeners: {
+                    load: me.onLoad,
+                    scope:  me
+                }
+            });
+            me.loaded = true;
+            me.autoStore = true;
+        } else {
+            me.add({
+                text: me.loadingText,
+                iconCls: 'loading-indicator'
+            });
+            me.store.on('load', me.onLoad, me);
+        }
+    },
+
+    destroy : function () {
+        var me = this,
+            store = me.store;
+            
+        if (store) {
+            if (me.autoStore) {
+                store.destroyStore();
+            } else {
+                store.un('unload', me.onLoad, me);
+            }
+        }
+        me.callParent();
+    },
+
+<span id='Ext-ux-grid-menu-ListMenu-method-show'>    /**
+</span>     * Lists will initially show a 'loading' item while the data is retrieved from the store.
+     * In some cases the loaded data will result in a list that goes off the screen to the
+     * right (as placement calculations were done with the loading item). This adapter will
+     * allow show to be called with no arguments to show with the previous arguments and
+     * thus recalculate the width and potentially hang the menu from the left.
+     */
+    show : function () {
+        if (this.loadOnShow &amp;&amp; !this.loaded &amp;&amp; !this.store.loading) {
+            this.store.load();
+        }
+        this.callParent();
+    },
+
+<span id='Ext-ux-grid-menu-ListMenu-method-onLoad'>    /** @private */
+</span>    onLoad : function (store, records) {
+        var me = this,
+            gid, itemValue, i, len,
+            listeners = {
+                checkchange: me.checkChange,
+                scope: me
+            };
+
+        Ext.suspendLayouts();
+        me.removeAll(true);
+
+        gid = me.single ? Ext.id() : null;
+        for (i = 0, len = records.length; i &lt; len; i++) {
+            itemValue = records[i].get('id');
+            me.add(Ext.create('Ext.menu.CheckItem', {
+                text: records[i].get(me.labelField),
+                group: gid,
+                checked: Ext.Array.contains(me.selected, itemValue),
+                hideOnClick: false,
+                value: itemValue,
+                listeners: listeners
+            }));
+        }
+
+        me.loaded = true;
+        Ext.resumeLayouts(true);
+        me.fireEvent('load', me, records);
+    },
+
+<span id='Ext-ux-grid-menu-ListMenu-method-getSelected'>    /**
+</span>     * Get the selected items.
+     * @return {Array} selected
+     */
+    getSelected : function () {
+        return this.selected;
+    },
+
+<span id='Ext-ux-grid-menu-ListMenu-method-setSelected'>    /** @private */
+</span>    setSelected : function (value) {
+        value = this.selected = [].concat(value);
+
+        if (this.loaded) {
+            this.items.each(function(item){
+                item.setChecked(false, true);
+                for (var i = 0, len = value.length; i &lt; len; i++) {
+                    if (item.value == value[i]) {
+                        item.setChecked(true, true);
+                    }
+                }
+            }, this);
+        }
+    },
+
+<span id='Ext-ux-grid-menu-ListMenu-method-checkChange'>    /**
+</span>     * Handler for the 'checkchange' event from an check item in this menu
+     * @param {Object} item Ext.menu.CheckItem
+     * @param {Object} checked The checked value that was set
+     */
+    checkChange : function (item, checked) {
+        var value = [];
+        this.items.each(function(item){
+            if (item.checked) {
+                value.push(item.value);
+            }
+        },this);
+        this.selected = value;
+
+        this.fireEvent('checkchange', item, checked);
+    }
+});
+</pre>
+</body>
+</html>

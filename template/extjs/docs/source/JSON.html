@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-JSON'>/**
+</span> * Modified version of [Douglas Crockford's JSON.js][dc] that doesn't
+ * mess with the Object prototype.
+ *
+ * [dc]: http://www.json.org/js.html
+ *
+ * @singleton
+ */
+Ext.JSON = (new(function() {
+    var me = this,
+    encodingFunction,
+    decodingFunction,
+    useNative = null,
+    useHasOwn = !! {}.hasOwnProperty,
+    isNative = function() {
+        if (useNative === null) {
+            useNative = Ext.USE_NATIVE_JSON &amp;&amp; window.JSON &amp;&amp; JSON.toString() == '[object JSON]';
+        }
+        return useNative;
+    },
+    pad = function(n) {
+        return n &lt; 10 ? &quot;0&quot; + n : n;
+    },
+    doDecode = function(json) {
+        return eval(&quot;(&quot; + json + ')');
+    },
+    doEncode = function(o, newline) {
+        // http://jsperf.com/is-undefined
+        if (o === null || o === undefined) {
+            return &quot;null&quot;;
+        } else if (Ext.isDate(o)) {
+            return Ext.JSON.encodeDate(o);
+        } else if (Ext.isString(o)) {
+            return Ext.JSON.encodeString(o);
+        } else if (typeof o == &quot;number&quot;) {
+            //don't use isNumber here, since finite checks happen inside isNumber
+            return isFinite(o) ? String(o) : &quot;null&quot;;
+        } else if (Ext.isBoolean(o)) {
+            return String(o);
+        }
+        // Allow custom zerialization by adding a toJSON method to any object type.
+        // Date/String have a toJSON in some environments, so check these first.
+        else if (o.toJSON) {
+            return o.toJSON();
+        } else if (Ext.isArray(o)) {
+            return encodeArray(o, newline);
+        } else if (Ext.isObject(o)) {
+            return encodeObject(o, newline);
+        } else if (typeof o === &quot;function&quot;) {
+            return &quot;null&quot;;
+        }
+        return 'undefined';
+    },
+    m = {
+        &quot;\b&quot;: '\\b',
+        &quot;\t&quot;: '\\t',
+        &quot;\n&quot;: '\\n',
+        &quot;\f&quot;: '\\f',
+        &quot;\r&quot;: '\\r',
+        '&quot;': '\\&quot;',
+        &quot;\\&quot;: '\\\\',
+        '\x0b': '\\u000b' //ie doesn't handle \v
+    },
+    charToReplace = /[\\\&quot;\x00-\x1f\x7f-\uffff]/g,
+    encodeString = function(s) {
+        return '&quot;' + s.replace(charToReplace, function(a) {
+            var c = m[a];
+            return typeof c === 'string' ? c : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+        }) + '&quot;';
+    },
+
+    //&lt;debug&gt;
+    encodeArrayPretty = function(o, newline) {
+        var len = o.length,
+            cnewline = newline + '   ',
+            sep = ',' + cnewline,
+            a = [&quot;[&quot;, cnewline], // Note newline in case there are no members
+            i;
+
+        for (i = 0; i &lt; len; i += 1) {
+            a.push(Ext.JSON.encodeValue(o[i], cnewline), sep);
+        }
+
+        // Overwrite trailing comma (or empty string)
+        a[a.length - 1] = newline + ']';
+
+        return a.join('');
+    },
+
+    encodeObjectPretty = function(o, newline) {
+        var cnewline = newline + '   ',
+            sep = ',' + cnewline,
+            a = [&quot;{&quot;, cnewline], // Note newline in case there are no members
+            i;
+
+        for (i in o) {
+            if (!useHasOwn || o.hasOwnProperty(i)) {
+                a.push(Ext.JSON.encodeValue(i) + ': ' + Ext.JSON.encodeValue(o[i], cnewline), sep);
+            }
+        }
+
+        // Overwrite trailing comma (or empty string)
+        a[a.length - 1] = newline + '}';
+
+        return a.join('');
+    },
+    //&lt;/debug&gt;
+
+    encodeArray = function(o, newline) {
+        //&lt;debug&gt;
+        if (newline) {
+            return encodeArrayPretty(o, newline);
+        }
+        //&lt;/debug&gt;
+
+        var a = [&quot;[&quot;, &quot;&quot;], // Note empty string in case there are no serializable members.
+            len = o.length,
+            i;
+        for (i = 0; i &lt; len; i += 1) {
+            a.push(Ext.JSON.encodeValue(o[i]), ',');
+        }
+        // Overwrite trailing comma (or empty string)
+        a[a.length - 1] = ']';
+        return a.join(&quot;&quot;);
+    },
+
+    encodeObject = function(o, newline) {
+        //&lt;debug&gt;
+        if (newline) {
+            return encodeObjectPretty(o, newline);
+        }
+        //&lt;/debug&gt;
+
+        var a = [&quot;{&quot;, &quot;&quot;], // Note empty string in case there are no serializable members.
+            i;
+        for (i in o) {
+            if (!useHasOwn || o.hasOwnProperty(i)) {
+                a.push(Ext.JSON.encodeValue(i), &quot;:&quot;, Ext.JSON.encodeValue(o[i]), ',');
+            }
+        }
+        // Overwrite trailing comma (or empty string)
+        a[a.length - 1] = '}';
+        return a.join(&quot;&quot;);
+    };
+    
+<span id='Ext-JSON-method-encodeString'>    /**
+</span>     * Encodes a String. This returns the actual string which is inserted into the JSON string as the literal
+     * expression. **The returned value includes enclosing double quotation marks.**
+     *
+     * To override this:
+     *
+     *     Ext.JSON.encodeString = function(s) {
+     *         return 'Foo' + s;
+     *     };
+     *
+     * @param {String} s The String to encode
+     * @return {String} The string literal to use in a JSON string.
+     * @method
+     */
+    me.encodeString = encodeString;
+
+<span id='Ext-JSON-method-encodeValue'>    /**
+</span>     * The function which {@link #encode} uses to encode all javascript values to their JSON representations
+     * when {@link Ext#USE_NATIVE_JSON} is `false`.
+     * 
+     * This is made public so that it can be replaced with a custom implementation.
+     *
+     * @param {Object} o Any javascript value to be converted to its JSON representation
+     * @return {String} The JSON representation of the passed value.
+     * @method
+     */
+    me.encodeValue = doEncode;
+
+<span id='Ext-JSON-method-encodeDate'>    /**
+</span>     * Encodes a Date. This returns the actual string which is inserted into the JSON string as the literal
+     * expression. **The returned value includes enclosing double quotation marks.**
+     *
+     * The default return format is `&quot;yyyy-mm-ddThh:mm:ss&quot;`.
+     *
+     * To override this:
+     *
+     *     Ext.JSON.encodeDate = function(d) {
+     *         return Ext.Date.format(d, '&quot;Y-m-d&quot;');
+     *     };
+     *
+     * @param {Date} d The Date to encode
+     * @return {String} The string literal to use in a JSON string.
+     */
+    me.encodeDate = function(o) {
+        return '&quot;' + o.getFullYear() + &quot;-&quot;
+        + pad(o.getMonth() + 1) + &quot;-&quot;
+        + pad(o.getDate()) + &quot;T&quot;
+        + pad(o.getHours()) + &quot;:&quot;
+        + pad(o.getMinutes()) + &quot;:&quot;
+        + pad(o.getSeconds()) + '&quot;';
+    };
+
+<span id='Ext-JSON-method-encode'>    /**
+</span>     * Encodes an Object, Array or other value.
+     * 
+     * If the environment's native JSON encoding is not being used ({@link Ext#USE_NATIVE_JSON} is not set,
+     * or the environment does not support it), then ExtJS's encoding will be used. This allows the developer
+     * to add a `toJSON` method to their classes which need serializing to return a valid JSON representation
+     * of the object.
+     * 
+     * @param {Object} o The variable to encode
+     * @return {String} The JSON string
+     */
+    me.encode = function(o) {
+        if (!encodingFunction) {
+            // setup encoding function on first access
+            encodingFunction = isNative() ? JSON.stringify : me.encodeValue;
+        }
+        return encodingFunction(o);
+    };
+
+<span id='Ext-JSON-method-decode'>    /**
+</span>     * Decodes (parses) a JSON string to an object. If the JSON is invalid, this function throws
+     * a SyntaxError unless the safe option is set.
+     *
+     * @param {String} json The JSON string
+     * @param {Boolean} [safe=false] True to return null, false to throw an exception if the JSON is invalid.
+     * @return {Object} The resulting object
+     */
+    me.decode = function(json, safe) {
+        if (!decodingFunction) {
+            // setup decoding function on first access
+            decodingFunction = isNative() ? JSON.parse : doDecode;
+        }
+        try {
+            return decodingFunction(json);
+        } catch (e) {
+            if (safe === true) {
+                return null;
+            }
+            Ext.Error.raise({
+                sourceClass: &quot;Ext.JSON&quot;,
+                sourceMethod: &quot;decode&quot;,
+                msg: &quot;You're trying to decode an invalid JSON String: &quot; + json
+            });
+        }
+    };
+})());
+<span id='Ext-method-encode'>/**
+</span> * Shorthand for {@link Ext.JSON#encode}
+ * @member Ext
+ * @method encode
+ * @inheritdoc Ext.JSON#encode
+ */
+Ext.encode = Ext.JSON.encode;
+<span id='Ext-method-decode'>/**
+</span> * Shorthand for {@link Ext.JSON#decode}
+ * @member Ext
+ * @method decode
+ * @inheritdoc Ext.JSON#decode
+ */
+Ext.decode = Ext.JSON.decode;</pre>
+</body>
+</html>

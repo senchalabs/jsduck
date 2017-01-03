@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-ux-ajax-JsonSimlet'>/**
+</span> * JSON Simlet.
+ */
+Ext.define('Ext.ux.ajax.JsonSimlet', {
+    extend: 'Ext.ux.ajax.DataSimlet',
+    alias: 'simlet.json',
+
+    doGet: function (ctx) {
+        var me = this,
+            data = me.getData(ctx),
+            page = me.getPage(ctx, data),
+            reader = ctx.xhr.options.proxy.reader,
+            ret = me.callParent(arguments), // pick up status/statusText
+            response = {};
+
+        if (reader.root) {
+            response[reader.root] = page;
+            response[reader.totalProperty] = data.length;
+        } else {
+            response = page;
+        }
+
+        if (ctx.groupSpec) {
+            response.summaryData = me.getSummary(ctx, data, page);
+        }
+
+        ret.responseText = Ext.encode(response);
+        return ret;
+    }
+});
+</pre>
+</body>
+</html>
