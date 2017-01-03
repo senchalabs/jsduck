@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-form-CheckboxGroup-css_mixin-extjs-form-checkboxgroup'>/**
+</span> * Creates the base structure of CheckboxGroup.
+ * @member Ext.form.CheckboxGroup
+ */
+@mixin extjs-form-checkboxgroup {
+
+    .#{$prefix}form-checkboxgroup-body {
+        padding: 1px 4px 1px 4px;
+    }
+
+    .#{$prefix}form-invalid {
+        .#{$prefix}form-checkboxgroup-body {
+            border: 1px solid #c30!important;
+            background: transparent repeat-x bottom;
+            background-image: theme-background-image($theme-name, 'grid/invalid_line.gif');
+            padding: 1px 3px 0 3px;
+        }
+    }
+
+    .#{$prefix}check-group-alt {
+        background: adjust-color($base-color, $hue: 2.667deg, $saturation: -7.168%, $lightness: 3.725%);
+
+        border-top:1px dotted adjust-color($base-color, $hue: 17.193deg, $saturation: -40.827%, $lightness: -9.412%);
+        border-bottom:1px dotted adjust-color($base-color, $hue: 17.193deg, $saturation: -40.827%, $lightness: -9.412%);
+    }
+
+    .#{$prefix}form-check-group-label {
+        color: #333;
+
+        border-bottom: 1px solid #333;
+
+        margin: 0 30px 5px 0;
+        padding: 2px;
+    }
+}</pre>
+</body>
+</html>
