@@ -1,0 +1,19 @@
+<?php
+$API = array(
+    'QueryDatabase'=>array(
+        'methods'=>array(
+            'getResults'=>array(
+                'len'=>1
+            ),
+            'createRecord'=>array(
+            	'len'=>1
+            ),
+            'updateRecords'=>array(
+            	'len'=>1
+            ),
+            'destroyRecord'=>array(
+            	'len'=>1
+            )
+        )
+    )
+);
