@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">@function min($value1, $value2) {
+    @if $value1 &gt; $value2 {
+        @return $value2;
+    }
+    @else if $value2 &gt; $value1 {
+        @return $value1;
+    }
+    @return $value1;
+}
+
+@function max($value1, $value2) {
+    @if $value1 &gt; $value2 {
+        @return $value1;
+    }
+    @else if $value2 &gt; $value1 {
+        @return $value2;
+    }
+    @return $value1;
+}
+
+@function top($box) {
+    @return parsebox($box, 1);
+}
+@function right($box) {
+    @return parsebox($box, 2);
+}
+@function bottom($box) {
+    @return parsebox($box, 3);
+}
+@function left($box) {
+    @return parsebox($box, 4);
+}
+@function vertical($box) {
+    @return top($box) + bottom($box);
+}
+@function horizontal($box) {
+    @return left($box) + right($box);
+}
+@function boxmax($box) {
+    @return max(max(top($box), right($box)), max(bottom($box), left($box)));
+}
+@function boxmin($box) {
+    @return min(min(top($box), right($box)), min(bottom($box), left($box)));
+}</pre>
+</body>
+</html>

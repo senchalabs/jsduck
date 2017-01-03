@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-panel-AbstractPanel'>/**
+</span> * @class Ext.panel.AbstractPanel
+ * @private
+ *
+ * A base class which provides methods common to Panel classes across the Sencha product range.
+ *
+ * Please refer to sub class's documentation
+ */
+Ext.define('Ext.panel.AbstractPanel', {
+
+    /* Begin Definitions */
+
+    extend: 'Ext.container.Container',
+
+    mixins: {
+        docking: 'Ext.container.DockingContainer'
+    },
+
+    requires: ['Ext.util.MixedCollection', 'Ext.Element', 'Ext.toolbar.Toolbar'],
+
+    /* End Definitions */
+
+<span id='Ext-panel-AbstractPanel-cfg-baseCls'>    /**
+</span>     * @cfg {String} [baseCls=x-panel]
+     * The base CSS class to apply to this panel's element.
+     */
+    baseCls : Ext.baseCSSPrefix + 'panel',
+
+<span id='Ext-panel-AbstractPanel-cfg-bodyPadding'>    /**
+</span>     * @cfg {Number/String} bodyPadding
+     * A shortcut for setting a padding style on the body element. The value can either be
+     * a number to be applied to all sides, or a normal css string describing padding.
+     * Defaults to &lt;code&gt;undefined&lt;/code&gt;.
+     */
+
+<span id='Ext-panel-AbstractPanel-cfg-bodyBorder'>    /**
+</span>     * @cfg {Boolean} bodyBorder
+     * A shortcut to add or remove the border on the body of a panel. This only applies to a panel which has the {@link #frame} configuration set to `true`.
+     * Defaults to &lt;code&gt;undefined&lt;/code&gt;.
+     */
+
+<span id='Ext-panel-AbstractPanel-cfg-bodyStyle'>    /**
+</span>     * @cfg {String/Object/Function} bodyStyle
+     * Custom CSS styles to be applied to the panel's body element, which can be supplied as a valid CSS style string,
+     * an object containing style property name/value pairs or a function that returns such a string or object.
+     * For example, these two formats are interpreted to be equivalent:&lt;pre&gt;&lt;code&gt;
+bodyStyle: 'background:#ffc; padding:10px;'
+
+bodyStyle: {
+    background: '#ffc',
+    padding: '10px'
+}
+     * &lt;/code&gt;&lt;/pre&gt;
+     */
+
+<span id='Ext-panel-AbstractPanel-cfg-bodyCls'>    /**
+</span>     * @cfg {String/String[]} bodyCls
+     * A CSS class, space-delimited string of classes, or array of classes to be applied to the panel's body element.
+     * The following examples are all valid:&lt;pre&gt;&lt;code&gt;
+bodyCls: 'foo'
+bodyCls: 'foo bar'
+bodyCls: ['foo', 'bar']
+     * &lt;/code&gt;&lt;/pre&gt;
+     */
+
+<span id='Ext-panel-AbstractPanel-property-isPanel'>    /**
+</span>     * @property {Boolean} isPanel
+     * `true` in this class to identify an object as an instantiated Panel, or subclass thereof.
+     */
+    isPanel: true,
+
+    componentLayout: 'dock',
+
+    childEls: [
+        'body'
+    ],
+
+    renderTpl: [
+        // If this Panel is framed, the framing template renders the docked items round the frame
+        '{% this.renderDockedItems(out,values,0); %}',
+        // This empty div solves an IE6/7/Quirks problem where the margin-top on the bodyEl
+        // is ignored. Best we can figure, this is triggered by the previousSibling being
+        // position absolute (a docked item). The goal is to use margins to position the
+        // bodyEl rather than left/top since that allows us to avoid writing a height on the
+        // panel and the body. This in turn allows CSS height to expand or contract the
+        // panel during things like portlet dragging where we want to avoid running a ton
+        // of layouts during the drag operation.
+        (Ext.isIE6 || Ext.isIE7 || Ext.isIEQuirks) ? '&lt;div&gt;&lt;/div&gt;' : '',
+        '&lt;div id=&quot;{id}-body&quot; class=&quot;{baseCls}-body&lt;tpl if=&quot;bodyCls&quot;&gt; {bodyCls}&lt;/tpl&gt;',
+            ' {baseCls}-body-{ui}&lt;tpl if=&quot;uiCls&quot;&gt;',
+                '&lt;tpl for=&quot;uiCls&quot;&gt; {parent.baseCls}-body-{parent.ui}-{.}&lt;/tpl&gt;',
+            '&lt;/tpl&gt;&quot;&lt;tpl if=&quot;bodyStyle&quot;&gt; style=&quot;{bodyStyle}&quot;&lt;/tpl&gt;&gt;',
+            '{%this.renderContainer(out,values);%}',
+        '&lt;/div&gt;',
+        '{% this.renderDockedItems(out,values,1); %}'
+    ],
+
+    bodyPosProps: {
+        x: 'x',
+        y: 'y'
+    },
+
+    // TODO: Move code examples into product-specific files. The code snippet below is Touch only.
+<span id='Ext-panel-AbstractPanel-cfg-dockedItems'>    /**
+</span>     * @cfg {Object/Object[]} dockedItems
+     * A component or series of components to be added as docked items to this panel.
+     * The docked items can be docked to either the top, right, left or bottom of a panel.
+     * This is typically used for things like toolbars or tab bars:
+     * &lt;pre&gt;&lt;code&gt;
+var panel = new Ext.panel.Panel({
+    fullscreen: true,
+    dockedItems: [{
+        xtype: 'toolbar',
+        dock: 'top',
+        items: [{
+            text: 'Docked to the top'
+        }]
+    }]
+});&lt;/code&gt;&lt;/pre&gt;
+     */
+
+    border: true,
+
+<span id='Ext-panel-AbstractPanel-property-emptyArray'>    /**
+</span>     * @private
+     */
+    emptyArray: [],
+
+    initComponent : function() {
+        var me = this;
+
+        //!frame
+        //!border
+
+        if (me.frame &amp;&amp; me.border &amp;&amp; me.bodyBorder === undefined) {
+            me.bodyBorder = false;
+        }
+        if (me.frame &amp;&amp; me.border &amp;&amp; (me.bodyBorder === false || me.bodyBorder === 0)) {
+            me.manageBodyBorders = true;
+        }
+
+        me.callParent();
+    },
+
+    beforeDestroy: function(){
+        this.destroyDockedItems();
+        this.callParent();
+    },
+
+    // @private
+    initItems : function() {
+        this.callParent();
+        this.initDockingItems();
+    },
+
+<span id='Ext-panel-AbstractPanel-method-initRenderData'>    /**
+</span>     * Initialized the renderData to be used when rendering the renderTpl.
+     * @return {Object} Object with keys and values that are going to be applied to the renderTpl
+     * @private
+     */
+    initRenderData: function() {
+        var me = this,
+            data = me.callParent();
+
+        me.initBodyStyles();
+        me.protoBody.writeTo(data);
+        delete me.protoBody;
+
+        return data;
+    },
+
+<span id='Ext-panel-AbstractPanel-method-getComponent'>    /**
+</span>     * Attempts a default component lookup (see {@link Ext.container.Container#getComponent}). If the component is not found in the normal
+     * items, the dockedItems are searched and the matched component (if any) returned (see {@link #getDockedComponent}). Note that docked
+     * items will only be matched by component id or itemId -- if you pass a numeric index only non-docked child components will be searched.
+     * @param {String/Number} comp The component id, itemId or position to find
+     * @return {Ext.Component} The component (if found)
+     */
+    getComponent: function(comp) {
+        var component = this.callParent(arguments);
+        if (component === undefined &amp;&amp; !Ext.isNumber(comp)) {
+            // If the arg is a numeric index skip docked items
+            component = this.getDockedComponent(comp);
+        }
+        return component;
+    },
+
+    getProtoBody: function () {
+        var me = this,
+            body = me.protoBody;
+
+        if (!body) {
+            me.protoBody = body = new Ext.util.ProtoElement({
+                cls: me.bodyCls,
+                style: me.bodyStyle,
+                clsProp: 'bodyCls',
+                styleProp: 'bodyStyle',
+                styleIsText: true
+            });
+        }
+
+        return body;
+    },
+
+<span id='Ext-panel-AbstractPanel-method-initBodyStyles'>    /**
+</span>     * Parses the {@link #bodyStyle} config if available to create a style string that will be applied to the body element.
+     * This also includes {@link #bodyPadding} and {@link #bodyBorder} if available.
+     * @return {String} A CSS style string with body styles, padding and border.
+     * @private
+     */
+    initBodyStyles: function() {
+        var me = this,
+            body = me.getProtoBody(),
+            Element = Ext.Element;
+
+        if (me.bodyPadding !== undefined) {
+            body.setStyle('padding', Element.unitizeBox((me.bodyPadding === true) ? 5 : me.bodyPadding));
+        }
+        if (me.frame &amp;&amp; me.bodyBorder) {
+            if (!Ext.isNumber(me.bodyBorder)) {
+                me.bodyBorder = 1;
+            }
+            body.setStyle('border-width', Element.unitizeBox(me.bodyBorder));
+        }
+    },
+
+    getCollapsedDockedItems: function () {
+        var me = this;
+        return me.collapseMode == 'placeholder' ? me.emptyArray : [ me.getReExpander() ];
+    },
+
+<span id='Ext-panel-AbstractPanel-method-setBodyStyle'>    /**
+</span>     * Sets the body style according to the passed parameters.
+     * @param {Mixed} style A full style specification string, or object, or the name of a style property to set.
+     * @param {String} value If the first param was a style property name, the style property value.
+     * @return {Ext.panel.Panel} this
+     */
+    setBodyStyle: function(style, value) {
+        var me = this,
+            body = me.rendered ? me.body : me.getProtoBody();
+
+        if (Ext.isFunction(style)) {
+            style = style();
+        }
+        if (arguments.length == 1) {
+            if (Ext.isString(style)) {
+                style = Ext.Element.parseStyles(style);     
+            }
+            body.setStyle(style);
+        } else {
+            body.setStyle(style, value);
+        }
+        return me;
+    },
+
+<span id='Ext-panel-AbstractPanel-method-addBodyCls'>    /**
+</span>     * Adds a CSS class to the body element. If not rendered, the class will
+     * be added when the panel is rendered. 
+     * @param {String} cls The class to add
+     * @return {Ext.panel.Panel} this
+     */
+    addBodyCls: function(cls) {
+        var me = this,
+            body = me.rendered ? me.body : me.getProtoBody();
+
+        body.addCls(cls);
+        return me;
+    },
+
+<span id='Ext-panel-AbstractPanel-method-removeBodyCls'>    /**
+</span>     * Removes a CSS class from the body element.
+     * @param {String} cls The class to remove
+     * @return {Ext.panel.Panel} this
+     */
+    removeBodyCls: function(cls) {
+        var me = this,
+            body = me.rendered ? me.body : me.getProtoBody();
+
+        body.removeCls(cls);
+        return me;
+    },
+
+    // inherit docs
+    addUIClsToElement: function(cls) {
+        var me = this,
+            result = me.callParent(arguments);
+
+        me.addBodyCls([Ext.baseCSSPrefix + cls, me.baseCls + '-body-' + cls, me.baseCls + '-body-' + me.ui + '-' + cls]);
+        return result;
+    },
+
+    // inherit docs
+    removeUIClsFromElement: function(cls) {
+        var me = this,
+            result = me.callParent(arguments);
+
+        me.removeBodyCls([Ext.baseCSSPrefix + cls, me.baseCls + '-body-' + cls, me.baseCls + '-body-' + me.ui + '-' + cls]);
+        return result;
+    },
+
+    // inherit docs
+    addUIToElement: function() {
+        var me = this;
+
+        me.callParent(arguments);
+        me.addBodyCls(me.baseCls + '-body-' + me.ui);
+    },
+
+    // inherit docs
+    removeUIFromElement: function() {
+        var me = this;
+
+        me.callParent(arguments);
+        me.removeBodyCls(me.baseCls + '-body-' + me.ui);
+    },
+
+    // @private
+    getTargetEl : function() {
+        return this.body;
+    },
+
+    getRefItems: function(deep) {
+        var items = this.callParent(arguments);
+
+        return this.getDockingRefItems(deep, items);
+    },
+
+    setupRenderTpl: function (renderTpl) {
+        this.callParent(arguments);
+        this.setupDockingRenderTpl(renderTpl);
+    }
+});
+</pre>
+</body>
+</html>

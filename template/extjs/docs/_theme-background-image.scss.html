@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+ * Method which inserts a full background-image property for a theme image.
+ * It checks if the file exists and if it doesn't, it'll throw an error.
+ * By default it will not include the background-image property if it is not found,
+ * but this can be changed by changing the default value of $include-missing-images to
+ * be true.
+ */
+@function theme-background-image($theme-name, $path, $without-url: false, $relative: false) {
+    $exists_image: theme-image($theme-name, $path, true, false);
+
+    @if $exists_image {
+        $exists: theme_image_exists($exists_image);
+
+        @if $exists == true {
+            @return theme-image($theme-name, $path, $without-url, $relative);
+        }
+        @else {
+            @warn &quot;@theme-background-image: Theme image not found: #{$exists_image}&quot;;
+
+            @if $include-missing-images {
+                @return theme-image($theme-name, $path, $without-url, $relative);
+            }
+
+            @return none;
+        }
+    }
+    @else {
+        @warn &quot;@theme-background-image: No arguments passed&quot;;
+    }
+}
+</pre>
+</body>
+</html>
