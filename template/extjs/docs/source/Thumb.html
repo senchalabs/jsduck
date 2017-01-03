@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-slider-Thumb'>/**
+</span> * @class Ext.slider.Thumb
+ * @private
+ * Represents a single thumb element on a Slider. This would not usually be created manually and would instead
+ * be created internally by an {@link Ext.slider.Multi Multi slider}.
+ */
+Ext.define('Ext.slider.Thumb', {
+    requires: ['Ext.dd.DragTracker', 'Ext.util.Format'],
+<span id='Ext-slider-Thumb-property-topThumbZIndex'>    /**
+</span>     * @private
+     * @property {Number} topThumbZIndex
+     * The number used internally to set the z index of the top thumb (see promoteThumb for details)
+     */
+    topZIndex: 10000,
+
+<span id='Ext-slider-Thumb-cfg-slider'>    /**
+</span>     * @cfg {Ext.slider.MultiSlider} slider (required)
+     * The Slider to render to.
+     */
+
+<span id='Ext-slider-Thumb-method-constructor'>    /**
+</span>     * Creates new slider thumb.
+     * @param {Object} [config] Config object.
+     */
+    constructor: function(config) {
+        var me = this;
+
+<span id='Ext-slider-Thumb-property-slider'>        /**
+</span>         * @property {Ext.slider.MultiSlider} slider
+         * The slider this thumb is contained within
+         */
+        Ext.apply(me, config || {}, {
+            cls: Ext.baseCSSPrefix + 'slider-thumb',
+
+<span id='Ext-slider-Thumb-cfg-constrain'>            /**
+</span>             * @cfg {Boolean} constrain True to constrain the thumb so that it cannot overlap its siblings
+             */
+            constrain: false
+        });
+        me.callParent([config]);
+    },
+
+<span id='Ext-slider-Thumb-method-render'>    /**
+</span>     * Renders the thumb into a slider
+     */
+    render: function() {
+        var me = this;
+        me.el = me.slider.innerEl.insertFirst(me.getElConfig());
+        me.onRender();
+    },
+    
+    onRender: function() {
+        if (this.disabled) {
+            this.disable();
+        }
+        this.initEvents();
+    },
+
+    getElConfig: function() {
+        var me = this,
+            slider = me.slider,
+            style = {};
+
+        style[slider.vertical ? 'bottom' : 'left'] = slider.calculateThumbPosition(slider.normalizeValue(me.value)) + '%';
+        return {
+            style: style,
+            id  : this.id,
+            cls : this.cls
+        };
+    },
+
+<span id='Ext-slider-Thumb-method-move'>    /**
+</span>     * @private
+     * move the thumb
+     */
+    move: function(v, animate) {
+        var el = this.el,
+            styleProp = this.slider.vertical ? 'bottom' : 'left',
+            to,
+            from;
+
+        v += '%';
+        
+        if (!animate) {
+            el.dom.style[styleProp] = v;
+        } else {
+            to = {};
+            to[styleProp] = v;
+            
+            if (!Ext.supports.GetPositionPercentage) {
+                from = {};
+                from[styleProp] = el.dom.style[styleProp];
+            }
+            
+            new Ext.fx.Anim({
+                target: el,
+                duration: 350,
+                from: from,
+                to: to
+            });
+        }
+    },
+
+<span id='Ext-slider-Thumb-method-bringToFront'>    /**
+</span>     * @private
+     * Bring thumb dom element to front.
+     */
+    bringToFront: function() {
+        this.el.setStyle('zIndex', this.topZIndex);
+    },
+
+<span id='Ext-slider-Thumb-method-sendToBack'>    /**
+</span>     * @private
+     * Send thumb dom element to back.
+     */
+    sendToBack: function() {
+        this.el.setStyle('zIndex', '');
+    },
+
+<span id='Ext-slider-Thumb-method-enable'>    /**
+</span>     * Enables the thumb if it is currently disabled
+     */
+    enable: function() {
+        var me = this;
+
+        me.disabled = false;
+        if (me.el) {
+            me.el.removeCls(me.slider.disabledCls);
+        }
+    },
+
+<span id='Ext-slider-Thumb-method-disable'>    /**
+</span>     * Disables the thumb if it is currently enabled
+     */
+    disable: function() {
+        var me = this;
+
+        me.disabled = true;
+        if (me.el) {
+            me.el.addCls(me.slider.disabledCls);
+        }
+    },
+
+<span id='Ext-slider-Thumb-method-initEvents'>    /**
+</span>     * Sets up an Ext.dd.DragTracker for this thumb
+     */
+    initEvents: function() {
+        var me = this,
+            el = me.el;
+
+        me.tracker = new Ext.dd.DragTracker({
+            onBeforeStart: Ext.Function.bind(me.onBeforeDragStart, me),
+            onStart      : Ext.Function.bind(me.onDragStart, me),
+            onDrag       : Ext.Function.bind(me.onDrag, me),
+            onEnd        : Ext.Function.bind(me.onDragEnd, me),
+            tolerance    : 3,
+            autoStart    : 300,
+            overCls      : Ext.baseCSSPrefix + 'slider-thumb-over'
+        });
+
+        me.tracker.initEl(el);
+    },
+
+<span id='Ext-slider-Thumb-method-onBeforeDragStart'>    /**
+</span>     * @private
+     * This is tied into the internal Ext.dd.DragTracker. If the slider is currently disabled,
+     * this returns false to disable the DragTracker too.
+     * @return {Boolean} False if the slider is currently disabled
+     */
+    onBeforeDragStart : function(e) {
+        if (this.disabled) {
+            return false;
+        } else {
+            this.slider.promoteThumb(this);
+            return true;
+        }
+    },
+
+<span id='Ext-slider-Thumb-method-onDragStart'>    /**
+</span>     * @private
+     * This is tied into the internal Ext.dd.DragTracker's onStart template method. Adds the drag CSS class
+     * to the thumb and fires the 'dragstart' event
+     */
+    onDragStart: function(e){
+        var me = this;
+
+        me.el.addCls(Ext.baseCSSPrefix + 'slider-thumb-drag');
+        me.dragging = me.slider.dragging = true;
+        me.dragStartValue = me.value;
+
+        me.slider.fireEvent('dragstart', me.slider, e, me);
+    },
+
+<span id='Ext-slider-Thumb-method-onDrag'>    /**
+</span>     * @private
+     * This is tied into the internal Ext.dd.DragTracker's onDrag template method. This is called every time
+     * the DragTracker detects a drag movement. It updates the Slider's value using the position of the drag
+     */
+    onDrag: function(e) {
+        var me       = this,
+            slider   = me.slider,
+            index    = me.index,
+            newValue = me.getValueFromTracker(),
+            above,
+            below;
+
+        // If dragged out of range, value will be undefined
+        if (newValue !== undefined) {
+            if (me.constrain) {
+                above = slider.thumbs[index + 1];
+                below = slider.thumbs[index - 1];
+
+                if (below !== undefined &amp;&amp; newValue &lt;= below.value) {
+                    newValue = below.value;
+                }
+
+                if (above !== undefined &amp;&amp; newValue &gt;= above.value) {
+                    newValue = above.value;
+                }
+            }
+            slider.setValue(index, newValue, false);
+            slider.fireEvent('drag', slider, e, me);
+        }
+    },
+
+    getValueFromTracker: function() {
+        var slider = this.slider,
+            trackPoint = slider.getTrackpoint(this.tracker.getXY());
+
+        // If dragged out of range, value will be undefined
+        if (trackPoint !== undefined) {
+            return slider.reversePixelValue(trackPoint);
+        }
+    },
+
+<span id='Ext-slider-Thumb-method-onDragEnd'>    /**
+</span>     * @private
+     * This is tied to the internal Ext.dd.DragTracker's onEnd template method. Removes the drag CSS class and
+     * fires the 'changecomplete' event with the new value
+     */
+    onDragEnd: function(e) {
+        var me     = this,
+            slider = me.slider,
+            value  = me.value;
+
+        me.el.removeCls(Ext.baseCSSPrefix + 'slider-thumb-drag');
+
+        me.dragging = slider.dragging = false;
+        slider.fireEvent('dragend', slider, e);
+
+        if (me.dragStartValue != value) {
+            slider.fireEvent('changecomplete', slider, value, me);
+        }
+    },
+
+    destroy: function() {
+        Ext.destroy(this.tracker);
+    }
+});
+</pre>
+</body>
+</html>
