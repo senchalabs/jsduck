@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-ux-grid-menu-RangeMenu'>/**
+</span> * @class Ext.ux.grid.menu.RangeMenu
+ * @extends Ext.menu.Menu
+ * Custom implementation of {@link Ext.menu.Menu} that has preconfigured items for entering numeric
+ * range comparison values: less-than, greater-than, and equal-to. This is used internally
+ * by {@link Ext.ux.grid.filter.NumericFilter} to create its menu.
+ */
+Ext.define('Ext.ux.grid.menu.RangeMenu', {
+    extend: 'Ext.menu.Menu',
+
+<span id='Ext-ux-grid-menu-RangeMenu-cfg-fieldCls'>    /**
+</span>     * @cfg {String} fieldCls
+     * The Class to use to construct each field item within this menu
+     * Defaults to:&lt;pre&gt;
+     * fieldCls : Ext.form.field.Number
+     * &lt;/pre&gt;
+     */
+    fieldCls : 'Ext.form.field.Number',
+
+<span id='Ext-ux-grid-menu-RangeMenu-cfg-fieldCfg'>    /**
+</span>     * @cfg {Object} fieldCfg
+     * The default configuration options for any field item unless superseded
+     * by the &lt;code&gt;{@link #fields}&lt;/code&gt; configuration.
+     * Defaults to:&lt;pre&gt;
+     * fieldCfg : {}
+     * &lt;/pre&gt;
+     * Example usage:
+     * &lt;pre&gt;&lt;code&gt;
+fieldCfg : {
+    width: 150,
+},
+     * &lt;/code&gt;&lt;/pre&gt;
+     */
+
+<span id='Ext-ux-grid-menu-RangeMenu-cfg-fields'>    /**
+</span>     * @cfg {Object} fields
+     * The field items may be configured individually
+     * Defaults to &lt;tt&gt;undefined&lt;/tt&gt;.
+     * Example usage:
+     * &lt;pre&gt;&lt;code&gt;
+fields : {
+    gt: { // override fieldCfg options
+        width: 200,
+        fieldCls: Ext.ux.form.CustomNumberField // to override default {@link #fieldCls}
+    }
+},
+     * &lt;/code&gt;&lt;/pre&gt;
+     */
+
+<span id='Ext-ux-grid-menu-RangeMenu-cfg-itemIconCls'>    /**
+</span>     * @cfg {Object} itemIconCls
+     * The itemIconCls to be applied to each comparator field item.
+     * Defaults to:&lt;pre&gt;
+itemIconCls : {
+    gt : 'ux-rangemenu-gt',
+    lt : 'ux-rangemenu-lt',
+    eq : 'ux-rangemenu-eq'
+}
+     * &lt;/pre&gt;
+     */
+    itemIconCls : {
+        gt : 'ux-rangemenu-gt',
+        lt : 'ux-rangemenu-lt',
+        eq : 'ux-rangemenu-eq'
+    },
+
+<span id='Ext-ux-grid-menu-RangeMenu-cfg-fieldLabels'>    /**
+</span>     * @cfg {Object} fieldLabels
+     * Accessible label text for each comparator field item. Can be overridden by localization
+     * files. Defaults to:&lt;pre&gt;
+fieldLabels : {
+     gt: 'Greater Than',
+     lt: 'Less Than',
+     eq: 'Equal To'
+}&lt;/pre&gt;
+     */
+    fieldLabels: {
+        gt: 'Greater Than',
+        lt: 'Less Than',
+        eq: 'Equal To'
+    },
+
+<span id='Ext-ux-grid-menu-RangeMenu-cfg-menuItemCfgs'>    /**
+</span>     * @cfg {Object} menuItemCfgs
+     * Default configuration options for each menu item
+     * Defaults to:&lt;pre&gt;
+menuItemCfgs : {
+    emptyText: 'Enter Filter Text...',
+    selectOnFocus: true,
+    width: 125
+}
+     * &lt;/pre&gt;
+     */
+    menuItemCfgs : {
+        emptyText: 'Enter Number...',
+        selectOnFocus: false,
+        width: 155
+    },
+
+<span id='Ext-ux-grid-menu-RangeMenu-cfg-menuItems'>    /**
+</span>     * @cfg {Array} menuItems
+     * The items to be shown in this menu.  Items are added to the menu
+     * according to their position within this array. Defaults to:&lt;pre&gt;
+     * menuItems : ['lt','gt','-','eq']
+     * &lt;/pre&gt;
+     */
+    menuItems : ['lt', 'gt', '-', 'eq'],
+
+
+    constructor : function (config) {
+        var me = this,
+            fields, fieldCfg, i, len, item, cfg, Cls;
+
+        me.callParent(arguments);
+
+        fields = me.fields = me.fields || {};
+        fieldCfg = me.fieldCfg = me.fieldCfg || {};
+        
+        me.addEvents(
+<span id='Ext-ux-grid-menu-RangeMenu-event-update'>            /**
+</span>             * @event update
+             * Fires when a filter configuration has changed
+             * @param {Ext.ux.grid.filter.Filter} this The filter object.
+             */
+            'update'
+        );
+      
+        me.updateTask = Ext.create('Ext.util.DelayedTask', me.fireUpdate, me);
+    
+        for (i = 0, len = me.menuItems.length; i &lt; len; i++) {
+            item = me.menuItems[i];
+            if (item !== '-') {
+                // defaults
+                cfg = {
+                    itemId: 'range-' + item,
+                    enableKeyEvents: true,
+                    hideLabel: false,
+                    fieldLabel: me.iconTpl.apply({
+                        cls: me.itemIconCls[item] || 'no-icon',
+                        text: me.fieldLabels[item] || '',
+                        src: Ext.BLANK_IMAGE_URL
+                    }),
+                    labelSeparator: '',
+                    labelWidth: 29,
+                    labelStyle: 'position: relative;',
+                    listeners: {
+                        scope: me,
+                        change: me.onInputChange,
+                        keyup: me.onInputKeyUp,
+                        el: {
+                            click: function(e) {
+                                e.stopPropagation();
+                            }
+                        }
+                    },
+                    activate: Ext.emptyFn,
+                    deactivate: Ext.emptyFn
+                };
+                Ext.apply(
+                    cfg,
+                    // custom configs
+                    Ext.applyIf(fields[item] || {}, fieldCfg[item]),
+                    // configurable defaults
+                    me.menuItemCfgs
+                );
+                Cls = cfg.fieldCls || me.fieldCls;
+                item = fields[item] = Ext.create(Cls, cfg);
+            }
+            me.add(item);
+        }
+    },
+
+<span id='Ext-ux-grid-menu-RangeMenu-method-fireUpdate'>    /**
+</span>     * @private
+     * called by this.updateTask
+     */
+    fireUpdate : function () {
+        this.fireEvent('update', this);
+    },
+    
+<span id='Ext-ux-grid-menu-RangeMenu-method-getValue'>    /**
+</span>     * Get and return the value of the filter.
+     * @return {String} The value of this filter
+     */
+    getValue : function () {
+        var result = {}, key, field;
+        for (key in this.fields) {
+            field = this.fields[key];
+            if (field.isValid() &amp;&amp; field.getValue() !== null) {
+                result[key] = field.getValue();
+            }
+        }
+        return result;
+    },
+  
+<span id='Ext-ux-grid-menu-RangeMenu-method-setValue'>    /**
+</span>     * Set the value of this menu and fires the 'update' event.
+     * @param {Object} data The data to assign to this menu
+     */	
+    setValue : function (data) {
+        var me = this,
+            key,
+            field;
+
+        for (key in me.fields) {
+            
+            // Prevent field's change event from tiggering a Store filter. The final upate event will do that
+            field = me.fields[key];
+            field.suspendEvents();
+            field.setValue(key in data ? data[key] : '');
+            field.resumeEvents();
+        }
+
+        // Trigger the filering of the Store
+        me.fireEvent('update', me);
+    },
+
+<span id='Ext-ux-grid-menu-RangeMenu-method-onInputKeyUp'>    /**  
+</span>     * @private
+     * Handler method called when there is a keyup event on an input
+     * item of this menu.
+     */
+    onInputKeyUp: function(field, e) {
+        if (e.getKey() === e.RETURN &amp;&amp; field.isValid()) {
+            e.stopEvent();
+            this.hide();
+        }
+    },
+
+<span id='Ext-ux-grid-menu-RangeMenu-method-onInputChange'>    /**
+</span>     * @private
+     * Handler method called when the user changes the value of one of the input
+     * items in this menu.
+     */
+    onInputChange: function(field) {
+        var me = this,
+            fields = me.fields,
+            eq = fields.eq,
+            gt = fields.gt,
+            lt = fields.lt;
+
+        if (field == eq) {
+            if (gt) {
+                gt.setValue(null);
+            }
+            if (lt) {
+                lt.setValue(null);
+            }
+        }
+        else {
+            eq.setValue(null);
+        }
+
+        // restart the timer
+        this.updateTask.delay(this.updateBuffer);
+    }
+}, function() {
+
+<span id='Ext-ux-grid-menu-RangeMenu-cfg-iconTpl'>    /**
+</span>     * @cfg {Ext.XTemplate} iconTpl
+     * A template for generating the label for each field in the menu
+     */
+    this.prototype.iconTpl = Ext.create('Ext.XTemplate',
+        '&lt;img src=&quot;{src}&quot; alt=&quot;{text}&quot; class=&quot;' + Ext.baseCSSPrefix + 'menu-item-icon ux-rangemenu-icon {cls}&quot; /&gt;'
+    );
+
+});
+</pre>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-draw-engine-SvgExporter'>/**
+</span> * A utility class for exporting a {@link Ext.draw.Surface Surface} to a string
+ * that may be saved or used for processing on the server.
+ *
+ * @singleton
+ */
+Ext.define('Ext.draw.engine.SvgExporter', function(){
+   var commaRe = /,/g,
+       fontRegex = /(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)\s('*.*'*)/,
+       rgbColorRe = /rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/g,
+       rgbaColorRe = /rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,([\d\.]+)\)/g,
+       surface, len, width, height,
+
+   init = function(s){
+       surface = s;
+       len = surface.length;
+       width = surface.width;
+       height = surface.height;
+   },
+   spriteProcessor = {
+       path: function(sprite){
+
+           var attr = sprite.attr,
+               path = attr.path,
+               pathString = '',
+               props, p, pLen;
+
+           if (Ext.isArray(path[0])) {
+               pLen = path.length;
+               for (p = 0; p &lt; pLen; p++) {
+                   pathString += path[p].join(' ');
+               }
+           } else if (Ext.isArray(path)) {
+               pathString = path.join(' ');
+           } else {
+               pathString = path.replace(commaRe,' ');
+           }
+
+           props = toPropertyString({
+               d: pathString,
+               fill: attr.fill || 'none',
+               stroke: attr.stroke,
+               'fill-opacity': attr.opacity,
+               'stroke-width': attr['stroke-width'],
+               'stroke-opacity': attr['stroke-opacity'],
+               &quot;z-index&quot;: attr.zIndex,
+               transform: sprite.matrix.toSvg()
+           });
+
+           return '&lt;path ' + props + '/&gt;';
+       },
+       text: function(sprite){
+
+           // TODO
+           // implement multi line support (@see Svg.js tuneText)
+
+           var attr = sprite.attr,
+               match = fontRegex.exec(attr.font),
+               size = (match &amp;&amp; match[1]) || &quot;12&quot;,
+               // default font family is Arial
+               family = (match &amp;&amp; match[3]) || 'Arial',
+               text = attr.text,
+               factor = (Ext.isFF3_0 || Ext.isFF3_5) ? 2 : 4,
+               tspanString = '',
+               props;
+
+           sprite.getBBox();
+           tspanString += '&lt;tspan x=&quot;' + (attr.x || '') + '&quot; dy=&quot;';
+           tspanString += (size/factor)+'&quot;&gt;';
+           tspanString += Ext.htmlEncode(text) + '&lt;/tspan&gt;';
+
+
+           props = toPropertyString({
+               x: attr.x,
+               y: attr.y,
+               'font-size': size,
+               'font-family': family,
+               'font-weight': attr['font-weight'],
+               'text-anchor': attr['text-anchor'],
+               // if no fill property is set it will be black
+               fill: attr.fill || '#000',
+               'fill-opacity': attr.opacity,
+               transform: sprite.matrix.toSvg()
+           });
+
+
+
+           return '&lt;text '+ props + '&gt;' +  tspanString + '&lt;/text&gt;';
+       },
+       rect: function(sprite){
+
+           var attr = sprite.attr,
+               props =  toPropertyString({
+                   x: attr.x,
+                   y: attr.y,
+                   rx: attr.rx,
+                   ry: attr.ry,
+                   width: attr.width,
+                   height: attr.height,
+                   fill: attr.fill || 'none',
+                   'fill-opacity': attr.opacity,
+                   stroke: attr.stroke,
+                   'stroke-opacity': attr['stroke-opacity'],
+                   'stroke-width':attr['stroke-width'],
+                   transform: sprite.matrix &amp;&amp; sprite.matrix.toSvg()
+               });
+
+           return '&lt;rect ' + props + '/&gt;';
+       },
+       circle: function(sprite){
+
+           var attr = sprite.attr,
+               props = toPropertyString({
+                   cx: attr.x,
+                   cy: attr.y,
+                   r: attr.radius,
+                   fill: attr.translation.fill || attr.fill || 'none',
+                   'fill-opacity': attr.opacity,
+                   stroke: attr.stroke,
+                   'stroke-opacity': attr['stroke-opacity'],
+                   'stroke-width':attr['stroke-width'],
+                   transform: sprite.matrix.toSvg()
+               });
+
+           return '&lt;circle ' + props + ' /&gt;';
+       },
+       image: function(sprite){
+
+           var attr = sprite.attr,
+               props = toPropertyString({
+                   x: attr.x - (attr.width/2 &gt;&gt; 0),
+                   y: attr.y - (attr.height/2 &gt;&gt; 0),
+                   width: attr.width,
+                   height: attr.height,
+                   'xlink:href': attr.src,
+                   transform: sprite.matrix.toSvg()
+               });
+
+           return '&lt;image ' + props + ' /&gt;';
+       }
+   },
+   svgHeader = function(){
+       var svg = '&lt;?xml version=&quot;1.0&quot; standalone=&quot;yes&quot;?&gt;';
+       svg += '&lt;!DOCTYPE svg PUBLIC &quot;-//W3C//DTD SVG 1.1//EN&quot; &quot;http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd&quot;&gt;';
+       return svg;
+   },
+   svgContent = function(){
+       var svg = '&lt;svg width=&quot;'+width+'px&quot; height=&quot;'+height+'px&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot; version=&quot;1.1&quot;&gt;',
+           defs = '', item, itemsLen, items, gradient,
+           getSvgString, colorstops, stop,
+           coll, keys, colls, k, kLen, key, collI, i, j, stopsLen, sortedItems, za, zb;
+
+       items = surface.items.items;
+       itemsLen = items.length;
+
+
+       getSvgString = function(node){
+
+           var childs = node.childNodes,
+               childLength = childs.length,
+               i = 0,
+               attrLength,
+               j,
+               svgString = '', child, attr, tagName, attrItem;
+
+               for(; i &lt; childLength; i++){
+                   child = childs[i];
+                   attr = child.attributes;
+                   tagName = child.tagName;
+
+                   svgString += '&lt;' +tagName;
+
+                   for(j = 0, attrLength = attr.length; j &lt; attrLength; j++){
+                       attrItem = attr.item(j);
+                       svgString += ' '+attrItem.name+'=&quot;'+attrItem.value+'&quot;';
+                   }
+
+                   svgString += '&gt;';
+
+                   if(child.childNodes.length &gt; 0){
+                       svgString += getSvgString(child);
+                   }
+
+                   svgString += '&lt;/' + tagName + '&gt;';
+
+               }
+           return svgString;
+       };
+
+
+       if(surface.getDefs){
+           defs = getSvgString(surface.getDefs());
+       }else{
+           // IE
+           coll = surface.gradientsColl;
+           if (coll) {
+               keys  = coll.keys;
+               colls = coll.items;
+               k     = 0;
+               kLen  = keys.length;
+           }
+
+           for (; k &lt; kLen; k++) {
+               key   = keys[k];
+               collI = colls[k];
+
+               gradient = surface.gradientsColl.getByKey(key);
+               defs += '&lt;linearGradient id=&quot;' + key + '&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;1&quot; y2=&quot;1&quot;&gt;';
+
+               var color = gradient.colors.replace(rgbColorRe, 'rgb($1|$2|$3)');
+               color = color.replace(rgbaColorRe, 'rgba($1|$2|$3|$4)')
+               colorstops = color.split(',');
+               for(i=0, stopsLen = colorstops.length; i &lt; stopsLen; i++){
+                   stop = colorstops[i].split(' ');
+                   color = Ext.draw.Color.fromString(stop[1].replace(/\|/g,','));
+                   defs += '&lt;stop offset=&quot;'+stop[0]+'&quot; stop-color=&quot;' + color.toString() + '&quot; stop-opacity=&quot;1&quot;&gt;&lt;/stop&gt;';
+               }
+               defs += '&lt;/linearGradient&gt;';
+           }
+       }
+
+       svg += '&lt;defs&gt;' + defs + '&lt;/defs&gt;';
+
+       // thats the background rectangle
+       svg += spriteProcessor.rect({
+           attr: {
+                   width: '100%',
+                   height: '100%',
+                   fill: '#fff',
+                   stroke: 'none',
+                   opacity: '0'
+           }
+       });
+
+       // Sort the items (stable sort guaranteed)
+       sortedItems = new Array(itemsLen);
+       for(i = 0; i &lt; itemsLen; i++){
+           sortedItems[i] = i;
+       }
+       sortedItems.sort(function (a, b) {
+           za = items[a].attr.zIndex || 0;
+           zb = items[b].attr.zIndex || 0;
+           if (za == zb) {
+               return a - b;
+           }
+           return za - zb;
+       });
+
+       for(i = 0; i &lt; itemsLen; i++){
+           item = items[sortedItems[i]];
+           if(!item.attr.hidden){
+               svg += spriteProcessor[item.type](item);
+           }
+       }
+
+       svg += '&lt;/svg&gt;';
+
+       return svg;
+   },
+   toPropertyString = function(obj){
+       var propString = '',
+           key;
+
+       for(key in obj){
+
+           if(obj.hasOwnProperty(key) &amp;&amp; obj[key] != null){
+               propString += key +'=&quot;'+ obj[key]+'&quot; ';
+           }
+
+       }
+
+       return propString;
+   };
+
+   return {
+       singleton: true,
+
+<span id='Ext-draw-engine-SvgExporter-method-generate'>       /**
+</span>        * Exports the passed surface to a SVG string representation
+        * @param {Ext.draw.Surface} surface The surface to export
+        * @param {Object} [config] Any configuration for the export. Currently this is
+        * unused but may provide more options in the future
+        * @return {String} The SVG as a string
+        */
+       generate: function(surface, config){
+           config = config || {};
+           init(surface);
+           return svgHeader() + svgContent();
+       }
+   };
+});</pre>
+</body>
+</html>
