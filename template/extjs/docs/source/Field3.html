@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-layout-component-field-Field'>/**
+</span> * Layout class for components with {@link Ext.form.Labelable field labeling}, handling the sizing and alignment of
+ * the form control, label, and error message treatment.
+ * @private
+ */
+Ext.define('Ext.layout.component.field.Field', {
+
+    /* Begin Definitions */
+
+    extend: 'Ext.layout.component.Auto',
+
+    alias: 'layout.field',
+
+    uses: ['Ext.tip.QuickTip', 'Ext.util.TextMetrics', 'Ext.util.CSS'],
+
+    /* End Definitions */
+
+    type: 'field',
+    
+    naturalSizingProp: 'size',
+
+    beginLayout: function(ownerContext) {
+        var me = this,
+            owner = me.owner,
+            widthModel = ownerContext.widthModel,
+            ownerNaturalSize = owner[me.naturalSizingProp],
+            width;
+
+        me.callParent(arguments);
+
+        ownerContext.labelStrategy = me.getLabelStrategy();
+        ownerContext.errorStrategy = me.getErrorStrategy();
+
+        ownerContext.labelContext = ownerContext.getEl('labelEl');
+        ownerContext.bodyCellContext = ownerContext.getEl('bodyEl');
+        ownerContext.inputContext = ownerContext.getEl('inputEl');
+        ownerContext.errorContext = ownerContext.getEl('errorEl');
+
+        // width:100% on an element inside a table in IE6/7 &quot;strict&quot; sizes the content box.
+        // store the input element's border and padding info so that subclasses can take it into consideration if needed
+        if ((Ext.isIE6 || Ext.isIE7) &amp;&amp; Ext.isStrict &amp;&amp; ownerContext.inputContext) {
+            me.ieInputWidthAdjustment = ownerContext.inputContext.getPaddingInfo().width + ownerContext.inputContext.getBorderInfo().width;
+        }
+
+        // perform preparation on the label and error (setting css classes, qtips, etc.)
+        ownerContext.labelStrategy.prepare(ownerContext, owner);
+        ownerContext.errorStrategy.prepare(ownerContext, owner);
+
+        // Body cell must stretch to use up available width unless the field is auto width
+        if (widthModel.shrinkWrap) {
+            // When the width needs to be auto, table-layout cannot be fixed
+            me.beginLayoutShrinkWrap(ownerContext);
+        } else if (widthModel.natural) {
+
+            // When a size specified, natural becomes fixed width unless the inpiutWidth is specified - we shrinkwrap that
+            if (typeof ownerNaturalSize == 'number' &amp;&amp; !owner.inputWidth) {
+                me.beginLayoutFixed(ownerContext, (width = ownerNaturalSize * 6.5 + 20), 'px');
+            }
+
+            // Otherwise it is the same as shrinkWrap
+            else {
+                me.beginLayoutShrinkWrap(ownerContext);
+            }
+            ownerContext.setWidth(width, false);
+        } else {
+            me.beginLayoutFixed(ownerContext, '100', '%');
+        }
+    },
+
+    beginLayoutFixed: function (ownerContext, width, suffix) {
+        var owner = ownerContext.target,
+            inputEl = owner.inputEl,
+            inputWidth = owner.inputWidth;
+
+        owner.el.setStyle('table-layout', 'fixed');
+        owner.bodyEl.setStyle('width', width + suffix);
+        if (inputEl &amp;&amp; inputWidth) {
+            inputEl.setStyle('width', inputWidth + 'px');
+        }
+        ownerContext.isFixed = true;
+    },
+
+    beginLayoutShrinkWrap: function (ownerContext) {
+        var owner = ownerContext.target,
+            inputEl = owner.inputEl,
+            inputWidth = owner.inputWidth;
+
+        if (inputEl &amp;&amp; inputEl.dom) {
+            inputEl.dom.removeAttribute('size');
+            if (inputWidth) {
+                inputEl.setStyle('width', inputWidth + 'px');
+            }
+        }
+        owner.el.setStyle('table-layout', 'auto');
+        owner.bodyEl.setStyle('width', '');
+    },
+
+    finishedLayout: function(ownerContext){
+        var owner = this.owner;
+
+        this.callParent(arguments);        
+        ownerContext.labelStrategy.finishedLayout(ownerContext, owner);
+        ownerContext.errorStrategy.finishedLayout(ownerContext, owner);
+    },
+
+    calculateOwnerHeightFromContentHeight: function(ownerContext, contentHeight) {
+        return contentHeight;
+    },
+
+    measureContentHeight: function (ownerContext) {
+        return ownerContext.el.getHeight();
+    },
+    
+    measureContentWidth: function (ownerContext) {
+        return ownerContext.el.getWidth();
+    },
+
+    measureLabelErrorHeight: function (ownerContext) {
+        return ownerContext.labelStrategy.getHeight(ownerContext) +
+               ownerContext.errorStrategy.getHeight(ownerContext);
+    },
+
+    onFocus: function() {
+        this.getErrorStrategy().onFocus(this.owner);    
+    },
+
+<span id='Ext-layout-component-field-Field-method-getLabelStrategy'>    /**
+</span>     * Return the set of strategy functions from the {@link #labelStrategies labelStrategies collection}
+     * that is appropriate for the field's {@link Ext.form.Labelable#labelAlign labelAlign} config.
+     */
+    getLabelStrategy: function() {
+        var me = this,
+            strategies = me.labelStrategies,
+            labelAlign = me.owner.labelAlign;
+        return strategies[labelAlign] || strategies.base;
+    },
+
+<span id='Ext-layout-component-field-Field-method-getErrorStrategy'>    /**
+</span>     * Return the set of strategy functions from the {@link #errorStrategies errorStrategies collection}
+     * that is appropriate for the field's {@link Ext.form.Labelable#msgTarget msgTarget} config.
+     */
+    getErrorStrategy: function() {
+        var me = this,
+            owner = me.owner,
+            strategies = me.errorStrategies,
+            msgTarget = owner.msgTarget;
+        return !owner.preventMark &amp;&amp; Ext.isString(msgTarget) ?
+                (strategies[msgTarget] || strategies.elementId) :
+                strategies.none;
+    },
+
+<span id='Ext-layout-component-field-Field-property-labelStrategies'>    /**
+</span>     * Collection of named strategies for laying out and adjusting labels to accommodate error messages.
+     * An appropriate one will be chosen based on the owner field's {@link Ext.form.Labelable#labelAlign} config.
+     */
+    labelStrategies: (function() {
+        var base = {
+                prepare: function(ownerContext, owner) {
+                    var cls = owner.labelCls + '-' + owner.labelAlign,
+                        labelEl = owner.labelEl;
+
+                    if (labelEl) {
+                        labelEl.addCls(cls);
+                    }
+                },
+
+                getHeight: function () {
+                    return 0;
+                },
+                
+                finishedLayout: Ext.emptyFn
+            };
+
+        return {
+            base: base,
+
+<span id='Ext-layout-component-field-Field-property-top'>            /**
+</span>             * Label displayed above the bodyEl
+             */
+            top: Ext.applyIf({        
+                        
+                getHeight: function (ownerContext) {
+                    var labelContext = ownerContext.labelContext,
+                        props = labelContext.props,
+                        height = props.height;
+                        
+                    if (height === undefined) {
+                        props.height = height = labelContext.el.getHeight();
+                    }
+
+                    return height;
+                }
+            }, base),
+
+<span id='Ext-layout-component-field-Field-property-left'>            /**
+</span>             * Label displayed to the left of the bodyEl
+             */
+            left: base,
+
+<span id='Ext-layout-component-field-Field-property-right'>            /**
+</span>             * Same as left, only difference is text-align in CSS
+             */
+            right: base
+        };
+    }()),
+
+<span id='Ext-layout-component-field-Field-property-errorStrategies'>    /**
+</span>     * Collection of named strategies for laying out and adjusting insets to accommodate error messages.
+     * An appropriate one will be chosen based on the owner field's {@link Ext.form.Labelable#msgTarget} config.
+     */
+    errorStrategies: (function() {
+        function showTip(owner) {
+            var tip = Ext.layout.component.field.Field.tip,
+                target;
+                
+            if (tip &amp;&amp; tip.isVisible()) {
+                target = tip.activeTarget;
+                if (target &amp;&amp; target.el === owner.getActionEl().dom) {
+                    tip.toFront(true);
+                }
+            }
+        }
+
+        var applyIf = Ext.applyIf,
+            emptyFn = Ext.emptyFn,
+            iconCls = Ext.baseCSSPrefix + 'form-invalid-icon',
+            iconWidth,
+            base = {
+                prepare: function(ownerContext, owner) {
+                    var el = owner.errorEl;
+                    if (el) {
+                        el.setDisplayed(false);
+                    }
+                },
+                getHeight: function () {
+                    return 0;
+                },
+                onFocus: emptyFn,
+                finishedLayout: emptyFn
+            };
+
+        return {
+            none: base,
+
+<span id='Ext-layout-component-field-Field-property-side'>            /**
+</span>             * Error displayed as icon (with QuickTip on hover) to right of the bodyEl
+             */
+            side: applyIf({
+                prepare: function(ownerContext, owner) {
+                    var errorEl = owner.errorEl,
+                        sideErrorCell = owner.sideErrorCell,
+                        displayError = owner.hasActiveError(),
+                        tempEl;
+
+                    // Capture error icon width once
+                    if (!iconWidth) {
+                        iconWidth = (tempEl = Ext.getBody().createChild({style: 'position:absolute', cls: iconCls})).getWidth();
+                        tempEl.remove();
+                    }
+
+                    errorEl.addCls(iconCls);
+                    errorEl.set({'data-errorqtip': owner.getActiveError() || ''});
+                    if (owner.autoFitErrors) {
+                        errorEl.setDisplayed(displayError);
+                    }
+                    // Not autofitting, the space must still be allocated.
+                    else {
+                        errorEl.setVisible(displayError);
+                    }
+
+                    // If we are auto fitting, then hide and show the entire cell
+                    if (sideErrorCell &amp;&amp; owner.autoFitErrors) {
+                        sideErrorCell.setDisplayed(displayError);
+                    }
+                    owner.bodyEl.dom.colSpan = owner.getBodyColspan();
+
+                    // TODO: defer the tip call until after the layout to avoid immediate DOM reads now
+                    Ext.layout.component.field.Field.initTip();
+                },
+                onFocus: showTip
+            }, base),
+
+<span id='Ext-layout-component-field-Field-property-under'>            /**
+</span>             * Error message displayed underneath the bodyEl
+             */
+            under: applyIf({
+                prepare: function(ownerContext, owner) {
+                    var errorEl = owner.errorEl,
+                        cls = Ext.baseCSSPrefix + 'form-invalid-under';
+
+                    errorEl.addCls(cls);
+                    errorEl.setDisplayed(owner.hasActiveError());
+                },
+                getHeight: function (ownerContext) {
+                    var height = 0,
+                        errorContext, props;
+
+                    if (ownerContext.target.hasActiveError()) {
+                        errorContext = ownerContext.errorContext;
+                        props = errorContext.props;
+                        height = props.height;
+
+                        if (height === undefined) {
+                            props.height = height = errorContext.el.getHeight();
+                        }
+                    }
+
+                    return height;
+                }
+            }, base),
+
+<span id='Ext-layout-component-field-Field-property-qtip'>            /**
+</span>             * Error displayed as QuickTip on hover of the field container
+             */
+            qtip: applyIf({
+                prepare: function(ownerContext, owner) {
+                    Ext.layout.component.field.Field.initTip();
+                    owner.getActionEl().set({'data-errorqtip': owner.getActiveError() || ''});
+                },
+                onFocus: showTip
+            }, base),
+
+<span id='Ext-layout-component-field-Field-property-title'>            /**
+</span>             * Error displayed as title tip on hover of the field container
+             */
+            title: applyIf({
+                prepare: function(ownerContext, owner) {
+                    owner.el.set({'title': owner.getActiveError() || ''});
+                }
+            }, base),
+
+<span id='Ext-layout-component-field-Field-property-elementId'>            /**
+</span>             * Error message displayed as content of an element with a given id elsewhere in the app
+             */
+            elementId: applyIf({
+                prepare: function(ownerContext, owner) {
+                    var targetEl = Ext.fly(owner.msgTarget);
+                    if (targetEl) {
+                        targetEl.dom.innerHTML = owner.getActiveError() || '';
+                        targetEl.setDisplayed(owner.hasActiveError());
+                    }
+                }
+            }, base)
+        };
+    }()),
+
+    statics: {
+<span id='Ext-layout-component-field-Field-static-method-initTip'>        /**
+</span>         * Use a custom QuickTip instance separate from the main QuickTips singleton, so that we
+         * can give it a custom frame style. Responds to errorqtip rather than the qtip property.
+         * @static
+         */
+        initTip: function() {
+            var tip = this.tip;
+            if (!tip) {
+                tip = this.tip = Ext.create('Ext.tip.QuickTip', {
+                    baseCls: Ext.baseCSSPrefix + 'form-invalid-tip'
+                });
+                tip.tagConfig = Ext.apply({}, {attribute: 'errorqtip'}, tip.tagConfig);
+            }
+        },
+
+<span id='Ext-layout-component-field-Field-static-method-destroyTip'>        /**
+</span>         * Destroy the error tip instance.
+         * @static
+         */
+        destroyTip: function() {
+            var tip = this.tip;
+            if (tip) {
+                tip.destroy();
+                delete this.tip;
+            }
+        }
+    }
+});</pre>
+</body>
+</html>

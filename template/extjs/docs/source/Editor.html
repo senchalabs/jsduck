@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-layout-container-Editor'>/**
+</span> * Component layout for editors
+ * @private
+ */
+Ext.define('Ext.layout.container.Editor', {
+
+    /* Begin Definitions */
+
+    alias: 'layout.editor',
+
+    extend: 'Ext.layout.container.Container',
+
+    /* End Definitions */
+
+    autoSizeDefault: {
+        width: 'field',
+        height: 'field'    
+    },
+
+    getItemSizePolicy: function (item) {
+        var me = this,
+            autoSize = me.owner.autoSize;
+
+        return me.sizePolicy || (me.sizePolicy = {
+            setsWidth:  autoSize &amp;&amp; autoSize.width  === 'boundEl' ? 1 : 0,
+            setsHeight: autoSize &amp;&amp; autoSize.height === 'boundEl' ? 1 : 0
+        });
+    },
+
+    calculate: function(ownerContext) {
+        var me = this,
+            owner = me.owner,
+            autoSize = owner.autoSize,
+            fieldWidth,
+            fieldHeight;
+            
+        if (autoSize === true) {
+            autoSize = me.autoSizeDefault;
+        }
+
+        // Calculate size of both Editor, and its owned Field
+        if (autoSize) {
+            fieldWidth  = me.getDimension(owner, autoSize.width,  'getWidth',  owner.width);
+            fieldHeight = me.getDimension(owner, autoSize.height, 'getHeight', owner.height);
+        }
+
+        // Set Field size
+        ownerContext.childItems[0].setSize(fieldWidth, fieldHeight);
+
+        // Bypass validity checking. Container layouts should not usually set their owner's size.
+        ownerContext.setWidth(fieldWidth);
+        ownerContext.setHeight(fieldHeight);
+
+        // This is a Container layout, so publish content size
+        ownerContext.setContentSize(fieldWidth || owner.field.getWidth(),
+                                    fieldHeight || owner.field.getHeight());
+    },
+
+    getDimension: function(owner, type, getMethod, ownerSize){
+        switch (type) {
+            // Size to boundEl's dimension
+            case 'boundEl':
+                return owner.boundEl[getMethod]();
+
+            // Auto size (shrink wrap the Field's size
+            case 'field':
+                return undefined;
+
+            // Size to the Editor's configured size
+            default:
+                return ownerSize;
+        }
+    }
+});</pre>
+</body>
+</html>

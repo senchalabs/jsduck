@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-dom-Element'>/**
+</span> * @class Ext.dom.Element
+ */
+(function() {
+
+var Element         = Ext.dom.Element,
+    VISIBILITY      = &quot;visibility&quot;,
+    DISPLAY         = &quot;display&quot;,
+    NONE            = &quot;none&quot;,
+    HIDDEN          = 'hidden',
+    VISIBLE         = 'visible',
+    OFFSETS         = &quot;offsets&quot;,
+    ASCLASS         = &quot;asclass&quot;,
+    NOSIZE          = 'nosize',
+    ORIGINALDISPLAY = 'originalDisplay',
+    VISMODE         = 'visibilityMode',
+    ISVISIBLE       = 'isVisible',
+    OFFSETCLASS     = Ext.baseCSSPrefix + 'hide-offsets',
+    getDisplay = function(el) {
+        var data = (el.$cache || el.getCache()).data,
+            display = data[ORIGINALDISPLAY];
+            
+        if (display === undefined) {
+            data[ORIGINALDISPLAY] = display = '';
+        }
+        return display;
+    },
+    getVisMode = function(el){
+        var data = (el.$cache || el.getCache()).data,
+            visMode = data[VISMODE];
+            
+        if (visMode === undefined) {
+            data[VISMODE] = visMode = Element.VISIBILITY;
+        }
+        return visMode;
+    };
+
+Element.override({
+<span id='Ext-dom-Element-property-originalDisplay'>    /**
+</span>     * The element's default display mode.
+     */
+    originalDisplay : &quot;&quot;,
+    visibilityMode : 1,
+
+<span id='Ext-dom-Element-method-setVisible'>    /**
+</span>     * Sets the visibility of the element (see details). If the visibilityMode is set to Element.DISPLAY, it will use
+     * the display property to hide the element, otherwise it uses visibility. The default is to hide and show using the visibility property.
+     * @param {Boolean} visible Whether the element is visible
+     * @param {Boolean/Object} [animate] True for the default animation, or a standard Element animation config object
+     * @return {Ext.dom.Element} this
+     */
+    setVisible : function(visible, animate) {
+        var me = this,
+            dom = me.dom,
+            visMode = getVisMode(me);
+
+        // hideMode string override
+        if (typeof animate == 'string') {
+            switch (animate) {
+                case DISPLAY:
+                    visMode = Element.DISPLAY;
+                    break;
+                case VISIBILITY:
+                    visMode = Element.VISIBILITY;
+                    break;
+                case OFFSETS:
+                    visMode = Element.OFFSETS;
+                    break;
+                case NOSIZE:
+                case ASCLASS:
+                    visMode = Element.ASCLASS;
+                    break;
+            }
+            me.setVisibilityMode(visMode);
+            animate = false;
+        }
+
+        if (!animate || !me.anim) {
+            if (visMode == Element.DISPLAY) {
+                return me.setDisplayed(visible);
+            } else if (visMode == Element.OFFSETS) {
+                me[visible?'removeCls':'addCls'](OFFSETCLASS);
+            } else if (visMode == Element.VISIBILITY) {
+                me.fixDisplay();
+                // Show by clearing visibility style. Explicitly setting to &quot;visible&quot; overrides parent visibility setting
+                dom.style.visibility = visible ? '' : HIDDEN;
+            } else if (visMode == Element.ASCLASS) {
+                me[visible?'removeCls':'addCls'](me.visibilityCls || Element.visibilityCls);
+            }
+        } else {
+            // closure for composites
+            if (visible) {
+                me.setOpacity(0.01);
+                me.setVisible(true);
+            }
+            if (!Ext.isObject(animate)) {
+                animate = {
+                    duration: 350,
+                    easing: 'ease-in'
+                };
+            }
+            me.animate(Ext.applyIf({
+                callback: function() {
+                    if (!visible) {
+                        me.setVisible(false).setOpacity(1);
+                    }
+                },
+                to: {
+                    opacity: (visible) ? 1 : 0
+                }
+            }, animate));
+        }
+        (me.$cache || me.getCache()).data[ISVISIBLE] = visible;
+        return me;
+    },
+
+<span id='Ext-dom-Element-method-hasMetrics'>    /**
+</span>     * @private
+     * Determine if the Element has a relevant height and width available based
+     * upon current logical visibility state
+     */
+    hasMetrics  : function(){
+        var visMode = getVisMode(this);
+        return this.isVisible() || (visMode == Element.OFFSETS) || (visMode == Element.VISIBILITY);
+    },
+
+<span id='Ext-dom-Element-method-toggle'>    /**
+</span>     * Toggles the element's visibility or display, depending on visibility mode.
+     * @param {Boolean/Object} [animate] True for the default animation, or a standard Element animation config object
+     * @return {Ext.dom.Element} this
+     */
+    toggle : function(animate){
+        var me = this;
+        me.setVisible(!me.isVisible(), me.anim(animate));
+        return me;
+    },
+
+<span id='Ext-dom-Element-method-setDisplayed'>    /**
+</span>     * Sets the CSS display property. Uses originalDisplay if the specified value is a boolean true.
+     * @param {Boolean/String} value Boolean value to display the element using its default display, or a string to set the display directly.
+     * @return {Ext.dom.Element} this
+     */
+    setDisplayed : function(value) {
+        if(typeof value == &quot;boolean&quot;){
+           value = value ? getDisplay(this) : NONE;
+        }
+        this.setStyle(DISPLAY, value);
+        return this;
+    },
+
+    // private
+    fixDisplay : function(){
+        var me = this;
+        if (me.isStyle(DISPLAY, NONE)) {
+            me.setStyle(VISIBILITY, HIDDEN);
+            me.setStyle(DISPLAY, getDisplay(me)); // first try reverting to default
+            if (me.isStyle(DISPLAY, NONE)) { // if that fails, default to block
+                me.setStyle(DISPLAY, &quot;block&quot;);
+            }
+        }
+    },
+
+<span id='Ext-dom-Element-method-hide'>    /**
+</span>     * Hide this element - Uses display mode to determine whether to use &quot;display&quot; or &quot;visibility&quot;. See {@link #setVisible}.
+     * @param {Boolean/Object} [animate] true for the default animation or a standard Element animation config object
+     * @return {Ext.dom.Element} this
+     */
+    hide : function(animate){
+        // hideMode override
+        if (typeof animate == 'string'){
+            this.setVisible(false, animate);
+            return this;
+        }
+        this.setVisible(false, this.anim(animate));
+        return this;
+    },
+
+<span id='Ext-dom-Element-method-show'>    /**
+</span>     * Show this element - Uses display mode to determine whether to use &quot;display&quot; or &quot;visibility&quot;. See {@link #setVisible}.
+     * @param {Boolean/Object} [animate] true for the default animation or a standard Element animation config object
+     * @return {Ext.dom.Element} this
+     */
+    show : function(animate){
+        // hideMode override
+        if (typeof animate == 'string'){
+            this.setVisible(true, animate);
+            return this;
+        }
+        this.setVisible(true, this.anim(animate));
+        return this;
+    }
+});
+
+}());
+</pre>
+</body>
+</html>

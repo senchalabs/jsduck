@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-ux-event-Driver'>/**
+</span> * This is the base class for {@link Ext.ux.event.Recorder} and {@link Ext.ux.event.Player}.
+ */
+Ext.define('Ext.ux.event.Driver', {
+    active: null,
+    mixins: {
+        observable: 'Ext.util.Observable'
+    },
+
+    constructor: function (config) {
+        var me = this;
+
+        me.mixins.observable.constructor.apply(this, arguments);
+
+        me.addEvents(
+<span id='Ext-ux-event-Driver-event-start'>            /**
+</span>             * @event start
+             * Fires when this object is started.
+             * @param {Ext.ux.event.Driver} this
+             */
+            'start',
+
+<span id='Ext-ux-event-Driver-event-stop'>            /**
+</span>             * @event stop
+             * Fires when this object is stopped.
+             * @param {Ext.ux.event.Driver} this
+             */
+            'stop'
+        );
+    },
+
+    getTime: function () {
+        return new Date().getTime();
+    },
+
+<span id='Ext-ux-event-Driver-method-getTimestamp'>    /**
+</span>     * Returns the number of milliseconds since start was called.
+     */
+    getTimestamp: function () {
+        var d = this.getTime();
+        return d - this.startTime;
+    },
+
+    onStart: function () {},
+
+    onStop: function () {},
+
+<span id='Ext-ux-event-Driver-method-start'>    /**
+</span>     * Starts this object. If this object is already started, nothing happens.
+     */
+    start: function () {
+        var me = this;
+
+        if (!me.active) {
+            me.active = new Date();
+            me.startTime = me.getTime();
+            me.onStart();
+            me.fireEvent('start', me);
+        }
+    },
+
+<span id='Ext-ux-event-Driver-method-stop'>    /**
+</span>     * Stops this object. If this object is not started, nothing happens.
+     */
+    stop: function () {
+        var me = this;
+
+        if (me.active) {
+            me.active = null;
+            me.onStop();
+            me.fireEvent('stop', me);
+        }
+    }
+});
+</pre>
+</body>
+</html>
