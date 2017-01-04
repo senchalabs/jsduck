@@ -1,0 +1,5 @@
+@import url(../../extjs/resources/css/ext-all.css);
+/* line 31, ../sass/docs-ext.scss */
+.x-nlg .x-toolbar-default { background-image: none !important; }
+/* line 34, ../sass/docs-ext.scss */
+.x-nlg .x-btn-default-toolbar-small-focus, .x-nlg .x-btn-default-toolbar-small-over, .x-nlg .x-btn-default-toolbar-small-pressed { background-image: none; }

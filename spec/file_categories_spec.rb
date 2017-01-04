@@ -1,6 +1,6 @@
-require "jsduck/categories/file"
+require "jsduck/file_categories"
 
-describe JsDuck::Categories::File do
+describe JsDuck::FileCategories do
 
   describe "#expand" do
     before do
@@ -10,7 +10,7 @@ describe JsDuck::Categories::File do
         {:name => "Foo.Blah"},
         {:name => "Bar.Ahhh"},
       ]
-      @categories = JsDuck::Categories::File.new("", classes)
+      @categories = JsDuck::FileCategories.new("", classes)
     end
 
     it "expands class without * in name into the same class" do

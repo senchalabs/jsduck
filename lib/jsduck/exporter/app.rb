@@ -1,37 +1,22 @@
-require 'jsduck/render/class'
+require 'jsduck/renderer'
+require 'jsduck/doc_formatter'
 require 'jsduck/exporter/full'
-require 'jsduck/tag_registry'
-require 'jsduck/web/class_icons'
 
 module JsDuck
   module Exporter
 
     # Exports data for Docs app.
-    class App
+    class App < Full
       def initialize(relations, opts)
-        @full_exporter = Exporter::Full.new(relations, opts)
-        @relations = relations
-        @renderer = Render::Class.new(opts)
+        super(relations, opts)
+        @renderer = Renderer.new(opts)
       end
 
       # Returns compacted class data hash which contains an additional
       # :html field with full HTML to show on class overview page.
       def export(cls)
-        data = @full_exporter.export(cls)
-
-        data[:classIcon] = Web::ClassIcons.get(cls)
-        data[:superclasses] = cls.superclasses.collect {|c| c[:name] }
-        data[:subclasses] = @relations.subclasses(cls).collect {|c| c[:name] }.sort
-        data[:mixedInto] = @relations.mixed_into(cls).collect {|c| c[:name] }.sort
-        data[:alternateClassNames] = cls[:alternateClassNames].sort if cls[:alternateClassNames]
-
-        data[:mixins] = cls.deps(:mixins).collect {|c| c[:name] }.sort
-        data[:parentMixins] = cls.parent_deps(:mixins).collect {|c| c[:name] }.sort
-        data[:requires] = cls.deps(:requires).collect {|c| c[:name] }.sort
-        data[:uses] = cls.deps(:uses).collect {|c| c[:name] }.sort
-
+        data = super(cls)
         data[:html] = @renderer.render(data)
-
         return compact(data)
       end
 
@@ -40,29 +25,26 @@ module JsDuck
       # removes extra data from export
       def compact(cls)
         cls.delete(:doc)
-        cls[:members] = cls[:members].map {|m| compact_member(m) }
+        cls[:members] = compact_members_group(cls[:members])
+        cls[:statics] = compact_members_group(cls[:statics])
         cls[:files] = compact_files(cls[:files])
-        cls[:meta] = combine_meta(cls)
         cls
+      end
+
+      def compact_members_group(group)
+        c_group = {}
+        group.each_pair do |type, members|
+          c_group[type] = members.map {|m| compact_member(m) }
+        end
+        c_group
       end
 
       def compact_member(m)
         m_copy = {}
-        [:name, :tagname, :owner, :id].each do |key|
+        [:name, :tagname, :owner, :meta, :id].each do |key|
           m_copy[key] = m[key]
         end
-        m_copy[:meta] = combine_meta(m)
         m_copy
-      end
-
-      # Add data for builtin tags with signatures to :meta field.
-      def combine_meta(m)
-        meta = {}
-        TagRegistry.signatures.each do |s|
-          name = s[:tagname]
-          meta[name] = m[name] if m[name]
-        end
-        meta
       end
 
       # Remove full path from filename for privacy considerations as the

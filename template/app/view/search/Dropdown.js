@@ -4,9 +4,6 @@
 Ext.define('Docs.view.search.Dropdown', {
     extend: 'Ext.view.View',
     alias: 'widget.searchdropdown',
-    requires: [
-        'Docs.view.Signature'
-    ],
 
     floating: true,
     autoShow: false,
@@ -66,7 +63,9 @@ Ext.define('Docs.view.search.Dropdown', {
                     return meta["private"] ? "private" : (meta.removed ? "removed" : "");
                 },
                 getMetaTags: function(meta) {
-                    return Docs.view.Signature.render(meta);
+                    return Ext.Array.map(Docs.data.signatures, function(s) {
+                        return meta[s.key] ? '<span class="signature '+s.key+'">'+(s["short"])+'</span>' : '';
+                    }).join(' ');
                 },
                 getTotal: Ext.bind(this.getTotal, this),
                 getStart: Ext.bind(this.getStart, this),

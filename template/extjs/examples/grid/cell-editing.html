@@ -1,0 +1,30 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cell Editing Grid Example</title>
+    <!-- Use the scoped CSS stylesheet. This is in conjunction with setting Ext.scopeResetCSS = true in app init code --> 
+    <script>
+        // use the scoped CSS stylesheet if the url has a scopecss parameter
+        document.write('<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all' +
+            ((window.location.search.indexOf('scopecss') === -1) ? '' : '-scoped') + '.css" />');
+    </script>
+    <link rel="stylesheet" type="text/css" href="../shared/example.css" />
+    <link rel="stylesheet" type="text/css" href="../ux/css/CheckHeader.css" />
+
+    <!-- GC -->
+
+    <script type="text/javascript" src="../../ext-all.js"></script>
+
+    <script type="text/javascript" src="cell-editing.js"></script>
+</head>
+<body>
+    <h1>Cell Editing Grid Example</h1>
+    <ul>
+    <li>This example shows how to enable users to edit the contents of a grid.</li>
+    <li>Note that the js is not minified so it is readable. See <a href="cell-editing.js">cell-editing.js</a>.</li>
+    <li>This example also illustrates how to scope ExtJS's CSS reset to only encapsulate each ExtJS Component rendered into a page to avoid interference with existing themes.</li>
+    <li>Note how this unordered list retains default styling while the unordered list in the "Light" dropdown is styled as a picker.</li>
+    </ul>
+    <div id="editor-grid"></div>
+</body>
+</html>

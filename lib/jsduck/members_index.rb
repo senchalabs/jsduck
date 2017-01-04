@@ -38,18 +38,19 @@ module JsDuck
 
     # Returns array of all local members (excludes inherited ones)
     def all_local
-      local_by_id.values.reject {|m| m[:hide] }
+      local_by_id.values.reject {|m| m[:meta] && m[:meta][:hide] }
     end
 
     # Clears the search cache.
-    #
-    # Using this degrades performance. It's currently triggered just
-    # once after InheritDoc process is run. Avoid using it in other
-    # places.
+    # Using this is REALLY BAD - try to get rid of it.
     def invalidate!
       @map_by_id = nil
       @global_map_by_id = nil
       @global_map_by_name = nil
+
+      @cls.parent.members_index.invalidate! if @cls.parent
+
+      @cls.mixins.each {|mix| mix.members_index.invalidate! }
     end
 
     protected
@@ -66,7 +67,7 @@ module JsDuck
         end
 
         # Exclude all non-inheritable static members
-        @global_map_by_id.delete_if {|id, m| m[:static] && !m[:inheritable] }
+        @global_map_by_id.delete_if {|id, m| m[:meta][:static] && !m[:inheritable] }
 
         merge!(@global_map_by_id, local_by_id)
       end
@@ -92,12 +93,13 @@ module JsDuck
     # merges second members hash into first one
     def merge!(hash1, hash2)
       hash2.each_pair do |name, m|
-        if m[:hide]
+        if m[:meta] && m[:meta][:hide]
           if hash1[name]
             hash1.delete(name)
           else
+            ctx = m[:files][0]
             msg = "@hide used but #{m[:tagname]} #{m[:name]} not found in parent class"
-            Logger.warn(:hide, msg, m[:files][0])
+            Logger.warn(:hide, msg, ctx[:filename], ctx[:linenr])
           end
         else
           if hash1[name]
@@ -131,6 +133,7 @@ module JsDuck
           new[:overrides] << {
             :name => old[:name],
             :owner => old[:owner],
+            :id => old[:id],
           }
         end
       end

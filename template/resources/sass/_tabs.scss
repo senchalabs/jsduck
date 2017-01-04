@@ -3,11 +3,12 @@
 @import "mixins";
 
 .doctabs {
-  // Here also the auto-generated class icons apply.
-
+  @include icons;
   padding-left: 10px;
-  height: 19px;
+  height: 45px;
+  margin-top: 10px;
   position: relative;
+  // border-bottom: 1px solid $docs-border-color;
 
   .doctab {
     position: relative;
@@ -15,14 +16,15 @@
     float: left;
     overflow: hidden;
     top: 0;
-    margin-left: -8px;
+    margin-left: -1px;
     cursor: pointer;
-    height: 28px;
+    height: 45px;
+/*
     .l {
       position: absolute;
       top: 0;
       left: 0px;
-      width: 9px;
+      width: 8px;
       height: 29px;
       background: url(../images/tabs.png) no-repeat -8px -141px;
       z-index: 3; }
@@ -32,26 +34,31 @@
       top: 0;
       width: 26px;
       height: 29px;
-      background: url(../images/tabs.png) no-repeat 0 -239px;
+      background: url(../images/tabs.png) no-repeat 0px -239px;
       z-index: 5; }
+*/
+    .m:hover {
+      background-color: white; }
+    .m:hover + .r a.close {
+      background-color: white; }
     .m {
       z-index: 5;
       position: relative;
-      padding: 6px 3px 0 6px;
-      margin: 0 7px;
-      background: url(../images/tabs.png) repeat-x 0 -173px;
-      height: 29px;
+      padding: 6px;
+      margin: 0 6px;
+      background-color: #eeeeee;
+      height: 45px;
       overflow: hidden;
       white-space: nowrap;
-      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
-      font-family: $docs-font;
-      font-weight: bold;
-      font-size: 11px;
+      font-family: FontAwesome, 'Open Sans', "Heletica Neue", Arial, sans-serif;
+      border-width: 1px 1px 0 1px;
+      border-style: solid;
+      border-color: #cccccc;
+      font-size: 14px;
       span, a {
-        padding-bottom: 5px;
         line-height: 16px;
         display: block;
-        color: #2e3841;
+            color: #666;
         white-space: nowrap;
         overflow: hidden;
         float: left; }
@@ -60,6 +67,11 @@
         padding: 0 14px 0 17px; }
       a.ov-tab-text {
         overflow: hidden; }
+      a.tabUrl {
+        padding: 0 4px 0 12px;
+        width: 140px;
+            margin-top: 4px;
+        overflow: visible; }
       a.main-tab {
         overflow: hidden;
         padding: 0 14px 0 17px;
@@ -67,73 +79,94 @@
       span.icn {
         display: block;
         position: absolute;
-        left: 3px;
-        padding-left: 15px;
-        padding-bottom: 0; } }
+        padding-top: 3px;
+      }
+    }
     a.close {
       position: absolute;
-      width: 11px;
-      height: 11px;
+      color: #666;
+      font-size: 16px;
+      width: 20px;
+      height: 20px;
       top: 8px;
-      right: 9px;
+      right: 7px;
       z-index: 6;
-      background: url(../images/tabs.png) no-repeat -8px -111px !important; }
-    a.close.ovr {
-      background: url(../images/tabs.png) no-repeat -8px -123px !important; } }
+      background-color: #eee; }
+    a.close:hover {
+      color: black; } }
   .doctab.highlight {
     border-width: 0;
     .l {
-      background: url(../images/tabs.png) no-repeat -9px -271px; }
+      background: url(../images/tabs.png) no-repeat -10px -271px; }
     .r {
-      background: url(../images/tabs.png) no-repeat -9px -335px;
+      background: url(../images/tabs.png) no-repeat -10px -335px;
       width: 10px; }
     .m {
       background: url(../images/tabs.png) repeat-x 0 -303px; } }
   .doctab.active {
     border-width: 0;
+    a.close {
+      background-color: white; }
     .l {
-      background: url(../images/tabs.png) no-repeat -9px -369px;
-      z-index: 6;
-      width: 13px; }
-    .r {
-      background: url(../images/tabs.png) no-repeat 3px -479px;
+      background-color: white;
       z-index: 5;
-      width: 28px; }
+      margin-left: 3px; }
+    .r {
+      background-color: white;
+      z-index: 5; }
     .m {
-      background: url(../images/tabs.png) repeat-x 0 -405px;
-      z-index: 5; } }
-  .doctab.overview .m {
-    z-index: 6; }
-  .doctab.index .m a {
-    background: url(../images/tabs.png) no-repeat 1px 1px;
-    padding-left: 16px; padding-right: 12px; padding-bottom: 20px; }
-  .doctab.classes .m a {
-    background: url(../images/tabs.png) no-repeat 2px -20px;
-    padding-left: 16px; padding-right: 12px; }
-  .doctab.guides .m a {
-    background: url(../images/tabs.png) no-repeat 3px -55px;
-    padding-left: 16px; padding-right: 12px; }
-  .doctab.videos .m a {
-    background: url(../images/tabs.png) no-repeat 2px -38px;
-    padding-left: 16px; padding-right: 12px; }
-  .doctab.examples .m a {
-    background: url(../images/tabs.png) no-repeat 1px -93px;
-    padding-left: 16px; padding-right: 12px; }
-  .doctab.comments .m a {
-    background: url(../images/tabs.png) no-repeat 2px -72px;
-    padding-left: 16px; padding-right: 12px; }
+      background-color: white; } }
+    .doctab.overview .m {
+        z-index: 6;
+        a.tabUrl {
+            width: auto !important;
+        }
+    }
+    .doctab.index .m a {
+        background: url(../images/tabs.png) no-repeat 2px 0px;
+        padding-left: 16px;
+        padding-right: 15px;
+    }
+  /*
+    .doctab.classes .m a {
+        background: url(../images/tabs.png) no-repeat 2px -20px;
+        padding-left: 16px;
+        padding-right: 15px;
+    }
+  */
+    .doctab.guides .m a {
+        background: url(../images/tabs.png) no-repeat 2px -60px;
+        padding-left: 16px;
+        padding-right: 15px;
+    }
+    .doctab.videos .m a {
+        background: url(../images/tabs.png) no-repeat 2px -40px;
+        padding-left: 16px;
+        padding-right: 15px;
+    }
+    .doctab.examples .m a {
+        background: url(../images/tabs.png) no-repeat 1px -93px;
+        padding-left: 16px;
+        padding-right: 12px;
+    }
+    .doctab.comments .m a {
+        background: url(../images/tabs.png) no-repeat 2px -72px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
 
-  .tab-overflow {
+    .tab-overflow {
     position: absolute;
     right: 5px;
     top: 8px;
+    /*
     button {
       cursor: pointer;
       display: block;
       width: 14px;
-      height: 20px;
+      height: 14px;
       background: url(../images/tabs.png) no-repeat -7px -513px;
-      border: 0; } } }
+      border: 0; }*/ } }
 
 .tab-menu {
   .x-menu-item-link {
@@ -148,3 +181,4 @@
       color: #666; } }
   .x-menu-item-icon.close {
     background: url(../images/x12.png) no-repeat 4px 4px; } }
+

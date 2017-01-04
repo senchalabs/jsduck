@@ -1,50 +1,50 @@
-require "mini_parser"
+require "jsduck/aggregator"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    Helper::MiniParser.parse(string)
-  end
-
-  def parse_id(string)
-    parse(string)["global"][:members][0][:id]
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.result
   end
 
   it "event foo gets id event-foo" do
-    id = parse_id(<<-EOF)
+    @member = parse(<<-EOF)[0]
       /**
        * @event foo
        */
     EOF
-    id.should == "event-foo"
+    @member[:id].should == "event-foo"
   end
 
   it "config foo gets id cfg-foo" do
-    id = parse_id(<<-EOF)
+    @member = parse(<<-EOF)[0]
       /**
        * @cfg {String} foo
        */
     EOF
-    id.should == "cfg-foo"
+    @member[:id].should == "cfg-foo"
   end
 
   it "static property foo gets id static-property-foo" do
-    id = parse_id(<<-EOF)
+    @member = parse(<<-EOF)[0]
       /**
        * @property {String} foo
        * @static
        */
     EOF
-    id.should == "static-property-foo"
+    @member[:id].should == "static-property-foo"
   end
 
   it "static method foo gets id static-method-foo" do
-    id = parse_id(<<-EOF)
+    @member = parse(<<-EOF)[0]
       /**
        * @method foo
        * @static
        */
     EOF
-    id.should == "static-method-foo"
+    @member[:id].should == "static-method-foo"
   end
 
 end
+

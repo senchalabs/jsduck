@@ -1,16 +1,15 @@
 require 'jsduck/batch_parser'
-require 'jsduck/batch_processor'
 require 'jsduck/assets'
-require 'jsduck/tag_registry'
+require 'jsduck/meta_tag_registry'
 require 'jsduck/export_writer'
-require 'jsduck/web/writer'
+require 'jsduck/web_writer'
 require 'jsduck/logger'
 
 module JsDuck
 
   # The main application logic of jsduck
   class App
-    # Initializes app with JsDuck::OptionsRecord object
+    # Initializes app with JsDuck::Options object
     def initialize(opts)
       @opts = opts
     end
@@ -38,16 +37,16 @@ module JsDuck
     private
 
     def parse
-      @parsed_files = BatchParser.parse(@opts)
-      @relations = BatchProcessor.process(@parsed_files, @opts)
+      @batch_parser = BatchParser.new(@opts)
+      @relations = @batch_parser.run
     end
 
     def init_assets
       # Initialize guides, videos, examples, ...
       @assets = Assets.new(@relations, @opts)
 
-      # HACK: Give access to assets from @aside tag
-      TagRegistry.get_by_name(:aside).assets = @assets
+      # Give access to assets from all meta-tags
+      MetaTagRegistry.instance.assets = @assets
     end
 
     def generate_export
@@ -55,7 +54,7 @@ module JsDuck
     end
 
     def generate_web_page
-      Web::Writer.new(@relations, @assets, @parsed_files, @opts).write
+      WebWriter.new(@relations, @assets, @batch_parser.parsed_files, @opts).write
     end
 
   end

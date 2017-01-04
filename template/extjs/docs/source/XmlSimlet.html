@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-ux-ajax-XmlSimlet'>/**
+</span> * This class simulates XML-based requests.
+ */
+Ext.define('Ext.ux.ajax.XmlSimlet', {
+    extend: 'Ext.ux.ajax.DataSimlet',
+    alias: 'simlet.xml',
+
+<span id='Ext-ux-ajax-XmlSimlet-property-xmlTpl'>    /**
+</span>     * This template is used to populate the XML response. The configuration of the Reader
+     * is available so that its `root` and `record` properties can be used as well as the
+     * `fields` of the associated `model`. But beyond that, the way these pieces are put
+     * together in the document requires the flexibility of a template.
+     */
+    xmlTpl: [
+        '&lt;{root}&gt;\n',
+            '&lt;tpl for=&quot;data&quot;&gt;',
+        '    &lt;{parent.record}&gt;\n',
+                '&lt;tpl for=&quot;parent.fields&quot;&gt;',
+        '        &lt;{name}&gt;{[parent[values.name]]}&lt;/{name}&gt;\n',
+                '&lt;/tpl&gt;',
+        '    &lt;/{parent.record}&gt;\n',
+            '&lt;/tpl&gt;',
+        '&lt;/{root}&gt;'
+    ],
+
+    doGet: function (ctx) {
+        var me = this,
+            data = me.getData(ctx),
+            page = me.getPage(ctx, data),
+            reader = ctx.xhr.options.proxy.reader,
+            ret = me.callParent(arguments), // pick up status/statusText
+            response = {
+                data: page,
+                reader: reader,
+                fields: reader.model.getFields(),
+                root: reader.root,
+                record: reader.record
+            };
+
+        if (ctx.groupSpec) {
+            response.summaryData = me.getSummary(ctx, data, page);
+        }
+
+        var tpl = Ext.XTemplate.getTpl(me, 'xmlTpl'),
+            xml = tpl.apply(response),
+            doc;
+
+        if (typeof DOMParser != 'undefined') {
+            doc = (new DOMParser()).parseFromString(xml, &quot;text/xml&quot;);
+        } else {
+            // IE doesn't have DOMParser, but fortunately, there is an ActiveX for XML
+            doc = new ActiveXObject(&quot;Microsoft.XMLDOM&quot;);
+            doc.async = false;
+            doc.loadXML(xml);
+        }
+
+        ret.responseText = xml;
+        ret.responseXML = doc;
+        return ret;
+    }
+});
+</pre>
+</body>
+</html>

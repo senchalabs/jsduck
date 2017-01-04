@@ -1,4 +1,4 @@
-require "jsduck/tag/tag"
+require "jsduck/meta_tag"
 
 module JsDuck::Tag
   # There is no @required tag.
@@ -6,18 +6,16 @@ module JsDuck::Tag
   #
   #    @cfg {Type} someName (required)
   #
-  # This class is only used for rendering the required attribute in
-  # HTML documentation, not for detecting it.  The detection is done
-  # with custom logic in @cfg and DocAst classes.
-  class Required < Tag
+  # This class is only used for displaying the required attribute, not
+  # for detecting it.  The detection is done with custom logic in
+  # DocParser and Merger classes.
+  class Required < JsDuck::MetaTag
     def initialize
-      @tagname = :required
+      @name = "--non-matching-requried-tag--"
+      @key = :required
       @signature = {:long => "required", :short => "REQ"}
-      @css = ".signature .required { background-color: #484848 }" # Docs text color
-    end
-
-    def process_doc(h, docs, pos)
-      h[:required] = true
+      @boolean = true
     end
   end
 end
+

@@ -22,6 +22,6 @@ Ext.define('Docs.view.welcome.Index', {
      * @return {Object}
      */
     getTab: function() {
-        return this.hasContent ? {cls: 'index', href: '#', tooltip: 'Home'} : false;
+        return this.hasContent ? {cls: 'index', href: '#', tooltip: 'Home', iconClass: 'fa-home'} : false;
     }
 });

@@ -38,7 +38,7 @@
   h2 { @include guides-h2-heading; }
   h3 { @include guides-h3-heading; }
   h3 { font-weight: bold; font-size: 1.1em; }
-  h4,h5,h6 { font-weight: bold; }
+  h4 { font-weight: bold; }
   ul {
     margin: 0 0 1em 2em;
     li {
@@ -67,10 +67,10 @@
   // Style only the body area, or the toolbar will get styled too
   .x-panel-body {
     min-height: 100px;
-    color: $docs-text-color;
     .clr {
       clear: both; }
     p, ul, ol {
+      color: $docs-text-color;
       max-width: 900px; }
     p {
       padding: 0;
@@ -78,37 +78,51 @@
     p:last-child {
       margin: 0; }
     ul {
-      margin: 0 0 1em 2em;
+      margin: 0 0 1em 1em;
+      p { 
+          margin-bottom: 0.5em; }
       li {
         list-style: disc outside; } }
     ol {
       margin: 0 0 1em 2em;
       li {
-        list-style: decimal outside; } }
+        margin: 0 0 1em;
+        list-style: decimal outside; 
+        ol {
+            margin: 0 0 1em 1em;
+            li {
+                list-style: lower-alpha inside; } } } }
+    ol {
+      margin: 0 0 1em 2em;
+      ul {
+        li {
+          margin: 0 0 1em;
+          list-style: disc outside;
+      li {
+        margin: 0 0 1em;
+        list-style: decimal outside; 
+        ol {
+            margin: 0 0 1em 1em;
+            li {
+                list-style: lower-alpha inside; } } } } } }
     em {
       font-style: italic; }
     strong {
       font-weight: bold; }
-    kbd {
-        border: 1px solid #aaa;
-        @include border-radius(2px);
-        @include box-shadow(1px 2px 2px #ddd);
-        background-color: #f9f9f9;
-        padding: 1px 3px;
-        font-size: 0.85em; }
     h3 {
       font-weight: bold;
       font-size: 1.1em; }
-    h4,h5,h6 {
+    h4 {
       font-weight: bold; }
     table {
       margin-bottom: 10px;
-      tr:first-child {
-        td {
-          color: #000;
-          font-weight: bold; } }
+      // Assume rationally constructed tables and don't attempt to override their styling
+      // tr:first-child {
+      //  td {
+      //    color: #000;
+      //    font-weight: bold; } }
       td {
-        color: #484848;
+        color: #222;
         padding: 2px 20px 2px 0; } }
     blockquote {
       padding-left: 1em;
@@ -119,6 +133,7 @@
       @include border-radius(5px);
       color: #314e64;
       font-family: $docs-monospace-font;
+      font-size: 13px;
       padding: 10px 12px;
       line-height: 1.3em;
       margin: 10px 0 14px 0;
@@ -129,6 +144,16 @@
         font-family: $docs-monospace-font; }
       i, em {
         font-style: normal; } } } }
+
+// Work around ugly TOC spacing in exported guides.
+.guide-container .x-panel-body {
+    ul {
+        ul {
+            margin: 0 0 0 1em;
+        }
+    }
+}
+
 
 @import "class_overview";
 
@@ -143,20 +168,14 @@
     border: solid 1px #e8e8e8;
     padding: 10px 20px;
     margin: 0 14px;
-    @include border-radius(5px);
-    // no bullets and smaller indent
-    ul {
-      margin-left: 0.5em;
-      margin-bottom: 0;
-      li {
-        list-style-type: none; } } }
+    @include border-radius(5px); }
   h1 {
-    background: url(../images/doc-m.png) no-repeat -5px -5px;
-    padding: 10px 0 10px 55px;
+    padding-top: 7px;
     font-family: $docs-heading-font;
     margin-bottom: 16px;
-    font-size: 2em;
-    color: $docs-heading-color; }
+    font-size: 16pt;
+    color: #66ab16;
+  }
   h2 {
     @include guides-h2-heading; }
   h3 {
@@ -188,8 +207,12 @@ p.screenshot {
 
 
 .x-panel-body-default {
-  border-width: 0; }
+  border-width: 0; 
+  font-size: 14px; }
 
+p > code {
+  font-size: 13px;
+}
 
 // Examples
 @import "examples";
@@ -202,6 +225,3 @@ p.screenshot {
 
 // Doc Tests
 @import "doc_tests";
-
-// Styling helpers
-@import "tags";

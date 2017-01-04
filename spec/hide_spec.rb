@@ -30,7 +30,7 @@ describe JsDuck::Class do
         :members => [
           {:name => "bar"},
           {:name => "baz"},
-          {:name => "zappa", :hide => true},
+          {:name => "zappa", :meta => {:hide => true}},
         ]
       });
     @classes["ChildClass"] = @child

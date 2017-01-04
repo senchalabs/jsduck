@@ -1,42 +1,41 @@
-require "mini_parser"
+require "jsduck/aggregator"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    Helper::MiniParser.parse(string)
-  end
-
-  def parse_params(string)
-    parse(string)["global"][:members][0][:params]
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.result
   end
 
   shared_examples_for "no parameters" do
     it "detects no params" do
-      @doc.length.should == 0
+      @doc[:params].length.should == 0
     end
   end
 
   shared_examples_for "two parameters" do
     it "detects parameter count" do
-      @doc.length.should == 2
+      @doc[:params].length.should == 2
     end
 
     it "detects parameter names" do
-      @doc[0][:name].should == "x"
-      @doc[1][:name].should == "y"
+      @doc[:params][0][:name].should == "x"
+      @doc[:params][1][:name].should == "y"
     end
   end
 
   shared_examples_for "parameter types" do
     it "detects parameter types" do
-      @doc[0][:type].should == "String"
-      @doc[1][:type].should == "Number"
+      @doc[:params][0][:type].should == "String"
+      @doc[:params][1][:type].should == "Number"
     end
   end
 
   describe "explicit @method without @param-s" do
     before do
-      @doc = parse_params(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * @method foo
          * Some function
@@ -48,25 +47,25 @@ describe JsDuck::Aggregator do
 
   describe "function declaration without params" do
     before do
-      @doc = parse_params("/** Some function */ function foo() {}")
+      @doc = parse("/** Some function */ function foo() {}")[0]
     end
     it_should_behave_like "no parameters"
   end
 
   describe "function declaration with parameters" do
     before do
-      @doc = parse_params("/** Some function */ function foo(x, y) {}")
+      @doc = parse("/** Some function */ function foo(x, y) {}")[0]
     end
     it_should_behave_like "two parameters"
     it "parameter types default to Object" do
-      @doc[0][:type].should == "Object"
-      @doc[1][:type].should == "Object"
+      @doc[:params][0][:type].should == "Object"
+      @doc[:params][1][:type].should == "Object"
     end
   end
 
   describe "explicit @method with @param-s" do
     before do
-      @doc = parse_params(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * @method foo
          * Some function
@@ -81,7 +80,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit @method with @param-s overriding implicit code" do
     before do
-      @doc = parse_params(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * Some function
          * @param {String} x First parameter
@@ -97,7 +96,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit @method followed by function with another name" do
     before do
-      @doc = parse_params(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * Some function
          * @method foo
@@ -110,7 +109,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit @param-s followed by more implicit params" do
     before do
-      @doc = parse_params(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * Some function
          * @param {String} x
@@ -124,7 +123,7 @@ describe JsDuck::Aggregator do
 
   describe "@param-s declaring only types" do
     before do
-      @doc = parse_params(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * Some function
          * @param {String}
@@ -133,12 +132,7 @@ describe JsDuck::Aggregator do
         function foo(x, y) {}
       EOS
     end
-
+    it_should_behave_like "two parameters"
     it_should_behave_like "parameter types"
-
-    it "detects no parameter names" do
-      @doc[0][:name].should == nil
-      @doc[1][:name].should == nil
-    end
   end
 end

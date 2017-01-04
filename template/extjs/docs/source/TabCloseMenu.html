@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-ux-TabCloseMenu'>/**
+</span> * Plugin for adding a close context menu to tabs. Note that the menu respects
+ * the closable configuration on the tab. As such, commands like remove others
+ * and remove all will not remove items that are not closable.
+ */
+Ext.define('Ext.ux.TabCloseMenu', {
+    alias: 'plugin.tabclosemenu',
+
+    mixins: {
+        observable: 'Ext.util.Observable'
+    },
+
+<span id='Ext-ux-TabCloseMenu-cfg-closeTabText'>    /**
+</span>     * @cfg {String} closeTabText
+     * The text for closing the current tab.
+     */
+    closeTabText: 'Close Tab',
+
+<span id='Ext-ux-TabCloseMenu-cfg-showCloseOthers'>    /**
+</span>     * @cfg {Boolean} showCloseOthers
+     * Indicates whether to show the 'Close Others' option.
+     */
+    showCloseOthers: true,
+
+<span id='Ext-ux-TabCloseMenu-cfg-closeOthersTabsText'>    /**
+</span>     * @cfg {String} closeOthersTabsText
+     * The text for closing all tabs except the current one.
+     */
+    closeOthersTabsText: 'Close Other Tabs',
+
+<span id='Ext-ux-TabCloseMenu-cfg-showCloseAll'>    /**
+</span>     * @cfg {Boolean} showCloseAll
+     * Indicates whether to show the 'Close All' option.
+     */
+    showCloseAll: true,
+
+<span id='Ext-ux-TabCloseMenu-cfg-closeAllTabsText'>    /**
+</span>     * @cfg {String} closeAllTabsText
+     * &lt;p&gt;The text for closing all tabs.
+     */
+    closeAllTabsText: 'Close All Tabs',
+
+<span id='Ext-ux-TabCloseMenu-cfg-extraItemsHead'>    /**
+</span>     * @cfg {Array} extraItemsHead
+     * An array of additional context menu items to add to the front of the context menu.
+     */
+    extraItemsHead: null,
+
+<span id='Ext-ux-TabCloseMenu-cfg-extraItemsTail'>    /**
+</span>     * @cfg {Array} extraItemsTail
+     * An array of additional context menu items to add to the end of the context menu.
+     */
+    extraItemsTail: null,
+
+    //public
+    constructor: function (config) {
+        this.addEvents(
+            'aftermenu',
+            'beforemenu');
+
+        this.mixins.observable.constructor.call(this, config);
+    },
+
+    init : function(tabpanel){
+        this.tabPanel = tabpanel;
+        this.tabBar = tabpanel.down(&quot;tabbar&quot;);
+
+        this.mon(this.tabPanel, {
+            scope: this,
+            afterlayout: this.onAfterLayout,
+            single: true
+        });
+    },
+
+    onAfterLayout: function() {
+        this.mon(this.tabBar.el, {
+            scope: this,
+            contextmenu: this.onContextMenu,
+            delegate: 'div.x-tab'
+        });
+    },
+
+    onBeforeDestroy : function(){
+        Ext.destroy(this.menu);
+        this.callParent(arguments);
+    },
+
+    // private
+    onContextMenu : function(event, target){
+        var me = this,
+            menu = me.createMenu(),
+            disableAll = true,
+            disableOthers = true,
+            tab = me.tabBar.getChildByElement(target),
+            index = me.tabBar.items.indexOf(tab);
+
+        me.item = me.tabPanel.getComponent(index);
+        menu.child('*[text=&quot;' + me.closeTabText + '&quot;]').setDisabled(!me.item.closable);
+
+        if (me.showCloseAll || me.showCloseOthers) {
+            me.tabPanel.items.each(function(item) {
+                if (item.closable) {
+                    disableAll = false;
+                    if (item != me.item) {
+                        disableOthers = false;
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            if (me.showCloseAll) {
+                menu.child('*[text=&quot;' + me.closeAllTabsText + '&quot;]').setDisabled(disableAll);
+            }
+
+            if (me.showCloseOthers) {
+                menu.child('*[text=&quot;' + me.closeOthersTabsText + '&quot;]').setDisabled(disableOthers);
+            }
+        }
+
+        event.preventDefault();
+        me.fireEvent('beforemenu', menu, me.item, me);
+
+        menu.showAt(event.getXY());
+    },
+
+    createMenu : function() {
+        var me = this;
+
+        if (!me.menu) {
+            var items = [{
+                text: me.closeTabText,
+                scope: me,
+                handler: me.onClose
+            }];
+
+            if (me.showCloseAll || me.showCloseOthers) {
+                items.push('-');
+            }
+
+            if (me.showCloseOthers) {
+                items.push({
+                    text: me.closeOthersTabsText,
+                    scope: me,
+                    handler: me.onCloseOthers
+                });
+            }
+
+            if (me.showCloseAll) {
+                items.push({
+                    text: me.closeAllTabsText,
+                    scope: me,
+                    handler: me.onCloseAll
+                });
+            }
+
+            if (me.extraItemsHead) {
+                items = me.extraItemsHead.concat(items);
+            }
+
+            if (me.extraItemsTail) {
+                items = items.concat(me.extraItemsTail);
+            }
+
+            me.menu = Ext.create('Ext.menu.Menu', {
+                items: items,
+                listeners: {
+                    hide: me.onHideMenu,
+                    scope: me
+                }
+            });
+        }
+
+        return me.menu;
+    },
+
+    onHideMenu: function () {
+        var me = this;
+
+        me.item = null;
+        me.fireEvent('aftermenu', me.menu, me);
+    },
+
+    onClose : function(){
+        this.tabPanel.remove(this.item);
+    },
+
+    onCloseOthers : function(){
+        this.doClose(true);
+    },
+
+    onCloseAll : function(){
+        this.doClose(false);
+    },
+
+    doClose : function(excludeActive){
+        var items = [];
+
+        this.tabPanel.items.each(function(item){
+            if(item.closable){
+                if(!excludeActive || item != this.item){
+                    items.push(item);
+                }
+            }
+        }, this);
+
+        Ext.each(items, function(item){
+            this.tabPanel.remove(item);
+        }, this);
+    }
+});
+</pre>
+</body>
+</html>

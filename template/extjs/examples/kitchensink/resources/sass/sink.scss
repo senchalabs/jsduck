@@ -1,0 +1,46 @@
+@import "compass";
+@import "accessories/all";
+
+$green: #81AF34;
+$lightblue: #E4EAED;
+
+.x-toolbar-sencha {
+	@include background-image(linear-gradient(top, lighten($green, 5), darken($green, 5)));
+	border-bottom: 1px solid darken($green, 15);
+
+	.x-logo {
+		padding: 10px 10px 10px 31px;
+
+		background: url(../images/logo.png) no-repeat 10px 11px;
+
+		color: #fff;
+		font-size: 18px;
+		font-weight: bold;
+		text-shadow: 0 1px 0 darken(#5C7D25, 5);
+	}
+}
+
+body > .x-panel > .x-panel-body {
+	background: #E4EAED;
+}
+
+.x-grid-body {
+	border-bottom: 0 !important;
+}
+
+//blueprint background on example container
+#examplePanel-body {
+	@include background-pattern-blueprint(
+		$bgcolor: $lightblue,
+		$majorcolor: lighten($lightblue, 5),
+		$majorwidth: 1px
+	);
+}
+
+//rounded corners on the selected items on the examples tree
+.examples-list {
+	.x-grid-cell,
+	.x-grid-rowwrap-div {
+		@include border-radius(4px);
+	}
+}

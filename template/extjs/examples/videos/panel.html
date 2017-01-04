@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Panels</title>
+    <link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css"/>
+
+    <!-- GC -->
+
+    <script type="text/javascript" src="../../ext-all.js"></script>
+</head>
+<body>
+    <script type="text/javascript" charset="utf-8">
+        Ext.onReady(function() {
+            Ext.create('Ext.panel.Panel', {
+                renderTo: Ext.getBody(),
+                height: 300,
+                width: 500,
+                frame: false,
+                title: 'My Panel',
+                collapsible: true,
+                animCollapse: 2000,
+
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
+                },
+
+                items: [
+                    {
+                        xtype: 'panel',
+                        flex: 1,
+                        frame: true,
+                        margin: '5 0 5 5',
+                        collapsible: true,
+                        collapseDirection: 'left',
+                        title: 'Second Panel',
+                        html: 'Second Panel interior'
+                    },
+                    {
+                        xtype: 'panel',
+                        flex: 2,
+                        margin: 5,
+                        title: 'Another Panel',
+                        html: 'Another'
+                    }
+                ],
+
+                tools: [
+                    {
+                        type: 'close'
+                    },
+                    {
+                        type: 'help',
+                        handler: function() {
+                            alert("There is no help");
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+</body>
+</html>

@@ -5,6 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="fragment" content="!">
+  <meta name="viewport" content="width=1024">
 
   {mobile_redirect}
 
@@ -15,7 +16,13 @@
   <link rel="stylesheet" href="resources/codemirror/codemirror.css" type="text/css" />
   <link rel="stylesheet" href="resources/prettify/prettify.css" type="text/css" />
   <!-- END CSS -->
-  <link rel="stylesheet" href="{css_path}" type="text/css" />
+
+  <!-- Keep this outside of BEGIN/END CSS comments, otherwise rake task <fails class=""></fails> -->
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">  
+
+  <!-- Unified nav additions -->
+  <script type="text/javascript" src="//platform.appcelerator.com/unified-nav.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
   <script type="text/javascript" src="{extjs_path}"></script>
   <script type="text/javascript" src="{data_path}"></script>
@@ -27,6 +34,7 @@
   <script type="text/javascript" src="resources/codemirror/markdown.js"></script>
   <script type="text/javascript" src="app.js"></script>
   <script type="text/javascript" src="resources/prettify/prettify.js"></script>
+  <script type="text/javascript" src="resources/codemirror/unified-nav-extras.js"></script>
   <!-- END JS -->
 
   {head_html}
@@ -36,14 +44,37 @@
 
   <div id="loading"><span class="title">{title}</span><span class="logo"></span></div>
 
-  <div id="header-content">{header}</div>
+	<div id="header-content">
+        <div id="header-content-menu">
+        {header}
+        </div>
+	</div>
   {welcome}
   {categories}
   {news}
   {guides}
-  {footer}
-
+  <div id='footer-content' style='display: none'/>
   {body_html}
+
+<script src="//munchkin.marketo.net/munchkin.js"></script>
+<script>try { mktoMunchkin("636-NHJ-871"); } catch (err) {}</script>
+<script>
+var _qoptions={qacct:"p-4aHbaizUurMCQ"},
+	_gaq=[['_setAccount','UA-5155164-11'],['_setDomainName','none'],['_setAllowLinker',true],['_setAllowAnchor',true],['_setAllowHash',false],['_addIgnoredOrganic',document.location.host],['_initData'],['_trackPageview']];
+
+(function(d) {
+function load(u){var s=d.getElementsByTagName('script')[0],sc=d.createElement('script');sc.async=true;sc.src=u;s.parentNode.insertBefore(sc,s);}
+
+load('//www.google-analytics.com/ga.js');
+load('//api.appcelerator.net/p/beacon.js');
+load('//api.appcelerator.net/p/analytics.js');
+load('//edge.quantserve.com/quant.js');
+
+function cc(l,n,s){if(!l||!n||!s||l==''||n==''||s==''){return'-'}var i,i2,i3,c='1';i=l.indexOf(n);i3=n.indexOf('=')+1;if(i>-1){i2=l.indexOf(s,i);if(i2<0){i2=l.length}c=l.substring((i+i3),i2)}return c};
+window._gaToMarketo=function(){var gaCookie=cc(document.cookie,'__utmz=',';');return {cf_campaign:cc(gaCookie,'utmccn=','|'),cf_source:cc(gaCookie,'utmsrc=','|'),cf_medium:cc(gaCookie,'utmcmd=','|'),cf_content:cc(gaCookie,'utmcct=','|'),cf_keyword:cc(gaCookie,'utmctr=','|'),cf_visits:cc(document.cookie,'__utma=',';').split('.')[5]}};
+})(document);
+</script>
+<noscript><img src="http://pixel.quantserve.com/pixel/p-4aHbaizUurMCQ.gif" style="border:0;display:none;" height="1" width="1" alt="Quantcast"/></noscript>
 
   <script type="text/javascript">
   (function(){

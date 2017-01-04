@@ -30,35 +30,4 @@ describe JsDuck::ExternalClasses do
     @external.is?("Bla_Bla").should == false
   end
 
-  it "doesn't match HTMLElement by default" do
-    @external.is?("HTMLElement").should == false
-  end
-
-  describe "with '@browser' in list of patterns" do
-    before do
-      @external.add("@browser")
-    end
-
-    it "doesn't match the special '@browser' pattern itself" do
-      @external.is?("@browser").should == false
-    end
-
-    # These classes were originally in the set of default externals.
-    %w(
-      HTMLElement
-      HTMLDivElement
-      XMLHttpRequest
-      Window
-      NodeList
-      CSSStyleSheet
-      CSSStyleRule
-      Event
-    ).each do |name|
-      it "matches #{name}" do
-        @external.is?(name).should == true
-      end
-    end
-
-  end
-
 end

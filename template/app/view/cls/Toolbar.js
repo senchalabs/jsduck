@@ -61,37 +61,49 @@ Ext.define('Docs.view.cls.Toolbar', {
         this.items = [];
         this.memberButtons = {};
 
-        Ext.Array.forEach(Docs.data.memberTypes, function(type) {
+        var memberTitles = {
+            cfg: "Configs",
+            property: (Docs.isRESTDoc ? "Fields" : "Properties"),
+            method: "Methods",
+            event: "Events",
+            css_var: "CSS Vars",
+            css_mixin: "CSS Mixins"
+        };
+        for (var type in memberTitles) {
             // combine both static and instance members into one alphabetically sorted array
-            var members = Ext.Array.filter(this.docClass.members, function(m) {
-                return m.tagname === type.name;
-            });
+            var members = this.docClass.members[type].concat(this.docClass.statics[type]);
             members.sort(function(a, b) {
                 if (a.name === "constructor" && a.tagname === "method") {
                     return -1;
                 }
                 return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
             });
-
             if (members.length > 0) {
                 var btn = this.createMemberButton({
-                    text: type.toolbar_title || type.title,
-                    type: type.name,
+                    text: memberTitles[type],
+                    type: type,
                     members: members
                 });
-                this.memberButtons[type.name] = btn;
+                this.memberButtons[type] = btn;
                 this.items.push(btn);
             }
-        }, this);
+        }
 
+        // For Ti, public/protected/private are not used currently. Set them to true and 
+		// don't show them.
         this.checkItems = {
-            "public": this.createCb("Public", "public"),
-            "protected": this.createCb("Protected", "protected"),
-            "private": this.createCb("Private", "private"),
+            "public": {checked: true}, //this.createCb("Public", "public"),
+            "protected": {checked: true}, //this.createCb("Protected", "protected"),
+            "private": {checked: true}, //this.createCb("Private", "private"),
             "inherited": this.createCb("Inherited", "inherited"),
             "accessor": this.createCb("Accessor", "accessor"),
             "deprecated": this.createCb("Deprecated", "deprecated"),
-            "removed": this.createCb("Removed", "removed")
+            "removed": this.createCb("Removed", "removed"),
+            "android": this.createCb("Android", "android"),
+            "iphone": this.createCb("iPhone", "iphone"),
+            "ipad": this.createCb("iPad", "ipad"),
+            "mobileweb": this.createCb("Mobile Web", "mobileweb"),
+            "windowsphone": this.createCb("Windows Phone", "windowsphone")
         };
 
         var self = this;
@@ -128,18 +140,14 @@ Ext.define('Docs.view.cls.Toolbar', {
             this.commentCount = this.createCommentCount(),
             {
                 xtype: 'button',
-                text: 'Show',
-                menu: [
-                    this.checkItems['public'],
-                    this.checkItems['protected'],
-                    this.checkItems['private'],
-                    '-',
-                    this.checkItems['inherited'],
-                    this.checkItems['accessor'],
-                    this.checkItems['deprecated'],
-                    this.checkItems['removed']
-                ]
-            },
+                text: 'Filter',
+                iconCls: 'fa fa-filter fa-lg',
+                menu: self.getMenuItems(),
+                width: 100,
+                style: {
+                    borderColor: '#D1D1D1',
+                    borderStyle: 'solid'
+                }            },
             {
                 xtype: 'button',
                 iconCls: 'expand-all-members',
@@ -164,10 +172,11 @@ Ext.define('Docs.view.cls.Toolbar', {
         return flags;
     },
 
+    // TiDuck: If platform 'show' setting is undefined, set checked to 'true'
     createCb: function(text, type) {
         return Ext.widget('menucheckitem', {
             text: text,
-            checked: Docs.Settings.get("show")[type],
+            checked: (Docs.Settings.get("show")[type] == undefined) ? true : Docs.Settings.get("show")[type],
             listeners: {
                 checkchange: function() {
                     this.fireEvent("filter", this.filterField.getValue(), this.getShowFlags());
@@ -225,27 +234,45 @@ Ext.define('Docs.view.cls.Toolbar', {
      * @param {RegExp} re
      */
     showMenuItems: function(show, isSearch, re) {
-        Ext.Array.forEach(Docs.data.memberTypes, function(type) {
-            var btn = this.memberButtons[type.name];
-            if (btn) {
-                btn.getStore().filterBy(function(m) {
-                    return !(
-                        !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
-                        !show['protected'] && m.get("meta")["protected"] ||
-                        !show['private']   && m.get("meta")["private"] ||
-                        !show['inherited'] && m.get("inherited") ||
-                        !show['accessor']  && m.get("accessor") ||
-                        !show['deprecated']   && m.get("meta")["deprecated"] ||
-                        !show['removed']   && m.get("meta")["removed"] ||
-                        isSearch           && !re.test(m.get("label"))
-                    );
+        Ext.Array.forEach(['cfg', 'property', 'method', 'event'], function(type) {
+            if (this.memberButtons[type]) {
+                var store = this.memberButtons[type].getStore();
+                store.filterBy(function(m) {
+                    if(!Docs.isRESTDoc && (show['android'] != undefined)) {
+                        return !(
+                            !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
+                            !show['protected'] && m.get("meta")["protected"] ||
+                            !show['private']   && m.get("meta")["private"] ||
+                            !show['inherited'] && m.get("inherited") ||
+                            !show['accessor']  && m.get("accessor") ||
+                            !show['deprecated']   && m.get("meta")["deprecated"] ||
+                            !show['removed']   && m.get("meta")["removed"] ||
+                            !(show['android'] && m.data.meta.platforms["android"] && m.data.meta.classPlatforms["android"]  || 
+                            show['ipad'] && m.data.meta.platforms["ipad"] && m.data.meta.classPlatforms["ipad"] ||
+                            show['iphone'] && m.data.meta.platforms["iphone"] && m.data.meta.classPlatforms["iphone"] ||
+                            show['mobileweb'] && m.data.meta.platforms["mobileweb"] && m.data.meta.classPlatforms["mobileweb"] ||
+                            show['windowsphone'] && m.data.meta.platforms["windowsphone"] && m.data.meta.classPlatforms["windowsphone"]) ||
+                            isSearch           && !re.test(m.get("label"))
+                        );
+                    } else {
+                        return !(
+                            !show['public']    && !(m.get("meta")["private"] || m.get("meta")["protected"]) ||
+                            !show['protected'] && m.get("meta")["protected"] ||
+                            !show['private']   && m.get("meta")["private"] ||
+                            !show['inherited'] && m.get("inherited") ||
+                            !show['accessor']  && m.get("accessor") ||
+                            !show['deprecated']   && m.get("meta")["deprecated"] ||
+                            !show['removed']   && m.get("meta")["removed"] ||
+                            isSearch           && !re.test(m.get("label"))                        
+                        )
+                    } 
                 });
                 // HACK!!!
                 // In Ext JS 4.1 filtering the stores causes the menus
                 // to become visible. But the visibility behaves badly
                 // - one has to call #show first or #hide won't have
                 // an effect.
-                var menu = btn.menu;
+                var menu = this.memberButtons[type].menu;
                 if (menu && Ext.getVersion().version >= "4.1.0") {
                     menu.show();
                     menu.hide();
@@ -303,5 +330,28 @@ Ext.define('Docs.view.cls.Toolbar', {
                 r.set("commentCount", Docs.Comments.getCount(["class", this.docClass.name, r.get("id")]));
             }, this);
         }, this);
+    },
+
+    // Returns menu items to display in Filter menu based. If showing REST APIs, only show deprecated and removed.
+    getMenuItems: function() {
+        if(!Docs.isRESTDoc) {
+            return [
+                this.checkItems['android'],
+                this.checkItems['ipad'],                    
+                this.checkItems['iphone'],                    
+                this.checkItems['mobileweb'],
+                this.checkItems['windowsphone'],
+                '-',
+                this.checkItems['inherited'],
+                this.checkItems['accessor'],
+                this.checkItems['deprecated'],
+                this.checkItems['removed']
+            ]
+        } else {
+            return [
+                this.checkItems['deprecated'],
+                this.checkItems['removed']            
+            ]
+        }
     }
 });

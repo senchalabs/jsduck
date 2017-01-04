@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-util-LruCache'>/**
+</span> * @private
+ * @class Ext.util.LruCache
+ * @extend Ext.util.HashMap
+ * A linked {@link Ext.util.HashMap HashMap} implementation which maintains most recently accessed
+ * items at the end of the list, and purges the cache down to the most recently accessed {@link #maxSize} items
+ * upon add.
+ */
+Ext.define('Ext.util.LruCache', {
+    extend: 'Ext.util.HashMap',
+
+<span id='Ext-util-LruCache-cfg-maxSize'>    /**
+</span>     * @cfg {Number} maxSize The maximum size the cache is allowed to grow to before further additions cause
+     * removal of the least recently used entry.
+     */
+
+    constructor: function(config) {
+        Ext.apply(this, config);
+        this.callParent([config]);
+    },
+
+    /*
+     * @inheritdoc
+     */
+    add: function(key, newValue) {
+        var me = this,
+            existingKey = me.findKey(newValue),
+            entry;
+
+        // &quot;new&quot; value is in the list.
+        if (existingKey) {
+            me.unlinkEntry(entry = me.map[existingKey]);
+            entry.prev = me.last;
+            entry.next = null;
+        }
+        // Genuinely new: create an entry for it.
+        else {
+            entry = {
+                prev: me.last,
+                next: null,
+                key: key,
+                value: newValue
+            };
+        }
+
+        // If the list is not empty, update the last entry
+        if (me.last) {
+            me.last.next = entry;
+        }
+        // List is empty
+        else {
+            me.first = entry;
+        }
+        me.last = entry;
+        me.callParent([key, entry]);
+        me.prune();
+        return newValue;
+    },
+
+    // @private
+    insertBefore: function(key, newValue, sibling) {
+        var me = this,
+            existingKey,
+            entry;
+
+        // NOT an assignment.
+        // If there is a following sibling
+        if (sibling = this.map[this.findKey(sibling)]) {
+            existingKey = me.findKey(newValue);
+
+            // &quot;new&quot; value is in the list.
+            if (existingKey) {
+                me.unlinkEntry(entry = me.map[existingKey]);
+            }
+            // Genuinely new: create an entry for it.
+            else {
+                entry = {
+                    prev: sibling.prev,
+                    next: sibling,
+                    key: key,
+                    value: newValue
+                };
+            }
+
+            if (sibling.prev) {
+                entry.prev.next = entry;
+            } else {
+                me.first = entry;
+            }
+            entry.next = sibling;
+            sibling.prev = entry;
+            me.prune();
+            return newValue;
+        }
+        // No following sibling, it's just an add.
+        else {
+            return me.add(key, newValue);
+        }
+    },
+
+    /*
+     * @inheritdoc
+     */
+    get: function(key) {
+        var entry = this.map[key];
+        if (entry) {
+
+            // If it's not the end, move to end of list on get
+            if (entry.next) {
+                this.moveToEnd(entry);
+            }
+            return entry.value;
+        }
+    },
+
+    /*
+     * @private
+     */
+    removeAtKey: function(key) {
+        this.unlinkEntry(this.map[key]);
+        return this.callParent(arguments);
+    },
+
+    /*
+     * @inheritdoc
+     */
+    clear: function(/* private */ initial) {
+        this.first = this.last = null;
+        return this.callParent(arguments);
+    },
+
+    // private. Only used by internal methods.
+    unlinkEntry: function(entry) {
+        // Stitch the list back up.
+        if (entry) {
+            if (entry.next) {
+                entry.next.prev = entry.prev;
+            } else {
+                this.last = entry.prev;
+            }
+            if (entry.prev) {
+                entry.prev.next = entry.next;
+            } else {
+                this.first = entry.next;
+            }
+            entry.prev = entry.next = null;
+        }
+    },
+
+    // private. Only used by internal methods.
+    moveToEnd: function(entry) {
+        this.unlinkEntry(entry);
+
+        // NOT an assignment.
+        // If the list is not empty, update the last entry
+        if (entry.prev = this.last) {
+            this.last.next = entry;
+        }
+        // List is empty
+        else {
+            this.first = entry;
+        }
+        this.last = entry;
+    },
+
+    /*
+     * @private
+     */
+    getArray: function(isKey) {
+        var arr = [],
+            entry = this.first;
+
+        while (entry) {
+            arr.push(isKey ? entry.key: entry.value);
+            entry = entry.next;
+        }
+        return arr;
+    },
+
+<span id='Ext-util-LruCache-method-each'>    /**
+</span>     * Executes the specified function once for each item in the cache.
+     * Returning false from the function will cease iteration.
+     *
+     * By default, iteration is from least recently used to most recent.
+     *
+     * The paramaters passed to the function are:
+     * &lt;div class=&quot;mdetail-params&quot;&gt;&lt;ul&gt;
+     * &lt;li&gt;&lt;b&gt;key&lt;/b&gt; : String&lt;p class=&quot;sub-desc&quot;&gt;The key of the item&lt;/p&gt;&lt;/li&gt;
+     * &lt;li&gt;&lt;b&gt;value&lt;/b&gt; : Number&lt;p class=&quot;sub-desc&quot;&gt;The value of the item&lt;/p&gt;&lt;/li&gt;
+     * &lt;li&gt;&lt;b&gt;length&lt;/b&gt; : Number&lt;p class=&quot;sub-desc&quot;&gt;The total number of items in the hash&lt;/p&gt;&lt;/li&gt;
+     * &lt;/ul&gt;&lt;/div&gt;
+     * @param {Function} fn The function to execute.
+     * @param {Object} scope The scope (&lt;code&gt;this&lt;/code&gt; reference) to execute in. Defaults to this LruCache.
+     * @param {Boolean} [reverse=false] Pass &lt;code&gt;true&lt;/code&gt; to iterate the list in reverse (most recent first) order.
+     * @return {Ext.util.LruCache} this
+     */
+    each: function(fn, scope, reverse) {
+        var me = this,
+            entry = reverse ? me.last : me.first,
+            length = me.length;
+
+        scope = scope || me;
+        while (entry) {
+            if (fn.call(scope, entry.key, entry.value, length) === false) {
+                break;
+            }
+            entry = reverse ? entry.prev : entry.next;
+        }
+        return me;
+    },
+
+<span id='Ext-util-LruCache-method-findKey'>    /**
+</span>     * @private
+     */
+    findKey: function(value) {
+        var key,
+            map = this.map;
+
+        for (key in map) {
+            if (map.hasOwnProperty(key) &amp;&amp; map[key].value === value) {
+                return key;
+            }
+        }
+        return undefined;
+    },
+
+<span id='Ext-util-LruCache-method-prune'>    /**
+</span>     * Purge the least recently used entries if the maxSize has been exceeded.
+     */
+    prune: function() {
+        var me = this,
+            purgeCount = me.maxSize ? (me.length - me.maxSize) : 0;
+
+        if (purgeCount &gt; 0) {
+            for (; me.first &amp;&amp; purgeCount; purgeCount--) {
+                me.removeAtKey(me.first.key);
+            }
+        }
+    }
+
+<span id='Ext-util-LruCache-method-containsKey'>  /**
+</span>   * @method containsKey
+   * @private
+   */
+<span id='Ext-util-LruCache-method-contains'>  /**
+</span>   * @method contains
+   * @private
+   */
+<span id='Ext-util-LruCache-method-getKeys'>  /**
+</span>   * @method getKeys
+   * @private
+   */
+<span id='Ext-util-LruCache-method-getValues'>  /**
+</span>   * @method getValues
+   * @private
+   */
+});</pre>
+</body>
+</html>

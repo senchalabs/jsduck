@@ -1,12 +1,13 @@
-require "jsduck/tag/boolean_tag"
+require "jsduck/meta_tag"
 
 module JsDuck::Tag
-  # Causes a member or entire class documentation to be completely
-  # excluded from docs.
-  class Ignore < BooleanTag
+  # @ignore is alias for @private
+  class Ignore < JsDuck::MetaTag
     def initialize
-      @pattern = "ignore"
-      super
+      @name = "ignore"
+      @key = :ignore
+      @boolean = true
     end
   end
 end
+

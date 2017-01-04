@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-Shadow'>/**
+</span> * Simple class that can provide a shadow effect for any element.  Note that the element
+ * MUST be absolutely positioned, and the shadow does not provide any shimming.  This
+ * should be used only in simple cases - for more advanced functionality that can also
+ * provide the same shadow effect, see the {@link Ext.Layer} class.
+ */
+Ext.define('Ext.Shadow', {
+    requires: ['Ext.ShadowPool'],
+
+<span id='Ext-Shadow-method-constructor'>    /**
+</span>     * Creates new Shadow.
+     * @param {Object} config (optional) Config object.
+     */
+    constructor: function(config) {
+        var me = this,
+            adjusts,
+            offset,
+            rad;
+        
+        Ext.apply(me, config);
+        if (!Ext.isString(me.mode)) {
+            me.mode = me.defaultMode;
+        }
+        offset = me.offset;
+        rad = Math.floor(offset / 2);
+        me.opacity = 50;
+        switch (me.mode.toLowerCase()) {
+            // all this hideous nonsense calculates the various offsets for shadows
+            case &quot;drop&quot;:
+                if (Ext.supports.CSS3BoxShadow) {
+                    adjusts = {
+                        t: offset,
+                        l: offset,
+                        h: -offset,
+                        w: -offset
+                    };
+                }
+                else {
+                    adjusts = {
+                        t: -rad,
+                        l: -rad,
+                        h: -rad,
+                        w: -rad
+                    };
+                }
+                break;
+            case &quot;sides&quot;:
+                if (Ext.supports.CSS3BoxShadow) {
+                    adjusts = {
+                        t: offset,
+                        l: 0,
+                        h: -offset,
+                        w: 0
+                    };
+                }
+                else {
+                    adjusts = {
+                        t: - (1 + rad),
+                        l: 1 + rad - 2 * offset,
+                        h: -1,
+                        w: rad - 1
+                    };
+                }
+                break;
+            case &quot;frame&quot;:
+                if (Ext.supports.CSS3BoxShadow) {
+                    adjusts = {
+                        t: 0,
+                        l: 0,
+                        h: 0,
+                        w: 0
+                    };
+                }
+                else {
+                    adjusts = {
+                        t: 1 + rad - 2 * offset,
+                        l: 1 + rad - 2 * offset,
+                        h: offset - rad - 1,
+                        w: offset - rad - 1
+                    };
+                }
+                break;
+        }
+        me.adjusts = adjusts;
+    },
+
+<span id='Ext-Shadow-method-getShadowSize'>    /**
+</span>     * @private
+     * Returns the shadow size on each side of the element in standard CSS order: top, right, bottom, left;
+     * @return {Number[]} Top, right, bottom and left shadow size.
+     */
+    getShadowSize: function() {
+        var me = this,
+            offset = me.el ? me.offset : 0,
+            result = [offset, offset, offset, offset],
+            mode = me.mode.toLowerCase();
+
+        // There are only offsets if the shadow element is present.
+        if (me.el &amp;&amp; mode !== 'frame') {
+            result[0] = 0;
+            if (mode == 'drop') {
+                result[3] = 0;
+            }
+        }
+        return result;
+    },
+
+<span id='Ext-Shadow-cfg-mode'>    /**
+</span>     * @cfg {String} mode
+     * The shadow display mode.  Supports the following options:
+     *
+     * - sides : Shadow displays on both sides and bottom only&lt;/li&gt;
+     * - frame : Shadow displays equally on all four sides&lt;/li&gt;
+     * - drop : Traditional bottom-right drop shadow&lt;/li&gt;
+     */
+
+<span id='Ext-Shadow-cfg-offset'>    /**
+</span>     * @cfg {Number} offset
+     * The number of pixels to offset the shadow from the element
+     */
+    offset: 4,
+
+    // private
+    defaultMode: &quot;drop&quot;,
+
+    // private - CSS property to use to set the box shadow
+    boxShadowProperty: (function() {
+        var property = 'boxShadow',
+            style = document.documentElement.style;
+
+        if (!('boxShadow' in style)) {
+            if ('WebkitBoxShadow' in style) {
+                // Safari prior to version 5.1 and Chrome prior to version 10
+                property = 'WebkitBoxShadow';
+            }
+            else if ('MozBoxShadow' in style) {
+                // FF 3.5 &amp; 3.6
+                property = 'MozBoxShadow';
+            }
+        }
+
+        return property;
+    }()),
+
+<span id='Ext-Shadow-method-show'>    /**
+</span>     * Displays the shadow under the target element
+     * @param {String/HTMLElement/Ext.Element} targetEl The id or element under which the shadow should display
+     */
+    show: function(target) {
+        var me = this,
+            index;
+        
+        target = Ext.get(target);
+        if (!me.el) {
+            me.el = Ext.ShadowPool.pull();
+            if (me.el.dom.nextSibling != target.dom) {
+                me.el.insertBefore(target);
+            }
+        }
+        index = (parseInt(target.getStyle(&quot;z-index&quot;), 10) - 1) || 0;
+        me.el.setStyle(&quot;z-index&quot;, me.zIndex || index);
+        if (Ext.isIE &amp;&amp; !Ext.supports.CSS3BoxShadow) {
+            me.el.dom.style.filter = &quot;progid:DXImageTransform.Microsoft.alpha(opacity=&quot; + me.opacity + &quot;) progid:DXImageTransform.Microsoft.Blur(pixelradius=&quot; + (me.offset) + &quot;)&quot;;
+        }
+        me.realign(
+            target.getLocalX(),
+            target.getLocalY(),
+            target.dom.offsetWidth,
+            target.dom.offsetHeight
+        );
+        me.el.dom.style.display = &quot;block&quot;;
+    },
+
+<span id='Ext-Shadow-method-isVisible'>    /**
+</span>     * Returns true if the shadow is visible, else false
+     */
+    isVisible: function() {
+        return this.el ? true: false;
+    },
+
+<span id='Ext-Shadow-method-realign'>    /**
+</span>     * Direct alignment when values are already available. Show must be called at least once before
+     * calling this method to ensure it is initialized.
+     * @param {Number} left The target element left position
+     * @param {Number} top The target element top position
+     * @param {Number} width The target element width
+     * @param {Number} height The target element height
+     */
+    realign: function(l, t, targetWidth, targetHeight) {
+        if (!this.el) {
+            return;
+        }
+        var adjusts = this.adjusts,
+            d = this.el.dom,
+            targetStyle = d.style,
+            shadowWidth,
+            shadowHeight,
+            sws,
+            shs;
+
+        targetStyle.left = (l + adjusts.l) + &quot;px&quot;;
+        targetStyle.top = (t + adjusts.t) + &quot;px&quot;;
+        shadowWidth = Math.max(targetWidth + adjusts.w, 0);
+        shadowHeight = Math.max(targetHeight + adjusts.h, 0);
+        sws = shadowWidth + &quot;px&quot;;
+        shs = shadowHeight + &quot;px&quot;;
+        if (targetStyle.width != sws || targetStyle.height != shs) {
+            targetStyle.width = sws;
+            targetStyle.height = shs;
+
+            if (Ext.supports.CSS3BoxShadow) {
+                targetStyle[this.boxShadowProperty] = '0 0 ' + this.offset + 'px #888';
+            }
+        }
+    },
+
+<span id='Ext-Shadow-method-hide'>    /**
+</span>     * Hides this shadow
+     */
+    hide: function() {
+        var me = this;
+        
+        if (me.el) {
+            me.el.dom.style.display = &quot;none&quot;;
+            Ext.ShadowPool.push(me.el);
+            delete me.el;
+        }
+    },
+
+<span id='Ext-Shadow-method-setZIndex'>    /**
+</span>     * Adjust the z-index of this shadow
+     * @param {Number} zindex The new z-index
+     */
+    setZIndex: function(z) {
+        this.zIndex = z;
+        if (this.el) {
+            this.el.setStyle(&quot;z-index&quot;, z);
+        }
+    },
+    
+<span id='Ext-Shadow-method-setOpacity'>    /**
+</span>     * Sets the opacity of the shadow
+     * @param {Number} opacity The opacity
+     */
+    setOpacity: function(opacity){
+        if (this.el) {
+            if (Ext.isIE &amp;&amp; !Ext.supports.CSS3BoxShadow) {
+                opacity = Math.floor(opacity * 100 / 2) / 100;
+            }
+            this.opacity = opacity;
+            this.el.setOpacity(opacity);
+        }
+    }
+});</pre>
+</body>
+</html>

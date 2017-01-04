@@ -16,7 +16,7 @@ module JsDuck
     # Parses welcome HTML or Markdown file with content for welcome page.
     def initialize(filename, doc_formatter)
       @html = Util::IO.read(filename)
-      if filename =~ /\.(md|markdown)\z/i
+      if filename =~ /\.(md|markdown)\Z/i
         @html = '<div class="markdown">' + doc_formatter.format(@html) + '</div>'
       end
     end

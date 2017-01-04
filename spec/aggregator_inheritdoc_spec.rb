@@ -1,191 +1,190 @@
-require "mini_parser"
+require "jsduck/aggregator"
+require "jsduck/source/file"
+require "jsduck/class"
+require "jsduck/relations"
+require "jsduck/inherit_doc"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    Helper::MiniParser.parse(string, {:inherit_doc => true})
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    relations = JsDuck::Relations.new(agr.result.map {|cls| JsDuck::Class.new(cls) })
+    JsDuck::InheritDoc.new(relations).resolve_all
+    relations
   end
 
-  shared_examples_for "docs inheritance" do
-    it "inherits docs" do
-      @inh1[:doc].should == "Original comment."
+  shared_examples_for "@inheritdoc" do
+    it "original method keeps its name" do
+      @orig[:name].should == "bar"
     end
 
-    it "doesn't inherit docs when it has docs of its own" do
-      @inh2[:doc].should == "Some docs of its own."
+    it "new method keeps its name" do
+      @inheritdoc[:name].should == "foobar"
+    end
+
+    it "inheritdoc merges comment from original and its own comment" do
+      @inheritdoc[:doc].should == "New comment.\n\nOriginal comment."
     end
   end
 
-  describe "@inheritdoc in class" do
-    before do
-      @docs = parse(<<-EOF)
-        /**
-         * @class Foo
-         * Original comment.
-         */
-
-        /**
-         * @class Inh1
-         * @inheritdoc Foo
-         */
-
-        /**
-         * @class Inh2
-         * @inheritdoc Foo
-         * Some docs of its own.
-         */
-      EOF
-      @inh1 = @docs["Inh1"]
-      @inh2 = @docs["Inh2"]
-    end
-
-    it_should_behave_like "docs inheritance"
-  end
-
-  describe "@inheritdoc in method" do
+  describe "@inheritdoc of method" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
           /**
-           * @method foo
+           * @method bar
            * Original comment.
            * @param arg1
            * @param arg2
            * @return {String}
-           * @throws {Exception}
            */
 
-        /** @class Inh1 */
+        /** @class Core */
           /**
-           * @method foo
-           * @inheritdoc Foo#foo
+           * @method foobar
+           * New comment.
+           * @inheritdoc Foo#bar
            */
-
-        /** @class Inh2 */
-          /**
-           * @method foo
-           * @inheritdoc Foo#foo
-           * Some docs of its own.
-           * @param blah
-           * @return {Number}
-           * @throws {String}
-           */
-
-        /** @class Inh3 */
-          /**
-           * @inheritdoc Foo#foo
-           */
-          function foo(a,b,c,d,e) {
-          }
       EOF
-      @inh1 = @docs["Inh1"][:members][0]
-      @inh2 = @docs["Inh2"][:members][0]
-      @inh3 = @docs["Inh3"][:members][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
-    it_should_behave_like "docs inheritance"
+    it_behaves_like "@inheritdoc"
 
     it "inherits parameters" do
-      @inh1[:params].length.should == 2
+      @inheritdoc[:params].length.should == 2
     end
 
     it "inherits return value" do
-      @inh1[:return][:type].should == "String"
-    end
-
-    it "inherits throws" do
-      @inh1[:throws][0][:type].should == "Exception"
-    end
-
-    it "doesn't inherit params when @param tag present" do
-      @inh2[:params].length.should == 1
-    end
-
-    it "doesn't inherit return when @return tag present" do
-      @inh2[:return][:type].should == "Number"
-    end
-
-    it "doesn't inherit throws when @throws tag present" do
-      @inh2[:throws][0][:type].should == "String"
-    end
-
-    it "inherits parameters when auto-detected parameters present" do
-      @inh3[:params].length.should == 2
+      @inheritdoc[:return][:type].should == "String"
     end
   end
 
-  describe "@inheritdoc in cfg" do
-    before do
+  # Helper to parse simple source codes to test if @inheritdoc tag
+  # aliases work
+  def parse_simple_source(at_tag)
       @docs = parse(<<-EOF)
         /** @class Foo */
           /**
-           * @cfg {String} foo
+           * @method bar
            * Original comment.
            */
 
-        /** @class Inh1 */
+        /** @class Core */
           /**
-           * @cfg foo
-           * @inheritdoc Foo#foo
+           * @method foobar
+           * New comment.
+           * #{at_tag} Foo#bar
            */
-
-        /** @class Inh2 */
-          /**
-           * @cfg {Number} foo
-           * Some docs of its own.
-           * @inheritdoc Foo#foo
-           */
-
-        /** @class Inh3 */
-        Inh3 = {
-          /**
-           * @cfg
-           * @inheritdoc Foo#foo
-           */
-          foo: 42
-        }
       EOF
-      @inh1 = @docs["Inh1"][:members][0]
-      @inh2 = @docs["Inh2"][:members][0]
-      @inh3 = @docs["Inh3"][:members][0]
-    end
-
-    it_should_behave_like "docs inheritance"
-
-    it "inherits type" do
-      @inh1[:type].should == "String"
-    end
-
-    it "doesn't inherit type when type specified in cfg itself" do
-      @inh2[:type].should == "Number"
-    end
-
-    it "inherits type when auto-detected type present" do
-      @inh3[:type].should == "String"
-    end
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
   end
 
-  describe "@inheritdoc in @cfg with subproperties" do
+  describe "@inheritDoc" do
+    before do
+      parse_simple_source("@inheritDoc")
+    end
+
+    it_behaves_like "@inheritdoc"
+  end
+
+  describe "@alias" do
+    before do
+      parse_simple_source("@alias")
+    end
+
+    it_behaves_like "@inheritdoc"
+  end
+
+  describe "@inheritdoc of event" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
           /**
-           * @cfg {Object} foo Original comment.
-           * @cfg {String} foo.name Some name
-           * @cfg {Number} foo.value Some value
+           * @event bar
+           * Original comment.
+           * @param arg1
+           * @param arg2
            */
 
-        /** @class Inh1 */
+        /** @class Core */
           /**
-           * @cfg foo
-           * @inheritdoc Foo#foo
+           * @event foobar
+           * New comment.
+           * @inheritdoc Foo#bar
            */
       EOF
-      @inh1 = @docs["Inh1"][:members][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
-    it "inherits subproperties" do
-      @inh1[:properties].length.should == 2
+    it_behaves_like "@inheritdoc"
+
+    it "inherits parameters" do
+      @inheritdoc[:params].length.should == 2
     end
+
+    it "doesn't get return value" do
+      @inheritdoc[:return].should == nil
+    end
+  end
+
+  describe "@inheritdoc of cfg" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @cfg bar
+           * Original comment.
+           */
+
+        /** @class Core */
+          /**
+           * @cfg foobar
+           * New comment.
+           * @inheritdoc Foo#bar
+           */
+      EOF
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
+    end
+
+    it_behaves_like "@inheritdoc"
+
+    it "doesn't get parameters" do
+      @inheritdoc[:params].should == nil
+    end
+
+    it "doesn't get return value" do
+      @inheritdoc[:return].should == nil
+    end
+  end
+
+  describe "@inheritdoc of static method" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @method bar
+           * Original comment.
+           * @static
+           */
+
+        /** @class Core */
+          /**
+           * @method foobar
+           * New comment.
+           * @inheritdoc Foo#bar
+           * @static
+           */
+      EOF
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
+    end
+
+    it_behaves_like "@inheritdoc"
   end
 
   describe "@inheritdoc with type info" do
@@ -193,157 +192,190 @@ describe JsDuck::Aggregator do
       @docs = parse(<<-EOF)
         /** @class Foo */
           /**
-           * @method foo
+           * @cfg bar
+           * Original comment.
+           */
+          /**
+           * @method bar
            * Method comment.
            */
           /**
-           * @event foo
-           * Event comment.
-           */
-          /**
-           * @method foo
-           * Static method comment.
-           * @static
+           * @property bar
+           * Prop comment.
            */
 
-        /** @class Inh1 */
+        /** @class Core */
           /**
-           * @event foo
-           * @inheritdoc Foo#method-foo
-           */
-
-        /** @class Inh2 */
-          /**
-           * @event foo
-           * @inheritdoc Foo#static-method-foo
+           * @cfg foobar
+           * New comment.
+           * @inheritdoc Foo#cfg-bar
            */
       EOF
-      @inh1 = @docs["Inh1"][:members][0]
-      @inh2 = @docs["Inh2"][:members][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
-    it "inherits from the type of member specified" do
-      @inh1[:doc].should == "Method comment."
-    end
-
-    it "inherits from the static member when static- specified in reference" do
-      @inh2[:doc].should == "Static method comment."
-    end
+    it_behaves_like "@inheritdoc"
   end
 
-  describe "@inheritdoc without type info" do
+  describe "using @inheritdoc to inherit from another type of member" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
           /**
-           * @method foo
-           * Method comment.
-           */
-          /**
-           * @event foo
-           * Event comment.
-           */
-          /**
-           * @method foo
-           * Static method comment.
-           * @static
+           * @method bar
+           * Original comment.
            */
 
-        /** @class Inh1 */
+        /** @class Core */
           /**
-           * @method foo
-           * @inheritdoc Foo#foo
-           */
-
-        /** @class Inh2 */
-          /**
-           * @method foo
-           * @inheritdoc Foo#foo
-           * @static
+           * @event foobar
+           * New comment.
+           * @inheritdoc Foo#method-bar
            */
       EOF
-      @inh1 = @docs["Inh1"][:members][0]
-      @inh2 = @docs["Inh2"][:members][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
-    it "inherits from the same type of member as itself" do
-      @inh1[:doc].should == "Method comment."
-    end
+    it_behaves_like "@inheritdoc"
 
-    it "inherits from the static member when it is static itself" do
-      @inh2[:doc].should == "Static method comment."
+    it "keeps the type of the member" do
+      @inheritdoc[:tagname].should == :event
     end
   end
 
-  describe "@inheritdoc without staticality info inheriting from parent with only a static member" do
+  describe "@inheritdoc without type info uses the type of itself" do
     before do
       @docs = parse(<<-EOF)
         /** @class Foo */
           /**
-           * @method foo
-           * Static method comment.
-           * @static
+           * @cfg bar
+           * Original comment.
+           */
+          /**
+           * @method bar
+           * Method comment.
+           */
+          /**
+           * @property bar
+           * Prop comment.
            */
 
-        /** @class Inh1 */
+        /** @class Core */
           /**
-           * @method foo
-           * @inheritdoc Foo#foo
+           * @cfg foobar
+           * New comment.
+           * @inheritdoc Foo#bar
            */
       EOF
-      @inh1 = @docs["Inh1"][:members][0]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
 
-    it "inherits from the static member" do
-      @inh1[:doc].should == "Static method comment."
+    it_behaves_like "@inheritdoc"
+  end
+
+  describe "@inheritdoc with staticality info" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @method bar
+           * @static
+           * Original comment.
+           */
+          /**
+           * @method bar
+           * Method comment.
+           */
+
+        /** @class Core */
+          /**
+           * @method foobar
+           * New comment.
+           * @inheritdoc Foo#static-bar
+           */
+      EOF
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
     end
+
+    it_behaves_like "@inheritdoc"
+  end
+
+  describe "@inheritdoc without staticality info uses the statics of itself" do
+    before do
+      @docs = parse(<<-EOF)
+        /** @class Foo */
+          /**
+           * @method bar
+           * @static
+           * Original comment.
+           */
+          /**
+           * @method bar
+           * Method comment.
+           */
+
+        /** @class Core */
+          /**
+           * @method foobar
+           * @static
+           * New comment.
+           * @inheritdoc Foo#bar
+           */
+      EOF
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
+    end
+
+    it_behaves_like "@inheritdoc"
   end
 
   describe "recursive @inheritdocs" do
     before do
       @docs = parse(<<-EOF)
-        /**
-         * @class Foo
-         * Grandparent docs.
-         */
+        /** @class Foo */
+          /**
+           * @method bar
+           * Original comment.
+           * @param arg1
+           * @param arg2
+           * @return {String}
+           */
 
-        /**
-         * @class ChildWithoutDocs
-         * @inheritdoc Foo
-         */
-        /**
-         * @class ChildWithDocs
-         * @inheritdoc Foo
-         * Parent docs.
-         */
+        /** @class HyperCore */
+          /**
+           * @method zap
+           * New comment 2.
+           * @inheritdoc Core#foobar
+           */
 
-        /**
-         * @class Inh1
-         * @inheritdoc ChildWithoutDocs
-         */
-        /**
-         * @class Inh2
-         * @inheritdoc ChildWithDocs
-         */
+        /** @class Core */
+          /**
+           * @method foobar
+           * New comment.
+           * @inheritdoc Foo#bar
+           */
       EOF
-      @inh1 = @docs["Inh1"]
-      @inh2 = @docs["Inh2"]
+      @orig = @docs["Foo"][:members][0]
+      @inheritdoc = @docs["Core"][:members][0]
+      @inheritdoc2 = @docs["HyperCore"][:members][0]
     end
 
-    it "inherits docs from grandparent when parent has no docs" do
-      @inh1[:doc].should == "Grandparent docs."
-    end
+    it_behaves_like "@inheritdoc"
 
-    it "inherits docs from parent when parent has docs of its own" do
-      @inh2[:doc].should == "Parent docs."
+    it "inheritdoc2 inherits params from first method" do
+      @inheritdoc2[:params].length.should == 2
     end
   end
 
-  describe "@inheritdoc with member name only" do
+  shared_examples_for "with member name parameter" do
     before do
       @docs = parse(<<-EOF)
         /**
-         * @class Foo
+         * @class Child
          */
           /**
            * @method bar
@@ -351,15 +383,30 @@ describe JsDuck::Aggregator do
            */
           /**
            * @method foobar
-           * @inheritdoc #bar
+           * #{@tagname} #bar
+           * New comment.
            */
       EOF
-      @inheritdoc = @docs["Foo"][:members][1]
+      @inheritdoc = @docs["Child"][:members][1]
     end
 
-    it "inherits from the member within current class" do
-      @inheritdoc[:doc].should == "Original comment."
+    it "merges comment from referenced member" do
+      @inheritdoc[:doc].should == "New comment.\n\nOriginal comment."
     end
+  end
+
+  describe "@inheritdoc" do
+    before do
+      @tagname = "@inheritdoc"
+    end
+    it_behaves_like "with member name parameter"
+  end
+
+  describe "@alias" do
+    before do
+      @tagname = "@alias"
+    end
+    it_behaves_like "with member name parameter"
   end
 
   describe "@inheritdoc without parameter" do
@@ -367,37 +414,33 @@ describe JsDuck::Aggregator do
       @docs = parse(<<-EOF)
         /**
          * @class Parent
-         * Parent class comment.
          */
           /**
            * @method foo
-           * Parent method comment.
+           * Original comment.
+           * @param arg1
+           * @param arg2
+           * @return {String}
            */
 
         /**
          * @class Child
          * @extends Parent
-         * @inheritdoc
          */
           /**
            * @method foo
            * @inheritdoc
            */
       EOF
-      @class = @docs["Child"]
-      @method = @class[:members][0]
-    end
-
-    it "inherits docs from parent class" do
-      @class[:doc].should == "Parent class comment."
+      @method = @docs["Child"][:members][0]
     end
 
     it "inherits docs from parent class method" do
-      @method[:doc].should == "Parent method comment."
+      @method[:doc].should == "Original comment."
     end
   end
 
-  describe "@inheritdoc without parameter and parent class" do
+  describe "@inheritdoc without parent" do
     before do
       @docs = parse(<<-EOF)
         /**
@@ -416,7 +459,7 @@ describe JsDuck::Aggregator do
     end
   end
 
-  describe "@inheritdoc without parameter and no such method in parent class" do
+  describe "@inheritdoc without method in parent" do
     before do
       @docs = parse(<<-EOF)
         /**
@@ -466,43 +509,337 @@ describe JsDuck::Aggregator do
     end
   end
 
-  # Bug 345, which was caused by only some member indexes being
-  # invalidated after InheritDoc process resulted in properties turned
-  # into configs.
-  describe "parent class with property changed to config" do
+  describe "@inheritdoc with class name in class" do
     before do
       @docs = parse(<<-EOF)
-          /** */
-          Ext.define('Ext.Blah', {
-              /**
-               * @inheritdoc Ext.View#blabla
-               */
-              something: true
-          });
-
-          /** */
-          Ext.define('Ext.AbstractView', {
-              /** @cfg */
-              itemSelector: "foo"
-          });
-
-          /** */
-          Ext.define('Ext.Table', {
-              extend: 'Ext.AbstractView',
-              itemSelector: 'bar'
-          });
-
-          /** */
-          Ext.define('Ext.View', {
-              extend: 'Ext.Table'
-          });
+        /**
+         * @class Parent
+         * Original comment.
+         */
+        /**
+         * @class Child
+         * New comment.
+         * @inheritdoc Parent
+         */
       EOF
-      @view = @docs["Ext.View"]
+      @cls = @docs["Child"]
     end
 
-    it "returns correctly just one member when calling #find_members on child" do
-      @view.find_members({:name => "itemSelector"}).length.should == 1
+    it "combines docs from referenced class and current class" do
+      @cls[:doc].should == "New comment.\n\nOriginal comment."
     end
   end
 
+  describe "plain @inheritdoc in class" do
+    before do
+      @docs = parse(<<-EOF)
+        /**
+         * @class Parent
+         * Original comment.
+         */
+        /**
+         * @class Child
+         * @extends Parent
+         * New comment.
+         * @inheritdoc
+         */
+      EOF
+      @cls = @docs["Child"]
+    end
+
+    it "combines docs from parent and child" do
+      @cls[:doc].should == "New comment.\n\nOriginal comment."
+    end
+  end
+
+  describe "autoinherit with config:{}" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            config: {
+                /**
+                 * My config.
+                 */
+                foo: 5
+            }
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            config: {
+                foo: 10
+            }
+        });
+      EOF
+      @cls = @docs["Child"]
+      @cfg = @cls[:members][0]
+    end
+
+    it "inherits docs from parent" do
+      @cfg[:doc].should == "My config."
+    end
+
+    it "inherits being public from parent" do
+      @cfg[:private].should == nil
+    end
+
+    it "inherits being public from parent (meta)" do
+      @cfg[:meta][:private].should == nil
+    end
+  end
+
+  describe "autoinherit with config:{} through two parents" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            config: {
+                /**
+                 * My config.
+                 */
+                foo: 5
+            }
+        });
+        /** */
+        Ext.define("Middle", {
+            extend: "Parent",
+            config: {
+                foo: 7
+            }
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Middle",
+            config: {
+                foo: 10
+            }
+        });
+      EOF
+      @cls = @docs["Child"]
+      @cfg = @cls[:members][0]
+    end
+
+    it "inherits docs from parent" do
+      @cfg[:doc].should == "My config."
+    end
+
+    it "inherits being public from parent" do
+      @cfg[:private].should == nil
+    end
+
+    it "inherits being public from parent (meta)" do
+      @cfg[:meta][:private].should == nil
+    end
+  end
+
+  describe "autoinherit with config:{} and no parent" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Child", {
+            config: {
+                foo: 10
+            }
+        });
+      EOF
+      @cls = @docs["Child"]
+      @cfg = @cls[:members][0]
+    end
+
+    it "becomes private" do
+      @cfg[:private].should == true
+    end
+
+    it "becomes private (meta)" do
+      @cfg[:meta][:private].should == true
+    end
+  end
+
+  describe "autoinherit with several meta tags" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            /**
+             * My property.
+             * @protected
+             * @deprecated 4.0 Use something else.
+             */
+            foo: 5
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            foo: 10
+        });
+      EOF
+      @cls = @docs["Child"]
+      @property = @cls[:members][0]
+    end
+
+    it "inherits @protected" do
+      @property[:meta][:protected].should == true
+    end
+
+    it "inherits @deprecated" do
+      @property[:meta][:deprecated][:version].should == "4.0"
+      @property[:meta][:deprecated][:text].should == "Use something else."
+    end
+  end
+
+  describe "autoinherit with his own and parent meta tags" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            /**
+             * My property.
+             * @protected
+             * @deprecated 3.0
+             */
+            foo: 5
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            // @readonly
+            // @deprecated 4.0
+            foo: 10
+        });
+      EOF
+      @cls = @docs["Child"]
+      @property = @cls[:members][0]
+    end
+
+    it "inherits @protected" do
+      @property[:meta][:protected].should == true
+    end
+
+    it "keeps @readonly" do
+      @property[:meta][:readonly].should == true
+    end
+
+    it "overrides @deprecated of parent with its own @deprecated" do
+      @property[:meta][:deprecated][:version].should == "4.0"
+    end
+  end
+
+  describe "inheriting cfg/property type" do
+    let(:members) do
+      ms = parse(<<-EOF)["Child"][:members]
+        /** */
+        Ext.define("Parent", {
+            /**
+             * @property {String/Number}
+             */
+            foo: 42,
+            /**
+             * @property {String/Number}
+             */
+            bar: 5,
+            baz: 15,
+            /**
+             * @property {String/Number}
+             * @private
+             */
+            zap: 7
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            /**
+             * @inheritdoc
+             */
+            foo: "blah",
+            bar: "blah",
+            baz: "blah",
+            zap: "blah"
+        });
+      EOF
+      hash = {}
+      ms.each {|p| hash[p[:name]] = p }
+      hash
+    end
+
+    it "explicit inherit from public parent keeps the type of parent" do
+      members["foo"][:type].should == "String/Number"
+    end
+
+    it "autoinherit from public parent keeps the type of parent" do
+      members["bar"][:type].should == "String/Number"
+    end
+
+    it "autoinherit from private parent overrides parent type" do
+      members["baz"][:type].should == "String"
+    end
+
+    it "autoinherit from explicitly documented private parent keeps parent type" do
+      members["zap"][:type].should == "String/Number"
+    end
+  end
+
+  describe "instance members autoinherit with parent containing statics" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            inheritableStatics: {
+                /** My method. */
+                foo: function() {},
+                /** My property. */
+                bar: 10
+            }
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            foo: function(){},
+            bar: 11
+        });
+      EOF
+      @cls = @docs["Child"]
+    end
+
+    it "doesn't inherit from parent static method" do
+      @cls[:members][0][:doc].should_not == "My method."
+    end
+
+    it "doesn't inherit from parent static property" do
+      @cls[:members][1][:doc].should_not == "My property."
+    end
+  end
+
+  describe "static members autoinherit with parent containing statics" do
+    before do
+      @docs = parse(<<-EOF)
+        /** */
+        Ext.define("Parent", {
+            inheritableStatics: {
+                /** My method. */
+                foo: function() {},
+                /** My property. */
+                bar: 10
+            }
+        });
+        /** */
+        Ext.define("Child", {
+            extend: "Parent",
+            inheritableStatics: {
+                foo: function(){},
+                bar: 11
+            }
+        });
+      EOF
+      @cls = @docs["Child"]
+    end
+
+    it "inherits from parent static method" do
+      @cls[:members][0][:doc].should == "My method."
+    end
+
+    it "inherits from parent static property" do
+      @cls[:members][1][:doc].should == "My property."
+    end
+  end
 end

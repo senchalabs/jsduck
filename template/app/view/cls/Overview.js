@@ -20,7 +20,7 @@ Ext.define('Docs.view.cls.Overview', {
     cls: 'class-overview iScroll',
     autoScroll: true,
     border: false,
-    bodyPadding: '20 8 20 5',
+    bodyPadding: '10 8 20 5',
 
     initComponent: function() {
         this.addEvents(
@@ -44,6 +44,14 @@ Ext.define('Docs.view.cls.Overview', {
         var el = (typeof query == 'string') ? Ext.get(Ext.query(query)[0]) : query;
         if (el) {
             var isMember = el.hasCls("member");
+			// Modify offset for Ti header... This should be set in configuration somewhere,
+			// not hardcoded.
+            // ToDo: Removed this section during upgrade. May need to correct scrolling offset?
+            // var scrollOffset = el.getY() - (isMember ? 235 : 225) + (offset || 0);
+            // var docContent = this.getEl().down('.x-panel-body');
+            // var currentScroll = docContent.getScroll()['top'];
+            // docContent.scrollTo('top', currentScroll + scrollOffset);
+            // End removed section
 
             // First make the element visible.
             // For example a private member might be hidden initially
@@ -64,7 +72,8 @@ Ext.define('Docs.view.cls.Overview', {
             var top = this.body.getBox().y;
             this.scrollToView(el, {
                 highlight: true,
-                offset: (offset || 0) - (isMember ? top : top - 10)
+                // Ti changed offset correction
+                offset: (offset || 0) - (isMember ? 235 : 225)
             });
         }
     },
@@ -214,7 +223,7 @@ Ext.define('Docs.view.cls.Overview', {
     },
 
     /**
-     * Filters members by search string and inheritance.
+     * Filters members by search string and inheritance and platform.
      * @param {String} search
      * @param {Object} show
      * @private
@@ -222,7 +231,6 @@ Ext.define('Docs.view.cls.Overview', {
     filterMembers: function(search, show) {
         Docs.Settings.set("show", show);
         var isSearch = search.length > 0;
-
         // Hide the class documentation when filtering
         Ext.Array.forEach(Ext.query('.doc-contents, .hierarchy'), function(el) {
             Ext.get(el).setStyle({display: isSearch ? 'none' : 'block'});
@@ -232,17 +240,84 @@ Ext.define('Docs.view.cls.Overview', {
         // and its type is currently visible
         var re = new RegExp(Ext.String.escapeRegex(search), "i");
         this.eachMember(function(m) {
+
+            var name = m.name;
+
+            // List of all supported platforms
+            var availablePlatforms = ["android", "ipad", "iphone", "mobileweb", "windowsphone"];
+
+            m.meta.platforms = {};
+            m.meta.classPlatforms = {};
+            var memberPlatforms = m.meta.platform;
+            var classPlatforms = this.docClass.meta.platform;
+
+            var platformsArray = (memberPlatforms != undefined) ? memberPlatforms : classPlatforms;
+ 
+            Ext.Array.forEach(availablePlatforms, function(availablePlatform) {
+                    // If platformsArray is !undefined, create hash of supported platforms
+                    // {
+                    //      "android": true,
+                    //      "iphone": false,
+                    //       etc..
+                    // }                    
+                    if(platformsArray != undefined) {
+                        Ext.Array.forEach(platformsArray, function(platformName) {
+                            // Trim off "since" part of platform string (everything after first space (" ")
+                            // i.e, "android 3.3" > "android"
+                            var trimmedName = platformName.substr(0,platformName.indexOf(' '));
+                            // If names match, set property to true
+                            if(trimmedName == availablePlatform) {
+                                m.meta.platforms[availablePlatform] = true;
+                            }
+                        });                        
+                    } else {
+                        m.meta.platforms[availablePlatform] = true;
+                    }
+                    if(classPlatforms != undefined) {
+                        Ext.Array.forEach(classPlatforms, function(platformName) {
+                            // Trim off "since" part of platform string (everything after first space (" ")
+                            // i.e, "android 3.3" > "android"
+                            var trimmedName = platformName.substr(0,platformName.indexOf(' '));
+                            // If names match, set property to true
+                            if(trimmedName == availablePlatform) {
+                                m.meta.classPlatforms[availablePlatform] = true;
+                            }
+                        });
+                    } else {
+                        m.meta.classPlatforms[availablePlatform] = true;
+                    }                       
+                });
+
             var el = Ext.get(m.id);
-            var visible = !(
-                !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
-                !show['protected'] && m.meta['protected'] ||
-                !show['private']   && m.meta['private'] ||
-                !show['inherited'] && (m.owner !== this.docClass.name) ||
-                !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
-                !show['deprecated'] && m.meta['deprecated'] ||
-                !show['removed']   && m.meta['removed'] ||
-                isSearch           && !re.test(m.name)
-            );
+
+            // For ACS REST and Alloy APIs, don't apply platform filtering, or if the platform filters are undefined.
+            // Assuming if any one of the platform filters is undefined ('android' in this case), they're all undefined.
+            if (!Docs.isRESTDoc && (m.owner.indexOf("Alloy") == -1) && (show['android'] != undefined)) {
+                // Only show if the member- and class-specified platforms intersects with the platform filter selection.
+                var visible = !(
+                    !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
+                    !show['protected'] && m.meta['protected'] ||
+                    !show['private']   && m.meta['private'] ||                
+                    !show['inherited'] && (m.owner !== this.docClass.name) ||
+                    !show['accessor']  && m.tagname === 'method' && this.accessors.hasOwnProperty(m.name) ||
+                    !show['deprecated'] && m.meta['deprecated'] ||
+                    !show['removed']   && m.meta['removed'] ||
+                    !(show['android'] && m.meta.platforms["android"] && m.meta.classPlatforms["android"]  || 
+                    show['ipad'] && m.meta.platforms["ipad"] && m.meta.classPlatforms["ipad"] ||
+                    show['iphone'] && m.meta.platforms["iphone"] && m.meta.classPlatforms["iphone"] ||
+                    show['mobileweb'] && m.meta.platforms["mobileweb"] && m.meta.classPlatforms["mobileweb"] ||
+                    show['windowsphone'] && m.meta.platforms["windowsphone"] && m.meta.classPlatforms["windowsphone"]) ||
+                    isSearch           && !re.test(m.name)
+                );                
+            } else {
+                var visible = !(
+                    !show['public']    && !(m.meta['private'] || m.meta['protected']) ||
+                    !show['protected'] && m.meta['protected'] ||
+                    !show['private']   && m.meta['private'] ||                
+                    !show['deprecated'] && m.meta['deprecated'] ||
+                    !show['removed']   && m.meta['removed'] ||                
+                    isSearch           && !re.test(m.name));
+            }
 
             if (visible) {
                 el.setStyle({display: 'block'});
@@ -283,12 +358,11 @@ Ext.define('Docs.view.cls.Overview', {
 
     buildAccessorsMap: function(name) {
         var accessors = {};
-        Ext.Array.forEach(this.docClass.members, function(m) {
-            if (m.tagname === "cfg") {
-                var capName = Ext.String.capitalize(m.name);
-                accessors["get"+capName] = true;
-                accessors["set"+capName] = true;
-            }
+		// Ti change -- properties instead of cfgs
+        Ext.Array.forEach(this.docClass.members.property, function(m) {
+            var capName = Ext.String.capitalize(m.name);
+            accessors["get"+capName] = true;
+            accessors["set"+capName] = true;
         });
         return accessors;
     },
@@ -304,7 +378,11 @@ Ext.define('Docs.view.cls.Overview', {
 
     // Loops through each member of class
     eachMember: function(callback, scope) {
-        Ext.Array.forEach(this.docClass.members, callback, scope);
+        Ext.Array.forEach(['members', 'statics'], function(group) {
+            Ext.Object.each(this.docClass[group], function(type, members) {
+                Ext.Array.forEach(members, callback, scope);
+            }, this);
+        }, this);
     }
 
 });

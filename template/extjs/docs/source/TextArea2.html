@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-form-field-TextArea'>/**
+</span> * @docauthor Robert Dougan &lt;rob@sencha.com&gt;
+ *
+ * This class creates a multiline text field, which can be used as a direct replacement for traditional
+ * textarea fields. In addition, it supports automatically {@link #grow growing} the height of the textarea to
+ * fit its content.
+ *
+ * All of the configuration options from {@link Ext.form.field.Text} can be used on TextArea.
+ *
+ * Example usage:
+ *
+ *     @example
+ *     Ext.create('Ext.form.FormPanel', {
+ *         title      : 'Sample TextArea',
+ *         width      : 400,
+ *         bodyPadding: 10,
+ *         renderTo   : Ext.getBody(),
+ *         items: [{
+ *             xtype     : 'textareafield',
+ *             grow      : true,
+ *             name      : 'message',
+ *             fieldLabel: 'Message',
+ *             anchor    : '100%'
+ *         }]
+ *     });
+ *
+ * Some other useful configuration options when using {@link #grow} are {@link #growMin} and {@link #growMax}.
+ * These allow you to set the minimum and maximum grow heights for the textarea.
+ * 
+ * **NOTE:** In some browsers, carriage returns ('\r', not to be confused with new lines)
+ * will be automatically stripped out the value is set to the textarea. Since we cannot
+ * use any reasonable method to attempt to re-insert these, they will automatically be
+ * stripped out to ensure the behaviour is consistent across browser.
+ */
+Ext.define('Ext.form.field.TextArea', {
+    extend:'Ext.form.field.Text',
+    alias: ['widget.textareafield', 'widget.textarea'],
+    alternateClassName: 'Ext.form.TextArea',
+    requires: [
+        'Ext.XTemplate', 
+        'Ext.layout.component.field.TextArea',
+        'Ext.util.DelayedTask'
+    ],
+
+    // This template includes a \n after &lt;textarea&gt; opening tag so that an initial value starting 
+    // with \n does not lose its first character when the markup is parsed.
+    // Both textareas below have the same value:
+    // &lt;textarea&gt;initial value&lt;/textarea&gt;
+    // &lt;textarea&gt;
+    // initial value
+    // &lt;/textarea&gt;
+    fieldSubTpl: [
+        '&lt;textarea id=&quot;{id}&quot; {inputAttrTpl}',
+            '&lt;tpl if=&quot;name&quot;&gt; name=&quot;{name}&quot;&lt;/tpl&gt;',
+            '&lt;tpl if=&quot;rows&quot;&gt; rows=&quot;{rows}&quot; &lt;/tpl&gt;',
+            '&lt;tpl if=&quot;cols&quot;&gt; cols=&quot;{cols}&quot; &lt;/tpl&gt;',
+            '&lt;tpl if=&quot;placeholder&quot;&gt; placeholder=&quot;{placeholder}&quot;&lt;/tpl&gt;',
+            '&lt;tpl if=&quot;size&quot;&gt; size=&quot;{size}&quot;&lt;/tpl&gt;',
+            '&lt;tpl if=&quot;maxLength !== undefined&quot;&gt; maxlength=&quot;{maxLength}&quot;&lt;/tpl&gt;',
+            '&lt;tpl if=&quot;readOnly&quot;&gt; readonly=&quot;readonly&quot;&lt;/tpl&gt;',
+            '&lt;tpl if=&quot;disabled&quot;&gt; disabled=&quot;disabled&quot;&lt;/tpl&gt;',
+            '&lt;tpl if=&quot;tabIdx&quot;&gt; tabIndex=&quot;{tabIdx}&quot;&lt;/tpl&gt;',
+            ' class=&quot;{fieldCls} {typeCls}&quot; ',
+            '&lt;tpl if=&quot;fieldStyle&quot;&gt; style=&quot;{fieldStyle}&quot;&lt;/tpl&gt;',
+            ' autocomplete=&quot;off&quot;&gt;\n',
+            '&lt;tpl if=&quot;value&quot;&gt;{[Ext.util.Format.htmlEncode(values.value)]}&lt;/tpl&gt;',
+        '&lt;/textarea&gt;',
+        {
+            disableFormats: true
+        }
+    ],
+
+<span id='Ext-form-field-TextArea-cfg-growMin'>    /**
+</span>     * @cfg {Number} growMin
+     * The minimum height to allow when {@link #grow}=true
+     */
+    growMin: 60,
+
+<span id='Ext-form-field-TextArea-cfg-growMax'>    /**
+</span>     * @cfg {Number} growMax
+     * The maximum height to allow when {@link #grow}=true
+     */
+    growMax: 1000,
+
+<span id='Ext-form-field-TextArea-cfg-growAppend'>    /**
+</span>     * @cfg {String} growAppend
+     * A string that will be appended to the field's current value for the purposes of calculating the target field
+     * size. Only used when the {@link #grow} config is true. Defaults to a newline for TextArea to ensure there is
+     * always a space below the current line.
+     */
+    growAppend: '\n-',
+
+<span id='Ext-form-field-TextArea-cfg-cols'>    /**
+</span>     * @cfg {Number} cols
+     * An initial value for the 'cols' attribute on the textarea element. This is only used if the component has no
+     * configured {@link #width} and is not given a width by its container's layout.
+     */
+    cols: 20,
+
+<span id='Ext-form-field-TextArea-cfg-rows'>    /**
+</span>     * @cfg {Number} rows
+     * An initial value for the 'rows' attribute on the textarea element. This is only used if the component has no
+     * configured {@link #height} and is not given a height by its container's layout. Defaults to 4.
+     */
+    rows: 4,
+
+<span id='Ext-form-field-TextArea-cfg-enterIsSpecial'>    /**
+</span>     * @cfg {Boolean} enterIsSpecial
+     * True if you want the ENTER key to be classed as a special key and the {@link #specialkey} event to be fired
+     * when ENTER is pressed.
+     */
+    enterIsSpecial: false,
+
+<span id='Ext-form-field-TextArea-cfg-preventScrollbars'>    /**
+</span>     * @cfg {Boolean} preventScrollbars
+     * true to prevent scrollbars from appearing regardless of how much text is in the field. This option is only
+     * relevant when {@link #grow} is true. Equivalent to setting overflow: hidden.
+     */
+    preventScrollbars: false,
+
+    // private
+    componentLayout: 'textareafield',
+    
+    setGrowSizePolicy: Ext.emptyFn,
+    
+    returnRe: /\r/g,
+
+    // private
+    getSubTplData: function() {
+        var me = this,
+            fieldStyle = me.getFieldStyle(),
+            ret = me.callParent();
+
+        if (me.grow) {
+            if (me.preventScrollbars) {
+                ret.fieldStyle = (fieldStyle||'') + ';overflow:hidden;height:' + me.growMin + 'px';
+            }
+        }
+
+        Ext.applyIf(ret, {
+            cols: me.cols,
+            rows: me.rows
+        });
+
+        return ret;
+    },
+
+    afterRender: function () {
+        var me = this;
+
+        me.callParent(arguments);
+
+        me.needsMaxCheck = me.enforceMaxLength &amp;&amp; me.maxLength !== Number.MAX_VALUE &amp;&amp; !Ext.supports.TextAreaMaxLength;
+        if (me.needsMaxCheck) {
+            me.inputEl.on('paste', me.onPaste, me);
+        }
+    },
+    
+    // The following overrides deal with an issue whereby some browsers
+    // will strip carriage returns from the textarea input, while others
+    // will not. Since there's no way to be sure where to insert returns,
+    // the best solution is to strip them out in all cases to ensure that
+    // the behaviour is consistent in a cross browser fashion. As such,
+    // we override in all cases when setting the value to control this.
+    transformRawValue: function(value){
+        return this.stripReturns(value);
+    },
+    
+    transformOriginalValue: function(value){
+        return this.stripReturns(value); 
+    },
+    
+    valueToRaw: function(value){
+        value = this.stripReturns(value);
+        return this.callParent([value]);
+    },
+    
+    stripReturns: function(value){
+        if (value) {
+            value = value.replace(this.returnRe, '');
+        }
+        return value;
+    },
+
+    onPaste: function(e){
+        var me = this;
+        if (!me.pasteTask) {
+            me.pasteTask = new Ext.util.DelayedTask(me.pasteCheck, me);
+        }
+        // since we can't get the paste data, we'll give the area a chance to populate
+        me.pasteTask.delay(1);
+    },
+    
+    pasteCheck: function(){
+        var me = this,
+            value = me.getValue(),
+            max = me.maxLength;
+            
+        if (value.length &gt; max) {
+            value = value.substr(0, max);
+            me.setValue(value);
+        }
+    },
+
+    // private
+    fireKey: function(e) {
+        var me = this,
+            key = e.getKey(),
+            value;
+            
+        if (e.isSpecialKey() &amp;&amp; (me.enterIsSpecial || (key !== e.ENTER || e.hasModifier()))) {
+            me.fireEvent('specialkey', me, e);
+        }
+        
+        if (me.needsMaxCheck &amp;&amp; key !== e.BACKSPACE &amp;&amp; key !== e.DELETE &amp;&amp; !e.isNavKeyPress() &amp;&amp; !me.isCutCopyPasteSelectAll(e, key)) {
+            value = me.getValue();
+            if (value.length &gt;= me.maxLength) {
+                e.stopEvent();
+            }
+        }
+    },
+    
+    isCutCopyPasteSelectAll: function(e, key) {
+        if (e.CTRL) {
+            return key === e.A || key === e.C || key === e.V || key === e.X;
+        }
+        return false;
+    },
+
+<span id='Ext-form-field-TextArea-method-autoSize'>    /**
+</span>     * Automatically grows the field to accomodate the height of the text up to the maximum field height allowed. This
+     * only takes effect if {@link #grow} = true, and fires the {@link #autosize} event if the height changes.
+     */
+    autoSize: function() {
+        var me = this,
+            height;
+
+        if (me.grow &amp;&amp; me.rendered) {
+            me.updateLayout();
+            height = me.inputEl.getHeight();
+            if (height !== me.lastInputHeight) {
+<span id='Ext-form-field-TextArea-event-autosize'>                /**
+</span>                 * @event autosize
+                 * Fires when the {@link #autoSize} function is triggered and the field is resized according to
+                 * the grow/growMin/growMax configs as a result. This event provides a hook for the developer
+                 * to apply additional logic at runtime to resize the field if needed.
+                 * @param {Ext.form.field.Text} this
+                 * @param {Number} height
+                 */
+                me.fireEvent('autosize', me, height);
+                me.lastInputHeight = height;
+            }
+        }
+    },
+
+    // private
+    initAria: function() {
+        this.callParent(arguments);
+        this.getActionEl().dom.setAttribute('aria-multiline', true);
+    },
+    
+    beforeDestroy: function(){
+        var task = this.pasteTask;
+        if (task) {
+            task.delay();
+        }    
+        this.callParent();
+    }
+});</pre>
+</body>
+</html>

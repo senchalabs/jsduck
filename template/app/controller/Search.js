@@ -25,7 +25,7 @@ Ext.define('Docs.controller.Search', {
     pageSize: 10,
 
     // Delay constants
-    basicSearchDelay: 50,
+    basicSearchDelay: 250,
     guideSearchDelay: 500,
     dropdownHideDelay: 500,
 
@@ -145,9 +145,140 @@ Ext.define('Docs.controller.Search', {
         }
         this.previousTerm = term;
 
-        this.basicSearch(term);
-        if (Docs.GuideSearch.isEnabled()) {
-            this.guideSearch(term);
+        if (Docs.otherProducts) {
+            // Use SOLR for production version
+            var url = window.location.href,
+                type = 'titanium',
+                suffix = '*',
+                match = term.match(/\"/g);
+            eso = this;
+            requestId = 0;
+
+            // Switch to correct product
+            if (url.match(/platform/g)) {
+                type = 'platform';
+            }
+            else if (url.match(/cloud/g)) {
+                type = 'cloud';
+            }
+
+            // Do a wildcard search unless we are doing so already
+            if (match && match.length % 2 == 1) {
+                suffix = '*"';
+            }
+            else if (term.match(/\*$/)) {
+                suffix = "";
+            }
+            else if (match && match.length % 2 == 0 && term.match(/\"$/)) {
+                suffix = "";
+            }
+            else if (term.match(/ $/)) {
+                suffix = "";
+            }
+
+            // Do the search
+            Ext.Ajax.request({
+                url: 'http://docs.appcelerator.com/solrsearch.php',
+                method: 'GET',
+                params: {
+                    query:encodeURIComponent(term + suffix),
+                    type:type
+                },
+                callback: function(options, success, response) {
+                    var rv = [],
+                        keyword_match = [],
+                        name_match = [];
+                    if (success && response && response.requestId > requestId) {
+                        // If successful, retrieve and prepare results
+                        var results = JSON.parse(response.responseText);
+                        requestId = response.requestId;
+                        results.response.docs.forEach(function(doc) {
+                            Object.keys(doc).forEach(function(k) {
+                                if (Array.isArray(doc[k])) {
+                                    doc[k] = doc[k][0];
+                                }
+                            });
+                            if ("title" in doc) {
+                                var elem, re;
+                                elem = {
+                                    fullName: doc.title,
+                                    name: doc.title,
+                                    url: '#!/guide/' + doc.url,
+                                    icon: 'icon-guide',
+                                    meta: {}
+                                };
+                                // If result matches title name, store in separate array
+                                // to be pushed at beginning of results
+                                re = new RegExp(term, 'gi');
+                                if (doc.title.match(re)) {
+                                    name_match.push(elem);
+                                } else {
+                                    rv.push(elem);
+                                }
+                            }
+                            else if ("name" in doc) {
+                                Object.keys(doc).forEach(function(k) {
+                                    if (Array.isArray(doc[k])) {
+                                        doc[k] = doc[k][0];
+                                    }
+                                });
+                                var api_type = 'class',
+                                    tokens = doc.name.split('.'),
+                                    api_name,
+                                    elem = {},
+                                    re;
+
+                                // Determine API type
+                                if (doc.url.match(/\-method\-/g)) {
+                                    api_type = 'method';
+                                }
+                                else if (doc.url.match(/\-event\-/g)) {
+                                    api_type = 'event';
+                                }
+                                else if (doc.url.match(/\-property\-/g)) {
+                                    api_type = 'property';
+                                }
+
+                                api_name = tokens[tokens.length - 1];
+                                elem = {
+                                    fullName: doc.name,
+                                    name: api_name,
+                                    url: '#!/api/' + doc.url,
+                                    icon: 'icon-' + api_type,
+                                    meta: {}
+                                };
+                                // If result matches API name, store in separate arrays
+                                // to be pushed at beginning of results
+                                api_name = api_name.toLowerCase();
+                                doc.name = doc.name.toLowerCase();
+                                term = term.toLowerCase();
+                                re = new RegExp(term.replace(/\./g, '\\.'), 'gi');
+                                if (api_name === term || doc.name === term) {
+                                    name_match.unshift(elem);
+                                }
+                                else if (api_name.indexOf(term) == 0 || doc.name.indexOf(term) == 0) {
+                                    name_match.push(elem);
+                                }
+                                else if (doc.name.match(re)) {
+                                    keyword_match.push(elem);
+                                } else {
+                                    rv.push(elem);
+                                }
+                            }
+                        });
+
+                        // Place API name matches ahead of others
+                        rv = name_match.concat(keyword_match.concat(rv));
+                    }
+                    eso.displayResults(rv);
+                }
+            });
+        } else {
+            // Use old search for offline version
+            this.basicSearch(term);
+            if (Docs.GuideSearch.isEnabled()) {
+                this.guideSearch(term);
+            }
         }
     },
 
@@ -187,7 +318,7 @@ Ext.define('Docs.controller.Search', {
             // auto-select first result
             this.getDropdown().getSelectionModel().select(0);
         }
-
         this.previousResults = results;
     }
+
 });

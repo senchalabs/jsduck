@@ -1,34 +1,38 @@
-require "jsduck/tag/tag"
+require "jsduck/meta_tag"
 require "jsduck/logger"
 
 module JsDuck::Tag
-  class Aside < Tag
+  # Implementation of @aside tag.
+  class Aside < JsDuck::MetaTag
     def initialize
-      @pattern = "aside"
-      @tagname = :aside
-      @repeatable = true
-      @html_position = POS_ASIDE
-    end
-
-    # Parses: @aside [ guide | video| example ] name
-    def parse_doc(p, pos)
-      {
-        :tagname => :aside,
-        :type => aside_type(p),
-        :name => p.hw.ident,
+      @name = "aside"
+      @key = :aside
+      @position = :top
+      @allowed_types = {
+        :guide => true,
+        :video => true,
+        :example => true,
       }
     end
 
-    def aside_type(p)
-      p.look(/\w+/) ? p.ident.to_sym : nil
+    def to_value(asides)
+      asides.map do |line|
+        if line =~ /\A(\w+) +([^ ].*)\Z/
+          type = $1.to_sym
+          name = $2.strip
+          if @allowed_types[type]
+            {:type => type, :name => name}
+          else
+            warn("Unknown @aside type: #{type}")
+          end
+        else
+          warn("Bad syntax: @aside #{line}")
+        end
+      end.compact
     end
 
-    def process_doc(h, tags, pos)
-      h[:aside] = tags
-    end
-
-    def to_html(context)
-      context[:aside].map do |aside|
+    def to_html(asides)
+      asides.map do |aside|
         type = aside[:type]
         name = aside[:name]
         assets_group = get_assets_group(type)
@@ -45,13 +49,10 @@ module JsDuck::Tag
             </div>
           EOHTML
         else
-          warn("Unknown @aside name: #{type} #{name}", context)
+          warn("Unknown @aside name: #{type} #{name}")
         end
       end.compact
     end
-
-    # special accessor for @aside alone through which assets are set
-    attr_accessor :assets
 
     def get_assets_group(type)
       case type
@@ -62,10 +63,12 @@ module JsDuck::Tag
       end
     end
 
-    def warn(msg, context)
-      JsDuck::Logger.warn(:aside, msg, context[:files][0])
+    def warn(msg)
+      ctx = @context ? @context[:files][0] : {}
+      JsDuck::Logger.warn(:aside, msg, ctx[:filename], ctx[:linenr])
       nil
     end
 
   end
 end
+

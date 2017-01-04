@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-picker-Color-css_mixin-extjs-colorpicker'>/**
+</span> * Creates base structure for Ext.picker.Color
+ * @member Ext.picker.Color
+ */
+@mixin extjs-colorpicker {
+    .#{$prefix}color-picker {
+        width: 144px;
+        height: 90px;
+        cursor: pointer;
+    }
+
+    .#{$prefix}color-picker a {
+        border: 1px solid #fff;
+
+        float: left;
+
+        padding: 2px;
+
+        text-decoration: none;
+
+        -moz-outline: 0 none;
+        outline: 0 none;
+
+        cursor: pointer;
+    }
+
+    .#{$prefix}color-picker a:hover,
+    .#{$prefix}color-picker a.#{$prefix}color-picker-selected {
+        border-color: $colorpicker-over-border-color;
+        background-color: $colorpicker-over-background-color;
+    }
+
+    .#{$prefix}color-picker em {
+        display: block;
+
+        border: 1px solid $colorpicker-item-border-color;
+    }
+
+    .#{$prefix}color-picker em span {
+        cursor: pointer;
+
+        display: block;
+
+        height: 10px;
+        width: 10px;
+
+        line-height: 10px;
+    }
+}</pre>
+</body>
+</html>

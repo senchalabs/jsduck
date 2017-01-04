@@ -1,13 +1,12 @@
-require "mini_parser"
+require "jsduck/aggregator"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    Helper::MiniParser.parse(string)
-  end
-
-  def parse_member(string)
-    parse(string)["global"][:members][0]
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.result
   end
 
   shared_examples_for "example cfg" do
@@ -30,7 +29,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit @cfg" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * @cfg {String} foo
          * Some documentation.
@@ -42,7 +41,7 @@ describe JsDuck::Aggregator do
 
   describe "implicit @cfg" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
       ({/**
          * @cfg
          * Some documentation.
@@ -55,7 +54,7 @@ describe JsDuck::Aggregator do
 
   describe "typeless @cfg" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
       ({/**
          * @cfg
          * Some documentation.
@@ -71,7 +70,7 @@ describe JsDuck::Aggregator do
 
   describe "null @cfg" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
       ({/**
          * @cfg
          * Some documentation.
@@ -87,7 +86,7 @@ describe JsDuck::Aggregator do
 
   describe "@cfg with dash in name" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * @cfg {String} foo-bar
          * Some documentation.
@@ -102,7 +101,7 @@ describe JsDuck::Aggregator do
 
   describe "@cfg with uppercase name" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
       ({/**
          * @cfg {String} Foo
          */
@@ -117,7 +116,7 @@ describe JsDuck::Aggregator do
 
   describe "@cfg with uppercase name after description" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
       ({/**
          * Docs here
          * @cfg {String} Foo
@@ -132,7 +131,7 @@ describe JsDuck::Aggregator do
   end
 
   def parse_config_code(propertyName)
-    parse(<<-EOS)["MyClass"][:members]
+    parse(<<-EOS)[0][:members]
       /**
        * Some documentation.
        */
@@ -167,7 +166,7 @@ describe JsDuck::Aggregator do
       end
 
       it "with :autodetected flag" do
-        cfg[0][:autodetected][:tagname].should == :cfg
+        cfg[0][:autodetected].should == true
       end
 
       it "with :linenr field" do
@@ -222,7 +221,7 @@ describe JsDuck::Aggregator do
 
   describe "detecting Ext.define() with all kind of configs" do
     let(:cfg) do
-      parse(<<-EOS)["MyClass"][:members]
+      parse(<<-EOS)[0][:members]
         /**
          * Some documentation.
          */
@@ -248,7 +247,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with line-comment before config:" do
     let(:cfg) do
-      parse(<<-EOS)["MyClass"][:members]
+      parse(<<-EOS)[0][:members]
         /**
          * Some documentation.
          */
@@ -274,7 +273,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects the config with :autodetected flag" do
-      cfg[0][:autodetected][:tagname].should == :cfg
+      cfg[0][:autodetected].should == true
     end
   end
 

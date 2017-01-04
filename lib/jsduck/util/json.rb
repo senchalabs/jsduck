@@ -17,15 +17,15 @@ module JsDuck
         @pretty = false
       end
 
-      # Configures the pretty-formatting from command line options.
-      def configure(opts)
-        @pretty = true if opts.pretty_json
+      # Set to true to turn on pretty-formatting of JSON
+      def pretty=(pretty)
+        @pretty = pretty
       end
 
       # Turns object into JSON, places it inside JavaScript that calls the
       # given callback name, and writes the result to file.
       def write_jsonp(filename, callback_name, data)
-        jsonp = "Ext.data.JsonP." + callback_name + "(" + generate(data) + ");"
+        jsonp = "Ext.data.JsonP['" + callback_name + "'](" + generate(data) + ");"
         File.open(filename, 'w') {|f| f.write(jsonp) }
       end
 

@@ -1,32 +1,31 @@
-require "mini_parser"
+require "jsduck/aggregator"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    Helper::MiniParser.parse(string)
-  end
-
-  def parse_member(string)
-    parse(string)["global"][:members][0]
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.result
   end
 
   describe "method without @return" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * Some function
          */
         function foo() {}
       EOS
     end
-    it "defaults return field to nil" do
-      @doc[:return].should == nil
+    it "defaults return type to undefined" do
+      @doc[:return][:type].should == "undefined"
     end
   end
 
   describe "method with @return that has no type" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * Some function
          * @return Some value.
@@ -53,7 +52,7 @@ describe JsDuck::Aggregator do
 
   describe "@return documenting return value" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * Some function
          * @return {String} return value
@@ -66,7 +65,7 @@ describe JsDuck::Aggregator do
 
   describe "@returns being alias for @return" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * Some function
          * @returns {String} return value

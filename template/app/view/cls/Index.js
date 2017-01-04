@@ -69,6 +69,6 @@ Ext.define('Docs.view.cls.Index', {
      */
     getTab: function() {
         var enabled = (Docs.data.classes || []).length > 0;
-        return enabled ? {cls: 'classes', href: '#!/api', tooltip: 'API Documentation'} : false;
+        return enabled ? {cls: 'classes', href: '#!/api', tooltip: 'API Documentation', iconClass: 'icon-cog'} : false;
     }
 });

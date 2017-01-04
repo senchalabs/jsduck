@@ -1,10 +1,10 @@
-require "jsduck/js/ast"
-require "jsduck/js/parser"
+require "jsduck/ast"
+require "jsduck/js_parser"
 
-describe JsDuck::Js::Ast do
+describe JsDuck::Ast do
   def detect(string)
-    node = JsDuck::Js::Parser.new(string).parse[0]
-    return JsDuck::Js::Ast.new.detect(node[:code])[:tagname]
+    node = JsDuck::JsParser.new(string).parse[0]
+    return JsDuck::Ast.new.detect(node[:code])[:tagname]
   end
 
   describe "detects as class" do

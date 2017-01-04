@@ -1,9 +1,14 @@
-require "mini_parser"
+require "jsduck/aggregator"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
 
   def parse(string)
-    Helper::MiniParser.parse(string)
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.classify_orphans
+    agr.create_global_class
+    agr.result
   end
 
   shared_examples_for "class of orphans" do
@@ -12,11 +17,11 @@ describe JsDuck::Aggregator do
     end
 
     it "combines members into itself" do
-      @classes[@classname][:members].length.should == 2
+      @classes[0][:members].length.should == 2
     end
 
     it "preserves the order of members" do
-      ms = @classes[@classname][:members]
+      ms = @classes[0][:members]
       ms[0][:name].should == "foo"
       ms[1][:name].should == "bar"
     end
@@ -24,7 +29,6 @@ describe JsDuck::Aggregator do
 
   describe "class named by orphan members" do
     before do
-      @classname = "MyClass"
       @classes = parse(<<-EOS)
         /**
          * @method foo
@@ -42,7 +46,6 @@ describe JsDuck::Aggregator do
 
   describe "orphan members without @member" do
     before do
-      @classname = "global"
       @classes = parse(<<-EOS)
         /**
          * @method foo
@@ -54,7 +57,7 @@ describe JsDuck::Aggregator do
     end
 
     it "results in global class" do
-      @classes["global"][:name].should == "global"
+      @classes[0][:name].should == "global"
     end
 
     it_should_behave_like "class of orphans"

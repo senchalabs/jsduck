@@ -1,11 +1,17 @@
-require "jsduck/tag/boolean_tag"
+require "jsduck/meta_tag"
 
 module JsDuck::Tag
+  # Implementation of @hide tag.
+  #
   # Hides a member in parent class.
-  class Hide < BooleanTag
+  #
+  # The core of the implementation is built into jsduck.
+  #
+  class Hide < JsDuck::MetaTag
     def initialize
-      @pattern = "hide"
-      super
+      @name = "hide"
+      @key = :hide
+      @boolean = true
     end
   end
 end

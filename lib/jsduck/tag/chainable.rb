@@ -1,12 +1,14 @@
-require "jsduck/tag/boolean_tag"
+require "jsduck/meta_tag"
 
 module JsDuck::Tag
-  class Chainable < BooleanTag
+  # Implementation of @chainable tag
+  class Chainable < JsDuck::MetaTag
     def initialize
-      @pattern = "chainable"
+      @name = "chainable"
+      @key = :chainable
       @signature = {:long => "chainable", :short => "&gt;"} # show small right-arrow
-      @css = ".signature .chainable { background-color: #00aa00 }" # green
-      super
+      @boolean = true
     end
   end
 end
+

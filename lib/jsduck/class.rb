@@ -115,7 +115,8 @@ module JsDuck
         # simplest thing and ignore it.
         Class.new({:name => classname}, false)
       else
-        Logger.warn(:extend, "Class #{classname} not found", @doc[:files][0])
+        context = @doc[:files][0]
+        Logger.warn(:extend, "Class #{classname} not found", context[:filename], context[:linenr])
         # Create placeholder class
         Class.new({:name => classname}, false)
       end
@@ -161,9 +162,9 @@ module JsDuck
       end
 
       if query[:static] == true
-        ms = ms.find_all {|m| m[:static] }
+        ms = ms.find_all {|m| m[:meta] && m[:meta][:static] }
       elsif query[:static] == false
-        ms = ms.reject {|m| m[:static] }
+        ms = ms.reject {|m| m[:meta] && m[:meta][:static] }
       end
 
       ms
@@ -171,8 +172,8 @@ module JsDuck
 
     # This must be called whenever member hashes are changed.
     # It updates the :id fields of members and clears the caches.
-    def refresh_member_ids!
-      @doc[:members].each do |m|
+    def update_members!(members)
+      members.each do |m|
         m[:id] = Class.member_id(m)
       end
       @members_index.invalidate!
@@ -189,7 +190,13 @@ module JsDuck
     def self.member_id(m)
       # Sanitize $ in member names with something safer
       name = m[:name].gsub(/\$/, 'S-')
-      "#{m[:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
+      "#{m[:meta][:static] ? 'static-' : ''}#{m[:tagname]}-#{name}"
+    end
+
+    # Loops through all available member types,
+    # passing the tagname of the member to the block.
+    def self.each_member_type(&block)
+      [:cfg, :property, :method, :event, :css_var, :css_mixin].each(&block)
     end
 
     # True if the given member is a constructor method

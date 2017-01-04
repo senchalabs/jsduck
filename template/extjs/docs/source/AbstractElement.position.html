@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-dom-AbstractElement'>/**
+</span> * @class Ext.dom.AbstractElement
+ */
+(function(){
+
+var Element = Ext.dom.AbstractElement;
+
+Element.override({
+
+<span id='Ext-dom-AbstractElement-method-getX'>    /**
+</span>     * Gets the current X position of the element based on page coordinates.  Element must be part of the DOM
+     * tree to have page coordinates (display:none or elements not appended return false).
+     * @return {Number} The X position of the element
+     */
+    getX: function(el) {
+        return this.getXY(el)[0];
+    },
+
+<span id='Ext-dom-AbstractElement-method-getY'>    /**
+</span>     * Gets the current Y position of the element based on page coordinates.  Element must be part of the DOM
+     * tree to have page coordinates (display:none or elements not appended return false).
+     * @return {Number} The Y position of the element
+     */
+    getY: function(el) {
+        return this.getXY(el)[1];
+    },
+
+<span id='Ext-dom-AbstractElement-method-getXY'>    /**
+</span>     * Gets the current position of the element based on page coordinates.  Element must be part of the DOM
+     * tree to have page coordinates (display:none or elements not appended return false).
+     * @return {Array} The XY position of the element
+     */
+    getXY: function() {
+        // @FEATUREDETECT
+        var point = window.webkitConvertPointFromNodeToPage(this.dom, new WebKitPoint(0, 0));
+        return [point.x, point.y];
+    },
+
+<span id='Ext-dom-AbstractElement-method-getOffsetsTo'>    /**
+</span>     * Returns the offsets of this element from the passed element. Both element must be part of the DOM
+     * tree and not have display:none to have page coordinates.
+     * @param {Ext.Element/HTMLElement/String} element The element to get the offsets from.
+     * @return {Array} The XY page offsets (e.g. [100, -200])
+     */
+    getOffsetsTo: function(el){
+        var o = this.getXY(),
+            e = Ext.fly(el, '_internal').getXY();
+        return [o[0]-e[0],o[1]-e[1]];
+    },
+
+<span id='Ext-dom-AbstractElement-method-setX'>    /**
+</span>     * Sets the X position of the element based on page coordinates.  Element must be part of the DOM tree
+     * to have page coordinates (display:none or elements not appended return false).
+     * @param {Number} The X position of the element
+     * @param {Boolean/Object} [animate] True for the default animation, or a standard Element
+     * animation config object
+     * @return {Ext.dom.AbstractElement} this
+     */
+    setX: function(x){
+        return this.setXY([x, this.getY()]);
+    },
+
+<span id='Ext-dom-AbstractElement-method-setY'>    /**
+</span>     * Sets the Y position of the element based on page coordinates.  Element must be part of the DOM tree
+     * to have page coordinates (display:none or elements not appended return false).
+     * @param {Number} The Y position of the element
+     * @param {Boolean/Object} [animate] True for the default animation, or a standard Element
+     * animation config object
+     * @return {Ext.dom.AbstractElement} this
+     */
+    setY: function(y) {
+        return this.setXY([this.getX(), y]);
+    },
+
+<span id='Ext-dom-AbstractElement-method-setLeft'>    /**
+</span>     * Sets the element's left position directly using CSS style (instead of {@link #setX}).
+     * @param {String} left The left CSS property value
+     * @return {Ext.dom.AbstractElement} this
+     */
+    setLeft: function(left) {
+        this.setStyle('left', Element.addUnits(left));
+        return this;
+    },
+
+<span id='Ext-dom-AbstractElement-method-setTop'>    /**
+</span>     * Sets the element's top position directly using CSS style (instead of {@link #setY}).
+     * @param {String} top The top CSS property value
+     * @return {Ext.dom.AbstractElement} this
+     */
+    setTop: function(top) {
+        this.setStyle('top', Element.addUnits(top));
+        return this;
+    },
+
+<span id='Ext-dom-AbstractElement-method-setRight'>    /**
+</span>     * Sets the element's CSS right style.
+     * @param {String} right The right CSS property value
+     * @return {Ext.dom.AbstractElement} this
+     */
+    setRight: function(right) {
+        this.setStyle('right', Element.addUnits(right));
+        return this;
+    },
+
+<span id='Ext-dom-AbstractElement-method-setBottom'>    /**
+</span>     * Sets the element's CSS bottom style.
+     * @param {String} bottom The bottom CSS property value
+     * @return {Ext.dom.AbstractElement} this
+     */
+    setBottom: function(bottom) {
+        this.setStyle('bottom', Element.addUnits(bottom));
+        return this;
+    },
+
+<span id='Ext-dom-AbstractElement-method-setXY'>    /**
+</span>     * Sets the position of the element in page coordinates, regardless of how the element is positioned.
+     * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+     * @param {Array} pos Contains X &amp; Y [x, y] values for new position (coordinates are page-based)
+     * @param {Boolean/Object} [animate] True for the default animation, or a standard Element animation config object
+     * @return {Ext.dom.AbstractElement} this
+     */
+    setXY: function(pos) {
+        var me = this,
+            pts,
+            style,
+            pt;
+
+        if (arguments.length &gt; 1) {
+            pos = [pos, arguments[1]];
+        }
+
+        // me.position();
+        pts = me.translatePoints(pos);
+        style = me.dom.style;
+
+        for (pt in pts) {
+            if (!pts.hasOwnProperty(pt)) {
+                continue;
+            }
+            if (!isNaN(pts[pt])) {
+                style[pt] = pts[pt] + &quot;px&quot;;
+            }
+        }
+        return me;
+    },
+
+<span id='Ext-dom-AbstractElement-method-getLeft'>    /**
+</span>     * Gets the left X coordinate
+     * @param {Boolean} local True to get the local css position instead of page coordinate
+     * @return {Number}
+     */
+    getLeft: function(local) {
+        return parseInt(this.getStyle('left'), 10) || 0;
+    },
+
+<span id='Ext-dom-AbstractElement-method-getRight'>    /**
+</span>     * Gets the right X coordinate of the element (element X position + element width)
+     * @param {Boolean} local True to get the local css position instead of page coordinate
+     * @return {Number}
+     */
+    getRight: function(local) {
+        return parseInt(this.getStyle('right'), 10) || 0;
+    },
+
+<span id='Ext-dom-AbstractElement-method-getTop'>    /**
+</span>     * Gets the top Y coordinate
+     * @param {Boolean} local True to get the local css position instead of page coordinate
+     * @return {Number}
+     */
+    getTop: function(local) {
+        return parseInt(this.getStyle('top'), 10) || 0;
+    },
+
+<span id='Ext-dom-AbstractElement-method-getBottom'>    /**
+</span>     * Gets the bottom Y coordinate of the element (element Y position + element height)
+     * @param {Boolean} local True to get the local css position instead of page coordinate
+     * @return {Number}
+     */
+    getBottom: function(local) {
+        return parseInt(this.getStyle('bottom'), 10) || 0;
+    },
+
+<span id='Ext-dom-AbstractElement-method-translatePoints'>    /**
+</span>     * Translates the passed page coordinates into left/top css values for this element
+     * @param {Number/Array} x The page x or an array containing [x, y]
+     * @param {Number} [y] The page y, required if x is not an array
+     * @return {Object} An object with left and top properties. e.g. {left: (value), top: (value)}
+     */
+    translatePoints: function(x, y) {
+        y = isNaN(x[1]) ? y : x[1];
+        x = isNaN(x[0]) ? x : x[0];
+        var me = this,
+            relative = me.isStyle('position', 'relative'),
+            o = me.getXY(),
+            l = parseInt(me.getStyle('left'), 10),
+            t = parseInt(me.getStyle('top'), 10);
+
+        l = !isNaN(l) ? l : (relative ? 0 : me.dom.offsetLeft);
+        t = !isNaN(t) ? t : (relative ? 0 : me.dom.offsetTop);
+
+        return {left: (x - o[0] + l), top: (y - o[1] + t)};
+    },
+
+<span id='Ext-dom-AbstractElement-method-setBox'>    /**
+</span>     * Sets the element's box. Use getBox() on another element to get a box obj.
+     * If animate is true then width, height, x and y will be animated concurrently.
+     * @param {Object} box The box to fill {x, y, width, height}
+     * @param {Boolean} [adjust] Whether to adjust for box-model issues automatically
+     * @param {Boolean/Object} [animate] true for the default animation or a standard
+     * Element animation config object
+     * @return {Ext.dom.AbstractElement} this
+     */
+    setBox: function(box) {
+        var me = this,
+            width = box.width,
+            height = box.height,
+            top = box.top,
+            left = box.left;
+
+        if (left !== undefined) {
+            me.setLeft(left);
+        }
+        if (top !== undefined) {
+            me.setTop(top);
+        }
+        if (width !== undefined) {
+            me.setWidth(width);
+        }
+        if (height !== undefined) {
+            me.setHeight(height);
+        }
+
+        return this;
+    },
+
+<span id='Ext-dom-AbstractElement-method-getBox'>    /**
+</span>     * Return an object defining the area of this Element which can be passed to {@link #setBox} to
+     * set another Element's size/location to match this element.
+     *
+     * @param {Boolean} [contentBox] If true a box for the content of the element is returned.
+     * @param {Boolean} [local] If true the element's left and top are returned instead of page x/y.
+     * @return {Object} box An object in the format:
+     *
+     *     {
+     *         x: &lt;Element's X position&gt;,
+     *         y: &lt;Element's Y position&gt;,
+     *         width: &lt;Element's width&gt;,
+     *         height: &lt;Element's height&gt;,
+     *         bottom: &lt;Element's lower bound&gt;,
+     *         right: &lt;Element's rightmost bound&gt;
+     *     }
+     *
+     * The returned object may also be addressed as an Array where index 0 contains the X position
+     * and index 1 contains the Y position. So the result may also be used for {@link #setXY}
+     */
+    getBox: function(contentBox, local) {
+        var me = this,
+            dom = me.dom,
+            width = dom.offsetWidth,
+            height = dom.offsetHeight,
+            xy, box, l, r, t, b;
+
+        if (!local) {
+            xy = me.getXY();
+        }
+        else if (contentBox) {
+            xy = [0,0];
+        }
+        else {
+            xy = [parseInt(me.getStyle(&quot;left&quot;), 10) || 0, parseInt(me.getStyle(&quot;top&quot;), 10) || 0];
+        }
+
+        if (!contentBox) {
+            box = {
+                x: xy[0],
+                y: xy[1],
+                0: xy[0],
+                1: xy[1],
+                width: width,
+                height: height
+            };
+        }
+        else {
+            l = me.getBorderWidth.call(me, &quot;l&quot;) + me.getPadding.call(me, &quot;l&quot;);
+            r = me.getBorderWidth.call(me, &quot;r&quot;) + me.getPadding.call(me, &quot;r&quot;);
+            t = me.getBorderWidth.call(me, &quot;t&quot;) + me.getPadding.call(me, &quot;t&quot;);
+            b = me.getBorderWidth.call(me, &quot;b&quot;) + me.getPadding.call(me, &quot;b&quot;);
+            box = {
+                x: xy[0] + l,
+                y: xy[1] + t,
+                0: xy[0] + l,
+                1: xy[1] + t,
+                width: width - (l + r),
+                height: height - (t + b)
+            };
+        }
+
+        box.left = box.x;
+        box.top = box.y;
+        box.right = box.x + box.width;
+        box.bottom = box.y + box.height;
+
+        return box;
+    },
+
+<span id='Ext-dom-AbstractElement-method-getPageBox'>    /**
+</span>     * Return an object defining the area of this Element which can be passed to {@link #setBox} to
+     * set another Element's size/location to match this element.
+     *
+     * @param {Boolean} [asRegion] If true an Ext.util.Region will be returned
+     * @return {Object} box An object in the format
+     *
+     *     {
+     *         left: &lt;Element's X position&gt;,
+     *         top: &lt;Element's Y position&gt;,
+     *         width: &lt;Element's width&gt;,
+     *         height: &lt;Element's height&gt;,
+     *         bottom: &lt;Element's lower bound&gt;,
+     *         right: &lt;Element's rightmost bound&gt;
+     *     }
+     *
+     * The returned object may also be addressed as an Array where index 0 contains the X position
+     * and index 1 contains the Y position. So the result may also be used for {@link #setXY}
+     */
+    getPageBox: function(getRegion) {
+        var me = this,
+            el = me.dom,
+            w = el.offsetWidth,
+            h = el.offsetHeight,
+            xy = me.getXY(),
+            t = xy[1],
+            r = xy[0] + w,
+            b = xy[1] + h,
+            l = xy[0];
+
+        if (!el) {
+            return new Ext.util.Region();
+        }
+
+        if (getRegion) {
+            return new Ext.util.Region(t, r, b, l);
+        }
+        else {
+            return {
+                left: l,
+                top: t,
+                width: w,
+                height: h,
+                right: r,
+                bottom: b
+            };
+        }
+    }
+});
+
+}());
+</pre>
+</body>
+</html>

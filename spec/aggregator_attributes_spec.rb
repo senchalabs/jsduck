@@ -1,47 +1,66 @@
-require "mini_parser"
+require "jsduck/aggregator"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    Helper::MiniParser.parse(string)
-  end
-
-  def parse_member(string)
-    parse(string)["global"][:members][0]
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.result
   end
 
   describe "member with @protected" do
     before do
-      @doc = parse_member("/** @protected */")
+      @doc = parse("/** @protected */")[0]
     end
 
     it "gets protected attribute" do
-      @doc[:protected].should == true
+      @doc[:meta][:protected].should == true
     end
   end
 
   describe "member with @abstract" do
     before do
-      @doc = parse_member("/** @abstract */")
+      @doc = parse("/** @abstract */")[0]
     end
 
     it "gets abstract attribute" do
-      @doc[:abstract].should == true
+      @doc[:meta][:abstract].should == true
     end
   end
 
   describe "member with @static" do
     before do
-      @doc = parse_member("/** @static */")
+      @doc = parse("/** @static */")[0]
     end
 
     it "gets static attribute" do
-      @doc[:static].should == true
+      @doc[:meta][:static].should == true
+    end
+  end
+
+  describe "Property with @readonly" do
+    before do
+      @doc = parse("/** @readonly */")[0]
+    end
+
+    it "gets readonly attribute" do
+      @doc[:meta][:readonly].should == true
+    end
+  end
+  
+  describe "Property with @writeonly" do
+    before do
+      @doc = parse("/** @writeonly */")[0]
+    end
+
+    it "gets writeonly attribute" do
+      @doc[:meta][:writeonly].should == true
     end
   end
 
   describe "method with @template" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * @method foo
          * Some function
@@ -50,31 +69,56 @@ describe JsDuck::Aggregator do
       EOS
     end
     it "gets template attribute" do
-      @doc[:template].should == true
+      @doc[:meta][:template].should == true
     end
   end
 
-  describe "event with @preventable" do
+  describe "a normal config option" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
-         * @event foo
-         * @preventable bla blah
-         * Some event
+         * @cfg foo Something
          */
       EOS
     end
-    it "gets preventable attribute" do
-      @doc[:preventable].should == true
+    it "is not required by default" do
+      @doc[:meta][:required].should_not == true
     end
-    it "ignores text right after @preventable" do
-      @doc[:doc].should == "Some event"
+  end
+
+  describe "a config option labeled as required" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @cfg foo (required) Something
+         */
+      EOS
+    end
+    it "has required flag set to true" do
+      @doc[:meta][:required].should == true
+    end
+  end
+
+  describe "a class with @cfg (required)" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @cfg foo (required)
+         */
+      EOS
+    end
+    it "doesn't become a required class" do
+      @doc[:meta][:required].should_not == true
+    end
+    it "contains required config" do
+      @doc[:members][0][:meta][:required].should == true
     end
   end
 
   describe "member with @deprecated" do
     before do
-      @deprecated = parse_member(<<-EOS)[:deprecated]
+      @deprecated = parse(<<-EOS)[0][:meta][:deprecated]
         /**
          * @deprecated 4.0 Use escapeRegex instead.
          */
@@ -96,7 +140,7 @@ describe JsDuck::Aggregator do
 
   describe "member with @deprecated without version number" do
     before do
-      @deprecated = parse_member(<<-EOS)[:deprecated]
+      @deprecated = parse(<<-EOS)[0][:meta][:deprecated]
         /**
          * @deprecated Use escapeRegex instead.
          */
@@ -114,7 +158,7 @@ describe JsDuck::Aggregator do
 
   describe "class with @markdown" do
     before do
-      @doc = parse(<<-EOS)["MyClass"]
+      @doc = parse(<<-EOS)[0]
         /**
          * @class MyClass
          * @markdown

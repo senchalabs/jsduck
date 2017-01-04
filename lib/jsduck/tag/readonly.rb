@@ -1,11 +1,14 @@
-require "jsduck/tag/boolean_tag"
+require "jsduck/meta_tag"
 
 module JsDuck::Tag
-  class Readonly < BooleanTag
+  # Implementation of @readonly tag
+  class Readonly < JsDuck::MetaTag
     def initialize
-      @pattern = "readonly"
+      @name = "readonly"
+      @key = :readonly
       @signature = {:long => "readonly", :short => "R O"}
-      super
+      @boolean = true
     end
   end
 end
+

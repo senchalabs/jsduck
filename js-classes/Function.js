@@ -86,7 +86,7 @@
  * '0': 'eat', '1': 'bananas'}`.
  *
  * You can use `apply` to chain constructors for an object, similar to Java. In the following example,
- * the constructor for the `Product` object is defined with two parameters, `name` and `price`. Two
+ * the constructor for the `Product` object is defined with two parameters, `name` and `value`. Two
  * other functions `Food` and `Toy` invoke `Product` passing `this` and `arguments`. `Product`
  * initializes the properties `name` and `price`, both specialized functions define the category. In
  * this example, the `arguments` object is fully passed to the product constructor and corresponds to

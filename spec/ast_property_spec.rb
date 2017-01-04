@@ -1,10 +1,10 @@
-require "jsduck/js/ast"
-require "jsduck/js/parser"
+require "jsduck/ast"
+require "jsduck/js_parser"
 
-describe "JsDuck::Js::Ast detects property with" do
+describe "JsDuck::Ast detects property with" do
   def detect(string)
-    node = JsDuck::Js::Parser.new(string).parse[0]
-    return JsDuck::Js::Ast.new.detect(node[:code])
+    node = JsDuck::JsParser.new(string).parse[0]
+    return JsDuck::Ast.new.detect(node[:code])
   end
 
   describe "name in" do

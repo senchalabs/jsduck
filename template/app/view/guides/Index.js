@@ -12,16 +12,29 @@ Ext.define('Docs.view.guides.Index', {
     autoScroll: true,
 
     initComponent: function() {
+    	// Ti change -- prepare data for Guides index page
+		var data = Ext.Array.map(Docs.data.guides, function(guide){
+			if(guide.items == null || guide.items.length === 0){
+				guide.items = [{
+					name: guide.name,
+					title: guide.title
+				}];
+			}
+			return guide;
+		});
+        // 
         this.items = [
             { xtype: 'container', html: '<h1 class="eg">Guides</h1>' },
             Ext.create('Docs.view.ThumbList', {
                 commentType: "guide",
                 itemTpl: [
-                    '<dd ext:url="#!/guide/{name}"><div class="thumb"><img src="guides/{name}/icon.png"/></div>',
+				// Ti change -- icon change next line
+                    '<dd ext:url="#!/guide/{name}"><div class="thumb"><img src="resources/images/icon-lg.png"/></div>',
                         '<div><h4>{title}</h4><p>{description}</p></div>',
                     '</dd>'
                 ],
-                data: Docs.data.guides
+                // Ti change -- use generated guides data
+                data: data
             })
         ];
 
@@ -34,7 +47,7 @@ Ext.define('Docs.view.guides.Index', {
      */
     getTab: function() {
         var enabled = (Docs.data.guides|| []).length > 0;
-        return enabled ? {cls: 'guides', href: '#!/guide', tooltip: 'Guides'} : false;
+        return enabled ? {cls: 'guides', href: '#!/guide', tooltip: 'Guides', iconClass: 'icon-doc-text'} : false;
     },
 
     /**

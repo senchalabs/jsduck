@@ -11,15 +11,15 @@
   background: -o-linear-gradient(top, #ffffff 0%,#f8f8f8  5px);
   background: -ms-linear-gradient(top, #ffffff 0%,#f8f8f8 5px);
   background: linear-gradient(top, #ffffff 0%,#f8f8f8  5px);
-  a { color: #000; }
+  a { color: #222; }
+  a:hover { color: #7aa1b0; }
   .x-grid-cell {
     background: none; }
   .x-grid-cell-inner {
     font-family: $docs-font;
-    font-size: 13px;
+    font-size: 14px;
     position: relative;
     @include transition(background-color, 0.15s, linear);
-    // Here also the auto-generated class icons apply
     @include icons; }
   // Use gray for private classes
   .private {
@@ -27,7 +27,9 @@
       color: #666; } }
   .x-grid-row-over {
     .x-grid-cell-inner {
-      @include transition(background-color, 0.15s, linear); } }
+      color: #7aa1b0;
+      // @include transition(background-color, 0.15s, linear); 
+    } }
   .x-panel-body {
     border-color: #d4d4d4;
     background: $docs-bg-color; } }
@@ -58,13 +60,13 @@
 }
 
 #tree-container .x-grid-cell-inner {
-  font-family: Helvetica, Arial, clean, sans-serif;
+  font-family: 'Open Sans', Helvetica, Arial, clean, sans-serif;
   font-size: 12px; }
 
 #treecontainer > .x-panel-body {
   background: transparent;
   border-color: #ebebeb;
-  border-width: 0 1px 0 0 !important; }
+  border-width: 0 3px 0 0 !important; }
 
 .x-resizable-over .x-resizable-handle-east {
   cursor: col-resize; }
@@ -94,8 +96,8 @@
   button {
     display: inline-block;
     float: left;
-    margin: 0 3px;
-    padding: 1px 13px 2px 13px;
+    margin: 0;
+    padding: 1px 5px 2px 5px;
     border: 1px solid transparent;
     cursor: pointer;
     background: transparent;
@@ -107,3 +109,4 @@
       @include box-shadow(#5b6167 0 0 1px 0 inset);
       @include border-radius(10px);
       text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35); } } }
+

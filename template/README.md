@@ -1,4 +1,4 @@
-Manually create extjs/ directory inside this dir.
+Manyally create extjs/ directory inside this dir.
 
 Either copy over ExtJS directory or create symlink to it.
 

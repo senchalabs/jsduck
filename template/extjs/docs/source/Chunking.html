@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-grid-feature-Chunking'>/**
+</span> *
+ */
+Ext.define('Ext.grid.feature.Chunking', {
+    extend: 'Ext.grid.feature.Feature',
+    alias: 'feature.chunking',
+
+    chunkSize: 20,
+    rowHeight: Ext.isIE ? 27 : 26,
+    visibleChunk: 0,
+    hasFeatureEvent: false,
+    attachEvents: function() {
+        this.view.el.on('scroll', this.onBodyScroll, this, {buffer: 300});
+    },
+
+    onBodyScroll: function(e, t) {
+        var view = this.view,
+            top  = t.scrollTop,
+            nextChunk = Math.floor(top / this.rowHeight / this.chunkSize);
+        if (nextChunk !== this.visibleChunk) {
+
+            this.visibleChunk = nextChunk;
+            view.refresh();
+            view.el.dom.scrollTop = top;
+            //BrowserBug: IE6,7,8 quirks mode takes setting scrollTop 2x.
+            view.el.dom.scrollTop = top;
+        }
+    },
+
+    collectData: function(records, preppedRecords, startIndex, fullWidth, o) {
+        //headerCt = this.view.headerCt,
+        //colums = headerCt.getColumnsForTpl(),
+        var me = this,
+            recordCount = o.rows.length,
+            start = 0,
+            i = 0,
+            visibleChunk = me.visibleChunk,
+            rows,
+            chunkLength,
+            origRows = o.rows;
+
+        delete o.rows;
+        o.chunks = [];
+        for (; start &lt; recordCount; start += me.chunkSize, i++) {
+            if (start + me.chunkSize &gt; recordCount) {
+                chunkLength = recordCount - start;
+            } else {
+                chunkLength = me.chunkSize;
+            }
+            
+            if (i &gt;= visibleChunk - 1 &amp;&amp; i &lt;= visibleChunk + 1) {
+                rows = origRows.slice(start, start + me.chunkSize);
+            } else {
+                rows = [];
+            }
+            o.chunks.push({
+                rows: rows,
+                fullWidth: fullWidth,
+                chunkHeight: chunkLength * me.rowHeight
+            });
+        }
+
+        return o;
+    },
+
+    getTableFragments: function() {
+        return {
+            openTableWrap: function() {
+                return '&lt;tpl for=&quot;chunks&quot;&gt;&lt;div class=&quot;' + Ext.baseCSSPrefix + 'grid-chunk&quot; style=&quot;height: {chunkHeight}px;&quot;&gt;';
+            },
+            closeTableWrap: function() {
+                return '&lt;/div&gt;&lt;/tpl&gt;';
+            }
+        };
+    }
+});
+</pre>
+</body>
+</html>

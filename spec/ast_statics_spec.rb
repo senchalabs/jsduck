@@ -1,10 +1,10 @@
-require "jsduck/js/ast"
-require "jsduck/js/parser"
+require "jsduck/ast"
+require "jsduck/js_parser"
 
-describe "JsDuck::Js::Ast detecting" do
+describe "JsDuck::Ast detecting" do
   def detect(string)
-    node = JsDuck::Js::Parser.new(string).parse[0]
-    return JsDuck::Js::Ast.new.detect(node[:code])
+    node = JsDuck::JsParser.new(string).parse[0]
+    return JsDuck::Ast.new.detect(node[:code])
   end
 
   describe "Ext.define()" do
@@ -32,7 +32,7 @@ describe "JsDuck::Js::Ast detecting" do
         members[0][:name].should == "foo"
       end
       it "with :static flag" do
-        members[0][:static].should == true
+        members[0][:meta][:static].should == true
       end
     end
 
@@ -44,7 +44,7 @@ describe "JsDuck::Js::Ast detecting" do
         members[1][:name].should == "bar"
       end
       it "with :static flag" do
-        members[1][:static].should == true
+        members[1][:meta][:static].should == true
       end
     end
 

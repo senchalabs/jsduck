@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-form-field-Checkbox-css_mixin-extjs-form-checkboxfield'>/**
+</span> * Creates the base structure of checkbox field.
+ * @member Ext.form.field.Checkbox
+ */
+@mixin extjs-form-checkboxfield {
+    .#{$prefix}form-cb-wrap {
+        padding-top: 3px;
+    }
+
+    .#{$prefix}form-checkbox,
+    .#{$prefix}form-radio {
+        vertical-align: -1px;
+
+        width: $form-checkbox-size;
+        height: $form-checkbox-size;
+        background: no-repeat;
+        background-image: theme-background-image($theme-name, $form-checkbox-image);
+
+        overflow: hidden;
+        padding: 0;
+        border: 0;
+        &amp;::-moz-focus-inner {
+            padding: 0;
+            border: 0;
+        }
+    }
+    @if $include-ie {
+        /* Hack for IE; causes alignment problem in IE9 standards mode so exclude that */
+        .#{$prefix}nbr.#{$prefix}ie {
+            .#{$prefix}form-checkbox,
+            .#{$prefix}form-radio {
+                font-size: 0;
+            }
+        }
+    }
+    .#{$prefix}form-cb-checked {
+        .#{$prefix}form-checkbox,
+        .#{$prefix}form-radio {
+            background-position: 0 (0 - $form-checkbox-size);
+        }
+    }
+
+    /* Focused */
+    .#{$prefix}form-cb-focus {
+        background-position: (0 - $form-checkbox-size) 0;
+    }
+    .#{$prefix}form-cb-checked {
+        .#{$prefix}form-cb-focus {
+            background-position: (0 - $form-checkbox-size) (0 - $form-checkbox-size);
+        }
+    }
+
+    /* Radios */
+    .#{$prefix}form-radio {
+        background-image: theme-background-image($theme-name, $form-radio-image);
+    }
+
+    /* boxLabel */
+    .#{$prefix}form-cb-label-before {
+        margin-right: 4px;
+    }
+    .#{$prefix}form-cb-label-after {
+        margin-left: 4px;
+    }
+
+
+
+}</pre>
+</body>
+</html>

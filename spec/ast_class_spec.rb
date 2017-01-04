@@ -1,10 +1,10 @@
-require "jsduck/js/ast"
-require "jsduck/js/parser"
+require "jsduck/ast"
+require "jsduck/js_parser"
 
-describe "JsDuck::Js::Ast detects class with" do
+describe "JsDuck::Ast detects class with" do
   def detect(string)
-    node = JsDuck::Js::Parser.new(string).parse[0]
-    return JsDuck::Js::Ast.new.detect(node[:code])
+    node = JsDuck::JsParser.new(string).parse[0]
+    return JsDuck::Ast.new.detect(node[:code])
   end
 
   describe "name in" do
@@ -32,18 +32,11 @@ describe "JsDuck::Js::Ast detects class with" do
       detect("/** */ var MyClass = Ext.extend(Your.Class, {  });")[:name].should == "MyClass"
     end
 
-    it "Ext.define() with object literal" do
+    it "Ext.define()" do
       detect(<<-EOS)[:name].should == "MyClass"
         /** */
         Ext.define('MyClass', {
         });
-      EOS
-    end
-
-    it "Ext.define() with function" do
-      detect(<<-EOS)[:name].should == "MyClass"
-        /** */
-        Ext.define('MyClass', function() {});
       EOS
     end
   end
@@ -83,29 +76,6 @@ describe "JsDuck::Js::Ast detects class with" do
         });
       EOS
     end
-
-    it "Ext.define() with function returning object" do
-      detect(<<-EOS)[:extends].should == "Your.Class"
-        /** */
-        Ext.define('MyClass', function() {
-            return {extend: "Your.Class"};
-        });
-      EOS
-    end
-
-    # TODO: Doesn't work at the moment
-    #
-    # it "Ext.define() with function returning two possible objects" do
-    #   detect(<<-EOS)[:extends].should == "Ext.Base"
-    #     /** */
-    #     Ext.define('MyClass', function() {
-    #         if (someCondition) {
-    #             return {extend: "Your.Class1"};
-    #         }
-    #         return {extend: "Your.Class2"};
-    #     });
-    #   EOS
-    # end
 
     it "Ext.define() with no extend: in config object" do
       detect(<<-EOS)[:extends].should == "Ext.Base"

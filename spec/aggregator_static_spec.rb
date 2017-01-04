@@ -1,17 +1,16 @@
-require "mini_parser"
+require "jsduck/aggregator"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    Helper::MiniParser.parse(string)
-  end
-
-  def parse_member(string)
-    parse(string)["global"][:members][0]
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.result
   end
 
   describe "normal @static on single method" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * Some function
          * @static
@@ -21,7 +20,7 @@ describe JsDuck::Aggregator do
     end
 
     it "labels that method as static" do
-      @doc[:static].should == true
+      @doc[:meta][:static].should == true
     end
 
     it "doesn't detect inheritable property" do
@@ -31,7 +30,7 @@ describe JsDuck::Aggregator do
 
   describe "@static with @inheritable" do
     before do
-      @doc = parse_member(<<-EOS)
+      @doc = parse(<<-EOS)[0]
         /**
          * Some function
          * @static
@@ -42,7 +41,7 @@ describe JsDuck::Aggregator do
     end
 
     it "labels that method as static" do
-      @doc[:static].should == true
+      @doc[:meta][:static].should == true
     end
 
     it "detects the @inheritable property" do
@@ -52,7 +51,7 @@ describe JsDuck::Aggregator do
 
   describe "@static in class context" do
     before do
-      @doc = parse(<<-EOS)["Foo"]
+      @doc = parse(<<-EOS)[0]
         /**
          * @class Foo
          */
@@ -76,7 +75,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with undocumented property in statics:" do
     let(:member) do
-      parse(<<-EOS)["MyClass"][:members][0]
+      parse(<<-EOS)[0][:members][0]
         /**
          * Some documentation.
          */
@@ -94,11 +93,11 @@ describe JsDuck::Aggregator do
       end
 
       it "with :static flag" do
-        member[:static].should == true
+        member[:meta][:static].should == true
       end
 
       it "with :autodetected flag" do
-        member[:autodetected][:tagname].should == :property
+        member[:autodetected].should == true
       end
 
       it "with owner" do
@@ -117,7 +116,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with documented method in statics:" do
     let(:member) do
-      parse(<<-EOS)["MyClass"][:members][0]
+      parse(<<-EOS)[0][:members][0]
         /**
          * Some documentation.
          */
@@ -136,7 +135,7 @@ describe JsDuck::Aggregator do
       end
 
       it "with :static flag" do
-        member[:static].should == true
+        member[:meta][:static].should == true
       end
 
       it "with docs" do
@@ -152,14 +151,14 @@ describe JsDuck::Aggregator do
       end
 
       it "with :linenr field" do
-        member[:files][0][:linenr].should == 6
+        member[:linenr].should == 6
       end
     end
   end
 
   describe "Ext.define() with undocumented method in inheritableStatics:" do
     let(:member) do
-      parse(<<-EOS)["MyClass"][:members][0]
+      parse(<<-EOS)[0][:members][0]
         /**
          * Some documentation.
          */
@@ -177,7 +176,7 @@ describe JsDuck::Aggregator do
       end
 
       it "with :static flag" do
-        member[:static].should == true
+        member[:meta][:static].should == true
       end
 
       it "with :inheritable flag" do
@@ -192,7 +191,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() with line-comment before item in statics:" do
     let(:member) do
-      parse(<<-EOS)["MyClass"][:members][0]
+      parse(<<-EOS)[0][:members][0]
         /**
          * Some documentation.
          */
@@ -206,7 +205,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects a static" do
-      member[:static].should == true
+      member[:meta][:static].should == true
     end
 
     it "detects a method" do
@@ -218,13 +217,13 @@ describe JsDuck::Aggregator do
     end
 
     it "detects the method with :autodetected flag" do
-      member[:autodetected][:tagname].should == :method
+      member[:autodetected].should == true
     end
   end
 
   describe "Ext.define() with property having value Ext.emptyFn in statics:" do
     let(:member) do
-      parse(<<-EOS)["MyClass"][:members][0]
+      parse(<<-EOS)[0][:members][0]
         /**
          * Some documentation.
          */
@@ -237,7 +236,7 @@ describe JsDuck::Aggregator do
     end
 
     it "detects a static" do
-      member[:static].should == true
+      member[:meta][:static].should == true
     end
 
     it "detects a method" do

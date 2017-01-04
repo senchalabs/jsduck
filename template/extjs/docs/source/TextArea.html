@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Ext-layout-component-field-TextArea'>/**
+</span> * Layout class for {@link Ext.form.field.TextArea} fields. Handles sizing the textarea field.
+ * @private
+ */
+Ext.define('Ext.layout.component.field.TextArea', {
+    extend: 'Ext.layout.component.field.Text',
+    alias: 'layout.textareafield',
+
+    type: 'textareafield',
+    
+    canGrowWidth: false,
+    
+    naturalSizingProp: 'cols',
+    
+    beginLayout: function(ownerContext){
+        this.callParent(arguments);
+        ownerContext.target.inputEl.setStyle('height', '');
+    },
+
+    measureContentHeight: function (ownerContext) {
+        var me = this,
+            owner = me.owner,
+            height = me.callParent(arguments),
+            inputContext, inputEl, value, max, curWidth, calcHeight;
+
+        if (owner.grow &amp;&amp; !ownerContext.state.growHandled) {
+            inputContext = ownerContext.inputContext;
+            inputEl = owner.inputEl;
+            curWidth = inputEl.getWidth(true); //subtract border/padding to get the available width for the text
+
+            // Get and normalize the field value for measurement
+            value = Ext.util.Format.htmlEncode(inputEl.dom.value) || '&amp;#160;';
+            value += owner.growAppend;
+            
+            // Translate newlines to &lt;br&gt; tags
+            value = value.replace(/\n/g, '&lt;br/&gt;');
+
+            // Find the height that contains the whole text value
+            calcHeight = Ext.util.TextMetrics.measure(inputEl, value, curWidth).height +
+                         inputContext.getBorderInfo().height + inputContext.getPaddingInfo().height;
+
+            // Constrain
+            calcHeight = Ext.Number.constrain(calcHeight, owner.growMin, owner.growMax);
+            inputContext.setHeight(calcHeight);
+            ownerContext.state.growHandled = true;
+            
+            // Now that we've set the inputContext, we need to recalculate the width
+            inputContext.domBlock(me, 'height');
+            height = NaN;
+        }
+        return height;
+    }
+});
+</pre>
+</body>
+</html>

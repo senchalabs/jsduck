@@ -1,10 +1,10 @@
-require "jsduck/js/ast"
-require "jsduck/js/parser"
+require "jsduck/ast"
+require "jsduck/js_parser"
 
-describe "JsDuck::Js::Ast detects method with" do
+describe "JsDuck::Ast detects method with" do
   def detect(string)
-    node = JsDuck::Js::Parser.new(string).parse[0]
-    return JsDuck::Js::Ast.new.detect(node[:code])
+    node = JsDuck::JsParser.new(string).parse[0]
+    return JsDuck::Ast.new.detect(node[:code])
   end
 
   describe "name in" do
@@ -66,11 +66,11 @@ describe "JsDuck::Js::Ast detects method with" do
 
   describe "no params in" do
     it "function declaration without params" do
-      detect("/** */ function foo() {}")[:params].should == nil
+      detect("/** */ function foo() {}")[:params].length.should == 0
     end
 
     it "Ext.emptyFn assignment" do
-      detect("/** */ foo = Ext.emptyFn")[:params].should == nil
+      detect("/** */ foo = Ext.emptyFn")[:params].length.should == 0
     end
   end
 

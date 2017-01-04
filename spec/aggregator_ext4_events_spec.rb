@@ -1,13 +1,17 @@
-require "mini_parser"
+require "jsduck/aggregator"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    Helper::MiniParser.parse(string, {:ext4_events => true})
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.append_ext4_event_options if agr.ext4?
+    agr.result
   end
 
   describe "event inside Ext.define get extra parameter" do
     let(:event) do
-      parse(<<-EOF)["Blah"][:members][0]
+      parse(<<-EOF)[0][:members][0]
         /** */
         Ext.define("Blah", {
             /**
@@ -34,15 +38,11 @@ describe JsDuck::Aggregator do
     it "with standard description" do
       event[:params][2][:doc].should =~ /The options object passed to.*addListener/
     end
-
-    it "with special :ext4event flag" do
-      event[:params][2][:ext4_auto_param].should == true
-    end
   end
 
   describe "When some class defined with Ext.define" do
     let(:events) do
-      parse(<<-EOF)["Foo"][:members]
+      parse(<<-EOF)[0][:members]
         /** @class Foo */
             /**
              * @event click
@@ -65,7 +65,7 @@ describe JsDuck::Aggregator do
 
   describe "Without Ext.define-d class" do
     let(:events) do
-      parse(<<-EOF)["Foo"][:members]
+      parse(<<-EOF)[0][:members]
         /** @class Foo */
             /**
              * @event click
@@ -84,3 +84,4 @@ describe JsDuck::Aggregator do
   end
 
 end
+

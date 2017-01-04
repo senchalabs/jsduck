@@ -63,8 +63,14 @@ def read_class(filename)
 end
 
 # loops through all members of class
-def each_member(cls, &block)
-  cls["members"].each(&block)
+def each_member(cls)
+  ["members", "statics"].each do |category|
+    cls[category].each_pair do |k, members|
+      members.each do |m|
+        yield m
+      end
+    end
+  end
 end
 
 def discard_docs(cls)
@@ -99,7 +105,7 @@ def read_ignored_members(filename)
 end
 
 def normal_public_member?(m)
-  !m["private"] && !m["protected"] && !m["deprecated"] && !m["removed"]
+  !m["private"] && !m["meta"]["protected"] && !m["meta"]["deprecated"] && !m["meta"]["removed"]
 end
 
 def unify_default(v)
@@ -109,7 +115,7 @@ end
 def visibility(m)
   if m["private"]
     "private"
-  elsif m["protected"]
+  elsif m["meta"]["protected"]
     "protected"
   else
     "public"
@@ -119,7 +125,7 @@ end
 # Finds equivalent member to given member from class.
 # Returns the member found or nil.
 def find_member(cls, member)
-  cls["members"].find do |m|
+  cls[member["meta"]["static"] ? "statics" : "members"][member["tagname"]].find do |m|
     member["name"] == m["name"]
   end
 end
@@ -173,16 +179,20 @@ def compare_classes(cls1, cls2)
       end
 
     elsif !m2 && m1["name"] != "constructor" && m1["name"] != ""
-      other = cls2["members"].find {|m2| m2["name"] == m1["name"] }
+      other = nil
+      ["cfg", "property", "method", "event"].each do |g|
+        other = other || cls2["members"][g].find {|m2| m2["name"] == m1["name"] }
+        other = other || cls2["statics"][g].find {|m2| m2["name"] == m1["name"] }
+      end
       diff << {
         :type => m1["tagname"],
         :name => m1["name"],
         :what => "removed",
         :other => other ? {
           :type => other["tagname"],
-          :static => other["static"],
+          :static => other["meta"]["static"],
           :private => other["private"],
-          :protected => other["protected"],
+          :protected => other["meta"]["protected"],
         } : nil
       }
     end
@@ -326,12 +336,11 @@ diff_data.each do |cls|
             html << " (found #{stat} #{priv} #{prot} #{o[:type]} with the same name)"
           elsif m[:changes]
             m[:changes].each do |c|
-              html << " (#{c[:what]} changed from #{CGI.escapeHTML(c[:a].to_s)} to #{CGI.escapeHTML(c[:b].to_s)})"
+              html << " (#{c[:what]} changed from #{CGI.escapeHTML(c[:a])} to #{CGI.escapeHTML(c[:b])})"
             end
           end
-          html << "</li>"
         end
-        html << "</ul>"
+        html << "</li>"
       end
       html << "</li>"
     end

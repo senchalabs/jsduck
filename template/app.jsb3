@@ -1,0 +1,526 @@
+{
+    "projectName": "Appcelerator Documentation",
+    "licenseText": "Copyright(c) 2012 Company Name",
+    "builds": [
+        {
+            "name": "All Classes",
+            "target": "all-classes.js",
+            "options": {
+                "debug": true
+            },
+            "files": [
+                {
+                    "clsName": "Docs.History",
+                    "name": "History.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.LocalStore",
+                    "name": "LocalStore.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.Auth",
+                    "name": "Auth.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.CommentCounts",
+                    "name": "CommentCounts.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.CommentSubscriptions",
+                    "name": "CommentSubscriptions.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.view.Header",
+                    "name": "Header.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.view.examples.Container",
+                    "name": "Container.js",
+                    "path": "app/view/examples/"
+                },
+                {
+                    "clsName": "Docs.controller.Content",
+                    "name": "Content.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.Syntax",
+                    "name": "Syntax.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.ClassRegistry",
+                    "name": "ClassRegistry.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.GuideSearch",
+                    "name": "GuideSearch.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.store.Search",
+                    "name": "Search.js",
+                    "path": "app/store/"
+                },
+                {
+                    "clsName": "Docs.model.Setting",
+                    "name": "Setting.js",
+                    "path": "app/model/"
+                },
+                {
+                    "clsName": "Docs.view.search.Dropdown",
+                    "name": "Dropdown.js",
+                    "path": "app/view/search/"
+                },
+                {
+                    "clsName": "Docs.view.TabMenu",
+                    "name": "TabMenu.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.view.Scrolling",
+                    "name": "Scrolling.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.ContentGrabber",
+                    "name": "ContentGrabber.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.view.comments.HeaderMenu",
+                    "name": "HeaderMenu.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.cls.Header",
+                    "name": "Header.js",
+                    "path": "app/view/cls/"
+                },
+                {
+                    "clsName": "Docs.view.examples.Device",
+                    "name": "Device.js",
+                    "path": "app/view/examples/"
+                },
+                {
+                    "clsName": "Docs.model.Test",
+                    "name": "Test.js",
+                    "path": "app/model/"
+                },
+                {
+                    "clsName": "Docs.view.examples.InlineToolbar",
+                    "name": "InlineToolbar.js",
+                    "path": "app/view/examples/"
+                },
+                {
+                    "clsName": "Docs.view.DocTree",
+                    "name": "DocTree.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.Tip",
+                    "name": "Tip.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.view.comments.Pager",
+                    "name": "Pager.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.SimpleSelectBehavior",
+                    "name": "SimpleSelectBehavior.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.view.comments.FilterField",
+                    "name": "FilterField.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.TopList",
+                    "name": "TopList.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.cls.MemberWrap",
+                    "name": "MemberWrap.js",
+                    "path": "app/view/cls/"
+                },
+                {
+                    "clsName": "Docs.view.examples.InlineEditor",
+                    "name": "InlineEditor.js",
+                    "path": "app/view/examples/"
+                },
+                {
+                    "clsName": "Docs.view.examples.InlinePreview",
+                    "name": "InlinePreview.js",
+                    "path": "app/view/examples/"
+                },
+                {
+                    "clsName": "Docs.view.cls.Logic",
+                    "name": "Logic.js",
+                    "path": "app/view/cls/"
+                },
+                {
+                    "clsName": "Docs.view.comments.Form",
+                    "name": "Form.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.DragZone",
+                    "name": "DragZone.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.DropZone",
+                    "name": "DropZone.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.TopLevelDropZone",
+                    "name": "TopLevelDropZone.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.Comments",
+                    "name": "Comments.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.controller.Auth",
+                    "name": "Auth.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.controller.Welcome",
+                    "name": "Welcome.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.controller.Failure",
+                    "name": "Failure.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.controller.Classes",
+                    "name": "Classes.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.controller.Search",
+                    "name": "Search.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.controller.Examples",
+                    "name": "Examples.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.controller.Guides",
+                    "name": "Guides.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.controller.Videos",
+                    "name": "Videos.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.controller.Tests",
+                    "name": "Tests.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.controller.CommentCounts",
+                    "name": "CommentCounts.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.store.Settings",
+                    "name": "Settings.js",
+                    "path": "app/store/"
+                },
+                {
+                    "clsName": "Docs.Settings",
+                    "name": "Settings.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.controller.Tabs",
+                    "name": "Tabs.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.controller.Comments",
+                    "name": "Comments.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.view.search.Container",
+                    "name": "Container.js",
+                    "path": "app/view/search/"
+                },
+                {
+                    "clsName": "Docs.view.Tabs",
+                    "name": "Tabs.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.view.welcome.Index",
+                    "name": "Index.js",
+                    "path": "app/view/welcome/"
+                },
+                {
+                    "clsName": "Docs.view.cls.Index",
+                    "name": "Index.js",
+                    "path": "app/view/cls/"
+                },
+                {
+                    "clsName": "Docs.view.examples.TouchContainer",
+                    "name": "TouchContainer.js",
+                    "path": "app/view/examples/"
+                },
+                {
+                    "clsName": "Docs.view.GroupTree",
+                    "name": "GroupTree.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.view.auth.BaseForm",
+                    "name": "BaseForm.js",
+                    "path": "app/view/auth/"
+                },
+                {
+                    "clsName": "Docs.view.auth.HeaderForm",
+                    "name": "HeaderForm.js",
+                    "path": "app/view/auth/"
+                },
+                {
+                    "clsName": "Docs.view.comments.Users",
+                    "name": "Users.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.ThumbList",
+                    "name": "ThumbList.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.view.guides.Index",
+                    "name": "Index.js",
+                    "path": "app/view/guides/"
+                },
+                {
+                    "clsName": "Docs.view.videos.Index",
+                    "name": "Index.js",
+                    "path": "app/view/videos/"
+                },
+                {
+                    "clsName": "Docs.view.examples.Index",
+                    "name": "Index.js",
+                    "path": "app/view/examples/"
+                },
+                {
+                    "clsName": "Docs.view.examples.Inline",
+                    "name": "Inline.js",
+                    "path": "app/view/examples/"
+                },
+                {
+                    "clsName": "Docs.view.examples.InlineWrap",
+                    "name": "InlineWrap.js",
+                    "path": "app/view/examples/"
+                },
+                {
+                    "clsName": "Docs.controller.InlineExamples",
+                    "name": "InlineExamples.js",
+                    "path": "app/controller/"
+                },
+                {
+                    "clsName": "Docs.view.tests.BatchRunner",
+                    "name": "BatchRunner.js",
+                    "path": "app/view/tests/"
+                },
+                {
+                    "clsName": "Docs.view.tests.Index",
+                    "name": "Index.js",
+                    "path": "app/view/tests/"
+                },
+                {
+                    "clsName": "Docs.view.cls.PackageLogic",
+                    "name": "PackageLogic.js",
+                    "path": "app/view/cls/"
+                },
+                {
+                    "clsName": "Docs.view.cls.InheritanceLogic",
+                    "name": "InheritanceLogic.js",
+                    "path": "app/view/cls/"
+                },
+                {
+                    "clsName": "Docs.view.cls.Tree",
+                    "name": "Tree.js",
+                    "path": "app/view/cls/"
+                },
+                {
+                    "clsName": "Docs.view.TreeContainer",
+                    "name": "TreeContainer.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.view.comments.Expander",
+                    "name": "Expander.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.LargeExpander",
+                    "name": "LargeExpander.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.guides.Container",
+                    "name": "Container.js",
+                    "path": "app/view/guides/"
+                },
+                {
+                    "clsName": "Docs.view.videos.Container",
+                    "name": "Container.js",
+                    "path": "app/view/videos/"
+                },
+                {
+                    "clsName": "Docs.view.comments.MemberWrap",
+                    "name": "MemberWrap.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.Template",
+                    "name": "Template.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.RepliesExpander",
+                    "name": "RepliesExpander.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.model.Comment",
+                    "name": "Comment.js",
+                    "path": "app/model/"
+                },
+                {
+                    "clsName": "Docs.CommentsProxy",
+                    "name": "CommentsProxy.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.model.Target",
+                    "name": "Target.js",
+                    "path": "app/model/"
+                },
+                {
+                    "clsName": "Docs.view.comments.Targets",
+                    "name": "Targets.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.model.Tag",
+                    "name": "Tag.js",
+                    "path": "app/model/"
+                },
+                {
+                    "clsName": "Docs.view.comments.Tags",
+                    "name": "Tags.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.TagEditor",
+                    "name": "TagEditor.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.List",
+                    "name": "List.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.FullList",
+                    "name": "FullList.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.comments.Index",
+                    "name": "Index.js",
+                    "path": "app/view/comments/"
+                },
+                {
+                    "clsName": "Docs.view.HoverMenu",
+                    "name": "HoverMenu.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.view.HoverMenuButton",
+                    "name": "HoverMenuButton.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.view.cls.Toolbar",
+                    "name": "Toolbar.js",
+                    "path": "app/view/cls/"
+                },
+                {
+                    "clsName": "Docs.view.cls.Overview",
+                    "name": "Overview.js",
+                    "path": "app/view/cls/"
+                },
+                {
+                    "clsName": "Docs.view.cls.Container",
+                    "name": "Container.js",
+                    "path": "app/view/cls/"
+                },
+                {
+                    "clsName": "Docs.view.Viewport",
+                    "name": "Viewport.js",
+                    "path": "app/view/"
+                },
+                {
+                    "clsName": "Docs.Application",
+                    "name": "Application.js",
+                    "path": "app/"
+                },
+                {
+                    "clsName": "Docs.view.auth.Form",
+                    "name": "Form.js",
+                    "path": "app/view/auth/"
+                },
+                {
+                    "clsName": "Docs.view.comments.ListWithForm",
+                    "name": "ListWithForm.js",
+                    "path": "app/view/comments/"
+                }
+            ]
+        },
+        {
+            "name": "Application - Production",
+            "target": "app-all.js",
+            "compress": true,
+            "files": [
+                {
+                    "path": "",
+                    "name": "all-classes.js"
+                },
+                {
+                    "path": "",
+                    "name": "app.js"
+                }
+            ]
+        }
+    ],
+    "resources": []
+}

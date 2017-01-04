@@ -1,5 +1,3 @@
-require 'cgi'
-
 module JsDuck
 
   # Transforms in-page links so they won't break docs app #!-navigation.
@@ -11,7 +9,7 @@ module JsDuck
 
     def self.transform(html, guide_name)
       html.gsub(/(<a\s+(?:[^<>]*\s+)?href=['"]#)([^!\/].*?)(['"])/i) do |m|
-        $1 + "!/guide/" + transform_id($2, guide_name) + $3
+        "#{$1}!/guide/#{guide_name}-section-#{$2}#{$3}"
 
       end.gsub(/(<a\s+(?:[^<>]*\s+)?name=['"])(.*?)(['"])/i) do |m|
         $1 + transform_id($2, guide_name) + $3
@@ -25,11 +23,6 @@ module JsDuck
       if id =~ /^#{guide_name}-section-/
         id
       else
-        # Escape the ID if it's not already escaped.  This check is
-        # needed to avoid re-escaping anchor-links created with
-        # Markdown - these get auto-escaped by RDiscount.
-        id = (id =~ /%[0-9A-F]{2}/) ? id : CGI::escape(id)
-
         "#{guide_name}-section-#{id}"
       end
     end

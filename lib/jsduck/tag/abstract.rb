@@ -1,11 +1,14 @@
-require "jsduck/tag/boolean_tag"
+require "jsduck/meta_tag"
 
 module JsDuck::Tag
-  class Abstract < BooleanTag
+  # Implementation of @abstract tag
+  class Abstract < JsDuck::MetaTag
     def initialize
-      @pattern = "abstract"
+      @name = "abstract"
+      @key = :abstract
       @signature = {:long => "abstract", :short => "ABS"}
-      super
+      @boolean = true
     end
   end
 end
+

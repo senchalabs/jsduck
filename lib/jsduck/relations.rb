@@ -50,11 +50,6 @@ module JsDuck
       @classes.each(&block)
     end
 
-    # Used in tests to check the nr of classes.
-    def length
-      @classes.length
-    end
-
     # Returns list of all classes.  This method allows us to treat
     # Relations as array and therefore easily mock it
     def to_a

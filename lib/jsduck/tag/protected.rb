@@ -1,12 +1,14 @@
-require "jsduck/tag/boolean_tag"
+require "jsduck/meta_tag"
 
 module JsDuck::Tag
-  class Protected < BooleanTag
+  # Implementation of @protected tag
+  class Protected < JsDuck::MetaTag
     def initialize
-      @pattern = "protected"
+      @name = "protected"
+      @key = :protected
       @signature = {:long => "protected", :short => "PRO"}
-      @css = ".signature .protected { background-color: #9B86FC }" # Violet
-      super
+      @boolean = true
     end
   end
 end
+

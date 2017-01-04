@@ -217,7 +217,8 @@ Ext.define('Docs.view.ThumbList', {
         var group = e.getTarget('h2', 3, true);
 
         if (group) {
-            group.up('div').toggleCls('collapsed');
+// Ti change -- commented out following line. why?
+//            group.up('div').toggleCls('collapsed');
         }
     },
 

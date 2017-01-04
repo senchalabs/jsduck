@@ -28,18 +28,32 @@ describe JsDuck::Exporter::Full do
       JsDuck::Exporter::Full.new(JsDuck::Relations.new([cls])).export(cls)
     end
 
-    it "places all members inside :members field" do
-      result[:members].length.should == 9
+    it "places configs into :members->:cfg" do
+      result[:members][:cfg].length.should == 4
+    end
+
+    it "places instance methods into :members->:method" do
+      result[:members][:method].length.should == 3
+    end
+
+    it "places static methods into :statics->:method" do
+      result[:statics][:method].length.should == 1
+    end
+
+    it "places events into :members->:event" do
+      result[:members][:event].length.should == 1
+    end
+
+    it "places nothing into :members->:property as there are no properties" do
+      result[:members][:property].length.should == 0
     end
 
     it "sorts configs alphabetically" do
-      configs = result[:members].find_all {|m| m[:tagname] == :cfg }
-      configs.map {|m| m[:name] }.should == ["bar", "baz", "foo", "zap"]
+      result[:members][:cfg].map {|m| m[:name] }.should == ["bar", "baz", "foo", "zap"]
     end
 
-    it "sorts constructor first when sorting methods and static methods last" do
-      methods = result[:members].find_all {|m| m[:tagname] == :method }
-      methods.map {|m| m[:name] }.should == ["constructor", "addBaz", "addFoo", "statGet"]
+    it "sorts constructor first when sorting methods" do
+      result[:members][:method].map {|m| m[:name] }.should == ["constructor", "addBaz", "addFoo"]
     end
 
   end

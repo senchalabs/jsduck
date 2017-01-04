@@ -1,8 +1,11 @@
-require "mini_parser"
+require "jsduck/aggregator"
+require "jsduck/source/file"
 
 describe JsDuck::Aggregator do
   def parse(string)
-    Helper::MiniParser.parse(string)
+    agr = JsDuck::Aggregator.new
+    agr.aggregate(JsDuck::Source::File.new(string))
+    agr.result
   end
 
   shared_examples_for "class" do
@@ -16,7 +19,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit class" do
     before do
-      @doc = parse(<<-EOS)["MyClass"]
+      @doc = parse(<<-EOS)[0]
         /**
          * @class MyClass
          * @extends Your.Class
@@ -48,7 +51,7 @@ describe JsDuck::Aggregator do
 
   describe "class @tag aliases" do
     before do
-      @doc = parse(<<-EOS)["MyClass"]
+      @doc = parse(<<-EOS)[0]
         /**
          * @class MyClass
          * @extend Your.Class
@@ -73,7 +76,7 @@ describe JsDuck::Aggregator do
 
   describe "class with multiple @mixins" do
     before do
-      @doc = parse(<<-EOS)["MyClass"]
+      @doc = parse(<<-EOS)[0]
         /**
          * @class MyClass
          * @mixins My.Mixin
@@ -91,7 +94,7 @@ describe JsDuck::Aggregator do
 
   describe "class with multiple @alternateClassNames" do
     before do
-      @doc = parse(<<-EOS)["MyClass"]
+      @doc = parse(<<-EOS)[0]
         /**
          * @class MyClass
          * @alternateClassNames AltClass1
@@ -109,46 +112,48 @@ describe JsDuck::Aggregator do
 
   describe "function after doc-comment" do
     before do
-      @doc = parse("/** */ function MyClass() {}")["MyClass"]
+      @doc = parse("/** */ function MyClass() {}")[0]
     end
     it_should_behave_like "class"
   end
 
   describe "lambda function after doc-comment" do
     before do
-      @doc = parse("/** */ MyClass = function() {}")["MyClass"]
+      @doc = parse("/** */ MyClass = function() {}")[0]
     end
     it_should_behave_like "class"
   end
 
   describe "class name in both code and doc-comment" do
     before do
-      @doc = parse("/** @class MyClass */ function YourClass() {}")["MyClass"]
+      @doc = parse("/** @class MyClass */ function YourClass() {}")[0]
     end
     it_should_behave_like "class"
   end
 
+  shared_examples_for "not class" do
+    it "does not imply class" do
+      @doc[:tagname].should_not == :class
+    end
+  end
+
   describe "function beginning with underscore" do
     before do
-      @doc = parse("/** */ function _Foo() {}")
+      @doc = parse("/** */ function _Foo() {}")[0]
     end
-    it "does not imply class" do
-      @doc["_Foo"].should == nil
-    end
+    it_should_behave_like "not class"
   end
 
   describe "lowercase function name" do
     before do
-      @doc = parse("/** */ function foo() {}")
+      @doc = parse("/** */ function foo() {}")[0]
     end
-    it "does not imply class" do
-      @doc["foo"].should == nil
-    end
+    it_should_behave_like "not class"
   end
 
   describe "Ext.extend() in code" do
     before do
-      @doc = parse("/** */ MyClass = Ext.extend(Your.Class, {  });")["MyClass"]
+      @doc = parse("/** */ MyClass = Ext.extend(Your.Class, {  });")[0]
     end
     it_should_behave_like "class"
     it "detects implied extends" do
@@ -180,7 +185,7 @@ describe JsDuck::Aggregator do
 
   describe "basic Ext.define() in code" do
     before do
-      @doc = parse(<<-EOS)["MyClass"]
+      @doc = parse(<<-EOS)[0]
         /** */
         Ext.define('MyClass', {
           extend: 'Your.Class',
@@ -200,7 +205,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.ClassManager.create() instead of Ext.define()" do
     before do
-      @doc = parse(<<-EOS)["MyClass"]
+      @doc = parse(<<-EOS)[0]
         /** */
         Ext.ClassManager.create('MyClass', {
         });
@@ -211,7 +216,7 @@ describe JsDuck::Aggregator do
 
   describe "complex Ext.define() in code" do
     before do
-      @doc = parse(<<-EOS)["MyClass"]
+      @doc = parse(<<-EOS)[0]
         /** */
         Ext.define('MyClass', {
           blah: true,
@@ -234,7 +239,7 @@ describe JsDuck::Aggregator do
 
   describe "explicit @tags overriding Ext.define()" do
     before do
-      @doc = parse(<<-EOS)["MyClass"]
+      @doc = parse(<<-EOS)[0]
         /**
          * @class MyClass
          * @extends Your.Class
@@ -261,7 +266,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define() without extend" do
     before do
-      @doc = parse(<<-EOS)["MyClass"]
+      @doc = parse(<<-EOS)[0]
         /** */
         Ext.define('MyClass', {
         });
@@ -270,6 +275,71 @@ describe JsDuck::Aggregator do
     it "automatically extends from Ext.Base" do
       @doc[:extends].should == "Ext.Base"
     end
+  end
+
+  describe "class with cfgs" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * @extends Bar
+         * Comment here.
+         * @cfg {String} foo Hahaha
+         * @private
+         * @cfg {Boolean} bar Hihihi
+         */
+      EOS
+    end
+
+    it_should_behave_like "class"
+    it "has needed number of members" do
+      @doc[:members].length.should == 2
+    end
+    it "detects members as configs" do
+      @doc[:members][0][:tagname].should == :cfg
+      @doc[:members][1][:tagname].should == :cfg
+    end
+    it "picks up names of all configs" do
+      @doc[:members][0][:name].should == "foo"
+      @doc[:members][1][:name].should == "bar"
+    end
+    it "marks first @cfg as private" do
+      @doc[:members][0][:private].should == true
+    end
+  end
+
+  describe "class with cfgs with subproperties" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * @class MyClass
+         * Comment here.
+         * @cfg {Object} foo
+         * @cfg {String} foo.one
+         * @cfg {String} foo.two
+         * @cfg {Function} bar
+         * @cfg {Boolean} bar.arg
+         */
+      EOS
+    end
+
+    it "detects the configs taking account the subproperties" do
+      @doc[:members].length.should == 2
+    end
+  end
+
+  describe "implicit class with more than one cfg" do
+    before do
+      @doc = parse(<<-EOS)[0]
+        /**
+         * Comment here.
+         * @cfg {String} foo
+         * @cfg {String} bar
+         */
+        MyClass = function() {}
+      EOS
+    end
+    it_should_behave_like "class"
   end
 
   describe "member docs after class doc" do
@@ -299,7 +369,7 @@ describe JsDuck::Aggregator do
           }
         });
       EOS
-      @doc = @classes["MyClass"]
+      @doc = @classes[0]
     end
     it "results in only one item" do
       @classes.length.should == 1
@@ -342,13 +412,13 @@ describe JsDuck::Aggregator do
     end
 
     it "both are class tags" do
-      @classes["Foo"][:tagname] == :class
-      @classes["Bar"][:tagname] == :class
+      @classes[0][:tagname] == :class
+      @classes[1][:tagname] == :class
     end
 
     it "names come in order" do
-      @classes["Foo"][:name] == "Foo"
-      @classes["Bar"][:name] == "Bar"
+      @classes[0][:name] == "Foo"
+      @classes[1][:name] == "Bar"
     end
   end
 
@@ -357,8 +427,8 @@ describe JsDuck::Aggregator do
       @classes = parse(<<-EOS)
         /**
          * @class Foo
+         * @cfg c1
          */
-          /** @cfg c1 */
           /** @method fun1 */
           /** @event eve1 */
           /** @property prop1 */
@@ -369,8 +439,8 @@ describe JsDuck::Aggregator do
          * @alternateClassNames AltClassic
          * Second description.
          * @private
+         * @cfg c2
          */
-          /** @cfg c2 */
           /** @method fun2 */
           /** @event eve3 */
           /** @property prop2 */
@@ -380,8 +450,8 @@ describe JsDuck::Aggregator do
          * @mixins Mix2
          * @singleton
          * Third description.
+         * @cfg c3
          */
-          /** @cfg c3 */
           /** @method fun3 */
           /** @event eve3 */
           /** @property prop3 */
@@ -393,31 +463,31 @@ describe JsDuck::Aggregator do
     end
 
     it "takes class doc from first doc-block that has one" do
-      @classes["Foo"][:doc].should == "Second description."
+      @classes[0][:doc].should == "Second description."
     end
 
     it "takes @extends from first doc-block that has one" do
-      @classes["Foo"][:extends].should == "Bar"
+      @classes[0][:extends].should == "Bar"
     end
 
     it "is singleton when one doc-block is singleton" do
-      @classes["Foo"][:singleton].should == true
+      @classes[0][:singleton].should == true
     end
 
     it "is private when one doc-block is private" do
-      @classes["Foo"][:private].should == true
+      @classes[0][:private].should == true
     end
 
     it "combines all mixins" do
-      @classes["Foo"][:mixins].length.should == 2
+      @classes[0][:mixins].length.should == 2
     end
 
     it "combines all alternateClassNames" do
-      @classes["Foo"][:alternateClassNames].length.should == 1
+      @classes[0][:alternateClassNames].length.should == 1
     end
 
     it "combines all members" do
-      @classes["Foo"][:members].length.should == 3 * 4
+      @classes[0][:members].length.should == 3 * 4
     end
   end
 
@@ -473,21 +543,6 @@ describe JsDuck::Aggregator do
   end
 
 
-  describe "@extend followed by class name in {curly brackets}" do
-    before do
-      @doc = parse(<<-EOS)["Foo"]
-        /**
-         * @class Foo
-         * @extends {Bar.Baz}
-         */
-      EOS
-    end
-    it "detectes the name of the extended class" do
-      @doc[:extends].should == "Bar.Baz"
-    end
-  end
-
-
   shared_examples_for "extending Object" do
     it "has extends == nil" do
       @doc[:extends].should == nil
@@ -496,7 +551,7 @@ describe JsDuck::Aggregator do
 
   describe "Class explicitly extending Object" do
     before do
-      @doc = parse(<<-EOS)["Foo"]
+      @doc = parse(<<-EOS)[0]
         /**
          * @class Foo
          * @extends Object
@@ -508,7 +563,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.define extending Object" do
     before do
-      @doc = parse(<<-EOS)["Foo"]
+      @doc = parse(<<-EOS)[0]
         /** */
         Ext.define("Foo", {extend: "Object"});
       EOS
@@ -518,7 +573,7 @@ describe JsDuck::Aggregator do
 
   describe "Ext.extend extending Object" do
     before do
-      @doc = parse(<<-EOS)["Foo"]
+      @doc = parse(<<-EOS)[0]
         /** */
         Foo = Ext.extend(Object, { });
       EOS
@@ -528,33 +583,10 @@ describe JsDuck::Aggregator do
 
   describe "Explicit class without @extends" do
     before do
-      @doc = parse(<<-EOS)["Foo"]
+      @doc = parse(<<-EOS)[0]
         /** @class Foo */
       EOS
     end
     it_should_behave_like "extending Object"
-  end
-
-  describe "explicit class followed by normal function" do
-    before do
-      @doc = parse(<<-EOS)["foo"]
-        /** @class */
-        function foo(a, b, c) {
-            return this;
-        }
-      EOS
-    end
-
-    it "detects class name" do
-      @doc[:name].should == "foo"
-    end
-
-    it "doesn't detect parameters" do
-      @doc[:params].should == nil
-    end
-
-    it "doesn't detect chainable" do
-      @doc[:chainable].should == nil
-    end
   end
 end

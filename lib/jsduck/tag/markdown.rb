@@ -1,14 +1,12 @@
-require "jsduck/tag/tag"
+require "jsduck/meta_tag"
 
 module JsDuck::Tag
-  class Markdown < Tag
+  # A @markdown tag that is simply ignored
+  class Markdown < JsDuck::MetaTag
     def initialize
-      @pattern = "markdown"
-    end
-
-    # @markdown
-    def parse_doc(p, pos)
-      # Just completely ignore this tag.
+      @name = "markdown"
+      @boolean = true
     end
   end
 end
+

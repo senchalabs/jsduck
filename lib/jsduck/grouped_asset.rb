@@ -12,8 +12,16 @@ module JsDuck
     # and after it's been ensured that all items in groupes have names.
     def build_map_by_name
       @map_by_name = {}
-      each_item do |item|
-        @map_by_name[item["name"]] = item
+      @groups.each do |group|
+        group_map = {}
+        group["items"].each do |item|
+          # Ti has some ungrouped guides (for example, the Quick Start)
+          if group_map[item["name"]]
+            Logger.instance.warn(:dup_asset, "#{warning_msg} '#{item['name']}'", filename)
+          end
+          @map_by_name[item["name"]] = item
+          group_map[item["name"]] = item
+        end
       end
     end
 

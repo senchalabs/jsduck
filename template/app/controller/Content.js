@@ -37,6 +37,7 @@ Ext.define('Docs.controller.Content', {
      * @return {String} URL
      */
     getBaseUrl: function() {
-        return document.location.href.replace(/\/?(index.html|template.html)?(\?[^#]*)?#.*/, "");
+        return document.location.href.replace(/\/?(index.html|template.html|index.php)?#.*/, "");
+    //    return document.location.href.replace(/\/?(index.html|template.html)?(\?[^#]*)?#.*/, "");
     }
 });

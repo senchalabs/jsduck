@@ -893,7 +893,7 @@
  * @param {Mixed} callback.value The element value.
  * @param {Number} callback.index The element index.
  * @param {Array} callback.array The array being traversed.
- * @param {Mixed} callback.return The resulting element at the specified index.
+ * @param {Boolean} callback.return Should return true when element passes the test.
  * @param {Object} [thisObject] Object to use as `this` when executing `callback`.
  * @return {Array} Array of the return values of `callback` function.
  */

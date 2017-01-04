@@ -63,7 +63,7 @@ module JsDuck
       end
 
       def warn_unused(img)
-        Logger.warn(:image_unused, "Image not used.", {:filename => img[:full_path]})
+        Logger.warn(:image_unused, "Image not used.", img[:full_path])
       end
 
       def img_record(filename)

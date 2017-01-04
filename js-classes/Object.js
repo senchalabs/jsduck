@@ -718,7 +718,7 @@
  * Returns an array of all properties (enumerable or not) found
  * directly upon a given object.
  *
- * Returns an array whose elements are strings corresponding to the
+ * Rreturns an array whose elements are strings corresponding to the
  * enumerable and non-enumerable properties found directly upon
  * obj. The ordering of the enumerable properties in the array is
  * consistent with the ordering exposed by a for...in loop (or by

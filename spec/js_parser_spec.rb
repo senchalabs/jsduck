@@ -1,27 +1,9 @@
-require "jsduck/js/parser"
+require "jsduck/js_parser"
 
-describe JsDuck::Js::Parser do
+describe JsDuck::JsParser do
 
   def parse(input)
-    JsDuck::Js::Parser.new(input).parse
-  end
-
-  describe "parsing invalid JavaScript" do
-    it "causes JS syntax error with line number to be raised" do
-      begin
-        parse("if ( x \n } alert('Hello');")
-      rescue
-        $!.to_s.should == "Invalid JavaScript syntax: Unexpected '}' on line 2"
-      end
-    end
-
-    it "causes JS syntax error for unexpected end of file to be raised" do
-      begin
-        parse("if ( x ) alert( ")
-      rescue
-        $!.to_s.should == "Invalid JavaScript syntax: Unexpected end of file"
-      end
-    end
+    JsDuck::JsParser.new(input).parse
   end
 
   describe "parsing two comments" do
@@ -232,10 +214,6 @@ describe JsDuck::Js::Parser do
       @docs[0][:code]["type"].should == "FunctionDeclaration"
       @docs[0][:code]["id"]["name"].should == "a"
     end
-
-    it "detects range" do
-      @docs[0][:code]["range"].should == [61, 89, 3]
-    end
   end
 
   describe "parsing heavily nested comment" do
@@ -288,21 +266,6 @@ describe JsDuck::Js::Parser do
     it "associates comment with the code" do
       @docs[0][:comment].should == " Blah "
       @docs[0][:code]["type"].should == "ObjectExpression"
-    end
-  end
-
-  # Sparse arrays are perfectly valid in JavaScript.
-  # Omitted array members are initialized to undefined.
-  describe "parsing comment before a missing array member" do
-    before do
-      @docs = parse(<<-EOS)
-          x = [5, /* Blah */, 6];
-      EOS
-    end
-
-    it "associates comment with the next array member after that" do
-      @docs[0][:comment].should == " Blah "
-      @docs[0][:code]["value"].should == 6
     end
   end
 

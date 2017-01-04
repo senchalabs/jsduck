@@ -1,24 +1,18 @@
-require "jsduck/tag/boolean_tag"
+require "jsduck/meta_tag"
 
 module JsDuck::Tag
-  class Template < BooleanTag
+  # Implementation of @template tag
+  class Template < JsDuck::MetaTag
     def initialize
-      @pattern = "template"
+      @name = "template"
+      @key = :template
       @signature = {:long => "template", :short => "TMP"}
-      @html_position = POS_TEMPLATE
-      # Box with light gray background
-      @css = <<-EOCSS
-        .template-box {
-          text-align: center;
-          background-color: #eee;
-        }
-      EOCSS
-      super
+      @boolean = true
     end
 
-    def to_html(context)
+    def to_html(contents)
       <<-EOHTML
-      <div class='rounded-box template-box'>
+      <div class='signature-box template'>
       <p>This is a <a href="#!/guide/components">template method</a>.
          a hook into the functionality of this class.
          Feel free to override it in child classes.</p>
@@ -27,3 +21,4 @@ module JsDuck::Tag
     end
   end
 end
+

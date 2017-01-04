@@ -71,7 +71,7 @@ module JsDuck
             cls2, member2 = split_to_cls_and_member(cls)
             if @relations[cls2] && @renderer.get_matching_member(cls2, {:name => member2})
               return @renderer.link(cls2, member2, cls2+"."+member2)
-            elsif cls =~ /\.(js|css|html|php)\z/
+            elsif cls =~ /\.(js|css|html|php)\Z/
               # Ignore common filenames
             else
               warn_magic_link("#{cls} links to non-existing class")
@@ -80,7 +80,7 @@ module JsDuck
         else
           if @renderer.get_matching_member(@class_context, {:name => member})
             return @renderer.link(@class_context, member, member)
-          elsif member =~ /\A([A-F0-9]{3}|[A-F0-9]{6})\z/i || member =~ /\A[0-9]/
+          elsif member =~ /\A([A-F0-9]{3}|[A-F0-9]{6})\Z/i || member =~ /\A[0-9]/
             # Ignore HEX color codes and
             # member names beginning with number
           else
@@ -97,7 +97,7 @@ module JsDuck
       end
 
       def warn_magic_link(msg)
-        Logger.warn(:link_auto, msg, @doc_context)
+        Logger.warn(:link_auto, msg, @doc_context[:filename], @doc_context[:linenr])
       end
 
     end
