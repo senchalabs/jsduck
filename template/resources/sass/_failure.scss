@@ -1,0 +1,13 @@
+// Styles for error page.
+@import "variables";
+
+#failure {
+  padding: 1em;
+  h1 {
+    padding: 10px 0;
+    font-family: $docs-heading-font;
+    margin-bottom: 16px;
+    font-size: 2em;
+    color: $docs-heading-color; }
+  p {
+    margin: 0 0 0.8em; } }

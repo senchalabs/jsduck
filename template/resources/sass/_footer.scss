@@ -1,0 +1,106 @@
+// Styles for footer
+// Almost completely different for Ti.
+
+#footer {
+	
+	@include vertical-gradient(#656565, #343434);
+	min-width: 1100px;
+	color: #FFF;
+	font-size: 10pt;
+	a { color: #FFF; }
+	.inner-container {
+		width: 1100px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.logo {
+		float: left;
+		margin: 25px 15px 0 15px;
+	}
+	.first-row,
+	.second-row,
+	.third-row {
+		white-space: nowrap;
+		margin: 0 190px;
+		width: 760px;
+		min-width: 760px;
+		text-align: justify;
+		text-justify: auto;
+	}
+
+	.first-row, .second-row {
+		padding-bottom: 3px;
+	}
+	.first-row {
+		padding-top: 10px;
+		a {
+			padding: 0 15px;
+			text-align: center;
+			&.br {
+				border-right: 1px solid white;
+			}
+			&:first-child {
+				text-align: left;
+				padding-left: 0;
+			}
+			&:last-child {
+				text-align: right;
+			}
+		}
+	}
+	.second-row {
+		a {
+			padding: 0 6px;
+			text-align: center;
+			&:first-child {
+				text-align: left;
+				padding-left: 0;
+			}
+			&.br {
+				border-right: 1px solid white;
+			}
+		}
+	}
+
+	.third-row {
+		color: #999;
+		a {
+			color: #999;
+		}
+		font-size: 9pt;
+		#ducktype1 {
+			letter-spacing: 1px;
+		}
+		#ducktype2 {
+			padding-left: 10px;
+		}
+	}
+
+	.links {
+		float: right;
+		margin-right: 15px;
+		background-image: url(../images/footer-icons.png);
+		background-repeat: no-repeat;
+		width: 138px;
+		height: 19px;
+		margin-top: 30px;
+		a {
+			width: 21px;
+			display: block;
+			float: left;
+			margin-left: 18px;
+			height: 19px;
+			&:first-child {
+				margin-left: 0;
+			}
+		}
+	}
+
+	// The footer-content div is initially hidden on page to prevent it
+	// being visible while loading-screen is shown.  Only after the div is
+	// brought inside footer component, make it visible.
+	#footer-content {
+		display: block !important;
+	}
+}

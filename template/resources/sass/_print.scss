@@ -1,0 +1,71 @@
+// Print styles
+
+@media print {
+  .logo {
+    padding: 0; }
+  .logo a {
+    color: #000; font-size: 1.4em; }
+  .members .member a.side {
+    display: none; }
+  .members .member {
+    padding: 5px; }
+  .members h3.members-title {
+    padding: 5px; }}
+
+.guide-container img{
+   max-width: 100%;
+}
+
+.platforms {
+    @include clearfix;
+    li {
+        width: 40px;
+        height: 40px;
+        background-repeat: no-repeat;
+        float: left;
+        list-style: none !important;
+        padding-left: 26px;
+        padding-right: 34px;
+        padding-top: 6px;
+    }
+
+    .platform-android {
+        background-image: url(../images/icon_android.png);
+    }
+
+    .platform-iphone {
+        background-image: url(../images/icon_iphone.png);
+    }
+
+    .platform-ipad {
+        background-image: url(../images/icon_ipad.png);
+    }
+
+    .platform-mobileweb {
+        background-image: url(../images/icon_mobileweb.png);
+    }
+
+    .platform-tizen {
+        background-image: url(../images/icon_tizen.png);
+    } 
+
+    .platform-blackberry {
+        background-image: url(../images/icon_blackberry.png);
+    }
+
+    .platform-windowsphone {
+        background-image: url(../images/icon_windowsphone.png);
+    }
+}
+
+.doc-contents {
+    // hide platforms in class description
+    .platforms {
+        display: none;
+    }
+}
+
+#editButton {
+	display: none;
+}
+

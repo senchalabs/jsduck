@@ -1,0 +1,21 @@
+// Global styles of HTML elements
+@import "variables";
+
+html {
+  height: 100%; }
+
+body {
+  -webkit-font-smoothing: antialiased;
+  font: 13px / 1.231 $docs-font;
+  color: $docs-text-color;
+  background: $docs-bg-color;
+  min-height: 100%; }
+
+a:link {
+  color: $docs-link-color;
+  text-decoration: none;
+  &:hover {
+    color: $docs-link-hover-color; } }
+
+pre, code, kbd, samp, tt {
+  font-family: $docs-monospace-font; }

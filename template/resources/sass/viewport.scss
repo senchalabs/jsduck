@@ -1,0 +1,227 @@
+@import "variables";
+@import "mixins";
+
+@import "reset";
+@import "global";
+@import "scrollbars";
+@import "print";
+
+@import "loading";
+@import "header";
+@import "footer";
+@import "tabs";
+@import "toolbar";
+@import "hover_menu";
+@import "trees";
+@import "thumb_list";
+@import "categories";
+@import "failure";
+@import "class_header";
+
+.card-panel {
+  line-height: 1.5em;
+  h3 {
+    font-size: 1.2em;
+    padding: 1em 0 0.4em 0;
+    font-weight: normal; } }
+
+// When welcome text rendered from Markdown.
+#welcomeindex .markdown {
+  margin: 2em;
+  color: $docs-text-color;
+  p {
+    margin-bottom: 1em; }
+  h1 {
+    color: $docs-heading-color;
+    font-family: $docs-heading-font;
+    font-size: 2em; }
+  h2 { @include guides-h2-heading; }
+  h3 { @include guides-h3-heading; }
+  h3 { font-weight: bold; font-size: 1.1em; }
+  h4 { font-weight: bold; }
+  ul {
+    margin: 0 0 1em 2em;
+    li {
+      list-style: disc outside; } }
+  ol {
+    margin: 0 0 1em 2em;
+    li {
+      list-style: decimal outside; } }
+  em {
+    font-style: italic; }
+  strong {
+    font-weight: bold; }
+  pre {
+    background-color: #f7f7f7;
+    border: solid 1px #e8e8e8;
+    @include border-radius(5px);
+    color: #314e64;
+    font-family: $docs-monospace-font;
+    padding: 10px 12px;
+    margin: 10px 0 14px 0;
+    overflow-x: auto;
+    overflow-y: hidden; } }
+
+
+.class-overview, .guide-container, .comments-index {
+  // Style only the body area, or the toolbar will get styled too
+  .x-panel-body {
+    min-height: 100px;
+    .clr {
+      clear: both; }
+    p, ul, ol {
+      color: $docs-text-color;
+      max-width: 900px; }
+    p {
+      padding: 0;
+      margin: 0 0 1em; }
+    p:last-child {
+      margin: 0; }
+    ul {
+      margin: 0 0 1em 1em;
+      p { 
+          margin-bottom: 0.5em; }
+      li {
+        list-style: disc outside; } }
+    ol {
+      margin: 0 0 1em 2em;
+      li {
+        margin: 0 0 1em;
+        list-style: decimal outside; 
+        ol {
+            margin: 0 0 1em 1em;
+            li {
+                list-style: lower-alpha inside; } } } }
+    ol {
+      margin: 0 0 1em 2em;
+      ul {
+        li {
+          margin: 0 0 1em;
+          list-style: disc outside;
+      li {
+        margin: 0 0 1em;
+        list-style: decimal outside; 
+        ol {
+            margin: 0 0 1em 1em;
+            li {
+                list-style: lower-alpha inside; } } } } } }
+    em {
+      font-style: italic; }
+    strong {
+      font-weight: bold; }
+    h3 {
+      font-weight: bold;
+      font-size: 1.1em; }
+    h4 {
+      font-weight: bold; }
+    table {
+      margin-bottom: 10px;
+      // Assume rationally constructed tables and don't attempt to override their styling
+      // tr:first-child {
+      //  td {
+      //    color: #000;
+      //    font-weight: bold; } }
+      td {
+        color: #222;
+        padding: 2px 20px 2px 0; } }
+    blockquote {
+      padding-left: 1em;
+      border-left: solid 1em #e8e8e8; }
+    pre.notpretty, pre.prettyprint {
+      background-color: #f7f7f7;
+      border: solid 1px #e8e8e8;
+      @include border-radius(5px);
+      color: #314e64;
+      font-family: $docs-monospace-font;
+      font-size: 13px;
+      padding: 10px 12px;
+      line-height: 1.3em;
+      margin: 10px 0 14px 0;
+      max-width: 900px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      code {
+        font-family: $docs-monospace-font; }
+      i, em {
+        font-style: normal; } } } }
+
+// Work around ugly TOC spacing in exported guides.
+.guide-container .x-panel-body {
+    ul {
+        ul {
+            margin: 0 0 0 1em;
+        }
+    }
+}
+
+
+@import "class_overview";
+
+#center-container .guide-container {
+  padding: 10px;
+  font-size: 14px;
+  // Table of contents for guides
+  // Similar styles to class docs sidebar
+  .toc {
+    float: right;
+    background-color: #f7f7f7;
+    border: solid 1px #e8e8e8;
+    padding: 10px 20px;
+    margin: 0 14px;
+    @include border-radius(5px); }
+  h1 {
+    padding-top: 7px;
+    font-family: $docs-heading-font;
+    margin-bottom: 16px;
+    font-size: 16pt;
+    color: #66ab16;
+  }
+  h2 {
+    @include guides-h2-heading; }
+  h3 {
+    @include guides-h3-heading; }
+  hr {
+    display: none; } }
+
+// Screenshot image created by {@img} tag. Centered.
+// With a span containing the caption for the image.
+p.screenshot {
+  img {
+    display: block;
+    margin: 0 auto; }
+  span {
+    display: block;
+    text-align: center;
+    font-size: smaller; }}
+
+// Some margins for the stuff on video page.
+#video {
+  object, p, h1 {
+    margin: 15px; } }
+
+#exampleindex,
+#videoindex,
+#guideindex,
+#classindex {
+  padding: 15px 10px 10px 10px; }
+
+
+.x-panel-body-default {
+  border-width: 0; 
+  font-size: 14px; }
+
+p > code {
+  font-size: 13px;
+}
+
+// Examples
+@import "examples";
+
+// Comments
+@import "comments";
+
+// Welcome Pages
+@import "extjs_welcome";
+
+// Doc Tests
+@import "doc_tests";

@@ -1,0 +1,43 @@
+// Styles for classes categories page
+@import "mixins";
+
+.class-categories {
+  // Main heading at the top of the page
+  h1.top {
+    margin-bottom: 12px; }
+  // Optional notice box at the top of the page
+  .notice {
+    background-color: #ffc;
+    text-align: center;
+    color: #434343;
+    font-weight: bold;
+    padding: 8px 0; margin: 0 20px 15px 0;
+    @include border-radius(8px); }
+  // All sections are inside gray round-corners bubbles
+  .section {
+    @include border-radius(5px);
+    background-color: #f7f7f7;
+    border: 1px solid #ebebeb;
+    padding: 20px 10px 20px 20px;
+    margin: 0 10px 20px 0;
+    clear: both;
+    // sections are divided into three columns
+    .left-column {
+      float: left;
+      width: 250px;
+      margin-left: 20px; }
+    .middle-column {
+      float: left;
+      width: 280px; }
+    .right-column {
+      float: left; }
+    // A list of links
+    .links {
+      margin-left: 1.5em;
+      .new-class {
+        @include border-radius(2px);
+        padding: 0 0.5em;
+        background: #F5D833;
+        position: relative;
+        top: -2px;
+        font-size: 7px; } } } }

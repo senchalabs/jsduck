@@ -1,0 +1,263 @@
+// Styles for class API docs page
+@import "variables";
+@import "mixins";
+
+.class-overview {
+//  .hierarchy, .aside {
+//    @include border-radius(5px);
+//    background-color: #f7f7f7;
+//    border: 1px solid #ebebeb;
+//    padding: 0 15px 15px 10px;
+//    float: right;
+//    clear: right;
+//    margin: 0 0 10px 60px;
+//    color: $docs-text-color;
+//    font-size: 12px; }
+//  .hierarchy {
+//    h4 {
+//      font-family: $docs-font;
+//      font-size: 90%;
+//      padding: 11px 0 5px 0;
+//      text-transform: uppercase;
+//      color: #999999; }
+//    .dependency, .alternate-class-name {
+//      padding: 0 0 0 12px;
+//      margin-top: 3px; }
+//    .alternate-class-name {
+//      color: $docs-text-color; }
+//    .subclass {
+//      background: url(../images/elbow-end.gif) no-repeat -5px 0;
+//      margin-top: 3px;
+//      padding: 0 0 0 12px;
+//      &.first-child {
+//        background: none;
+//        padding-left: 15px; } } }
+//  .aside {
+//    width: 180px;
+//    h4 {
+//      margin: 4px 0;
+//      font-size: larger;
+//      color: #526c83;
+//      padding-left: 22px; }
+//    img {
+//      width: 50px;
+//      float: left;
+//      margin-right: 10px; }
+//    &.guide h4 {
+//      background: url(../images/tabs.png) no-repeat -5px -55px; }
+//    &.video h4 {
+//      background: url(../images/tabs.png) no-repeat -6px -38px; }
+//    &.example h4 {
+//      background: url(../images/tabs.png) no-repeat -7px -93px; } } }
+
+	// Ti changes to hierarchy style. ToDo: Clean up this mess.
+	.hierarchy {
+		border: none !important;
+		background: none !important;
+		//@include border-radius(5px);
+		//background-color: #f7f7f7;
+		//border: 1px solid #ebebeb;
+		//padding: 0 15px 15px 10px;
+		 padding: 0 !important;
+		//margin: 0 0 40px 60px;
+		font-size: 12px;
+		overflow: auto;
+		width: 80%;
+		h4 {
+			padding: 0 0 0 15px;
+			font-family: $docs-font;
+			font-size: 90%;
+			padding: 11px 0 5px 0;
+			text-transform: uppercase;
+			color: #999999; 
+		}
+		.dependency, .alternate-class-name {
+			padding: 0 0 0 12px;
+			margin-top: 3px;
+		}
+		.alternate-class-name {
+			color: $docs-text-color;
+		}
+		.classes {
+            background-image: url(../images/bg_example.png);
+            border: solid 1px #e8e8e8;
+            @include border-radius(5px);
+            color: #314e64;
+            // font-family: $docs-monospace-font;
+            font-size: 10pt;
+            padding: 10px 20px;
+            line-height: 1.3em;
+            margin: 10px 0 14px 0;
+            max-width: 900px;
+            overflow-x: auto;
+            overflow-y: hidden;
+
+			.subclass {
+				float: left;
+				font-weight: bold;
+				padding: 0 0 0 5px;
+				strong {
+					color: #8b0e04;
+				}
+				&.first-child {
+					padding-left: 15px;
+				}
+			}
+		}
+	}
+}
+
+// Nice styles for headings inside documentation
+#center-container .doc-contents {
+  h1, h2 {
+    @include guides-h2-heading;
+    letter-spacing: 0; }
+  h3 {
+    @include guides-h3-heading; } }
+
+.class-overview {
+  p.private {
+    border: 1px solid #999;
+    @include border-radius(5px);
+    color: #600;
+    background-color: #fee;
+    padding: 10px 50px;
+    text-align: center; }
+  p.enum {
+    border: 1px solid #999;
+    @include border-radius(5px);
+    color: #060;
+    background-color: #efe;
+    padding: 10px 50px;
+    text-align: center; }
+  .signature {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.7em;
+    @include border-radius(2px);
+    margin-left: 5px;
+    padding: 0 3px;
+    @include signature-colors; }
+  .new-keyword {
+    margin-left: 0;
+    margin-right: 3px;
+    color: $docs-link-color; }
+  .cfgGroup {
+    margin: 10px 0 3px 0; } }
+
+.members {
+  color: #444444;
+  padding-top: 10px;
+  clear: both;
+  h1, h2 {
+    @include guides-h2-heading;
+    font-size: 14px;
+    margin: 15px 0 5px; }
+  first-child: {
+    padding-top: 0; };
+  .pre {
+    font-family: $docs-monospace-font;
+    font-size: 0.9em; }
+  .definedBy {
+    float: right;
+    padding: 0 20px 0 0;
+    font-weight: bold;
+    color: #666666; }
+  .subsection .definedBy {
+    // do not lower definedBy float when inside subsection
+    padding-top: 0; }
+  h3.pa {
+    padding: 10px 0 5px 0; }
+  .members-section, .comments-section {
+    margin-bottom: 40px; }
+    h3.members-title {
+      margin: 20px 0 5px 0;
+      padding: 0 0 0 25px;
+      font-size: 1.3em;
+      font-weight: bold; }
+    @include icons;
+  h4.members-subtitle {
+    padding-left: 25px;
+    margin: 10px 0 7px 0; }
+  ul ul {
+    list-style: circle;
+    margin-top: 1em; }
+  .sub-desc {
+    margin: 0.5em 0 1em; }
+  .description {
+    .short {
+      p {
+        margin: 0; } } }
+  a {
+    text-decoration: none; }
+  .member {
+    position: relative;
+    min-height: 2.5em;
+    border-style: solid;
+    border-color: #E0E0E0;
+    border-width: 0 0 1px 0;
+    padding: 10px 22px;
+    @include member-expander;
+    &.first-child {
+      border-width: 1px 0; }
+    .long {
+      display: none; }
+    .meta {
+      float: right;
+      text-align: right; }
+    .defined-in, .view-source {
+      font-family: "Open Sans", "Helvetica", "Arial", sans-serif;
+      font-size: 0.9em; }
+    a.defined-in {
+      color: #888888;
+      &:hover {
+        color: $docs-link-hover-color; } }
+    a.view-source {
+      color: rgba(0, 0, 0, 0);
+      @include transition(color, 0.2s, linear);
+      font-size: 0.9em;
+      &:hover {
+        @include transition(color, 0.2s, linear);
+        color: $docs-link-hover-color; } }
+    &:hover {
+      a.view-source {
+        color: rgba(128, 128, 128, 1);
+        @include transition(color, 0.2s, linear); } }
+    &.open {
+      a.side.expandable {
+        @include horizontal-gradient(#ebf3fe, #d9e8fc);
+        span {
+          background: url(../images/member-expanded.gif) no-repeat 1px 2px; } }
+      .short {
+        display: none; }
+      .long {
+        display: block; } }
+    .name {
+      font-weight: bold; }
+    .title {
+      padding-bottom: 3px; } } }
+
+.signature-box {
+  border: 1px solid #999;
+  @include border-radius(5px);
+  padding: 10px 50px;
+  text-align: center;
+  &.template {
+    background-color: #eee; }
+  &.deprecated, &.removed {
+    color: #600;
+    background-color: #fee;
+	// Ti changed width.
+	width: 80%;
+    strong {
+      text-transform: uppercase;
+      @include border-radius(2px);
+      padding: 0 3px; } }
+  &.deprecated strong {
+    color: white;
+    background-color: #aa0000; }
+  &.removed strong {
+    color: #aa0000;
+    border: 1px solid #aa0000;
+    background-color: transparent;
+    text-decoration: line-through; } }

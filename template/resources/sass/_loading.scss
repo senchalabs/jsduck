@@ -1,0 +1,19 @@
+// Styles for loading screen
+@import "variables";
+
+#loading {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -70px;
+  .title {
+    font-family: $docs-heading-font;
+    font-size: 2em;
+    color: gray;
+    text-align: center;
+    white-space: nowrap;
+    display: block; }
+  .logo {
+    background: url(../images/loading.gif) no-repeat center;
+    display: block;
+    height: 120px; } }

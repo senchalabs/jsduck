@@ -1,0 +1,171 @@
+@import "variables";
+@import "compass/css3";
+
+@mixin vertical-gradient($fromCol, $toCol) {
+  background: $fromCol;
+  background: -webkit-gradient(linear, left top, left bottom, from($fromCol), to($toCol));
+  background: -moz-linear-gradient(top, $fromCol, $toCol); }
+
+@mixin horizontal-gradient($fromCol, $toCol) {
+  background: $fromCol;
+  background: -webkit-gradient(linear, left top, right top, from($fromCol), to($toCol));
+  background: -moz-linear-gradient(left, $fromCol, $toCol); }
+
+@mixin transition($property, $duration, $timingFunction) {
+  -webkit-transition: $property $duration $timingFunction;
+  -moz-transition: $property $duration $timingFunction;
+  -o-transition: $property $duration $timingFunction; }
+
+@mixin icons {
+  .icon-pkg {
+    // Ti change offset
+    background: url(../images/icons.png) no-repeat 0 -400px; }
+  .icon-class {
+    background: url(../images/icons.png) no-repeat 0 -80px; }
+  // Ti add object icon
+  .icon-object {
+    background: url(../images/icons.png) no-repeat 0 -40px; }
+  //.icon-singleton {
+  //  background: url(../images/icons.png) no-repeat 0 -80px; }
+  .icon-subclass {
+    background: url(../images/icons.png) no-repeat 0 -120px; }
+  .icon-component {
+    background: url(../images/icons.png) no-repeat 0 -160px; }
+  .icon-cfg {
+    background: url(../images/icons.png) no-repeat 0 -200px; }
+  .icon-property {
+    // Ti tweaked positioning
+    background: url(../images/icons.png) no-repeat 0 -238px; }
+  .icon-method {
+    background: url(../images/icons.png) no-repeat 0 -280px; }
+  .icon-event {
+    background: url(../images/icons.png) no-repeat 0 -320px; }
+  .icon-guide {
+  		background: url(../images/tabs.png) no-repeat -6px -60px; }
+  .icon-video {
+    background: url(../images/icons.png) no-repeat 0 -400px; }
+  .icon-example {
+    background: url(../images/icons.png) no-repeat 0 -440px; }
+  .icon-css_var {
+    background: url(../images/icons.png) no-repeat 0 -480px; }
+  .icon-css_mixin {
+    background: url(../images/icons.png) no-repeat 0 -520px; }
+  .icon-class-redirect {
+    background: url(../images/icons.png) no-repeat 0 -560px; }
+  .icon-singleton-redirect {
+    background: url(../images/icons.png) no-repeat 0 -600px; }
+  .icon-component-redirect {
+    background: url(../images/icons.png) no-repeat 0 -640px; } }
+
+@mixin green-button {
+  @include box-shadow(#b3f33d 0 1px 0 0 inset);
+  color: #fff;
+  text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
+  @include border-radius(3px);
+  cursor: pointer;
+  border: 1px solid #264901;
+  @include vertical-gradient(#91c632, #519700);
+  &:hover {
+    @include vertical-gradient(#74b61e, #3d7e00); }
+  &.disabled {
+    border-color: #707070;
+    cursor: auto;
+    @include vertical-gradient(#bbb, #9c9c9c);
+    @include box-shadow(#d7d7d7 0 1px 0 0 inset); } }
+
+@mixin member-expander {
+  &.open > a.side.toggleComments,
+  &.open > a.side.expandable {
+    background: #EBF3FE;
+    span {
+      background: url(../images/member-expanded.gif) no-repeat 2px 12px; } }
+  a.side {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    cursor: default !important;
+    span {
+      display: block;
+      width: 15px;
+      height: 30px; }
+    &.expandable,
+    &.toggleComments {
+      cursor: pointer;
+      span {
+        background: url(../images/member-collapsed.gif) no-repeat 3px 13px; }
+      &:hover {
+        span {
+          background: url(../images/member-hover.gif) no-repeat 3px 13px; } } } } }
+
+@mixin guides-h2-heading {
+  font-family: $docs-font;
+  letter-spacing: -1px;
+  line-height: 20px;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 20px;
+  font-weight: bold;
+  color: #666666;
+  margin: 30px 0 15px;
+  padding-bottom: 5px; }
+
+@mixin guides-h3-heading {
+  font-weight: bold;
+  color: #666666;
+  margin-top: 0.5em;
+  padding-top: 16px;
+  font-size: 16px;
+  line-height: 16px;
+  margin-bottom: 4px; }
+
+// Shared colors for member signatures in toolbar menu and class api body
+@mixin signature-colors {
+  // the default colors
+  color: white;
+  background-color: #aaa;
+  // specific colors
+  &.deprecated {
+    background-color: #aa0000; }
+  &.removed {
+    color: #aa0000;
+    background-color: transparent;
+    border: 1px solid #aa0000;
+    text-decoration: line-through; }
+  &.chainable {
+    background-color: #00aa00; }
+  &.static {
+    background-color: $docs-text-color; }
+  &.required {
+    background-color: $docs-text-color; }
+  &.new {
+    color: $docs-text-color;
+    background-color: #F5D833; }
+  &.private {
+    background-color: #FD6B1B; }
+  &.protected {
+    background-color: #9B86FC; } }
+
+// shared styles for signature labels in hover-menus and search dropdown.
+@mixin mini-signature {
+ .signature {
+   font-size: 0.6em;
+   text-transform: uppercase;
+   font-weight: bold;
+   padding: 0 0.5em;
+   @include border-radius(2px);
+   @include signature-colors; } }
+
+@mixin clearfix() {
+	zoom: 1;
+	&:before,
+	&:after {
+		display: table;
+		content: "";
+		zoom: 1;
+		*display: inline;
+	}
+	&:after {
+		clear: both;
+	}
+}

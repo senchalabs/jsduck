@@ -1,0 +1,91 @@
+// Styles for class-overview page header.
+//
+// Although some styles in here also effect all pages, which is not good.
+// Notably h1 and print button.
+//
+@import "variables";
+@import "mixins";
+
+#center-container {
+  h1 {
+    font-family: $docs-heading-font;
+    padding-bottom: 5px;
+    padding-top: 2px;
+    border-bottom: 1px #f1f1f1;
+	// Ti change. ToDo: Check color.
+    /*font-size: 16pt;*/
+    color: #66ab16;
+
+    // Icons for different class types
+    .class-source-link {
+      color: #66ab16; // Same color as h1 itself
+        // Ti changes
+		padding-top: 7px;	}
+    &.class a {
+      //background: url(../images/class-m.png) no-repeat 0 8px;
+      }
+    &.component a {
+      background: url(../images/component-m.png) no-repeat 0 -5px; }
+    &.class .class-source-link {
+      background: url(../images/class-m.png) no-repeat 0 -5px; }
+    &.component .class-source-link {
+      background: url(../images/component-m.png) no-repeat 0 -5px; }
+    &.singleton .class-source-link {
+      background: url(../images/singleton-m.png) no-repeat 0 -5px; }
+
+    // gray style for xtypes listing
+    span {
+      color: #929292;
+      letter-spacing: 0;
+      margin-left: 10px;
+      font-size: 0.5em; }
+
+    // View source... tooltip when hovering class name
+    span.class-source-tip {
+      font-size: 0.5em;
+      position: absolute;
+      top: 35px;
+      left: 100px;
+      color: #fff;
+      @include transition(color, 0.2s, linear);
+      &.hover {
+        color: #929292; } }
+
+    .signature {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.4em;
+      letter-spacing: 2px;
+      @include border-radius(3px);
+      margin-left: 2px;
+      margin-right: 0;
+      padding: 0 5px;
+      @include signature-colors; } }
+
+  .guide-container {
+    table {
+      max-width: 900px;
+      font-size: 1.0em;
+      th {
+        background-color: #eee;
+        font-weight: bold;
+        text-align: left;
+        color: #333;
+        padding: 3px 5px; }
+      td {
+        padding: 3px 5px; } } }
+
+  // The print button
+  .print {
+    background: url(../images/print.png) no-repeat;
+    position: absolute;
+    right: 0;
+    top: 5px;
+    display: block;
+    text-indent: -9999px;
+    width: 32px;
+    height: 32px;
+    // Adjust in bottom-left direction in guides context
+    &.guide {
+      right: 15px;
+      top: 15px; } } }

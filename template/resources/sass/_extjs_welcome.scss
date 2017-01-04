@@ -1,0 +1,244 @@
+//
+// Docs Welcome Page Style
+//
+// Order from general -> specific
+
+@import "variables";
+
+$page-width: 900px;
+$body-color: #434343;
+$green: #4C8E0E;
+$green-hover: #38690A;
+$graphite: #314E64;
+$light-blue: #B9D4E7;
+$link-color: #126499;
+
+
+#extjs-welcome {
+  -webkit-font-smoothing: antialiased;
+  color: $body-color;
+  font: 14px/1.4em $docs-font;
+
+  .logo {
+    background: url(../images/logo-screen-noglow.png) no-repeat;
+    width: 155px;
+    height: 72px;
+    margin: 0 0 0 -13px;
+    position: relative;
+    z-index: 99;
+
+    a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-indent: -9999px;
+    }
+  }
+
+  a {
+    color: $link-color;
+  }
+
+  ul {
+    font-size: 13px;
+    margin-bottom: 1em;
+    margin-left: 18px;
+    li {
+      list-style: square;
+    }
+  }
+
+  h1, h2 {
+    text-rendering: optimizeLegibility;
+    text-shadow: rgba(255, 255, 255, 0.8) 0 1px 1px;
+  }
+
+  h2 {
+    color: $graphite;
+    line-height: 1.0em;
+    margin-top: 60px;
+    margin-bottom: 8px;
+    font-size: 25px;
+    font-weight: normal;
+    font-family: $docs-heading-font;
+    font-weight: normal;
+  }
+
+  h2 strong {
+    font-size: 1.2em;
+    color: $green;
+  }
+
+  h3 {
+    font-size: 16px;
+    line-height: 20px;
+    margin-bottom: 4px;
+    margin-top: 1em;
+    font-weight: bold;
+    color: $graphite;
+    padding: 0;
+  }
+
+  p {
+    margin-bottom: 1em;
+  }
+
+  p.intro {
+    color: $graphite;
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  .auto_columns {
+    width: 100%;
+    &::after {
+      clear: both;
+      content: '.';
+      display: block;
+      height: 0px;
+      visibility: hidden;
+    }
+    .auto_columns p {
+      font-size: 13px;
+      line-height: 16px;
+    }
+  }
+
+  .two .column {
+    width: 48%;
+    padding-right: 2%;
+    float: left;
+    position: relative;
+    // ExtJS switches everything to border-box, revert it.
+    box-sizing: content-box;
+  }
+
+  a.button-link {
+    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    border-color: #274807 !important;
+    background: $green url(../images/link-green-standard.png) 0 0 repeat-x;
+    color: white;
+    -webkit-background-clip: padding-box;
+    border: 1px solid #477A09;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.0em;
+    padding: 6px 8px 9px;
+    text-decoration: none;
+    text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
+    @include border-radius(3px);
+    display: inline-block;
+    &:active {
+      position: relative;
+      top: 1px;
+    }
+    &:hover, &:focus, &:active {
+      background: $green-hover url(../images/link-green-standard-over.png) 0 0 repeat-x;
+    }
+  }
+
+  a.more-icon {
+    background: url(../images/more.png) no-repeat right center;
+    font-size: 12px;
+    font-weight: bold;
+    padding-right: 16px;
+  }
+
+  .button-group a {
+    margin-right: 12px;
+  }
+
+  .right {
+    padding-top: 140px;
+    overflow: hidden;
+  }
+
+  .content {
+    margin: 0 auto;
+    text-align: left;
+    width: $page-width;
+    padding-top: 30px;
+  }
+
+  section {
+    padding: 36px 18px;
+    background: #fff url(../images/welcome-bg-js4.gif) left bottom no-repeat;
+    min-height: 300px;
+    position: relative;
+  }
+
+  .meta {
+    color: #8F8F8F;
+  }
+
+  .inline-social {
+    $icon_size: 16;
+    $file_ext: "-#{$icon_size}.png";
+    text-indent: -9999px;
+    margin-top: 6px;
+
+    li {
+      display: block;
+      float: right;
+      margin-bottom: 8px;
+
+      a {
+        color: $graphite;
+        display: block;
+        line-height: 1.0em;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+        background-position: top left;
+        background-repeat: no-repeat;
+
+
+        &.facebook { background: url(../images/facebook#{$file_ext}) no-repeat; }
+        &.linkedin { background: url(../images/linkedin#{$file_ext}) no-repeat; }
+        &.tumblr { background: url(../images/tumblr#{$file_ext}) no-repeat; }
+        &.twitter { background: url(../images/twitter#{$file_ext}) no-repeat; }
+        &.vimeo { background: url(../images/vimeo#{$file_ext}) no-repeat; }
+        &.rss { background: url(../images/rss#{$file_ext}) no-repeat; }
+      }
+    }
+  }
+
+  .feature-img {
+    position: absolute;
+    right: 20px;
+    top: -100px;
+  }
+
+  footer {
+    color: $light-blue;
+    padding: 8px 18px;
+    font-size: 13px;
+  }
+
+  .news {
+    width: 860px;
+    margin: 20px auto;
+    h1 {
+      padding-bottom: 15px;
+    }
+    .l {
+      float: left;
+      width: 450px;
+    }
+    .r {
+      margin-left: 470px;
+    }
+    .item {
+      padding-bottom: 3px;
+    }
+    .date {
+      color: #666;
+      font-size: 0.8em;
+      width: 90px;
+      display: block;
+      float: left;
+      font-family: $docs-monospace-font;
+    }
+  }
+
+}

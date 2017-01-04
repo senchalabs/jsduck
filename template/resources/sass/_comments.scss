@@ -1,0 +1,471 @@
+// Styles for comment system
+@import "mixins";
+
+$moderator-color: #3D7E00;
+$moderator-color-light: #94b773;
+$comment-date-color: #999;
+
+// comment count button in class toolbar.
+.comment-btn {
+  background: url(../images/comment-bubble.png) no-repeat;
+  color: #fff;
+  text-align: center;
+  line-height: 16px;
+  height: 20px;
+  text-shadow: 1px 1px 0 #58b0e0;
+  font-weight: bold;
+  cursor: pointer; }
+
+
+// The small comment count with icon, used all over in several places.
+.comment-counter-small {
+  cursor: pointer;
+  background: url(../images/comment-bubble.png) no-repeat 2px -55px;
+  padding-left: 21px;
+  font-weight: normal;
+  font-size: 11px; }
+
+
+@mixin comments-expander-drop-target {
+   &.open > a.side.toggleComments.drop-target-hover {
+      background: $moderator-color-light; } }
+
+
+// Large comments expander (Class/Guide/Video)
+#center-container .comments-large-expander {
+  // ensure class comments are below the hierarchy sidebar
+  clear: both;
+  .comments-expander {
+    @include member-expander;
+    @include comments-expander-drop-target; }
+  // Header icon in large comments expander
+  h3.icon-comment {
+    padding: 0 0 5px 25px;
+    margin: 30px 0 5px 0;
+    background: url(../images/comment-bubble.png) no-repeat 1px -26px; } }
+
+
+// Comments expander
+.comments-expander {
+  color: $docs-text-color;
+  border-width: 1px 0;
+  border-style: solid;
+  border-color: #e0e0e0;
+  position: relative;
+  padding: 0 0 10px 25px;
+  @include comments-expander-drop-target;
+  &.open {
+    min-height: 40px; }
+  .loading {
+    font-weight: bold;
+    background: url(../images/ajax-loader.gif) no-repeat 0 9px;
+    padding: 8px 0 0 25px; }
+  .name {
+    padding: 10px 0 0 0px;
+    display: block;
+    font-weight: normal !important; } }
+
+
+// login form at the end of comments list.
+.auth-form {
+  form {
+    position: relative;
+    display: inline-block;
+    .username, .password {
+      border: 1px solid #bbb; } }
+  .before-text {
+    display: inline-block;
+    line-height: 22px;
+    margin: 10px 10px 1px 4px;
+    font-weight: bold; } }
+
+
+// Form for posting/editing comment
+form.commentForm {
+  position: relative;
+  border: 1px solid #c7d1d9;
+  padding: 10px 15px 15px 15px;
+  @include border-radius(4px);
+  background: #ecf5fc;
+  margin: 10px 55px 0px 0;
+  &.newComment {
+    margin: 20px 55px 10px 5px; }
+  .subscribe {
+    margin-right: 5px;
+    color: #444;
+    .sep {
+      color: #aaa; }
+    input {
+      color: #000;
+      margin-right: 5px;
+      margin-left: 5px; } }
+  .com-meta {
+    position: relative;
+    margin-top: 8px;
+    text-align: right;
+    .toggleCommentGuide {
+      font-weight: bold; } }
+  img {
+    @include border-radius(2px);
+    position: absolute;
+    left: 0;
+    margin-right: 10px; }
+  .form-author {
+    font-weight: normal;
+    line-height: 25px;
+    position: absolute;
+    left: 35px;
+    margin-bottom: 10px; }
+  .CodeMirror,
+  textarea {
+    border: 1px solid #ccc;
+    background: #fff;
+    @include border-radius(3px);
+    width: 100%;
+    padding: 3px;
+    border: auto; }
+  .CodeMirror .CodeMirror-scroll,
+  textarea {
+    height: auto;
+    min-height: 8em; }
+  input.sub {
+    @include green-button();
+    font-weight: bold;
+    width: 120px;
+    margin-left: 20px;
+    padding: 5px 8px;
+    font-size: 12px; }
+  .commentGuideTxt {
+    border-top: 1px solid #C7D1D9;
+    margin-top: 15px;
+    padding-top: 10px;
+    .markdown.preview {
+      float: left;
+      width: 310px;
+      pre {
+        border: 0;
+        padding: 0;
+        margin: 0;
+        line-height: 1.5em;
+        background: transparent; } }
+    .markdown.result {
+      margin-left: 320px;
+      width: 260px; }
+    .markdown {
+      background: #fff;
+      padding: 20px;
+      position: relative;
+      @include border-radius(5px);
+      h4 {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        padding: 5px 10px;
+        background: rgba(0,0,0,0.05); } }
+    code {
+      padding-left: 5px; }
+    ul {
+      margin-top: 5px; } } }
+
+
+// Single comment
+.comment {
+  padding-top: 10px;
+  padding-left: 2px;
+  &.drop-target-hover {
+    background: $moderator-color-light; }
+  &:hover {
+    // Use child > selector to ensure the hover also
+    // happens for the list of comment replies.
+    > .com-meta > .top-right > .command,
+    > .com-meta > .top-right > .vote,
+    > .comments-replies-expander > .replies-button {
+        @include transition(opacity, 0.2s, linear);
+        @include opacity(1); } }
+  .target {
+    color: #666;
+    font-size: 90%;
+    font-weight: normal; }
+  .com-meta {
+    position: relative;
+    text-size: 13px;
+    img {
+      @include border-radius(2px);
+      &.drag-handle {
+        cursor: all-scroll; } }
+    .author {
+      position: absolute;
+      left: 40px;
+      font-weight: bold;
+      top: 2px;
+      font-size: 14px;
+      &.moderator {
+        color: $moderator-color; } }
+    .top-right {
+      position: absolute;
+      right: 20px;
+      top: 0;
+      .command,
+      .time {
+        display: inline-block;
+        margin-left: 10px; }
+      .tag {
+        @include border-radius(2px);
+        padding: 0 1em;
+        font-weight: bold;
+        color: white;
+        background: $docs-text-color;
+        position: relative;
+        a {
+          color: $docs-text-color;
+          position: absolute;
+          top: -5px;
+          right: -5px;
+          background: white;
+          width: 13px;
+          height: 13px;
+          text-align: center;
+          line-height: 7px;
+          border: 2px solid $docs-text-color;
+          @include border-radius(7px);
+          &:hover {
+            border-color: red;
+            color: red; } } }
+      .add-tag {
+        color: $comment-date-color;
+        background: white;
+        width: 13px;
+        height: 13px;
+        text-align: center;
+        text-indent: -1px;
+        line-height: 9px;
+        border: 2px solid $comment-date-color;
+        @include border-radius(7px);
+        @include opacity(0);
+        @include transition(opacity, 0.2s, linear);
+        &:hover {
+          border-color: $moderator-color;
+          color: $moderator-color; } }
+      .editComment, .deleteComment, .readComment {
+        color: $comment-date-color;
+        @include opacity(0);
+        @include transition(opacity, 0.2s, linear); }
+      .readComment.read {
+        color: white;
+        @include border-radius(2px);
+        background: $moderator-color;
+        font-weight: bold;
+        padding: 0 1em;
+        @include opacity(0.5); }
+      .time {
+        color: $comment-date-color;
+        text-align: right;
+        width: 90px; } }
+    .vote {
+      position: absolute;
+      left: 2px;
+      top: 33px;
+      .voteCommentUp {
+        position: absolute;
+        display: block;
+        width: 20px;
+        height: 18px;
+        background: url(../images/vote-arrows.png) no-repeat;
+        &.selected {
+          @include opacity(0.4);
+          background-position: -22px 0; }
+        &:hover, &.selected:hover {
+          @include opacity(1);
+          background-position: -22px 0; } }
+      .voteCommentDown {
+        position: absolute;
+        display: block;
+        width: 20px;
+        height: 18px;
+        top: 36px;
+        background: url(../images/vote-arrows.png) no-repeat 0 -35px;
+        &.selected {
+          background-position: -22px -35px;
+          @include opacity(0.4); }
+        &:hover, &.selected:hover {
+          @include opacity(1);
+          background-position: -22px -35px; } }
+      .score {
+        position: absolute;
+        font-weight: bold;
+        width: 20px;
+        top: 15px;
+        color: #aaa;
+        text-align: center;
+        font-size: 16px; } } }
+  .content {
+    min-height: 65px;
+    padding: 0 0 30px 40px;
+    border-bottom: 1px solid #eee; }
+  .comments-replies-expander {
+    .replies-button {
+      position: relative;
+      top: -20px;
+      height: 0;
+      display: block;
+      padding-left: 40px;
+      font-weight: bold;
+      @include opacity(0);
+      @include transition(opacity, 0.2s, linear);
+      color: $moderator-color-light;
+      &.with-replies {
+        @include opacity(1); }
+      &:hover {
+        color: $moderator-color; } }
+    .comments-list-with-form {
+      padding-left: 1em;
+      border-left: 1em solid #EBF3FE; } }
+
+  .deleted-comment {
+    text-align: center;
+    background: #ffd76e;
+    border: 1px solid #e1ba53;
+    @include border-radius(4px);
+    font-weight: bold; } }
+
+
+// Editor for adding new tags.
+.comments-tageditor {
+  padding-top: 10px; }
+.comments-tageditor-boundlist .x-boundlist-item-over {
+  background: $moderator-color-light; }
+
+
+// Comments index page
+#commentindex {
+  padding: 5px;
+  .comments-full-list {
+    .comments-list {
+      margin: 0 auto;
+      max-width: 1000px; }
+    // load-mask
+    .x-mask {
+      opacity: 0.9;
+      background: #fff url(../images/ajax-loader.gif) no-repeat center; } } }
+
+
+// pager on comments index page
+.recent-comments-pager {
+  display: block;
+  padding: 10px 0 5px 35px;
+  position: relative;
+  color: gray;
+  span {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 27px;
+    height: 28px;
+    background: url(../images/comment.png) no-repeat 0 -25px; }
+  &:hover span {
+    background-position: -59px -25px; } }
+
+
+// Menu for switching between Users and Topics
+.comments-header-menu {
+  h1 a {
+    margin-right: 1em;
+    color: gray; }
+  h1 a:hover {
+    @include opacity(0.7); }
+  h1 a.selected {
+    color: $docs-heading-color; } }
+
+
+// Table with top-voted users
+.comments-users .x-panel-body .users-list {
+  ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none; }
+  li {
+    height: 30px;
+    @include border-radius(2px);
+    cursor: pointer;
+    &:hover {
+      background: #eee; }
+    &.x-item-selected {
+      background: $moderator-color-light; } }
+ .score {
+    display: block;
+    float: left;
+    width: 40px;
+    padding: 0 5px;
+    line-height: 30px;
+    font-weight: bold;
+    color: #aaa;
+    text-align: center;
+    font-size: 16px; }
+  img {
+    @include border-radius(2px);
+    display: block;
+    float: left;
+    margin-top: 2px;
+    margin-right: 10px; }
+  .username {
+    line-height: 30px;
+    font-weight: bold;
+    &.moderator {
+      color: $moderator-color; } }
+  .x-item-selected {
+    .score {
+      color: $docs-text-color; }
+    .username.moderator {
+      color: $docs-link-color; } } }
+
+
+// Table with top targets or tags
+.comments-toplist .x-panel-body .top-list {
+  ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none; }
+  li {
+    height: 30px;
+    @include border-radius(2px);
+    cursor: pointer;
+    &:hover {
+      background: #eee; }
+    &.x-item-selected {
+      background: $moderator-color-light; } }
+ .score {
+    display: block;
+    float: left;
+    width: 40px;
+    padding: 0 5px;
+    line-height: 30px;
+    font-weight: bold;
+    color: #aaa;
+    text-align: center;
+    font-size: 16px; }
+  .x-item-selected .score {
+    color: $docs-text-color; }
+  .text {
+    float: left;
+    width: 250px;
+    overflow: hidden;
+    line-height: 30px;
+    font-weight: bold; } }
+
+
+// Filter field with reset button
+.comments-filter-field {
+  table {
+    border-style: solid;
+    border-color: #bebebe;
+    border-width: 1px;
+    background: white url('../images/text-bg.gif') repeat-x 0 0; }
+  .x-form-trigger.reset {
+    background: url(../images/x12.png) no-repeat 2px 3px;
+    padding: 0;
+    margin: 0;
+    border: 0; }
+  input {
+    background: transparent;
+    border: none; } }

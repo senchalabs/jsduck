@@ -1,0 +1,208 @@
+/* line 6, ../sass/my.scss */
+#north-region { background-image: url(../images/bkgd.png); background-repeat: repeat-x; }
+/* line 10, ../sass/my.scss */
+#north-region #search-field input { font-family: "Helvetica Neue" !important; }
+
+/* line 15, ../sass/my.scss */
+#header-content { padding: 10px 0 0 15px; }
+
+/* line 19, ../sass/my.scss */
+.x-border-layout-ct { background-color: #FFF !important; }
+
+/* line 23, ../sass/my.scss */
+#welcomeindex { overflow: hidden !important; }
+
+/* line 28, ../sass/my.scss */
+.thumb-list h2 { cursor: auto !important; }
+/* line 30, ../sass/my.scss */
+.thumb-list h2 div { background: none !important; padding: 4px !important; }
+
+/* line 37, ../sass/my.scss */
+#center-container h1 { color: #9B1C1F !important; font-size: 16pt !important; }
+/* line 40, ../sass/my.scss */
+#center-container h1 a { color: #9B1C1F !important; }
+/* line 44, ../sass/my.scss */
+#center-container h1 .typestr { font-weight: bold; }
+/* line 50, ../sass/my.scss */
+#center-container .thumb-list h2 { border-bottom: 2px solid #666666 !important; }
+/* line 53, ../sass/my.scss */
+#center-container .thumb-list h2 div { color: #314e64 !important; font-size: 14pt !important; }
+/* line 59, ../sass/my.scss */
+#center-container .thumb-list dd h4 { font-size: 10pt !important; padding: 5px 0 !important; }
+/* line 66, ../sass/my.scss */
+#center-container .class-categories .section { background: none; border: none; }
+/* line 70, ../sass/my.scss */
+#center-container .class-categories .section h1 { color: #666666 !important; }
+/* line 74, ../sass/my.scss */
+#center-container .class-categories .section h3 { color: black; font-size: 14pt; }
+
+/* line 87, ../sass/my.scss */
+.class-overview .x-toolbar-default { background-color: transparent; background-image: none; border: none; border-bottom-style: solid; border-bottom-color: #cccccc; padding-bottom: 6px; }
+/* line 94, ../sass/my.scss */
+.class-overview .x-toolbar-default .hover-menu-button { background: none; }
+
+/* line 98, ../sass/my.scss */
+.hover-menu { background-color: #f1f1f1 !important; }
+
+/* line 102, ../sass/my.scss */
+.x-grid-row-selected .x-grid-cell, .x-grid-row-selected .x-grid-rowwrap-div { border-style: none !important; border-color: transparent !important; background-color: transparent !important; }
+/* line 106, ../sass/my.scss */
+.x-grid-row-selected .x-grid-cell div, .x-grid-row-selected .x-grid-cell a, .x-grid-row-selected .x-grid-rowwrap-div div, .x-grid-row-selected .x-grid-rowwrap-div a { color: #9B1C1F !important; font-weight: bold; }
+
+/* line 112, ../sass/my.scss */
+.platform-android { background-image: url(../images/icon_android.png); }
+
+/* line 116, ../sass/my.scss */
+.platform-iphone { background-image: url(../images/icon_iphone.png); }
+
+/* line 120, ../sass/my.scss */
+.platform-ipad { background-image: url(../images/icon_ipad.png); }
+
+/* line 124, ../sass/my.scss */
+.platform-mobileweb { background-image: url(../images/icon_mobileweb.png); }
+
+/* line 128, ../sass/my.scss */
+.platform-tizen { background-image: url(../images/icon_tizen.png); }
+
+/* line 132, ../sass/my.scss */
+.platform-blackberry { background-image: url(../images/icon_blackberry.png); }
+
+/* line 136, ../sass/my.scss */
+.platform-windowsphone { background-image: url(../images/icon_windowsphone.png); }
+
+/* line 140, ../sass/my.scss */
+.sidebar { width: 20%; float: right; }
+/* line 143, ../sass/my.scss */
+.sidebar .sidebar-platforms { clear: right; float: right; color: #666666 !important; }
+/* line 148, ../sass/my.scss */
+.sidebar .sidebar-platforms li { list-style: none !important; height: 40px; background-position: 100% 50%; background-repeat: no-repeat; padding: 12px 40px 0 0; text-align: right; font-size: 12pt; }
+
+/* line 160, ../sass/my.scss */
+.hierarchy { width: 80%; clear: none; }
+
+/* line 166, ../sass/my.scss */
+.doc-contents .platforms, .members .platforms { zoom: 1; }
+/* line 161, ../sass/_mixins.scss */
+.doc-contents .platforms:before, .doc-contents .platforms:after, .members .platforms:before, .members .platforms:after { display: table; content: ""; zoom: 1; *display: inline; }
+/* line 168, ../sass/_mixins.scss */
+.doc-contents .platforms:after, .members .platforms:after { clear: both; }
+/* line 169, ../sass/my.scss */
+.doc-contents .platforms li, .members .platforms li { width: 40px; height: 40px; background-repeat: no-repeat; float: left; list-style: none !important; padding-left: 26px; padding-right: 34px; padding-top: 6px; }
+
+/* line 184, ../sass/my.scss */
+.doc-contents .platforms { display: none; }
+
+/* line 189, ../sass/my.scss */
+.container ol, .container ul { padding-left: 1em !important; }
+
+/* line 192, ../sass/my.scss */
+#videoindex .thumb-list dd .thumb img { border: none !important; }
+
+/* line 197, ../sass/my.scss */
+.doc-table table, .doc-table th, .doc-table td { border: 1px solid #ccc; }
+/* line 200, ../sass/my.scss */
+.doc-table th { font-weight: bold; text-align: left; padding: 3px 5px 3px 5px; }
+/* line 205, ../sass/my.scss */
+.doc-table th, .doc-table td { padding: 3px 5px 3px 5px; }
+
+/* line 211, ../sass/my.scss */
+.note { background-color: #FFFFDD; border-color: #F7DF92; padding: 1em 1em 1em 3em !important; border-radius: 5px; padding-top: 1em !important; padding-bottom: 1em !important; padding-left: 1em !important; width: 95%; }
+
+/* line 222, ../sass/my.scss */
+.note:before { content: "Note: "; padding-left: 0px; color: red; font-weight: bold; }
+
+/* line 229, ../sass/my.scss */
+#editButton { background-image: url(../images/pencil.png); background-position: 10px; background-repeat: no-repeat; background-size: 20px 20px; border-radius: 5px; color: #555555; display: block; height: 30px; position: absolute; right: 50px; text-align: center; top: 18px; width: 75px; }
+
+/* line 245, ../sass/my.scss */
+#editButton span { font-family: 'Open Sans', Helvetica, FreeSans, sans-serif; font-size: 15px; font-weight: normal; right: 15px; position: absolute; text-align: center; top: 5px; }
+
+/* line 255, ../sass/my.scss */
+#editButton:hover { background-color: #555555; color: #ffffff; }
+
+/* line 260, ../sass/my.scss */
+.classheader #editButton { top: 8px; right: 35px; }
+
+/* line 265, ../sass/my.scss */
+#platformComparison { margin: 0 0 0 25px; }
+
+/* line 269, ../sass/my.scss */
+#platformComparison th, #platformComparison td { text-align: center; font-family: 'Helvetica Neue', helvetica, arial, sans-serif; font-size: 13px; font-weight: bold; border-width: 0; color: #555; padding: 5px; }
+
+/* line 279, ../sass/my.scss */
+.x-toolbar .x-toolbar-text { color: #222; font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif !important; }
+
+/* line 284, ../sass/my.scss */
+.x-btn-default-toolbar-small .x-btn-inner { font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif !important; }
+
+/* line 288, ../sass/my.scss */
+.x-form-field, .x-form-display-field { font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif !important; }
+
+/* line 292, ../sass/my.scss */
+.icon-search-1 { -webkit-font-smoothing: subpixel-antialiased; color: #888888; display: block; height: 45px; line-height: 45px; opacity: 0.80; position: absolute; font-size: 16px; left: 7px; }
+
+/* line 304, ../sass/my.scss */
+#appc-docs-search-cancel { color: #888888; position: absolute; right: 7px; font-size: 16px; }
+
+/* line 310, ../sass/my.scss */
+#appc-docs-search-cancel:hover { color: #484850; cursor: pointer; }
+
+/* line 315, ../sass/my.scss */
+#appc-docs-search-form { font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif !important; font-size: 14px; padding: 5px 25px; width: 200px; border-radius: 16px; border-style: solid; border-width: 1px; border-color: #888888; }
+
+/* line 326, ../sass/my.scss */
+#appc-docs-search-form:focus { border-color: #66afe9; outline: 0; -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6); }
+
+/* line 333, ../sass/my.scss */
+#appc-docs-products { position: relative; display: inline-block; line-height: 45px; padding: 0 25px; }
+
+/* line 340, ../sass/my.scss */
+#appc-docs-products-menu { z-index: 4000 !important; display: none; position: absolute; top: 100%; left: 0; z-index: 1000; float: left; min-width: 160px; margin: 0; padding: 5px 0 0 0; font-size: 14px; text-align: left; border-top-right-radius: 0; border-top-left-radius: 0; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); background-color: #484850; }
+
+/* line 358, ../sass/my.scss */
+#appc-docs-products-menu a { padding-left: 10px; display: block; color: white; }
+
+/* line 363, ../sass/my.scss */
+#appc-docs-products-menu a:hover { background-color: #343438 !important; box-sizing: border-box; }
+
+/* line 368, ../sass/my.scss */
+#appc-docs-search { position: relative; display: inline-block; }
+
+/* line 372, ../sass/my.scss */
+#appc-docs-search-results { z-index: 4000 !important; position: absolute; top: 100%; left: 0; z-index: 1000; float: left; width: 250px; margin: 0; padding: 5px 0 0 0; font-size: 14px; text-align: left; border-top-right-radius: 0; border-top-left-radius: 0; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); background-color: #484850; display: none; }
+
+/* line 390, ../sass/my.scss */
+#appc-docs-search-results a { padding-left: 10px; display: block; color: white; overflow: hidden; }
+
+/* line 396, ../sass/my.scss */
+#appc-docs-search-results a:hover { background-color: #343438 !important; box-sizing: border-box; }
+
+/* line 401, ../sass/my.scss */
+#appc-docs-results-last { color: #888; background-color: #343438; height: 48px; position: absolute; width: 100%; text-align: center; vertical-align: baseline; }
+
+/* line 411, ../sass/my.scss */
+#appc-docs-results-prev { font-size: 20px; }
+
+/* line 414, ../sass/my.scss */
+#appc-docs-results-prev:hover, #appc-docs-results-next:hover { color: white; cursor: pointer; }
+
+/* line 419, ../sass/my.scss */
+#appc-docs-results-next { font-size: 20px; }
+
+/* line 423, ../sass/my.scss */
+#appc-docs-results-stats { padding: 0 50px; }
+
+/* line 427, ../sass/my.scss */
+.appc-docs-results-name { font-size: 14px !important; line-height: 150%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* line 435, ../sass/my.scss */
+.appc-docs-results-fullname { font-size: 12px; line-height: 150%; color: #888; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* line 444, ../sass/my.scss */
+.taboverflow-center { width: 40px; height: 30px; border-style: solid; text-align: center; vertical-align: middle; border-width: 1px; top: -8px; position: relative; border-color: #cccccc; border-radius: 4px; background-color: #e7e7e7; padding: 5px; }
+
+/* line 459, ../sass/my.scss */
+.taboverflow-center:hover { background-color: white; cursor: pointer; }
+
+/* line 465, ../sass/my.scss */
+.confluence-embedded-image.image-right { float: right; }

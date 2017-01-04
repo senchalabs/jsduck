@@ -1,0 +1,123 @@
+// Styles for examples
+@import "mixins";
+
+pre.inline-example {
+  margin-top: 0; }
+
+.inline-example-tb {
+  // Hide toolbar background completely.
+  // !important is needed to hide the background image
+  // that is created for browsers like IE and Opera.
+  background: none !important;
+  border: none;
+
+  .x-btn {
+    // Cancel out generic table styles for content.
+    // The table element is used for buttons in IE8 and below.
+    table {
+      margin: 0;
+      td {
+        padding: 0; }}
+    // Buttons default display type has changed in Ext 4.1,
+    // messing up the layout of toolbar buttons.
+    button {
+      display: inline-block; } }
+
+  // Inline example component buttons
+  span.x-btn-inner {
+    line-height: 16px; }
+  .active span.x-btn-inner {
+    color: #57a7dc; }
+  span.x-btn-icon {
+    background: url(../images/example-icons.png) no-repeat;
+    @include opacity(0.6);
+    &.code {
+      background-position: -2px -17px; }
+    &.preview {
+      background-position: -3px -63px; }
+    &.copy {
+      background-position: -2px -86px; } }
+  .active span.x-btn-icon {
+    background: url(../images/example-icons.png) no-repeat;
+    @include opacity(1);
+    &.code {
+      background-position: -30px -17px; }
+    &.preview {
+      background-position: -31px -63px; }
+    &.copy {
+      background-position: -30px -86px; } } }
+
+.inline-example-editor {
+  border: none;
+  .x-panel-body {
+    border: solid 1px #e8e8e8;
+    @include border-radius(5px);
+    // Create exactly the same amount of padding as normal code <pre> has
+    padding: 5px 15px !important;
+    background: #f7f7f7; }
+  // override CodeMirror height which defaults to 300px
+  .CodeMirror-scroll {
+    height: auto; }
+  // same line height as for non-live code examples
+  .CodeMirror pre {
+    line-height: 1.3em; } }
+
+.inline-example-cmp {
+  margin-bottom: 10px;
+  // add padding to make right scrollbar visible
+  padding-right: 25px; }
+
+.tablet.landscape {
+  padding: 83px 87px;
+  background: url(../images/tablet-l.jpg) no-repeat; }
+
+.tablet.portrait {
+  padding: 87px 80px;
+  background: url(../images/tablet-p.jpg) no-repeat; }
+
+.phone.landscape {
+  padding: 22px 79px;
+  width: 637px;
+  height: 367px;
+  background: url(../images/phone-l.jpg) no-repeat; }
+
+.phone.portrait {
+  padding: 78px 25px;
+  width: 368px;
+  height: 637px;
+  background: url(../images/phone-p.jpg) no-repeat; }
+
+.miniphone.landscape {
+  padding: 79px 22px 6px 25px;
+  width: 368px;
+  height: 303px;
+  background: url(../images/phone-small-p.jpg) no-repeat; }
+
+.miniphone.portrait {
+  padding: 22px 6px 25px 79px;
+  width: 303px;
+  height: 368px;
+  background: url(../images/phone-small-l.jpg) no-repeat; }
+
+.example-container {
+  h1 {
+    padding: 15px 0 !important; } }
+
+.example-toolbar {
+  height: 35px;
+  padding: 7px 5px;
+  width: 100%;
+  border-radius: 2px;
+  border-color: #e4e4e4;
+  border-width: 1px !important;
+  border-style: solid;
+  @include vertical-gradient(#f1f1f1, #e9e9e9);
+  @include box-shadow(rgba(255,255,255,0.5) 0 1px 0 0 inset);
+  .separator {
+    border-left: 1px solid #ccc;
+    margin: 0 10px;
+    display: inline-block;
+    float: left;
+    width: 1px; }
+  .new-window {
+    float: right; } }
