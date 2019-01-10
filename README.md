@@ -1,6 +1,12 @@
 ![JSDuck](https://raw.github.com/senchalabs/jsduck/master/opt/jsduck-logo-dark.png)
 ===================================================================================
 
+**Warning: JSDuck is no more maintained!**
+- If you're looking to adopt a documentation tool, try something else.
+- If you're using JSDuck, consider moving over to something else.
+- Even Sencha itself doesn't use it any more, they use some internal tool, that's not available publicly.
+- If you'd like to take over the maintenance of JSDuck, contact me by creating an issue.
+
 [![Build Status](https://travis-ci.org/senchalabs/jsduck.png)](https://travis-ci.org/senchalabs/jsduck)
 
 API documentation generator for Sencha JavaScript frameworks.
