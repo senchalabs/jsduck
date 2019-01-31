@@ -96,7 +96,16 @@ Ext.define('Docs.controller.Search', {
                         clearTimeout(this.searchTimeout);
                         this.searchTimeout = Ext.Function.defer(function() {
                             this.search(el.value);
+                            this.searchTimeout = void 0;
                         }, this.basicSearchDelay, this);
+                    }
+                },
+                change: function(tf, newValue, oldValue) {
+                    if (newValue && !oldValue) {
+                        this.getDropdown().show();
+                        this.search(newValue);
+                    } else if (!this.searchTimeout && this.getDropdown().isVisible()) {
+                        this.search(newValue);
                     }
                 },
                 focus: function(el) {

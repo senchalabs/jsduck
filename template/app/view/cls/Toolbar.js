@@ -95,7 +95,7 @@ Ext.define('Docs.view.cls.Toolbar', {
         };
 
         var self = this;
-        this.items = this.items.concat([
+        self.items = self.items.concat([
             { xtype: 'tbfill' },
             this.filterField = Ext.widget("triggerfield", {
                 triggerCls: 'reset',
@@ -105,17 +105,18 @@ Ext.define('Docs.view.cls.Toolbar', {
                 enableKeyEvents: true,
                 width: 150,
                 listeners: {
-                    keyup: function(cmp) {
-                        this.fireEvent("filter", cmp.getValue(), this.getShowFlags());
-                        cmp.setHideTrigger(cmp.getValue().length === 0);
+                    buffer: 256,
+                    change: function() {
+                        var value = self.filterField.getValue();
+                        self.fireEvent("filter", value, self.getShowFlags());
+                        self.filterField.setHideTrigger(value.length === 0);
                     },
                     specialkey: function(cmp, event) {
                         if (event.keyCode === Ext.EventObject.ESC) {
                             cmp.reset();
-                            this.fireEvent("filter", "", this.getShowFlags());
+                            self.fireEvent("filter", "", self.getShowFlags());
                         }
-                    },
-                    scope: this
+                    }
                 },
                 onTriggerClick: function() {
                     this.reset();
@@ -125,7 +126,7 @@ Ext.define('Docs.view.cls.Toolbar', {
                 }
             }),
             { xtype: 'tbspacer', width: 10 },
-            this.commentCount = this.createCommentCount(),
+            self.commentCount = self.createCommentCount(),
             {
                 xtype: 'button',
                 text: 'Show',
@@ -153,7 +154,7 @@ Ext.define('Docs.view.cls.Toolbar', {
             }
         ]);
 
-        this.callParent(arguments);
+        this.callParent();
     },
 
     getShowFlags: function() {
