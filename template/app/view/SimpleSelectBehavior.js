@@ -30,7 +30,7 @@ Ext.define('Docs.view.SimpleSelectBehavior', {
 
     /**
      * Creates a wrapper around selection model.
-     * @param {Ext.Component} selModel A component firering "select"
+     * @param {Ext.Component} selModel A component firing "select"
      * and "deselect" events.
      * @param {Object} listeners The listeners config for Observable.
      */
