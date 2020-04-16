@@ -2,7 +2,7 @@
  * Component for running multiple tests in batch mode.
  *
  * Calling the #run method with bunch of Docs.model.Test records will
- * start the runner, firering #start event.  After the completion of
+ * start the runner, firing #start event.  After the completion of
  * every test the #statuschange event is fired.  Finally #finish will
  * fire when all tests are done.
  */
